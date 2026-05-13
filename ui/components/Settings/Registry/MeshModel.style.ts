@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled, Button, alpha } from '@sistent/sistent';
-import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
+import { TreeItem, treeItemClasses } from '../../shared/TreeView';
 
 export const DisableButton = styled(Button)(({ theme }) => ({
   '&.MuiButtonBase-root:disabled': {

@@ -51,16 +51,6 @@ export class ExtensionsPage {
     await expect(this.performanceEnableBtn).toBeEnabled();
   }
 
-  async verifyKanvasSignupUI() {
-    await expect(this.kanvasSignupHeading).toBeVisible();
-    await expect(this.kanvasSignupBtn).toBeVisible();
-  }
-
-  async hasKanvasAccess() {
-    const btnText = await this.kanvasSignupBtn.textContent();
-    return btnText?.trim() === 'Enabled';
-  }
-
   async toggleCatalog() {
     await this.catalogToggleSwitch.click();
   }

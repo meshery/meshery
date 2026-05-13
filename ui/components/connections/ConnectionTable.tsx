@@ -338,10 +338,13 @@ const ConnectionTable = ({
     },
   );
 
-  const environments = environmentsResponse?.environments || [];
   const environmentOptions = useMemo(
-    () => environments.map((env) => ({ label: env.name, value: env.id })),
-    [environments],
+    () =>
+      (environmentsResponse?.environments || []).map((env) => ({
+        label: env.name,
+        value: env.id,
+      })),
+    [environmentsResponse?.environments],
   );
 
   useEffect(() => {

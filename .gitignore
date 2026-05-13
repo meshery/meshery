@@ -90,3 +90,7 @@ ui/.env
 *.env
 */.env
 docs/hugo_stats.json
+
+
+LLMs
+.copilot-tmp/*

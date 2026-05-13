@@ -8,6 +8,8 @@ interface UseUnsavedChangesProps {
   savedLayout: unknown;
 }
 
+const UNSAVED_NAVIGATION_ERROR = 'Navigation blocked due to unsaved changes';
+
 const useUnsavedChanges = ({
   isEditMode,
   dashboardLayout,
@@ -32,7 +34,7 @@ const useUnsavedChanges = ({
         pendingUrlRef.current = url;
         setShowModal(true);
         router.events.emit('routeChangeError');
-        throw new Error('Navigation blocked due to unsaved changes');
+        throw new Error(UNSAVED_NAVIGATION_ERROR);
       }
     };
 
@@ -40,7 +42,7 @@ const useUnsavedChanges = ({
     return () => {
       router.events.off('routeChangeStart', handleRouteChange);
     };
-  }, [router.events]);
+  }, [router]);
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {

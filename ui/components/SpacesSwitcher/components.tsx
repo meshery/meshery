@@ -5,35 +5,35 @@ import {
   Button,
   Checkbox,
   CircularProgress,
+  CloseIcon,
+  DeleteIcon,
+  ExportIcon,
+  FileUploadIcon,
   FormControl,
+  FormControlLabel,
+  FormGroup,
+  Grid2,
+  IconButton,
   InputLabel,
   ListItemText,
   MenuItem,
+  OutlinedInput,
+  PersonIcon,
   Select,
+  SettingsIcon,
+  ShareIcon,
   TextField,
   Typography,
-  Grid2,
   useTheme,
-  PersonIcon,
-  OutlinedInput,
-  FormControlLabel,
-  FormGroup,
-  DeleteIcon,
-  ShareIcon,
-  ExportIcon,
-  IconButton,
-  CloseIcon,
 } from '@sistent/sistent';
 import React, { useContext, useState } from 'react';
 import { capitalize } from 'lodash/fp';
 import { getAllUsers } from '@/rtk-query/user';
-import { FileUpload } from '@mui/icons-material';
 import { ImportDesignModal } from '../MesheryPatterns/MesheryPatterns';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useImportPatternMutation } from '@/rtk-query/design';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import { useAssignDesignToWorkspaceMutation } from '@/rtk-query/workspace';
@@ -122,14 +122,16 @@ export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
         <TextField
           {...params}
           label="Author"
-          InputProps={{
-            ...params.InputProps,
-            endAdornment: (
-              <>
-                {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                {params.InputProps.endAdornment}
-              </>
-            ),
+          slotProps={{
+            input: {
+              ...(params?.slotProps?.input || {}),
+              endAdornment: (
+                <>
+                  {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                  {params?.slotProps?.input?.endAdornment}
+                </>
+              ),
+            },
           }}
         />
       )}
@@ -393,7 +395,7 @@ export const ImportButton = ({ workspaceId, disabled = false, refetch }) => {
           padding: '0.85rem !important',
           width: '100%',
         }}
-        startIcon={<FileUpload color={theme.palette.common.white} />}
+        startIcon={<FileUploadIcon fill={theme.palette.common.white} />}
       >
         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Import</Box>
       </StyledResponsiveButton>

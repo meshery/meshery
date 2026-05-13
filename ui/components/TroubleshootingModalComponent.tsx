@@ -12,8 +12,7 @@ import {
   Modal,
   keyframes,
 } from '@sistent/sistent';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import CloseIcon from '@mui/icons-material/Close';
+import { ExpandMore, Close } from '@/components/icons';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   top: '50%',
@@ -45,8 +44,8 @@ const Info = styled(InfoIcon)(({ theme }) => ({
   color: theme.palette.type === 'dark' ? theme.palette.background.brand?.default : LIGHT_TEAL,
 }));
 
-const FooterText = styled(Typography)(() => ({
-  color: 'white',
+const FooterText = styled(Typography)(({ theme }) => ({
+  color: theme.palette.common.white,
   fontSize: '.85rem',
   textDecoration: 'italics',
 }));
@@ -93,9 +92,9 @@ const ModelHeader = styled(Typography)({
   color: 'white',
 });
 
-const IconStyle = styled(CloseIcon)({
-  color: 'white',
-});
+const IconStyle = styled(Close)(({ theme }) => ({
+  color: theme.palette.common.white,
+}));
 
 const IconContainer = styled(IconButton)({
   transition: 'all .3s',
@@ -105,10 +104,10 @@ const IconContainer = styled(IconButton)({
   },
 });
 
-const AccordionContainer = styled(Accordion)({
+const AccordionContainer = styled(Accordion)(({ theme }) => ({
   margin: '0 !important',
-  borderBottom: '1px solid #ccc',
-});
+  borderBottom: `1px solid ${theme.palette.divider}`,
+}));
 
 const AccordionSummaryStyled = styled(AccordionSummary)(({ theme }) => ({
   '&.Mui-expanded': {
@@ -117,7 +116,7 @@ const AccordionSummaryStyled = styled(AccordionSummary)(({ theme }) => ({
 }));
 
 const AccDetailHead = styled(Typography)(({ theme }) => ({
-  color: theme.palette.mode === 'dark' ? '#f1f1f1' : '#444',
+  color: theme.palette.mode === 'dark' ? theme.palette.grey[300] : theme.palette.grey[700],
 }));
 
 const TroubleshootListitem = styled('li')({
@@ -131,8 +130,7 @@ const KeyStyleContainer = styled('div')(({ theme }) => ({
   background: theme.palette.background.tabs,
   margin: '0.3rem',
   borderRadius: '5px',
-  boxShadow:
-    'rgba(0, 0, 0, 0.17) 0px -0px 0px -5px inset, rgba(0, 0, 0, 0.15) 0px 0px 0px -3px inset, rgba(0, 0, 0, 0.1) 0px 4px 30px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 0px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.1) 0px 1px 0px, rgba(0, 0, 0, 0.1) 0px -2px 0px',
+  boxShadow: theme.shadows[3],
 }));
 
 const AccDetailsContainer = styled(AccordionDetails)({
@@ -141,16 +139,18 @@ const AccDetailsContainer = styled(AccordionDetails)({
 
 const TroubleshootHelpLink = styled('a')(({ theme }) => ({
   color:
-    theme.palette.mode === 'dark' ? theme.palette.background.brand?.default : 'rgb(57, 102, 121)',
+    theme.palette.mode === 'dark'
+      ? theme.palette.background.brand?.default
+      : theme.palette.info.main,
   fontWeight: 'bold',
   textDecoration: 'none',
 }));
 
-const ContactHelpLink = styled('a')({
-  color: 'white',
+const ContactHelpLink = styled('a')(({ theme }) => ({
+  color: theme.palette.common.white,
   fontWeight: 'bold',
   textDecoration: 'none',
-});
+}));
 
 const TroubleshootingModal = (props) => {
   const [expanded, setExpanded] = React.useState(false);
@@ -184,7 +184,7 @@ const TroubleshootingModal = (props) => {
           </ModalHeader>
           <AccordionContainer expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
             <AccordionSummaryStyled
-              expandIcon={<ExpandMoreIcon />}
+              expandIcon={<ExpandMore />}
               aria-controls="panel1bh-content"
               id="panel1bh-header"
             >
@@ -221,7 +221,7 @@ const TroubleshootingModal = (props) => {
             onChange={handleChange('panel2')}
           >
             <AccordionSummaryStyled
-              expandIcon={<ExpandMoreIcon />}
+              expandIcon={<ExpandMore />}
               aria-controls="panel2bh-content"
               id="panel2bh-header"
             >
@@ -255,7 +255,7 @@ const TroubleshootingModal = (props) => {
 
           <AccordionContainer expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
             <AccordionSummaryStyled
-              expandIcon={<ExpandMoreIcon />}
+              expandIcon={<ExpandMore />}
               aria-controls="panel4bh-content"
               id="panel4bh-header"
             >

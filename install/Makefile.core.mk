@@ -53,7 +53,9 @@ MESHERY_CLOUD_STAGING="https://staging-cloud.meshery.io"
 EXOSCALE_PROD="https://sks.exoscale.com"
 EXOSCALE_STG="https://stg-sks.exoscale.com"
 EXOSCALE_DEV="https://dev-sks.exoscale.com"
+LAYER5_CLOUD_PROD="https://cloud.layer5.io"
 PROVIDER_CAPABILITIES_FILEPATH="" # Path to capabilities file for remote provider. If empty, capabilities will be fetched from remote provider.
+REMOTE_PROVIDER_URLS=$(MESHERY_CLOUD_PROD),$(LAYER5_CLOUD_PROD)
 
 #-----------------------------------------------------------------------------
 # Server

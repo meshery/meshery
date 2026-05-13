@@ -4,7 +4,7 @@ import { pingMesheryOperator } from '../../utils/helpers/mesheryOperator';
 import { useLazyPingKubernetesQuery } from '@/rtk-query/connection';
 import { EVENT_TYPES } from '../../lib/event-types';
 import MeshsyncStatusQuery from '../graphql/queries/MeshsyncStatusQuery';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
 import NatsStatusQuery from '../graphql/queries/NatsStatusQuery';
 import { CONTROLLERS, CONTROLLER_STATES } from '../../utils/Enum';
@@ -17,17 +17,22 @@ export default function useKubernetesHook() {
   const dispatch = useDispatch();
   const [triggerPing] = useLazyPingKubernetesQuery();
 
-  const ping = async (name, server, connectionID) => {
-    dispatch(updateProgressAction({ showProgress: true }));
-    try {
-      await triggerPing(connectionID).unwrap();
-      dispatch(updateProgressAction({ showProgress: false }));
-      successHandlerGenerator(notify, `Kubernetes context ${name} at ${server} pinged`)();
-    } catch (err) {
-      dispatch(updateProgressAction({ showProgress: false }));
-      errorHandlerGenerator(notify, `Kubernetes context ${name} at ${server} not reachable`)(err);
-    }
-  };
+  // Memoized so consumers can list `ping` in hook dep arrays without
+  // invalidating their memos every render.
+  const ping = useCallback(
+    async (name, server, connectionID) => {
+      dispatch(updateProgressAction({ showProgress: true }));
+      try {
+        await triggerPing(connectionID).unwrap();
+        dispatch(updateProgressAction({ showProgress: false }));
+        successHandlerGenerator(notify, `Kubernetes context ${name} at ${server} pinged`)();
+      } catch (err) {
+        dispatch(updateProgressAction({ showProgress: false }));
+        errorHandlerGenerator(notify, `Kubernetes context ${name} at ${server} not reachable`)(err);
+      }
+    },
+    [dispatch, notify, triggerPing],
+  );
 
   return ping;
 }
