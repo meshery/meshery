@@ -151,6 +151,7 @@ const legacyLiteralColorOffenders = [
   'components/layout/NotificationCenter/index.tsx',
   'components/layout/NotificationCenter/notificationCenter.style.tsx',
   'components/performance/PerformanceCard.tsx',
+  'components/performance/PerformanceForm.tsx',
   'components/performance/PerformanceResults.tsx',
   'components/performance/assets/facebookIcon.tsx',
   'components/performance/assets/linkedinIcon.tsx',
@@ -186,12 +187,8 @@ const legacyLiteralColorOffenders = [
 ];
 
 const legacyMaxLineOffenders = [
-  'components/Dashboard/resources/configuration/config.tsx',
-  'components/Dashboard/resources/workloads/config.tsx',
-  'components/MesheryAdapterPlayComponent.tsx',
-  'components/MesheryFilters/Filters.tsx',
-  'components/MesheryPatterns/MesheryPatterns.tsx',
-  'components/Performance/index.tsx',
+  'components/designs/patterns/MesheryPatterns.tsx',
+  'components/connections/ConnectionTable.tsx',
 ];
 
 // Files currently in the 600–1000 line "soft" range. They exceed the 600-line
@@ -311,13 +308,17 @@ const legacyInlineStyleOffenders = [
   'components/performance/NodeDetails.tsx',
   'components/performance/PerformanceCalendar.tsx',
   'components/performance/PerformanceCard.tsx',
+  'components/performance/PerformanceForm.tsx',
+  'components/performance/PerformanceFormActions.tsx',
   'components/performance/PerformanceProfileGrid.tsx',
   'components/performance/PerformanceProfiles.tsx',
   'components/performance/PerformanceResults.tsx',
+  'components/performance/PerformanceTestResults.tsx',
   'components/performance/assets/facebookIcon.tsx',
   'components/performance/assets/linkedinIcon.tsx',
   'components/performance/assets/twitterIcon.tsx',
   'components/performance/index.tsx',
+  'components/performance/performance-helpers.tsx',
   'components/ReactSelectWrapper.tsx',
   'components/relationship-builder/CreateRelationshipModal.tsx',
   'components/relationship-builder/RelationshipFormStepper.tsx',
