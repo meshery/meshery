@@ -1,22 +1,22 @@
 import { Grid2, Pagination } from '@sistent/sistent';
 import React, { useState } from 'react';
 import MesheryPatternCard from './MesheryPatternCard';
-import DesignConfigurator from '../configuratorComponents/MeshModel';
-import { FILE_OPS } from '../../utils/Enum';
-import { EVENT_TYPES } from '../../lib/event-types';
+import DesignConfigurator from '../configurator/MeshModel';
+import { FILE_OPS } from '../../../utils/Enum';
+import { EVENT_TYPES } from '../../../lib/event-types';
 import {
   GridNoContainerStyles,
   GridNoPapperStyles,
   GridNoTextStyles,
   GridPaginationStyles,
 } from './Grid.styles';
-import { RJSFModalWrapper } from '../General/Modals/Modal';
-import ExportModal from '../ExportModal';
+import { RJSFModalWrapper } from '../../General/Modals/Modal';
+import ExportModal from '../../ExportModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { Modal as SistentModal } from '@sistent/sistent';
 
-import Pattern from '../../public/static/img/drawer-icons/pattern_svg';
+import Pattern from '../../../public/static/img/drawer-icons/pattern_svg';
 const INITIAL_GRID_SIZE = { xl: 6, md: 6, xs: 12 };
 
 function PatternCardGridItem({

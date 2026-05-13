@@ -20,9 +20,9 @@ import {
   SaveAs as SaveAsIcon,
 } from '@/assets/icons';
 import { NoSsr } from '@sistent/sistent';
-import { iconMedium } from '../../../css/icons.styles';
-import { useMeshModelComponents } from '../../../utils/hooks/useMeshModelComponents';
-import { getWebAdress } from '../../../utils/webApis';
+import { iconMedium } from '../../../../css/icons.styles';
+import { useMeshModelComponents } from '../../../../utils/hooks/useMeshModelComponents';
+import { getWebAdress } from '../../../../utils/webApis';
 import CodeEditor from '../CodeEditor';
 import LazyComponentForm from './LazyComponentForm';
 import useDesignLifecycle from './hooks/useDesignLifecycle';

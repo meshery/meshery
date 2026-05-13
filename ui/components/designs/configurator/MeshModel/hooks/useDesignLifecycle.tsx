@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import jsYaml from 'js-yaml';
-import { useNotification } from '../../../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../../../lib/event-types';
+import { useNotification } from '../../../../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../../../../lib/event-types';
 import {
   useUpdatePatternFileMutation,
   useDeletePatternFileMutation,
