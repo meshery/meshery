@@ -92,7 +92,7 @@ function PatternServiceForm({
                 style={{
                   padding: '0 5px',
                   paddingLeft: 16,
-                  background: `linear-gradient(115deg, ${darken(color || '#607d8b', 0.2)} 0%, ${color} 100%)`,
+                  background: `linear-gradient(115deg, ${darken(color || '#607d8b', 0.2)} 0%, ${color || '#607d8b'} 100%)`,
                   height: '0.7rem !important',
                 }}
               >
