@@ -17,7 +17,7 @@ import {
   ErrorBoundary,
   CustomTooltip,
 } from '@sistent/sistent';
-import { WorkspacesComponent } from '../Lifecycle';
+import { WorkspacesComponent } from '@/components/Lifecycle';
 import { iconMedium, iconSmall } from 'css/icons.styles';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -25,7 +25,7 @@ import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import MyViewsContent from './MyViewsContent';
 import MyDesignsContent from './MyDesignsContent';
 import RecentContent from './RecentContent';
-import { useGetWorkspacesQuery } from '../../rtk-query/workspace';
+import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { DrawerHeader, StyledDrawer, StyledMainContent, StyledModal } from './styles';
 import WorkspaceContent from './WorkspaceContent';
 import { useGetProviderCapabilitiesQuery, useGetSelectedOrganization } from '@/rtk-query/user';
