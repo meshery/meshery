@@ -1,10 +1,9 @@
 import React, { useContext } from 'react';
 import { reactJsonTheme } from '../registry/helper';
 import dynamic from 'next/dynamic';
-import { SectionBody, ArrayFormatter } from '../data-formatter';
+import { SectionBody, ArrayFormatter, SectionHeading } from '../data-formatter';
 import _ from 'lodash';
 import { Grid2, useTheme, Typography, styled, Box } from '@sistent/sistent';
-import { SectionHeading } from '../data-formatter';
 
 type FormatterMap = Record<string, (value: any) => React.ReactNode>;
 type ResourceFormatterProps = {
