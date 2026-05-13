@@ -492,7 +492,7 @@ const Extensions = () => {
   const [updateUserPref] = useUpdateUserPrefMutation();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
   const { data: userData } = useGetUserPrefQuery();
 
   const serverCatalogContent = userData?.usersExtensionPreferences?.catalogContent;
@@ -507,10 +507,10 @@ const Extensions = () => {
 
   const hasAccessToMeshMap = useMemo(
     () =>
-      !!capabilitiesRegistry?.extensions?.navigator?.some(
+      !!providerCapabilities?.extensions?.navigator?.some(
         (val: { title: string }) => val.title.toLowerCase() === EXTENSION_NAMES.KANVAS,
       ),
-    [capabilitiesRegistry],
+    [providerCapabilities],
   );
 
   const handleToggle = () => {

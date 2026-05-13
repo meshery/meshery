@@ -18,7 +18,7 @@ const User = (props) => {
   const capabilitiesLoadedRef = useRef(false);
   const { notify } = useNotification();
   const dispatch = useDispatch();
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
   const {
     data: userData,
     isSuccess: isGetUserSuccess,
@@ -52,13 +52,13 @@ const User = (props) => {
   }, [userData, isGetUserSuccess, isGetUserError]);
 
   useEffect(() => {
-    if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
+    if (!capabilitiesLoadedRef.current && providerCapabilities) {
       capabilitiesLoadedRef.current = true;
       setAccount(
-        ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account),
+        ExtensionPointSchemaValidator('account')(providerCapabilities?.extensions?.account),
       );
     }
-  }, [capabilitiesRegistry]);
+  }, [providerCapabilities]);
 
   const { color } = props;
 
@@ -67,7 +67,7 @@ const User = (props) => {
   const refURL = btoa(window.location.href);
 
   if (userData?.status == 'anonymous') {
-    const url = `${capabilitiesRegistry?.providerUrl}?anonymousUserID=${userData?.id}&source=${sourceURL}&ref=${refURL}`;
+    const url = `${providerCapabilities?.providerUrl}?anonymousUserID=${userData?.id}&source=${sourceURL}&ref=${refURL}`;
 
     return (
       <Link href={url}>
