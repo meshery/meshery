@@ -120,7 +120,10 @@ const legacyLiteralColorOffenders = [
   'components/connections/meshSync/Stepper/StepperContentWrapper.tsx',
   'components/connections/meshSync/Stepper/index.tsx',
   'components/filters/Filters.tsx',
+  'components/filters/Filters.columns.tsx',
   'components/filters/FiltersGrid.tsx',
+  'components/filters/ImportModal.tsx',
+  'components/filters/PublishModal.tsx',
   'components/load-test-timer-dialog.tsx',
   'components/telemetry/grafana/GrafanaCustomGaugeChart.tsx',
   'components/telemetry/grafana/GrafanaDateRangePicker.tsx',
@@ -132,7 +135,6 @@ const legacyLiteralColorOffenders = [
 const legacyMaxLineOffenders = [
   'components/performance/index.tsx',
   'components/connections/ConnectionTable.tsx',
-  'components/filters/Filters.tsx',
 ];
 
 // Files currently in the 600–1000 line "soft" range. They exceed the 600-line
@@ -317,6 +319,9 @@ const legacyInlineStyleOffenders = [
   'components/filters/Filters.tsx',
   'components/filters/FiltersCard.tsx',
   'components/filters/FiltersGrid.tsx',
+  'components/filters/ImportModal.tsx',
+  'components/filters/PublishModal.tsx',
+  'components/filters/YAMLEditor.tsx',
   'components/layout/AppShell/layout.tsx',
   'components/multi-select-wrapper.tsx',
   'components/layout/Navigator/navigatorComponents.tsx',
