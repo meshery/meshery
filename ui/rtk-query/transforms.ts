@@ -78,6 +78,7 @@ export const normalizeProviderCapabilities = (response?: ProviderCapabilitiesRes
     providerType: response.providerType ?? response.provider_type,
     providerUrl: response.providerUrl ?? response.provider_url,
     providerDescription: response.providerDescription ?? response.provider_description,
+    capabilities: Array.isArray(response.capabilities) ? response.capabilities : [],
   };
 };
 
