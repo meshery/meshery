@@ -1,6 +1,10 @@
 package retry
 
-import "github.com/cenkalti/backoff/v4"
+import (
+	"errors"
+
+	"github.com/cenkalti/backoff/v4"
+)
 
 // PermanentError is the type returned by Permanent.
 // Callers should not create PermanentError values directly; use Permanent(err).
