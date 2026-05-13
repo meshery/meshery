@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, FC } from 'react';
 import {
   IconButton,
   Menu,
@@ -10,14 +10,22 @@ import {
   ModalFooter,
   PrimaryActionButtons,
   Modal as SistentModal,
+  useTheme,
 } from '@sistent/sistent';
 import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
-import { ArrowDropDown } from '@mui/icons-material';
+import { ArrowDropDown } from '@/components/icons';
 import { getSchema } from '../../MesheryMeshInterface/PatternService/helper';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 
-const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
+interface SchemaVersionProps {
+  schema_array: string[];
+  type: string;
+  schemaChangeHandler: (version: string) => void;
+}
+
+const SchemaVersion: FC<SchemaVersionProps> = ({ schema_array, type, schemaChangeHandler }) => {
+  const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClose = () => {
@@ -27,7 +35,7 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
     <div>
       <Tooltip title="Schema_Changer">
         <IconButton component="span" onClick={(e) => setAnchorEl(e.currentTarget)}>
-          <ArrowDropDown style={{ color: '#000' }} />
+          <ArrowDropDown style={{ color: theme.palette.text.primary }} />
         </IconButton>
       </Tooltip>
       <Menu id="schema-menu" anchorEl={anchorEl} open={open} handleClose={handleClose}>
