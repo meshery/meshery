@@ -14,21 +14,13 @@ function recursivelySearchObjKey(obj, arr, index) {
 }
 
 /**
- * CapabilitiesRegistry is a UI component-access guard that wraps the raw provider
- * capabilities payload returned by /api/provider/capabilities.
+ * Wraps the raw /api/provider/capabilities payload and answers provider-driven
+ * UI access questions.
  *
- * Distinguish between two related but separate concepts:
- *
- *   • Provider capabilities  – the `{ feature, endpoint }[]` list inside the
- *     payload that describes which features the remote provider supports (e.g.
- *     "persist-meshery-patterns").  Access them via `providerCapabilities`.
- *
- *   • Component-access registry – the methods on this class
- *     (`isNavigatorComponentEnabled`, `isHeaderComponentEnabled`, …) that consult
- *     the provider's `restrictedAccess` block to decide whether individual UI
- *     components should be rendered (playground / restricted-mode guards).
+ * "Registry" in Meshery UI refers to the Model/Relationship Registry under
+ * ui/components/registry, so this helper deliberately avoids that name.
  */
-export class CapabilitiesRegistry {
+export class ProviderUiAccessControl {
   /** Raw payload from /api/provider/capabilities. */
   providerPayload;
   isPlaygroundEnv = false;

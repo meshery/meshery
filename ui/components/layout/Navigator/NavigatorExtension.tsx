@@ -9,7 +9,7 @@ import PatternServiceFormCore from '../../meshery-mesh-interface/PatternServiceF
 import InfoModal from '../../shared/Modal/Information/InfoModal';
 import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
 import _PromptComponent from '../../PromptComponent';
-import { CapabilitiesRegistry } from '../../../utils/disabledComponents';
+import { ProviderUiAccessControl } from '../../../utils/disabledComponents';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import Modal from '../../shared/Modal/Modal';
 import ExportModal from '../../shared/Modal/ExportModal';
@@ -85,7 +85,7 @@ function NavigatorExtensionError({ error }: { error: unknown }) {
 
 function NavigatorExtension({ url }: NavigatorExtensionProps) {
   const {
-    capabilitiesRegistry,
+    providerCapabilities,
     selectedK8sContexts,
     organization: currentOrganization,
   } = useSelector((state) => state.ui);
@@ -111,8 +111,10 @@ function NavigatorExtension({ url }: NavigatorExtensionProps) {
       ExportModal,
       GenericRJSFModal: Modal,
       _PromptComponent,
-      capabilitiesRegistry,
-      CapabilitiesRegistryClass: CapabilitiesRegistry,
+      providerCapabilities,
+      ProviderUiAccessControlClass: ProviderUiAccessControl,
+      // Backward-compatible alias for already-published remote extensions.
+      CapabilitiesRegistryClass: ProviderUiAccessControl,
       TypingFilter,
       useNotificationHook: useNotification,
       StructuredDataFormatter: FormatStructuredData,
@@ -138,7 +140,7 @@ function NavigatorExtension({ url }: NavigatorExtensionProps) {
       SetCurrentLoadedResourceInOrgWorkspaceSession: onLoadResource,
     }),
     [
-      capabilitiesRegistry,
+      providerCapabilities,
       currentOrganization,
       onLoadResource,
       openModalWithDefault,

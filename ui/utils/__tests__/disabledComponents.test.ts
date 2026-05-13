@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { CapabilitiesRegistry } from '../disabledComponents';
+import { ProviderUiAccessControl } from '../disabledComponents';
 
-describe('CapabilitiesRegistry', () => {
+describe('ProviderUiAccessControl', () => {
   it('exposes provider capabilities as an array for UI guards', () => {
-    const registry = new CapabilitiesRegistry({
+    const registry = new ProviderUiAccessControl({
       capabilities: [{ feature: 'persist-meshery-patterns' }],
     });
 
@@ -11,7 +11,7 @@ describe('CapabilitiesRegistry', () => {
   });
 
   it('returns an empty capability list when the provider payload is malformed', () => {
-    const registry = new CapabilitiesRegistry({
+    const registry = new ProviderUiAccessControl({
       capabilities: { feature: 'persist-meshery-patterns' },
     });
 
