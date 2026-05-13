@@ -403,7 +403,7 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                   <Typography gutterBottom variant="subtitle1">
                     <CustomTooltip
                       title={`Owner: ${
-                        resourceUserProfile?.firstName + ' ' + resourceUserProfile?.lastName
+                        resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
                       }`}
                     >
                       <div>
@@ -521,7 +521,7 @@ const OwnerChip = ({ userProfile }) => {
           <Link href={`${MESHERY_CLOUD_PROD}/user/${userProfile.id}`} rel="noopener noreferrer">
             <Avatar src={userProfile.avatarUrl} />
           </Link>
-          <Typography>{`${userProfile.firstName} ${userProfile.lastName}`}</Typography>
+          <Typography>{`${userProfile.first_name} ${userProfile.last_name}`}</Typography>
         </>
       ) : (
         <Skeleton variant="circular" width={40} height={40} />

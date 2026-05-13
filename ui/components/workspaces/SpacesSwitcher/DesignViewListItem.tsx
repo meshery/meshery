@@ -57,8 +57,11 @@ const DesignViewListItem = ({
   const hasEmbeddedUser = Boolean(
     selectedItem?.userId &&
     (selectedItem?.firstName ||
+      selectedItem?.first_name ||
       selectedItem?.lastName ||
+      selectedItem?.last_name ||
       selectedItem?.avatarUrl ||
+      selectedItem?.avatar_url ||
       selectedItem?.email),
   );
   const { data: fetchedUserData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery(
@@ -69,9 +72,9 @@ const DesignViewListItem = ({
     ? {
         id: selectedItem.userId,
         userId: selectedItem.userId,
-        firstName: selectedItem.firstName,
-        lastName: selectedItem.lastName,
-        avatarUrl: selectedItem.avatarUrl,
+        firstName: selectedItem.firstName ?? selectedItem.first_name,
+        lastName: selectedItem.lastName ?? selectedItem.last_name,
+        avatarUrl: selectedItem.avatarUrl ?? selectedItem.avatar_url,
         email: selectedItem.email,
       }
     : fetchedUserData;
