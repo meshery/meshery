@@ -123,7 +123,6 @@ const legacyLiteralColorOffenders = [
   'components/telemetry/grafana/GrafanaDateRangePicker.tsx',
   'css/icons.styles.ts',
   'pages/extension/AccessMesheryModal.tsx',
-  'utils/charts.ts',
   'utils/custom-search.tsx',
 ];
 

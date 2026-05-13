@@ -48,7 +48,7 @@ export default function KubernetesConnectionStatsChart() {
       data: {
         columns: chartData,
         type: donut(),
-        colors: dataToColors(chartData),
+        colors: dataToColors(chartData, theme),
         onclick: function () {
           router.push('/management/connections');
         },
@@ -75,7 +75,7 @@ export default function KubernetesConnectionStatsChart() {
         },
       },
     }),
-    [chartData, router],
+    [chartData, router, theme],
   );
 
   const canViewConnections = CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject);
