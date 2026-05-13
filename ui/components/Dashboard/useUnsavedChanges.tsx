@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEventListener } from '@/utils/hooks';
 
 interface UseUnsavedChangesProps {
   isEditMode: boolean;
@@ -44,19 +45,12 @@ const useUnsavedChanges = ({
     };
   }, [router]);
 
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (hasUnsavedChanges) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [hasUnsavedChanges]);
+  useEventListener('beforeunload', (e: BeforeUnloadEvent) => {
+    if (hasUnsavedRef.current) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
 
   const confirmNavigation = useCallback(() => {
     const destination = pendingUrlRef.current;

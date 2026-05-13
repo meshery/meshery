@@ -6,6 +6,7 @@ import { trueRandom } from '../../../lib/trueRandom';
 import { usePostBoardImportMutation, useLazyQueryTemplateVarsQuery } from '@/rtk-query/telemetry';
 import { Code as CodeIcon } from '../../icons';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { isValidJSON } from '@/utils/validators';
 
 const PrometheusContainer = styled('div')(({ theme }) => ({
   padding: theme.spacing(5),
@@ -235,19 +236,6 @@ const PrometheusSelectionComponent = (props) => {
 
   const genRandomNumberForKey = () => Math.floor(trueRandom() * 1000 + 1);
 
-  const isValidJson = (value) => {
-    if (!value) {
-      return false;
-    }
-
-    try {
-      JSON.parse(value);
-      return true;
-    } catch (error) {
-      return false;
-    }
-  };
-
   const handleCodeChange = (editor, data, value) => {
     setGrafanaBoard(value);
     setGrafanaBoardObject({});
@@ -262,7 +250,7 @@ const PrometheusSelectionComponent = (props) => {
     }
 
     boardTimeoutRef.current = setTimeout(() => {
-      if (isValidJson(value)) {
+      if (isValidJSON(value)) {
         boardChange(value);
       }
     }, 1000);
