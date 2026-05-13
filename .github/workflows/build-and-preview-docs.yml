@@ -11,8 +11,7 @@ on:
       - 'mesheryctl/doc/**'
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: preview-${{ github.event.pull_request.number || github.run_id }}
@@ -23,18 +22,15 @@ defaults:
     shell: bash
 
 jobs:
-  build-and-deploy-preview:
+  build-preview:
+    name: Build Preview
+    if: github.event.action != 'closed'
     runs-on: ubuntu-24.04
-    outputs:
-      removed_prs_json: ${{ steps.prune-previews.outputs.removed_prs_json }}
     env:
       HUGO_VERSION: 0.157.0
-      PREVIEW_RETENTION_LIMIT: 6
-
     steps:
       - name: Checkout PR code
-        if: github.event.action != 'closed'
-        uses: actions/checkout@v6
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.sha }}
@@ -42,38 +38,26 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Checkout for cleanup
-        if: github.event.action == 'closed'
-        uses: actions/checkout@v6
-        with:
-          ref: gh-pages
-          fetch-depth: 0
-
       - name: Install Hugo CLI
-        if: github.event.action != 'closed'
         run: |
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
 
       - name: Install dart-sass
-        if: github.event.action != 'closed'
         run: |
           sudo snap install dart-sass
 
       - name: Setup Node
-        if: github.event.action != 'closed'
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@1d43b558a28a419068a746938360f0d483d10e91 # v4.2.0
         with:
           node-version: "22"
 
       - name: Install dependencies
-        if: github.event.action != 'closed'
         run: |
           cd docs
-          [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true
+          [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci --ignore-scripts || true
 
       - name: Build PR preview
-        if: github.event.action != 'closed'
         env:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
@@ -86,19 +70,44 @@ jobs:
           Disallow: /
           EOF
 
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        with:
+          name: docs-preview-${{ github.event.pull_request.number }}
+          path: docs/public/
+          retention-days: 1
+
+  deploy-preview:
+    name: Deploy Preview
+    needs: build-preview
+    if: always() && (github.event.action == 'closed' || needs.build-preview.result == 'success')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      PREVIEW_RETENTION_LIMIT: 6
+    steps:
+      - name: Download Build Artifact
+        if: github.event.action != 'closed'
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: docs-preview-${{ github.event.pull_request.number }}
+          path: ./docs-preview
+
       - name: Deploy PR preview
         if: github.event.action != 'closed'
-        uses: rossjrw/pr-preview-action@v1.6.3
+        uses: rossjrw/pr-preview-action@732381f885741f021e17df146019a7905f061250 # v1.6.3
         with:
-          source-dir: ./docs/public
+          source-dir: ./docs-preview
           preview-branch: gh-pages
           umbrella-dir: pr-preview
           action: auto
           comment: false
 
-      - name: Checkout gh-pages for preview retention
+      - name: Checkout gh-pages for maintenance
         if: github.event.action != 'closed'
-        uses: actions/checkout@v6
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: gh-pages
           fetch-depth: 0
@@ -141,14 +150,14 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add pr-preview
           git commit -m "Prune old PR previews"
-          git push
+          git push origin gh-pages
 
           echo "removed_prs=$(IFS=,; echo "${removed_prs[*]}")" >> "$GITHUB_OUTPUT"
           echo "removed_prs_json=$(printf '%s\n' "${removed_prs[@]}" | jq -R . | jq -sc .)" >> "$GITHUB_OUTPUT"
 
       - name: Comment PR with Preview URL
         if: github.event.action != 'closed'
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@331f0ba0ceee5910709968781ecd0a2dc636fafb # v2.9.0
         with:
           header: pr-preview
           message: |
@@ -157,7 +166,7 @@ jobs:
 
       - name: Comment on pruned previews
         if: github.event.action != 'closed' && steps.prune-previews.outputs.removed_prs_json != '[]'
-        uses: actions/github-script@v7
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         env:
           REMOVED_PRS_JSON: ${{ steps.prune-previews.outputs.removed_prs_json }}
           PREVIEW_RETENTION_LIMIT: ${{ env.PREVIEW_RETENTION_LIMIT }}
@@ -207,7 +216,7 @@ jobs:
 
       - name: Cleanup PR preview on close
         if: github.event.action == 'closed'
-        uses: rossjrw/pr-preview-action@v1.6.3
+        uses: rossjrw/pr-preview-action@732381f885741f021e17df146019a7905f061250 # v1.6.3
         with:
           preview-branch: gh-pages
           umbrella-dir: pr-preview
