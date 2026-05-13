@@ -51,8 +51,7 @@ jobs:
           cp e2e-test-reporter/ui/test-report.md new-report.md
 
           normalize() {
-            sed -E '/^- Testing started at:/d' "$1" \
-            | sed -E '/^[[:space:]]*Duration:/d'
+            sed -E '/^- Testing started at:/d; /^⌛ _Duration:/d' "$1"
           }
 
           normalize old-report.md > old-clean.md
