@@ -117,7 +117,6 @@ const legacyLiteralColorOffenders = [
   'components/connections/meshSync/Stepper/StepperContent.tsx',
   'components/connections/meshSync/Stepper/StepperContentWrapper.tsx',
   'components/connections/meshSync/Stepper/index.tsx',
-  'components/connections/styles.tsx',
   'components/filters/Filters.tsx',
   'components/filters/FiltersGrid.tsx',
   'components/load-test-timer-dialog.tsx',
