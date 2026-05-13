@@ -205,7 +205,10 @@ const MultiSelectWrapper = (props) => {
         ...selectTheme,
         colors: {
           ...selectTheme.colors,
-          backgroundColor2: theme.palette.mode === 'dark' ? theme.palette.background.card : '#fff',
+          backgroundColor2:
+            theme.palette.mode === 'dark'
+              ? theme.palette.background.card
+              : theme.palette.common.white,
         },
       })}
       isMulti
