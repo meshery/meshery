@@ -10,9 +10,9 @@ import {
   DoneAll as DoneAllIcon,
 } from '@/assets/icons';
 import Moment from 'react-moment';
-import FlipCard from '../FlipCard';
-import { UnControlled as CodeMirror } from '../CodeMirror';
-import UndeployIcon from '../../public/static/img/UndeployIcon';
+import FlipCard from '../../FlipCard';
+import { UnControlled as CodeMirror } from '../../CodeMirror';
+import UndeployIcon from '../../../public/static/img/UndeployIcon';
 import {
   BottomContainer,
   CatalogCardButtons,
@@ -24,7 +24,7 @@ import {
   GridCloneBtnText,
   StyledCodeMirrorWrapper,
 } from './Cards.styles';
-import YAMLDialog from '../YamlDialog';
+import YAMLDialog from '../../YamlDialog';
 import {
   Public as PublicIcon,
   Edit,
@@ -33,10 +33,10 @@ import {
   InfoOutlined as InfoOutlinedIcon,
 } from '@/assets/icons';
 import TooltipButton from '@/utils/TooltipButton';
-import CloneIcon from '../../public/static/img/CloneIcon';
+import CloneIcon from '../../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
-import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
-import { useGetUserByIdQuery } from '../../rtk-query/user';
+import { MESHERY_CLOUD_PROD } from '../../../constants/endpoints';
+import { useGetUserByIdQuery } from '../../../rtk-query/user';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ActionButton from './ActionButton';
@@ -45,7 +45,7 @@ import CheckIcon from '@/assets/icons/CheckIcon';
 import { VISIBILITY } from '@/utils/Enum';
 import PatternIcon from '@/assets/icons/Pattern';
 import { iconLarge, iconMedium } from 'css/icons.styles';
-import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
+import { VIEW_VISIBILITY } from '../../General/Modals/Information/InfoModal';
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
 function MesheryPatternCard_({

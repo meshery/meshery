@@ -1,5 +1,5 @@
 import React, { useState, useEffect, type ReactNode } from 'react';
-import { FlipCardWrapper, InnerCard } from './MesheryPatterns/style';
+import { FlipCardWrapper, InnerCard } from './designs/patterns/style';
 
 interface FlipCardProps {
   duration?: number;

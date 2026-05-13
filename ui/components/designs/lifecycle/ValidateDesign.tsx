@@ -9,7 +9,7 @@ import {
   selectValidator,
   useDesignSchemaValidationResults,
   useIsValidatingDesignSchema,
-} from '../../machines/validator/designValidator';
+} from '../../../machines/validator/designValidator';
 import AlertIcon from '@/assets/icons/AlertIcon';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
 import {

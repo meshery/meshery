@@ -8,10 +8,10 @@ import {
   designValidatorEvents,
   useDryRunValidationResults,
   useIsValidatingDryRun,
-} from '../../machines/validator/designValidator';
+} from '../../../machines/validator/designValidator';
 import { ErrorIcon } from '@sistent/sistent';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
-import { FormatStructuredData } from '../DataFormatter';
+import { FormatStructuredData } from '../../DataFormatter';
 import {
   DryRunComponentLabel,
   DryRunComponentStyled,

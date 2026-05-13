@@ -1,4 +1,4 @@
-import { normalizeStaticImagePath } from '../../../utils/fallback';
+import { normalizeStaticImagePath } from '../../../../utils/fallback';
 import clsx from 'clsx';
 import { getComponentMetadata, getStyleOverrides } from './utils';
 import {

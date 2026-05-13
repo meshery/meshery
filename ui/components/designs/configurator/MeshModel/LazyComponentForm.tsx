@@ -9,11 +9,11 @@ import {
 } from '@sistent/sistent';
 import { isEmpty } from 'lodash';
 import React from 'react';
-import { getMeshModelComponent } from '../../../api/meshmodel';
-import { iconMedium } from '../../../css/icons.styles';
-import PatternServiceForm from '../../MesheryMeshInterface/PatternServiceForm';
-import { useNotification } from '../../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../../lib/event-types';
+import { getMeshModelComponent } from '../../../../api/meshmodel';
+import { iconMedium } from '../../../../css/icons.styles';
+import PatternServiceForm from '../../../MesheryMeshInterface/PatternServiceForm';
+import { useNotification } from '../../../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../../../lib/event-types';
 
 export const AccordionRoot = styled('div')({
   width: '100%',
