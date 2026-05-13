@@ -7,7 +7,7 @@ import {
   Typography,
   InfoOutlinedIcon,
 } from '@sistent/sistent';
-import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../../constants/navigator';
+import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '@/utils/custom-search';
 import debounce from '@/utils/debounce';
 import { useWindowDimensions } from '@/utils/dimension';
