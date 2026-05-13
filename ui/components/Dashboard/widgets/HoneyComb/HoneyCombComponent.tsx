@@ -2,13 +2,15 @@ import React, { useCallback, useMemo, useState } from 'react';
 import ResponsiveHoneycomb from './ResponsiveHoneycomb';
 import Hexagon from './Hexagon';
 import {
+  ArrowDownwardIcon,
+  ArrowUpwardIcon,
   CustomTooltip,
   ErrorBoundary,
+  IconButton,
+  MenuItem,
+  Select,
   Skeleton,
   Typography,
-  Select,
-  MenuItem,
-  IconButton,
 } from '@sistent/sistent';
 import { useRouter } from 'next/router';
 import ConnectCluster from '../../charts/ConnectCluster';
@@ -23,8 +25,6 @@ import {
   ControlsContainer,
   NoResourcesText,
 } from '../../style';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import {
   DEFAULT_GROUP_BY,
   SORT_DIRECTIONS,
@@ -129,11 +129,18 @@ const HoneycombComponent = ({
             </Select>
             <IconButton size="small" onClick={handleSortChange}>
               <CustomTooltip title="Sort by Count">
-                {sortDirection === SORT_DIRECTIONS.ASC ? (
-                  <ArrowUpwardIcon />
-                ) : (
-                  <ArrowDownwardIcon />
-                )}
+                {/*
+                 * Sistent's typed-SVG icons are functional components without
+                 * forwardRef, so Tooltip's cloneElement warns when used as a
+                 * direct child. Wrap them in a span to attach the ref safely.
+                 */}
+                <span>
+                  {sortDirection === SORT_DIRECTIONS.ASC ? (
+                    <ArrowUpwardIcon />
+                  ) : (
+                    <ArrowDownwardIcon />
+                  )}
+                </span>
               </CustomTooltip>
             </IconButton>
           </ControlsContainer>
