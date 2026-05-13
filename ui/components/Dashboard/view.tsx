@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { TooltipIconButton } from '../../utils/TooltipButton';
 import {
   ArrowBackIcon as ArrowBack,
@@ -58,12 +58,27 @@ const TitleContent = styled('div')({
   alignItems: 'center',
 });
 
-const View = (props) => {
-  const { setView, resource, k8sConfig } = props;
+type DashboardViewProps = {
+  setView: (view: string) => void;
+  resource?: Record<string, any> | null;
+  k8sConfig: unknown;
+};
+
+type DashboardTitleProps = {
+  onClick: () => void;
+  value: React.ReactNode;
+  kind?: string;
+  model?: string;
+};
+
+const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
   const ping = useKubernetesHook();
   const { getResourceCleanData } = useResourceCleanData();
   const router = useRouter();
-  const cleanData = getResourceCleanData({ resource: resource, router: router });
+  const cleanData = useMemo(
+    () => getResourceCleanData({ resource, router }),
+    [getResourceCleanData, resource, router],
+  );
 
   const { data: connections = [] } = useGetConnectionsQuery({
     page: 0,
@@ -75,6 +90,7 @@ const View = (props) => {
   });
 
   if (!resource) return null;
+
   const context = getK8sContextFromClusterId(resource.cluster_id, k8sConfig);
   const connection = connections?.connections.find((conn) => conn.id === context?.connectionId);
   const connectionStatus = connection?.status || CONNECTION_STATES.DISCONNECTED;
@@ -99,8 +115,8 @@ const View = (props) => {
               <img
                 src={iconSrc || FALLBACK_MESHERY_IMAGE_PATH}
                 alt={resource?.kind}
-                onError={(e) => {
-                  e.currentTarget.src = FALLBACK_MESHERY_IMAGE_PATH;
+                onError={(event: React.SyntheticEvent<HTMLImageElement>) => {
+                  event.currentTarget.src = FALLBACK_MESHERY_IMAGE_PATH;
                 }}
                 {...iconXLarge}
               />
@@ -129,8 +145,9 @@ const View = (props) => {
 
 export default View;
 
-export const Title = ({ onClick, value, kind, model }) => {
+export const Title = ({ onClick, value, kind, model }: DashboardTitleProps) => {
   const [isHovered, setHovered] = useState(false);
+
   return (
     <TitleContainer
       onMouseEnter={() => setHovered(true)}

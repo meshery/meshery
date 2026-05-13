@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import ResponsiveHoneycomb from './ResponsiveHoneycomb';
 import Hexagon from './Hexagon';
 import {
@@ -25,17 +25,28 @@ import {
 } from '../../style';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { useResourceOptions, useResourceFiltering, SORT_DIRECTIONS } from './useResourceOptions';
+import {
+  DEFAULT_GROUP_BY,
+  SORT_DIRECTIONS,
+  type ResourceKind,
+  type SortDirection,
+  useResourceFiltering,
+  useResourceOptions,
+} from './useResourceOptions';
 import GetKubernetesNodeIcon from '../../utils';
 
-type Kind = { Kind: string; Model?: string; Count?: number };
-
 type HoneycombComponentProps = {
-  kinds?: Kind[];
+  kinds?: ResourceKind[];
   isClusterLoading?: boolean;
   isClusterIdsEmpty?: boolean;
   isEditMode?: boolean;
 };
+
+type GroupChangeHandler = NonNullable<React.ComponentProps<typeof Select>['onChange']>;
+
+const HONEYCOMB_DEFAULT_WIDTH = 1024;
+const HONEYCOMB_SIZE = 47;
+const LOADING_SKELETON_COUNT = 40;
 
 const HoneycombComponent = ({
   kinds,
@@ -44,44 +55,68 @@ const HoneycombComponent = ({
   isEditMode,
 }: HoneycombComponentProps) => {
   const router = useRouter();
-  const [groupBy, setGroupBy] = useState('all');
-  const [sortDirection, setSortDirection] = useState<string | null>(null);
+  const [groupBy, setGroupBy] = useState(DEFAULT_GROUP_BY);
+  const [sortDirection, setSortDirection] = useState<SortDirection | null>(null);
 
   const groupOptions = useResourceOptions();
   const filteredKinds = useResourceFiltering(kinds, groupBy, sortDirection);
-  const handleGroupChange = useCallback((e: { target: { value: string } }) => {
-    setGroupBy(e.target.value);
+  const loadingItems = useMemo<ResourceKind[]>(
+    () => Array.from({ length: LOADING_SKELETON_COUNT }, () => ({ Kind: 'loading' })),
+    [],
+  );
+
+  const handleGroupChange = useCallback<GroupChangeHandler>((event) => {
+    setGroupBy(String(event.target.value));
   }, []);
 
   const handleSortChange = useCallback(() => {
-    setSortDirection((prev) =>
-      prev === SORT_DIRECTIONS.ASC ? SORT_DIRECTIONS.DESC : SORT_DIRECTIONS.ASC,
+    setSortDirection((previousDirection) =>
+      previousDirection === SORT_DIRECTIONS.ASC ? SORT_DIRECTIONS.DESC : SORT_DIRECTIONS.ASC,
     );
   }, []);
 
-  const renderLoadingSkeleton = () => {
-    const loadingItems = Array(40).fill({ Kind: 'loading' });
+  const handleKindClick = useCallback(
+    (kind: string) => {
+      router.push(generateDynamicURL(kind));
+    },
+    [router],
+  );
+
+  const renderLoadingItem = useCallback(() => {
     return (
-      <ResponsiveHoneycomb
-        defaultWidth={1024}
-        size={47}
-        items={loadingItems}
-        renderItem={() => (
-          <Hexagon>
-            <SkeletonHexagon>
-              <Skeleton variant="circular" width={50} height={50} />
-            </SkeletonHexagon>
-          </Hexagon>
-        )}
-      />
+      <Hexagon>
+        <SkeletonHexagon>
+          <Skeleton variant="circular" width={50} height={50} />
+        </SkeletonHexagon>
+      </Hexagon>
     );
-  };
+  }, []);
+
+  const renderKind = useCallback(
+    (item: ResourceKind) => {
+      return (
+        <Hexagon onClick={() => handleKindClick(item.Kind)}>
+          <SelectedHexagon>
+            <CustomTooltip title={item.Kind || ''} placement="top">
+              <IconWrapper>
+                <GetKubernetesNodeIcon kind={item.Kind} model={item.Model} />
+                <ResourceCount variant="subtitle1">{item.Count}</ResourceCount>
+              </IconWrapper>
+            </CustomTooltip>
+          </SelectedHexagon>
+        </Hexagon>
+      );
+    },
+    [handleKindClick],
+  );
+
+  const hasFilteredKinds = filteredKinds.length > 0;
 
   return (
     <ErrorBoundary>
       <HoneycombRoot isEditMode={isEditMode}>
         <HeaderContainer>
-          <Typography variant="h6" fontWeight={'700'}>
+          <Typography variant="h6" fontWeight="700">
             Cluster Resource Overview
           </Typography>
           <ControlsContainer>
@@ -93,7 +128,7 @@ const HoneycombComponent = ({
               ))}
             </Select>
             <IconButton size="small" onClick={handleSortChange}>
-              <CustomTooltip title={`Sort by Count`}>
+              <CustomTooltip title="Sort by Count">
                 {sortDirection === SORT_DIRECTIONS.ASC ? (
                   <ArrowUpwardIcon />
                 ) : (
@@ -104,41 +139,25 @@ const HoneycombComponent = ({
           </ControlsContainer>
         </HeaderContainer>
         {isClusterLoading || isClusterIdsEmpty ? (
-          renderLoadingSkeleton()
+          <ResponsiveHoneycomb
+            defaultWidth={HONEYCOMB_DEFAULT_WIDTH}
+            size={HONEYCOMB_SIZE}
+            items={loadingItems}
+            renderItem={renderLoadingItem}
+          />
         ) : !kinds ? (
           <ConnectCluster message="No workloads found in your cluster(s)." />
+        ) : hasFilteredKinds ? (
+          <ResponsiveHoneycomb
+            defaultWidth={HONEYCOMB_DEFAULT_WIDTH}
+            size={HONEYCOMB_SIZE}
+            items={filteredKinds}
+            renderItem={renderKind}
+          />
         ) : (
-          <>
-            {Array.isArray(filteredKinds) && filteredKinds.length > 0 ? (
-              <ResponsiveHoneycomb
-                defaultWidth={1024}
-                size={47}
-                items={filteredKinds}
-                renderItem={(item) => {
-                  return (
-                    <Hexagon
-                      onClick={() => {
-                        router.push(generateDynamicURL(item?.Kind));
-                      }}
-                    >
-                      <SelectedHexagon>
-                        <CustomTooltip title={item?.Kind || ''} placement="top">
-                          <IconWrapper>
-                            <GetKubernetesNodeIcon kind={item?.Kind} model={item?.Model} />
-                            <ResourceCount variant="subtitle1">{item.Count}</ResourceCount>
-                          </IconWrapper>
-                        </CustomTooltip>
-                      </SelectedHexagon>
-                    </Hexagon>
-                  );
-                }}
-              />
-            ) : (
-              <NoResourcesText variant="body1">
-                No resources found for the selected group
-              </NoResourcesText>
-            )}
-          </>
+          <NoResourcesText variant="body1">
+            No resources found for the selected group
+          </NoResourcesText>
         )}
       </HoneycombRoot>
     </ErrorBoundary>

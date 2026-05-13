@@ -3,32 +3,18 @@ import { reactJsonTheme } from '../Settings/Registry/helper';
 import dynamic from 'next/dynamic';
 import { SectionBody, ArrayFormatter } from '../DataFormatter';
 import _ from 'lodash';
-import {
-  Grid2,
-  useTheme,
-  Typography,
-  StatusFormatter,
-  MemoryUsage,
-  TextWithLinkFormatter,
-  CodeFormatter,
-  LabelFormatter,
-  TableDataFormatter,
-  styled,
-  ListFormatter,
-  NumberStateFormatter,
-  CollapsibleSectionFormatter,
-  ContainerFormatter,
-  Box,
-  OperatorDynamicFormatter,
-  SecretFormatter,
-  extractPodVolumnTables,
-  splitCamelCaseString,
-  KeyValueInRow,
-} from '@sistent/sistent';
+import { Grid2, useTheme, Typography, styled, Box } from '@sistent/sistent';
 import { SectionHeading } from '../DataFormatter';
 
+type FormatterMap = Record<string, (value: any) => React.ReactNode>;
+type ResourceFormatterProps = {
+  data: any;
+};
+
+const splitCamelCaseString = (value: string) => value.replace(/([a-z0-9])([A-Z])/g, '$1 $2');
+
 const ReactJson = dynamic(() => import('@microlink/react-json-view'), { ssr: false });
-const FormatterContext = React.createContext({
+const FormatterContext = React.createContext<{ propertyFormatters: FormatterMap }>({
   propertyFormatters: {},
 });
 const LevelContext = React.createContext(0);
@@ -43,7 +29,7 @@ export const ColourContainer = styled('div')(({ theme }) => ({
   overflow: 'scroll',
 }));
 
-export const JSONViewFormatter = ({ data }) => {
+export const JSONViewFormatter = ({ data }: ResourceFormatterProps) => {
   const theme = useTheme();
   const rjvTheme = reactJsonTheme(theme.palette.mode);
 
@@ -65,12 +51,128 @@ export const JSONViewFormatter = ({ data }) => {
   );
 };
 
-const Level = ({ children }) => {
+type KeyValueInRowProps = {
+  Key: string;
+  Value: React.ReactNode;
+  showFold?: boolean;
+};
+
+type TableDataFormatterProps = {
+  data?: unknown;
+  mainTableData?: unknown;
+  mainTableCols?: unknown;
+};
+
+const formatDisplayValue = (value: unknown) =>
+  typeof value === 'string' ? value : JSON.stringify(value, null, 2);
+
+const KeyValueInRow = ({ Key, Value }: KeyValueInRowProps) => (
+  <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+      {Key}
+    </Typography>
+    {Value}
+  </Box>
+);
+
+const StatusFormatter = ({ status }: { status: unknown }) => (
+  <Typography variant="body2">{formatDisplayValue(status)}</Typography>
+);
+
+const MemoryUsage = ({ allocatable, capacity }: { allocatable: unknown; capacity: unknown }) => (
+  <JSONViewFormatter data={{ allocatable, capacity }} />
+);
+
+const TextWithLinkFormatter = ({
+  title,
+  value,
+  onClick,
+}: {
+  title: string;
+  value: React.ReactNode;
+  onClick: () => void;
+}) => (
+  <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+      {title}
+    </Typography>
+    <Typography
+      variant="body2"
+      sx={{ textDecoration: 'underline', cursor: 'pointer' }}
+      onClick={onClick}
+    >
+      {value}
+    </Typography>
+  </Box>
+);
+
+const CodeFormatter = ({ data }: { data: unknown }) => (
+  <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{formatDisplayValue(data)}</pre>
+);
+
+const LabelFormatter = ({ data }: { data: unknown }) => <JSONViewFormatter data={data} />;
+
+const TableDataFormatter = ({ data, mainTableData, mainTableCols }: TableDataFormatterProps) => (
+  <JSONViewFormatter
+    data={mainTableData ? { rows: mainTableData, columns: mainTableCols } : data}
+  />
+);
+
+const ListFormatter = ({ data }: { data: unknown }) =>
+  Array.isArray(data) ? (
+    <ArrayFormatter items={data} style={{}} />
+  ) : (
+    <JSONViewFormatter data={data} />
+  );
+
+const NumberStateFormatter = ({ data }: { data: unknown }) => <JSONViewFormatter data={data} />;
+
+const CollapsibleSectionFormatter = ({
+  title,
+  children,
+}: {
+  title: React.ReactNode;
+  children: React.ReactNode;
+}) => (
+  <details>
+    <summary>{title}</summary>
+    <Box sx={{ mt: 1 }}>{children}</Box>
+  </details>
+);
+
+const ContainerFormatter = ({
+  containerSpec,
+  containerStatus,
+}: {
+  containerSpec: unknown;
+  containerStatus: unknown;
+}) => <JSONViewFormatter data={{ containerSpec, containerStatus }} />;
+
+const OperatorDynamicFormatter = ({ data }: { data: unknown }) => <JSONViewFormatter data={data} />;
+
+const SecretFormatter = ({ data }: { data: unknown }) => <JSONViewFormatter data={data} />;
+
+const extractPodVolumnTables = (value: Record<string, unknown> | null | undefined) => {
+  if (!value || typeof value !== 'object') {
+    return [];
+  }
+
+  return Object.entries(value).map(([key, rows]) => ({
+    key,
+    rows,
+    columns:
+      Array.isArray(rows) && rows.length > 0 && typeof rows[0] === 'object' && rows[0] !== null
+        ? Object.keys(rows[0] as Record<string, unknown>)
+        : [],
+  }));
+};
+
+const Level = ({ children }: { children: React.ReactNode }) => {
   const level = useContext(LevelContext);
   return <LevelContext.Provider value={level + 1}> {children} </LevelContext.Provider>;
 };
 
-const ResourceDynamicFormatter = ({ data }) => {
+const ResourceDynamicFormatter = ({ data }: ResourceFormatterProps) => {
   const { propertyFormatters } = useContext(FormatterContext);
   const level = useContext(LevelContext);
 
@@ -79,7 +181,7 @@ const ResourceDynamicFormatter = ({ data }) => {
   }
 
   if (_.isArray(data)) {
-    return <ArrayFormatter items={data} />;
+    return <ArrayFormatter items={data} style={{}} />;
   }
 
   if (_.isObject(data)) {
@@ -91,7 +193,7 @@ const ResourceDynamicFormatter = ({ data }) => {
       if (propertyFormatters?.[title]) {
         return (
           <Grid2 key={title} size={{ sm: 12 }}>
-            {propertyFormatters[title](data, data)}
+            {propertyFormatters[title](data)}
           </Grid2>
         );
       }
@@ -110,7 +212,9 @@ const ResourceDynamicFormatter = ({ data }) => {
             marginBlock: '0.25rem',
           }}
         >
-          <SectionHeading level={level}>{title}</SectionHeading>
+          <SectionHeading level={level} isLevel>
+            {title}
+          </SectionHeading>
           <Level>
             <ResourceDynamicFormatter data={data} />
           </Level>
@@ -122,7 +226,7 @@ const ResourceDynamicFormatter = ({ data }) => {
   return null;
 };
 
-const propertyFormatter = {
+const propertyFormatter: FormatterMap = {
   status: (status) => <KeyValueInRow Key={'Status'} Value={<StatusFormatter status={status} />} />,
   usage: (value) => {
     if (value.allocatable && value.capacity) {
@@ -138,7 +242,7 @@ const propertyFormatter = {
   deeplinks: (value) => {
     return (
       <>
-        {value.links.map((linkObj) => {
+        {value.links.map((linkObj: any) => {
           const { label, nodeName, namespace, serviceAccount, resourceCategory } = linkObj;
           const name = nodeName || namespace || serviceAccount;
           if (!name) return null;
@@ -175,11 +279,11 @@ const propertyFormatter = {
   labels: (value) => (
     <KeyValueInRow
       Key={'Labels'}
-      Value={<LabelFormatter data={value?.data} selectedLabels={[]} />}
+      Value={<LabelFormatter data={value?.data} />}
       showFold={value?.data?.length > 7}
     />
   ),
-  annotations: (value) => (
+  annotations: (value: string | any[]) => (
     <KeyValueInRow
       Key={'Annotations'}
       Value={<StatusFormatter status={value} />}
@@ -255,13 +359,10 @@ const propertyFormatter = {
         Key={'Init Containers'}
         Value={
           <>
-            {spec.map((containerSpec, index) => (
+            {spec.map((containerSpec: any, index: number) => (
               <Box
-                paddingInline={1}
                 key={index}
-                display={'flex'}
-                flexDirection={'column'}
-                gap={'0.3rem'}
+                sx={{ px: 1, display: 'flex', flexDirection: 'column', gap: '0.3rem' }}
               >
                 <CollapsibleSectionFormatter title={containerSpec.name}>
                   <ContainerFormatter containerSpec={spec[index]} containerStatus={status[index]} />
@@ -281,13 +382,10 @@ const propertyFormatter = {
         Key={'Containers'}
         Value={
           <>
-            {spec.map((containerSpec, index) => (
+            {spec.map((containerSpec: any, index: number) => (
               <Box
-                paddingInline={1}
                 key={index}
-                display={'flex'}
-                flexDirection={'column'}
-                gap={'0.3rem'}
+                sx={{ px: 1, display: 'flex', flexDirection: 'column', gap: '0.3rem' }}
               >
                 <CollapsibleSectionFormatter title={containerSpec.name}>
                   <ContainerFormatter containerSpec={spec[index]} containerStatus={status[index]} />
@@ -306,7 +404,7 @@ const propertyFormatter = {
         Key={'Pod Volumes'}
         Value={
           <>
-            {tables.map((table, index) => {
+            {tables.map((table: any, index: number) => {
               return (
                 <ColourContainer style={{ paddingInline: '1rem' }} key={index}>
                   <Typography variant="body1">{splitCamelCaseString(table.key)}</Typography>
@@ -332,13 +430,16 @@ const propertyFormatter = {
     return <KeyValueInRow Key={'Secret'} Value={<SecretFormatter data={value} />} />;
   },
 };
-const ResourceDetailFormatData = ({ data }) => {
+const ResourceDetailFormatData = ({ data }: ResourceFormatterProps) => {
+  const formatterContextValue = React.useMemo(
+    () => ({
+      propertyFormatters: propertyFormatter,
+    }),
+    [],
+  );
+
   return (
-    <FormatterContext.Provider
-      value={{
-        propertyFormatters: propertyFormatter,
-      }}
-    >
+    <FormatterContext.Provider value={formatterContextValue}>
       <Grid2
         container
         style={{

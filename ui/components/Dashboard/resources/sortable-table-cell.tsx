@@ -34,14 +34,12 @@ export const SortableTableCell = ({
                 {icon}
               </Typography>
             </Tooltip>
-          ) : (
-            ''
-          )}
+          ) : null}
         </Grid2>
         <TableSortLabel
           active={columnMeta.name === columnData.name}
           direction={columnMeta.direction || 'asc'}
-        ></TableSortLabel>
+        />
       </Grid2>
     </TableCell>
   );
@@ -67,9 +65,7 @@ export const DefaultTableCell = ({ columnData, icon, tooltip }: DefaultTableCell
                 {icon}
               </Typography>
             </Tooltip>
-          ) : (
-            ''
-          )}
+          ) : null}
         </Grid2>
       </Grid2>
     </TableCell>

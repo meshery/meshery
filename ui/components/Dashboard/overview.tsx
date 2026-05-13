@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { NoSsr } from '@sistent/sistent';
 import HoneycombComponent from './widgets/HoneyComb/HoneyCombComponent';
 import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
@@ -27,8 +27,11 @@ const ErrorDisplay = ({ theme }: { theme: Theme }) => (
 
 const Overview = ({ isEditMode }: { isEditMode?: boolean }) => {
   const { k8sConfig, selectedK8sContexts } = useSelector((state) => state.ui);
-  const clusterIds = getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
-  const isClusterIdsEmpty = clusterIds.size === 0;
+  const clusterIds = useMemo(
+    () => getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig),
+    [k8sConfig, selectedK8sContexts],
+  );
+  const hasNoClusters = clusterIds.size === 0 || clusterIds.length === 0;
   const theme = useTheme();
 
   const {
@@ -43,11 +46,11 @@ const Overview = ({ isEditMode }: { isEditMode?: boolean }) => {
       clusterIds: clusterIds,
     },
     {
-      skip: isClusterIdsEmpty || clusterIds.length === 0,
+      skip: hasNoClusters,
     },
   );
 
-  if (clusterIds.length === 0) {
+  if (hasNoClusters) {
     return (
       <div
         style={{
@@ -76,7 +79,7 @@ const Overview = ({ isEditMode }: { isEditMode?: boolean }) => {
       <HoneycombComponent
         kinds={clusterSummary?.kinds}
         isClusterLoading={isClusterLoading}
-        isClusterIdsEmpty={isClusterIdsEmpty}
+        isClusterIdsEmpty={hasNoClusters}
         isEditMode={isEditMode}
       />
     </NoSsr>

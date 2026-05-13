@@ -28,9 +28,16 @@ export const ACTION_TYPES = {
   },
 };
 
-const ResourcesTable = (props) => {
-  const { updateProgress, k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } =
-    props;
+type ResourcesTableProps = {
+  updateProgress?: (value: { showProgress: boolean }) => void;
+  k8sConfig: unknown;
+  resourceConfig: (...args: any[]) => any;
+  submenu?: boolean;
+  workloadType: string;
+  selectedK8sContexts: unknown;
+};
+
+const ResourcesTable = (props: ResourcesTableProps) => {
   const router = useRouter();
 
   // Wait for router to be ready before rendering query-dependent content.
@@ -42,9 +49,10 @@ const ResourcesTable = (props) => {
   return <ResourcesTableInner {...props} />;
 };
 
-const ResourcesTableInner = (props) => {
+const ResourcesTableInner = (props: ResourcesTableProps) => {
   const { updateProgress, k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } =
     props;
+  const router = useRouter();
   const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -75,42 +83,46 @@ const ResourcesTableInner = (props) => {
     { skip: clusterIds.length === 0 },
   );
 
-  const filters = {
-    namespace: {
-      name: 'Namespace',
-      options: [
-        ...(clusterSummary?.namespaces || []).map((ns) => ({
+  const filters = useMemo(
+    () => ({
+      namespace: {
+        name: 'Namespace',
+        options: (clusterSummary?.namespaces || []).map((ns) => ({
           value: ns,
           label: ns,
         })),
-      ],
-    },
-  };
+      },
+    }),
+    [clusterSummary?.namespaces],
+  );
 
   const switchView = (view, resource) => {
     setSelectedResource(resource);
     setView(view);
   };
 
-  const tableConfig = submenu
-    ? resourceConfig(
-        switchView,
-        meshSyncResources,
-        k8sConfig,
-        connectionMetadataState,
-        workloadType,
-        selectedK8sContexts,
-      )[workloadType]
-    : resourceConfig(
-        switchView,
-        meshSyncResources,
-        k8sConfig,
-        connectionMetadataState,
-        workloadType,
-        selectedK8sContexts,
-      );
+  const tableConfig = useMemo(() => {
+    const resolvedConfig = resourceConfig(
+      switchView,
+      meshSyncResources,
+      k8sConfig,
+      connectionMetadataState,
+      workloadType,
+      selectedK8sContexts,
+    );
 
-  const encodedClusterIds = JSON.stringify(clusterIds);
+    return submenu ? resolvedConfig[workloadType] : resolvedConfig;
+  }, [
+    connectionMetadataState,
+    k8sConfig,
+    meshSyncResources,
+    resourceConfig,
+    selectedK8sContexts,
+    submenu,
+    workloadType,
+  ]);
+
+  const encodedClusterIds = useMemo(() => JSON.stringify(clusterIds), [clusterIds]);
 
   const { notify } = useNotification();
   const [fetchMeshSyncResources] = useLazyGetMeshSyncResourcesQuery();
@@ -186,7 +198,6 @@ const ResourcesTableInner = (props) => {
       { shallow: true },
     );
   };
-  const router = useRouter();
   const options = useMemo(
     () => ({
       filter: false,

@@ -1,12 +1,22 @@
 import { useMemo } from 'react';
 import { getAllCustomResourceDefinitionsKinds, ResourceMenuConfig } from '../../resources/config';
 
-type Kind = { Kind: string; Count?: number };
+export type ResourceKind = { Kind: string; Model?: string; Count?: number };
 
-export const useResourceOptions = () => {
+type ResourceGroupOption = { value: string; label: string };
+
+export const DEFAULT_GROUP_BY = 'all';
+export const SORT_DIRECTIONS = {
+  ASC: 'asc',
+  DESC: 'desc',
+} as const;
+
+export type SortDirection = (typeof SORT_DIRECTIONS)[keyof typeof SORT_DIRECTIONS];
+
+export const useResourceOptions = (): ResourceGroupOption[] => {
   const groupOptions = useMemo(
     () => [
-      { value: 'all', label: 'All Resources' },
+      { value: DEFAULT_GROUP_BY, label: 'All Resources' },
       ...Object.entries(ResourceMenuConfig)
         .filter(([, resources]) => resources.length > 0)
         .map(([category]) => ({
@@ -21,21 +31,21 @@ export const useResourceOptions = () => {
   return groupOptions;
 };
 
-const SORT_DIRECTIONS = {
-  ASC: 'asc',
-  DESC: 'desc',
-};
-
 export const useResourceFiltering = (
-  kinds: Kind[] | undefined,
+  kinds: ResourceKind[] | undefined,
   groupBy: string,
-  sortDirection: string | null,
+  sortDirection: SortDirection | null,
 ) => {
   const filteredAndSortedKinds = useMemo(() => {
-    if (!kinds) return [];
+    if (!kinds) {
+      return [];
+    }
+
     const filteredKinds = filterKindsByGroup(kinds, groupBy);
 
-    if (!sortDirection) return filteredKinds;
+    if (!sortDirection) {
+      return filteredKinds;
+    }
 
     return sortKindsByCount(filteredKinds, sortDirection);
   }, [kinds, groupBy, sortDirection]);
@@ -43,25 +53,31 @@ export const useResourceFiltering = (
   return filteredAndSortedKinds;
 };
 
-const filterKindsByGroup = (kinds: Kind[], groupBy: string): Kind[] => {
-  if (groupBy === 'all') return [...kinds];
-
-  if (groupBy === 'crds') {
-    const crdKinds = getAllCustomResourceDefinitionsKinds(kinds).map((crd: Kind) => crd.Kind);
-    return kinds.filter((item) => crdKinds.includes(item.Kind));
+const filterKindsByGroup = (kinds: ResourceKind[], groupBy: string): ResourceKind[] => {
+  if (groupBy === DEFAULT_GROUP_BY) {
+    return [...kinds];
   }
 
-  const categoryKinds =
-    ResourceMenuConfig[groupBy.charAt(0).toUpperCase() + groupBy.slice(1)] || [];
+  if (groupBy === 'crds') {
+    const crdKinds = new Set(
+      getAllCustomResourceDefinitionsKinds(kinds).map(
+        (customResource: ResourceKind) => customResource.Kind,
+      ),
+    );
+
+    return kinds.filter((item) => crdKinds.has(item.Kind));
+  }
+
+  const categoryKey = groupBy.charAt(0).toUpperCase() + groupBy.slice(1);
+  const categoryKinds = ResourceMenuConfig[categoryKey] || [];
+
   return kinds.filter((item) => categoryKinds.includes(item.Kind));
 };
 
-const sortKindsByCount = (kinds: Kind[], direction: string): Kind[] => {
+const sortKindsByCount = (kinds: ResourceKind[], direction: SortDirection): ResourceKind[] => {
   return [...kinds].sort((a, b) => {
     return direction === SORT_DIRECTIONS.ASC
       ? (a.Count ?? 0) - (b.Count ?? 0)
       : (b.Count ?? 0) - (a.Count ?? 0);
   });
 };
-
-export { SORT_DIRECTIONS };

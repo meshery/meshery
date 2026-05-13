@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors } from '../../../utils/charts';
@@ -15,9 +15,10 @@ import ConnectCluster from './ConnectCluster';
 
 import { Box, InfoOutlined, Typography, useTheme } from '@sistent/sistent';
 
+type ChartColumn = [string, number];
+
 export default function MesheryConfigurationChart() {
   const router = useRouter();
-  const [chartData, setChartData] = useState<[string, number][]>([]);
   const theme = useTheme();
 
   const { data: patternsData, error: patternsError } = useGetPatternsQuery({
@@ -30,50 +31,58 @@ export default function MesheryConfigurationChart() {
     pagesize: 1,
   });
 
-  useEffect(() => {
+  const chartData = useMemo<ChartColumn[]>(() => {
+    const nextChartData: ChartColumn[] = [];
+
     if (!patternsError && patternsData?.patterns) {
-      setChartData((prevData) => [...prevData, ['Designs', patternsData.totalCount]]);
+      nextChartData.push(['Designs', patternsData.totalCount ?? 0]);
     }
-  }, [patternsData, patternsError]);
 
-  useEffect(() => {
     if (!filtersError && filtersData?.filters) {
-      setChartData((prevData) => [...prevData, ['Filters', filtersData.totalCount]]);
+      nextChartData.push(['Filters', filtersData.totalCount ?? 0]);
     }
-  }, [filtersData, filtersError]);
 
-  const chartOptions = {
-    data: {
-      columns: chartData,
-      type: donut(),
-      colors: dataToColors(chartData),
-      onclick: function (d: { name: string }) {
-        const routeName = d.name.charAt(0).toLowerCase() + d.name.slice(1);
-        router.push(`/configuration/${routeName}`);
-      },
-    },
-    arc: {
-      cornerRadius: {
-        ratio: 0.05,
-      },
-    },
-    donut: {
-      title: 'Content\nby Type',
-      padAngle: 0.03,
-      label: {
-        format: function (value) {
-          return value;
+    return nextChartData;
+  }, [
+    filtersData?.filters,
+    filtersData?.totalCount,
+    filtersError,
+    patternsData?.patterns,
+    patternsData?.totalCount,
+    patternsError,
+  ]);
+
+  const chartOptions = useMemo(
+    () => ({
+      data: {
+        columns: chartData,
+        type: donut(),
+        colors: dataToColors(chartData),
+        onclick: (dataPoint: { name: string }) => {
+          const routeName = dataPoint.name.charAt(0).toLowerCase() + dataPoint.name.slice(1);
+          router.push(`/configuration/${routeName}`);
         },
       },
-    },
-    tooltip: {
-      format: {
-        value: function (v) {
-          return v;
+      arc: {
+        cornerRadius: {
+          ratio: 0.05,
         },
       },
-    },
-  };
+      donut: {
+        title: 'Content\nby Type',
+        padAngle: 0.03,
+        label: {
+          format: (value: number) => value,
+        },
+      },
+      tooltip: {
+        format: {
+          value: (value: number) => value,
+        },
+      },
+    }),
+    [chartData, router],
+  );
 
   return (
     <Link
