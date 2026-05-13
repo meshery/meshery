@@ -19,6 +19,7 @@ import (
 	"github.com/layer5io/gowrk2/api"
 	nighthawk_client "github.com/layer5io/nighthawk-go/pkg/client"
 	nighthawk_proto "github.com/layer5io/nighthawk-go/pkg/proto"
+	"github.com/meshery/meshery/server/internal/retry"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/utils"
@@ -235,17 +236,26 @@ func startNighthawkServer(timeout int64) error {
 		return ErrStartingNighthawkServer(err)
 	}
 
-	for timeout != 0 {
+	// Poll until the nighthawk server is listening on :8443, honouring the
+	// caller-supplied timeout budget (in seconds).
+	pollErr := retry.Do(context.Background(), func() error {
 		if utils.TcpCheck(&utils.HostPort{
 			Address: "0.0.0.0",
 			Port:    8443,
 		}, nil) {
 			return nil
 		}
-		timeout--
-		time.Sleep(1 * time.Second)
+		return fmt.Errorf("nighthawk server not yet listening on :8443")
+	},
+		retry.WithMaxElapsedTime(time.Duration(timeout)*time.Second),
+		retry.WithInitialInterval(1*time.Second),
+		retry.WithMaxInterval(3*time.Second),
+		retry.WithJitter(0.1),
+	)
+	if pollErr != nil {
+		return ErrStartingNighthawkServer(pollErr)
 	}
-	return ErrStartingNighthawkServer(err)
+	return nil
 }
 
 // NighthawkLoadTest is the actual code which invokes nighthawk to run the load test

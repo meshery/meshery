@@ -10,6 +10,7 @@ import (
 
 	operatorv1alpha1 "github.com/meshery/meshery-operator/api/v1alpha1"
 	operatorClient "github.com/meshery/meshery-operator/pkg/client"
+	"github.com/meshery/meshery/server/internal/retry"
 	"github.com/meshery/meshery/server/models"
 	brokerpkg "github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/broker/nats"
@@ -144,15 +145,28 @@ func SubscribeToBroker(_ models.Provider, mesheryKubeClient *mesherykube.Client,
 		return "", ErrMesheryClient(err)
 	}
 
-	timeout := 60
-	for timeout > 0 {
-		broker, err = mesheryclient.CoreV1Alpha1().Brokers(Namespace).Get(context.Background(), "meshery-broker", metav1.GetOptions{})
-		if err == nil && broker.Status.Endpoint.External != "" {
-			break
+	// Poll until the broker CR has an external endpoint assigned, or until
+	// 60 s elapse. Uses exponential backoff with a 1 s initial interval so
+	// early readiness is detected quickly without hammering the API server.
+	retryErr := retry.Do(context.Background(), func() error {
+		var ferr error
+		broker, ferr = mesheryclient.CoreV1Alpha1().Brokers(Namespace).Get(
+			context.Background(), "meshery-broker", metav1.GetOptions{},
+		)
+		if ferr != nil {
+			return ferr
 		}
-
-		timeout--
-		time.Sleep(1 * time.Second)
+		if broker.Status.Endpoint.External == "" {
+			return fmt.Errorf("broker external endpoint not yet assigned")
+		}
+		return nil
+	},
+		retry.WithMaxElapsedTime(60*time.Second),
+		retry.WithInitialInterval(1*time.Second),
+		retry.WithMaxInterval(5*time.Second),
+	)
+	if retryErr != nil {
+		return "", ErrMesheryClient(retryErr)
 	}
 
 	endpoint := broker.Status.Endpoint.Internal
