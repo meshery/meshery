@@ -45,7 +45,6 @@ const legacyRestrictedImportOffenders = [
   'components/Lifecycle/Workspaces/WorkspaceGridView.tsx',
   'components/MesheryAdapterPlayComponent.tsx',
   'components/MesheryChart.tsx',
-  'components/MesheryDateTimePicker.tsx',
   'components/MesheryMeshInterface/PatternService/RJSF.tsx',
   'components/MesheryMeshInterface/PatternService/RJSFCustomComponents/ArrayFieldTemlate.tsx',
   'components/MesheryMeshInterface/PatternService/RJSFCustomComponents/CustomFileWidget.tsx',

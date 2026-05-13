@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TextField } from '@sistent/sistent';
+// eslint-disable-next-line no-restricted-imports -- Central wrapper for @mui/x-date-pickers to satisfy UI guardrails.
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import moment, { Moment } from 'moment';
 
