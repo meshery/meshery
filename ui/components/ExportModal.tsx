@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { ListItemText, Modal, useTheme, Box, DownloadIcon } from '@sistent/sistent';
 import KubernetesIcon from '@/assets/icons/technology/kubernetes';
 import { useModal } from '@sistent/sistent';
@@ -6,13 +6,21 @@ import PatternIcon from '@/assets/icons/Pattern';
 import { ListItem } from '@sistent/sistent';
 import { ListItemIcon } from '@sistent/sistent';
 import { ModalBody } from '@sistent/sistent';
-import { Colors } from '@/themes/app';
 import { InfoTooltip } from '@sistent/sistent';
 import { IconButton } from '@sistent/sistent';
 import { OCIImageIcon } from '@/assets/icons/OciImage';
 import HelmIcon from '@/assets/icons/technology/HelmIcon';
 
-const ExportOption = ({
+interface ExportOptionProps {
+  title: string;
+  Icon: React.ReactNode;
+  onClick: (e: React.MouseEvent) => void;
+  content?: React.ReactNode;
+  disabled?: boolean;
+  description?: string | React.ReactNode;
+}
+
+const ExportOption: FC<ExportOptionProps> = ({
   title,
   Icon,
   onClick,
@@ -65,7 +73,15 @@ const ExportOption = ({
     </ListItem>
   );
 };
-const ExportModal = (props) => {
+interface ExportModalProps {
+  downloadModal: { open: boolean; content: any };
+  handleDownloadDialogClose: () => void;
+  handleDesignDownload: (e: React.MouseEvent, content: any, arg?: null, params?: string) => void;
+  extensionExportOptions?: Array<any>;
+}
+
+const ExportModal: FC<ExportModalProps> = (props) => {
+  const theme = useTheme();
   const {
     downloadModal,
     handleDownloadDialogClose,
@@ -76,7 +92,7 @@ const ExportModal = (props) => {
   const ExportOptions = [
     {
       title: 'Meshery Design (yaml)',
-      icon: <PatternIcon width={'30'} height="30" fill={Colors.caribbeanGreen} />,
+      icon: <PatternIcon width={'30'} height="30" fill={theme.palette.primary.main} />,
       onClick: (e) => handleDesignDownload(e, downloadModal.content),
       description:
         'Export your design as a complete, self-contained Meshery Design file (YAML). This file includes embedded images and all configuration details. It&apos;s the perfect format for creating backups, sharing with colleagues using Meshery, or transferring designs between Meshery environments without losing any information (lossless transfer).',
@@ -131,7 +147,7 @@ const ExportModal = (props) => {
   ];
 
   const exportModal = useModal({
-    headerIcon: <PatternIcon fill={'#fff'} height={'2rem'} width="2rem" />,
+    headerIcon: <PatternIcon fill={theme.palette.common.white} height={'2rem'} width="2rem" />,
   });
   return (
     <>
