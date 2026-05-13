@@ -18,7 +18,7 @@ import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { capitalize } from 'lodash';
-import { Loading } from '@/components/DesignLifeCycle/common';
+import { Loading } from '@/components/designs/lifecycle/common';
 import { NotificationCenterContext } from '@/components/NotificationCenter';
 import { OPERATION_CENTER_EVENTS } from 'machines/operationsCenter';
 import {

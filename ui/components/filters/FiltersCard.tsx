@@ -24,7 +24,7 @@ import {
   GridCloneBtnText,
   CardHeaderRight,
   StyledCodeMirrorWrapper,
-} from '../MesheryPatterns/Cards.styles';
+} from '../designs/patterns/Cards.styles';
 import YAMLDialog from '../YamlDialog';
 import CloneIcon from '../../public/static/img/CloneIcon';
 import {
