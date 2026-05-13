@@ -13,12 +13,12 @@ import { CreateButtonWrapper, BulkActionWrapper } from './styles';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import AddIconCircleBorder from '../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
-import EnvironmentIcon from '../../../assets/icons/Environment';
-import { EVENT_TYPES } from '../../../lib/event-types';
-import { useNotification } from '../../../utils/hooks/useNotification';
-import { RJSFModalWrapper } from '../../shared/Modal/Modal';
-import _PromptComponent from '../../PromptComponent';
-import { EmptyState } from '../General';
+import EnvironmentIcon from '../../assets/icons/Environment';
+import { EVENT_TYPES } from '../../lib/event-types';
+import { useNotification } from '../../utils/hooks/useNotification';
+import { RJSFModalWrapper } from '../shared/Modal/Modal';
+import _PromptComponent from '../PromptComponent';
+import { EmptyState } from '../Lifecycle/General';
 import {
   Modal as SisitentModal,
   ModalBody,
