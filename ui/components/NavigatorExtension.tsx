@@ -14,7 +14,7 @@ import { useNotification } from '../utils/hooks/useNotification';
 import Modal from './General/Modals/Modal';
 import ExportModal from './ExportModal';
 import { FormatStructuredData } from './DataFormatter';
-import { useFilterK8sContexts } from './hooks/useKubernetesHook';
+import { useFilterK8sContexts } from '@/utils/hooks/useKubernetesHook';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
 import { DryRunDesign } from './DesignLifeCycle/DryRun';

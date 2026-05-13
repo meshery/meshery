@@ -12,7 +12,7 @@ import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS } from '@/utils/Enum';
-import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
+import { withTelemetryHook } from '@/utils/hooks/useTelemetryHook';
 import { useLazyGetCredentialByIdQuery } from '@/rtk-query/credentials';
 import { useUpdateConnectionByIdMutation } from '@/rtk-query/connection';
 import {

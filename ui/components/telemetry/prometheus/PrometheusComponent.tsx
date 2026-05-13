@@ -16,7 +16,7 @@ import fetchAvailableAddons from '@/graphql/queries/AddonsStatusQuery';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
-import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
+import { withTelemetryHook } from '@/utils/hooks/useTelemetryHook';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updatePrometheusConfig } from '@/store/slices/telemetry';
