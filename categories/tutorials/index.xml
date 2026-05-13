@@ -91,31 +91,28 @@ Learn how to use Kubernetes CronJobs to schedule and automate periodic backups o
 &lt;blockquote&gt;
 &lt;p&gt;&lt;strong&gt;NOTE:&lt;/strong&gt; If this is your first time working with Meshery Playground, consider starting with the &lt;a href="../../guides/tutorials/kubernetes-pods"&gt;Exploring Kubernetes Pods with Meshery Playground&lt;/a&gt; tutorial first or &lt;a href="../../guides/tutorials/kubernetes-deployments"&gt;Exploring Kubernetes Deployments with Meshery&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Kubernetes Request Flow – A Visual Guide</title><link>/guides/tutorials/kubernetes/kubernetes-request-flow/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/tutorials/kubernetes/kubernetes-request-flow/</guid><description>&lt;p&gt;In this tutorial, we will explore the exact journey a request takes inside a Kubernetes cluster from the moment a user hits &amp;ldquo;Enter&amp;rdquo; in their browser, to the moment a response is sent back. We will understand the fundamental data path of a request - from the user to the container, using a &lt;strong&gt;diagram built in Meshery Kanvas&lt;/strong&gt;.&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;Note:&lt;/em&gt;&lt;/strong&gt; This tutorial is completely visual and beginner-friendly. No YAML or CLI is required.&lt;/p&gt;</description></item><item><title>Publishing Meshery Designs to ArtifactHub</title><link>/guides/tutorials/artifacthub/publish-to-artifacthub/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/tutorials/artifacthub/publish-to-artifacthub/</guid><description>&lt;h2 id="introduction"&gt;
-	Introduction
-&lt;/h2&gt;
-&lt;p&gt;In this tutorial, we&amp;rsquo;ll see how to export a Design from Meshery which we will use to populate an ArtifactHub repository.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Note:&lt;/em&gt;&lt;/strong&gt; This tutorial is completely visual and beginner-friendly. No YAML or CLI is required.&lt;/p&gt;</description></item><item><title>Publishing Meshery Designs to Artifact Hub</title><link>/guides/tutorials/artifacthub/publish-to-artifacthub/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/tutorials/artifacthub/publish-to-artifacthub/</guid><description>&lt;p&gt;In this tutorial, we&amp;rsquo;ll see how to export a design from Meshery, which we will use to populate an Artifact Hub repository.&lt;/p&gt;
 &lt;h2 id="prerequisites"&gt;
 	Prerequisites
 &lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;Access to the &lt;em&gt;Meshery Playground&lt;/em&gt;. If you don&amp;rsquo;t have an account, sign up at &lt;a href="https://playground.meshery.io/"&gt;Meshery Playground&lt;/a&gt;.&lt;/li&gt;
-&lt;/ul&gt;
+&lt;ol&gt;
+&lt;li&gt;Access to Meshery. &lt;a href="../../installation/"&gt;Install Meshery&lt;/a&gt; or access the &lt;a href="https://play.meshery.io"&gt;Meshery Playground&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;An Artifact Hub repository.&lt;/li&gt;
+&lt;/ol&gt;
 &lt;h2 id="steps"&gt;
 	Steps
 &lt;/h2&gt;
-&lt;h3 id="1-click-on-meshmap"&gt;
-	1. Click on MeshMap
-&lt;/h3&gt;
-&lt;p&gt;&lt;img class="content-image" src="../../guides/tutorials/images/publish-to-artifacthub/2024-07-30_1.png" alt="" /&gt;&lt;/p&gt;
-&lt;h3 id="2-find-the-design-in-the-side-panel"&gt;
-	2. Find the Design in the Side Panel
-&lt;/h3&gt;
-&lt;p&gt;&lt;img class="content-image" src="../../guides/tutorials/images/publish-to-artifacthub/2024-07-30_2.png" alt="" /&gt;&lt;/p&gt;
-&lt;h3 id="3-click-on-export-design"&gt;
-	3. Click on Export Design
-&lt;/h3&gt;
-&lt;p&gt;&lt;img class="content-image" src="../../guides/tutorials/images/publish-to-artifacthub/2024-07-30_3.png" alt="" /&gt;&lt;/p&gt;</description></item><item><title>Tutorials</title><link>/guides/tutorials/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/tutorials/</guid><description>&lt;p&gt;🧑‍🔬 Explore these tutorials to learn how to use Meshery for collaboratively managing infrastructure. Access the &lt;a href="../../installation/playground/"&gt;Meshery Playground&lt;/a&gt; as a convenient resource for the labs in these tutorials.&lt;/p&gt;</description></item><item><title>Understanding Kubernetes ConfigMaps and Secrets with Meshery</title><link>/guides/tutorials/kubernetes/kubernetes-configmaps-secrets/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/tutorials/kubernetes/kubernetes-configmaps-secrets/</guid><description>&lt;h2 id="introduction"&gt;
+&lt;ol&gt;
+&lt;li&gt;Navigate to the Designs page. You can access it from the left-hand menu in Meshery. The URL will be:
+&lt;ul&gt;
+&lt;li&gt;Locally: &lt;a href="http://localhost:9081/configuration/designs?view=grid"&gt;http://localhost:9081/configuration/designs?view=grid&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Playground: &lt;a href="https://playground.meshery.io/configuration/designs?view=grid"&gt;https://playground.meshery.io/configuration/designs?view=grid&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img class="content-image" src="../../guides/tutorials/artifacthub/images/designs.png" alt="" /&gt;&lt;/p&gt;
+&lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Can't find your design?&lt;/div&gt;
+&lt;p&gt;If you don&amp;rsquo;t see your design, check your Organization and Workspace selections.&lt;/p&gt;</description></item><item><title>Tutorials</title><link>/guides/tutorials/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/tutorials/</guid><description>&lt;p&gt;🧑‍🔬 Explore these tutorials to learn how to use Meshery for collaboratively managing infrastructure. Access the &lt;a href="../../installation/playground/"&gt;Meshery Playground&lt;/a&gt; as a convenient resource for the labs in these tutorials.&lt;/p&gt;</description></item><item><title>Understanding Kubernetes ConfigMaps and Secrets with Meshery</title><link>/guides/tutorials/kubernetes/kubernetes-configmaps-secrets/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/tutorials/kubernetes/kubernetes-configmaps-secrets/</guid><description>&lt;h2 id="introduction"&gt;
 	Introduction
 &lt;/h2&gt;
 &lt;p&gt;In this tutorial, we will work with Kubernetes ConfigMaps and Secrets. &lt;em&gt;ConfigMaps&lt;/em&gt; are used to manage configuration data, while &lt;em&gt;Secrets&lt;/em&gt; are used for sensitive information such as passwords. Using Meshery Playground, an interactive live cluster environment, we&amp;rsquo;ll perform hands-on exercises to gain practical knowledge into working with these Kubernetes objects.&lt;/p&gt;
