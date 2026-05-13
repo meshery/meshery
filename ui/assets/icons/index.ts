@@ -86,7 +86,6 @@ export {
   GetApp,
   GroupAdd,
   Handyman,
-  HelpOutline,
   HelpOutlineOutlined,
   HelpOutlined,
   Info,
