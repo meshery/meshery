@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
@@ -33,7 +35,7 @@ func (da *DefaultConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx i
 func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
 
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	userUUID := user.ID
 
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
@@ -46,14 +48,14 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 	if err != nil {
 		return NoOp, eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), err
 	}
-	_, ok := payload.CredentialSecret["id"]
+	existingCredID, ok := payload.CredentialSecret["id"]
 	credential := &models.Credential{}
 	// If existing credential is used do not persist again
 	if !ok {
 		credName, _ := payload.CredentialSecret["name"].(string)
 		credential, err = provider.SaveUserCredential(token, &models.Credential{
 			Name:   credName,
-			UserID: &userUUID,
+			UserId: userUUID,
 			Type:   payload.Kind,
 			Secret: payload.CredentialSecret,
 		})
@@ -65,6 +67,30 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 			WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), _err
 	}
 
+	var credentialID *core.Uuid
+	if ok {
+		idStr, isStr := existingCredID.(string)
+		if !isStr {
+			parseErr := fmt.Errorf("credential id is not a string")
+			_err := models.ErrPersistCredential(parseErr)
+			return NoOp, eventBuilder.
+				WithDescription(fmt.Sprintf("Invalid credential identifier for the connection %s", payload.Name)).
+				WithSeverity(events.Error).
+				WithMetadata(map[string]interface{}{"error": parseErr}).Build(), _err
+		}
+		parsed, parseErr := uuid.FromString(idStr)
+		if parseErr != nil {
+			_err := models.ErrPersistCredential(parseErr)
+			return NoOp, eventBuilder.
+				WithDescription(fmt.Sprintf("Invalid credential identifier for the connection %s", payload.Name)).
+				WithSeverity(events.Error).
+				WithMetadata(map[string]interface{}{"error": parseErr}).Build(), _err
+		}
+		credentialID = &parsed
+	} else {
+		credentialID = &credential.ID
+	}
+
 	connection, err := provider.SaveConnection(&connections.ConnectionPayload{
 		ID:           payload.ID,
 		Kind:         payload.Kind,
@@ -73,7 +99,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 		Status:       connections.CONNECTED,
 		Name:         payload.Name,
 		MetaData:     payload.MetaData,
-		CredentialID: &credential.ID,
+		CredentialID: credentialID,
 	}, token, false)
 	if err != nil {
 		_err := models.ErrPersistConnection(err)

@@ -1,4 +1,4 @@
-import { api } from './index';
+import { api, mesheryApiPath } from './index';
 
 const TAGS = {
   FILTERS: 'filters',
@@ -11,7 +11,7 @@ const filters = api
     endpoints: (builder) => ({
       getFilters: builder.query({
         query: (queryArg) => ({
-          url: `filter`,
+          url: mesheryApiPath(`filter`),
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,
@@ -25,41 +25,41 @@ const filters = api
       }),
       cloneFilter: builder.mutation({
         query: (queryArg) => ({
-          url: `filter/clone/${queryArg.filterID}`,
+          url: mesheryApiPath(`filter/clone/${queryArg.filterID}`),
           method: 'POST',
           body: queryArg.body,
         }),
       }),
       publishFilter: builder.mutation({
         query: (queryArg) => ({
-          url: `filter/catalog/publish`,
+          url: mesheryApiPath(`filter/catalog/publish`),
           method: 'POST',
           body: queryArg.publishBody,
         }),
       }),
       unpublishFilter: builder.mutation({
         query: (queryArg) => ({
-          url: `filter/catalog/unpublish`,
+          url: mesheryApiPath(`filter/catalog/unpublish`),
           method: 'DELETE',
           body: queryArg.unpublishBody,
         }),
       }),
       deleteFilter: builder.mutation({
         query: (queryArg) => ({
-          url: `filter/${queryArg.id}`,
+          url: mesheryApiPath(`filter/${queryArg.id}`),
           method: 'DELETE',
         }),
       }),
       updateFilterFile: builder.mutation({
         query: (queryArg) => ({
-          url: `filter`,
+          url: mesheryApiPath(`filter`),
           method: 'POST',
           body: queryArg.updateBody,
         }),
       }),
       uploadFilterFile: builder.mutation({
         query: (queryArg) => ({
-          url: `filter`,
+          url: mesheryApiPath(`filter`),
           headers: {
             'Content-Type': 'application/octet-stream', // Set appropriate content type for binary data
           },

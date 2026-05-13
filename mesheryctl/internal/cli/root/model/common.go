@@ -21,7 +21,7 @@ func promptModelSelection(modelSearchTerm string, apiPath string) (*model.ModelD
 		},
 		formatLabel,
 		func(data *models.MeshmodelsAPIResponse) ([]model.ModelDefinition, int64) {
-			return data.Models, data.Count
+			return data.Models, data.TotalCount
 		},
 		selectedModel,
 	)

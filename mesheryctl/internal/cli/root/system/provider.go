@@ -16,22 +16,25 @@ package system
 
 import (
 	"fmt"
-	"os"
-	"sort"
-
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"sort"
 )
 
 var (
-	showProviderForAllContext bool
-	forceSetProvider          bool
-	MesheryProvider           = "Layer5"
-	NoneProvider              = "None"
+	MesheryProvider = "Layer5"
+	NoneProvider    = "None"
 )
+
+type cmdProviderViewFlags struct {
+	All bool `json:"all" validate:"boolean"`
+}
+
+var providerViewFlags cmdProviderViewFlags
 
 // PrintProviderToStdout to return provider details for a context
 func PrintProviderToStdout(ctx config.Context, contextName string) string {
@@ -46,18 +49,20 @@ var viewProviderCmd = &cobra.Command{
 // View current provider
 mesheryctl system provider view
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &providerViewFlags)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
 			return errors.New(utils.SystemProviderSubError("this command takes no arguments\n", "view"))
 		}
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		focusedContext := focusedSystemContext(cmd, mctlCfg.CurrentContext)
 
-		if showProviderForAllContext {
+		if providerViewFlags.All {
 			keys := make([]string, 0, len(mctlCfg.Contexts))
 			for contextName := range mctlCfg.Contexts {
 				keys = append(keys, contextName)
@@ -73,14 +78,12 @@ mesheryctl system provider view
 
 		err = mctlCfg.SetCurrentContext(focusedContext)
 		if err != nil {
-			utils.Log.Error(ErrSetCurrentContext(err))
-			return nil
+			return ErrSetCurrentContext(err)
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return ErrGetCurrentContext(err)
 		}
 		utils.Log.Infof("%s\n", PrintProviderToStdout(*currCtx, focusedContext))
 		return nil
@@ -104,8 +107,7 @@ mesheryctl system provider list
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		focusedContext := tempContext
@@ -115,21 +117,19 @@ mesheryctl system provider list
 
 		err = mctlCfg.SetCurrentContext(focusedContext)
 		if err != nil {
-			utils.Log.Error(ErrSetCurrentContext(err))
-			return nil
+			return ErrSetCurrentContext(err)
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return ErrGetCurrentContext(err)
 		}
 
 		utils.Log.Infof("Current provider: %s", currCtx.Provider)
 
 		providers, err := utils.GetProviderInfo(mctlCfg)
 		if err != nil {
-			utils.Log.Fatalf("could not fetch providers as Meshery server was unreachable\nStart Meshery to list available providers")
+			return err
 		}
 
 		utils.Log.Info("Available providers:\n")
@@ -156,6 +156,12 @@ mesheryctl system provider list
 	},
 }
 
+type cmdProviderSetFlags struct {
+	Force bool `json:"force" validate:"boolean"`
+}
+
+var providerSetFlags cmdProviderSetFlags
+
 var setProviderCmd = &cobra.Command{
 	Use:   "set [provider]",
 	Short: "set provider",
@@ -173,11 +179,14 @@ mesheryctl system provider set [provider]
 		}
 		return nil
 	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &providerSetFlags)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			return err
 		}
 
 		focusedContext := tempContext
@@ -187,45 +196,33 @@ mesheryctl system provider set [provider]
 
 		err = mctlCfg.SetCurrentContext(focusedContext)
 		if err != nil {
-			utils.Log.Error(ErrSetCurrentContext(err))
-			return nil
+			return ErrSetCurrentContext(err)
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return ErrGetCurrentContext(err)
 		}
 
 		provider := args[0]
 
-		if !forceSetProvider {
+		if !providerSetFlags.Force {
 			// Verify provider
 			availableProviders, err := utils.GetProviderInfo(mctlCfg)
 			if err != nil {
-				utils.Log.Error(ErrProviderInfo(err))
+				return ErrProviderInfo(err)
 			}
 
-			keys := make([]string, 0, len(availableProviders))
 			isValidProvider := false
 
 			for k := range availableProviders {
 				if provider == k {
 					isValidProvider = true
 				}
-				keys = append(keys, k)
 			}
 
 			if !isValidProvider {
-				utils.Log.Error(ErrValidProvider())
-
-				utils.Log.Info("Available providers:\n")
-				//sorting the contexts to get a consistent order on each subsequent run
-				sort.Strings(keys)
-				for _, k := range keys {
-					utils.Log.Infof("- %s", k)
-				}
-				os.Exit(1)
+				return ErrValidProvider()
 			}
 		}
 
@@ -235,8 +232,7 @@ mesheryctl system provider set [provider]
 		viper.Set("contexts", mctlCfg.Contexts)
 		err = viper.WriteConfig()
 		if err != nil {
-			utils.Log.Error(ErrWriteConfig(err))
-			return nil
+			return ErrWriteConfig(err)
 		}
 
 		utils.Log.Infof("Provider set to %s", currCtx.Provider)
@@ -270,17 +266,16 @@ mesheryctl system provider switch [provider]
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return ErrHealthCheckFailed(err)
 		}
 		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		userResponse := false
 
-		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			return err
 		}
 
 		focusedContext := tempContext
@@ -329,7 +324,7 @@ mesheryctl system provider reset
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			return err
 		}
 
 		focusedContext := tempContext
@@ -339,14 +334,12 @@ mesheryctl system provider reset
 
 		err = mctlCfg.SetCurrentContext(focusedContext)
 		if err != nil {
-			utils.Log.Error(ErrSetCurrentContext(err))
-			return nil
+			return ErrSetCurrentContext(err)
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return ErrGetCurrentContext(err)
 		}
 
 		currCtx.Provider = ""
@@ -355,8 +348,7 @@ mesheryctl system provider reset
 		viper.Set("contexts", mctlCfg.Contexts)
 		err = viper.WriteConfig()
 		if err != nil {
-			utils.Log.Error(ErrWriteConfig(err))
-			return nil
+			return ErrWriteConfig(err)
 		}
 
 		utils.Log.Info("Provider has been reset. You will be prompted to select a provider on next Meshery start. If not, log out or clear existing browser sessions.")
@@ -390,7 +382,7 @@ mesheryctl system provider reset
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			return err
 		}
 		err = viewProviderCmd.RunE(cmd, args)
 		if err != nil {
@@ -405,7 +397,7 @@ mesheryctl system provider reset
 }
 
 func init() {
-	viewProviderCmd.Flags().BoolVarP(&showProviderForAllContext, "all", "a", false, "Show provider for all contexts")
-	setProviderCmd.Flags().BoolVarP(&forceSetProvider, "force", "f", false, "Force set provider")
+	viewProviderCmd.Flags().BoolVarP(&providerViewFlags.All, "all", "a", false, "Show provider for all contexts")
+	setProviderCmd.Flags().BoolVarP(&providerSetFlags.Force, "force", "f", false, "Force set provider")
 	providerCmd.AddCommand(viewProviderCmd, listProviderCmd, setProviderCmd, switchProviderCmd, resetProviderCmd)
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/schemas/models/core"
 )
 
 type PatternResourcePersister struct {
@@ -13,8 +14,8 @@ type PatternResourcePersister struct {
 
 type PatternResourcePage struct {
 	Page       uint64             `json:"page,omitempty"`
-	PageSize   uint64             `json:"page_size,omitempty"`
-	TotalCount int                `json:"total_count,omitempty"`
+	PageSize   uint64             `json:"pageSize,omitempty"`
+	TotalCount int                `json:"totalCount,omitempty"`
 	Resources  []*PatternResource `json:"resources,omitempty"`
 }
 
@@ -31,11 +32,11 @@ func (prp *PatternResourcePersister) SavePatternResource(pr *PatternResource) (*
 	return pr, prp.DB.Create(pr).Error
 }
 
-func (prp *PatternResourcePersister) DeletePatternResource(id uuid.UUID) error {
+func (prp *PatternResourcePersister) DeletePatternResource(id core.Uuid) error {
 	return prp.DB.Model(&PatternResource{}).Where("id = ?", id).Update("deleted", true).Error
 }
 
-func (prp *PatternResourcePersister) GetPatternResource(id uuid.UUID) (*PatternResource, error) {
+func (prp *PatternResourcePersister) GetPatternResource(id core.Uuid) (*PatternResource, error) {
 	var pr PatternResource
 
 	err := prp.DB.First(&pr, id).Error

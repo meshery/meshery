@@ -48,7 +48,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 
 		// validate model name
 		if len(args) != 1 {
-			return ErrModelInitFromString(errInitOneArg)
+			return utils.ErrInvalidArgument(fmt.Errorf("%s", errInitOneArg))
 		}
 		modelName := args[0]
 		input := map[string]any{"name": modelName}
@@ -258,7 +258,7 @@ var initModelData = []struct {
 		// map file name to template key
 		files: nil,
 		beforeHook: func() {
-			utils.Log.Info("Adding sample connections...")
+			utils.Log.Info("Creating connections directory...")
 		},
 	},
 	{
@@ -266,7 +266,7 @@ var initModelData = []struct {
 		// map file name to template key
 		files: nil,
 		beforeHook: func() {
-			utils.Log.Info("Creating sample credentials...")
+			utils.Log.Info("Creating credentials directory...")
 		},
 	},
 }

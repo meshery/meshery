@@ -97,7 +97,19 @@ components:
   colorIcon: content/en/extensions/models/kube-arangodb/components/arango-platform-service/icons/color/arango-platform-service-color.svg
   whiteIcon: content/en/extensions/models/kube-arangodb/components/arango-platform-service/icons/white/arango-platform-service-white.svg
   description: 
-components-count: 22
+- name: arango-permission-policy
+  colorIcon: content/en/extensions/models/kube-arangodb/components/arango-permission-policy/icons/color/arango-permission-policy-color.svg
+  whiteIcon: content/en/extensions/models/kube-arangodb/components/arango-permission-policy/icons/white/arango-permission-policy-white.svg
+  description: 
+- name: arango-permission-role
+  colorIcon: content/en/extensions/models/kube-arangodb/components/arango-permission-role/icons/color/arango-permission-role-color.svg
+  whiteIcon: content/en/extensions/models/kube-arangodb/components/arango-permission-role/icons/white/arango-permission-role-white.svg
+  description: 
+- name: arango-permission-token
+  colorIcon: content/en/extensions/models/kube-arangodb/components/arango-permission-token/icons/color/arango-permission-token-color.svg
+  whiteIcon: content/en/extensions/models/kube-arangodb/components/arango-permission-token/icons/white/arango-permission-token-white.svg
+  description: 
+components-count: 25
 relationships: 
 relationship-count: 0
 featureList: [

@@ -346,7 +346,7 @@ func formatToTabs(data string) string {
 	return s
 }
 
-// AssertMeshkitErrorsEqual compares  relevant fields of two meshkit errors
+// AssertMeshkitErrorsEqual compares relevant fields of two meshkit errors
 func AssertMeshkitErrorsEqual(t *testing.T, got, expected error) {
 	t.Helper()
 	assert.Equal(t, reflect.TypeOf(got), reflect.TypeOf(expected), "error type mismatch")
@@ -746,6 +746,13 @@ func ResetCommandFlags(c *cobra.Command, t *testing.T) {
 		if err := f.Value.Set(f.DefValue); err != nil {
 			t.Fatalf("failed to reset flag %q: %v", f.Name, err)
 		}
+		f.Changed = false
+	})
+	c.PersistentFlags().VisitAll(func(f *pflag.Flag) {
+		if err := f.Value.Set(f.DefValue); err != nil {
+			t.Fatalf("failed to reset persistent flag %q: %v", f.Name, err)
+		}
+		f.Changed = false
 	})
 	for _, sub := range c.Commands() {
 		ResetCommandFlags(sub, t)

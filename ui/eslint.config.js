@@ -25,6 +25,305 @@ const patchedNextConfig = nextConfig.map((cfg) => {
   return cfg;
 });
 
+// Files allowed to import directly from the legacy MUI / RJSF packages.
+//
+// Phase 2 (#18737) completed the app-code sweep: every `@mui/*` and
+// `@rjsf/mui` import outside the shared wrappers has been migrated to
+// `@sistent/sistent` or the canonical icon barrel at `assets/icons/`.
+//
+// The remaining boundaries are:
+//   - `assets/icons/index.ts` — the canonical icon barrel itself, which
+//     centrally re-exports `@mui/icons-material` glyphs (#18736, #18744).
+//   - Shared wrappers under `components/shared/{DatePicker,TreeView,FormFields}/`
+//     opt in via a local `eslint-disable no-restricted-imports` comment
+//     (line-scoped `-next-line` for single-import files, file-scoped block
+//     comment for the TreeView wrapper that re-exports several names)
+//     rather than relying on this allowlist.
+const legacyRestrictedImportOffenders = ['assets/icons/index.ts'];
+
+const legacyLiteralColorOffenders = [
+  'components/dashboard/charts/ResourceUtilizationChart.tsx',
+  'components/dashboard/components.tsx',
+  'components/dashboard/images/info-icon.tsx',
+  'components/dashboard/images/meshery-icon.tsx',
+  'components/dashboard/style.ts',
+  'components/designs/lifecycle/DryRun.tsx',
+  'components/designs/lifecycle/ValidateDesign.tsx',
+  'components/designs/lifecycle/common.tsx',
+  'components/general/TipsCarousel.tsx',
+  'components/general/error-404/CurrentSession.tsx',
+  'components/general/error-404/socials/styles.tsx',
+  'components/general/error-404/styles.tsx',
+  'components/layout/Header/Header.styles.tsx',
+  'components/layout/Header/Header.tsx',
+  'components/environments/environment-card.tsx',
+  'components/environments/index.tsx',
+  'components/environments/styles.tsx',
+  'components/lifecycle/general/empty-state/curvedArrowIcon.tsx',
+  'components/lifecycle/general/empty-state/index.tsx',
+  'components/lifecycle/general/flip-card/index.tsx',
+  'components/workspaces/index.tsx',
+  'components/shared/LoadingState/Animations/AnimatedFilter.tsx',
+  'components/shared/LoadingState/Animations/AnimatedLightMeshery.tsx',
+  'components/shared/LoadingState/Animations/AnimatedMeshPattern.tsx',
+  'components/shared/LoadingState/Animations/AnimatedMeshery.tsx',
+  'components/shared/LoadingState/Animations/AnimatedMesheryCSS.tsx',
+  'components/shared/LoadingState/LoadingComponentServer.tsx',
+  'components/MeshAdapterConfigComponent.tsx',
+  'components/MesheryAdapterPlayComponent.tsx',
+  'components/MesheryChart.tsx',
+  'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/ArrayFieldTemlate.tsx',
+  'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/CustomBaseInput.tsx',
+  'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/ObjectFieldTemplate.tsx',
+  'components/meshery-mesh-interface/PatternServiceForm.tsx',
+  'components/designs/patterns/MesheryPatternCard.tsx',
+  'components/designs/patterns/MesheryPatternGridView.tsx',
+  'components/designs/patterns/MesheryPatterns.tsx',
+  'components/designs/patterns/style.tsx',
+  'components/layout/Navigator/NavigatorExtension.tsx',
+  'components/layout/NotificationCenter/constants.tsx',
+  'components/layout/NotificationCenter/formatters/relationship_evaluation.tsx',
+  'components/layout/NotificationCenter/index.tsx',
+  'components/layout/NotificationCenter/notificationCenter.style.tsx',
+  'components/performance/PerformanceCard.tsx',
+  'components/performance/PerformanceResults.tsx',
+  'components/performance/assets/facebookIcon.tsx',
+  'components/performance/assets/linkedinIcon.tsx',
+  'components/performance/assets/twitterIcon.tsx',
+  'components/performance/index.tsx',
+  'components/performance/style.tsx',
+  'components/settings/MesherySettings.tsx',
+  'components/registry/MeshModelDetails.tsx',
+  'components/registry/helper.ts',
+  'components/workspaces/SpacesSwitcher/WorkspaceSwitcher.tsx',
+  'components/workspaces/SpacesSwitcher/styles.tsx',
+  'components/typing-filter/style.tsx',
+  'components/user-preferences/index.tsx',
+  'components/user-preferences/style.tsx',
+  'components/designs/configurator/CustomBreadCrumb.tsx',
+  'components/designs/configurator/MeshModel/styledComponents/AppBar.tsx',
+  'components/designs/configurator/MeshModel/utils.tsx',
+  'components/designs/configurator/NameToIcon.tsx',
+  'components/connections/meshSync/Stepper/Notification.tsx',
+  'components/connections/meshSync/Stepper/StepperContent.tsx',
+  'components/connections/meshSync/Stepper/StepperContentWrapper.tsx',
+  'components/connections/meshSync/Stepper/index.tsx',
+  'components/connections/styles.tsx',
+  'components/filters/Filters.tsx',
+  'components/filters/FiltersGrid.tsx',
+  'components/load-test-timer-dialog.tsx',
+  'components/telemetry/grafana/GrafanaCustomGaugeChart.tsx',
+  'components/telemetry/grafana/GrafanaDateRangePicker.tsx',
+  'css/icons.styles.ts',
+  'pages/extension/AccessMesheryModal.tsx',
+  'utils/charts.ts',
+  'utils/custom-search.tsx',
+  'utils/lightenOrDarkenColor.ts',
+];
+
+const legacyMaxLineOffenders = [
+  'components/dashboard/resources/configuration/config.tsx',
+  'components/dashboard/resources/workloads/config.tsx',
+  'components/MesheryAdapterPlayComponent.tsx',
+  'components/designs/patterns/MesheryPatterns.tsx',
+  'components/performance/index.tsx',
+  'components/connections/ConnectionTable.tsx',
+  'components/filters/Filters.tsx',
+];
+
+// Files currently in the 600–1000 line "soft" range. They exceed the 600-line
+// proactive warning threshold (§8.4) but stay under the hard 1000-line ceiling.
+// Allowlisted so CI stays green; entries leave the list as files get split up.
+const legacyMaxLineSoftOffenders = [
+  'components/dashboard/resources/network/config.tsx',
+  'components/environments/index.tsx',
+  'components/layout/Navigator/Navigator.tsx',
+  'components/performance/PerformanceResults.tsx',
+  'components/registry/Stepper/UrlStepper.tsx',
+  'components/user-preferences/index.tsx',
+  'components/connections/meshSync/index.tsx',
+  'components/telemetry/grafana/GrafanaCustomChart.tsx',
+  'components/telemetry/grafana/GrafanaDateRangePicker.tsx',
+  // This config file itself: the legacy allowlists above push it past 600
+  // lines. Excluding it from the soft cap until the lists thin out naturally.
+  'eslint.config.js',
+  'pages/_app.tsx',
+];
+
+// Files that currently use inline `style={{ ... }}` props. The §8.3 guardrail
+// nudges new code toward styled() from @sistent/sistent; existing offenders
+// stay allowlisted until they are migrated.
+const legacyInlineStyleOffenders = [
+  'assets/icons/shapes/Octagon.tsx',
+  'components/AppComponents.tsx',
+  'components/BBChart.tsx',
+  'components/shared/Modal/ConfirmationModal.tsx',
+  'components/dashboard/UnsavedChangesModal.tsx',
+  'components/dashboard/charts/ConnectionCharts.tsx',
+  'components/dashboard/charts/DashboardMeshModelGraph.tsx',
+  'components/dashboard/charts/KubernetesConnectionChart.tsx',
+  'components/dashboard/charts/MesheryConfigurationCharts.tsx',
+  'components/dashboard/charts/WorkloadChart.tsx',
+  'components/dashboard/components.tsx',
+  'components/dashboard/debounceWidthProvider.tsx',
+  'components/dashboard/images/info-icon.tsx',
+  'components/dashboard/images/meshery-icon.tsx',
+  'components/dashboard/index.tsx',
+  'components/dashboard/overview.tsx',
+  'components/dashboard/resources/network/config.tsx',
+  'components/dashboard/resources/nodes/config.tsx',
+  'components/dashboard/resources/resources-table.tsx',
+  'components/dashboard/resources/security/config.tsx',
+  'components/dashboard/resources/sortable-table-cell.tsx',
+  'components/dashboard/tabpanel.tsx',
+  'components/dashboard/utils.tsx',
+  'components/dashboard/view-component.tsx',
+  'components/dashboard/view.tsx',
+  'components/dashboard/widgets/getting-started/data.tsx',
+  'components/data-formatter/index.tsx',
+  'components/DatabaseSummary.tsx',
+  'components/designs/lifecycle/DeployStepper.tsx',
+  'components/designs/lifecycle/DeploymentSummary.tsx',
+  'components/designs/lifecycle/DryRun.tsx',
+  'components/designs/lifecycle/SelectDeploymentTarget.tsx',
+  'components/designs/lifecycle/ValidateDesign.tsx',
+  'components/designs/lifecycle/common.tsx',
+  'components/designs/lifecycle/finalizeDeployment.tsx',
+  'components/DuplicatesDataTable.tsx',
+  'components/shared/Modal/ExportModal.tsx',
+  'components/FlipCard.tsx',
+  'components/general/ConnectClustersBtn.tsx',
+  'components/general/CreateDesignBtn.tsx',
+  'components/shared/ErrorBoundary/ErrorBoundary.tsx',
+  'components/shared/Modal/ConnectionModal.tsx',
+  'components/shared/Modal/Information/InfoModal.tsx',
+  'components/shared/Modal/Modal.tsx',
+  'components/general/TipsCarousel.tsx',
+  'components/general/error-404/index.tsx',
+  'components/layout/Header/Header.tsx',
+  'components/layout/Header/HeaderMenu.tsx',
+  'components/lifecycle/general/empty-state/index.tsx',
+  'components/workspaces/WorkspaceActionList.tsx',
+  'components/workspaces/WorkspaceDataTable.tsx',
+  'components/workspaces/WorkspaceGridView.tsx',
+  'components/workspaces/index.tsx',
+  'components/shared/LoadingState/Animations/AnimatedMeshSync.tsx',
+  'components/shared/LoadingState/LoadingComponent.tsx',
+  'components/shared/LoadingState/LoadingComponentServer.tsx',
+  'components/MeshAdapterConfigComponent.tsx',
+  'components/MesheryAdapterPlayComponent.tsx',
+  'components/MesheryChart.tsx',
+  'components/MesheryCredentialComponent.tsx',
+  'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/Accordion.tsx',
+  'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/ArrayFieldTemlate.tsx',
+  'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/CustomBaseInput.tsx',
+  'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/CustomCheckboxWidget.tsx',
+  'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/CustomFileWidget.tsx',
+  'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/CustomSelectWidget.tsx',
+  'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/ObjectFieldTemplate.tsx',
+  'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/WrapIfAdditionalTemplate.tsx',
+  'components/meshery-mesh-interface/PatternServiceForm.tsx',
+  'components/designs/patterns/ActionButton.tsx',
+  'components/designs/patterns/ActionPopover.tsx',
+  'components/designs/patterns/CustomToolbarSelect.tsx',
+  'components/designs/patterns/MesheryPatternCard.tsx',
+  'components/designs/patterns/MesheryPatternGridView.tsx',
+  'components/designs/patterns/MesheryPatterns.tsx',
+  'components/MesheryPlayComponent.tsx',
+  'components/MesheryProgressBar.tsx',
+  'components/MesherySettingsEnvButtons.tsx',
+  'components/layout/Navigator/Navigator.tsx',
+  'components/layout/Navigator/NavigatorExtension.tsx',
+  'components/layout/NotificationCenter/formatters/common.tsx',
+  'components/layout/NotificationCenter/formatters/error.tsx',
+  'components/layout/NotificationCenter/formatters/meshsync_events.tsx',
+  'components/layout/NotificationCenter/formatters/model_registration.tsx',
+  'components/layout/NotificationCenter/formatters/relationship_evaluation.tsx',
+  'components/layout/NotificationCenter/index.tsx',
+  'components/layout/NotificationCenter/metadata.tsx',
+  'components/layout/NotificationCenter/notification.tsx',
+  'components/performance/Dashboard.tsx',
+  'components/performance/NodeDetails.tsx',
+  'components/performance/PerformanceCalendar.tsx',
+  'components/performance/PerformanceCard.tsx',
+  'components/performance/PerformanceProfileGrid.tsx',
+  'components/performance/PerformanceProfiles.tsx',
+  'components/performance/PerformanceResults.tsx',
+  'components/performance/assets/facebookIcon.tsx',
+  'components/performance/assets/linkedinIcon.tsx',
+  'components/performance/assets/twitterIcon.tsx',
+  'components/performance/index.tsx',
+  'components/ReactSelectWrapper.tsx',
+  'components/relationship-builder/CreateRelationshipModal.tsx',
+  'components/relationship-builder/RelationshipFormStepper.tsx',
+  'components/settings/MesherySettings.tsx',
+  'components/settings/MesherySettingsPerformanceComponent.tsx',
+  'components/registry/ComponentTree.tsx',
+  'components/registry/CreateModelModal.tsx',
+  'components/registry/ImportModel.tsx',
+  'components/registry/ImportModelModal.tsx',
+  'components/registry/MeshModelComponent.tsx',
+  'components/registry/MeshModelDetails.tsx',
+  'components/registry/MesheryTreeView.tsx',
+  'components/registry/MesheryTreeViewItem.tsx',
+  'components/registry/MesheryTreeViewModel.tsx',
+  'components/registry/MesheryTreeViewRegistrants.tsx',
+  'components/registry/RegistryModal.tsx',
+  'components/registry/RelationshipTree.tsx',
+  'components/registry/Stepper/CSVStepper.tsx',
+  'components/registry/Stepper/UrlStepper.tsx',
+  'components/registry/StyledTreeItem.tsx',
+  'components/workspaces/SpacesSwitcher/DesignViewListItem.tsx',
+  'components/workspaces/SpacesSwitcher/MainDesignsContent.tsx',
+  'components/workspaces/SpacesSwitcher/MainViewsContent.tsx',
+  'components/workspaces/SpacesSwitcher/MenuComponent.tsx',
+  'components/workspaces/SpacesSwitcher/MobileViewSwitcher.tsx',
+  'components/workspaces/SpacesSwitcher/MyDesignsContent.tsx',
+  'components/workspaces/SpacesSwitcher/MyViewsContent.tsx',
+  'components/workspaces/SpacesSwitcher/RecentContent.tsx',
+  'components/workspaces/SpacesSwitcher/SharedContent.tsx',
+  'components/workspaces/SpacesSwitcher/SpaceSwitcher.tsx',
+  'components/workspaces/SpacesSwitcher/WorkspaceContent.tsx',
+  'components/workspaces/SpacesSwitcher/WorkspaceModal.tsx',
+  'components/workspaces/SpacesSwitcher/WorkspaceSwitcher.tsx',
+  'components/workspaces/SpacesSwitcher/components.tsx',
+  'components/TroubleshootingComponent.tsx',
+  'components/typing-filter/index.tsx',
+  'components/user-preferences/index.tsx',
+  'components/shared/Modal/ViewInfoModal.tsx',
+  'components/ViewSwitch.tsx',
+  'components/designs/configurator/MeshModel/LazyComponentForm.tsx',
+  'components/designs/configurator/MeshModel/index.tsx',
+  'components/designs/configurator/NameToIcon.tsx',
+  'components/connections/ConnectionChip.tsx',
+  'components/connections/ConnectionTable.tsx',
+  'components/connections/common/index.tsx',
+  'components/connections/index.tsx',
+  'components/connections/meshSync/MeshSyncEmptyState.tsx',
+  'components/connections/meshSync/RegisterConnectionModal.tsx',
+  'components/connections/meshSync/Stepper/Notification.tsx',
+  'components/connections/meshSync/Stepper/StepperContent.tsx',
+  'components/connections/meshSync/Stepper/StepperContentWrapper.tsx',
+  'components/connections/meshSync/index.tsx',
+  'components/connections/metadata.tsx',
+  'components/extensions/adapters/adapters.tsx',
+  'components/filters/CatalogFilter.tsx',
+  'components/filters/Filters.tsx',
+  'components/filters/FiltersCard.tsx',
+  'components/filters/FiltersGrid.tsx',
+  'components/layout/AppShell/layout.tsx',
+  'components/multi-select-wrapper.tsx',
+  'components/layout/Navigator/navigatorComponents.tsx',
+  'components/telemetry/grafana/GrafanaComponent.tsx',
+  'components/telemetry/prometheus/PrometheusSelectionComponent.tsx',
+  'pages/_app.tsx',
+  'pages/_document.tsx',
+  'pages/extension/AccessMesheryModal.tsx',
+  'pages/extensions.tsx',
+  'utils/custom-search.tsx',
+  'utils/utils.tsx',
+];
+
 module.exports = [
   // Global ignores (replaces .eslintignore — not supported in flat config)
   {
@@ -134,6 +433,207 @@ module.exports = [
       'no-dupe-keys': 'error',
       'react/prop-types': 'off',
       'prettier/prettier': ['error', { endOfLine: 'lf' }],
+
+      // ---------------------------------------------------------------------
+      // UI restructure guardrails (warn mode, phase 1).
+      //
+      // These rules encode the target architecture: one design system
+      // (@sistent/sistent), one theme source (@/theme), and a size budget
+      // for component files. They ship as warnings so CI stays green on
+      // day one; a later phase will allowlist today's offenders and promote
+      // the rules to errors.
+      // ---------------------------------------------------------------------
+
+      // Ban Material UI and legacy theme imports. @sistent/sistent is the
+      // only UI kit; @/theme is the approved Phase 1 theme entry point.
+      'no-restricted-imports': [
+        'warn',
+        {
+          paths: [
+            {
+              name: '@/theme/index',
+              message: 'Use @/theme; do not deep-import the local theme entry point.',
+            },
+            {
+              name: '@mui/material',
+              message: 'Use @sistent/sistent instead.',
+            },
+            {
+              name: '@mui/icons-material',
+              message: 'Use @sistent/sistent icons, or add an SVG component to ui/assets/icons.',
+            },
+            {
+              name: '@mui/x-date-pickers',
+              message:
+                'Wrap @mui/x-date-pickers in a single shared primitive; do not import it directly.',
+            },
+            {
+              name: '@mui/x-tree-view',
+              message:
+                'Wrap @mui/x-tree-view in a single shared primitive; do not import it directly.',
+            },
+            {
+              name: '@rjsf/mui',
+              message: 'Use the shared RJSF wrapper; do not import @rjsf/mui directly.',
+            },
+            {
+              name: '@/themes',
+              message: 'Use @/theme, the approved Phase 1 theme entry point.',
+            },
+            {
+              name: '@/themes/app',
+              message: 'Use @/theme and theme.palette.* instead of the legacy Colors object.',
+            },
+            {
+              name: '@/themes/index',
+              message: 'Use @/theme and theme.palette.* instead of NOTIFICATIONCOLORS.',
+            },
+            {
+              name: '@/constants/colors',
+              message: 'Use @/theme and theme.palette.* instead of legacy color constants.',
+            },
+          ],
+          patterns: [
+            {
+              group: ['@mui/*'],
+              message: 'Use @sistent/sistent instead.',
+            },
+            {
+              group: ['@material-ui/*'],
+              message: 'Material UI v4 is deprecated in this project — use @sistent/sistent.',
+            },
+          ],
+        },
+      ],
+
+      // Size budget for component files. 600 lines is the proactive warning
+      // threshold; current files above 600 are allowlisted (legacyMaxLineSoft
+      // Offenders for 600–1000, legacyMaxLineOffenders for >1000) so CI stays
+      // green while the plan refactors them. The 1000-line hard ceiling from
+      // the restructure plan is tracked separately by scripts/audit-size.js
+      // (run via `npm run audit:size`) rather than by ESLint.
+      'max-lines': ['warn', { max: 600, skipComments: true, skipBlankLines: true }],
+    },
+  },
+
+  // ---------------------------------------------------------------------
+  // Ban hex (#RRGGBB) and rgb()/rgba() literals in source files.
+  //
+  // Colors must come from theme.palette.* (or be composed with alpha() /
+  // lighten() / darken() from @sistent/sistent). The only places allowed
+  // to contain a literal color are:
+  //
+  //   - ui/theme/**       (the theme module itself)
+  //   - ui/themes/**      (legacy theme module, scheduled for deletion)
+  //   - ui/assets/**      (SVG icons encoded as React components)
+  //   - ui/constants/**   (legacy color constants, scheduled for deletion)
+  //   - ui/lib/**         (third-party integration helpers)
+  //   - ui/public/**      (static assets)
+  // ---------------------------------------------------------------------
+  {
+    files: ['**/*.{ts,tsx,js,jsx}'],
+    ignores: [
+      'theme/**',
+      'themes/**',
+      'assets/**',
+      'constants/**',
+      'lib/**',
+      'public/**',
+      'tests/**',
+      'scripts/**',
+      'eslint.config.js',
+    ],
+    rules: {
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector: 'Literal[value=/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/]',
+          message: 'Hex color literals are forbidden outside ui/theme/. Use theme.palette.*.',
+        },
+        {
+          selector: 'Literal[value=/rgba?\\(/]',
+          message:
+            'rgb()/rgba() literals are forbidden outside ui/theme/. Use theme.palette.* (or alpha() from @sistent/sistent).',
+        },
+      ],
+    },
+  },
+
+  // ---------------------------------------------------------------------
+  // Ban inline `style={{ ... }}` props in component code (§8.3).
+  //
+  // Styling belongs in styled() factories from @sistent/sistent. The inline
+  // `style` prop is reserved for dynamic geometry (positions, sizes computed
+  // at runtime) and should not be used for theme-derived values such as
+  // colors, typography, or spacing tokens.
+  //
+  // Scoped to .tsx/.jsx component sources. The same dirs the hex-literal
+  // guardrail ignores are ignored here (theme/themes/assets/lib/public are
+  // not component code, and tests/scripts/the config itself are tooling).
+  // ---------------------------------------------------------------------
+  {
+    files: ['**/*.{tsx,jsx}'],
+    ignores: [
+      'theme/**',
+      'themes/**',
+      'assets/**',
+      'constants/**',
+      'lib/**',
+      'public/**',
+      'tests/**',
+      'scripts/**',
+      'eslint.config.js',
+    ],
+    rules: {
+      'react/forbid-dom-props': [
+        'warn',
+        {
+          forbid: [
+            {
+              propName: 'style',
+              message:
+                'Use styled() from @sistent/sistent; inline style is reserved for dynamic geometry.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  // Current legacy violations that are being refactored incrementally.
+  {
+    files: legacyRestrictedImportOffenders,
+    rules: {
+      'no-restricted-imports': 'off',
+    },
+  },
+  {
+    files: legacyLiteralColorOffenders,
+    rules: {
+      'no-restricted-syntax': 'off',
+    },
+  },
+  {
+    files: legacyInlineStyleOffenders,
+    rules: {
+      'react/forbid-dom-props': 'off',
+    },
+  },
+  // Hard 1000-line ceiling files: disable the 600-line warning entirely so
+  // they are not double-reported. They are tracked separately in the giant-
+  // files audit and will be refactored in phase 5.
+  {
+    files: legacyMaxLineOffenders,
+    rules: {
+      'max-lines': 'off',
+    },
+  },
+  // 600–1000 line "soft" offenders: silence the 600-line warning for these
+  // existing files only. New files crossing 600 lines will still warn.
+  {
+    files: legacyMaxLineSoftOffenders,
+    rules: {
+      'max-lines': 'off',
     },
   },
 

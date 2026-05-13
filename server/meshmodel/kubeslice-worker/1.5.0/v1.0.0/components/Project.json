@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -80,7 +80,7 @@
       ],
       "key": "",
       "kind": "mutate",
-      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "schemaVersion": "capability.meshery.io/v1beta1",
       "status": "enabled",
       "subType": "",
       "type": "style",
@@ -94,7 +94,7 @@
       ],
       "key": "",
       "kind": "mutate",
-      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "schemaVersion": "capability.meshery.io/v1beta1",
       "status": "enabled",
       "subType": "shape",
       "type": "style",
@@ -108,7 +108,7 @@
       ],
       "key": "",
       "kind": "interaction",
-      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "schemaVersion": "capability.meshery.io/v1beta1",
       "status": "enabled",
       "subType": "compoundDnd",
       "type": "graph",
@@ -131,6 +131,7 @@
     "kind": "Project",
     "schema": "{\n \"description\": \"Project is the Schema for the projects API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ProjectSpec defines the desired state of Project\",\n   \"properties\": {\n    \"defaultSliceCreation\": {\n     \"description\": \"If defaultSliceCreation is true, then the default slice will be created\",\n     \"type\": \"boolean\"\n    },\n    \"serviceAccount\": {\n     \"description\": \"ServiceAccount is a field of Project. Edit project_types.go to remove/update\",\n     \"properties\": {\n      \"readOnly\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"readWrite\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Project\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

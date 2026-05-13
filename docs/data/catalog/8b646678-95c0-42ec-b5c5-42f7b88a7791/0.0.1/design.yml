@@ -1,0 +1,1524 @@
+{
+  "id": "8b646678-95c0-42ec-b5c5-42f7b88a7791",
+  "name": "fluentbit-log-pipeline",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.80",
+  "metadata": {
+    "resolvedAliases": {}
+  },
+  "components": [
+    {
+      "id": "8bbe24c1-2e43-4c79-8dcf-b27d83ccee7f",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "filter-te",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ec04c8d7-1b4b-2b6f-faf8-785c3c0c6352",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "fluent-operator",
+        "displayName": "Fluent Operator",
+        "status": "enabled",
+        "registrant": {
+          "id": "82e5bc76-4468-9d29-2e5f-94ccdbabd618",
+          "name": "Artifact Hub",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "artifacthub",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-07-04T13:54:41.033162928Z",
+          "updated_at": "2025-07-04T13:54:41.033162928Z",
+          "deleted_at": "0001-01-01T00:00:00Z"
+        },
+        "connection_id": "82e5bc76-4468-9d29-2e5f-94ccdbabd618",
+        "category": {
+          "id": "9f7009b1-f686-a5a1-059f-a7488946e6f1",
+          "name": "Observability and Analysis"
+        },
+        "subCategory": "Logging",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#7bb09f",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/fluent-operator/color/fluent-operator-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/fluent-operator/white/fluent-operator-white.svg"
+        },
+        "model": {
+          "version": "0.1.0"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 44.482895,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 794.2148760330576,
+          "y": 211.01003599560946
+        },
+        "primaryColor": "#c67b2b",
+        "secondaryColor": "#00D3A9",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/fluent-operator/color/filter-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/fluent-operator/white/filter-white.svg",
+        "width": 47.891544,
+        "z-index": 2
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "https://tanmay-bhat.github.io/helm-charts/fluent-operator-1.0.2.tgz"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        },
+        "spec": {
+          "filters": []
+        }
+      },
+      "component": {
+        "version": "fluentd.fluent.io/v1alpha1",
+        "kind": "Filter",
+        "schema": ""
+      }
+    },
+    {
+      "id": "d410ff9e-76d7-454a-a800-be6eba005b52",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "fluent-bit-qu",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ec04c8d7-1b4b-2b6f-faf8-785c3c0c6352",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "fluent-operator",
+        "displayName": "Fluent Operator",
+        "status": "enabled",
+        "registrant": {
+          "id": "82e5bc76-4468-9d29-2e5f-94ccdbabd618",
+          "name": "Artifact Hub",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "artifacthub",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-07-04T13:54:41.033162928Z",
+          "updated_at": "2025-07-04T13:54:41.033162928Z",
+          "deleted_at": "0001-01-01T00:00:00Z"
+        },
+        "connection_id": "82e5bc76-4468-9d29-2e5f-94ccdbabd618",
+        "category": {
+          "id": "9f7009b1-f686-a5a1-059f-a7488946e6f1",
+          "name": "Observability and Analysis"
+        },
+        "subCategory": "Logging",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#7bb09f",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/fluent-operator/color/fluent-operator-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/fluent-operator/white/fluent-operator-white.svg"
+        },
+        "model": {
+          "version": "0.1.0"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 63.71407,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 653.3801652892562,
+          "y": 209.5495867768595
+        },
+        "primaryColor": "rgb(0,180,216)",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/fluent-operator/color/fluentbit-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/fluent-operator/white/fluentbit-white.svg",
+        "width": 65.60927,
+        "z-index": 0
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "https://tanmay-bhat.github.io/helm-charts/fluent-operator-1.0.2.tgz"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        },
+        "spec": {
+          "affinity": {
+            "nodeAffinity": {
+              "preferredDuringSchedulingIgnoredDuringExecution": [],
+              "requiredDuringSchedulingIgnoredDuringExecution": {
+                "nodeSelectorTerms": []
+              }
+            },
+            "podAffinity": {
+              "preferredDuringSchedulingIgnoredDuringExecution": [],
+              "requiredDuringSchedulingIgnoredDuringExecution": []
+            },
+            "podAntiAffinity": {
+              "preferredDuringSchedulingIgnoredDuringExecution": [],
+              "requiredDuringSchedulingIgnoredDuringExecution": []
+            }
+          },
+          "args": [],
+          "imagePullSecrets": [],
+          "positionDB": {
+            "cephfs": {
+              "monitors": []
+            },
+            "configMap": {
+              "items": []
+            },
+            "downwardAPI": {
+              "items": []
+            },
+            "ephemeral": {
+              "volumeClaimTemplate": {
+                "spec": {
+                  "accessModes": [],
+                  "selector": {
+                    "matchExpressions": []
+                  }
+                }
+              }
+            },
+            "fc": {
+              "targetWWNs": [],
+              "wwids": []
+            },
+            "iscsi": {
+              "portals": []
+            },
+            "projected": {
+              "sources": []
+            },
+            "rbd": {
+              "monitors": []
+            },
+            "scaleIO": {
+              "secretRef": {}
+            },
+            "secret": {
+              "items": []
+            }
+          },
+          "secrets": [],
+          "tolerations": [],
+          "volumes": [],
+          "volumesMounts": []
+        }
+      },
+      "component": {
+        "version": "fluentbit.fluent.io/v1alpha2",
+        "kind": "FluentBit",
+        "schema": ""
+      }
+    },
+    {
+      "id": "a203888b-4a62-4f11-91fb-c42d238ef416",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "fluent-bit-config",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "b0bfcbc1-a76f-8678-4cae-ebf470050668",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "fluentbit-operator",
+        "displayName": "Fluentbit Operator",
+        "status": "enabled",
+        "registrant": {
+          "id": "82e5bc76-4468-9d29-2e5f-94ccdbabd618",
+          "name": "Artifact Hub",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "artifacthub",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-07-04T13:54:41.033162928Z",
+          "updated_at": "2025-07-04T13:54:41.033162928Z",
+          "deleted_at": "0001-01-01T00:00:00Z"
+        },
+        "connection_id": "82e5bc76-4468-9d29-2e5f-94ccdbabd618",
+        "category": {
+          "id": "9f7009b1-f686-a5a1-059f-a7488946e6f1",
+          "name": "Observability and Analysis"
+        },
+        "subCategory": "Logging",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#7bb09f",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/fluentbit-operator/color/fluentbit-operator-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/fluentbit-operator/white/fluentbit-operator-white.svg"
+        },
+        "model": {
+          "version": "0.1.0"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-image": "https://img.icons8.com/?size=100\u0026id=30450\u0026format=png\u0026color=FFFFFF",
+        "background-image-opacity": 1,
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 51.18237,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 651.2396694214873,
+          "y": 63.90259797908051
+        },
+        "primaryColor": "#7bb09f",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/fluentbit-operator/color/fluentbitconfig-color.svg",
+        "svgComplete": "",
+        "svgWhite": "https://img.icons8.com/?size=100\u0026id=30450\u0026format=png\u0026color=FFFFFF",
+        "width": 52.625492,
+        "z-index": 5
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "https://charts.kubesphere.io/main/fluentbit-operator-0.1.0.tgz"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "fluent-bit-config",
+          "namespace": "default"
+        },
+        "spec": {
+          "filterSelector": {
+            "matchExpressions": []
+          },
+          "inputSelector": {
+            "matchExpressions": []
+          },
+          "outputSelector": {
+            "matchExpressions": []
+          },
+          "parserSelector": {
+            "matchExpressions": []
+          }
+        }
+      },
+      "component": {
+        "version": "logging.kubesphere.io/v1alpha2",
+        "kind": "FluentBitConfig",
+        "schema": ""
+      }
+    },
+    {
+      "id": "e75e44c4-ec1d-4f14-ba7b-b2fe7611588e",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "input-me",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "b0bfcbc1-a76f-8678-4cae-ebf470050668",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "fluentbit-operator",
+        "displayName": "Fluentbit Operator",
+        "status": "enabled",
+        "registrant": {
+          "id": "82e5bc76-4468-9d29-2e5f-94ccdbabd618",
+          "name": "Artifact Hub",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "artifacthub",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-07-04T13:54:41.033162928Z",
+          "updated_at": "2025-07-04T13:54:41.033162928Z",
+          "deleted_at": "0001-01-01T00:00:00Z"
+        },
+        "connection_id": "82e5bc76-4468-9d29-2e5f-94ccdbabd618",
+        "category": {
+          "id": "9f7009b1-f686-a5a1-059f-a7488946e6f1",
+          "name": "Observability and Analysis"
+        },
+        "subCategory": "Logging",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#7bb09f",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/fluentbit-operator/color/fluentbit-operator-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/fluentbit-operator/white/fluentbit-operator-white.svg"
+        },
+        "model": {
+          "version": "0.1.0"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 51.751728,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 509.2561983471075,
+          "y": 210.2107438016529
+        },
+        "primaryColor": "rgb(174,62,201)",
+        "secondaryColor": "#00D3A9",
+        "shape": "hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/fluentbit-operator/color/input-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/fluentbit-operator/white/input-white.svg",
+        "width": 86.25993,
+        "z-index": 6
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "https://charts.kubesphere.io/main/fluentbit-operator-0.1.0.tgz"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        },
+        "spec": {
+          "systemd": {
+            "systemdFilter": []
+          },
+          "tail": {
+            "parserN": []
+          }
+        }
+      },
+      "component": {
+        "version": "logging.kubesphere.io/v1alpha2",
+        "kind": "Input",
+        "schema": ""
+      }
+    },
+    {
+      "id": "1a11afdf-f15a-4eea-85cb-38798be835d6",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "output-dl",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "ec04c8d7-1b4b-2b6f-faf8-785c3c0c6352",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "fluent-operator",
+        "displayName": "Fluent Operator",
+        "status": "enabled",
+        "registrant": {
+          "id": "82e5bc76-4468-9d29-2e5f-94ccdbabd618",
+          "name": "Artifact Hub",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "artifacthub",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-07-04T13:54:41.033162928Z",
+          "updated_at": "2025-07-04T13:54:41.033162928Z",
+          "deleted_at": "0001-01-01T00:00:00Z"
+        },
+        "connection_id": "82e5bc76-4468-9d29-2e5f-94ccdbabd618",
+        "category": {
+          "id": "9f7009b1-f686-a5a1-059f-a7488946e6f1",
+          "name": "Observability and Analysis"
+        },
+        "subCategory": "Logging",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#7bb09f",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/fluent-operator/color/fluent-operator-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/fluent-operator/white/fluent-operator-white.svg"
+        },
+        "model": {
+          "version": "0.1.0"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 48.023922,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 946.2809917355372,
+          "y": 207.7042508716425
+        },
+        "primaryColor": "#2ec639",
+        "secondaryColor": "#00D3A9",
+        "shape": "hexagon",
+        "svgColor": "ui/public/static/img/meshmodels/fluent-operator/color/output-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/fluent-operator/white/output-white.svg",
+        "width": 79.293106,
+        "z-index": 3
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "https://tanmay-bhat.github.io/helm-charts/fluent-operator-1.0.2.tgz"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        },
+        "spec": {
+          "outputs": []
+        }
+      },
+      "component": {
+        "version": "fluentd.fluent.io/v1alpha1",
+        "kind": "Output",
+        "schema": ""
+      }
+    },
+    {
+      "id": "dd869d65-9431-4e91-a61c-f893efeb7efc",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "parser-cv",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "b0bfcbc1-a76f-8678-4cae-ebf470050668",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "fluentbit-operator",
+        "displayName": "Fluentbit Operator",
+        "status": "enabled",
+        "registrant": {
+          "id": "82e5bc76-4468-9d29-2e5f-94ccdbabd618",
+          "name": "Artifact Hub",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "artifacthub",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-07-04T13:54:41.033162928Z",
+          "updated_at": "2025-07-04T13:54:41.033162928Z",
+          "deleted_at": "0001-01-01T00:00:00Z"
+        },
+        "connection_id": "82e5bc76-4468-9d29-2e5f-94ccdbabd618",
+        "category": {
+          "id": "9f7009b1-f686-a5a1-059f-a7488946e6f1",
+          "name": "Observability and Analysis"
+        },
+        "subCategory": "Logging",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#7bb09f",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/fluentbit-operator/color/fluentbit-operator-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/fluentbit-operator/white/fluentbit-operator-white.svg"
+        },
+        "model": {
+          "version": "0.1.0"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 44.21532,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 652.892561983471,
+          "y": 353.15879632618794
+        },
+        "primaryColor": "#b1a615",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/fluentbit-operator/color/parser-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/fluentbit-operator/white/parser-white.svg",
+        "width": 54.02154,
+        "z-index": 7
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "https://charts.kubesphere.io/main/fluentbit-operator-0.1.0.tgz"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        },
+        "spec": {
+          "decoders": []
+        }
+      },
+      "component": {
+        "version": "logging.kubesphere.io/v1alpha2",
+        "kind": "Parser",
+        "schema": ""
+      }
+    }
+  ],
+  "preferences": {
+    "layers": {
+      "relationships": {
+        "hierarchical-sibling-matchlabels": false
+      }
+    }
+  },
+  "relationships": [
+    {
+      "id": "04a27765-c153-4a4a-96aa-4d0f7f7fa7e6",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "c3e26e2e-57a3-e9ed-5aa1-37facf6e372c",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": "0001-01-01T00:00:00Z"
+        },
+        "connection_id": "98027e7d-9e16-e4f0-6dbd-83f3ac0d9856",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "d410ff9e-76d7-454a-a800-be6eba005b52",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "credential_id": "00000000-0000-0000-0000-000000000000",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": "0001-01-01T00:00:00Z"
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "8bbe24c1-2e43-4c79-8dcf-b27d83ccee7f",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "credential_id": "00000000-0000-0000-0000-000000000000",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": "0001-01-01T00:00:00Z"
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "64fccbf7-fc5c-48c9-a4cc-9c97e77dac38",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "c3e26e2e-57a3-e9ed-5aa1-37facf6e372c",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": "0001-01-01T00:00:00Z"
+        },
+        "connection_id": "98027e7d-9e16-e4f0-6dbd-83f3ac0d9856",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "e75e44c4-ec1d-4f14-ba7b-b2fe7611588e",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "credential_id": "00000000-0000-0000-0000-000000000000",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": "0001-01-01T00:00:00Z"
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "d410ff9e-76d7-454a-a800-be6eba005b52",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "credential_id": "00000000-0000-0000-0000-000000000000",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": "0001-01-01T00:00:00Z"
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "6b52dfd4-0b28-4632-90ef-324aba02b156",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "c3e26e2e-57a3-e9ed-5aa1-37facf6e372c",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": "0001-01-01T00:00:00Z"
+        },
+        "connection_id": "98027e7d-9e16-e4f0-6dbd-83f3ac0d9856",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "dd869d65-9431-4e91-a61c-f893efeb7efc",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "credential_id": "00000000-0000-0000-0000-000000000000",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": "0001-01-01T00:00:00Z"
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "d410ff9e-76d7-454a-a800-be6eba005b52",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "credential_id": "00000000-0000-0000-0000-000000000000",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": "0001-01-01T00:00:00Z"
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "6e47a5ba-1c7e-4cd0-9531-04668a1a5bde",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+          "curve-style": "bezier",
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "vee"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "c3e26e2e-57a3-e9ed-5aa1-37facf6e372c",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": "0001-01-01T00:00:00Z"
+        },
+        "connection_id": "98027e7d-9e16-e4f0-6dbd-83f3ac0d9856",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "a203888b-4a62-4f11-91fb-c42d238ef416",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "credential_id": "00000000-0000-0000-0000-000000000000",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": "0001-01-01T00:00:00Z"
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "d410ff9e-76d7-454a-a800-be6eba005b52",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "credential_id": "00000000-0000-0000-0000-000000000000",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": "0001-01-01T00:00:00Z"
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "ae348384-f1a7-4459-9d37-736f0a1ccd5d",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+          "line-color": "#00B39F",
+          "line-style": "solid",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": "",
+          "target-arrow-color": "#00B39F",
+          "target-arrow-shape": "triangle"
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "c3e26e2e-57a3-e9ed-5aa1-37facf6e372c",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "displayName": "Meshery Shapes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": "0001-01-01T00:00:00Z"
+        },
+        "connection_id": "98027e7d-9e16-e4f0-6dbd-83f3ac0d9856",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Application Definition \u0026 Image Build",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#00B39F",
+          "secondaryColor": "#00D3A9",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/meshery-shapes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/meshery-shapes-white.svg"
+        },
+        "model": {
+          "version": "0.7.2"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "8bbe24c1-2e43-4c79-8dcf-b27d83ccee7f",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "credential_id": "00000000-0000-0000-0000-000000000000",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": "0001-01-01T00:00:00Z"
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "1a11afdf-f15a-4eea-85cb-38798be835d6",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "schemaVersion": "",
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "status": "",
+                  "registrant": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "",
+                    "credential_id": "00000000-0000-0000-0000-000000000000",
+                    "type": "",
+                    "sub_type": "",
+                    "kind": "",
+                    "status": "",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "created_at": "0001-01-01T00:00:00Z",
+                    "updated_at": "0001-01-01T00:00:00Z",
+                    "deleted_at": "0001-01-01T00:00:00Z"
+                  },
+                  "connection_id": "00000000-0000-0000-0000-000000000000",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": ""
+                  },
+                  "subCategory": "",
+                  "metadata": null,
+                  "model": {
+                    "version": ""
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    }
+  ]
+}

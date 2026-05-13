@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Tooltip, Grid2, FormControl, MenuItem, Table, FormattedTime } from '@sistent/sistent';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
@@ -22,9 +22,9 @@ import {
 } from '../../../utils/utils';
 import RegisterConnectionModal from './RegisterConnectionModal';
 import { CONNECTION_STATES, MESHSYNC_STATES } from '../../../utils/Enum';
-import { updateVisibleColumns } from '../../../utils/responsive-column';
+import { getResponsiveColumnVisibility } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
-import { FormatId } from '../../DataFormatter';
+import { FormatId } from '../../data-formatter';
 import {
   useGetMeshSyncResourceKindsQuery,
   useGetMeshSyncResourcesQuery,
@@ -55,8 +55,7 @@ export default function MeshSyncTable(props) {
   const [kindFilter, setKindFilter] = useState();
   const [namespaceFilter, setNamespaceFilter] = useState();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const { k8sConfig } = useSelector((state) => state.ui);
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { k8sConfig, selectedK8sContexts } = useSelector((state) => state.ui);
   const [selectedFilters, setSelectedFilters] = useState({
     kind: 'All',
     model: 'All',
@@ -69,6 +68,11 @@ export default function MeshSyncTable(props) {
   const { width } = useWindowDimensions();
 
   const { notify } = useNotification();
+  const clusterIds = useMemo(
+    () => getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig),
+    [k8sConfig, selectedK8sContexts],
+  );
+  const serializedClusterIds = useMemo(() => JSON.stringify(clusterIds), [clusterIds]);
 
   const handleRegistrationModalClose = () => {
     setRegistrationModal(false);
@@ -86,23 +90,27 @@ export default function MeshSyncTable(props) {
     kind: kindFilter,
     model: modelFilter,
     namespace: namespaceFilter,
-    clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)),
+    clusterIds: serializedClusterIds,
   });
-  if (isError) {
-    if (isError) {
-      notify({
-        message: 'Error fetching MeshSync Resources',
-        event_type: EVENT_TYPES.ERROR,
-        details: meshSyncError?.data,
-      });
+
+  useEffect(() => {
+    if (!isError) {
+      return;
     }
-  }
+
+    notify({
+      message: 'Error fetching MeshSync Resources',
+      event_type: EVENT_TYPES.ERROR,
+      details: meshSyncError?.data,
+    });
+  }, [isError, meshSyncError?.data, notify]);
+
   const { data: clusterSummary } = useGetMeshSyncResourceKindsQuery({
     page: page,
     pagesize: 'all',
     search: search,
     order: sortOrder,
-    clusterIds: getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig),
+    clusterIds: clusterIds,
   });
   const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.Kind);
   const availableModels = [
@@ -111,18 +119,22 @@ export default function MeshSyncTable(props) {
   const availableNamespaces = clusterSummary?.namespaces || [];
   const meshSyncResources = meshSyncData?.resources || [];
 
-  let colViews = [
-    ['metadata.name', 'xs'],
-    ['apiVersion', 'na'],
-    ['kind', 'm'],
-    ['model', 'm'],
-    ['metadata.namespace', 'xs'],
-    ['cluster_id', 'na'],
-    ['pattern_resources', 'na'],
-    ['metadata.creationTimestamp', 'l'],
-    ['status', 'xs'],
-    ['metadata', 'na'],
-  ];
+  const colViews = useMemo(
+    () => [
+      ['metadata.name', 'xs'],
+      ['apiVersion', 'na'],
+      ['kind', 'm'],
+      ['model', 'm'],
+      ['metadata.namespace', 'xs'],
+      ['cluster_id', 'na'],
+      ['pattern_resources', 'na'],
+      ['metadata.creationTimestamp', 'l'],
+      ['status', 'xs'],
+      ['metadata', 'na'],
+    ],
+    [],
+  );
+  const columnNames = useMemo(() => colViews.map(([columnName]) => columnName), [colViews]);
 
   const columns = [
     {
@@ -427,7 +439,7 @@ export default function MeshSyncTable(props) {
     responsive: 'standard',
     serverSide: true,
     selectableRows: 'none',
-    count: meshSyncData?.total_count,
+    count: meshSyncData?.totalCount,
     rowsPerPage: pageSize,
     fixedHeader: true,
     page,
@@ -621,15 +633,13 @@ export default function MeshSyncTable(props) {
 
   const [tableCols, updateCols] = useState(columns);
 
-  const [columnVisibility, setColumnVisibility] = useState(() => {
-    let showCols = updateVisibleColumns(colViews, width);
-    // Initialize column visibility based on the original columns' visibility
-    const initialVisibility = {};
-    columns.forEach((col) => {
-      initialVisibility[col.name] = showCols[col.name];
-    });
-    return initialVisibility;
-  });
+  const [columnVisibility, setColumnVisibility] = useState(() =>
+    getResponsiveColumnVisibility(columnNames, colViews, width),
+  );
+
+  useEffect(() => {
+    setColumnVisibility(getResponsiveColumnVisibility(columnNames, colViews, width));
+  }, [colViews, columnNames, width]);
 
   return (
     <>

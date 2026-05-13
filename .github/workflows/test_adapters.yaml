@@ -44,6 +44,10 @@ on:
       provider: #default to local
         required: false
         type: string
+      job_type:
+        required: false
+        type: string
+        default: ""
     secrets:
       token:
         required: true
@@ -238,7 +242,7 @@ jobs:
       - name: UploadResults
         uses: actions/upload-artifact@v6
         with:
-          name: ${{ inputs.output_filename }}
+          name: ${{ inputs.job_type != '' && format('{0}-', inputs.job_type) || '' }}${{ inputs.output_filename }}
           path: ./${{ inputs.output_filename }}
       - name: exit
         run: |

@@ -17,9 +17,6 @@ System Flows 7
 Flow: Meshery Server Connects to an OCI-compliant Registry unauthenticated 7
 Flow: Meshery Server Connects to an OCI-compliant Registry authenticated 8
 Action Items: 8
-Flow: <short title> 10
-Flow: <short title> 10
-Flow: <short title> 11
 
 Design Prologue
 Meshery Models represent a schema-based description of cloud native infrastructure and operations of which Meshery is capable of managing. Models and Designs need to be portable between Meshery deployments as well as easily versionable in external repositories.

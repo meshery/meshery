@@ -33,10 +33,12 @@ ui/out/
 ui/.eslintcache
 ui/node_modules/
 ui/tests/e2e/.env
+ui/next-env.d.ts
 
 provider-ui/out/
 provider-ui/.next/
 provider-ui/node_modules/
+provider-ui/.eslintcache
 
 # mesheryctl
 mesheryctl/cmd/mesheryctl/mesheryctl
@@ -88,3 +90,7 @@ ui/.env
 *.env
 */.env
 docs/hugo_stats.json
+
+
+LLMs
+.copilot-tmp/*
