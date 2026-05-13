@@ -24,7 +24,7 @@ import { RESOURCE_TYPE } from '@/utils/Enum';
 import { DesignList, LoadingContainer, GhostContainer, GhostImage, GhostText } from './styles';
 import { useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import ShareModal from './ShareModal';
-import { ViewInfoModal } from '@/components/ViewInfoModal';
+import { ViewInfoModal } from '../../shared/Modal/ViewInfoModal';
 import { openViewInKanvas, useIsOperatorEnabled } from '@/utils/utils';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';

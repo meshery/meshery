@@ -9,7 +9,7 @@ import {
   GridNoTextStyles,
   GridPaginationStyles,
 } from '../designs/patterns/Grid.styles';
-import { RJSFModalWrapper } from '../General/Modals/Modal';
+import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { Modal as SistentModal } from '@sistent/sistent';

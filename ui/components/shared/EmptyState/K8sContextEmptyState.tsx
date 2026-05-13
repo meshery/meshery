@@ -1,6 +1,6 @@
 import { AddIcon, Button, Link, styled, Typography, useTheme } from '@sistent/sistent';
-import OperatorLight from '../../assets/img/OperatorLight';
-import Operator from '../../assets/img/Operator';
+import OperatorLight from '../../../assets/img/OperatorLight';
+import Operator from '../../../assets/img/Operator';
 
 const TextContent = styled('div')({
   display: 'flex',

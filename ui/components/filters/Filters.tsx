@@ -24,7 +24,7 @@ import CloneIcon from '../../public/static/img/CloneIcon';
 import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
 import fetchCatalogFilter from '@/graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../../css/icons.styles';
-import { RJSFModalWrapper } from '../General/Modals/Modal';
+import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from '../../utils/utils';
 import Filter from '../../public/static/img/drawer-icons/filter_svg';
 import { getMeshModels } from '../../api/meshmodel';
@@ -54,7 +54,7 @@ import {
 } from '@sistent/sistent';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
-import InfoModal from '../General/Modals/Information/InfoModal';
+import InfoModal from '../shared/Modal/Information/InfoModal';
 import { InfoOutlined as InfoOutlinedIcon } from '@/assets/icons';
 import { DefaultTableCell, SortableTableCell } from '../connections/common/index';
 import CAN from '@/utils/can';
@@ -70,7 +70,7 @@ import {
   useUpdateFilterFileMutation,
   useUploadFilterFileMutation,
 } from '@/rtk-query/filter';
-import LoadingScreen from '../LoadingComponents/LoadingComponent';
+import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useSelector } from 'react-redux';

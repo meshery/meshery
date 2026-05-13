@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { NoSsr } from '@sistent/sistent';
 import { ErrorBoundary, AppBar } from '@sistent/sistent';
-import Modal from '../General/Modals/Modal';
+import Modal from '../shared/Modal/Modal';
 import { ConnectionIconText, ConnectionTab, ConnectionTabs } from './styles';
 import MeshSyncTable from './meshSync';
 import ConnectionIcon from '../../assets/icons/Connection';
@@ -10,7 +10,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
-import CustomErrorFallback from '../General/ErrorBoundary';
+import CustomErrorFallback from '../shared/ErrorBoundary/ErrorBoundary';
 import ConnectionTable from './ConnectionTable';
 import { useRouter } from 'next/router';
 

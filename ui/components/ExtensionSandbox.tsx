@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import normalizeURI from '../utils/normalizeURI';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
-import LoadingScreen from './LoadingComponents/LoadingComponent';
+import LoadingScreen from './shared/LoadingState/LoadingComponent';
 import { toggleDrawer } from '@/store/slices/mesheryUi';
 import type {
   NavigatorSchema,

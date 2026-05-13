@@ -28,7 +28,7 @@ import {
   ConnectionStyledSelect,
 } from './styles';
 import { FormatId } from '../DataFormatter';
-import LoadingScreen from '../LoadingComponents/LoadingComponent';
+import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';

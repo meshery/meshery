@@ -13,7 +13,7 @@ import {
   VisibilitySelect,
 } from './components';
 import { useContentDelete, useContentDownload } from './hooks';
-import ExportModal from '@/components/ExportModal';
+import ExportModal from '../../shared/Modal/ExportModal';
 import ShareModal from './ShareModal';
 import { useSelector } from 'react-redux';
 
