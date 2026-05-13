@@ -25,48 +25,21 @@ const patchedNextConfig = nextConfig.map((cfg) => {
   return cfg;
 });
 
-// Temporary allowlists for legacy files that still violate the new UI guardrails.
-// Keep the rules active for new/clean files while letting incremental refactors
-// remove entries from these lists over time.
-const legacyRestrictedImportOffenders = [
-  'assets/icons/index.ts',
-  'components/dashboard/charts/NodeStatusChart.tsx',
-  'components/dashboard/charts/PodStatusChart.tsx',
-  'components/dashboard/index.tsx',
-  'components/dashboard/resources/resources-sub-menu.tsx',
-  'components/dashboard/widgets/HoneyComb/HoneyCombComponent.tsx',
-  'components/data-formatter/index.tsx',
-  'components/designs/lifecycle/DeploymentSummary.tsx',
-  'components/designs/lifecycle/DryRun.tsx',
-  'components/designs/lifecycle/ValidateDesign.tsx',
-  'components/designs/lifecycle/styles.tsx',
-  'components/layout/Header/Header.tsx',
-  'components/environments/environment-card.tsx',
-  'components/environments/index.tsx',
-  'components/workspaces/WorkspaceGridView.tsx',
-  'components/MesheryAdapterPlayComponent.tsx',
-  'components/MesheryChart.tsx',
-  'components/meshery-mesh-interface/PatternService/RJSF.tsx',
-  'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/ArrayFieldTemlate.tsx',
-  'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/CustomFileWidget.tsx',
-  'components/meshery-mesh-interface/PatternService/RJSFCustomComponents/CustomSelectWidget.tsx',
-  'components/meshery-mesh-interface/PatternService/helper.tsx',
-  'components/MesheryPlayComponent.tsx',
-  'components/MesherySettingsEnvButtons.tsx',
-  'components/layout/NotificationCenter/formatters/common.tsx',
-  'components/layout/NotificationCenter/index.tsx',
-  'components/layout/NotificationCenter/notificationCenter.style.tsx',
-  'components/ReactSelectWrapper.tsx',
-  'components/relationship-builder/RelationshipFormStepper.tsx',
-  'components/registry/Stepper/CSVStepper.tsx',
-  'components/workspaces/SpacesSwitcher/MainDesignsContent.tsx',
-  'components/workspaces/SpacesSwitcher/WorkspaceModal.tsx',
-  'components/workspaces/SpacesSwitcher/components.tsx',
-  'components/user-preferences/index.tsx',
-  'components/connections/ConnectionChip.tsx',
-  'components/connections/ConnectionTable.tsx',
-  'components/registry/MesheryTreeView.tsx',
-];
+// Files allowed to import directly from the legacy MUI / RJSF packages.
+//
+// Phase 2 (#18737) completed the app-code sweep: every `@mui/*` and
+// `@rjsf/mui` import outside the shared wrappers has been migrated to
+// `@sistent/sistent` or the canonical icon barrel at `assets/icons/`.
+//
+// The remaining boundaries are:
+//   - `assets/icons/index.ts` — the canonical icon barrel itself, which
+//     centrally re-exports `@mui/icons-material` glyphs (#18736, #18744).
+//   - Shared wrappers under `components/shared/{DatePicker,TreeView,FormFields}/`
+//     opt in via a local `eslint-disable no-restricted-imports` comment
+//     (line-scoped `-next-line` for single-import files, file-scoped block
+//     comment for the TreeView wrapper that re-exports several names)
+//     rather than relying on this allowlist.
+const legacyRestrictedImportOffenders = ['assets/icons/index.ts'];
 
 const legacyLiteralColorOffenders = [
   'components/dashboard/charts/ResourceUtilizationChart.tsx',
