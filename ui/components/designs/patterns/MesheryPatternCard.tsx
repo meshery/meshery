@@ -191,6 +191,7 @@ function MesheryPatternCard_({
             <CatalogCardButtons>
               {visibility === VISIBILITY.PUBLISHED && (
                 <TooltipButton
+                  aria-label="Unpublish design"
                   variant="outlined"
                   title="Unpublish"
                   style={{
@@ -240,6 +241,7 @@ function MesheryPatternCard_({
                 data-testid="pattern-btn-action-dropdown"
               />
               <TooltipButton
+                aria-label="Download design"
                 title="Download"
                 variant="contained"
                 color="primary"
@@ -258,6 +260,7 @@ function MesheryPatternCard_({
               </TooltipButton>
               {visibility === VISIBILITY.PRIVATE && userCanEdit ? (
                 <TooltipButton
+                  aria-label="Open design in configurator"
                   title="Design"
                   variant="contained"
                   color="primary"
@@ -278,6 +281,7 @@ function MesheryPatternCard_({
                 </TooltipButton>
               ) : (
                 <TooltipButton
+                  aria-label="Clone design"
                   title="Clone"
                   variant="contained"
                   color="primary"
@@ -296,6 +300,7 @@ function MesheryPatternCard_({
 
               {userCanEdit && (
                 <TooltipButton
+                  aria-label="Edit design in configurator"
                   title="Edit In Configurator"
                   variant="contained"
                   color="primary"
@@ -309,6 +314,7 @@ function MesheryPatternCard_({
                 </TooltipButton>
               )}
               <TooltipButton
+                aria-label="View design information"
                 title="Pattern Information"
                 variant="contained"
                 color="primary"
@@ -348,6 +354,9 @@ function MesheryPatternCard_({
                 </Link>
                 <CustomTooltip title="Enter Fullscreen" arrow interactive placement="top">
                   <IconButton
+                    aria-label={
+                      fullScreen ? 'Exit fullscreen pattern view' : 'Enter fullscreen pattern view'
+                    }
                     onClick={(ev) =>
                       genericClickHandler(ev, () => {
                         {
@@ -416,6 +425,7 @@ function MesheryPatternCard_({
                   {/* Save button */}
                   <CustomTooltip title="Save" arrow interactive placement="bottom">
                     <IconButton
+                      aria-label="Save design changes"
                       disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                       onClick={(ev) => genericClickHandler(ev, updateHandler)}
                       data-testid="pattern-btn-save"
@@ -427,6 +437,7 @@ function MesheryPatternCard_({
                   {/* Delete Button */}
                   <CustomTooltip title="Delete" arrow interactive placement="bottom">
                     <IconButton
+                      aria-label="Delete design"
                       disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
                       onClick={(ev) => genericClickHandler(ev, deleteHandler)}
                       data-testid="pattern-btn-delete"

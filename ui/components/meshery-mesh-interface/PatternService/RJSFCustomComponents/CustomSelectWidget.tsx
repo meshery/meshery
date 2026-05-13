@@ -98,7 +98,11 @@ export default function CustomSelectWidget({
                   title={rawErrors?.join('  ')}
                   interactive={true}
                 >
-                  <IconButton component="span" size="small">
+                  <IconButton
+                    aria-label={`Validation errors for ${label}`}
+                    component="span"
+                    size="small"
+                  >
                     <ErrorOutlineIcon
                       width="14px"
                       height="14px"
@@ -114,7 +118,12 @@ export default function CustomSelectWidget({
                   title={schema.description}
                   interactive={true}
                 >
-                  <IconButton component="span" size="small" style={{ marginRight: '4px' }}>
+                  <IconButton
+                    aria-label={`Help for ${label}`}
+                    component="span"
+                    size="small"
+                    style={{ marginRight: '4px' }}
+                  >
                     <HelpOutlineIcon
                       width="14px"
                       height="14px"

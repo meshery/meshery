@@ -251,7 +251,7 @@ const MesheryResults = () => {
           ),
           customBodyRender: (value, tableMeta) => (
             <IconButton
-              aria-label="more"
+              aria-label="View performance result details"
               color="inherit"
               onClick={() => setSelectedRowData(results[tableMeta.rowIndex])}
             >

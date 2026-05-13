@@ -114,7 +114,12 @@ const BaseInput = (props) => {
                     title={errorTitle}
                     interactive={true}
                   >
-                    <IconButton component="span" size="small" tabIndex={-1}>
+                    <IconButton
+                      aria-label={`Validation errors for ${props.label}`}
+                      component="span"
+                      size="small"
+                      tabIndex={-1}
+                    >
                       <ErrorOutlineIcon
                         width="14px"
                         height="14px"
@@ -130,7 +135,12 @@ const BaseInput = (props) => {
                     title={descriptionTitle}
                     interactive={true}
                   >
-                    <IconButton component="span" size="small" tabIndex={-1}>
+                    <IconButton
+                      aria-label={`Help for ${props.label}`}
+                      component="span"
+                      size="small"
+                      tabIndex={-1}
+                    >
                       <HelpOutlineIcon
                         width="14px"
                         height="14px"

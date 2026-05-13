@@ -255,7 +255,7 @@ function K8sContextMenu({
       <div>
         <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS}>
           <IconButton
-            aria-label="contexts"
+            aria-label="Open Kubernetes contexts menu"
             className="k8s-icon-button"
             onClick={(e) => {
               e.preventDefault();
@@ -289,6 +289,7 @@ function K8sContextMenu({
                 }}
                 width="24px"
                 height="24px"
+                alt="Kubernetes"
                 style={{ objectFit: 'contain' }}
               />
               <CBadge
@@ -377,7 +378,11 @@ function K8sContextMenu({
                         </div>
                         <CustomTooltip title="Configure Connections">
                           <div>
-                            <IconButton size="small" onClick={() => setIsConnectionOpenModal(true)}>
+                            <IconButton
+                              aria-label="Configure connections"
+                              size="small"
+                              onClick={() => setIsConnectionOpenModal(true)}
+                            >
                               <SettingsIcon style={{ ...iconSmall }} />
                             </IconButton>
                           </div>

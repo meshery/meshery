@@ -203,7 +203,7 @@ function generateColumnsForDisplay(
         customBodyRender: function CustomBody(value, tableMeta) {
           return (
             <IconButton
-              aria-label="more"
+              aria-label="View performance result chart"
               data-testid="open-performance-result-bar-chart"
               color="inherit"
               onClick={() => setSelectedProfileIdxForChart(tableMeta.rowIndex)}
@@ -226,7 +226,7 @@ function generateColumnsForDisplay(
         customBodyRender: function CustomBody(value, tableMeta) {
           return (
             <IconButton
-              aria-label="more"
+              aria-label="View performance node details"
               color="inherit"
               onClick={() => setSelectedProfileIdxForNodeDetails(tableMeta.rowIndex)}
             >

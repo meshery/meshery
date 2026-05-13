@@ -103,7 +103,11 @@ export const FormatId = ({ id }) => {
         </Typography>
       </CustomTooltip>
       <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
-        <IconButton onClick={copyToClipboard} style={{ padding: '0.25rem' }}>
+        <IconButton
+          aria-label={`Copy ${id}`}
+          onClick={copyToClipboard}
+          style={{ padding: '0.25rem' }}
+        >
           <CopyIcon width="16px" height="16px" />
         </IconButton>
       </CustomTooltip>

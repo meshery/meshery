@@ -107,7 +107,7 @@ export const CheckBoxField = ({
       </Stack>
       {helpText && (
         <CustomTooltip title={helpText} placement="top">
-          <IconButton data-testid={`${testId}-help-icon`}>
+          <IconButton aria-label={`Help for ${label}`} data-testid={`${testId}-help-icon`}>
             <InfoCircleIcon fill={color} />
           </IconButton>
         </CustomTooltip>
