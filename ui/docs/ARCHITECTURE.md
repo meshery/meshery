@@ -212,9 +212,9 @@ ui/
 - **`components/shared/`** — Cross-cutting primitives that any domain may use. If two domain folders both need it, it belongs here. The canonical home for Modal, Card, Stepper, EmptyState, LoadingState, PageHeader, DataTable, FormFields, CodeEditor, and Markdown.
 - **`components/layout/`** — Application chrome — the Shell, Header, Navigator, Footer, and NotificationCenter. These are mounted once per app, not per route.
 - **`components/<domain>/`** — One folder per product domain (Designs, Workspaces, Connections, Environments, Performance, Dashboard, Adapters, Registry, Settings, User, Telemetry, Extensions, Subscription). Each domain owns its own list, detail, and form views.
-- **`theme/`** — The single entrypoint for theme utilities. Always import `styled`, `useTheme`, `alpha`, `lighten`, `darken`, and palette accessors from `@/theme`, never directly from `@sistent/sistent` or `@mui/*` in application code. See [`THEMING.md`](./THEMING.md) for the full theming guide.
+- **`theme/`** — The single entrypoint for theme utilities. Always import styling utilities (`styled`, `useTheme`, `alpha`, `lighten`, `darken`, and palette accessors) from `@/theme`, rather than importing them directly from `@sistent/sistent` or `@mui/*` in application code. UI components themselves still come from `@sistent/sistent` per principle 1. See [`THEMING.md`](./THEMING.md) for the full theming guide.
 - **`utils/`** — Pure functions only. No JSX, no React components. Hooks live in `utils/hooks/`. Generic helpers (`format/`, `k8s/`, etc.) live in subfolders by category.
-- **`assets/`** — Static-only. Icons, images, GIFs, and schemas. A `.tsx` file in `assets/` is a bug.
+- **`assets/`** — Static-only, plus typed SVG icons. Icons, images, GIFs, and schemas. The one allowed `.tsx` flavor is the typed SVG components under `assets/icons/`; any other `.tsx` file in `assets/` is a bug.
 - **`graphql/`** — All GraphQL queries, mutations, and subscriptions. These are not components — they live at the top level, not under `components/`.
 - **`store/`, `rtk-query/`, `machines/`** — Already clean. Untouched by the restructure.
 
