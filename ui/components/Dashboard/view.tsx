@@ -15,7 +15,7 @@ import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
 import { normalizeStaticImagePath } from '@/utils/fallback';
 import { iconXLarge } from 'css/icons.styles';
 import { getK8sContextFromClusterId } from '@/utils/multi-ctx';
-import useKubernetesHook from '../hooks/useKubernetesHook';
+import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import { TooltipWrappedConnectionChip } from '../connections/ConnectionChip';
 import ResourceDetailFormatData, { JSONViewFormatter } from './view-component';
 import { useRouter } from 'next/router';

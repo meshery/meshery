@@ -12,7 +12,7 @@ import { iconMedium, iconSmall } from '../css/icons.styles';
 import { createPathForRemoteComponent } from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
 import { useNotification } from '../utils/hooks/useNotification';
-import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
+import useKubernetesHook, { useControllerStatus } from '@/utils/hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import RegistryModal from './Registry/RegistryModal';
 

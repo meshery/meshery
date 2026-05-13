@@ -121,7 +121,7 @@ vi.mock('../graphql/queries/ResetDatabaseQuery', () => ({
   default: vi.fn(),
 }));
 
-vi.mock('../hooks/useKubernetesHook', () => ({
+vi.mock('@/utils/hooks/useKubernetesHook', () => ({
   default: () => ping,
 }));
 

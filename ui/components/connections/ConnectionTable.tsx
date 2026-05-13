@@ -42,7 +42,7 @@ import SyncIcon from '@mui/icons-material/Sync';
 
 import { CONNECTION_KINDS, CONNECTION_STATES, MESHSYNC_DEPLOYMENT_TYPE } from '../../utils/Enum';
 import FormatConnectionMetadata from './metadata';
-import useKubernetesHook from '../hooks/useKubernetesHook';
+import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import { ConnectionStateChip, TooltipWrappedConnectionChip } from './ConnectionChip';
 import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue } from '../../utils/utils';
