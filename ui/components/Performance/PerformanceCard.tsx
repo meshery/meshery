@@ -21,7 +21,7 @@ import { iconMedium } from '../../css/icons.styles';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useGetUserByIdQuery } from '@/rtk-query/user';
-import useTestIDsGenerator from '@/components/hooks/useTestIDs';
+import useTestIDsGenerator from '@/utils/hooks/useTestIDs';
 import { BottomPart, CardButton, ResultContainer } from './style';
 
 function PerformanceCard({

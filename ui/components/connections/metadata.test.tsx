@@ -76,7 +76,7 @@ vi.mock('../DataFormatter', () => ({
   createColumnUiSchema: ({ metadata }) => ({ fields: Object.keys(metadata || {}) }),
 }));
 
-vi.mock('../hooks/useKubernetesHook', () => ({
+vi.mock('@/utils/hooks/useKubernetesHook', () => ({
   default: () => pingKubernetes,
   useControllerStatus: () => ({ getControllerStatesByConnectionID }),
   useMesheryOperator: () => ({ ping: pingMesheryOperator }),

@@ -33,7 +33,7 @@ import { ACTIONS } from '../utils/Enum';
 import CAN from '../utils/can';
 import { keys } from '@/utils/permission_constants';
 import { K8sContextConnectionChip } from './Header';
-import { useFilterK8sContexts } from './hooks/useKubernetesHook';
+import { useFilterK8sContexts } from '@/utils/hooks/useKubernetesHook';
 import { TooltipWrappedConnectionChip } from './connections/ConnectionChip';
 import { setK8sContexts, updateProgress } from '@/store/slices/mesheryUi';
 import { useDispatch, useSelector } from 'react-redux';
