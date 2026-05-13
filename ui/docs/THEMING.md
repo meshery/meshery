@@ -38,6 +38,11 @@ From `@sistent/sistent`:
   `SistentThemeProviderWithoutBaseLine`, `CssBaseline`, `NoSsr`
 - **Types** — `Theme`
 
+Bridged from MUI (until Sistent re-exports them) so callers can still go
+through the project-local front door:
+
+- **Color helpers** — `darken`
+
 ### What it adds locally
 
 A `palette` object with named accessors for the palette paths the app reaches
@@ -279,7 +284,7 @@ restructure plan call out for deletion:
 | `import { notificationColors, darkNotificationColors } from '@/themes/app'` | `theme.palette.*` (the theme handles the dark variant)   |
 | `import { NOTIFICATIONCOLORS } from '@/themes'`                        | `theme.palette.*`                                             |
 | `import { PRIMARY_COLOR } from '@/constants/colors'`                   | `theme.palette.primary.main`                                  |
-| `import { lightenOrDarkenColor } from '@/utils/lightenOrDarkenColor'`  | `import { lighten } from '@/theme'`. `darken` is not yet re-exported by `@/theme`; needed `darken` callers should add it to `ui/theme/index.ts` per the front-door policy. |
+| `import { lightenOrDarkenColor } from '@/utils/lightenOrDarkenColor'`  | `import { lighten, darken } from '@/theme'`. The legacy helper accepts percent (`-100..100`); the MUI utilities take a coefficient (`0..1`). Convert by dividing by 100 and using `darken` for negative percents, `lighten` for positive. |
 | `import { styled } from '@/theme/index'`                               | `import { styled } from '@/theme'`                            |
 | `import { ... } from '@mui/material'`                                  | `import { ... } from '@sistent/sistent'`                      |
 

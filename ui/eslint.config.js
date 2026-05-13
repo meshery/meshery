@@ -118,7 +118,6 @@ const legacyLiteralColorOffenders = [
   'pages/extension/AccessMesheryModal.tsx',
   'utils/charts.ts',
   'utils/custom-search.tsx',
-  'utils/lightenOrDarkenColor.ts',
 ];
 
 const legacyMaxLineOffenders = [
