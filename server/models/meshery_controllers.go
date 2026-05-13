@@ -527,7 +527,9 @@ func CheckLatestVersion(serverVersion string) (*bool, string, error) {
 // operator so that it can be enabled or disabled depending on the need
 func setOverrideValues(delete bool, adapterTracker AdaptersTrackerInterface) map[string]interface{} {
 	installedAdapters := make([]string, 0)
-	adapters := adapterTracker.GetAdapters(context.TODO())
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	adapters := adapterTracker.GetAdapters(ctx)
 
 	for _, adapter := range adapters {
 		if adapter.Name != "" {

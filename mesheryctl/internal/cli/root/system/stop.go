@@ -256,13 +256,14 @@ func invokeDeleteCRs(client *meshkitkube.Client) error {
 	return nil
 }
 
-// deleteCRs delete the specified CR instance in the clusters
 func deleteCR(resourceName, instanceName string, client *meshkitkube.Client) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 	return client.DynamicKubeClient.Resource(schema.GroupVersionResource{
 		Group:    v1alpha1.GroupVersion.Group,
 		Version:  v1alpha1.GroupVersion.Version,
 		Resource: resourceName,
-	}).Namespace(utils.MesheryNamespace).Delete(context.TODO(), instanceName, metav1.DeleteOptions{})
+	}).Namespace(utils.MesheryNamespace).Delete(ctx, instanceName, metav1.DeleteOptions{})
 }
 
 // invokeDeleteCRs is a wrapper of deleteCRD to delete CRDs (brokers and meshsyncs)
@@ -306,11 +307,15 @@ func invokeDeleteCRDs() error {
 
 // deleteCRs delete the specified CRD in the clusters
 func deleteCRD(name string, client *apiextension.Clientset) error {
-	return client.ApiextensionsV1().CustomResourceDefinitions().Delete(context.TODO(), name, metav1.DeleteOptions{})
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	return client.ApiextensionsV1().CustomResourceDefinitions().Delete(ctx, name, metav1.DeleteOptions{})
 }
 
 func deleteNs(ns string, client *kubernetes.Clientset) error {
-	return client.CoreV1().Namespaces().Delete(context.TODO(), ns, metav1.DeleteOptions{})
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	return client.CoreV1().Namespaces().Delete(ctx, ns, metav1.DeleteOptions{})
 }
 
 func init() {

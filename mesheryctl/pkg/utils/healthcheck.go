@@ -180,9 +180,10 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 			}
 
 			// podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
+			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+			defer cancel()
 			deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
-			// podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
-			deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
+			deploymentList, err := deploymentInterface.List(ctx, metav1.ListOptions{})
 			if err != nil {
 				return false, err
 			}
@@ -243,8 +244,10 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 				return false, ErrMesheryServerNotRunning(currPlatform)
 			}
 
+			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+			defer cancel()
 			deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
-			deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
+			deploymentList, err := deploymentInterface.List(ctx, metav1.ListOptions{})
 			if err != nil {
 				return false, err
 			}
@@ -301,9 +304,9 @@ func CheckMesheryNsDelete() (bool, error) {
 
 // return a condition function that indicates whether the given pod is
 // currently running
-func isPodRunning(c *meshkitkube.Client, podName, namespace string) wait.ConditionFunc {
+func isPodRunning(ctx context.Context, c *meshkitkube.Client, podName, namespace string) wait.ConditionFunc {
 	return func() (bool, error) {
-		pod, err := c.KubeClient.CoreV1().Pods(namespace).Get(context.TODO(), podName, metav1.GetOptions{})
+		pod, err := c.KubeClient.CoreV1().Pods(namespace).Get(ctx, podName, metav1.GetOptions{})
 		if err != nil {
 			return false, err
 		}
@@ -323,7 +326,7 @@ func isPodRunning(c *meshkitkube.Client, podName, namespace string) wait.Conditi
 func pollForPodRunning(c *meshkitkube.Client, namespace, podName string, timeout time.Duration) error {
 	// return wait.PollImmediate(time.Second, timeout, isPodRunning(c, podName, namespace))
 	return wait.PollUntilContextTimeout(context.Background(), time.Second, timeout, true, func(ctx context.Context) (done bool, err error) {
-		conditionFunc := isPodRunning(c, podName, namespace)
+		conditionFunc := isPodRunning(ctx, c, podName, namespace)
 		return conditionFunc()
 	})
 }
@@ -354,9 +357,9 @@ func WaitForPodRunning(c *meshkitkube.Client, desiredPod, namespace string, time
 }
 
 // Returns condition function to indicate that the `namespace` does not exist anymore.
-func isNamespaceDeleted(c *meshkitkube.Client, namespace string) wait.ConditionFunc {
+func isNamespaceDeleted(ctx context.Context, c *meshkitkube.Client, namespace string) wait.ConditionFunc {
 	return func() (bool, error) {
-		namespaces, err := c.KubeClient.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
+		namespaces, err := c.KubeClient.CoreV1().Namespaces().List(ctx, metav1.ListOptions{})
 		if err != nil {
 			return false, err
 		}
@@ -376,7 +379,7 @@ func isNamespaceDeleted(c *meshkitkube.Client, namespace string) wait.ConditionF
 func pollForNamespaceDeleted(c *meshkitkube.Client, namespace string, timeout time.Duration) error {
 	// return wait.Poll(5*time.Second, timeout, isNamespaceDeleted(c, namespace))
 	return wait.PollUntilContextTimeout(context.Background(), time.Second, timeout, false, func(ctx context.Context) (done bool, err error) {
-		conditionFunc := isNamespaceDeleted(c, namespace)
+		conditionFunc := isNamespaceDeleted(ctx, c, namespace)
 		return conditionFunc()
 	})
 }
