@@ -1,7 +1,6 @@
 // @ts-check
 import { AppBar, Box, IconButton, Toolbar, Tooltip, useTheme } from '@sistent/sistent';
-import { Delete, HelpOutlined as HelpOutline } from '@mui/icons-material';
-import SettingsIcon from '@mui/icons-material/Settings';
+import { Delete, HelpOutlined as HelpOutline, Settings as SettingsIcon } from '@/components/icons';
 import React, { useEffect } from 'react';
 import { iconSmall } from '../../css/icons.styles';
 import { pSBCr } from '../../utils/lightenOrDarkenColor';
