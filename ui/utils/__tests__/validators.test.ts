@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import {
   isArrayEmpty,
   isFieldEmpty,
-  isValidHttpUrl,
   isValidJSON,
   matchesSearch,
   normalizeSearchTerm,
@@ -81,20 +80,5 @@ describe('normalizeSearchTerm / matchesSearch', () => {
 
   it('returns false on no match', () => {
     expect(matchesSearch('alpha', 'beta')).toBe(false);
-  });
-});
-
-describe('isValidHttpUrl', () => {
-  it('accepts http(s) URLs', () => {
-    expect(isValidHttpUrl('http://example.com')).toBe(true);
-    expect(isValidHttpUrl('HTTPS://Example.com/path')).toBe(true);
-  });
-
-  it('rejects other protocols and non-strings', () => {
-    expect(isValidHttpUrl('ftp://example.com')).toBe(false);
-    expect(isValidHttpUrl('example.com')).toBe(false);
-    expect(isValidHttpUrl('')).toBe(false);
-    expect(isValidHttpUrl(null)).toBe(false);
-    expect(isValidHttpUrl(undefined)).toBe(false);
   });
 });

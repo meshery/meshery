@@ -35,11 +35,3 @@ export const matchesSearch = (text: string, searchTerm: string): boolean => {
   }
   return text.toLowerCase().includes(needle);
 };
-
-export const isValidHttpUrl = (url: unknown): boolean => {
-  if (typeof url !== 'string') {
-    return false;
-  }
-  const lower = url.toLowerCase();
-  return lower.startsWith('http://') || lower.startsWith('https://');
-};
