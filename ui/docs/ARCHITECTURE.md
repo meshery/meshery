@@ -26,11 +26,12 @@ These are load-bearing. Every rule below answers a single question: **what does 
 
 ### 1. Sistent is the only UI kit
 
-Import every component, hook, and styling utility you need from `@sistent/sistent` — never from `@mui/material`, `@mui/icons-material`, `@material-ui/*`, or `@rjsf/mui`. If Sistent is missing something you need, file an upstream PR to Sistent rather than reaching past it. The single exception is RJSF: `@rjsf/mui` is allowed only inside Sistent's wrapper (`ui/components/shared/FormFields/`) and is invisible to the rest of the app.
+Import every component you need from `@sistent/sistent` — never from `@mui/material`, `@mui/icons-material`, `@material-ui/*`, or `@rjsf/mui`. Hooks and styling utilities (`styled`, `useTheme`, `alpha`, palette accessors) come from `@/theme`, the project-local front door that re-exports the supported Sistent surface; see [`THEMING.md`](./THEMING.md) for the full theming contract. If Sistent is missing something you need, file an upstream PR to Sistent rather than reaching past it. The single exception is RJSF: `@rjsf/mui` is allowed only inside Sistent's wrapper (`ui/components/shared/FormFields/`) and is invisible to the rest of the app.
 
 ```tsx
 // Good
-import { Button, Dialog, useTheme } from '@sistent/sistent';
+import { Button, Dialog } from '@sistent/sistent';
+import { useTheme, styled } from '@/theme';
 
 // Forbidden in application code
 import Button from '@mui/material/Button';
@@ -87,7 +88,7 @@ components/layout/Header/
 # Bad
 components/layout/Header/
   index.tsx
-  style.tsx
+  styles.tsx
   utils.tsx
 ```
 
@@ -174,7 +175,7 @@ ui/
 │   └── subscription/               # kept — GraphQL subscription wiring
 │
 ├── theme/                          # RENAMED & COLLAPSED from themes/
-│   ├── index.ts                    # Re-exports from @sistent/sistent — the ONLY color source
+│   ├── index.ts                    # Re-exports from @sistent/sistent — the ONLY source for theme & styling
 │   ├── SistentProvider.tsx         # was: SistentWrapper.tsx + provider plumbing
 │   ├── snackbar.tsx                # ThemeResponsiveSnackbar (uses theme.palette.*)
 │   └── rjsf.ts                     # Sistent-backed RJSF theme — no Material UI
