@@ -1,6 +1,6 @@
 import React from 'react';
-import { FlipCard } from '../General';
-import { useGetEnvironmentConnectionsQuery } from '../../../rtk-query/environments';
+import { FlipCard } from '../Lifecycle/General';
+import { useGetEnvironmentConnectionsQuery } from '../../rtk-query/environments';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { DeleteIcon, EditIcon, Grid2, SyncAltIcon, useTheme } from '@sistent/sistent';
