@@ -99,13 +99,11 @@ const legacyRestrictedImportOffenders = [
 ];
 
 const legacyLiteralColorOffenders = [
-  'components/ConfirmationModal.tsx',
   'components/Dashboard/charts/ResourceUtilizationChart.tsx',
   'components/Dashboard/components.tsx',
   'components/Dashboard/images/info-icon.tsx',
   'components/Dashboard/images/meshery-icon.tsx',
   'components/Dashboard/style.ts',
-  'components/DatabaseSummary.tsx',
   'components/DesignLifeCycle/DryRun.tsx',
   'components/DesignLifeCycle/ValidateDesign.tsx',
   'components/DesignLifeCycle/common.tsx',
