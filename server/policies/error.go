@@ -8,7 +8,7 @@ import "github.com/meshery/meshkit/errors"
 const (
 	ErrApplyPatchCode       = "meshery-server-1376"
 	ErrParsePayloadCode     = "meshery-server-1377"
-	ErrFlappingDetectedCode = "meshery-server-1378"
+	ErrFlappingDetectedCode = "meshery-server-1430"
 )
 
 func ErrApplyPatch(err error) error {
