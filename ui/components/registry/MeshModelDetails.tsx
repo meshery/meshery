@@ -1,6 +1,6 @@
 import React from 'react';
 import { DetailsContainer, Segment, FullWidth } from '@/assets/styles/general/tool.styles';
-import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../../constants/navigator';
+import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { FormatStructuredData, reorderObjectProperties } from '@/components/DataFormatter';
 import {
   FormControl,

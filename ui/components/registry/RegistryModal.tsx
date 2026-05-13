@@ -22,7 +22,7 @@ import {
 } from '@sistent/sistent';
 import ConnectionIcon from '@/assets/icons/Connection';
 import ComponentIcon from '@/assets/icons/Component';
-import MeshModelComponent from '../Settings/Registry/MeshModelComponent';
+import MeshModelComponent from './MeshModelComponent';
 import { iconMedium, iconSmall } from 'css/icons.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { RegistryModalContext } from '@/utils/context/RegistryModalContextProvider';
@@ -32,7 +32,7 @@ import {
   useGetRelationshipsQuery,
   useGetRegistrantsQuery,
 } from '@/rtk-query/meshModel';
-import { removeDuplicateVersions } from '../Settings/Registry/helper';
+import { removeDuplicateVersions } from './helper';
 
 const DRAWER_WIDTH = 250;
 

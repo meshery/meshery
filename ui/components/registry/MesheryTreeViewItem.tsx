@@ -1,5 +1,5 @@
 import React from 'react';
-import { MODELS } from '../../../constants/navigator';
+import { MODELS } from '../../constants/navigator';
 import { normalizeStaticImagePath } from '@/utils/fallback';
 import StyledTreeItem from './StyledTreeItem';
 

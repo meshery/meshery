@@ -42,8 +42,8 @@ import {
   OVERVIEW,
   REGISTRY,
 } from '@/constants/navigator';
-import { removeDuplicateVersions } from './Registry/helper';
-import MeshModelComponent from './Registry/MeshModelComponent';
+import { removeDuplicateVersions } from '../registry/helper';
+import MeshModelComponent from '../registry/MeshModelComponent';
 import DefaultError from '../General/error-404';
 import MesheryConfigurationChart from '../Dashboard/charts/MesheryConfigurationCharts';
 import ConnectionStatsChart from '../Dashboard/charts/ConnectionCharts';

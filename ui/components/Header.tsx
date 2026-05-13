@@ -14,7 +14,7 @@ import RemoteComponent from './RemoteComponent';
 import { useNotification } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from '@/utils/hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
-import RegistryModal from './Registry/RegistryModal';
+import RegistryModal from './registry/RegistryModal';
 
 import {
   Checkbox,
