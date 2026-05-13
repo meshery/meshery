@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
+  AddIcon,
   Box,
   Card,
   CardActions,
   CardHeader,
   Chip,
+  DeleteIcon,
   Dialog,
   DialogActions,
   DialogContent,
@@ -17,6 +19,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  PlayArrowIcon as PlayIcon,
   Switch,
   Table,
   Tooltip,
@@ -28,9 +31,6 @@ import {
   NoSsr,
   TableHead,
 } from '@sistent/sistent';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import PlayIcon from '@mui/icons-material/PlayArrow';
 import MUIDataTable from '@sistent/mui-datatables';
 import { useRouter } from 'next/router';
 import { Controlled as CodeMirror } from './CodeMirror';
@@ -42,12 +42,12 @@ import {
   useLazyPingAdapterQuery,
   useLazyGetSmiResultsQuery,
 } from '../rtk-query/system';
-import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
-import fetchAvailableNamespaces from './graphql/queries/NamespaceQuery';
-import MesheryMetrics from './Performance/MesheryMetrics';
+import fetchAvailableAddons from '@/graphql/queries/AddonsStatusQuery';
+import fetchAvailableNamespaces from '@/graphql/queries/NamespaceQuery';
+import MesheryMetrics from './performance/MesheryMetrics';
 import MesheryResultDialog from './MesheryResultDialog';
 import ReactSelectWrapper from './ReactSelectWrapper';
-import ConfirmationMsg from './ConfirmationModal';
+import ConfirmationMsg from './shared/Modal/ConfirmationModal';
 import { iconMedium } from '../css/icons.styles';
 import { ACTIONS } from '../utils/Enum';
 import { getModelByName } from '../api/meshmodel';

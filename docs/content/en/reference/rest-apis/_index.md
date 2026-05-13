@@ -2,7 +2,6 @@
 title: REST API
 description: Meshery REST API documentation
 data: openapi
-display_toc: false
 aliases: 
 - /reference/rest-apis/swagger
 ---

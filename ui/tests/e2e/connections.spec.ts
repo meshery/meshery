@@ -51,7 +51,8 @@ test.describe.serial('Connection Management Tests', () => {
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToConnections();
-    await page.getByTestId('connection-addCluster').waitFor();
+    await page.waitForURL(/\/management\/connections/);
+    await expect(page.getByTestId('ConnectionTable-search')).toBeVisible();
   });
 
   test('Verify that UI components are displayed', async ({ page }) => {
@@ -194,7 +195,15 @@ test.describe.serial('Connection Management Tests', () => {
 
     await getFilteredConnectionsRes;
 
-    const row = page.locator('tr').filter({ hasText: 'connected' }).first();
+    // Narrow to the data row for the searched cluster — `tr` alone matches
+    // table headers, MUI menu items, and the chip dropdown popovers, all of
+    // which can carry the word `connected` from filter labels or other
+    // rendered chips and silently grab the wrong row.
+    const row = page
+      .locator('tbody tr')
+      .filter({ hasText: clusterMetaData.name })
+      .filter({ hasText: 'connected' })
+      .first();
 
     // Skip the test if no connected cluster is found (e.g., CI environments without a pre-connected cluster)
     if ((await row.count()) === 0) {
@@ -210,7 +219,26 @@ test.describe.serial('Connection Management Tests', () => {
     await page.getByRole('button', { name: 'Delete', exact: true }).click();
     // Verify that Confirmation modal opened and delete
     await expect(page.getByText('Delete Connections')).toBeVisible();
+
+    // Capture the PUT to the connection-update endpoint so we can surface
+    // the HTTP status in the test output if the delete fails on the
+    // backend — the alternative (just waiting on the snackbar) leaves
+    // 500s/4xxs invisible: the success toast never fires and the test
+    // hangs to its 60s timeout with no clue what happened.
+    const updateRes = page.waitForResponse(
+      (resp) =>
+        /\/api\/integrations\/connections\/[0-9a-f-]{36}$/.test(resp.url()) &&
+        resp.request().method() === 'PUT',
+      { timeout: 60_000 },
+    );
+
     await page.getByRole('button', { name: 'DELETE', exact: true }).click();
+
+    const response = await updateRes;
+    expect(
+      response.status(),
+      `connection update PUT returned ${response.status()} ${response.statusText()} — body: ${await response.text()}`,
+    ).toBe(200);
 
     await waitForSnackBar(page, 'Connection status updated');
   });

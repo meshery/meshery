@@ -1,21 +1,22 @@
-import { Avatar, useTheme } from '@sistent/sistent';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import ExploreIcon from '@mui/icons-material/Explore';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import HandymanIcon from '@mui/icons-material/Handyman';
+import React, { memo } from 'react';
+import { Avatar, AssignmentTurnedInIcon, CustomTooltip, useTheme } from '@sistent/sistent';
+import {
+  CheckCircle as CheckCircleIcon,
+  Explore as ExploreIcon,
+  RemoveCircle as RemoveCircleIcon,
+  DeleteForever as DeleteForeverIcon,
+  Handyman as HandymanIcon,
+  NotInterestedRounded as NotInterestedRoundedIcon,
+} from '@/assets/icons';
 import BadgeAvatars from '../CustomAvatar';
 import { notificationColors } from '../../themes';
 import DisconnectIcon from '../../assets/icons/disconnect';
-import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import {
   CONNECTION_STATE_TO_TRANSITION_MAP,
   CONNECTION_STATES,
   CONTROLLER_STATES,
 } from '../../utils/Enum';
 import { normalizeStaticImagePath } from '@/utils/fallback';
-import { CustomTooltip } from '@sistent/sistent';
 import {
   ChipWrapper,
   ConnectedChip,
@@ -26,239 +27,190 @@ import {
   MaintainanceChip,
   NotFoundChip,
   RegisteredChip,
-  ConnectionStyledMenuItem,
 } from './styles';
 import { iconMedium, iconSmall } from 'css/icons.styles';
 import ConnectionIcon from '@/assets/icons/Connection';
 
-export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, width }) => {
-  const chipStyle = { width };
+type ConnectionChipProps = {
+  handlePing?: () => void;
+  onDelete?: () => void;
+  iconSrc?: string;
+  status?: string;
+  title?: React.ReactNode;
+  width?: string | number;
+  disabled?: boolean;
+};
+
+type TooltipWrappedConnectionChipProps = ConnectionChipProps & {
+  tooltip?: React.ReactNode;
+};
+
+type ConnectionStateChipProps = {
+  status?: string;
+  actionable?: boolean;
+};
+
+const HEALTHY_STATUSES = new Set(
+  [CONNECTION_STATES.CONNECTED, CONTROLLER_STATES.DEPLOYED].map((status) => status.toLowerCase()),
+);
+const PARTIAL_STATUSES = new Set(
+  [
+    CONTROLLER_STATES.ENABLED,
+    CONTROLLER_STATES.RUNNING,
+    CONTROLLER_STATES.DEPLOYING,
+    CONNECTION_STATES.REGISTERED,
+  ].map((status) => status.toLowerCase()),
+);
+
+const STATE_CHIP_CONFIG = {
+  [CONNECTION_STATES.IGNORED]: {
+    Component: IgnoredChip,
+    avatar: <RemoveCircleIcon />,
+  },
+  [CONNECTION_STATES.CONNECTED]: {
+    Component: ConnectedChip,
+    avatar: <CheckCircleIcon />,
+  },
+  [CONNECTION_STATES.REGISTERED]: {
+    Component: RegisteredChip,
+    avatar: <AssignmentTurnedInIcon />,
+  },
+  [CONNECTION_STATES.DISCOVERED]: {
+    Component: DiscoveredChip,
+    avatar: <ExploreIcon />,
+  },
+  [CONNECTION_STATES.DELETED]: {
+    Component: DeletedChip,
+    avatar: <DeleteForeverIcon />,
+  },
+  [CONNECTION_STATES.MAINTENANCE]: {
+    Component: MaintainanceChip,
+    avatar: <HandymanIcon />,
+  },
+  [CONNECTION_STATES.DISCONNECTED]: {
+    Component: DisconnectedChip,
+    avatar: <DisconnectIcon fill={notificationColors.lightwarning} width={24} height={24} />,
+  },
+  [CONNECTION_STATES.NOTFOUND]: {
+    Component: NotFoundChip,
+    avatar: <NotInterestedRoundedIcon />,
+  },
+} as const;
+
+const DEFAULT_STATE_CHIP = {
+  Component: DiscoveredChip,
+  avatar: <ExploreIcon />,
+};
+
+const getStatusLevel = (status?: string) => {
+  if (!status) {
+    return 'error';
+  }
+
+  const normalizedStatus = status.toLowerCase();
+
+  if (HEALTHY_STATUSES.has(normalizedStatus)) {
+    return 'healthy';
+  }
+
+  if (PARTIAL_STATUSES.has(normalizedStatus)) {
+    return 'partial';
+  }
+
+  return 'error';
+};
+
+const getStatusColor = (theme: ReturnType<typeof useTheme>, status?: string) => {
+  switch (getStatusLevel(status)) {
+    case 'healthy':
+      return theme.palette.background.brand.default;
+    case 'partial':
+      return theme.palette.background.warning.default;
+    default:
+      return theme.palette.text.disabled;
+  }
+};
+
+const ConnectionChip_ = ({
+  handlePing,
+  onDelete,
+  iconSrc,
+  status,
+  title,
+  width,
+  disabled = false,
+}: ConnectionChipProps) => {
   const theme = useTheme();
   const normalizedIconSrc = normalizeStaticImagePath(iconSrc) || undefined;
+  const isPingEnabled = Boolean(handlePing) && !disabled;
 
-  const STATUS_LEVEL_MAP = Object.fromEntries([
-    ...[CONNECTION_STATES.CONNECTED, CONTROLLER_STATES.DEPLOYED].map((status) => [
-      status.toLowerCase(),
-      'healthy',
-    ]),
-    ...[
-      CONTROLLER_STATES.ENABLED,
-      CONTROLLER_STATES.RUNNING,
-      CONTROLLER_STATES.DEPLOYING,
-      CONNECTION_STATES.REGISTERED,
-    ].map((status) => [status.toLowerCase(), 'partial']),
-  ]);
-
-  const getStatusLevel = (status) => {
-    if (!status) return 'error';
-    return STATUS_LEVEL_MAP[status.toLowerCase()] || 'error';
-  };
-
-  const getStatusColor = (statusLevel) => {
-    switch (statusLevel) {
-      case 'healthy':
-        return theme.palette.background.brand.default;
-      case 'partial':
-        return theme.palette.background.warning.default;
-      case 'error':
-      default:
-        return theme.palette.text.disabled;
-    }
-  };
+  const avatar = status ? (
+    <BadgeAvatars color={getStatusColor(theme, status)}>
+      <Avatar src={normalizedIconSrc} sx={iconMedium}>
+        <ConnectionIcon {...iconSmall} />
+      </Avatar>
+    </BadgeAvatars>
+  ) : (
+    <Avatar src={normalizedIconSrc} sx={iconMedium}>
+      <ConnectionIcon {...iconSmall} />
+    </Avatar>
+  );
 
   return (
     <ChipWrapper
       label={title}
-      onClick={(e) => {
-        e.stopPropagation(); // Prevent event propagation
-        handlePing(); // Call your custom handler
-      }}
-      onDelete={onDelete}
-      avatar={
-        status ? (
-          <BadgeAvatars color={getStatusColor(getStatusLevel(status))}>
-            <Avatar
-              src={normalizedIconSrc}
-              style={{ ...(status ? {} : { opacity: 0.2 }), ...iconMedium }}
-            >
-              <ConnectionIcon {...iconSmall} />
-            </Avatar>
-          </BadgeAvatars>
-        ) : (
-          <Avatar src={normalizedIconSrc} sx={iconMedium}>
-            <ConnectionIcon {...iconSmall} />
-          </Avatar>
-        )
+      onClick={
+        isPingEnabled
+          ? (event) => {
+              event.stopPropagation();
+              handlePing?.();
+            }
+          : undefined
       }
-      // variant="filled"
+      onDelete={disabled ? undefined : onDelete}
+      disabled={disabled}
+      avatar={avatar}
       data-cy="chipContextName"
-      style={chipStyle}
+      style={width ? { width } : undefined}
     />
   );
 };
 
-export const TooltipWrappedConnectionChip = (props) => {
+export const ConnectionChip = memo(ConnectionChip_);
+
+const TooltipWrappedConnectionChip_ = ({
+  tooltip,
+  title,
+  ...props
+}: TooltipWrappedConnectionChipProps) => {
+  const chip = (
+    <span style={{ display: 'inline-block' }}>
+      <ConnectionChip title={title} {...props} />
+    </span>
+  );
+
+  if (!tooltip && !title) {
+    return chip;
+  }
+
   return (
-    <CustomTooltip title={props.tooltip || props.title} placement="left">
-      <div style={{ display: 'inline-block' }}>
-        <ConnectionChip {...props} />
-      </div>
+    <CustomTooltip title={tooltip || title} placement="left">
+      {chip}
     </CustomTooltip>
   );
 };
 
-const DiscoveredStateChip = ({ value }) => {
-  return (
-    <ConnectionStyledMenuItem value={value} sx={{ padding: 0 }}>
-      <DiscoveredChip
-        avatar={<ExploreIcon />}
-        label={value}
-        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
-      />
-      {/* <HelpToolTip classes={classes} value="1-discovered" /> */}
-    </ConnectionStyledMenuItem>
-  );
+export const TooltipWrappedConnectionChip = memo(TooltipWrappedConnectionChip_);
+
+const ConnectionStateChip_ = ({ status, actionable = false }: ConnectionStateChipProps) => {
+  const normalizedStatus = status?.toLowerCase() || '';
+  const value =
+    actionable && normalizedStatus
+      ? CONNECTION_STATE_TO_TRANSITION_MAP[normalizedStatus] || status
+      : status;
+  const { Component, avatar } = STATE_CHIP_CONFIG[normalizedStatus] || DEFAULT_STATE_CHIP;
+
+  return <Component avatar={avatar} label={value || ''} />;
 };
 
-const RegisteredStateChip = ({ value }) => {
-  return (
-    <ConnectionStyledMenuItem value={value}>
-      <RegisteredChip
-        avatar={<AssignmentTurnedInIcon />}
-        label={value}
-        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
-      />
-      {/* <HelpToolTip classes={classes} value="2-registered" /> */}
-    </ConnectionStyledMenuItem>
-  );
-};
-
-const ConnectedStateChip = ({ value }) => {
-  return (
-    <ConnectionStyledMenuItem value={value}>
-      <ConnectedChip
-        avatar={<CheckCircleIcon />}
-        label={value}
-        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
-      />
-      {/* <HelpToolTip classes={classes} value="3-connected" /> */}
-    </ConnectionStyledMenuItem>
-  );
-};
-
-const DisconnectedStateChip = ({ value }) => {
-  return (
-    <ConnectionStyledMenuItem value={value}>
-      <DisconnectedChip
-        avatar={<DisconnectIcon fill={notificationColors.lightwarning} width={24} height={24} />}
-        label={value}
-        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
-      />
-    </ConnectionStyledMenuItem>
-  );
-};
-
-const IgnoredStateChip = ({ value }) => {
-  // const classes = styles/();
-  return (
-    <ConnectionStyledMenuItem value={value}>
-      <IgnoredChip
-        avatar={<RemoveCircleIcon />}
-        label={value}
-        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
-      />
-      {/* <HelpToolTip classes={classes} value="4-ignored" /> */}
-    </ConnectionStyledMenuItem>
-  );
-};
-
-const DeletedStateChip = ({ value }) => {
-  return (
-    <ConnectionStyledMenuItem value={value}>
-      <DeletedChip
-        avatar={<DeleteForeverIcon />}
-        label={value}
-        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
-      />
-      {/* <HelpToolTip classes={classes} value="7-deleted" /> */}
-    </ConnectionStyledMenuItem>
-  );
-};
-
-const MaintainanceStateChip = ({ value }) => {
-  return (
-    <ConnectionStyledMenuItem value={value}>
-      <MaintainanceChip
-        avatar={<HandymanIcon />}
-        label={value}
-        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
-      />
-      {/* <HelpToolTip classes={classes} value="7-deleted" /> */}
-    </ConnectionStyledMenuItem>
-  );
-};
-
-const NotFoundStateChip = ({ value }) => {
-  return (
-    <ConnectionStyledMenuItem value={value}>
-      <NotFoundChip
-        avatar={<NotInterestedRoundedIcon />}
-        label={value}
-        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
-      />
-      {/* <HelpToolTip classes={classes} value="7-deleted" /> */}
-    </ConnectionStyledMenuItem>
-  );
-};
-
-// const HelpToolTip = ({ classes, value }) => {
-//   const url = `https://docs.meshery.io/concepts/connections#${value}`;
-//   const onClick = () => (e) => {
-//     e.preventDefault();
-//     e.stopPropagation();
-//     window.open(url, '_blank');
-//   };
-//   return (
-//     <Tooltip title={url}>
-//       <IconButton onClick={onClick()} aria-label="help">
-//         <HelpIcon className={classes.helpIcon} style={{ fontSize: '1.45rem', ...iconSmall }} />
-//       </IconButton>
-//     </Tooltip>
-//   );
-// };
-
-const Default = ({ value }) => {
-  return (
-    <ConnectionStyledMenuItem value={value}>
-      <DiscoveredChip value={value} avatar={<ExploreIcon />} label={value} />
-    </ConnectionStyledMenuItem>
-  );
-};
-
-function getStatusChip(status, actionable) {
-  const value = actionable ? CONNECTION_STATE_TO_TRANSITION_MAP[status] : status;
-  switch (status) {
-    case 'ignored':
-      return <IgnoredStateChip value={value} />;
-    case 'connected':
-      return <ConnectedStateChip value={value} />;
-    case 'registered':
-      return <RegisteredStateChip value={value} />;
-    case 'discovered':
-      return <DiscoveredStateChip value={value} />;
-    case 'deleted':
-      return <DeletedStateChip value={value} />;
-    case 'maintenance':
-      return <MaintainanceStateChip value={value} />;
-    case 'disconnected':
-      return <DisconnectedStateChip value={value} />;
-    case 'not found':
-      return <NotFoundStateChip value={value} />;
-    default:
-      return <Default value={value} />;
-  }
-}
-
-export const ConnectionStateChip = ({ status, actionable }) => {
-  return <>{getStatusChip(status, actionable)}</>;
-};
+export const ConnectionStateChip = memo(ConnectionStateChip_);
