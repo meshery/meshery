@@ -164,7 +164,9 @@ func NewK8sContextWithServerID(
 	}
 
 	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
-	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
+	timeoutCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(timeoutCtx, "kube-system", v1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -438,7 +440,9 @@ func (kc K8sContext) PingTest() error {
 		return err
 	}
 
-	res := h.KubeClient.DiscoveryClient.RESTClient().Get().RequestURI("/livez").Timeout(1 * time.Second).Do(context.TODO())
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	res := h.KubeClient.DiscoveryClient.RESTClient().Get().RequestURI("/livez").Timeout(1 * time.Second).Do(ctx)
 	if res.Error() != nil {
 		return ErrUnreachableKubeAPI(res.Error(), kc.Server)
 	}
@@ -450,7 +454,9 @@ func (kc K8sContext) PingTest() error {
 // server ID to the kubernetes context
 func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
-	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(ctx, "kube-system", v1.GetOptions{})
 	if err != nil {
 		return ErrUnreachableKubeAPI(err, kc.Server)
 	}

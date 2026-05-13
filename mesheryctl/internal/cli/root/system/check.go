@@ -398,8 +398,10 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 	}
 
 	//Check whether kubernetes can be queried
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 	podInterface := client.KubeClient.CoreV1().Pods("")
-	_, err = podInterface.List(context.TODO(), v1.ListOptions{})
+	_, err = podInterface.List(ctx, v1.ListOptions{})
 	if err != nil {
 		if hc.context.Platform == platformKubernetes { // increase failure count
 			failure++
