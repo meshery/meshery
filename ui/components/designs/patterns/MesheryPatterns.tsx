@@ -451,8 +451,8 @@ function MesheryPatterns({
 
   useEffect(() => {
     if (capabilitiesData) {
-      const capabilitiesRegistry = capabilitiesData;
-      const patternsCatalogueCapability = capabilitiesRegistry?.capabilities.filter(
+      // `capabilitiesData.capabilities` is the provider-declared feature list.
+      const patternsCatalogueCapability = capabilitiesData?.capabilities?.filter(
         (val) => val.feature === MesheryPatternsCatalog,
       );
       if (patternsCatalogueCapability?.length > 0) setCanPublishPattern(true);
