@@ -58,77 +58,29 @@ jobs:
             echo ""
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Run audit:mui
-        id: audit-mui
-        env:
-          AUDIT_KIND: mui
+      - name: Run audits (mui, hex, size)
+        id: audits
         run: |
-          output="$(npm run --silent audit:${AUDIT_KIND})"
-          trend="$(printf '%s\n' "$output" | grep -E "^AUDIT ${AUDIT_KIND} " | tail -1)"
-          : "${trend:=AUDIT ${AUDIT_KIND} (no summary line)}"
-          printf '%s\n' "$output"
-          printf 'trend=%s\n' "$trend" >> "$GITHUB_OUTPUT"
-          {
-            echo "<details><summary><strong>audit:${AUDIT_KIND}</strong> &mdash; <code>${trend}</code></summary>"
-            echo ""
-            echo '```'
-            echo "${trend}"
-            echo '```'
-            echo ""
-            echo '```text'
+          for kind in mui hex size; do
+            output="$(npm run --silent audit:${kind})"
+            trend="$(printf '%s\n' "$output" | grep -E "^AUDIT ${kind} " | tail -1)"
+            : "${trend:=AUDIT ${kind} (no summary line)}"
             printf '%s\n' "$output"
-            echo '```'
-            echo ""
-            echo "</details>"
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Run audit:hex
-        id: audit-hex
-        env:
-          AUDIT_KIND: hex
-        run: |
-          output="$(npm run --silent audit:${AUDIT_KIND})"
-          trend="$(printf '%s\n' "$output" | grep -E "^AUDIT ${AUDIT_KIND} " | tail -1)"
-          : "${trend:=AUDIT ${AUDIT_KIND} (no summary line)}"
-          printf '%s\n' "$output"
-          printf 'trend=%s\n' "$trend" >> "$GITHUB_OUTPUT"
-          {
-            echo "<details><summary><strong>audit:${AUDIT_KIND}</strong> &mdash; <code>${trend}</code></summary>"
-            echo ""
-            echo '```'
-            echo "${trend}"
-            echo '```'
-            echo ""
-            echo '```text'
-            printf '%s\n' "$output"
-            echo '```'
-            echo ""
-            echo "</details>"
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Run audit:size
-        id: audit-size
-        env:
-          AUDIT_KIND: size
-        run: |
-          output="$(npm run --silent audit:${AUDIT_KIND})"
-          trend="$(printf '%s\n' "$output" | grep -E "^AUDIT ${AUDIT_KIND} " | tail -1)"
-          : "${trend:=AUDIT ${AUDIT_KIND} (no summary line)}"
-          printf '%s\n' "$output"
-          printf 'trend=%s\n' "$trend" >> "$GITHUB_OUTPUT"
-          {
-            echo "<details><summary><strong>audit:${AUDIT_KIND}</strong> &mdash; <code>${trend}</code></summary>"
-            echo ""
-            echo '```'
-            echo "${trend}"
-            echo '```'
-            echo ""
-            echo '```text'
-            printf '%s\n' "$output"
-            echo '```'
-            echo ""
-            echo "</details>"
-          } >> "$GITHUB_STEP_SUMMARY"
+            printf '%s-trend=%s\n' "$kind" "$trend" >> "$GITHUB_OUTPUT"
+            {
+              echo "<details><summary><strong>audit:${kind}</strong> &mdash; <code>${trend}</code></summary>"
+              echo ""
+              echo '```'
+              echo "${trend}"
+              echo '```'
+              echo ""
+              echo '```text'
+              printf '%s\n' "$output"
+              echo '```'
+              echo ""
+              echo "</details>"
+            } >> "$GITHUB_STEP_SUMMARY"
+          done
 
       - name: Run lint:ui-kit
         id: lint-ui-kit
@@ -165,9 +117,16 @@ jobs:
             exit 1
           fi
 
+      # PR-comment steps are best-effort. Fork PRs receive a read-only
+      # GITHUB_TOKEN regardless of the workflow's `permissions:` block, so
+      # find-comment / create-or-update-comment return HTTP 403 from forks.
+      # continue-on-error keeps fork PRs green — contributors still get the
+      # full report via the job summary even when the sticky comment cannot
+      # be posted. Same-repo PRs continue to post normally.
       - name: Find existing audit comment
         if: github.event_name == 'pull_request'
         id: find-comment
+        continue-on-error: true
         uses: peter-evans/find-comment@v3
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -176,6 +135,7 @@ jobs:
 
       - name: Post or update PR comment
         if: github.event_name == 'pull_request'
+        continue-on-error: true
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -189,9 +149,9 @@ jobs:
             Phase 1 baseline counters (informational; see [#18656](https://github.com/meshery/meshery/issues/18656)).
 
             ```
-            ${{ steps.audit-mui.outputs.trend }}
-            ${{ steps.audit-hex.outputs.trend }}
-            ${{ steps.audit-size.outputs.trend }}
+            ${{ steps.audits.outputs.mui-trend }}
+            ${{ steps.audits.outputs.hex-trend }}
+            ${{ steps.audits.outputs.size-trend }}
             ${{ steps.lint-ui-kit.outputs.trend }}
             ```
 
