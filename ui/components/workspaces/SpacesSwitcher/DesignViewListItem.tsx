@@ -14,7 +14,7 @@ import {
   Typography,
   VisibilityChipMenu,
 } from '@sistent/sistent';
-import { VIEW_VISIBILITY } from '@/utils/Enum'
+import { VIEW_VISIBILITY } from '@/utils/Enum';
 import {
   StyledAvatarContainer,
   StyledListIcon,

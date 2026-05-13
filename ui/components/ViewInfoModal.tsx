@@ -15,13 +15,13 @@ import { Box, Modal, ModalBody, ModalFooter } from '@sistent/sistent';
 import { useGetViewQuery, useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import { useGetLoggedInUserQuery, useGetUserProfileSummaryByIdQuery } from '@/rtk-query/user';
 import { iconLarge } from 'css/icons.styles';
-import VisibilityChipMenu  from '@sistent/sistent';
+import { VisibilityChipMenu } from '@sistent/sistent';
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { MDEditor } from './Markdown';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { ModalButtonSecondary } from '@sistent/sistent';
-import { handleUpdateViewVisibility, viewPath } from './workspaces/SpacesSwitcher/hooks'
+import { handleUpdateViewVisibility, viewPath } from './workspaces/SpacesSwitcher/hooks';
 import { ModalButtonPrimary } from '@sistent/sistent';
 import rehypeSanitize from 'rehype-sanitize';
 import { Lock, Public } from '@mui/icons-material';
