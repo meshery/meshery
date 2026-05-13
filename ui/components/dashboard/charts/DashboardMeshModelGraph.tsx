@@ -42,7 +42,7 @@ function MeshModelContructs() {
       data: {
         columns: data,
         type: donut(),
-        colors: dataToColors(data),
+        colors: dataToColors(data, theme),
         onclick: function (d: { name: string }) {
           router.push(`/settings?settingsCategory=Registry&tab=${d.name}`);
         },
@@ -64,7 +64,7 @@ function MeshModelContructs() {
         },
       },
     }),
-    [data],
+    [data, theme],
   );
 
   return (
@@ -120,7 +120,7 @@ function MeshModelCategories() {
     () => ({
       data: {
         columns: cleanedData,
-        colors: dataToColors(cleanedData),
+        colors: dataToColors(cleanedData, theme),
         type: donut(),
         onclick: function () {
           router.push('/settings?settingsCategory=Registry&tab=Models');
@@ -151,7 +151,7 @@ function MeshModelCategories() {
         show: false,
       },
     }),
-    [cleanedData],
+    [cleanedData, theme],
   );
 
   return (
