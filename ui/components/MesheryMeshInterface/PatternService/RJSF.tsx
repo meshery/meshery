@@ -1,5 +1,4 @@
-import { withTheme } from '@rjsf/core';
-import { Theme as MaterialUITheme } from '@rjsf/mui';
+import RJSFProvider from '../../shared/FormFields/RJSFProvider';
 import customValidator from '../../../utils/rjsfValidator';
 import React, { useEffect, useMemo, useState } from 'react';
 import { rjsfTheme } from '../../../themes';
@@ -23,9 +22,6 @@ import CustomRadioWidget from './RJSFCustomComponents/CustomRadioWidget';
 import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
-
-const MuiRJSFForm = withTheme(MaterialUITheme);
-
 /**
  * The Custom RJSF Form that accepts custom fields from the extension
  * or seed it's own default
@@ -101,7 +97,7 @@ function RJSFForm_({
     <ErrorBoundary customFallback={CustomErrorFallback}>
       {/* Putting RJSF into error boundary, so that error can be catched.. */}{' '}
       <ThemeProvider theme={resolvedRjsfTheme}>
-        <MuiRJSFForm
+        <RJSFProvider
           schema={schema.rjsfSchema}
           idPrefix={jsonSchema?.title}
           ref={formRef}
@@ -141,7 +137,7 @@ function RJSFForm_({
         >
           {children}
           <div></div>
-        </MuiRJSFForm>
+        </RJSFProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );
