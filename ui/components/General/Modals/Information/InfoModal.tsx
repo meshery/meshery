@@ -24,12 +24,13 @@ import {
   Skeleton,
   Typography,
   VisibilityChipMenu,
+  useTheme,
 } from '@sistent/sistent';
-import CloseIcon from '@mui/icons-material/Close';
+import { Close, Lock, Public } from '@/components/icons';
 import yaml from 'js-yaml';
 import _ from 'lodash';
 import { useSnackbar } from 'notistack';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, FC } from 'react';
 import PatternIcon from '../../../../assets/icons/Pattern';
 import { MESHERY_CLOUD_PROD } from '../../../../constants/endpoints';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';
@@ -46,7 +47,6 @@ import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { getMeshModels } from '@/api/meshmodel';
 import { useSelector } from 'react-redux';
-import { Lock, Public } from '@mui/icons-material';
 import RJSFWrapper from '@/components/MesheryMeshInterface/PatternService/RJSF_wrapper';
 
 export const VIEW_VISIBILITY = {
@@ -54,7 +54,17 @@ export const VIEW_VISIBILITY = {
   PRIVATE: 'private',
 };
 
-const InfoModal_ = React.memo((props) => {
+interface InfoModalProps {
+  infoModalOpen: boolean;
+  handleInfoModalClose: () => void;
+  resourceOwnerID: string;
+  selectedResource: any;
+  patternFetcher: any;
+  isReadOnly?: boolean;
+}
+
+const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
+  const theme = useTheme();
   const {
     infoModalOpen,
     handleInfoModalClose,
@@ -114,7 +124,7 @@ const InfoModal_ = React.memo((props) => {
       variant: 'info',
       action: (key) => (
         <IconButton aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-          <CloseIcon style={iconMedium} />
+          <Close style={iconMedium} />
         </IconButton>
       ),
     });
@@ -317,7 +327,7 @@ const InfoModal_ = React.memo((props) => {
         open={infoModalOpen}
         closeModal={handleInfoModalClose}
         title={selectedResource?.name}
-        headerIcon={<PatternIcon style={{ ...iconSmall }} fill="#FFF" />}
+        headerIcon={<PatternIcon style={{ ...iconSmall }} fill={theme.palette.common.white} />}
         maxWidth={false}
         sx={{
           '& .MuiDialog-container': {
@@ -334,8 +344,8 @@ const InfoModal_ = React.memo((props) => {
               <Button
                 variant="outlined"
                 disabled
-                style={{
-                  border: '0.1px solid #E6E6E6',
+                sx={{
+                  border: `0.1px solid ${theme.palette.divider}`,
                   width: '150px',
                   height: '150px',
                   display: 'flex',
@@ -353,7 +363,7 @@ const InfoModal_ = React.memo((props) => {
                 ) : (
                   <ServiceMesheryIcon
                     style={{
-                      boxShadow: '0px 0px 6px 2px rgba(0, 0, 0, 0.25)',
+                      boxShadow: theme.shadows[8],
                       borderRadius: '20px',
                     }}
                     width={100}
