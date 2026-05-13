@@ -61,23 +61,29 @@ const ErrorBadge = styled('span')(({ theme }) => ({
 
 ### How to import
 
-Always import from `@/theme`, never from `@/theme/index` and never from
-`@sistent/sistent` for primitives that `@/theme` already re-exports:
+Prefer `@/theme` as the front door. Never deep-import `@/theme/index`, and
+avoid importing from `@sistent/sistent` for primitives that `@/theme`
+already re-exports — `@/theme` is the project-local entry point that future
+phases will extend with additional palette accessors and helpers.
 
 ```tsx
 // Correct
 import { useTheme, styled, alpha, palette } from '@/theme';
 
-// Incorrect — deep import of the local entry point
+// Incorrect — deep import of the local entry point (lint-blocked)
 import { styled } from '@/theme/index';
 
-// Incorrect — bypasses the project-local front door
+// Discouraged — bypasses the project-local front door (convention, not
+// lint-blocked today)
 import { styled } from '@sistent/sistent';
 ```
 
-The lint rule that enforces this lives in
-[`ui/eslint.config.js`](../eslint.config.js) under the `no-restricted-imports`
-configuration.
+Today's `no-restricted-imports` rule in
+[`ui/eslint.config.js`](../eslint.config.js) blocks the legacy
+`@/themes*` / `@/constants/colors` paths, the `@/theme/index` deep import,
+and direct `@mui/*` / `@material-ui/*` / `@rjsf/mui` imports. Routing
+theme primitives through `@/theme` rather than `@sistent/sistent` is
+project convention; a later phase may tighten the rule.
 
 ---
 
@@ -218,13 +224,13 @@ function StatusPill({ status, label }: Props) {
 After:
 
 ```tsx
-import { styled } from '@/theme';
+import { styled, palette } from '@/theme';
 
 const Pill = styled('span', {
   shouldForwardProp: (prop) => prop !== 'isError',
 })<{ isError: boolean }>(({ theme, isError }) => ({
-  color: isError ? theme.palette.error.main : theme.palette.text.primary,
-  backgroundColor: theme.palette.background.elevatedComponents,
+  color: isError ? palette.status.error(theme) : theme.palette.text.primary,
+  backgroundColor: palette.surface.elevated(theme),
   padding: theme.spacing(0.5, 1),
   borderRadius: theme.shape.borderRadius,
 }));
@@ -233,6 +239,10 @@ function StatusPill({ status, label }: Props) {
   return <Pill isError={status === 'error'}>{label}</Pill>;
 }
 ```
+
+The `palette.status.*` and `palette.surface.*` accessors are the
+project-local helpers from `@/theme`; they read directly from
+`theme.palette.*` but document the supported palette paths in one place.
 
 Like the hex-literal rule, this rule ships in `warn` mode with a file-level
 allowlist; future phases drain the allowlist and promote it to `error`.
@@ -269,7 +279,7 @@ restructure plan call out for deletion:
 | `import { notificationColors, darkNotificationColors } from '@/themes/app'` | `theme.palette.*` (the theme handles the dark variant)   |
 | `import { NOTIFICATIONCOLORS } from '@/themes'`                        | `theme.palette.*`                                             |
 | `import { PRIMARY_COLOR } from '@/constants/colors'`                   | `theme.palette.primary.main`                                  |
-| `import { lightenOrDarkenColor } from '@/utils/lightenOrDarkenColor'`  | `import { lighten } from '@/theme'` (or `darken` from Sistent) |
+| `import { lightenOrDarkenColor } from '@/utils/lightenOrDarkenColor'`  | `import { lighten } from '@/theme'`. `darken` is not yet re-exported by `@/theme`; needed `darken` callers should add it to `ui/theme/index.ts` per the front-door policy. |
 | `import { styled } from '@/theme/index'`                               | `import { styled } from '@/theme'`                            |
 | `import { ... } from '@mui/material'`                                  | `import { ... } from '@sistent/sistent'`                      |
 
