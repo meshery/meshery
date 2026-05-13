@@ -22,8 +22,10 @@ export class CapabilitiesRegistry {
     this.isPlaygroundEnv = capabilitiesRegistry?.restrictedAccess?.isMesheryUIRestricted || false;
   }
 
-  capabilities() {
-    return this.capabilitiesRegistry;
+  get capabilities() {
+    return Array.isArray(this.capabilitiesRegistry?.capabilities)
+      ? this.capabilitiesRegistry.capabilities
+      : [];
   }
 
   isNavigatorComponentEnabled(navigatorWalker) {
