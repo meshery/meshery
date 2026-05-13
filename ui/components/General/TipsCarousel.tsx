@@ -13,7 +13,9 @@ const TipsCarousel = ({ tips }) => {
   };
 
   useInterval(() => {
-    setActiveStep((prevActiveStep) => (prevActiveStep === tips.length - 1 ? 0 : prevActiveStep + 1));
+    setActiveStep((prevActiveStep) =>
+      prevActiveStep === tips.length - 1 ? 0 : prevActiveStep + 1,
+    );
   }, 3000);
 
   return (

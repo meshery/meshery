@@ -1,12 +1,9 @@
 import { useEffect, useRef } from 'react';
 
-type EventTargetLike = EventTarget | null | undefined;
-
-const useEventListener = <K extends keyof WindowEventMap>(
-  eventName: K,
-  handler: (event: WindowEventMap[K]) => void,
-  target: EventTargetLike = typeof window !== 'undefined' ? window : null,
-  options?: boolean | AddEventListenerOptions,
+const useEventListener = <E extends Event = Event>(
+  eventName: string,
+  handler: (event: E) => void,
+  target: EventTarget | null = typeof window !== 'undefined' ? window : null,
 ): void => {
   const savedHandler = useRef(handler);
 
@@ -18,10 +15,10 @@ const useEventListener = <K extends keyof WindowEventMap>(
     if (!target || typeof target.addEventListener !== 'function') {
       return undefined;
     }
-    const listener = (event: Event) => savedHandler.current(event as WindowEventMap[K]);
-    target.addEventListener(eventName, listener, options);
-    return () => target.removeEventListener(eventName, listener, options);
-  }, [eventName, target, options]);
+    const listener = (event: Event) => savedHandler.current(event as E);
+    target.addEventListener(eventName, listener);
+    return () => target.removeEventListener(eventName, listener);
+  }, [eventName, target]);
 };
 
 export default useEventListener;
