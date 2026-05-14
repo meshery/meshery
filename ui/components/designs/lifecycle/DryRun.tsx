@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@sistent/sistent';
+import { List, ListItemText, ListItemIcon, Typography, Collapse } from '@sistent/sistent';
 import { ExpandLess, ExpandMore } from '@/assets/icons';
 import { useState } from 'react';
 import { ComponentIcon, DEPLOYMENT_TYPE, Loading, processDesign } from './common';
@@ -10,7 +10,7 @@ import {
   useIsValidatingDryRun,
 } from '../../../machines/validator/designValidator';
 import { ErrorIcon } from '@sistent/sistent';
-import { NOTIFICATIONCOLORS } from '@/themes/index';
+import { useTheme } from '@/theme';
 import { FormatStructuredData } from '../../data-formatter';
 import {
   DryRunComponentLabel,
@@ -123,7 +123,7 @@ const ExpandableComponentErrors = ({
                     height="24px"
                     width="24px"
                     bangFill="#fff"
-                    fill={NOTIFICATIONCOLORS.ERROR_DARK}
+                    fill={theme.palette.error.dark}
                   />{' '}
                 </ListItemIcon>
 
@@ -200,9 +200,7 @@ export const FormatDryRunResponse = ({
             disablePadding
             style={{
               color: `${
-                totalDryRunErrors > 0
-                  ? NOTIFICATIONCOLORS.ERROR_DARK
-                  : NOTIFICATIONCOLORS.SUCCESS_V2
+                totalDryRunErrors > 0 ? theme.palette.error.dark : theme.palette.success.main
               }`,
             }}
           >
