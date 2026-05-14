@@ -2,8 +2,8 @@ import { ability } from '../utils/can';
 import { useGetUserKeysQuery } from './userKeys';
 import _ from 'lodash';
 import CustomErrorMessage from '@/components/ErrorPage';
-import DefaultError from '@/components/General/error-404';
-import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
+import DefaultError from '@/components/general/error-404';
+import { DynamicFullScreenLoader } from '@/components/shared/LoadingState/DynamicFullscreenLoader';
 import {
   useGetProviderCapabilitiesQuery,
   useGetSelectedOrganization,

@@ -27,22 +27,21 @@ import {
   ActionListItem,
   ConnectionStyledSelect,
 } from './styles';
-import { FormatId } from '../DataFormatter';
-import LoadingScreen from '../LoadingComponents/LoadingComponent';
+import { FormatId } from '../data-formatter';
+import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { MoreVert as MoreVertIcon, Sync as SyncIcon } from '@/assets/icons';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { iconMedium } from '../../css/icons.styles';
 import _PromptComponent from '../PromptComponent';
-import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
-import SyncIcon from '@mui/icons-material/Sync';
+import resetDatabase from '@/graphql/queries/ResetDatabaseQuery';
 
 import { CONNECTION_KINDS, CONNECTION_STATES, MESHSYNC_DEPLOYMENT_TYPE } from '../../utils/Enum';
 import FormatConnectionMetadata from './metadata';
-import useKubernetesHook from '../hooks/useKubernetesHook';
+import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import { ConnectionStateChip, TooltipWrappedConnectionChip } from './ConnectionChip';
 import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue } from '../../utils/utils';
@@ -58,11 +57,11 @@ import {
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useGetConnectionsQuery, useUpdateConnectionByIdMutation } from '@/rtk-query/connection';
-import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DeleteIcon } from '@sistent/sistent';
 
-import { formatDate } from '../DataFormatter';
+import { formatDate } from '../data-formatter';
 import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
@@ -338,10 +337,13 @@ const ConnectionTable = ({
     },
   );
 
-  const environments = environmentsResponse?.environments || [];
   const environmentOptions = useMemo(
-    () => environments.map((env) => ({ label: env.name, value: env.id })),
-    [environments],
+    () =>
+      (environmentsResponse?.environments || []).map((env) => ({
+        label: env.name,
+        value: env.id,
+      })),
+    [environmentsResponse?.environments],
   );
 
   useEffect(() => {

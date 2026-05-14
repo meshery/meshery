@@ -8,13 +8,13 @@ import {
   KeyValue,
   Link,
   createColumnUiSchema,
-} from '../DataFormatter';
+} from '../data-formatter';
 import useKubernetesHook, {
   useControllerStatus,
   useMesheryOperator,
   useMeshsSyncController,
   useNatsController,
-} from '../hooks/useKubernetesHook';
+} from '@/utils/hooks/useKubernetesHook';
 import { TooltipWrappedConnectionChip } from './ConnectionChip';
 import { CONTROLLER_STATES, MESHSYNC_DEPLOYMENT_TYPE } from '../../utils/Enum';
 import { formatToTitleCase } from '../../utils/utils';

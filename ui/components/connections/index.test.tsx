@@ -37,15 +37,24 @@ vi.mock('./styles', () => ({
   ),
 }));
 
+// Records every `updateUrlWithConnectionId` reference the parent passes down.
+// Tests assert against this list to catch callback identity churn (which
+// previously cascaded into ConnectionTable's `options` memo and caused
+// React error #185 on /management/connections).
+const connectionTableCallbackRefs: Array<unknown> = [];
+
 vi.mock('./ConnectionTable', () => ({
-  default: ({ selectedConnectionId, updateUrlWithConnectionId }) => (
-    <div>
-      <div data-testid="connection-table">connection:{selectedConnectionId ?? 'none'}</div>
-      <button onClick={() => updateUrlWithConnectionId?.('cluster-2')} type="button">
-        Update Connection Id
-      </button>
-    </div>
-  ),
+  default: ({ selectedConnectionId, updateUrlWithConnectionId }) => {
+    connectionTableCallbackRefs.push(updateUrlWithConnectionId);
+    return (
+      <div>
+        <div data-testid="connection-table">connection:{selectedConnectionId ?? 'none'}</div>
+        <button onClick={() => updateUrlWithConnectionId?.('cluster-2')} type="button">
+          Update Connection Id
+        </button>
+      </div>
+    );
+  },
 }));
 
 vi.mock('./meshSync', () => ({
@@ -59,7 +68,7 @@ vi.mock('./meshSync', () => ({
   ),
 }));
 
-vi.mock('../General/Modals/Modal', () => ({
+vi.mock('../shared/Modal/Modal', () => ({
   default: () => <div data-testid="create-connection-modal" />,
 }));
 
@@ -71,11 +80,11 @@ vi.mock('@/rtk-query/schema', () => ({
   useGetSchemaQuery: () => ({ data: undefined }),
 }));
 
-vi.mock('../General/error-404/index', () => ({
+vi.mock('../general/error-404/index', () => ({
   default: () => <div data-testid="default-error" />,
 }));
 
-vi.mock('../General/ErrorBoundary', () => ({
+vi.mock('../shared/ErrorBoundary/ErrorBoundary', () => ({
   default: () => <div data-testid="error-fallback" />,
 }));
 
@@ -92,6 +101,7 @@ describe('connections index page', () => {
     router.query = {};
     router.push.mockReset();
     router.isReady = true;
+    connectionTableCallbackRefs.length = 0;
   });
 
   it('defaults to the connections tab and ignores non-string connection ids', () => {
@@ -150,5 +160,39 @@ describe('connections index page', () => {
       undefined,
       { shallow: true },
     );
+  });
+
+  // Regression test for React error #185 ("Maximum update depth exceeded") on
+  // /management/connections. The parent used to recreate
+  // `updateUrlWithConnectionId` on every render because its `useCallback` deps
+  // listed `query` and `push` from `useRouter()`, both of which Next.js's
+  // pages-router reassigns each render. That fresh callback identity
+  // invalidated ConnectionTable's `options` memo and the in-table
+  // expansion-sync effect, cascading into setState loops. The parent now
+  // mirrors router state into refs so the callback identity is preserved.
+  it('hands ConnectionTable a stable updateUrlWithConnectionId across re-renders', () => {
+    router.query = {};
+
+    const { rerender } = render(<ConnectionManagementPageWithErrorBoundary />);
+
+    // Simulate Next.js handing us a brand-new `query` object reference on the
+    // next render with the same logical contents (no URL change, just a
+    // different object identity from `useRouter()`).
+    router.query = {};
+    rerender(<ConnectionManagementPageWithErrorBoundary />);
+
+    // And again — but this time also include the `connectionId` the URL would
+    // grow once a row is expanded. The dedupe guard in
+    // `updateUrlWithConnectionId` previously closed over `connectionId` in its
+    // dep list, so this is the render that historically minted a new callback.
+    router.query = { connectionId: 'cluster-1' };
+    rerender(<ConnectionManagementPageWithErrorBoundary />);
+
+    expect(connectionTableCallbackRefs.length).toBeGreaterThanOrEqual(3);
+    const [first, ...rest] = connectionTableCallbackRefs;
+    expect(typeof first).toBe('function');
+    for (const ref of rest) {
+      expect(ref).toBe(first);
+    }
   });
 });

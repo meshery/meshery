@@ -87,7 +87,7 @@ vi.mock('./styles', () => ({
   ConnectionStyledSelect: ({ children }) => <div>{children}</div>,
 }));
 
-vi.mock('../DataFormatter', () => ({
+vi.mock('../data-formatter', () => ({
   FormatId: ({ id }) => <span>{id}</span>,
   formatDate: (value) => value,
 }));
@@ -97,7 +97,7 @@ vi.mock('../../css/icons.styles', () => ({
   iconSmall: {},
 }));
 
-vi.mock('../LoadingComponents/LoadingComponent', () => ({
+vi.mock('../shared/LoadingState/LoadingComponent', () => ({
   default: () => <div data-testid="loading-screen" />,
 }));
 
@@ -121,7 +121,7 @@ vi.mock('../graphql/queries/ResetDatabaseQuery', () => ({
   default: vi.fn(),
 }));
 
-vi.mock('../hooks/useKubernetesHook', () => ({
+vi.mock('@/utils/hooks/useKubernetesHook', () => ({
   default: () => ping,
 }));
 
