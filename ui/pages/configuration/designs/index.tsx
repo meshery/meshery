@@ -1,6 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
-import MesheryPatterns from '../../../components/MesheryPatterns/MesheryPatterns';
+import MesheryPatterns from '../../../components/designs/patterns/MesheryPatterns';
 import { NoSsr } from '@sistent/sistent';
 import { usePageTitle } from '@/utils/hooks';
 
