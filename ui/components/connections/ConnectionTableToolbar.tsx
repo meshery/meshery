@@ -1,5 +1,10 @@
 import React from 'react';
-import { CustomColumnVisibilityControl, SearchBar, UniversalFilter } from '@sistent/sistent';
+import {
+  CustomColumnVisibilityControl,
+  SearchBar,
+  UniversalFilter,
+  styled,
+} from '@sistent/sistent';
 import { CreateButton } from './styles';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
@@ -19,6 +24,13 @@ type ConnectionTableToolbarProps = {
   setColumnVisibility: (visibility: Record<string, boolean | undefined>) => void;
 };
 
+const ToolbarActions = styled('div')(() => ({
+  display: 'flex',
+  borderRadius: '0.5rem 0.5rem 0 0',
+  width: '100%',
+  justifyContent: 'flex-end',
+}));
+
 export const ConnectionTableToolbar = ({
   isSearchExpanded,
   setIsSearchExpanded,
@@ -36,14 +48,7 @@ export const ConnectionTableToolbar = ({
       <CreateButton>
         <MesherySettingsEnvButtons />
       </CreateButton>
-      <div
-        style={{
-          display: 'flex',
-          borderRadius: '0.5rem 0.5rem 0 0',
-          width: '100%',
-          justifyContent: 'flex-end',
-        }}
-      >
+      <ToolbarActions>
         <div data-testid="ConnectionTable-search">
           <SearchBar
             onSearch={onSearch}
@@ -67,7 +72,7 @@ export const ConnectionTableToolbar = ({
           columns={getVisibilityColums(columns)}
           customToolsProps={{ columnVisibility, setColumnVisibility }}
         />
-      </div>
+      </ToolbarActions>
     </ToolWrapper>
   );
 };
