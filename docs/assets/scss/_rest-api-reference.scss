@@ -13,21 +13,19 @@ $method-head: #7d8790;
   color: var(--color-white);
 }
 
-.rest-api-reference-page {
+.rest-api-reference-main {
+  overflow-x: visible;
+}
+
+.rest-api-reference-content {
+  max-width: none;
+
   .rest-api-page,
   .rest-api-page pre,
   .rest-api-page code,
   .rest-api-page kbd,
   .rest-api-page samp {
     font-family: "Qanelas Soft", "Open Sans", sans-serif;
-  }
-
-  .main-container {
-    overflow-x: visible;
-  }
-
-  .td-content {
-    max-width: none;
   }
 
   .rest-api-page {
@@ -798,10 +796,11 @@ $method-head: #7d8790;
 
   .rest-api-chip {
     padding: 0.35rem 0.75rem;
-    border-radius: 0.75rem;
-    border: 1px solid var(--color-grey-light);
-    background: var(--color-primary-medium);
+    border-radius: 0.45rem;
+    border: 1px dashed var(--color-grey-light);
+    background: transparent;
     font-size: 0.82rem;
+    letter-spacing: 0.09em;
     color: var(--color-secondary-dark);
   }
 
