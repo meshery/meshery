@@ -83,14 +83,48 @@ vi.mock('./layout/Header/Header.styles', () => ({
 import UserProvider from './User';
 
 const setWindowLocation = (href: string) => {
-  // jsdom: replace window.location safely
+  // jsdom: replace window.location with a stub whose setter captures string
+  // assignments (e.g. `window.location = profileUrl`) into the .href getter.
+  // This lets tests assert via window.location.href regardless of whether
+  // the source writes to .location directly or to .location.href.
+  let current = href;
+  const stub: any = {
+    get href() {
+      return current;
+    },
+    set href(v: string) {
+      current = String(v);
+    },
+    get origin() {
+      try {
+        return new URL(current).origin;
+      } catch {
+        return '';
+      }
+    },
+    get pathname() {
+      try {
+        return new URL(current).pathname;
+      } catch {
+        return '';
+      }
+    },
+    toString() {
+      return current;
+    },
+  };
   Object.defineProperty(window, 'location', {
-    writable: true,
-    value: {
-      href,
-      origin: new URL(href).origin,
-      pathname: new URL(href).pathname,
-    } as any,
+    configurable: true,
+    set(v: any) {
+      if (typeof v === 'string') {
+        current = v;
+      } else if (v && typeof v.href === 'string') {
+        current = v.href;
+      }
+    },
+    get() {
+      return stub;
+    },
   });
 };
 
@@ -194,11 +228,7 @@ describe('User component', () => {
     await waitFor(() => expect(ExtensionPointSchemaValidator).toHaveBeenCalledWith('account'));
 
     await user.click(screen.getByTestId('icon-button-avatar'));
-    // User.tsx does `window.location = profileUrl` — it assigns the URL
-    // STRING directly to window.location (not to window.location.href).
-    // After that, window.location is the string itself, so we coerce it
-    // back via String() to assert what the source wrote.
-    expect(String(window.location)).toContain('https://cloud.test/profile');
+    expect(window.location.href).toContain('https://cloud.test/profile');
   });
 
   it('does not redirect when no profile URL is present', async () => {
