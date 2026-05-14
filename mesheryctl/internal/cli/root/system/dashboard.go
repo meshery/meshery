@@ -107,6 +107,13 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// Derive a safe context — cmd may be nil when called programmatically
+		// (e.g. from start.go via dashboardCmd.RunE(nil, nil))
+		cmdCtx := context.Background()
+		if cmd != nil {
+			cmdCtx = cmd.Context()
+		}
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
@@ -136,7 +143,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 				defer signal.Stop(signals)
 
 				portforward, err := utils.NewPortForward(
-					cmd.Context(),
+					cmdCtx,
 					client,
 					utils.MesheryNamespace,
 					"meshery",
@@ -184,7 +191,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 			}
 
 			var mesheryEndpoint string
-			ctx, cancel := context.WithTimeout(cmd.Context(), 30*time.Second)
+			ctx, cancel := context.WithTimeout(cmdCtx, 30*time.Second)
 			defer cancel()
 			endpoint, err := utils.GetMesheryEndpoint(ctx, client)
 			if err != nil {
