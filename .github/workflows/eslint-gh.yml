@@ -61,6 +61,41 @@ jobs:
         env:
           CI: 'true'
         run: npm test -- --reporter=default --reporter=junit --outputFile=./test-report.junit.xml
+
+      - name: Summarize failing tests on failure
+        if: failure()
+        working-directory: ui
+        run: |
+          if [ ! -f ./test-report.junit.xml ]; then
+            echo "## ui-unit-tests: report missing" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          echo "## ui-unit-tests: failing tests" >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          # Extract <testcase> nodes that contain a <failure> child and print
+          # classname/name plus the first 8 lines of the failure body.
+          node -e '
+            const fs = require("fs");
+            const xml = fs.readFileSync("./test-report.junit.xml", "utf8");
+            const cases = xml.split(/<testcase\s/).slice(1);
+            const out = [];
+            for (const raw of cases) {
+              if (!/<failure/.test(raw)) continue;
+              const cls = (raw.match(/classname="([^"]*)"/) || [, ""])[1];
+              const nm = (raw.match(/name="([^"]*)"/) || [, ""])[1];
+              const failMsg = (raw.match(/<failure[^>]*message="([^"]*)"/) || [, ""])[1];
+              const body = ((raw.match(/<failure[^>]*>([\s\S]*?)<\/failure>/) || [, ""])[1] || "")
+                .replace(/<!\[CDATA\[/g, "")
+                .replace(/\]\]>/g, "")
+                .split(/\r?\n/)
+                .slice(0, 8)
+                .join("\n");
+              out.push(`### ${cls} › ${nm}\n\n**Message:** ${failMsg}\n\n\`\`\`\n${body}\n\`\`\`\n`);
+            }
+            if (out.length === 0) out.push("No <failure> tags found in JUnit XML.");
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, out.join("\n"));
+          '
+
       - name: Upload test report on failure
         if: failure()
         uses: actions/upload-artifact@v6
