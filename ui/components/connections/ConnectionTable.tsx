@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { PROMPT_VARIANTS, ResponsiveDataTable } from '@sistent/sistent';
-import LoadingScreen from '../LoadingComponents/LoadingComponent';
+import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 import { EVENT_TYPES } from '../../lib/event-types';
 import _PromptComponent from '../PromptComponent';
-import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
+import resetDatabase from '@/graphql/queries/ResetDatabaseQuery';
 
 import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
-import useKubernetesHook from '../hooks/useKubernetesHook';
+import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import { useGetEnvironmentsQuery } from '../../rtk-query/environments';

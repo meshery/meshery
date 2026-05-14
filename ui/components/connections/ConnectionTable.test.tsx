@@ -117,7 +117,7 @@ vi.mock('../../utils/utils', () => ({
   },
 }));
 
-vi.mock('../graphql/queries/ResetDatabaseQuery', () => ({
+vi.mock('@/graphql/queries/ResetDatabaseQuery', () => ({
   default: vi.fn(),
 }));
 
