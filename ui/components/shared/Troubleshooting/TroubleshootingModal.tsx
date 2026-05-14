@@ -119,11 +119,11 @@ const TroubleshootingModal: React.FC<TroubleshootingModalProps> = (props) => {
     }
   };
 
-  const handleClose = () => props?.setOpen(false);
+  const handleClose = () => props.setOpen(false);
 
   return (
     <Modal
-      isOpen={!!props?.open}
+      isOpen={props.open}
       onClose={handleClose}
       title="Extensions Troubleshooting Guide"
       size="md"
