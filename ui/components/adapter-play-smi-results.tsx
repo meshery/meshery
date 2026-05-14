@@ -205,17 +205,19 @@ const AdapterSmiResultsDialog: React.FC<AdapterSmiResultsDialogProps> = ({
         'Result',
         'Reason',
       ];
-      const data = (smiResult as SmiResult).results[rowMeta.dataIndex].more_details.map((val) => {
-        return [
-          val.smi_specification,
-          val.assertions,
-          val.time,
-          val.smi_version,
-          val.capability,
-          val.status,
-          val.reason,
-        ];
-      });
+      const results = (smiResult as SmiResult)?.results;
+      const data =
+        results?.[rowMeta.dataIndex]?.more_details?.map((val) => {
+          return [
+            val.smi_specification,
+            val.assertions,
+            val.time,
+            val.smi_version,
+            val.capability,
+            val.status,
+            val.reason,
+          ];
+        }) || [];
       const colSpan = rowData.length + 1;
       return (
         <TableRow>
