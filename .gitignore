@@ -81,6 +81,8 @@ default.profraw
 wasm/policies/temp-bundle-extract-dir/**
 server/policies/wasm/policy_engine.wasm
 server/policies/wasm/wasm_exec.js
+ui/public/static/wasm/policy_engine.wasm
+ui/public/static/wasm/wasm_exec.js
 .nvim.lua
 
 allure-results/
