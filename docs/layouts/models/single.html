@@ -47,7 +47,7 @@
     <!-- Related Designs -->
     {{ $tech := "" }}
     {{ with .Params.docURL }}
-        {{ $tech = path.Base (strings.TrimSuffix "/" .) }}
+        {{ $tech = path.Base (strings.TrimSuffix "/" .) | lower }}
     {{ end }}
     {{ $matchedDesigns := slice }}
     {{ if $tech }}
@@ -101,10 +101,14 @@
                target="_blank"
                rel="noopener noreferrer">
                 <div class="design-card__img-wrap">
-                    {{ if .image }}
-                    <img src="{{ .image }}" alt="{{ .name }} thumbnail" loading="lazy" />
+                    {{ $designImage := .image }}
+                    {{ if and $designImage (hasPrefix $designImage "/") }}
+                        {{ $designImage = printf "https://meshery.io%s" $designImage }}
+                    {{ end }}
+                    {{ if $designImage }}
+                    <img src="{{ $designImage }}" alt="{{ .name }} thumbnail" loading="lazy" />
                     {{ else }}
-                    <img src="/assets/images/logos/service-mesh-pattern.svg" alt="{{ .name }} thumbnail" loading="lazy" />
+                    <img src="https://meshery.io/assets/images/logos/service-mesh-pattern.svg" alt="{{ .name }} thumbnail" loading="lazy" />
                     {{ end }}
                 </div>
                 <div class="design-card__body">
