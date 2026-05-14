@@ -23,7 +23,7 @@
       "version": "v2.19.0"
     }
   },
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
@@ -31,40 +31,6 @@
           {
             "id": null,
             "kind": "ScaledObject",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "version": "",
-              "name": "keda",
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "triggers",
-                  "0",
-                  "authenticationRef",
-                  "name"
-                ]
-              ]
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "ClusterTriggerAuthentication",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "version": "",
@@ -83,8 +49,38 @@
               "mutatedRef": [
                 [
                   "configuration",
-                  "metadata",
+                  "spec",
+                  "triggers",
+                  "0",
+                  "authenticationRef",
                   "name"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "ClusterTriggerAuthentication",
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "keda",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "displayName"
                 ]
               ]
             }
@@ -102,3 +98,5 @@
   "type": "parent",
   "version": "v1.0.0"
 }
+
+
