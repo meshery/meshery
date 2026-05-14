@@ -1149,7 +1149,15 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			}
 		}
 
-		pkg, version, err := meshkitRegistryUtils.GenerateModels(model.Registrant, importRequest.ImportBody.Url, model.Model)
+		// Use the AH package name from the URL for lookup; preserve model.Model as the output name.
+		ahLookupName := model.Model
+		if isArtifactHubSourceURL(importRequest.ImportBody.Url) {
+			if derived := deriveArtifactHubPackageNameFromURL(importRequest.ImportBody.Url); derived != "" {
+				ahLookupName = derived
+			}
+		}
+
+		pkg, version, err := meshkitRegistryUtils.GenerateModels(model.Registrant, importRequest.ImportBody.Url, ahLookupName)
 		if err != nil {
 			h.handleError(rw, err, "Error generating model")
 			h.sendErrorEvent(userID, provider, "Error generating model", err, token)
