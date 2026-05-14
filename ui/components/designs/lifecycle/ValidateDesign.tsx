@@ -104,12 +104,12 @@ const ValidationResults_ = (props) => {
         aria-labelledby="nested-list-subheader"
         subheader={
           <ValidationSubHeader disableSticky="true" component="div" disablePadding>
-            <Typography varaint="h6" disablePadding style={{ color: theme.palette.text.default }}>
+            <Typography variant="h6" disablePadding style={{ color: theme.palette.text.default }}>
               {compCount} component{compCount > 1 ? 's' : ''} and {annotationCount} annotations
             </Typography>
 
             <Typography
-              varaint="h6"
+              variant="h6"
               disablePadding
               style={{
                 color: `${
@@ -123,7 +123,7 @@ const ValidationResults_ = (props) => {
         }
       >
         {errorCount == 0 && (
-          <Typography varaint="h6" align="center" style={{ marginBlock: '1rem' }} disablePadding>
+          <Typography variant="h6" align="center" style={{ marginBlock: '1rem' }} disablePadding>
             No validation errors.
           </Typography>
         )}
