@@ -99,6 +99,7 @@ vi.mock('../../../constants/navigator', () => ({
   CONFIGURATION: 'CONFIGURATION',
   DASHBOARD: 'DASHBOARD',
   CATALOG: 'CATALOG',
+  DESIGN: 'DESIGN',
   LIFECYCLE: 'LIFECYCLE',
   SERVICE_MESH: 'SERVICE_MESH',
   TOGGLER: 'TOGGLER',
@@ -213,52 +214,61 @@ vi.mock('@/store/slices/adapter', () => ({
 }));
 
 vi.mock('./navigatorComponents', () => ({
-  getNavigatorComponents: () => [
-    {
-      id: 'DASHBOARD',
-      title: 'Dashboard',
-      icon: <span data-testid="dash-icon">D</span>,
-      hovericon: <span data-testid="dash-hover-icon">D</span>,
-      href: '/',
-      show: true,
-      link: true,
-      submenu: true,
-    },
-    {
-      id: 'CONFIGURATION',
-      title: 'Configuration',
-      icon: <span data-testid="config-icon">C</span>,
-      hovericon: <span data-testid="config-hover-icon">C</span>,
-      href: '/configuration',
-      show: true,
-      link: true,
-      submenu: true,
-      children: [
-        {
-          id: 'Designs',
-          title: 'Designs',
-          icon: <span data-testid="design-icon">d</span>,
-          href: '/configuration/designs',
-          link: true,
-        },
-        {
-          id: 'CATALOG',
-          title: 'Catalog',
-          icon: <span data-testid="catalog-icon">c</span>,
-          href: '/configuration/catalog',
-          link: true,
-        },
-      ],
-    },
-  ],
+  getNavigatorComponents: vi.fn(),
 }));
 
-import Navigator from './Navigator';
+import Navigator, { resolveNavigatorComponents } from './Navigator';
+import { getNavigatorComponents } from './navigatorComponents';
+
+const defaultNavigatorComponents = () => [
+  {
+    id: 'DASHBOARD',
+    title: 'Dashboard',
+    icon: <span data-testid="dash-icon">D</span>,
+    hovericon: <span data-testid="dash-hover-icon">D</span>,
+    href: '/',
+    show: true,
+    link: true,
+    submenu: true,
+  },
+  {
+    id: 'CONFIGURATION',
+    title: 'Configuration',
+    icon: <span data-testid="config-icon">C</span>,
+    hovericon: <span data-testid="config-hover-icon">C</span>,
+    href: '/configuration',
+    show: true,
+    link: true,
+    submenu: true,
+    children: [
+      {
+        id: 'DESIGN',
+        title: 'Designs',
+        icon: <span data-testid="design-icon">d</span>,
+        href: '/configuration/designs',
+        link: true,
+        show: true,
+      },
+      {
+        id: 'CATALOG',
+        title: 'Catalog',
+        icon: <span data-testid="catalog-icon">c</span>,
+        href: '/configuration/catalog',
+        link: true,
+        show: true,
+      },
+    ],
+  },
+];
+
+const getNavigatorComponentsMock = vi.mocked(getNavigatorComponents);
 
 describe('Navigator', () => {
   beforeEach(() => {
     dispatchMock.mockReset();
     useMediaQueryMock.mockReset().mockReturnValue(false);
+    getNavigatorComponentsMock.mockReset();
+    getNavigatorComponentsMock.mockReturnValue(defaultNavigatorComponents());
     stateContainer.isDrawerCollapsed = false;
     stateContainer.catalogVisibility = true;
     stateContainer.meshAdapters = [];
@@ -296,5 +306,63 @@ describe('Navigator', () => {
     render(<Navigator />);
     expect(screen.getByTestId('sidebar-footer')).toBeInTheDocument();
     expect(screen.getByTestId('chevron-wrapper')).toBeInTheDocument();
+  });
+
+  it('keeps Configuration visible when Catalog is allowed but persisted designs are unavailable', () => {
+    getNavigatorComponentsMock.mockReturnValueOnce([
+      {
+        id: 'CONFIGURATION',
+        title: 'Configuration',
+        show: true,
+        children: [
+          { id: 'DESIGN', title: 'Designs', show: true },
+          { id: 'CATALOG', title: 'Catalog', show: true },
+        ],
+      },
+    ] as any);
+
+    const [configuration] = resolveNavigatorComponents({
+      providerUiAccessControl: { providerCapabilities: [] } as any,
+      theme: {} as any,
+      meshAdapters: [],
+      catalogVisibility: true,
+      currentPath: '/',
+    });
+
+    expect(configuration.show).toBe(true);
+    expect(configuration.children).toEqual([
+      expect.objectContaining({ id: 'DESIGN', show: false }),
+      expect.objectContaining({ id: 'CATALOG', show: true }),
+    ]);
+  });
+
+  it('does not override Configuration child visibility granted by provider access control', () => {
+    getNavigatorComponentsMock.mockReturnValueOnce([
+      {
+        id: 'CONFIGURATION',
+        title: 'Configuration',
+        show: true,
+        children: [
+          { id: 'DESIGN', title: 'Designs', show: true },
+          { id: 'CATALOG', title: 'Catalog', show: false },
+        ],
+      },
+    ] as any);
+
+    const [configuration] = resolveNavigatorComponents({
+      providerUiAccessControl: {
+        providerCapabilities: [{ feature: 'persist-meshery-patterns' }],
+      } as any,
+      theme: {} as any,
+      meshAdapters: [],
+      catalogVisibility: true,
+      currentPath: '/',
+    });
+
+    expect(configuration.show).toBe(true);
+    expect(configuration.children).toEqual([
+      expect.objectContaining({ id: 'DESIGN', show: true }),
+      expect.objectContaining({ id: 'CATALOG', show: false }),
+    ]);
   });
 });

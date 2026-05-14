@@ -28,6 +28,7 @@ import {
   CONFIGURATION,
   DASHBOARD,
   CATALOG,
+  DESIGN,
   LIFECYCLE,
   SERVICE_MESH,
   TOGGLER,
@@ -143,7 +144,7 @@ const buildLifecycleIcon = (adapterName, href, currentPath) => {
   );
 };
 
-const resolveNavigatorComponents = ({
+export const resolveNavigatorComponents = ({
   providerUiAccessControl,
   theme,
   meshAdapters,
@@ -175,30 +176,29 @@ const resolveNavigatorComponents = ({
     }
 
     if (category.id === CONFIGURATION) {
-      let show = false;
-
       const children = category.children?.map((child) => {
-        if (child.id === 'Designs') {
-          show = designPersistenceEnabled;
+        if (child.id === DESIGN) {
           return {
             ...child,
-            show: designPersistenceEnabled,
+            show: child.show !== false && designPersistenceEnabled,
           };
         }
 
         if (child.id === CATALOG) {
           return {
             ...child,
-            show: catalogVisibility,
+            show: child.show !== false && catalogVisibility,
           };
         }
 
         return child;
       });
 
+      const hasVisibleChildren = children?.some((child) => child.show !== false) ?? false;
+
       return {
         ...category,
-        show,
+        show: category.show !== false && hasVisibleChildren,
         children,
       };
     }
