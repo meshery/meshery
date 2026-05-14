@@ -130,8 +130,8 @@ export const buildPodDisruptionBudgetColumns = ({
         },
         customBodyRender: function CustomBody(val) {
           let attribute = JSON.parse(val);
-          let desiredtHealthy = attribute?.desiredtHealthy;
-          return <>{desiredtHealthy}</>;
+          let desiredHealthy = attribute?.desiredHealthy;
+          return <>{desiredHealthy}</>;
         },
       },
     },

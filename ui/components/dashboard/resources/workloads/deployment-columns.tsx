@@ -123,8 +123,8 @@ export const buildDeploymentColumns = ({
         customBodyRender: function CustomBody(val) {
           let attribute = JSON.parse(val);
           let template = attribute?.template;
-          let spec = template.spec;
-          let restartPolicy = spec.restartPolicy;
+          let spec = template?.spec;
+          let restartPolicy = spec?.restartPolicy;
           return <>{restartPolicy}</>;
         },
       },

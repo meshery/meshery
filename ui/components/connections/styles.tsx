@@ -1,5 +1,4 @@
-import type { Theme } from '@sistent/sistent';
-import { alpha } from '@/theme';
+import { alpha, type Theme } from '@/theme';
 import { CONNECTION_STATES } from '../../utils/Enum';
 import {
   Box,

@@ -144,7 +144,7 @@ export const buildPodColumns = ({
         },
         customBodyRender: function CustomBody(value) {
           const parsedSpec = JSON.parse(value);
-          return <>{parsedSpec.containers.length}</>;
+          return <>{parsedSpec?.containers?.length ?? 0}</>;
         },
       },
     },
