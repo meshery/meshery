@@ -13,7 +13,7 @@ import fetchAvailableNamespaces from '@/graphql/queries/NamespaceQuery';
 import MesheryMetrics from './performance/MesheryMetrics';
 import MesheryResultDialog from './MesheryResultDialog';
 import ReactSelectWrapper from './ReactSelectWrapper';
-import ConfirmationMsg from './shared/Modal/ConfirmationModal';
+import ConfirmationMsg from '@/components/designs/lifecycle/DeployConfirmationModal';
 import { ACTIONS } from '../utils/Enum';
 import { getModelByName } from '../api/meshmodel';
 import { EVENT_TYPES } from '../lib/event-types';
