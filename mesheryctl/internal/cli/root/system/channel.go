@@ -193,7 +193,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 		if err != nil {
 			return err
 		}
-		return hc.RunPreflightHealthChecks()
+		return hc.RunPreflightHealthChecks(cmd.Context())
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 1 {

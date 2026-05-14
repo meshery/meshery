@@ -15,6 +15,7 @@
 package system
 
 import (
+	"context"
 	"fmt"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
@@ -75,7 +76,7 @@ mesheryctl system restart --skip-update
 			return ErrHealthCheckFailed(err)
 		}
 		// execute healthchecks
-		err = hc.RunPreflightHealthChecks()
+		err = hc.RunPreflightHealthChecks(cmd.Context())
 		if err != nil {
 			cmd.SilenceUsage = true
 		}
@@ -85,11 +86,11 @@ mesheryctl system restart --skip-update
 	RunE: func(cmd *cobra.Command, args []string) error {
 		skipUpdateFlag = systemRestartFlags.SkipUpdate
 		providerFlag = systemRestartFlags.Provider
-		return restart()
+		return restart(cmd.Context())
 	},
 }
 
-func restart() error {
+func restart(ctx context.Context) error {
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
@@ -140,7 +141,7 @@ func restart() error {
 		silentFlagSet = utils.SilentFlag
 		utils.Log.Info("Restarting Meshery...")
 
-		if err := stop(); err != nil {
+		if err := stop(ctx); err != nil {
 			return ErrRestartMeshery(err)
 		}
 
