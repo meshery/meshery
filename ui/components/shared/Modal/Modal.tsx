@@ -1,283 +1,112 @@
-import React, { useState, useEffect, useRef, FC } from 'react';
+/**
+ * Shared Modal primitive.
+ *
+ * Canonical base modal for Meshery UI. Wraps Sistent's `Modal`, `ModalBody`,
+ * `ModalFooter` so every modal in the application:
+ *
+ *   - has the same prop shape (`isOpen`/`onClose`/`title`/...).
+ *   - composes a consistent header, body, and footer.
+ *   - exposes the same `size` token vocabulary (`sm`/`md`/`lg`/`xl`/`fullscreen`).
+ *   - threads `actions` through `ModalFooter` so callers don't reimplement
+ *     button alignment.
+ *
+ * Use this primitive directly for ad-hoc dialogs; prefer `ConfirmModal`,
+ * `InfoModal`, or `FormModal` for the corresponding higher-level patterns.
+ *
+ * NOTE: Legacy callers still import the previous RJSF-backed `Modal` default
+ * export and the `RJSFModalWrapper` named export from this file path. Those
+ * are preserved as a temporary shim re-exported from `./LegacyRJSFModal` and
+ * will be removed after the Phase 5.b migration sub-issues (#18752–#18756).
+ */
+import { FC, ReactNode } from 'react';
 import {
-  IconButton,
-  Menu,
-  MenuItem,
-  Tooltip,
-  Typography,
-  CircularProgress,
-  ModalBody,
-  ModalFooter,
-  PrimaryActionButtons,
   Modal as SistentModal,
-  useTheme,
+  ModalBody as SistentModalBody,
+  ModalFooter as SistentModalFooter,
 } from '@sistent/sistent';
-import RJSFWrapper from '../../meshery-mesh-interface/PatternService/RJSF_wrapper';
-import { ArrowDropDown } from '@/assets/icons';
-import { getSchema } from '../../meshery-mesh-interface/PatternService/helper';
-import { useNotification } from '@/utils/hooks/useNotification';
-import { EVENT_TYPES } from 'lib/event-types';
 
-interface SchemaVersionProps {
-  schema_array: string[];
-  type: string;
-  schemaChangeHandler: (version: string) => void;
+export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'fullscreen';
+
+export type ModalFooterVariant = 'filled' | 'transparent';
+
+export interface ModalProps {
+  /** Whether the modal is currently visible. */
+  isOpen: boolean;
+  /** Called when the user dismisses the modal (close icon, backdrop, ESC). */
+  onClose: () => void;
+  /** Heading rendered in the modal header. */
+  title: string;
+  /** Optional icon rendered to the left of the title. */
+  headerIcon?: ReactNode;
+  /** Body content. Prefer placing structured content inside a child layout. */
+  children?: ReactNode;
+  /** Footer content; typically a row of primary/secondary buttons. */
+  actions?: ReactNode;
+  /** Footer variant. `filled` matches the Sistent default action-bar styling. */
+  footerVariant?: ModalFooterVariant;
+  /** Optional help-text rendered in the footer alongside `actions`. */
+  helpText?: string;
+  /** Pre-set width token. Defaults to `md`. */
+  size?: ModalSize;
+  /** Toggle Sistent's built-in fullscreen mode button. */
+  isFullScreenModeAllowed?: boolean;
+  /** Forwarded to the underlying Dialog root for cypress/test selectors. */
+  'aria-labelledby'?: string;
+  'aria-describedby'?: string;
 }
 
-const SchemaVersion: FC<SchemaVersionProps> = ({ schema_array, type, schemaChangeHandler }) => {
-  const theme = useTheme();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+const sizeToMaxWidth = {
+  sm: 'sm',
+  md: 'md',
+  lg: 'lg',
+  xl: 'xl',
+  fullscreen: false,
+} as const;
+
+export const Modal: FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  title,
+  headerIcon,
+  children,
+  actions,
+  footerVariant = 'filled',
+  helpText,
+  size = 'md',
+  isFullScreenModeAllowed,
+  ...ariaProps
+}) => {
   return (
-    <div>
-      <Tooltip title="Schema_Changer">
-        <IconButton component="span" onClick={(e) => setAnchorEl(e.currentTarget)}>
-          <ArrowDropDown style={{ color: theme.palette.text.primary }} />
-        </IconButton>
-      </Tooltip>
-      <Menu id="schema-menu" anchorEl={anchorEl} open={open} handleClose={handleClose}>
-        {schema_array.map((version, index) => (
-          <MenuItem
-            id="schema-menu-item"
-            key={index}
-            selected={version === type}
-            onClick={() => {
-              schemaChangeHandler(version);
-              handleClose();
-            }}
-          >
-            {version}
-          </MenuItem>
-        ))}
-      </Menu>
-    </div>
+    <SistentModal
+      open={isOpen}
+      closeModal={onClose}
+      title={title}
+      headerIcon={headerIcon}
+      maxWidth={sizeToMaxWidth[size]}
+      fullScreen={size === 'fullscreen'}
+      fullWidth
+      isFullScreenModeAllowed={isFullScreenModeAllowed}
+      {...ariaProps}
+    >
+      <SistentModalBody>{children}</SistentModalBody>
+      {actions ? (
+        <SistentModalFooter variant={footerVariant} helpText={helpText} hasHelpText={!!helpText}>
+          {actions}
+        </SistentModalFooter>
+      ) : null}
+    </SistentModal>
   );
 };
 
-/**
- * Renders common dialog component.
- *
- * @param {Object} props - Component props.
- * @param {boolean} props.open - Determines whether the modal is open or not.
- * @param {string} props.title - The title of the modal.
- * @param {Function} props.handleClose - Function to handle the close event of the modal.
- * @param {Function} props.onChange - Function to handle the change event of the form fields in the modal.
- * @param {Object} props.schema - The JSON schema for the form fields.
- * @param {Object} props.formData - The form data object.
- * @param {Array} props.schema_array - An array of schema versions.
- * @param {string} props.type - The selected schema version.
- * @param {Function} props.schemaChangeHandler - Function to handle the change of the schema version.
- * @param {Function} props.handleSubmit - Function to handle the submit event of the modal.
- * @param {Object} props.payload - The payload for the submit event.
- * @param {Object} props.showInfoIcon - Determines whether to show the info icon adjacent to the modal button.
- * @param {string} props.submitBtnText - The text for the submit button.
- * @param {Object} props.uiSchema - The UI schema for the form fields.
- */
+Modal.displayName = 'Modal';
 
-// Meshery extensions also uses this modal
-function Modal(props) {
-  const {
-    open,
-    title,
-    handleClose,
-    schema,
-    schema_array,
-    type,
-    schemaChangeHandler,
-    handleSubmit,
-    submitBtnText,
-    leftHeaderIcon,
-    uiSchema = {},
-    helpText,
-    RJSFWrapperComponent = null,
-    initialData = {},
-  } = props;
+// -----------------------------------------------------------------------------
+// Back-compat re-exports for legacy callers (`import Modal from
+// 'shared/Modal/Modal'` and `{ RJSFModalWrapper }`). These will be removed
+// once the Phase 5.b migration sub-issues complete.
+// -----------------------------------------------------------------------------
+import LegacyRJSFModal from './LegacyRJSFModal';
 
-  const [canNotSubmit, setCanNotSubmit] = useState(false);
-  const formStateRef = useRef({});
-  const formRef = React.createRef();
-  const [loadingSchema, setLoadingSchema] = useState(true);
-  const { notify } = useNotification();
-  const handleFormSubmit = () => {
-    if (formRef.current && formRef.current.validateForm()) {
-      handleClose();
-      handleSubmit(formRef.current.state.formData);
-    }
-  };
+export { RJSFModalWrapper } from './LegacyRJSFModal';
 
-  useEffect(() => {
-    setCanNotSubmit(false);
-    const handleDesignNameCheck = () => {
-      const designName = title?.toLowerCase();
-      const forbiddenWords = ['untitled design', 'Untitled', 'lfx'];
-
-      for (const word of forbiddenWords) {
-        if (designName?.includes(word)) {
-          notify({
-            event_type: EVENT_TYPES.WARNING,
-            message: `Design name should not contain Untitled Design, Untitled, LFX`,
-          });
-          setCanNotSubmit(true);
-          break;
-        }
-      }
-    };
-    handleDesignNameCheck();
-  }, [title]);
-
-  const handleFormChange = (data) => {
-    formStateRef.current = data;
-  };
-
-  useEffect(() => {
-    if (schema) {
-      setLoadingSchema(false);
-    }
-  }, [schema]);
-
-  return (
-    <>
-      <SistentModal open={open} closeModal={handleClose} title={title} headerIcon={leftHeaderIcon}>
-        <Typography variant="h5">
-          {schema_array?.length < 1 && (
-            <SchemaVersion
-              schema_array={schema_array}
-              type={type}
-              schemaChangeHandler={schemaChangeHandler}
-            />
-          )}
-        </Typography>
-        <ModalBody>
-          {loadingSchema ? (
-            <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>
-              <CircularProgress />
-            </div>
-          ) : (
-            <RJSFWrapper
-              key={type}
-              formData={initialData || formStateRef}
-              jsonSchema={schema || getSchema(type)}
-              uiSchema={uiSchema}
-              onChange={handleFormChange}
-              liveValidate={false}
-              formRef={formRef}
-              hideTitle={true}
-              {...(RJSFWrapperComponent && { RJSFWrapperComponent })}
-            />
-          )}
-        </ModalBody>
-        <ModalFooter variant="filled" helpText={helpText} hasHelpText={!!helpText}>
-          <PrimaryActionButtons
-            primaryText={submitBtnText || 'Submit'}
-            secondaryText="Cancel"
-            primaryButtonProps={{
-              onClick: handleFormSubmit,
-              disabled: canNotSubmit,
-            }}
-            secondaryButtonProps={{
-              onClick: handleClose,
-            }}
-          />
-        </ModalFooter>
-      </SistentModal>
-    </>
-  );
-}
-
-export default React.memo(Modal);
-
-function RJSFModalWrapper({
-  handleClose,
-  schema,
-  uiSchema = {},
-  initialData = {},
-  handleSubmit,
-  handleNext,
-  title,
-  submitBtnText,
-  helpText,
-  widgets = {},
-}) {
-  const formRef = useRef();
-  const formStateRef = useRef();
-  const [canNotSubmit, setCanNotSubmit] = useState(false);
-  const [loadingSchema, setLoadingSchema] = useState(true);
-  const { notify } = useNotification();
-  useEffect(() => {
-    setCanNotSubmit(false);
-    const handleDesignNameCheck = () => {
-      const designName = title?.toLowerCase();
-      const forbiddenWords = ['untitled design', 'Untitled', 'lfx'];
-
-      for (const word of forbiddenWords) {
-        if (designName?.includes(word)) {
-          notify({
-            event_type: EVENT_TYPES.WARNING,
-            message: `Design name should not contain Untitled Design, Untitled, LFX`,
-          });
-          setCanNotSubmit(true);
-          break;
-        }
-      }
-    };
-    handleDesignNameCheck();
-  }, [title]);
-
-  const handleFormChange = (data) => {
-    formStateRef.current = data;
-  };
-
-  useEffect(() => {
-    setLoadingSchema(!schema);
-  }, [schema]);
-
-  const handleFormSubmit = () => {
-    if (formRef.current && formRef.current.validateForm()) {
-      handleSubmit(formRef.current.state.formData);
-      if (handleNext) {
-        handleNext();
-      }
-    }
-  };
-
-  return (
-    <>
-      <ModalBody>
-        {loadingSchema ? (
-          <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>
-            <CircularProgress />
-          </div>
-        ) : (
-          <RJSFWrapper
-            formData={initialData}
-            jsonSchema={schema}
-            uiSchema={uiSchema}
-            onChange={handleFormChange}
-            liveValidate={false}
-            formRef={formRef}
-            hideTitle={true}
-            widgets={widgets}
-          />
-        )}
-      </ModalBody>
-      <ModalFooter variant="filled" helpText={helpText}>
-        <PrimaryActionButtons
-          primaryText={submitBtnText || 'Submit'}
-          secondaryText="Cancel"
-          primaryButtonProps={{
-            onClick: handleFormSubmit,
-            disabled: canNotSubmit,
-          }}
-          secondaryButtonProps={{
-            onClick: handleClose,
-          }}
-        />
-      </ModalFooter>
-    </>
-  );
-}
-
-export { RJSFModalWrapper };
+export default LegacyRJSFModal;
