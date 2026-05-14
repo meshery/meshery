@@ -8,7 +8,7 @@
  */
 import { FC, ReactNode } from 'react';
 import { styled, useTheme } from '@/theme';
-import Pattern from '../../public/static/img/drawer-icons/pattern_svg';
+import PatternIcon from '@/assets/icons/Pattern';
 
 const DesignHeaderIconSlot = styled('span')({
   display: 'inline-flex',
@@ -20,7 +20,7 @@ const DesignHeaderIconSlot = styled('span')({
 });
 
 interface DesignModalHeaderIconProps {
-  /** Optional override; defaults to the Pattern SVG used by all design modals. */
+  /** Optional override; defaults to the Pattern icon used by all design modals. */
   children?: ReactNode;
 }
 
@@ -28,7 +28,7 @@ export const DesignModalHeaderIcon: FC<DesignModalHeaderIconProps> = ({ children
   const theme = useTheme();
   return (
     <DesignHeaderIconSlot>
-      {children ?? <Pattern fill={theme.palette.common.white} />}
+      {children ?? <PatternIcon fill={theme.palette.common.white} width="24" height="24" />}
     </DesignHeaderIconSlot>
   );
 };

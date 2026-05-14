@@ -599,7 +599,7 @@ function MesheryPatterns({
                 <PublishDesignModal
                   publishFormSchema={publishSchema}
                   handleClose={handlePublishModalClose}
-                  title={publishModal.pattern?.name}
+                  title={publishModal.pattern?.name || ''}
                   handleSubmit={handlePublish}
                 />
               )}
