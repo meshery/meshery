@@ -45,28 +45,38 @@ jobs:
       # Note: Untrusted inputs are passed via env variables to prevent script injection
       - name: 🔍 Introspect Inputs and Context
         env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          DEBUG_MODE: ${{ inputs.debug_mode || 'false' }}
+          MANUAL_PR_NUMBER: ${{ inputs.pr_number || 'N/A' }}
+          EVENT_NAME: ${{ github.event_name }}
+          ACTOR: ${{ github.actor }}
+          REPOSITORY: ${{ github.repository }}
+          REF_NAME: ${{ github.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number || 'N/A' }}
+          PR_TITLE: ${{ github.event.pull_request.title || 'N/A' }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login || 'N/A' }}
+          PR_BASE_REF: ${{ github.event.pull_request.base.ref || 'N/A' }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref || 'N/A' }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || 'N/A' }}
         run: |
           echo "::group::Workflow Inputs"
-          echo "Debug Mode: ${{ inputs.debug_mode }}"
-          echo "Manual PR Number: ${{ inputs.pr_number }}"
+          echo "Debug Mode: $DEBUG_MODE"
+          echo "Manual PR Number: $MANUAL_PR_NUMBER"
           echo "::endgroup::"
           
           echo "::group::GitHub Context"
-          echo "Actor: ${{ github.actor }}"
-          echo "Event Name: ${{ github.event_name }}"
-          echo "Repository: ${{ github.repository }}"
-          echo "Ref: ${{ github.ref }}"
+          echo "Actor: $ACTOR"
+          echo "Event Name: $EVENT_NAME"
+          echo "Repository: $REPOSITORY"
+          echo "Ref: $REF_NAME"
           echo "::endgroup::"
           
           echo "::group::Pull Request Context"
-          echo "PR Number: ${{ github.event.pull_request.number }}"
+          echo "PR Number: $PR_NUMBER"
           echo "PR Title: $PR_TITLE"
-          echo "PR Author: ${{ github.event.pull_request.user.login }}"
-          echo "Base Branch: ${{ github.event.pull_request.base.ref }}"
+          echo "PR Author: $PR_AUTHOR"
+          echo "Base Branch: $PR_BASE_REF"
           echo "Head Branch: $PR_HEAD_REF"
-          echo "Head SHA: ${{ github.event.pull_request.head.sha }}"
+          echo "Head SHA: $PR_HEAD_SHA"
           echo "::endgroup::"
 
       - name: Checkout code
@@ -81,16 +91,26 @@ jobs:
       - name: 🔒 Validate PR Contains ONLY Meeting Minutes Changes
         id: validate
         uses: actions/github-script@v8
+        env:
+          MANUAL_PR_NUMBER: ${{ inputs.pr_number || '' }}
         with:
           github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
             
-            // Determine PR number from event or manual input
-            let prNumber = context.payload.pull_request?.number;
-            if (!prNumber && '${{ inputs.pr_number }}') {
-              prNumber = parseInt('${{ inputs.pr_number }}', 10);
+            // Determine PR number from event or manual input without interpolating
+            // untrusted workflow inputs directly into the script source.
+            const manualPrNumberRaw = process.env.MANUAL_PR_NUMBER?.trim() || '';
+            const manualPrNumber = /^\d+$/.test(manualPrNumberRaw)
+              ? Number.parseInt(manualPrNumberRaw, 10)
+              : null;
+
+            if (manualPrNumberRaw && manualPrNumber === null) {
+              core.setFailed('Invalid pr_number input. Expected a numeric pull request number.');
+              return;
             }
+
+            let prNumber = context.payload.pull_request?.number || manualPrNumber;
             
             if (!prNumber) {
               core.setFailed('No PR number found. This workflow must be triggered by a pull_request event or with a pr_number input.');

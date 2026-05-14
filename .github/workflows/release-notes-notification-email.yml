@@ -28,13 +28,37 @@ jobs:
     name: Prepare email
     runs-on: "ubuntu-24.04"
     steps:
-      - name: grab release notes
+      - name: 🔍 Introspect Inputs and Context
+        env:
+          EMAIL_TO: ${{ inputs.to || 'N/A' }}
+          RELEASE_TAG: ${{ inputs.release-tag || 'N/A' }}
+          EVENT_NAME: ${{ github.event_name }}
+          ACTOR: ${{ github.actor }}
         run: |
-          curl https://raw.githubusercontent.com/meshery/meshery/master/docs/content/en/project/releases/${{inputs.release-tag}}.md | sed -e '1,5d' > meshery-release-notification.html
-          echo "
-          
-          ## 🛝 Access ${{inputs.release-tag}} in the [Meshery Playground](https://playground.meshery.io) 
-          " >> meshery-release-notification.html
+          echo "::group::Workflow Inputs"
+          echo "Recipient: $EMAIL_TO"
+          echo "Release Tag: $RELEASE_TAG"
+          echo "Actor: $ACTOR"
+          echo "Event Name: $EVENT_NAME"
+          echo "::endgroup::"
+
+      - name: grab release notes
+        env:
+          RELEASE_TAG: ${{ inputs.release-tag || '' }}
+        run: |
+          set -euo pipefail
+
+          if [[ -z "$RELEASE_TAG" || ! "$RELEASE_TAG" =~ ^[A-Za-z0-9._-]+$ ]]; then
+            echo "Invalid release-tag input: $RELEASE_TAG" >&2
+            exit 1
+          fi
+
+          curl --fail --silent --show-error "https://raw.githubusercontent.com/meshery/meshery/master/docs/content/en/project/releases/${RELEASE_TAG}.md" \
+            | sed -e '1,5d' > meshery-release-notification.html
+
+          {
+            printf '\n## 🛝 Access %s in the [Meshery Playground](https://playground.meshery.io)\n' "$RELEASE_TAG"
+          } >> meshery-release-notification.html
       - name: Send email
         uses: dawidd6/action-send-mail@v6
         with:
