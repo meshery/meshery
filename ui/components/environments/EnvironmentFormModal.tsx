@@ -25,10 +25,6 @@ const BodyShell = styled('div')({
 const EnvironmentFormModal: FC<EnvironmentFormModalProps> = ({ isOpenModal, setIsOpenModal }) => {
   const theme = useTheme();
 
-  if (!isOpenModal) {
-    return null;
-  }
-
   return (
     <Modal
       isOpen={isOpenModal}
