@@ -1,7 +1,6 @@
 import React from 'react';
-import { Button, Popover, Typography } from '@sistent/sistent';
+import { Button, Popover, Typography, SyncAltIcon } from '@sistent/sistent';
 import { ActionListItem } from './styles';
-import SyncIcon from '@mui/icons-material/Sync';
 import { iconMedium } from '../../css/icons.styles';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -39,7 +38,7 @@ export const ConnectionActionMenu = ({
           data-cy="btnResetDatabase"
           disabled={!CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)}
         >
-          <SyncIcon {...iconMedium} />
+          <SyncAltIcon {...iconMedium} />
           <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
             Flush MeshSync
           </Typography>
