@@ -320,46 +320,35 @@ ui-server: ui-meshery-build ui-provider-build server
 #-----------------------------------------------------------------------------
 .PHONY: ui-setup ui ui-meshery-build ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
 
-UI_BUILD_SCRIPT = build16
-UI_DEV_SCRIPT = dev16
-
-ifeq ($(findstring v22, $(shell node --version)), v22)
-    UI_BUILD_SCRIPT = build
-    UI_DEV_SCRIPT = dev
-else ifeq ($(findstring v20, $(shell node --version)), v20)
-    UI_BUILD_SCRIPT = build
-    UI_DEV_SCRIPT = dev
-
-endif
 ## Install dependencies for building Meshery UI.
-ui-setup:
+ui-setup: dep-check
 	cd ui; npm i; cd ..
 	cd provider-ui; npm i; cd ..
 
 ## Clean Install dependencies for building Meshery UI.
-ui-setup-ci:
+ui-setup-ci: dep-check
 	cd ui; npm ci; cd ..
 	cd provider-ui; npm ci; cd ..
 
 
 ## Run Meshery UI on your local machine. Listen for changes.
-ui:
+ui: dep-check
 	cd ui; npm run dev; cd ..;
 
 ## Run Meshery Provider UI  on your local machine. Listen for changes.
-ui-provider:
+ui-provider: dep-check
 	cd provider-ui; npm run dev; cd ..
 
 ## Lint check Meshery UI and Provider UI on your local machine.
-ui-lint:
+ui-lint: dep-check
 	cd ui; npm i eslint; npx eslint . --fix; cd ..
 
 ## Lint check Meshery Provider UI on your local machine.
-ui-provider-lint:
+ui-provider-lint: dep-check
 	cd provider-ui && npm i eslint && npx eslint .
 
 ## Test Meshery Provider UI on your local machine.
-ui-provider-test:
+ui-provider-test: dep-check
 	cd provider-ui; npm run test; cd ..
 
 ## Buils all Meshery UIs  on your local machine.
@@ -368,11 +357,11 @@ ui-build: ui-setup
 	cd provider-ui; npm run lint:fix || echo "Warning: Lint issues detected in provider-ui but continuing build"; npm run build; cd ..
 
 ## Build only Meshery UI on your local machine.
-ui-meshery-build:
+ui-meshery-build: dep-check
 	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
-ui-provider-build:
+ui-provider-build: dep-check
 	cd provider-ui; npm run build; cd ..
 
 ## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
@@ -552,16 +541,16 @@ server-integration-tests-meshsync: docker-build server-integration-tests-meshsyn
 #-----------------------------------------------------------------------------
 .PHONY: ui-test-setup ui-test ui-test-e2e-ci
 ## Install Playwright dependencies for UI tests
-ui-test-setup:
+ui-test-setup: dep-check
 	cd ui; npx playwright install chromium --with-deps; cd ..
 
 ## Run Meshery UI End-to-End Tests
-ui-test:
+ui-test: dep-check
 	 touch .env
 	 @set -a; source .env; set +a; cd ui; npm run test:e2e ; cd ..
 
 ## Run Meshery UI End-to-End Tests in CI environment
-ui-test-e2e-ci:
+ui-test-e2e-ci: dep-check
 	 touch .env
 	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci ; cd ..
 
@@ -579,6 +568,7 @@ mesheryctl-tests-int:
 #.SILENT: dep-check
 
 INSTALLED_GO_VERSION=$(shell go version)
+REQUIRED_NODE_VERSION=^22.13.0 || >=24
 
 dep-check:
 
@@ -592,3 +582,16 @@ ifeq (,$(findstring $(GOVERSION), $(INSTALLED_GO_VERSION)))
 #	 Required golang version is: 'go$(GOVERSION).x'. \
 #	 Ensure go '$(GOVERSION).x' is installed and available in your 'PATH'.)
 endif
+	@node_version="$$(node --version 2>/dev/null || true)"; \
+	if [ -z "$$node_version" ]; then \
+		echo "Dependency missing: node. Ensure Node.js '$(REQUIRED_NODE_VERSION)' is installed and available in your 'PATH'"; \
+		exit 1; \
+	fi; \
+	node_version="$${node_version#v}"; \
+	node_major="$${node_version%%.*}"; \
+	node_minor="$${node_version#*.}"; \
+	node_minor="$${node_minor%%.*}"; \
+	if ! { [ "$$node_major" -eq 22 ] && [ "$$node_minor" -ge 13 ]; } && [ "$$node_major" -lt 24 ]; then \
+		echo "Dependency mismatch: Found node v$$node_version. Required Node.js version is '$(REQUIRED_NODE_VERSION)'."; \
+		exit 1; \
+	fi
