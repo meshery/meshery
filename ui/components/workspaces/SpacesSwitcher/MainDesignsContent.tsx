@@ -26,7 +26,7 @@ import useInfiniteScroll, {
 } from './hooks';
 import { MenuComponent } from './MenuComponent';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
-import ExportModal from '../../shared/Modal/ExportModal';
+import ExportDesignModal from '../../designs/export/ExportDesignModal';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import ShareModal from '../ShareWorkspaceModal';
 import InfoModal from '../../shared/Modal/Information/InfoModal';
@@ -352,7 +352,7 @@ const MainDesignsContent = ({
         <GhostImage src="/static/img/service-mesh-pattern.png" height={30} width={30} />
         <GhostText ref={ghostTextNodeRef}></GhostText>
       </GhostContainer>
-      <ExportModal
+      <ExportDesignModal
         downloadModal={downloadModal}
         handleDownloadDialogClose={handleDownloadDialogClose}
         handleDesignDownload={handleDesignDownload}

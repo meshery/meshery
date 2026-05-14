@@ -22,7 +22,7 @@ import InfoModal from '../../shared/Modal/Information/InfoModal';
 import DefaultError from '../../general/error-404/index';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import ExportModal from '../../shared/Modal/ExportModal';
+import ExportDesignModal from '../export/ExportDesignModal';
 import { useModal, Modal as SistentModal } from '@sistent/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
 import { useActorRef } from '@xstate/react';
@@ -45,7 +45,8 @@ import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { useSelector } from 'react-redux';
 import { ACTION_TYPES, resetSelectedPattern } from './MesheryPatterns.constants';
 import YAMLEditor from './YAMLEditor';
-import { ImportDesignModal, PublishModal } from './MesheryPatternsModals';
+import { ImportDesignModal } from '../ImportDesignModal';
+import { PublishDesignModal } from '../PublishDesignModal';
 import MesheryPatternsToolbar from './MesheryPatternsToolbar';
 import {
   buildPatternColumns,
@@ -54,10 +55,6 @@ import {
 } from './MesheryPatterns.columns';
 import { buildDesignLifecycleHandlers } from './design-lifecycle-handlers';
 import { createPatternsActions } from './patterns-actions';
-
-// Re-export modal helpers so existing consumers
-// (`@/components/designs/patterns/MesheryPatterns`) keep working.
-export { ImportDesignModal };
 
 function MesheryPatterns({
   disableCreateImportDesignButton = false,
@@ -543,7 +540,7 @@ function MesheryPatterns({
                 />
                 {/* </StyledRow> */}
 
-                <ExportModal
+                <ExportDesignModal
                   downloadModal={downloadModal}
                   handleDownloadDialogClose={handleDownloadDialogClose}
                   handleDesignDownload={handleDownload}
@@ -599,10 +596,10 @@ function MesheryPatterns({
             {canPublishPattern &&
               publishModal.open &&
               CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) && (
-                <PublishModal
+                <PublishDesignModal
                   publishFormSchema={publishSchema}
                   handleClose={handlePublishModalClose}
-                  title={publishModal.pattern?.name}
+                  title={publishModal.pattern?.name || ''}
                   handleSubmit={handlePublish}
                 />
               )}
