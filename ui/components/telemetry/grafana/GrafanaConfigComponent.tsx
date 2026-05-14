@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@sistent/sistent';
 import { TextField, Grid2, Button, styled } from '@sistent/sistent';
@@ -6,7 +6,7 @@ import ReactSelectWrapper from '../../ReactSelectWrapper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
-import dataFetch from 'lib/data-fetch';
+import { useGetConnectionsQuery } from '@/rtk-query/connection';
 
 const Wrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(5),
@@ -37,21 +37,13 @@ function GrafanaConfigComponent({
   handleGrafanaConfigure,
   handleChangeApiKey,
 }) {
-  const [availableGrafanaConnection, setAvailableGrafanaConnection] = useState([]);
-  useEffect(() => {
-    dataFetch(
-      `/api/integrations/connections?page=0&pagesize=1&status=${encodeURIComponent(
-        JSON.stringify([CONNECTION_STATES.CONNECTED]),
-      )}&kind=${encodeURIComponent(JSON.stringify([CONNECTION_KINDS.GRAFANA]))}`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (result) => {
-        setAvailableGrafanaConnection(result?.connections);
-      },
-    );
-  }, []);
+  const { data: connectionData } = useGetConnectionsQuery({
+    page: 0,
+    pagesize: 1,
+    status: JSON.stringify([CONNECTION_STATES.CONNECTED]),
+    kind: JSON.stringify([CONNECTION_KINDS.GRAFANA]),
+  });
+  const availableGrafanaConnection = connectionData?.connections || [];
 
   return (
     <NoSsr>

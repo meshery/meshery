@@ -25,7 +25,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -53,13 +53,12 @@ mesheryctl connection view [connection-name|connection-id] --output-format json
 mesheryctl connection view [connection-name|connection-id] --output-format json --save
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl connection view [connection-name]\nRun 'mesheryctl connection view --help' to see detailed help message"
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("connection name or ID isn't specified\n\n%v", errMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errNoArgMsg, viewUsageMsg))
 		}
 
 		if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%v", errMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errMultiArgMsg, viewUsageMsg))
 		}
 
 		return display.ValidateOutputFormat(connectionViewFlagsProvided.outputFormat)
@@ -83,7 +82,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 			}
 
 			if fetchedConnection == nil {
-				fmt.Println("No connection(s) found for the given name: ", connectionNameOrID)
+				fmt.Println("No connection(s) found for the given name or ID: ", connectionNameOrID)
 				return nil
 			}
 

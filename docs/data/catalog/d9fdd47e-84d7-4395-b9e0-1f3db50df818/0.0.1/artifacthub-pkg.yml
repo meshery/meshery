@@ -1,0 +1,20 @@
+version: 0.0.1
+name: azure-microservices-architecture-with-aks-design
+displayName: Azure Microservices Architecture with AKS design
+createdAt: "2025-10-02T09:52:06Z"
+description: Azure Microservices Architecture with AKS design
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/d9fdd47e-84d7-4395-b9e0-1f3db50df818/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: c191d146-dd71-44ac-8ef9-bccac10068fe
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

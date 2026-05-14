@@ -18,18 +18,10 @@ func TestDesignListCmd(t *testing.T) {
 	// test scenrios for fetching data
 	tests := []utils.MesheryListCommandTest{
 		{
-			Name:             "Fetch Design List",
+			Name:             "given no arguments provided when design list then design list is displayed",
 			Args:             []string{"list", "--page", "1"},
 			ExpectedResponse: "list.design.output.golden",
 			Fixture:          "list.design.api.response.golden",
-			URL:              "/api/pattern?page=0&pagesize=10",
-			ExpectError:      false,
-		},
-		{
-			Name:             "Fetch Design List with Local provider",
-			Args:             []string{"list", "--page", "1"},
-			ExpectedResponse: "list.design.local.output.golden",
-			Fixture:          "list.design.local.api.response.golden",
 			URL:              "/api/pattern?page=0&pagesize=10",
 			ExpectError:      false,
 		},

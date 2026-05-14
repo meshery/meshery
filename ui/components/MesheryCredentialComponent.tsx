@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import {
   Chip,
+  CustomColumnVisibilityControl,
+  DeleteIcon,
   IconButton,
-  Tooltip,
+  ResponsiveDataTable,
+  styled,
   TableCell,
   TableSortLabel,
-  styled,
-  ResponsiveDataTable,
-  CustomColumnVisibilityControl,
+  Tooltip,
 } from '@sistent/sistent';
-import Modal from './Modal';
+import Modal from './shared/Modal/Modal';
 import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
-import DeleteIcon from '@mui/icons-material/Delete';
 import Moment from 'react-moment';
-import LoadingScreen from './LoadingComponents/LoadingComponent';
-import { useNotification } from '../utils/hooks/useNotification';
+import LoadingScreen from './shared/LoadingState/LoadingComponent';
+import { useNotification, useNotificationHandlers } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
@@ -28,7 +28,7 @@ import {
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import type { RootState } from '@/store/store';
-import type { MUIDataTableColumn, MUIDataTableMeta } from 'mui-datatables';
+import type { MUIDataTableColumn, MUIDataTableMeta } from '@sistent/mui-datatables';
 
 const CredentialIcon = styled('img')({
   width: '24px',
@@ -93,6 +93,7 @@ const MesheryCredentialComponent: React.FC = () => {
   );
   const [credentialName, setCredentialName] = useState<string | null>(null);
   const { notify } = useNotification();
+  const { notifyApiError } = useNotificationHandlers();
   const { width } = useWindowDimensions();
 
   const schemaChangeHandler = (type: CredentialType): void => {
@@ -119,13 +120,15 @@ const MesheryCredentialComponent: React.FC = () => {
     });
   };
 
-  const handleError = (error_msg: string): void => {
+  /**
+   * Surface a credential mutation error. Delegates to `notifyApiError` so the
+   * structured MeshKit envelope (when present) renders the server-supplied
+   * message and remediation guidance; otherwise falls back to the supplied
+   * description string.
+   */
+  const handleError = (error: unknown, fallbackMessage: string): void => {
     updateProgress({ showProgress: false });
-    notify({
-      message: `${error_msg}`,
-      event_type: EVENT_TYPES.ERROR,
-      details: error_msg.toString(),
-    });
+    notifyApiError(error, fallbackMessage);
   };
 
   const getCredentialsIcon = (type: string): React.ReactNode => {
@@ -370,7 +373,7 @@ const MesheryCredentialComponent: React.FC = () => {
           : type === CON_OPS.CREATE
             ? 'Failed to create credentials.'
             : 'Failed to update credentials.';
-      handleError(errorMessage);
+      handleError(error, errorMessage);
     } finally {
       updateProgress({ showProgress: false });
     }

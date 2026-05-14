@@ -1,0 +1,29 @@
+<table style="margin:auto;padding-right:25%; padding-left:20%;">
+<thead>
+  <tr>
+    <th style="text-align:left">Component Type</th>
+    <th style="text-align:left">Component Name</th>
+  </tr>
+</thead>
+<tbody>
+  {{ range $fileName, $fileData := site.Data.errorref }}
+    {{ $component := $fileData.errors_export }}
+    {{ $link := "" }}
+    {{ if eq $component.component_type "adapter" }}
+      {{ $link = printf "meshery-adapter-for-%s" ($component.component_name | lower) }}
+    {{ else if eq $component.component_type "component" }}
+      {{ $link = "meshery-server" }}
+    {{ else if eq $component.component_type "client" }}
+      {{ $link = printf "meshery-client-for-%s" ($component.component_name | lower) }}
+    {{ else if eq $component.component_type "library" }}
+      {{ $link = printf "meshery-library-for-%s" ($component.component_name | lower) }}
+    {{ else }}
+      {{ $link = printf "%s-%s" ($component.component_name | lower) $component.component_type }}
+    {{ end }}
+    <tr>
+      <td style="text-align:left">{{ $component.component_type }}</td>
+      <td class="title"><a href="#{{ $link }}">{{ $component.component_name }}</a></td>
+    </tr>
+  {{ end }}
+</tbody>
+</table>

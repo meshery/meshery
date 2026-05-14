@@ -1,0 +1,1 @@
+../.github/agents/meshery-code-contributor.md

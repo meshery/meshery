@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"net/http"
 	"path/filepath"
 	"runtime"
@@ -8,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -37,6 +39,7 @@ func TestModelGenerate(t *testing.T) {
 		ExpectedResponse string
 		ExpectHelp       bool
 		ExpectErr        bool
+		RaisedError      error
 		HttpCode         int
 	}
 
@@ -47,6 +50,7 @@ func TestModelGenerate(t *testing.T) {
 			ExpectedResponse: "generate.no-args.output.golden",
 			ExpectHelp:       true,
 			ExpectErr:        true,
+			RaisedError:      utils.ErrInvalidArgument(fmt.Errorf(errGenerateMissingArgsMsg, errGenerateUsageMsg)),
 		},
 		{
 			Name:             "model generate: from CSV directory",
@@ -99,6 +103,7 @@ func TestModelGenerate(t *testing.T) {
 			b := utils.SetupMeshkitLoggerTesting(t, false)
 			ModelCmd.SetOut(b)
 			ModelCmd.SetArgs(tt.Args)
+			mesheryctlflags.InitValidators(ModelCmd)
 			err := ModelCmd.Execute()
 
 			if tt.ExpectHelp || tt.ExpectErr {
@@ -106,8 +111,7 @@ func TestModelGenerate(t *testing.T) {
 					t.Fatal("expected an error, but got nil")
 				}
 				t.Logf("[%s] stderr (error):\n%s", tt.Name, err.Error())
-				expectedResponse := golden.Load()
-				utils.Equals(t, expectedResponse, err.Error())
+				utils.AssertMeshkitErrorsEqual(t, tt.RaisedError, err)
 				return
 			}
 

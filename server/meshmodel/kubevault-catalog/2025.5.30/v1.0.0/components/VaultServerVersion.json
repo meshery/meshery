@@ -15,9 +15,8 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",
@@ -54,16 +53,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#326ce5",
@@ -205,6 +204,7 @@
     "kind": "VaultServerVersion",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"deprecated\": {\n     \"type\": \"boolean\"\n    },\n    \"exporter\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\"\n     ],\n     \"type\": \"object\"\n    },\n    \"initContainer\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\"\n     ],\n     \"type\": \"object\"\n    },\n    \"stash\": {\n     \"properties\": {\n      \"addon\": {\n       \"properties\": {\n        \"backupTask\": {\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"params\": {\n           \"items\": {\n            \"properties\": {\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"value\": {\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"name\",\n             \"value\"\n            ],\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"restoreTask\": {\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"params\": {\n           \"items\": {\n            \"properties\": {\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"value\": {\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"name\",\n             \"value\"\n            ],\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"backupTask\",\n        \"restoreTask\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"unsealer\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\"\n     ],\n     \"type\": \"object\"\n    },\n    \"vault\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\"\n     ],\n     \"type\": \"object\"\n    },\n    \"version\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"unsealer\",\n    \"vault\",\n    \"version\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vault Server Version\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

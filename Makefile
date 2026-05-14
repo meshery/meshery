@@ -128,7 +128,7 @@ server-kanvas: dep-check
 build-server: dep-check
 	cd server; cd cmd; go mod tidy; cd "../.."
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD),$(LAYER5_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -178,9 +178,10 @@ server-stg: dep-check
 server: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=$(PORT) \
 	DEBUG=true \
+	USE_GO_POLICY_ENGINE=$(USE_GO_POLICY_ENGINE) \
 	OTEL_CONFIG=$(OTEL_CONFIG) \
 	PROVIDER_CAPABILITIES_FILEPATH=$(PROVIDER_CAPABILITIES_FILEPATH) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
@@ -292,7 +293,7 @@ server-playground: dep-check
 
 ## Lint check Meshery Server.
 golangci: error dep-check
-	golangci-lint run
+	golangci-lint run --config=.github/.golangci.yml --timeout=10m
 
 ## Build Meshery's protobufs.
 proto-build:
@@ -322,16 +323,10 @@ ui-server: ui-meshery-build ui-provider-build server
 UI_BUILD_SCRIPT = build16
 UI_DEV_SCRIPT = dev16
 
-ifeq ($(findstring v20, $(shell node --version)), v20)
+ifeq ($(findstring v22, $(shell node --version)), v22)
     UI_BUILD_SCRIPT = build
     UI_DEV_SCRIPT = dev
-else ifeq ($(findstring v19, $(shell node --version)), v19)
-    UI_BUILD_SCRIPT = build
-    UI_DEV_SCRIPT = dev
-else ifeq ($(findstring v18, $(shell node --version)), v18)
-    UI_BUILD_SCRIPT = build
-    UI_DEV_SCRIPT = dev
-else ifeq ($(findstring v17, $(shell node --version)), v17)
+else ifeq ($(findstring v20, $(shell node --version)), v20)
     UI_BUILD_SCRIPT = build
     UI_DEV_SCRIPT = dev
 
@@ -369,12 +364,12 @@ ui-provider-test:
 
 ## Buils all Meshery UIs  on your local machine.
 ui-build: ui-setup
-	cd ui; npm run lint:fix || echo "Warning: Lint issues detected in ui but continuing build"; npm run build && npm run export; cd ..
+	cd ui; npm run lint:fix || echo "Warning: Lint issues detected in ui but continuing build"; npm run build; cd ..
 	cd provider-ui; npm run lint:fix || echo "Warning: Lint issues detected in provider-ui but continuing build"; npm run build; cd ..
 
 ## Build only Meshery UI on your local machine.
 ui-meshery-build:
-	cd ui; npm run build && npm run export; cd ..
+	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
 ui-provider-build:
@@ -388,31 +383,62 @@ ui-integration-tests: ui-setup
 # Meshery Docs
 #-----------------------------------------------------------------------------
 #Incorporating Make docs commands from the Docs Makefile
-.PHONY: docs docs-build site docs-docker docs-mesheryctl
-jekyll=bundle exec jekyll
+.PHONY: docs docs-setup docs-build docs-build-production site docs-docker docs-mesheryctl check-go
 
+## Alias target to run Meshery Docs in watch mode.
 site: docs
+## Alias target to run Meshery Docs once without file watching.
 site-serve: docs-serve
 
+## Install docs dependencies.
+docs-setup:
+	cd docs; npm install
+
 ## Run Meshery Docs. Listen for changes.
-docs:
-	cd docs; bundle install; bundle exec jekyll serve --drafts --incremental --config _config_dev.yml
+docs: check-go
+	cd docs; hugo server -D -F
 
 ## Run Meshery Docs. Do not listen for changes.
-docs-serve:
-	cd docs; bundle install; bundle exec jekyll serve --drafts --config _config_dev.yml
+docs-serve: check-go
+	cd docs; hugo server -D -F --watch=false
+
+## Run Meshery Docs. Do not listen for changes.
+docs-clean: check-go
+	cd docs; hugo --cleanDestinationDir
+	make docs
+
 
 ## Build Meshery Docs on your local machine.
-docs-build:
-	cd docs; $(jekyll) build --drafts
+docs-build: check-go
+	cd docs; hugo
+
+## Build Meshery Docs for production. BASE_URL is optional.
+## Example: make docs-build-production BASE_URL=https://example.com
+docs-build-production:
+	cd docs; \
+	hugo_args="--gc --minify"; \
+	if [ -n "$(BASE_URL)" ]; then \
+		base_url="$(BASE_URL)"; \
+		base_url="$${base_url%/}/"; \
+		hugo_args="$$hugo_args --baseURL $$base_url"; \
+	fi; \
+	echo "Running: hugo $$hugo_args"; \
+	hugo $$hugo_args
 
 ## Run Meshery Docs in a Docker container. Listen for changes.
 docs-docker:
-	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:4.0 bash -c "bundle install; jekyll serve --drafts --livereload"
+	cd docs; docker run --rm --name meshery-docs -p 1313:1313 -v `pwd`:/src -w /src ghcr.io/gohugoio/hugo:v0.157.0 server -D -F --bind 0.0.0.0
+
 
 ## Build Meshery CLI docs
 docs-mesheryctl:
 	cd mesheryctl; make docs;
+
+## Validate Go is installed.
+check-go:
+	@echo "Checking if Go is installed..."
+	@command -v go > /dev/null || (echo "Go is not installed. Please install it before proceeding."; exit 1)
+	@echo "Go is installed."
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
@@ -443,28 +469,7 @@ helm-meshery-lint:
 #-----------------------------------------------------------------------------
 # Meshery APIs
 #-----------------------------------------------------------------------------
-.PHONY: swagger-build swagger swagger-docs-build graphql-docs-build graphql-build
-## Build Meshery REST API specifications
-swagger-build:
-	swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
-
-## Generate and serve Meshery REST API specifications
-swagger: swagger-build
-	swagger serve ./server/helpers/swagger.yaml
-
-## Build Meshery REST API documentation
-swagger-docs-build:
-	swagger generate spec -o ./docs/_data/swagger.yml --scan-models; \
-	swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
-
-
-## Building Meshery docs with redocly
-redocly-docs-build:
-	npx @redocly/cli build-docs ./docs/_data/swagger.yml --config='redocly.yaml' -t custom.hbs
-
-## Build Meshery GraphQL API documentation
-graphql-docs-build:
-	cd docs; bundle exec rake graphql:compile_docs
+.PHONY: graphql-build
 
 ## Build Meshery GraphQl API specifications
 graphql-build: dep-check
@@ -561,7 +566,7 @@ ui-test-e2e-ci:
 	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci ; cd ..
 
 #-----------------------------------------------------------------------------
-# Testing - Meshery CLI 
+# Testing - Meshery CLI
 #-----------------------------------------------------------------------------
 .PHONY: mesheryctl-tests
 ### Run all Mesheryctl integration tests (Golang)

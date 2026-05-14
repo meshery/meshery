@@ -21,7 +21,6 @@ import (
 
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -164,24 +163,21 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 			}
 			err = websiteSystem()
 		default:
-			err = fmt.Errorf("invalid system: %s", system) // update to meshkit
+			return ErrPublish(fmt.Errorf("invalid system: %s", system), system)
 		}
 
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return ErrPublish(err, system)
 		}
 
 		err = modelCSVHelper.Cleanup()
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return ErrPublish(err, system)
 		}
 
 		err = componentCSVHelper.Cleanup()
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return ErrPublish(err, system)
 		}
 
 		return nil
@@ -210,7 +206,7 @@ func remoteProviderSystem() error {
 		err := utils.GenerateIcons(model, comps, imgsOutputPath)
 		if err != nil {
 			utils.Log.Debug(utils.ErrGeneratingIcons(err, imgsOutputPath))
-			log.Fatalln(fmt.Printf("Error generating icons for model %s: %v\n", model.Model, err.Error()))
+			utils.Log.Fatalf("Error generating icons for model %s: %v", model.Model, err.Error())
 		}
 
 		_, _, err = WriteModelDefToFileSystem(&model, "", modelDir)
@@ -247,17 +243,17 @@ func websiteSystem() error {
 		case "mdx":
 			err := utils.GenerateMDXStyleDocs(model, comps, modelsOutputPath, imgsOutputPath) // creates mdx file
 			if err != nil {
-				log.Fatalln(fmt.Printf("Error generating remote provider docs for model %s: %v\n", model.Model, err.Error()))
+				utils.Log.Fatalf("Error generating remote provider docs for model %s: %v", model.Model, err.Error())
 			}
 		case "md":
 			err := utils.GenerateMDStyleDocs(model, comps, relnships, modelsOutputPath, imgsOutputPath) // creates md file
 			if err != nil {
-				log.Fatalln(fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error()))
+				utils.Log.Fatalf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error())
 			}
 		case "js":
 			docsJSON, err = utils.GenerateJSStyleDocs(model, docsJSON, comps, relnships, modelsOutputPath, imgsOutputPath) // json file
 			if err != nil {
-				log.Fatalln(fmt.Printf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error()))
+				utils.Log.Fatalf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error())
 			}
 		}
 

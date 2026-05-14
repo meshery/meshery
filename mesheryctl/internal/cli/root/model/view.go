@@ -1,101 +1,119 @@
 package model
 
 import (
+	"errors"
 	"fmt"
-	"slices"
+	"net/url"
+	"path/filepath"
 	"strings"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/spf13/cobra"
 )
 
-var modelViewOutputFormat string
+type cmdModelViewFlags struct {
+	OutputFormat string `json:"output-format" validate:"oneof=json yaml"`
+	Save         bool   `json:"save" validate:"boolean"`
+}
+
+var modelViewFlags cmdModelViewFlags
 
 var viewModelCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View model",
-	Long: `View a model queried by its name
+	Long: `View a model queried by its name or ID
 Find more information at: https://docs.meshery.io/reference/mesheryctl/model/view`,
 	Example: `
-// View a specific model from current provider
+// View a specific model from current provider by using [model-name] or [model-id] in default format yaml
 mesheryctl model view [model-name]
+
+// View a specific model in specifed format
+mesheryctl model view [model-name] --output-format [json|yaml]
+
+// View a specific model in specified format and save it as a file
+mesheryctl model view [model-name] --output-format [json|yaml] --save
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if !slices.Contains(getValidOutputFormat(), strings.ToLower(modelViewOutputFormat)) {
-			return ErrModelUnsupportedOutputFormat(formaterrMsg)
-		}
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, &modelViewFlags)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("%s%s", errNoArg, viewUsageMsg))
-		} else if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("%s%s", errMultiArg, viewUsageMsg))
+		if len(args) != 1 {
+			return utils.ErrInvalidArgument(errors.New(errInvalidArg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		modelDefinition := args[0]
+		modelNameOrId := args[0]
 
-		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](fmt.Sprintf("%s/%s?pagesize=all", modelsApiPath, modelDefinition))
+		var selectedModel *model.ModelDefinition
+		var err error
+
+		if !utils.IsUUID(modelNameOrId) {
+			selectedModel, err = promptModelSelection(modelNameOrId, modelsApiPath)
+		} else {
+			queryParams := url.Values{}
+			queryParams.Add("id", modelNameOrId)
+			modelViewApiPath := fmt.Sprintf("%s?%s", modelsApiPath, queryParams.Encode())
+			selectedModel, err = promptModelSelection("", modelViewApiPath)
+		}
 
 		if err != nil {
 			return err
 		}
 
-		var selectedModel model.ModelDefinition
-
-		switch modelsResponse.Count {
-		case 0:
-			fmt.Println("No model(s) found for the given name ", modelDefinition)
+		if selectedModel == nil {
+			utils.Log.Infof("No model found with name or ID: %s", modelNameOrId)
 			return nil
-		case 1:
-			selectedModel = modelsResponse.Models[0]
-		default:
-			selectedModel, err = selectModelPrompt(modelsResponse.Models)
+		}
+
+		outputFormatterFactory := display.OutputFormatterFactory[*model.ModelDefinition]{}
+		outputFormatter, err := outputFormatterFactory.New(strings.ToLower(modelViewFlags.OutputFormat), selectedModel)
+		if err != nil {
+			return err
+		}
+
+		err = outputFormatter.WithOutput(cmd.OutOrStdout()).Display()
+		if err != nil {
+			return err
+		}
+
+		if modelViewFlags.Save {
+			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[*model.ModelDefinition]{}
+			outputFormatterSaver, err := outputFormatterSaverFactory.New(modelViewFlags.OutputFormat, outputFormatter)
+			if err != nil {
+				return err
+			}
+
+			modelString := strings.ReplaceAll(fmt.Sprintf("%v", selectedModel.DisplayName), " ", "_")
+			fileName := filepath.Join(utils.MesheryFolder, fmt.Sprintf("model_%s.%s", modelString, modelViewFlags.OutputFormat))
+
+			outputFormatterSaver = outputFormatterSaver.WithFilePath(fileName)
+			err = outputFormatterSaver.Save()
 			if err != nil {
 				return err
 			}
 		}
 
-		outputFormatterFactory := display.OutputFormatterFactory[model.ModelDefinition]{}
-		outputFormatter, err := outputFormatterFactory.New(strings.ToLower(modelViewOutputFormat), selectedModel)
-		if err != nil {
-			return err
-		}
-
-		err = outputFormatter.Display()
-		if err != nil {
-			return err
-		}
-
 		return nil
 	},
 }
 
-func getValidOutputFormat() []string {
-	return []string{"yaml", "json"}
-}
+func getModelViewUrlPath(modelNameOrId string) string {
+	queryParams := url.Values{}
 
-func selectModelPrompt(models []model.ModelDefinition) (model.ModelDefinition, error) {
-	modelNames := make([]string, len(models))
-
-	for i, model := range models {
-		modelNames[i] = fmt.Sprintf("%s, version: %s", model.DisplayName, model.Version)
+	if !utils.IsUUID(modelNameOrId) {
+		queryParams.Add("search", modelNameOrId)
+	} else {
+		queryParams.Add("id", modelNameOrId)
 	}
 
-	i, err := utils.RunSelectPrompt("Select a model", modelNames)
-	if err != nil {
-		return model.ModelDefinition{}, err
-	}
-
-	return models[i], nil
+	return fmt.Sprintf("%s?%s", modelsApiPath, queryParams.Encode())
 }
 
 func init() {
-	viewModelCmd.Flags().StringVarP(&modelViewOutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewModelCmd.Flags().StringVarP(&modelViewFlags.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewModelCmd.Flags().BoolVarP(&modelViewFlags.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
 }

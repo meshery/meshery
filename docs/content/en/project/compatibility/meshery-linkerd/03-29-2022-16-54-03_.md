@@ -1,0 +1,15 @@
+---
+timestamp: "2022-03-29 16:53:51 UTC Tue"
+meshery-component: meshery-linkerd
+meshery-component-version: edge
+meshery-server-version: "v0.6.0-rc-5h"
+k8s-distro: minikube
+k8s-version: "v1.20.1"
+service-mesh: Linkerd
+service-mesh-version: "stable-2.11.1"
+tests:
+  linkerd-destination: "Running"
+  linkerd-identity: "Running"
+  linkerd-proxy-injector:  "Running"
+overall-status: "passing"
+---

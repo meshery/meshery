@@ -1,7 +1,16 @@
-import { BasicMarkdown, CircularProgress, styled, lighten, Box } from '@sistent/sistent';
+import {
+  BasicMarkdown,
+  Box,
+  CheckCircleIcon as CheckCircle,
+  CircularProgress,
+  ErrorIcon as Error,
+  InfoIcon as Info,
+  lighten,
+  styled,
+  WarningIcon as Warning,
+} from '@sistent/sistent';
 import { SnackbarContent } from 'notistack';
 import { forwardRef } from 'react';
-import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
 
 const drawerWidth = 256;
 
@@ -34,15 +43,22 @@ export const StyledMainContent = styled('main')(({ theme }) => ({
   },
 }));
 
-export const StyledAppContent = styled('div')(({ theme, canShowNav }) => ({
+export const StyledAppContent = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed' && prop !== 'canShowNav',
+})(({ theme, canShowNav, isDrawerCollapsed }) => ({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
   overflowX: 'hidden',
   overflowY: 'hidden',
+
   [theme.breakpoints.down('sm')]: {
     marginLeft: canShowNav ? '4.25rem' : '0',
+  },
+
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: isDrawerCollapsed && canShowNav ? 68 : 0,
   },
 }));
 

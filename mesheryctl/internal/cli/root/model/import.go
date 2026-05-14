@@ -5,24 +5,27 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/encoding"
-	"github.com/meshery/meshkit/errors"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	meshkitutils "github.com/meshery/meshkit/utils"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 )
+
+type cmdModelImportFlags struct {
+	File string `json:"file" validate:"omitempty,dirpath|filepath|url"`
+}
+
+var modelImportFlags cmdModelImportFlags
 
 var importModelCmd = &cobra.Command{
 	Use:   "import",
@@ -31,48 +34,44 @@ var importModelCmd = &cobra.Command{
 Find more information at: https://docs.meshery.io/reference/mesheryctl/model/import`,
 	Example: `
 // Import model
-mesheryctl model import -f [URI]
+mesheryctl model import --file [URI]
  
 // Import model from a URL to a meshery model
-mesheryctl model import -f [URL]
+mesheryctl model import --file [URL]
 
 // Import model from an OCI artifact
-mesheryctl model import -f [OCI]
+mesheryctl model import --file [OCI]
 
 // Import model from a tar.gz file
-mesheryctl model import -f [path-to-model.tar.gz]
+mesheryctl model import --file [path-to-model.tar.gz]
 
 // Import model from a path
-mesheryctl model import -f [path-to-model]
+mesheryctl model import --file [path-to-model]
 
 // Import model using CSV files
-mesheryctl model import -f [path-to-csv-directory]
+mesheryctl model import --file [path-to-csv-directory]
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &modelImportFlags)
+	},
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl model import [ file | filePath | URL ]\nRun 'mesheryctl model import --help' to see detailed help message"
-		file, _ := cmd.Flags().GetString("file")
-		if file == "" && len(args) == 0 {
-			return fmt.Errorf("[ file | filepath | URL ] isn't specified\n\n%v", errMsg)
+		if modelImportFlags.File == "" && len(args) == 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("either --file [ file | filepath | URL ] or an argument must be specified\n\n%s", errImportUsageMsg))
 		} else if len(args) > 1 {
-			return fmt.Errorf("too many arguments\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%s", errImportUsageMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var path string
-		file, _ := cmd.Flags().GetString("file")
-		if file != "" {
-			path = file
-		} else {
+		path := modelImportFlags.File
+		// If file flag is not provided, use the argument as the path
+		if path == "" {
 			path = args[0]
+
 		}
+
 		if utils.IsValidUrl(path) {
-			err := registerModel(nil, nil, nil, "", "urlImport", path, true)
-			if err != nil {
-				utils.Log.Error(err)
-				return nil
-			}
-			return nil
+			return registerModel(nil, nil, nil, "", "urlImport", path, true)
 		}
 
 		hasCSVs := hasCSVs(path)
@@ -80,20 +79,7 @@ mesheryctl model import -f [path-to-csv-directory]
 		if hasCSVs {
 			modelcsvpath, componentcsvpath, relationshipcsvpath, err := meshkitRegistryUtils.GetCsv(path)
 			if err != nil {
-				utils.Log.Infof("%s: %s", utils.BoldString("ERROR"), "Error importing model using CSV files")
-				if meshkitErr, ok := err.(*errors.Error); ok {
-					if len(meshkitErr.ProbableCause) != 0 {
-						utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("PROBABLE CAUSE"), strings.Join(meshkitErr.ProbableCause, ". "))
-					}
-					if len(meshkitErr.SuggestedRemediation) != 0 {
-						utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("SUGGESTED REMEDIATION"), strings.Join(meshkitErr.SuggestedRemediation, ". "))
-					}
-				} else {
-					utils.Log.Error(err)
-				}
-
 				return err
-
 			} else {
 				modelData, err := os.ReadFile(modelcsvpath)
 				if err != nil {
@@ -168,13 +154,7 @@ func hasCSVs(path string) bool {
 }
 
 func registerModel(data []byte, componentData []byte, relationshipData []byte, filename string, dataType string, sourceURI string, register bool) error {
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return err
-	}
-
-	baseURL := mctlCfg.GetBaseMesheryURL()
-	url := baseURL + "/api/meshmodels/register"
+	urlPath := "api/meshmodels/register"
 	var importRequest schemav1beta1.ImportRequest
 	importRequest.UploadType = dataType
 	switch dataType {
@@ -186,9 +166,9 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 		importRequest.ImportBody.ModelFile = data
 	default:
 		if data != nil {
-			err = encoding.Unmarshal(data, &importRequest.ImportBody.Model)
+			err := encoding.Unmarshal(data, &importRequest.ImportBody.Model)
 			if err != nil {
-				return err
+				return utils.ErrUnmarshal(err)
 			}
 		}
 	}
@@ -197,38 +177,24 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 	importRequest.Register = register
 	requestBody, err := json.Marshal(importRequest)
 	if err != nil {
-		return err
+		return utils.ErrMarshal(err)
 	}
 
-	req, err := utils.NewRequest(http.MethodPost, url, bytes.NewReader(requestBody))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := api.Add(urlPath, bytes.NewReader(requestBody), headers)
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Content-Type", "application/json")
 
-	resp, err := utils.MakeRequest(req)
+	response, err := api.GenerateDataFromBodyResponse[models.RegistryAPIResponse](req)
 	if err != nil {
 		return err
 	}
 
-	defer func() { _ = resp.Body.Close() }()
-	if resp.StatusCode != http.StatusOK {
-		err = models.ErrDoRequest(err, resp.Request.Method, url)
-		return err
-	}
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		err = models.ErrDataRead(err, "response body")
-		return err
-	}
-	var response models.RegistryAPIResponse
-
-	if err := encoding.Unmarshal((bodyBytes), &response); err != nil {
-		err = models.ErrUnmarshal(err, "response body")
-		return err
-	}
-
-	displayEntities(&response)
+	displayEntities(response)
 
 	if len(response.EntityTypeSummary.SuccessfulModels) == 0 {
 		return utils.ErrInvalidModel()
@@ -524,6 +490,6 @@ func init() {
 		return pflag.NormalizedName(strings.ToLower(name))
 	})
 
-	importModelCmd.Flags().StringP("file", "f", "", "Specify path to the file or directory")
+	importModelCmd.Flags().StringVarP(&modelImportFlags.File, "file", "f", "", "Specify path to the file or directory")
 
 }

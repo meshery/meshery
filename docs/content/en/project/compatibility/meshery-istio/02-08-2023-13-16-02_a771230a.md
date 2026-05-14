@@ -1,0 +1,15 @@
+---
+timestamp: "2023-02-08 13:16:03 UTC Wed"
+meshery-component: meshery-istio
+meshery-component-version: edge
+meshery-server-version: "v0.6.50"
+k8s-distro: minikube
+k8s-version: "v1.24.7"
+service-mesh: istio
+service-mesh-version: "1.16.2"
+tests:
+  pod/istiod: "Running"
+  pod/istio-egressgateway: "Running"
+  pod/istio-ingressgateway:  "Running"
+overall-status: "passing"
+---

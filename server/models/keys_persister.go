@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/schemas/models/core"
 )
 
 // KeyPersister is the persister for persisting keys in the database
@@ -18,11 +18,11 @@ func (kp *KeyPersister) GetUsersKeys(search, order, updatedAfter string) ([]byte
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "function", "category", "subcategory"})
 
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	count := int64(0)
-	keys := []*Key{}
+	keys := []Key{}
 
 	query := kp.DB.Where("updated_at > ?", updatedAfter).Order(order)
 
@@ -52,9 +52,9 @@ func (kp *KeyPersister) SaveUsersKey(key *Key) (*Key, error) {
 	return key, nil
 }
 
-// SaveUsersKeys saves a key to the database
-func (kp *KeyPersister) SaveUsersKeys(keys []*Key) ([]*Key, error) {
-	if err := kp.DB.Save(keys).Error; err != nil {
+// SaveUsersKeys saves multiple keys to the database
+func (kp *KeyPersister) SaveUsersKeys(keys []Key) ([]Key, error) {
+	if err := kp.DB.Save(&keys).Error; err != nil {
 		return nil, ErrDBCreate(err)
 	}
 
@@ -62,7 +62,7 @@ func (kp *KeyPersister) SaveUsersKeys(keys []*Key) ([]*Key, error) {
 }
 
 // GetUsersKey retrieves a key by its ID
-func (kp *KeyPersister) GetUsersKey(id uuid.UUID) ([]byte, error) {
+func (kp *KeyPersister) GetUsersKey(id core.Uuid) ([]byte, error) {
 	var key Key
 	err := kp.DB.First(&key, id).Error
 	return marshalKey(&key), err

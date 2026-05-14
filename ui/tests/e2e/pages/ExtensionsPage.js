@@ -4,6 +4,9 @@ import { DashboardPage } from './DashboardPage';
 export class ExtensionsPage {
   constructor(page) {
     this.page = page;
+    this.extensionNavRegion = page.getByTestId('extension-navigation-region');
+    this.extensionRootNavItems = page.getByTestId('extension-nav-root-item');
+    this.extensionRegionTopLevelLists = this.extensionNavRegion.locator(':scope > ul');
 
     this.kanvasSnapshotHeading = page.getByTestId('kanvas-snapshot-heading');
     this.kanvasSnapshotDescription = page.getByTestId('kanvas-snapshot-description');
@@ -48,19 +51,57 @@ export class ExtensionsPage {
     await expect(this.performanceEnableBtn).toBeEnabled();
   }
 
-  async verifyKanvasSignupUI() {
-    await expect(this.kanvasSignupHeading).toBeVisible();
-    await expect(this.kanvasSignupBtn).toBeVisible();
-    await expect(this.kanvasSignupBtn).toBeEnabled();
-  }
-
   async toggleCatalog() {
     await this.catalogToggleSwitch.click();
   }
 
-  async verifyNewTab(context, locator, expectedUrl) {
-    const [newPage] = await Promise.all([context.waitForEvent('page'), locator.click()]);
-    await expect(newPage).toHaveURL(expectedUrl);
-    await newPage.close();
+  async verifyExtensionNavItemsUseTopLevelLayout() {
+    await expect(this.extensionNavRegion).toBeVisible();
+    await expect(this.extensionRootNavItems.first()).toBeVisible();
+    await expect(this.extensionRegionTopLevelLists).toHaveCount(0);
+  }
+
+  normalizeUrl(url) {
+    const parsedUrl = new URL(url);
+    const normalizedPath = parsedUrl.pathname.replace(/\/+$/, '') || '/';
+    return `${parsedUrl.origin}${normalizedPath}${parsedUrl.search}${parsedUrl.hash}`;
+  }
+
+  async verifyNewTab(locator, expectedUrl) {
+    const href = await locator.getAttribute('href');
+
+    if (href) {
+      expect(href).not.toBe('');
+      expect(this.normalizeUrl(href)).toBe(this.normalizeUrl(expectedUrl));
+      return;
+    }
+
+    await this.page.evaluate(() => {
+      window.__mesheryOpenedUrl = null;
+      // Save original window.open so it can be restored after the check.
+      window.__mesheryOriginalOpen = window.open;
+      window.open = (...args) => {
+        window.__mesheryOpenedUrl = args[0] ?? null;
+        return null;
+      };
+    });
+
+    await locator.click();
+
+    try {
+      await expect
+        .poll(async () => {
+          const openedUrl = await this.page.evaluate(() => window.__mesheryOpenedUrl);
+          return openedUrl ? this.normalizeUrl(openedUrl) : null;
+        })
+        .toBe(this.normalizeUrl(expectedUrl));
+    } finally {
+      await this.page.evaluate(() => {
+        if (window.__mesheryOriginalOpen) {
+          window.open = window.__mesheryOriginalOpen;
+          delete window.__mesheryOriginalOpen;
+        }
+      });
+    }
   }
 }

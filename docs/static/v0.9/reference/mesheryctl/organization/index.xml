@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mesheryctl-organization on Documentation</title>
+    <link>/v0.9/reference/mesheryctl/organization/</link>
+    <description>Recent content in mesheryctl-organization on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/reference/mesheryctl/organization/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>mesheryctl-organization-list</title>
+      <link>/v0.9/reference/mesheryctl/organization/list/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/reference/mesheryctl/organization/list/</guid>
+      <description>&lt;h1 id=&#34;mesheryctl-organization-list&#34;&gt;&#xA;&#x9;mesheryctl organization list&#xA;&lt;/h1&gt;&#xA;&lt;p&gt;List registered organizations&lt;/p&gt;&#xA;&lt;h2 id=&#34;synopsis&#34;&gt;&#xA;&#x9;Synopsis&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;List all registered organizations with their id, name and date of creation. Organization will be returned based on provider you logged in.&lt;/p&gt;&#xA;&lt;pre class=&#39;codeblock-pre&#39;&gt;&#xA;&lt;div class=&#39;codeblock&#39;&gt;&#xA;mesheryctl organization list [flags]&#xA;&#xA;&lt;/div&gt;&#xA;&lt;/pre&gt; &#xA;&lt;h2 id=&#34;examples&#34;&gt;&#xA;&#x9;Examples&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;list all organizations&lt;/p&gt;&#xA;&lt;pre class=&#39;codeblock-pre&#39;&gt;&#xA;&lt;div class=&#39;codeblock&#39;&gt;&#xA;mesheryctl organization list&#xA;&#xA;&lt;/div&gt;&#xA;&lt;/pre&gt; &#xA;&lt;p&gt;list organizations for a specified page&lt;/p&gt;&#xA;&lt;pre class=&#39;codeblock-pre&#39;&gt;&#xA;&lt;div class=&#39;codeblock&#39;&gt;&#xA;mesheryctl organization list --page [page-number]&#xA;&#xA;&lt;/div&gt;&#xA;&lt;/pre&gt; &#xA;&lt;p&gt;Display number of available organizations&lt;/p&gt;&#xA;&lt;pre class=&#39;codeblock-pre&#39;&gt;&#xA;&lt;div class=&#39;codeblock&#39;&gt;&#xA;mesheryctl organization list --count&#xA;&#xA;&lt;/div&gt;&#xA;&lt;/pre&gt; &#xA;&lt;h2 id=&#34;options&#34;&gt;&#xA;&#x9;Options&#xA;&lt;/h2&gt;&#xA;&lt;pre class=&#39;codeblock-pre&#39;&gt;&#xA;&lt;div class=&#39;codeblock&#39;&gt;&#xA;      --count          total number of registered orgs&#xA;  -h, --help           help for list&#xA;  -p, --page int       (optional) Page number of paginated results (default 1)&#xA;  -s, --pagesize int   (optional) Number of organizations per page (default 10)&#xA;&#xA;&lt;/div&gt;&#xA;&lt;/pre&gt;&#xA;&lt;h2 id=&#34;options-inherited-from-parent-commands&#34;&gt;&#xA;&#x9;Options inherited from parent commands&#xA;&lt;/h2&gt;&#xA;&lt;pre class=&#39;codeblock-pre&#39;&gt;&#xA;&lt;div class=&#39;codeblock&#39;&gt;&#xA;      --config string   path to config file (default &#34;/home/runner/.meshery/config.yaml&#34;)&#xA;  -v, --verbose         verbose output&#xA;&#xA;&lt;/div&gt;&#xA;&lt;/pre&gt;&#xA;&lt;h2 id=&#34;see-also&#34;&gt;&#xA;&#x9;See Also&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Go back to &lt;a href=&#34;/v0.9/reference/mesheryctl/&#34;&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href=&#34;/v0.9/project/contributing/contributing-cli/#preserving-manually-added-documentation&#34;&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

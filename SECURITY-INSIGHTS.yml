@@ -11,10 +11,17 @@ project:
   homepage: https://meshery.io
   roadmap: https://github.com/meshery/meshery/blob/master/ROADMAP.md
   administrators:
-    - name: Lee Calcote
-      affiliation: Layer5
-      social: https://layer5.io/community/members/lee-calcote/
+    - name: Meshery Maintainers
+      affiliation: Meshery
+      social: https://slack.meshery.io
       primary: true
+  documentation:
+    quickstart-guide: https://docs.meshery.io/installation/quick-start
+    detailed-guide: https://docs.meshery.io/guides
+    code-of-conduct: https://github.com/meshery/meshery/blob/master/CODE_OF_CONDUCT.md
+    release-process: https://docs.meshery.io/project/contributing/build-and-release#release-channels
+    support-policy: https://docs.meshery.io/project/contributing/build-and-release#release-support
+    design: https://docs.meshery.io/concepts/architecture
   repositories:
     - name: Meshery
       url: https://github.com/meshery/meshery
@@ -73,9 +80,12 @@ repository:
     - name: Sangram Rath
       affiliation: OD10
       social: https://layer5.io/community/members/sangram-rath/
+    - name: Mia Grenell
+      affiliation: The University of Texas at Austin
+      social: https://layer5.io/community/members/mia-grenell/
   license:
     url: https://github.com/meshery/meshery/blob/master/LICENSE
-    expression: Apache License 2.0
+    expression: Apache-2.0
   security:
     assessments:
       self:
@@ -84,6 +94,7 @@ repository:
   documentation:
     contributing-guide: https://docs.meshery.io/project/contributing
     governance: https://github.com/meshery/meshery/blob/master/GOVERNANCE.md
+    security-policy: https://github.com/meshery/meshery/blob/master/SECURITY.md
   release:
     automated-pipeline: true
     distribution-points:

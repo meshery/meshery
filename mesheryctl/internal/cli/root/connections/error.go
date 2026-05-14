@@ -16,7 +16,13 @@ var (
 	ErrGcpGKEGetCredentialsCode   = "mesheryctl-1175"
 	ErrReadKubeConfigCode         = "mesheryctl-1187"
 	ErrWriteKubeConfigCode        = "mesheryctl-1188"
-	ErrConnectionNotFoundCode     = "mesheryctl-1197"
+)
+
+var (
+	deleteUsageMsg = "Usage: mesheryctl connection delete --help' to see detailed help message"
+	viewUsageMsg   = "Usage: mesheryctl connection view --help' to see detailed help message"
+	errNoArgMsg    = "connection name or ID isn't specified"
+	errMultiArgMsg = "too many arguments specified"
 )
 
 func errInvalidConnectionType(connectionType string) error {
@@ -49,8 +55,4 @@ func errAwsEksGetCredentials(err error) error {
 
 func errGcpGKEGetCredentials(err error) error {
 	return errors.New(ErrGcpGKEGetCredentialsCode, errors.Alert, []string{"Unable to get GKE cluster credentials"}, []string{"There was an error while fetching the GKE cluster credentials"}, []string{err.Error()}, []string{"Ensure that the GKE cluster name, zone, and project ID are correct, and that you have the necessary permissions to access the cluster"})
-}
-
-func errConnectionNotFound(err error) error {
-	return errors.New(ErrConnectionNotFoundCode, errors.Alert, []string{"Connection not found"}, []string{err.Error()}, []string{"The specified connection ID does not exist"}, []string{"Verify the connection ID using `mesheryctl connection list`"})
 }

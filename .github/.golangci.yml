@@ -3,10 +3,24 @@ run:
   timeout: 5m
 
 linters:
-  disable:
-    - errcheck
+  enable:
+    - forbidigo
+  settings:
+    forbidigo:
+      forbid:
+        - pattern: '^http\.Error$'
+          msg: "Use writeMeshkitError(w, err, status) or writeJSONError(w, msg, status) from server/handlers/utils.go. http.Error writes Content-Type: text/plain and breaks RTK Query's default baseQuery. See docs/content/en/project/contributing/error-contract.md."
+      exclude-godoc-examples: true
+      analyze-types: true
   exclusions:
     paths:
       - server/handlers/doc.go
       - server/models/meshmodel/core/register.go
- 
+    rules:
+      # Legitimate plain-text responders — keep http.Error here if used.
+      - path: 'server/handlers/k8s_healthz_handler\.go'
+        linters: [forbidigo]
+      # UI handler serves static HTML; any http.Error there relates to
+      # asset resolution, not API surface — keep off the hook.
+      - path: 'server/handlers/ui_handler\.go'
+        linters: [forbidigo]

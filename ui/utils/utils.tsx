@@ -224,7 +224,7 @@ export function getSharableCommonHostAndprotocolLink(sharedResource) {
   if (sharedResource?.application_file) {
     return `${webAddr}?${APPLICATION}=${sharedResource.id}`;
   }
-  if (sharedResource?.pattern_file) {
+  if (sharedResource?.patternFile) {
     return `${webAddr}?mode=${DESIGN}&${DESIGN}=${sharedResource.id}`;
   }
   if (sharedResource?.filter_resource) {
@@ -435,11 +435,11 @@ export const getComponentFromDesign = (design, componentId) => {
  */
 export const getDesignVersion = (design) => {
   if (design?.visibility === 'published') {
-    return design.catalog_data.published_version;
+    return design.catalog_data?.published_version;
   } else {
     try {
-      const parsedYaml = yaml.load(design.pattern_file);
-      return parsedYaml.version;
+      const parsedYaml = yaml.load(design.patternFile);
+      return parsedYaml?.version;
     } catch (error) {
       console.error('Version is not available for this design: ', error);
     }
@@ -483,8 +483,8 @@ export function isDesignOpenInKanvas() {
   return params.has('design') && params.get('mode') === KANVAS_MODE.DESIGN;
 }
 
-export const isKanvasEnabled = (capabilitiesRegistry) => {
-  const navigatorExtension = _.get(capabilitiesRegistry, 'extensions.navigator') || [];
+export const isKanvasEnabled = (providerCapabilities) => {
+  const navigatorExtension = _.get(providerCapabilities, 'extensions.navigator') || [];
   return navigatorExtension.some((ext) => ext.title === 'Kanvas');
 };
 
@@ -492,9 +492,9 @@ export const isOperatorEnabled = isKanvasEnabled;
 export const isKanvasDesignerEnabled = isKanvasEnabled;
 
 export const useIsKanvasEnabled = () => {
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
 
-  return isKanvasEnabled(capabilitiesRegistry);
+  return isKanvasEnabled(providerCapabilities);
 };
 
 export const useIsOperatorEnabled = useIsKanvasEnabled;
@@ -505,8 +505,8 @@ export const openViewScopedToDesignInOperator = (designName, designId, router) =
     mesheryEventBus.publish({
       type: 'OPEN_VIEW_SCOPED_TO_DESIGN',
       data: {
-        design_id: designId,
-        design_name: designName,
+        designId,
+        designName,
       },
     });
     return;
@@ -531,8 +531,8 @@ export const openDesignInKanvas = (designId, designName, router) => {
     mesheryEventBus.publish({
       type: 'OPEN_DESIGN_IN_KANVAS',
       data: {
-        design_id: designId,
-        design_name: designName,
+        designId,
+        designName,
       },
     });
     return;
@@ -547,8 +547,8 @@ export const openViewInKanvas = (viewId, viewName, router) => {
     mesheryEventBus.publish({
       type: 'OPEN_VIEW_IN_KANVAS',
       data: {
-        view_id: viewId,
-        view_name: viewName,
+        viewId,
+        viewName,
       },
     });
     return;

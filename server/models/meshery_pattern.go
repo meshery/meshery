@@ -6,9 +6,9 @@ import (
 
 	"database/sql"
 
-	"github.com/gofrs/uuid"
 	isql "github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshkit/models/catalog/v1alpha1"
+	"github.com/meshery/schemas/models/core"
 	"gopkg.in/yaml.v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -17,8 +17,8 @@ import (
 type DesignType string
 
 type DesignTypeResponse struct {
-	Type                DesignType `json:"design_type"`
-	SupportedExtensions []string   `json:"supported_extensions"`
+	Type                DesignType `json:"designType"`
+	SupportedExtensions []string   `json:"supportedExtensions"`
 }
 
 func GetDesignsTypes() (r []DesignTypeResponse) {
@@ -84,37 +84,111 @@ type StatusApplyConfiguration struct {
 
 // MesheryPattern represents the patterns that needs to be saved
 type MesheryPattern struct {
-	ID *uuid.UUID `json:"id,omitempty"`
+	ID *core.Uuid `json:"id,omitempty"`
 
 	Name        string `json:"name,omitempty"`
-	PatternFile string `json:"pattern_file"`
+	PatternFile string `json:"patternFile"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	UserID *string `json:"user_id"`
+	UserID *string `json:"userId"`
 
 	Location      isql.Map             `json:"location"`
 	Visibility    string               `json:"visibility"`
-	CatalogData   v1alpha1.CatalogData `json:"catalog_data,omitempty" gorm:"type:bytes;serializer:json"`
+	CatalogData   v1alpha1.CatalogData `json:"catalogData,omitempty" gorm:"type:bytes;serializer:json"`
 	Type          sql.NullString       `json:"type"`
-	SourceContent []byte               `json:"source_content"`
+	SourceContent []byte               `json:"sourceContent"`
 
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
 
-	ViewCount       int       `json:"view_count" db:"view_count"`
-	ShareCount      int       `json:"share_count" db:"share_count"`
-	DownloadCount   int       `json:"download_count" db:"download_count"`
-	CloneCount      int       `json:"clone_count" db:"clone_count"`
-	DeploymentCount int       `json:"deployment_count" db:"deployment_count"`
-	WorkspaceID     uuid.UUID `json:"workspace_id,omitempty" db:"-"`
-	OrgID           uuid.UUID `json:"org_id,omitempty" db:"-"`
+	ViewCount       int       `json:"viewCount" db:"view_count"`
+	ShareCount      int       `json:"shareCount" db:"share_count"`
+	DownloadCount   int       `json:"downloadCount" db:"download_count"`
+	CloneCount      int       `json:"cloneCount" db:"clone_count"`
+	DeploymentCount int       `json:"deploymentCount" db:"deployment_count"`
+	WorkspaceID     core.Uuid `json:"workspaceId,omitempty" db:"-"`
+	OrgID           core.Uuid `json:"orgId,omitempty" db:"-"`
+}
+
+// UnmarshalJSON dual-accepts the canonical camelCase count keys
+// (`viewCount`, `shareCount`, `downloadCount`, `cloneCount`,
+// `deploymentCount`) and the legacy snake_case spellings
+// (`view_count`, `share_count`, `download_count`, `clone_count`,
+// `deployment_count`) on the MesheryPattern wire. This is the Phase 2.K
+// cascade shim: meshery/schemas v1.2.0 flipped the canonical property
+// names to camelCase, and inbound responses from remote providers may
+// still carry the legacy snake_case form during the deprecation window.
+// Canonical wins when both spellings are present for a given field.
+//
+// Other fields unmarshal via stdlib default rules through the
+// embedded-alias pattern; the five count fields are explicitly reset
+// before the precedence switch so a reused receiver does not carry
+// stale counts when the next payload omits both spellings.
+//
+// Remove once every known upstream producer (meshery-cloud remote
+// provider, Kanvas catalog API) has migrated off the snake_case
+// spellings.
+func (m *MesheryPattern) UnmarshalJSON(data []byte) error {
+	type alias MesheryPattern
+	aux := &struct {
+		*alias
+		ViewCountCanonical       *int `json:"viewCount,omitempty"`
+		ViewCountLegacy          *int `json:"view_count,omitempty"`
+		ShareCountCanonical      *int `json:"shareCount,omitempty"`
+		ShareCountLegacy         *int `json:"share_count,omitempty"`
+		DownloadCountCanonical   *int `json:"downloadCount,omitempty"`
+		DownloadCountLegacy      *int `json:"download_count,omitempty"`
+		CloneCountCanonical      *int `json:"cloneCount,omitempty"`
+		CloneCountLegacy         *int `json:"clone_count,omitempty"`
+		DeploymentCountCanonical *int `json:"deploymentCount,omitempty"`
+		DeploymentCountLegacy    *int `json:"deployment_count,omitempty"`
+	}{alias: (*alias)(m)}
+	if err := json.Unmarshal(data, aux); err != nil {
+		return err
+	}
+	m.ViewCount = 0
+	switch {
+	case aux.ViewCountCanonical != nil:
+		m.ViewCount = *aux.ViewCountCanonical
+	case aux.ViewCountLegacy != nil:
+		m.ViewCount = *aux.ViewCountLegacy
+	}
+	m.ShareCount = 0
+	switch {
+	case aux.ShareCountCanonical != nil:
+		m.ShareCount = *aux.ShareCountCanonical
+	case aux.ShareCountLegacy != nil:
+		m.ShareCount = *aux.ShareCountLegacy
+	}
+	m.DownloadCount = 0
+	switch {
+	case aux.DownloadCountCanonical != nil:
+		m.DownloadCount = *aux.DownloadCountCanonical
+	case aux.DownloadCountLegacy != nil:
+		m.DownloadCount = *aux.DownloadCountLegacy
+	}
+	m.CloneCount = 0
+	switch {
+	case aux.CloneCountCanonical != nil:
+		m.CloneCount = *aux.CloneCountCanonical
+	case aux.CloneCountLegacy != nil:
+		m.CloneCount = *aux.CloneCountLegacy
+	}
+	m.DeploymentCount = 0
+	switch {
+	case aux.DeploymentCountCanonical != nil:
+		m.DeploymentCount = *aux.DeploymentCountCanonical
+	case aux.DeploymentCountLegacy != nil:
+		m.DeploymentCount = *aux.DeploymentCountLegacy
+	}
+	return nil
 }
 
 // MesheryCatalogPatternRequestBody refers to the type of request body
 // that PublishCatalogPattern would receive
 type MesheryCatalogPatternRequestBody struct {
-	ID          uuid.UUID `json:"id,omitempty"`
-	CatalogData isql.Map  `json:"catalog_data,omitempty"`
+	ID          core.Uuid `json:"id,omitempty"`
+	CatalogData isql.Map  `json:"catalogData,omitempty"`
 }
 
 // MesheryCatalogPatternRequestBody refers to the type of request body
@@ -144,6 +218,6 @@ func GetPatternName(stringifiedFile string) (string, error) {
 }
 
 type MesheryPatternFileDeployPayload struct {
-	PatternFile string    `json:"pattern_file"`
-	PatternID   uuid.UUID `json:"pattern_id"`
+	PatternFile string    `json:"patternFile"`
+	PatternID   core.Uuid `json:"patternId"`
 }

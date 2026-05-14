@@ -1,0 +1,24 @@
+version: 0.0.16
+name: discoursedesign
+displayName: discoursedesign
+createdAt: "2025-10-10T19:33:53Z"
+description: Helm-based Discourse deployment using Bitnami chart. Includes app (Ruby/Rails), embedded Postgres DB, Redis cache, Services, PVCs for persistence, and ConfigMaps/Secrets for configs. Tested on Minikube.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/f8c65b6a-99a9-4694-8f96-92582f4c5b03/0.0.16/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "- Requires image pre-pull for Bitnami tags (postgresql:17.6.0-debian-12-r0, redis:8.2.1-debian-12-r0, discourse:3.2.0-debian-12-r1) in air-gapped setups.\n- Scale replicas for prod traffic; use Longhorn for multi-node storage.\n- SMTP/domain env vars in ConfigMap—update post-deploy. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 6ad60df0-67bb-4c3f-8c9d-d4cd51f00644
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/f8c65b6a-99a9-4694-8f96-92582f4c5b03-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/f8c65b6a-99a9-4694-8f96-92582f4c5b03-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

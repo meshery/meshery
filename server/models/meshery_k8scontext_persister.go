@@ -18,8 +18,8 @@ type MesheryK8sContextPersister struct {
 // MesheryK8sContextPage represents a page of contexts
 type MesheryK8sContextPage struct {
 	Page       uint64        `json:"page"`
-	PageSize   uint64        `json:"page_size"`
-	TotalCount int           `json:"total_count"`
+	PageSize   uint64        `json:"pageSize"`
+	TotalCount int           `json:"totalCount"`
 	Contexts   []*K8sContext `json:"contexts"`
 }
 
@@ -28,7 +28,7 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order stri
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	count := int64(0)

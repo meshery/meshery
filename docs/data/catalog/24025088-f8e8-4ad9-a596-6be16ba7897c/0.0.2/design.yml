@@ -1,0 +1,72 @@
+name: Test design
+version: 0.0.2
+services:
+  comment-vl:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: comment-vl
+    namespace: ""
+    settings:
+      user Messages: []
+    traits:
+      meshmap:
+        edges: []
+        id: c3374c64-b646-4051-80ef-741b57e10d67
+        label: Comment
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: null
+          description: ""
+          displayName: Meshery Core
+          hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+          id: c1af66fb-1c38-54bf-92d1-9d9808251e00
+          metadata:
+            isAnnotation: false
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          model:
+            version: 0.7.1
+          name: meshery-core
+          registrant:
+            hostname: artifacthub
+          relationships: null
+          schemaVersion: models.meshery.io/v1beta1
+          status: enabled
+          subCategory: App Definition and Development
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":true}}}'
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: true
+          primaryColor: '#FFDE00'
+          secondaryColor: '#FFDE00'
+          shape: tag
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: 1.5px
+            "y": 7.5px
+            z-index: 3
+          styles: '{"height":"22px","width":"22px","x":"1.5px","y":"7.5px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+        position:
+          posX: 350.421875
+          posY: 270.625
+        whiteboardData: {}
+    type: Comment
+    version: 0.7.1

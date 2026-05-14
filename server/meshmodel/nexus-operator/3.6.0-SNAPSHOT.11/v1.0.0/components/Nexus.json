@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -203,6 +203,7 @@
     "kind": "Nexus",
     "schema": "{\n \"description\": \"Nexus is the Schema for the nexus API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NexusSpec defines the desired state of Nexus.\",\n   \"properties\": {\n    \"secret\": {\n     \"description\": \"Secret is the name of the k8s object Secret related to nexus.\\nSecret should contain a user field with a nexus username and a password field with a nexus password.\",\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"description\": \"Url is the url of nexus instance.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"secret\",\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nexus\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

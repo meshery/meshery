@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Concepts on Documentation</title>
+    <link>/v0.9/concepts/</link>
+    <description>Recent content in Concepts on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/concepts/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>

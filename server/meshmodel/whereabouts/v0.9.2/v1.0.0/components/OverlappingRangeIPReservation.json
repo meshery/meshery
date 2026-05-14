@@ -17,7 +17,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Github",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "github",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -53,16 +53,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#000001",
@@ -146,6 +146,7 @@
     "kind": "OverlappingRangeIPReservation",
     "schema": "{\n \"description\": \"OverlappingRangeIPReservation is the Schema for the OverlappingRangeIPReservations API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"OverlappingRangeIPReservationSpec defines the desired state of OverlappingRangeIPReservation\",\n   \"properties\": {\n    \"containerid\": {\n     \"type\": \"string\"\n    },\n    \"ifname\": {\n     \"type\": \"string\"\n    },\n    \"podref\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"podref\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Overlapping Range IP Reservation\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

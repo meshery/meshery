@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -203,6 +203,7 @@
     "kind": "RoleUsagePolicy",
     "schema": "{\n \"description\": \"Auto-generated derived type for RoleUsagePolicySpec via `CustomResource`\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"`RoleUsagePolicy` objects are managed by Cluster Administrator to authorize\\nnamespaces to use (assume) certain AWS IAM Roles. The controller will not\\nadd any TrustPolicy Statements to AWS IAM Roles if there is no valid\\nauthorization for the corresponding `TrustPolicyStatement` object.\",\n   \"properties\": {\n    \"namespaces\": {\n     \"description\": \"Set of Kubernetes namespaces, which are authorized to use that AWS IAM    \\nRole. Can contain `*` to authorize all namespaces.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"permissionBoundary\": {\n     \"description\": \"ARN or ARN-Pattern of the AWS PermissionBoundary Policy.\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    },\n    \"roleArn\": {\n     \"description\": \"AWS IAM Role ARN of the role for which to grant permission.\\nEither a full ARN, am ARN-PATTERN or the wildcard `*` to match all ARNs.\\n- `arn:aws:iam::000000000000:role/path/role-name`\\n- `arn:aws:iam::*:role/path/role-name`\\n- `arn:aws:iam::*:role/path/*`\\n- `*`\",\n     \"type\": \"string\"\n    },\n    \"roleTags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Role tags, which must match for the policy to apply.\",\n     \"nullable\": true,\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"namespaces\",\n    \"roleArn\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Role Usage Policy\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }
