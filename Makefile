@@ -321,34 +321,34 @@ ui-server: ui-meshery-build ui-provider-build server
 .PHONY: ui-setup ui ui-meshery-build ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
 
 ## Install dependencies for building Meshery UI.
-ui-setup: dep-check
+ui-setup: dep-check-node
 	cd ui; npm i; cd ..
 	cd provider-ui; npm i; cd ..
 
 ## Clean Install dependencies for building Meshery UI.
-ui-setup-ci: dep-check
+ui-setup-ci: dep-check-node
 	cd ui; npm ci; cd ..
 	cd provider-ui; npm ci; cd ..
 
 
 ## Run Meshery UI on your local machine. Listen for changes.
-ui: dep-check
+ui: dep-check-node
 	cd ui; npm run dev; cd ..;
 
 ## Run Meshery Provider UI  on your local machine. Listen for changes.
-ui-provider: dep-check
+ui-provider: dep-check-node
 	cd provider-ui; npm run dev; cd ..
 
 ## Lint check Meshery UI and Provider UI on your local machine.
-ui-lint: dep-check
+ui-lint: dep-check-node
 	cd ui; npm i eslint; npx eslint . --fix; cd ..
 
 ## Lint check Meshery Provider UI on your local machine.
-ui-provider-lint: dep-check
+ui-provider-lint: dep-check-node
 	cd provider-ui && npm i eslint && npx eslint .
 
 ## Test Meshery Provider UI on your local machine.
-ui-provider-test: dep-check
+ui-provider-test: dep-check-node
 	cd provider-ui; npm run test; cd ..
 
 ## Buils all Meshery UIs  on your local machine.
@@ -357,11 +357,11 @@ ui-build: ui-setup
 	cd provider-ui; npm run lint:fix || echo "Warning: Lint issues detected in provider-ui but continuing build"; npm run build; cd ..
 
 ## Build only Meshery UI on your local machine.
-ui-meshery-build: dep-check
+ui-meshery-build: dep-check-node
 	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
-ui-provider-build: dep-check
+ui-provider-build: dep-check-node
 	cd provider-ui; npm run build; cd ..
 
 ## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
@@ -541,16 +541,16 @@ server-integration-tests-meshsync: docker-build server-integration-tests-meshsyn
 #-----------------------------------------------------------------------------
 .PHONY: ui-test-setup ui-test ui-test-e2e-ci
 ## Install Playwright dependencies for UI tests
-ui-test-setup: dep-check
+ui-test-setup: dep-check-node
 	cd ui; npx playwright install chromium --with-deps; cd ..
 
 ## Run Meshery UI End-to-End Tests
-ui-test: dep-check
+ui-test: dep-check-node
 	 touch .env
 	 @set -a; source .env; set +a; cd ui; npm run test:e2e ; cd ..
 
 ## Run Meshery UI End-to-End Tests in CI environment
-ui-test-e2e-ci: dep-check
+ui-test-e2e-ci: dep-check-node
 	 touch .env
 	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci ; cd ..
 
@@ -564,13 +564,18 @@ mesheryctl-tests-int:
 #-----------------------------------------------------------------------------
 # Dependencies
 #-----------------------------------------------------------------------------
-.PHONY: dep-check
+.PHONY: dep-check dep-check-go dep-check-node
 #.SILENT: dep-check
 
 INSTALLED_GO_VERSION=$(shell go version)
-REQUIRED_NODE_VERSION=^22.13.0 || >=24
+NODE_PRIMARY_MAJOR=22
+NODE_PRIMARY_MINOR=13
+NODE_FALLBACK_MAJOR=24
+REQUIRED_NODE_VERSION=^$(NODE_PRIMARY_MAJOR).$(NODE_PRIMARY_MINOR).0 || >=$(NODE_FALLBACK_MAJOR)
 
-dep-check:
+dep-check: dep-check-go
+
+dep-check-go:
 
 ifeq (,$(findstring $(GOVERSION), $(INSTALLED_GO_VERSION)))
 # Only send a warning.
@@ -582,6 +587,8 @@ ifeq (,$(findstring $(GOVERSION), $(INSTALLED_GO_VERSION)))
 #	 Required golang version is: 'go$(GOVERSION).x'. \
 #	 Ensure go '$(GOVERSION).x' is installed and available in your 'PATH'.)
 endif
+
+dep-check-node:
 	@node_version="$$(node --version 2>/dev/null || true)"; \
 	if [ -z "$$node_version" ]; then \
 		echo "Dependency missing: node. Ensure Node.js '$(REQUIRED_NODE_VERSION)' is installed and available in your 'PATH'"; \
@@ -591,7 +598,7 @@ endif
 	node_major="$${node_version%%.*}"; \
 	node_minor="$${node_version#*.}"; \
 	node_minor="$${node_minor%%.*}"; \
-	if ! { [ "$$node_major" -eq 22 ] && [ "$$node_minor" -ge 13 ]; } && [ "$$node_major" -lt 24 ]; then \
+	if ! { [ "$$node_major" -eq "$(NODE_PRIMARY_MAJOR)" ] && [ "$$node_minor" -ge "$(NODE_PRIMARY_MINOR)" ]; } && [ "$$node_major" -lt "$(NODE_FALLBACK_MAJOR)" ]; then \
 		echo "Dependency mismatch: Found node v$$node_version. Required Node.js version is '$(REQUIRED_NODE_VERSION)'."; \
 		exit 1; \
 	fi
