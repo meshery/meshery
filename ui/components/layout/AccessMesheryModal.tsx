@@ -57,7 +57,7 @@ export interface PlaygroundMeshDeployProps {
 
 const PlaygroundMeshDeploy: FC<PlaygroundMeshDeployProps> = ({ isOpen, closeForm }) => {
   const handlePage = (e: React.MouseEvent<HTMLButtonElement>) => {
-    window.open('https://meshery.io/#getting-started', '_blank');
+    window.open('https://meshery.io/#getting-started', '_blank', 'noopener,noreferrer');
     e.stopPropagation();
   };
 
@@ -90,7 +90,13 @@ const PlaygroundMeshDeploy: FC<PlaygroundMeshDeployProps> = ({ isOpen, closeForm
         <Typography gutterBottom>
           Meshery Playground gives you hands-on experience with designing cloud native systems -
           from your browser - using every CNCF project. Choose a{' '}
-          <TutorialLink href="https://docs.meshery.io/guides/tutorials">Learning Path</TutorialLink>{' '}
+          <TutorialLink
+            href="https://docs.meshery.io/guides/tutorials"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Learning Path
+          </TutorialLink>{' '}
           and work through labs as you visually and collaboratively learn-by-doing without having to
           install a single thing.
         </Typography>

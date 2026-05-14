@@ -147,20 +147,22 @@ export const ViewInfoModal_: FC<ViewInfoModalProps> = ({
   const [updateView] = useUpdateViewVisibilityMutation();
   const theme = useTheme();
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setSaving(true);
-    updateView({
-      id: view?.id,
-      body: {
-        metadata: formState,
-      },
-    })
-      .unwrap()
-      .then(() => {
-        setSaving(false);
-        refetch && refetch();
-        closeModal();
-      });
+    try {
+      await updateView({
+        id: view?.id,
+        body: {
+          metadata: formState,
+        },
+      }).unwrap();
+      refetch && refetch();
+      closeModal();
+    } catch (error) {
+      console.error('Failed to update view metadata:', error);
+    } finally {
+      setSaving(false);
+    }
   };
   const canEdit = view?.userId === user?.id;
   const uiSchema = _.merge({}, UIFormSchema, {
@@ -315,13 +317,20 @@ const CopyLinkButton: FC<{ link: string; disabled?: boolean; onClick?: () => voi
 }) => {
   const { notify } = useNotification();
 
-  const handleClick = () => {
-    navigator.clipboard.writeText(link);
-    notify({
-      message: 'Link copied to clipboard',
-      event_type: EVENT_TYPES.INFO,
-    });
-    if (onClick) onClick();
+  const handleClick = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      notify({
+        message: 'Link copied to clipboard',
+        event_type: EVENT_TYPES.INFO,
+      });
+      if (onClick) onClick();
+    } catch (err) {
+      notify({
+        message: 'Failed to copy link to clipboard',
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
   };
   return (
     <ModalButtonSecondary onClick={handleClick} {...rest}>
