@@ -40,6 +40,7 @@ jobs:
   ui-unit-tests:
     name: runner / ui-unit-tests
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
       - name: Setup Node.js v22
@@ -53,4 +54,13 @@ jobs:
         run: npm ci
       - name: Run Vitest unit + React Testing Library tests
         working-directory: ui
-        run: npm test
+        env:
+          CI: 'true'
+        run: npm test -- --reporter=default --reporter=junit --outputFile=./test-report.junit.xml
+      - name: Upload test report on failure
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: ui-unit-tests-report
+          path: ui/test-report.junit.xml
+          retention-days: 7
