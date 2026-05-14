@@ -14,7 +14,7 @@ import {
 } from './components';
 import { useContentDelete, useContentDownload } from './hooks';
 import ExportModal from '../../shared/Modal/ExportModal';
-import ShareModal from './ShareModal';
+import ShareModal from '../ShareWorkspaceModal';
 import { useSelector } from 'react-redux';
 
 const MyDesignsContent = () => {
