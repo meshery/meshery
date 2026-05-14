@@ -63,7 +63,6 @@ export {
   CheckCircleIcon as CheckCircle,
   CloseIcon as Close,
   CodeIcon as Code,
-  DeleteIcon as Delete,
   DirectionsCarIcon as DirectionsCar,
   DoneAllIcon as DoneAll,
   EditIcon as Edit,
@@ -108,6 +107,7 @@ export {
 
 export { default as AddCircleOutlined } from './AddIconCircleBorder';
 export { ArrowDropDownIcon as ArrowDropDown } from './ArrowDropDownIcon';
+export { default as Delete } from './DeleteIcon';
 export { default as DeleteForever } from './DeleteIcon';
 export { default as FilterAlt } from './ContentFilterIcon';
 export { default as Fullscreen } from './FullscreenIcon';
