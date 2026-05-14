@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/meshery/meshkit/broker"
@@ -10,6 +11,7 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/core"
+	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/v1beta3/component"
@@ -326,14 +328,24 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 		}
 	}()
 
-	// Query the database for the complete component definition
-	result := mh.dbHandler.Model(component.ComponentDefinition{}).Preload("Model").
+	if !mh.dbHandler.Migrator().HasTable(&component.ComponentDefinition{}) {
+		mh.log.Debug("Component registry table unavailable while looking up metadata for apiVersion: ", apiVersion, " kind: ", kind, ". Using default metadata.")
+		componentDef = component.ComponentDefinition{
+			Styles: &K8sMeshModelMetadata.Styles,
+		}
+		return
+	}
+
+	// Query the database for the complete component definition.
+	result := mh.dbHandler.Model(component.ComponentDefinition{}).
 		Where("component->>'version' = ? AND component->>'kind' = ?", apiVersion, kind).
 		First(&componentDef)
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			mh.log.Debug("No component definition found for apiVersion: ", apiVersion, " kind: ", kind, ". Using default metadata.")
+		} else if isMissingTableError(result.Error) {
+			mh.log.Debug("Component registry table unavailable while looking up metadata for apiVersion: ", apiVersion, " kind: ", kind, ". Using default metadata.")
 		} else {
 			mh.log.Error(ErrDBRead(result.Error))
 		}
@@ -344,7 +356,27 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 		return
 	}
 
+	if componentDef.ModelID != nil && mh.dbHandler.Migrator().HasTable(&modelv1beta1.ModelDefinition{}) {
+		modelDef := modelv1beta1.ModelDefinition{}
+		result = mh.dbHandler.Where("id = ?", componentDef.ModelID).First(&modelDef)
+		if result.Error == nil {
+			componentDef.Model = &modelDef
+		} else if result.Error != gorm.ErrRecordNotFound && !isMissingTableError(result.Error) {
+			mh.log.Error(ErrDBRead(result.Error))
+		}
+	}
+
 	return
+}
+
+func isMissingTableError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	msg := strings.ToLower(err.Error())
+
+	return strings.Contains(msg, "no such table") || strings.Contains(msg, "does not exist")
 }
 
 func (mh *MeshsyncDataHandler) Resync() error {

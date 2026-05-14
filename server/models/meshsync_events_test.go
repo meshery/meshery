@@ -11,6 +11,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	meshkitErrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
+	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
@@ -182,6 +183,82 @@ func TestGetComponentMetadataWithNilModel(t *testing.T) {
 	})
 }
 
+func TestGetComponentMetadataWithoutRegistryTablesFallsBackSilently(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("Failed to create in-memory database: %v", err)
+	}
+
+	testLogger := &fakeMeshsyncLogger{}
+	handler := &MeshsyncDataHandler{
+		dbHandler: database.Handler{DB: db},
+		log:       testLogger,
+	}
+
+	data, model := handler.getComponentMetadata("v1", "Pod")
+
+	if data == nil {
+		t.Fatal("expected fallback metadata to be returned")
+	}
+
+	if model != "" {
+		t.Fatalf("expected empty model name, got %q", model)
+	}
+
+	if logged := testLogger.getLogged(); len(logged) != 0 {
+		t.Fatalf("expected no error logs when registry tables are absent, got %d", len(logged))
+	}
+}
+
+func TestGetComponentMetadataReturnsAssociatedModelName(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("Failed to create in-memory database: %v", err)
+	}
+
+	if err := db.AutoMigrate(&modelv1beta1.ModelDefinition{}, &component.ComponentDefinition{}); err != nil {
+		t.Fatalf("Failed to migrate schema: %v", err)
+	}
+
+	modelID := uuid.FromStringOrNil("11111111-1111-1111-1111-111111111111")
+	componentID := uuid.FromStringOrNil("22222222-2222-2222-2222-222222222222")
+
+	modelDef := modelv1beta1.ModelDefinition{
+		ID:   modelID,
+		Name: "kubernetes",
+	}
+	if err := db.Create(&modelDef).Error; err != nil {
+		t.Fatalf("Failed to create model definition: %v", err)
+	}
+
+	componentDef := component.ComponentDefinition{
+		ID:      componentID,
+		ModelID: &modelID,
+		Component: component.Component{
+			Kind:    "Pod",
+			Version: "v1",
+		},
+	}
+	if err := db.Create(&componentDef).Error; err != nil {
+		t.Fatalf("Failed to create component definition: %v", err)
+	}
+
+	mockLogger, err := logger.New("test", logger.Options{})
+	if err != nil {
+		t.Fatalf("Failed to create logger: %v", err)
+	}
+
+	handler := &MeshsyncDataHandler{
+		dbHandler: database.Handler{DB: db},
+		log:       mockLogger,
+	}
+
+	_, modelName := handler.getComponentMetadata("v1", "Pod")
+	if modelName != "kubernetes" {
+		t.Fatalf("expected associated model name to be returned, got %q", modelName)
+	}
+}
+
 func TestMeshsyncDataHandlerStopStopsListeners(t *testing.T) {
 	stopCalled := make(chan struct{}, 1)
 	broker := &testMeshsyncBroker{}
@@ -243,10 +320,10 @@ func (f *fakeMeshsyncLogger) getLogged() []error {
 	return append([]error(nil), f.logged...)
 }
 
-func (f *fakeMeshsyncLogger) Info(description ...interface{}) {}
+func (f *fakeMeshsyncLogger) Info(description ...interface{})          {}
 func (f *fakeMeshsyncLogger) Infof(format string, args ...interface{}) {}
-func (f *fakeMeshsyncLogger) Debug(description ...interface{}) {}
-func (f *fakeMeshsyncLogger) Warn(err error) {}
+func (f *fakeMeshsyncLogger) Debug(description ...interface{})         {}
+func (f *fakeMeshsyncLogger) Warn(err error)                           {}
 
 func TestMeshsyncEventErrorWrappedWithMeshKit(t *testing.T) {
 	broker := &testMeshsyncBroker{}
