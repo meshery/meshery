@@ -54,7 +54,7 @@ interface FormModalBaseProps {
   title: string;
   headerIcon?: ReactNode;
   /** Footer help text, e.g. linking to docs. Renders inside the action bar. */
-  helpText?: string;
+  helpText?: ReactNode;
   /** Primary action label. Defaults to `Submit`. */
   submitText?: string;
   /** Secondary action label. Defaults to `Cancel`. */
