@@ -2,6 +2,12 @@ import { test, expect } from '@playwright/test';
 import path from 'path';
 import { DashboardPage } from './pages/DashboardPage';
 
+/** CI runners are slower (Docker, shared CPU); wizard steps and Git-backed generation need more headroom. */
+const isCI = !!process.env.CI;
+const UI_STEP_TIMEOUT_MS = isCI ? 120_000 : 60_000;
+const MODEL_GENERATE_VISIBLE_MS = isCI ? 300_000 : 180_000;
+const CREATE_MODEL_TEST_TIMEOUT_MS = isCI ? 420_000 : 240_000;
+
 // Strongly typed inline to avoid JS linter false positives
 const model: {
   MODEL_URL: string;
@@ -49,7 +55,7 @@ test.describe.serial('Model Workflow Tests', () => {
     // Model generation downloads from GitHub and can be very slow in CI.
     // test.slow() triples the default timeout (60s → 180s).
     test.slow();
-    test.setTimeout(240_000);
+    test.setTimeout(CREATE_MODEL_TEST_TIMEOUT_MS);
 
     await page.getByTestId('TabBar-Button-CreateModel').click();
 
@@ -58,17 +64,31 @@ test.describe.serial('Model Workflow Tests', () => {
 
     await page.getByTestId('UrlStepper-Button-Next').click();
 
-    await expect(page.getByTestId('UrlStepper-Select-Category')).toBeVisible();
-    await expect(page.getByTestId('UrlStepper-Select-Subcategory')).toBeVisible();
+    await expect(page.getByTestId('UrlStepper-Select-Category')).toBeVisible({
+      timeout: UI_STEP_TIMEOUT_MS,
+    });
+    await expect(page.getByTestId('UrlStepper-Select-Subcategory')).toBeVisible({
+      timeout: UI_STEP_TIMEOUT_MS,
+    });
 
     await page.getByTestId('UrlStepper-Button-Next').click();
 
-    await expect(page.getByTestId('UrlStepper-Select-Logo-Dark-Theme')).toBeVisible();
-    await expect(page.getByTestId('UrlStepper-Select-Logo-Light-Theme')).toBeVisible();
+    await expect(page.getByTestId('UrlStepper-Select-Logo-Dark-Theme')).toBeVisible({
+      timeout: UI_STEP_TIMEOUT_MS,
+    });
+    await expect(page.getByTestId('UrlStepper-Select-Logo-Light-Theme')).toBeVisible({
+      timeout: UI_STEP_TIMEOUT_MS,
+    });
 
-    await expect(page.getByTestId('UrlStepper-Select-Primary-Color')).toBeVisible();
-    await expect(page.getByTestId('UrlStepper-Select-Secondary-Color')).toBeVisible();
-    await expect(page.getByTestId('UrlStepper-Select-Shape')).toBeVisible();
+    await expect(page.getByTestId('UrlStepper-Select-Primary-Color')).toBeVisible({
+      timeout: UI_STEP_TIMEOUT_MS,
+    });
+    await expect(page.getByTestId('UrlStepper-Select-Secondary-Color')).toBeVisible({
+      timeout: UI_STEP_TIMEOUT_MS,
+    });
+    await expect(page.getByTestId('UrlStepper-Select-Shape')).toBeVisible({
+      timeout: UI_STEP_TIMEOUT_MS,
+    });
 
     await page.getByTestId('UrlStepper-Button-Next').click();
 
@@ -84,8 +104,10 @@ test.describe.serial('Model Workflow Tests', () => {
     // Model generation fetches from GitHub — wait with extended timeout
     await expect(
       page.getByTestId(`ModelImportedSection-ModelHeader-${model.MODEL_NAME}`),
-    ).toBeVisible({ timeout: 180_000 });
-    await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible();
+    ).toBeVisible({ timeout: MODEL_GENERATE_VISIBLE_MS });
+    await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible({
+      timeout: UI_STEP_TIMEOUT_MS,
+    });
 
     await page.getByTestId('UrlStepper-Button-Finish').click();
   });
@@ -115,8 +137,10 @@ test.describe.serial('Model Workflow Tests', () => {
 
     await expect(
       page.getByTestId(`ModelImportedSection-ModelHeader-${model_import.MODEL_NAME}`),
-    ).toBeVisible();
-    await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible();
+    ).toBeVisible({ timeout: UI_STEP_TIMEOUT_MS });
+    await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible({
+      timeout: UI_STEP_TIMEOUT_MS,
+    });
     await page.getByRole('button', { name: 'Finish' }).click();
   });
 
@@ -131,8 +155,10 @@ test.describe.serial('Model Workflow Tests', () => {
 
     await expect(
       page.getByTestId(`ModelImportedSection-ModelHeader-${model_import.MODEL_NAME}`),
-    ).toBeVisible();
-    await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible();
+    ).toBeVisible({ timeout: UI_STEP_TIMEOUT_MS });
+    await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible({
+      timeout: UI_STEP_TIMEOUT_MS,
+    });
     await page.getByRole('button', { name: 'Finish' }).click();
   });
 
@@ -154,8 +180,10 @@ test.describe.serial('Model Workflow Tests', () => {
       page.getByTestId(
         `ModelImportedSection-ModelHeader-${model_import.MODEL_CSV_IMPORT.Model_Name}`,
       ),
-    ).toBeVisible();
-    await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible();
+    ).toBeVisible({ timeout: UI_STEP_TIMEOUT_MS });
+    await expect(page.getByTestId('ModelImportMessages-Wrapper')).toBeVisible({
+      timeout: UI_STEP_TIMEOUT_MS,
+    });
     await page.getByRole('button', { name: 'Finish' }).click();
   });
 });

@@ -67,6 +67,21 @@ jobs:
             --name meshery \
             meshery-server:ci
 
+      - name: Wait for Meshery server
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 60); do
+            if curl -sf "http://localhost:9081/api/system/version" >/dev/null; then
+              echo "Meshery ready after attempt ${attempt}"
+              exit 0
+            fi
+            echo "Waiting for Meshery (attempt ${attempt}/60)..."
+            sleep 5
+          done
+          echo "Meshery did not become ready in time; last container logs:"
+          docker logs meshery 2>&1 | tail -200 || true
+          exit 1
+
       - name: Install Playwright
         run: make ui-setup-ci
 
