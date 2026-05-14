@@ -39,6 +39,7 @@ const (
 	ErrPerformanceResultSubscriptionCode    = "meshery-server-1212"
 	ErrGormDatabaseCode                     = "meshery-server-1213"
 	ErrResyncClusterCode                    = "meshery-server-1369"
+	ErrAdapterOperationCode                 = "meshery-server-1430"
 )
 
 var (
@@ -188,6 +189,10 @@ func ErrGettingTelemetryComponents(err error) error {
 
 func ErrAdapterInsufficientInformation(err error) error {
 	return errors.New(ErrAdapterInsufficientInformationCode, errors.Critical, []string{"Unable to process adapter request, incomplete request"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrAdapterOperation(err error) error {
+	return errors.New(ErrAdapterOperationCode, errors.Alert, []string{"Adapter operation failed"}, []string{err.Error()}, []string{"Adapter may not be running or reachable"}, []string{"Ensure the adapter is deployed and healthy", "Check adapter logs for more information"})
 }
 
 func ErrResyncCluster(err error) error {
