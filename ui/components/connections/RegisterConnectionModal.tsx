@@ -18,7 +18,10 @@ import CustomizedSteppers from './meshSync/Stepper';
 interface RegisterConnectionModalProps {
   openRegistrationModal: boolean;
   handleRegistrationModalClose: () => void;
-  connectionData: unknown;
+  connectionData: {
+    resourceID?: string;
+    [key: string]: unknown;
+  };
 }
 
 interface SharedData {
@@ -60,8 +63,9 @@ const RegisterConnectionModal: FC<RegisterConnectionModalProps> = ({
   };
 
   const handleRegistrationComplete = (resourceId?: string) => {
-    if (!resourceId) return;
-    deleteMeshsyncResource(resourceId)
+    const resolvedResourceId = resourceId ?? connectionData.resourceID;
+    if (!resolvedResourceId) return;
+    deleteMeshsyncResource(resolvedResourceId)
       .unwrap()
       .then(() => {
         notify({
@@ -85,7 +89,6 @@ const RegisterConnectionModal: FC<RegisterConnectionModalProps> = ({
       size="md"
     >
       <CustomizedSteppers
-        formConnectionIdRef
         onClose={handleClose}
         connectionData={connectionData}
         sharedData={sharedData}
