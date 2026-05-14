@@ -549,6 +549,8 @@ module.exports = [
       'tests/**',
       'scripts/**',
       'eslint.config.js',
+      '**/*.test.{ts,tsx,js,jsx}',
+      '**/__tests__/**',
     ],
     rules: {
       'no-restricted-syntax': [
@@ -590,6 +592,8 @@ module.exports = [
       'tests/**',
       'scripts/**',
       'eslint.config.js',
+      '**/*.test.{ts,tsx,js,jsx}',
+      '**/__tests__/**',
     ],
     rules: {
       'react/forbid-dom-props': [
@@ -649,6 +653,22 @@ module.exports = [
     files: ['**/*.{js,jsx,mjs,cjs}'],
     rules: {
       'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+    },
+  },
+
+  // Test files: relax rules that get in the way of mocks and ad-hoc test
+  // doubles. Inline mock components rarely warrant a displayName, JSX in
+  // .ts test files for hooks/RTK-Query providers, etc., are all expected
+  // in a testing context.
+  {
+    files: ['**/*.test.{ts,tsx,js,jsx}', '**/__tests__/**/*.{ts,tsx,js,jsx}'],
+    rules: {
+      'react/display-name': 'off',
+      'react/no-children-prop': 'off',
+      'react/forbid-dom-props': 'off',
+      'react-hooks/rules-of-hooks': 'off',
+      'no-undef': 'off',
+      'no-restricted-syntax': 'off',
     },
   },
 ];
