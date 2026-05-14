@@ -5,6 +5,7 @@ import subscribeK8sContext from '@/graphql/subscriptions/K8sContextSubscription'
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useDispatch, useSelector } from 'react-redux';
+import { normalizeKubernetesContextsResponse } from '@/rtk-query/transforms';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
 import { StyledDrawer, StyledFooterBody, StyledFooterText } from '../themes/App.styles';
 
@@ -70,18 +71,19 @@ export const KubernetesSubscription = ({ setAppState }: { setAppState: SetAppSta
 
     const subscription = subscribeK8sContext(
       (result) => {
+        const normalizedK8sContext = normalizeKubernetesContextsResponse(result?.k8sContext);
         const allContexts: string[] = [];
-        if (result.k8sContext?.contexts?.length > 0) {
-          result.k8sContext.contexts.forEach((ctx: { id: string }) => allContexts.push(ctx.id));
+        if (normalizedK8sContext?.contexts?.length > 0) {
+          normalizedK8sContext.contexts.forEach((ctx: { id: string }) => allContexts.push(ctx.id));
           allContexts.push('all');
         }
 
         setAppState({
-          k8sContexts: result.k8sContext,
+          k8sContexts: normalizedK8sContext,
           activeK8sContexts: allContexts,
         });
 
-        dispatch(updateK8SConfig({ k8sConfig: result.k8sContext.contexts }));
+        dispatch(updateK8SConfig({ k8sConfig: normalizedK8sContext?.contexts ?? [] }));
       },
       {
         selector: { page: '', pageSize: '10', order: '', search: '' },
