@@ -26,11 +26,16 @@ vi.mock('@sistent/sistent', () => {
       </div>
     ),
     AssignmentTurnedInIcon: () => <svg data-testid="assignment-icon" />,
+    CancelIcon: () => <svg data-testid="cancel-icon" />,
+    CheckCircleIcon: () => <svg data-testid="check-circle-icon" />,
     CustomTooltip: ({ title, children }) => (
       <div data-testid="tooltip" data-title={String(title)}>
         {children}
       </div>
     ),
+    ExploreIcon: () => <svg data-testid="explore-icon" />,
+    HandymanIcon: () => <svg data-testid="handyman-icon" />,
+    RemoveIcon: () => <svg data-testid="remove-icon" />,
     Typography: ({ children }) => <span>{children}</span>,
     styled,
     createTheme: () => ({ breakpoints: {} }),

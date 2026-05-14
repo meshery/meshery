@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ViewInfoModal_, ViewInfoModal, UserChip, ActionBox } from './ViewInfoModal';
+import { ViewInfoModal_, ViewInfoModal, UserChip } from '../../workspaces/ViewInfoModal';
 
 const notify = vi.fn();
 const mockUpdateView = vi.fn().mockReturnValue({ unwrap: () => Promise.resolve() });
@@ -46,7 +46,7 @@ vi.mock('@/utils/hooks/useNotification', () => ({
 }));
 
 vi.mock('lib/event-types', () => ({
-  EVENT_TYPES: { INFO: 'info' },
+  EVENT_TYPES: { INFO: 'info', ERROR: 'error' },
 }));
 
 vi.mock('../../workspaces/SpacesSwitcher/hooks', () => ({
@@ -147,6 +147,12 @@ vi.mock('@sistent/sistent', () => {
         {children}
       </button>
     ),
+    createTheme: () => ({
+      breakpoints: {
+        down: () => '',
+        up: () => '',
+      },
+    }),
     useTheme: () => ({
       palette: {
         text: { primary: '#000' },
@@ -298,11 +304,5 @@ describe('ViewInfoModal', () => {
     );
 
     expect(screen.getByTestId('provider-wrapper')).toBeInTheDocument();
-  });
-});
-
-describe('ActionBox', () => {
-  it('is exported as a styled component', () => {
-    expect(ActionBox).toBeDefined();
   });
 });

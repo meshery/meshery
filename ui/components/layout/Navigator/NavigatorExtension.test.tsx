@@ -77,7 +77,7 @@ vi.mock('../../shared/Modal/Modal', () => ({
   default: () => <div data-testid="modal" />,
 }));
 
-vi.mock('../../shared/Modal/ExportModal', () => ({
+vi.mock('../../designs/export/ExportDesignModal', () => ({
   default: () => <div data-testid="export-modal" />,
 }));
 
@@ -145,7 +145,7 @@ vi.mock('@/components/shared/FormFields/typing-filter', () => ({
 vi.mock('../../registry/CreateModelModal', () => ({ default: () => null }));
 vi.mock('../../registry/ImportModelModal', () => ({ default: () => null }));
 
-vi.mock('../../shared/Modal/ViewInfoModal', () => ({
+vi.mock('../../workspaces/ViewInfoModal', () => ({
   ViewInfoModal: () => null,
 }));
 
