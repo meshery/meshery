@@ -32,7 +32,7 @@ export interface InfoModalProps {
   /** Label for the dismiss button. Defaults to `Close`. */
   closeText?: string;
   /** Optional help-text rendered alongside the action in the footer. */
-  helpText?: string;
+  helpText?: ReactNode;
   /** Size token; defaults to `md`. */
   size?: ModalSize;
   /** Hide the footer action entirely (e.g. when caller renders its own). */

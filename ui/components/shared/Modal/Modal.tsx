@@ -45,11 +45,25 @@ export interface ModalProps {
   /** Footer variant. `filled` matches the Sistent default action-bar styling. */
   footerVariant?: ModalFooterVariant;
   /** Optional help-text rendered in the footer alongside `actions`. */
-  helpText?: string;
+  helpText?: ReactNode;
   /** Pre-set width token. Defaults to `md`. */
   size?: ModalSize;
   /** Toggle Sistent's built-in fullscreen mode button. */
   isFullScreenModeAllowed?: boolean;
+  /**
+   * When `true`, the modal does NOT wrap children in `ModalBody` — caller
+   * emits its own `ModalBody` sibling. Use this for stepper-style flows that
+   * need full control over the body layout. Footer rendering is independent:
+   * pass `actions` alongside `disableBodyWrap` to keep the standard action bar,
+   * or omit `actions` to render the footer yourself.
+   */
+  disableBodyWrap?: boolean;
+  /**
+   * Forwarded to the underlying Sistent `Modal` (MUI `Dialog`) so consumers
+   * can target the dialog root with `styled(Modal)(...)` for project-specific
+   * size or stacking overrides.
+   */
+  className?: string;
   /** Forwarded to the underlying Dialog root for cypress/test selectors. */
   'aria-labelledby'?: string;
   'aria-describedby'?: string;
@@ -74,6 +88,8 @@ export const Modal: FC<ModalProps> = ({
   helpText,
   size = 'md',
   isFullScreenModeAllowed,
+  disableBodyWrap = false,
+  className,
   ...ariaProps
 }) => {
   return (
@@ -86,11 +102,18 @@ export const Modal: FC<ModalProps> = ({
       fullScreen={size === 'fullscreen'}
       fullWidth
       isFullScreenModeAllowed={isFullScreenModeAllowed}
+      className={className}
       {...ariaProps}
     >
-      <SistentModalBody>{children}</SistentModalBody>
+      {disableBodyWrap ? children : <SistentModalBody>{children}</SistentModalBody>}
       {actions ? (
-        <SistentModalFooter variant={footerVariant} helpText={helpText} hasHelpText={!!helpText}>
+        <SistentModalFooter
+          variant={footerVariant}
+          // Sistent types `helpText` as string but the runtime element renders
+          // any node — widen here so callers can pass JSX (e.g. a Docs link).
+          helpText={helpText as string}
+          hasHelpText={!!helpText}
+        >
           {actions}
         </SistentModalFooter>
       ) : null}
