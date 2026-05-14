@@ -45,11 +45,23 @@ export interface ModalProps {
   /** Footer variant. `filled` matches the Sistent default action-bar styling. */
   footerVariant?: ModalFooterVariant;
   /** Optional help-text rendered in the footer alongside `actions`. */
-  helpText?: string;
+  helpText?: ReactNode;
   /** Pre-set width token. Defaults to `md`. */
   size?: ModalSize;
   /** Toggle Sistent's built-in fullscreen mode button. */
   isFullScreenModeAllowed?: boolean;
+  /**
+   * When `true`, the modal does NOT wrap children in `ModalBody` and does NOT
+   * render a `ModalFooter` for `actions`. Use this for callers (e.g. stepper
+   * flows) that emit their own `ModalBody` and `ModalFooter` siblings.
+   */
+  disableBodyWrap?: boolean;
+  /**
+   * Forwarded to the underlying Sistent `Modal` (MUI `Dialog`) so consumers
+   * can target the dialog root with `styled(Modal)(...)` for project-specific
+   * size or stacking overrides.
+   */
+  className?: string;
   /** Forwarded to the underlying Dialog root for cypress/test selectors. */
   'aria-labelledby'?: string;
   'aria-describedby'?: string;
@@ -74,6 +86,8 @@ export const Modal: FC<ModalProps> = ({
   helpText,
   size = 'md',
   isFullScreenModeAllowed,
+  disableBodyWrap = false,
+  className,
   ...ariaProps
 }) => {
   return (
@@ -86,11 +100,18 @@ export const Modal: FC<ModalProps> = ({
       fullScreen={size === 'fullscreen'}
       fullWidth
       isFullScreenModeAllowed={isFullScreenModeAllowed}
+      className={className}
       {...ariaProps}
     >
-      <SistentModalBody>{children}</SistentModalBody>
-      {actions ? (
-        <SistentModalFooter variant={footerVariant} helpText={helpText} hasHelpText={!!helpText}>
+      {disableBodyWrap ? children : <SistentModalBody>{children}</SistentModalBody>}
+      {!disableBodyWrap && actions ? (
+        <SistentModalFooter
+          variant={footerVariant}
+          // Sistent types `helpText` as string but the runtime element renders
+          // any node — widen here so callers can pass JSX (e.g. a Docs link).
+          helpText={helpText as string}
+          hasHelpText={!!helpText}
+        >
           {actions}
         </SistentModalFooter>
       ) : null}
