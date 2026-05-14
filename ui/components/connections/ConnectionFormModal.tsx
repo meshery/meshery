@@ -34,24 +34,18 @@ const TableShell = styled('div')(({ theme }) => ({
   maxHeight: '65vh',
 }));
 
-const ConnectionFormModal: FC<ConnectionFormModalProps> = ({ isOpenModal, setIsOpenModal }) => {
-  if (!isOpenModal) {
-    return null;
-  }
-
-  return (
-    <Modal
-      isOpen={isOpenModal}
-      onClose={() => setIsOpenModal(false)}
-      title="Connections"
-      size="xl"
-      headerIcon={<ConnectionIcon height={24} width={24} />}
-    >
-      <TableShell>
-        <ConnectionTable selectedFilter="kubernetes" />
-      </TableShell>
-    </Modal>
-  );
-};
+const ConnectionFormModal: FC<ConnectionFormModalProps> = ({ isOpenModal, setIsOpenModal }) => (
+  <Modal
+    isOpen={isOpenModal}
+    onClose={() => setIsOpenModal(false)}
+    title="Connections"
+    size="xl"
+    headerIcon={<ConnectionIcon height={24} width={24} />}
+  >
+    <TableShell>
+      <ConnectionTable selectedFilter="kubernetes" />
+    </TableShell>
+  </Modal>
+);
 
 export default ConnectionFormModal;
