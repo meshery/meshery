@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   eslint:
@@ -101,6 +102,51 @@ jobs:
               console.log(lines.join("\n"));
             '
           fi
+
+      - name: Post failure details to PR
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const xmlPath = path.join('ui', 'test-report.junit.xml');
+            const logPath = path.join('ui', 'test-output.log');
+            let body = '## :x: ui-unit-tests failed\n\n';
+            if (fs.existsSync(xmlPath)) {
+              const xml = fs.readFileSync(xmlPath, 'utf8');
+              const cases = xml.split(/<testcase\s/).slice(1);
+              const failures = [];
+              for (const raw of cases) {
+                if (!/<failure/.test(raw)) continue;
+                const cls = (raw.match(/classname="([^"]*)"/) || [, ""])[1];
+                const nm = (raw.match(/name="([^"]*)"/) || [, ""])[1];
+                const failMsg = (raw.match(/<failure[^>]*message="([^"]*)"/) || [, ""])[1];
+                const body2 = ((raw.match(/<failure[^>]*>([\s\S]*?)<\/failure>/) || [, ""])[1] || "")
+                  .replace(/<!\[CDATA\[/g, "")
+                  .replace(/\]\]>/g, "")
+                  .split(/\r?\n/)
+                  .slice(0, 20)
+                  .join("\n");
+                failures.push(`### ${cls} › ${nm}\n\n**Message:** ${failMsg}\n\n\`\`\`\n${body2}\n\`\`\`\n`);
+              }
+              body += failures.length
+                ? failures.join('\n')
+                : '_JUnit XML had no <failure> entries; see TAIL OF TEST OUTPUT below._\n\n';
+            } else {
+              body += '_JUnit XML missing._\n\n';
+            }
+            if (fs.existsSync(logPath)) {
+              const log = fs.readFileSync(logPath, 'utf8');
+              const tail = log.split(/\r?\n/).slice(-120).join('\n');
+              body += `\n### Last 120 lines of test output\n\n\`\`\`\n${tail}\n\`\`\`\n`;
+            }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: body.slice(0, 60000),
+            });
 
       - name: Upload test report on failure
         if: failure()
