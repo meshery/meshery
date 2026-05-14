@@ -498,6 +498,12 @@ wasm-engine:
 	@cd server/policies/wasm && \
 		GOOS=js GOARCH=wasm go build -trimpath -ldflags="-s -w" -o policy_engine.wasm .
 	@cp -f "$$(go env GOROOT)/lib/wasm/wasm_exec.js" server/policies/wasm/wasm_exec.js
+	@echo "Patching wasm_exec.js to add process.env polyfill..."
+	@sed -i.bak '/chdir() { throw enosys(); },/a\		env: {},' server/policies/wasm/wasm_exec.js
+	@rm -f server/policies/wasm/wasm_exec.js.bak
+	@mkdir -p ui/public/static/wasm
+	@cp -f server/policies/wasm/policy_engine.wasm ui/public/static/wasm/policy_engine.wasm
+	@cp -f server/policies/wasm/wasm_exec.js ui/public/static/wasm/wasm_exec.js
 	@if command -v wasm-opt >/dev/null 2>&1; then \
 		raw=$$(wc -c < server/policies/wasm/policy_engine.wasm); \
 		wasm-opt -Oz --enable-bulk-memory \
@@ -510,6 +516,7 @@ wasm-engine:
 		echo "wasm-opt not found (brew install binaryen) — skipping size optimization"; \
 	fi
 	@echo "Wrote server/policies/wasm/{policy_engine.wasm,wasm_exec.js}"
+	@echo "Copied ui/public/static/wasm/{policy_engine.wasm,wasm_exec.js}"
 
 
 #-----------------------------------------------------------------------------
