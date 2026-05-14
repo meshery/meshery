@@ -9,8 +9,8 @@ import {
   TableCell,
 } from '@sistent/sistent';
 import { ConnectionStyledSelect } from './styles';
-import { FormatId } from '../DataFormatter';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { FormatId } from '../data-formatter';
+import { MoreVertIcon } from '@sistent/sistent';
 import { iconMedium } from '../../css/icons.styles';
 import { CONNECTION_KINDS } from '../../utils/Enum';
 import { ConnectionStateChip, TooltipWrappedConnectionChip } from './ConnectionChip';
@@ -19,9 +19,9 @@ import { getColumnValue } from '../../utils/utils';
 import MultiSelectWrapper from '../multi-select-wrapper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
-import { formatDate } from '../DataFormatter';
+import { formatDate } from '../data-formatter';
 import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
 import { CONNECTION_STATE_TRANSITIONS } from './ConnectionTable.constants';
 import type { EnvironmentOption, RowData } from './ConnectionTable.types';
