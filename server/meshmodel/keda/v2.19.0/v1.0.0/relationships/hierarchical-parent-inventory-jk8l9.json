@@ -82,7 +82,9 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "metadata",
+                  "name"
                 ]
               ]
             }
