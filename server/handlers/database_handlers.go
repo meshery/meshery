@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/meshery/meshery/server/models"
@@ -14,50 +16,77 @@ import (
 	"github.com/meshery/meshkit/utils"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
-	"gorm.io/gorm/clause"
 )
 
 func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	var tables []*models.SqliteSchema
 	var recordCount int
-	var totalTables int64
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sortOrder, _ := getPaginationParams(r)
 
-	tableFinder := h.dbHandler.DB.Table("sqlite_schema").
-		Where("type = ?", "table")
+	dbHandler := provider.GetGenericPersister()
+	if dbHandler == nil {
+		http.Error(w, "Failed to obtain database handler", http.StatusInternalServerError)
+		return
+	}
+
+	allTables, err := dbHandler.Migrator().GetTables()
+	if err != nil {
+		http.Error(w, "Cannot access database tables", http.StatusInternalServerError)
+		return
+	}
 
 	if search != "" {
-		tableFinder = tableFinder.Where("name LIKE ?", "%"+search+"%")
+		var filtered []string
+		for _, t := range allTables {
+			if strings.Contains(strings.ToLower(t), strings.ToLower(search)) {
+				filtered = append(filtered, t)
+			}
+		}
+		allTables = filtered
 	}
 
-	tableFinder.Count(&totalTables)
-
-	if limit != 0 {
-		tableFinder = tableFinder.Limit(limit)
-	}
-	if offset != 0 {
-		tableFinder = tableFinder.Offset(offset)
-	}
-	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
-	if order != "" {
-		if sort == "desc" {
-			tableFinder = tableFinder.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
+	if order == "name" {
+		if sortOrder == "desc" {
+			slices.SortFunc(allTables, func(a, b string) int {
+				return strings.Compare(b, a)
+			})
 		} else {
-			tableFinder = tableFinder.Order(order)
+			slices.Sort(allTables)
 		}
 	}
 
-	tableFinder.Find(&tables)
+	totalTables := len(allTables)
 
-	for _, table := range tables {
-		h.dbHandler.DB.Table(table.Name).Count(&table.Count)
-		recordCount += int(table.Count)
+	start := offset
+	end := offset + limit
+	if limit == 0 || end > totalTables {
+		end = totalTables
+	}
+	if start > totalTables {
+		start = totalTables
+	}
+	pagedTables := allTables[start:end]
+
+	var tables []*models.SqliteSchema
+	for _, tableName := range pagedTables {
+		var count int64
+		
+		if h.dbHandler != nil && h.dbHandler.DB != nil {
+			h.dbHandler.DB.Table(tableName).Count(&count)
+		}
+		
+		recordCount += int(count)
+
+		tables = append(tables, &models.SqliteSchema{
+			Name:  tableName,
+			Type:  "table",
+			Count: count,
+		})
 	}
 
 	databaseSummary := &models.DatabaseSummary{
 		Page:        page,
 		PageSize:    limit,
-		TotalTables: int(totalTables),
+		TotalTables: totalTables,
 		RecordCount: recordCount,
 		Tables:      tables,
 	}
@@ -67,13 +96,15 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	val, err := json.Marshal(databaseSummary)
 	if err != nil {
 		fmt.Println(err)
+		h.log.Error(err)
+		http.Error(w, "Failed to marshal response", http.StatusInternalServerError)
+		return
 	}
 	if _, err := fmt.Fprint(w, string(val)); err != nil {
 		h.log.Error(err)
 	}
 }
 
-// Reset the system database to its initial state.
 func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 
 	mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
