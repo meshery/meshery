@@ -253,9 +253,18 @@ func TestGetComponentMetadataReturnsAssociatedModelName(t *testing.T) {
 		log:       mockLogger,
 	}
 
-	_, modelName := handler.getComponentMetadata("v1", "Pod")
+	data, modelName := handler.getComponentMetadata("v1", "Pod")
 	if modelName != "kubernetes" {
 		t.Fatalf("expected associated model name to be returned, got %q", modelName)
+	}
+
+	modelData, ok := data["model"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected returned metadata to include the resolved model, got %#v", data["model"])
+	}
+
+	if got := modelData["name"]; got != "kubernetes" {
+		t.Fatalf("expected returned metadata to include model name %q, got %#v", "kubernetes", got)
 	}
 }
 
