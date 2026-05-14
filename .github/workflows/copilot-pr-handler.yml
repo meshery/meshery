@@ -92,10 +92,19 @@ jobs:
       # -------------------------------------------------------------------------
       - name: 📝 Mark PR as Ready for Review
         uses: actions/github-script@v8
+        env:
+          MANUAL_PR_NUMBER: ${{ inputs.pr_number }}
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           script: |
-            const prNumber = context.payload.pull_request?.number || parseInt('${{ inputs.pr_number }}') || null;
+            const manualPrNumber = process.env.MANUAL_PR_NUMBER?.trim() || '';
+            const parsedManualPrNumber = manualPrNumber ? Number.parseInt(manualPrNumber, 10) : null;
+            const prNumber = context.payload.pull_request?.number || parsedManualPrNumber || null;
+
+            if (manualPrNumber && Number.isNaN(parsedManualPrNumber)) {
+              core.setFailed(`Invalid workflow_dispatch pr_number input: ${manualPrNumber}`);
+              return;
+            }
 
             if (!prNumber) {
               core.info('No PR number available, skipping ready for review step');
@@ -145,10 +154,18 @@ jobs:
       # -------------------------------------------------------------------------
       - name: ✅ Approve Pending Workflow Runs
         uses: actions/github-script@v8
+        env:
+          MANUAL_PR_NUMBER: ${{ inputs.pr_number }}
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           script: |
-            const prNumber = context.payload.pull_request?.number || parseInt('${{ inputs.pr_number }}') || null;
+            const manualPrNumber = process.env.MANUAL_PR_NUMBER?.trim() || '';
+            const parsedManualPrNumber = manualPrNumber ? Number.parseInt(manualPrNumber, 10) : null;
+            const prNumber = context.payload.pull_request?.number || parsedManualPrNumber || null;
+            if (manualPrNumber && Number.isNaN(parsedManualPrNumber)) {
+              core.setFailed(`Invalid workflow_dispatch pr_number input: ${manualPrNumber}`);
+              return;
+            }
             const headSha = context.payload.pull_request?.head?.sha || null;
             const headRef = context.payload.pull_request?.head?.ref || null;
 
@@ -211,17 +228,27 @@ jobs:
       - name: 📢 Post Status Comment
         if: always()
         uses: actions/github-script@v8
+        env:
+          MANUAL_PR_NUMBER: ${{ inputs.pr_number }}
+          JOB_STATUS: ${{ job.status }}
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           script: |
-            const prNumber = context.payload.pull_request?.number || parseInt('${{ inputs.pr_number }}') || null;
+            const manualPrNumber = process.env.MANUAL_PR_NUMBER?.trim() || '';
+            const parsedManualPrNumber = manualPrNumber ? Number.parseInt(manualPrNumber, 10) : null;
+            const prNumber = context.payload.pull_request?.number || parsedManualPrNumber || null;
+
+            if (manualPrNumber && Number.isNaN(parsedManualPrNumber)) {
+              core.setFailed(`Invalid workflow_dispatch pr_number input: ${manualPrNumber}`);
+              return;
+            }
 
             if (!prNumber) {
               core.info('No PR number available, skipping status comment');
               return;
             }
 
-            const jobStatus = '${{ job.status }}';
+            const jobStatus = process.env.JOB_STATUS || 'unknown';
             const statusEmoji = jobStatus === 'success' ? '✅' : jobStatus === 'failure' ? '❌' : '⚠️';
 
             // Only comment on success to avoid noise
