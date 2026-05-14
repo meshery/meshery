@@ -1,21 +1,43 @@
-name: Build and Preview Docs
+name: Deploy Docs Preview
 
+# This workflow is the trusted side of the docs preview pipeline. It never checks
+# out or executes pull request code; instead it deploys the static artifact that
+# was produced by the untrusted pull_request workflow.
 on:
+  workflow_run:
+    workflows: ['Build Docs Preview']
+    types: [completed]
   pull_request_target:
     branches: [master]
-    types: [opened, synchronize, reopened, closed]
+    types: [closed]
     paths:
-      - '!**'
       - 'docs/**'
-      - '.github/workflows/build-and-preview-docs.yml'
       - 'mesheryctl/doc/**'
+      - '.github/workflows/build-docs-preview.yml'
+      - '.github/workflows/build-and-preview-docs.yml'
+  workflow_dispatch:
+    inputs:
+      debug_mode:
+        description: 'Enable verbose debug logging'
+        required: false
+        default: 'false'
+        type: boolean
+      build_run_id:
+        description: 'Build workflow run ID to deploy manually'
+        required: false
+        type: string
+      pr_number:
+        description: 'PR number for manual deployment or cleanup'
+        required: false
+        type: string
 
 permissions:
+  actions: read
   contents: write
   pull-requests: write
 
 concurrency:
-  group: preview-${{ github.event.pull_request.number || github.run_id }}
+  group: docs-preview-${{ github.event.pull_request.number || github.event.workflow_run.id || inputs.pr_number || github.run_id }}
   cancel-in-progress: true
 
 defaults:
@@ -23,157 +45,283 @@ defaults:
     shell: bash
 
 jobs:
-  build-and-deploy-preview:
+  deploy-preview:
+    if: |
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
+      (github.event_name == 'workflow_dispatch' && inputs.build_run_id != '')
     runs-on: ubuntu-24.04
-    outputs:
-      removed_prs_json: ${{ steps.prune-previews.outputs.removed_prs_json }}
     env:
-      HUGO_VERSION: 0.157.0
       PREVIEW_RETENTION_LIMIT: 6
-
     steps:
-      - name: Checkout PR code
-        if: github.event.action != 'closed'
-        uses: actions/checkout@v6
-        with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.sha }}
-          persist-credentials: false
-          submodules: recursive
-          fetch-depth: 0
-
-      - name: Checkout for cleanup
-        if: github.event.action == 'closed'
-        uses: actions/checkout@v6
-        with:
-          ref: gh-pages
-          fetch-depth: 0
-
-      - name: Install Hugo CLI
-        if: github.event.action != 'closed'
-        run: |
-          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
-          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
-
-      - name: Install dart-sass
-        if: github.event.action != 'closed'
-        run: |
-          sudo snap install dart-sass
-
-      - name: Setup Node
-        if: github.event.action != 'closed'
-        uses: actions/setup-node@v6
-        with:
-          node-version: "22"
-
-      - name: Install dependencies
-        if: github.event.action != 'closed'
-        run: |
-          cd docs
-          [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true
-
-      - name: Build PR preview
-        if: github.event.action != 'closed'
+      - name: 🔍 Introspect Inputs and Context
         env:
-          HUGO_ENVIRONMENT: production
-          HUGO_ENV: production
-          HUGO_PREVIEW: "true"
+          EVENT_PATH: ${{ github.event_path }}
         run: |
-          make docs-build-production BASE_URL="/"
-          find docs/public -maxdepth 1 -type d -name 'v0.*' -exec rm -rf {} +
-          cat > docs/public/robots.txt <<'EOF'
-          User-agent: *
-          Disallow: /
-          EOF
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || 'false' }}"
+          echo "Manual Build Run ID: ${{ inputs.build_run_id || 'N/A' }}"
+          echo "Manual PR Number: ${{ inputs.pr_number || 'N/A' }}"
+          echo "::endgroup::"
 
-      - name: Deploy PR preview
-        if: github.event.action != 'closed'
-        uses: rossjrw/pr-preview-action@v1.6.3
+          echo "::group::GitHub Context"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "::endgroup::"
+
+          echo "::group::Event Payload Summary"
+          python - <<'PY'
+          import json
+          import os
+
+          with open(os.environ["EVENT_PATH"], "r", encoding="utf-8") as event_file:
+              event = json.load(event_file)
+
+          workflow_run = event.get("workflow_run", {})
+          print(json.dumps({
+              "action": event.get("action"),
+              "workflow_run": {
+                  "id": workflow_run.get("id"),
+                  "name": workflow_run.get("name"),
+                  "conclusion": workflow_run.get("conclusion"),
+                  "event": workflow_run.get("event"),
+                  "pull_requests": [pr.get("number") for pr in workflow_run.get("pull_requests", [])],
+              } if workflow_run else None,
+          }, indent=2))
+          PY
+          echo "::endgroup::"
+
+      - name: Checkout repository metadata
+        uses: actions/checkout@v6
         with:
-          source-dir: ./docs/public
-          preview-branch: gh-pages
-          umbrella-dir: pr-preview
-          action: auto
-          comment: false
+          fetch-depth: 0
+          persist-credentials: false
 
-      - name: Checkout gh-pages for preview retention
-        if: github.event.action != 'closed'
+      # Resolve the completed untrusted build run and fetch only its uploaded
+      # artifact. This preserves preview functionality without re-running PR code
+      # while a write-capable token is available.
+      - name: Resolve build run and artifact
+        id: preview-artifact
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const manualRunId = '${{ inputs.build_run_id }}'.trim();
+            const runId = context.payload.workflow_run?.id || (manualRunId ? Number(manualRunId) : 0);
+
+            if (!runId) {
+              core.setFailed('A completed build workflow run is required for deployment.');
+              return;
+            }
+
+            let workflowRun = context.payload.workflow_run;
+            if (!workflowRun) {
+              const { data } = await github.rest.actions.getWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: runId,
+              });
+              workflowRun = data;
+            }
+
+            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: runId,
+              per_page: 100,
+            });
+
+            const artifact = artifacts.find((candidate) => candidate.name === 'docs-preview-build-output');
+            if (!artifact) {
+              core.setFailed(`No docs preview artifact was found for workflow run ${runId}.`);
+              return;
+            }
+
+            core.setOutput('run_id', String(runId));
+            core.setOutput('artifact_id', String(artifact.id));
+            core.setOutput('pr_number', String(workflowRun.pull_requests?.[0]?.number || '${{ inputs.pr_number }}' || ''));
+
+      - name: Download preview artifact
+        env:
+          ARTIFACT_ID: ${{ steps.preview-artifact.outputs.artifact_id }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          curl -fsSL \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "${{ github.api_url }}/repos/${{ github.repository }}/actions/artifacts/${ARTIFACT_ID}/zip" \
+            -o "${RUNNER_TEMP}/docs-preview-build-output.zip"
+          unzip -qo "${RUNNER_TEMP}/docs-preview-build-output.zip" -d "${RUNNER_TEMP}/docs-preview-build-output"
+
+      - name: Read preview metadata
+        id: preview-metadata
+        env:
+          FALLBACK_PR_NUMBER: ${{ steps.preview-artifact.outputs.pr_number }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+
+          metadata_path = os.path.join(os.environ['RUNNER_TEMP'], 'docs-preview-build-output', 'preview-metadata.json')
+          with open(metadata_path, 'r', encoding='utf-8') as metadata_file:
+              metadata = json.load(metadata_file)
+
+          pr_number = metadata.get('pr_number') or os.environ.get('FALLBACK_PR_NUMBER', '')
+          preview_url = ''
+          if pr_number:
+              preview_url = f"https://{os.environ['GITHUB_REPOSITORY_OWNER']}.github.io/{os.environ['GITHUB_REPOSITORY'].split('/', 1)[1]}/pr-preview/pr-{pr_number}/"
+
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output_file:
+              print(f"pr_number={pr_number}", file=output_file)
+              print(f"preview_url={preview_url}", file=output_file)
+          PY
+
+      - name: Extract preview site
+        run: |
+          mkdir -p "${RUNNER_TEMP}/docs-preview-site"
+          tar -xzf "${RUNNER_TEMP}/docs-preview-build-output/docs-preview-site.tgz" -C "${RUNNER_TEMP}/docs-preview-site"
+
+      # Work exclusively inside gh-pages when publishing previews so the trusted
+      # job only manipulates the Pages branch and static files.
+      - name: Checkout gh-pages for preview maintenance
         uses: actions/checkout@v6
         with:
           ref: gh-pages
           fetch-depth: 0
           path: gh-pages-maintenance
 
-      - name: Prune old PR previews
-        id: prune-previews
-        if: github.event.action != 'closed'
+      - name: Deploy preview and prune old previews
+        id: deploy-preview
+        env:
+          PR_NUMBER: ${{ steps.preview-metadata.outputs.pr_number }}
+          PREVIEW_RETENTION_LIMIT: ${{ env.PREVIEW_RETENTION_LIMIT }}
+          SOURCE_DIR: ${{ runner.temp }}/docs-preview-site
         run: |
-          cd gh-pages-maintenance
-          mkdir -p pr-preview
-          removed_prs=()
+          if [[ -z "${PR_NUMBER}" ]]; then
+            echo "A PR number is required to deploy the preview." >&2
+            exit 1
+          fi
 
+          cd gh-pages-maintenance
+          mkdir -p "pr-preview/pr-${PR_NUMBER}"
+          rsync -a --delete "${SOURCE_DIR}/" "pr-preview/pr-${PR_NUMBER}/"
+
+          removed_prs=()
           mapfile -t previews < <(
             while IFS= read -r preview; do
-              timestamp="$(git log -1 --format=%ct -- "pr-preview/$preview" 2>/dev/null || echo 0)"
-              printf '%s %s\n' "$timestamp" "$preview"
+              timestamp="$(git log -1 --format=%ct -- "pr-preview/${preview}" 2>/dev/null || echo 0)"
+              printf '%s %s\n' "${timestamp}" "${preview}"
             done < <(find pr-preview -mindepth 1 -maxdepth 1 -type d -name 'pr-*' -printf '%f\n') \
               | sort -nr \
               | awk '{print $2}'
           )
 
-          if (( ${#previews[@]} <= PREVIEW_RETENTION_LIMIT )); then
-            echo "removed_prs_json=[]" >> "$GITHUB_OUTPUT"
-            exit 0
+          if (( ${#previews[@]} > PREVIEW_RETENTION_LIMIT )); then
+            for preview in "${previews[@]:PREVIEW_RETENTION_LIMIT}"; do
+              rm -rf "pr-preview/${preview}"
+              removed_prs+=("${preview#pr-}")
+            done
           fi
 
-          for preview in "${previews[@]:PREVIEW_RETENTION_LIMIT}"; do
-            rm -rf "pr-preview/$preview"
-            removed_prs+=("${preview#pr-}")
-          done
-
           if git diff --quiet -- pr-preview; then
-            echo "removed_prs=" >> "$GITHUB_OUTPUT"
-            echo "removed_prs_json=[]" >> "$GITHUB_OUTPUT"
+            echo "changed=false" >> "${GITHUB_OUTPUT}"
+            echo "removed_prs_json=[]" >> "${GITHUB_OUTPUT}"
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add pr-preview
-          git commit -m "Prune old PR previews"
-          git push
+          git commit -m "Update docs preview for PR #${PR_NUMBER}"
+          git push origin HEAD:gh-pages
 
-          echo "removed_prs=$(IFS=,; echo "${removed_prs[*]}")" >> "$GITHUB_OUTPUT"
-          echo "removed_prs_json=$(printf '%s\n' "${removed_prs[@]}" | jq -R . | jq -sc .)" >> "$GITHUB_OUTPUT"
+          echo "changed=true" >> "${GITHUB_OUTPUT}"
+          echo "removed_prs_json=$(printf '%s\n' "${removed_prs[@]}" | jq -R . | jq -sc .)" >> "${GITHUB_OUTPUT}"
 
-      - name: Comment PR with Preview URL
-        if: github.event.action != 'closed'
-        uses: marocchino/sticky-pull-request-comment@v2
+      - name: Update preview comment
+        uses: actions/github-script@v8
+        env:
+          PR_NUMBER: ${{ steps.preview-metadata.outputs.pr_number }}
+          PREVIEW_URL: ${{ steps.preview-metadata.outputs.preview_url }}
         with:
-          header: pr-preview
-          message: |
-            🚀 Preview deployment: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-preview/pr-${{ github.event.pull_request.number }}/
-            > *Note: Preview may take a moment (GitHub Pages deployment in progress). Please wait and refresh. Track deployment [here](https://github.com/${{ github.repository }}/actions/workflows/pages/pages-build-deployment)*
+          github-token: ${{ github.token }}
+          script: |
+            const prNumber = Number(process.env.PR_NUMBER || 0);
+            if (!prNumber) {
+              core.info('No PR number was resolved, skipping preview comment update.');
+              return;
+            }
+
+            const marker = '<!-- docs-preview-comment -->';
+            const body = [
+              '🚀 Preview deployment: ' + process.env.PREVIEW_URL,
+              '> *Note: Preview may take a moment to become available after the deployment commit is pushed. Please refresh after GitHub Pages finishes publishing.*',
+              marker,
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              per_page: 100,
+            });
+
+            const existingComment = [...comments].reverse().find((comment) =>
+              comment.user?.login === 'github-actions[bot]' && comment.body?.includes(marker)
+            );
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body,
+              });
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body,
+            });
+
+      - name: Report Preview Status
+        if: always() && steps.preview-metadata.outputs.pr_number != ''
+        continue-on-error: true
+        uses: layer5labs/meshery-extensions-packages/.github/actions/cloud-comment@master
+        with:
+          github-token: ${{ github.token }}
+          body: |
+            ### Docs Preview 🚀
+            Status: ${{ job.status }}
+            Preview: ${{ steps.preview-metadata.outputs.preview_url }}
+            Build Run: ${{ steps.preview-artifact.outputs.run_id }}
 
       - name: Comment on pruned previews
-        if: github.event.action != 'closed' && steps.prune-previews.outputs.removed_prs_json != '[]'
-        uses: actions/github-script@v7
+        if: steps.deploy-preview.outputs.removed_prs_json != '[]'
+        uses: actions/github-script@v8
         env:
-          REMOVED_PRS_JSON: ${{ steps.prune-previews.outputs.removed_prs_json }}
+          REMOVED_PRS_JSON: ${{ steps.deploy-preview.outputs.removed_prs_json }}
           PREVIEW_RETENTION_LIMIT: ${{ env.PREVIEW_RETENTION_LIMIT }}
         with:
+          github-token: ${{ github.token }}
           script: |
             const removedPrs = JSON.parse(process.env.REMOVED_PRS_JSON);
             const retentionLimit = process.env.PREVIEW_RETENTION_LIMIT;
-            const header = "pr-preview";
-            const marker = `<!-- Sticky Pull Request Comment${header} -->`;
+            const marker = '<!-- docs-preview-pruned -->';
 
             for (const prNumber of removedPrs) {
-              const body =
-                `Preview deployment for PR #${prNumber} removed.\n\n` +
-                `This PR preview was automatically pruned because we keep only the ${retentionLimit} most recently updated previews on GitHub Pages to stay within deployment size limits.\n\n` +
-                `If needed, push a new commit to this PR to generate a fresh preview.\n` +
-                `${marker}`;
+              const body = [
+                `Preview deployment for PR #${prNumber} removed.`,
+                '',
+                `This PR preview was automatically pruned because we keep only the ${retentionLimit} most recently updated previews on GitHub Pages to stay within deployment size limits.`,
+                '',
+                'If needed, push a new commit to this PR to generate a fresh preview.',
+                marker,
+              ].join('\n');
 
               const { data: comments } = await github.rest.issues.listComments({
                 owner: context.repo.owner,
@@ -183,8 +331,7 @@ jobs:
               });
 
               const existingComment = [...comments].reverse().find((comment) =>
-                comment.user?.login === "github-actions[bot]" &&
-                comment.body?.includes(marker)
+                comment.user?.login === 'github-actions[bot]' && comment.body?.includes(marker)
               );
 
               if (existingComment) {
@@ -205,10 +352,103 @@ jobs:
               });
             }
 
-      - name: Cleanup PR preview on close
-        if: github.event.action == 'closed'
-        uses: rossjrw/pr-preview-action@v1.6.3
+      - name: 🚨 Email Alert on Failure
+        if: failure() && secrets.MAIL_USERNAME != '' && secrets.MAIL_PASSWORD != ''
+        uses: dawidd6/action-send-mail@v7
         with:
-          preview-branch: gh-pages
-          umbrella-dir: pr-preview
-          action: remove
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          secure: true
+          subject: 'Docs preview deployment failed: ${{ github.workflow }}'
+          to: support@meshery.io
+          from: 'Meshery CI <no-reply@meshery.io>'
+          reply_to: no-reply@meshery.io
+          body: |
+            The docs preview deployment workflow failed.
+            Repository: ${{ github.repository }}
+            Event: ${{ github.event_name }}
+            Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ignore_cert: true
+
+  cleanup-preview:
+    if: |
+      (github.event_name == 'pull_request_target' && github.event.action == 'closed') ||
+      (github.event_name == 'workflow_dispatch' && inputs.build_run_id == '' && inputs.pr_number != '')
+    runs-on: ubuntu-24.04
+    steps:
+      - name: 🔍 Introspect Inputs and Context
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || 'false' }}"
+          echo "Manual PR Number: ${{ inputs.pr_number || 'N/A' }}"
+          echo "::endgroup::"
+
+          echo "::group::GitHub Context"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Closed PR Number: ${{ github.event.pull_request.number || inputs.pr_number || 'N/A' }}"
+          echo "::endgroup::"
+
+      - name: Checkout gh-pages for cleanup
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          fetch-depth: 0
+          path: gh-pages-maintenance
+
+      - name: Remove preview directory
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
+        run: |
+          if [[ -z "${PR_NUMBER}" ]]; then
+            echo "A PR number is required for cleanup." >&2
+            exit 1
+          fi
+
+          cd gh-pages-maintenance
+          rm -rf "pr-preview/pr-${PR_NUMBER}"
+
+          if git diff --quiet -- pr-preview; then
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pr-preview
+          git commit -m "Remove docs preview for PR #${PR_NUMBER}"
+          git push origin HEAD:gh-pages
+
+      - name: 📢 Report Cleanup Status
+        if: always() && (github.event.pull_request.number || inputs.pr_number) != ''
+        continue-on-error: true
+        uses: layer5labs/meshery-extensions-packages/.github/actions/cloud-comment@master
+        with:
+          github-token: ${{ github.token }}
+          body: |
+            ### Docs Preview Cleanup 🧹
+            Status: ${{ job.status }}
+            PR: #${{ github.event.pull_request.number || inputs.pr_number }}
+
+      - name: 🚨 Email Alert on Failure
+        if: failure() && secrets.MAIL_USERNAME != '' && secrets.MAIL_PASSWORD != ''
+        uses: dawidd6/action-send-mail@v7
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          secure: true
+          subject: 'Docs preview cleanup failed: ${{ github.workflow }}'
+          to: support@meshery.io
+          from: 'Meshery CI <no-reply@meshery.io>'
+          reply_to: no-reply@meshery.io
+          body: |
+            The docs preview cleanup workflow failed.
+            Repository: ${{ github.repository }}
+            Event: ${{ github.event_name }}
+            Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ignore_cert: true

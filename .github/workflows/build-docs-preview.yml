@@ -1,0 +1,177 @@
+name: Build Docs Preview
+
+# This workflow intentionally builds untrusted PR content with a read-only token.
+# Deployment and PR commenting happen in a separate trusted workflow so PR code
+# never runs in a write-enabled pull_request_target context.
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'docs/**'
+      - 'mesheryctl/doc/**'
+      - '.github/workflows/build-docs-preview.yml'
+      - '.github/workflows/build-and-preview-docs.yml'
+  workflow_dispatch:
+    inputs:
+      debug_mode:
+        description: 'Enable verbose debug logging'
+        required: false
+        default: 'false'
+        type: boolean
+      ref:
+        description: 'Git ref to build when run manually'
+        required: false
+        default: 'master'
+        type: string
+      pr_number:
+        description: 'PR number to associate with a manual preview build'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-preview-build-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-preview:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: 🔍 Introspect Inputs and Context
+        env:
+          EVENT_PATH: ${{ github.event_path }}
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || 'false' }}"
+          echo "Manual Ref: ${{ inputs.ref || 'N/A' }}"
+          echo "Manual PR Number: ${{ inputs.pr_number || 'N/A' }}"
+          echo "::endgroup::"
+
+          echo "::group::GitHub Context"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Head SHA: ${{ github.event.pull_request.head.sha || github.sha }}"
+          echo "PR Number: ${{ github.event.pull_request.number || inputs.pr_number || 'N/A' }}"
+          echo "::endgroup::"
+
+          echo "::group::Event Payload Summary"
+          python - <<'PY'
+          import json
+          import os
+
+          with open(os.environ["EVENT_PATH"], "r", encoding="utf-8") as event_file:
+              event = json.load(event_file)
+
+          print(json.dumps({
+              "action": event.get("action"),
+              "pull_request": {
+                  "number": event.get("pull_request", {}).get("number"),
+                  "head_sha": event.get("pull_request", {}).get("head", {}).get("sha"),
+                  "head_ref": event.get("pull_request", {}).get("head", {}).get("ref"),
+                  "is_fork": event.get("pull_request", {}).get("head", {}).get("repo", {}).get("fork"),
+              } if event.get("pull_request") else None,
+          }, indent=2))
+          PY
+          echo "::endgroup::"
+
+      # Check out the pull request head in the untrusted workflow only.
+      # This keeps contributor code away from any write-capable token.
+      - name: Checkout PR code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || inputs.ref }}
+          persist-credentials: false
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install Hugo CLI
+        env:
+          HUGO_VERSION: 0.157.0
+        run: |
+          wget -O "${RUNNER_TEMP}/hugo.deb" "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
+          sudo dpkg -i "${RUNNER_TEMP}/hugo.deb"
+
+      - name: Install dart-sass
+        run: sudo snap install dart-sass
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: |
+          cd docs
+          [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true
+
+      - name: Build PR preview
+        env:
+          HUGO_ENVIRONMENT: production
+          HUGO_ENV: production
+          HUGO_PREVIEW: 'true'
+        run: |
+          make docs-build-production BASE_URL="/"
+          find docs/public -maxdepth 1 -type d -name 'v0.*' -exec rm -rf {} +
+          cat > docs/public/robots.txt <<'EOF'
+          User-agent: *
+          Disallow: /
+          EOF
+
+      # Package only static output plus minimal metadata. The trusted deploy
+      # workflow consumes this artifact and never needs to execute PR code again.
+      - name: Package preview artifact
+        env:
+          PREVIEW_PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
+          PREVIEW_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          mkdir -p .preview-artifact
+          python - <<'PY'
+          import json
+          import os
+
+          metadata = {
+              "pr_number": os.environ.get("PREVIEW_PR_NUMBER", ""),
+              "head_sha": os.environ.get("PREVIEW_HEAD_SHA", ""),
+              "repository": os.environ.get("GITHUB_REPOSITORY", ""),
+          }
+
+          with open('.preview-artifact/preview-metadata.json', 'w', encoding='utf-8') as metadata_file:
+              json.dump(metadata, metadata_file)
+          PY
+          tar -C docs/public -czf .preview-artifact/docs-preview-site.tgz .
+
+      - name: Upload preview artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: docs-preview-build-output
+          retention-days: 7
+          path: .preview-artifact/
+
+      - name: 🚨 Email Alert on Failure
+        if: failure() && (github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.fork != true)
+        uses: dawidd6/action-send-mail@v7
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          secure: true
+          subject: 'Docs preview build failed: ${{ github.workflow }}'
+          to: support@meshery.io
+          from: 'Meshery CI <no-reply@meshery.io>'
+          reply_to: no-reply@meshery.io
+          body: |
+            The docs preview build workflow failed.
+            Repository: ${{ github.repository }}
+            Event: ${{ github.event_name }}
+            Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ignore_cert: true
