@@ -1,12 +1,8 @@
 import React from 'react';
-import {
-  CustomColumnVisibilityControl,
-  SearchBar,
-  UniversalFilter,
-  styled,
-} from '@sistent/sistent';
+import { CustomColumnVisibilityControl, SearchBar, UniversalFilter } from '@sistent/sistent';
 import { CreateButton } from './styles';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+import { styled } from '@/theme';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
 import type { SelectedFilters } from './ConnectionTable.types';
