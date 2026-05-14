@@ -577,6 +577,7 @@ Packaged, repeatable workflows live in `.agents/skills/`. Each skill has a `SKIL
 |-------|-----------|------------|---------|
 | gen-test | `.agents/skills/gen-test/` | User-invoked | Generate idiomatic Go tests |
 | api-doc | `.agents/skills/api-doc/` | User or agent | Document REST/GraphQL endpoints |
+| gen-relationship | `.agents/skills/gen-relationship/` | User or agent | Generate schema-backed relationships |
 
 ## Automation Hooks
 

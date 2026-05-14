@@ -17,7 +17,7 @@ vi.mock('@sistent/sistent', () => ({
   ),
 }));
 
-vi.mock('@/components/MesheryMeshInterface/PatternService/CustomTextTooltip', () => ({
+vi.mock('@/components/meshery-mesh-interface/PatternService/CustomTextTooltip', () => ({
   CustomTextTooltip: ({ title, children }) => (
     <div data-testid="custom-text-tooltip" data-title={String(title)}>
       {children}

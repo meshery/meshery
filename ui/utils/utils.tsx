@@ -483,8 +483,8 @@ export function isDesignOpenInKanvas() {
   return params.has('design') && params.get('mode') === KANVAS_MODE.DESIGN;
 }
 
-export const isKanvasEnabled = (capabilitiesRegistry) => {
-  const navigatorExtension = _.get(capabilitiesRegistry, 'extensions.navigator') || [];
+export const isKanvasEnabled = (providerCapabilities) => {
+  const navigatorExtension = _.get(providerCapabilities, 'extensions.navigator') || [];
   return navigatorExtension.some((ext) => ext.title === 'Kanvas');
 };
 
@@ -492,9 +492,9 @@ export const isOperatorEnabled = isKanvasEnabled;
 export const isKanvasDesignerEnabled = isKanvasEnabled;
 
 export const useIsKanvasEnabled = () => {
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
 
-  return isKanvasEnabled(capabilitiesRegistry);
+  return isKanvasEnabled(providerCapabilities);
 };
 
 export const useIsOperatorEnabled = useIsKanvasEnabled;

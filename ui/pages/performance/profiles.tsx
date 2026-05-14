@@ -1,6 +1,6 @@
 import React from 'react';
 import { NoSsr } from '@sistent/sistent';
-import PerformanceProfiles from '../../components/Performance/PerformanceProfiles';
+import PerformanceProfiles from '../../components/performance/PerformanceProfiles';
 import Head from 'next/head';
 import { usePageTitle } from '@/utils/hooks';
 
