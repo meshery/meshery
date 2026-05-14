@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ModalBody, ModalFooter, NoSsr } from '@sistent/sistent';
 import { URLValidator } from '../../utils/URLValidator';
+import { isValidJSON } from '../../utils/validators';
 import LoadTestTimerDialog from '../load-test-timer-dialog';
 import fetchControlPlanes from '@/graphql/queries/ControlPlanesQuery';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';

@@ -49,7 +49,7 @@ const PerformanceFormActions: React.FC<PerformanceFormActionsProps> = ({
           variant="contained"
           color="primary"
           size="large"
-          csx={{ marginLeft: '1rem' }}
+          sx={{ marginLeft: '1rem' }}
           disabled={disableTest}
           onClick={onShowResults}
         >

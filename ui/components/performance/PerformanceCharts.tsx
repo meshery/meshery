@@ -34,8 +34,12 @@ const PerformanceCharts: React.FC<PerformanceChartsProps> = ({
     prometheus.prometheusURL !== ''
   ) {
     // only add testUUID to the board that should be persisted
+    // copy-on-write to avoid mutating a prop/imported config object
     if (localStaticPrometheusBoardConfig.cluster) {
-      localStaticPrometheusBoardConfig.cluster.testUUID = testUUID;
+      localStaticPrometheusBoardConfig = {
+        ...localStaticPrometheusBoardConfig,
+        cluster: { ...localStaticPrometheusBoardConfig.cluster, testUUID },
+      };
     }
     displayStaticCharts = (
       <React.Fragment>

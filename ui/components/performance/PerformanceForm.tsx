@@ -287,8 +287,8 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
               </Grid2>
               <Grid2 size={{ xs: 12 }}>
                 <TextField
-                  id="cookies"
-                  name="cookies"
+                  id="reqBody"
+                  name="reqBody"
                   label='Request Body e.g. {"method":"post","url":"http://bookinfo.meshery.io/test"}'
                   fullWidth
                   value={reqBody}
@@ -353,7 +353,7 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
                   <TextField
                     size="small"
                     variant="outlined"
-                    margin="mormal"
+                    margin="normal"
                     fullWidth
                     label={caCertificate?.name || 'Upload SSL Certificate e.g. .crt file'}
                     style={{ width: '100%', margin: '0.5rem 0' }}
