@@ -8,7 +8,7 @@ import {
   GetApp as GetAppIcon,
   FullscreenExit,
   DoneAll as DoneAllIcon,
-  AccountTree as AccountTreeIcon,
+  AssignmentTurnedIn as AssignmentTurnedInIcon,
 } from '@/assets/icons';
 import Moment from 'react-moment';
 import FlipCard from '../../FlipCard';
@@ -253,7 +253,7 @@ function MesheryPatternCard_({
                 disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject)}
                 data-testid="pattern-btn-evaluate"
               >
-                <AccountTreeIcon
+                <AssignmentTurnedInIcon
                   style={{ fill: theme.palette.background.constant.white, ...iconMedium }}
                 />
                 <GridBtnText> Evaluate </GridBtnText>

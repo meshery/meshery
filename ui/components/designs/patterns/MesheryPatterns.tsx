@@ -430,7 +430,6 @@ function MesheryPatterns({
         });
       });
   };
-
   const userCanEdit = (pattern) => {
     return (
       CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) && user?.userId == pattern?.userId

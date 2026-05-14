@@ -13,7 +13,7 @@ vi.mock('react-moment', () => ({
 }));
 
 vi.mock('@/assets/icons', () => ({
-  AccountTree: () => <svg data-testid="account-tree" />,
+  AssignmentTurnedIn: () => <svg data-testid="assignment-turned-in" />,
   GetApp: () => <svg data-testid="get-app" />,
   DoneAll: () => <svg data-testid="done-all" />,
   Public: () => <svg data-testid="public" />,
