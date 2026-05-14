@@ -210,6 +210,7 @@ const (
 	ErrExtensionProxyCode                  = "meshery-server-1427"
 	ErrInitializeMachineCode               = "meshery-server-1428"
 	ErrSendMachineEventCode                = "meshery-server-1429"
+	ErrPruneArchivesCode                   = "meshery-server-1430"
 )
 
 var (
@@ -1047,4 +1048,13 @@ func ErrInitializeMachine(err error) error {
 // caller input.
 func ErrSendMachineEvent(err error) error {
 	return errors.New(ErrSendMachineEventCode, errors.Alert, []string{"Failed to advance connection state machine"}, []string{err.Error()}, []string{"The requested event is not valid from the connection's current state.", "A side-effect action attached to the transition (e.g. provisioning, discovery) returned an error."}, []string{"Inspect the connection's current status before retrying. If the failure originates from a side-effect action, address the underlying cause (e.g. cluster reachability, credential validity) and retry."})
+}
+
+// ErrPruneArchives wraps failures that occur while pruning old database
+// archive files from ~/.meshery/config/.archive. Emitted with HTTP 500
+// because the failure is an internal file-system operation (listing or
+// removing files from the archive directory) that the caller cannot
+// influence.
+func ErrPruneArchives(err error) error {
+	return errors.New(ErrPruneArchivesCode, errors.Alert, []string{"Failed to prune old database archive files"}, []string{err.Error()}, []string{"Archive directory is not readable or a file could not be deleted"}, []string{"Verify ~/.meshery/config/.archive is accessible and the server has delete permission"})
 }
