@@ -114,7 +114,7 @@ export const userApi = api
       }),
       getUserProfileSummaryById: builder.query({
         query: (queryArg) => ({
-          url: `/api/user/profile/${queryArg.id}`,
+          url: queryArg.id === 'profile' ? '/api/user/profile' : `/api/user/profile/${queryArg.id}`,
           // Attempt JSON parsing on every response — success bodies are JSON,
           // and most error paths also return structured JSON via
           // writeJSONError. Fall back to the raw text for any non-JSON error
