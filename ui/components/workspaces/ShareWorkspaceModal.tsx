@@ -115,7 +115,7 @@ export const ShareWorkspaceModal_: FC<ShareWorkspaceModalInternalProps> = ({
     if (dataName === RESOURCE_TYPE.VIEW) {
       return handleUpdateViewVisibilityCall(updatedVisibility);
     }
-    return undefined;
+    return Promise.resolve({ error: undefined });
   };
 
   return (
