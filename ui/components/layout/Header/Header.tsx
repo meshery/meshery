@@ -142,7 +142,7 @@ function K8sContextMenu({
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
   // The dropdown slides up from below; its translate distance scales with the
   // number of context rows it will render so it ends up flush against the badge.
-  const transformProperty = 100 + (contexts?.totalCount || 0) * 3.125;
+  const transformProperty = 100 + (contexts?.contexts?.length || 0) * 3.125;
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
