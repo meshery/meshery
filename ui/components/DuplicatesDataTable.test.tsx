@@ -79,8 +79,9 @@ describe('DuplicatesDataTable', () => {
       );
     });
 
-    // getDuplicateComponents is invoked as (componentKind, modelName, apiVersion)
-    // even though useEffect chains pass (kind, model, version)
+    // getDuplicateComponents signature is (componentKind, apiVersion, modelName) —
+    // rowData { kind: 'Pod', model: 'core', version: 'v1' } maps to
+    // ('Pod', 'v1', 'core').
     expect(getDuplicateComponentsMock).toHaveBeenCalledWith('Pod', 'v1', 'core');
   });
 

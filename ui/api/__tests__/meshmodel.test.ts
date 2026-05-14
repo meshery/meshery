@@ -93,6 +93,9 @@ describe('api/meshmodel', () => {
 
   describe('getDuplicateComponents', () => {
     it('encodes componentKind, apiVersion and modelName', async () => {
+      // The source template at api/meshmodel.ts uses `&?model=` as a separator,
+      // producing a malformed query (two `?` characters). This test pins the
+      // current behavior so any future fix to the source surfaces here.
       await getDuplicateComponents('Pod', 'v1', 'k8s');
       expect(promisifiedDataFetch).toHaveBeenCalledWith(
         '/api/meshmodels/components/Pod?apiVersion=v1&?model=k8s',
@@ -133,6 +136,9 @@ describe('api/meshmodel', () => {
   });
 
   describe('paginated detail endpoints', () => {
+    // The source templates for getComponentsDetail / getRelationshipsDetail
+    // omit the leading slash (unlike every other endpoint in this file).
+    // Tests pin the as-written URL so any future normalization is visible.
     it('getComponentsDetail builds /api/meshmodels/components URL', async () => {
       await getComponentsDetail(3);
       expect(promisifiedDataFetch).toHaveBeenCalledWith('api/meshmodels/components?page=3');
