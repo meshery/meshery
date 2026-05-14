@@ -28,8 +28,8 @@ export const ACTION_TYPES = {
     error_msg: 'Failed to publish catalog',
   },
   UNPUBLISH_CATALOG: {
-    name: 'PUBLISH_CATALOG',
-    error_msg: 'Failed to publish catalog',
+    name: 'UNPUBLISH_CATALOG',
+    error_msg: 'Failed to unpublish catalog',
   },
   SCHEMA_FETCH: {
     name: 'SCHEMA_FETCH',
