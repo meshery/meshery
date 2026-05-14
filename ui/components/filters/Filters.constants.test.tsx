@@ -28,7 +28,7 @@ describe('Filters.constants', () => {
       error_msg: 'Failed to clone filter file',
     });
     expect(ACTION_TYPES.PUBLISH_CATALOG.error_msg).toBe('Failed to publish catalog');
-    expect(ACTION_TYPES.UNPUBLISH_CATALOG.error_msg).toBe('Failed to publish catalog');
+    expect(ACTION_TYPES.UNPUBLISH_CATALOG.error_msg).toBe('Failed to unpublish catalog');
     expect(ACTION_TYPES.SCHEMA_FETCH).toEqual({
       name: 'SCHEMA_FETCH',
       error_msg: 'failed to fetch import schema',
