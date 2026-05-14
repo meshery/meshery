@@ -212,30 +212,30 @@ func startNighthawkServer(timeout int64) error {
 	if err != nil {
 		return ErrStartingNighthawkServer(err)
 	}
-	cmd := exec.Command(command)
+
 	if !nighthawkRunning {
+		cmd := exec.Command(command)
 		err := cmd.Start()
 		if err != nil {
-			nighthawkStatus.Unlock()
 			return ErrStartingNighthawkServer(err)
 		}
 		nighthawkRunning = true
-	}
-	go func() {
-		err := cmd.Wait()
-		if err != nil {
+
+		go func() {
+			_ = cmd.Wait()
+			nighthawkStatus.Lock()
 			nighthawkRunning = false
-			return
-		}
-	}()
+			nighthawkStatus.Unlock()
+		}()
+	}
 
 	_, err = os.Stat(transformCommand)
 	if err != nil {
-		nighthawkStatus.Unlock()
+		nighthawkRunning = false
 		return ErrStartingNighthawkServer(err)
 	}
 
-	for timeout != 0 {
+	for timeout > 0 {
 		if utils.TcpCheck(&utils.HostPort{
 			Address: "0.0.0.0",
 			Port:    8443,
@@ -245,12 +245,14 @@ func startNighthawkServer(timeout int64) error {
 		timeout--
 		time.Sleep(1 * time.Second)
 	}
-	return ErrStartingNighthawkServer(err)
+
+	nighthawkRunning = false
+	return ErrStartingNighthawkServer(fmt.Errorf("nighthawk service did not start within timeout"))
 }
 
 // NighthawkLoadTest is the actual code which invokes nighthawk to run the load test
 func NighthawkLoadTest(opts *models.LoadTestOptions, log logger.Handler) (map[string]interface{}, *periodic.RunnerResults, error) {
-	err := startNighthawkServer(int64(opts.Duration))
+	err := startNighthawkServer(int64(opts.Duration.Seconds()))
 	if err != nil {
 		return nil, nil, ErrRunningNighthawkServer(err)
 	}
