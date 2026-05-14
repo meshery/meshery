@@ -12,7 +12,7 @@ import _PromptComponent from '../../PromptComponent';
 import { ProviderUiAccessControl } from '../../../utils/disabledComponents';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import Modal from '../../shared/Modal/Modal';
-import ExportModal from '../../shared/Modal/ExportModal';
+import ExportDesignModal from '../../designs/export/ExportDesignModal';
 import { FormatStructuredData } from '../../data-formatter';
 import { useFilterK8sContexts } from '@/utils/hooks/useKubernetesHook';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
@@ -108,7 +108,7 @@ function NavigatorExtension({ url }: NavigatorExtensionProps) {
       },
       InfoModal,
       ViewInfoModal,
-      ExportModal,
+      ExportModal: ExportDesignModal,
       GenericRJSFModal: Modal,
       _PromptComponent,
       providerCapabilities,

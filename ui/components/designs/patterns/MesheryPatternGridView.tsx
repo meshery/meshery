@@ -10,13 +10,10 @@ import {
   GridNoTextStyles,
   GridPaginationStyles,
 } from './Grid.styles';
-import { RJSFModalWrapper } from '../../shared/Modal/Modal';
-import ExportModal from '../../shared/Modal/ExportModal';
+import ExportDesignModal from '../export/ExportDesignModal';
+import { PublishDesignModal } from '../PublishDesignModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
-import { Modal as SistentModal } from '@sistent/sistent';
-
-import Pattern from '../../../public/static/img/drawer-icons/pattern_svg';
 const INITIAL_GRID_SIZE = { xl: 6, md: 6, xs: 12 };
 
 function PatternCardGridItem({
@@ -258,31 +255,14 @@ function MesheryPatternGrid({
       ) : null}
 
       {canPublishPattern && publishModal.open && (
-        <SistentModal
-          open={true}
+        <PublishDesignModal
           title={publishModal.pattern?.name}
-          closeModal={handlePublishModalClose}
-          aria-label="catalog publish"
-          maxWidth="sm"
-          headerIcon={
-            <Pattern
-              fill="#fff"
-              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-              className={undefined}
-            />
-          }
-        >
-          <RJSFModalWrapper
-            schema={publishSchema.rjsfSchema}
-            uiSchema={publishSchema.uiSchema}
-            submitBtnText="Submit for Approval"
-            handleSubmit={handlePublish}
-            helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
-            handleClose={handlePublishModalClose}
-          />
-        </SistentModal>
+          handleClose={handlePublishModalClose}
+          handleSubmit={handlePublish}
+          publishFormSchema={publishSchema}
+        />
       )}
-      <ExportModal
+      <ExportDesignModal
         downloadModal={downloadModal}
         handleDownloadDialogClose={handleDownloadDialogClose}
         handleDesignDownload={handleDownload}
