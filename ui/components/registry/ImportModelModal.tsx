@@ -43,6 +43,8 @@ import {
 } from '@/components/layout/NotificationCenter/formatters/model_registration';
 import { StyledDocsRedirectLink } from './Stepper/style';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
 import {
   UPLOAD_TYPE_CSV,
   UPLOAD_TYPE_FILE,
@@ -107,6 +109,53 @@ interface CustomRadioWidgetProps {
   schema: { description?: string; enumDescriptions?: string[] };
 }
 
+// Hoisted to module scope so the widget identity is stable across renders of
+// `ImportModelModal` — defining it inside the parent would unmount/remount
+// the radio group on every parent render.
+const CustomRadioWidget = (props: CustomRadioWidgetProps) => {
+  const { options, value, onChange, label, schema } = props;
+  const { enumOptions } = options;
+
+  return (
+    <FormControl component="fieldset">
+      <RadioGroup
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        sx={{ marginTop: '-1.7rem', marginLeft: '-1rem' }}
+      >
+        <Typography fontWeight={'bold'} fontSize={'1rem'}>
+          {label}
+        </Typography>
+        {enumOptions.map((option, index) => (
+          <FormControlLabel
+            key={option.value}
+            value={option.value}
+            control={<Radio />}
+            label={
+              <div>
+                <Typography variant="subtitle1">{option.label}</Typography>
+                <Typography variant="body2" color="textSecondary" textTransform={'none'}>
+                  {schema.enumDescriptions?.[index]}
+                </Typography>
+              </div>
+            }
+          />
+        ))}
+      </RadioGroup>
+    </FormControl>
+  );
+};
+
+const widgets = { RadioWidget: CustomRadioWidget };
+
+// Pull the upload-type description statically from the canonical schema so
+// the footer help text doesn't need state derived from a render-time side
+// effect inside the widget.
+const importModalDescription =
+  ((importModelSchema.properties as Record<string, { description?: string }> | undefined)?.[
+    'uploadType'
+  ]?.description as string | undefined) ?? '';
+
 interface ImportModelModalProps {
   isImportModalOpen: boolean;
   setIsImportModalOpen: (_open: boolean) => void;
@@ -114,10 +163,10 @@ interface ImportModelModalProps {
 
 const ImportModelModal = memo<ImportModelModalProps>(
   ({ isImportModalOpen, setIsImportModalOpen }) => {
-    const [importModalDescription, setImportModalDescription] = useState('');
     const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
     const [importModelReq] = useImportMeshModelMutation();
     const [activeStep, setActiveStep] = useState(0);
+    const { notify } = useNotification();
 
     const handleClose = () => {
       setIsImportModalOpen(false);
@@ -167,6 +216,10 @@ const ImportModelModal = memo<ImportModelModalProps>(
                 }
               } catch (err) {
                 console.error('Error reading file from DOM:', err);
+                notify({
+                  message: `Unable to read the selected file. Please try again.`,
+                  event_type: EVENT_TYPES.ERROR,
+                });
                 return;
               }
             }
@@ -182,7 +235,10 @@ const ImportModelModal = memo<ImportModelModalProps>(
               register: true,
             };
           } else {
-            console.error('Error: File data or file name is empty or invalid');
+            notify({
+              message: 'Please choose a model file before continuing.',
+              event_type: EVENT_TYPES.ERROR,
+            });
             return;
           }
           break;
@@ -195,7 +251,10 @@ const ImportModelModal = memo<ImportModelModalProps>(
               register: true,
             };
           } else {
-            console.error('Error: URL is empty');
+            notify({
+              message: 'Please provide a model URL before continuing.',
+              event_type: EVENT_TYPES.ERROR,
+            });
             return;
           }
           break;
@@ -206,54 +265,32 @@ const ImportModelModal = memo<ImportModelModalProps>(
           return;
         }
         default: {
-          console.error('Error: Invalid upload type');
+          notify({
+            message: 'Please choose an import method to continue.',
+            event_type: EVENT_TYPES.ERROR,
+          });
           return;
         }
       }
 
-      setActiveStep(1);
+      // Fire the request first; only advance to the Finish step on success so
+      // a failed import doesn't strand the user on a perpetual loading screen
+      // (the Finish step subscribes to the operations-center event bus and
+      // only ever stops loading on a SUCCESS event).
       updateProgress({ showProgress: true });
-      await importModelReq({ importBody: requestBody });
-      updateProgress({ showProgress: false });
+      try {
+        await importModelReq({ importBody: requestBody }).unwrap();
+        setActiveStep(1);
+      } catch (err) {
+        console.error('Failed to import model:', err);
+        notify({
+          message: 'Model import failed. Please verify the file or URL and try again.',
+          event_type: EVENT_TYPES.ERROR,
+        });
+      } finally {
+        updateProgress({ showProgress: false });
+      }
     };
-
-    const CustomRadioWidget = (props: CustomRadioWidgetProps) => {
-      const { options, value, onChange, label, schema } = props;
-      const { enumOptions } = options;
-
-      setImportModalDescription(schema.description ?? '');
-
-      return (
-        <FormControl component="fieldset">
-          <RadioGroup
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            sx={{ marginTop: '-1.7rem', marginLeft: '-1rem' }}
-          >
-            <Typography fontWeight={'bold'} fontSize={'1rem'}>
-              {label}
-            </Typography>
-            {enumOptions.map((option, index) => (
-              <FormControlLabel
-                key={option.value}
-                value={option.value}
-                control={<Radio />}
-                label={
-                  <div>
-                    <Typography variant="subtitle1">{option.label}</Typography>
-                    <Typography variant="body2" color="textSecondary" textTransform={'none'}>
-                      {schema.enumDescriptions?.[index]}
-                    </Typography>
-                  </div>
-                }
-              />
-            ))}
-          </RadioGroup>
-        </FormControl>
-      );
-    };
-
-    const widgets = { RadioWidget: CustomRadioWidget };
 
     const helpText = (
       <>
