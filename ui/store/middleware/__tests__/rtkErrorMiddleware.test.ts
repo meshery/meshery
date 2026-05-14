@@ -57,7 +57,12 @@ describe('rtkErrorMiddleware', () => {
     expect(dispatched.payload.description).toBe('getThing: Boom');
     expect(dispatched.payload.action).toBe('api_error');
     expect(dispatched.payload.category).toBe('api');
-    expect(dispatched.payload.createdAt).toBe(new Date().toISOString());
+    // Avoid a race against wall-clock millisecond drift on slow CI runners:
+    // assert createdAt is a parseable ISO string within a second of "now".
+    expect(typeof dispatched.payload.createdAt).toBe('string');
+    const createdAtMs = Date.parse(dispatched.payload.createdAt);
+    expect(Number.isFinite(createdAtMs)).toBe(true);
+    expect(Math.abs(createdAtMs - Date.now())).toBeLessThan(1000);
     expect(typeof dispatched.payload.id).toBe('string');
     expect(dispatched.payload.id).toMatch(/^rtk-error-\d+$/);
   });
