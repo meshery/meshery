@@ -35,7 +35,7 @@ import getWidgets from './widgets/getWidgets';
 import { TABS_SCROLL_BUTTONS_CLASS } from './constants';
 import { useSelector } from 'react-redux';
 import useUnsavedChanges from './useUnsavedChanges';
-import UnsavedChangesModal from './UnsavedChangesModal';
+import UnsavedChangesModal from '@/components/shared/Modal/UnsavedChangesModal';
 
 const ResponsiveReactGridLayout = debounceWidthProvider(Responsive);
 
