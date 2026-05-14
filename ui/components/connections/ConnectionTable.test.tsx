@@ -43,6 +43,8 @@ vi.mock('@sistent/sistent', () => ({
   },
   MenuItem: ({ children }) => <div>{children}</div>,
   Box: ({ children }) => <div>{children}</div>,
+  SyncAltIcon: () => <svg data-testid="sync-alt-icon" />,
+  MoreVertIcon: () => <svg data-testid="more-vert-icon" />,
   IconButton: ({ children, onClick, ...props }) => (
     <button onClick={onClick} type="button" {...props}>
       {children}
