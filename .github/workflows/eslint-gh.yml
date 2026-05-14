@@ -67,18 +67,18 @@ jobs:
         working-directory: ui
         run: |
           if [ ! -f ./test-report.junit.xml ]; then
-            echo "## ui-unit-tests: report missing" >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::ui-unit-tests JUnit report missing"
             exit 0
           fi
-          echo "## ui-unit-tests: failing tests" >> "$GITHUB_STEP_SUMMARY"
-          echo '' >> "$GITHUB_STEP_SUMMARY"
           # Extract <testcase> nodes that contain a <failure> child and print
-          # classname/name plus the first 8 lines of the failure body.
+          # classname/name plus the first 8 lines of the failure body, both to
+          # stdout (so it's in the workflow log) and to $GITHUB_STEP_SUMMARY.
           node -e '
             const fs = require("fs");
             const xml = fs.readFileSync("./test-report.junit.xml", "utf8");
             const cases = xml.split(/<testcase\s/).slice(1);
-            const out = [];
+            const md = ["## ui-unit-tests: failing tests", ""];
+            const stdout = ["", "=========== FAILING UNIT TESTS ==========="];
             for (const raw of cases) {
               if (!/<failure/.test(raw)) continue;
               const cls = (raw.match(/classname="([^"]*)"/) || [, ""])[1];
@@ -88,12 +88,28 @@ jobs:
                 .replace(/<!\[CDATA\[/g, "")
                 .replace(/\]\]>/g, "")
                 .split(/\r?\n/)
-                .slice(0, 8)
+                .slice(0, 12)
                 .join("\n");
-              out.push(`### ${cls} › ${nm}\n\n**Message:** ${failMsg}\n\n\`\`\`\n${body}\n\`\`\`\n`);
+              md.push(`### ${cls} › ${nm}`);
+              md.push("");
+              md.push("**Message:** " + failMsg);
+              md.push("");
+              md.push("```");
+              md.push(body);
+              md.push("```");
+              md.push("");
+              stdout.push("");
+              stdout.push("FAIL: " + cls + " > " + nm);
+              stdout.push("  msg: " + failMsg);
+              stdout.push(body.split("\n").map(l => "  | " + l).join("\n"));
             }
-            if (out.length === 0) out.push("No <failure> tags found in JUnit XML.");
-            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, out.join("\n"));
+            if (md.length === 2) {
+              md.push("No <failure> tags found in JUnit XML.");
+              stdout.push("(no <failure> tags in JUnit XML)");
+            }
+            stdout.push("==========================================");
+            console.log(stdout.join("\n"));
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, md.join("\n"));
           '
 
       - name: Upload test report on failure
