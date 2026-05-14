@@ -7,7 +7,7 @@ import _PromptComponent from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 
 import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
-import useKubernetesHook from '../hooks/useKubernetesHook';
+import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
