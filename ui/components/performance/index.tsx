@@ -21,6 +21,7 @@ import {
   AccordionSummary,
 } from '@sistent/sistent';
 import { URLValidator } from '../../utils/URLValidator';
+import { isValidJSON } from '../../utils/validators';
 import {
   ArrowBack,
   ExpandMore as ExpandMoreIcon,
@@ -164,14 +165,6 @@ const MesheryPerformanceComponent_ = (props) => {
     metadata,
     closeModal,
   } = props;
-  const isJsonString = (str) => {
-    try {
-      JSON.parse(str);
-    } catch {
-      return false;
-    }
-    return true;
-  };
   // Create individual state variables for each property
   const [testNameState, setTestName] = useState(testName);
   const [meshNameState, setMeshName] = useState(meshName);
@@ -199,7 +192,7 @@ const MesheryPerformanceComponent_ = (props) => {
   const [tErrorState, setTError] = useState('');
   const [jsonErrorState, setJsonError] = useState(false);
   const [disableTestState, setDisableTest] = useState(
-    !(URLValidator(urlState) || isJsonString(additionalOptionsState)),
+    !(URLValidator(urlState) || isValidJSON(additionalOptionsState)),
   );
   const [testUUIDState, setTestUUID] = useState(generateUUID());
   const [selectedMeshState, setSelectedMesh] = useState('');
