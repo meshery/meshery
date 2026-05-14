@@ -24,19 +24,11 @@ export const getChartColors = (theme: Theme): string[] => {
   ];
 };
 
-export const dataToColors = (data, theme: Theme) => {
+export const dataToColors = (data: unknown[][], theme: Theme): Record<string, string> => {
   const palette = getChartColors(theme);
-  const columns = data.map((item) => item[0]);
   const colors: Record<string, string> = {};
-  let colorIdx = 0;
-
-  columns.forEach((col) => {
-    if (colorIdx >= palette.length) {
-      colorIdx = 0;
-    }
-    colors[col] = palette[colorIdx];
-    colorIdx += 1;
+  data.forEach((item, idx) => {
+    colors[String(item[0])] = palette[idx % palette.length];
   });
-
   return colors;
 };

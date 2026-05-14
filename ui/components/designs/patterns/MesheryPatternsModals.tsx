@@ -21,7 +21,7 @@ export const ImportDesignModal = React.memo((props) => {
           open={true}
           closeModal={handleClose}
           headerIcon={
-            <Pattern fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
+            <Pattern fill="#fff" style={{ height: '24px', width: '24px', fontSize: '1.45rem' }} />
           }
           maxWidth="sm"
           title="Import Design"
@@ -52,7 +52,7 @@ export const PublishModal = React.memo((props) => {
           aria-label="catalog publish"
           title={title}
           headerIcon={
-            <Pattern fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
+            <Pattern fill="#fff" style={{ height: '24px', width: '24px', fontSize: '1.45rem' }} />
           }
           maxWidth="sm"
         >
