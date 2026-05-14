@@ -150,4 +150,32 @@ describe('KubernetesSubscription', () => {
     unmount();
     expect(disposeMock).toHaveBeenCalledTimes(1);
   });
+
+  it('passes through an already-camelCased subscription payload (GraphQL alias path)', () => {
+    render(<KubernetesSubscription setAppState={setAppStateMock} />);
+
+    act(() => {
+      subscriptionCallback?.({
+        k8sContext: {
+          totalCount: 4,
+          contexts: [
+            { id: 'ctx-1', name: 'a', connectionId: 'conn-1', createdBy: 'meshery' },
+            { id: 'ctx-2', name: 'b', connectionId: 'conn-2', createdBy: 'meshery' },
+          ],
+        },
+      });
+    });
+
+    expect(setAppStateMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        k8sContexts: expect.objectContaining({
+          totalCount: 4,
+          contexts: expect.arrayContaining([
+            expect.objectContaining({ id: 'ctx-1', connectionId: 'conn-1' }),
+            expect.objectContaining({ id: 'ctx-2', connectionId: 'conn-2' }),
+          ]),
+        }),
+      }),
+    );
+  });
 });

@@ -132,7 +132,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     isDrawerCollapsed: false,
     isFullScreenMode: false,
     isLoading: true,
-    k8sContexts: [],
+    k8sContexts: { totalCount: 0, contexts: [] },
     activeK8sContexts: [],
     mesheryControllerSubscription: null,
     disposeK8sContextSubscription: null,
