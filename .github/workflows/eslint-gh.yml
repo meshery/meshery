@@ -4,6 +4,10 @@ on:
     paths:
       - 'ui/**'
       - 'provider-ui/**'
+
+permissions:
+  contents: read
+
 jobs:
   eslint:
     name: runner / eslint
