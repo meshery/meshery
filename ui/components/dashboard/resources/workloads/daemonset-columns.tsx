@@ -86,8 +86,8 @@ export const buildDaemonSetColumns = ({
         customBodyRender: function CustomBody(val) {
           let attribute = JSON.parse(val);
           let template = attribute?.template;
-          let spec = template.spec;
-          let nodeSelector = spec.nodeSelector;
+          let spec = template?.spec;
+          let nodeSelector = spec?.nodeSelector;
           return <>{JSON.stringify(nodeSelector)}</>;
         },
       },

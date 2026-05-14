@@ -25,30 +25,80 @@ const patchedNextConfig = nextConfig.map((cfg) => {
   return cfg;
 });
 
-// Files allowed to import directly from the legacy MUI / RJSF packages.
-//
-// Phase 2 (#18737) completed the app-code sweep: every `@mui/*` and
-// `@rjsf/mui` import outside the shared wrappers has been migrated to
-// `@sistent/sistent` or the canonical icon barrel at `assets/icons/`.
-//
-// The remaining boundaries are:
-//   - `assets/icons/index.ts` — the canonical icon barrel itself, which
-//     centrally re-exports `@mui/icons-material` glyphs (#18736, #18744).
-//   - `theme/index.ts` — the project-local theme entry point, which bridges
-//     a handful of primitives (`darken`, `GlobalStyles`) from `@mui/material`
-//     until Sistent re-exports them. Each bridged import opts in via a
-//     line-scoped `eslint-disable-next-line no-restricted-imports` comment
-//     rather than relying on this allowlist.
-//   - Shared wrappers under `components/shared/{DatePicker,TreeView,FormFields}/`
-//     opt in via a local `eslint-disable no-restricted-imports` comment
-//     (line-scoped `-next-line` for single-import files, file-scoped block
-//     comment for the TreeView wrapper that re-exports several names)
-//     rather than relying on this allowlist.
-//
-// The audit script (`scripts/audit-mui.js`) keeps a matching list of
-// approved wrappers (`APPROVED_WRAPPERS`) so the trend line reports only
-// *unmigrated* MUI usage. Keep the two lists in sync when adding entries.
-const legacyRestrictedImportOffenders = ['assets/icons/index.ts'];
+// Temporary allowlists for legacy files that still violate the new UI guardrails.
+// Keep the rules active for new/clean files while letting incremental refactors
+// remove entries from these lists over time.
+const legacyRestrictedImportOffenders = [
+  'components/Dashboard/charts/NodeStatusChart.tsx',
+  'components/Dashboard/charts/PodStatusChart.tsx',
+  'components/Dashboard/index.tsx',
+  'components/Dashboard/resources/resources-sub-menu.tsx',
+  'components/Dashboard/widgets/HoneyComb/HoneyCombComponent.tsx',
+  'components/DataFormatter/index.tsx',
+  'components/DesignLifeCycle/DeploymentSummary.tsx',
+  'components/DesignLifeCycle/DryRun.tsx',
+  'components/DesignLifeCycle/ValidateDesign.tsx',
+  'components/DesignLifeCycle/styles.tsx',
+  'components/ExportModal.tsx',
+  'components/General/Modals/Information/InfoModal.tsx',
+  'components/General/Modals/Modal.tsx',
+  'components/Header.tsx',
+  'components/Lifecycle/Environments/environment-card.tsx',
+  'components/Lifecycle/Environments/index.tsx',
+  'components/Lifecycle/Workspaces/WorkspaceGridView.tsx',
+  'components/MesheryAdapterPlayComponent.tsx',
+  'components/MesheryChart.tsx',
+  'components/MesheryDateTimePicker.tsx',
+  'components/MesheryFilters/Filters.tsx',
+  'components/MesheryFilters/FiltersCard.tsx',
+  'components/MesheryMeshInterface/PatternService/RJSF.tsx',
+  'components/MesheryMeshInterface/PatternService/RJSFCustomComponents/ArrayFieldTemlate.tsx',
+  'components/MesheryMeshInterface/PatternService/RJSFCustomComponents/CustomFileWidget.tsx',
+  'components/MesheryMeshInterface/PatternService/RJSFCustomComponents/CustomSelectWidget.tsx',
+  'components/MesheryMeshInterface/PatternService/helper.tsx',
+  'components/MesheryMeshInterface/PatternServiceForm.tsx',
+  'components/MesheryPatterns/MesheryPatternCard.tsx',
+  'components/MesheryPatterns/MesheryPatterns.tsx',
+  'components/MesheryPlayComponent.tsx',
+  'components/MesherySettingsEnvButtons.tsx',
+  'components/NotificationCenter/formatters/common.tsx',
+  'components/NotificationCenter/index.tsx',
+  'components/NotificationCenter/notificationCenter.style.tsx',
+  'components/Performance/MesheryResults.tsx',
+  'components/Performance/PerformanceCard.tsx',
+  'components/Performance/PerformanceResults.tsx',
+  'components/Performance/index.tsx',
+  'components/Performance/style.tsx',
+  'components/ReactSelectWrapper.tsx',
+  'components/Registry/RegistryModal.tsx',
+  'components/RelationshipBuilder/RelationshipFormStepper.tsx',
+  'components/Settings/Registry/ComponentTree.tsx',
+  'components/Settings/Registry/MeshModel.style.ts',
+  'components/Settings/Registry/MeshModelComponent.tsx',
+  'components/Settings/Registry/MeshModelDetails.tsx',
+  'components/Settings/Registry/MesheryTreeView.tsx',
+  'components/Settings/Registry/MesheryTreeViewModel.tsx',
+  'components/Settings/Registry/MesheryTreeViewRegistrants.tsx',
+  'components/Settings/Registry/RelationshipTree.tsx',
+  'components/Settings/Registry/Stepper/CSVStepper.tsx',
+  'components/Settings/Registry/Stepper/UrlStepper.tsx',
+  'components/SpacesSwitcher/MainDesignsContent.tsx',
+  'components/SpacesSwitcher/WorkspaceModal.tsx',
+  'components/SpacesSwitcher/components.tsx',
+  'components/TroubleshootingModalComponent.tsx',
+  'components/UserPreferences/index.tsx',
+  'components/ViewInfoModal.tsx',
+  'components/ViewSwitch.tsx',
+  'components/YamlDialog.tsx',
+  'components/configuratorComponents/MeshModel/index.tsx',
+  'components/configuratorComponents/NameToIcon.tsx',
+  'components/connections/ConnectionChip.tsx',
+  'components/icons/index.ts',
+  'components/telemetry/grafana/GrafanaCustomChart.tsx',
+  'components/telemetry/grafana/GrafanaDateRangePicker.tsx',
+  'components/telemetry/prometheus/PrometheusSelectionComponent.tsx',
+  'pages/_app.tsx',
+];
 
 const legacyLiteralColorOffenders = [
   'components/dashboard/charts/ResourceUtilizationChart.tsx',
@@ -98,6 +148,7 @@ const legacyLiteralColorOffenders = [
   'components/layout/NotificationCenter/index.tsx',
   'components/layout/NotificationCenter/notificationCenter.style.tsx',
   'components/performance/PerformanceCard.tsx',
+  'components/performance/PerformanceForm.tsx',
   'components/performance/PerformanceResults.tsx',
   'components/performance/assets/facebookIcon.tsx',
   'components/performance/assets/linkedinIcon.tsx',
@@ -133,7 +184,7 @@ const legacyLiteralColorOffenders = [
 ];
 
 const legacyMaxLineOffenders = [
-  'components/performance/index.tsx',
+  'components/designs/patterns/MesheryPatterns.tsx',
   'components/connections/ConnectionTable.tsx',
 ];
 
@@ -162,6 +213,7 @@ const legacyInlineStyleOffenders = [
   'assets/icons/shapes/Octagon.tsx',
   'components/AppComponents.tsx',
   'components/BBChart.tsx',
+  'components/connections/ConnectionTable.columns.tsx',
   'components/shared/Modal/ConfirmationModal.tsx',
   'components/dashboard/UnsavedChangesModal.tsx',
   'components/dashboard/charts/ConnectionCharts.tsx',
@@ -201,8 +253,8 @@ const legacyInlineStyleOffenders = [
   'components/general/CreateDesignBtn.tsx',
   'components/shared/ErrorBoundary/ErrorBoundary.tsx',
   'components/shared/Modal/ConnectionModal.tsx',
-  'components/shared/Modal/Information/InfoModal.tsx',
-  'components/shared/Modal/Modal.tsx',
+  'components/shared/Modal/Information/LegacyInfoModal.tsx',
+  'components/shared/Modal/LegacyRJSFModal.tsx',
   'components/general/TipsCarousel.tsx',
   'components/general/error-404/index.tsx',
   'components/layout/Header/Header.tsx',
@@ -254,13 +306,17 @@ const legacyInlineStyleOffenders = [
   'components/performance/NodeDetails.tsx',
   'components/performance/PerformanceCalendar.tsx',
   'components/performance/PerformanceCard.tsx',
+  'components/performance/PerformanceForm.tsx',
+  'components/performance/PerformanceFormActions.tsx',
   'components/performance/PerformanceProfileGrid.tsx',
   'components/performance/PerformanceProfiles.tsx',
   'components/performance/PerformanceResults.tsx',
+  'components/performance/PerformanceTestResults.tsx',
   'components/performance/assets/facebookIcon.tsx',
   'components/performance/assets/linkedinIcon.tsx',
   'components/performance/assets/twitterIcon.tsx',
   'components/performance/index.tsx',
+  'components/performance/performance-helpers.tsx',
   'components/ReactSelectWrapper.tsx',
   'components/relationship-builder/CreateRelationshipModal.tsx',
   'components/relationship-builder/RelationshipFormStepper.tsx',

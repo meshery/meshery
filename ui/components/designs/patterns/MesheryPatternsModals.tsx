@@ -21,7 +21,7 @@ export const ImportDesignModal = React.memo((props) => {
           open={true}
           closeModal={handleClose}
           headerIcon={
-            <Pattern fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
+            <Pattern fill="#fff" style={{ height: '24px', width: '24px', fontSize: '1.45rem' }} />
           }
           maxWidth="sm"
           title="Import Design"
@@ -41,7 +41,12 @@ export const ImportDesignModal = React.memo((props) => {
 });
 
 export const PublishModal = React.memo((props) => {
-  const { handleClose, handleSubmit, title } = props;
+  const { handleClose, handleSubmit, title, publishFormSchema } = props;
+  // Prefer the dynamically-populated schema (populated from fetched mesh
+  // models for the compatibility enum); fall back to the static Sistent
+  // schema only when the caller hasn't supplied one yet.
+  const schema = publishFormSchema?.rjsfSchema ?? publishCatalogItemSchema;
+  const uiSchema = publishFormSchema?.uiSchema ?? publishCatalogItemUiSchema;
 
   return (
     <>
@@ -52,13 +57,13 @@ export const PublishModal = React.memo((props) => {
           aria-label="catalog publish"
           title={title}
           headerIcon={
-            <Pattern fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
+            <Pattern fill="#fff" style={{ height: '24px', width: '24px', fontSize: '1.45rem' }} />
           }
           maxWidth="sm"
         >
           <RJSFModalWrapper
-            schema={publishCatalogItemSchema}
-            uiSchema={publishCatalogItemUiSchema}
+            schema={schema}
+            uiSchema={uiSchema}
             handleSubmit={handleSubmit}
             submitBtnText="Submit for Approval"
             handleClose={handleClose}

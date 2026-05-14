@@ -186,7 +186,7 @@ export function buildFiltersColumns({
               ) : (
                 <TooltipIcon
                   title="Unpublish"
-                  onClick={(ev) => handleUnpublishModal(ev, rowData)()}
+                  onClick={(ev) => handleUnpublishModal(ev, rowData)?.()}
                   disabled={
                     !CAN(keys.UNPUBLISH_WASM_FILTER.action, keys.UNPUBLISH_WASM_FILTER.subject)
                   }

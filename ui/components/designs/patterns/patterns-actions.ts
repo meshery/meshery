@@ -119,7 +119,7 @@ export function createPatternsActions(deps) {
         variant: PROMPT_VARIANTS.DANGER,
         primaryOption: 'UNPUBLISH',
         showInfoIcon:
-          "Unpublishing a catolog item removes the item from the public-facing catalog (a public website accessible to anonymous visitors at meshery.io/catalog). The catalog item's visibility will change to either public (or private with a subscription). The ability to for other users to continue to access, edit, clone and collaborate on your content depends upon the assigned visibility level (public or private). Prior collaborators (users with whom you have shared your catalog item) will retain access. However, you can always republish it whenever you want. Remember: unpublished catalog items can still be available to other users if that item is set to public visibility. For detailed information, please refer to the [documentation](https://docs.meshery.io/concepts/designs).",
+          "Unpublishing a catalog item removes the item from the public-facing catalog (a public website accessible to anonymous visitors at meshery.io/catalog). The catalog item's visibility will change to either public (or private with a subscription). The ability to for other users to continue to access, edit, clone and collaborate on your content depends upon the assigned visibility level (public or private). Prior collaborators (users with whom you have shared your catalog item) will retain access. However, you can always republish it whenever you want. Remember: unpublished catalog items can still be available to other users if that item is set to public visibility. For detailed information, please refer to the [documentation](https://docs.meshery.io/concepts/designs).",
       });
       if (response === 'UNPUBLISH') {
         updateProgress({ showProgress: true });
@@ -134,9 +134,9 @@ export function createPatternsActions(deps) {
               event_type: EVENT_TYPES.SUCCESS,
             });
           })
-          .catch(() => {
+          .catch((error) => {
             updateProgress({ showProgress: false });
-            handleError(ACTION_TYPES.UNPUBLISH_CATALOG);
+            handleError(ACTION_TYPES.UNPUBLISH_CATALOG)(error);
           });
       }
     };
@@ -185,9 +185,9 @@ export function createPatternsActions(deps) {
           });
         }
       })
-      .catch(() => {
+      .catch((error) => {
         updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.PUBLISH_CATALOG);
+        handleError(ACTION_TYPES.PUBLISH_CATALOG)(error);
       });
   };
 
@@ -243,9 +243,9 @@ export function createPatternsActions(deps) {
           getPatterns();
           resetSelectedRowData()();
         })
-        .catch(() => {
+        .catch((error) => {
           updateProgress({ showProgress: false });
-          handleError(ACTION_TYPES.DELETE_PATTERN);
+          handleError(ACTION_TYPES.DELETE_PATTERN)(error);
         });
     }
 
@@ -255,7 +255,7 @@ export function createPatternsActions(deps) {
       updatePattern({
         updateBody: JSON.stringify({
           id,
-          name: data.name,
+          name,
           designFile: design,
           catalogData,
         }),
@@ -265,9 +265,9 @@ export function createPatternsActions(deps) {
           updateProgress({ showProgress: false });
           notify({ message: `"${name}" Design updated`, event_type: EVENT_TYPES.SUCCESS });
         })
-        .catch(() => {
+        .catch((error) => {
           updateProgress({ showProgress: false });
-          handleError(ACTION_TYPES.UPDATE_PATTERN);
+          handleError(ACTION_TYPES.UPDATE_PATTERN)(error);
         });
     }
 
@@ -298,9 +298,9 @@ export function createPatternsActions(deps) {
         .then(() => {
           updateProgress({ showProgress: false });
         })
-        .catch(() => {
+        .catch((error) => {
           updateProgress({ showProgress: false });
-          handleError(ACTION_TYPES.UPLOAD_PATTERN);
+          handleError(ACTION_TYPES.UPLOAD_PATTERN)(error);
         });
     }
   }
@@ -342,9 +342,9 @@ export function createPatternsActions(deps) {
         setImportModal((prev) => ({ ...prev, open: false }));
         getPatterns();
       })
-      .catch(() => {
+      .catch((error) => {
         updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.UPLOAD_PATTERN);
+        handleError(ACTION_TYPES.UPLOAD_PATTERN)(error);
       });
   }
 
@@ -367,9 +367,9 @@ export function createPatternsActions(deps) {
           resetSelectedRowData()();
         }, 1200);
       })
-      .catch(() => {
+      .catch((error) => {
         updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.DELETE_PATTERN);
+        handleError(ACTION_TYPES.DELETE_PATTERN)(error);
       });
   }
 

@@ -486,7 +486,7 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
     };
   };
 
-  const addDelHandleClick = (cat, isDelete) => {
+  const addDelHandleClick = (cat: number, isDelete: boolean) => {
     const newMenuState = { ...menuState };
     newMenuState[cat][isDelete ? 'delete' : 'add'] =
       !newMenuState[cat][isDelete ? 'delete' : 'add'];

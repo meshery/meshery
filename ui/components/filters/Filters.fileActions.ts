@@ -50,7 +50,11 @@ export function createHandleSubmit({
         updateProgress({ showProgress: false });
         return;
       }
-      deleteFilterFile({ id: id })
+      if (!id) {
+        updateProgress({ showProgress: false });
+        return;
+      }
+      deleteFilterFile({ id })
         .unwrap()
         .then(() => {
           updateProgress({ showProgress: false });

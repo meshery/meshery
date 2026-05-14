@@ -205,7 +205,7 @@ export function buildPatternColumns({ patterns, handlers }) {
     },
     {
       name: 'updated_at',
-      label: 'Update At',
+      label: 'Updated At',
       options: {
         filter: false,
         sort: true,
@@ -353,7 +353,7 @@ export function buildPatternsTableOptions({
     onTableChange: (action, tableState) => {
       const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
       let order = '';
-      if (tableState.activeColumn) {
+      if (tableState.activeColumn != null) {
         order = `${columns[tableState.activeColumn].name} desc`;
       }
 

@@ -85,7 +85,7 @@ export const buildConfigMapColumns = ({
         customBodyRender: function CustomBody(val) {
           if (!val) return <>-</>;
           const parseVal = JSON.parse(val);
-          const keys = Object.keys(parseVal);
+          const keys = parseVal ? Object.keys(parseVal) : [];
           return <>{keys.join(', ')}</>;
         },
       },
