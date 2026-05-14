@@ -89,8 +89,7 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
   const [triggerPing] = useLazyPingKubernetesQuery();
   const { selectedK8sContexts, k8sConfig: k8scontext } = useSelector((state: any) => state.ui);
 
-  const isDisabled =
-    typeof selectedK8sContexts.length === 'undefined' || selectedK8sContexts.length === 0;
+  const isDisabled = !selectedK8sContexts?.length;
   const dispatch = useDispatch();
   useEffect(() => {
     setTabVal(tab);
@@ -114,11 +113,12 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
   };
 
   const handleSubmit = () => {
-    if (selectedK8sContexts.length === 0) {
+    if (!selectedK8sContexts?.length) {
       notify({
         message: 'Please select Kubernetes context(s) before proceeding with the operation',
         event_type: EVENT_TYPES.INFO,
       });
+      return;
     }
 
     if (tabVal === ACTIONS.DEPLOY) {
@@ -130,17 +130,12 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
   };
 
   const searchContexts = (search: string) => {
-    if (search === '') {
+    const term = search.toLowerCase();
+    if (term === '') {
       setContexts(k8scontext);
       return;
     }
-    const matchedCtx: any[] = [];
-    k8scontext.forEach((ctx: any) => {
-      if (ctx.name.includes(search)) {
-        matchedCtx.push(ctx);
-      }
-    });
-    setContexts(matchedCtx);
+    setContexts(k8scontext.filter((ctx: any) => ctx.name?.toLowerCase().includes(term)));
   };
 
   const setContextViewer = (id: string) => {
@@ -156,7 +151,7 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
     if (selectedK8sContexts?.includes(id)) {
       const filteredContexts = selectedK8sContexts.filter((cid: string) => cid !== id);
       dispatch(setK8sContexts({ selectedK8sContexts: filteredContexts }));
-    } else if (selectedK8sContexts[0] === 'all') {
+    } else if (selectedK8sContexts.length > 0 && selectedK8sContexts[0] === 'all') {
       const allContextIds = getK8sConfigIdsFromK8sConfig(k8scontext);
       dispatch(
         setK8sContexts({ selectedK8sContexts: allContextIds.filter((cid: string) => cid !== id) }),
@@ -220,7 +215,7 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
       }
     >
       <Tabs
-        value={validationBody ? tabVal : tabVal === 2 ? 1 : 0}
+        value={validationBody ? tabVal : tabVal === ACTIONS.DEPLOY ? 1 : 0}
         variant="scrollable"
         scrollButtons="auto"
         indicatorColor="primary"
@@ -230,7 +225,7 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
         {!!validationBody && (
           <Tab
             data-cy="validate-btn-modal"
-            onClick={(event) => handleTabValChange(event, 0)}
+            onClick={(event) => handleTabValChange(event, ACTIONS.VERIFY)}
             label={
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <DoneIcon
@@ -262,7 +257,7 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
             (CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) && isDisabled)
           }
           data-cy="Undeploy-btn-modal"
-          onClick={(event) => handleTabValChange(event, 1)}
+          onClick={(event) => handleTabValChange(event, ACTIONS.UNDEPLOY)}
           label={
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div style={{ margin: '2px', paddingRight: '2px' }}>
@@ -284,7 +279,7 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
             (CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) && isDisabled)
           }
           data-cy="deploy-btn-modal"
-          onClick={(event) => handleTabValChange(event, 2)}
+          onClick={(event) => handleTabValChange(event, ACTIONS.DEPLOY)}
           label={
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <DoneAllIcon
@@ -306,7 +301,7 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
 
       {isDeployOrUndeploy && (
         <DialogSubtitle id="alert-dialog-description">
-          <div style={{ height: '100%' }}>{dryRunComponent && dryRunComponent}</div>
+          <div style={{ height: '100%' }}>{dryRunComponent}</div>
           <div>
             <Typography variant="subtitle1" style={{ marginBottom: '0.8rem' }}>
               {' '}
