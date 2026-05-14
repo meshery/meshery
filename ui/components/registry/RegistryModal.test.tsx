@@ -6,24 +6,28 @@ let mediaQueryReturn = false;
 const RegistryModalContext = React.createContext<any>({});
 
 // Stable theme reference so setHeaderInfo effects don't loop.
-const stableTheme = {
-  palette: {
-    icon: { default: 'i', white: 'w' },
-    common: { white: 'w' },
-    mode: 'light',
-    background: { paper: '#fff' },
-  },
-  transitions: {
-    create: () => '',
-    easing: { sharp: '' },
-    duration: { enteringScreen: 0, leavingScreen: 0 },
-  },
-  breakpoints: {
-    up: () => '@media (min-width:600px)',
-    down: () => '@media (max-width:600px)',
-  },
-  spacing: (n: number) => n,
-};
+function createStableTheme() {
+  return {
+    palette: {
+      icon: { default: 'i', white: 'w' },
+      common: { white: 'w' },
+      mode: 'light',
+      background: { paper: '#fff' },
+    },
+    transitions: {
+      create: () => '',
+      easing: { sharp: '' },
+      duration: { enteringScreen: 0, leavingScreen: 0 },
+    },
+    breakpoints: {
+      up: () => '@media (min-width:600px)',
+      down: () => '@media (max-width:600px)',
+    },
+    spacing: (n: number) => n,
+  };
+}
+
+const stableTheme = createStableTheme();
 
 vi.mock('@sistent/sistent', () => ({
   ModalBody: ({ children }: any) => <div data-testid="modal-body">{children}</div>,
@@ -45,10 +49,29 @@ vi.mock('@sistent/sistent', () => ({
   ChevronLeftIcon: () => <svg data-testid="chev-left" />,
   ChevronRightIcon: () => <svg data-testid="chev-right" />,
   FileIcon: () => <svg data-testid="file-icon" />,
+  InfoIcon: () => <svg data-testid="info-icon" />,
   DatabaseIcon: () => <svg data-testid="database-icon" />,
   CustomTooltip: ({ children }: any) => <>{children}</>,
   useMediaQuery: () => mediaQueryReturn,
   useTheme: () => stableTheme,
+  alpha: (value: string) => value,
+  lighten: (value: string) => value,
+  ThemeProvider: ({ children }: any) => <>{children}</>,
+  ErrorBoundary: ({ children }: any) => <>{children}</>,
+  CssBaseline: () => null,
+  NoSsr: ({ children }: any) => <>{children}</>,
+  createTheme: (...overrides: any[]) =>
+    overrides.reduce(
+      (theme, override) => ({
+        ...theme,
+        ...override,
+        palette: { ...theme.palette, ...(override?.palette || {}) },
+        transitions: { ...theme.transitions, ...(override?.transitions || {}) },
+        breakpoints: { ...theme.breakpoints, ...(override?.breakpoints || {}) },
+        spacing: override?.spacing || theme.spacing,
+      }),
+      createStableTheme(),
+    ),
   Modal: ({ children, open, title }: any) =>
     open ? (
       <div data-testid="registry-modal" data-title={title}>
@@ -66,6 +89,14 @@ vi.mock('@sistent/sistent', () => ({
 
 vi.mock('@/assets/icons/Connection', () => ({ default: () => <svg /> }));
 vi.mock('@/assets/icons/Component', () => ({ default: () => <svg /> }));
+vi.mock('@/components/shared/Modal', () => ({
+  Modal: ({ children, isOpen, title }: any) =>
+    isOpen ? (
+      <div data-testid="registry-modal" data-title={title}>
+        {children}
+      </div>
+    ) : null,
+}));
 
 vi.mock('./MeshModelComponent', () => ({
   default: (props: any) => (
