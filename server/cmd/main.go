@@ -363,16 +363,9 @@ func main() {
 			continue
 		}
 
-		expectedIss := expectedProviderIssuer
-		if expectedIss == "" {
-			// Fallback: origin of the API base.
-			// Token iss must match this exactly unless EXPECTED_PROVIDER_ISSUER is set.
-			expectedIss = parsedURL.Scheme + "://" + parsedURL.Host
-		}
-
 		cp := &models.RemoteProvider{
 			RemoteProviderURL:             parsedURL.String(),
-			ExpectedIssuer:                expectedIss,
+			ExpectedIssuer:                expectedProviderIssuer,
 			RefCookieName:                 parsedURL.Host + "_ref",
 			SessionName:                   parsedURL.Host,
 			TokenStore:                    make(map[string]string),

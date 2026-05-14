@@ -339,23 +339,11 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	// Verifies the signature
 	claims := jwt.MapClaims{}
 
-	// Strict issuer (iss) check when we know what the AS mints.
-	//
-	// golang-jwt/jwt/v5 WithIssuer requires the iss claim to be present and
-	// equal to the configured string (byte-for-byte). That matches OIDC:
-	// the JWT iss must equal the issuer identifier from the discovery document
-	// (which may include a path; it is not "origin only" unless the AS
-	// publishes the origin alone as issuer). If PROVIDER_BASE_URLS differs
-	// from the token iss (custom-domain vs canonical Hydra issuer), set
-	// EXPECTED_PROVIDER_ISSUER to the exact iss string the provider emits.
+	// Strict issuer (iss) validation is opt-in. Enforce it only when
+	// EXPECTED_PROVIDER_ISSUER is configured, because deriving an issuer from
+	// the API base URL can reject existing provider tokens whose issuer differs
+	// from their Meshery-facing endpoint.
 	effectiveIssuer := strings.TrimSpace(l.ExpectedIssuer)
-	if effectiveIssuer == "" {
-		if u, err := url.Parse(l.RemoteProviderURL); err == nil {
-			effectiveIssuer = u.Scheme + "://" + u.Host
-		} else {
-			effectiveIssuer = strings.TrimSpace(l.RemoteProviderURL)
-		}
-	}
 	var parserOpts []jwt.ParserOption
 	if effectiveIssuer != "" {
 		parserOpts = append(parserOpts, jwt.WithIssuer(effectiveIssuer))
