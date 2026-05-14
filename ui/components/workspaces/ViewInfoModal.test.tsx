@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ViewInfoModal_, ViewInfoModal, UserChip } from '../../workspaces/ViewInfoModal';
+import { ViewInfoModal_, ViewInfoModal, UserChip } from './ViewInfoModal';
 
 const notify = vi.fn();
 const mockUpdateView = vi.fn().mockReturnValue({ unwrap: () => Promise.resolve() });
@@ -49,7 +49,7 @@ vi.mock('lib/event-types', () => ({
   EVENT_TYPES: { INFO: 'info', ERROR: 'error' },
 }));
 
-vi.mock('../../workspaces/SpacesSwitcher/hooks', () => ({
+vi.mock('./SpacesSwitcher/hooks', () => ({
   handleUpdateViewVisibility: vi.fn(),
   viewPath: (view: any) => `/views/${view?.id}`,
 }));
@@ -71,13 +71,13 @@ vi.mock('@/assets/icons', () => ({
 
 vi.mock('rehype-sanitize', () => ({ default: () => null }));
 
-vi.mock('../../Markdown', () => ({
+vi.mock('../Markdown', () => ({
   MDEditor: ({ value, onChange }: any) => (
     <textarea data-testid="md-editor" value={value} onChange={(e) => onChange?.(e.target.value)} />
   ),
 }));
 
-vi.mock('../../meshery-mesh-interface/PatternService/RJSF_wrapper', () => ({
+vi.mock('../meshery-mesh-interface/PatternService/RJSF_wrapper', () => ({
   default: ({ formData, onChange, widgets }: any) => {
     const Widget = widgets?.markdown;
     return (
