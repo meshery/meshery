@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const processDesignMock = vi.fn(() => ({
   configurableComponents: [{ id: 'c1' }, { id: 'c2' }],
@@ -70,8 +70,15 @@ vi.mock('@/assets/icons/AlertIcon', () => ({
   default: () => <svg data-testid="alert-icon" />,
 }));
 
-vi.mock('@/themes/index', () => ({
-  NOTIFICATIONCOLORS: { WARNING: '#ffaa00', SUCCESS_V2: '#00ff00' },
+vi.mock('@/theme', () => ({
+  useTheme: () => ({
+    palette: {
+      text: { default: '#000' },
+      background: { cta: { default: '#abc' } },
+      warning: { main: '#ffaa00' },
+      success: { main: '#00ff00' },
+    },
+  }),
 }));
 
 vi.mock('./styles', () => ({
@@ -96,9 +103,17 @@ vi.mock('./styles', () => ({
 import { ValidateDesign, ValidationResults } from './ValidateDesign';
 
 describe('ValidateDesign', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    useDesignSchemaValidationResultsMock.mockReset();
+    useIsValidatingDesignSchemaMock.mockReset();
+    useDesignSchemaValidationResultsMock.mockReturnValue({});
+    useIsValidatingDesignSchemaMock.mockReturnValue(false);
+  });
+
   it('shows the loading state when the validator is running', () => {
-    useIsValidatingDesignSchemaMock.mockReturnValueOnce(true);
-    useDesignSchemaValidationResultsMock.mockReturnValueOnce(null);
+    useIsValidatingDesignSchemaMock.mockReturnValue(true);
+    useDesignSchemaValidationResultsMock.mockReturnValue(null);
 
     render(
       <ValidateDesign
@@ -111,8 +126,8 @@ describe('ValidateDesign', () => {
   });
 
   it('renders results when validation completes', () => {
-    useIsValidatingDesignSchemaMock.mockReturnValueOnce(false);
-    useDesignSchemaValidationResultsMock.mockReturnValueOnce({});
+    useIsValidatingDesignSchemaMock.mockReturnValue(false);
+    useDesignSchemaValidationResultsMock.mockReturnValue({});
 
     render(
       <ValidateDesign
@@ -125,8 +140,8 @@ describe('ValidateDesign', () => {
   });
 
   it('renders the typeof-string validation message as a typography', () => {
-    useIsValidatingDesignSchemaMock.mockReturnValueOnce(false);
-    useDesignSchemaValidationResultsMock.mockReturnValueOnce('All good');
+    useIsValidatingDesignSchemaMock.mockReturnValue(false);
+    useDesignSchemaValidationResultsMock.mockReturnValue('All good');
 
     render(
       <ValidateDesign

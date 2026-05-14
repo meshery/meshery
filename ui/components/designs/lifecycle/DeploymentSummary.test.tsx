@@ -2,27 +2,11 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/themes/index', () => ({
-  NOTIFICATIONCOLORS: { SUCCESS: '#0f0', ERROR: '#f00' },
-}));
-
 vi.mock('@sistent/sistent', () => {
-  const styled = (_tag: any) => () => {
-    const Styled = ({ children, ...rest }: any) => <div {...rest}>{children}</div>;
-    Styled.displayName = 'StyledMock';
-    return Styled;
-  };
   return {
-    styled,
     Box: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
     Stack: ({ children }: any) => <div>{children}</div>,
     Typography: ({ children }: any) => <span>{children}</span>,
-    useTheme: () => ({
-      palette: {
-        text: { default: '#000' },
-        background: { constant: { white: '#fff' } },
-      },
-    }),
     Button: ({ children, onClick }: any) => (
       <button type="button" onClick={onClick}>
         {children}
@@ -30,6 +14,26 @@ vi.mock('@sistent/sistent', () => {
     ),
     ExternalLinkIcon: () => <svg data-testid="external-link" />,
     componentIcon: ({ kind }: any) => `/icons/${kind}.svg`,
+  };
+});
+
+vi.mock('@/theme', () => {
+  const styled = (_tag: any) => () => {
+    const Styled = ({ children, ...rest }: any) => <div {...rest}>{children}</div>;
+    Styled.displayName = 'StyledMock';
+    return Styled;
+  };
+
+  return {
+    styled,
+    useTheme: () => ({
+      palette: {
+        text: { default: '#000' },
+        background: { constant: { white: '#fff' } },
+        success: { main: '#0f0' },
+        error: { main: '#f00' },
+      },
+    }),
   };
 });
 

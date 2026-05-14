@@ -2,35 +2,49 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import UnsavedChangesModal from './UnsavedChangesModal';
+import UnsavedChangesModal from '../shared/Modal/UnsavedChangesModal';
 
-vi.mock('@sistent/sistent', () => ({
-  CheckCircleIcon: () => <svg data-testid="check-icon" />,
-  DeleteIcon: ({ fill }: any) => <svg data-testid="delete-icon" data-fill={fill} />,
-  Modal: ({ open, closeModal, title, children }: any) =>
-    open ? (
+vi.mock('../shared/Modal/Modal', () => ({
+  Modal: ({ isOpen, onClose, title, children, actions }: any) =>
+    isOpen ? (
       <div data-testid="modal" data-title={title}>
-        <button type="button" onClick={closeModal} data-testid="modal-close">
+        <button type="button" onClick={onClose} data-testid="modal-close">
           close
         </button>
-        {children}
+        <div data-testid="modal-body">{children}</div>
+        <div data-testid="modal-actions">{actions}</div>
       </div>
     ) : null,
-  ModalBody: ({ children }: any) => <div data-testid="modal-body">{children}</div>,
-  ModalButtonPrimary: ({ children, onClick, startIcon, style }: any) => (
-    <button type="button" onClick={onClick} style={style}>
-      {startIcon}
-      <span>{children}</span>
-    </button>
-  ),
-  ModalFooter: ({ children }: any) => <div data-testid="modal-footer">{children}</div>,
-  Typography: ({ children }: any) => <span>{children}</span>,
+}));
+
+vi.mock('@/theme', () => ({
   useTheme: () => ({
     palette: {
       common: { white: '#fff' },
       background: { error: { default: '#f00' } },
     },
   }),
+  styled: (Component: any) => () => {
+    const Styled = ({ children, ...props }: any) =>
+      typeof Component === 'string' ? (
+        React.createElement(Component, props, children)
+      ) : (
+        <Component {...props}>{children}</Component>
+      );
+    return Styled;
+  },
+}));
+
+vi.mock('@sistent/sistent', () => ({
+  CheckCircleIcon: () => <svg data-testid="check-icon" />,
+  DeleteIcon: ({ fill }: any) => <svg data-testid="delete-icon" data-fill={fill} />,
+  ModalButtonPrimary: ({ children, onClick, startIcon, style }: any) => (
+    <button type="button" onClick={onClick} style={style}>
+      {startIcon}
+      <span>{children}</span>
+    </button>
+  ),
+  Typography: ({ children }: any) => <span>{children}</span>,
 }));
 
 describe('UnsavedChangesModal', () => {

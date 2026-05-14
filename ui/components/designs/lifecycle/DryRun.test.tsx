@@ -19,15 +19,20 @@ vi.mock('@sistent/sistent', () => {
       </span>
     ),
     Collapse: ({ children }: any) => <div>{children}</div>,
-    useTheme: () => ({
-      palette: {
-        text: { default: '#000' },
-        background: { error: { default: '#f00' } },
-      },
-    }),
     ErrorIcon: () => <svg data-testid="error-icon" />,
   };
 });
+
+vi.mock('@/theme', () => ({
+  useTheme: () => ({
+    palette: {
+      text: { default: '#000' },
+      background: { error: { default: '#f00' } },
+      error: { dark: '#900', main: '#f00' },
+      success: { main: '#0f0' },
+    },
+  }),
+}));
 
 vi.mock('@/assets/icons', () => ({
   ExpandLess: () => <svg data-testid="expand-less" />,
@@ -51,10 +56,6 @@ vi.mock('../../../machines/validator/designValidator', () => ({
   },
   useDryRunValidationResults: vi.fn(),
   useIsValidatingDryRun: vi.fn(),
-}));
-
-vi.mock('@/themes/index', () => ({
-  NOTIFICATIONCOLORS: { ERROR_DARK: '#dc0', SUCCESS_V2: '#0f0' },
 }));
 
 vi.mock('../../data-formatter', () => ({

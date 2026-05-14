@@ -2,19 +2,45 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import ExportModal from './ExportModal';
+import ExportModal from '../../designs/export/ExportDesignModal';
 
-vi.mock('@sistent/sistent', () => ({
-  Modal: ({ open, onClose, closeModal, title, children }: any) =>
-    open ? (
+const theme = {
+  palette: {
+    primary: { main: '#1a73e8' },
+    border: { normal: '#eee', brand: '#0aa' },
+    icon: { default: '#444' },
+    common: { white: '#fff' },
+  },
+  shadows: ['none', '0px 1px 1px rgba(0,0,0,0.1)'],
+  spacing: (n: number) => `${n * 8}px`,
+};
+
+vi.mock('@/theme', () => ({
+  useTheme: () => theme,
+  styled: (Component: any) => (_styles: any) => {
+    const Styled = ({ children, ...props }: any) =>
+      typeof Component === 'string' ? (
+        React.createElement(Component, props, children)
+      ) : (
+        <Component {...props}>{children}</Component>
+      );
+    return Styled;
+  },
+}));
+
+vi.mock('@/components/shared/Modal', () => ({
+  Modal: ({ isOpen, onClose, title, children }: any) =>
+    isOpen ? (
       <div data-testid="modal" data-title={title}>
-        <button onClick={onClose ?? closeModal} aria-label="close-modal">
+        <button onClick={onClose} aria-label="close-modal">
           Close
         </button>
         {children}
       </div>
     ) : null,
-  ModalBody: ({ children }: any) => <div data-testid="modal-body">{children}</div>,
+}));
+
+vi.mock('@sistent/sistent', () => ({
   ListItem: ({ children, sx }: any) => (
     <li data-testid="export-list-item" data-sx={JSON.stringify(sx || {})}>
       {children}
@@ -35,17 +61,6 @@ vi.mock('@sistent/sistent', () => ({
   ),
   DownloadIcon: () => <svg data-testid="download-icon" />,
   Box: ({ children, sx }: any) => <div data-sx={JSON.stringify(sx || {})}>{children}</div>,
-  useTheme: () => ({
-    palette: {
-      primary: { main: '#1a73e8' },
-      border: { normal: '#eee', brand: '#0aa' },
-      icon: { default: '#444' },
-      common: { white: '#fff' },
-    },
-    shadows: ['none', '0px 1px 1px rgba(0,0,0,0.1)'],
-    spacing: (n: number) => `${n * 8}px`,
-  }),
-  useModal: (props: any) => ({ headerIcon: props?.headerIcon ?? 'icon' }),
 }));
 
 vi.mock('@/assets/icons/technology/kubernetes', () => ({
@@ -130,7 +145,7 @@ describe('ExportModal', () => {
       expect.anything(),
       { id: 'design-1' },
       null,
-      'export=Kubernetes Manifest',
+      'export=Kubernetes+Manifest',
     );
   });
 

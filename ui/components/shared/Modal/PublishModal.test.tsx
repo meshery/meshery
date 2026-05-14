@@ -1,141 +1,84 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
-import PublishModal from './PublishModal';
+import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import PublishModal from '../../designs/PublishDesignModal';
 
 let modalProps: any = null;
-let mockSchemaData: any = { rjsfSchema: { type: 'object' }, uiSchema: {} };
-let mockIsSuccess = true;
-const mockGetMeshModels = vi.fn();
-const mockModifyRJSFSchema = vi.fn((schema: any, _path: string, enumValues: string[]) => ({
-  ...schema,
-  modified: enumValues,
-}));
 
-vi.mock('./Modal', () => ({
-  default: (props: any) => {
+vi.mock('@/components/shared/Modal', () => ({
+  FormModal: (props: any) => {
     modalProps = props;
     return (
-      <div
-        data-testid="rjsf-modal"
-        data-title={props.title}
-        data-submit-btn={props.submitBtnText}
-        data-open={String(props.open)}
-      />
+      <div data-testid="rjsf-modal" data-title={props.title} data-submit-btn={props.submitText}>
+        <button type="button" onClick={() => props.onSubmit?.({ ok: true })}>
+          {props.submitText}
+        </button>
+        <button type="button" onClick={props.onClose}>
+          close
+        </button>
+      </div>
     );
   },
 }));
 
 vi.mock('@sistent/sistent', () => ({
-  PublicIcon: (props: any) => <svg data-testid="public-icon" {...props} />,
+  publishCatalogItemSchema: { type: 'object', __mockId: 'publish' },
+  publishCatalogItemUiSchema: { __mockUi: 'publish' },
 }));
 
-vi.mock('../../../api/meshmodel', () => ({
-  getMeshModels: () => mockGetMeshModels(),
-}));
-
-vi.mock('../../../utils/utils', () => ({
-  modifyRJSFSchema: (...args: any[]) => mockModifyRJSFSchema(...args),
-}));
-
-vi.mock('@/rtk-query/schema', () => ({
-  useGetSchemaQuery: () => ({ data: mockSchemaData, isSuccess: mockIsSuccess }),
+vi.mock('../../designs/design-modal-header', () => ({
+  DesignModalHeaderIcon: () => <svg data-testid="design-modal-header" />,
 }));
 
 describe('PublishModal', () => {
   beforeEach(() => {
     modalProps = null;
-    mockGetMeshModels.mockReset();
-    mockGetMeshModels.mockResolvedValue({
-      models: [{ displayName: 'kubernetes' }, { displayName: 'istio' }],
-    });
-    mockSchemaData = { rjsfSchema: { type: 'object' }, uiSchema: {} };
-    mockIsSuccess = true;
   });
 
-  it('renders an underlying RJSFModal with the publish submit text', () => {
-    render(
-      <PublishModal
-        open={true}
-        title="Publish Design"
-        handleClose={vi.fn()}
-        handleSubmit={vi.fn()}
-      />,
-    );
+  it('renders the publish modal with the fallback schema', () => {
+    render(<PublishModal title="Publish Design" handleClose={vi.fn()} handleSubmit={vi.fn()} />);
 
     expect(screen.getByTestId('rjsf-modal')).toHaveAttribute('data-title', 'Publish Design');
     expect(screen.getByTestId('rjsf-modal')).toHaveAttribute(
       'data-submit-btn',
       'Submit for Approval',
     );
+    expect(modalProps.schema).toEqual({ type: 'object', __mockId: 'publish' });
   });
 
-  it('processes the schema when schema data succeeds', async () => {
-    render(
-      <PublishModal
-        open={true}
-        title="Publish Design"
-        handleClose={vi.fn()}
-        handleSubmit={vi.fn()}
-      />,
-    );
-
-    // Allow microtask
-    await new Promise((resolve) => setTimeout(resolve, 10));
-
-    expect(mockGetMeshModels).toHaveBeenCalled();
-    expect(mockModifyRJSFSchema).toHaveBeenCalledWith(
-      mockSchemaData.rjsfSchema,
-      'properties.compatibility.items.enum',
-      ['istio', 'kubernetes'],
-    );
-  });
-
-  it('falls back to the original schema when fetching meshmodels fails', async () => {
-    mockGetMeshModels.mockRejectedValue(new Error('fail'));
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  it('uses the provided publish form schema when supplied', () => {
+    const publishFormSchema = {
+      rjsfSchema: { type: 'object', __mockId: 'custom' },
+      uiSchema: { __mockUi: 'custom' },
+    };
 
     render(
       <PublishModal
-        open={true}
         title="Publish Design"
         handleClose={vi.fn()}
         handleSubmit={vi.fn()}
+        publishFormSchema={publishFormSchema}
       />,
     );
 
-    await new Promise((resolve) => setTimeout(resolve, 10));
-    expect(errorSpy).toHaveBeenCalled();
-    errorSpy.mockRestore();
+    expect(modalProps.schema).toEqual({ type: 'object', __mockId: 'custom' });
+    expect(modalProps.uiSchema).toEqual({ __mockUi: 'custom' });
   });
 
-  it('does not process the schema if isSuccess is false', async () => {
-    mockIsSuccess = false;
-    mockSchemaData = null;
+  it('calls handleSubmit and handleClose', async () => {
+    const user = userEvent.setup();
+    const handleSubmit = vi.fn();
+    const handleClose = vi.fn();
 
     render(
-      <PublishModal
-        open={false}
-        title="Publish Design"
-        handleClose={vi.fn()}
-        handleSubmit={vi.fn()}
-      />,
+      <PublishModal title="Publish Design" handleClose={handleClose} handleSubmit={handleSubmit} />,
     );
 
-    await new Promise((resolve) => setTimeout(resolve, 10));
-    expect(mockGetMeshModels).not.toHaveBeenCalled();
-  });
+    await user.click(screen.getByRole('button', { name: 'Submit for Approval' }));
+    await user.click(screen.getByRole('button', { name: 'close' }));
 
-  it('passes open prop through to the Modal', () => {
-    render(
-      <PublishModal
-        open={false}
-        title="Publish Design"
-        handleClose={vi.fn()}
-        handleSubmit={vi.fn()}
-      />,
-    );
-
-    expect(screen.getByTestId('rjsf-modal')).toHaveAttribute('data-open', 'false');
+    expect(handleSubmit).toHaveBeenCalledWith({ ok: true });
+    expect(handleClose).toHaveBeenCalledTimes(1);
   });
 });

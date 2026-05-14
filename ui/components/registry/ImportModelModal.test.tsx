@@ -4,26 +4,58 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const importModelReq = vi.fn();
 
-vi.mock('@sistent/sistent', () => ({
-  FormControlLabel: ({ label, control }: any) => (
-    <label>
-      {control}
-      {label}
-    </label>
-  ),
-  Button: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
-  FormControl: ({ children }: any) => <div>{children}</div>,
-  RadioGroup: ({ children }: any) => <div>{children}</div>,
-  Radio: () => <input type="radio" />,
-  Typography: ({ children }: any) => <span>{children}</span>,
-  ModalFooter: ({ children }: any) => <div data-testid="modal-footer">{children}</div>,
-  Box: ({ children }: any) => <div>{children}</div>,
-  Modal: ({ children, open, title }: any) =>
-    open ? <div data-testid={`modal-${title}`}>{children}</div> : null,
-  useTheme: () => ({
-    palette: { background: { surfaces: '#fff' } },
-  }),
-}));
+vi.mock('@sistent/sistent', async (importOriginal) => {
+  const actual = await importOriginal<any>();
+  return {
+    ...actual,
+    FormControlLabel: ({ label, control }: any) => (
+      <label>
+        {control}
+        {label}
+      </label>
+    ),
+    Button: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
+    FormControl: ({ children }: any) => <div>{children}</div>,
+    RadioGroup: ({ children }: any) => <div>{children}</div>,
+    Radio: () => <input type="radio" />,
+    Typography: ({ children }: any) => <span>{children}</span>,
+    ModalButtonPrimary: ({ children, onClick }: any) => (
+      <button onClick={onClick}>{children}</button>
+    ),
+    Box: ({ children }: any) => <div>{children}</div>,
+    EventBus: class {
+      publish() {}
+      on() {
+        return { subscribe: () => ({ unsubscribe() {} }) };
+      }
+      onAny() {
+        return { subscribe: () => ({ unsubscribe() {} }) };
+      }
+    },
+    InfoIcon: () => <svg data-testid="info-icon" />,
+    styled: (Component: any) => () => {
+      const Styled = ({ children, ...props }: any) =>
+        typeof Component === 'string' ? (
+          React.createElement(Component, props, children)
+        ) : (
+          <Component {...props}>{children}</Component>
+        );
+      return Styled;
+    },
+    createTheme: (theme: any = {}) => ({
+      ...theme,
+      breakpoints: theme.breakpoints ?? {
+        values: { xs: 0, sm: 600, md: 900, lg: 1200, xl: 1536 },
+        up: () => '',
+        down: () => '',
+        between: () => '',
+      },
+    }),
+    useTheme: () => ({
+      palette: { background: { surfaces: '#fff' } },
+    }),
+  };
+});
 
 vi.mock('@meshery/schemas', () => ({
   ModelImportRjsfSchemaV1Beta2: {
@@ -34,30 +66,40 @@ vi.mock('@meshery/schemas', () => ({
   ModelImportRjsfUiSchemaV1Beta2: {},
 }));
 
-vi.mock('@/components/shared/Modal/Modal', () => ({
-  RJSFModalWrapper: ({ handleSubmit, helpText }: any) => (
-    <div data-testid="rjsf-wrapper">
-      {helpText}
-      <button
-        data-testid="submit-url"
-        onClick={() => handleSubmit({ uploadType: 'urlImport', url: 'https://x.com' })}
-      >
-        submit-url
-      </button>
-      <button
-        data-testid="submit-empty-url"
-        onClick={() => handleSubmit({ uploadType: 'urlImport', url: '' })}
-      >
-        submit-empty-url
-      </button>
-      <button data-testid="submit-csv" onClick={() => handleSubmit({ uploadType: 'csv' })}>
-        submit-csv
-      </button>
-      <button data-testid="submit-invalid" onClick={() => handleSubmit({ uploadType: 'unknown' })}>
-        submit-invalid
-      </button>
-    </div>
-  ),
+vi.mock('@/components/shared/Modal', () => ({
+  FormModal: ({ isOpen, title, onSubmit, helpText }: any) =>
+    isOpen ? (
+      <div data-testid={`modal-${title}`}>
+        <div data-testid="rjsf-wrapper">
+          {helpText}
+          <button
+            data-testid="submit-url"
+            onClick={() => onSubmit({ uploadType: 'urlImport', url: 'https://x.com' })}
+          >
+            submit-url
+          </button>
+          <button
+            data-testid="submit-empty-url"
+            onClick={() => onSubmit({ uploadType: 'urlImport', url: '' })}
+          >
+            submit-empty-url
+          </button>
+          <button data-testid="submit-csv" onClick={() => onSubmit({ uploadType: 'csv' })}>
+            submit-csv
+          </button>
+          <button data-testid="submit-invalid" onClick={() => onSubmit({ uploadType: 'unknown' })}>
+            submit-invalid
+          </button>
+        </div>
+      </div>
+    ) : null,
+  Modal: ({ children, isOpen, title, actions }: any) =>
+    isOpen ? (
+      <div data-testid={`modal-${title}`}>
+        {children}
+        {actions}
+      </div>
+    ) : null,
 }));
 
 vi.mock('./Stepper/CSVStepper', () => ({
@@ -107,6 +149,7 @@ vi.mock('./Stepper/style', () => ({
 }));
 
 vi.mock('@/store/slices/mesheryUi', () => ({
+  default: () => ({}),
   updateProgress: vi.fn(),
 }));
 
@@ -115,6 +158,7 @@ import ImportModelModal from './ImportModelModal';
 describe('ImportModelModal', () => {
   beforeEach(() => {
     importModelReq.mockReset();
+    importModelReq.mockReturnValue({ unwrap: () => Promise.resolve({}) });
   });
 
   it('renders the main Import Model modal when open', () => {

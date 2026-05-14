@@ -2,7 +2,21 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import TroubleshootingModal from './TroubleshootingModalComponent';
+import TroubleshootingModal from '../Troubleshooting/TroubleshootingModal';
+
+vi.mock('@/components/shared/Modal', () => ({
+  Modal: ({ isOpen, onClose, title, children, actions }: any) =>
+    isOpen ? (
+      <div data-testid="ts-modal">
+        <button onClick={onClose} aria-label="close-modal">
+          close
+        </button>
+        <span>{title}</span>
+        {children}
+        {actions}
+      </div>
+    ) : null,
+}));
 
 vi.mock('@sistent/sistent', () => {
   const styled = (Component: any) => () => {
@@ -37,22 +51,8 @@ vi.mock('@sistent/sistent', () => {
         {children}
       </div>
     ),
-    IconButton: ({ children, onClick, ...rest }: any) => (
-      <button onClick={onClick} {...rest}>
-        {children}
-      </button>
-    ),
     InfoIcon: () => <svg data-testid="info-icon" />,
     LIGHT_TEAL: '#0aa',
-    Modal: ({ open, onClose, children }: any) =>
-      open ? (
-        <div data-testid="ts-modal">
-          <button onClick={onClose} aria-label="close-modal">
-            close
-          </button>
-          {children}
-        </div>
-      ) : null,
     keyframes: () => 'mocked-keyframes',
     styled,
   };
@@ -60,7 +60,6 @@ vi.mock('@sistent/sistent', () => {
 
 vi.mock('@/assets/icons', () => ({
   ExpandMore: () => <svg data-testid="expand-more" />,
-  Close: (props: any) => <svg data-testid="close-icon" {...props} />,
 }));
 
 describe('TroubleshootingModal', () => {
@@ -79,10 +78,7 @@ describe('TroubleshootingModal', () => {
     const setOpen = vi.fn();
     render(<TroubleshootingModal open={true} setOpen={setOpen} />);
 
-    const closeBtn = screen.getByTestId('close-icon').closest('button');
-    expect(closeBtn).toBeInTheDocument();
-    if (closeBtn) await user.click(closeBtn);
-
+    await user.click(screen.getByRole('button', { name: 'close-modal' }));
     expect(setOpen).toHaveBeenCalledWith(false);
   });
 

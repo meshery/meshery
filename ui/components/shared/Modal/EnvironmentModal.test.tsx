@@ -2,30 +2,39 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import EnvironmentModal from './EnvironmentModal';
+import EnvironmentModal from '../../environments/EnvironmentFormModal';
 
-vi.mock('@sistent/sistent', () => ({
-  Modal: ({ open, closeModal, title, headerIcon, maxWidth, children }: any) =>
-    open ? (
-      <div data-testid="modal" data-title={title} data-max-width={maxWidth}>
+vi.mock('@/theme', () => ({
+  useTheme: () => ({
+    palette: { background: { constant: { white: '#ffffff' } } },
+  }),
+  styled: (Component: any) => () => {
+    const Styled = ({ children, ...props }: any) =>
+      typeof Component === 'string' ? (
+        React.createElement(Component, props, children)
+      ) : (
+        <Component {...props}>{children}</Component>
+      );
+    return Styled;
+  },
+}));
+
+vi.mock('@/components/shared/Modal', () => ({
+  Modal: ({ isOpen, onClose, title, headerIcon, size, children }: any) =>
+    isOpen ? (
+      <div data-testid="modal" data-title={title} data-max-width={size}>
         <div data-testid="header-icon">{headerIcon}</div>
-        <button onClick={closeModal} aria-label="close-modal">
+        <button onClick={onClose} aria-label="close-modal">
           Close
         </button>
         {children}
       </div>
     ) : null,
-  ModalBody: ({ children }: any) => <div data-testid="modal-body">{children}</div>,
+}));
+
+vi.mock('@sistent/sistent', () => ({
   EnvironmentIcon: ({ height, width, fill }: any) => (
     <svg data-testid="environment-icon" data-height={height} data-width={width} data-fill={fill} />
-  ),
-  useTheme: () => ({
-    palette: { background: { constant: { white: '#ffffff' } } },
-  }),
-  Box: ({ children, maxHeight }: any) => (
-    <div data-testid="box" data-max-height={maxHeight}>
-      {children}
-    </div>
   ),
 }));
 
@@ -56,11 +65,5 @@ describe('EnvironmentModal', () => {
 
     await user.click(screen.getByRole('button', { name: 'close-modal' }));
     expect(setIsOpenModal).toHaveBeenCalledWith(false);
-  });
-
-  it('wraps the EnvironmentComponent in a Box with max height', () => {
-    render(<EnvironmentModal isOpenModal={true} setIsOpenModal={vi.fn()} />);
-
-    expect(screen.getByTestId('box')).toHaveAttribute('data-max-height', '65vh');
   });
 });

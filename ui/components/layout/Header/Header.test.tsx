@@ -119,74 +119,109 @@ vi.mock('../../registry/RegistryModal', () => ({
   default: () => <div data-testid="registry-modal" />,
 }));
 
-vi.mock('@sistent/sistent', () => ({
-  Checkbox: ({ checked, onChange }: any) => (
-    <input
-      type="checkbox"
-      checked={Boolean(checked)}
-      onChange={(e) => onChange?.(e)}
-      data-testid="header-checkbox"
-      readOnly
-    />
-  ),
-  Box: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  CustomTooltip: ({ children, title }: any) => (
-    <div data-testid="tooltip" data-title={title}>
-      {children}
-    </div>
-  ),
-  Typography: ({ children, ...props }: any) => <span {...props}>{children}</span>,
-  styled: (Component: any) => () => {
-    const Styled = ({ children, ...props }: any) =>
-      typeof Component === 'string' ? (
-        React.createElement(Component, props, children)
-      ) : (
-        <div {...props}>{children}</div>
-      );
-    return Styled;
-  },
-  PROMPT_VARIANTS: { DANGER: 'danger' },
-  TextField: (props: any) => <input data-testid="search-field" {...props} />,
-  ClickAwayListener: ({ children }: any) => <>{children}</>,
-  IconButton: ({ children, onClick, ...props }: any) => (
-    <button type="button" onClick={onClick} {...props}>
-      {children}
-    </button>
-  ),
-  Slide: ({ children, in: open }: any) =>
-    open ? <div data-testid="slide-open">{children}</div> : null,
-  Grid2: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  Hidden: ({ children }: any) => <>{children}</>,
-  NoSsr: ({ children }: any) => <>{children}</>,
-  useTheme: () => ({
-    palette: {
-      background: {
-        secondary: '#222',
-        card: '#fff',
-        constant: { white: '#fff' },
-        brand: { default: '#brand' },
+vi.mock('@sistent/sistent', async (importOriginal) => {
+  const actual = await importOriginal<any>();
+  return {
+    ...actual,
+    createTheme: (theme: any = {}) => ({
+      ...theme,
+      breakpoints: theme.breakpoints ?? {
+        values: { xs: 0, sm: 600, md: 900, lg: 1200, xl: 1536 },
+        up: () => '',
+        down: () => '',
+        between: () => '',
       },
-      common: { white: '#fff' },
-      mode: 'light',
+    }),
+    EventBus: class {
+      publish() {}
+      on() {
+        return { subscribe: () => ({ unsubscribe() {} }) };
+      }
+      onAny() {
+        return { subscribe: () => ({ unsubscribe() {} }) };
+      }
     },
-    breakpoints: {
-      up: () => '',
-      down: () => '',
-      between: () => '',
+    Checkbox: ({ checked, onChange }: any) => (
+      <input
+        type="checkbox"
+        checked={Boolean(checked)}
+        onChange={(e) => onChange?.(e)}
+        data-testid="header-checkbox"
+        readOnly
+      />
+    ),
+    alpha: (color: any) => color,
+    Box: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    Button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+    ButtonGroup: ({ children }: any) => <div>{children}</div>,
+    CustomTooltip: ({ children, title }: any) => (
+      <div data-testid="tooltip" data-title={title}>
+        {children}
+      </div>
+    ),
+    Divider: () => <hr />,
+    Typography: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+    styled: (Component: any) => () => {
+      const Styled = ({ children, ...props }: any) =>
+        typeof Component === 'string' ? (
+          React.createElement(Component, props, children)
+        ) : (
+          <div {...props}>{children}</div>
+        );
+      return Styled;
     },
-    spacing: (val: number) => `${val * 8}px`,
-    shadows: [],
-  }),
-  useMediaQuery: () => useMediaQueryMock(),
-  SearchIcon: () => <svg data-testid="search-icon" />,
-  SettingsIcon: () => <svg data-testid="settings-icon" />,
-  ErrorBoundary: ({ children }: any) => <>{children}</>,
-  darkTeal: { main: '#000' },
-  AppBar: ({ children }: any) => <header>{children}</header>,
-  Toolbar: ({ children }: any) => <div>{children}</div>,
-  Paper: ({ children }: any) => <div>{children}</div>,
-  MenuIcon: () => <svg data-testid="menu-icon" />,
-}));
+    PROMPT_VARIANTS: { DANGER: 'danger' },
+    TextField: (props: any) => <input data-testid="search-field" {...props} />,
+    ClickAwayListener: ({ children }: any) => <>{children}</>,
+    IconButton: ({ children, onClick, ...props }: any) => (
+      <button type="button" onClick={onClick} {...props}>
+        {children}
+      </button>
+    ),
+    Slide: ({ children, in: open }: any) =>
+      open ? <div data-testid="slide-open">{children}</div> : null,
+    Grid2: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    Hidden: ({ children }: any) => <>{children}</>,
+    NoSsr: ({ children }: any) => <>{children}</>,
+    InfoIcon: () => <svg data-testid="info-icon" />,
+    useTheme: () => ({
+      palette: {
+        background: {
+          secondary: '#222',
+          card: '#fff',
+          constant: { white: '#fff' },
+          brand: { default: '#brand' },
+        },
+        common: { white: '#fff' },
+        mode: 'light',
+      },
+      breakpoints: {
+        up: () => '',
+        down: () => '',
+        between: () => '',
+      },
+      spacing: (val: number) => `${val * 8}px`,
+      shadows: [],
+    }),
+    useMediaQuery: () => useMediaQueryMock(),
+    SearchIcon: () => <svg data-testid="search-icon" />,
+    SettingsIcon: () => <svg data-testid="settings-icon" />,
+    ErrorBoundary: ({ children }: any) => <>{children}</>,
+    darkTeal: { main: '#000' },
+    AppBar: ({ children }: any) => <header>{children}</header>,
+    Drawer: ({ children }: any) => <div>{children}</div>,
+    List: ({ children }: any) => <div>{children}</div>,
+    ListItem: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    ListItemButton: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+    ListItemIcon: ({ children }: any) => <span>{children}</span>,
+    ListItemText: ({ primary }: any) => <span>{primary}</span>,
+    Toolbar: ({ children }: any) => <div>{children}</div>,
+    Paper: ({ children }: any) => <div>{children}</div>,
+    charcoal: { 30: '#000' },
+    CaretDownIcon: () => <svg data-testid="caret-down-icon" />,
+    MenuIcon: () => <svg data-testid="menu-icon" />,
+  };
+});
 
 vi.mock('@/utils/can', () => ({
   CanShow: ({ children }: any) => <>{children}</>,
@@ -256,6 +291,7 @@ vi.mock('@/rtk-query/user', () => ({
 }));
 
 vi.mock('@/store/slices/mesheryUi', () => ({
+  default: () => ({}),
   updateK8SConfig: (payload: any) => ({ type: 'ui/updateK8SConfig', payload }),
 }));
 

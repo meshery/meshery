@@ -7,23 +7,15 @@ vi.mock('@sistent/sistent', () => ({
   importDesignUiSchema: { __mockUi: 'import' },
   publishCatalogItemSchema: { type: 'object', __mockId: 'publish' },
   publishCatalogItemUiSchema: { __mockUi: 'publish' },
-  Modal: ({ title, children, closeModal, 'data-testid': testId }: any) => (
-    <div data-testid={testId || 'modal'} data-title={title}>
-      <button type="button" onClick={closeModal}>
-        close
-      </button>
-      {children}
-    </div>
-  ),
 }));
 
-vi.mock('../../shared/Modal/Modal', () => ({
-  RJSFModalWrapper: ({ submitBtnText, schema, handleSubmit, handleClose, helpText }: any) => (
-    <div data-testid="rjsf-modal-wrapper">
-      <button onClick={() => handleSubmit?.({ ok: true })} type="button">
-        {submitBtnText}
+vi.mock('@/components/shared/Modal', () => ({
+  FormModal: ({ title, schema, submitText, onSubmit, onClose, helpText }: any) => (
+    <div data-testid="form-modal" data-title={title}>
+      <button onClick={() => onSubmit?.({ ok: true })} type="button">
+        {submitText}
       </button>
-      <button onClick={handleClose} type="button">
+      <button onClick={onClose} type="button">
         close-wrapper
       </button>
       <span data-testid="schema-id">{schema.__mockId}</span>
@@ -32,19 +24,17 @@ vi.mock('../../shared/Modal/Modal', () => ({
   ),
 }));
 
-vi.mock('../../../public/static/img/drawer-icons/pattern_svg', () => ({
-  default: () => <svg data-testid="pattern-svg" />,
+vi.mock('../design-modal-header', () => ({
+  DesignModalHeaderIcon: () => <svg data-testid="pattern-svg" />,
 }));
 
-import { ImportDesignModal, PublishModal } from './MesheryPatternsModals';
+import ImportDesignModal from '../ImportDesignModal';
+import PublishModal from '../PublishDesignModal';
 
 describe('ImportDesignModal', () => {
   it('renders the Import Design modal with the import schema', () => {
     render(<ImportDesignModal handleClose={vi.fn()} handleImportDesign={vi.fn()} />);
-    expect(screen.getByTestId('import-design-modal')).toHaveAttribute(
-      'data-title',
-      'Import Design',
-    );
+    expect(screen.getByTestId('form-modal')).toHaveAttribute('data-title', 'Import Design');
     expect(screen.getByTestId('schema-id')).toHaveTextContent('import');
   });
 

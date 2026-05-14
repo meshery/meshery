@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import ConfirmationMsg, { SelectDeploymentTarget } from './ConfirmationModal';
+import ConfirmationMsg from '../../designs/lifecycle/DeployConfirmationModal';
 
 const dispatch = vi.fn();
 let selectorState: any = {
@@ -76,6 +76,19 @@ vi.mock('../../layout/Header/Header', () => ({
       {ctx.name}
     </button>
   ),
+}));
+
+vi.mock('@/components/shared/Modal', () => ({
+  Modal: ({ isOpen, onClose, title, children, actions }: any) =>
+    isOpen ? (
+      <div data-testid="sistent-modal" data-title={title}>
+        <button onClick={onClose} aria-label="modal-close">
+          close
+        </button>
+        <div data-testid="modal-body">{children}</div>
+        {actions}
+      </div>
+    ) : null,
 }));
 
 vi.mock('../../connections/ConnectionChip', () => ({
@@ -267,42 +280,6 @@ describe('ConfirmationMsg', () => {
 
     const checkboxes = screen.getAllByTestId('checkbox');
     await user.click(checkboxes[0]);
-    expect(dispatch).toHaveBeenCalledWith({
-      type: 'setK8sContexts',
-      payload: { selectedK8sContexts: ['all'] },
-    });
-  });
-});
-
-describe('SelectDeploymentTarget', () => {
-  beforeEach(() => {
-    dispatch.mockReset();
-  });
-
-  it('renders empty state when there are no contexts', () => {
-    render(<SelectDeploymentTarget k8scontext={[]} selectedK8sContexts={[]} />);
-    expect(screen.getByTestId('k8s-empty')).toHaveTextContent('No active cluster found');
-  });
-
-  it('renders the chips for available contexts', () => {
-    const contexts = [
-      { id: '1', name: 'prod', operatorState: 'ENABLED' },
-      { id: '2', name: 'dev', operatorState: 'ENABLED' },
-    ];
-    render(<SelectDeploymentTarget k8scontext={contexts} selectedK8sContexts={[]} />);
-
-    expect(screen.getByTestId('ctx-chip-1')).toHaveTextContent('prod');
-    expect(screen.getByTestId('ctx-chip-2')).toHaveTextContent('dev');
-  });
-
-  it('dispatches all when select all is checked', async () => {
-    const user = userEvent.setup();
-    const contexts = [{ id: '1', name: 'prod', operatorState: 'ENABLED' }];
-    render(<SelectDeploymentTarget k8scontext={contexts} selectedK8sContexts={[]} />);
-
-    const allCheckbox = screen.getByTestId('checkbox');
-    await user.click(allCheckbox);
-
     expect(dispatch).toHaveBeenCalledWith({
       type: 'setK8sContexts',
       payload: { selectedK8sContexts: ['all'] },

@@ -2,20 +2,31 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import ConnectionModal from './ConnectionModal';
+import ConnectionModal from '../../connections/ConnectionFormModal';
 
-vi.mock('@sistent/sistent', () => ({
-  Modal: ({ open, closeModal, title, headerIcon, maxWidth, children }: any) =>
-    open ? (
-      <div data-testid="modal" data-title={title} data-max-width={maxWidth}>
+vi.mock('@/theme', () => ({
+  styled: (Component: any) => () => {
+    const Styled = ({ children, ...props }: any) =>
+      typeof Component === 'string' ? (
+        React.createElement(Component, props, children)
+      ) : (
+        <Component {...props}>{children}</Component>
+      );
+    return Styled;
+  },
+}));
+
+vi.mock('@/components/shared/Modal', () => ({
+  Modal: ({ isOpen, onClose, title, headerIcon, size, children }: any) =>
+    isOpen ? (
+      <div data-testid="modal" data-title={title} data-max-width={size}>
         <div data-testid="header-icon">{headerIcon}</div>
-        <button onClick={closeModal} aria-label="close-modal">
+        <button onClick={onClose} aria-label="close-modal">
           Close
         </button>
         {children}
       </div>
     ) : null,
-  ModalBody: ({ children }: any) => <div data-testid="modal-body">{children}</div>,
 }));
 
 vi.mock('@/assets/icons/Connection', () => ({
@@ -85,26 +96,19 @@ describe('ConnectionModal', () => {
     expect(setIsOpenModal).toHaveBeenCalledWith(false);
   });
 
-  it('forwards the meshsync and connection metadata state to the table', () => {
-    const controllerState = { status: 'running' };
-    const metadataState = { foo: 'bar' };
-
+  it('keeps rendering the connection table when compatibility props are passed', () => {
     render(
       <ConnectionModal
         isOpenModal={true}
         setIsOpenModal={vi.fn()}
-        meshsyncControllerState={controllerState}
-        connectionMetadataState={metadataState}
+        meshsyncControllerState={{ status: 'running' }}
+        connectionMetadataState={{ foo: 'bar' }}
       />,
     );
 
     expect(screen.getByTestId('connection-table')).toHaveAttribute(
-      'data-controller',
-      JSON.stringify(controllerState),
-    );
-    expect(screen.getByTestId('connection-table')).toHaveAttribute(
-      'data-metadata',
-      JSON.stringify(metadataState),
+      'data-selected-filter',
+      'kubernetes',
     );
   });
 });

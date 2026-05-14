@@ -13,17 +13,40 @@ vi.mock('next/router', () => ({
   }),
 }));
 
-vi.mock('@sistent/sistent', () => ({
-  Button: ({ children, onClick }: any) => (
-    <button onClick={onClick} data-testid={`btn-${String(children).trim()}`}>
-      {children}
-    </button>
-  ),
-  NoSsr: ({ children }: any) => <>{children}</>,
-  AddCircleIcon: () => <svg data-testid="add-icon" />,
-  ExternalLinkIcon: () => <svg data-testid="ext-icon" />,
-  FileUploadIcon: () => <svg data-testid="upload-icon" />,
-}));
+vi.mock('@sistent/sistent', async (importOriginal) => {
+  const actual = await importOriginal<any>();
+  return {
+    ...actual,
+    createTheme: (theme: any = {}) => ({
+      ...theme,
+      breakpoints: theme.breakpoints ?? {
+        values: { xs: 0, sm: 600, md: 900, lg: 1200, xl: 1536 },
+        up: () => '',
+        down: () => '',
+        between: () => '',
+      },
+    }),
+    EventBus: class {
+      publish() {}
+      on() {
+        return { subscribe: () => ({ unsubscribe() {} }) };
+      }
+      onAny() {
+        return { subscribe: () => ({ unsubscribe() {} }) };
+      }
+    },
+    Button: ({ children, onClick }: any) => (
+      <button onClick={onClick} data-testid={`btn-${String(children).trim()}`}>
+        {children}
+      </button>
+    ),
+    NoSsr: ({ children }: any) => <>{children}</>,
+    AddCircleIcon: () => <svg data-testid="add-icon" />,
+    ExternalLinkIcon: () => <svg data-testid="ext-icon" />,
+    FileUploadIcon: () => <svg data-testid="upload-icon" />,
+    InfoIcon: () => <svg data-testid="info-icon" />,
+  };
+});
 
 vi.mock('../../constants/navigator', () => ({
   MODELS: 'Models',
@@ -88,6 +111,47 @@ vi.mock('@/components/relationship-builder/CreateRelationshipModal', () => ({
 
 vi.mock('css/icons.styles', () => ({
   iconSmall: {},
+}));
+
+vi.mock('../layout/Navigator/navigatorComponents', () => ({
+  drawerIconsStyle: {},
+  getNavigatorComponents: () => [],
+}));
+
+vi.mock('../AppComponents', () => ({
+  Footer: () => null,
+  KubernetesSubscription: () => null,
+  NavigationBar: () => null,
+}));
+
+vi.mock('../layout/Header/Header', () => ({
+  default: () => null,
+  K8sContextConnectionChip: () => null,
+}));
+
+vi.mock('../subscription/helpers', () => ({
+  MESHERY_CONTROLLER_SUBSCRIPTION: 'MESHERY_CONTROLLER_SUBSCRIPTION',
+  fnMapping: {},
+  isControllerObjectEqual: () => true,
+}));
+
+vi.mock('../general/error-404', () => ({
+  default: () => null,
+}));
+
+vi.mock('../general/error-404/index', () => ({
+  default: () => null,
+}));
+
+vi.mock('../../ui.config', () => ({
+  default: {
+    loadingComponent: null,
+    loadingComponentDark: null,
+  },
+}));
+
+vi.mock('machines/operationsCenter', () => ({
+  OPERATION_CENTER_EVENTS: { EVENT_RECEIVED_FROM_SERVER: 'event' },
 }));
 
 import MeshModelComponent from './MeshModelComponent';
