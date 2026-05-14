@@ -3,7 +3,8 @@ import { reactJsonTheme } from '../registry/helper';
 import dynamic from 'next/dynamic';
 import { SectionBody, ArrayFormatter, SectionHeading } from '../data-formatter';
 import _ from 'lodash';
-import { Grid2, useTheme, Typography, styled, Box } from '@sistent/sistent';
+import { Grid2, Typography, styled, Box } from '@sistent/sistent';
+import { useTheme } from '@/theme';
 
 type FormatterMap = Record<string, (value: any) => React.ReactNode>;
 type ResourceFormatterProps = {
@@ -30,7 +31,7 @@ export const ColourContainer = styled('div')(({ theme }) => ({
 
 export const JSONViewFormatter = ({ data }: ResourceFormatterProps) => {
   const theme = useTheme();
-  const rjvTheme = reactJsonTheme(theme);
+  const rjvTheme = React.useMemo(() => reactJsonTheme(theme), [theme]);
 
   return (
     <ReactJson
