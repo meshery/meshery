@@ -1,12 +1,10 @@
 ---
-title: REST API
+title: REST API Overview
 description: Meshery REST API documentation
 data: openapi
 aliases: 
 - /reference/rest-apis/swagger
 ---
-
-## Meshery REST API specifications
 
 Meshery's REST API specifications are now maintained and published from the [meshery/schemas](https://github.com/meshery/schemas) repository.
 
@@ -86,6 +84,6 @@ Using curl, you can access Meshery's REST API by executing this command:
 
 </details>
 
-## Endpoints
+## Endpoint Reference
 
 See the published Meshery OpenAPI bundles in [meshery/schemas](https://github.com/meshery/schemas) for the authoritative REST API definitions.
