@@ -256,7 +256,7 @@ function MesheryPatternGrid({
 
       {canPublishPattern && publishModal.open && (
         <PublishDesignModal
-          title={publishModal.pattern?.name}
+          title={publishModal.pattern?.name || ''}
           handleClose={handlePublishModalClose}
           handleSubmit={handlePublish}
           publishFormSchema={publishSchema}

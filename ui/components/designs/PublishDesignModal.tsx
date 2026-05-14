@@ -60,7 +60,7 @@ const PublishDesignModalComponent: FC<PublishDesignModalProps> = ({
       uiSchema={uiSchema}
       submitText="Submit for Approval"
       onSubmit={handleSubmit}
-      helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+      helpText="Upon submitting your catalog item, an approval flow will be initiated. [Learn more](https://docs.meshery.io/concepts/catalog)"
     />
   );
 };

@@ -11,7 +11,7 @@
  * User-facing export choices are preserved verbatim: Meshery YAML, OCI image,
  * Kubernetes manifest, Helm chart, plus any extension-supplied options.
  */
-import { FC, MouseEvent, ReactNode } from 'react';
+import { FC, MouseEvent, ReactNode, useMemo, memo } from 'react';
 import {
   Box,
   DownloadIcon,
@@ -113,7 +113,7 @@ export interface ExportDesignModalProps {
   extensionExportOptions?: ExportDesignOption[];
 }
 
-const ExportDesignModal: FC<ExportDesignModalProps> = ({
+const ExportDesignModalComponent: FC<ExportDesignModalProps> = ({
   downloadModal,
   handleDownloadDialogClose,
   handleDesignDownload,
@@ -121,61 +121,81 @@ const ExportDesignModal: FC<ExportDesignModalProps> = ({
 }) => {
   const theme = useTheme();
 
-  const baseOptions: ExportDesignOption[] = [
-    {
-      title: 'Meshery Design (yaml)',
-      icon: <PatternIcon width="30" height="30" fill={theme.palette.primary.main} />,
-      onClick: (e) => handleDesignDownload(e, downloadModal.content),
-      description:
-        'Export your design as a complete, self-contained Meshery Design file (YAML). This file includes embedded images and all configuration details. It&apos;s the perfect format for creating backups, sharing with colleagues using Meshery, or transferring designs between Meshery environments without losing any information (lossless transfer).',
-    },
-    {
-      title: 'Meshery Design (OCI image)',
-      icon: <OCIImageIcon width={30} height={30} />,
-      onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'oci=true'),
-      description:
-        'Download your design as an OCI compatible container image, which can be pushed to and pulled from container registries like Docker Hub, AWS ECR, and so on.',
-    },
-    {
-      title: 'Kubernetes Manifest (yaml)',
-      icon: <KubernetesIcon width="30" height="30" />,
-      onClick: (e) =>
-        handleDesignDownload(e, downloadModal.content, null, 'export=Kubernetes Manifest'),
-      description: (
-        <div>
-          <p>
-            Download your design as a standard Kubernetes Manifest file. This file contains the
-            Kubernetes resource definitions from your design and can be directly applied to a
-            cluster using tools `kubectl`.
-          </p>
-          <p>
-            <strong>Lossy Export:</strong> This process strips out Meshery-specific information
-            (e.g., visual arrangement, comments, and so on). The resulting manifest only includes
-            the core Kubernetes resource definitions, not the extra context that might be present in
-            your Meshery design.
-          </p>
-        </div>
-      ),
-    },
-    {
-      title: 'Helm Chart (tar.gz)',
-      icon: <HelmIcon width="30" height="30" />,
-      onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'export=helm-chart'),
-      disabled: false,
-      description: (
-        <div>
-          <p>Download your design as a Helm Chart.</p>
-          <p>
-            <strong>Lossy Export:</strong> This process strips out Meshery-specific information
-            (e.g., visual arrangement, comments, and so on). The resulting manifest only includes
-            the core Kubernetes resource definitions, not the extra context that might be present in
-            your Meshery design.
-          </p>
-        </div>
-      ),
-    },
-    ...extensionExportOptions,
-  ];
+  const baseOptions: ExportDesignOption[] = useMemo(
+    () => [
+      {
+        title: 'Meshery Design (yaml)',
+        icon: <PatternIcon width="30" height="30" fill={theme.palette.primary.main} />,
+        onClick: (e) => handleDesignDownload(e, downloadModal.content),
+        description:
+          'Export your design as a complete, self-contained Meshery Design file (YAML). This file includes embedded images and all configuration details. It&apos;s the perfect format for creating backups, sharing with colleagues using Meshery, or transferring designs between Meshery environments without losing any information (lossless transfer).',
+      },
+      {
+        title: 'Meshery Design (OCI image)',
+        icon: <OCIImageIcon width={30} height={30} />,
+        onClick: (e) =>
+          handleDesignDownload(
+            e,
+            downloadModal.content,
+            null,
+            new URLSearchParams({ oci: 'true' }).toString(),
+          ),
+        description:
+          'Download your design as an OCI compatible container image, which can be pushed to and pulled from container registries like Docker Hub, AWS ECR, and so on.',
+      },
+      {
+        title: 'Kubernetes Manifest (yaml)',
+        icon: <KubernetesIcon width="30" height="30" />,
+        onClick: (e) =>
+          handleDesignDownload(
+            e,
+            downloadModal.content,
+            null,
+            new URLSearchParams({ export: 'Kubernetes Manifest' }).toString(),
+          ),
+        description: (
+          <div>
+            <p>
+              Download your design as a standard Kubernetes Manifest file. This file contains the
+              Kubernetes resource definitions from your design and can be directly applied to a
+              cluster using tools like `kubectl`.
+            </p>
+            <p>
+              <strong>Lossy Export:</strong> This process strips out Meshery-specific information
+              (e.g., visual arrangement, comments, and so on). The resulting manifest only includes
+              the core Kubernetes resource definitions, not the extra context that might be present
+              in your Meshery design.
+            </p>
+          </div>
+        ),
+      },
+      {
+        title: 'Helm Chart (tar.gz)',
+        icon: <HelmIcon width="30" height="30" />,
+        onClick: (e) =>
+          handleDesignDownload(
+            e,
+            downloadModal.content,
+            null,
+            new URLSearchParams({ export: 'helm-chart' }).toString(),
+          ),
+        disabled: false,
+        description: (
+          <div>
+            <p>Download your design as a Helm Chart.</p>
+            <p>
+              <strong>Lossy Export:</strong> This process strips out Meshery-specific information
+              (e.g., visual arrangement, comments, and so on). The resulting manifest only includes
+              the core Kubernetes resource definitions, not the extra context that might be present
+              in your Meshery design.
+            </p>
+          </div>
+        ),
+      },
+      ...extensionExportOptions,
+    ],
+    [theme, handleDesignDownload, downloadModal.content, extensionExportOptions],
+  );
 
   return (
     <Modal
@@ -198,5 +218,9 @@ const ExportDesignModal: FC<ExportDesignModalProps> = ({
     </Modal>
   );
 };
+
+ExportDesignModalComponent.displayName = 'ExportDesignModal';
+
+export const ExportDesignModal = memo(ExportDesignModalComponent);
 
 export default ExportDesignModal;
