@@ -106,10 +106,7 @@ const renderMenu = (
       {selectedAdapterOps
         .sort((adap1, adap2) => adap1.value.localeCompare(adap2.value))
         .map(({ key, value }) => (
-          <MenuItem
-            key={`${key}_${new Date().getTime()}`}
-            onClick={onMenuItemClick(cat, key, isDelete)}
-          >
+          <MenuItem key={key} onClick={onMenuItemClick(cat, key, isDelete)}>
             {value}
           </MenuItem>
         ))}
