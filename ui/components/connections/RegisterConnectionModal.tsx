@@ -12,6 +12,7 @@ import { useCancelConnectionRegisterMutation } from '@/rtk-query/connection';
 import { useDeleteMeshsyncResourceMutation } from '@/rtk-query/meshsync';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
+import { getErrorMessage } from './ConnectionTable.constants';
 import CustomizedSteppers from './meshSync/Stepper';
 
 interface RegisterConnectionModalProps {
@@ -36,12 +37,19 @@ const RegisterConnectionModal: FC<RegisterConnectionModalProps> = ({
   const [deleteMeshsyncResource] = useDeleteMeshsyncResourceMutation();
 
   const cancelConnectionRegister = (id?: string) => {
-    cancelConnection({ body: JSON.stringify({ id }) })
+    if (!id) return;
+    cancelConnection({ body: { id } })
       .unwrap()
       .then(() => {
         notify({
           message: 'Connection registration cancelled.',
           event_type: EVENT_TYPES.INFO,
+        });
+      })
+      .catch((error) => {
+        notify({
+          message: `Failed to cancel registration: ${getErrorMessage(error)}`,
+          event_type: EVENT_TYPES.ERROR,
         });
       });
   };
@@ -52,7 +60,8 @@ const RegisterConnectionModal: FC<RegisterConnectionModalProps> = ({
   };
 
   const handleRegistrationComplete = (resourceId?: string) => {
-    deleteMeshsyncResource({ resourceId })
+    if (!resourceId) return;
+    deleteMeshsyncResource(resourceId)
       .unwrap()
       .then(() => {
         notify({
@@ -62,7 +71,7 @@ const RegisterConnectionModal: FC<RegisterConnectionModalProps> = ({
       })
       .catch((error) => {
         notify({
-          message: `Failed to register connection: ${error}`,
+          message: `Failed to register connection: ${getErrorMessage(error)}`,
           event_type: EVENT_TYPES.ERROR,
         });
       });
@@ -74,7 +83,6 @@ const RegisterConnectionModal: FC<RegisterConnectionModalProps> = ({
       onClose={handleClose}
       title="Register Connection"
       size="md"
-      aria-labelledby="form-dialog-title"
     >
       <CustomizedSteppers
         formConnectionIdRef
