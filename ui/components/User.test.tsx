@@ -194,7 +194,10 @@ describe('User component', () => {
     await waitFor(() => expect(ExtensionPointSchemaValidator).toHaveBeenCalledWith('account'));
 
     await user.click(screen.getByTestId('icon-button-avatar'));
-    // The component assigns the URL string directly to window.location.
+    // User.tsx does `window.location = profileUrl` — it assigns the URL
+    // STRING directly to window.location (not to window.location.href).
+    // After that, window.location is the string itself, so we coerce it
+    // back via String() to assert what the source wrote.
     expect(String(window.location)).toContain('https://cloud.test/profile');
   });
 
