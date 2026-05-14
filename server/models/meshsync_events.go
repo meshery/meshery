@@ -328,14 +328,6 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 		}
 	}()
 
-	if !mh.dbHandler.Migrator().HasTable(&component.ComponentDefinition{}) {
-		mh.log.Debug("Component registry table unavailable while looking up metadata for apiVersion: ", apiVersion, " kind: ", kind, ". Using default metadata.")
-		componentDef = component.ComponentDefinition{
-			Styles: &K8sMeshModelMetadata.Styles,
-		}
-		return
-	}
-
 	// Query the database for the complete component definition.
 	result := mh.dbHandler.Model(component.ComponentDefinition{}).
 		Where("component->>'version' = ? AND component->>'kind' = ?", apiVersion, kind).
@@ -344,7 +336,7 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			mh.log.Debug("No component definition found for apiVersion: ", apiVersion, " kind: ", kind, ". Using default metadata.")
-		} else if isMissingTableError(result.Error) {
+		} else if isMissingTableError(result.Error, component.ComponentDefinition{}.TableName()) {
 			mh.log.Debug("Component registry table unavailable while looking up metadata for apiVersion: ", apiVersion, " kind: ", kind, ". Using default metadata.")
 		} else {
 			mh.log.Error(ErrDBRead(result.Error))
@@ -356,12 +348,14 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 		return
 	}
 
-	if componentDef.ModelID != nil && mh.dbHandler.Migrator().HasTable(&modelv1beta1.ModelDefinition{}) {
+	if componentDef.ModelID != nil {
 		modelDef := modelv1beta1.ModelDefinition{}
-		result = mh.dbHandler.Where("id = ?", componentDef.ModelID).First(&modelDef)
+		result = mh.dbHandler.Session(&gorm.Session{NewDB: true}).Model(&modelv1beta1.ModelDefinition{}).
+			Where("id = ?", componentDef.ModelID).
+			First(&modelDef)
 		if result.Error == nil {
 			componentDef.Model = &modelDef
-		} else if result.Error != gorm.ErrRecordNotFound && !isMissingTableError(result.Error) {
+		} else if result.Error != gorm.ErrRecordNotFound && !isMissingTableError(result.Error, modelv1beta1.ModelDefinition{}.TableName()) {
 			mh.log.Error(ErrDBRead(result.Error))
 		}
 	}
@@ -369,14 +363,16 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 	return
 }
 
-func isMissingTableError(err error) bool {
+func isMissingTableError(err error, tableName string) bool {
 	if err == nil {
 		return false
 	}
 
 	msg := strings.ToLower(err.Error())
 
-	return strings.Contains(msg, "no such table") || strings.Contains(msg, "does not exist")
+	return strings.Contains(msg, "no such table: "+tableName) ||
+		strings.Contains(msg, `relation "`+tableName+`" does not exist`) ||
+		strings.Contains(msg, "."+tableName+"' doesn't exist")
 }
 
 func (mh *MeshsyncDataHandler) Resync() error {
