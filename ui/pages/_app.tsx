@@ -60,6 +60,7 @@ import './styles/AnimatedMeshery.css';
 import './styles/AnimatedMeshPattern.css';
 import './styles/AnimatedMeshSync.css';
 import PlaygroundMeshDeploy from './extension/AccessMesheryModal';
+import SessionModals from '../components/SessionModals';
 import Router from 'next/router';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from '../lib/relayEnvironment';
@@ -438,7 +439,9 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
 
   useEffect(() => {
     startSessionTimer();
+  }, []);
 
+  useEffect(() => {
     const loadAll = async () => {
       try {
         loadConfigFromServer();
@@ -589,6 +592,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                         closeForm={() => setState((prevState) => ({ ...prevState, isOpen: false }))}
                         isOpen={state.isOpen}
                       />
+                      <SessionModals />
                     </RegistryModalContextProvider>
                   </WorkspaceModalContextProvider>
                 </LoadSessionGuard>
