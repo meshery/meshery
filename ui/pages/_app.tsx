@@ -59,7 +59,7 @@ import './styles/AnimatedFilter.css';
 import './styles/AnimatedMeshery.css';
 import './styles/AnimatedMeshPattern.css';
 import './styles/AnimatedMeshSync.css';
-import PlaygroundMeshDeploy from './extension/AccessMesheryModal';
+import PlaygroundMeshDeploy from '../components/layout/AccessMesheryModal';
 import Router from 'next/router';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from '../lib/relayEnvironment';
