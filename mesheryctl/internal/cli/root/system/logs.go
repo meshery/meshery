@@ -93,7 +93,7 @@ mesheryctl system logs meshery-istio
 			return ErrHealthCheckFailed(err)
 		}
 		// execute healthchecks
-		err = hc.RunPreflightHealthChecks()
+		err = hc.RunPreflightHealthChecks(cmd.Context())
 		if err != nil {
 			cmd.SilenceUsage = true
 		}

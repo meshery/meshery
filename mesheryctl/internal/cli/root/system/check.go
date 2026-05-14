@@ -153,6 +153,7 @@ mesheryctl system check --operator
 		return mesheryctlflags.ValidateCmdFlags(cmd, &systemCheckFlags)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		cmdCtx := cmd.Context()
 		hco := &HealthCheckOptions{
 			PrintLogs:  true,
 			IsPreRunE:  false,
@@ -165,7 +166,7 @@ mesheryctl system check --operator
 
 		runPreflightCheck := systemCheckFlags.Pre || systemCheckFlags.Preflight
 		if runPreflightCheck {
-			err := hc.RunPreflightHealthChecks()
+			err := hc.RunPreflightHealthChecks(cmdCtx)
 			if err != nil {
 				return err
 			}
@@ -226,12 +227,13 @@ mesheryctl system check --operator
 		hc.Options.RunKubernetesChecks = currPlatform == platformKubernetes
 		// if platform is kubernetes only then run operator checks as well since operator is only supported on kubernetes
 		hc.Options.RunOperatorChecks = currPlatform == platformKubernetes
-		return hc.Run()
+		return hc.Run(cmdCtx)
 	},
 }
 
+
 // Run triggers all the healthchecks according to the requirements defined from struct HealthChecks
-func (hc *HealthChecker) Run() error {
+func (hc *HealthChecker) Run(ctx context.Context) error {
 	// Run meshery docker checks
 	if hc.Options.RunDockerChecks {
 		if err := hc.runDockerHealthChecks(); err != nil {
@@ -240,7 +242,7 @@ func (hc *HealthChecker) Run() error {
 	}
 	// Run meshery kubernetes checks
 	if hc.Options.RunKubernetesChecks {
-		if err := hc.runKubernetesHealthChecks(); err != nil {
+		if err := hc.runKubernetesHealthChecks(ctx); err != nil {
 			return err
 		}
 	}
@@ -267,7 +269,7 @@ func (hc *HealthChecker) Run() error {
 }
 
 // Run preflight healthchecks to verify environment health
-func (hc *HealthChecker) RunPreflightHealthChecks() error {
+func (hc *HealthChecker) RunPreflightHealthChecks(ctx context.Context) error {
 	// Docker healthchecks are only invoked when it's not a PreRunExecution
 	// or it's a PreRunExecution and current platform is docker
 	if !hc.Options.IsPreRunE || (hc.Options.IsPreRunE && hc.context.Platform == platformDocker) {
@@ -280,7 +282,7 @@ func (hc *HealthChecker) RunPreflightHealthChecks() error {
 	// invoked when it's not a PreRunExecution
 	// or it's a PreRunExecution and current platform is kubernetes
 	if !hc.Options.IsPreRunE || (hc.Options.IsPreRunE && hc.context.Platform == platformKubernetes) {
-		if err := hc.runKubernetesHealthChecks(); err != nil {
+		if err := hc.runKubernetesHealthChecks(ctx); err != nil {
 			return err
 		}
 	}
@@ -373,7 +375,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 }
 
 // Run healthchecks to verify if kubernetes client can be initialized and can be queried
-func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
+func (hc *HealthChecker) runKubernetesAPIHealthCheck(ctx context.Context) error {
 	if hc.Options.PrintLogs {
 		utils.Log.Info("\nKubernetes API \n--------------")
 	}
@@ -399,10 +401,10 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 	}
 
 	//Check whether kubernetes can be queried
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	timeoutCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 	podInterface := client.KubeClient.CoreV1().Pods("")
-	_, err = podInterface.List(ctx, v1.ListOptions{})
+	_, err = podInterface.List(timeoutCtx, v1.ListOptions{})
 	if err != nil {
 		if hc.context.Platform == platformKubernetes { // increase failure count
 			failure++
@@ -478,9 +480,9 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 }
 
 // runKubernetesHealthChecks runs checks regarding k8s api and k8s plus kubectl version
-func (hc *HealthChecker) runKubernetesHealthChecks() error {
+func (hc *HealthChecker) runKubernetesHealthChecks(ctx context.Context) error {
 	// Run k8s API healthchecks
-	if err := hc.runKubernetesAPIHealthCheck(); err != nil {
+	if err := hc.runKubernetesAPIHealthCheck(ctx); err != nil {
 		return err
 	}
 	// Run k8s plus kubectl minimum version healthchecks
