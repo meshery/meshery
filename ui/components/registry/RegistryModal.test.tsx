@@ -67,7 +67,7 @@ vi.mock('@sistent/sistent', () => ({
         ...override,
         palette: { ...theme.palette, ...(override?.palette || {}) },
         transitions: { ...theme.transitions, ...(override?.transitions || {}) },
-        breakpoints: override?.breakpoints || theme.breakpoints,
+        breakpoints: { ...theme.breakpoints, ...(override?.breakpoints || {}) },
         spacing: override?.spacing || theme.spacing,
       }),
       createStableTheme(),
