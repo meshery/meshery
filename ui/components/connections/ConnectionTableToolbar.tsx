@@ -2,6 +2,7 @@ import React from 'react';
 import { CustomColumnVisibilityControl, SearchBar, UniversalFilter } from '@sistent/sistent';
 import { CreateButton } from './styles';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+import { styled } from '@/theme';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
 import type { SelectedFilters } from './ConnectionTable.types';
@@ -18,6 +19,13 @@ type ConnectionTableToolbarProps = {
   columnVisibility: Record<string, boolean | undefined>;
   setColumnVisibility: (visibility: Record<string, boolean | undefined>) => void;
 };
+
+const ToolbarActions = styled('div')(() => ({
+  display: 'flex',
+  borderRadius: '0.5rem 0.5rem 0 0',
+  width: '100%',
+  justifyContent: 'flex-end',
+}));
 
 export const ConnectionTableToolbar = ({
   isSearchExpanded,
@@ -36,14 +44,7 @@ export const ConnectionTableToolbar = ({
       <CreateButton>
         <MesherySettingsEnvButtons />
       </CreateButton>
-      <div
-        style={{
-          display: 'flex',
-          borderRadius: '0.5rem 0.5rem 0 0',
-          width: '100%',
-          justifyContent: 'flex-end',
-        }}
-      >
+      <ToolbarActions>
         <div data-testid="ConnectionTable-search">
           <SearchBar
             onSearch={onSearch}
@@ -67,7 +68,7 @@ export const ConnectionTableToolbar = ({
           columns={getVisibilityColums(columns)}
           customToolsProps={{ columnVisibility, setColumnVisibility }}
         />
-      </div>
+      </ToolbarActions>
     </ToolWrapper>
   );
 };
