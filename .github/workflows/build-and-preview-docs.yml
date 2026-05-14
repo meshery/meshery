@@ -1,7 +1,7 @@
 name: Build and Preview Docs
 
 on:
-  pull_request_target:
+  pull_request:
     branches: [master]
     types: [opened, synchronize, reopened, closed]
     paths:
@@ -24,6 +24,7 @@ defaults:
 
 jobs:
   build-and-deploy-preview:
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
     outputs:
       removed_prs_json: ${{ steps.prune-previews.outputs.removed_prs_json }}
@@ -33,7 +34,7 @@ jobs:
 
     steps:
       - name: Checkout PR code
-        if: github.event.action != 'closed'
+        if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/checkout@v6
         with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
@@ -43,7 +44,7 @@ jobs:
           fetch-depth: 0
 
       - name: Checkout for cleanup
-        if: github.event.action == 'closed'
+        if: github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/checkout@v6
         with:
           ref: gh-pages
@@ -87,7 +88,7 @@ jobs:
           EOF
 
       - name: Deploy PR preview
-        if: github.event.action != 'closed'
+        if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
         uses: rossjrw/pr-preview-action@v1.6.3
         with:
           source-dir: ./docs/public
@@ -97,7 +98,7 @@ jobs:
           comment: false
 
       - name: Checkout gh-pages for preview retention
-        if: github.event.action != 'closed'
+        if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/checkout@v6
         with:
           ref: gh-pages
@@ -147,7 +148,7 @@ jobs:
           echo "removed_prs_json=$(printf '%s\n' "${removed_prs[@]}" | jq -R . | jq -sc .)" >> "$GITHUB_OUTPUT"
 
       - name: Comment PR with Preview URL
-        if: github.event.action != 'closed'
+        if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: pr-preview
@@ -156,7 +157,7 @@ jobs:
             > *Note: Preview may take a moment (GitHub Pages deployment in progress). Please wait and refresh. Track deployment [here](https://github.com/${{ github.repository }}/actions/workflows/pages/pages-build-deployment)*
 
       - name: Comment on pruned previews
-        if: github.event.action != 'closed' && steps.prune-previews.outputs.removed_prs_json != '[]'
+        if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository && steps.prune-previews.outputs.removed_prs_json != '[]'
         uses: actions/github-script@v7
         env:
           REMOVED_PRS_JSON: ${{ steps.prune-previews.outputs.removed_prs_json }}
@@ -206,7 +207,7 @@ jobs:
             }
 
       - name: Cleanup PR preview on close
-        if: github.event.action == 'closed'
+        if: github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
         uses: rossjrw/pr-preview-action@v1.6.3
         with:
           preview-branch: gh-pages
