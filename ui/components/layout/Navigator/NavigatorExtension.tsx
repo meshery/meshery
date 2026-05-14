@@ -29,7 +29,7 @@ import Troubleshoot from '../../TroubleshootingComponent';
 import TypingFilter from '@/components/shared/FormFields/typing-filter';
 import CreateModelModal from '../../registry/CreateModelModal';
 import ImportModelModal from '../../registry/ImportModelModal';
-import { ViewInfoModal } from '../../shared/Modal/ViewInfoModal';
+import { ViewInfoModal } from '../../workspaces/ViewInfoModal';
 import { selectK8sConfig, selectSelectedK8sClusters } from '@/store/slices/mesheryUi';
 import { useSelector } from 'react-redux';
 import { store } from '../../../store';
