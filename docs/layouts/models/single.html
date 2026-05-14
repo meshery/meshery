@@ -44,10 +44,13 @@
     {{ partialCached "integration/models-components.html" . }}
     {{ partialCached "integration/meshery-registry.html" . }}
 
-    <section>
-        <h3 id="related-designs-header">Designs containing {{ .Title }}</h3>
-        {{ $tech := path.Base (strings.TrimSuffix "/" .Params.docURL) }}
-        <ul>
+    <!-- Related Designs -->
+    {{ $tech := "" }}
+    {{ with .Params.docURL }}
+        {{ $tech = path.Base (strings.TrimSuffix "/" .) }}
+    {{ end }}
+    {{ $matchedDesigns := slice }}
+    {{ if $tech }}
         {{ $catalogRoot := "catalog" }}
         {{ range readDir $catalogRoot }}
             {{ if .IsDir }}
@@ -62,18 +65,65 @@
                             {{ $meta := transform.Unmarshal (index $parts 1) }}
                             {{ $compatibility := index $meta "compatibility" }}
                             {{ if and $compatibility (in $compatibility $tech) }}
-            <li class="design-link">
-                <a href="https://meshery.io/catalog/{{ $catalogType }}/{{ replace (index $meta "name") "." "-" | urlize }}-{{ index $meta "patternId" }}" target="_blank">
-                    {{ index $meta "name" }}
-                </a>
-            </li>
+                                {{ $matchedDesigns = $matchedDesigns | append (dict
+                                    "name"      (index $meta "name")
+                                    "patternId" (index $meta "patternId")
+                                    "type"      $catalogType
+                                    "image"     (index $meta "image")
+                                    "userName"  (index $meta "userName")
+                                ) }}
                             {{ end }}
                         {{ end }}
                     {{ end }}
                 {{ end }}
             {{ end }}
         {{ end }}
-    </ul>
+    {{ end }}
+
+    <section class="related-designs-section">
+        <div class="related-designs-header">
+            <h3>Designs containing {{ .Title }}</h3>
+            {{ if gt (len $matchedDesigns) 0 }}
+            <a class="catalog-cta-link"
+               href="https://meshery.io/catalog?search={{ $tech | urlize }}"
+               target="_blank"
+               rel="noopener noreferrer">
+                View all in Catalog &rarr;
+            </a>
+            {{ end }}
+        </div>
+
+        {{ if gt (len $matchedDesigns) 0 }}
+        <div class="designs-grid">
+            {{ range $matchedDesigns }}
+            <a class="design-card"
+               href="https://meshery.io/catalog/{{ .type }}/{{ replace .name "." "-" | urlize }}-{{ .patternId }}"
+               target="_blank"
+               rel="noopener noreferrer">
+                <div class="design-card__img-wrap">
+                    {{ if .image }}
+                    <img src="{{ .image }}" alt="{{ .name }} design thumbnail" loading="lazy" />
+                    {{ else }}
+                    <img src="/assets/images/logos/service-mesh-pattern.svg" alt="{{ .name }}" loading="lazy" />
+                    {{ end }}
+                </div>
+                <div class="design-card__body">
+                    <span class="design-card__name">{{ .name }}</span>
+                    {{ if .userName }}
+                    <span class="design-card__author">by {{ .userName }}</span>
+                    {{ end }}
+                    <span class="design-card__type">{{ .type }}</span>
+                </div>
+            </a>
+            {{ end }}
+        </div>
+        {{ else }}
+        <p class="related-designs-empty">
+            No catalog designs currently reference this model.
+            <a href="https://meshery.io/catalog" target="_blank" rel="noopener noreferrer">Browse the catalog</a>
+            to discover or contribute designs.
+        </p>
+        {{ end }}
     </section>
 
     <!-- Related Tutorials -->
@@ -142,10 +192,6 @@
     function handleImageError(image) {
         image.onerror = null;
         image.src = '{{ .Params.image }}';
-    }
-    const designLinks = document.querySelectorAll('.design-link');
-    if (designLinks.length === 0) {
-        document.getElementById('related-designs-header').style.display = 'none';
     }
 
     const relatedTutorials = document.querySelectorAll(".tutorial-link");
