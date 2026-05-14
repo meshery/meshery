@@ -246,7 +246,7 @@ const MesherySettingsPerformanceComponent = () => {
               onClick={handleSubmit}
               disabled={isSaving}
             >
-              <SaveIcon style={{ marginRight: '3px' }} />
+{!isSaving && <SaveIcon style={{ marginRight: '3px' }} />}
               {isSaving ? <CircularProgress size={30} /> : 'Save'}
             </Button>
           </div>
