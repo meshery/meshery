@@ -39,7 +39,7 @@ import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import OrganizationAndWorkSpaceSwitcher from '../../workspaces/SpacesSwitcher/SpaceSwitcher';
 import HeaderMenu from './HeaderMenu';
-import ConnectionModal from '../../shared/Modal/ConnectionModal';
+import ConnectionModal from '../../connections/ConnectionFormModal';
 import MesherySettingsEnvButtons from '../../MesherySettingsEnvButtons';
 import {
   HeaderAppBar,

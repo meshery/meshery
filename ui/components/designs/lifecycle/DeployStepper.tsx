@@ -34,7 +34,7 @@ import { capitalize } from 'lodash';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
 import { DeploymentSummaryFormatter } from './DeploymentSummary';
 import { SEVERITY } from '../../layout/NotificationCenter/constants';
-import EnvironmentModal from '../../shared/Modal/EnvironmentModal';
+import EnvironmentModal from '../../environments/EnvironmentFormModal';
 import { openViewScopedToDesignInOperator } from '@/utils/utils';
 import { useRouter } from 'next/router';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
