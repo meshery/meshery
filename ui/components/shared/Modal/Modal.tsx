@@ -51,9 +51,11 @@ export interface ModalProps {
   /** Toggle Sistent's built-in fullscreen mode button. */
   isFullScreenModeAllowed?: boolean;
   /**
-   * When `true`, the modal does NOT wrap children in `ModalBody` and does NOT
-   * render a `ModalFooter` for `actions`. Use this for callers (e.g. stepper
-   * flows) that emit their own `ModalBody` and `ModalFooter` siblings.
+   * When `true`, the modal does NOT wrap children in `ModalBody` — caller
+   * emits its own `ModalBody` sibling. Use this for stepper-style flows that
+   * need full control over the body layout. Footer rendering is independent:
+   * pass `actions` alongside `disableBodyWrap` to keep the standard action bar,
+   * or omit `actions` to render the footer yourself.
    */
   disableBodyWrap?: boolean;
   /**
@@ -104,7 +106,7 @@ export const Modal: FC<ModalProps> = ({
       {...ariaProps}
     >
       {disableBodyWrap ? children : <SistentModalBody>{children}</SistentModalBody>}
-      {!disableBodyWrap && actions ? (
+      {actions ? (
         <SistentModalFooter
           variant={footerVariant}
           // Sistent types `helpText` as string but the runtime element renders
