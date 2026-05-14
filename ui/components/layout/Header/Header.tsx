@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { NotificationDrawerButton } from '../NotificationCenter/index';
 import User from '../../User';
@@ -140,7 +140,9 @@ function K8sContextMenu({
 }) {
   const [anchorEl, setAnchorEl] = useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
-  const [transformProperty, setTransformProperty] = useState(100);
+  // The dropdown slides up from below; its translate distance scales with the
+  // number of context rows it will render so it ends up flush against the badge.
+  const transformProperty = 100 + (contexts?.totalCount || 0) * 3.125;
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
@@ -246,9 +248,6 @@ function K8sContextMenu({
     open = showFullContextMenu;
   }
 
-  useEffect(() => {
-    setTransformProperty((prev) => prev + (contexts.totalCount ? contexts.totalCount * 3.125 : 0));
-  }, []);
   const [isConnectionOpenModal, setIsConnectionOpenModal] = useState(false);
 
   return (
