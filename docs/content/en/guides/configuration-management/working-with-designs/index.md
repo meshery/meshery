@@ -18,9 +18,9 @@ Meshery's core construct of configuration management is that of a design. A desi
 
 ## Creating a Meshery Design
 
-You have your choice of how are you would like to create an infrastructure design. You can use the design configurator inside of measure, UI or extensions, like Kanvas, or you can hand code your design, using the mesh model spec, if you like.
+You have your choice of how are you would like to create an infrastructure design. You can use the design configurator inside of Meshery UI, or you can hand code your design, using the mesh model spec, if you like.
 
-You are free to choose how you would like to create an infrastructure design. You can use the design configurator inside of measure, UI or extensions, like Kanvas, or you can hand code your design, using the mesh model spec, if you like.
+You are free to choose how you would like to create an infrastructure design. You can use the design configurator inside of Meshery UI, or you can hand code your design, using the mesh model spec, if you like.
 
 Use Meshery UI or mesheryctl to create designs.
 
