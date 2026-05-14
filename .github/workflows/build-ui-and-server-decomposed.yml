@@ -1,5 +1,15 @@
 name: Meshery UI and Server PR Build
 on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - "master"
+    paths-ignore:
+      - "docs/**"
+      - "mesheryctl/**"
+      - "*.md"
+      - "*.github/**"
+      - "Makefile"
   workflow_dispatch:
 
 permissions:
