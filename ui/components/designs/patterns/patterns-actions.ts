@@ -134,9 +134,9 @@ export function createPatternsActions(deps) {
               event_type: EVENT_TYPES.SUCCESS,
             });
           })
-          .catch(() => {
+          .catch((error) => {
             updateProgress({ showProgress: false });
-            handleError(ACTION_TYPES.UNPUBLISH_CATALOG);
+            handleError(ACTION_TYPES.UNPUBLISH_CATALOG)(error);
           });
       }
     };
@@ -185,9 +185,9 @@ export function createPatternsActions(deps) {
           });
         }
       })
-      .catch(() => {
+      .catch((error) => {
         updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.PUBLISH_CATALOG);
+        handleError(ACTION_TYPES.PUBLISH_CATALOG)(error);
       });
   };
 
@@ -243,9 +243,9 @@ export function createPatternsActions(deps) {
           getPatterns();
           resetSelectedRowData()();
         })
-        .catch(() => {
+        .catch((error) => {
           updateProgress({ showProgress: false });
-          handleError(ACTION_TYPES.DELETE_PATTERN);
+          handleError(ACTION_TYPES.DELETE_PATTERN)(error);
         });
     }
 
@@ -265,9 +265,9 @@ export function createPatternsActions(deps) {
           updateProgress({ showProgress: false });
           notify({ message: `"${name}" Design updated`, event_type: EVENT_TYPES.SUCCESS });
         })
-        .catch(() => {
+        .catch((error) => {
           updateProgress({ showProgress: false });
-          handleError(ACTION_TYPES.UPDATE_PATTERN);
+          handleError(ACTION_TYPES.UPDATE_PATTERN)(error);
         });
     }
 
@@ -298,9 +298,9 @@ export function createPatternsActions(deps) {
         .then(() => {
           updateProgress({ showProgress: false });
         })
-        .catch(() => {
+        .catch((error) => {
           updateProgress({ showProgress: false });
-          handleError(ACTION_TYPES.UPLOAD_PATTERN);
+          handleError(ACTION_TYPES.UPLOAD_PATTERN)(error);
         });
     }
   }
@@ -342,9 +342,9 @@ export function createPatternsActions(deps) {
         setImportModal((prev) => ({ ...prev, open: false }));
         getPatterns();
       })
-      .catch(() => {
+      .catch((error) => {
         updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.UPLOAD_PATTERN);
+        handleError(ACTION_TYPES.UPLOAD_PATTERN)(error);
       });
   }
 
@@ -367,9 +367,9 @@ export function createPatternsActions(deps) {
           resetSelectedRowData()();
         }, 1200);
       })
-      .catch(() => {
+      .catch((error) => {
         updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.DELETE_PATTERN);
+        handleError(ACTION_TYPES.DELETE_PATTERN)(error);
       });
   }
 

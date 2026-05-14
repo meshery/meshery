@@ -41,7 +41,12 @@ export const ImportDesignModal = React.memo((props) => {
 });
 
 export const PublishModal = React.memo((props) => {
-  const { handleClose, handleSubmit, title } = props;
+  const { handleClose, handleSubmit, title, publishFormSchema } = props;
+  // Prefer the dynamically-populated schema (populated from fetched mesh
+  // models for the compatibility enum); fall back to the static Sistent
+  // schema only when the caller hasn't supplied one yet.
+  const schema = publishFormSchema?.rjsfSchema ?? publishCatalogItemSchema;
+  const uiSchema = publishFormSchema?.uiSchema ?? publishCatalogItemUiSchema;
 
   return (
     <>
@@ -57,8 +62,8 @@ export const PublishModal = React.memo((props) => {
           maxWidth="sm"
         >
           <RJSFModalWrapper
-            schema={publishCatalogItemSchema}
-            uiSchema={publishCatalogItemUiSchema}
+            schema={schema}
+            uiSchema={uiSchema}
             handleSubmit={handleSubmit}
             submitBtnText="Submit for Approval"
             handleClose={handleClose}
