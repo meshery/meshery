@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CustomTextTooltip } from '@/components/meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { Grid2, Typography, TableCell, TableSortLabel } from '@sistent/sistent';
 
 const HeaderLabel = ({ label, icon, tooltip }) => (
