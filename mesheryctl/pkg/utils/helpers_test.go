@@ -109,7 +109,7 @@ func TestSetFileLocation(t *testing.T) {
 
 func TestNavigateToBrowser(t *testing.T) {
 	// opens up a browser window whenever this test runs
-	err := NavigateToBrowser("https://layer5.io")
+	err := NavigateToBrowser("https://meshery.io")
 	if err != nil {
 		t.Errorf("NavigateToBrowser error: %v", err)
 	}
@@ -226,17 +226,17 @@ func TestValidateURL(t *testing.T) {
 	}{
 		{
 			name: "Correct URL",
-			url:  "https://www.layer5.io",
+			url:  "https://www.meshery.io",
 		},
 		{
 			name:    "Unsupported scheme",
-			url:     "mqtt://www.layer5.io",
+			url:     "mqtt://www.meshery.io",
 			wantErr: ErrParsingUrl(fmt.Errorf("mqtt is not a supported protocol")),
 		},
 		{
 			name:    "invalid URL",
-			url:     "layer5.io",
-			wantErr: ErrParsingUrl(fmt.Errorf("parse \"layer5.io\": invalid URI for request")),
+			url:     "meshery.io",
+			wantErr: ErrParsingUrl(fmt.Errorf("parse \"meshery.io\": invalid URI for request")),
 		},
 	}
 	for _, tt := range tests {
