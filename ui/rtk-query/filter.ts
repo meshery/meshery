@@ -23,6 +23,32 @@ const filters = api
         }),
         providesTags: () => [{ type: TAGS.FILTERS }],
       }),
+      getCatalogFilters: builder.query<
+        unknown[],
+        { page?: number; pagesize?: number; search?: string; order?: string }
+      >({
+        query: (queryArg) => ({
+          url: mesheryApiPath('filter/catalog'),
+          params: {
+            page: queryArg?.page,
+            pagesize: queryArg?.pagesize,
+            search: queryArg?.search,
+            order: queryArg?.order,
+          },
+          method: 'GET',
+        }),
+        // The GraphQL resolver fetchFilterCatalogContent strips the page envelope
+        // and returns just the filters array. The REST endpoint returns the full
+        // envelope {page, page_size, total_count, filters}, so we unwrap here to
+        // preserve the consumer contract.
+        transformResponse: (response: { filters?: unknown[] } | unknown[] | undefined) => {
+          if (Array.isArray(response)) {
+            return response;
+          }
+          return Array.isArray(response?.filters) ? response.filters : [];
+        },
+        providesTags: () => [{ type: TAGS.FILTERS }],
+      }),
       cloneFilter: builder.mutation({
         query: (queryArg) => ({
           url: mesheryApiPath(`filter/clone/${queryArg.filterID}`),
@@ -72,6 +98,8 @@ const filters = api
 
 export const {
   useGetFiltersQuery,
+  useGetCatalogFiltersQuery,
+  useLazyGetCatalogFiltersQuery,
   useCloneFilterMutation,
   usePublishFilterMutation,
   useUnpublishFilterMutation,

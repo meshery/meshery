@@ -6,7 +6,7 @@ import GenericModal from '../shared/Modal/GenericModal';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import MesheryChart from '../MesheryChart';
 import { Typography, Paper } from '@sistent/sistent';
-import fetchAllResults from '@/graphql/queries/FetchAllResultsQuery';
+import { useGetProfileResultsQuery } from '@/rtk-query/performance-profile';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { CalendarComponent } from './style';
@@ -86,44 +86,36 @@ function generateDateRange(from, to) {
  */
 function PerformanceCalendar({ style }) {
   const [time, setTime] = useState(generateDateRange());
-  const [results, setResults] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState();
 
   //hooks
   const { notify } = useNotification();
 
+  const {
+    data: profileResults,
+    isFetching,
+    isError,
+    error: queryError,
+  } = useGetProfileResultsQuery({
+    page: '0',
+    pagesize: '10',
+    search: '',
+    order: '',
+    from: time.start,
+    to: time.end,
+  });
+
+  const results = profileResults?.results || [];
+
   useEffect(() => {
-    fetchResults(time.start, time.end);
-  }, [time]);
+    updateProgress({ showProgress: isFetching });
+  }, [isFetching]);
 
-  async function fetchResults(start, end) {
-    updateProgress({ showProgress: true });
-
-    fetchAllResults({
-      selector: {
-        // default
-        pageSize: `10`,
-        page: `0`,
-        search: ``,
-        order: ``,
-        from: start,
-        to: end,
-      },
-    }).subscribe({
-      next: (res) => {
-        // @ts-ignore
-        let result = res?.fetchAllResults;
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          if (result) {
-            // @ts-ignore
-            setResults(result.results || []);
-          }
-        }
-      },
-      error: handleError('Failed to Fetch Profiles'),
-    });
-  }
+  useEffect(() => {
+    if (isError) {
+      handleError('Failed to Fetch Profiles')(queryError ?? 'Unknown error');
+    }
+  }, [isError, queryError]);
 
   function handleError(msg) {
     return function (error) {

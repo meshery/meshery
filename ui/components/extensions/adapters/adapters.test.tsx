@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const fetchSystemSyncMock = vi.fn();
 const unwrapMock = vi.fn();
 const notifyMock = vi.fn();
-const changeAdapterStateMock = vi.fn();
+const manageAdapterMock = vi.fn();
 const updateProgressMock = vi.fn();
 
 vi.mock('@sistent/sistent', () => ({
@@ -31,10 +31,6 @@ vi.mock('../../../css/grid.style', () => ({
   LARGE_6_MED_12_GRID_STYLE: { xs: 12 },
 }));
 
-vi.mock('@/graphql/mutations/AdapterStatusMutation', () => ({
-  default: (...args: any[]) => changeAdapterStateMock(...args),
-}));
-
 vi.mock('../../../utils/hooks/useNotification', () => ({
   useNotification: () => ({ notify: notifyMock }),
 }));
@@ -45,6 +41,7 @@ vi.mock('../../../lib/event-types', () => ({
 
 vi.mock('../../../rtk-query/system', () => ({
   useLazyGetSystemSyncQuery: () => [fetchSystemSyncMock],
+  useManageAdapterMutation: () => [manageAdapterMock],
 }));
 
 vi.mock('@/store/slices/mesheryUi', () => ({
@@ -58,7 +55,7 @@ describe('Adapters component', () => {
     fetchSystemSyncMock.mockReset();
     unwrapMock.mockReset();
     notifyMock.mockReset();
-    changeAdapterStateMock.mockReset();
+    manageAdapterMock.mockReset();
     updateProgressMock.mockReset();
 
     fetchSystemSyncMock.mockReturnValue({
@@ -66,6 +63,10 @@ describe('Adapters component', () => {
         Promise.resolve({
           meshAdapters: [],
         }),
+    });
+    // Default: manageAdapter resolves so success path runs without throwing.
+    manageAdapterMock.mockReturnValue({
+      unwrap: () => Promise.resolve({}),
     });
   });
 
@@ -93,8 +94,6 @@ describe('Adapters component', () => {
   });
 
   it('enables an adapter when its switch is toggled on', async () => {
-    changeAdapterStateMock.mockImplementation((cb: any) => cb({}, null));
-
     await act(async () => {
       render(<Adapters />);
     });
@@ -105,10 +104,11 @@ describe('Adapters component', () => {
       fireEvent.click(istioSwitch);
     });
 
-    expect(changeAdapterStateMock).toHaveBeenCalledTimes(1);
-    const payload = changeAdapterStateMock.mock.calls[0][1];
-    expect(payload.status).toBe('ENABLED');
-    expect(payload.adapter).toBe('meshery-istio');
+    expect(manageAdapterMock).toHaveBeenCalledTimes(1);
+    // ENABLED path passes { meshLocationURL } (DELETE path passes a method).
+    const arg = manageAdapterMock.mock.calls[0][0];
+    expect(arg.meshLocationURL).toBeDefined();
+    expect(arg.method).toBeUndefined();
     expect(notifyMock).toHaveBeenCalledWith(expect.objectContaining({ event_type: 'success' }));
   });
 
@@ -152,8 +152,11 @@ describe('Adapters component', () => {
     expect(switches[0]).toBeChecked();
   });
 
-  it('passes the deploy payload through to changeAdapterState on toggle', async () => {
-    changeAdapterStateMock.mockImplementation((cb: any) => cb(null, new Error('fail')));
+  it('passes the deploy payload through to manageAdapter on toggle', async () => {
+    // Reject so the catch path runs and the switch state is rolled back.
+    manageAdapterMock.mockReturnValue({
+      unwrap: () => Promise.reject(new Error('fail')),
+    });
 
     await act(async () => {
       render(<Adapters />);
@@ -165,10 +168,10 @@ describe('Adapters component', () => {
       fireEvent.click(istioSwitch);
     });
 
-    // mutation called with a payload describing the deploy action
-    expect(changeAdapterStateMock).toHaveBeenCalled();
-    const payload = changeAdapterStateMock.mock.calls[0][1];
-    expect(payload.adapter).toBe('meshery-istio');
-    expect(payload.status).toBe('ENABLED');
+    expect(manageAdapterMock).toHaveBeenCalled();
+    // ENABLED toggle: argument is { meshLocationURL: '<adapter url>' }
+    const arg = manageAdapterMock.mock.calls[0][0];
+    expect(arg.meshLocationURL).toBeDefined();
+    expect(typeof arg.meshLocationURL).toBe('string');
   });
 });

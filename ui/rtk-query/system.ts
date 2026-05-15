@@ -115,6 +115,162 @@ const systemApi = api.injectEndpoints({
       },
       invalidatesTags: [TAGS.ADAPTERS],
     }),
+
+    getMeshAddons: builder.query<
+      { addonsState: Array<{ name: string; owner: string; endpoint?: string }> },
+      { meshType?: string; clusterId?: string | string[] }
+    >({
+      query: (queryArg) => ({
+        url: mesheryApiPath('system/meshes/addons'),
+        params: {
+          meshType: queryArg?.meshType,
+          clusterId: queryArg?.clusterId,
+        },
+        method: 'GET',
+        credentials: 'include',
+      }),
+      // The legacy GraphQL aliased getAvailableAddons as `addonsState`.
+      // Preserve that consumer contract regardless of whether the REST
+      // endpoint returns the array directly or wraps it.
+      transformResponse: (
+        response:
+          | { addonsState?: Array<{ name: string; owner: string; endpoint?: string }> }
+          | { addons?: Array<{ name: string; owner: string; endpoint?: string }> }
+          | Array<{ name: string; owner: string; endpoint?: string }>
+          | undefined,
+      ) => {
+        if (Array.isArray(response)) {
+          return { addonsState: response };
+        }
+        if (response && Array.isArray((response as { addonsState?: unknown[] }).addonsState)) {
+          return {
+            addonsState: (response as { addonsState: typeof response.addonsState }).addonsState,
+          };
+        }
+        if (response && Array.isArray((response as { addons?: unknown[] }).addons)) {
+          return { addonsState: (response as { addons: typeof response.addons }).addons };
+        }
+        return { addonsState: [] };
+      },
+      providesTags: [TAGS.SYSTEM],
+    }),
+
+    getControlPlanes: builder.query<
+      {
+        controlPlanesState: Array<{
+          name: string;
+          members: Array<{ name: string; version: string; component: string; namespace: string }>;
+        }>;
+      },
+      { type?: string; clusterId?: string | string[] }
+    >({
+      query: (queryArg) => ({
+        url: mesheryApiPath('system/meshes/control-planes'),
+        params: {
+          type: queryArg?.type,
+          clusterId: queryArg?.clusterId,
+        },
+        method: 'GET',
+        credentials: 'include',
+      }),
+      // The legacy GraphQL aliased getControlPlanes as `controlPlanesState`.
+      // Preserve that consumer contract.
+      transformResponse: (
+        response:
+          | {
+              controlPlanesState?: Array<{
+                name: string;
+                members: Array<{
+                  name: string;
+                  version: string;
+                  component: string;
+                  namespace: string;
+                }>;
+              }>;
+            }
+          | {
+              control_planes?: Array<{
+                name: string;
+                members: Array<{
+                  name: string;
+                  version: string;
+                  component: string;
+                  namespace: string;
+                }>;
+              }>;
+            }
+          | Array<{
+              name: string;
+              members: Array<{
+                name: string;
+                version: string;
+                component: string;
+                namespace: string;
+              }>;
+            }>
+          | undefined,
+      ) => {
+        if (Array.isArray(response)) {
+          return { controlPlanesState: response };
+        }
+        if (
+          response &&
+          Array.isArray((response as { controlPlanesState?: unknown[] }).controlPlanesState)
+        ) {
+          return {
+            controlPlanesState: (
+              response as { controlPlanesState: typeof response.controlPlanesState }
+            ).controlPlanesState,
+          };
+        }
+        if (
+          response &&
+          Array.isArray((response as { control_planes?: unknown[] }).control_planes)
+        ) {
+          return {
+            controlPlanesState: (response as { control_planes: typeof response.control_planes })
+              .control_planes,
+          };
+        }
+        return { controlPlanesState: [] };
+      },
+      providesTags: [TAGS.SYSTEM],
+    }),
+
+    resetDatabase: builder.mutation<
+      { message?: string },
+      { k8scontextID?: string; clearDB?: string; ReSync?: string; hardReset?: string }
+    >({
+      query: (queryArg) => ({
+        url: mesheryApiPath('system/database/reset'),
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: {
+          k8scontextID: queryArg?.k8scontextID || '',
+          clearDB: queryArg?.clearDB,
+          ReSync: queryArg?.ReSync,
+          hardReset: queryArg?.hardReset,
+        },
+      }),
+      invalidatesTags: [TAGS.SYSTEM],
+    }),
+
+    changeOperatorStatus: builder.mutation<
+      unknown,
+      { contextID: string; targetStatus: 'ENABLED' | 'DISABLED' }
+    >({
+      query: (queryArg) => ({
+        url: mesheryApiPath(
+          `system/kubernetes/contexts/${encodeURIComponent(queryArg.contextID)}/operator`,
+        ),
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: { targetStatus: queryArg.targetStatus },
+      }),
+      invalidatesTags: [TAGS.SYSTEM],
+    }),
   }),
 });
 
@@ -130,4 +286,10 @@ export const {
   useLazyGetKubernetesContextsQuery,
   useAdapterOperationMutation,
   useLazyGetSmiResultsQuery,
+  useGetMeshAddonsQuery,
+  useLazyGetMeshAddonsQuery,
+  useGetControlPlanesQuery,
+  useLazyGetControlPlanesQuery,
+  useResetDatabaseMutation,
+  useChangeOperatorStatusMutation,
 } = systemApi;

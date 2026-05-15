@@ -186,6 +186,12 @@ vi.mock('@/rtk-query/connection', () => ({
   useUpdateConnectionByIdMutation: () => [updateConnectionByIdMutator],
 }));
 
+// useResyncClusterMutation moved here from the deleted GraphQL meshery_controllers
+// resolver as part of the SSE migration; mock the hook to return a no-op trigger.
+vi.mock('@/rtk-query/kubernetes', () => ({
+  useResyncClusterMutation: () => [vi.fn()],
+}));
+
 vi.mock('../../assets/icons/InfoOutlined', () => ({
   default: () => <svg />,
 }));

@@ -3,8 +3,10 @@ import { useRouter } from 'next/router';
 import MesheryMetrics from './MesheryMetrics';
 import PerformanceCalendar from './PerformanceCalendar';
 import MesheryPerformanceComponent from './index';
-import fetchPerformanceProfiles from '@/graphql/queries/PerformanceProfilesQuery';
-import fetchAllResults from '@/graphql/queries/FetchAllResultsQuery';
+import {
+  useGetPerformanceProfilesQuery,
+  useGetProfileResultsQuery,
+} from '@/rtk-query/performance-profile';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import CAN from '@/utils/can';
@@ -57,81 +59,62 @@ const Separator = styled('div')(({ theme, vertical }) => ({
 }));
 
 function Dashboard() {
-  const [profiles, setProfiles] = useState({ count: 0, profiles: [] });
-  const [tests, setTests] = useState({ count: 0, tests: [] });
   const [runTest, setRunTest] = useState(false);
   const { notify } = useNotification();
   const router = useRouter();
   const { grafana } = useSelector((state) => state.telemetry);
   const theme = useTheme();
 
-  /**
-   * fetch performance profiles when the page loads
-   */
+  const profileQueryArgs = {
+    page: '0',
+    pagesize: '10',
+    search: '',
+    order: '',
+  };
+  const {
+    data: profilesData,
+    isFetching: isProfilesFetching,
+    isError: isProfilesError,
+    error: profilesError,
+  } = useGetPerformanceProfilesQuery(profileQueryArgs);
+  const {
+    data: testsData,
+    isFetching: isTestsFetching,
+    isError: isTestsError,
+    error: testsError,
+  } = useGetProfileResultsQuery({
+    page: '0',
+    pagesize: '10',
+    search: '',
+    order: '',
+    from: '',
+    to: '',
+  });
+
+  const profiles = {
+    count: profilesData?.total_count || 0,
+    profiles: profilesData?.profiles || [],
+  };
+  const tests = {
+    count: testsData?.total_count || 0,
+    tests: testsData?.results || [],
+  };
+
   useEffect(() => {
-    fetchTestProfiles();
-    fetchTests();
-  }, []);
+    updateProgress({ showProgress: isProfilesFetching || isTestsFetching });
+  }, [isProfilesFetching, isTestsFetching]);
 
-  function fetchTestProfiles() {
-    updateProgress({ showProgress: true });
+  useEffect(() => {
+    if (isProfilesError) {
+      handleError('Failed to Fetch Profiles')(profilesError ?? 'Unknown error');
+    }
+  }, [isProfilesError, profilesError]);
 
-    fetchPerformanceProfiles({
-      selector: {
-        // default
-        pageSize: `10`,
-        page: `0`,
-        search: ``,
-        order: ``,
-      },
-    }).subscribe({
-      next: (res) => {
-        // @ts-ignore
-        let result = res?.getPerformanceProfiles;
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          if (result) {
-            setProfiles({
-              count: result.total_count || 0,
-              profiles: result.profiles || [],
-            });
-          }
-        }
-      },
-      error: handleError('Failed to Fetch Profiles'),
-    });
-  }
-
-  function fetchTests() {
-    updateProgress({ showProgress: true });
-
-    fetchAllResults({
-      selector: {
-        // default
-        pageSize: `10`,
-        page: `0`,
-        search: ``,
-        order: ``,
-        from: ``,
-        to: ``,
-      },
-    }).subscribe({
-      next: (res) => {
-        // @ts-ignore
-        let result = res?.fetchAllResults;
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          if (result) {
-            setTests({
-              count: result.total_count || 0,
-              tests: result.results || [],
-            });
-          }
-        }
-      },
-      error: handleError('Failed to Fetch Results'),
-    });
-  }
+  useEffect(() => {
+    if (isTestsError) {
+      handleError('Failed to Fetch Results')(testsError ?? 'Unknown error');
+    }
+  }, [isTestsError, testsError]);
 
   function handleError(msg) {
     return function (error) {

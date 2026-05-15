@@ -1,3 +1,9 @@
+// File is over the 600-line soft limit (legacy: addon/namespace/operation
+// state all colocated). Splitting is tracked as a follow-up; the current
+// review-round fixes (notify+getErrorMessage on the addon and namespace
+// catch handlers) push it across the threshold but do not introduce new
+// scope coupling.
+/* eslint-disable max-lines */
 import React, { useState, useRef, useEffect } from 'react';
 import { Grid, NoSsr } from '@sistent/sistent';
 import { useRouter } from 'next/router';
@@ -7,9 +13,9 @@ import {
   useAdapterOperationMutation,
   useLazyPingAdapterQuery,
   useLazyGetSmiResultsQuery,
+  useLazyGetMeshAddonsQuery,
 } from '../rtk-query/system';
-import fetchAvailableAddons from '@/graphql/queries/AddonsStatusQuery';
-import fetchAvailableNamespaces from '@/graphql/queries/NamespaceQuery';
+import { useLazyGetKubernetesNamespacesQuery } from '../rtk-query/kubernetes';
 import MesheryMetrics from './performance/MesheryMetrics';
 import MesheryResultDialog from './MesheryResultDialog';
 import ReactSelectWrapper from './ReactSelectWrapper';
@@ -18,6 +24,7 @@ import { ACTIONS } from '../utils/Enum';
 import { getModelByName } from '../api/meshmodel';
 import { EVENT_TYPES } from '../lib/event-types';
 import { useNotification } from '../utils/hooks/useNotification';
+import { getErrorMessage } from './connections/ConnectionTable.constants';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import {
@@ -62,6 +69,8 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
   const [triggerAdapterOp] = useAdapterOperationMutation();
   const [triggerPingAdapter] = useLazyPingAdapterQuery();
   const [triggerGetSmiResults] = useLazyGetSmiResultsQuery();
+  const [triggerGetMeshAddons] = useLazyGetMeshAddonsQuery();
+  const [triggerGetNamespaces] = useLazyGetKubernetesNamespacesQuery();
   const { grafana } = useSelector((state) => state.telemetry);
   const router = useRouter();
   const addIconEles = useRef({});
@@ -129,7 +138,7 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
   // Equivalent to componentDidMount
   useEffect(() => {
     const meshname = mapAdapterNameToMeshName(adapter.name);
-    const variables = { type: meshname, k8sClusterIDs: getK8sClusterIds() };
+    const clusterIds = getK8sClusterIds();
 
     initSubscription();
     getMeshVersions();
@@ -146,12 +155,20 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
       }
     }
 
-    fetchAvailableAddons(variables).subscribe({
-      next: (res) => {
+    triggerGetMeshAddons({ meshType: meshname, clusterId: clusterIds })
+      .unwrap()
+      .then((res) => {
         setAddonsState(res);
-      },
-      error: (err) => console.log('error at addon fetch: ' + err),
-    });
+      })
+      .catch((err) => {
+        console.error('error at addon fetch:', err);
+        updateProgress({ showProgress: false });
+        notify({
+          message: 'Failed to fetch available addons',
+          event_type: EVENT_TYPES.ERROR,
+          details: getErrorMessage(err),
+        });
+      });
 
     // Cleanup function (componentWillUnmount)
     return () => {
@@ -175,12 +192,15 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
   const initSubscription = () => {
     disposeSubscriptions();
 
-    const subscription = fetchAvailableNamespaces({
-      k8sClusterIDs: getK8sClusterIds(),
-    }).subscribe({
-      next: (res) => {
+    let cancelled = false;
+    triggerGetNamespaces({
+      clusterIds: getK8sClusterIds(),
+    })
+      .unwrap()
+      .then((res) => {
+        if (cancelled) return;
         let namespaces = [];
-        res?.namespaces?.map((ns) => {
+        res?.namespaces?.forEach((ns) => {
           namespaces.push({
             value: ns?.namespace,
             label: ns?.namespace,
@@ -194,11 +214,17 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
         }
         namespaces.sort((a, b) => (a.value > b.value ? 1 : -1));
         setNamespaceList(namespaces);
-      },
-      error: (err) => console.log('error at namespace fetch: ' + err),
-    });
+      })
+      .catch((err) => {
+        console.error('error at namespace fetch:', err);
+        notify({
+          message: 'Failed to fetch available namespaces',
+          event_type: EVENT_TYPES.ERROR,
+          details: getErrorMessage(err),
+        });
+      });
 
-    setNamespaceSubscription(subscription);
+    setNamespaceSubscription({ unsubscribe: () => (cancelled = true) });
   };
 
   const disposeSubscriptions = () => {

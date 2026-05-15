@@ -3,11 +3,12 @@ import { ModalBody, ModalFooter, NoSsr } from '@sistent/sistent';
 import { URLValidator } from '../../utils/URLValidator';
 import { isValidJSON } from '../../utils/validators';
 import LoadTestTimerDialog from '../load-test-timer-dialog';
-import fetchControlPlanes from '@/graphql/queries/ControlPlanesQuery';
+import { useLazyGetControlPlanesQuery } from '@/rtk-query/system';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { generateTestName, generateUUID } from './helper';
+import { getErrorMessage } from '../connections/ConnectionTable.constants';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/general/error-404/index';
@@ -98,6 +99,7 @@ const MesheryPerformanceComponent_ = (props) => {
     useGetUserPrefWithContextQuery(selectedK8sContexts);
 
   const [savePerformanceProfile] = useSavePerformanceProfileMutation();
+  const [triggerGetControlPlanes] = useLazyGetControlPlanesQuery();
   const {
     data: smpMeshes,
     isSuccess: isSMPMeshesFetched,
@@ -439,15 +441,14 @@ const MesheryPerformanceComponent_ = (props) => {
      * component of all of the service meshes supported by meshsync v2
      */
 
-    const ALL_MESH = {
+    triggerGetControlPlanes({
       type: 'ALL_MESH',
-      k8sClusterIDs: getK8sClusterIds(),
-    };
-
-    fetchControlPlanes(ALL_MESH).subscribe({
-      next: (res) => {
+      clusterId: getK8sClusterIds(),
+    })
+      .unwrap()
+      .then((res) => {
         let result = res?.controlPlanesState;
-        if (typeof result !== 'undefined' && Object.keys(result).length > 0) {
+        if (typeof result !== 'undefined' && result.length > 0) {
           const adaptersList = [];
           result.forEach((mesh) => {
             if (mesh?.members.length > 0) {
@@ -466,9 +467,15 @@ const MesheryPerformanceComponent_ = (props) => {
             setSelectedMesh(mesh?.name);
           });
         }
-      },
-      error: (err) => console.error(err),
-    });
+      })
+      .catch((err) => {
+        console.error('error at control plane scan:', err);
+        notify({
+          message: 'Failed to scan for service meshes',
+          event_type: EVENT_TYPES.ERROR,
+          details: getErrorMessage(err),
+        });
+      });
   };
 
   const getSMPMeshes = () => {

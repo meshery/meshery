@@ -1,12 +1,11 @@
 import React, { useState, FC } from 'react';
 import { Button, Typography, ResponsiveDataTable, useTheme } from '@sistent/sistent';
-import resetDatabase from '@/graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import SearchBar from '../utils/custom-search';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
-import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
+import { useGetDatabaseSummaryQuery, useResetDatabaseMutation } from '@/rtk-query/system';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { PROMPT_VARIANTS } from '@sistent/sistent';
@@ -41,6 +40,8 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
     order: sortOrder,
   });
 
+  const [resetDatabase] = useResetDatabaseMutation();
+
   const handleResetDatabase = () => {
     return async () => {
       let responseOfResetDatabase = await props.promptRef.current.show({
@@ -52,22 +53,21 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
       if (responseOfResetDatabase === 'RESET') {
         updateProgress({ showProgress: true });
         resetDatabase({
-          selector: {
-            clearDB: 'true',
-            ReSync: 'true',
-            hardReset: 'true',
-          },
+          clearDB: 'true',
+          ReSync: 'true',
+          hardReset: 'true',
           k8scontextID: '',
-        }).subscribe({
-          next: (res) => {
+        })
+          .unwrap()
+          .then(() => {
+            // The REST endpoint returns 200 + `{message}` on success; that's
+            // semantically equivalent to the legacy GraphQL `resetStatus ===
+            // 'PROCESSING'`. Promise resolution == success.
             updateProgress({ showProgress: false });
-            if (res.resetStatus === 'PROCESSING') {
-              notify({ message: 'Database reset successful.', event_type: EVENT_TYPES.SUCCESS });
-              refetch();
-            }
-          },
-          error: handleError('Database is not reachable, try restarting server.'),
-        });
+            notify({ message: 'Database reset successful.', event_type: EVENT_TYPES.SUCCESS });
+            refetch();
+          })
+          .catch(handleError('Database is not reachable, try restarting server.'));
       }
     };
   };

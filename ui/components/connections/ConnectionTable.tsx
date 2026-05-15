@@ -4,7 +4,7 @@ import { PROMPT_VARIANTS, ResponsiveDataTable } from '@sistent/sistent';
 import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 import { EVENT_TYPES } from '../../lib/event-types';
 import _PromptComponent from '../PromptComponent';
-import resetDatabase from '@/graphql/queries/ResetDatabaseQuery';
+import { useResyncClusterMutation } from '@/rtk-query/kubernetes';
 
 import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
@@ -85,6 +85,7 @@ const ConnectionTable = ({
   const open = Boolean(anchorEl);
   const deploymentModeOpen = Boolean(deploymentModeAnchorEl);
   const modalRef = useRef<{ show: (options: unknown) => Promise<string | null> } | null>(null);
+  const [resyncCluster] = useResyncClusterMutation();
 
   useEffect(() => {
     if (typeof router.query.searchText === 'string') {
@@ -384,25 +385,35 @@ const ConnectionTable = ({
 
       if (response === 'PROCEED') {
         updateProgress({ showProgress: true });
-        resetDatabase({
-          selector: {
-            clearDB: 'true',
-            ReSync: 'true',
-            hardReset: 'false',
-          },
-          k8scontextID: connection.metadata?.id || '',
-        }).subscribe({
-          next: (result) => {
+        // Per-row "Flush MeshSync" resyncs ONLY this cluster's data, not the
+        // whole database — use the dedicated /api/system/kubernetes/contexts/
+        // {contextID}/resync endpoint (added in #19397), not the global
+        // /api/system/database/reset endpoint that DatabaseSummary uses.
+        resyncCluster({
+          contextID: connection.metadata?.id || '',
+          reSync: true,
+          clearDb: true,
+          hardReset: false,
+        })
+          .unwrap()
+          .then(() => {
             updateProgress({ showProgress: false });
-            if (result.resetStatus === 'PROCESSING') {
-              notify({ message: `Database reset successful.`, event_type: EVENT_TYPES.SUCCESS });
-            }
-          },
-          error: handleError('Database is not reachable, try restarting server.'),
-        });
+            notify({
+              message: `MeshSync flushed for ${connection.metadata?.name || 'connection'}.`,
+              event_type: EVENT_TYPES.SUCCESS,
+            });
+          })
+          .catch(handleError('Failed to flush MeshSync for this connection.'));
       }
     },
-    [getConnectionAtRowIndex, handleActionMenuClose, handleError, notify, rowData?.rowIndex],
+    [
+      getConnectionAtRowIndex,
+      handleActionMenuClose,
+      handleError,
+      notify,
+      resyncCluster,
+      rowData?.rowIndex,
+    ],
   );
 
   const handleEnvironmentSelect = useCallback(
