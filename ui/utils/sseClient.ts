@@ -49,6 +49,13 @@ export class SseClient {
 
     this.es = new EventSource(this.opts.url, { withCredentials: true });
 
+    // Resolve the wildcard handler once so named-event listeners can call it.
+    // NOTE: EventSource has no native catch-all listener — onmessage only fires
+    // for events without an "event:" field (unnamed/default events).  To give
+    // the wildcard handler true "all events" semantics we invoke it from inside
+    // every named-event listener as well.
+    const wildcardHandler = this.opts.handlers['*'] ?? null;
+
     // Register a listener for each named event.
     for (const [eventName, handler] of Object.entries(this.opts.handlers)) {
       if (eventName === '*') continue;
@@ -56,15 +63,17 @@ export class SseClient {
         try {
           const data = JSON.parse(raw.data);
           handler({ name: eventName, data });
+          wildcardHandler?.({ name: eventName, data });
         } catch {
           handler({ name: eventName, data: raw.data });
+          wildcardHandler?.({ name: eventName, data: raw.data });
         }
       });
     }
 
-    // Wildcard handler receives every named event.
-    if (this.opts.handlers['*']) {
-      const wildcardHandler = this.opts.handlers['*'];
+    // Wildcard handler also receives unnamed (default) message events, i.e.
+    // SSE frames with no "event:" line, which EventSource routes to onmessage.
+    if (wildcardHandler) {
       this.es.onmessage = (raw: MessageEvent) => {
         try {
           const data = JSON.parse(raw.data);

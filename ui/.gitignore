@@ -1,3 +1,6 @@
+# TypeScript incremental build cache (generated, must not be committed)
+tsconfig.tsbuildinfo
+
 # Code coverage
 coverage
 .nyc_output

@@ -189,17 +189,14 @@ components:
       type: object
       properties:
         clearDb:
-          type: string
-          enum: ["true", "false"]
-          default: "false"
+          type: boolean
+          default: false
         hardReset:
-          type: string
-          enum: ["true", "false"]
-          default: "false"
+          type: boolean
+          default: false
         reSync:
-          type: string
-          enum: ["true", "false"]
-          default: "false"
+          type: boolean
+          default: false
 
     ResyncClusterResponse:
       type: object

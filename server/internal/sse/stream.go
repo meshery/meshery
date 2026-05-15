@@ -14,6 +14,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -43,6 +44,14 @@ func SetSSEHeaders(w http.ResponseWriter) {
 // Returns an error if the response writer does not support flushing, or if
 // JSON serialisation fails.
 func Write(w http.ResponseWriter, e Event) error {
+	// Guard against SSE protocol injection: the event name is written directly
+	// onto the wire as the "event:" field.  A name containing CR or LF would
+	// terminate that field early and allow an attacker to inject arbitrary SSE
+	// frames into the stream.
+	if strings.ContainsAny(e.Name, "\r\n") {
+		return fmt.Errorf("sse: event name %q contains illegal CR/LF characters", e.Name)
+	}
+
 	payload, err := json.Marshal(e.Data)
 	if err != nil {
 		return fmt.Errorf("sse: marshal event %q data: %w", e.Name, err)

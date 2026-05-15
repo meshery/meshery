@@ -63,9 +63,9 @@ type OperatorControllerStatusResponse struct {
 
 // ResyncClusterRequest is the JSON body accepted by ResyncClusterHandler.
 type ResyncClusterRequest struct {
-	ClearDb   string `json:"clearDb"`
-	HardReset string `json:"hardReset"`
-	ReSync    string `json:"reSync"`
+	ClearDb   bool `json:"clearDb"`
+	HardReset bool `json:"hardReset"`
+	ReSync    bool `json:"reSync"`
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -179,6 +179,13 @@ func (h *Handler) GetMesheryOperatorStatusHandler(w http.ResponseWriter, req *ht
 	}
 
 	connectionUUID := uuid.FromStringOrNil(connectionID)
+	if connectionUUID == uuid.Nil {
+		if err := json.NewEncoder(w).Encode(unknown); err != nil {
+			h.log.Error(models.ErrMarshal(err, "operator status"))
+		}
+		return
+	}
+
 	inst, ok := h.ConnectionToStateMachineInstanceTracker.Get(connectionUUID)
 	if !ok || inst == nil {
 		if err := json.NewEncoder(w).Encode(unknown); err != nil {
@@ -197,7 +204,13 @@ func (h *Handler) GetMesheryOperatorStatusHandler(w http.ResponseWriter, req *ht
 	}
 
 	ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
-	operatorHandler := ctrlHandlers[models.MesheryOperator]
+	operatorHandler, ok := ctrlHandlers[models.MesheryOperator]
+	if !ok || operatorHandler == nil {
+		if err := json.NewEncoder(w).Encode(unknown); err != nil {
+			h.log.Error(models.ErrMarshal(err, "operator status"))
+		}
+		return
+	}
 	version, _ := operatorHandler.GetVersion()
 	result := ControllerStatusResponse{
 		ConnectionID: connectionID,
@@ -240,6 +253,13 @@ func (h *Handler) GetMeshsyncStatusHandler(w http.ResponseWriter, req *http.Requ
 	}
 
 	connectionUUID := uuid.FromStringOrNil(connectionID)
+	if connectionUUID == uuid.Nil {
+		if err := json.NewEncoder(w).Encode(unknown); err != nil {
+			h.log.Error(models.ErrMarshal(err, "meshsync status"))
+		}
+		return
+	}
+
 	inst, ok := h.ConnectionToStateMachineInstanceTracker.Get(connectionUUID)
 	if !ok || inst == nil {
 		if err := json.NewEncoder(w).Encode(unknown); err != nil {
@@ -258,7 +278,13 @@ func (h *Handler) GetMeshsyncStatusHandler(w http.ResponseWriter, req *http.Requ
 	}
 
 	ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
-	meshsyncHandler := ctrlHandlers[models.Meshsync]
+	meshsyncHandler, ok := ctrlHandlers[models.Meshsync]
+	if !ok || meshsyncHandler == nil {
+		if err := json.NewEncoder(w).Encode(unknown); err != nil {
+			h.log.Error(models.ErrMarshal(err, "meshsync status"))
+		}
+		return
+	}
 	version, _ := meshsyncHandler.GetVersion()
 	result := OperatorControllerStatusResponse{
 		ConnectionID: connectionID,
@@ -326,7 +352,13 @@ func (h *Handler) GetNatsStatusHandler(w http.ResponseWriter, req *http.Request,
 	}
 
 	ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
-	brokerHandler := ctrlHandlers[models.MesheryBroker]
+	brokerHandler, ok := ctrlHandlers[models.MesheryBroker]
+	if !ok || brokerHandler == nil {
+		if err := json.NewEncoder(w).Encode(unknown); err != nil {
+			h.log.Error(models.ErrMarshal(err, "nats status"))
+		}
+		return
+	}
 	version, _ := brokerHandler.GetVersion()
 	result := OperatorControllerStatusResponse{
 		ConnectionID: connectionID,
@@ -360,7 +392,7 @@ func (h *Handler) ResyncClusterHandler(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	if body.ClearDb == "true" {
+	if body.ClearDb {
 		k8sCtx, err := provider.GetK8sContext(token, contextID)
 		if err != nil {
 			h.log.Error(err)
