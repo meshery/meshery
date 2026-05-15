@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -203,6 +203,7 @@
     "kind": "CodebaseImageStream",
     "schema": "{\n \"description\": \"CodebaseImageStream is the Schema for the CodebaseImageStreams API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CodebaseImageStreamSpec defines the desired state of CodebaseImageStream.\",\n   \"properties\": {\n    \"codebase\": {\n     \"description\": \"Name of Codebase associated with.\",\n     \"type\": \"string\"\n    },\n    \"imageName\": {\n     \"description\": \"Docker container name without tag, e.g. registry-name/path/name.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"A list of docker image tags available for ImageName and their creation date.\",\n     \"items\": {\n      \"properties\": {\n       \"created\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"created\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"codebase\",\n    \"imageName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Codebase Image Stream\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

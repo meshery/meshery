@@ -60,6 +60,7 @@ func TestSearchComponent(t *testing.T) {
 		},
 	}
 
+	mesheryctlflags.InitValidators(ComponentCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, ComponentCmd, tests, currentDirectory, "component")
 
 }

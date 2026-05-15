@@ -12,18 +12,18 @@
     }
   },
   "model": {
-    "version": "",
-    "name": "kube-prometheus-stack",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "80.4.2"
+    },
+    "name": "kube-prometheus-stack",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": "80.4.2"
-    }
+    "version": ""
   },
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
@@ -39,16 +39,16 @@
               ]
             ],
             "model": {
-              "version": "",
-              "name": "kube-prometheus-stack",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kube-prometheus-stack",
               "registrant": {
                 "kind": "artifacthub"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
               "mutatorRef": [
@@ -69,20 +69,21 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kube-prometheus-stack",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kube-prometheus-stack",
               "registrant": {
                 "kind": "artifacthub"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
               "mutatedRef": [
                 [
+                  "configuration",
                   "metadata",
                   "labels"
                 ]

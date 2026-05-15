@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Community on Documentation</title>
+    <link>/v0.9/categories/community/</link>
+    <description>Recent content in Community on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/categories/community/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Meshery Community</title>
+      <link>/v0.9/project/community/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/project/community/</guid>
+      <description>&lt;p&gt;Meshery is a CNCF project maintained by engineers from Layer5, VMware, Red Hat, Rackspace, Citrix, Instabase, Microsoft, OpenGov, Computas AS, Rill Data, Quantex, Lumina Networks, API7, F5, Citi, Acquia, and HashiCorp. Meshery is an open source project that adheres to the &lt;a href=&#34;https://github.com/cncf/foundation/blob/master/code-of-conduct.md&#34;&gt;CNCF&amp;rsquo;s Code of Conduct&lt;/a&gt;. Meshery advance the state of the art surrounding cloud native management and enable adopters of Cloud Native technologies and techniques to do so with confidence. Our shared commitment to the open source spirit pushes Meshery forward.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

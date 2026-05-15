@@ -15,9 +15,8 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",
@@ -54,16 +53,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -205,6 +204,7 @@
     "kind": "IP",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"attachIps\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"attachMacs\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"attachSubnets\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"containerID\": {\n     \"type\": \"string\"\n    },\n    \"ipAddress\": {\n     \"type\": \"string\"\n    },\n    \"macAddress\": {\n     \"type\": \"string\"\n    },\n    \"namespace\": {\n     \"type\": \"string\"\n    },\n    \"nodeName\": {\n     \"type\": \"string\"\n    },\n    \"podName\": {\n     \"type\": \"string\"\n    },\n    \"podType\": {\n     \"type\": \"string\"\n    },\n    \"subnet\": {\n     \"type\": \"string\"\n    },\n    \"v4IpAddress\": {\n     \"type\": \"string\"\n    },\n    \"v6IpAddress\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"IP\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

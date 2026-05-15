@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Github",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "github",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#326CE5",
@@ -203,6 +203,7 @@
     "kind": "StorageVersionMigration",
     "schema": "{\"description\":\"StorageVersionMigration represents a migration of stored data to the latest storage version.\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"Spec of the storage version migration.\",\"properties\":{\"continueToken\":{\"description\":\"The token used in the list options to get the next chunk of objects to migrate. When the .status.conditions indicates the migration is \\\"Running\\\", users can use this token to check the progress of the migration.\",\"type\":\"string\"},\"resource\":{\"allOf\":[{\"description\":\"The names of the group, the version, and the resource.\",\"properties\":{\"group\":{\"description\":\"The name of the group.\",\"type\":\"string\"},\"resource\":{\"description\":\"The name of the resource.\",\"type\":\"string\"},\"version\":{\"description\":\"The name of the version.\",\"type\":\"string\"}},\"type\":\"object\"}],\"default\":{},\"description\":\"The resource that is being migrated. The migrator sends requests to the endpoint serving the resource. Immutable.\"}},\"required\":[\"resource\"],\"type\":\"object\"}],\"default\":{},\"description\":\"Specification of the migration.\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"storagemigration.k8s.io\",\"kind\":\"StorageVersionMigration\",\"version\":\"v1alpha1\"}]}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

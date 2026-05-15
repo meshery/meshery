@@ -21,7 +21,7 @@ const initialState = {
   isDrawerCollapsed: false,
   catalogVisibility: true,
   extensionType: '',
-  capabilitiesRegistry: null,
+  providerCapabilities: null,
   controllerState: null,
   connectionMetadataState: null, // store connection definition metadata for state and connection kind management
   organization: null,
@@ -103,8 +103,8 @@ const coreSlice = createSlice({
     updateExtensionType: (state, action) => {
       state.extensionType = action.payload.extensionType;
     },
-    updateCapabilities: (state, action) => {
-      state.capabilitiesRegistry = action.payload.capabilitiesRegistry;
+    updateProviderCapabilities: (state, action) => {
+      state.providerCapabilities = action.payload.providerCapabilities;
     },
     setConnectionMetadata: (state, action) => {
       state.connectionMetadataState = action.payload.connectionMetadataState;
@@ -140,7 +140,7 @@ export const {
   clearControllerState,
   setMeshsyncSubscription,
   updateExtensionType,
-  updateCapabilities,
+  updateProviderCapabilities,
   setConnectionMetadata,
   setOrganization,
   setWorkspace,

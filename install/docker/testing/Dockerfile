@@ -10,7 +10,7 @@ RUN go mod download
 RUN cd server && cd cmd && GOPROXY=https://proxy.golang.org go build -ldflags="-w -s -X main.version=$GIT_VERSION" -tags draft -a -o /meshery .
 
 # This image will be reuse for both UI & UI Provider
-FROM node:20-alpine AS base-node
+FROM node:22-alpine AS base-node
 
 FROM base-node AS ui-deps
 RUN apk add --no-cache libc6-compat
@@ -122,7 +122,6 @@ COPY ./server/meshmodel /app/server/meshmodel
 COPY ./server/permissions /app/server/permissions/
 COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
-COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml
 COPY --from=ui-builder /app/out /app/ui/out
 COPY --from=ui-builder /app/public /app/ui/public
 COPY --from=ui-provider-builder /app/out /app/provider-ui/out

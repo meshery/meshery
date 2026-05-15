@@ -1,0 +1,30 @@
+{{ $operation := .operation }}
+{{ $schemes := .schemes | default dict }}
+{{ $summary := "" }}
+
+{{ if isset $operation "security" }}
+  {{ $security := index $operation "security" }}
+  {{ if not $security }}
+    {{ $summary = "No authentication required" }}
+  {{ else }}
+    {{ $summaries := slice }}
+    {{ range $security }}
+      {{ range $schemeName, $scopes := . }}
+        {{ $itemSummary := replace $schemeName "_" " " | title }}
+        {{ $scheme := index $schemes $schemeName }}
+        {{ if and $scheme (eq (lower (index $scheme "type")) "http") (eq (lower (index $scheme "scheme")) "bearer") }}
+          {{ $itemSummary = "Bearer JWT" }}
+        {{ end }}
+        {{ if gt (len $scopes) 0 }}
+          {{ $itemSummary = printf "%s (%s)" $itemSummary (delimit $scopes ", ") }}
+        {{ end }}
+        {{ if not (in $summaries $itemSummary) }}
+          {{ $summaries = $summaries | append $itemSummary }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+    {{ $summary = delimit $summaries " or " }}
+  {{ end }}
+{{ end }}
+
+{{ return $summary }}

@@ -1,0 +1,142 @@
+import React, { useMemo } from 'react';
+import { donut } from 'billboard.js';
+import BBChart from '../../BBChart';
+import { dataToColors, isValidColumnName } from '../../../utils/charts';
+import ConnectClustersBtn from '../../general/ConnectClustersBtn';
+import Link from 'next/link';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
+import { Box, MenuItem, Select, Typography } from '@sistent/sistent';
+import { useTheme } from '@/theme';
+
+type WorkloadResource = { kind?: string; count?: number };
+
+type WorkloadChartProps = {
+  classes: { dashboardSection: string; link: string };
+  resourses?: WorkloadResource[];
+  namespaces?: string[];
+  selectedNamespace?: string;
+  handleSetNamespace: (ns: string) => void;
+};
+
+export default function WorkloadChart({
+  classes,
+  resourses = [],
+  namespaces = [],
+  selectedNamespace = '',
+  handleSetNamespace,
+}: WorkloadChartProps) {
+  const theme = useTheme();
+  const chartData = useMemo(
+    () =>
+      (resourses || [])
+        .filter((resource) => isValidColumnName(resource?.kind))
+        .map((resource) => [resource?.kind, resource?.count]),
+    [resourses],
+  );
+
+  const chartOptions = useMemo(
+    () => ({
+      data: {
+        columns: chartData,
+        type: donut(),
+        colors: dataToColors(chartData, theme),
+      },
+      arc: {
+        cornerRadius: {
+          ratio: 0.05,
+        },
+      },
+      donut: {
+        title: 'Workloads',
+        padAngle: 0.03,
+        label: {
+          format: function (value) {
+            return value;
+          },
+        },
+      },
+      tooltip: {
+        format: {
+          value: function (v) {
+            return v;
+          },
+        },
+      },
+      legend: {
+        show: false,
+      },
+    }),
+    [chartData, theme],
+  );
+  const canViewConnections = CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject);
+
+  return (
+    <div
+      className={classes.dashboardSection}
+      style={{
+        padding: '0.5rem',
+        paddingTop: '2rem',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <Link
+          href="/management/connections"
+          style={{
+            pointerEvents: !canViewConnections ? 'none' : 'auto',
+          }}
+        >
+          <Typography variant="h6" gutterBottom className={classes.link}>
+            Workloads
+          </Typography>
+        </Link>
+        {namespaces.length > 0 && (
+          <Select
+            value={selectedNamespace}
+            onChange={(event) => handleSetNamespace(event.target.value)}
+          >
+            {(namespaces || []).map((ns) => (
+              <MenuItem key={ns} value={ns}>
+                {ns}
+              </MenuItem>
+            ))}
+          </Select>
+        )}
+      </div>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignContent: 'center',
+          height: '100%',
+        }}
+      >
+        {chartData.length > 0 ? (
+          <BBChart options={chartOptions} />
+        ) : (
+          <div
+            style={{
+              padding: '2rem',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+            }}
+          >
+            <Typography style={{ fontSize: '1.5rem', marginBottom: '1rem' }} align="center">
+              No workloads found in your cluster(s).
+            </Typography>
+            <ConnectClustersBtn />
+          </div>
+        )}
+      </Box>
+    </div>
+  );
+}

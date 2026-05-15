@@ -9,8 +9,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// LogLevelResponse represents the response structure for log level operations
-// swagger:response LogLevelResponse
 type LogLevelResponse struct {
 	// Status of the operation (success/error)
 	// example: success/error
@@ -19,21 +17,43 @@ type LogLevelResponse struct {
 	// Current log level of the server
 	// example: info
 	// required: true
-	LogLevel string `json:"event_log_level"`
+	LogLevel string `json:"eventLogLevel"`
 
 	// List of available logging levels
 	// example: ["panic","fatal","error","warn","info","debug","trace"]
-	Available []string `json:"available_levels,omitempty"`
+	Available []string `json:"availableLevels,omitempty"`
 }
 
-// LogLevelRequest represents the request body for setting log level
-// swagger:parameters LogLevelRequest
 type LogLevelRequest struct {
 	// Desired log level to set
 	// required: true
 	// enum: panic,fatal,error,warn,info,debug,trace
 	// example: debug
-	LogLevel string `json:"event_log_level"`
+	LogLevel string `json:"eventLogLevel"`
+}
+
+// UnmarshalJSON dual-accepts the canonical `eventLogLevel` wire key and the
+// legacy `event_log_level` spelling during the Phase 2 deprecation window.
+// Go's encoding/json case-insensitive tag fallback does NOT cross an
+// underscore boundary, so a struct tagged `eventLogLevel` would silently
+// drop a payload keyed `event_log_level`. Canonical wins when both are
+// present. Retire the fallback once Phase 3 consumer migration completes.
+func (r *LogLevelRequest) UnmarshalJSON(data []byte) error {
+	aux := struct {
+		Canonical *string `json:"eventLogLevel,omitempty"`
+		Legacy    *string `json:"event_log_level,omitempty"`
+	}{}
+	r.LogLevel = ""
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	switch {
+	case aux.Canonical != nil:
+		r.LogLevel = *aux.Canonical
+	case aux.Legacy != nil:
+		r.LogLevel = *aux.Legacy
+	}
+	return nil
 }
 
 // getAvailableLogLevels returns all valid logging levels supported by the system
@@ -54,21 +74,11 @@ func (h *Handler) ServerEventConfigurationHandler(w http.ResponseWriter, req *ht
 	case http.MethodGet:
 		h.ServerEventConfigurationGet(w, req, prefObj, user, provider)
 	default:
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		// TODO(error-code): promote to MeshKit code
+		writeJSONError(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
-// swagger:route POST /api/system/events system setLogLevel
-//
-// # Set server event logging level
-//
-// Updates the server's logging level. The new level must be one of the available logging levels.
-// Invalid log levels will result in a 400 Bad Request response.
-//
-// Responses:
-//
-//	200: LogLevelResponse       Successfully updated log level
-//	400: LogLevelResponse       Invalid log level provided
 func (h *Handler) ServerEventConfigurationSet(w http.ResponseWriter, req *http.Request,
 	prefObj *models.Preference, user *models.User, provider models.Provider) {
 
@@ -112,18 +122,6 @@ func (h *Handler) ServerEventConfigurationSet(w http.ResponseWriter, req *http.R
 	}
 }
 
-// swagger:route GET /api/system/events system getLogLevel
-//
-// # Get current logging configuration for the server events
-//
-// Retrieves the current server log level and lists all available log levels.
-//
-// Produces:
-//   - application/json
-//
-// Responses:
-//
-//	200: LogLevelResponse       Successfully retrieved log level
 func (h *Handler) ServerEventConfigurationGet(w http.ResponseWriter, req *http.Request,
 	prefObj *models.Preference, user *models.User, provider models.Provider) {
 

@@ -1,0 +1,24 @@
+version: 0.0.158
+name: meshery-design-at-a-glance
+displayName: meshery-design-at-a-glance
+createdAt: "2026-03-26T06:53:53Z"
+description: This design illustrates Meshery's Architeture at a glance , showing service meshes and their interactions
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/bf3ef49f-0623-499b-b9e3-3b9e0da07557/0.0.158/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This design is created for learning purposes and may need modifications for real-world use. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: f8bf707f-40b4-4cd7-a3f5-1774603af68d
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/bf3ef49f-0623-499b-b9e3-3b9e0da07557-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/bf3ef49f-0623-499b-b9e3-3b9e0da07557-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

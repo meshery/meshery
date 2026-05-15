@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/events"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/spf13/viper"
 )
 
@@ -21,7 +23,7 @@ func (ca *ConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interfac
 
 func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	userUUID := user.ID
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
@@ -60,16 +62,16 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		return machines.NoOp, eventBuilder.Build(), errConnection
 	}
 
-	meshsyncDeploymentMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(connection.Metadata)
-	if meshsyncDeploymentMode == schemasConnection.MeshsyncDeploymentModeUndefined {
+	meshsyncDeploymentMode := connections.MeshsyncDeploymentModeFromMetadata(connection.Metadata)
+	if meshsyncDeploymentMode == connections.MeshsyncDeploymentModeUndefined {
 		// TODO:
 		// maybe not call to viper here and propagate default value from above,
 		// f.e. when machine is created
-		meshsyncDeploymentMode = schemasConnection.MeshsyncDeploymentModeFromString(
+		meshsyncDeploymentMode = connections.MeshsyncDeploymentModeFromString(
 			viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"),
 		)
-		if meshsyncDeploymentMode == schemasConnection.MeshsyncDeploymentModeUndefined {
-			meshsyncDeploymentMode = schemasConnection.MeshsyncDeploymentModeDefault
+		if meshsyncDeploymentMode == connections.MeshsyncDeploymentModeUndefined {
+			meshsyncDeploymentMode = connections.MeshsyncDeploymentModeDefault
 		}
 	}
 

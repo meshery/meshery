@@ -1,0 +1,13 @@
+{{ define "main" }}
+<h1>Meshery {{ .Params.tag }}</h1>
+
+<h4><a href="https://github.com/meshery/meshery/releases/tag/{{ .Params.tag }}">Released</a> on {{ .Date.Format "January 02, 2006" }}</h4>
+
+{{ .Content }}
+
+{{ if strings.Contains .Content "code" }}
+<script>
+/*clipboard.js code*/
+</script>
+{{ end }}
+{{ end }}

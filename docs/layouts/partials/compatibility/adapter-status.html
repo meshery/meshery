@@ -1,0 +1,12 @@
+<table style="display: flex; align-self: center; justify-self: center">
+  <th>Cloud Native Infrastructure</th>
+  <th>Adapter Status</th>
+  <th>Adapter Version</th>
+  <th>Earliest Supported Infrastructure Version</th>
+  <tr>
+    <td><img src="{{ .Params.image }}" style="width:20px" data-logo-for-dark="{{ .Params.white_image }}" data-logo-for-light="{{ .Params.image }}" id="logo-dark-light" loading="lazy"/> {{ .Params.component }}</td>
+    <td><a href="{{ .Params.github_link }}">{{ .Params.project_status }}</a></td>
+    <td>{{ .Params.adapter_version }}</td>
+    <td>{{ .Params.earliest_version }}</td>
+  </tr>
+</table>

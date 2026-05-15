@@ -1,0 +1,1784 @@
+{
+  "id": "397e88c7-38d9-4499-85b2-73696f0b195a",
+  "name": "Edge-Firewall-relationship",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.265",
+  "metadata": {
+    "resolvedAliases": {
+      "00a15419-566b-4a55-be3a-58dc20a83949": {
+        "alias_component_id": "00a15419-566b-4a55-be3a-58dc20a83949",
+        "immediate_parent_id": "c024b55d-ca23-45c9-a9aa-b5c754c300fa",
+        "immediate_ref_field_path": [
+          "configuration",
+          "spec",
+          "containers",
+          "0"
+        ],
+        "relationship_id": "ac7c4485-dd18-43d8-94d3-0382383cd04a",
+        "resolved_parent_id": "c024b55d-ca23-45c9-a9aa-b5c754c300fa",
+        "resolved_ref_field_path": [
+          "configuration",
+          "spec",
+          "containers",
+          "0"
+        ]
+      },
+      "d8a3806e-488b-4527-b451-47272230bb35": {
+        "alias_component_id": "d8a3806e-488b-4527-b451-47272230bb35",
+        "immediate_parent_id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
+        "immediate_ref_field_path": [
+          "configuration",
+          "spec",
+          "containers",
+          "0"
+        ],
+        "relationship_id": "588fe5db-3928-46e8-b5af-fce65af9a4cb",
+        "resolved_parent_id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
+        "resolved_ref_field_path": [
+          "configuration",
+          "spec",
+          "containers",
+          "0"
+        ]
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "6366cd62-f4ed-4c83-97f0-95b25d6d5be6",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "default",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.35.0-rc.1"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-style": "dashed",
+        "border-width": 2,
+        "position": {
+          "x": -156.6932018263309,
+          "y": -49.908716666757414
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "name": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Namespace",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "8f39eefc-9bd3-4cbe-ac27-e90f18d7f82b",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "network-policy-wy",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.35.0-rc.1"
+        }
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": -81.79627944374067,
+          "y": -28.78445199112483
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/networkpolicy-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/networkpolicy-white.svg",
+        "width": 24
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "network-policy-wy",
+          "namespace": "default"
+        },
+        "spec": {
+          "ingress": [
+            {
+              "from": [],
+              "ports": []
+            },
+            {
+              "from": [],
+              "ports": []
+            }
+          ],
+          "selector": {
+            "matchLabels": {
+              "role": "db"
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "networking.k8s.io/v1",
+        "kind": "NetworkPolicy",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "78ef7c98-840f-4ecc-b693-594122f38aab",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "network-policy-yn",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.35.0-rc.1"
+        }
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/networkpolicy-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/networkpolicy-white.svg",
+        "width": 24
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "networking.k8s.io/v1",
+        "kind": "NetworkPolicy",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "c024b55d-ca23-45c9-a9aa-b5c754c300fa",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "database",
+      "description": "",
+      "format": "",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.35.0-rc.1"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "position": {
+          "x": -237.24253679030085,
+          "y": -68.70903636489214
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/pod-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/pod-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/pod-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "role": "db"
+          },
+          "name": "database",
+          "namespace": "default"
+        },
+        "spec": {
+          "containers": [
+            {
+              "image": "redis:6",
+              "name": "database",
+              "ports": [
+                {
+                  "containerPort": 6379
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Pod",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "frontend",
+      "description": "",
+      "format": "",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.35.0-rc.1"
+        }
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "position": {
+          "x": -22.381870586134934,
+          "y": -65.04047769334306
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/pod-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/pod-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/pod-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "role": "frontend"
+          },
+          "name": "frontend",
+          "namespace": "default"
+        },
+        "spec": {
+          "00": {
+            "networkPolicy": "network-policy-wy"
+          },
+          "containers": [
+            {
+              "image": "nginx:latest",
+              "name": "frontend",
+              "ports": [
+                {
+                  "containerPort": 80
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Pod",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "d8a3806e-488b-4527-b451-47272230bb35",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "container-kcw",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Container",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "00a15419-566b-4a55-be3a-58dc20a83949",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "container-yee",
+      "description": "",
+      "format": "JSON",
+      "modelReference": {
+        "version": "v1.0.0",
+        "name": "meshery-core",
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "model": {
+          "version": "0.7.2"
+        }
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Container",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "preferences": {
+    "layers": {
+      "relationships": {
+        "hierarchical-sibling-matchlabels": false
+      }
+    }
+  },
+  "relationships": [
+    {
+      "id": "a9caa12d-7034-43e5-9f7e-5e8fc1850c53",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that allows traffic from one Pod to another Pod via a NetworkPolicy.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": null
+      },
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "e878da72-d314-383a-6b73-907344dc7775",
+        "registrant": {
+          "kind": ""
+        },
+        "model": {
+          "version": "v1.32.0-alpha.1"
+        }
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
+                "kind": "Pod",
+                "match": {
+                  "from": [
+                    {
+                      "id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
+                      "kind": "self",
+                      "mutatedRef": [
+                        [
+                          "configuration",
+                          "spec",
+                          "_",
+                          "networkPolicy"
+                        ]
+                      ]
+                    }
+                  ],
+                  "to": [
+                    {
+                      "id": "8f39eefc-9bd3-4cbe-ac27-e90f18d7f82b",
+                      "kind": "NetworkPolicy",
+                      "mutatorRef": [
+                        [
+                          "displayName"
+                        ]
+                      ]
+                    }
+                  ]
+                },
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "artifacthub"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "c024b55d-ca23-45c9-a9aa-b5c754c300fa",
+                "kind": "Pod",
+                "match": {
+                  "from": [
+                    {
+                      "id": "8f39eefc-9bd3-4cbe-ac27-e90f18d7f82b",
+                      "kind": "NetworkPolicy",
+                      "mutatedRef": [
+                        [
+                          "configuration",
+                          "spec",
+                          "ingress"
+                        ],
+                        [
+                          "configuration",
+                          "spec",
+                          "selector",
+                          "matchLabels"
+                        ]
+                      ]
+                    }
+                  ],
+                  "to": [
+                    {
+                      "id": "c024b55d-ca23-45c9-a9aa-b5c754c300fa",
+                      "kind": "self",
+                      "mutatorRef": [
+                        [
+                          "displayName"
+                        ],
+                        [
+                          "configuration",
+                          "metadata",
+                          "labels"
+                        ]
+                      ]
+                    }
+                  ]
+                },
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "artifacthub"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "firewall",
+      "status": "deleted",
+      "type": "binding",
+      "version": ""
+    },
+    {
+      "id": "c7b2a37e-1745-496f-bf28-f2f47c47abad",
+      "evaluationQuery": null,
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "A relationship that defines whether a component can be a parent of other components. It is read like: `from` can be a child of `to`, where from and to are any components that match the from and to selectors respectively",
+        "styles": null,
+        "isAnnotation": null
+      },
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "4394fd4f-7d35-78e1-2cba-a265d8e33b70",
+        "registrant": {
+          "kind": ""
+        },
+        "model": {
+          "version": "v1.25.2"
+        }
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "6366cd62-f4ed-4c83-97f0-95b25d6d5be6",
+                "kind": "Namespace",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "artifacthub"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "e24b5221-bad4-4b28-939a-5f0756efe985",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that act as a firewall for ingress and egress traffic from Pods.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": null
+      },
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "e878da72-d314-383a-6b73-907344dc7775",
+        "registrant": {
+          "kind": ""
+        },
+        "model": {
+          "version": "v1.32.0-alpha.1"
+        }
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
+                "kind": "Pod",
+                "match": {
+                  "from": [
+                    {
+                      "id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
+                      "kind": "self",
+                      "mutatedRef": [
+                        []
+                      ]
+                    }
+                  ],
+                  "to": [
+                    {
+                      "id": "78ef7c98-840f-4ecc-b693-594122f38aab",
+                      "kind": "NetworkPolicy",
+                      "mutatorRef": [
+                        []
+                      ]
+                    }
+                  ]
+                },
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "artifacthub"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "c024b55d-ca23-45c9-a9aa-b5c754c300fa",
+                "kind": "Pod",
+                "match": {
+                  "from": [
+                    {
+                      "id": "78ef7c98-840f-4ecc-b693-594122f38aab",
+                      "kind": "NetworkPolicy",
+                      "mutatedRef": [
+                        []
+                      ]
+                    }
+                  ],
+                  "to": [
+                    {
+                      "id": "c024b55d-ca23-45c9-a9aa-b5c754c300fa",
+                      "kind": "self",
+                      "mutatorRef": [
+                        []
+                      ]
+                    }
+                  ]
+                },
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "artifacthub"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "firewall",
+      "status": "deleted",
+      "type": "binding",
+      "version": ""
+    },
+    {
+      "id": "ea4eebf7-4646-427d-a376-a2ef953a9f16",
+      "evaluationQuery": null,
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "A relationship that defines whether a component can be a parent of other components. It is read like: `from` can be a child of `to`, where from and to are any components that match the from and to selectors respectively",
+        "styles": null,
+        "isAnnotation": null
+      },
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "4394fd4f-7d35-78e1-2cba-a265d8e33b70",
+        "registrant": {
+          "kind": ""
+        },
+        "model": {
+          "version": "v1.25.2"
+        }
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "c024b55d-ca23-45c9-a9aa-b5c754c300fa",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "6366cd62-f4ed-4c83-97f0-95b25d6d5be6",
+                "kind": "Namespace",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "artifacthub"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "588fe5db-3928-46e8-b5af-fce65af9a4cb",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "bba54c44-a440-773a-a524-0114ebde5397",
+        "registrant": {
+          "kind": ""
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        }
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "d8a3806e-488b-4527-b451-47272230bb35",
+                "kind": "Container",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "meshery-core",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ],
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
+                "kind": "Pod",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ],
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "subType": "alias",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "86558d8e-7777-4f66-a414-e059b67cc0b9",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": null
+      },
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "e878da72-d314-383a-6b73-907344dc7775",
+        "registrant": {
+          "kind": ""
+        },
+        "model": {
+          "version": "v1.32.0-alpha.1"
+        }
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "8f39eefc-9bd3-4cbe-ac27-e90f18d7f82b",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "6366cd62-f4ed-4c83-97f0-95b25d6d5be6",
+                "kind": "Namespace",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "artifacthub"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "ac7c4485-dd18-43d8-94d3-0382383cd04a",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "bba54c44-a440-773a-a524-0114ebde5397",
+        "registrant": {
+          "kind": ""
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        }
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "00a15419-566b-4a55-be3a-58dc20a83949",
+                "kind": "Container",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "meshery-core",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ],
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "c024b55d-ca23-45c9-a9aa-b5c754c300fa",
+                "kind": "Pod",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ],
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "containers",
+                      "0"
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "subType": "alias",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "b0235147-348e-4788-94df-ac550fb5d96a",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": null
+      },
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "e878da72-d314-383a-6b73-907344dc7775",
+        "registrant": {
+          "kind": ""
+        },
+        "model": {
+          "version": "v1.32.0-alpha.1"
+        }
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "78ef7c98-840f-4ecc-b693-594122f38aab",
+                "kind": "*",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "*",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "6366cd62-f4ed-4c83-97f0-95b25d6d5be6",
+                "kind": "Namespace",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "artifacthub"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "approved",
+      "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "b9d7ba21-755a-40d9-be0f-286d1f1a0da3",
+      "evaluationQuery": "",
+      "kind": "edge",
+      "metadata": {
+        "description": "An edge relationship Policy firewalls any Pod — zero-trust traffic rules, no name needed.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.35.0-beta.0"
+        }
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "78ef7c98-840f-4ecc-b693-594122f38aab",
+                "kind": "NetworkPolicy",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "podSelector",
+                      "matchLabels"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
+                "kind": "Pod",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                    [
+                      "metadata",
+                      "labels"
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "subType": "firewall",
+      "status": "approved",
+      "type": "non-binding",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "cb17a8c0-97d5-4d65-a33c-31a6607eb710",
+      "evaluationQuery": "",
+      "kind": "edge",
+      "metadata": {
+        "description": "An edge relationship Policy firewalls any Pod — zero-trust traffic rules, no name needed.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.35.0-beta.0"
+        }
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "78ef7c98-840f-4ecc-b693-594122f38aab",
+                "kind": "NetworkPolicy",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "podSelector",
+                      "matchLabels"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "c024b55d-ca23-45c9-a9aa-b5c754c300fa",
+                "kind": "Pod",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                    [
+                      "metadata",
+                      "labels"
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "subType": "firewall",
+      "status": "approved",
+      "type": "non-binding",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "dad78f1c-cd40-4bf9-a0bf-9030d264e770",
+      "evaluationQuery": "",
+      "kind": "edge",
+      "metadata": {
+        "description": "An edge relationship Policy firewalls any Pod — zero-trust traffic rules, no name needed.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.35.0-beta.0"
+        }
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "8f39eefc-9bd3-4cbe-ac27-e90f18d7f82b",
+                "kind": "NetworkPolicy",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "podSelector",
+                      "matchLabels"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "09cf7c20-b5e3-4218-9cfe-025b5253f2f8",
+                "kind": "Pod",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                    [
+                      "metadata",
+                      "labels"
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "subType": "firewall",
+      "status": "approved",
+      "type": "non-binding",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "ea054fa6-6259-4ace-8fc7-1e2f4c374d3c",
+      "evaluationQuery": "",
+      "kind": "edge",
+      "metadata": {
+        "description": "An edge relationship Policy firewalls any Pod — zero-trust traffic rules, no name needed.",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "registrant": {
+          "kind": "github"
+        },
+        "model": {
+          "version": "v1.35.0-beta.0"
+        }
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "8f39eefc-9bd3-4cbe-ac27-e90f18d7f82b",
+                "kind": "NetworkPolicy",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "podSelector",
+                      "matchLabels"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "c024b55d-ca23-45c9-a9aa-b5c754c300fa",
+                "kind": "Pod",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "version": "",
+                  "name": "kubernetes",
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "model": {
+                    "version": ""
+                  }
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatedRef": [
+                    [
+                      "metadata",
+                      "labels"
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": null,
+            "to": null
+          }
+        }
+      ],
+      "subType": "firewall",
+      "status": "approved",
+      "type": "non-binding",
+      "version": "v1.0.0"
+    }
+  ]
+}

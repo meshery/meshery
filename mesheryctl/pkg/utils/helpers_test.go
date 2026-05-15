@@ -12,8 +12,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
-	"github.com/sirupsen/logrus/hooks/test"
 	"k8s.io/client-go/tools/clientcmd/api"
 )
 
@@ -28,9 +26,7 @@ func (m mockCloser) Close() error {
 
 func TestSafeClose(t *testing.T) {
 
-	log := logrus.New()
-	hook := test.NewGlobal()
-	log.AddHook(hook)
+	SetupMeshkitLoggerTesting(t, false)
 
 	// testcases for SafeClose(co io.Closer)
 	t.Run("SafeClose", func(t *testing.T) {
@@ -43,9 +39,6 @@ func TestSafeClose(t *testing.T) {
 		}
 		SafeClose(mc)
 
-		if len(hook.Entries) != 1 {
-			t.Fatal("expected 1 log entry")
-		}
 	})
 }
 
@@ -229,7 +222,7 @@ func TestValidateURL(t *testing.T) {
 	tests := []struct {
 		name    string
 		url     string
-		wantErr string
+		wantErr error
 	}{
 		{
 			name: "Correct URL",
@@ -238,22 +231,19 @@ func TestValidateURL(t *testing.T) {
 		{
 			name:    "Unsupported scheme",
 			url:     "mqtt://www.layer5.io",
-			wantErr: "mqtt is not a supported protocol",
+			wantErr: ErrParsingUrl(fmt.Errorf("mqtt is not a supported protocol")),
 		},
 		{
 			name:    "invalid URL",
 			url:     "layer5.io",
-			wantErr: "parse \"layer5.io\": invalid URI for request",
+			wantErr: ErrParsingUrl(fmt.Errorf("parse \"layer5.io\": invalid URI for request")),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := ValidateURL(tt.url)
 			if err != nil {
-				// check error message
-				if err.Error() != tt.wantErr {
-					t.Errorf("ValidateURL error = %v want = %v", err, tt.wantErr)
-				}
+				AssertMeshkitErrorsEqual(t, err, tt.wantErr)
 			}
 		})
 	}

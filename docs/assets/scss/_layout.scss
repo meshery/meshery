@@ -1,0 +1,111 @@
+@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i";
+html {
+  font-size: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 75em) {
+    font-size: 100%;
+  }
+
+  @media (max-width: 56.25em) {
+    font-size: 100%;
+  }
+
+  @media (max-width: 37.5em) {
+    font-size: 105%;
+  }
+}
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+  color: var(--color-secondary-dark);
+  text-decoration: none;
+}
+
+body {
+  font-weight: 400;
+  position: relative;
+  line-height: 1.3;
+  background-repeat: no-repeat;
+  color: var(--color-secondary-dark);
+  background: var(--background-light);
+  font-family: "Qanelas Soft", "Open Sans", sans-serif, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, apple color emoji, segoe ui emoji, segoe ui symbol;
+}
+
+ul,
+ol {
+  list-style: none;
+  text-decoration: none;
+  margin-bottom: 1.15rem;
+}
+
+.flex-container {
+  display: flex;
+
+  @media (max-width: 81.25em) {
+    // grid-template-columns: 2.2fr 5.8fr 2fr;
+  }
+  @media (max-width: 75em) {
+    display: flex;
+    // flex-direction: column;
+    flex-wrap: wrap;
+  }
+}
+
+// Hide the span initially
+.social__link .footer-icons-text {
+  display: none;
+}
+
+/* Show the span when hovering over the link */
+.social__link:hover .footer-icons-text {
+  display: block;
+}
+
+
+.main-container {
+  padding: 3.5rem 4.4rem;
+  overflow-x: auto;
+  width: 100%;
+  min-height: calc(100vh - var(--footer-height));
+  flex-grow: 5;
+
+  @media (max-width: 1200px) {
+    flex: 0 0 100%;
+  }
+  @media (max-width: 600px) {
+    padding: 1.5rem 1.5rem 1.5rem 2.5rem;
+  }
+  & .breadcrumb {
+    list-style: none;
+  }
+
+  & #breadcrumbs {
+    font-size: .9rem;
+    line-height: 1.15rem;
+    & a {
+      color: var(--color-grey-dark);
+      transition: all 0.3s;
+      &:hover {
+        color: var(--color-secondary-dark);
+      }
+    }
+  }
+}
+
+#hiddendiv {
+  font-size: 1.4rem;
+  background-color: var(--color-primary-medium);
+  padding: 15px 10px;
+}
+
+@media (max-width: 600px) {
+  .small-hide {
+    display: none;
+  }
+}
+

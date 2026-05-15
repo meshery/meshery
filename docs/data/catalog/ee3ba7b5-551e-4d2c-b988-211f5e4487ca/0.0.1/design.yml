@@ -1,0 +1,39 @@
+name: Minimal Nginx Ingress
+version: 0.0.11
+services:
+  minimal-ingress:
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /
+    apiVersion: networking.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: minimal-ingress
+    namespace: default
+    settings:
+      spec:
+        rules:
+        - http:
+            paths:
+            - backend:
+                service:
+                  name: test
+                  port:
+                    number: 80
+              path: /testpath
+              path Type: Prefix
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: ca48cb52-07ad-4205-b785-617360155265
+        label: minimal-ingress
+        position:
+          posX: 450
+          posY: 270
+        whiteboardData:
+          style: {}
+    type: Ingress.K8s
+    version: v1.25.2

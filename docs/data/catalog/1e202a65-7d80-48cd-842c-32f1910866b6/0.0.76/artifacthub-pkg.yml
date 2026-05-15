@@ -1,0 +1,24 @@
+version: 0.0.76
+name: enhance-flask-app
+displayName: enhance-flask-app
+createdAt: "2024-07-14T01:43:53Z"
+description: Simple flask app utilizing cloud technology.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/1e202a65-7d80-48cd-842c-32f1910866b6/0.0.76/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "The pods are at a failed status in the Kubernetes dashboard, so that is still an issue. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: abfc81dc-0c7f-412c-91f6-ef555ef53abf
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/1e202a65-7d80-48cd-842c-32f1910866b6-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/1e202a65-7d80-48cd-842c-32f1910866b6-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

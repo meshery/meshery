@@ -15,9 +15,8 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",
@@ -54,16 +53,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -205,6 +204,7 @@
     "kind": "SecurityGroup",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allowSameGroupTraffic\": {\n     \"type\": \"boolean\"\n    },\n    \"egressRules\": {\n     \"items\": {\n      \"properties\": {\n       \"ipVersion\": {\n        \"type\": \"string\"\n       },\n       \"policy\": {\n        \"type\": \"string\"\n       },\n       \"portRangeMax\": {\n        \"type\": \"integer\"\n       },\n       \"portRangeMin\": {\n        \"type\": \"integer\"\n       },\n       \"priority\": {\n        \"type\": \"integer\"\n       },\n       \"protocol\": {\n        \"type\": \"string\"\n       },\n       \"remoteAddress\": {\n        \"type\": \"string\"\n       },\n       \"remoteSecurityGroup\": {\n        \"type\": \"string\"\n       },\n       \"remoteType\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"ingressRules\": {\n     \"items\": {\n      \"properties\": {\n       \"ipVersion\": {\n        \"type\": \"string\"\n       },\n       \"policy\": {\n        \"type\": \"string\"\n       },\n       \"portRangeMax\": {\n        \"type\": \"integer\"\n       },\n       \"portRangeMin\": {\n        \"type\": \"integer\"\n       },\n       \"priority\": {\n        \"type\": \"integer\"\n       },\n       \"protocol\": {\n        \"type\": \"string\"\n       },\n       \"remoteAddress\": {\n        \"type\": \"string\"\n       },\n       \"remoteSecurityGroup\": {\n        \"type\": \"string\"\n       },\n       \"remoteType\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Security Group\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

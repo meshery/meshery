@@ -15,9 +15,8 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",
@@ -54,16 +53,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00ABCD",
@@ -205,6 +204,7 @@
     "kind": "Gerrit",
     "schema": "{\n \"description\": \"Gerrit is the Schema for the gerrits API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GerritSpec defines the desired state of Gerrit.\",\n   \"properties\": {\n    \"basePath\": {\n     \"description\": \"BasePath gerrit http route base path.\",\n     \"type\": \"string\"\n    },\n    \"externalURL\": {\n     \"description\": \"ExternalURL gerrit full external url for keycloak or other integrations\",\n     \"type\": \"string\"\n    },\n    \"keycloakSpec\": {\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"realm\": {\n       \"type\": \"string\"\n      },\n      \"url\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"restAPIUrl\": {\n     \"description\": \"RestAPIUrl gerrit http full api url.\",\n     \"type\": \"string\"\n    },\n    \"sshPort\": {\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"sshUrl\": {\n     \"description\": \"SSHUrl gerrit ssh url.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"keycloakSpec\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Gerrit\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

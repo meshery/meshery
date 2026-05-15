@@ -1,0 +1,158 @@
+# meshery-ui restructure audits.
+#
+# This workflow is informational; it does not gate merges. It surfaces the
+# Phase 1 baseline counts (direct MUI usage, hex/rgb color literals, and
+# giant source files) that gate the Phase 1 exit criteria of issue #18656.
+#
+# See ui/restructure-plan.md §8.6. The audits trend toward zero across the
+# multi-phase UI restructure; this job tracks them on every UI PR and on
+# every push to master.
+name: ui-audits
+on:
+  pull_request:
+    paths:
+      - 'ui/**'
+  push:
+    branches:
+      - master
+    paths:
+      - 'ui/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  audits:
+    name: runner / ui-audits
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: ui
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js v22
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Cache ui/node_modules
+        uses: actions/cache@v4
+        with:
+          path: ui/node_modules
+          key: ui-node-modules-${{ runner.os }}-${{ hashFiles('ui/package-lock.json') }}
+
+      - name: Install dependencies in Meshery UI
+        run: npm ci
+
+      - name: Initialise audit summary
+        run: |
+          {
+            echo "# Meshery UI restructure audits"
+            echo ""
+            echo "Phase 1 baseline counters for issue [#18656](https://github.com/meshery/meshery/issues/18656)."
+            echo "These audits are informational; they do not gate merges."
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Run audits (mui, hex, size)
+        id: audits
+        run: |
+          for kind in mui hex size; do
+            output="$(npm run --silent audit:${kind})"
+            trend="$(printf '%s\n' "$output" | grep -E "^AUDIT ${kind} " | tail -1)"
+            : "${trend:=AUDIT ${kind} (no summary line)}"
+            printf '%s\n' "$output"
+            printf '%s-trend=%s\n' "$kind" "$trend" >> "$GITHUB_OUTPUT"
+            {
+              echo "<details><summary><strong>audit:${kind}</strong> &mdash; <code>${trend}</code></summary>"
+              echo ""
+              echo '```'
+              echo "${trend}"
+              echo '```'
+              echo ""
+              echo '```text'
+              printf '%s\n' "$output"
+              echo '```'
+              echo ""
+              echo "</details>"
+            } >> "$GITHUB_STEP_SUMMARY"
+          done
+
+      - name: Run lint:ui-kit
+        id: lint-ui-kit
+        # Errors (real guardrail violations) fail this step; warnings do not,
+        # because `--quiet` filters lint output down to errors only.
+        run: |
+          set +e
+          lint_output="$(npm run --silent lint:ui-kit 2>&1)"
+          lint_exit=$?
+          set -e
+          if [ "$lint_exit" -eq 0 ]; then
+            lint_status="pass"
+          else
+            lint_status="fail"
+          fi
+          lint_trend="AUDIT lint-ui-kit status=${lint_status}"
+          printf '%s\n' "$lint_output"
+          printf 'trend=%s\n' "$lint_trend" >> "$GITHUB_OUTPUT"
+          {
+            echo "<details><summary><strong>lint:ui-kit</strong> &mdash; <code>${lint_trend}</code></summary>"
+            echo ""
+            echo '```'
+            echo "${lint_trend}"
+            echo '```'
+            echo ""
+            echo '```text'
+            printf '%s\n' "${lint_output:-(no lint output)}"
+            echo '```'
+            echo ""
+            echo "</details>"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$lint_status" = "fail" ]; then
+            echo "lint:ui-kit reported errors; failing this step."
+            exit 1
+          fi
+
+      # PR-comment steps are best-effort. Fork PRs receive a read-only
+      # GITHUB_TOKEN regardless of the workflow's `permissions:` block, so
+      # find-comment / create-or-update-comment return HTTP 403 from forks.
+      # continue-on-error keeps fork PRs green — contributors still get the
+      # full report via the job summary even when the sticky comment cannot
+      # be posted. Same-repo PRs continue to post normally.
+      - name: Find existing audit comment
+        if: github.event_name == 'pull_request'
+        id: find-comment
+        continue-on-error: true
+        uses: peter-evans/find-comment@v3
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- meshery-ui-audit-marker -->'
+
+      - name: Post or update PR comment
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
+          body: |
+            <!-- meshery-ui-audit-marker -->
+            ### Meshery UI restructure audits
+
+            Phase 1 baseline counters (informational; see [#18656](https://github.com/meshery/meshery/issues/18656)).
+
+            ```
+            ${{ steps.audits.outputs.mui-trend }}
+            ${{ steps.audits.outputs.hex-trend }}
+            ${{ steps.audits.outputs.size-trend }}
+            ${{ steps.lint-ui-kit.outputs.trend }}
+            ```
+
+            Full per-file breakdowns are in the workflow's [job summary](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).

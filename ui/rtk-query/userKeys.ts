@@ -1,26 +1,26 @@
-import { api } from './index';
+import {
+  mesheryApi,
+  useGetUserKeysQuery as useSchemasGetUserKeysQuery,
+} from '@meshery/schemas/mesheryApi';
 
-const TAGS = {
-  USER_KEYS: 'user-keys',
+export const useGetUserKeysQuery = (queryArgs, options) =>
+  useSchemasGetUserKeysQuery(
+    {
+      orgId: queryArgs?.orgId,
+    },
+    options,
+  );
+
+export const useLazyGetUserKeysQuery = () => {
+  const [trigger, result, lastPromiseInfo] = mesheryApi.endpoints.getUserKeys.useLazyQuery();
+
+  const wrappedTrigger = (queryArgs, preferCacheValue) =>
+    trigger(
+      {
+        orgId: queryArgs?.orgId,
+      },
+      preferCacheValue,
+    );
+
+  return [wrappedTrigger, result, lastPromiseInfo] as const;
 };
-
-const userKeysApi = api
-  .enhanceEndpoints({
-    addTagTypes: [TAGS.USER_KEYS],
-  })
-  .injectEndpoints({
-    endpoints: (builder) => ({
-      getUserKeys: builder.query({
-        query: (queryArgs) => ({
-          url: `identity/orgs/${queryArgs.orgId}/users/keys`,
-          params: {
-            page: queryArgs.page || 0,
-            pagesize: queryArgs.pagesize || 10,
-          },
-        }),
-        providesTags: () => [{ type: TAGS.USER_KEYS }],
-      }),
-    }),
-  });
-
-export const { useLazyGetUserKeysQuery, useGetUserKeysQuery } = userKeysApi;
