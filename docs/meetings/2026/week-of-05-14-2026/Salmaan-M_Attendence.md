@@ -1,3 +1,3 @@
 Hi, I am Salmaan, an undergrad information technology student based in India, actively building skills in software development and open‑source contributions.
 I already merged my first PR, excited to contribute more in Meshery.
-Thankyou
+Thank you
