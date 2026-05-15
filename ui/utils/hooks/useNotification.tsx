@@ -1,8 +1,10 @@
 //NOTE: This file is being refactored to use the new notification center
 
 import { useCallback } from 'react';
+import type { ComponentType } from 'react';
 import { CloseIcon, IconButton, ToggleButtonGroup } from '@sistent/sistent';
 import { useSnackbar } from 'notistack';
+import type { VariantType } from 'notistack';
 import { iconMedium } from '../../css/iconSizes';
 import { v4 } from 'uuid';
 import { store as rtkStore } from '../../store/index';
@@ -87,16 +89,20 @@ export const useNotification = () => {
   };
 };
 
+type NotifyFn = ReturnType<typeof useNotification>['notify'];
+
 /**
  * A higher-order component that provides the `notify` function as a prop to a class-based component.
  *
- * @param {React.Component} Component - The class-based component to be wrapped.
- * @returns {React.Component} The wrapped component with the `notify` prop.
+ * @param Component - The class-based component to be wrapped.
+ * @returns The wrapped component with the `notify` prop injected.
  */
-export function withNotify(Component) {
-  return function WrappedWithNotify(props) {
+export function withNotify<P extends { notify: NotifyFn }>(
+  Component: ComponentType<P>,
+): ComponentType<Omit<P, 'notify'>> {
+  return function WrappedWithNotify(props: Omit<P, 'notify'>) {
     const { notify } = useNotification();
-    return <Component {...props} notify={notify} />;
+    return <Component {...(props as P)} notify={notify} />;
   };
 }
 
@@ -104,7 +110,7 @@ export const useNotificationHandlers = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const handleNotification = useCallback(
-    (type, msg) => {
+    (type: VariantType, msg: string | { response?: { data?: string } }) => {
       let message = typeof msg === 'string' ? msg : msg?.response?.data;
       enqueueSnackbar(message, {
         variant: type,
@@ -129,28 +135,28 @@ export const useNotificationHandlers = () => {
   );
 
   const handleSuccess = useCallback(
-    (message) => {
+    (message: string) => {
       handleNotification('success', message);
     },
     [handleNotification],
   );
 
   const handleError = useCallback(
-    (message) => {
+    (message: string) => {
       handleNotification('error', message);
     },
     [handleNotification],
   );
 
   const handleInfo = useCallback(
-    (message) => {
+    (message: string) => {
       handleNotification('info', message);
     },
     [handleNotification],
   );
 
   const handleWarn = useCallback(
-    (message) => {
+    (message: string) => {
       handleNotification('warning', message);
     },
     [handleNotification],
