@@ -24,6 +24,20 @@ describe('normalizeProviderCapabilities', () => {
       }),
     );
   });
+
+  it('normalizes non-array capabilities to an empty array', () => {
+    expect(
+      normalizeProviderCapabilities({
+        provider_name: 'Meshery Cloud',
+        capabilities: 'not-an-array',
+      }),
+    ).toEqual(
+      expect.objectContaining({
+        providerName: 'Meshery Cloud',
+        capabilities: [],
+      }),
+    );
+  });
 });
 
 describe('normalizePaginatedCollectionResponse', () => {
