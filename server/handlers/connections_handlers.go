@@ -570,20 +570,73 @@ func (h *Handler) resolveMetricsCredential(
 	return url, apiKey, true
 }
 
+// connectionPingFn is the signature for a per-kind ping probe.
+// Implementations write the response themselves and return an error on failure.
+type connectionPingFn func(h *Handler, w http.ResponseWriter, req *http.Request, connection *connections.Connection, token string, provider models.Provider) error
+
+// connectionPingRegistry maps a connection kind to its active-probe implementation.
+// To add support for a new connection kind, register its probe here — no changes
+// to ConnectionPingHandler are required.
+var connectionPingRegistry = map[string]connectionPingFn{
+	"kubernetes": pingKubernetes,
+	"grafana":    pingGrafana,
+	"prometheus":  pingPrometheus,
+}
+
+func pingKubernetes(h *Handler, w http.ResponseWriter, req *http.Request, connection *connections.Connection, token string, provider models.Provider) error {
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
+	k8sContext, err := provider.GetK8sContext(token, connectionID.String())
+	if err != nil {
+		writeMeshkitError(w, ErrInvalidKubeContext(err, connectionID.String()), http.StatusNotFound)
+		return err
+	}
+	kubeclient, err := k8sContext.GenerateKubeHandler()
+	if err != nil {
+		writeMeshkitError(w, ErrInvalidKubeConfig(err, k8sContext.Name), http.StatusBadRequest)
+		return err
+	}
+	version, err := kubeclient.KubeClient.ServerVersion()
+	if err != nil {
+		h.log.Error(ErrKubeVersion(err))
+		writeMeshkitError(w, ErrKubeVersion(err), http.StatusInternalServerError)
+		return err
+	}
+	return json.NewEncoder(w).Encode(map[string]string{"server_version": version.String()})
+}
+
+func pingGrafana(h *Handler, w http.ResponseWriter, req *http.Request, connection *connections.Connection, token string, provider models.Provider) error {
+	url, apiKey, ok := h.resolveMetricsCredential(w, req, connection, token, provider)
+	if !ok {
+		return fmt.Errorf("could not resolve grafana credential")
+	}
+	if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKey); err != nil {
+		h.log.Error(models.ErrGrafanaScan(err))
+		writeMeshkitError(w, models.ErrGrafanaScan(err), http.StatusInternalServerError)
+		return err
+	}
+	writeJSONEmptyObject(w, http.StatusOK)
+	return nil
+}
+
+func pingPrometheus(h *Handler, w http.ResponseWriter, req *http.Request, connection *connections.Connection, token string, provider models.Provider) error {
+	url, apiKey, ok := h.resolveMetricsCredential(w, req, connection, token, provider)
+	if !ok {
+		return fmt.Errorf("could not resolve prometheus credential")
+	}
+	if err := h.config.PrometheusClient.Validate(req.Context(), url, apiKey); err != nil {
+		h.log.Error(models.ErrPrometheusScan(err))
+		writeMeshkitError(w, models.ErrPrometheusScan(err), http.StatusInternalServerError)
+		return err
+	}
+	writeJSONEmptyObject(w, http.StatusOK)
+	return nil
+}
+
 // ConnectionPingHandler performs an ad hoc connectivity check for any connection
-// identified by {connectionId} in the URL path. The check strategy depends on
-// the connection kind:
+// identified by {connectionId} in the URL path.
 //
-//   - kubernetes  — fetches the remote API-server version (same probe as
-//     /api/system/kubernetes/ping).
-//   - grafana     — validates the Grafana URL and API key stored in the
-//     connection credential.
-//   - prometheus  — validates the Prometheus URL and API key stored in the
-//     connection credential.
-//   - all others  — returns the current connection status recorded in the
-//     database without making an outbound call; the status field is the
-//     authoritative source of connectivity state for connection kinds that do
-//     not yet have a dedicated active-probe handler.
+// Kinds with a registered probe in connectionPingRegistry get an active check.
+// All other kinds return the current status recorded in the database.
 //
 // GET /api/integrations/connections/{connectionId}/ping
 func (h *Handler) ConnectionPingHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -603,63 +656,19 @@ func (h *Handler) ConnectionPingHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	switch connection.Kind {
-	case "kubernetes":
-		k8sContext, err := provider.GetK8sContext(token, connectionID.String())
-		if err != nil {
-			writeMeshkitError(w, ErrInvalidKubeContext(err, connectionID.String()), http.StatusNotFound)
-			return
-		}
-		kubeclient, err := k8sContext.GenerateKubeHandler()
-		if err != nil {
-			writeMeshkitError(w, ErrInvalidKubeConfig(err, k8sContext.Name), http.StatusBadRequest)
-			return
-		}
-		version, err := kubeclient.KubeClient.ServerVersion()
-		if err != nil {
-			h.log.Error(ErrKubeVersion(err))
-			writeMeshkitError(w, ErrKubeVersion(err), http.StatusInternalServerError)
-			return
-		}
-		if err := json.NewEncoder(w).Encode(map[string]string{
-			"server_version": version.String(),
-		}); err != nil {
-			h.log.Error(models.ErrMarshal(err, "kube-server-version"))
-		}
+	if probe, ok := connectionPingRegistry[connection.Kind]; ok {
+		probe(h, w, req, connection, token, provider) //nolint:errcheck
+		return
+	}
 
-	case "grafana":
-		url, apiKey, ok := h.resolveMetricsCredential(w, req, connection, token, provider)
-		if !ok {
-			return
-		}
-		if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKey); err != nil {
-			h.log.Error(models.ErrGrafanaScan(err))
-			writeMeshkitError(w, models.ErrGrafanaScan(err), http.StatusInternalServerError)
-			return
-		}
-		writeJSONEmptyObject(w, http.StatusOK)
-
-	case "prometheus":
-		url, apiKey, ok := h.resolveMetricsCredential(w, req, connection, token, provider)
-		if !ok {
-			return
-		}
-		if err := h.config.PrometheusClient.Validate(req.Context(), url, apiKey); err != nil {
-			h.log.Error(models.ErrPrometheusScan(err))
-			writeMeshkitError(w, models.ErrPrometheusScan(err), http.StatusInternalServerError)
-			return
-		}
-		writeJSONEmptyObject(w, http.StatusOK)
-
-	default:
-		if err := json.NewEncoder(w).Encode(map[string]string{
-			"name":   connection.Name,
-			"kind":   connection.Kind,
-			"status": string(connection.Status),
-		}); err != nil {
-			h.log.Error(models.ErrMarshal(err, "connection-ping"))
-			writeMeshkitError(w, models.ErrMarshal(err, "connection-ping"), http.StatusInternalServerError)
-		}
+	// No active probe registered — return DB status as authoritative state.
+	if err := json.NewEncoder(w).Encode(map[string]string{
+		"name":   connection.Name,
+		"kind":   connection.Kind,
+		"status": string(connection.Status),
+	}); err != nil {
+		h.log.Error(models.ErrMarshal(err, "connection-ping"))
+		writeMeshkitError(w, models.ErrMarshal(err, "connection-ping"), http.StatusInternalServerError)
 	}
 }
 
