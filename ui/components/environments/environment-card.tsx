@@ -221,6 +221,7 @@ const EnvironmentCard = ({
                 }}
               >
                 <IconButton
+                  aria-label={`Edit environment ${environmentDetails.name}`}
                   onClick={onEdit}
                   disabled={
                     selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
@@ -231,6 +232,7 @@ const EnvironmentCard = ({
                   <EditIcon fill="white" style={{ margin: '0 2px' }} />
                 </IconButton>
                 <IconButton
+                  aria-label={`Delete environment ${environmentDetails.name}`}
                   onClick={onDelete}
                   disabled={
                     selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1

@@ -53,6 +53,7 @@ const WrapIfAdditionalTemplate = ({
       <Grid2 size={{ xs: 12 }}>{children}</Grid2>
       <Grid2>
         <IconButton
+          aria-label={`Remove ${label}`}
           component="span"
           disabled={disabled || readonly}
           onClick={onDropPropertyClick(label)}

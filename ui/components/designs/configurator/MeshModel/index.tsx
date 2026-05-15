@@ -82,7 +82,7 @@ export default function DesignConfigurator() {
   return (
     <NoSsr>
       <CustomTooltip title="Back" placement="right">
-        <IconButton onClick={() => router.back()}>
+        <IconButton aria-label="Go back" onClick={() => router.back()}>
           <ArrowBack />
         </IconButton>
       </CustomTooltip>
@@ -190,7 +190,7 @@ export default function DesignConfigurator() {
           <CustomTooltip title="Save Design as New File">
             <div>
               <IconButton
-                aria-label="Save"
+                aria-label="Save design as new file"
                 data-testid="design-configurator-save-design-btn"
                 onClick={designSave}
                 disabled={!CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)}
@@ -204,7 +204,7 @@ export default function DesignConfigurator() {
               <CustomTooltip title="Update Design">
                 <div>
                   <IconButton
-                    aria-label="Update"
+                    aria-label="Update design"
                     data-testid="design-configurator-update-design-btn"
                     onClick={designUpdate}
                     disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
@@ -216,7 +216,7 @@ export default function DesignConfigurator() {
               <CustomTooltip title="Delete Design">
                 <div>
                   <IconButton
-                    aria-label="Delete"
+                    aria-label="Delete design"
                     data-testid="design-configurator-delete-design-btn"
                     onClick={designDelete}
                     disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}

@@ -33,6 +33,7 @@ const PerformanceFormActions: React.FC<PerformanceFormActionsProps> = ({
   return (
     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
       <Button
+        aria-label="Clear performance test form"
         type="submit"
         variant="contained"
         color="primary"
@@ -45,6 +46,7 @@ const PerformanceFormActions: React.FC<PerformanceFormActionsProps> = ({
       </Button>
       {hasTestResult && (
         <Button
+          aria-label="View performance test results"
           type="submit"
           variant="contained"
           color="primary"
@@ -57,6 +59,7 @@ const PerformanceFormActions: React.FC<PerformanceFormActionsProps> = ({
         </Button>
       )}
       <Button
+        aria-label="Save performance profile"
         type="submit"
         variant="contained"
         color="primary"
@@ -69,6 +72,7 @@ const PerformanceFormActions: React.FC<PerformanceFormActionsProps> = ({
         Save Profile
       </Button>
       <Button
+        aria-label="Run performance test"
         type="submit"
         data-testid="run-performance-test"
         variant="contained"

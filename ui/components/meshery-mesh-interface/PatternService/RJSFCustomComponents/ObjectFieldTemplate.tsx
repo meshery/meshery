@@ -72,6 +72,7 @@ const ObjectFieldTemplate = ({
               }}
             >
               <IconButton
+                aria-label={`Add ${titleStr || 'object property'}`}
                 className="object-property-expand"
                 onClick={typeof onAddClick === 'function' ? onAddClick(schema) : undefined}
                 disabled={disabled || readonly}
@@ -90,7 +91,11 @@ const ObjectFieldTemplate = ({
           ) : (
             Object.keys(properties).length > 0 && (
               <Grid2>
-                <IconButton className="object-property-expand" onClick={() => setShow(!show)}>
+                <IconButton
+                  aria-label={`${show ? 'Collapse' : 'Expand'} ${titleStr || 'object properties'}`}
+                  className="object-property-expand"
+                  onClick={() => setShow(!show)}
+                >
                   {show ? (
                     <ExpandLessIcon style={iconMedium} fill="gray" />
                   ) : (
@@ -116,6 +121,7 @@ const ObjectFieldTemplate = ({
             {safeStringTitle(descProp ?? safeDescriptionStr) && (
               <CustomTextTooltip title={safeStringTitle(descProp ?? safeDescriptionStr)}>
                 <IconButton
+                  aria-label={`Help for ${titleStr || 'field'}`}
                   disableTouchRipple="true"
                   disableRipple="true"
                   component="span"
@@ -136,6 +142,7 @@ const ObjectFieldTemplate = ({
                 title={safeStringTitle(Array.isArray(rawErrors) ? rawErrors.join('  ') : rawErrors)}
               >
                 <IconButton
+                  aria-label={`Validation errors for ${titleStr || 'field'}`}
                   disableTouchRipple="true"
                   disableRipple="true"
                   component="span"

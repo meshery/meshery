@@ -98,7 +98,10 @@ function CustomToolbarSelect({ setSelectedRows }) {
       <NoSsr>
         <div className="custom-toolbar-select">
           <Tooltip title="Deselect ALL">
-            <StyledIconButton onClick={handleClickDeselectAll}>
+            <StyledIconButton
+              aria-label="Deselect all performance results"
+              onClick={handleClickDeselectAll}
+            >
               <StyledIcon>
                 <IndeterminateCheckBox />
               </StyledIcon>
@@ -108,7 +111,7 @@ function CustomToolbarSelect({ setSelectedRows }) {
             <Tooltip title="Download">
               <StyledIconButton
                 key="download"
-                aria-label="download"
+                aria-label="Download performance test result"
                 color="inherit"
                 href={`/api/perf/profile/result/${encodeURIComponent(fullData[0].meshery_id)}`}
                 download={`${fullData[0].name}_test_result.json`}
@@ -120,7 +123,10 @@ function CustomToolbarSelect({ setSelectedRows }) {
             </Tooltip>
           )}
           <Tooltip title="Compare selected">
-            <StyledIconButton onClick={handleCompareSelected}>
+            <StyledIconButton
+              aria-label="Compare selected performance results"
+              onClick={handleCompareSelected}
+            >
               <StyledIcon>
                 <CompareArrows />
               </StyledIcon>

@@ -330,7 +330,10 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
           ))}
         </List>
         <DrawerHeader open={open}>
-          <IconButton onClick={handleDrawerToggle}>
+          <IconButton
+            aria-label={open ? 'Collapse registry navigation' : 'Expand registry navigation'}
+            onClick={handleDrawerToggle}
+          >
             {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </DrawerHeader>
