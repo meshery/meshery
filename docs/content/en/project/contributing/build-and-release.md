@@ -211,7 +211,7 @@ GoReleaser facilitates the creation of a brew formula for mesheryctl. The [homeb
 
 ##### Scoop
 
-GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bucket](https://github.com/layer5io/scoop-bucket) repository is the location of Meshery’s Scoop bucket.
+GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bucket](https://github.com/meshery/scoop-bucket) repository is the location of Meshery’s Scoop bucket.
 
 ## Helm Charts Lint Check, Build, and Release
 

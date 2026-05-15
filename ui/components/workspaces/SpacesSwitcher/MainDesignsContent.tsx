@@ -32,7 +32,7 @@ import ShareModal from '../ShareWorkspaceModal';
 import InfoModal from '../../shared/Modal/Information/InfoModal';
 import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import {
-  isDesignOpenInKanvas,
+  isDesignOpenInExtension,
   mergeDesignWithCurrent,
   openDesignInKanvas,
   useIsKanvasDesignerEnabled,
@@ -175,7 +175,7 @@ const MainDesignsContent = ({
       title: 'Merge Into Current Design',
       icon: <MergeOutlinedIcon fill={theme.palette.icon.default} />,
       enabled: () =>
-        isDesignOpenInKanvas() && CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject),
+        isDesignOpenInExtension() && CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject),
     },
     EXPORT_DESIGN: {
       id: 'export_design',
