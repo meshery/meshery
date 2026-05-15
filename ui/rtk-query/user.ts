@@ -103,6 +103,7 @@ export const userApi = api
           url: '/api/user',
           method: 'GET',
         }),
+        transformResponse: normalizeUserProfileSummary,
         // All callers share one cache entry per user session (client-side Redux store).
         // This does not affect other users—each browser has its own isolated store.
         serializeQueryArgs: ({ endpointName }) => endpointName,

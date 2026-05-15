@@ -12,6 +12,17 @@ const TAGS = {
   VIEWS: 'workspaces_views',
   TEAMS: 'workspaces_teams',
 };
+
+const normalizeWorkspaceResource = (resource) => ({
+  ...resource,
+  userId: resource?.userId ?? resource?.user_id,
+  catalogData: resource?.catalogData ?? resource?.catalog_data,
+  patternFile: resource?.patternFile ?? resource?.pattern_file,
+  designFile: resource?.designFile ?? resource?.design_file,
+  createdAt: resource?.createdAt ?? resource?.created_at,
+  updatedAt: resource?.updatedAt ?? resource?.updated_at,
+});
+
 const workspacesApi = api
   .enhanceEndpoints({
     addTagTypes: [TAGS.WORKSPACES, TAGS.DESIGNS, TAGS.ENVIRONMENTS, TAGS.VIEWS, TAGS.TEAMS],
@@ -129,13 +140,20 @@ const workspacesApi = api
           });
           const normalizedDesigns =
             designs.data && !designs.error
-              ? { ...designs, data: normalizePaginatedCollectionResponse(designs.data, 'designs') }
+              ? {
+                  ...designs,
+                  data: normalizePaginatedCollectionResponse(
+                    designs.data,
+                    'designs',
+                    normalizeWorkspaceResource,
+                  ),
+                }
               : designs;
           if (expandUser && normalizedDesigns.data && !normalizedDesigns.error) {
             const withUsersPromises = normalizedDesigns.data.designs.map(async (design) => {
               const user = await dispatch(
                 mesheryApi.endpoints.getUserProfileById.initiate({
-                  id: design.userId ?? design.user_id,
+                  id: design.userId,
                 }),
               );
               const normalizedUser = normalizeUserProfileSummary(user.data);
@@ -144,7 +162,7 @@ const workspacesApi = api
                 firstName: normalizedUser?.firstName || '[deleted]',
                 lastName: normalizedUser?.lastName || '',
                 avatarUrl: normalizedUser?.avatarUrl || '',
-                userId: normalizedUser?.id || design.userId || design.user_id || '',
+                userId: normalizedUser?.id || design.userId || '',
                 email: normalizedUser?.email || '',
               };
             });
@@ -210,13 +228,20 @@ const workspacesApi = api
           });
           const normalizedViews =
             views.data && !views.error
-              ? { ...views, data: normalizePaginatedCollectionResponse(views.data, 'views') }
+              ? {
+                  ...views,
+                  data: normalizePaginatedCollectionResponse(
+                    views.data,
+                    'views',
+                    normalizeWorkspaceResource,
+                  ),
+                }
               : views;
           if (expandUser && normalizedViews.data && !normalizedViews.error) {
             const withUsersPromises = normalizedViews.data.views.map(async (view) => {
               const user = await dispatch(
                 mesheryApi.endpoints.getUserProfileById.initiate({
-                  id: view.userId ?? view.user_id,
+                  id: view.userId,
                 }),
               );
               const normalizedUser = normalizeUserProfileSummary(user.data);
@@ -225,7 +250,7 @@ const workspacesApi = api
                 firstName: normalizedUser?.firstName || '[deleted]',
                 lastName: normalizedUser?.lastName || '',
                 avatarUrl: normalizedUser?.avatarUrl || '',
-                userId: normalizedUser?.id || view.userId || view.user_id || '',
+                userId: normalizedUser?.id || view.userId || '',
                 email: normalizedUser?.email || '',
               };
             });
