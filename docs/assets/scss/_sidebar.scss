@@ -210,7 +210,7 @@
 
     &:hover {
       opacity: 1;
-      color: #00d3a9;
+      color: #00a88d;
     }
 
     &.child-toggle {
@@ -297,21 +297,21 @@
 
   & .td-sidebar-link:hover,
   & .td-sidebar-link:focus {
-    color: #00d3a9;
+    color: #00a88d;
     text-decoration: none;
 
     &>span {
-      color: #00d3a9;
+      color: #00a88d;
     }
   }
 
   & .td-sidebar-link.active,
   & .td-sidebar-nav-active-item {
-    color: #00d3a9;
+    color: #00a88d;
     text-decoration: none;
 
     &>span {
-      color: #00d3a9;
+      color: #00a88d;
     }
   }
 
@@ -326,7 +326,7 @@
 
   & .td-sidebar-nav__section-title.active-path>.td-sidebar-link.active,
   & .td-sidebar-nav__section-title.active-path>.td-sidebar-link.active>span {
-    color: #00d3a9;
+    color: #00a88d;
   }
 
   & .td-sidebar-link.tree-root {
@@ -371,7 +371,7 @@
   }
 
   & .td-sidebar-link.active span {
-    color: #00d3a9;
+    color: #00a88d;
   }
 
   & .td-sidebar-nav__section-title.active-path>.td-sidebar-link,
