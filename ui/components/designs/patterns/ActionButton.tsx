@@ -53,7 +53,7 @@ export default function ActionButton({ defaultActionClick, options }) {
         <Button
           aria-label="Open design actions menu"
           aria-haspopup="menu"
-          aria-expanded={open ? 'true' : undefined}
+          aria-expanded={open ? 'true' : 'false'}
           sx={{
             padding: '6px 9px',
             borderRadius: '8px',
