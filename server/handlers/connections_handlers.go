@@ -566,7 +566,11 @@ func (h *Handler) resolveMetricsCredential(
 		writeMeshkitError(w, err, statusCode)
 		return "", "", false
 	}
-	apiKey, _ = cred.Secret["secret"].(string)
+	apiKey, ok = cred.Secret["secret"].(string)
+	if !ok || apiKey == "" {
+		writeMeshkitError(w, ErrInvalidRequestObject(connection.Name+": credential missing required 'secret' field"), http.StatusBadRequest)
+		return "", "", false
+	}
 	return url, apiKey, true
 }
 
@@ -587,8 +591,8 @@ func (h *Handler) resolveMetricsCredential(
 //
 // GET /api/integrations/connections/{connectionId}/ping
 func (h *Handler) ConnectionPingHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
-	if connectionID == uuid.Nil {
+	connectionId := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
+	if connectionId == uuid.Nil {
 		err := ErrInvalidUUID(fmt.Errorf("invalid connection ID in path"))
 		h.log.Error(err)
 		writeMeshkitError(w, err, http.StatusBadRequest)
@@ -596,7 +600,7 @@ func (h *Handler) ConnectionPingHandler(w http.ResponseWriter, req *http.Request
 	}
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
+	connection, statusCode, err := provider.GetConnectionByID(token, connectionId)
 	if err != nil {
 		h.log.Error(ErrQueryGet("connection"))
 		writeMeshkitError(w, ErrQueryGet("connection"), statusCode)
@@ -605,9 +609,9 @@ func (h *Handler) ConnectionPingHandler(w http.ResponseWriter, req *http.Request
 
 	switch connection.Kind {
 	case "kubernetes":
-		k8sContext, err := provider.GetK8sContext(token, connectionID.String())
+		k8sContext, err := provider.GetK8sContext(token, connectionId.String())
 		if err != nil {
-			writeMeshkitError(w, ErrInvalidKubeContext(err, connectionID.String()), http.StatusNotFound)
+			writeMeshkitError(w, ErrInvalidKubeContext(err, connectionId.String()), http.StatusNotFound)
 			return
 		}
 		kubeclient, err := k8sContext.GenerateKubeHandler()
