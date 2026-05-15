@@ -204,6 +204,7 @@
     "kind": "ApplicationRelease",
     "schema": "{\n \"description\": \"ApplicationRelease is the Schema for the applicationreleases API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ApplicationReleaseSpec defines the desired state of ApplicationRelease\",\n   \"properties\": {\n    \"appID\": {\n     \"type\": \"string\"\n    },\n    \"appType\": {\n     \"type\": \"string\"\n    },\n    \"appVersionID\": {\n     \"type\": \"string\"\n    },\n    \"icon\": {\n     \"type\": \"string\"\n    },\n    \"values\": {\n     \"format\": \"byte\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"appID\",\n    \"appVersionID\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Application Release\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

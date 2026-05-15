@@ -210,8 +210,8 @@ func (ep *EnvironmentPersister) DeleteEnvironmentByID(environmentID core.Uuid) (
 // AddConnectionToEnvironment adds a connection to an environment
 func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connectionID core.Uuid) ([]byte, error) {
 	envConMapping := environment.EnvironmentConnectionMapping{
-		ConnectionId:  connectionID,
-		EnvironmentId: environmentID,
+		ConnectionId:  &connectionID,
+		EnvironmentId: &environmentID,
 		CreatedAt:     time.Now(),
 		UpdatedAt:     time.Now(),
 	}

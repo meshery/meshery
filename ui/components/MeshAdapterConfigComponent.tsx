@@ -3,7 +3,7 @@ import { Grid2, Chip, Button, TextField, Tooltip, Avatar, styled } from '@sisten
 import { NoSsr } from '@sistent/sistent';
 import ReactSelectWrapper from './ReactSelectWrapper';
 
-import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
+import changeAdapterState from '@/graphql/mutations/AdapterStatusMutation';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import BadgeAvatars from './CustomAvatar';
@@ -58,8 +58,9 @@ const STATUS = {
 
 const MeshAdapterConfigComponent = () => {
   const labelRef = useRef(null);
-  const { meshAdapters: globalAdapters } = useSelector((state) => state.adapter);
-  const { meshAdaptersts: meshAdapterStates } = useSelector((state) => state.adapter);
+  const { meshAdapters: globalAdapters, meshAdaptersts: meshAdapterStates } = useSelector(
+    (state) => state.adapter,
+  );
   const [meshAdapters, setMeshAdapters] = useState(globalAdapters);
   const [ts, setTs] = useState(meshAdapterStates);
   const [meshLocationURLError, setMeshLocationURLError] = useState(false);
@@ -79,13 +80,13 @@ const MeshAdapterConfigComponent = () => {
 
   const setAdapterURLs =
     adapters?.map((res) => ({
-      value: res.adapter_location,
-      label: res.adapter_location,
+      value: res.adapterLocation,
+      label: res.adapterLocation,
     })) || [];
 
   const availableAdapters =
     availableAdaptersData?.map((res) => ({
-      value: res.adapter_location,
+      value: res.adapterLocation,
       label: res.name,
     })) || [];
 
@@ -378,9 +379,9 @@ const MeshAdapterConfigComponent = () => {
                           .join(' ')} (${adapter.version})`}
               >
                 <AdapterChipStyled
-                  label={adapter.adapter_location}
-                  onDelete={handleDelete(adapter.adapter_location)}
-                  onClick={handleClick(adapter.adapter_location)}
+                  label={adapter.adapterLocation}
+                  onDelete={handleDelete(adapter.adapterLocation)}
+                  onClick={handleClick(adapter.adapterLocation)}
                   icon={
                     // logoIcon
                     <BadgeAvatars color={getStatusColor(adapterStates[adapter.name])}>
@@ -472,7 +473,7 @@ const MeshAdapterConfigComponent = () => {
                 type="text"
                 label="Enter Port"
                 variant="standard"
-                onChange={(e) => handleDeployPortChange(e.target)}
+                onChange={(e) => handleDeployPortChange(e.target as HTMLInputElement)}
                 value={meshDeployURL}
                 error={meshDeployURLError}
               />

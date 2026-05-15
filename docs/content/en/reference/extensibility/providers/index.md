@@ -64,11 +64,11 @@ For production deployments, consider the following security best practices regar
 
 ### Remote Providers
 
-The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Layer5 Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
+The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Meshery Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
 
 A specific provider can be enforced in a Meshery instance by passing the name of the provider with the env variable `PROVIDER`. This applies to both remote and local providers.
 
-Name: **"Layer5"** (default)
+Name: **"Meshery"** (default)
 
 - Enforces user authentication.
 - Long-term term persistence.
@@ -143,7 +143,7 @@ Meshery preserves the originally requested URL when authentication is required, 
 - The Local Provider supports this functionality, validating `ref` values to prevent open redirects (absolute URLs, protocol-relative URLs, and URLs with schemes/hosts are rejected)
 - If `ref` validation fails or is absent, users are redirected to the dashboard (`/`)
 
-**Example**: User visits `https://meshery.example.com/extension/meshmap` while unauthenticated → redirected to login with `ref` parameter → after login, automatically returned to MeshMap extension.
+**Example**: User visits `https://meshery.example.com/extension/meshmap` while unauthenticated → redirected to login with `ref` parameter → after login, automatically returned to the extension.
 
 {{% alert color="info" title="Deep-Link Security" %}}
 Deep-link targets are validated to prevent open redirect vulnerabilities. Only relative paths within the Meshery application are accepted.
@@ -162,7 +162,7 @@ This environment variable enforces a specific provider, bypassing the provider s
 
 Accepted values:
 - `None` - Enforces the Local Provider (no authentication)
-- `Meshery` - Enforces the Meshery (Layer5 Cloud) Remote Provider
+- `Meshery` - Enforces the Meshery (Meshery Cloud) Remote Provider
 - Any other registered remote provider name
 
 Example: `PROVIDER=None`
@@ -288,11 +288,11 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
 <details>
 <summary>Capabilities Endpoint Example</summary>
 {{< code code=`{
-  "provider_type": "remote",
-  "package_version": "v0.1.0",
-  "package_url": "https://layer5labs.github.io/meshery-extensions-packages/provider.tar.gz",
-  "provider_name": "Meshery",
-  "provider_description": [
+  "providerType": "remote",
+  "packageVersion": "v0.1.0",
+  "packageURL": "https://<hostname>>/meshery-extensions-packages/provider.tar.gz",
+  "providerName": "Meshery",
+  "providerDescription": [
     "Persistent sessions",
     "Save environment setup",
     "Retrieve performance test results",
@@ -301,7 +301,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
   "extensions": {
     "navigator": [
       {
-        "title": "MeshMap",
+        "title": "Designer",
         "href": {
           "uri": "/meshmap",
           "external": false
@@ -328,7 +328,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
     "account": [
       {
           "title": "Overview",
-          "on_click_callback": 1,
+          "onClickCallback": 1,
           "href": {
               "uri": "/account/overview",
               "external": false
@@ -340,7 +340,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
       },
       {
           "title": "Profile",
-          "on_click_callback": 1,
+          "onClickCallback": 1,
           "href": {
               "uri": "/account/profile",
               "external": false
@@ -352,7 +352,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
       },
       {
           "title": "API Tokens",
-          "on_click_callback": 1,
+          "onClickCallback": 1,
           "href": {
               "uri": "/account/tokens",
               "external": false
@@ -363,7 +363,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
           "type": "full_page"
       }
     ],
-    "user_prefs": [
+    "userPrefs": [
       {
         "component": "/provider/userprefs/meshmap-preferences.js"
       }

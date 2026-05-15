@@ -1,25 +1,25 @@
 {
   "page": 0,
-  "page_size": 10000,
-  "total_count": 2,
+  "pageSize": 10000,
+  "totalCount": 2,
   "filters": [
     {
       "id": "c0c6035a-b1b9-412d-aab2-4ed1f1d51f84",
       "name": "Kuma-Test",
-      "user_id": "user1234-5678-90ab-cdef-1234567890ab",
-      "filter_file": "base64encodedcontent",
+      "userId": "user1234-5678-90ab-cdef-1234567890ab",
+      "filterFile": "base64encodedcontent",
       "visibility": "public",
-      "created_at": "2025-01-01T00:00:00Z",
-      "updated_at": "2025-01-01T00:00:00Z"
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
     },
     {
       "id": "d0e09134-acb6-4c71-b051-3d5611653f70",
       "name": "RolloutAndIstio",
-      "user_id": "user1234-5678-90ab-cdef-1234567890ab",
-      "filter_file": "base64encodedcontent",
+      "userId": "user1234-5678-90ab-cdef-1234567890ab",
+      "filterFile": "base64encodedcontent",
       "visibility": "private",
-      "created_at": "2025-01-02T00:00:00Z",
-      "updated_at": "2025-01-02T00:00:00Z"
+      "createdAt": "2025-01-02T00:00:00Z",
+      "updatedAt": "2025-01-02T00:00:00Z"
     }
   ]
 }

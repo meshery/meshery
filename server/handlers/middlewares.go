@@ -35,25 +35,38 @@ func isTransientProviderError(err error) bool {
 
 const providerQParamName = "provider"
 
+// resolveProviderName returns the provider name for a request based on, in
+// order: the provider cookie, the provider header, the ?provider= query
+// param, and finally the enforced default. Returns "" only in
+// multi-provider mode when the client supplied no hint.
+//
+// Falling through to enforcedProvider here is what removes the need for a
+// cookie round-trip via /provider, which is fragile across SameSite/popup/CDN
+// boundaries and was the trigger for an observed /user/login ⇄ /provider
+// redirect loop on enforced-provider hosts.
+func resolveProviderName(req *http.Request, cookieName, enforcedProvider string) string {
+	if ck, err := req.Cookie(cookieName); err == nil && ck.Value != "" {
+		return ck.Value
+	}
+	if hdr := req.Header.Get(cookieName); hdr != "" {
+		return hdr
+	}
+	if q := req.URL.Query().Get(providerQParamName); q != "" {
+		return q
+	}
+	return enforcedProvider
+}
+
 // ProviderMiddleware is a middleware to validate if a provider is set
 func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
-		var providerName string
 		var provider models.Provider
-		ck, err := req.Cookie(h.config.ProviderCookieName)
-		if err == nil {
-			providerName = ck.Value
-		} else {
-			providerName = req.Header.Get(h.config.ProviderCookieName)
-			// allow provider to be set using query parameter
-			// this is OK since provider information is not sensitive
-
-			if providerName == "" {
-				providerName = req.URL.Query().Get(providerQParamName)
-			}
-		}
+		providerName := resolveProviderName(req, h.config.ProviderCookieName, h.Provider)
 		if providerName != "" {
 			provider = h.config.Providers[providerName]
+			if provider == nil && h.Provider != "" && providerName == h.Provider {
+				h.log.Errorf("enforced provider %q is not registered in h.config.Providers; ProviderUIHandler will degrade to serving the provider-selection UI instead of auto-login. Register %q in PROVIDERS or unset PROVIDER on this deployment.", h.Provider, h.Provider)
+			}
 		}
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
 
@@ -160,7 +173,7 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 		ctx := req.Context()
 		ctx, err := KubernetesMiddleware(ctx, h, provider, user, req.URL.Query()["contexts"])
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, err, http.StatusInternalServerError)
 			return
 		}
 
@@ -195,12 +208,21 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		user, err := provider.GetUserDetails(req)
 		if err != nil {
 			h.log.Error(ErrGetUserDetails(err))
-			// Distinguish auth failures from transient provider errors.
-			// If the token cookie is missing/invalid, the user genuinely needs to re-authenticate.
-			// But if Cloud is temporarily unreachable, we must NOT destroy the user's session
-			// by logging them out — that would cause a redirect loop when Cloud recovers.
+			// INTENTIONAL log/wire divergence. We log ErrGetUserDetails so the
+			// operational trail captures *what* failed (the get-user call), but
+			// we surface ErrTransientProvider on the wire so the client can
+			// distinguish between a transient failure (e.g., Cloud unreachable)
+			// and a genuine auth failure. Conflating the two would either flood
+			// logs with misleading transient classifications or hide the
+			// auth-vs-network distinction from clients. Don't "fix" this to
+			// match without reading PR #18919.
+			//
+			// Behavioral consequence: on a transient provider error we must NOT
+			// destroy the user's session by logging them out — that would cause
+			// a redirect loop when Cloud recovers. A missing/invalid token
+			// cookie still falls through to the genuine auth-failure path below.
 			if isTransientProviderError(err) {
-				http.Error(w, "Remote provider temporarily unavailable. Please try again.", http.StatusServiceUnavailable)
+				writeMeshkitError(w, ErrTransientProvider(err), http.StatusServiceUnavailable)
 				return
 			}
 			// Genuine auth failure — logout and redirect to login
@@ -210,7 +232,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 				provider.HandleUnAuthenticated(w, req)
 				return
 			}
-			http.Error(w, ErrGetUserDetails(err).Error(), http.StatusUnauthorized)
+			writeMeshkitError(w, ErrGetUserDetails(err), http.StatusUnauthorized)
 			return
 		}
 		prefObj, err := provider.ReadFromPersister(user.UserId)

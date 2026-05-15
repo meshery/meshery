@@ -9,7 +9,8 @@ module.exports = {
     '@mui/icons-material/DesktopMac': require('@mui/icons-material/DesktopMac'),
     '@mui/icons-material/Traffic': require('@mui/icons-material/Traffic'),
     '@mui/icons-material/Security': require('@mui/icons-material/Security'),
-    '@mui/icons-material/HelpOutline': require('@mui/icons-material/HelpOutline'),
+    '@mui/icons-material/HelpOutline': require('@mui/icons-material/HelpOutlined'),
+    '@mui/icons-material/HelpOutlined': require('@mui/icons-material/HelpOutlined'),
     '@mui/icons-material/SwapCalls': require('@mui/icons-material/SwapCalls'),
     '@mui/icons-material/ChevronRight': require('@mui/icons-material/ChevronRight'),
     '@mui/icons-material/OpenInNew': require('@mui/icons-material/OpenInNew'),
@@ -145,7 +146,8 @@ module.exports = {
     'react-dom': require('react-dom'),
     '@xstate/react': require('@xstate/react'),
     yjs: require('yjs'),
-    '@mui/icons-material/AddCircleOutline': require('@mui/icons-material/AddCircleOutline'),
+    '@mui/icons-material/AddCircleOutline': require('@mui/icons-material/AddCircleOutlined'),
+    '@mui/icons-material/AddCircleOutlined': require('@mui/icons-material/AddCircleOutlined'),
     '@mui/icons-material/ArrowDropDown': require('@mui/icons-material/ArrowDropDown'),
     '@mui/icons-material/FileUpload': require('@mui/icons-material/FileUpload'),
     'ajv-formats/dist/formats': require('ajv-formats/dist/formats'),
@@ -162,5 +164,74 @@ module.exports = {
     '@rjsf/mui': require('@rjsf/mui'),
     '@rjsf/utils': require('@rjsf/utils'),
     '@rjsf/validator-ajv8': require('@rjsf/validator-ajv8'),
+
+    // Extension Point: Shared runtime for extensions
+    // Extensions that want to use these packages need to:
+    // 1. keep versions in lockstep.
+    // 2. configure an `externalDeps` tracking file or similar
+    cytoscape: require('cytoscape'),
+    'cytoscape-automove': require('cytoscape-automove'),
+    'cytoscape-autopan-on-drag': require('cytoscape-autopan-on-drag'),
+    'cytoscape-bubblesets': require('cytoscape-bubblesets'),
+    'cytoscape-clipboard': require('cytoscape-clipboard'),
+    'cytoscape-cola': require('cytoscape-cola'),
+    'cytoscape-dagre': require('cytoscape-dagre'),
+    'cytoscape-dblclick': require('cytoscape-dblclick'),
+    'cytoscape-edgehandles': require('cytoscape-edgehandles'),
+    'cytoscape-fcose': require('cytoscape-fcose'),
+    'cytoscape-layers': require('cytoscape-layers'),
+    'cytoscape-popper': require('cytoscape-popper'),
+
+    // Extension Point: Shared runtime for extensions
+    dockview: require('dockview'),
+    'emoji-picker-react': require('emoji-picker-react'),
+    '@xterm/xterm': require('@xterm/xterm'),
+    '@xterm/addon-fit': require('@xterm/addon-fit'),
+    '@xterm/addon-search': require('@xterm/addon-search'),
+    // CSS subpath stub — the actual stylesheet is injected globally in
+    // pages/_app.tsx. Remote plugins still call `require(...)` on the subpath,
+    // so a key must exist here or remote-component throws
+    // "does not exist in dependencies". The value is irrelevant because
+    // plugin-side imports are side-effect only.
+    '@xterm/xterm/css/xterm.css': {},
+
+    // Extension Point: Shared runtime for extensions
+    '@dnd-kit/core': require('@dnd-kit/core'),
+    '@dnd-kit/utilities': require('@dnd-kit/utilities'),
+    '@tippyjs/react': require('@tippyjs/react'),
+    'tippy.js': require('tippy.js'),
+    // tippy.js CSS subpath stubs — stylesheets are injected globally in
+    // pages/_app.tsx. These keys exist only so remote plugins that
+    // `require('tippy.js/...css')` don't trip remote-component's resolver.
+    // Listed greedily (every shipped theme + animation) so we don't have to
+    // chase each new extension's subpath request one-by-one.
+    'tippy.js/dist/tippy.css': {},
+    'tippy.js/dist/svg-arrow.css': {},
+    'tippy.js/dist/border.css': {},
+    'tippy.js/dist/backdrop.css': {},
+    'tippy.js/themes/light.css': {},
+    'tippy.js/themes/light-border.css': {},
+    'tippy.js/themes/material.css': {},
+    'tippy.js/themes/translucent.css': {},
+    'tippy.js/animations/shift-away.css': {},
+    'tippy.js/animations/shift-away-subtle.css': {},
+    'tippy.js/animations/shift-away-extreme.css': {},
+    'tippy.js/animations/shift-toward.css': {},
+    'tippy.js/animations/shift-toward-subtle.css': {},
+    'tippy.js/animations/shift-toward-extreme.css': {},
+    'tippy.js/animations/scale.css': {},
+    'tippy.js/animations/scale-subtle.css': {},
+    'tippy.js/animations/scale-extreme.css': {},
+    'tippy.js/animations/perspective.css': {},
+    'tippy.js/animations/perspective-subtle.css': {},
+    'tippy.js/animations/perspective-extreme.css': {},
+    '@reactour/tour': require('@reactour/tour'),
+    'react-mentions': require('react-mentions'),
+    'hotkeys-js': require('hotkeys-js'),
+    'styled-components': require('styled-components'),
+    immer: require('immer'),
+    'resize-observer-polyfill': require('resize-observer-polyfill'),
+    'prop-types': require('prop-types'),
+    pluralize: require('pluralize'),
   },
 };

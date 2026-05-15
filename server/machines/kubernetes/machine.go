@@ -159,11 +159,16 @@ func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Ha
 	if err != nil {
 		return nil, eventBuilder.Build(), err
 	}
+	// Attach the logger before any action that may log on an error path.
+	// AssignClientSetToContext threads machinectx.log into GenerateK8sClientSet,
+	// which log.Warn()s when the kube handler cannot be constructed (e.g. the
+	// persisted context's API server is unreachable from this machine). A nil
+	// logger.Handler there causes an interface-method-on-nil panic.
+	machinectx.log = log
 	err = AssignClientSetToContext(machinectx, eventBuilder)
 	if err != nil {
 		return nil, eventBuilder.Build(), err
 	}
-	machinectx.log = log
 	AssignControllerHandlers(machinectx, sysID, provider)
 	return machinectx, nil, nil
 }
