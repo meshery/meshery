@@ -1,16 +1,15 @@
 /**
- * @generated SignedSource<<af9b90fa300571b33bcd5c7f70347fcd>>
+ * @generated SignedSource<<113d49e98bcc343e127a7bbee3273c0f>>
  * @lightSyntaxTransform
  * @nogrep
  */
 
 /* tslint:disable */
 /* eslint-disable */
-// @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type MesheryController = "BROKER" | "MESHSYNC" | "OPERATOR" | "%future added value";
-export type MesheryControllerStatus = "CONNECTED" | "DEPLOYED" | "DEPLOYING" | "ENABLED" | "NOTDEPLOYED" | "RUNNING" | "UNDEPLOYED" | "UNKOWN" | "%future added value";
+export type MesheryController = "BROKER" | "MESHSYNC" | "OPERATOR";
+export type MesheryControllerStatus = "CONNECTED" | "DEPLOYED" | "DEPLOYING" | "ENABLED" | "NOTDEPLOYED" | "RUNNING" | "UNDEPLOYED" | "UNKOWN";
 export type OperatorStatusQuery$variables = {
   connectionID: string;
 };

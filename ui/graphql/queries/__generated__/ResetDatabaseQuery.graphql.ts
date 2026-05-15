@@ -1,15 +1,14 @@
 /**
- * @generated SignedSource<<0315f8c654f92713d4952b2f465c4149>>
+ * @generated SignedSource<<34a404dcc13560d31f1435df147e1abc>>
  * @lightSyntaxTransform
  * @nogrep
  */
 
 /* tslint:disable */
 /* eslint-disable */
-// @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
+export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN";
 export type ReSyncActions = {
   ReSync: string;
   clearDB: string;

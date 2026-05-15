@@ -1,15 +1,14 @@
 /**
- * @generated SignedSource<<0dd9419c0a7558919b38722c00dfcffc>>
+ * @generated SignedSource<<2b36fe46181a41c113b770b00d9865b3>>
  * @lightSyntaxTransform
  * @nogrep
  */
 
 /* tslint:disable */
 /* eslint-disable */
-// @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
+export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN";
 export type OperatorStatusInput = {
   contextID: string;
   targetStatus: Status;

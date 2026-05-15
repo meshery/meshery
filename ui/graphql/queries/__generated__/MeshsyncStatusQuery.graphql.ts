@@ -1,15 +1,14 @@
 /**
- * @generated SignedSource<<cd252b762f4c91a7b1ee54846a2eb9fd>>
+ * @generated SignedSource<<f13e56c4cf444ab7fd139348002c4e88>>
  * @lightSyntaxTransform
  * @nogrep
  */
 
 /* tslint:disable */
 /* eslint-disable */
-// @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
+export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN";
 export type MeshsyncStatusQuery$variables = {
   connectionID: string;
 };

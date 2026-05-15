@@ -1,15 +1,14 @@
 /**
- * @generated SignedSource<<ab8619d4497e08066a968ab897a59fa1>>
+ * @generated SignedSource<<c3a746f897b6e7bd63ab1139cf90a092>>
  * @lightSyntaxTransform
  * @nogrep
  */
 
 /* tslint:disable */
 /* eslint-disable */
-// @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
+export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN";
 export type NatsStatusQuery$variables = {
   connectionID: string;
 };
