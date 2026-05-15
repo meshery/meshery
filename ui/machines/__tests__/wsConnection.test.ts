@@ -2,32 +2,31 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { createActor } from 'xstate';
 
 // The wsConnection machine spawns an actor that subscribes to the
-// graphql-ws `subscriptionClient` (in `lib/relayEnvironment`). We expose a
-// fake client and stub the relay environment to control how events flow.
+// connection-status event bus exposed by `lib/wsStatus`. We mock that
+// module so the test can synthetically fire `connected | closed | error`
+// events and assert the machine's resulting state transitions.
 
 type Handler = (...args: unknown[]) => void;
 
 const hoisted = vi.hoisted(() => {
   const handlers: Record<string, Handler[]> = {};
   const offFns: Record<string, ReturnType<typeof vi.fn>[]> = {};
-  const fakeClient = {
-    on(eventName: string, handler: Handler) {
-      handlers[eventName] = handlers[eventName] || [];
-      handlers[eventName].push(handler);
-      const off = vi.fn();
-      offFns[eventName] = offFns[eventName] || [];
-      offFns[eventName].push(off);
-      return off;
-    },
+  const on = (eventName: string, handler: Handler) => {
+    handlers[eventName] = handlers[eventName] || [];
+    handlers[eventName].push(handler);
+    const off = vi.fn();
+    offFns[eventName] = offFns[eventName] || [];
+    offFns[eventName].push(off);
+    return off;
   };
-  return { handlers, offFns, fakeClient };
+  return { handlers, offFns, on };
 });
 const handlers = hoisted.handlers;
 const offFns = hoisted.offFns;
 
-vi.mock('../../lib/relayEnvironment', () => ({
-  subscriptionClient: hoisted.fakeClient,
-  createRelayEnvironment: () => ({}),
+vi.mock('../../lib/wsStatus', () => ({
+  on: hoisted.on,
+  off: vi.fn(),
 }));
 
 import { wsConnectionMachine, WS_CONNECTION_EVENTS } from '../wsConnection';
