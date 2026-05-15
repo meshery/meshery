@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mesheryctl-adapter on Documentation</title><link>/reference/mesheryctl/adapter/</link><description>Recent content in mesheryctl-adapter on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/reference/mesheryctl/adapter/index.xml" rel="self" type="application/rss+xml"/><item><title>mesheryctl-adapter-deploy</title><link>/reference/mesheryctl/adapter/deploy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/adapter/deploy/</guid><description>&lt;h1 id="mesheryctl-adapter-deploy"&gt;
+	mesheryctl adapter deploy
+&lt;/h1&gt;
+&lt;p&gt;Deploy infrastructure to the Kubernetes cluster&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Deploy infrastructure to the connected Kubernetes cluster&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl adapter deploy [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Deploy a infrastructure from an interactive on the default namespace&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl adapter deploy
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Deploy infrastructure&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl adapter deploy linkerd
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Deploy Linkerd mesh on a specific namespace&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl adapter deploy linkerd --namespace linkerd-ns
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Deploy Linkerd mesh and wait for it to be deployed&lt;/p&gt;</description></item><item><title>mesheryctl-adapter-remove</title><link>/reference/mesheryctl/adapter/remove/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/adapter/remove/</guid><description>&lt;h1 id="mesheryctl-adapter-remove"&gt;
+	mesheryctl adapter remove
+&lt;/h1&gt;
+&lt;p&gt;remove cloud and cloud native infrastructure&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;remove cloud and cloud native infrastructure&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl adapter remove [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Remove Linkerd deployment&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl adapter remove linkerd
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Remove a Linkerd control plane found under a specific namespace (linkerd-ns)&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl adapter remove linkerd --namespace linkerd-ns
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+		
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for remove
+ -n, --namespace string Kubernetes namespace where the mesh is deployed (default "default")
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -t, --token string Path to token for authenticating to Meshery API
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-adapter-validate</title><link>/reference/mesheryctl/adapter/validate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/adapter/validate/</guid><description>&lt;h1 id="mesheryctl-adapter-validate"&gt;
+	mesheryctl adapter validate
+&lt;/h1&gt;
+&lt;p&gt;Validate conformance to predefined standards&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Validate predefined conformance to different standard specifications&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl adapter validate [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Validate conformance to predefined standards&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Validate Istio to predefined standards&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl adapter validate istio --adapter meshery-istio --spec smi
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -a, --adapter string (Required) Adapter to use for validation (default "meshery-nsm")
+ -h, --help help for validate
+ -s, --spec string (Required) specification to be used for conformance test (smi/istio-vet) (default "smi")
+ -t, --token string Path to token for authenticating to Meshery API
+ -w, --watch Watch for events and verify operation (in beta testing)
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="screenshots"&gt;
+	Screenshots
+&lt;/h2&gt;
+&lt;p&gt;Usage of mesheryctl adapter validate
+&lt;img class="content-image" src="../../../reference/images/mesh-validate.png" alt="mesh-validate-usage" /&gt;&lt;/p&gt;</description></item></channel></rss>
