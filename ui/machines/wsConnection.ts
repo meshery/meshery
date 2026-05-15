@@ -1,10 +1,12 @@
 import { setup, fromCallback, assign } from 'xstate';
-import { subscriptionClient } from '../lib/relayEnvironment';
+import * as wsStatus from '../lib/wsStatus';
 
 /**
- * XState machine managing the graphql-ws WebSocket connection lifecycle.
- * Tracks connection state (connecting, connected, reconnecting, disconnected)
- * and emits events for UI consumption (connection status indicators, error toasts).
+ * XState machine managing the live server connection lifecycle for the
+ * SSE migration. Historically wired to the graphql-ws subscriptionClient;
+ * now wired to lib/wsStatus, which aggregates SSE subscription state under
+ * the same `connected | closed | error` event surface. Consumers of the
+ * machine (status indicators, reconnect toasts) see no shape change.
  */
 
 export const WS_CONNECTION_EVENTS = {
@@ -15,19 +17,22 @@ export const WS_CONNECTION_EVENTS = {
 } as const;
 
 const wsMonitorActor = fromCallback(({ sendBack }) => {
-  if (!subscriptionClient || typeof window === 'undefined') {
+  // SSR guard: wsStatus events fire from EventSource callbacks which only
+  // exist in the browser. Returning a no-op cleanup keeps the actor happy
+  // when the machine is hydrated server-side.
+  if (typeof window === 'undefined') {
     return;
   }
 
-  const unsubConnected = subscriptionClient.on('connected', () => {
+  const unsubConnected = wsStatus.on('connected', () => {
     sendBack({ type: WS_CONNECTION_EVENTS.CONNECTED });
   });
 
-  const unsubClosed = subscriptionClient.on('closed', (event) => {
+  const unsubClosed = wsStatus.on('closed', (event) => {
     sendBack({ type: WS_CONNECTION_EVENTS.DISCONNECTED, data: { event } });
   });
 
-  const unsubError = subscriptionClient.on('error', (error) => {
+  const unsubError = wsStatus.on('error', (error) => {
     sendBack({ type: WS_CONNECTION_EVENTS.ERROR, data: { error } });
   });
 
