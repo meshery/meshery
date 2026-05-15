@@ -106,19 +106,19 @@ const MeshMapSnapShotCard = ({
 }) => (
   <Grid2 size={GRID_SIZE}>
     <UnifiedCardContainer>
-      <Typography data-testid="kanvas-snapshot-heading" variant="h5" component="div">
-        GitHub Action: Kanvas Snapshot
+      <Typography data-testid="snapshot-heading" variant="h5" component="div">
+        GitHub Action: Snapshot
       </Typography>
 
-      <UnifiedDescription data-testid="kanvas-snapshot-description" hasIcon>
+      <UnifiedDescription data-testid="snapshot-description" hasIcon>
         <ResponsiveImage
           src="/static/img/extensions/meshmap-snapshot-logo.svg"
-          alt="Kanvas Snapshot Logo"
-          testId="kanvas-snapshot-image"
+          alt="Snapshot Logo"
+          testId="snapshot-image"
         />
         <div>
-          Connect Kanvas to your GitHub repo and see changes pull request-to-pull request. Get
-          snapshots of your infrastructure directly in your PRs.
+          Connect to your GitHub repo and see changes pull request-to-pull request. Get snapshots of
+          your infrastructure directly in your PRs.
         </div>
       </UnifiedDescription>
 
@@ -126,7 +126,7 @@ const MeshMapSnapShotCard = ({
         <Button
           variant="contained"
           color="primary"
-          data-testid="kanvas-snapshot-enable-btn"
+          data-testid="snapshot-enable-btn"
           disabled={githubActionEnabled}
           onClick={openExternal('https://cloud.meshery.io/connect/github/new/')}
         >
@@ -191,8 +191,8 @@ const MesheryDockerExtension = () => (
         />
         <div>
           Connect Meshery to your Kubernetes cluster via Docker Desktop and let MeshSync discover
-          your clusters. Use Kanvas&apos;s no-code designer to collaboratively design and manage
-          your infrastructure with ready-made patterns from Meshery Catalog.
+          your clusters. Use no-code designer to collaboratively design and manage your
+          infrastructure with ready-made patterns from Meshery Catalog.
         </div>
       </UnifiedDescription>
 
@@ -212,23 +212,23 @@ const MesheryDockerExtension = () => (
   </Grid2>
 );
 
-const MesheryHelmKanvasExtension = () => (
+const MesheryHelmExtension = () => (
   <Grid2 size={GRID_SIZE}>
     <UnifiedCardContainer>
       <Typography variant="h5" component="div">
-        Kanvas Snapshot Helm Plugin
+        Snapshot Helm Plugin
       </Typography>
 
       <UnifiedDescription hasIcon>
         <ResponsiveImage
           src="/static/img/extensions/helm_chart.svg"
           alt="Helm Chart Logo"
-          testId="helm-kanvas-icon"
+          testId="helm-icon"
         />
         <div>
-          The Kanvas Snapshot Helm Plugin allows you to generate a visual snapshot of your Helm
-          charts directly from the command line. It simplifies the process of creating Meshery
-          Snapshots, providing a visual representation of packaged Helm charts.
+          The Snapshot Helm Plugin allows you to generate a visual snapshot of your Helm charts
+          directly from the command line. It simplifies the process of creating Meshery Snapshots,
+          providing a visual representation of packaged Helm charts.
         </div>
       </UnifiedDescription>
 
@@ -236,7 +236,7 @@ const MesheryHelmKanvasExtension = () => (
         <Button
           variant="contained"
           color="primary"
-          data-testid="helm-kanvas-learn-more-btn"
+          data-testid="helm-learn-more-btn"
           onClick={openExternal('https://docs.meshery.io/extensions/helm-kanvas-snapshot')}
         >
           Learn More
@@ -283,15 +283,15 @@ const MesheryDesignEmbedExtension = () => (
 const CloudExtension = () => (
   <Grid2 size={GRID_SIZE}>
     <UnifiedCardContainer>
-      <Typography data-testid="layer5-cloud-heading" variant="h5" component="div">
+      <Typography data-testid="meshery-cloud-heading" variant="h5" component="div">
         Meshery Cloud
       </Typography>
 
       <UnifiedDescription hasIcon>
         <ResponsiveImage
-          src="/static/img/extensions/layer5.svg"
+          src="/static/img/meshery-logo.png"
           alt="Cloud Logo"
-          testId="layer5-cloud-image"
+          testId="meshery-cloud-image"
         />
         <div>
           A comprehensive platform offering identity and collaboration services, private catalogs,
@@ -318,7 +318,7 @@ const KubectlPluginExtension = () => (
   <Grid2 size={GRID_SIZE}>
     <UnifiedCardContainer>
       <Typography data-testid="kubectl-plugin-heading" variant="h5" component="div">
-        Kubectl Plugin for Kanvas Snapshot
+        Kubectl Plugin for Snapshots
       </Typography>
 
       <UnifiedDescription hasIcon>
@@ -329,8 +329,8 @@ const KubectlPluginExtension = () => (
         />
         <div>
           Generate visual snapshots of your Kubernetes manifests directly from kubectl. Cluster
-          configurations and workflows with Kanvas Snapshots. Receive snapshots via email or get
-          instant terminal URL display.
+          configurations and workflows with snapshots. Receive snapshots via email or get instant
+          terminal URL display.
         </div>
       </UnifiedDescription>
 
@@ -450,7 +450,7 @@ export const WrappedMeshMapSnapShopCard = MeshMapSnapShotCard;
 export const WrappedMesheryPerformanceAction = MesheryPerformanceAction;
 export const WrappedMesheryDockerExtension = MesheryDockerExtension;
 export const WrappedMesheryEmbedDesignExtension = MesheryDesignEmbedExtension;
-export const WrappedMesheryHelmKanvasExtension = MesheryHelmKanvasExtension;
+export const WrappedMesheryHelmExtension = MesheryHelmExtension;
 
 const Extensions = () => {
   usePageTitle('Extensions');
@@ -510,7 +510,7 @@ const Extensions = () => {
         <Grid2 container spacing={2} size="grow">
           <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
           <WrappedMesheryPerformanceAction githubActionEnabled={false} />
-          <WrappedMesheryHelmKanvasExtension />
+          <WrappedMesheryHelmExtension />
           <WrappedMesheryDockerExtension />
           <WrappedMesheryEmbedDesignExtension />
           <WrappedCloudExtension />

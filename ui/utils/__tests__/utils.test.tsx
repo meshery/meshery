@@ -55,13 +55,11 @@ import {
   isExtensionOpen,
   isInDesignMode,
   isInOperatorMode,
-  isKanvasEnabled,
   JsonParse,
-  KANVAS_MODE,
   mergeDesignWithCurrent,
   modifyRJSFSchema,
-  openDesignInKanvas,
-  openViewInKanvas,
+  openDesignInExtension,
+  openViewInExtension,
   openViewScopedToDesignInOperator,
   parseDesignFile,
   processDesign,
@@ -70,7 +68,7 @@ import {
   updateURLs,
   urlEncodeArrayParam,
   urlEncodeParams,
-  useIsKanvasEnabled,
+  EXTENSION_MODE,
 } from '../utils';
 
 const setLocation = (url: string) => {
@@ -509,7 +507,7 @@ describe('urlEncodeArrayParam / urlEncodeParams', () => {
   });
 });
 
-describe('extension / kanvas helpers', () => {
+describe('extension / helpers', () => {
   it('isExtensionOpen returns true under /extension/meshmap', () => {
     setLocation('http://localhost:9081/extension/meshmap');
     expect(isExtensionOpen()).toBe(true);
@@ -545,27 +543,8 @@ describe('extension / kanvas helpers', () => {
     expect(isInDesignMode()).toBe(false);
   });
 
-  it('exposes the KANVAS_MODE constants', () => {
-    expect(KANVAS_MODE).toEqual({ DESIGN: 'design', OPERATOR: 'operator' });
-  });
-
-  it('isKanvasEnabled returns true only when a Kanvas navigator extension is registered', () => {
-    expect(isKanvasEnabled({ extensions: { navigator: [{ title: 'Kanvas' }] } })).toBe(true);
-    expect(isKanvasEnabled({ extensions: { navigator: [{ title: 'Other' }] } })).toBe(false);
-    expect(isKanvasEnabled({})).toBe(false);
-    expect(isKanvasEnabled(undefined as never)).toBe(false);
-  });
-
-  it('useIsKanvasEnabled reads providerCapabilities from the ui slice', () => {
-    useSelectorMock.mockImplementation((sel: (s: unknown) => unknown) =>
-      sel({ ui: { providerCapabilities: { extensions: { navigator: [{ title: 'Kanvas' }] } } } }),
-    );
-    const TestComponent = () => {
-      const enabled = useIsKanvasEnabled();
-      return <div>{enabled ? 'on' : 'off'}</div>;
-    };
-    render(<TestComponent />);
-    expect(screen.getByText('on')).toBeInTheDocument();
+  it('exposes the EXTENSION_MODE constants', () => {
+    expect(EXTENSION_MODE).toEqual({ DESIGN: 'design', OPERATOR: 'operator' });
   });
 });
 
@@ -601,25 +580,25 @@ describe('event-bus router helpers', () => {
     });
   });
 
-  it('openDesignInKanvas publishes inside extension and routes outside', () => {
+  it('openDesignInExtension publishes inside extension and routes outside', () => {
     setLocation('http://localhost:9081/extension/meshmap');
-    openDesignInKanvas('d-1', 'D1', { push: vi.fn() });
+    openDesignInExtension('d-1', 'D1', { push: vi.fn() });
     expect(eventBus.publish).toHaveBeenCalled();
     eventBus.publish.mockClear();
     setLocation('http://localhost:9081/dashboard');
     const router = { push: vi.fn() };
-    openDesignInKanvas('d-1', 'D1', router);
+    openDesignInExtension('d-1', 'D1', router);
     expect(router.push).toHaveBeenCalledWith('/extension/meshmap?mode=design&type=design&id=d-1');
   });
 
-  it('openViewInKanvas publishes inside extension and routes outside', () => {
+  it('openViewInExtension publishes inside extension and routes outside', () => {
     setLocation('http://localhost:9081/extension/meshmap');
-    openViewInKanvas('v-1', 'V1', { push: vi.fn() });
+    openViewInExtension('v-1', 'V1', { push: vi.fn() });
     expect(eventBus.publish).toHaveBeenCalled();
     eventBus.publish.mockClear();
     setLocation('http://localhost:9081/dashboard');
     const router = { push: vi.fn() };
-    openViewInKanvas('v-1', 'V1', router);
+    openViewInExtension('v-1', 'V1', router);
     expect(router.push).toHaveBeenCalledWith('/extension/meshmap?mode=operator&type=view&id=v-1');
   });
 });
