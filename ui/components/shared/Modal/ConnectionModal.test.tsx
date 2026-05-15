@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import ConnectionModal from '../../connections/ConnectionFormModal';
+import ConnectionFormModal from '../../connections/ConnectionFormModal';
 
 vi.mock('@/theme', () => ({
   styled:
@@ -38,12 +38,14 @@ vi.mock('../../connections/ConnectionTable', () => ({
 
 describe('ConnectionFormModal', () => {
   it('renders nothing when isOpenModal is false', () => {
-    const { container } = render(<ConnectionModal isOpenModal={false} setIsOpenModal={vi.fn()} />);
+    const { container } = render(
+      <ConnectionFormModal isOpenModal={false} setIsOpenModal={vi.fn()} />,
+    );
     expect(container.textContent).toBe('');
   });
 
   it('renders the modal with a connection table when isOpenModal is true', () => {
-    render(<ConnectionModal isOpenModal={true} setIsOpenModal={vi.fn()} />);
+    render(<ConnectionFormModal isOpenModal={true} setIsOpenModal={vi.fn()} />);
 
     expect(screen.getByTestId('modal')).toHaveAttribute('data-title', 'Connections');
     expect(screen.getByTestId('modal')).toHaveAttribute('data-size', 'xl');
@@ -58,7 +60,7 @@ describe('ConnectionFormModal', () => {
     const user = userEvent.setup();
     const setIsOpenModal = vi.fn();
 
-    render(<ConnectionModal isOpenModal={true} setIsOpenModal={setIsOpenModal} />);
+    render(<ConnectionFormModal isOpenModal={true} setIsOpenModal={setIsOpenModal} />);
 
     await user.click(screen.getByRole('button', { name: 'close-modal' }));
     expect(setIsOpenModal).toHaveBeenCalledWith(false);

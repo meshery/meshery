@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import ExportModal from '../../designs/export/ExportDesignModal';
+import ExportDesignModal from '../../designs/export/ExportDesignModal';
 
 vi.mock('@sistent/sistent', () => ({
   ListItem: ({ children, sx }: any) => (
@@ -85,7 +85,7 @@ describe('ExportDesignModal', () => {
   };
 
   it('renders the export modal with the 4 default options', () => {
-    render(<ExportModal {...baseProps} />);
+    render(<ExportDesignModal {...baseProps} />);
 
     expect(screen.getByTestId('modal')).toHaveAttribute('data-title', 'Export Design as...');
     expect(screen.getByText('Meshery Design (yaml)')).toBeInTheDocument();
@@ -96,7 +96,7 @@ describe('ExportDesignModal', () => {
   });
 
   it('returns null modal when open is false', () => {
-    render(<ExportModal {...baseProps} downloadModal={{ open: false, content: null }} />);
+    render(<ExportDesignModal {...baseProps} downloadModal={{ open: false, content: null }} />);
     expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
   });
 
@@ -104,7 +104,7 @@ describe('ExportDesignModal', () => {
     const user = userEvent.setup();
     const handleDesignDownload = vi.fn();
 
-    render(<ExportModal {...baseProps} handleDesignDownload={handleDesignDownload} />);
+    render(<ExportDesignModal {...baseProps} handleDesignDownload={handleDesignDownload} />);
 
     await user.click(screen.getAllByTestId('icon-button')[0]);
     expect(handleDesignDownload).toHaveBeenCalledWith(expect.anything(), { id: 'design-1' });
@@ -118,7 +118,7 @@ describe('ExportDesignModal', () => {
       description: 'Extra',
     };
 
-    render(<ExportModal {...baseProps} extensionExportOptions={[extraOption]} />);
+    render(<ExportDesignModal {...baseProps} extensionExportOptions={[extraOption]} />);
 
     expect(screen.getByText('Extra Export')).toBeInTheDocument();
     expect(screen.getAllByTestId('export-list-item')).toHaveLength(5);

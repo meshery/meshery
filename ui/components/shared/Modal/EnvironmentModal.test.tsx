@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import EnvironmentModal from '../../environments/EnvironmentFormModal';
+import EnvironmentFormModal from '../../environments/EnvironmentFormModal';
 
 vi.mock('@sistent/sistent', () => ({
   EnvironmentIcon: ({ height, width, fill }: any) => (
@@ -39,12 +39,14 @@ vi.mock('../../lifecycle', () => ({
 
 describe('EnvironmentFormModal', () => {
   it('returns null when isOpenModal is false', () => {
-    const { container } = render(<EnvironmentModal isOpenModal={false} setIsOpenModal={vi.fn()} />);
+    const { container } = render(
+      <EnvironmentFormModal isOpenModal={false} setIsOpenModal={vi.fn()} />,
+    );
     expect(container.textContent).toBe('');
   });
 
   it('renders the Environment modal when open', () => {
-    render(<EnvironmentModal isOpenModal={true} setIsOpenModal={vi.fn()} />);
+    render(<EnvironmentFormModal isOpenModal={true} setIsOpenModal={vi.fn()} />);
 
     expect(screen.getByTestId('modal')).toHaveAttribute('data-title', 'Environment');
     expect(screen.getByTestId('modal')).toHaveAttribute('data-size', 'xl');
@@ -55,7 +57,7 @@ describe('EnvironmentFormModal', () => {
   it('closes the modal when close button is clicked', async () => {
     const user = userEvent.setup();
     const setIsOpenModal = vi.fn();
-    render(<EnvironmentModal isOpenModal={true} setIsOpenModal={setIsOpenModal} />);
+    render(<EnvironmentFormModal isOpenModal={true} setIsOpenModal={setIsOpenModal} />);
 
     await user.click(screen.getByRole('button', { name: 'close-modal' }));
     expect(setIsOpenModal).toHaveBeenCalledWith(false);
