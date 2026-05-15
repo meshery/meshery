@@ -1,0 +1,9 @@
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+  <path 
+    d="M2,35 L4,15 L15,25 L25,5 L35,12 L32,35 Z" 
+    fill="#00B39F"
+    fill-opacity="0.1"
+    stroke="#00B39F" 
+    stroke-miterlimit="10"
+  />
+</svg>
