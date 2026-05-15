@@ -1,6 +1,6 @@
 Hi, I'm Naman Chhabra 👋
 
-I'm a 3rd year B.Tech CSE student at GGSIPU, currently diving deeper into open source and cloud native technologies.
+I'm a B.Tech CSE student at GGSIPU, currently diving deeper into open-source and cloud native technologies.
 
 A little about what I've been up to: I'm a GSoC 2026 mentee at CircuitVerse, where I also serve as an Issue Triage Member and maintain the Community Leaderboard. These roles have given me a solid understanding of how open source communities function at a deeper level, beyond just writing code.
 
