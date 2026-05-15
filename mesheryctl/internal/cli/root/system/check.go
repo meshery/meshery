@@ -231,7 +231,6 @@ mesheryctl system check --operator
 	},
 }
 
-
 // Run triggers all the healthchecks according to the requirements defined from struct HealthChecks
 func (hc *HealthChecker) Run(ctx context.Context) error {
 	// Run meshery docker checks
