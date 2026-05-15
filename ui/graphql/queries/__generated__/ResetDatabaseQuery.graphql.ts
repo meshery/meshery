@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<34a404dcc13560d31f1435df147e1abc>>
+ * @generated SignedSource<<0315f8c654f92713d4952b2f465c4149>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -8,7 +8,7 @@
 /* eslint-disable */
 
 import { ConcreteRequest } from 'relay-runtime';
-export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN";
+export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
 export type ReSyncActions = {
   ReSync: string;
   clearDB: string;

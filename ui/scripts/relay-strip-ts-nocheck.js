@@ -8,19 +8,22 @@
  * `npm run relay` so that the suppression never re-appears on rebuild.
  */
 
-const fs = require('fs');
-const path = require('path');
-const { globSync } = require('glob');
+const { globSync } = require('node:fs');
+const fs = require('node:fs');
+const path = require('node:path');
 
-const generatedGlob = 'graphql/{queries,mutations,subscriptions}/__generated__/*.graphql.ts';
-const files = globSync(generatedGlob, { cwd: path.join(__dirname, '..') });
+// Match all __generated__ directories under ui/ (excludes node_modules automatically)
+const files = globSync('**/__generated__/*.graphql.ts', {
+  cwd: path.join(__dirname, '..'),
+  exclude: ['**/node_modules/**'],
+});
 
 let changed = 0;
 for (const rel of files) {
   const abs = path.join(__dirname, '..', rel);
   const original = fs.readFileSync(abs, 'utf8');
-  // Remove the @ts-nocheck line (relay-compiler emits it on its own line)
-  const patched = original.replace(/^\/\/ @ts-nocheck\n/m, '');
+  // Remove the @ts-nocheck line; handle both LF and CRLF line endings
+  const patched = original.replace(/^\/\/ @ts-nocheck\r?\n/m, '');
   if (patched !== original) {
     fs.writeFileSync(abs, patched, 'utf8');
     changed++;

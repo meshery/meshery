@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b4a6749ab9275b430386aab0f45b65b1>>
+ * @generated SignedSource<<ed1ec0402fa8b4861339501488a3e28e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -8,7 +8,7 @@
 /* eslint-disable */
 
 import { ConcreteRequest } from 'relay-runtime';
-export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN";
+export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
 export type AdapterStatusInput = {
   adapter: string;
   targetPort: string;

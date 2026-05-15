@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<46d4c7f18d4c40ee15da94dbfdef2921>>
+ * @generated SignedSource<<64a6e2242e655d185ae16b2fb0efa9fb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -8,7 +8,7 @@
 /* eslint-disable */
 
 import { ConcreteRequest } from 'relay-runtime';
-export type Severity = "alert" | "critical" | "debug" | "emergency" | "error" | "informational" | "warning";
+export type Severity = "alert" | "critical" | "debug" | "emergency" | "error" | "informational" | "warning" | "%future added value";
 export type EventsSubscription$variables = Record<PropertyKey, never>;
 export type EventsSubscription$data = {
   readonly event: {
