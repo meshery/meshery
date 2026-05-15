@@ -455,17 +455,6 @@ helm-operator-lint:
 helm-meshery-lint:
 	helm lint install/kubernetes/helm/meshery --with-subcharts
 
-#-----------------------------------------------------------------------------
-# Meshery APIs
-#-----------------------------------------------------------------------------
-.PHONY: graphql-build
-
-## Build Meshery GraphQl API specifications
-graphql-build: dep-check
-	cd server; cd internal/graphql; go run -mod=mod github.com/99designs/gqlgen generate
-
-
-
 ## testing
 test-setup-ui:
 	cd ui; npx playwright install chromium --with-deps; cd ..

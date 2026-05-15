@@ -18,8 +18,7 @@ import { startSessionTimer } from '../lib/sessionTimer';
 import Header from '../components/layout/Header/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import getPageContext from '../components/PageContext';
-import { MESHERY_CONTROLLER_SUBSCRIPTION } from '../components/subscription/helpers';
-import { GQLSubscription } from '../components/subscription/subscriptionhandler';
+import { sseSubscribe, type SSESubscription } from '@/lib/sseClient';
 import { useLazyGetSystemSyncQuery, useLazyGetKubernetesContextsQuery } from '../rtk-query/system';
 import { useGetUserPrefQuery } from '../rtk-query/user';
 import { api } from '../rtk-query';
@@ -61,8 +60,6 @@ import './styles/AnimatedMeshPattern.css';
 import './styles/AnimatedMeshSync.css';
 import PlaygroundMeshDeploy from '../components/layout/AccessMesheryModal';
 import Router from 'next/router';
-import { RelayEnvironmentProvider } from 'react-relay';
-import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
 import uiConfig from '../ui.config';
 import { NotificationCenterProvider } from '../components/layout/NotificationCenter';
@@ -114,7 +111,7 @@ export function isExtensionOpen() {
   return window.location.pathname.startsWith(mesheryExtensionRoute);
 }
 
-const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) => {
+const MesheryApp = ({ Component, pageProps, emotionCache }) => {
   const pageContext = useMemo(() => getPageContext(), []);
   const { k8sConfig } = useSelector((state) => state.ui);
   const { providerCapabilities } = useSelector((state) => state.ui);
@@ -134,16 +131,19 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     isLoading: true,
     k8sContexts: { totalCount: 0, contexts: [] },
     activeK8sContexts: [],
-    mesheryControllerSubscription: null,
     disposeK8sContextSubscription: null,
     theme: 'light',
     isOpen: false,
-    relayEnvironment: createRelayEnvironment(),
     connectionMetadata: {},
     keys: [],
     abilities: [],
     abilityUpdated: false,
   });
+
+  // Holds the active controllers status SSE subscription. The effect below
+  // creates it once we have at least one connectionID and rebinds in-place
+  // whenever the derived connectionID list changes — no respawn churn.
+  const controllerSubscriptionRef = useRef<SSESubscription | null>(null);
 
   // Mirror the dispose callback into a ref so the bootstrap effect's cleanup
   // can call the latest value rather than the (always-null) initial-mount
@@ -238,31 +238,24 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     );
   }, [dispatch]);
 
-  const initSubscriptions = useCallback(
-    (contexts) => {
-      if (!k8sConfig?.length) {
-        return;
-      }
-      const connectionIDs = getConnectionIDsFromContextIds(contexts, k8sConfig);
-      // No need to create a controller subscription if there are no connections
-      if (connectionIDs.length < 1) {
-        setState((prevState) => ({ ...prevState, mesheryControllerSubscription: () => {} }));
-        return;
-      }
+  // Derive controller connectionIDs once from the current k8sConfig. The
+  // effect below creates or rebinds the SSE subscription whenever this list
+  // actually changes — previously _app derived the list twice (once in
+  // initSubscriptions, once in the k8sConfig effect) which made it easy to
+  // drift.
+  const controllerConnectionIDs = useMemo<string[]>(() => {
+    if (!k8sConfig?.length) {
+      return [];
+    }
+    const ids = getK8sConfigIdsFromK8sConfig(k8sConfig);
+    // Sort so the derived connectionIDKey is order-insensitive — k8sConfig
+    // re-fetches can return the same set in a different order, and without
+    // a stable sort the subscription effect would tear down and recreate
+    // the EventSource for what is logically the same set of connections.
+    return getConnectionIDsFromContextIds(ids, k8sConfig).slice().sort();
+  }, [k8sConfig]);
 
-      const mesheryControllerSubscription = new GQLSubscription({
-        type: MESHERY_CONTROLLER_SUBSCRIPTION,
-        connectionIDs: connectionIDs,
-        callbackFunction: (data) => {
-          dispatch(setControllerState({ controllerState: data }));
-        },
-      });
-      mesheryControllerSubscription.initSubscription();
-
-      setState((prevState) => ({ ...prevState, mesheryControllerSubscription }));
-    },
-    [k8sConfig],
-  );
+  const connectionIDKey = controllerConnectionIDs.join(',');
 
   const handleDrawerToggle = useCallback(() => {
     setState((prevState) => ({ ...prevState, mobileOpen: !prevState.mobileOpen }));
@@ -445,8 +438,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
         loadPromGrafanaConnection();
         await loadOrg();
 
-        initSubscriptions([]);
-
         // Catalog content preference is loaded via useGetUserPrefQuery (reactive)
         if (typeof userPrefData?.usersExtensionPreferences?.catalogContent !== 'undefined') {
           dispatch(
@@ -472,28 +463,41 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     };
   }, []);
 
-  // Update effect for k8sConfig
+  // Auth/restricted-mode redirect — kept separate from subscription wiring.
   useEffect(() => {
-    // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
     if (
       typeof window !== 'undefined' &&
       isMesheryUIRestrictedAndThePageIsNotPlayground(providerCapabilities)
     ) {
       Router.push(mesheryExtensionRoute);
     }
+  }, [providerCapabilities]);
 
-    if (k8sConfig?.length > 0) {
-      const { mesheryControllerSubscription } = state;
-      const ids = getK8sConfigIdsFromK8sConfig(k8sConfig);
-      if (mesheryControllerSubscription) {
-        mesheryControllerSubscription.updateSubscription(
-          getConnectionIDsFromContextIds(ids, k8sConfig),
-        );
-      } else {
-        initSubscriptions(ids);
-      }
+  // Controllers status SSE subscription — created lazily when at least one
+  // connectionID exists, then rebound in-place when the connectionID list
+  // changes. Server-side change-detection means we no longer need the
+  // client comparator/merge dedupe that the old GQLSubscription performed.
+  useEffect(() => {
+    if (!controllerConnectionIDs.length) {
+      return;
     }
-  }, [k8sConfig, providerCapabilities]);
+    if (controllerSubscriptionRef.current) {
+      controllerSubscriptionRef.current.rebind({ connectionID: controllerConnectionIDs });
+      return;
+    }
+    controllerSubscriptionRef.current = sseSubscribe({
+      path: '/api/system/kubernetes/controllers/status/stream',
+      params: { connectionID: controllerConnectionIDs },
+      subscriptionName: 'MesheryControllers',
+      onMessage: (data) => {
+        dispatch(setControllerState({ controllerState: data }));
+      },
+    });
+    return () => {
+      controllerSubscriptionRef.current?.dispose();
+      controllerSubscriptionRef.current = null;
+    };
+  }, [connectionIDKey, dispatch]);
 
   const canShowNav = !state.isFullScreenMode && uiConfig?.components?.navigator !== false;
   const { extensionType } = useSelector((state) => state.ui);
@@ -501,101 +505,99 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   return (
     <DynamicFullScreenLoader isLoading={state.isLoading}>
       <DynamicComponentProvider>
-        <RelayEnvironmentProvider environment={relayEnvironment}>
-          <MesheryThemeProvider emotionCache={emotionCache}>
-            <NoSsr>
-              <ErrorBoundary customFallback={CustomErrorFallback}>
-                <LoadSessionGuard>
-                  <WorkspaceModalContextProvider>
-                    <RegistryModalContextProvider>
-                      <StyledRoot>
-                        <CssBaseline />
-                        <NavigationBar
-                          isDrawerCollapsed={isDrawerCollapsed}
-                          mobileOpen={state.mobileOpen}
-                          handleDrawerToggle={handleDrawerToggle}
-                          updateExtensionType={updateCurrentExtensionType}
-                          canShowNav={canShowNav}
-                        />
-                        <StyledAppContent
-                          canShowNav={canShowNav}
-                          isDrawerCollapsed={isDrawerCollapsed}
-                        >
-                          <SnackbarProvider
-                            anchorOrigin={{
-                              vertical: 'bottom',
-                              horizontal: 'right',
-                            }}
-                            iconVariant={{
-                              success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
-                              error: <Error style={{ marginRight: '0.5rem' }} />,
-                              warning: <Warning style={{ marginRight: '0.5rem' }} />,
-                              info: <Info style={{ marginRight: '0.5rem' }} />,
-                            }}
-                            Components={{
-                              info: ThemeResponsiveSnackbar,
-                              success: ThemeResponsiveSnackbar,
-                              error: ThemeResponsiveSnackbar,
-                              warning: ThemeResponsiveSnackbar,
-                              loading: ThemeResponsiveSnackbar,
-                            }}
-                            maxSnack={10}
-                          >
-                            <NotificationCenterProvider>
-                              <MesheryProgressBar />
-                              <KubernetesSubscription setAppState={setAppState} />
-                              {!state.isFullScreenMode && (
-                                <Header
-                                  onDrawerToggle={handleDrawerToggle}
-                                  onDrawerCollapse={isDrawerCollapsed}
-                                  contexts={state.k8sContexts}
-                                  activeContexts={state.activeK8sContexts}
-                                  setActiveContexts={setActiveContexts}
-                                  searchContexts={searchContexts}
-                                  updateExtensionType={updateCurrentExtensionType}
-                                  abilityUpdated={state.abilityUpdated}
-                                />
-                              )}
-                              <StyledContentWrapper>
-                                <StyledMainContent
-                                  id="meshery-main"
-                                  style={{
-                                    padding: extensionType === 'navigator' && '0px',
-                                  }}
-                                >
-                                  <LocalizationProvider dateAdapter={AdapterMoment}>
-                                    <ErrorBoundary customFallback={CustomErrorFallback}>
-                                      <Component
-                                        pageContext={pageContext}
-                                        contexts={state.k8sContexts}
-                                        activeContexts={state.activeK8sContexts}
-                                        setActiveContexts={setActiveContexts}
-                                        searchContexts={searchContexts}
-                                        {...pageProps}
-                                      />
-                                    </ErrorBoundary>
-                                  </LocalizationProvider>
-                                </StyledMainContent>
-                                <Footer
-                                  handleMesheryCommunityClick={handleMesheryCommunityClick}
-                                  providerCapabilities={providerCapabilities}
-                                />
-                              </StyledContentWrapper>
-                            </NotificationCenterProvider>
-                          </SnackbarProvider>
-                        </StyledAppContent>
-                      </StyledRoot>
-                      <PlaygroundMeshDeploy
-                        closeForm={() => setState((prevState) => ({ ...prevState, isOpen: false }))}
-                        isOpen={state.isOpen}
+        <MesheryThemeProvider emotionCache={emotionCache}>
+          <NoSsr>
+            <ErrorBoundary customFallback={CustomErrorFallback}>
+              <LoadSessionGuard>
+                <WorkspaceModalContextProvider>
+                  <RegistryModalContextProvider>
+                    <StyledRoot>
+                      <CssBaseline />
+                      <NavigationBar
+                        isDrawerCollapsed={isDrawerCollapsed}
+                        mobileOpen={state.mobileOpen}
+                        handleDrawerToggle={handleDrawerToggle}
+                        updateExtensionType={updateCurrentExtensionType}
+                        canShowNav={canShowNav}
                       />
-                    </RegistryModalContextProvider>
-                  </WorkspaceModalContextProvider>
-                </LoadSessionGuard>
-              </ErrorBoundary>
-            </NoSsr>
-          </MesheryThemeProvider>
-        </RelayEnvironmentProvider>
+                      <StyledAppContent
+                        canShowNav={canShowNav}
+                        isDrawerCollapsed={isDrawerCollapsed}
+                      >
+                        <SnackbarProvider
+                          anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                          }}
+                          iconVariant={{
+                            success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
+                            error: <Error style={{ marginRight: '0.5rem' }} />,
+                            warning: <Warning style={{ marginRight: '0.5rem' }} />,
+                            info: <Info style={{ marginRight: '0.5rem' }} />,
+                          }}
+                          Components={{
+                            info: ThemeResponsiveSnackbar,
+                            success: ThemeResponsiveSnackbar,
+                            error: ThemeResponsiveSnackbar,
+                            warning: ThemeResponsiveSnackbar,
+                            loading: ThemeResponsiveSnackbar,
+                          }}
+                          maxSnack={10}
+                        >
+                          <NotificationCenterProvider>
+                            <MesheryProgressBar />
+                            <KubernetesSubscription setAppState={setAppState} />
+                            {!state.isFullScreenMode && (
+                              <Header
+                                onDrawerToggle={handleDrawerToggle}
+                                onDrawerCollapse={isDrawerCollapsed}
+                                contexts={state.k8sContexts}
+                                activeContexts={state.activeK8sContexts}
+                                setActiveContexts={setActiveContexts}
+                                searchContexts={searchContexts}
+                                updateExtensionType={updateCurrentExtensionType}
+                                abilityUpdated={state.abilityUpdated}
+                              />
+                            )}
+                            <StyledContentWrapper>
+                              <StyledMainContent
+                                id="meshery-main"
+                                style={{
+                                  padding: extensionType === 'navigator' && '0px',
+                                }}
+                              >
+                                <LocalizationProvider dateAdapter={AdapterMoment}>
+                                  <ErrorBoundary customFallback={CustomErrorFallback}>
+                                    <Component
+                                      pageContext={pageContext}
+                                      contexts={state.k8sContexts}
+                                      activeContexts={state.activeK8sContexts}
+                                      setActiveContexts={setActiveContexts}
+                                      searchContexts={searchContexts}
+                                      {...pageProps}
+                                    />
+                                  </ErrorBoundary>
+                                </LocalizationProvider>
+                              </StyledMainContent>
+                              <Footer
+                                handleMesheryCommunityClick={handleMesheryCommunityClick}
+                                providerCapabilities={providerCapabilities}
+                              />
+                            </StyledContentWrapper>
+                          </NotificationCenterProvider>
+                        </SnackbarProvider>
+                      </StyledAppContent>
+                    </StyledRoot>
+                    <PlaygroundMeshDeploy
+                      closeForm={() => setState((prevState) => ({ ...prevState, isOpen: false }))}
+                      isOpen={state.isOpen}
+                    />
+                  </RegistryModalContextProvider>
+                </WorkspaceModalContextProvider>
+              </LoadSessionGuard>
+            </ErrorBoundary>
+          </NoSsr>
+        </MesheryThemeProvider>
       </DynamicComponentProvider>
     </DynamicFullScreenLoader>
   );

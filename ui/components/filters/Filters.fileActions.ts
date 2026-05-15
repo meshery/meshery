@@ -1,6 +1,5 @@
 import type React from 'react';
 import _ from 'lodash';
-import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
 import { FILE_OPS } from '../../utils/Enum';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { getUnit8ArrayDecodedFile } from '../../utils/utils';
@@ -373,62 +372,15 @@ export function createDeleteFilter({
   };
 }
 
-type CreateInitFiltersSubscriptionArgs = {
+// Historical GraphQL heartbeat subscription. The callback never consumed the
+// payload — the RTK query already refetches reactively on dependency change —
+// so the factory is now a no-op returning a stable function. Kept exported
+// only so existing call sites stay valid until the prop is fully removed.
+export function createInitFiltersSubscription(_args?: {
   page: number;
   pageSize: number;
   search: string;
   sortOrder: string;
-  disposeConfSubscriptionRef: React.MutableRefObject<{ dispose: () => void } | null>;
-};
-
-export function createInitFiltersSubscription({
-  page,
-  pageSize,
-  search,
-  sortOrder,
-  disposeConfSubscriptionRef,
-}: CreateInitFiltersSubscriptionArgs) {
-  return (
-    pageNo: string = page.toString(),
-    pagesize: string = pageSize.toString(),
-    searchText: string = search,
-    order: string = sortOrder,
-  ) => {
-    if (disposeConfSubscriptionRef.current) {
-      disposeConfSubscriptionRef.current.dispose();
-    }
-    const configurationSubscription = ConfigurationSubscription(
-      () => {
-        /**
-         * We are not using filter subscription and this code is commented to prevent
-         * unnecessary state updates
-         */
-        // setPage(result.configuration?.filters?.page || 0);
-        // setPageSize(result.configuration?.filters?.page_size || 10);
-        // setCount(result.configuration?.filters?.total_count || 0);
-        // handleSetFilters(result.configuration?.filters?.filters);
-      },
-      {
-        applicationSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-        patternSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-        filterSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-      },
-    );
-    disposeConfSubscriptionRef.current = configurationSubscription;
-  };
+}) {
+  return (_pageNo?: string, _pagesize?: string, _searchText?: string, _order?: string): void => {};
 }

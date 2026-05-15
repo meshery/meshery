@@ -1,8 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 // Heavy machinery deps need stubbing exactly like the individual machine tests
-// or the import graph will pull in the relay env, the redux store, the RTK
-// query API, and the GraphQL subscription bootstrap.
+// or the import graph will pull in the redux store and the RTK query API.
 vi.mock('@/rtk-query/meshModel', () => ({ getComponentDefinition: vi.fn() }));
 vi.mock('@/rtk-query/design', () => ({
   designsApi: {
@@ -14,19 +13,12 @@ vi.mock('@/utils/utils', () => ({
   encodeDesignFile: vi.fn(),
   processDesign: vi.fn(() => ({ components: [] })),
 }));
-vi.mock('@/graphql/subscriptions/EventsSubscription', () => ({
-  default: () => ({ dispose: vi.fn() }),
-}));
 vi.mock('../../store', () => ({ store: { dispatch: vi.fn() } }));
 vi.mock('@/store/slices/events', () => ({ pushEvent: vi.fn() }));
 vi.mock('../../rtk-query', () => ({ api: { util: { invalidateTags: vi.fn() } } }));
 vi.mock('@/rtk-query/notificationCenter', () => ({ PROVIDER_TAGS: { EVENT: 'Event' } }));
 vi.mock('@/components/layout/NotificationCenter/constants', () => ({
   SEVERITY_TO_NOTIFICATION_TYPE_MAPPING: {},
-}));
-vi.mock('../../lib/relayEnvironment', () => ({
-  subscriptionClient: { on: () => () => {} },
-  createRelayEnvironment: () => ({}),
 }));
 
 import * as machines from '../index';

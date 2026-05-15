@@ -22,7 +22,6 @@ import (
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/helpers/utils"
-	"github.com/meshery/meshery/server/internal/graphql"
 	"github.com/meshery/meshery/server/internal/store"
 	"github.com/meshery/meshery/server/machines"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
@@ -421,19 +420,8 @@ func main() {
 		}
 	}()
 
-	g := graphql.New(graphql.Options{
-		Config:      hc,
-		Logger:      log,
-		BrokerConn:  brokerConn,
-		Broadcaster: b,
-	})
-
-	gp := graphql.NewPlayground(graphql.Options{
-		URL: "/api/system/graphql/query",
-	})
-
 	port := viper.GetInt("PORT")
-	r := router.NewRouter(ctx, h, port, g, gp)
+	r := router.NewRouter(ctx, h, port)
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 
