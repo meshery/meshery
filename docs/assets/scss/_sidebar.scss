@@ -145,6 +145,7 @@
   & .td-search__input::placeholder {
     font-family: inherit;
     color: var(--color-secondary-light);
+    opacity: 0.72;
   }
 
   & .td-sidebar__toggle {
@@ -381,12 +382,18 @@
 }
 .dark-mode .sidebar-container {
   & .td-search__input {
-    background: #20252b;
-    color: #eef1f4;
+    background: var(--color-primary-light);
+    color: var(--color-secondary-dark);
   }
 
   & .td-search__input::placeholder {
-    color: rgba(238, 241, 244, 0.72);
+    color: var(--color-secondary-medium);
+    opacity: 0.72;
+  }
+
+  & .td-sidebar-nav__section-title,
+  & .td-sidebar-link {
+    color: var(--color-secondary-dark);
   }
 }
 
