@@ -13,7 +13,6 @@ import LinkedinIcon from './assets/linkedinIcon';
 import TwitterIcon from './assets/twitterIcon';
 import { iconMedium, iconLarge } from '../../css/icons.styles';
 import { TwitterShareButton, LinkedinShareButton, FacebookShareButton } from 'react-share';
-import subscribePerformanceResults from '@/graphql/subscriptions/PerformanceResultSubscription';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import {
@@ -502,39 +501,11 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
   const { notify } = useNotification();
 
   useEffect(() => {
+    // The historical GraphQL subscription on top of this REST fetch has been
+    // removed (the TODO at the original call site was honoured). The REST
+    // query itself reruns whenever page/pageSize/search/sortOrder change, and
+    // server-side change-detection drives live updates via a separate channel.
     fetchResults(page, pageSize, search, sortOrder);
-
-    //TODO: remove this
-    const subscription = subscribePerformanceResults(
-      (res) => {
-        // @ts-ignore
-        let result = res?.subscribePerfResults;
-        if (typeof result !== 'undefined') {
-          updateProgress({ showProgress: false });
-
-          if (result) {
-            setCount(result.total_count);
-            setPageSize(result.page_size);
-            setSortOrder(sortOrder);
-            setSearch(search);
-            setResults(result.results);
-            setPageSize(result.page_size);
-          }
-        }
-      },
-      {
-        selector: {
-          pageSize: `${pageSize}`,
-          page: `${page}`,
-          search: `${encodeURIComponent(search)}`,
-          order: `${encodeURIComponent(sortOrder)}`,
-        },
-        profileID: endpoint.split('/')[endpoint.split('/').length - 2],
-      },
-    );
-    return () => {
-      subscription.dispose();
-    };
   }, [page, pageSize, search, sortOrder]);
 
   const handleSocialExpandClick = (e, tableMeta) => {

@@ -26,7 +26,6 @@ import _PromptComponent from '../PromptComponent';
 import ViewSwitch from '../ViewSwitch';
 import { EVENT_TYPES } from '../../lib/event-types';
 import fetchPerformanceProfiles from '@/graphql/queries/PerformanceProfilesQuery';
-import subscribePerformanceProfiles from '@/graphql/subscriptions/PerformanceProfilesSubscription';
 import { iconMedium } from '../../css/icons.styles';
 import { useDeletePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 import { useNotification } from '@/utils/hooks/useNotification';
@@ -71,34 +70,13 @@ function PerformanceProfile({ handleDelete }) {
 
   const [deletePerformanceProfile] = useDeletePerformanceProfileMutation();
   /**
-   * fetch performance profiles when the page loads
+   * fetch performance profiles when the page or sort/search change. The
+   * historical GraphQL subscription on top of this REST fetch is dropped:
+   * the REST query itself reruns when its dependencies change, and server-
+   * side change-detection now drives live updates via a separate channel.
    */
   useEffect(() => {
     fetchTestProfiles(page, pageSize, search, sortOrder);
-    const subscription = subscribePerformanceProfiles(
-      (res) => {
-        let result = res?.subscribePerfProfiles;
-        if (typeof result !== 'undefined') {
-          if (result) {
-            setCount(result.total_count || 0);
-            setPageSize(result.page_size || 0);
-            setTestProfiles(result.profiles || []);
-            setPage(result.page || 0);
-          }
-        }
-      },
-      {
-        selector: {
-          pageSize: `${pageSize}`,
-          page: `${page}`,
-          search: `${encodeURIComponent(search)}`,
-          order: `${sortOrder}`,
-        },
-      },
-    );
-    return () => {
-      subscription.dispose();
-    };
   }, [page, pageSize, search, sortOrder]);
 
   /**

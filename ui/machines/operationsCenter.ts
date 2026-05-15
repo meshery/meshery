@@ -1,6 +1,6 @@
 import { SEVERITY_TO_NOTIFICATION_TYPE_MAPPING } from '@/components/layout/NotificationCenter/constants';
-import subscribeEvents from '@/graphql/subscriptions/EventsSubscription';
-import { emit, fromCallback, setup, spawnChild, stopChild } from 'xstate';
+import { sseSubscribe } from '@/lib/sseClient';
+import { emit, fromCallback, setup, spawnChild } from 'xstate';
 import { store } from '../store';
 import { pushEvent } from '@/store/slices/events';
 import { api as mesheryApi } from '../rtk-query';
@@ -25,10 +25,13 @@ const events = {
 };
 
 const subscriptionActor = fromCallback(({ sendBack }) => {
-  const subscription = subscribeEvents(
-    (result) => {
+  const subscription = sseSubscribe({
+    path: '/api/events',
+    subscriptionName: 'Events',
+    onMessage: (result) => {
       try {
-        if (!result.event) {
+        const payload = result as { event?: unknown } | null | undefined;
+        if (!payload?.event) {
           console.error('Invalid event received', result);
           return;
         }
@@ -36,18 +39,18 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
         // GraphQL Event payload (canonical camelCase) is consumed as-is by
         // downstream UI; meshkit Event JSON tags also flipped to camelCase in
         // v1.0.7 so the REST /api/system/events list endpoint matches.
-        sendBack(events.eventReceivedFromServer(result.event));
+        sendBack(events.eventReceivedFromServer(payload.event));
       } catch (error) {
         console.error('[operationsCenter] An error occurred in processing event', error);
       }
     },
-    (error) => {
+    onError: (error) => {
       console.error('[operationsCenter] An error occurred in subscription to events', error);
       sendBack(events.errorOccurredInSubscription(error));
     },
-  );
+  });
 
-  () => {
+  return () => {
     subscription.dispose();
   };
 });
@@ -91,9 +94,9 @@ export const operationsCenterActor = setup({
         [OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER]: {
           actions: ['storeInRedux', 'notifyUI', 'emitBack'],
         },
-        [OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION]: {
-          actions: [stopChild('subscriptionActor'), 'spawnSubscriptionActor'],
-        },
+        // EventSource auto-reconnects natively; no respawn needed here.
+        // Errors are logged in the subscription callback.
+        [OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION]: {},
       },
     },
   },

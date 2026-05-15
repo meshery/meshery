@@ -108,7 +108,6 @@ function MesheryFilters() {
 
   const catalogContentRef = useRef<any[]>([]);
   const catalogVisibilityRef = useRef<boolean>(false);
-  const disposeConfSubscriptionRef = useRef<{ dispose: () => void } | null>(null);
   const [visibilityFilter, setVisibilityFilter] = useState<string | null>(null);
 
   const [selectedFilters, setSelectedFilters] = useState<{ visibility: string }>({
@@ -245,7 +244,6 @@ function MesheryFilters() {
     pageSize,
     search,
     sortOrder,
-    disposeConfSubscriptionRef,
   });
   const handleSubmit = createHandleSubmit({
     notify,
@@ -336,7 +334,6 @@ function MesheryFilters() {
 
     return () => {
       fetchCatalogFilters.unsubscribe();
-      disposeConfSubscriptionRef.current?.dispose();
     };
   }, []);
 
