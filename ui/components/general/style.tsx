@@ -166,12 +166,9 @@ export const NavigatorListItem = styled(ListItemButton, {
   },
   '&:hover': {
     backgroundColor: alpha(theme.palette.background.brand.default, 0.12),
-    color: isActive
-      ? theme.palette.background.brand.default
-      : theme.palette.background.constant.white,
-    fill: isActive
-      ? theme.palette.background.brand.default
-      : theme.palette.background.constant.white,
+    ...(!isActive && {
+      color: theme.palette.background.constant.white,
+    }),
     '& $expandMoreIcon': {
       opacity: 1,
       transition: 'opacity 200ms ease-in',
@@ -197,12 +194,9 @@ export const NavigatorListItemII = styled(ListItemButton, {
   fill: isActive ? theme.palette.background.brand.default : theme.palette.background.constant.white,
   '&:hover': {
     backgroundColor: alpha(theme.palette.background.brand.default, 0.12),
-    color: isActive
-      ? theme.palette.background.brand.default
-      : theme.palette.background.constant.white,
-    fill: isActive
-      ? theme.palette.background.brand.default
-      : theme.palette.background.constant.white,
+    ...(!isActive && {
+      color: theme.palette.background.constant.white,
+    }),
     '& $expandMoreIcon': {
       opacity: 1,
       transition: 'opacity 200ms ease-in',
@@ -228,12 +222,9 @@ export const NavigatorListItemIII = styled(ListItemButton, {
   fill: isActive ? theme.palette.background.brand.default : theme.palette.background.constant.white,
   '&:hover': {
     backgroundColor: alpha(theme.palette.background.brand.default, 0.12),
-    color: isActive
-      ? theme.palette.background.brand.default
-      : theme.palette.background.constant.white,
-    fill: isActive
-      ? theme.palette.background.brand.default
-      : theme.palette.background.constant.white,
+    ...(!isActive && {
+      color: theme.palette.background.constant.white,
+    }),
     '& $expandMoreIcon': {
       opacity: 1,
       transition: 'opacity 200ms ease-in',
@@ -260,12 +251,9 @@ export const SideBarListItem = styled(ListItemButton, {
     ...(link && {
       backgroundColor: alpha(theme.palette.background.constant.white, 0.12),
     }),
-    color: isActive
-      ? theme.palette.background.brand.default
-      : theme.palette.background.constant.white,
-    fill: isActive
-      ? theme.palette.background.brand.default
-      : theme.palette.background.constant.white,
+    ...(!isActive && {
+      color: theme.palette.background.constant.white,
+    }),
 
     '.svg-inline--fa': {
       opacity: 1,
