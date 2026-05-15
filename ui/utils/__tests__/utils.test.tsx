@@ -48,7 +48,7 @@ import {
   getUnit8ArrayDecodedFile,
   getUnit8ArrayForDesign,
   getVisibilityColums,
-  isDesignOpenInKanvas,
+  isDesignOpenInExtension,
   isEmptyArr,
   isEmptyObj,
   isEqualArr,
@@ -520,19 +520,19 @@ describe('extension / kanvas helpers', () => {
     expect(isExtensionOpen()).toBe(false);
   });
 
-  it('isDesignOpenInKanvas reads `design` + mode=design from query', () => {
+  it('isDesignOpenInExtension reads `design` + mode=design from query', () => {
     setLocation('http://localhost:9081/x?design=abc&mode=design');
-    expect(isDesignOpenInKanvas()).toBe(true);
+    expect(isDesignOpenInExtension()).toBe(true);
   });
 
-  it('isDesignOpenInKanvas returns false when mode is not design', () => {
+  it('isDesignOpenInExtension returns false when mode is not design', () => {
     setLocation('http://localhost:9081/x?design=abc&mode=operator');
-    expect(isDesignOpenInKanvas()).toBe(false);
+    expect(isDesignOpenInExtension()).toBe(false);
   });
 
-  it('isDesignOpenInKanvas returns false when no design param', () => {
+  it('isDesignOpenInExtension returns false when no design param', () => {
     setLocation('http://localhost:9081/x?mode=design');
-    expect(isDesignOpenInKanvas()).toBe(false);
+    expect(isDesignOpenInExtension()).toBe(false);
   });
 
   it('isInDesignMode / isInOperatorMode read mode from search', () => {
