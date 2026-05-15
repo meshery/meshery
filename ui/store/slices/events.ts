@@ -107,8 +107,7 @@ export const eventsSlice = createSlice({
       state.current_view = action.payload;
     },
 
-    toggleNotificationCenter: (state, action) => {
-      console.log('Toggling notification center state', action);
+    toggleNotificationCenter: (state) => {
       state.isNotificationCenterOpen = !state.isNotificationCenterOpen;
     },
 
