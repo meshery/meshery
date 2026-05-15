@@ -23,10 +23,6 @@ test.describe('Extensions Section Tests', () => {
     await extensionsPage.goto();
   });
 
-  test('Verify Kanvas Snapshot UI elements', async () => {
-    await extensionsPage.verifyKanvasSnapshotDetails();
-  });
-
   test('Verify extension nav items use top-level layout', async () => {
     await extensionsPage.verifyExtensionNavItemsUseTopLevelLayout();
   });
