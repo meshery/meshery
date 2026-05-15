@@ -1,4 +1,4 @@
-Hi, I'm Naman Chhabra 👋
+# Naman Chhabra 👋
 
 I'm a B.Tech CSE student at GGSIPU, currently diving deeper into open-source and cloud native technologies.
 
