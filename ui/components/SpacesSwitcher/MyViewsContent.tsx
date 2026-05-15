@@ -15,7 +15,7 @@ import { useContentDelete, useContentDownload } from './hooks';
 import ShareModal from './ShareModal';
 
 const MyViewsContent = () => {
-  const { data: currentUser } = useGetLoggedInUserQuery({});
+  const { data: currentUser } = useGetLoggedInUserQuery();
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
   const [shareModal, setShareModal] = useState({ open: false, content: null });
 

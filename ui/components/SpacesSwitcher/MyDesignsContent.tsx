@@ -18,7 +18,7 @@ import ShareModal from './ShareModal';
 import { useSelector } from 'react-redux';
 
 const MyDesignsContent = () => {
-  const { data: currentUser } = useGetLoggedInUserQuery({});
+  const { data: currentUser } = useGetLoggedInUserQuery();
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE, VISIBILITY.PUBLISHED];
   const { organization: currentOrganization } = useSelector((state) => state.ui);
   const [shareModal, setShareModal] = useState({ open: false, content: null });

@@ -2,7 +2,7 @@ import { ctxUrl } from '../utils/multi-ctx';
 import {
   mesheryApi,
   useGetTeamsQuery as useSchemasGetTeamsQuery,
-  useGetUsersQuery as useSchemasGetUsersQuery,
+  useGetUserProfileByIdQuery,
 } from '@meshery/schemas/mesheryApi';
 import { api, mesheryApiPath } from './index';
 import { initiateQuery } from './utils';
@@ -12,6 +12,7 @@ import { normalizeLoadTestPrefs } from '../lib/load-test-prefs';
 
 const Tags = {
   USER_PREF: 'userPref',
+  USER: 'User_users',
   LOAD_TEST_PREF: 'loadTestPref',
   PROVIDER_CAP: 'provider_capabilities',
 };
@@ -143,52 +144,9 @@ export const userApi = api
           }
         },
       }),
-      getLoggedInUser: builder.query({
-        query: () => ({
-          url: '/api/user',
-          method: 'GET',
-        }),
-        // All callers share one cache entry per user session (client-side Redux store).
-        // This does not affect other users—each browser has its own isolated store.
-        serializeQueryArgs: ({ endpointName }) => endpointName,
-      }),
       getProviderCapabilities: builder.query({
         query: () => '/api/provider/capabilities',
         method: 'GET',
-      }),
-      getUserProfileSummaryById: builder.query({
-        query: (queryArg) => ({
-          url: `/api/user/profile/${queryArg.id}`,
-          // Attempt JSON parsing on every response — success bodies are JSON,
-          // and most error paths also return structured JSON via
-          // writeJSONError. Fall back to the raw text for any non-JSON error
-          // body (legacy upstreams, reverse proxies, etc.) so RTK Query
-          // surfaces a readable error.data instead of throwing SyntaxError.
-          responseHandler: async (response) => {
-            const text = await response.text();
-            if (!text) {
-              return undefined;
-            }
-            try {
-              return JSON.parse(text);
-            } catch {
-              return text;
-            }
-          },
-        }),
-        transformResponse: (response) => {
-          if (!response || typeof response !== 'object') {
-            return undefined;
-          }
-          return {
-            id: response.id,
-            email: response.email,
-            user_id: response.user_id,
-            avatar_url: response.avatar_url,
-            first_name: response.first_name,
-            last_name: response.last_name,
-          };
-        },
       }),
       getExtensionsByType: builder.query({
         query: () => ({
@@ -255,20 +213,7 @@ export const userApi = api
           method: 'POST',
           body: queryArg.userFeedbackRequestBody,
         }),
-        invalidatesTags: ['users'],
-      }),
-      getAllUsers: builder.query({
-        query: (queryArg) => ({
-          url: `/api/identity/users`,
-          params: {
-            page: queryArg.page,
-            pageSize: queryArg.pageSize ?? queryArg.pagesize,
-            search: queryArg.search,
-            order: queryArg.order,
-            filter: queryArg.filter,
-          },
-        }),
-        providesTags: ['users'],
+        invalidatesTags: [Tags.USER],
       }),
       removeUserFromTeam: builder.mutation({
         query: (queryArg) => ({
@@ -285,7 +230,7 @@ export const userApi = api
           method: 'POST',
           body: queryArg.userInvite,
         }),
-        invalidatesTags: ['users'],
+        invalidatesTags: [Tags.USER],
       }),
       getAccessToken: builder.query({
         query: () => ({
@@ -312,17 +257,21 @@ export const {
   useUpdateUserPrefMutation,
   useGetUserPrefWithContextQuery,
   useUpdateUserPrefWithContextMutation,
-  useGetLoggedInUserQuery,
   useGetProviderCapabilitiesQuery,
   useHandleFeedbackFormSubmissionMutation,
-  useGetAllUsersQuery,
   useRemoveUserFromTeamMutation,
   useGetSystemVersionQuery,
-  useGetUserProfileSummaryByIdQuery,
 } = userApi;
 
+export {
+  useGetUserProfileByIdQuery as useGetUserProfileSummaryByIdQuery,
+  useGetUserQuery as useGetLoggedInUserQuery,
+  useGetUsersQuery as useGetAllUsersQuery,
+  useGetUsersQuery as useGetUsersForOrgQuery,
+} from '@meshery/schemas/mesheryApi';
+
 export const useGetUserByIdQuery = (id, options = {}) =>
-  useGetUserProfileSummaryByIdQuery(
+  useGetUserProfileByIdQuery(
     {
       id,
     },
@@ -332,18 +281,6 @@ export const useGetUserByIdQuery = (id, options = {}) =>
     // empty/invalid UUID and reintroducing the 400/404 loop this wrapper
     // exists to prevent.
     { ...options, skip: !id || options?.skip },
-  );
-
-export const useGetUsersForOrgQuery = (queryArg, options) =>
-  useSchemasGetUsersQuery(
-    {
-      page: queryArg?.page?.toString(),
-      pageSize: (queryArg?.pageSize ?? queryArg?.pagesize)?.toString(),
-      search: queryArg?.search,
-      order: queryArg?.order,
-      filter: queryArg?.filter,
-    },
-    options,
   );
 
 export const useGetTeamsQuery = (queryArg, options) =>
@@ -387,7 +324,7 @@ export const getUserAccessToken = async () => {
 };
 
 export const getUserProfile = async () => {
-  const userProfile = await initiateQuery(userApi.endpoints.getLoggedInUser);
+  const userProfile = await initiateQuery(mesheryApi.endpoints.getUser);
   return userProfile;
 };
 
@@ -397,11 +334,11 @@ export const getSystemVersion = async () => {
 };
 
 export const getAllUsers = async ({ page, pageSize, pagesize, search }) => {
-  const users = await initiateQuery(
-    userApi.endpoints.getAllUsers,
-    { page, pageSize: pageSize ?? pagesize, search },
-    { skip: !search },
-  );
+  const users = await initiateQuery(mesheryApi.endpoints.getUsers, {
+    page: page?.toString(),
+    pageSize: (pageSize ?? pagesize)?.toString(),
+    search,
+  });
   return users;
 };
 
