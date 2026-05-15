@@ -557,16 +557,27 @@ const ConnectionTable = ({
 
   const [tableCols, updateCols] = useState(columns);
 
-  useEffect(() => {
-    updateCols(columns);
-  }, [columns]);
-
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean | undefined>>(
     () => getResponsiveColumnVisibility(columnNames, colViews, width),
   );
 
   useEffect(() => {
-    setColumnVisibility(getResponsiveColumnVisibility(columnNames, colViews, width));
+    const nextColumnVisibility = getResponsiveColumnVisibility(columnNames, colViews, width);
+
+    setColumnVisibility((previousColumnVisibility) => {
+      const columnKeys = new Set([
+        ...Object.keys(previousColumnVisibility),
+        ...Object.keys(nextColumnVisibility),
+      ]);
+
+      for (const columnKey of columnKeys) {
+        if (previousColumnVisibility[columnKey] !== nextColumnVisibility[columnKey]) {
+          return nextColumnVisibility;
+        }
+      }
+
+      return previousColumnVisibility;
+    });
   }, [colViews, columnNames, width]);
 
   if (isConnectionLoading) {

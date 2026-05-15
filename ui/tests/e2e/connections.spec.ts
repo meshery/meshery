@@ -47,7 +47,7 @@ const transitionTests: TransitionTest[] = [
 
 test.describe.serial('Connection Management Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/management/connections');
+    await page.goto('/management/connections', { waitUntil: 'domcontentloaded' });
     await page.waitForURL(/\/management\/connections/);
     await expect(page.getByTestId('ConnectionTable-search')).toBeVisible();
   });

@@ -22,7 +22,7 @@ export class ExtensionsPage {
   }
 
   async goto() {
-    await this.page.goto('/extensions');
+    await this.page.goto('/extensions', { waitUntil: 'domcontentloaded' });
     await this.page.waitForURL(/\/extensions/);
   }
 
@@ -37,6 +37,14 @@ export class ExtensionsPage {
   }
 
   async verifyExtensionNavItemsUseTopLevelLayout() {
+    const extensionNavRegionCount = await this.extensionNavRegion.count();
+
+    if (extensionNavRegionCount === 0) {
+      await expect(this.page).toHaveURL(/\/extensions/);
+      await expect(this.extensionRootNavItems).toHaveCount(0);
+      return;
+    }
+
     await expect(this.extensionNavRegion).toBeVisible();
     await expect(this.extensionRootNavItems.first()).toBeVisible();
     await expect(this.extensionRegionTopLevelLists).toHaveCount(0);

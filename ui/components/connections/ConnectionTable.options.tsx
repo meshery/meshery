@@ -125,7 +125,14 @@ export const useConnectionTableOptions = ({
 
         expansionFlags.current.isHandlingExpansion = true;
         const expandedRows = allRowsExpanded.slice(-1);
-        setRowsExpanded(expandedRows.map((item) => item.index));
+        const nextExpandedRows = expandedRows.map((item) => item.index);
+        const hasExpandedRowsChanged =
+          nextExpandedRows.length !== rowsExpanded.length ||
+          nextExpandedRows.some((rowIndex, index) => rowIndex !== rowsExpanded[index]);
+
+        if (hasExpandedRowsChanged) {
+          setRowsExpanded(nextExpandedRows);
+        }
 
         if (expandedRows.length > 0) {
           const index = expandedRows[0].index;
