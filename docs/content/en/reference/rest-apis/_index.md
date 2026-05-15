@@ -10,6 +10,8 @@ aliases:
 
 Meshery's REST API specifications are now maintained and published from the [meshery/schemas](https://github.com/meshery/schemas) repository.
 
+### Related Reading
+
 - Published schemas: [schemas.meshery.io](https://schemas.meshery.io/)
 - Source repository: [github.com/meshery/schemas](https://github.com/meshery/schemas)
 - Contributor guide: [Schema-Driven Development](https://docs.meshery.io/project/contributing/contributing-schemas)
