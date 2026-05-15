@@ -478,7 +478,7 @@ export const KANVAS_MODE = {
   OPERATOR: 'operator',
 };
 
-export function isDesignOpenInKanvas() {
+export function isDesignOpenInExtension() {
   const params = new URLSearchParams(window.location.search);
   return params.has('design') && params.get('mode') === KANVAS_MODE.DESIGN;
 }

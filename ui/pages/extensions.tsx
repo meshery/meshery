@@ -99,39 +99,6 @@ const openExternal = (url: string) => (e: React.MouseEvent<HTMLButtonElement>) =
   e.stopPropagation();
 };
 
-const MeshMapSignUpcard = ({ hasAccessToMeshMap = false }: { hasAccessToMeshMap?: boolean }) => (
-  <Grid2 size={GRID_SIZE}>
-    <UnifiedCardContainer>
-      <Typography data-testid="kanvas-signup-heading" variant="h5" component="div">
-        Kanvas
-      </Typography>
-
-      <UnifiedDescription hasIcon>
-        <ResponsiveImage
-          src="/static/img/extensions/kanvas-icon-color.svg"
-          alt="Kanvas Icon"
-          testId="kanvas-signup-icon"
-        />
-        <div>
-          Collaboratively design and manage your infra and apps. Kanvas is now publicly available.{' '}
-          {!hasAccessToMeshMap && 'Sign-up today for access!'}
-        </div>
-      </UnifiedDescription>
-
-      <UnifiedButtonContainer>
-        <Button
-          variant="contained"
-          data-testid="kanvas-signup-btn"
-          disabled={hasAccessToMeshMap}
-          onClick={openExternal('https://docs.layer5.io/kanvas')}
-        >
-          {hasAccessToMeshMap ? 'Enabled' : 'Sign Up'}
-        </Button>
-      </UnifiedButtonContainer>
-    </UnifiedCardContainer>
-  </Grid2>
-);
-
 const MeshMapSnapShotCard = ({
   githubActionEnabled = false,
 }: {
@@ -304,7 +271,7 @@ const MesheryDesignEmbedExtension = () => (
           variant="contained"
           color="primary"
           data-testid="design-embed-learn-more-btn"
-          onClick={openExternal('https://docs.layer5.io/kanvas/designer/embedding-designs/')}
+          onClick={openExternal('https://docs.meshery.io/extensions/')}
         >
           Learn More
         </Button>
@@ -313,7 +280,7 @@ const MesheryDesignEmbedExtension = () => (
   </Grid2>
 );
 
-const Layer5CloudExtension = () => (
+const CloudExtension = () => (
   <Grid2 size={GRID_SIZE}>
     <UnifiedCardContainer>
       <Typography data-testid="layer5-cloud-heading" variant="h5" component="div">
@@ -476,10 +443,9 @@ const CatalogCard = ({ catalogContent, handleToggle, theme }: CatalogCardProps) 
   </Grid2>
 );
 
-export const WrappedLayer5CloudExtension = Layer5CloudExtension;
+export const WrappedCloudExtension = CloudExtension;
 export const WrappedKubectlPluginExtension = KubectlPluginExtension;
 export const WrappedKubectlMeshSyncExtension = KubectlMeshSyncExtension;
-export const WrappedMeshMapSignupCard = MeshMapSignUpcard;
 export const WrappedMeshMapSnapShopCard = MeshMapSnapShotCard;
 export const WrappedMesheryPerformanceAction = MesheryPerformanceAction;
 export const WrappedMesheryDockerExtension = MesheryDockerExtension;
@@ -544,11 +510,10 @@ const Extensions = () => {
         <Grid2 container spacing={2} size="grow">
           <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
           <WrappedMesheryPerformanceAction githubActionEnabled={false} />
-          <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
           <WrappedMesheryHelmKanvasExtension />
           <WrappedMesheryDockerExtension />
           <WrappedMesheryEmbedDesignExtension />
-          <WrappedLayer5CloudExtension />
+          <WrappedCloudExtension />
           <WrappedKubectlPluginExtension />
           <WrappedKubectlMeshSyncExtension />
           <CatalogCard catalogContent={catalogContent} handleToggle={handleToggle} theme={theme} />
