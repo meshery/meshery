@@ -192,8 +192,9 @@ const ConnectionTable = ({
       .filter((conn) => conn.name && conn.kind && conn.status)
       .map((connection) => ({
         ...connection,
-        nextStatus: connection.nextStatus || connectionMetadataState[connection.kind]?.transitions,
-        kindLogo: connection.kindLogo || connectionMetadataState[connection.kind]?.icon,
+        nextStatus:
+          connection.nextStatus || connectionMetadataState?.[connection.kind]?.transitions,
+        kindLogo: connection.kindLogo || connectionMetadataState?.[connection.kind]?.icon,
       }));
   }, [connectionData?.connections, connectionMetadataState]) as ConnectionRow[];
 
