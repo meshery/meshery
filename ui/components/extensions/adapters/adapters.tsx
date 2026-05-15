@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { isNil, isUndefined } from 'lodash';
+import { isUndefined } from 'lodash';
 import { CardContainer, FrontSideDescription, ImageWrapper } from '../../../css/icons.styles';
 import { ADAPTER_STATUS, adaptersList, AdaptersListType } from './constants';
-import changeAdapterState from '@/graphql/mutations/AdapterStatusMutation';
 import { LARGE_6_MED_12_GRID_STYLE } from '../../../css/grid.style';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { useLazyGetSystemSyncQuery } from '../../../rtk-query/system';
+import { useLazyGetSystemSyncQuery, useManageAdapterMutation } from '../../../rtk-query/system';
 import { Grid2, Switch, Typography, useTheme } from '@sistent/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
@@ -32,6 +31,7 @@ const Adapters: React.FC = () => {
   // Hooks.
   const { notify } = useNotification();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
+  const [manageAdapter] = useManageAdapterMutation();
 
   // useEffects.
   useEffect(() => {
@@ -74,24 +74,31 @@ const Adapters: React.FC = () => {
   ): void => {
     updateProgress({ showProgress: true });
 
-    changeAdapterState((response: unknown, errors: unknown) => {
-      updateProgress({ showProgress: false });
+    const meshLocationURL = `${payload.adapter}:${payload.targetPort}`;
+    const request =
+      payload.status === ADAPTER_STATUS.ENABLED
+        ? manageAdapter({ meshLocationURL })
+        : manageAdapter({ method: 'DELETE', adapter: meshLocationURL });
 
-      if (!isNil(errors)) {
-        // Toggle the switch to its previous state if the request fails.
-        setAvailableAdapters({
-          ...availableAdapters,
-          [adapterId]: { ...selectedAdapter, enabled: !selectedAdapter.enabled },
-        });
-        handleError(msg);
-      } else {
+    request
+      .unwrap()
+      .then(() => {
+        updateProgress({ showProgress: false });
         const actionText = payload.status.toLowerCase();
         notify({
           message: `${selectedAdapter.name} adapter ${actionText}`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-      }
-    }, payload);
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        // Toggle the switch to its previous state if the request fails.
+        setAvailableAdapters({
+          ...availableAdapters,
+          [adapterId]: { ...selectedAdapter, enabled: !selectedAdapter.enabled },
+        });
+        handleError(msg)();
+      });
   };
 
   const handleError =

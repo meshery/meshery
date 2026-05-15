@@ -38,6 +38,8 @@ describe('filter – module surface', () => {
   it('exposes all expected hooks', async () => {
     const mod = await import('../filter');
     expect(typeof mod.useGetFiltersQuery).toBe('function');
+    expect(typeof mod.useGetCatalogFiltersQuery).toBe('function');
+    expect(typeof mod.useLazyGetCatalogFiltersQuery).toBe('function');
     expect(typeof mod.useCloneFilterMutation).toBe('function');
     expect(typeof mod.usePublishFilterMutation).toBe('function');
     expect(typeof mod.useUnpublishFilterMutation).toBe('function');

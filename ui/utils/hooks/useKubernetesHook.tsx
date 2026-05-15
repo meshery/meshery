@@ -2,11 +2,13 @@ import { useNotification } from '../../utils/hooks/useNotification';
 import { errorHandlerGenerator, successHandlerGenerator } from '../../utils/helpers/common';
 import { pingMesheryOperator } from '../../utils/helpers/mesheryOperator';
 import { useLazyPingKubernetesQuery } from '@/rtk-query/connection';
+import {
+  useGetMesheryOperatorStatusQuery,
+  useLazyGetMeshsyncStatusQuery,
+  useLazyGetNatsStatusQuery,
+} from '@/rtk-query/kubernetes';
 import { EVENT_TYPES } from '../../lib/event-types';
-import MeshsyncStatusQuery from '@/graphql/queries/MeshsyncStatusQuery';
-import { useCallback, useEffect, useState } from 'react';
-import fetchMesheryOperatorStatus from '@/graphql/queries/OperatorStatusQuery';
-import NatsStatusQuery from '@/graphql/queries/NatsStatusQuery';
+import { useCallback, useEffect } from 'react';
 import { CONTROLLERS, CONTROLLER_STATES } from '../../utils/Enum';
 import _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
@@ -103,6 +105,7 @@ export function useMesheryOperator() {
 export function useMeshsSyncController() {
   const { notify } = useNotification();
   const dispatch = useDispatch();
+  const [triggerMeshsyncStatus] = useLazyGetMeshsyncStatusQuery();
 
   const handleError = handleErrorGenerator(dispatch, notify);
   const handleSuccess = handleSuccessGenerator(dispatch, notify);
@@ -111,8 +114,15 @@ export function useMeshsSyncController() {
   const ping = ({ connectionID, subscribe = false, onSuccess, onError }) => {
     dispatch(updateProgressAction({ showProgress: true }));
 
-    const subscription = MeshsyncStatusQuery({ connectionID: connectionID }).subscribe({
-      next: (res) => {
+    const promise = triggerMeshsyncStatus(
+      { connectionID: connectionID },
+      // Do not use cached result; this is a user-triggered ping action.
+      false,
+    );
+
+    promise
+      .unwrap()
+      .then((res) => {
         dispatch(updateProgressAction({ showProgress: false }));
 
         if (res.controller.name === 'MeshSync' && res.controller.status.includes('Connected')) {
@@ -141,18 +151,18 @@ export function useMeshsSyncController() {
           handleError('MeshSync could not be reached');
         }
         onSuccess && onSuccess(res);
-
-        !subscribe && subscription && subscription?.unsubscribe();
-      },
-      error: (err) => {
+      })
+      .catch((err) => {
         dispatch(updateProgressAction({ showProgress: false }));
         handleError('MeshSync status could not be retrieved', err);
         onError && onError(err);
-        !subscribe && subscription && subscription?.unsubscribe();
-      },
-    });
+      });
 
-    return subscription;
+    // Maintain the legacy `subscription`-like return for compatibility with
+    // callers that expected `.unsubscribe()`. `subscribe=true` would have
+    // kept the GraphQL subscription open; with REST we always one-shot.
+    void subscribe;
+    return { unsubscribe: () => promise.abort() };
   };
 
   return { ping };
@@ -165,50 +175,38 @@ export const useGetOperatorInfoQuery = ({ connectionID }) => {
   const handleError = handleErrorGenerator(dispatch, notify);
   // const handleSuccess = handleSuccessGenerator(dispatch, notify);
   const handleInfo = handleInfoGenerator(notify);
-  const [isLoading, setIsLoading] = useState(false);
+
+  // RTK Query: lifecycle is managed by the cache + the subscription that
+  // useQuery creates. Skip if we have no connection to ping.
+  const { isFetching, isError } = useGetMesheryOperatorStatusQuery(
+    { connectionID },
+    { skip: !connectionID },
+  );
 
   useEffect(() => {
-    setIsLoading(true);
-    dispatch(updateProgressAction({ showProgress: true }));
+    if (!connectionID) return;
     handleInfo('Fetching Meshery Operator status');
-    // react-realy fetchQuery function returns a "Observable". To start a request subscribe needs to be called.
-    // The data is stored into the react-relay store, the data is retrieved by subscribing to the relay store.
-    // This subscription only subscribes to the fetching of the query and not to any subsequent changes to data in the relay store.
-    const tempSubscription = fetchMesheryOperatorStatus({ connectionID: connectionID }).subscribe({
-      next: () => {
-        setIsLoading(false);
+  }, [connectionID]);
 
-        dispatch(updateProgressAction({ showProgress: false }));
-        // const [isReachable, operatorInfo] = getOperatorStatusFromQueryResult(res);
-        // setOperatorInfo({
-        //   isReachable,
-        //   ...operatorInfo,
-        //   meshSyncStatus: operatorInfo.MeshSync ? operatorInfo.MeshSync.status : '',
-        //   meshSyncVersion: operatorInfo.MeshSync ? operatorInfo.MeshSync.version : '',
-        //   NATSVersion: operatorInfo.MesheryBroker ? operatorInfo.MesheryBroker.version : '',
-        //   natsStatus: operatorInfo.MesheryBroker ? operatorInfo.MesheryBroker.status : '',
-        // });
-      },
-      error: () => {
-        setIsLoading(false);
-        handleError('Meshery Operator status could not be retrieved');
-      },
-    });
-    return () => {
-      setIsLoading(false);
-      dispatch(updateProgressAction({ showProgress: false }));
-      tempSubscription?.unsubscribe();
-    };
-  }, []);
+  useEffect(() => {
+    dispatch(updateProgressAction({ showProgress: isFetching }));
+  }, [dispatch, isFetching]);
+
+  useEffect(() => {
+    if (isError) {
+      handleError('Meshery Operator status could not be retrieved');
+    }
+  }, [isError]);
 
   return {
-    isLoading,
+    isLoading: isFetching,
   };
 };
 
 export const useNatsController = () => {
   const { notify } = useNotification();
   const dispatch = useDispatch();
+  const [triggerNatsStatus] = useLazyGetNatsStatusQuery();
 
   const handleError = handleErrorGenerator(dispatch, notify);
   const handleSuccess = handleSuccessGenerator(dispatch, notify);
@@ -216,8 +214,11 @@ export const useNatsController = () => {
 
   const ping = ({ connectionID, subscribe = false, onSuccess, onError }) => {
     dispatch(updateProgressAction({ showProgress: true }));
-    const subscription = NatsStatusQuery({ connectionID }).subscribe({
-      next: (res) => {
+    const promise = triggerNatsStatus({ connectionID }, false);
+
+    promise
+      .unwrap()
+      .then((res) => {
         dispatch(updateProgressAction({ showProgress: false }));
 
         if (
@@ -249,17 +250,17 @@ export const useNatsController = () => {
             natsStatus: res.controller.status,
             NATSVersion: res.controller.version,
           });
-
-        !subscribe && subscription?.unsubscribe();
-      },
-      error: (err) => {
+      })
+      .catch((err) => {
         onError && onError(err);
         handleError('NATS status could not be retrieved', err);
-        !subscribe && subscription?.unsubscribe();
-      },
-    });
+      });
 
-    return subscription;
+    // Maintain the legacy `subscription`-like return for compatibility.
+    // `subscribe=true` would have kept the GraphQL subscription open;
+    // with REST we always one-shot.
+    void subscribe;
+    return { unsubscribe: () => promise.abort() };
   };
 
   return {

@@ -7,11 +7,12 @@ import GrafanaConfigComponent from './GrafanaConfigComponent';
 import GrafanaSelectionComponent from './GrafanaSelectionComponent';
 import GrafanaDisplaySelection from './GrafanaDisplaySelection';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
-import fetchAvailableAddons from '@/graphql/queries/AddonsStatusQuery';
+import { useLazyGetMeshAddonsQuery } from '@/rtk-query/system';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS } from '@/utils/Enum';
+import { getErrorMessage } from '../../connections/ConnectionTable.constants';
 import { withTelemetryHook } from '@/utils/hooks/useTelemetryHook';
 import { useLazyGetCredentialByIdQuery } from '@/rtk-query/credentials';
 import { useUpdateConnectionByIdMutation } from '@/rtk-query/connection';
@@ -334,19 +335,17 @@ const GrafanaComponent = (props) => {
     }
   }, [grafana.grafanaAPIKey, grafana.grafanaURL]);
 
+  const [triggerGetMeshAddons] = useLazyGetMeshAddonsQuery();
+
   useEffect(() => {
     if (!props.isMeshConfigured || grafanaConfigIsLoading || grafanaConfigIsError) return;
 
     updateProgress({ showProgress: grafanaConfigIsLoading });
     if (grafanaConfigData?.grafanaURL) return;
 
-    const selector = {
-      type: 'ALL_MESH',
-      k8sClusterIDs: getK8sClusterIds(),
-    };
-
-    fetchAvailableAddons(selector).subscribe({
-      next: (res) => {
+    triggerGetMeshAddons({ meshType: 'ALL_MESH', clusterId: getK8sClusterIds() })
+      .unwrap()
+      .then((res) => {
         res?.addonsState?.forEach((addon) => {
           if (addon.name === 'grafana' && !grafanaConfigData?.grafanaURL) {
             updateState({ grafanaURL: 'http://' + addon.endpoint });
@@ -359,9 +358,17 @@ const GrafanaComponent = (props) => {
             });
           }
         });
-      },
-      error: (err) => console.error('Error registering Grafana:', err),
-    });
+      })
+      .catch((err) => {
+        console.error('Error registering Grafana:', err);
+        if (typeof props.notify === 'function') {
+          props.notify({
+            message: 'Failed to auto-configure Grafana',
+            event_type: EVENT_TYPES.ERROR,
+            details: getErrorMessage(err),
+          });
+        }
+      });
   }, [props.isMeshConfigured, grafanaConfigData, grafanaConfigIsLoading, grafanaConfigIsError]);
 
   const {

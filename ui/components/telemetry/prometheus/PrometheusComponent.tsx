@@ -12,10 +12,11 @@ import GrafanaDisplaySelection from '../grafana/GrafanaDisplaySelection';
 import GrafanaCustomCharts from '../grafana/GrafanaCustomCharts';
 import PrometheusConfigComponent from './PrometheusConfigComponent';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
-import fetchAvailableAddons from '@/graphql/queries/AddonsStatusQuery';
+import { useLazyGetMeshAddonsQuery } from '@/rtk-query/system';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
+import { getErrorMessage } from '../../connections/ConnectionTable.constants';
 import { withTelemetryHook } from '@/utils/hooks/useTelemetryHook';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
@@ -206,6 +207,7 @@ const PrometheusComponent = (props) => {
 
   const { data: prometheusConfig, isSuccess: isPrometheusConfigLoaded } =
     useGetPrometheusConfigQuery(undefined, { skip: !props.isMeshConfigured });
+  const [triggerGetMeshAddons] = useLazyGetMeshAddonsQuery();
 
   useEffect(() => {
     if (!isPrometheusConfigLoaded) return;
@@ -218,13 +220,9 @@ const PrometheusComponent = (props) => {
       setSelectedPrometheusBoardsConfigs(prometheusConfig.selectedPrometheusBoardsConfigs || []);
     }
 
-    const selector = {
-      type: 'ALL_MESH',
-      k8sClusterIDs: getK8sClusterIds(),
-    };
-
-    fetchAvailableAddons(selector).subscribe({
-      next: (res) => {
+    triggerGetMeshAddons({ meshType: 'ALL_MESH', clusterId: getK8sClusterIds() })
+      .unwrap()
+      .then((res) => {
         res?.addonsState?.forEach((addon) => {
           if (
             addon.name === 'prometheus' &&
@@ -236,9 +234,17 @@ const PrometheusComponent = (props) => {
             submitPrometheusConfigure(newURL);
           }
         });
-      },
-      error: (err) => console.error('Error registering Prometheus:', err),
-    });
+      })
+      .catch((err) => {
+        console.error('Error registering Prometheus:', err);
+        if (typeof props.notify === 'function') {
+          props.notify({
+            message: 'Failed to auto-configure Prometheus',
+            event_type: EVENT_TYPES.ERROR,
+            details: getErrorMessage(err),
+          });
+        }
+      });
   }, [
     isPrometheusConfigLoaded,
     prometheusConfig,

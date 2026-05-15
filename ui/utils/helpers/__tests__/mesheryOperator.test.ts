@@ -1,12 +1,35 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
-// The module under test calls `fetchMesheryOperatorStatus(...).subscribe(...)`
-// (a Relay-style fetchQuery wrapper). We mock the import so we can drive the
-// next/error callbacks directly without standing up a Relay environment.
-const fetchMock = vi.fn();
-vi.mock('@/graphql/queries/OperatorStatusQuery', () => ({
-  default: (...args: unknown[]) => fetchMock(...args),
+// pingMesheryOperator now dispatches the RTK Query endpoint
+// `api.endpoints.getMesheryOperatorStatus.initiate(...)` against the store,
+// then consumes the returned promise via .unwrap() and .unsubscribe().
+// We mock the store and the RTK endpoint so we can drive the resolve/reject
+// path and observe unsubscribe — same coverage shape the prior Relay-style
+// test had, just against the post-migration plumbing.
+const initiateMock = vi.fn();
+const dispatchMock = vi.fn();
+const unsubscribeMock = vi.fn();
+
+vi.mock('@/store/index', () => ({
+  store: {
+    dispatch: (...args: unknown[]) => dispatchMock(...args),
+  },
 }));
+
+vi.mock('@/rtk-query/index', () => ({
+  api: {
+    endpoints: {
+      getMesheryOperatorStatus: {
+        initiate: (...args: unknown[]) => initiateMock(...args),
+      },
+    },
+  },
+}));
+
+// The source module imports '@/rtk-query/kubernetes' purely for its endpoint-
+// injection side-effect. There is no exported value to mock; an empty module
+// satisfies the import.
+vi.mock('@/rtk-query/kubernetes', () => ({}));
 
 import {
   getOperatorStatusFromQueryResult,
@@ -91,93 +114,118 @@ describe('getOperatorStatusFromQueryResult', () => {
 });
 
 describe('pingMesheryOperator', () => {
-  let unsubscribe: ReturnType<typeof vi.fn>;
-  let savedHandlers: { next?: (v: unknown) => void; error?: (e: unknown) => void };
+  // Each test installs a fresh mock promise that we can resolve/reject
+  // synchronously and then await microtasks to drain. The shape mirrors
+  // what RTK Query's initiate() returns: an object with .unwrap() and
+  // .unsubscribe(). We control resolve/reject from the test body.
+  let resolveFn: (value: unknown) => void;
+  let rejectFn: (reason: unknown) => void;
+  let dispatchedPromise: { unwrap: () => Promise<unknown>; unsubscribe: () => void };
 
   beforeEach(() => {
-    fetchMock.mockReset();
-    unsubscribe = vi.fn();
-    savedHandlers = {};
-    fetchMock.mockImplementation(() => ({
-      subscribe: ({ next, error }: { next: (v: unknown) => void; error: (e: unknown) => void }) => {
-        savedHandlers.next = next;
-        savedHandlers.error = error;
-        return { unsubscribe };
-      },
-    }));
+    initiateMock.mockReset();
+    dispatchMock.mockReset();
+    unsubscribeMock.mockReset();
+
+    const inner = new Promise<unknown>((res, rej) => {
+      resolveFn = res;
+      rejectFn = rej;
+    });
+    dispatchedPromise = {
+      unwrap: () => inner,
+      unsubscribe: unsubscribeMock,
+    };
+
+    initiateMock.mockReturnValue('initiate-action');
+    dispatchMock.mockReturnValue(dispatchedPromise);
   });
 
-  it('passes the connection id to fetchMesheryOperatorStatus', () => {
+  // Microtask-flush helper. The .then/.catch/.finally chain runs across
+  // multiple ticks, so a single await isn't enough to drive the whole chain.
+  const flushAll = async () => {
+    for (let i = 0; i < 5; i++) {
+      await Promise.resolve();
+    }
+  };
+
+  it('dispatches getMesheryOperatorStatus.initiate with the connection id and forceRefetch', () => {
     pingMesheryOperator('conn-1', vi.fn(), vi.fn());
-    expect(fetchMock).toHaveBeenCalledWith({ connectionID: 'conn-1' });
+    expect(initiateMock).toHaveBeenCalledWith({ connectionID: 'conn-1' }, { forceRefetch: true });
+    expect(dispatchMock).toHaveBeenCalledWith('initiate-action');
   });
 
-  it('invokes the success handler and unsubscribes on a healthy response', () => {
+  it('invokes the success handler and unsubscribes on a healthy response', async () => {
     const success = vi.fn();
     const error = vi.fn();
     pingMesheryOperator('conn-1', success, error);
 
     const data = { operator: { status: 'ENABLED' } };
-    savedHandlers.next?.(data);
+    resolveFn(data);
+    await flushAll();
 
     expect(success).toHaveBeenCalledWith(data);
     expect(error).not.toHaveBeenCalled();
-    expect(unsubscribe).toHaveBeenCalledTimes(1);
+    expect(unsubscribeMock).toHaveBeenCalledTimes(1);
   });
 
-  it('invokes the error handler when the response is null', () => {
+  it('invokes the error handler when the response is null', async () => {
     const success = vi.fn();
     const error = vi.fn();
     pingMesheryOperator('conn-1', success, error);
 
-    savedHandlers.next?.(null);
+    resolveFn(null);
+    await flushAll();
 
     expect(error).toHaveBeenCalledWith(null);
     expect(success).not.toHaveBeenCalled();
-    expect(unsubscribe).toHaveBeenCalledTimes(1);
+    expect(unsubscribeMock).toHaveBeenCalledTimes(1);
   });
 
-  it('invokes the error handler when operator is null', () => {
+  it('invokes the error handler when operator is null', async () => {
     const success = vi.fn();
     const error = vi.fn();
     pingMesheryOperator('conn-1', success, error);
 
     const data = { operator: null };
-    savedHandlers.next?.(data);
+    resolveFn(data);
+    await flushAll();
 
     expect(error).toHaveBeenCalledWith(data);
     expect(success).not.toHaveBeenCalled();
   });
 
-  it('invokes the error handler when operator status is UNKOWN', () => {
+  it('invokes the error handler when operator status is UNKOWN', async () => {
     const success = vi.fn();
     const error = vi.fn();
     pingMesheryOperator('conn-1', success, error);
 
     const data = { operator: { status: 'UNKOWN' } };
-    savedHandlers.next?.(data);
+    resolveFn(data);
+    await flushAll();
 
     expect(error).toHaveBeenCalledWith(data);
     expect(success).not.toHaveBeenCalled();
   });
 
-  it('routes raw errors through the error handler and unsubscribes', () => {
+  it('routes rejected promises through the error handler and unsubscribes', async () => {
     const success = vi.fn();
     const error = vi.fn();
     pingMesheryOperator('conn-1', success, error);
 
     const e = new Error('socket closed');
-    savedHandlers.error?.(e);
+    rejectFn(e);
+    await flushAll();
 
     expect(error).toHaveBeenCalledWith(e);
-    expect(unsubscribe).toHaveBeenCalledTimes(1);
+    expect(unsubscribeMock).toHaveBeenCalledTimes(1);
   });
 
-  it('substitutes a default error when the subscription emits a nullish error', () => {
+  it('substitutes a default error when the rejection is nullish', async () => {
     const error = vi.fn();
     pingMesheryOperator('conn-1', vi.fn(), error);
 
-    savedHandlers.error?.(null);
+    rejectFn(null);
+    await flushAll();
 
     expect(error).toHaveBeenCalledTimes(1);
     const arg = error.mock.calls[0][0];
@@ -185,16 +233,24 @@ describe('pingMesheryOperator', () => {
     expect((arg as Error).message).toBe('Unknown error from pingMesheryOperator');
   });
 
-  it('does not throw when the success callback is undefined', () => {
+  it('does not throw when the success callback is undefined', async () => {
     pingMesheryOperator('conn-1', undefined as never, vi.fn());
-    expect(() => savedHandlers.next?.({ operator: { status: 'ENABLED' } })).not.toThrow();
-    expect(unsubscribe).toHaveBeenCalledTimes(1);
+    resolveFn({ operator: { status: 'ENABLED' } });
+    await flushAll();
+    expect(unsubscribeMock).toHaveBeenCalledTimes(1);
   });
 
-  it('does not throw when the error callback is undefined', () => {
+  it('does not throw when the error callback is undefined on rejection', async () => {
     pingMesheryOperator('conn-1', vi.fn(), undefined as never);
-    expect(() => savedHandlers.next?.(null)).not.toThrow();
-    expect(unsubscribe).toHaveBeenCalledTimes(1);
-    expect(() => savedHandlers.error?.(new Error('boom'))).not.toThrow();
+    rejectFn(new Error('boom'));
+    await flushAll();
+    expect(unsubscribeMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not throw when the error callback is undefined on null response', async () => {
+    pingMesheryOperator('conn-1', vi.fn(), undefined as never);
+    resolveFn(null);
+    await flushAll();
+    expect(unsubscribeMock).toHaveBeenCalledTimes(1);
   });
 });

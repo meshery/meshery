@@ -3,7 +3,6 @@ import { Grid2, Chip, Button, TextField, Tooltip, Avatar, styled } from '@sisten
 import { NoSsr } from '@sistent/sistent';
 import ReactSelectWrapper from './ReactSelectWrapper';
 
-import changeAdapterState from '@/graphql/mutations/AdapterStatusMutation';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import BadgeAvatars from './CustomAvatar';
@@ -251,32 +250,32 @@ const MeshAdapterConfigComponent = () => {
 
     updateProgress({ showProgress: true });
 
-    const variables = {
-      status: 'ENABLED',
-      adapter: selectedAvailableAdapter.label,
-      targetPort: meshDeployURL,
-    };
+    // The legacy mutation accepted {status, adapter, targetPort}. The REST
+    // endpoint accepts the composite mesh location URL `adapter:targetPort`
+    // and uses POST to deploy / DELETE to undeploy.
+    const meshLocationURL = `${selectedAvailableAdapter.label}:${meshDeployURL}`;
 
-    changeAdapterState((response, errors) => {
-      updateProgress({ showProgress: false });
-
-      if (errors !== undefined) {
-        handleError('Unable to Deploy adapter');
+    manageAdapter({ meshLocationURL })
+      .unwrap()
+      .then(() => {
+        updateProgress({ showProgress: false });
+        setAdapterStates((prevState) => ({
+          ...prevState,
+          [adapterLabel]: STATUS.DEPLOYED,
+        }));
+        notify({
+          message: 'Adapter enabled',
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      })
+      .catch((err) => {
+        updateProgress({ showProgress: false });
+        handleError('Unable to Deploy adapter')(err);
         setAdapterStates((prevState) => ({
           ...prevState,
           [adapterLabel]: STATUS.UNDEPLOYED,
         }));
-      }
-
-      setAdapterStates((prevState) => ({
-        ...prevState,
-        [adapterLabel]: STATUS.DEPLOYED,
-      }));
-      notify({
-        message: 'Adapter ' + response.adapterStatus.toLowerCase(),
-        event_type: EVENT_TYPES.SUCCESS,
       });
-    }, variables);
   };
 
   const handleAdapterUndeploy = () => {
@@ -322,34 +321,32 @@ const MeshAdapterConfigComponent = () => {
       [adapterLabel]: STATUS.UNDEPLOYING,
     }));
 
-    const variables = {
-      status: 'DISABLED',
-      adapter: adapterName,
-      targetPort: targetPort,
-    };
+    // DISABLED maps to DELETE on the REST endpoint, with the composite
+    // `adapter:targetPort` URL as the `adapter` query param.
+    const adapterID = `${adapterName}:${targetPort}`;
 
-    changeAdapterState((response, errors) => {
-      updateProgress({ showProgress: false });
-
-      if (errors !== undefined) {
-        console.error(errors);
-        handleError('Unable to Deploy adapter');
+    manageAdapter({ method: 'DELETE', adapter: adapterID })
+      .unwrap()
+      .then(() => {
+        updateProgress({ showProgress: false });
+        notify({
+          message: 'Adapter disabled',
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+        setAdapterStates((prevState) => ({
+          ...prevState,
+          [adapterLabel]: STATUS.UNDEPLOYED,
+        }));
+      })
+      .catch((err) => {
+        console.error(err);
+        updateProgress({ showProgress: false });
+        handleError('Unable to Undeploy adapter')(err);
         setAdapterStates((prevState) => ({
           ...prevState,
           [adapterLabel]: STATUS.DEPLOYED,
         }));
-      }
-
-      notify({
-        message: 'Adapter ' + response.adapterStatus.toLowerCase(),
-        event_type: EVENT_TYPES.SUCCESS,
       });
-
-      setAdapterStates((prevState) => ({
-        ...prevState,
-        [adapterLabel]: STATUS.UNDEPLOYED,
-      }));
-    }, variables);
   };
 
   const handleError = (msg) => (error) => {

@@ -54,6 +54,12 @@ describe('system endpoints', () => {
     expect(mod.useLazyGetKubernetesContextsQuery).toBeTypeOf('function');
     expect(mod.useAdapterOperationMutation).toBeTypeOf('function');
     expect(mod.useLazyGetSmiResultsQuery).toBeTypeOf('function');
+    expect(mod.useGetMeshAddonsQuery).toBeTypeOf('function');
+    expect(mod.useLazyGetMeshAddonsQuery).toBeTypeOf('function');
+    expect(mod.useGetControlPlanesQuery).toBeTypeOf('function');
+    expect(mod.useLazyGetControlPlanesQuery).toBeTypeOf('function');
+    expect(mod.useResetDatabaseMutation).toBeTypeOf('function');
+    expect(mod.useChangeOperatorStatusMutation).toBeTypeOf('function');
   });
 
   it('getDatabaseSummary issues GET with pagination params', async () => {
@@ -218,5 +224,105 @@ describe('system endpoints', () => {
     const body = await req.text();
     expect(body).toContain('meshLocationURL=');
     expect(body).toContain(encodeURIComponent('tcp://meshery-istio:10000'));
+  });
+
+  it('getMeshAddons issues GET /api/system/meshes/addons with filter params', async () => {
+    fetchMock.mockResolvedValue(okResponse({ addons: [] }));
+    const { api, store } = await setupStore();
+    await store.dispatch(
+      api.endpoints.getMeshAddons.initiate({ meshType: 'ISTIO', clusterId: 'c1' }),
+    );
+    const req = fetchMock.mock.calls[0][0] as Request;
+    expect(req.method).toBe('GET');
+    expect(req.url).toContain('/api/system/meshes/addons');
+    expect(req.url).toContain('meshType=ISTIO');
+    expect(req.url).toContain('clusterId=c1');
+  });
+
+  it('getMeshAddons normalizes a raw array response to {addonsState}', async () => {
+    fetchMock.mockResolvedValue(
+      okResponse([
+        { name: 'grafana', owner: 'istio', endpoint: 'g.local' },
+        { name: 'prometheus', owner: 'istio', endpoint: 'p.local' },
+      ]),
+    );
+    const { api, store } = await setupStore();
+    const res = await store.dispatch(api.endpoints.getMeshAddons.initiate({}));
+    expect(res.data).toEqual({
+      addonsState: [
+        { name: 'grafana', owner: 'istio', endpoint: 'g.local' },
+        { name: 'prometheus', owner: 'istio', endpoint: 'p.local' },
+      ],
+    });
+  });
+
+  it('getMeshAddons preserves an existing addonsState envelope', async () => {
+    fetchMock.mockResolvedValue(okResponse({ addonsState: [{ name: 'jaeger', owner: 'istio' }] }));
+    const { api, store } = await setupStore();
+    const res = await store.dispatch(api.endpoints.getMeshAddons.initiate({}));
+    expect(res.data).toEqual({ addonsState: [{ name: 'jaeger', owner: 'istio' }] });
+  });
+
+  it('getControlPlanes issues GET /api/system/meshes/control-planes with filter params', async () => {
+    fetchMock.mockResolvedValue(okResponse({ control_planes: [] }));
+    const { api, store } = await setupStore();
+    await store.dispatch(
+      api.endpoints.getControlPlanes.initiate({ type: 'ALL_MESH', clusterId: ['c1', 'c2'] }),
+    );
+    const req = fetchMock.mock.calls[0][0] as Request;
+    expect(req.method).toBe('GET');
+    expect(req.url).toContain('/api/system/meshes/control-planes');
+    expect(req.url).toContain('type=ALL_MESH');
+  });
+
+  it('getControlPlanes normalizes snake_case control_planes envelope', async () => {
+    fetchMock.mockResolvedValue(
+      okResponse({
+        control_planes: [{ name: 'istio', members: [] }],
+      }),
+    );
+    const { api, store } = await setupStore();
+    const res = await store.dispatch(api.endpoints.getControlPlanes.initiate({}));
+    expect(res.data).toEqual({ controlPlanesState: [{ name: 'istio', members: [] }] });
+  });
+
+  it('resetDatabase issues POST /api/system/database/reset with JSON body', async () => {
+    fetchMock.mockResolvedValue(okResponse({ message: 'Database reset successful' }));
+    const { api, store } = await setupStore();
+    await store.dispatch(
+      api.endpoints.resetDatabase.initiate({
+        k8scontextID: 'ctx-1',
+        clearDB: 'true',
+        ReSync: 'true',
+        hardReset: 'true',
+      }),
+    );
+    const req = fetchMock.mock.calls[0][0] as Request;
+    expect(req.method).toBe('POST');
+    expect(req.url).toContain('/api/system/database/reset');
+    expect(req.headers.get('content-type')).toContain('application/json');
+    const body = JSON.parse(await req.text());
+    expect(body).toEqual({
+      k8scontextID: 'ctx-1',
+      clearDB: 'true',
+      ReSync: 'true',
+      hardReset: 'true',
+    });
+  });
+
+  it('changeOperatorStatus POSTs to /api/system/kubernetes/contexts/:id/operator', async () => {
+    fetchMock.mockResolvedValue(okResponse({ status: 'PROCESSING' }));
+    const { api, store } = await setupStore();
+    await store.dispatch(
+      api.endpoints.changeOperatorStatus.initiate({
+        contextID: 'ctx-abc',
+        targetStatus: 'ENABLED',
+      }),
+    );
+    const req = fetchMock.mock.calls[0][0] as Request;
+    expect(req.method).toBe('POST');
+    expect(req.url).toContain('/api/system/kubernetes/contexts/ctx-abc/operator');
+    expect(req.headers.get('content-type')).toContain('application/json');
+    expect(JSON.parse(await req.text())).toEqual({ targetStatus: 'ENABLED' });
   });
 });
