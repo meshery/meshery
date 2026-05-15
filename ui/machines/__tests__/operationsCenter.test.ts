@@ -1,11 +1,10 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { createActor } from 'xstate';
 
-// The operationsCenter machine subscribes to a relay GraphQL events stream
-// and bridges them into the redux store + the snackbar notifier. We mock the
-// subscription module, the redux store, the rtk-query API and the
-// NotificationCenter constants so we can drive events and assert side
-// effects.
+// The operationsCenter machine subscribes to an SSE events stream and bridges
+// them into the redux store + the snackbar notifier. We mock the sseClient,
+// the redux store, the rtk-query API and the NotificationCenter constants so
+// we can drive events and assert side effects.
 
 type EventCallback = (result: { event?: unknown }) => void;
 type ErrorCallback = (err: unknown) => void;
@@ -23,11 +22,11 @@ const subscriptionState = hoisted.subscriptionState;
 const dispatch = hoisted.dispatch;
 const pushEvent = hoisted.pushEvent;
 
-vi.mock('@/graphql/subscriptions/EventsSubscription', () => ({
-  default: (next: EventCallback, error: ErrorCallback) => {
-    hoisted.subscriptionState.onEvent = next;
-    hoisted.subscriptionState.onError = error;
-    return { dispose: hoisted.subscriptionState.dispose };
+vi.mock('@/lib/sseClient', () => ({
+  sseSubscribe: (opts: { onMessage: EventCallback; onError?: ErrorCallback }) => {
+    hoisted.subscriptionState.onEvent = opts.onMessage;
+    hoisted.subscriptionState.onError = opts.onError;
+    return { dispose: hoisted.subscriptionState.dispose, rebind: vi.fn() };
   },
 }));
 
@@ -158,15 +157,22 @@ describe('operationsCenter machine', () => {
     actor.stop();
   });
 
-  it('respawns the subscription actor on ERROR_OCCURRED_IN_SUBSCRIPTION', () => {
+  it('disposes the SSE subscription when the actor is stopped (cleanup leak fix)', () => {
     const { actor } = startActor();
-    // Send error event to trigger respawn
+    actor.stop();
+    expect(subscriptionState.dispose).toHaveBeenCalled();
+  });
+
+  it('keeps the actor in idle when ERROR_OCCURRED_IN_SUBSCRIPTION is received (EventSource auto-reconnects)', () => {
+    const { actor } = startActor();
+    // Send an error event; EventSource handles reconnect natively, so the
+    // actor simply stays idle and the existing subscription remains.
     actor.send({
       type: OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION,
       data: { error: new Error('socket') },
     });
 
-    // After respawn, subscription handlers should still be wired up
+    expect(actor.getSnapshot().value).toBe('idle');
     expect(subscriptionState.onEvent).toBeDefined();
     expect(subscriptionState.onError).toBeDefined();
 

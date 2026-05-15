@@ -6,7 +6,7 @@ import { KubernetesSubscription } from './AppComponents';
 const dispatchMock = vi.fn();
 const setAppStateMock = vi.fn();
 const disposeMock = vi.fn();
-const subscribeK8sContextMock = vi.fn();
+const sseSubscribeMock = vi.fn();
 let subscriptionCallback: ((result: Record<string, unknown>) => void) | undefined;
 
 vi.mock('react-redux', () => ({
@@ -15,13 +15,14 @@ vi.mock('react-redux', () => ({
     selector({ ui: { extensionType: '' } }),
 }));
 
-vi.mock('@/graphql/subscriptions/K8sContextSubscription', () => ({
-  default: (
-    callback: (result: Record<string, unknown>) => void,
-    variables: Record<string, unknown>,
-  ) => {
-    subscriptionCallback = callback;
-    return subscribeK8sContextMock(callback, variables);
+vi.mock('@/lib/sseClient', () => ({
+  sseSubscribe: (opts: {
+    path: string;
+    onMessage: (result: Record<string, unknown>) => void;
+    subscriptionName?: string;
+  }) => {
+    subscriptionCallback = opts.onMessage;
+    return sseSubscribeMock(opts);
   },
 }));
 
@@ -70,19 +71,20 @@ describe('KubernetesSubscription', () => {
     dispatchMock.mockReset();
     setAppStateMock.mockReset();
     disposeMock.mockReset();
-    subscribeK8sContextMock.mockReset();
+    sseSubscribeMock.mockReset();
     subscriptionCallback = undefined;
 
-    subscribeK8sContextMock.mockReturnValue({ dispose: disposeMock });
+    sseSubscribeMock.mockReturnValue({ dispose: disposeMock, rebind: vi.fn() });
   });
 
   it('normalizes subscription payloads before storing contexts and connection config', () => {
     const { unmount } = render(<KubernetesSubscription setAppState={setAppStateMock} />);
 
-    expect(subscribeK8sContextMock).toHaveBeenCalledWith(
-      expect.any(Function),
+    expect(sseSubscribeMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        selector: { page: '', pageSize: '10', order: '', search: '' },
+        path: '/api/system/kubernetes/contexts/stream',
+        subscriptionName: 'K8sContext',
+        onMessage: expect.any(Function),
       }),
     );
     expect(setAppStateMock).toHaveBeenCalledWith({

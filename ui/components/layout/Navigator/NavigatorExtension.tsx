@@ -7,7 +7,6 @@ import {
 import MesheryPerformanceComponent from '../../performance';
 import PatternServiceFormCore from '../../meshery-mesh-interface/PatternServiceFormCore';
 import InfoModal from '../../shared/Modal/Information/InfoModal';
-import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
 import _PromptComponent from '../../PromptComponent';
 import { ProviderUiAccessControl } from '../../../utils/disabledComponents';
 import { useNotification } from '../../../utils/hooks/useNotification';
@@ -102,8 +101,11 @@ function NavigatorExtension({ url }: NavigatorExtensionProps) {
       resolver: {
         query: {},
         mutation: {},
+        // Stub kept for one release so remote extensions importing the
+        // ConfigurationSubscription symbol via injectProps don't crash.
+        // The historical subscription was a heartbeat with no payload use.
         subscription: {
-          ConfigurationSubscription,
+          ConfigurationSubscription: () => ({ dispose: () => {} }),
         },
       },
       InfoModal,
