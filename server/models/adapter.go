@@ -24,10 +24,10 @@ var ListAvailableAdapters = []Adapter{Istio, Linkerd, Consul, Kuma, NSM, Nginx, 
 
 // Adapter represents an adapter in Meshery
 type Adapter struct {
-	Location     string                       `json:"adapter_location"`
+	Location     string                       `json:"adapterLocation"`
 	Name         string                       `json:"name"`
 	Version      string                       `json:"version"`
-	GitCommitSHA string                       `json:"git_commit_sha"`
+	GitCommitSHA string                       `json:"gitCommitSha"`
 	Ops          []*meshes.SupportedOperation `json:"ops"`
 }
 

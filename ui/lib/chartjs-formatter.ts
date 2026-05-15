@@ -171,13 +171,13 @@ export function getMetadata(rawdata, res) {
                       {
                         display: {
                           key: 'CPU',
-                          value: node?.allocatable_cpu,
+                          value: node?.allocatableCpu,
                         },
                       },
                       {
                         display: {
                           key: 'Memory',
-                          value: node?.allocatable_memory,
+                          value: node?.allocatableMemory,
                         },
                       },
                       {
@@ -189,19 +189,19 @@ export function getMetadata(rawdata, res) {
                       {
                         display: {
                           key: 'OS',
-                          value: node?.operating_system,
+                          value: node?.operatingSystem,
                         },
                       },
                       {
                         display: {
                           key: 'Kubelet Version',
-                          value: node?.kubelet_version,
+                          value: node?.kubeletVersion,
                         },
                       },
                       {
                         display: {
                           key: 'Container runtime',
-                          value: node?.container_runtime_version,
+                          value: node?.containerRuntimeVersion,
                         },
                       },
                     ],

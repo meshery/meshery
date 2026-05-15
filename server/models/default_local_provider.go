@@ -23,17 +23,17 @@ import (
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/utils"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/meshkit/utils/walker"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
-	"github.com/meshery/schemas/models/v1beta1/organization"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
-	"github.com/meshery/schemas/models/v1beta1/workspace"
+	"github.com/meshery/schemas/models/v1beta2/organization"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
+	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -67,7 +67,7 @@ type DefaultLocalProvider struct {
 	KubeClient       *mesherykube.Client
 	Log              logger.Handler
 
-	MeshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode
+	MeshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode
 }
 
 // Initialize will initialize the local provider
@@ -135,13 +135,16 @@ func (l *DefaultLocalProvider) UnSetJWTCookie(_ http.ResponseWriter) {
 }
 
 func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request, _ string) {
-	w.Header().Set("Content-Type", "application/json")
-	encoder := json.NewEncoder(w)
-	if err := encoder.Encode(l.ProviderProperties); err != nil {
-		obj := "provider capabilities"
-		errObj := ErrEncoding(err, obj)
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(l.ProviderProperties); err != nil {
+		errObj := ErrEncoding(err, "provider capabilities")
 		l.Log.Error(errObj)
-		http.Error(w, errObj.Error(), http.StatusInternalServerError)
+		httputil.WriteMeshkitError(w, errObj, http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if _, err := buf.WriteTo(w); err != nil {
+		l.Log.Error(ErrEncoding(err, "provider capabilities"))
 	}
 }
 
@@ -273,13 +276,13 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 	}
 
 	_metadata := map[string]string{
-		"id":                   k8sContext.ID,
-		"server":               k8sContext.Server,
-		"meshery_instance_id":  k8sContext.MesheryInstanceID.String(),
-		"deployment_type":      k8sContext.DeploymentType,
-		"version":              k8sContext.Version,
-		"name":                 k8sContext.Name,
-		"kubernetes_server_id": k8sServerID.String(),
+		"id":                 k8sContext.ID,
+		"server":             k8sContext.Server,
+		"mesheryInstanceId":  k8sContext.MesheryInstanceID.String(),
+		"deploymentType":     k8sContext.DeploymentType,
+		"version":            k8sContext.Version,
+		"name":               k8sContext.Name,
+		"kubernetesServerId": k8sServerID.String(),
 	}
 	metadata := make(map[string]interface{}, len(_metadata)+len(additionalMetadata))
 	for k, v := range _metadata {
@@ -288,8 +291,8 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 
 	maps.Copy(metadata, additionalMetadata)
 
-	if schemasConnection.MeshsyncDeploymentModeFromMetadata(metadata) == schemasConnection.MeshsyncDeploymentModeUndefined {
-		schemasConnection.SetMeshsyncDeploymentModeToMetadata(
+	if connections.MeshsyncDeploymentModeFromMetadata(metadata) == connections.MeshsyncDeploymentModeUndefined {
+		connections.SetMeshsyncDeploymentModeToMetadata(
 			metadata,
 			l.MeshsyncDefaultDeploymentMode,
 		)
@@ -615,9 +618,16 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, _ *http.Reque
 		TokenCookieName:    "",
 	}
 	l.Log.Debug(fmt.Sprintf("token sent for meshery-provider %v", l.Name()))
-	if err := json.NewEncoder(w).Encode(resp); err != nil {
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(resp); err != nil {
+		errObj := ErrEncoding(err, "token")
+		l.Log.Error(errObj)
+		httputil.WriteMeshkitError(w, errObj, http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if _, err := buf.WriteTo(w); err != nil {
 		l.Log.Error(ErrEncoding(err, "token"))
-		http.Error(w, ErrEncoding(err, "token").Error(), http.StatusInternalServerError)
 	}
 }
 
@@ -955,16 +965,6 @@ func (l *DefaultLocalProvider) RemoteFilterFile(_ *http.Request, resourceURL, pa
 	return json.Marshal(ffs)
 }
 
-// SaveMesheryApplication saves given application with the provider
-func (l *DefaultLocalProvider) SaveMesheryApplication(_ string, application *MesheryApplication) ([]byte, error) {
-	return l.MesheryApplicationPersister.SaveMesheryApplication(application)
-}
-
-// SaveApplicationSourceContent nothing needs to be done as application is saved with source content for local provider
-func (l *DefaultLocalProvider) SaveApplicationSourceContent(_, _ string, _ []byte) error {
-	return nil
-}
-
 // GetApplicationSourceContent returns application source-content from provider
 func (l *DefaultLocalProvider) GetApplicationSourceContent(_ *http.Request, applicationID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(applicationID)
@@ -1193,6 +1193,12 @@ func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
 	return err
 }
 
+// LogoutMesheryServer is a no-op for the local provider: there is no
+// remote session to revoke.
+func (l *DefaultLocalProvider) LogoutMesheryServer() error {
+	return nil
+}
+
 // GetGenericPersister - to return persister
 func (l *DefaultLocalProvider) GetGenericPersister() *database.Handler {
 	return l.GenericPersister
@@ -1217,7 +1223,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	nilUserID := ""
 
 	// Use the relative directory for patterns
-	catalogDir := filepath.Join("..", "..", "docs", "catalog")
+	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
 
 	for _, seedContent := range seedContents {
 		go func(comp string, log logger.Handler) {
@@ -1924,7 +1930,12 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 // Events
 
 func (e *EventsPersister) PersistEvent(event events.Event, token string) error {
-	err := e.DB.Save(event).Error
+	// GORM's Save requires a pointer (it reflects on the struct to read/update
+	// the primary key and timestamps). Passing the value directly produced
+	// "invalid value, should be pointer to struct or slice" and dropped every
+	// system event silently — including the controller-emitted events that
+	// flow through PersistSystemEvent.
+	err := e.DB.Save(&event).Error
 	if err != nil {
 		return ErrPersistEvent(err)
 	}

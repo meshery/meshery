@@ -17,7 +17,7 @@ type Version struct {
 	Latest         string `json:"latest,omitempty"`
 	Outdated       *bool  `json:"outdated,omitempty"`
 	CommitSHA      string `json:"commitsha,omitempty"`
-	ReleaseChannel string `json:"release_channel,omitempty"`
+	ReleaseChannel string `json:"releaseChannel,omitempty"`
 }
 
 // ServerVersionHandler handles the version api request for the server
@@ -49,7 +49,7 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, _ *http.Request) {
 	err = json.NewEncoder(w).Encode(version)
 	if err != nil {
 		h.log.Error(models.ErrEncoding(err, "server-version"))
-		http.Error(w, models.ErrEncoding(err, "server-version").Error(), http.StatusNotFound)
+		writeMeshkitError(w, models.ErrEncoding(err, "server-version"), http.StatusNotFound)
 	}
 }
 

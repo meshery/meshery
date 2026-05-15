@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
-import { Colors } from '../themes/app';
-import { Checkbox, MenuItem, Paper, FormControlLabel } from '@sistent/sistent';
-import { useTheme } from '@sistent/sistent';
+import { Checkbox, ListItemButton, Paper, FormControlLabel, useTheme } from '@sistent/sistent';
 
 const MultiSelectWrapper = (props) => {
   const [selectInput, setSelectInput] = useState('');
@@ -25,8 +23,8 @@ const MultiSelectWrapper = (props) => {
 
   const Option = (props) => {
     return (
-      <MenuItem
-        buttonRef={props.innerRef}
+      <ListItemButton
+        ref={props.innerRef}
         selected={props.isFocused}
         {...props.innerProps}
         component="div"
@@ -64,7 +62,7 @@ const MultiSelectWrapper = (props) => {
           }
           label={<span style={{ marginLeft: '0.5rem' }}>{props.label}</span>}
         />
-      </MenuItem>
+      </ListItemButton>
     );
   };
 
@@ -152,11 +150,11 @@ const MultiSelectWrapper = (props) => {
   const customStyles = {
     multiValueLabel: (def) => ({
       ...def,
-      backgroundColor: 'lightgray',
+      backgroundColor: theme.palette.grey[300],
     }),
     multiValueRemove: (def) => ({
       ...def,
-      backgroundColor: 'lightgray',
+      backgroundColor: theme.palette.grey[300],
     }),
     valueContainer: (base) => ({
       ...base,
@@ -166,14 +164,14 @@ const MultiSelectWrapper = (props) => {
     control: (base) => ({
       ...base,
       backgroundColor: base.backgroundColor2,
-      borderColor: Colors.keppelGreen,
-      color: Colors.keppelGreen,
+      borderColor: theme.palette.primary.main,
+      color: theme.palette.primary.main,
       boxShadow: 'none',
       '&:hover': {
-        borderColor: Colors.keppelGreen,
+        borderColor: theme.palette.primary.main,
       },
       '&$focused': {
-        borderColor: '#00B39F',
+        borderColor: theme.palette.primary.main,
       },
     }),
     menu: (base) => ({
@@ -207,7 +205,10 @@ const MultiSelectWrapper = (props) => {
         ...selectTheme,
         colors: {
           ...selectTheme.colors,
-          backgroundColor2: theme.palette.mode === 'dark' ? theme.palette.background.card : '#fff',
+          backgroundColor2:
+            theme.palette.mode === 'dark'
+              ? theme.palette.background.card
+              : theme.palette.common.white,
         },
       })}
       isMulti

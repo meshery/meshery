@@ -29,6 +29,27 @@ const path = require('path');
 
 const UI_ROOT = path.resolve(__dirname, '..');
 
+// Approved single-boundary wrappers around @mui/* and @rjsf/mui.
+//
+// These files are the *only* places in the codebase allowed to import from
+// the legacy MUI / RJSF packages, per the UI restructure plan §1.3 and the
+// Phase 3 issue (#18657). They exist because Sistent doesn't yet expose the
+// underlying primitives (`GlobalStyles`, `darken`, the date pickers, the
+// tree view, the RJSF theme adapter); every other consumer goes through
+// `@/theme` or the shared component wrappers, not `@mui/*` directly.
+//
+// Excluded from the audit count so the trend line tracks *unmigrated* MUI
+// usage rather than the approved bridge. Adding a new entry should require
+// an open issue and a code review — the goal is to keep this list small
+// and to drain it as Sistent grows.
+const APPROVED_WRAPPERS = new Set([
+  'theme/index.ts',
+  'components/shared/TreeView/TreeView.tsx',
+  'components/shared/DatePicker/index.ts',
+  'components/shared/DatePicker/MesheryDateTimePicker.tsx',
+  'components/shared/FormFields/RJSFProvider.tsx',
+]);
+
 // Directories under ui/ that are scanned.
 const SCAN_DIRS = [
   'components',
@@ -107,10 +128,15 @@ function main() {
 
   const offenders = [];
   let totalMatches = 0;
+  let skippedWrappers = 0;
   for (const file of files) {
     const matches = scanFile(file);
     if (matches.length === 0) continue;
     const rel = path.relative(UI_ROOT, file);
+    if (APPROVED_WRAPPERS.has(rel)) {
+      skippedWrappers += 1;
+      continue;
+    }
     offenders.push({ file: rel, count: matches.length, imports: matches });
     totalMatches += matches.length;
   }
@@ -123,6 +149,8 @@ function main() {
           audit: 'mui',
           files: offenders.length,
           matches: totalMatches,
+          approvedWrappers: APPROVED_WRAPPERS.size,
+          approvedWrappersWithMuiImports: skippedWrappers,
           offenders,
         },
         null,
@@ -155,7 +183,8 @@ function main() {
 
   process.stdout.write('Summary:\n');
   process.stdout.write(`  Files:   ${offenders.length}\n`);
-  process.stdout.write(`  Matches: ${totalMatches}\n\n`);
+  process.stdout.write(`  Matches: ${totalMatches}\n`);
+  process.stdout.write(`  Approved wrappers (excluded from count): ${APPROVED_WRAPPERS.size}\n\n`);
   process.stdout.write(`AUDIT mui files=${offenders.length} matches=${totalMatches}\n`);
 }
 
