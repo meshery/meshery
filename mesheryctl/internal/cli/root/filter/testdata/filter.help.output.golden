@@ -1,0 +1,26 @@
+Cloud Native Filter Management
+Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference
+
+Usage:
+  filter [flags]
+  filter [command]
+
+Examples:
+
+// Base command for WASM filters:
+mesheryctl filter [subcommands]
+
+
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  delete      Delete a filter file
+  help        Help about any command
+  import      Import a WASM filter
+  list        List filters
+  view        View filter(s)
+
+Flags:
+  -h, --help           help for filter
+  -t, --token string   Path to token file default from current context
+
+Use "filter [command] --help" for more information about a command.

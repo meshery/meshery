@@ -1,0 +1,53 @@
+{{- /* Load all adapter pages from extensions/adapters section */ -}}
+{{- $adapters := slice -}}
+{{- range site.AllPages -}}
+  {{- if and (strings.Contains .Path "extensions/adapters") (ne .Kind "section") .Params.project_status -}}
+    {{- $adapters = $adapters | append . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Sort adapters by project_status in reverse */ -}}
+{{- $sorted := sort $adapters "Params.project_status" -}}
+{{- $reversed := slice -}}
+{{- $len := len $sorted -}}
+{{- range $i := (seq $len) -}}
+  {{- $reversed = $reversed | append (index $sorted (sub $len $i)) -}}
+{{- end -}}
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">Adapter Status</th>
+      <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">Adapter</th>
+      <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">Port</th>
+      <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">Earliest Version Supported</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{- range $reversed -}}
+      {{- $status := .Params.project_status -}}
+      {{- if $status -}}
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="text-align: center; padding: 10px;">
+            <span style="display: inline-block; padding: 4px 8px; background-color: 
+              {{- if eq $status "stable" -}}#4caf50{{- else if eq $status "beta" -}}#ff9800{{- else -}}#9e9e9e{{- end -}};
+              color: white; border-radius: 4px; font-size: 0.85em;">
+              {{ $status }}
+            </span>
+          </td>
+          <td style="text-align: center; padding: 10px;">
+            <a href="{{ .RelPermalink }}" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <img src="{{ .Params.image }}" style="height: 24px; width: auto; display: inline-block;" 
+                   data-logo-for-dark="{{ .Params.white_image }}" 
+                   data-logo-for-light="{{ .Params.image }}" 
+                   loading="lazy" alt="{{ .Params.name }}" />
+              <span>{{ .Params.name }}</span>
+            </a>
+          </td>
+          <td style="text-align: center; padding: 10px;">{{ .Params.port }}</td>
+          <td style="text-align: center; padding: 10px;">{{ .Params.earliest_version }}</td>
+        </tr>
+      {{- end -}}
+    {{- end -}}
+  </tbody>
+</table>

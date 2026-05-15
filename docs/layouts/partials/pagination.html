@@ -1,0 +1,64 @@
+{{- $pageTree := newScratch -}}
+{{- $pageTree.Set "pages" slice -}}
+
+{{- template "pagination-sidebar-pages" (dict "node" .Site.Home "scratch" $pageTree) -}}
+
+{{- $pages := $pageTree.Get "pages" -}}
+
+{{ $index := -1 }}
+{{ $current := trim .RelPermalink "/" }} {{/* Get current page path */}}
+
+{{ range $i, $p := $pages }}
+  {{ $normalizedURL := trim ($p.url | relURL) "/" }}
+  {{ if eq $normalizedURL $current }}
+    {{ $index = $i }}
+  {{ end }}
+{{ end }}
+
+{{ if ge $index 0 }}
+
+<div class="toc-pagination-wrapper">
+
+  {{ if gt $index 0 }}
+    {{ $prev := index $pages (sub $index 1) }}
+    <a class="toc-card prev" href="{{ $prev.url | relURL }}">   
+      <div class="toc-label">Previous</div>
+      <div class="toc-title">
+        <span class="arrow"><i class="fa-solid fa-chevron-left"></i></span>
+        {{ replaceRE "\\s*[ↆ↓]$" "" (replaceRE "^[^a-zA-Z0-9]+" "" $prev.title) }}
+      </div>
+    </a>
+  {{ end }}
+
+  {{ if lt $index (sub (len $pages) 1) }}
+    {{ $next := index $pages (add $index 1) }}
+    <a class="toc-card next" href="{{ $next.url | relURL }}">
+      <div class="toc-label">Next</div>
+      <div class="toc-title">
+        {{ replaceRE "\\s*[ↆ↓]$" "" (replaceRE "^[^a-zA-Z0-9]+" "" $next.title) }}
+        <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+      </div>
+    </a>
+  {{ end }}
+
+</div>
+
+{{ end }}
+
+{{- define "pagination-sidebar-pages" -}}
+  {{- $node := .node -}}
+  {{- $scratch := .scratch -}}
+
+  {{- $pages_tmp := where (union $node.Pages $node.Sections) ".Params.toc_hide" "!=" true -}}
+  {{- $pages_tmp = sort $pages_tmp "Title" "asc" -}}
+  {{- $pages_tmp = sort $pages_tmp "Weight" "asc" -}}
+
+  {{- range $pages_tmp -}}
+    {{- if ne .Params.hide_summary true -}}
+      {{- $scratch.Add "pages" (slice (dict "title" (or .LinkTitle .Title) "url" .RelPermalink)) -}}
+    {{- end -}}
+    {{- if .IsSection -}}
+      {{- template "pagination-sidebar-pages" (dict "node" . "scratch" $scratch) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

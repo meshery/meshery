@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 const (
@@ -53,9 +53,9 @@ type Events map[EventType]StateType
 
 type StateMachine struct {
 	// ID to trace the events originated from the machine, also used in logs
-	ID uuid.UUID
+	ID core.Uuid
 
-	UserID uuid.UUID
+	UserID core.Uuid
 
 	// Given name for the machine, used in logs to track issues
 	Name string
@@ -130,7 +130,7 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 // In cases when the event is received as part of some other event and not explicitly created by an actor, use the useID and systemID of the actor who initially invoked the machine.
 func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) (*events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	userUUID := user.ID
 	ctx = context.WithValue(ctx, models.ProviderCtxKey, sm.Provider)
 	defaultEvent := events.NewEvent().WithDescription(fmt.Sprintf("Invalid status change requested to %s for connection type %s.", eventType, sm.Name)).ActedUpon(sm.ID).FromUser(userUUID).FromSystem(*sysID).WithSeverity(events.Error)
@@ -138,11 +138,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	defer sm.mx.Unlock()
 	var event *events.Event
 	var err error
-	for {
-		if eventType == NoOp {
-			break
-		}
-
+	for eventType != NoOp {
 		nextState, err := sm.getNextState(eventType)
 		if err != nil {
 			sm.Log.Error(err)
@@ -204,22 +200,39 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 
 	if sm.Provider != nil && eventType != Exit {
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
-		connection, statusCode, err := sm.Provider.UpdateConnectionStatusByID(token, sm.ID, connections.ConnectionStatus(sm.CurrentState))
+		connection, _, err := sm.Provider.GetConnectionByID(token, sm.ID)
+
+		if err != nil {
+
+			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromUser(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+		}
+
+		connectionPayload := &connections.ConnectionPayload{
+			ID:       sm.ID,
+			Kind:     connection.Kind,
+			MetaData: connection.Metadata,
+			Status:   connections.ConnectionStatus(sm.CurrentState)}
+
+		if connectionPayload.MetaData == nil {
+			connectionPayload.MetaData = map[string]interface{}{}
+		}
+
+		connection, err = sm.Provider.UpdateConnectionById(token, connectionPayload, sm.ID.String())
 
 		if err != nil {
 			// In this case should the current state be again set to previous state i.e. should we rollback. But not only state should be rollback but other actions as well, rn we don't rollback state.
 			return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", sm.CurrentState)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromUser(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
 		}
 
-		sm.Log.Debugf("%s: HTTP status: %s updated \"status\" for connection with id: %s to \"%s\"", sm.Name, statusCode, connection.ID, sm.CurrentState)
+		sm.Log.Debugf("%s: updated \"status\" for connection with id: %s to \"%s\"", sm.Name, connection.ID, sm.CurrentState)
 	}
 
 	// The action func only emits event when an error occurs.
 	// If "event" is nil, it indicates actions were execeuted successfully, hence send an confirmation that request was processed successsfully.
 	if event == nil {
 		event = events.NewEvent().WithDescription(fmt.Sprintf("%s connection changed to %s", sm.Name, sm.CurrentState)).FromSystem(*sysID).FromUser(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").WithMetadata(map[string]interface{}{
-			"previous_status": sm.PreviousState,
-			"current_status":  sm.CurrentState,
+			"previousStatus": sm.PreviousState,
+			"currentStatus":  sm.CurrentState,
 		}).WithSeverity(events.Informational).Build()
 	}
 

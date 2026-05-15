@@ -38,11 +38,11 @@ array_endswith(arr, item) if {
 }
 
 # coalesce is a utility function that returns the first non-null value from the provided arguments.
-coalesce(val, defautl) := val if {
+coalesce(val, default_val) := val if {
 	val != null
 }
 
-coalesce(val, defautl) := defautl if {
+coalesce(val, default_val) := default_val if {
 	val == null
 }
 
@@ -102,9 +102,9 @@ get_component_configuration(component, design) := configuration if {
 
 	# print("configuration from Alias is ==>",alias)
 
-	parent := component_declaration_by_id(design, alias.resolved_parent_id)
+	parent := component_declaration_by_id(design, alias.resolvedParentId)
 
-	configuration := object_get_nested(parent, alias.resolved_ref_field_path, null)
+	configuration := object_get_nested(parent, alias.resolvedRefFieldPath, null)
 	# print("Configuration got from Alias " ,configuration)
 }
 

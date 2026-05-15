@@ -1,11 +1,13 @@
 package model
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -21,10 +23,19 @@ func TestModelBuild(t *testing.T) {
 		}
 	}
 
+	// Test constants
+	const (
+		buildTestDynamoController    = "test-case-model-build-aws-dynamodb-controller"
+		buildTestDynamoControllerGbx = "test-case-model-build-aws-dynamodb-controller-gbxter34"
+		buildTestEC2Controller       = "aws-ec2-controller"
+		buildTestVersion             = "v0.1.0"
+		buildTestNonExistentFolder   = "not_existing_folder"
+	)
+
 	// Clean up any existing test directories before running tests
 	cleanupDirs := []string{
-		"test-case-model-build-aws-dynamodb-controller",
-		"test-case-model-build-aws-dynamodb-controller-gbxter34",
+		buildTestDynamoController,
+		buildTestDynamoControllerGbx,
 	}
 	// Clean up all test artifacts from previous runs
 	cleanupTestArtifacts(cleanupDirs)
@@ -77,6 +88,7 @@ func TestModelBuild(t *testing.T) {
 
 		// Use the shared helper for ModelCmd
 		cmd := createFreshModelCmd()
+		mesheryctlflags.InitValidators(freshBuildCmd)
 		cmd.AddCommand(freshBuildCmd)
 		return cmd
 	}
@@ -86,6 +98,7 @@ func TestModelBuild(t *testing.T) {
 			// Use the shared helper to create a fresh ModelCmd
 			cmd := createFreshModelCmd()
 			cmd.AddCommand(initModelCmd)
+			mesheryctlflags.InitValidators(initModelCmd)
 			cmd.SetArgs(modelInitArgs)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
 			cmd.SetOut(buff)
@@ -109,9 +122,11 @@ func TestModelBuild(t *testing.T) {
 		ExpectedResponse string
 		ExpectedFiles    []string
 		CleanupHooks     []func()
+		IsOutputGolden   bool
+		ExpectedError    error
 	}{
 		{
-			Name:             "model build from model name and version",
+			Name:             "given name and version when model build then model is built",
 			Args:             []string{"build", "test-case-model-build-aws-lambda-controller/v0.1.0"},
 			ExpectError:      false,
 			ExpectedResponse: "model.build.from-model-name-version.golden",
@@ -129,74 +144,82 @@ func TestModelBuild(t *testing.T) {
 			},
 		},
 		{
-			Name:             "model build from model name only (no version)",
-			Args:             []string{"build", "test-case-model-build-aws-dynamodb-controller"},
+			Name:             "given name only when model build then model is built",
+			Args:             []string{"build", buildTestDynamoController},
 			ExpectError:      false,
 			ExpectedResponse: "model.build.from-model-name-only.golden",
 			ExpectedFiles: []string{
-				"test-case-model-build-aws-dynamodb-controller.tar",
+				buildTestDynamoController + ".tar",
 			},
 			SetupHooks: []func(){
-				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller", "--version", "v0.1.0"),
+				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
 			},
 			CleanupHooks: []func(){
 				cleanUpHookRemoveDirsAndFiles(
-					"test-case-model-build-aws-dynamodb-controller",
-					"test-case-model-build-aws-dynamodb-controller.tar",
+					buildTestDynamoController,
+					buildTestDynamoController+".tar",
 				),
 			},
 		},
 		{
-			Name:             "model build from model name only (no version) with slash in the end",
-			Args:             []string{"build", "test-case-model-build-aws-dynamodb-controller/"},
+			Name:             "given name only when model build then model is built",
+			Args:             []string{"build", buildTestDynamoController + "/"},
 			ExpectError:      false,
 			ExpectedResponse: "model.build.from-model-name-only.golden",
 			ExpectedFiles: []string{
-				"test-case-model-build-aws-dynamodb-controller.tar",
+				buildTestDynamoController + ".tar",
 			},
 			SetupHooks: []func(){
-				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller", "--version", "v0.1.0"),
+				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
 			},
 			CleanupHooks: []func(){
 				cleanUpHookRemoveDirsAndFiles(
-					"test-case-model-build-aws-dynamodb-controller",
-					"test-case-model-build-aws-dynamodb-controller.tar",
+					buildTestDynamoController,
+					buildTestDynamoController+".tar",
 				),
 			},
 		},
 		{
-			Name:             "model build no params",
+			Name:             "given no params when model build then throw error",
 			Args:             []string{"build"},
 			ExpectError:      true,
-			ExpectedResponse: "model.build.error.usage.golden",
+			ExpectedResponse: "",
+			IsOutputGolden:   false,
+			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage),
 		},
 		{
-			Name:             "model build wrong input param format",
-			Args:             []string{"build", "aws-ec2-controller/v0.1.0/smthelse"},
+			Name:             "given wrong input param format when model build then throw error",
+			Args:             []string{"build", buildTestEC2Controller + "/" + buildTestVersion + "/smthelse"},
 			ExpectError:      true,
-			ExpectedResponse: "model.build.error.usage.golden",
+			ExpectedResponse: "",
+			IsOutputGolden:   false,
+			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage),
 		},
 		{
-			Name:             "model build from model name only (no version) not supporting multiple versions",
-			Args:             []string{"build", "test-case-model-build-aws-dynamodb-controller-gbxter34"},
+			Name:             "given name and multiple versions when model build then throw error",
+			Args:             []string{"build", buildTestDynamoControllerGbx},
 			ExpectError:      true,
-			ExpectedResponse: "model.build.error.not-supporting-multiple-versions-build.golden",
+			ExpectedResponse: "",
 			SetupHooks: []func(){
-				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller-gbxter34", "--version", "v0.1.0"),
-				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller-gbxter34", "--version", "v0.1.1"),
-				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller-gbxter34", "--version", "v0.1.2"),
+				setupHookModelInit("init", buildTestDynamoControllerGbx, "--version", buildTestVersion),
+				setupHookModelInit("init", buildTestDynamoControllerGbx, "--version", "v0.1.1"),
+				setupHookModelInit("init", buildTestDynamoControllerGbx, "--version", "v0.1.2"),
 			},
 			CleanupHooks: []func(){
 				cleanUpHookRemoveDirsAndFiles(
-					"test-case-model-build-aws-dynamodb-controller-gbxter34",
+					buildTestDynamoControllerGbx,
 				),
 			},
+			IsOutputGolden: false,
+			ExpectedError:  ErrModelBuildFromStrings(errBuildUsage, errBuildMultiVersionNotSupported),
 		},
 		{
-			Name:             "model build folder does not exist",
-			Args:             []string{"build", "aws-ec2-controller/v0.1.0", "--path", "./not_existing_folder"},
+			Name:             "given folder does not exist when model build then throw error",
+			Args:             []string{"build", buildTestEC2Controller + "/" + buildTestVersion, "--path", "./" + buildTestNonExistentFolder},
 			ExpectError:      true,
-			ExpectedResponse: "model.build.error.folder-does-not-exist.golden",
+			ExpectedResponse: "",
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --path './%s': directory does not exist", buildTestNonExistentFolder)),
 		},
 	}
 	for _, tc := range tests {
@@ -226,10 +249,15 @@ func TestModelBuild(t *testing.T) {
 			if err != nil {
 				// if we're supposed to get an error
 				if tc.ExpectError {
-					expectedResponse := golden.Load()
+					if tc.IsOutputGolden {
+						expectedResponse := golden.Load()
 
-					utils.Equals(t, expectedResponse, err.Error())
+						utils.Equals(t, expectedResponse, err.Error())
+						return
+					}
+					utils.AssertMeshkitErrorsEqual(t, err, tc.ExpectedError)
 					return
+
 				}
 				t.Fatal(err)
 			}

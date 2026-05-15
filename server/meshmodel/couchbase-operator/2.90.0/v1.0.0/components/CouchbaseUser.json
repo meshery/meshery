@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -203,6 +203,7 @@
     "kind": "CouchbaseUser",
     "schema": "{\n \"description\": \"CouchbaseUser allows the automation of Couchbase user management.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CouchbaseUserSpec allows the specification of Couchbase user configuration.\",\n   \"properties\": {\n    \"authDomain\": {\n     \"description\": \"The domain which provides user authentication.\",\n     \"enum\": [\n      \"local\",\n      \"external\"\n     ],\n     \"type\": \"string\"\n    },\n    \"authSecret\": {\n     \"description\": \"Name of the Kubernetes Secret that provides the user's initial password for the Couchbase domain.\\nOnce the user is created, changes to this field will be ignored.\\nThe initial password must comply with all password policies defined for Couchbase clusters\\nthat have RBAC management enabled and for which the user matches the RBAC resource selector.\",\n     \"type\": \"string\"\n    },\n    \"fullName\": {\n     \"description\": \"Full Name of Couchbase user.\",\n     \"type\": \"string\"\n    },\n    \"locked\": {\n     \"description\": \"Locked defines whether the user is locked and can only be used when a using the internal auth domain for the user.\\nThis field is only available for Couchbase Server 8.0.0+.\",\n     \"type\": \"boolean\"\n    },\n    \"name\": {\n     \"description\": \"Username of the couchbase user.\",\n     \"type\": \"string\"\n    },\n    \"password\": {\n     \"description\": \"Password allows user specific password settings to be set.\\nThis field is only available for Couchbase Server 8.0.0+.\",\n     \"properties\": {\n      \"expiresAfter\": {\n       \"description\": \"ExpiresAfter allows setting a fixed duration after a user changes their password when they will be required to change their password again.\\nConsider that this duration will be checked against the users last password change date, not the current date and time and could therefore\\nresult in the user being required to change their password immediately.\\nThis field is only available for Couchbase Server 8.0.0+. More info:\\nhttps://golang.org/pkg/time/#ParseDuration\",\n       \"type\": \"string\"\n      },\n      \"expiresAt\": {\n       \"description\": \"ExpiresAt allows setting a timestamp when a user's password will expire. After that timestamp has passed, the user\\nwill be required to change their password.\\nIf set to a timestamp in the past, the user's password must have been changed since then or they\\nwill be required to change their password.\\nThis field is only available for Couchbase Server 8.0.0+.\",\n       \"format\": \"date-time\",\n       \"type\": \"string\"\n      },\n      \"requireInitialChange\": {\n       \"description\": \"RequireInitialChange defines whether a user will be required to change\\ntheir password the first time they login and is only effective when a user is first being created.\\nThis field is only available for Couchbase Server 8.0.0+.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"authDomain\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Couchbase User\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

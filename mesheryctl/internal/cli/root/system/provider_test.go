@@ -1,45 +1,73 @@
 package system
 
 import (
+	"slices"
+	"strings"
 	"testing"
+
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestViewProviderCmd(t *testing.T) {
-	SetupContextEnv(t)
+	setupContextTestEnv(t)
+	mesheryctlflags.InitValidators(SystemCmd)
 	tests := []CmdTestInput{
 		{
-			Name:             "view without any parameter",
+			Name:             "given provider context when provider view then display provided provider",
+			Args:             []string{"provider", "view", "-c", "gke"},
+			ExpectedResponse: PrintProviderToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
+		},
+		{
+			Name:             "given no provider context when provider view then display default provider",
 			Args:             []string{"provider", "view"},
 			ExpectedResponse: PrintProviderToStdout(mctlCfg.Contexts["local"], "local") + "\n\n",
 		},
 		{
-			Name:             "view with context override",
-			Args:             []string{"provider", "view", "-c", "gke"},
-			ExpectedResponse: PrintProviderToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
+			Name: "given --all flag provided when provider view then display all providers",
+			Args: []string{"provider", "view", "--all"},
+			ExpectedResponse: func() string {
+				output := strings.Builder{}
+				keys := make([]string, 0, len(mctlCfg.Contexts))
+				for k := range mctlCfg.Contexts {
+					keys = append(keys, k)
+				}
+
+				// 2. Sort the slice alphabetically
+				slices.Sort(keys)
+
+				for _, contextName := range keys {
+					context := mctlCfg.Contexts[contextName]
+					output.WriteString(PrintProviderToStdout(context, contextName) + "\n\n")
+				}
+
+				output.WriteString("Current Context: local\n")
+				return output.String()
+			}(),
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc()
+			buf := setupSystemOutCmdTest(t)
+			defer buf.Reset()
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
 			if err != nil {
 				t.Error(err)
 			}
 
-			actualResponse := b.String()
+			actualResponse := buf.String()
 			expectedResponse := tt.ExpectedResponse
 
-			if expectedResponse != actualResponse {
-				t.Errorf("\nExpected response\n\n%v\n\nActual response\n\n%v\n\nMismatch between expected and actual response\n", expectedResponse, actualResponse)
-			}
+			assert.Equal(t, expectedResponse, actualResponse)
+
 			BreakupFunc()
 		})
 	}
 }
 func TestRunProviderWithNoCmdOrFlag(t *testing.T) {
-	SetupFunc()
+	setupSystemOutCmdTest(t)
 	SystemCmd.SetArgs([]string{"provider"})
 	err = SystemCmd.Execute()
 

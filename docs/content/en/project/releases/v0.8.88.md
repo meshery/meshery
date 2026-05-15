@@ -1,0 +1,18 @@
+---
+title: v0.8.88
+date: 2025-05-23
+tag: v0.8.88
+prerelease: false
+---
+
+## What's New
+## 🔤 General
+## 🖥 Meshery UI
+
+- worspace switcher @aabidsofi19 (#14808)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@aabidsofi19 and @amitamrutiya
+

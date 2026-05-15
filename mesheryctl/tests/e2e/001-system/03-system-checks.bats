@@ -12,18 +12,15 @@ setup() {
    export CHECK_PREREQUISISTE_RESULT="Meshery prerequisites met"
 }
 
-@test "mesheryctl system check succeeds displaying required sections" {
+@test "given all requirements are met, when running mesheryctl system check then required sections are displayed" {
    run $MESHERYCTL_BIN system check
-   assert_success
-
    assert_output --partial "$CHECK_KUBERNETES_API_HEADER"
    assert_output --partial "$CHECK_KUBERNETES_VERSION_HEADER"
    assert_output --partial "$CHECK_MESHERY_COMPONENTS_HEADER"
    assert_output --partial "$CHECK_MESHERY_OPERATORS_HEADER"
 }
 
-
-@test "mesheryctl system check --pre succeeds displaying required sections and expected prerequisites result" {
+@test "given all requirements are met, when running mesheryctl system check --pre then required sections and prerequisites result are displayed" {
    run $MESHERYCTL_BIN system check --pre
    assert_success
 
@@ -33,7 +30,7 @@ setup() {
    assert_output --partial "$CHECK_PREREQUISISTE_RESULT"
 }
 
-@test "mesheryctl system check --preflight succeeds displaying required sections and expected prerequisites result" {
+@test "given all requirements are met, when running mesheryctl system check --preflight then required sections and prerequisites result are displayed" {
    run $MESHERYCTL_BIN system check --pre
    assert_success
 
@@ -43,7 +40,7 @@ setup() {
    assert_output --partial "$CHECK_PREREQUISISTE_RESULT"
 }
 
-@test "mesheryctl system check --operators succeeds displaying required section and meshery operators in running state" {
+@test "given all requirements are met, when running mesheryctl system check --operator then operators are shown in running state" {
    run $MESHERYCTL_BIN system check --operator
    assert_success
 

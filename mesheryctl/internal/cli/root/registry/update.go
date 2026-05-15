@@ -25,7 +25,7 @@ import (
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	mutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshkit/utils/store"
-	comp "github.com/meshery/schemas/models/v1beta1/component"
+	comp "github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -45,7 +45,7 @@ var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update the registry with latest data.",
 	Long: `Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/registry/update`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/registry/update`,
 	Example: `
 // Update models from Meshery Integration Spreadsheet
 mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred "$CRED" -i [path to the directory containing models].

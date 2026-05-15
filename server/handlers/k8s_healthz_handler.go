@@ -39,7 +39,7 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Check 2: Check for extensions (informational only, does not affect health status)
 	extensionExists := false
-	
+
 	// Check all providers for navigator extensions
 	for _, provider := range h.config.Providers {
 		providerProps := provider.GetProviderProperties()
@@ -87,30 +87,39 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 		if verbose {
 			// Return detailed check results
 			for _, check := range checks {
-				if check.status == checkOK {
-					fmt.Fprintf(w, "[+]%s ok\n", check.name)
-				} else if check.status == checkInfo {
+				switch check.status {
+				case checkOK:
+					_, _ = fmt.Fprintf(w, "[+]%s ok\n", check.name)
+
+				case checkInfo:
 					// Informational checks show status without +/- prefix
-					fmt.Fprintf(w, "[i]%s %s\n", check.name, check.reason)
+					_, _ = fmt.Fprintf(w, "[i]%s %s\n", check.name, check.reason)
 				}
 			}
-			fmt.Fprint(w, "healthz check passed\n")
+			if _, err := fmt.Fprint(w, "healthz check passed\n"); err != nil {
+				h.log.Error(err)
+			}
 		} else {
 			// Simple "ok" response
-			fmt.Fprint(w, "ok")
+			if _, err := fmt.Fprint(w, "ok"); err != nil {
+				h.log.Error(err)
+			}
 		}
 	} else {
 		w.WriteHeader(http.StatusServiceUnavailable)
 		if verbose {
 			// Return detailed check results with failures
 			for _, check := range checks {
-				if check.status == checkOK {
-					fmt.Fprintf(w, "[+]%s ok\n", check.name)
-				} else if check.status == checkFailed {
-					fmt.Fprintf(w, "[-]%s failed: %s\n", check.name, check.reason)
-				} else if check.status == checkInfo {
+				switch check.status {
+				case checkOK:
+					_, _ = fmt.Fprintf(w, "[+]%s ok\n", check.name)
+
+				case checkFailed:
+					_, _ = fmt.Fprintf(w, "[-]%s failed: %s\n", check.name, check.reason)
+
+				case checkInfo:
 					// Show informational checks even in failure state
-					fmt.Fprintf(w, "[i]%s %s\n", check.name, check.reason)
+					_, _ = fmt.Fprintf(w, "[i]%s %s\n", check.name, check.reason)
 				}
 			}
 		} else {
@@ -121,7 +130,7 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 					failedChecks = append(failedChecks, fmt.Sprintf("%s: %s", check.name, check.reason))
 				}
 			}
-			fmt.Fprintf(w, "healthz check failed: %s", strings.Join(failedChecks, "; "))
+			_, _ = fmt.Fprintf(w, "healthz check failed: %s", strings.Join(failedChecks, "; "))
 		}
 	}
 }

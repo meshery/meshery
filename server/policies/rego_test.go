@@ -70,7 +70,8 @@ func TestRegoPolicy(t *testing.T) {
 		EnableTracing(false).
 		SetTimeout(10 * time.Second)
 
-	ch, err := runner.Run(ctx, modules)
+	runner.SetModules(modules)
+	ch, err := runner.RunTests(ctx, nil) // Pass nil for transaction to match previous behavior (Run() used nil internally)
 	if err != nil {
 		t.Fatalf("Failed to run tests: %v", err)
 	}

@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00A651",
@@ -203,6 +203,7 @@
     "kind": "ResourceOutlineFilter",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"actions\": {\n     \"items\": {\n      \"properties\": {\n       \"items\": {\n        \"additionalProperties\": {\n         \"type\": \"boolean\"\n        },\n        \"type\": \"object\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"show\": {\n        \"type\": \"boolean\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"show\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"header\": {\n     \"type\": \"boolean\"\n    },\n    \"pages\": {\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"sections\": {\n        \"items\": {\n         \"properties\": {\n          \"blocks\": {\n           \"additionalProperties\": {\n            \"type\": \"boolean\"\n           },\n           \"type\": \"object\"\n          },\n          \"info\": {\n           \"additionalProperties\": {\n            \"type\": \"boolean\"\n           },\n           \"type\": \"object\"\n          },\n          \"insight\": {\n           \"type\": \"boolean\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"show\": {\n           \"type\": \"boolean\"\n          }\n         },\n         \"required\": [\n          \"info\",\n          \"insight\",\n          \"show\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"show\": {\n        \"type\": \"boolean\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"show\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resource\": {\n     \"properties\": {\n      \"group\": {\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"scope\": {\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"group\"\n     ],\n     \"type\": \"object\"\n    },\n    \"tabBar\": {\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"header\",\n    \"resource\",\n    \"tabBar\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resource Outline Filter\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

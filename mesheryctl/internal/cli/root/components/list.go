@@ -16,13 +16,14 @@ package components
 
 import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/spf13/cobra"
 )
 
 type componentListFlag struct {
-	Count    bool
-	Page     int
-	PageSize int
+	Count    bool `json:"count" validate:"boolean"`
+	Page     int  `json:"page" validate:"omitempty,gte=1"`
+	PageSize int  `json:"page-size" validate:"omitempty,gte=1"`
 }
 
 var cmdComponentListFlag componentListFlag
@@ -32,7 +33,7 @@ var listComponentCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered components",
 	Long: `List all components registered in Meshery Server
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component/list`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/component/list`,
 	Example: `
 // View list of components
 mesheryctl component list
@@ -46,18 +47,21 @@ mesheryctl component list --page [page-number] --pagesize [page-size]
 // Display the number of components present in Meshery
 mesheryctl component list --count
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentListFlag)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		modelData := display.DisplayDataAsync{
+		componentData := display.DisplayDataAsync{
 			UrlPath:          componentApiPath,
 			DataType:         "component",
-			Header:           []string{"Name", "Model", "Category", "Version"},
+			Header:           []string{"ID", "Name", "Model", "Version"},
 			Page:             cmdComponentListFlag.Page,
 			PageSize:         cmdComponentListFlag.PageSize,
 			IsPage:           cmd.Flags().Changed("page"),
 			DisplayCountOnly: cmdComponentListFlag.Count,
 		}
 
-		err := display.ListAsyncPagination(modelData, generateComponentDataToDisplay)
+		err := display.ListAsyncPagination(componentData, generateComponentDataToDisplay)
 		if err != nil {
 			return err
 		}

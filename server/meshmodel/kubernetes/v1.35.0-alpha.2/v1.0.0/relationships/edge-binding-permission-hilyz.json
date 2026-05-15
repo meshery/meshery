@@ -149,6 +149,12 @@
                       "configuration",
                       "subjects",
                       "_",
+                      "kind"
+                    ],
+                    [
+                      "configuration",
+                      "subjects",
+                      "_",
                       "name"
                     ]
                   ]
@@ -190,6 +196,12 @@
                   "id": null,
                   "kind": "RoleBinding",
                   "mutatedRef": [
+                    [
+                      "configuration",
+                      "subjects",
+                      "_",
+                      "kind"
+                    ],
                     [
                       "configuration",
                       "subjects",

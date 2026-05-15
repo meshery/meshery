@@ -1,0 +1,25 @@
+name: Meshery UI and Server PR Build
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - "master"
+    paths-ignore:
+      - "docs/**"
+      - "mesheryctl/**"
+      - "*.md"
+      - "*.github/**"
+      - "Makefile"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-meshery:
+    uses: ./.github/workflows/build-meshery-image.yml
+  tests-ui-e2e:
+    needs: [build-meshery]
+    uses: ./.github/workflows/test-e2e-pr.yml
+    with:
+      meshery-image: ${{ needs.build-meshery.outputs.meshery-image }}

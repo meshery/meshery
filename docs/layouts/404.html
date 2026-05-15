@@ -1,0 +1,29 @@
+{{ define "main" }}
+<div class="content" style="text-align: left; margin: 50px auto; max-width: 800px;">
+  <h1 id="funny-message" style="font-weight: 400; margin-bottom: 1.5em; font-size: 2em;"></h1>
+  <h3 style="font-style: italic; margin-bottom: 2em; font-size: 1.3em;">Things tend to get a bit meshy around here...</h3>
+  <div class="alert alert-info" style="text-align: center;">
+    Please <a href="https://github.com/meshery/meshery/issues/new?assignees=&labels=docs&template=documentation.md&title=Docs:" target="_blank">report this issue</a> (thank you!) and return to the <a href="/">Meshery Documentation</a>.
+  </div>
+</div>
+
+<script type="text/javascript">
+  var messages = [
+    "Oh, no. Please pardon our meshy site.",
+    "Oops. Please excuse the mesh.",
+    "Looks like this page doesn't exist. What a mesh!",
+    "Please pardon our mesh.",
+    "Lost in the mesh! Our apologies.",
+    "404: Mesh not found. Sorry about that!",
+    "Oops, caught in the mesh. Bear with us!",
+    "Looks like this page got tangled in our mesh. Apologies!",
+    "Mesh happens! We're working on it.",
+    "Oh mesh, where did that page go? Our bad!",
+    "404 error: Page meltdown. We're on the case!",
+    "Lost in the mesh maze. Sorry for the inconvenience!",
+    "Meshed up! Page not found. We're untangling it."
+  ];
+  var message = messages[Math.floor(Math.random()*messages.length)];
+  document.getElementById("funny-message").innerHTML = message;
+</script>
+{{ end }}

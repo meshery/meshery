@@ -8,9 +8,9 @@ type GrafanaBoard struct {
 	Title        string                 `json:"title,omitempty"`
 	Slug         string                 `json:"slug,omitempty"`
 	UID          string                 `json:"uid,omitempty"`
-	OrgID        uint                   `json:"org_id,omitempty"`
+	OrgID        uint                   `json:"orgId,omitempty"`
 	Panels       []*sdk.Panel           `json:"panels,omitempty"`
-	TemplateVars []*GrafanaTemplateVars `json:"template_vars,omitempty"`
+	TemplateVars []*GrafanaTemplateVars `json:"templateVars,omitempty"`
 }
 
 // GrafanaTemplateVars represents template variables in a bboard

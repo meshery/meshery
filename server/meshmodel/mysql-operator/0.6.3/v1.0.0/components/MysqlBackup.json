@@ -15,9 +15,8 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",
@@ -54,16 +53,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00758F",
@@ -205,6 +204,7 @@
     "kind": "MysqlBackup",
     "schema": "{\n \"description\": \"MysqlBackup is the Schema for the mysqlbackups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MysqlBackupSpec defines the desired state of MysqlBackup\",\n   \"properties\": {\n    \"backupSecretName\": {\n     \"description\": \"BackupSecretName the name of secrets that contains the credentials to access the bucket. Default is used the secret specified in cluster.\",\n     \"type\": \"string\"\n    },\n    \"backupURL\": {\n     \"description\": \"BackupURL represents the URL to the backup location, this can be partially specifyied. Default is used the one specified in the cluster.\",\n     \"type\": \"string\"\n    },\n    \"clusterName\": {\n     \"description\": \"ClustterName represents the cluster for which to take backup\",\n     \"type\": \"string\"\n    },\n    \"remoteDeletePolicy\": {\n     \"description\": \"RemoteDeletePolicy the deletion policy that specify how to treat the data from remote storage. By default it's used softDelete.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"clusterName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mysql Backup\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

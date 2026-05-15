@@ -15,9 +15,8 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",
@@ -53,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#003459",
@@ -204,6 +203,7 @@
     "kind": "IngressClassParameters",
     "schema": "{\n \"description\": \"IngressClassParameters is the Schema for the IngressClassParameters API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the IngressClassParameters specification.\",\n   \"properties\": {\n    \"enableLegacyRegexDetection\": {\n     \"default\": false,\n     \"description\": \"EnableLegacyRegexDetection automatically detects if ImplementationSpecific Ingress paths are regular expression\\npaths using the legacy 2.x heuristic. The controller adds the \\\"~\\\" prefix to those paths if the Kong version is\\n3.0 or higher.\",\n     \"type\": \"boolean\"\n    },\n    \"serviceUpstream\": {\n     \"default\": false,\n     \"description\": \"Offload load-balancing to kube-proxy or sidecar.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Ingress Class Parameters\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

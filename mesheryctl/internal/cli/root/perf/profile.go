@@ -25,7 +25,7 @@ import (
 	"github.com/manifoldco/promptui"
 	termbox "github.com/nsf/termbox-go"
 
-	"github.com/ghodss/yaml"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -54,6 +54,14 @@ mesheryctl perf profile test 2
 // View single performance profile with detailed information
 mesheryctl perf profile test --view
 `,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		// Check for valid output Format
+		if outputFormatFlag != "" {
+			return display.ValidateOutputFormat(outputFormatFlag)
+		}
+		return nil
+	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
 		var searchString string
@@ -62,7 +70,7 @@ mesheryctl perf profile test --view
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
+			return utils.ErrLoadConfig(err)
 		}
 
 		// handles spaces in args if quoted args passed
@@ -74,8 +82,7 @@ mesheryctl perf profile test --view
 
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return utils.ErrLoadConfig(err)
 		}
 
 		if len(profiles) == 0 {
@@ -88,14 +95,15 @@ mesheryctl perf profile test --view
 
 		// print in json/yaml format
 		if outputFormatFlag != "" {
-			body, _ := json.Marshal(profiles)
-			if outputFormatFlag == "yaml" {
-				body, _ = yaml.JSONToYAML(body)
-			} else if outputFormatFlag != "json" {
-				utils.Log.Error(ErrInvalidOutputChoice())
-				return nil
+			outputFormatterFactory := display.OutputFormatterFactory[[]models.PerformanceProfile]{}
+			outputFormatter, err := outputFormatterFactory.New(strings.ToLower(outputFormatFlag), profiles)
+			if err != nil {
+				return err
 			}
-			utils.Log.Info(string(body))
+
+			if err := outputFormatter.Display(); err != nil {
+				return err
+			}
 		} else if !viewSingleProfile { // print all profiles
 			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data, nil)
 		} else { // print single profile
@@ -104,7 +112,7 @@ mesheryctl perf profile test --view
 			if len(profiles) > 1 {
 				index, err = userPrompt("profile", "Enter index of the profile", data)
 				if err != nil {
-					return err
+					return ErrUserPrompt(err)
 				}
 			}
 
@@ -113,8 +121,8 @@ mesheryctl perf profile test --view
 			fmt.Printf("Name: %v\n", a.Name)
 			fmt.Printf("ID: %s\n", a.ID.String())
 			fmt.Printf("Total Results: %d\n", a.TotalResults)
-			fmt.Printf("Endpoint: %v\n", a.Endpoints[0])
-			fmt.Printf("Load Generators: %v\n", a.LoadGenerators[0])
+			fmt.Printf("Endpoint: %v\n", firstString(a.Endpoints))
+			fmt.Printf("Load Generators: %v\n", firstString(a.LoadGenerators))
 			fmt.Printf("Test run duration: %v\n", a.Duration)
 			fmt.Printf("QPS: %d\n", a.QPS)
 			fmt.Printf("Infrastructure: %v\n", a.ServiceMesh)
@@ -127,9 +135,8 @@ mesheryctl perf profile test --view
 			if _, ok := a.Metadata["additional_options"]; ok {
 				var out bytes.Buffer
 				err := json.Indent(&out, []byte(a.Metadata["additional_options"].(string)), "", "  ")
-
 				if err != nil {
-					return err
+					return ErrFailMarshal(err)
 				}
 				fmt.Printf("Load generator options:\n%s\n", out.String())
 			}
@@ -165,7 +172,7 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 	defer func() { _ = resp.Body.Close() }()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
+		return nil, nil, utils.ErrReadResponseBody(err)
 	}
 
 	err = json.Unmarshal(body, &response)
@@ -181,15 +188,24 @@ func profilesToStringArrays(profiles []models.PerformanceProfile) [][]string {
 	var data [][]string
 
 	for _, profile := range profiles {
+		loadGenerator := firstString(profile.LoadGenerators)
 		// adding profile to data for list output
 		if profile.LastRun != nil {
-			data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), profile.LoadGenerators[0], profile.LastRun.Time.Format("2006-01-02 15:04:05")})
+			data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), loadGenerator, profile.LastRun.Time.Format("2006-01-02 15:04:05")})
 		} else {
-			data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), profile.LoadGenerators[0], ""})
+			data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), loadGenerator, ""})
 		}
 	}
 
 	return data
+}
+
+func firstString[S ~[]string](values S) string {
+	if len(values) == 0 {
+		return ""
+	}
+
+	return values[0]
 }
 
 func userPrompt(key string, label string, data [][]string) (int, error) {
@@ -225,7 +241,6 @@ func userPrompt(key string, label string, data [][]string) (int, error) {
 	}
 
 	result, err := prompt.Run()
-
 	if err != nil {
 		termbox.Close()
 		return -1, fmt.Errorf("prompt failed %v", err)

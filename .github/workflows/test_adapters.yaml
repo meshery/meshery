@@ -44,6 +44,10 @@ on:
       provider: #default to local
         required: false
         type: string
+      job_type:
+        required: false
+        type: string
+        default: ""
     secrets:
       token:
         required: true
@@ -81,18 +85,21 @@ jobs:
         env:
           provider_token: ${{ secrets.token }}
         run: |
-          echo $provider_token
-          mkdir ~/.meshery
+          if [ -n "$provider_token" ]; then
+            echo "::add-mask::$provider_token"
+          fi
+          mkdir -p ~/.meshery
           config='{"contexts":{"local":{"endpoint":"http://localhost:9081","token":"default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"default"}]}'
           echo $config > ~/.meshery/config.yaml
           cat ~/.meshery/config.yaml
           echo "Using provider: ${{ inputs.provider }}"
           if  [ "${{ inputs.provider }}" = "Meshery" ] && [ "$provider_token" != "" ] ;then
-            echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = "'$provider_token'"' > ~/.meshery/auth.json
+            jq -n --arg token "$provider_token" '{ "meshery-provider": "Meshery", "token": $token }' > ~/.meshery/auth.json
           else
             echo '{ "meshery-provider": "None", "token": "" }'  > ~/.meshery/auth.json
           fi
-          cat ~/.meshery/auth.json
+          chmod 600 ~/.meshery/auth.json
+          echo "Meshery provider auth configured"
 
       # Start Meshery Server (Assuming that this step will create the meshery namespace)
       - name: Start Meshery Server using mesheryctl
@@ -238,7 +245,7 @@ jobs:
       - name: UploadResults
         uses: actions/upload-artifact@v6
         with:
-          name: ${{ inputs.output_filename }}
+          name: ${{ inputs.job_type != '' && format('{0}-', inputs.job_type) || '' }}${{ inputs.output_filename }}
           path: ./${{ inputs.output_filename }}
       - name: exit
         run: |

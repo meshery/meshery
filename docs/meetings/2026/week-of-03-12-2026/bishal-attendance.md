@@ -1,0 +1,1 @@
+Hi everyone, I am Bishal Haldar, a CS student from India. I am currently exploring cloud-native tools and DevOps and recently started diving into Meshery and other CNCF projects. I'm here to learn, understand the project better, and start contributing where I can. Excited to connect with everyone!

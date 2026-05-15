@@ -1,0 +1,80 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "reference",
+  "evaluationQuery": "edge_non_binding_reference_relationship",
+  "status": "enabled",
+  "metadata": {
+    "description": "Reference relationship from AWS S3 Bucket to Kubernetes ConfigMap. This represents applications referencing bucket configuration (bucket name, region, prefix, endpoint) via ConfigMap values.",
+    "capabilities": {
+      "designer": {
+        "edit": {
+          "style": true,
+          "config": false,
+          "label": true
+        }
+      }
+    }
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-s3-controller",
+    "registrant": {
+      "kind": "artifacthub"
+    },
+    "category": {
+      "name": "Provisioning"
+    },
+    "displayName": "AWS S3 Controller"
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Bucket",
+            "model": {
+              "name": "aws-s3-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["displayName"]
+              ],
+              "description": "S3 Bucket identity can be referenced by Kubernetes configuration."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "ConfigMap",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["data"]
+              ],
+              "description": "ConfigMap data can store S3 bucket configuration such as bucket name, region, endpoint, or object prefix."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}

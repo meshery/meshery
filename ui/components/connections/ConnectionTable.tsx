@@ -1,0 +1,619 @@
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
+import { PROMPT_VARIANTS, ResponsiveDataTable } from '@sistent/sistent';
+import LoadingScreen from '../shared/LoadingState/LoadingComponent';
+import { EVENT_TYPES } from '../../lib/event-types';
+import _PromptComponent from '../PromptComponent';
+import resetDatabase from '@/graphql/queries/ResetDatabaseQuery';
+
+import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
+import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
+import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
+import { useWindowDimensions } from '../../utils/dimension';
+import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
+import { useGetConnectionsQuery } from '@/rtk-query/connection';
+
+import { useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
+
+import type {
+  ConnectionTableProps,
+  ConnectionRow,
+  EnvironmentOption,
+  ExpansionFlags,
+  RowData,
+  SelectedFilters,
+  SelectedRows,
+} from './ConnectionTable.types';
+import {
+  ACTION_TYPES,
+  CONNECTION_DOCS_URL,
+  ENVIRONMENT_DOCS_URL,
+  getErrorMessage,
+  getStatusTransition,
+} from './ConnectionTable.constants';
+import { useConnectionActions } from './ConnectionTable.hooks';
+import { useConnectionColumns } from './ConnectionTable.columns';
+import { useConnectionTableOptions } from './ConnectionTable.options';
+import { ConnectionActionMenu, ConnectionDeploymentModeMenu } from './ConnectionActionMenu';
+import { ConnectionTableToolbar } from './ConnectionTableToolbar';
+
+const ConnectionTable = ({
+  selectedFilter,
+  selectedConnectionId,
+  updateUrlWithConnectionId,
+}: ConnectionTableProps) => {
+  const router = useRouter();
+  const {
+    organization,
+    connectionMetadataState,
+    controllerState: meshsyncControllerState,
+  } = useSelector(
+    (state: {
+      ui: {
+        organization?: { id?: string };
+        connectionMetadataState: Record<string, { transitions?: string[]; icon?: string }>;
+        controllerState: unknown;
+      };
+    }) => state.ui,
+  );
+  const ping = useKubernetesHook();
+  const { width } = useWindowDimensions();
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [sortOrder, setSortOrder] = useState('created_at desc');
+  const [rowData, setRowData] = useState<RowData | null>(null);
+  const [rowsExpanded, setRowsExpanded] = useState<number[]>([]);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>({
+    status: 'All',
+    kind: 'All',
+  });
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [kindFilter, setKindFilter] = useState<string | null>(null);
+  const {
+    notify,
+    updateConnectionByIdMutator,
+    addConnectionToEnvironment,
+    removeConnectionFromEnvironment,
+    saveEnvironment,
+    updateConnectionStatus,
+  } = useConnectionActions({ organizationId: organization?.id });
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [deploymentModeAnchorEl, setDeploymentModeAnchorEl] = useState<HTMLElement | null>(null);
+  const open = Boolean(anchorEl);
+  const deploymentModeOpen = Boolean(deploymentModeAnchorEl);
+  const modalRef = useRef<{ show: (options: unknown) => Promise<string | null> } | null>(null);
+
+  useEffect(() => {
+    if (typeof router.query.searchText === 'string') {
+      setSearch(router.query.searchText);
+    }
+  }, [router.query.searchText]);
+
+  const filters = useMemo(
+    () => ({
+      status: {
+        name: 'Status',
+        options: [
+          { label: 'Connected', value: 'connected' },
+          { label: 'Registered', value: 'registered' },
+          { label: 'Discovered', value: 'discovered' },
+          { label: 'Ignored', value: 'ignored' },
+          { label: 'Deleted', value: 'deleted' },
+          { label: 'Maintenance', value: 'maintenance' },
+          { label: 'Disconnected', value: 'disconnected' },
+          { label: 'Not Found', value: 'not found' },
+        ],
+      },
+      kind: {
+        name: 'Kind',
+        options: Object.entries(CONNECTION_KINDS).map(([key, value]) => ({ label: key, value })),
+      },
+    }),
+    [],
+  );
+
+  const handleApplyFilter = () => {
+    const statusFilter = selectedFilters.status === 'All' ? null : selectedFilters.status;
+    const kindFilter = selectedFilters.kind === 'All' ? null : selectedFilters.kind;
+
+    setKindFilter(kindFilter);
+    setStatusFilter(statusFilter);
+  };
+  // lock for not allowing multiple updates at the same time
+  // needs to be a ref because it needs to be shared between renders
+  // and useState loses reactivity when down table custom cells
+  const updatingConnection = useRef(false);
+
+  const {
+    data: connectionData,
+    isError: isConnectionError,
+    error: connectionError,
+    refetch: getConnections,
+    isLoading: isConnectionLoading,
+  } = useGetConnectionsQuery(
+    {
+      page: page,
+      pagesize: pageSize,
+      search: search,
+      order: sortOrder,
+      status: statusFilter ? JSON.stringify([statusFilter]) : '',
+      kind: selectedFilter
+        ? JSON.stringify([selectedFilter])
+        : kindFilter
+          ? JSON.stringify([kindFilter])
+          : '',
+    },
+    undefined,
+  );
+  const {
+    data: environmentsResponse,
+    isSuccess: isEnvironmentsSuccess,
+    isError: isEnvironmentsError,
+    error: environmentsError,
+  } = useGetEnvironmentsQuery(
+    { orgId: organization?.id },
+    {
+      skip: !organization?.id,
+    },
+  );
+
+  const environmentOptions = useMemo(
+    () =>
+      (environmentsResponse?.environments || []).map((env) => ({
+        label: env.name,
+        value: env.id,
+      })),
+    [environmentsResponse?.environments],
+  );
+
+  useEffect(() => {
+    if (isEnvironmentsError) {
+      notify({
+        message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${getErrorMessage(environmentsError)}`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
+
+    if (isConnectionError) {
+      notify({
+        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${getErrorMessage(connectionError)}`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
+  }, [connectionError, environmentsError, isConnectionError, isEnvironmentsError, notify]);
+
+  const enhancedConnections = useMemo(() => {
+    if (!connectionData?.connections) return [];
+
+    return connectionData.connections
+      .filter((conn) => conn.name && conn.kind && conn.status)
+      .map((connection) => ({
+        ...connection,
+        nextStatus: connection.nextStatus || connectionMetadataState[connection.kind]?.transitions,
+        kindLogo: connection.kindLogo || connectionMetadataState[connection.kind]?.icon,
+      }));
+  }, [connectionData?.connections, connectionMetadataState]) as ConnectionRow[];
+
+  const filteredConnections = useMemo(
+    () =>
+      enhancedConnections.filter(({ status, kind }) => {
+        const statusMatch = selectedFilters.status === 'All' || status === selectedFilters.status;
+        const kindMatch = selectedFilters.kind === 'All' || kind === selectedFilters.kind;
+        return statusMatch && kindMatch;
+      }),
+    [enhancedConnections, selectedFilters],
+  );
+
+  const colViews = useMemo(
+    () => [
+      ['name', 'xs'],
+      ['environments', 'm'],
+      ['kind', 'm'],
+      ['type', 's'],
+      ['sub_type', 'na'],
+      ['created_at', 'na'],
+      ['status', 'xs'],
+      ['Actions', 'xs'],
+      ['ConnectionID', 'na'],
+    ],
+    [],
+  );
+  const handleDeleteConnection = useCallback(
+    async (connectionId: string) => {
+      if (!connectionId || !modalRef.current) {
+        return;
+      }
+
+      const response = await modalRef.current.show({
+        title: `Delete Connection`,
+        subtitle: `Are you sure that you want to delete the connection?`,
+        primaryOption: 'DELETE',
+        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
+        variant: PROMPT_VARIANTS.DANGER,
+      });
+
+      if (response === 'DELETE') {
+        await updateConnectionStatus(connectionId, CONNECTION_STATES.DELETED);
+      }
+    },
+    [updateConnectionStatus],
+  );
+
+  const handleDeleteConnections = useCallback(
+    async (selected: SelectedRows) => {
+      if (!selected?.data?.length || !modalRef.current) {
+        return;
+      }
+
+      // Capture the connection IDs up front. The user has to acknowledge the
+      // confirmation modal before delete fires, and `filteredConnections` can
+      // be invalidated/reordered by an in-flight refetch in that window — using
+      // the index after-the-fact dereferenced stale rows and silently no-op'd
+      // (no PUT, no notification), which surfaced as a hung e2e snackbar wait.
+      const ids = selected.data
+        .map(({ index }) => filteredConnections[index]?.id)
+        .filter(Boolean) as string[];
+
+      if (ids.length === 0) {
+        return;
+      }
+
+      const response = await modalRef.current.show({
+        title: `Delete Connections`,
+        subtitle: `Are you sure that you want to delete the connections?`,
+        primaryOption: 'DELETE',
+        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
+        variant: PROMPT_VARIANTS.DANGER,
+      });
+
+      if (response === 'DELETE') {
+        await Promise.all(
+          ids.map((connectionId) =>
+            updateConnectionStatus(connectionId, CONNECTION_STATES.DELETED),
+          ),
+        );
+      }
+    },
+    [filteredConnections, updateConnectionStatus],
+  );
+
+  const handleError = useCallback(
+    (action: { error_msg?: string } | string) => (error: unknown) => {
+      updateProgress({ showProgress: false });
+
+      const message =
+        typeof action === 'string'
+          ? action
+          : `${action.error_msg}: ${getErrorMessage(error, 'Request failed')}`;
+
+      notify({
+        message,
+        event_type: EVENT_TYPES.ERROR,
+        details: String(error),
+      });
+    },
+    [notify],
+  );
+
+  const handleActionMenuClose = useCallback(() => {
+    setAnchorEl(null);
+    setRowData(null);
+  }, []);
+
+  const handleDeploymentModeMenuClose = useCallback(() => {
+    setDeploymentModeAnchorEl(null);
+  }, []);
+
+  const getConnectionAtRowIndex = useCallback(
+    (rowIndex?: number | null) => {
+      if (rowIndex == null) {
+        return null;
+      }
+
+      return filteredConnections[rowIndex] ?? null;
+    },
+    [filteredConnections],
+  );
+
+  const handleDeploymentModeChange = useCallback(
+    async (newMode: string) => {
+      const connection = getConnectionAtRowIndex(rowData?.rowIndex);
+
+      if (!connection) {
+        handleDeploymentModeMenuClose();
+        handleActionMenuClose();
+        return;
+      }
+
+      try {
+        await updateConnectionByIdMutator({
+          connectionId: connection.id,
+          body: {
+            ...connection,
+            metadata: {
+              ...connection.metadata,
+              meshsync_deployment_mode: newMode,
+            },
+          },
+        }).unwrap();
+
+        notify({
+          message: `Deployment mode changed to ${newMode}`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      } catch (error) {
+        notify({
+          message: `Failed to change deployment mode: ${getErrorMessage(error)}`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+      }
+
+      handleDeploymentModeMenuClose();
+      handleActionMenuClose();
+    },
+    [
+      getConnectionAtRowIndex,
+      handleActionMenuClose,
+      handleDeploymentModeMenuClose,
+      notify,
+      rowData?.rowIndex,
+      updateConnectionByIdMutator,
+    ],
+  );
+
+  const handleFlushMeshSync = useCallback(
+    () => async () => {
+      handleActionMenuClose();
+
+      const connection = getConnectionAtRowIndex(rowData?.rowIndex);
+      const connectionName = connection?.metadata?.name;
+
+      if (!connection || !modalRef.current) {
+        return;
+      }
+
+      const response = await modalRef.current.show({
+        title: `Flush MeshSync data for ${connectionName} ?`,
+        subtitle: `Are you sure to Flush MeshSync data for “${connectionName}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
+        primaryOption: 'PROCEED',
+        variant: PROMPT_VARIANTS.WARNING,
+      });
+
+      if (response === 'PROCEED') {
+        updateProgress({ showProgress: true });
+        resetDatabase({
+          selector: {
+            clearDB: 'true',
+            ReSync: 'true',
+            hardReset: 'false',
+          },
+          k8scontextID: connection.metadata?.id || '',
+        }).subscribe({
+          next: (result) => {
+            updateProgress({ showProgress: false });
+            if (result.resetStatus === 'PROCESSING') {
+              notify({ message: `Database reset successful.`, event_type: EVENT_TYPES.SUCCESS });
+            }
+          },
+          error: handleError('Database is not reachable, try restarting server.'),
+        });
+      }
+    },
+    [getConnectionAtRowIndex, handleActionMenuClose, handleError, notify, rowData?.rowIndex],
+  );
+
+  const handleEnvironmentSelect = useCallback(
+    async (
+      connectionId: string,
+      connName: string,
+      assignedEnvironments: EnvironmentOption[],
+      selectedEnvironments: EnvironmentOption[],
+      unSelectedEnvironments: EnvironmentOption[],
+    ) => {
+      if (updatingConnection.current) {
+        return;
+      }
+
+      updatingConnection.current = true;
+
+      try {
+        const newlySelectedEnvironments = selectedEnvironments.filter((environment) => {
+          return !assignedEnvironments.some(
+            (assignedEnvironment) => assignedEnvironment.value === environment.value,
+          );
+        });
+
+        const selectedExistingEnvironments = newlySelectedEnvironments.filter(
+          (environment) => !environment.__isNew__,
+        );
+        const selectedNewEnvironments = newlySelectedEnvironments.filter(
+          (environment) => environment.__isNew__,
+        );
+
+        await Promise.all([
+          ...selectedExistingEnvironments.map((environment) =>
+            addConnectionToEnvironment(
+              environment.value || '',
+              environment.label,
+              connectionId,
+              connName,
+            ),
+          ),
+          ...selectedNewEnvironments.map((environment) =>
+            saveEnvironment(connectionId, connName, environment.label),
+          ),
+          ...unSelectedEnvironments.map((environment) =>
+            removeConnectionFromEnvironment(
+              environment.value || '',
+              environment.label,
+              connectionId,
+              connName,
+            ),
+          ),
+        ]);
+      } finally {
+        getConnections();
+        updatingConnection.current = false;
+      }
+    },
+    [addConnectionToEnvironment, getConnections, removeConnectionFromEnvironment, saveEnvironment],
+  );
+
+  const handleStatusChange = useCallback(
+    async (event, connectionId: string, connectionKind: string, connectionStatus: string) => {
+      event.stopPropagation();
+
+      if (!modalRef.current) {
+        return;
+      }
+
+      const status = event.target.value;
+      const subtitle = getStatusTransition(connectionKind, connectionStatus, status.toLowerCase());
+      const response = await modalRef.current.show({
+        title: `Transition connection to ${status.toUpperCase()}?`,
+        subtitle,
+        primaryOption: 'Confirm',
+        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
+        variant: PROMPT_VARIANTS.WARNING,
+      });
+
+      if (response === 'Confirm') {
+        await updateConnectionStatus(connectionId, status);
+      }
+    },
+    [updateConnectionStatus],
+  );
+
+  const handleActionMenuOpen = useCallback((event, tableMeta: RowData) => {
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+    setRowData(tableMeta);
+  }, []);
+
+  // Consolidate multiple useRef hooks into a single object
+  const expansionFlags = useRef<ExpansionFlags>({
+    isHandlingExpansion: false,
+    isInitialLoad: true,
+    isUrlExpansion: false,
+    lastProcessedId: null,
+  });
+
+  // Update rowsExpanded when a specific connection ID is selected
+  useEffect(() => {
+    if (!selectedConnectionId || expansionFlags.current.isHandlingExpansion) return;
+    if (expansionFlags.current.lastProcessedId === selectedConnectionId) return;
+
+    if (filteredConnections && filteredConnections.length > 0) {
+      expansionFlags.current.isUrlExpansion = true;
+      expansionFlags.current.lastProcessedId = selectedConnectionId;
+
+      const index = filteredConnections?.findIndex((conn) => conn.id === selectedConnectionId);
+      if (index !== -1) {
+        setRowsExpanded([index]);
+      } else {
+        updateUrlWithConnectionId?.('');
+      }
+
+      expansionFlags.current.isUrlExpansion = false;
+      expansionFlags.current.isInitialLoad = false;
+    }
+  }, [filteredConnections, selectedConnectionId, updateUrlWithConnectionId]);
+
+  const columns = useConnectionColumns({
+    url: CONNECTION_DOCS_URL,
+    envUrl: ENVIRONMENT_DOCS_URL,
+    environmentOptions,
+    isEnvironmentsSuccess,
+    updatingConnection,
+    handleDeleteConnection,
+    handleEnvironmentSelect,
+    handleStatusChange,
+    handleActionMenuOpen,
+    ping,
+  });
+  const columnNames = useMemo(() => columns.map((column) => column.name), [columns]);
+
+  const options = useConnectionTableOptions({
+    totalCount: connectionData?.totalCount,
+    page,
+    pageSize,
+    setPage,
+    setPageSize,
+    sortOrder,
+    setSortOrder,
+    rowsExpanded,
+    setRowsExpanded,
+    columns,
+    filteredConnections,
+    meshsyncControllerState,
+    selectedConnectionId,
+    updateUrlWithConnectionId,
+    expansionFlags,
+    handleDeleteConnections,
+  });
+
+  const [tableCols, updateCols] = useState(columns);
+
+  useEffect(() => {
+    updateCols(columns);
+  }, [columns]);
+
+  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean | undefined>>(
+    () => getResponsiveColumnVisibility(columnNames, colViews, width),
+  );
+
+  useEffect(() => {
+    setColumnVisibility(getResponsiveColumnVisibility(columnNames, colViews, width));
+  }, [colViews, columnNames, width]);
+
+  if (isConnectionLoading) {
+    return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Connections" />;
+  }
+
+  return (
+    <>
+      <ConnectionTableToolbar
+        isSearchExpanded={isSearchExpanded}
+        setIsSearchExpanded={setIsSearchExpanded}
+        onSearch={setSearch}
+        filters={filters}
+        selectedFilters={selectedFilters}
+        setSelectedFilters={setSelectedFilters}
+        handleApplyFilter={handleApplyFilter}
+        columns={columns}
+        columnVisibility={columnVisibility}
+        setColumnVisibility={setColumnVisibility}
+      />
+
+      <ResponsiveDataTable
+        data={filteredConnections}
+        columns={columns}
+        options={options}
+        tableCols={tableCols}
+        updateCols={updateCols}
+        columnVisibility={columnVisibility}
+      />
+
+      <_PromptComponent ref={modalRef} />
+      <ConnectionActionMenu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleActionMenuClose}
+        onFlushMeshSync={handleFlushMeshSync()}
+        onDeploymentModeAnchor={(e) => setDeploymentModeAnchorEl(e.currentTarget)}
+      />
+
+      <ConnectionDeploymentModeMenu
+        anchorEl={deploymentModeAnchorEl}
+        open={deploymentModeOpen}
+        onClose={handleDeploymentModeMenuClose}
+        onSelectMode={handleDeploymentModeChange}
+      />
+    </>
+  );
+};
+
+export default ConnectionTable;

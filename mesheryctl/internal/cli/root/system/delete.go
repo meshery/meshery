@@ -23,7 +23,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -83,7 +82,7 @@ func deleteContainers() error {
 	}
 
 	switch currCtx.GetPlatform() {
-	case "docker":
+	case platformDocker:
 		// if the platform is docker, then remove all the containers
 		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 			if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
@@ -100,28 +99,28 @@ func deleteContainers() error {
 		}
 
 		if !userResponse {
-			log.Info("Delete aborted.")
+			utils.Log.Info("Delete aborted.")
 			return nil
 		}
 
-		log.Info("Deleting Meshery containers...")
+		utils.Log.Info("Deleting Meshery containers...")
 
 		// Use compose library to remove containers
 		composeClient, err := utils.NewComposeClient()
 		if err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to create compose client"))
+			return utils.ErrDockerComposeClient(err)
 		}
 
 		// Remove all Docker containers (equivalent to docker compose rm)
 		if err := composeClient.Remove(context.Background(), utils.DockerComposeFile); err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to delete Meshery containers"))
+			return utils.ErrDockerComposeRemove(err)
 		}
-		log.Info("Meshery containers deleted.")
-	case "kubernetes":
-		log.Info("The 'delete' command is only supported for the Docker platform.")
-		log.Info("For Kubernetes, use 'mesheryctl system stop' to remove Meshery resources.")
+		utils.Log.Info("Meshery containers deleted.")
+	case platformKubernetes:
+		utils.Log.Info("The 'delete' command is only supported for the Docker platform.")
+		utils.Log.Info("For Kubernetes, use 'mesheryctl system stop' to remove Meshery resources.")
 	default:
-		return errors.New(utils.SystemError(fmt.Sprintf("unsupported platform: %s", currCtx.GetPlatform())))
+		return ErrUnsupportedPlatform(currCtx.GetPlatform(), utils.CfgFile)
 	}
 
 	return nil

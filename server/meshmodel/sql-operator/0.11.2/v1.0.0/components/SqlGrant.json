@@ -15,9 +15,8 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",
@@ -54,16 +53,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -205,6 +204,7 @@
     "kind": "SqlGrant",
     "schema": "{\n \"description\": \"SqlGrant is the Schema for the sqlgrant API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SqlGrantSpec defines the desired state of SqlGrant\",\n   \"properties\": {\n    \"cleanupPolicy\": {\n     \"description\": \"Specifies how to handle deletion of a SqlUser. Valid values are: - \\\"Retain\\\" (default): keeps the external resource when the object is deleted; - \\\"Delete\\\": deletes the external resource when the object is deleted;\",\n     \"enum\": [\n      \"Retain\",\n      \"Delete\"\n     ],\n     \"type\": \"string\"\n    },\n    \"databaseRef\": {\n     \"description\": \"Reference to the SqlUser\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the SqlObject\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the SqlObject\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"grants\": {\n     \"description\": \"List of grants\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"userRef\": {\n     \"description\": \"Reference to the SqlUser\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the SqlObject\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the SqlObject\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"databaseRef\",\n    \"grants\",\n    \"userRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sql Grant\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

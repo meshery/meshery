@@ -1,0 +1,16 @@
+services:
+  server:
+    build:
+      context: .
+      target: dev
+    ports:
+      - "1313:1313"
+    entrypoint: ["hugo", "server", "--bind", "0.0.0.0","--enableGitInfo=false"]
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /src
+          ignore:
+            - node_modules/
+

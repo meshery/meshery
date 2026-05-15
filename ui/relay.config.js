@@ -4,8 +4,8 @@
  */
 
 module.exports = {
-  // ...
   // Configuration options accepted by the `relay-compiler` command-line tool and `babel-plugin-relay`.
-  src: './components',
+  language: 'typescript',
+  src: './',
   schema: '../server/internal/graphql/schema/schema.graphql',
 };

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Compatibility Matrix on Documentation</title>
+    <link>/v0.9/installation/compatibility-matrix/</link>
+    <description>Recent content in Compatibility Matrix on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/installation/compatibility-matrix/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Meshery-Cilium Past Results</title>
+      <link>/v0.9/installation/compatibility-matrix/meshery-cilium-past-results/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/compatibility-matrix/meshery-cilium-past-results/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Meshery-Consul Past Results</title>
+      <link>/v0.9/installation/compatibility-matrix/meshery-consul-past-results/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/compatibility-matrix/meshery-consul-past-results/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Meshery-Istio Past Results</title>
+      <link>/v0.9/installation/compatibility-matrix/meshery-istio-past-results/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/compatibility-matrix/meshery-istio-past-results/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Meshery-Kuma Past Results</title>
+      <link>/v0.9/installation/compatibility-matrix/meshery-kuma-past-results/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/compatibility-matrix/meshery-kuma-past-results/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Meshery-Linkerd Past Results</title>
+      <link>/v0.9/installation/compatibility-matrix/meshery-linkerd-past-results/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/compatibility-matrix/meshery-linkerd-past-results/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Meshery-Nginx-SM Past Results</title>
+      <link>/v0.9/installation/compatibility-matrix/meshery-nginx-past-results/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/compatibility-matrix/meshery-nginx-past-results/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Meshery-OSM Past Results</title>
+      <link>/v0.9/installation/compatibility-matrix/meshery-osm-past-results/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/compatibility-matrix/meshery-osm-past-results/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Meshery-Traefik-Mesh Past Results</title>
+      <link>/v0.9/installation/compatibility-matrix/meshery-traefik-mesh-past-results/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/compatibility-matrix/meshery-traefik-mesh-past-results/</guid>
+      <description></description>
+    </item>
+  </channel>
+</rss>

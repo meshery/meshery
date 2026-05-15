@@ -3,15 +3,15 @@ import { mockPerfApis } from './mocks/mockPerfApi';
 import { DashboardPage } from './pages/DashboardPage';
 
 const performanceProfiles = [
-  {
-    profileName: 'Fortio-Perf-Test',
-    serviceMesh: 'None',
-    url: 'https://meshery.io/',
-    loadGenerator: 'fortio',
-    concurrentRequest: '2',
-    qps: '2',
-    duration: '15s',
-  },
+  // {
+  //   profileName: 'Fortio-Perf-Test',
+  //   serviceMesh: 'None',
+  //   url: 'https://meshery.io/',
+  //   loadGenerator: 'fortio',
+  //   concurrentRequest: '2',
+  //   qps: '2',
+  //   duration: '15s',
+  // },
 ];
 
 performanceProfiles.forEach((config) => {

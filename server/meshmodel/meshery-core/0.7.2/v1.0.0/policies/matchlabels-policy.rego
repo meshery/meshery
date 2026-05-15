@@ -1,25 +1,12 @@
 package eval
 
-import data.core_utils
-import data.feasibility_evaluation_utils
 import rego.v1
 
-import data.core_utils.component_alias
-import data.core_utils.component_declaration_by_id
 import data.core_utils.configuration_for_component_at_path
-import data.core_utils.from_component_id
-import data.core_utils.get_component_configuration
-import data.core_utils.new_uuid
-import data.core_utils.object_get_nested
-import data.core_utils.pop_first
 import data.core_utils.static_uuid
-import data.core_utils.to_component_id
 import data.core_utils.truncate_set
 import data.feasibility_evaluation_utils.is_relationship_feasible_from
 import data.feasibility_evaluation_utils.is_relationship_feasible_to
-
-import data.actions
-import data.eval_rules
 
 # Notes :
 # these policies take advantage of set comprehensions to weedout duplicates at any stage
