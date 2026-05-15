@@ -151,7 +151,7 @@ const (
 	ErrMeshsyncStoreUpdatesCode           = "meshery-server-1380"
 	ErrRemoteProviderCapabilitiesCode     = "meshery-server-1420"
 	ErrRemoteProviderAuthExhaustedCode    = "meshery-server-1421"
-	ErrTokenIssuerMismatchCode            = "meshery-server-1422"
+	ErrTokenIssuerMismatchCode            = "meshery-server-1430"
 )
 
 var (
