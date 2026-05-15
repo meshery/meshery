@@ -1,18 +1,26 @@
 //NOTE: This file is being refactored to use the new notification center
 
+import { useCallback } from 'react';
 import { CloseIcon, IconButton, ToggleButtonGroup } from '@sistent/sistent';
 import { useSnackbar } from 'notistack';
-import { iconMedium } from '../../css/icons.styles';
-import moment from 'moment';
+import { iconMedium } from '../../css/iconSizes';
 import { v4 } from 'uuid';
 import { store as rtkStore } from '../../store/index';
 import { toggleNotificationCenter } from '../../store/slices/events';
 import { NOTIFICATION_CENTER_TOGGLE_CLASS } from '../../components/layout/NotificationCenter/constants';
-import React from 'react';
 import BellIcon from '../../assets/icons/BellIcon';
 import { AddClassRecursively } from '../Elements';
-import { useCallback } from 'react';
 import { formatApiError } from '../helpers/meshkitError';
+
+type NotifyEventType = string | { type?: string | null } | null | undefined;
+
+type NotifyPayload = {
+  id?: string | null;
+  message: string;
+  dataTestID?: string;
+  event_type?: NotifyEventType;
+  showInNotificationCenter?: boolean;
+};
 
 const openEvent = () => {
   rtkStore.dispatch(toggleNotificationCenter());
@@ -35,14 +43,9 @@ export const useNotification = () => {
       id = null,
       message,
       dataTestID = 'notify',
-      details = null,
       event_type,
-      timestamp = null,
-      customEvent = null,
       showInNotificationCenter = false,
-      pushToServer = false,
-    }) => {
-      timestamp = timestamp ?? moment.utc().valueOf();
+    }: NotifyPayload) => {
       id = id || v4();
 
       enqueueSnackbar(message, {

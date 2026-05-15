@@ -223,4 +223,12 @@ ExportDesignModalComponent.displayName = 'ExportDesignModal';
 
 export const ExportDesignModal = memo(ExportDesignModalComponent);
 
+/**
+ * Unwrapped (non-memo) variant for use in remote extension `injectProps`.
+ * Remote bundles (e.g. Kanvas) may call the component directly as a function;
+ * `memo()` returns a plain object without `.apply`, which causes
+ * "i.apply is not a function" at runtime in the remote bundle.
+ */
+export { ExportDesignModalComponent };
+
 export default ExportDesignModal;
