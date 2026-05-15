@@ -40,6 +40,7 @@ import mesheryUiReducer, {
   toggleDrawer,
   toggleCatalogContent,
   setControllerState,
+  clearControllerState,
   updateExtensionType,
   updateProviderCapabilities,
   setConnectionMetadata,
@@ -151,10 +152,60 @@ describe('mesheryUi slice', () => {
     expect(state.catalogVisibility).toBe(false);
   });
 
-  it('setControllerState updates controllerState', () => {
+  it('setControllerState wholesale-replaces for non-array payloads (legacy callers)', () => {
     let state = mesheryUiReducer(undefined, { type: 'init' } as any);
     state = mesheryUiReducer(state, setControllerState({ controllerState: { ok: true } }));
     expect(state.controllerState).toEqual({ ok: true });
+  });
+
+  it('setControllerState merges array payloads by (connectionID, controller) key', () => {
+    let state = mesheryUiReducer(undefined, { type: 'init' } as any);
+
+    // Initial seed from the SSE stream — full snapshot of two connections.
+    state = mesheryUiReducer(
+      state,
+      setControllerState({
+        controllerState: [
+          { connectionID: 'c1', controller: 'operator', status: 'ENABLED', version: 'v1' },
+          { connectionID: 'c1', controller: 'meshsync', status: 'ENABLED', version: 'v1' },
+          { connectionID: 'c2', controller: 'operator', status: 'ENABLED', version: 'v1' },
+        ],
+      }),
+    );
+    expect(state.controllerState).toHaveLength(3);
+
+    // Diff tick — only c1/operator changed. The other two entries must
+    // survive: this is the regression a wholesale replace would cause.
+    state = mesheryUiReducer(
+      state,
+      setControllerState({
+        controllerState: [
+          { connectionID: 'c1', controller: 'operator', status: 'DISABLED', version: 'v2' },
+        ],
+      }),
+    );
+    expect(state.controllerState).toHaveLength(3);
+    const updated = (state.controllerState as Array<Record<string, unknown>>).find(
+      (item) => item.connectionID === 'c1' && item.controller === 'operator',
+    );
+    expect(updated).toMatchObject({ status: 'DISABLED', version: 'v2' });
+    const untouched = (state.controllerState as Array<Record<string, unknown>>).find(
+      (item) => item.connectionID === 'c2' && item.controller === 'operator',
+    );
+    expect(untouched).toMatchObject({ status: 'ENABLED', version: 'v1' });
+  });
+
+  it('clearControllerState resets controllerState to null', () => {
+    let state = mesheryUiReducer(undefined, { type: 'init' } as any);
+    state = mesheryUiReducer(
+      state,
+      setControllerState({
+        controllerState: [{ connectionID: 'c1', controller: 'operator', status: 'ENABLED' }],
+      }),
+    );
+    expect(state.controllerState).not.toBeNull();
+    state = mesheryUiReducer(state, clearControllerState());
+    expect(state.controllerState).toBeNull();
   });
 
   it('updateExtensionType updates extensionType', () => {
