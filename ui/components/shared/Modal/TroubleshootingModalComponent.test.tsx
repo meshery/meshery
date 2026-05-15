@@ -31,9 +31,14 @@ vi.mock('@sistent/sistent', () => ({
 
 vi.mock('@/theme', () => ({
   styled:
-    (_Component: any) =>
+    (Component: any) =>
     () =>
-    ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    ({ children, ...props }: any) =>
+      typeof Component === 'string' ? (
+        React.createElement(Component, props, children)
+      ) : (
+        <Component {...props}>{children}</Component>
+      ),
 }));
 
 vi.mock('@/components/shared/Modal', () => ({
@@ -61,7 +66,10 @@ describe('TroubleshootingModal', () => {
 
   it('shows the modal title when open', () => {
     render(<TroubleshootingModal open={true} setOpen={vi.fn()} />);
-    expect(screen.getByText('Extensions Troubleshooting Guide')).toBeInTheDocument();
+    expect(screen.getByTestId('ts-modal')).toHaveAttribute(
+      'data-title',
+      'Extensions Troubleshooting Guide',
+    );
   });
 
   it('calls setOpen(false) when the close button is clicked', async () => {

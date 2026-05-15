@@ -26,7 +26,7 @@ vi.mock('./Modal', () => ({
   ),
 }));
 
-vi.mock('../../public/static/img/drawer-icons/filter_svg', () => ({
+vi.mock('../../../public/static/img/drawer-icons/filter_svg', () => ({
   default: () => <svg data-testid="filter-icon" />,
 }));
 

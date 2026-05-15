@@ -18,9 +18,14 @@ vi.mock('@sistent/sistent', () => ({
 
 vi.mock('@/theme', () => ({
   styled:
-    (_Component: any) =>
+    (Component: any) =>
     () =>
-    ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    ({ children, ...props }: any) =>
+      typeof Component === 'string' ? (
+        React.createElement(Component, props, children)
+      ) : (
+        <Component {...props}>{children}</Component>
+      ),
   useTheme: () => ({
     palette: {
       common: { white: '#fff' },

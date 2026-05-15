@@ -12,6 +12,7 @@ vi.mock('@sistent/sistent', () => ({
     </button>
   ),
   ExternalLinkIcon: () => <svg data-testid="external-link" />,
+  componentIcon: ({ kind }: any) => `/icons/${kind}.svg`,
 }));
 
 vi.mock('@/theme', () => ({
