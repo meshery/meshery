@@ -183,22 +183,7 @@
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;a href="../../guides/infrastructure-management/sample-apps/"&gt;Bookinfo&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Meshery Adapter for Nighthawk</title><link>/extensions/adapters/nighthawk/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/adapters/nighthawk/</guid><description>&lt;h3 id="features"&gt;
-	Features
-&lt;/h3&gt;
-&lt;ol&gt;
-&lt;li&gt;Lifecycle management of Nighthawk&lt;/li&gt;
-&lt;li&gt;Performance characterization&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id="performance-characterization"&gt;
-	Performance characterization
-&lt;/h2&gt;
-&lt;p&gt;Identify overhead involved in running Nighthawk, various Nighthawk configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Prometheus integration&lt;/li&gt;
-&lt;li&gt;Grafana integration&lt;/li&gt;
-&lt;/ol&gt;
-&lt;!-- ### Performance tests --&gt;</description></item><item><title>Meshery Adapter for Tanzu Service Mesh</title><link>/extensions/adapters/tanzu-sm/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/adapters/tanzu-sm/</guid><description>&lt;h3 id="suggested-reading"&gt;
+&lt;p&gt;&lt;a href="../../guides/infrastructure-management/sample-apps/"&gt;Bookinfo&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Meshery Adapter for Tanzu Service Mesh</title><link>/extensions/adapters/tanzu-sm/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/adapters/tanzu-sm/</guid><description>&lt;h3 id="suggested-reading"&gt;
 	Suggested Reading
 &lt;/h3&gt;
 &lt;ul&gt;
