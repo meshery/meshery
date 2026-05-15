@@ -2,7 +2,6 @@ import { expect, Page, Response } from '@playwright/test';
 import { test } from './fixtures/project';
 import { ENV } from './env';
 import { waitForSnackBar } from './utils/waitForSnackBar';
-import { DashboardPage } from './pages/DashboardPage';
 
 // Define the shape of the transition test objects
 interface TransitionTest {
@@ -48,9 +47,7 @@ const transitionTests: TransitionTest[] = [
 
 test.describe.serial('Connection Management Tests', () => {
   test.beforeEach(async ({ page }) => {
-    const dashboardPage = new DashboardPage(page);
-    await dashboardPage.navigateToDashboard();
-    await dashboardPage.navigateToConnections();
+    await page.goto('/management/connections');
     await page.waitForURL(/\/management\/connections/);
     await expect(page.getByTestId('ConnectionTable-search')).toBeVisible();
   });
