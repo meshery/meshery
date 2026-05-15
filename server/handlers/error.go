@@ -533,7 +533,7 @@ func ErrDeleteFilter(err error) error {
 }
 
 func ErrSavePattern(err error) error {
-	return errors.New(ErrSavePatternCode, errors.Alert, []string{"Error failed to save design."}, []string{err.Error()}, []string{"Cannot save the design due to an invalid path or URL"}, []string{"Verify that you have an active user session. Try logging and in again.", "Confirm that you have sufficient permissions to save the design.", "Try reducing the size of the design file by removing the number of images, using alternative image formats or removing other non-critical components from the design. See https://docs.layer5.io/kanvas/advanced/performance/."})
+	return errors.New(ErrSavePatternCode, errors.Alert, []string{"Error failed to save design."}, []string{err.Error()}, []string{"Cannot save the design due to an invalid path or URL"}, []string{"Verify that you have an active user session. Try logging and in again.", "Confirm that you have sufficient permissions to save the design.", "Try reducing the size of the design file by removing the number of images, using alternative image formats or removing other non-critical components from the design."})
 }
 
 func ErrSaveApplication(err error) error {
@@ -1028,7 +1028,7 @@ func ErrUpdateEntityStatus(err error) error {
 // failures (the common case), 501 Not Implemented when the active
 // provider is the local provider, which has no extensions backend.
 func ErrExtensionProxy(err error) error {
-	return errors.New(ErrExtensionProxyCode, errors.Alert, []string{"Extension proxy request failed"}, []string{err.Error()}, []string{"The remote provider could not be reached (network failure, DNS resolution, or TLS handshake failure).", "The remote provider returned a non-2xx response that the proxy could not translate.", "The active provider is the local provider, which has no extensions backend."}, []string{"Verify the remote provider is reachable from this Meshery instance and that the user's session token has not expired. Retry the request after re-authenticating if the failure persists.", "If running against the local provider, switch to a remote provider (Layer5 Cloud) that exposes the extensions surface."})
+	return errors.New(ErrExtensionProxyCode, errors.Alert, []string{"Extension proxy request failed"}, []string{err.Error()}, []string{"The remote provider could not be reached (network failure, DNS resolution, or TLS handshake failure).", "The remote provider returned a non-2xx response that the proxy could not translate.", "The active provider is the local provider, which has no extensions backend."}, []string{"Verify the remote provider is reachable from this Meshery instance and that the user's session token has not expired. Retry the request after re-authenticating if the failure persists.", "If running against the local provider, switch to a remote provider that exposes the extensions surface."})
 }
 
 // ErrInitializeMachine wraps failures of the connection state-machine

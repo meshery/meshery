@@ -4,6 +4,9 @@ import { DashboardPage } from './DashboardPage';
 export class ExtensionsPage {
   constructor(page) {
     this.page = page;
+    this.extensionNavRegion = page.getByTestId('extension-navigation-region');
+    this.extensionRootNavItems = page.getByTestId('extension-nav-root-item');
+    this.extensionRegionTopLevelLists = this.extensionNavRegion.locator(':scope > ul');
 
     this.kanvasSnapshotHeading = page.getByTestId('kanvas-snapshot-heading');
     this.kanvasSnapshotDescription = page.getByTestId('kanvas-snapshot-description');
@@ -48,18 +51,14 @@ export class ExtensionsPage {
     await expect(this.performanceEnableBtn).toBeEnabled();
   }
 
-  async verifyKanvasSignupUI() {
-    await expect(this.kanvasSignupHeading).toBeVisible();
-    await expect(this.kanvasSignupBtn).toBeVisible();
-  }
-
-  async hasKanvasAccess() {
-    const btnText = await this.kanvasSignupBtn.textContent();
-    return btnText?.trim() === 'Enabled';
-  }
-
   async toggleCatalog() {
     await this.catalogToggleSwitch.click();
+  }
+
+  async verifyExtensionNavItemsUseTopLevelLayout() {
+    await expect(this.extensionNavRegion).toBeVisible();
+    await expect(this.extensionRootNavItems.first()).toBeVisible();
+    await expect(this.extensionRegionTopLevelLists).toHaveCount(0);
   }
 
   normalizeUrl(url) {

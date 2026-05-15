@@ -20,11 +20,11 @@ import {
   getColumnValue,
   getVisibilityColums,
 } from '../../../utils/utils';
-import RegisterConnectionModal from './RegisterConnectionModal';
+import RegisterConnectionModal from '../RegisterConnectionModal';
 import { CONNECTION_STATES, MESHSYNC_STATES } from '../../../utils/Enum';
 import { getResponsiveColumnVisibility } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
-import { FormatId } from '../../DataFormatter';
+import { FormatId } from '../../data-formatter';
 import {
   useGetMeshSyncResourceKindsQuery,
   useGetMeshSyncResourcesQuery,

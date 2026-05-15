@@ -43,6 +43,8 @@ vi.mock('@sistent/sistent', () => ({
   },
   MenuItem: ({ children }) => <div>{children}</div>,
   Box: ({ children }) => <div>{children}</div>,
+  SyncAltIcon: () => <svg data-testid="sync-alt-icon" />,
+  MoreVertIcon: () => <svg data-testid="more-vert-icon" />,
   IconButton: ({ children, onClick, ...props }) => (
     <button onClick={onClick} type="button" {...props}>
       {children}
@@ -87,7 +89,7 @@ vi.mock('./styles', () => ({
   ConnectionStyledSelect: ({ children }) => <div>{children}</div>,
 }));
 
-vi.mock('../DataFormatter', () => ({
+vi.mock('../data-formatter', () => ({
   FormatId: ({ id }) => <span>{id}</span>,
   formatDate: (value) => value,
 }));
@@ -97,7 +99,7 @@ vi.mock('../../css/icons.styles', () => ({
   iconSmall: {},
 }));
 
-vi.mock('../LoadingComponents/LoadingComponent', () => ({
+vi.mock('../shared/LoadingState/LoadingComponent', () => ({
   default: () => <div data-testid="loading-screen" />,
 }));
 
@@ -117,11 +119,11 @@ vi.mock('../../utils/utils', () => ({
   },
 }));
 
-vi.mock('../graphql/queries/ResetDatabaseQuery', () => ({
+vi.mock('@/graphql/queries/ResetDatabaseQuery', () => ({
   default: vi.fn(),
 }));
 
-vi.mock('../hooks/useKubernetesHook', () => ({
+vi.mock('@/utils/hooks/useKubernetesHook', () => ({
   default: () => ping,
 }));
 

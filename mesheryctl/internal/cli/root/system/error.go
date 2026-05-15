@@ -69,6 +69,11 @@ const (
 	ErrSystemGkeGenerateConfigCode        = "mesheryctl-1237"
 	ErrSystemEksGetCredentialsCode        = "mesheryctl-1238"
 	ErrSystemMinikubeKubeconfigCode       = "mesheryctl-1239"
+	ErrValidateVersionCode                = "mesheryctl-1240"
+	ErrUpdateContainersCode               = "mesheryctl-1241"
+	ErrFetchContainersCode                = "mesheryctl-1242"
+	ErrInvalidComponentCode               = "mesheryctl-1243"
+	ErrMesheryEndpointNotAccessibleCode   = "mesheryctl-1244"
 )
 
 var (
@@ -466,4 +471,54 @@ func ErrLogout(err error) error {
 		[]string{err.Error()},
 		[]string{"Unable to complete the logout operation"},
 		[]string{"Check the token file path and permissions. The underlying error will provide more details."})
+}
+
+func ErrValidateVersion(err error) error {
+	return errors.New(
+		ErrValidateVersionCode,
+		errors.Alert,
+		[]string{"Error validating Meshery version"},
+		[]string{err.Error()},
+		[]string{"The version in the context is invalid or unsupported"},
+		[]string{"Verify the version in your context is valid. " + FormatErrorReference()})
+}
+
+func ErrUpdateContainers(err error) error {
+	return errors.New(
+		ErrUpdateContainersCode,
+		errors.Alert,
+		[]string{"Error updating Meshery containers"},
+		[]string{err.Error()},
+		[]string{"Failed to update Meshery container images"},
+		[]string{"Ensure Docker is running and you have a stable network connection"})
+}
+
+func ErrFetchContainers(err error) error {
+	return errors.New(
+		ErrFetchContainersCode,
+		errors.Alert,
+		[]string{"Error fetching container status"},
+		[]string{err.Error()},
+		[]string{"Failed to fetch the list of running containers"},
+		[]string{"Ensure Docker is running and docker-compose is available"})
+}
+
+func ErrInvalidComponent(component string) error {
+	return errors.New(
+		ErrInvalidComponentCode,
+		errors.Alert,
+		[]string{"Invalid component specified"},
+		[]string{fmt.Sprintf("The component '%s' is not a valid Meshery component", component)},
+		[]string{"An invalid or unsupported component name was provided in the context"},
+		[]string{"Verify the component name in your meshconfig context. Run `mesheryctl system context view` to check configured components."})
+}
+
+func ErrMesheryEndpointNotAccessible() error {
+	return errors.New(
+		ErrMesheryEndpointNotAccessibleCode,
+		errors.Alert,
+		[]string{"Meshery endpoint is not yet accessible"},
+		[]string{"Meshery endpoint did not become accessible within the expected time"},
+		[]string{"Meshery server may still be initializing or failed to start"},
+		[]string{"Check the status later with `mesheryctl system status`"})
 }
