@@ -7,4 +7,4 @@ I actively contribute to open source projects, focusing on frontend UI/UX improv
 
 Excited to contribute to the Meshery ecosystem, collaborate with the community, and learn from everyone here!
 
-GitHub: https://github.com/Rudra2637
+GitHub: [@Rudra2637](https://github.com/Rudra2637)
