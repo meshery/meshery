@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -203,6 +203,7 @@
     "kind": "SubGraph",
     "schema": "{\n \"description\": \"SubGraph is the Schema for the subgraphs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SubGraphSpec defines the desired state of SubGraph\",\n   \"properties\": {\n    \"schema\": {\n     \"type\": \"string\"\n    },\n    \"sdl\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"schema\",\n    \"sdl\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sub Graph\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

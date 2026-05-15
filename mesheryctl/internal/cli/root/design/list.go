@@ -19,7 +19,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -34,7 +33,7 @@ var (
 )
 
 var linkDocPatternList = map[string]string{
-	"link":    "![pattern-list-usage](/assets/img/mesheryctl/patternList.png)",
+	"link":    "![pattern-list-usage](/reference/images/patternList.png)",
 	"caption": "Usage of mesheryctl design list",
 }
 
@@ -105,12 +104,7 @@ mesheryctl design list --count
 func processDesignData(data *models.PatternsAPIResponse) ([][]string, int64) {
 	var displayData [][]string
 	for _, v := range data.Patterns {
-		designId := func(id *uuid.UUID, isVerbose bool) string {
-			if isVerbose {
-				return id.String()
-			}
-			return utils.TruncateID(id.String())
-		}(v.ID, verbose)
+		designId := v.ID.String()
 
 		designName := strings.Trim(v.Name, filepath.Ext(v.Name))
 		createdAt := formatTimeToString(v.CreatedAt, verbose)
@@ -142,7 +136,7 @@ func formatTimeToString(t *time.Time, isVerbose bool) string {
 }
 
 func init() {
-	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "(optional) Display full length user and design file identifiers")
+	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "(optional) Display full length user identifiers and detailed timestamps")
 	listCmd.Flags().IntVarP(&page, "page", "p", 1, "(optional) List next set of designs with --page")
 	listCmd.Flags().IntVarP(&pageSize, "pagesize", "", 10, "(optional) Number of designs to be displayed per page")
 	listCmd.Flags().BoolP("count", "c", false, "(optional) Display count only")

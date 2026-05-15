@@ -1,4 +1,8 @@
-import { api } from './index';
+import {
+  mesheryApi,
+  useGetConnectionsQuery as useSchemasGetConnectionsQuery,
+} from '@meshery/schemas/mesheryApi';
+import { api, mesheryApiPath } from './index';
 
 const TAGS = {
   CONNECTIONS: 'connections',
@@ -10,7 +14,7 @@ const connectionsApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getCredentials: builder.query({
       query: () => ({
-        url: 'integrations/credentials',
+        url: mesheryApiPath('integrations/credentials'),
         method: 'GET',
       }),
       providesTags: [TAGS.CREDENTIALS],
@@ -18,7 +22,7 @@ const connectionsApi = api.injectEndpoints({
 
     verifyAndRegisterConnection: builder.mutation({
       query: (queryArg) => ({
-        url: 'integrations/connections/register',
+        url: mesheryApiPath('integrations/connections/register'),
         method: 'POST',
         body: queryArg.body,
       }),
@@ -27,59 +31,42 @@ const connectionsApi = api.injectEndpoints({
 
     connectToConnection: builder.mutation({
       query: (queryArg) => ({
-        url: 'integrations/connections/register',
+        url: mesheryApiPath('integrations/connections/register'),
         method: 'POST',
         body: queryArg.body,
       }),
       invalidatesTags: [TAGS.CONNECTIONS],
     }),
-    getConnections: builder.query({
-      query: (queryArg) => ({
-        url: `integrations/connections`,
-        params: {
-          page: queryArg.page,
-          pagesize: queryArg.pagesize,
-          search: queryArg.search,
-          order: queryArg.order,
-          status: queryArg.status,
-          kind: queryArg.kind,
-          type: queryArg.type,
-          name: queryArg.name,
-        },
-        method: 'GET',
-      }),
-      providesTags: () => [{ type: TAGS.CONNECTIONS }],
-    }),
     getConnectionDetails: builder.query({
       query: (queryArg) => ({
-        url: `integrations/connections/${queryArg.connectionKind}/details`,
+        url: mesheryApiPath(`integrations/connections/${queryArg.connectionKind}/details`),
         params: { id: queryArg.repoURL },
       }),
     }),
     verifyConnectionURL: builder.mutation({
       query: (queryArg) => ({
-        url: `integrations/connections/${queryArg.connectionKind}/verify`,
+        url: mesheryApiPath(`integrations/connections/${queryArg.connectionKind}/verify`),
         method: 'POST',
         params: { id: queryArg.repoURL },
       }),
     }),
     connectionMetaData: builder.mutation({
       query: (queryArg) => ({
-        url: `integrations/connections/${queryArg.connectionKind}/metadata`,
+        url: mesheryApiPath(`integrations/connections/${queryArg.connectionKind}/metadata`),
         method: 'POST',
         body: queryArg.body,
       }),
     }),
     configureConnection: builder.mutation({
       query: (queryArg) => ({
-        url: `integrations/connections/${queryArg.connectionKind}/configure`,
+        url: mesheryApiPath(`integrations/connections/${queryArg.connectionKind}/configure`),
         method: 'POST',
         body: queryArg.body,
       }),
     }),
     updateConnectionById: builder.mutation({
       query: (queryArg) => ({
-        url: `integrations/connections/${queryArg.connectionId}`,
+        url: mesheryApiPath(`integrations/connections/${queryArg.connectionId}`),
         method: 'PUT',
         body: {
           status: queryArg.body?.status,
@@ -90,14 +77,31 @@ const connectionsApi = api.injectEndpoints({
     }),
     cancelConnectionRegister: builder.mutation({
       query: (queryArg) => ({
-        url: `integrations/connections/register`,
+        url: mesheryApiPath(`integrations/connections/register`),
         method: 'DELETE',
         body: queryArg.body,
       }),
     }),
+    pingKubernetes: builder.query({
+      query: (connectionId) => ({
+        url: mesheryApiPath(`system/kubernetes/ping`),
+        params: { connectionId: connectionId },
+        credentials: 'include',
+      }),
+    }),
+    updateConnectionStatus: builder.mutation({
+      query: ({ kind, body }) => ({
+        url: mesheryApiPath(`integrations/connections/${kind}/status`),
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      }),
+      invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
+    }),
     addKubernetesConfig: builder.mutation({
       query: (queryArg) => ({
-        url: `system/kubernetes`,
+        url: mesheryApiPath(`system/kubernetes`),
         method: 'POST',
         body: queryArg.body,
       }),
@@ -110,8 +114,6 @@ export const {
   useGetCredentialsQuery,
   useVerifyAndRegisterConnectionMutation,
   useConnectToConnectionMutation,
-  useGetConnectionsQuery,
-  useLazyGetConnectionsQuery,
   useLazyGetConnectionDetailsQuery,
   useVerifyConnectionURLMutation,
   useConnectionMetaDataMutation,
@@ -119,4 +121,42 @@ export const {
   useUpdateConnectionByIdMutation,
   useCancelConnectionRegisterMutation,
   useAddKubernetesConfigMutation,
+  useLazyPingKubernetesQuery,
+  useUpdateConnectionStatusMutation,
 } = connectionsApi;
+
+export const useGetConnectionsQuery = (queryArg, options) =>
+  useSchemasGetConnectionsQuery(
+    {
+      page: queryArg?.page?.toString(),
+      pagesize: queryArg?.pagesize?.toString(),
+      search: queryArg?.search,
+      order: queryArg?.order,
+      status: queryArg?.status,
+      kind: queryArg?.kind,
+      type: queryArg?.type,
+      name: queryArg?.name,
+    },
+    options,
+  );
+
+export const useLazyGetConnectionsQuery = () => {
+  const [trigger, result, lastPromiseInfo] = mesheryApi.endpoints.getConnections.useLazyQuery();
+
+  const wrappedTrigger = (queryArg, preferCacheValue) =>
+    trigger(
+      {
+        page: queryArg?.page?.toString(),
+        pagesize: queryArg?.pagesize?.toString(),
+        search: queryArg?.search,
+        order: queryArg?.order,
+        status: queryArg?.status,
+        kind: queryArg?.kind,
+        type: queryArg?.type,
+        name: queryArg?.name,
+      },
+      preferCacheValue,
+    );
+
+  return [wrappedTrigger, result, lastPromiseInfo] as const;
+};

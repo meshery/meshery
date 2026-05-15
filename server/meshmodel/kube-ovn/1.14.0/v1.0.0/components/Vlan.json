@@ -15,9 +15,8 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",
@@ -54,16 +53,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -205,6 +204,7 @@
     "kind": "Vlan",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"id\": {\n     \"maximum\": 4095,\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"provider\": {\n     \"type\": \"string\"\n    },\n    \"providerInterfaceName\": {\n     \"description\": \"Deprecated in favor of provider\",\n     \"type\": \"string\"\n    },\n    \"vlanId\": {\n     \"description\": \"Deprecated in favor of id\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"provider\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vlan\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

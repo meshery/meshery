@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -9,39 +10,45 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/pkg/errors"
+	pkgerrors "github.com/pkg/errors"
 
 	"github.com/meshery/meshery/server/models"
 )
 
 // UserHandler returns info about the logged in user
 func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.Preference, user *models.User, _ models.Provider) {
+	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(user); err != nil {
 		obj := "user data"
 		h.log.Error(models.ErrEncoding(err, obj))
-		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
 		return
 	}
 }
-
-// swagger:route GET /api/user/profile/{id} UserAPI idGetUserByIDHandler
-// Handle GET for User info by ID
-//
-// Returns User info
-// responses:
-// 	200: userInfo
 
 func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	userID := mux.Vars(r)["id"]
 	_, err := uuid.FromString(userID)
 	if err != nil {
-		http.Error(w, ErrInvalidUUID(err).Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrInvalidUUID(err), http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetUserByID(r, userID)
 	if err != nil {
+		if errors.Is(err, models.ErrUserIsSystemInstance) {
+			// The requested ID is this Meshery instance's own system UUID; it
+			// isn't a real user record. Return a 204 so callers can render a
+			// "system" placeholder without treating it as a fetch failure.
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		writeMeshkitError(w, ErrGetResult(err), http.StatusNotFound)
+		return
+	}
+
+	if resp == nil {
+		writeMeshkitError(w, ErrUserNotFound(userID), http.StatusNotFound)
 		return
 	}
 
@@ -51,27 +58,10 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 	}
 }
 
-// swagger:route GET /api/identity/users UserAPI idGetAllUsersHandler
-// Handles GET for all Users
-//
-// # Users can be further filtered through query parameters
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 20
-//
-// ```?search={username|email|first_name|last_name}``` If search is non empty then a greedy search is performed
-//
-// ```?filter={condition}```
-// responses:
-// 	200: users
-
 func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
-		http.Error(w, "failed to get token", http.StatusInternalServerError)
+		writeMeshkitError(w, ErrFetchToken(fmt.Errorf("token not found in request context")), http.StatusInternalServerError)
 		return
 	}
 
@@ -80,7 +70,7 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 	resp, err := provider.GetUsers(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		writeMeshkitError(w, ErrGetResult(err), http.StatusNotFound)
 		return
 	}
 
@@ -90,27 +80,14 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 	}
 }
 
-// swagger:route GET /api/user/prefs UserAPI idGetUserTestPrefs
-// Handle GET Requests for User Load Test Preferences
-//
-// Returns User Load Test Preferences
-// responses:
-// 	200: userLoadTestPrefsRespWrapper
-
-// swagger:route POST /api/user/prefs UserAPI idPostUserTestPrefs
-// Handle POST Requests for User Load Test Preferences
-//
-// Updates User Load Test Preferences
-// responses:
-// 	200: userLoadTestPrefsRespWrapper
-
 // UserPrefsHandler updates anonymous stats for user or for persisting load test preferences
 func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method == http.MethodGet {
+		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
 			obj := "user preference object"
 			h.log.Error(models.ErrEncoding(err, obj))
-			http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
 		}
 		return
 	}
@@ -122,7 +99,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 	// read user preferences from JSON request body
 	if err := json.NewDecoder(req.Body).Decode(&prefObj); err != nil {
 		h.log.Error(ErrDecoding(err, "user preferences"))
-		http.Error(w, ErrDecoding(err, "user preferences").Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrDecoding(err, "user preferences"), http.StatusInternalServerError)
 		return
 	}
 
@@ -131,18 +108,17 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		// validate load test data
 		qps := prefObj.LoadTestPreferences.QueriesPerSecond
 		if qps < 0 {
-			w.WriteHeader(http.StatusBadRequest)
 			err := fmt.Errorf("QPS value less than 0")
 			h.log.Error(ErrSavingUserPreference(err))
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusBadRequest)
 			return
 		}
 
 		dur := prefObj.LoadTestPreferences.Duration
 		if _, err := time.ParseDuration(dur); err != nil {
-			err = errors.Wrap(err, "unable to parse test duration")
+			err = pkgerrors.Wrap(err, "unable to parse test duration")
 			h.log.Error(ErrSavingUserPreference(err))
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusBadRequest)
 			return
 		}
 
@@ -150,7 +126,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		if c < 0 {
 			err := fmt.Errorf("number of concurrent requests less than 0")
 			h.log.Error(ErrSavingUserPreference(err))
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusBadRequest)
 			return
 		}
 
@@ -164,7 +140,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		if !loadGenSupported {
 			err := fmt.Errorf("invalid load generator: %s", loadGen)
 			h.log.Error(ErrSavingUserPreference(err))
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusBadRequest)
 			return
 		}
 	}
@@ -172,58 +148,35 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 	if err := provider.RecordPreferences(req, user.UserId, prefObj); err != nil {
 		err := fmt.Errorf("unable to save user preferences: %v", err)
 		h.log.Error(ErrSavingUserPreference(err))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusInternalServerError)
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(prefObj); err != nil {
 		obj := "user preferences"
 		h.log.Error(models.ErrEncoding(err, obj))
-		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
 		return
 	}
 }
-
-// swagger:route POST /api/content/design/share ShareContent idPostShareContent
-// Handle POST request for Sharing content
-//
-// Used to share designs with others
-// responses:
-// 	200:
-//  403:
-//  500:
 
 func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	statusCode, err := provider.ShareDesign(r)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error: %v", err.Error()), statusCode)
+		writeMeshkitError(w, ErrShareDesign(err), statusCode)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := fmt.Fprint(w, "Design shared"); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONMessage(w, map[string]string{"message": "Design shared"}, http.StatusOK)
 }
-
-// swagger:route POST /api/content/filter/share ShareContent idPostShareContent
-// Handle POST request for Sharing content
-//
-// Used to share filters with others
-// responses:
-// 	200:
-//  403:
-//  500:
 
 func (h *Handler) ShareFilterHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	statusCode, err := provider.ShareFilter(r)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error: %v", err.Error()), statusCode)
+		writeMeshkitError(w, ErrShareFilter(err), statusCode)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := fmt.Fprint(w, "Filter shared"); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONMessage(w, map[string]string{"message": "Filter shared"}, http.StatusOK)
 }

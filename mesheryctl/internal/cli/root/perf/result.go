@@ -27,6 +27,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	core "github.com/meshery/schemas/models/core"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -38,9 +39,9 @@ type resultStruct struct {
 	LatenciesMs   *models.LatenciesMs
 	QPS           int
 	URL           string
-	UserID        *uuid.UUID
+	UserID        *core.Uuid
 	Duration      string
-	MesheryID     *uuid.UUID
+	MesheryID     *core.Uuid
 	LoadGenerator string
 }
 
@@ -50,7 +51,7 @@ var (
 )
 
 var linkDocPerfResult = map[string]string{
-	"link":    "![perf-result-usage](/assets/img/mesheryctl/perf-result.png)",
+	"link":    "![perf-result-usage](/reference/images/perf-result.png)",
 	"caption": "Usage of mesheryctl perf result",
 }
 
@@ -267,7 +268,7 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 
 		a := resultStruct{
 			Name:     name,
-			UserID:   (*uuid.UUID)(userid.Bytes()),
+			UserID:   &userid,
 			URL:      url,
 			QPS:      int(result.RunnerResults.QPS),
 			Duration: result.RunnerResults.RequestedDuration,
@@ -280,7 +281,7 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 				P99:     P99,
 			},
 			StartTime:     result.TestStartTime,
-			MesheryID:     (*uuid.UUID)(mesheryid.Bytes()),
+			MesheryID:     &mesheryid,
 			LoadGenerator: loadGenerator,
 		}
 

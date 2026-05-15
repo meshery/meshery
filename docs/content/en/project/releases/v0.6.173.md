@@ -1,0 +1,27 @@
+---
+title: v0.6.173
+date: 2023-11-07
+tag: v0.6.173
+---
+
+## What's New
+## 🔤 General
+## 🖥 Meshery UI
+
+- Fix Dark mode @ptdatta (#9318)
+- Enable status col in connection and add ping check @sudhanshutech (#9317)
+- [bug] Fix broken UI  @sudhanshutech (#9315)
+
+## 🐛 Bug Fixes
+
+- [bug] Fix broken UI  @sudhanshutech (#9315)
+
+## 📖 Documentation
+
+- [docs] Fix Redirection /platforms/page -> /page @theBeginner86 (#9316)
+- [bug/docs] Fix redirect from /platforms @theBeginner86 (#9314)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@MUzairS15, @l5io, @leecalcote, @ptdatta, @sudhanshutech and @theBeginner86

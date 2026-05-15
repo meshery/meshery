@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Artifacthub on Documentation</title>
+    <link>/v0.9/guides/tutorials/artifacthub/</link>
+    <description>Recent content in Artifacthub on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/guides/tutorials/artifacthub/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Publishing Meshery Designs to ArtifactHub</title>
+      <link>/v0.9/guides/tutorials/artifacthub/publish-to-artifacthub/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/tutorials/artifacthub/publish-to-artifacthub/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;&#xA;&#x9;Introduction&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;In this tutorial, we&amp;rsquo;ll see how to export a Design from Meshery which we will use to populate an ArtifactHub repository.&lt;/p&gt;&#xA;&lt;h2 id=&#34;prerequisites&#34;&gt;&#xA;&#x9;Prerequisites&#xA;&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Access to the &lt;em&gt;Meshery Playground&lt;/em&gt;. If you don&amp;rsquo;t have an account, sign up at &lt;a href=&#34;https://playground.meshery.io/&#34;&gt;Meshery Playground&lt;/a&gt;.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;steps&#34;&gt;&#xA;&#x9;Steps&#xA;&lt;/h2&gt;&#xA;&lt;h3 id=&#34;1-click-on-meshmap&#34;&gt;&#xA;&#x9;1. Click on MeshMap&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;&lt;img class=&#34;content-image&#34; src=&#34;/v0.9/guides/tutorials/images/publish-to-artifacthub/2024-07-30_1.png&#34; alt=&#34;&#34;  /&gt;&lt;/p&gt;&#xA;&lt;h3 id=&#34;2-find-the-design-in-the-side-panel&#34;&gt;&#xA;&#x9;2. Find the Design in the Side Panel&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;&lt;img class=&#34;content-image&#34; src=&#34;/v0.9/guides/tutorials/images/publish-to-artifacthub/2024-07-30_2.png&#34; alt=&#34;&#34;  /&gt;&lt;/p&gt;&#xA;&lt;h3 id=&#34;3-click-on-export-design&#34;&gt;&#xA;&#x9;3. Click on Export Design&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;&lt;img class=&#34;content-image&#34; src=&#34;/v0.9/guides/tutorials/images/publish-to-artifacthub/2024-07-30_3.png&#34; alt=&#34;&#34;  /&gt;&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

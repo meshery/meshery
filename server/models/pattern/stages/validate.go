@@ -8,7 +8,7 @@ import (
 	"github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshery/server/models/pattern/jsonschema"
 	"github.com/meshery/meshery/server/models/pattern/resource/selector"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta2/component"
 
 	"gopkg.in/yaml.v2"
 )
@@ -97,7 +97,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate boo
 			}
 
 			// Store the corresponding definition
-			data.DeclartionToDefinitionMapping[component.Id] = wc
+			data.DeclartionToDefinitionMapping[component.ID] = wc
 		}
 
 		if next != nil {

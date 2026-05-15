@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Categories on Documentation</title>
+    <link>/v0.9/categories/</link>
+    <description>Recent content in Categories on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 24 Mar 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="/v0.9/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Contributing</title>
+      <link>/v0.9/categories/contributing/</link>
+      <pubDate>Tue, 24 Mar 2026 00:00:00 +0000</pubDate>
+      <guid>/v0.9/categories/contributing/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Project</title>
+      <link>/v0.9/categories/project/</link>
+      <pubDate>Tue, 24 Mar 2026 00:00:00 +0000</pubDate>
+      <guid>/v0.9/categories/project/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Community</title>
+      <link>/v0.9/categories/community/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/categories/community/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Configuration</title>
+      <link>/v0.9/categories/configuration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/categories/configuration/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Docker</title>
+      <link>/v0.9/categories/docker/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/categories/docker/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Infrastructure</title>
+      <link>/v0.9/categories/infrastructure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/categories/infrastructure/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Installation</title>
+      <link>/v0.9/categories/installation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/categories/installation/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Integrations</title>
+      <link>/v0.9/categories/integrations/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/categories/integrations/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Kanvas</title>
+      <link>/v0.9/categories/kanvas/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/categories/kanvas/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Kubernetes</title>
+      <link>/v0.9/categories/kubernetes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/categories/kubernetes/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Mesheryctl</title>
+      <link>/v0.9/categories/mesheryctl/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/categories/mesheryctl/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>None</title>
+      <link>/v0.9/categories/none/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/categories/none/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Performance</title>
+      <link>/v0.9/categories/performance/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/categories/performance/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Troubleshooting</title>
+      <link>/v0.9/categories/troubleshooting/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/categories/troubleshooting/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Tutorials</title>
+      <link>/v0.9/categories/tutorials/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/categories/tutorials/</guid>
+      <description></description>
+    </item>
+  </channel>
+</rss>

@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 )
@@ -19,8 +21,8 @@ type MesheryFilterPersister struct {
 // MesheryFilterPage represents a page of filters
 type MesheryFilterPage struct {
 	Page       uint64           `json:"page"`
-	PageSize   uint64           `json:"page_size"`
-	TotalCount int              `json:"total_count"`
+	PageSize   uint64           `json:"pageSize"`
+	TotalCount int              `json:"totalCount"`
 	Filters    []*MesheryFilter `json:"filters"`
 }
 
@@ -149,7 +151,7 @@ func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string, cloneFilt
 }
 
 // DeleteMesheryFilter takes in a profile id and delete it if it already exists
-func (mfp *MesheryFilterPersister) DeleteMesheryFilter(id uuid.UUID) ([]byte, error) {
+func (mfp *MesheryFilterPersister) DeleteMesheryFilter(id core.Uuid) ([]byte, error) {
 	filter := MesheryFilter{ID: &id}
 	mfp.DB.Delete(&filter)
 
@@ -196,14 +198,14 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilters(filters []MesheryFilter) (
 	return marshalMesheryFilters(finalFilters), mfp.DB.Create(finalFilters).Error
 }
 
-func (mfp *MesheryFilterPersister) GetMesheryFilter(id uuid.UUID) ([]byte, error) {
+func (mfp *MesheryFilterPersister) GetMesheryFilter(id core.Uuid) ([]byte, error) {
 	var mesheryFilter MesheryFilter
 
 	err := mfp.DB.First(&mesheryFilter, id).Error
 	return marshalMesheryFilter(&mesheryFilter), err
 }
 
-func (mfp *MesheryFilterPersister) GetMesheryFilterFile(id uuid.UUID) ([]byte, error) {
+func (mfp *MesheryFilterPersister) GetMesheryFilterFile(id core.Uuid) ([]byte, error) {
 	var mesheryFilter MesheryFilter
 
 	err := mfp.DB.First(&mesheryFilter, id).Error

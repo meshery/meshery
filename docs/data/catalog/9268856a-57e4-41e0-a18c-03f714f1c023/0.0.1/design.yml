@@ -1,0 +1,309 @@
+name: ArgoCD-Application [Components added for Network, Storage and Orchestration]
+version: 0.0.4
+services:
+  hpa:
+    annotations: {}
+    apiVersion: autoscaling/v2
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: hpa
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 30902c99-4937-46c2-a10f-9b3bcf3e5d93
+        label: hpa
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          metadata: {}
+          name: kubernetes
+          version: v1.27.2
+        meshmodel-metadata:
+          isCustomResource: false
+          isNamespaced: true
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: circle
+          styleOverrides:
+            z-index: 5
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        position:
+          posX: -90
+          posY: 230
+        whiteboardData:
+          style:
+            z-index: 3
+    type: HorizontalPodAutoscaler
+    version: v1.27.2
+  jiva-volume:
+    annotations: {}
+    apiVersion: openebs.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: openebs
+    name: jiva-volume
+    namespace: default
+    settings:
+      access Type: Block
+      capacity: 10Gi
+      pv: 5Gi
+      spec:
+        policy:
+          replica:
+            affinity:
+              node Affinity:
+                preferred During Scheduling Ignored During Execution: []
+                required During Scheduling Ignored During Execution:
+                  node Selector Terms: []
+              pod Affinity:
+                preferred During Scheduling Ignored During Execution: []
+                required During Scheduling Ignored During Execution: []
+              pod Anti Affinity:
+                preferred During Scheduling Ignored During Execution: []
+                required During Scheduling Ignored During Execution: []
+            tolerations: []
+          target:
+            affinity:
+              node Affinity:
+                preferred During Scheduling Ignored During Execution: []
+                required During Scheduling Ignored During Execution:
+                  node Selector Terms: []
+              pod Affinity:
+                preferred During Scheduling Ignored During Execution: []
+                required During Scheduling Ignored During Execution: []
+              pod Anti Affinity:
+                preferred During Scheduling Ignored During Execution: []
+                required During Scheduling Ignored During Execution: []
+            tolerations: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 36ae1f0a-dd6d-49b4-abd3-7ad06d196e4b
+        label: jiva-volume
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Cloud Native Storage
+          displayName: OpenEBS
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/openebs/color/blockdevice-color.svg
+            svgWhite: ui/public/static/img/meshmodels/openebs/white/blockdevice-white.svg
+          name: openebs
+          version: 3.5.0
+        meshmodel-metadata:
+          genealogy: ""
+          logoURL: https://github.com/cncf/artwork/blob/master/examples/sandbox.md#openebs-logos
+          model: openebs
+          modelDisplayName: OpenEBS
+          primaryColor: '#563a39'
+          published: true
+          secondaryColor: '#9B7F7E'
+          shape: circle
+          styleOverrides:
+            z-index: 6
+          subCategory: Cloud Native Storage
+          svgColor: ui/public/static/img/meshmodels/openebs/color/blockdevice-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/openebs/white/blockdevice-white.svg
+        position:
+          posX: -90
+          posY: 330
+        whiteboardData:
+          style:
+            z-index: 4
+    type: JivaVolume
+    version: 3.5.0
+  myApp:
+    annotations: {}
+    apiVersion: argoproj.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: argo-cd
+    name: myApp
+    namespace: default
+    settings:
+      destination:
+        name: Host server
+        server: 127.0.0.4
+      ignore Differences: []
+      info: []
+      project: KubeDeploy
+      source:
+        directory:
+          jsonnet:
+            ext Vars: []
+            libs: []
+            tlas: []
+        helm:
+          file Parameters: []
+          parameters: []
+          value Files: []
+        kustomize:
+          images: []
+        plugin:
+          env: []
+          parameters: []
+        repo URL: https://github.com/username/repo
+      sources: []
+      sync Policy:
+        sync Options: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 64fc264d-c549-46c0-a479-eddf786d5310
+        label: myApp
+        meshmodel-data:
+          category:
+            metadata: null
+            name: App Definition and Development
+          displayName: Argo CD
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/argo-cd/color/appproject-color.svg
+            svgWhite: ui/public/static/img/meshmodels/argo-cd/white/appproject-white.svg
+          name: argo-cd
+          version: 4.5.1
+        meshmodel-metadata:
+          genealogy: ""
+          logoURL: https://github.com/cncf/artwork/blob/master/examples/incubating.md#argo-logos
+          model: argo-cd
+          modelDisplayName: Argo CD
+          primaryColor: '#fe733e'
+          published: true
+          secondaryColor: '#FFB883'
+          shape: circle
+          styleOverrides: ""
+          subCategory: Continuous Integration & Delivery
+          svgColor: ui/public/static/img/meshmodels/argo-cd/color/appproject-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/argo-cd/white/appproject-white.svg
+        position:
+          posX: -70
+          posY: 290
+        whiteboardData:
+          style:
+            z-index: 5
+    type: Application
+    version: 4.5.1
+  transport-server-1:
+    annotations: {}
+    apiVersion: k8s.nginx.org/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: nginx-ingress
+    name: transport-server-1
+    namespace: default
+    settings:
+      host: 127.0.1.2
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: f985da30-59c6-475b-8c94-54c2bca96c2a
+        label: transport-server-1
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Cloud Native Network
+          displayName: NGINX Ingress Controller
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/nginx-ingress/color/apdoslogconf-color.svg
+            svgWhite: ui/public/static/img/meshmodels/nginx-ingress/white/apdoslogconf-white.svg
+          name: nginx-ingress
+          version: 0.16.2
+        meshmodel-metadata:
+          genealogy: ""
+          logoURL: https://www.vectorlogo.zone/logos/nginx/index.html
+          model: nginx-ingress
+          modelDisplayName: NGINX Ingress Controller
+          primaryColor: '#009639'
+          published: true
+          secondaryColor: '#42C473'
+          shape: circle
+          styleOverrides:
+            z-index: 3
+          subCategory: Service Proxy
+          svgColor: ui/public/static/img/meshmodels/nginx-ingress/color/apdoslogconf-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/nginx-ingress/white/apdoslogconf-white.svg
+        position:
+          posX: -150
+          posY: 310
+        whiteboardData:
+          style:
+            z-index: 6
+    type: TransportServer
+    version: 0.16.2
+  virtual-server-1:
+    annotations: {}
+    apiVersion: k8s.nginx.org/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: nginx-ingress
+    name: virtual-server-1
+    namespace: default
+    settings:
+      host: 127.0.1.1
+      spec:
+        external DNS:
+          provider Specific: []
+        policies: []
+        routes: []
+        upstreams: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: c52bf0ed-6749-4184-8c46-ce4b269b5d8f
+        label: virtual-server-1
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Cloud Native Network
+          displayName: NGINX Ingress Controller
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/nginx-ingress/color/apdoslogconf-color.svg
+            svgWhite: ui/public/static/img/meshmodels/nginx-ingress/white/apdoslogconf-white.svg
+          name: nginx-ingress
+          version: 0.16.2
+        meshmodel-metadata:
+          genealogy: ""
+          logoURL: https://www.vectorlogo.zone/logos/nginx/index.html
+          model: nginx-ingress
+          modelDisplayName: NGINX Ingress Controller
+          primaryColor: '#009639'
+          published: true
+          secondaryColor: '#42C473'
+          shape: circle
+          styleOverrides:
+            z-index: 4
+          subCategory: Service Proxy
+          svgColor: ui/public/static/img/meshmodels/nginx-ingress/color/apdoslogconf-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/nginx-ingress/white/apdoslogconf-white.svg
+        position:
+          posX: -130
+          posY: 270
+        whiteboardData:
+          style:
+            z-index: 7
+    type: VirtualServer
+    version: 0.16.2

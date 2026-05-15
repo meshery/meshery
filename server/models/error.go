@@ -2,11 +2,19 @@
 package models
 
 import (
+	stderrors "errors"
 	"fmt"
 	"time"
 
 	"github.com/meshery/meshkit/errors"
 )
+
+// ErrUserIsSystemInstance is returned by Provider.GetUserByID when the
+// requested userID matches this Meshery instance's own INSTANCE_ID. Callers
+// can use errors.Is to detect the sentinel and return a policy-appropriate
+// response (e.g. a 204 so the UI renders a "system" placeholder) instead of
+// conflating it with a missing user.
+var ErrUserIsSystemInstance = stderrors.New("requested ID is the Meshery instance's system UUID, not a user")
 
 // Please reference the following before contributing an error code:
 // https://docs.meshery.io/project/contributing/contributing-error
@@ -114,7 +122,7 @@ const (
 	ErrUrlParseCode                       = "meshery-server-1335"
 	ErrCloseIoReaderCode                  = "meshery-server-1336"
 	ErrDownloadPackageCode                = "meshery-server-1337"
-	ErrOperationNotAvailableCode           = "meshery-server-1338"
+	ErrOperationNotAvailableCode          = "meshery-server-1338"
 	ErrTokenVerifyCode                    = "meshery-server-1339"
 	ErrLogoutCode                         = "meshery-server-1340"
 	ErrGetSessionCookieCode               = "meshery-server-1341"
@@ -138,6 +146,11 @@ const (
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
 	ErrMeshsyncDataHandlerCode            = "meshery-server-1370"
+	ErrWorkspaceMissingInputCode          = "meshery-server-1375"
+	ErrMeshsyncEventCode                  = "meshery-server-1379"
+	ErrMeshsyncStoreUpdatesCode           = "meshery-server-1380"
+	ErrRemoteProviderCapabilitiesCode     = "meshery-server-1420"
+	ErrRemoteProviderAuthExhaustedCode    = "meshery-server-1421"
 )
 
 var (
@@ -280,6 +293,38 @@ func ErrStatusCode(statusCode int) error {
 			"Check if the server is online and operational.",
 			"Verify network connectivity and ensure there are no firewalls or DNS issues blocking the request.",
 			"Confirm the API endpoint is correct and functional."},
+	)
+}
+
+// ErrRemoteProviderCapabilities wraps a failure to load the capability
+// manifest from the remote provider. This runs on session bootstrap and on
+// post-login token exchange; when it fails the UI falls back to a minimal
+// feature set, so surfacing a structured code lets the client distinguish it
+// from handlers.ErrTransientProvider (which is a full provider outage).
+func ErrRemoteProviderCapabilities(err error) error {
+	return errors.New(
+		ErrRemoteProviderCapabilitiesCode,
+		errors.Alert,
+		[]string{"Failed to load capabilities from remote provider"},
+		[]string{fmt.Sprintf("Meshery Server could not retrieve the feature manifest from the remote provider: %v", err)},
+		[]string{"Remote provider is unreachable, the manifest endpoint is down, or the response is malformed."},
+		[]string{"Verify the remote provider is reachable, check its manifest endpoint, and retry."},
+	)
+}
+
+// ErrRemoteProviderAuthExhausted wraps the terminal "redirect loop detected"
+// state in the remote-provider auth flow. After MaxAuthRetries redirects
+// without a valid session, the provider gives up rather than cookie-thrash;
+// clients receiving this code should show a remediation prompt rather than
+// silently retrying.
+func ErrRemoteProviderAuthExhausted(err error) error {
+	return errors.New(
+		ErrRemoteProviderAuthExhaustedCode,
+		errors.Alert,
+		[]string{"Authentication failed after multiple attempts"},
+		[]string{fmt.Sprintf("Remote provider auth retries exhausted: %v", err)},
+		[]string{"Invalid or expired credentials, or the auth endpoint is rejecting requests."},
+		[]string{"Log out and sign in again; if this persists, check that the remote provider's auth endpoint is healthy."},
 	)
 }
 
@@ -448,7 +493,7 @@ func ErrJWKsKeys(err error) error {
 }
 
 func ErrInvalidCapability(capability string, provider string) error {
-	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capablity is not supported by your Provider", capability}, []string{"You dont have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the vaild remote Provider"}, []string{"Connect to the vaild remote Provider", "Ask the Provider Adim for access"})
+	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capability is not supported by your Provider", capability}, []string{"You dont have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the vaild remote Provider"}, []string{"Connect to the vaild remote Provider", "Ask the Provider Adim for access"})
 }
 
 func ErrFetchData(err error) error {
@@ -613,4 +658,29 @@ func ErrMarshallingDesignIntoYAML(err error) error {
 
 func ErrMeshsyncDataHandler(err error) error {
 	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data hadler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
+}
+
+// ErrWorkspaceMissingInput is used by both the list-workspaces handler
+// (which requires only orgId from the query string) and the
+// get-workspace-by-id handler (which reads workspaceId from the URL path
+// and orgId from the query string). The message is kept generic so the
+// same constructor fits both call sites; callers may log the specific
+// missing field alongside this error for clarity.
+func ErrWorkspaceMissingInput() error {
+	return errors.New(
+		ErrWorkspaceMissingInputCode,
+		errors.Alert,
+		[]string{"Invalid input for workspace operation"},
+		[]string{"a required workspace input was not provided (orgId is required; workspaceId is required for single-workspace operations)"},
+		[]string{"Required workspace input values were not provided for this operation."},
+		[]string{"Ensure orgId is provided as a query parameter (and workspaceId is provided in the URL path for single-workspace operations)."},
+	)
+}
+
+func ErrMeshsyncEvent(err error) error {
+	return errors.New(ErrMeshsyncEventCode, errors.Alert, []string{"Error processing MeshSync event"}, []string{err.Error()}, []string{"MeshSync encountered an error while processing a broker event"}, []string{"Check MeshSync logs for details. Ensure the Kubernetes cluster is reachable and MeshSync is running correctly."})
+}
+
+func ErrMeshsyncStoreUpdates(err error) error {
+	return errors.New(ErrMeshsyncStoreUpdatesCode, errors.Alert, []string{"Error processing MeshSync store update"}, []string{err.Error()}, []string{"MeshSync encountered an error while processing a store update event"}, []string{"Check MeshSync store logs. Verify that the database connection is active and the store is not corrupted."})
 }

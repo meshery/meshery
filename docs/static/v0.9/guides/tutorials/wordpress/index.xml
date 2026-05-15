@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Wordpress on Documentation</title>
+    <link>/v0.9/guides/tutorials/wordpress/</link>
+    <description>Recent content in Wordpress on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/guides/tutorials/wordpress/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Embedding a Meshery Design in a WordPress Post</title>
+      <link>/v0.9/guides/tutorials/wordpress/embedding-meshery-design-in-wordpress/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/guides/tutorials/wordpress/embedding-meshery-design-in-wordpress/</guid>
+      <description>&lt;h3 id=&#34;introduction&#34;&gt;&#xA;&#x9;Introduction&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;In this tutorial, we will learn how to embed a &lt;strong&gt;Meshery Design&lt;/strong&gt; in a WordPress post using the &lt;strong&gt;Embed&lt;/strong&gt; option in &lt;strong&gt;Kanvas&lt;/strong&gt;.&lt;/p&gt;&#xA;&lt;p&gt;This tutorial assumes that you have created a design or have an existing one. If not, you can use one of the numerous public designs available in &lt;strong&gt;Kanvas&lt;/strong&gt; for this tutorial.&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;Expand the &lt;strong&gt;Designs&lt;/strong&gt; menu on the left.&lt;/p&gt;&#xA;&lt;p&gt;&lt;img class=&#34;content-image&#34; src=&#34;/v0.9/guides/tutorials/images/embedding-design-in-wordpress/expand-designs-kanvas.png&#34; alt=&#34;Expand Designs&#34;  /&gt;&lt;/p&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;Click the &lt;strong&gt;Quick actions&lt;/strong&gt; button to the left of the design (inverted ellipsis) and select &lt;strong&gt;Export Design&lt;/strong&gt;.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

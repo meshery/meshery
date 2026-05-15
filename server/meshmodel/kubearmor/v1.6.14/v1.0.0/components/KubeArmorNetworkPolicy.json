@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Github",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "github",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#0C2A79",
@@ -71,7 +71,50 @@
     "svgComplete": "",
     "svgWhite": "\u003csvg width=\"203\" height=\"360\" viewBox=\"0 0 203 360\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M202.689 180.309C200.689 128.309 186.689 104.309 186.689 104.309C165.689 70.3086 129.689 66.3086 129.689 66.3086L127.199 79.6986L135.689 0.308594H61.6895L76.6895 125.539L99.1895 149.539L122.289 125.539L127.189 79.7786C157.679 85.2486 172.689 107.309 172.689 107.309C187.689 127.309 189.689 177.309 189.689 177.309C157.689 241.309 172.689 273.309 172.689 273.309C154.999 280.199 136.359 298.999 135.779 299.629C154.089 249.049 176.669 183.569 173.569 176.309H168.689V167.309H31.6895V176.309H25.6895C23.8995 186.469 43.1594 249.449 58.9594 298.509C55.7994 295.049 42.6195 281.149 28.6895 273.309C28.6895 273.309 40.6895 234.309 14.6895 177.309C14.6895 177.309 15.6895 131.309 28.6895 108.309C28.6895 108.309 34.6895 89.3086 68.6895 79.3086L64.6895 66.3086C64.6895 66.3086 32.6895 71.3086 14.6895 105.309C14.6895 105.309 2.68945 129.309 0.689453 180.309C0.689453 180.309 28.6895 231.309 14.6895 279.309C14.6895 279.309 58.2694 299.649 77.7694 355.579C78.0294 356.329 78.2895 357.089 78.5395 357.859V357.919L78.6295 358.199V358.309L90.6295 354.309C90.6295 354.309 61.6295 262.309 45.6295 207.309C41.7295 193.879 40.2695 185.829 39.7395 181.309H160.089C159.749 185.609 158.259 193.409 153.569 207.309C134.749 263.049 100.689 354.309 100.689 354.309L113.689 359.309C113.689 359.309 114.899 356.139 116.959 350.629C138.249 299.979 187.669 279.349 187.669 279.349C170.689 233.309 202.689 180.309 202.689 180.309ZM108.689 120.309L99.1895 130.309L89.6895 120.309L76.6895 13.3086H120.579L108.689 120.309Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e"
   },
-  "capabilities": null,
+  "capabilities": [
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1beta1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1beta1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1beta1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
   "metadata": {
     "configurationUISchema": "",
@@ -88,6 +131,7 @@
     "kind": "KubeArmorNetworkPolicy",
     "schema": "{\n \"description\": \"KubeArmorNetworkPolicy is the Schema for the kubearmornetworkpolicies API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KubeArmorNetworkPolicySpec defines the desired state of KubeArmorNetworkPolicy\",\n   \"properties\": {\n    \"action\": {\n     \"enum\": [\n      \"Allow\",\n      \"Audit\",\n      \"Block\"\n     ],\n     \"type\": \"string\"\n    },\n    \"egress\": {\n     \"items\": {\n      \"description\": \"EgressType Structure\",\n      \"properties\": {\n       \"action\": {\n        \"enum\": [\n         \"Allow\",\n         \"Audit\",\n         \"Block\"\n        ],\n        \"type\": \"string\"\n       },\n       \"iface\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"message\": {\n        \"type\": \"string\"\n       },\n       \"ports\": {\n        \"items\": {\n         \"description\": \"PortType Structure\",\n         \"properties\": {\n          \"endPort\": {\n           \"format\": \"int32\",\n           \"maximum\": 65535,\n           \"minimum\": 1,\n           \"type\": \"integer\"\n          },\n          \"port\": {\n           \"type\": \"string\"\n          },\n          \"protocol\": {\n           \"enum\": [\n            \"TCP\",\n            \"UDP\",\n            \"SCTP\",\n            \"tcp\",\n            \"udp\",\n            \"sctp\"\n           ],\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"port\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"severity\": {\n        \"type\": \"integer\"\n       },\n       \"tags\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"to\": {\n        \"items\": {\n         \"description\": \"NetworkPeer Structure\",\n         \"properties\": {\n          \"ipBlock\": {\n           \"description\": \"IPBlock Structure\",\n           \"properties\": {\n            \"cidr\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"cidr\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"ipBlock\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"ingress\": {\n     \"items\": {\n      \"description\": \"IngressType Structure\",\n      \"properties\": {\n       \"action\": {\n        \"enum\": [\n         \"Allow\",\n         \"Audit\",\n         \"Block\"\n        ],\n        \"type\": \"string\"\n       },\n       \"from\": {\n        \"items\": {\n         \"description\": \"NetworkPeer Structure\",\n         \"properties\": {\n          \"ipBlock\": {\n           \"description\": \"IPBlock Structure\",\n           \"properties\": {\n            \"cidr\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"cidr\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"ipBlock\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"iface\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"message\": {\n        \"type\": \"string\"\n       },\n       \"ports\": {\n        \"items\": {\n         \"description\": \"PortType Structure\",\n         \"properties\": {\n          \"endPort\": {\n           \"format\": \"int32\",\n           \"maximum\": 65535,\n           \"minimum\": 1,\n           \"type\": \"integer\"\n          },\n          \"port\": {\n           \"type\": \"string\"\n          },\n          \"protocol\": {\n           \"enum\": [\n            \"TCP\",\n            \"UDP\",\n            \"SCTP\",\n            \"tcp\",\n            \"udp\",\n            \"sctp\"\n           ],\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"port\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"severity\": {\n        \"type\": \"integer\"\n       },\n       \"tags\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"message\": {\n     \"type\": \"string\"\n    },\n    \"nodeSelector\": {\n     \"properties\": {\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"severity\": {\n     \"maximum\": 10,\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"tags\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"nodeSelector\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kube Armor Network Policy\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

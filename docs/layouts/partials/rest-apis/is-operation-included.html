@@ -1,0 +1,13 @@
+{{ $operation := . }}
+{{ $xInternal := index $operation "x-internal" }}
+{{ $values := slice }}
+
+{{ with $xInternal }}
+  {{ if reflect.IsSlice . }}
+    {{ $values = . }}
+  {{ else }}
+    {{ $values = slice . }}
+  {{ end }}
+{{ end }}
+
+{{ return (in $values "meshery") }}

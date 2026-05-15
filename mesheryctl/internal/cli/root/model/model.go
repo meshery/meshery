@@ -18,18 +18,23 @@ import (
 	"fmt"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
 	"github.com/meshery/meshery/server/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
+type cmdModelFlags struct {
+	Count bool `json:"count" validate:"boolean"`
+}
+
+var modelFlags cmdModelFlags
+
 var (
-	modelsApiPath = "api/meshmodels/models"
 	// Available model subcommands
 	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, deleteModelCmd, importModelCmd, exportModelCmd, generateModelCmd, initModelCmd, buildModelCmd}
 )
@@ -44,11 +49,14 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/model`,
 // Display number of available models in Meshery
 mesheryctl model --count
 
-// Export registred models
+// Export registered models
 mesheryctl model export [model-name]
 
-// Generate model(s)
-mesheryctl model export [model-name]
+// Generate a model from a CSV directory
+mesheryctl model generate [path-to-csv-directory]
+
+// Generate a model from a URL based on a JSON template
+mesheryctl model generate --file [URL] --template [path-to-template.json]
 
 // Import model(s)
 mesheryctl model import -f [Uri]
@@ -56,7 +64,7 @@ mesheryctl model import -f [Uri]
 // List available model(s)
 mesheryctl model list
 
-// Delete avaialbe model(s)
+// Delete available model(s)
 mesheryctl model delete [model-id]
 
 // Search for a specific model
@@ -72,6 +80,9 @@ mesheryctl model init [model-name]
 mesheryctl model build [model-name]
 mesheryctl model build [model-name]/[model-version]
 `,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &modelFlags)
+	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ := cmd.Flags().GetBool("count")
 		if len(args) == 0 && !count {
@@ -91,7 +102,7 @@ mesheryctl model build [model-name]/[model-version]
 				return err
 			}
 
-			utils.DisplayCount("models", models.Count)
+			utils.DisplayCount("models", models.TotalCount)
 
 			return nil
 		}
@@ -101,7 +112,7 @@ mesheryctl model build [model-name]/[model-version]
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err, "error processing config")
+			return err
 		}
 
 		err = cmd.Usage()
@@ -114,7 +125,7 @@ mesheryctl model build [model-name]/[model-version]
 
 func init() {
 	ModelCmd.AddCommand(availableSubcommands...)
-	ModelCmd.Flags().BoolP("count", "", false, "(optional) Get the number of models in total")
+	ModelCmd.Flags().BoolVarP(&modelFlags.Count, "count", "", false, "(optional) Get the number of models in total")
 }
 
 func generateModelDataToDisplay(modelsResponse *models.MeshmodelsAPIResponse) ([][]string, int64) {
@@ -125,8 +136,8 @@ func generateModelDataToDisplay(modelsResponse *models.MeshmodelsAPIResponse) ([
 		if modelName == "" {
 			modelName = "N/A"
 		}
-		rows = append(rows, []string{model.Id.String(), modelName, string(model.Category.Name), model.Version})
+		rows = append(rows, []string{model.ID.String(), modelName, string(model.Category.Name), model.Version})
 	}
 
-	return rows, int64(modelsResponse.Count)
+	return rows, modelsResponse.TotalCount
 }

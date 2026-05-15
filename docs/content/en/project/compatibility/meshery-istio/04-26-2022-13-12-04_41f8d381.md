@@ -1,0 +1,17 @@
+---
+timestamp: "2022-04-26 13:11:53 UTC Tue"
+meshery-component: meshery-istio
+meshery-component-version: edge
+meshery-server-version: "v0.6.0-rc.5p"
+k8s-distro: minikube
+k8s-version: "v1.20.1"
+service-mesh: istio
+service-mesh-version: "1.13.3"
+tests:
+  istiod: "Running"
+  istio-egressgateway: "Running"
+  istio-ingressgateway:  "Running"
+  grafana-addon: "Running"
+  prometheus-addon: "Running"
+overall-status: "passing"
+---

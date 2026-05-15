@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00A651",
@@ -203,6 +203,7 @@
     "kind": "HelmRepository",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"accessFrom\": {\n     \"properties\": {\n      \"namespaceSelectors\": {\n       \"items\": {\n        \"properties\": {\n         \"matchLabels\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"namespaceSelectors\"\n     ],\n     \"type\": \"object\"\n    },\n    \"certSecretRef\": {\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"insecure\": {\n     \"type\": \"boolean\"\n    },\n    \"interval\": {\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"passCredentials\": {\n     \"type\": \"boolean\"\n    },\n    \"provider\": {\n     \"default\": \"generic\",\n     \"enum\": [\n      \"generic\",\n      \"aws\",\n      \"azure\",\n      \"gcp\"\n     ],\n     \"type\": \"string\"\n    },\n    \"secretRef\": {\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"suspend\": {\n     \"type\": \"boolean\"\n    },\n    \"timeout\": {\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ms|s|m))+$\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"default\",\n      \"oci\"\n     ],\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"pattern\": \"^(http|https|oci)://.*$\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Helm Repository\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#3c61d0",
@@ -203,6 +203,7 @@
     "kind": "VolumeSnapshotClass",
     "schema": "{\n \"description\": \"VolumeSnapshotClass specifies parameters that a underlying storage system uses when\\ncreating a volume snapshot. A specific VolumeSnapshotClass is used by specifying its\\nname in a VolumeSnapshot object.\\nVolumeSnapshotClasses are non-namespaced\",\n \"properties\": {\n  \"deletionPolicy\": {\n   \"description\": \"deletionPolicy determines whether a VolumeSnapshotContent created through\\nthe VolumeSnapshotClass should be deleted when its bound VolumeSnapshot is deleted.\\nSupported values are \\\"Retain\\\" and \\\"Delete\\\".\\n\\\"Retain\\\" means that the VolumeSnapshotContent and its physical snapshot on underlying storage system are kept.\\n\\\"Delete\\\" means that the VolumeSnapshotContent and its physical snapshot on underlying storage system are deleted.\\nRequired.\",\n   \"enum\": [\n    \"Delete\",\n    \"Retain\"\n   ],\n   \"type\": \"string\"\n  },\n  \"driver\": {\n   \"description\": \"driver is the name of the storage driver that handles this VolumeSnapshotClass.\\nRequired.\",\n   \"type\": \"string\"\n  },\n  \"parameters\": {\n   \"additionalProperties\": {\n    \"type\": \"string\"\n   },\n   \"description\": \"parameters is a key-value map with storage driver specific parameters for creating snapshots.\\nThese values are opaque to Kubernetes.\",\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"deletionPolicy\",\n  \"driver\"\n ],\n \"title\": \"Volume Snapshot Class\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

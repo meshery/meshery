@@ -101,7 +101,7 @@ func init() {
 func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponentsAPIResponse) ([][]string, int64) {
 	rows := [][]string{}
 	for _, component := range componentsResponse.Components {
-		componentID := component.Id.String()
+		componentID := component.ID.String()
 		componentName := component.DisplayName
 		if componentName == "" {
 			componentName = "N/A"
@@ -118,5 +118,5 @@ func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponen
 
 	}
 
-	return rows, int64(componentsResponse.Count)
+	return rows, componentsResponse.TotalCount
 }

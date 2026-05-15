@@ -1,8 +1,7 @@
 import React, { Suspense, lazy, useState } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@sistent/sistent';
+import { ExpandMoreIcon, NoSsr } from '@sistent/sistent';
 import { Grid2, ExpansionPanelDetails, Typography, styled } from '@sistent/sistent';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';
 
@@ -104,7 +103,7 @@ const GrafanaCharts = ({ grafanaURL, boardPanelConfigs }) => {
                     <Suspense fallback={null}>
                       <LazyGrafanaPanelIframe
                         key={`url_-_-${ind}`}
-                        src={`${adjustedGrafanaURL}/d-solo/${config.board.uid}/${config.board.slug}?theme=light&orgId=${config.board.org_id}&panelId=${panel.id}&refresh=${refresh}&from=${from}&to=${to}&${config.templateVars
+                        src={`${adjustedGrafanaURL}/d-solo/${config.board.uid}/${config.board.slug}?theme=light&orgId=${config.board.orgId ?? config.board.org_id}&panelId=${panel.id}&refresh=${refresh}&from=${from}&to=${to}&${config.templateVars
                           .map((tv) => `var-${tv}`)
                           .join('&')}`}
                         title={`${config.board.title} panel ${panel.id}`}
