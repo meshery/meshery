@@ -25,9 +25,11 @@ import PerformanceResults from './PerformanceResults';
 import _PromptComponent from '../PromptComponent';
 import ViewSwitch from '../ViewSwitch';
 import { EVENT_TYPES } from '../../lib/event-types';
-import fetchPerformanceProfiles from '@/graphql/queries/PerformanceProfilesQuery';
 import { iconMedium } from '../../css/icons.styles';
-import { useDeletePerformanceProfileMutation } from '@/rtk-query/performance-profile';
+import {
+  useDeletePerformanceProfileMutation,
+  useGetPerformanceProfilesQuery,
+} from '@/rtk-query/performance-profile';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { updateVisibleColumns } from '@/utils/responsive-column';
 import { useWindowDimensions } from '@/utils/dimension';
@@ -69,51 +71,51 @@ function PerformanceProfile({ handleDelete }) {
   const { user } = useSelector((state) => state.ui);
 
   const [deletePerformanceProfile] = useDeletePerformanceProfileMutation();
-  /**
-   * fetch performance profiles when the page or sort/search change. The
-   * historical GraphQL subscription on top of this REST fetch is dropped:
-   * the REST query itself reruns when its dependencies change, and server-
-   * side change-detection now drives live updates via a separate channel.
-   */
+
+  const {
+    data: profilesData,
+    isFetching: isProfilesFetching,
+    isError: isProfilesError,
+    error: profilesError,
+    refetch: refetchProfiles,
+  } = useGetPerformanceProfilesQuery({
+    page: `${page}`,
+    pagesize: `${pageSize}`,
+    // RTK Query's fetchBaseQuery already URL-encodes params, so pre-
+    // encoding here would double-encode (e.g. "foo bar" -> "foo%2520bar").
+    search,
+    order: sortOrder,
+  });
+
   useEffect(() => {
-    fetchTestProfiles(page, pageSize, search, sortOrder);
-  }, [page, pageSize, search, sortOrder]);
+    updateProgress({ showProgress: isProfilesFetching });
+  }, [isProfilesFetching]);
+
+  useEffect(() => {
+    if (profilesData) {
+      setCount(profilesData.total_count || 0);
+      setPageSize(profilesData.page_size || 0);
+      setTestProfiles(profilesData.profiles || []);
+    }
+  }, [profilesData]);
+
+  useEffect(() => {
+    if (isProfilesError) {
+      handleError('Failed to Fetch Profiles')(profilesError ?? new Error('Unknown error'));
+    }
+  }, [isProfilesError, profilesError]);
+
+  // Performance profiles are loaded via the RTK Query
+  // useGetPerformanceProfilesQuery hook above; the prior GraphQL
+  // subscription was removed in the SSE migration (#19395 / #19400).
 
   /**
-   * fetchTestProfiles constructs the queries based on the parameters given
-   * and fetches the performance profiles
-   * @param {number} page current page
-   * @param {number} pageSize items per page
-   * @param {string} search search string
-   * @param {string} sortOrder order of sort
+   * fetchTestProfiles is retained for the post-delete refetch hook.
+   * The RTK Query useGetPerformanceProfilesQuery above drives the
+   * initial + reactive loads.
    */
-  function fetchTestProfiles(page, pageSize, search, sortOrder) {
-    if (!search) search = '';
-    if (!sortOrder) sortOrder = '';
-
-    updateProgress({ showProgress: true });
-    fetchPerformanceProfiles({
-      selector: {
-        pageSize: `${pageSize}`,
-        page: `${page}`,
-        search: `${encodeURIComponent(search)}`,
-        order: `${sortOrder}`,
-      },
-    }).subscribe({
-      next: (res) => {
-        let result = res?.getPerformanceProfiles;
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          if (result) {
-            setCount(result.total_count || 0);
-            setPageSize(result.page_size || 0);
-            setTestProfiles(result.profiles || []);
-            // setPage(result.page || 0);
-          }
-        }
-      },
-      error: handleError('Failed to Fetch Profiles'),
-    });
+  function fetchTestProfiles() {
+    refetchProfiles();
   }
 
   async function showModal(count) {

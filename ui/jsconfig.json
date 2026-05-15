@@ -14,6 +14,8 @@
       "@/theme/*": ["theme/*"],
       "@/themes/*": ["themes/*"],
       "@/store/*": ["store/*"],
+      "@/lib/*": ["lib/*"],
+      "@/machines/*": ["machines/*"],
       "lib/*": ["lib/*"],
       "machines/*": ["machines/*"],
       "css/*": ["css/*"],

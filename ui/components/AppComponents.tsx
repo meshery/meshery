@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { FavoriteIcon, Hidden, Typography, useTheme } from '@sistent/sistent';
 import Navigator from './layout/Navigator/Navigator';
-import { sseSubscribe } from '@/lib/sseClient';
+import { sseSubscribe } from 'lib/sseClient';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useDispatch, useSelector } from 'react-redux';
