@@ -120,6 +120,8 @@ func main() {
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
 	viper.SetDefault("INSTANCE_ID", &instanceID)
 	viper.SetDefault(constants.ProviderENV, "")
+	viper.SetDefault(constants.ProviderExpectedIssuerENV, "")
+	viper.SetDefault(constants.ProviderExpectedIssuersENV, "")
 	viper.SetDefault("REGISTER_STATIC_K8S", true)
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
 	viper.SetDefault("SKIP_DOWNLOAD_EXTENSIONS", false)
@@ -353,15 +355,24 @@ func main() {
 	provs[lProv.Name()] = lProv
 
 	providerEnvVar := viper.GetString(constants.ProviderENV)
-	RemoteProviderURLs := utils.SplitAndTrim(viper.GetString("PROVIDER_BASE_URLS"), ", \t\n\r")
-	for _, providerurl := range RemoteProviderURLs {
+	RemoteProviderURLs := utils.SplitAndTrim(viper.GetString(constants.ProviderURLsENV), ", \t\n\r")
+	expectedIssuers := utils.SplitAndTrim(viper.GetString(constants.ProviderExpectedIssuersENV), ", \t\n\r")
+	if len(expectedIssuers) == 0 {
+		expectedIssuers = utils.SplitAndTrim(viper.GetString(constants.ProviderExpectedIssuerENV), ", \t\n\r")
+	}
+	for providerIndex, providerurl := range RemoteProviderURLs {
 		parsedURL, err := url.Parse(providerurl)
 		if err != nil {
 			log.Error(ErrInvalidURLSkippingProvider(providerurl))
 			continue
 		}
+		expectedIssuer := parsedURL.String()
+		if providerIndex < len(expectedIssuers) && expectedIssuers[providerIndex] != "" {
+			expectedIssuer = expectedIssuers[providerIndex]
+		}
 		cp := &models.RemoteProvider{
 			RemoteProviderURL:             parsedURL.String(),
+			ExpectedIssuer:                expectedIssuer,
 			RefCookieName:                 parsedURL.Host + "_ref",
 			SessionName:                   parsedURL.Host,
 			TokenStore:                    make(map[string]string),

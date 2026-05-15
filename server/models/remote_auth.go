@@ -347,12 +347,34 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 		return nil, ErrTokenPrase(err)
 	}
 	if tokenClaims, ok := token.Claims.(jwt.MapClaims); ok {
+		if err := l.validateExpectedIssuer(tokenClaims); err != nil {
+			return nil, err
+		}
 		return &tokenClaims, nil
 	}
 	if tokenClaims, ok := token.Claims.(*jwt.MapClaims); ok {
+		if err := l.validateExpectedIssuer(*tokenClaims); err != nil {
+			return nil, err
+		}
 		return tokenClaims, nil
 	}
 	return nil, ErrTokenClaims
+}
+
+func (l *RemoteProvider) validateExpectedIssuer(claims jwt.MapClaims) error {
+	expectedIssuer := strings.TrimSpace(l.ExpectedIssuer)
+	if expectedIssuer == "" {
+		expectedIssuer = strings.TrimSpace(l.RemoteProviderURL)
+	}
+	if expectedIssuer == "" {
+		return nil
+	}
+
+	issuer, ok := claims["iss"].(string)
+	if !ok || strings.TrimSpace(issuer) != expectedIssuer {
+		return ErrTokenIssuer(fmt.Errorf("expected issuer %q, got %q", expectedIssuer, issuer))
+	}
+	return nil
 }
 
 func (l *RemoteProvider) revokeToken(tokenString string) error {

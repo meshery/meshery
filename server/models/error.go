@@ -151,6 +151,7 @@ const (
 	ErrMeshsyncStoreUpdatesCode           = "meshery-server-1380"
 	ErrRemoteProviderCapabilitiesCode     = "meshery-server-1420"
 	ErrRemoteProviderAuthExhaustedCode    = "meshery-server-1421"
+	ErrTokenIssuerCode                    = "meshery-server-1422"
 )
 
 var (
@@ -486,6 +487,10 @@ func ErrTokenClientCheck(err error) error {
 
 func ErrTokenPrase(err error) error {
 	return errors.New(ErrTokenPraseCode, errors.Alert, []string{"Error occurred while Prasing and validating the token"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrTokenIssuer(err error) error {
+	return errors.New(ErrTokenIssuerCode, errors.Alert, []string{"Token issuer validation failed"}, []string{err.Error()}, []string{"Token was issued by an unexpected identity provider."}, []string{"Verify the remote provider expected issuer configuration."})
 }
 
 func ErrJWKsKeys(err error) error {

@@ -65,6 +65,7 @@ type RemoteProvider struct {
 
 	SaaSTokenName     string
 	RemoteProviderURL string
+	ExpectedIssuer    string
 
 	SessionName   string
 	RefCookieName string

@@ -15,6 +15,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/meshery/meshkit/logger"
 	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
@@ -112,6 +113,71 @@ func TestRemoteProviderInitiateLogin_OmitsPlaceholderVersions(t *testing.T) {
 	}
 	if got := query.Get("source"); got == "" {
 		t.Fatal("expected source to be present")
+	}
+}
+
+func TestRemoteProviderValidateExpectedIssuer(t *testing.T) {
+	tests := []struct {
+		name              string
+		remoteProviderURL string
+		expectedIssuer    string
+		issuer            any
+		wantErr           bool
+	}{
+		{
+			name:              "accepts configured expected issuer",
+			remoteProviderURL: "https://custom.example.com",
+			expectedIssuer:    "https://cloud.layer5.io",
+			issuer:            "https://cloud.layer5.io",
+		},
+		{
+			name:              "defaults expected issuer to remote provider URL",
+			remoteProviderURL: "https://cloud.meshery.io",
+			issuer:            "https://cloud.meshery.io",
+		},
+		{
+			name:              "rejects mismatched issuer",
+			remoteProviderURL: "https://custom.example.com",
+			expectedIssuer:    "https://cloud.layer5.io",
+			issuer:            "https://custom.example.com",
+			wantErr:           true,
+		},
+		{
+			name:              "rejects missing issuer",
+			remoteProviderURL: "https://cloud.meshery.io",
+			wantErr:           true,
+		},
+		{
+			name:   "skips validation when issuer is not configured",
+			issuer: "https://cloud.meshery.io",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			provider := &RemoteProvider{
+				RemoteProviderURL: tt.remoteProviderURL,
+				ExpectedIssuer:    tt.expectedIssuer,
+			}
+			claims := jwt.MapClaims{}
+			if tt.issuer != nil {
+				claims["iss"] = tt.issuer
+			}
+
+			err := provider.validateExpectedIssuer(claims)
+			if tt.wantErr {
+				if err == nil {
+					t.Fatal("expected issuer validation error")
+				}
+				if !strings.Contains(err.Error(), "Token issuer validation failed") {
+					t.Fatalf("expected issuer validation error, got %v", err)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("expected issuer validation to pass, got %v", err)
+			}
+		})
 	}
 }
 
