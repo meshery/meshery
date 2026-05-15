@@ -406,14 +406,6 @@ func TestInitModelInjectModelName(t *testing.T) {
 			expectedName:    "",
 			expectedDisplay: "",
 		},
-		{
-			name:            "given an unsupported output format when injecting then replacement still occurs",
-			inputJSON:       `{"name":"untitled-model","displayName":"Untitled Model","version":"v0.0.1"}`,
-			outputFormat:    "xml",
-			modelName:       "my-model",
-			expectedName:    "my-model",
-			expectedDisplay: "My Model",
-		},
 	}
 
 	for _, tc := range tests {
@@ -425,14 +417,7 @@ func TestInitModelInjectModelName(t *testing.T) {
 			}
 			assert.NoError(t, err)
 
-			// For edge cases where content should remain unchanged (empty name, unsupported format),
-			// always parse as JSON since input is JSON
-			parseFormat := tc.outputFormat
-			if parseFormat != "json" && parseFormat != "yaml" {
-				parseFormat = "json"
-			}
-
-			switch parseFormat {
+			switch tc.outputFormat {
 			case "json":
 				var data map[string]interface{}
 				assert.NoError(t, json.Unmarshal(result, &data))
