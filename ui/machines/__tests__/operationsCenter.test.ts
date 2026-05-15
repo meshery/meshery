@@ -147,10 +147,14 @@ describe('operationsCenter machine', () => {
     actor.stop();
   });
 
-  it('ignores stream callbacks without an event payload but logs', () => {
+  it('ignores stream callbacks with a null payload but logs', () => {
+    // Post-SSE migration: the /api/events handler emits raw event objects, so
+    // any truthy payload is treated as a valid event (the handler accepts both
+    // the legacy `{event: X}` envelope and an unwrapped X). Only null/undefined
+    // payloads are rejected, with a console.error logged.
     const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const { actor } = startActor();
-    subscriptionState.onEvent?.({});
+    subscriptionState.onEvent?.(null as unknown as { event?: unknown });
     expect(pushEvent).not.toHaveBeenCalled();
     expect(errSpy).toHaveBeenCalled();
     errSpy.mockRestore();

@@ -18,12 +18,9 @@ type Router struct {
 }
 
 // NewRouter returns a new ServeMux with app routes.
-func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Handler, gp http.Handler) *Router {
+func NewRouter(_ context.Context, h models.HandlerInterface, port int) *Router {
 	gMux := mux.NewRouter()
 	gMux.Use(otelmux.Middleware("meshery-server"))
-
-	gMux.Handle("/api/system/graphql/query", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlMiddleware(g)), models.ProviderAuth))).Methods("GET", "POST")
-	gMux.Handle("/api/system/graphql/playground", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlMiddleware(gp)), models.ProviderAuth))).Methods("GET", "POST")
 
 	gMux.HandleFunc("/api/system/version", h.ServerVersionHandler).
 		Methods("GET")
@@ -99,10 +96,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/system/kubernetes/contexts/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteContext), models.ProviderAuth))).
 		Methods("DELETE")
 
-	// REST replacements for the legacy GraphQL service-mesh, operator,
-	// meshsync and kubectl-describe queries / mutations. These mirror the
-	// resolvers in server/internal/graphql/resolver/* and will replace them
-	// fully once the UI no longer hits the GraphQL endpoint.
+	// REST/SSE endpoints for service-mesh, operator, meshsync and
+	// kubectl-describe queries / mutations (formerly served via GraphQL).
 	gMux.Handle("/api/system/meshes/addons", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMeshesAddonsHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/system/meshes/control-planes", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMeshesControlPlanesHandler), models.ProviderAuth))).
@@ -406,8 +401,6 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.Handle("/api/identity/orgs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetOrganizations), models.ProviderAuth))).
 		Methods("GET")
-
-	//gMux.PathPrefix("/api/system/graphql").Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlSystemHandler)))).Methods("GET", "POST")
 
 	gMux.Handle("/user/logout", h.ProviderMiddleware(h.SessionInjectorMiddleware(func(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 		h.LogoutHandler(w, req, user, provider)

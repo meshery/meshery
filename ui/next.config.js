@@ -25,11 +25,6 @@ const nextConfig = {
     'billboard.js',
   ],
 
-  // SWC Compiler Configuration (SWC is the default in Next.js 15)
-  compiler: {
-    relay: require('./relay.config'),
-  },
-
   // Turbopack configuration (default bundler in Next.js 16+).
   // An explicit config block is required when a `webpack` config is also present
   // so that Next.js 16 does not abort the build with a configuration-mismatch error.
