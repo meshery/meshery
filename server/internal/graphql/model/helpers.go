@@ -6,7 +6,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/logger"
@@ -57,7 +56,7 @@ func installUsingHelm(client *mesherykube.Client, delete bool, _ models.Adapters
 	// retrieving meshery's version to apply the appropriate chart
 	mesheryReleaseVersion := viper.GetString("BUILD")
 	if mesheryReleaseVersion == "" || mesheryReleaseVersion == "Not Set" || mesheryReleaseVersion == "edge-latest" {
-		_, latestRelease, err := handlers.CheckLatestVersion(mesheryReleaseVersion)
+		_, latestRelease, err := models.CheckLatestVersion(mesheryReleaseVersion)
 		// if unable to fetch latest release tag, meshkit helm functions handle
 		// this automatically fetch the latest one
 		if err != nil {
@@ -174,6 +173,21 @@ type K8sConnectionTracker struct {
 	mx              sync.Mutex
 	contextToBroker map[string]string //ContextID -> BrokerURL
 }
+
+// ConnectionTrackerSingleton is a process-wide tracker available to both
+// the GraphQL resolver (legacy) and the REST/SSE handlers (current). It is
+// declared here in the model package because the model package is the only
+// shared dependency both paths can import without creating a cycle.
+//
+// Transitional reality: the legacy GraphQL resolver still uses its OWN
+// connectionTrackerSingleton (see server/internal/graphql/resolver/meshsync.go)
+// — switching it to this one is intentionally out of scope for the REST/SSE
+// migration to avoid touching code that the GraphQL teardown PR will delete.
+// The two trackers will coexist for the duration of the migration window;
+// once the resolver is removed, only this singleton remains. New REST/SSE
+// handlers MUST use this instance; new constructions via NewK8sConnctionTracker
+// should be limited to tests or other scoped use.
+var ConnectionTrackerSingleton = NewK8sConnctionTracker()
 
 func NewK8sConnctionTracker() *K8sConnectionTracker {
 	return &K8sConnectionTracker{

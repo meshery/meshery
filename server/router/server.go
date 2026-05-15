@@ -99,6 +99,42 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/system/kubernetes/contexts/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteContext), models.ProviderAuth))).
 		Methods("DELETE")
 
+	// REST replacements for the legacy GraphQL service-mesh, operator,
+	// meshsync and kubectl-describe queries / mutations. These mirror the
+	// resolvers in server/internal/graphql/resolver/* and will replace them
+	// fully once the UI no longer hits the GraphQL endpoint.
+	gMux.Handle("/api/system/meshes/addons", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMeshesAddonsHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/meshes/control-planes", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMeshesControlPlanesHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/kubernetes/connections/{connectionID}/operator/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnectionOperatorStatusHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/kubernetes/connections/{connectionID}/meshsync/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnectionMeshsyncStatusHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/kubernetes/connections/{connectionID}/nats/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnectionNatsStatusHandler), models.ProviderAuth))).
+		Methods("GET")
+	// ResyncClusterHandler reads models.AllKubeClusterKey from the request
+	// context — that key is populated by KubernetesMiddleware. Without the
+	// middleware the handler short-circuits with "no kubernetes contexts
+	// available", matching what the legacy GraphQL resolver received via the
+	// @KubernetesMiddleware schema directive.
+	gMux.Handle("/api/system/kubernetes/contexts/{contextID}/resync", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.ResyncClusterHandler)), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/system/kubernetes/contexts/{contextID}/operator", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ChangeOperatorStatusHandler), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/system/kubernetes/describe", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubectlDescribeHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/kubernetes/controllers/status/stream", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ControllersStatusStreamHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/kubernetes/namespaces", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetKubernetesNamespacesHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/meshes/data-planes", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMeshesDataPlanesHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/kubernetes/cluster/resources", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetClusterResourcesHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/telemetry/components", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetTelemetryComponentsHandler), models.ProviderAuth))).
+		Methods("GET")
+
 	gMux.Handle("/api/perf/profile", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestHandler), models.ProviderAuth))).
 		Methods("GET", "POST")
 	gMux.Handle("/api/perf/profile/result", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.FetchAllResultsHandler), models.ProviderAuth))).
@@ -125,6 +161,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/system/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ClientEventHandler), models.ProviderAuth))).
 		Methods("POST")
 		// This will be changed to /api/events once the UI is compeltely updated to use new events and SSE is tunred off, otherwise existing events will break.
+	gMux.Handle("/api/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.EventStreamHandler), models.ProviderAuth))).
+		Methods("GET")
 	gMux.Handle("/api/system/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetAllEvents), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/system/events/types", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetEventTypes), models.ProviderAuth))).
