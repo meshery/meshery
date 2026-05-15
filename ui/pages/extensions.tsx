@@ -289,7 +289,7 @@ const CloudExtension = () => (
 
       <UnifiedDescription hasIcon>
         <ResponsiveImage
-          src="/static/img/meshery-logo.png"
+          src="/static/img/meshery-logo/meshery-logo.png"
           alt="Cloud Logo"
           testId="meshery-cloud-image"
         />

@@ -81,15 +81,11 @@ docker-testing-env:
 #-----------------------------------------------------------------------------
 # Meshery Server Native Builds
 #-----------------------------------------------------------------------------
-.PHONY: server wrk2-setup nighthawk-setup server-local server-skip-compgen server-no-content golangci proto-build error build-server server-binary server-binary-local
+.PHONY: server wrk2-setup server-local server-skip-compgen server-no-content golangci proto-build error build-server server-binary server-binary-local
 ## Setup wrk2 for local development.
 wrk2-setup:
 	echo "setup-wrk does not work on Mac Catalina at the moment"
 	cd server; cd cmd; git clone https://github.com/layer5io/wrk2.git; cd wrk2; make; cd ..
-
-## Setup nighthawk for local development.
-nighthawk-setup: dep-check
-	cd server; cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd nighthawk-go; make setup; cd ..
 
 run-local: server-local error
 
