@@ -18,8 +18,7 @@ import { startSessionTimer } from '../lib/sessionTimer';
 import Header from '../components/layout/Header/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import getPageContext from '../components/PageContext';
-import { MESHERY_CONTROLLER_SUBSCRIPTION } from '../components/subscription/helpers';
-import { GQLSubscription } from '../components/subscription/subscriptionhandler';
+import { sseSubscribe, type SSESubscription } from '@/lib/sseClient';
 import { useLazyGetSystemSyncQuery, useLazyGetKubernetesContextsQuery } from '../rtk-query/system';
 import { useGetUserPrefQuery } from '../rtk-query/user';
 import { api } from '../rtk-query';
@@ -134,7 +133,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     isLoading: true,
     k8sContexts: { totalCount: 0, contexts: [] },
     activeK8sContexts: [],
-    mesheryControllerSubscription: null,
     disposeK8sContextSubscription: null,
     theme: 'light',
     isOpen: false,
@@ -144,6 +142,11 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     abilities: [],
     abilityUpdated: false,
   });
+
+  // Holds the active controllers status SSE subscription. The effect below
+  // creates it once we have at least one connectionID and rebinds in-place
+  // whenever the derived connectionID list changes — no respawn churn.
+  const controllerSubscriptionRef = useRef<SSESubscription | null>(null);
 
   // Mirror the dispose callback into a ref so the bootstrap effect's cleanup
   // can call the latest value rather than the (always-null) initial-mount
@@ -238,31 +241,20 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     );
   }, [dispatch]);
 
-  const initSubscriptions = useCallback(
-    (contexts) => {
-      if (!k8sConfig?.length) {
-        return;
-      }
-      const connectionIDs = getConnectionIDsFromContextIds(contexts, k8sConfig);
-      // No need to create a controller subscription if there are no connections
-      if (connectionIDs.length < 1) {
-        setState((prevState) => ({ ...prevState, mesheryControllerSubscription: () => {} }));
-        return;
-      }
+  // Derive controller connectionIDs once from the current k8sConfig. The
+  // effect below creates or rebinds the SSE subscription whenever this list
+  // actually changes — previously _app derived the list twice (once in
+  // initSubscriptions, once in the k8sConfig effect) which made it easy to
+  // drift.
+  const controllerConnectionIDs = useMemo<string[]>(() => {
+    if (!k8sConfig?.length) {
+      return [];
+    }
+    const ids = getK8sConfigIdsFromK8sConfig(k8sConfig);
+    return getConnectionIDsFromContextIds(ids, k8sConfig);
+  }, [k8sConfig]);
 
-      const mesheryControllerSubscription = new GQLSubscription({
-        type: MESHERY_CONTROLLER_SUBSCRIPTION,
-        connectionIDs: connectionIDs,
-        callbackFunction: (data) => {
-          dispatch(setControllerState({ controllerState: data }));
-        },
-      });
-      mesheryControllerSubscription.initSubscription();
-
-      setState((prevState) => ({ ...prevState, mesheryControllerSubscription }));
-    },
-    [k8sConfig],
-  );
+  const connectionIDKey = controllerConnectionIDs.join(',');
 
   const handleDrawerToggle = useCallback(() => {
     setState((prevState) => ({ ...prevState, mobileOpen: !prevState.mobileOpen }));
@@ -445,8 +437,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
         loadPromGrafanaConnection();
         await loadOrg();
 
-        initSubscriptions([]);
-
         // Catalog content preference is loaded via useGetUserPrefQuery (reactive)
         if (typeof userPrefData?.usersExtensionPreferences?.catalogContent !== 'undefined') {
           dispatch(
@@ -472,28 +462,63 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     };
   }, []);
 
-  // Update effect for k8sConfig
+  // Auth/restricted-mode redirect — kept separate from subscription wiring.
   useEffect(() => {
-    // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
     if (
       typeof window !== 'undefined' &&
       isMesheryUIRestrictedAndThePageIsNotPlayground(providerCapabilities)
     ) {
       Router.push(mesheryExtensionRoute);
     }
+  }, [providerCapabilities]);
 
-    if (k8sConfig?.length > 0) {
-      const { mesheryControllerSubscription } = state;
-      const ids = getK8sConfigIdsFromK8sConfig(k8sConfig);
-      if (mesheryControllerSubscription) {
-        mesheryControllerSubscription.updateSubscription(
-          getConnectionIDsFromContextIds(ids, k8sConfig),
-        );
-      } else {
-        initSubscriptions(ids);
+  // Controllers status SSE — split lifecycle from rebind so the React
+  // cleanup-before-rerun rule doesn't tear down the subscription on every
+  // connectionID change.
+  //
+  // Effect 1 (this one): create or rebind when the connection set changes.
+  // - empty list -> dispose any existing subscription (e.g. user removed
+  //   the last context)
+  // - first non-empty -> create the subscription
+  // - subsequent changes -> rebind in place (sseClient.rebind closes the
+  //   old EventSource and opens a new one with the new params, preserving
+  //   our onMessage handler)
+  //
+  // This effect intentionally does NOT return a cleanup. If it did, React
+  // would dispose before every rerun, defeating rebind. The unmount-only
+  // disposal lives in Effect 2 below.
+  useEffect(() => {
+    if (!controllerConnectionIDs.length) {
+      if (controllerSubscriptionRef.current) {
+        controllerSubscriptionRef.current.dispose();
+        controllerSubscriptionRef.current = null;
       }
+      return;
     }
-  }, [k8sConfig, providerCapabilities]);
+    if (controllerSubscriptionRef.current) {
+      controllerSubscriptionRef.current.rebind({ connectionID: controllerConnectionIDs });
+      return;
+    }
+    controllerSubscriptionRef.current = sseSubscribe({
+      path: '/api/system/kubernetes/controllers/status/stream',
+      params: { connectionID: controllerConnectionIDs },
+      subscriptionName: 'MesheryControllers',
+      onMessage: (data) => {
+        dispatch(setControllerState({ controllerState: data }));
+      },
+    });
+  }, [connectionIDKey, dispatch]);
+
+  // Effect 2: unmount-only cleanup. Empty deps array is intentional — this
+  // effect owns the dispose call for the subscription lifecycle. Without
+  // this split, Effect 1 would have to choose between (a) returning cleanup
+  // and breaking rebind, or (b) leaking the subscription on unmount.
+  useEffect(() => {
+    return () => {
+      controllerSubscriptionRef.current?.dispose();
+      controllerSubscriptionRef.current = null;
+    };
+  }, []);
 
   const canShowNav = !state.isFullScreenMode && uiConfig?.components?.navigator !== false;
   const { extensionType } = useSelector((state) => state.ui);

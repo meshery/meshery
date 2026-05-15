@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { FavoriteIcon, Hidden, Typography, useTheme } from '@sistent/sistent';
 import Navigator from './layout/Navigator/Navigator';
-import subscribeK8sContext from '@/graphql/subscriptions/K8sContextSubscription';
+import { sseSubscribe } from '@/lib/sseClient';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useDispatch, useSelector } from 'react-redux';
@@ -69,9 +69,12 @@ export const KubernetesSubscription = ({ setAppState }: { setAppState: SetAppSta
       return;
     }
 
-    const subscription = subscribeK8sContext(
-      (result) => {
-        const normalizedK8sContext = normalizeKubernetesContextsResponse(result?.k8sContext);
+    const subscription = sseSubscribe({
+      path: '/api/system/kubernetes/contexts/stream',
+      subscriptionName: 'K8sContext',
+      onMessage: (result) => {
+        const payload = result as { k8sContext?: unknown } | null | undefined;
+        const normalizedK8sContext = normalizeKubernetesContextsResponse(payload?.k8sContext);
         const allContexts: string[] = [];
         if (normalizedK8sContext?.contexts?.length > 0) {
           normalizedK8sContext.contexts.forEach((ctx: { id: string }) => allContexts.push(ctx.id));
@@ -85,10 +88,7 @@ export const KubernetesSubscription = ({ setAppState }: { setAppState: SetAppSta
 
         dispatch(updateK8SConfig({ k8sConfig: normalizedK8sContext?.contexts ?? [] }));
       },
-      {
-        selector: { page: '', pageSize: '10', order: '', search: '' },
-      },
-    );
+    });
 
     const dispose = () => {
       if (subscription && typeof subscription.dispose === 'function') {

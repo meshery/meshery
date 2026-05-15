@@ -11,7 +11,6 @@ import _PromptComponent from '../../PromptComponent';
 import LoadingScreen from '../../shared/LoadingState/LoadingComponent';
 import { MesheryPatternsCatalog, VISIBILITY } from '../../../utils/Enum';
 import { useRouter } from 'next/router';
-import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import _ from 'lodash';
 import { getMeshModels } from '../../../api/meshmodel';
@@ -215,7 +214,6 @@ function MesheryPatterns({
 
   const catalogVisibilityRef = useRef(false);
   const catalogContentRef = useRef();
-  const disposeConfSubscriptionRef = useRef(null);
 
   /**
    * Checking whether users are signed in under a provider that doesn't have
@@ -260,50 +258,12 @@ function MesheryPatterns({
     );
   }, [viewType]);
 
-  const initPatternsSubscription = (
-    pageNo = page.toString(),
-    pagesize = pageSize.toString(),
-    searchText = search,
-    order = sortOrder,
-  ) => {
-    if (disposeConfSubscriptionRef.current) {
-      disposeConfSubscriptionRef.current.dispose();
-    }
-    const configurationSubscription = ConfigurationSubscription(
-      () => {
-        // stillLoading(false);
-        /**
-         * We are not using pattern subscription and this code is commented to prevent
-         * unnecessary state updates
-         */
-        // setPage(result.configuration?.patterns?.page || 0);
-        // setPageSize(result.configuration?.patterns?.page_size || 10);
-        // setCount(result.configuration?.patterns?.total_count || 0);
-        // handleSetPatterns(result.configuration?.patterns?.patterns);
-      },
-      {
-        applicationSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-        patternSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-        filterSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-      },
-    );
-    disposeConfSubscriptionRef.current = configurationSubscription;
-  };
+  // No-op kept as a stable callback for downstream table-action handlers that
+  // historically poked a GraphQL heartbeat subscription on page/sort/search
+  // changes. The original callback never consumed the payload — the REST
+  // query above already refetches reactively — so triggering it does nothing.
+  // Removing the prop entirely is left to the call-site cleanup pass.
+  const initPatternsSubscription = () => {};
 
   useEffect(() => {
     const fetchMeshModels = async () => {

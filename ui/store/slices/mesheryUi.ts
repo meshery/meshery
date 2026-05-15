@@ -62,8 +62,44 @@ const coreSlice = createSlice({
     toggleCatalogContent: (state, action) => {
       state.catalogVisibility = action.payload.catalogVisibility;
     },
+    // mergeControllerState upserts incoming controller-status entries keyed by
+    // (connectionID, controller). Pre-SSE, the GraphQL resolver emitted the
+    // entire controller set on every tick, so the legacy setControllerState
+    // could wholesale-replace state without losing data. The new SSE endpoint
+    // emits only DIFFS after the initial seed (server-side change detection
+    // moved out of the UI hot path), so a wholesale replace would drop the
+    // status of every controller not mentioned in the latest tick. Merge by
+    // composite key preserves the unchanged controllers and only updates the
+    // ones the server signalled changed.
+    //
+    // For non-array payloads (legacy callers, error paths), fall back to the
+    // wholesale-replace behavior to avoid surprising existing consumers.
     setControllerState: (state, action) => {
-      state.controllerState = action.payload.controllerState;
+      const incoming = action.payload?.controllerState;
+      if (!Array.isArray(incoming)) {
+        state.controllerState = incoming;
+        return;
+      }
+      const existing = Array.isArray(state.controllerState) ? state.controllerState : [];
+      const byKey = new Map();
+      for (const item of existing) {
+        if (item && typeof item === 'object') {
+          byKey.set(`${item.connectionID}|${item.controller}`, item);
+        }
+      }
+      for (const item of incoming) {
+        if (item && typeof item === 'object') {
+          byKey.set(`${item.connectionID}|${item.controller}`, item);
+        }
+      }
+      state.controllerState = Array.from(byKey.values());
+    },
+    // clearControllerState resets the slice to its empty form. The SSE
+    // subscription dispatches this before rebinding to a new connection set
+    // so the diff-merge in setControllerState doesn't carry stale entries
+    // from the previous set forward.
+    clearControllerState: (state) => {
+      state.controllerState = null;
     },
     updateExtensionType: (state, action) => {
       state.extensionType = action.payload.extensionType;
@@ -102,6 +138,7 @@ export const {
   toggleDrawer,
   toggleCatalogContent,
   setControllerState,
+  clearControllerState,
   setMeshsyncSubscription,
   updateExtensionType,
   updateProviderCapabilities,
