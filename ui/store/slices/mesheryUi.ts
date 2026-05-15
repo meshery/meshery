@@ -1,7 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
 import { mesheryEventBus } from '@/utils/eventBus';
 import { store } from '..';
+// TODO(schemas-canonical): import type { ControllerStatus } from '@meshery/schemas/constructs/ControllerStatus';
+// Replace the local type below once meshery/schemas >= 1.3.0 is published and
+// the ControllerStatus construct is generated there.
+// Tracked in: meshery/meshery#19424
+import type { ControllerStatus } from '@/rtk-query/kubernetes';
 
 const initialState = {
   page: {
@@ -62,8 +67,38 @@ const coreSlice = createSlice({
     toggleCatalogContent: (state, action) => {
       state.catalogVisibility = action.payload.catalogVisibility;
     },
-    setControllerState: (state, action) => {
-      state.controllerState = action.payload.controllerState;
+    // Merges incoming controller-status items into the store by the composite
+    // key (connectionID, controller).  This avoids wholesale replacement so
+    // that a partial SSE diff (e.g. only the OPERATOR status changed) does not
+    // clobber the last-known MESHSYNC / BROKER states.
+    setControllerState: (
+      state,
+      action: PayloadAction<{ controllerState: ControllerStatus[] | ControllerStatus }>,
+    ) => {
+      const incoming = Array.isArray(action.payload.controllerState)
+        ? action.payload.controllerState
+        : [action.payload.controllerState];
+
+      const existing: ControllerStatus[] = Array.isArray(state.controllerState)
+        ? (state.controllerState as ControllerStatus[])
+        : [];
+
+      const merged = [...existing];
+      for (const item of incoming) {
+        const idx = merged.findIndex(
+          (s) => s.connectionID === item.connectionID && s.controller === item.controller,
+        );
+        if (idx === -1) {
+          merged.push(item);
+        } else {
+          merged[idx] = item;
+        }
+      }
+      state.controllerState = merged;
+    },
+
+    clearControllerState: (state) => {
+      state.controllerState = null;
     },
     updateExtensionType: (state, action) => {
       state.extensionType = action.payload.extensionType;
@@ -102,6 +137,7 @@ export const {
   toggleDrawer,
   toggleCatalogContent,
   setControllerState,
+  clearControllerState,
   setMeshsyncSubscription,
   updateExtensionType,
   updateCapabilities,

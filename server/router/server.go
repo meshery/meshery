@@ -96,6 +96,20 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/system/kubernetes/contexts/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteContext), models.ProviderAuth))).
 		Methods("DELETE")
 
+	// Per-context REST endpoints — GraphQL→SSE migration replacements.
+	// TODO(schemas-canonical): route paths match the OpenAPI spec in
+	//   docs/openapi/kubernetes-context-endpoints.yaml; update here if spec changes.
+	gMux.Handle("/api/system/kubernetes/contexts/{contextID}/namespaces", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetKubernetesNamespacesHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/kubernetes/contexts/{contextID}/operator/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryOperatorStatusHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/kubernetes/contexts/{contextID}/meshsync/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMeshsyncStatusHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/kubernetes/contexts/{contextID}/nats/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetNatsStatusHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/kubernetes/contexts/{contextID}/resync", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ResyncClusterHandler), models.ProviderAuth))).
+		Methods("POST")
+
 	gMux.Handle("/api/perf/profile", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestHandler), models.ProviderAuth))).
 		Methods("GET", "POST")
 	gMux.Handle("/api/perf/profile/result", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.FetchAllResultsHandler), models.ProviderAuth))).

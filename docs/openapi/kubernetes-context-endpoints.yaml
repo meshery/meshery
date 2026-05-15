@@ -1,0 +1,210 @@
+openapi: "3.0.3"
+info:
+  title: Meshery — Kubernetes Context Endpoints
+  description: |
+    Per-context REST endpoints introduced in the GraphQL→SSE migration
+    (meshery/meshery#19424).
+
+    These specs should be submitted to the meshery/schemas repository so that:
+      1. TypeScript RTK Query hooks can be generated and exported from
+         @meshery/schemas/mesheryApi (replacing ui/rtk-query/kubernetes.ts).
+      2. Go request/response types can be generated and imported by the server
+         handlers (replacing the locally-defined structs in
+         server/handlers/kubernetes_context_handler.go).
+
+    Until meshery/schemas >= 1.3.0 is published, the local implementations
+    listed in that file are used.
+  version: "1.3.0"
+
+servers:
+  - url: /api
+
+paths:
+  /system/kubernetes/contexts/{contextID}/namespaces:
+    get:
+      operationId: GetKubernetesNamespaces
+      summary: List Kubernetes namespaces observed by MeshSync for a context
+      tags: [kubernetes]
+      parameters:
+        - $ref: "#/components/parameters/contextID"
+      responses:
+        "200":
+          description: Namespaces list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NamespacesResponse"
+        "404":
+          description: Context not found
+
+  /system/kubernetes/contexts/{contextID}/operator/status:
+    get:
+      operationId: GetMesheryOperatorStatus
+      summary: Get Meshery Operator deployment status for a context
+      tags: [kubernetes]
+      parameters:
+        - $ref: "#/components/parameters/contextID"
+      responses:
+        "200":
+          description: Operator status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControllerStatus"
+        "404":
+          description: Context not found
+
+  /system/kubernetes/contexts/{contextID}/meshsync/status:
+    get:
+      operationId: GetMeshsyncStatus
+      summary: Get MeshSync controller status for a context
+      tags: [kubernetes]
+      parameters:
+        - $ref: "#/components/parameters/contextID"
+      responses:
+        "200":
+          description: MeshSync status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperatorControllerStatus"
+        "404":
+          description: Context not found
+
+  /system/kubernetes/contexts/{contextID}/nats/status:
+    get:
+      operationId: GetNatsStatus
+      summary: Get NATS broker controller status for a context
+      tags: [kubernetes]
+      parameters:
+        - $ref: "#/components/parameters/contextID"
+      responses:
+        "200":
+          description: NATS status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperatorControllerStatus"
+        "404":
+          description: Context not found
+
+  /system/kubernetes/contexts/{contextID}/resync:
+    post:
+      operationId: ResyncCluster
+      summary: Trigger a cluster resync for a context
+      tags: [kubernetes]
+      parameters:
+        - $ref: "#/components/parameters/contextID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResyncClusterRequest"
+      responses:
+        "200":
+          description: Resync accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResyncClusterResponse"
+        "400":
+          description: Invalid request body
+        "404":
+          description: Context not found
+
+components:
+  parameters:
+    contextID:
+      name: contextID
+      in: path
+      required: true
+      description: Meshery Kubernetes context ID (UUID)
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    NamespacesResponse:
+      type: object
+      required: [namespaces]
+      properties:
+        namespaces:
+          type: array
+          items:
+            type: string
+
+    ControllerStatus:
+      description: |
+        Status of a single Meshery controller (OPERATOR, MESHSYNC, or BROKER)
+        for a given connection.
+        TODO(schemas-canonical): promote to dist/constructs/ControllerStatus
+        in meshery/schemas.
+      type: object
+      required: [connectionID, controller, status, version]
+      properties:
+        connectionID:
+          type: string
+          format: uuid
+        controller:
+          type: string
+          enum: [OPERATOR, MESHSYNC, BROKER]
+        status:
+          type: string
+          enum:
+            - DEPLOYED
+            - DEPLOYING
+            - NOTDEPLOYED
+            - UNDEPLOYED
+            - ENABLED
+            - RUNNING
+            - CONNECTED
+            - UNKNOWN
+        version:
+          type: string
+
+    OperatorControllerStatus:
+      type: object
+      required: [connectionID, name, version, status]
+      properties:
+        connectionID:
+          type: string
+          format: uuid
+        name:
+          type: string
+        version:
+          type: string
+        status:
+          type: string
+        error:
+          type: object
+          nullable: true
+          properties:
+            title:
+              type: string
+            description:
+              type: string
+
+    ResyncClusterRequest:
+      type: object
+      properties:
+        clearDb:
+          type: string
+          enum: ["true", "false"]
+          default: "false"
+        hardReset:
+          type: string
+          enum: ["true", "false"]
+          default: "false"
+        reSync:
+          type: string
+          enum: ["true", "false"]
+          default: "false"
+
+    ResyncClusterResponse:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          example: processing

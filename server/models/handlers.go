@@ -48,6 +48,16 @@ type HandlerInterface interface {
 	GetAllContexts(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetContext(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteContext(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	// Per-context REST endpoints added in the GraphQL→SSE migration.
+	// TODO(schemas-canonical): once meshery/schemas publishes OpenAPI specs for
+	//   these paths and generates Go types, update the handler signatures to use
+	//   the generated request/response types.
+	GetKubernetesNamespacesHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetMesheryOperatorStatusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetMeshsyncStatusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetNatsStatusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	ResyncClusterHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	// GetCurrentContextHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	// SetCurrentContextHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 

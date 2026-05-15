@@ -1,0 +1,99 @@
+asyncapi: "2.6.0"
+info:
+  title: Meshery — Controller Status SSE Channel
+  description: |
+    AsyncAPI document for the SSE channel that streams controller-status
+    updates from the Meshery server to the UI.
+
+    This document should be submitted to the meshery/schemas repository so
+    that TypeScript client stubs and Go server stubs can be generated from it,
+    replacing the hand-rolled Event envelope in:
+      - server/internal/sse/stream.go
+      - ui/utils/sseClient.ts
+
+    Until meshery/schemas publishes generated stubs, the local implementations
+    in those two files are used.
+
+    Tracked in: meshery/meshery#19424
+  version: "1.0.0"
+
+servers:
+  meshery-server:
+    url: "http://localhost:9081"
+    protocol: http
+    description: Meshery server SSE endpoint
+
+channels:
+  /api/system/kubernetes/contexts/{contextID}/controllers/status/stream:
+    description: |
+      SSE stream that emits an array of ControllerStatus items whenever any
+      controller state changes for the given Kubernetes context.  The server
+      sends a heartbeat comment every 30 s on idle connections.
+    parameters:
+      contextID:
+        description: Meshery Kubernetes context ID (UUID)
+        schema:
+          type: string
+          format: uuid
+    subscribe:
+      operationId: subscribeControllerStatusUpdates
+      summary: Receive controller-status diffs
+      message:
+        $ref: "#/components/messages/ControllerStatusUpdateEvent"
+
+components:
+  messages:
+    ControllerStatusUpdateEvent:
+      name: controller-status-update
+      title: Controller Status Update
+      summary: |
+        Emitted when one or more Meshery controller statuses change.
+        The payload is a JSON array of ControllerStatus objects.  Consumers
+        should merge these items into their local state by the composite key
+        (connectionID, controller) rather than wholesale-replacing the state
+        (see mesheryUi.ts setControllerState).
+      contentType: application/json
+      payload:
+        type: object
+        required: [name, data]
+        properties:
+          name:
+            type: string
+            const: controller-status-update
+          data:
+            type: array
+            items:
+              $ref: "#/components/schemas/ControllerStatus"
+
+  schemas:
+    ControllerStatus:
+      description: |
+        Status snapshot for a single Meshery controller on a given connection.
+        TODO(schemas-canonical): promote to dist/constructs/ControllerStatus
+        in meshery/schemas.
+      type: object
+      required: [connectionID, controller, status, version]
+      properties:
+        connectionID:
+          type: string
+          format: uuid
+          description: UUID of the Meshery connection this status belongs to.
+        controller:
+          type: string
+          enum: [OPERATOR, MESHSYNC, BROKER]
+          description: Which of the three Meshery controllers this item describes.
+        status:
+          type: string
+          enum:
+            - DEPLOYED
+            - DEPLOYING
+            - NOTDEPLOYED
+            - UNDEPLOYED
+            - ENABLED
+            - RUNNING
+            - CONNECTED
+            - UNKNOWN
+          description: Current deployment/runtime status of the controller.
+        version:
+          type: string
+          description: Installed version string, or empty if not available.
