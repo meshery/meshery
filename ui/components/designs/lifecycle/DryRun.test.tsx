@@ -2,32 +2,29 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@sistent/sistent', () => {
-  const styled = (_tag: any) => () => {
-    const Styled = ({ children, ...rest }: any) => <div {...rest}>{children}</div>;
-    Styled.displayName = 'StyledMock';
-    return Styled;
-  };
-  return {
-    styled,
-    List: ({ children, ...rest }: any) => <ul {...rest}>{children}</ul>,
-    ListItemText: ({ primary }: any) => <span>{primary}</span>,
-    ListItemIcon: ({ children }: any) => <span>{children}</span>,
-    Typography: ({ children, 'data-testid': testId, ...rest }: any) => (
-      <span data-testid={testId} {...rest}>
-        {children}
-      </span>
-    ),
-    Collapse: ({ children }: any) => <div>{children}</div>,
-    useTheme: () => ({
-      palette: {
-        text: { default: '#000' },
-        background: { error: { default: '#f00' } },
-      },
-    }),
-    ErrorIcon: () => <svg data-testid="error-icon" />,
-  };
-});
+vi.mock('@sistent/sistent', () => ({
+  List: ({ children, ...rest }: any) => <ul {...rest}>{children}</ul>,
+  ListItemText: ({ primary }: any) => <span>{primary}</span>,
+  ListItemIcon: ({ children }: any) => <span>{children}</span>,
+  Typography: ({ children, 'data-testid': testId, ...rest }: any) => (
+    <span data-testid={testId} {...rest}>
+      {children}
+    </span>
+  ),
+  Collapse: ({ children }: any) => <div>{children}</div>,
+  ErrorIcon: () => <svg data-testid="error-icon" />,
+}));
+
+vi.mock('@/theme', () => ({
+  useTheme: () => ({
+    palette: {
+      text: { default: '#000' },
+      background: { error: { default: '#f00' } },
+      success: { main: '#0f0' },
+      error: { dark: '#c00' },
+    },
+  }),
+}));
 
 vi.mock('@/assets/icons', () => ({
   ExpandLess: () => <svg data-testid="expand-less" />,
@@ -51,10 +48,6 @@ vi.mock('../../../machines/validator/designValidator', () => ({
   },
   useDryRunValidationResults: vi.fn(),
   useIsValidatingDryRun: vi.fn(),
-}));
-
-vi.mock('@/themes/index', () => ({
-  NOTIFICATIONCOLORS: { ERROR_DARK: '#dc0', SUCCESS_V2: '#0f0' },
 }));
 
 vi.mock('../../data-formatter', () => ({

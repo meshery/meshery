@@ -2,41 +2,44 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import EnvironmentModal from './EnvironmentModal';
+import EnvironmentModal from '../../environments/EnvironmentFormModal';
 
 vi.mock('@sistent/sistent', () => ({
-  Modal: ({ open, closeModal, title, headerIcon, maxWidth, children }: any) =>
-    open ? (
-      <div data-testid="modal" data-title={title} data-max-width={maxWidth}>
+  EnvironmentIcon: ({ height, width, fill }: any) => (
+    <svg data-testid="environment-icon" data-height={height} data-width={width} data-fill={fill} />
+  ),
+}));
+
+vi.mock('@/theme', () => ({
+  styled:
+    (_Component: any) =>
+    () =>
+    ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  useTheme: () => ({
+    palette: { background: { constant: { white: '#ffffff' } } },
+  }),
+}));
+
+vi.mock('@/components/shared/Modal', () => ({
+  Modal: ({ isOpen, onClose, title, headerIcon, size, children }: any) =>
+    isOpen ? (
+      <div data-testid="modal" data-title={title} data-size={size}>
         <div data-testid="header-icon">{headerIcon}</div>
-        <button onClick={closeModal} aria-label="close-modal">
+        <button onClick={onClose} aria-label="close-modal">
           Close
         </button>
         {children}
       </div>
     ) : null,
-  ModalBody: ({ children }: any) => <div data-testid="modal-body">{children}</div>,
-  EnvironmentIcon: ({ height, width, fill }: any) => (
-    <svg data-testid="environment-icon" data-height={height} data-width={width} data-fill={fill} />
-  ),
-  useTheme: () => ({
-    palette: { background: { constant: { white: '#ffffff' } } },
-  }),
-  Box: ({ children, maxHeight }: any) => (
-    <div data-testid="box" data-max-height={maxHeight}>
-      {children}
-    </div>
-  ),
 }));
 
 vi.mock('../../lifecycle', () => ({
   EnvironmentComponent: () => <div data-testid="environment-component" />,
 }));
 
-describe('EnvironmentModal', () => {
+describe('EnvironmentFormModal', () => {
   it('returns null when isOpenModal is false', () => {
     const { container } = render(<EnvironmentModal isOpenModal={false} setIsOpenModal={vi.fn()} />);
-
     expect(container.textContent).toBe('');
   });
 
@@ -44,7 +47,7 @@ describe('EnvironmentModal', () => {
     render(<EnvironmentModal isOpenModal={true} setIsOpenModal={vi.fn()} />);
 
     expect(screen.getByTestId('modal')).toHaveAttribute('data-title', 'Environment');
-    expect(screen.getByTestId('modal')).toHaveAttribute('data-max-width', 'xl');
+    expect(screen.getByTestId('modal')).toHaveAttribute('data-size', 'xl');
     expect(screen.getByTestId('environment-icon')).toHaveAttribute('data-fill', '#ffffff');
     expect(screen.getByTestId('environment-component')).toBeInTheDocument();
   });
@@ -56,11 +59,5 @@ describe('EnvironmentModal', () => {
 
     await user.click(screen.getByRole('button', { name: 'close-modal' }));
     expect(setIsOpenModal).toHaveBeenCalledWith(false);
-  });
-
-  it('wraps the EnvironmentComponent in a Box with max height', () => {
-    render(<EnvironmentModal isOpenModal={true} setIsOpenModal={vi.fn()} />);
-
-    expect(screen.getByTestId('box')).toHaveAttribute('data-max-height', '65vh');
   });
 });

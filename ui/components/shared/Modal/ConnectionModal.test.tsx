@@ -2,20 +2,26 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import ConnectionModal from './ConnectionModal';
+import ConnectionModal from '../../connections/ConnectionFormModal';
 
-vi.mock('@sistent/sistent', () => ({
-  Modal: ({ open, closeModal, title, headerIcon, maxWidth, children }: any) =>
-    open ? (
-      <div data-testid="modal" data-title={title} data-max-width={maxWidth}>
+vi.mock('@/theme', () => ({
+  styled:
+    (_Component: any) =>
+    () =>
+    ({ children, ...props }: any) => <div {...props}>{children}</div>,
+}));
+
+vi.mock('@/components/shared/Modal', () => ({
+  Modal: ({ isOpen, onClose, title, headerIcon, size, children }: any) =>
+    isOpen ? (
+      <div data-testid="modal" data-title={title} data-size={size}>
         <div data-testid="header-icon">{headerIcon}</div>
-        <button onClick={closeModal} aria-label="close-modal">
+        <button onClick={onClose} aria-label="close-modal">
           Close
         </button>
         {children}
       </div>
     ) : null,
-  ModalBody: ({ children }: any) => <div data-testid="modal-body">{children}</div>,
 }));
 
 vi.mock('@/assets/icons/Connection', () => ({
@@ -25,42 +31,22 @@ vi.mock('@/assets/icons/Connection', () => ({
 }));
 
 vi.mock('../../connections/ConnectionTable', () => ({
-  default: ({ meshsyncControllerState, connectionMetadataState, selectedFilter }: any) => (
-    <div
-      data-testid="connection-table"
-      data-selected-filter={selectedFilter}
-      data-controller={JSON.stringify(meshsyncControllerState || {})}
-      data-metadata={JSON.stringify(connectionMetadataState || {})}
-    />
+  default: ({ selectedFilter }: any) => (
+    <div data-testid="connection-table" data-selected-filter={selectedFilter} />
   ),
 }));
 
-describe('ConnectionModal', () => {
+describe('ConnectionFormModal', () => {
   it('renders nothing when isOpenModal is false', () => {
-    const { container } = render(
-      <ConnectionModal
-        isOpenModal={false}
-        setIsOpenModal={vi.fn()}
-        meshsyncControllerState={{}}
-        connectionMetadataState={{}}
-      />,
-    );
-
+    const { container } = render(<ConnectionModal isOpenModal={false} setIsOpenModal={vi.fn()} />);
     expect(container.textContent).toBe('');
   });
 
   it('renders the modal with a connection table when isOpenModal is true', () => {
-    render(
-      <ConnectionModal
-        isOpenModal={true}
-        setIsOpenModal={vi.fn()}
-        meshsyncControllerState={{ status: 'ok' }}
-        connectionMetadataState={{ count: 1 }}
-      />,
-    );
+    render(<ConnectionModal isOpenModal={true} setIsOpenModal={vi.fn()} />);
 
     expect(screen.getByTestId('modal')).toHaveAttribute('data-title', 'Connections');
-    expect(screen.getByTestId('modal')).toHaveAttribute('data-max-width', 'xl');
+    expect(screen.getByTestId('modal')).toHaveAttribute('data-size', 'xl');
     expect(screen.getByTestId('connection-icon')).toBeInTheDocument();
     expect(screen.getByTestId('connection-table')).toHaveAttribute(
       'data-selected-filter',
@@ -72,39 +58,9 @@ describe('ConnectionModal', () => {
     const user = userEvent.setup();
     const setIsOpenModal = vi.fn();
 
-    render(
-      <ConnectionModal
-        isOpenModal={true}
-        setIsOpenModal={setIsOpenModal}
-        meshsyncControllerState={{}}
-        connectionMetadataState={{}}
-      />,
-    );
+    render(<ConnectionModal isOpenModal={true} setIsOpenModal={setIsOpenModal} />);
 
     await user.click(screen.getByRole('button', { name: 'close-modal' }));
     expect(setIsOpenModal).toHaveBeenCalledWith(false);
-  });
-
-  it('forwards the meshsync and connection metadata state to the table', () => {
-    const controllerState = { status: 'running' };
-    const metadataState = { foo: 'bar' };
-
-    render(
-      <ConnectionModal
-        isOpenModal={true}
-        setIsOpenModal={vi.fn()}
-        meshsyncControllerState={controllerState}
-        connectionMetadataState={metadataState}
-      />,
-    );
-
-    expect(screen.getByTestId('connection-table')).toHaveAttribute(
-      'data-controller',
-      JSON.stringify(controllerState),
-    );
-    expect(screen.getByTestId('connection-table')).toHaveAttribute(
-      'data-metadata',
-      JSON.stringify(metadataState),
-    );
   });
 });

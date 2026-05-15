@@ -2,35 +2,44 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import UnsavedChangesModal from './UnsavedChangesModal';
+import UnsavedChangesModal from '../shared/Modal/UnsavedChangesModal';
 
 vi.mock('@sistent/sistent', () => ({
   CheckCircleIcon: () => <svg data-testid="check-icon" />,
   DeleteIcon: ({ fill }: any) => <svg data-testid="delete-icon" data-fill={fill} />,
-  Modal: ({ open, closeModal, title, children }: any) =>
-    open ? (
-      <div data-testid="modal" data-title={title}>
-        <button type="button" onClick={closeModal} data-testid="modal-close">
-          close
-        </button>
-        {children}
-      </div>
-    ) : null,
-  ModalBody: ({ children }: any) => <div data-testid="modal-body">{children}</div>,
-  ModalButtonPrimary: ({ children, onClick, startIcon, style }: any) => (
-    <button type="button" onClick={onClick} style={style}>
+  ModalButtonPrimary: ({ children, onClick, startIcon, ...props }: any) => (
+    <button type="button" onClick={onClick} {...props}>
       {startIcon}
       <span>{children}</span>
     </button>
   ),
-  ModalFooter: ({ children }: any) => <div data-testid="modal-footer">{children}</div>,
   Typography: ({ children }: any) => <span>{children}</span>,
+}));
+
+vi.mock('@/theme', () => ({
+  styled:
+    (_Component: any) =>
+    () =>
+    ({ children, ...props }: any) => <div {...props}>{children}</div>,
   useTheme: () => ({
     palette: {
       common: { white: '#fff' },
       background: { error: { default: '#f00' } },
     },
   }),
+}));
+
+vi.mock('../shared/Modal/Modal', () => ({
+  Modal: ({ isOpen, onClose, title, children, actions }: any) =>
+    isOpen ? (
+      <div data-testid="modal" data-title={title}>
+        <button type="button" onClick={onClose} data-testid="modal-close">
+          close
+        </button>
+        {children}
+        {actions}
+      </div>
+    ) : null,
 }));
 
 describe('UnsavedChangesModal', () => {

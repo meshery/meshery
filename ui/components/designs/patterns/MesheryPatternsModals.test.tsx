@@ -7,23 +7,15 @@ vi.mock('@sistent/sistent', () => ({
   importDesignUiSchema: { __mockUi: 'import' },
   publishCatalogItemSchema: { type: 'object', __mockId: 'publish' },
   publishCatalogItemUiSchema: { __mockUi: 'publish' },
-  Modal: ({ title, children, closeModal, 'data-testid': testId }: any) => (
-    <div data-testid={testId || 'modal'} data-title={title}>
-      <button type="button" onClick={closeModal}>
-        close
-      </button>
-      {children}
-    </div>
-  ),
 }));
 
-vi.mock('../../shared/Modal/Modal', () => ({
-  RJSFModalWrapper: ({ submitBtnText, schema, handleSubmit, handleClose, helpText }: any) => (
+vi.mock('@/components/shared/Modal', () => ({
+  FormModal: ({ title, schema, submitText, onSubmit, onClose, helpText }: any) => (
     <div data-testid="rjsf-modal-wrapper">
-      <button onClick={() => handleSubmit?.({ ok: true })} type="button">
-        {submitBtnText}
+      <button onClick={() => onSubmit?.({ ok: true })} type="button">
+        {submitText}
       </button>
-      <button onClick={handleClose} type="button">
+      <button onClick={onClose} type="button">
         close-wrapper
       </button>
       <span data-testid="schema-id">{schema.__mockId}</span>
@@ -32,20 +24,22 @@ vi.mock('../../shared/Modal/Modal', () => ({
   ),
 }));
 
+vi.mock('../design-modal-header', () => ({
+  DesignModalHeaderIcon: () => <svg data-testid="design-modal-header-icon" />,
+}));
+
 vi.mock('../../../public/static/img/drawer-icons/pattern_svg', () => ({
   default: () => <svg data-testid="pattern-svg" />,
 }));
 
-import { ImportDesignModal, PublishModal } from './MesheryPatternsModals';
+import { ImportDesignModal } from '../ImportDesignModal';
+import { PublishDesignModal } from '../PublishDesignModal';
 
 describe('ImportDesignModal', () => {
   it('renders the Import Design modal with the import schema', () => {
     render(<ImportDesignModal handleClose={vi.fn()} handleImportDesign={vi.fn()} />);
-    expect(screen.getByTestId('import-design-modal')).toHaveAttribute(
-      'data-title',
-      'Import Design',
-    );
     expect(screen.getByTestId('schema-id')).toHaveTextContent('import');
+    expect(screen.getByRole('button', { name: 'Import' })).toBeInTheDocument();
   });
 
   it('invokes handleImportDesign when submitting the form', () => {
@@ -56,16 +50,16 @@ describe('ImportDesignModal', () => {
   });
 });
 
-describe('PublishModal', () => {
+describe('PublishDesignModal', () => {
   it('renders the Publish modal with the supplied title and publish schema', () => {
-    render(<PublishModal handleClose={vi.fn()} handleSubmit={vi.fn()} title="Publish X" />);
+    render(<PublishDesignModal handleClose={vi.fn()} handleSubmit={vi.fn()} title="Publish X" />);
     expect(screen.getByTestId('schema-id')).toHaveTextContent('publish');
     expect(screen.getByTestId('help-text')).toBeInTheDocument();
   });
 
   it('invokes handleSubmit when submitting the form', () => {
     const handleSubmit = vi.fn();
-    render(<PublishModal handleClose={vi.fn()} handleSubmit={handleSubmit} title="t" />);
+    render(<PublishDesignModal handleClose={vi.fn()} handleSubmit={handleSubmit} title="t" />);
     screen.getByRole('button', { name: 'Submit for Approval' }).click();
     expect(handleSubmit).toHaveBeenCalledWith({ ok: true });
   });

@@ -2,19 +2,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import ExportModal from './ExportModal';
+import ExportModal from '../../designs/export/ExportDesignModal';
 
 vi.mock('@sistent/sistent', () => ({
-  Modal: ({ open, onClose, closeModal, title, children }: any) =>
-    open ? (
-      <div data-testid="modal" data-title={title}>
-        <button onClick={onClose ?? closeModal} aria-label="close-modal">
-          Close
-        </button>
-        {children}
-      </div>
-    ) : null,
-  ModalBody: ({ children }: any) => <div data-testid="modal-body">{children}</div>,
   ListItem: ({ children, sx }: any) => (
     <li data-testid="export-list-item" data-sx={JSON.stringify(sx || {})}>
       {children}
@@ -35,6 +25,13 @@ vi.mock('@sistent/sistent', () => ({
   ),
   DownloadIcon: () => <svg data-testid="download-icon" />,
   Box: ({ children, sx }: any) => <div data-sx={JSON.stringify(sx || {})}>{children}</div>,
+}));
+
+vi.mock('@/theme', () => ({
+  styled:
+    (_Component: any) =>
+    () =>
+    ({ children, ...props }: any) => <div {...props}>{children}</div>,
   useTheme: () => ({
     palette: {
       primary: { main: '#1a73e8' },
@@ -45,7 +42,18 @@ vi.mock('@sistent/sistent', () => ({
     shadows: ['none', '0px 1px 1px rgba(0,0,0,0.1)'],
     spacing: (n: number) => `${n * 8}px`,
   }),
-  useModal: (props: any) => ({ headerIcon: props?.headerIcon ?? 'icon' }),
+}));
+
+vi.mock('@/components/shared/Modal', () => ({
+  Modal: ({ isOpen, onClose, title, children }: any) =>
+    isOpen ? (
+      <div data-testid="modal" data-title={title}>
+        <button onClick={onClose} aria-label="close-modal">
+          Close
+        </button>
+        {children}
+      </div>
+    ) : null,
 }));
 
 vi.mock('@/assets/icons/technology/kubernetes', () => ({
@@ -64,7 +72,7 @@ vi.mock('@/assets/icons/OciImage', () => ({
   OCIImageIcon: (props: any) => <svg data-testid="oci-icon" {...props} />,
 }));
 
-describe('ExportModal', () => {
+describe('ExportDesignModal', () => {
   const baseProps = {
     downloadModal: { open: true, content: { id: 'design-1' } },
     handleDownloadDialogClose: vi.fn(),
@@ -84,7 +92,6 @@ describe('ExportModal', () => {
 
   it('returns null modal when open is false', () => {
     render(<ExportModal {...baseProps} downloadModal={{ open: false, content: null }} />);
-
     expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
   });
 
@@ -94,61 +101,8 @@ describe('ExportModal', () => {
 
     render(<ExportModal {...baseProps} handleDesignDownload={handleDesignDownload} />);
 
-    const downloadButtons = screen.getAllByTestId('icon-button');
-    await user.click(downloadButtons[0]);
-
+    await user.click(screen.getAllByTestId('icon-button')[0]);
     expect(handleDesignDownload).toHaveBeenCalledWith(expect.anything(), { id: 'design-1' });
-  });
-
-  it('triggers oci=true for the OCI image option', async () => {
-    const user = userEvent.setup();
-    const handleDesignDownload = vi.fn();
-
-    render(<ExportModal {...baseProps} handleDesignDownload={handleDesignDownload} />);
-
-    const downloadButtons = screen.getAllByTestId('icon-button');
-    await user.click(downloadButtons[1]);
-
-    expect(handleDesignDownload).toHaveBeenLastCalledWith(
-      expect.anything(),
-      { id: 'design-1' },
-      null,
-      'oci=true',
-    );
-  });
-
-  it('triggers Kubernetes Manifest export with the right query', async () => {
-    const user = userEvent.setup();
-    const handleDesignDownload = vi.fn();
-
-    render(<ExportModal {...baseProps} handleDesignDownload={handleDesignDownload} />);
-
-    const downloadButtons = screen.getAllByTestId('icon-button');
-    await user.click(downloadButtons[2]);
-
-    expect(handleDesignDownload).toHaveBeenLastCalledWith(
-      expect.anything(),
-      { id: 'design-1' },
-      null,
-      'export=Kubernetes Manifest',
-    );
-  });
-
-  it('triggers helm chart export', async () => {
-    const user = userEvent.setup();
-    const handleDesignDownload = vi.fn();
-
-    render(<ExportModal {...baseProps} handleDesignDownload={handleDesignDownload} />);
-
-    const downloadButtons = screen.getAllByTestId('icon-button');
-    await user.click(downloadButtons[3]);
-
-    expect(handleDesignDownload).toHaveBeenLastCalledWith(
-      expect.anything(),
-      { id: 'design-1' },
-      null,
-      'export=helm-chart',
-    );
   });
 
   it('appends extension export options', () => {

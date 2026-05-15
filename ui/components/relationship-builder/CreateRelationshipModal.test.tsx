@@ -2,12 +2,12 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@sistent/sistent', () => ({
-  Modal: ({ open, title, children, closeModal }: any) =>
-    open ? (
+vi.mock('@/components/shared/Modal', () => ({
+  Modal: ({ isOpen, onClose, title, children }: any) =>
+    isOpen ? (
       <div data-testid="modal" data-title={title}>
         {children}
-        <button data-testid="close-btn" onClick={closeModal}>
+        <button data-testid="close-btn" onClick={onClose}>
           close
         </button>
       </div>
@@ -24,7 +24,7 @@ vi.mock('./RelationshipFormStepper', () => ({
   ),
 }));
 
-import CreateRelationshipModal from './CreateRelationshipModal';
+import CreateRelationshipModal from '../registry/CreateRelationshipModal';
 
 describe('CreateRelationshipModal', () => {
   it('does not render the modal when closed', () => {
