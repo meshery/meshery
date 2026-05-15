@@ -42,6 +42,7 @@ import (
 
 const (
 	PROVIDER_CAPABILITIES_FILEPATH_ENV = "PROVIDER_CAPABILITIES_FILEPATH"
+	PROVIDER_TOKEN_ISSUER_ENV          = "PROVIDER_TOKEN_ISSUER"
 	SKIP_DOWNLOAD_EXTENSIONS_ENV       = "SKIP_DOWNLOAD_EXTENSIONS"
 )
 
@@ -65,6 +66,7 @@ type RemoteProvider struct {
 
 	SaaSTokenName     string
 	RemoteProviderURL string
+	ExpectedIssuer    string
 
 	SessionName   string
 	RefCookieName string

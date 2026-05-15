@@ -362,6 +362,7 @@ func main() {
 		}
 		cp := &models.RemoteProvider{
 			RemoteProviderURL:             parsedURL.String(),
+			ExpectedIssuer:                viper.GetString(models.PROVIDER_TOKEN_ISSUER_ENV),
 			RefCookieName:                 parsedURL.Host + "_ref",
 			SessionName:                   parsedURL.Host,
 			TokenStore:                    make(map[string]string),

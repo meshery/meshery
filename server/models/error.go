@@ -151,6 +151,7 @@ const (
 	ErrMeshsyncStoreUpdatesCode           = "meshery-server-1380"
 	ErrRemoteProviderCapabilitiesCode     = "meshery-server-1420"
 	ErrRemoteProviderAuthExhaustedCode    = "meshery-server-1421"
+	ErrTokenIssuerMismatchCode            = "meshery-server-1422"
 )
 
 var (
@@ -182,6 +183,7 @@ var (
 	ErrTokenRetry              = errors.New(ErrTokenRetryCode, errors.Alert, []string{"Error occurred, retrying after refresh to fetch token"}, []string{}, []string{}, []string{})
 	ErrOperationNotAvailable   = errors.New(ErrOperationNotAvailableCode, errors.Alert, []string{"Operation not available"}, []string{}, []string{}, []string{})
 	ErrEmptySession            = errors.New(ErrEmptySessionCode, errors.Alert, []string{"No session found in the request"}, []string{"Unable to find \"token\" cookie in the request."}, []string{"User is not authenticated with the selected Provider.", "Browser might be restricting use of cookies."}, []string{"Choose a Provider and login to establish an active session (receive a new token and cookie). Optionally, try using a private/incognito browser window.", "Verify that your browser settings allow cookies."})
+	ErrTokenIssuerMismatch     = errors.New(ErrTokenIssuerMismatchCode, errors.Alert, []string{"Token issuer mismatch"}, []string{"The token's issuer claim does not match the expected issuer"}, []string{"Custom domain deployment with Hydra issuing tokens from the canonical issuer URL"}, []string{"Set PROVIDER_TOKEN_ISSUER to the canonical Hydra issuer URL, or remove it if the token issuer is not being validated"})
 )
 
 func ErrCloseIoReader(err error) error {
