@@ -1418,8 +1418,9 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	if fileTypes == "oci" {
 		img, err := meshkitOci.BuildImage(modelDir)
 		if err != nil {
+			err = ErrBuildOCIImg(err)
 			h.log.Error(err)
-			writeMeshkitError(rw, ErrExportModel(err, "OCI image build"), http.StatusInternalServerError)
+			http.Error(rw, ErrBuildOCIImg(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
