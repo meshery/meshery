@@ -30,19 +30,16 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
     subscriptionName: 'Events',
     onMessage: (result) => {
       try {
-        // The /api/events SSE endpoint (EventStreamHandler) emits raw
-        // event objects (not the legacy GraphQL `{event: ...}` envelope).
-        // For backwards compatibility during the migration we accept either
-        // shape: prefer the unwrapped event if present, otherwise fall back
-        // to the legacy envelope's .event field.
-        const payload = result as { event?: unknown } | Record<string, unknown> | null | undefined;
-        if (!payload) {
-          console.error('Invalid event received: empty payload', result);
+        const payload = result as { event?: unknown } | null | undefined;
+        if (!payload?.event) {
+          console.error('Invalid event received', result);
           return;
         }
-        const envelope = payload as { event?: unknown };
-        const evt = envelope.event !== undefined ? envelope.event : payload;
-        sendBack(events.eventReceivedFromServer(evt));
+
+        // GraphQL Event payload (canonical camelCase) is consumed as-is by
+        // downstream UI; meshkit Event JSON tags also flipped to camelCase in
+        // v1.0.7 so the REST /api/system/events list endpoint matches.
+        sendBack(events.eventReceivedFromServer(payload.event));
       } catch (error) {
         console.error('[operationsCenter] An error occurred in processing event', error);
       }

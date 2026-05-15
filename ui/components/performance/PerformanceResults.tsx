@@ -6,14 +6,13 @@ import MesheryChart from '../MesheryChart';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import GenericModal from '../shared/Modal/GenericModal';
 import { BarChart as BarChartIcon, Info as InfoIcon, Reply as ReplyIcon } from '@/assets/icons';
-import { useGetProfileResultsByIdQuery } from '@/rtk-query/performance-profile';
+import fetchPerformanceResults from '@/graphql/queries/PerformanceResultQuery';
 import NodeDetails from './NodeDetails';
 import FacebookIcon from './assets/facebookIcon';
 import LinkedinIcon from './assets/linkedinIcon';
 import TwitterIcon from './assets/twitterIcon';
 import { iconMedium, iconLarge } from '../../css/icons.styles';
 import { TwitterShareButton, LinkedinShareButton, FacebookShareButton } from 'react-share';
-import subscribePerformanceResults from '@/graphql/subscriptions/PerformanceResultSubscription';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import {
@@ -501,75 +500,12 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
   const searchTimeout = useRef();
   const { notify } = useNotification();
 
-  const profilePathParts = endpoint.split('/');
-  const profileID = profilePathParts[profilePathParts.length - 2];
-
-  const {
-    data: profileResultsData,
-    isFetching: isResultsFetching,
-    isError: isResultsError,
-    error: resultsError,
-  } = useGetProfileResultsByIdQuery({
-    id: profileID,
-    page: `${page}`,
-    pagesize: `${pageSize}`,
-    // RTK Query's fetchBaseQuery encodes params on the way out; pre-
-    // encoding here would produce "updated_at%2520desc" which the server
-    // would decode as the literal string "updated_at%20desc".
-    search,
-    order: sortOrder,
-  });
-
   useEffect(() => {
-    updateProgress({ showProgress: isResultsFetching });
-  }, [isResultsFetching]);
-
-  useEffect(() => {
-    if (profileResultsData) {
-      setCount(profileResultsData.total_count);
-      setPageSize(profileResultsData.page_size);
-      setResults(profileResultsData.results);
-    }
-  }, [profileResultsData]);
-
-  useEffect(() => {
-    if (isResultsError) {
-      handleError(resultsError ?? new Error('Unknown error'));
-    }
-  }, [isResultsError, resultsError]);
-
-  useEffect(() => {
-    //TODO: remove this
-    const subscription = subscribePerformanceResults(
-      (res) => {
-        // @ts-ignore
-        let result = res?.subscribePerfResults;
-        if (typeof result !== 'undefined') {
-          updateProgress({ showProgress: false });
-
-          if (result) {
-            setCount(result.total_count);
-            setPageSize(result.page_size);
-            setSortOrder(sortOrder);
-            setSearch(search);
-            setResults(result.results);
-            setPageSize(result.page_size);
-          }
-        }
-      },
-      {
-        selector: {
-          pageSize: `${pageSize}`,
-          page: `${page}`,
-          search: `${encodeURIComponent(search)}`,
-          order: `${encodeURIComponent(sortOrder)}`,
-        },
-        profileID: profileID,
-      },
-    );
-    return () => {
-      subscription.dispose();
-    };
+    // The historical GraphQL subscription on top of this REST fetch has been
+    // removed (the TODO at the original call site was honoured). The REST
+    // query itself reruns whenever page/pageSize/search/sortOrder change, and
+    // server-side change-detection drives live updates via a separate channel.
+    fetchResults(page, pageSize, search, sortOrder);
   }, [page, pageSize, search, sortOrder]);
 
   const handleSocialExpandClick = (e, tableMeta) => {
@@ -593,6 +529,41 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
     socialExpandUpdate[index] = !socialExpand[index];
     setSocialExpand(socialExpandUpdate);
   };
+
+  function fetchResults(page, pageSize, search, sortOrder) {
+    if (!search) search = '';
+    if (!sortOrder) sortOrder = '';
+
+    updateProgress({ showProgress: true });
+
+    fetchPerformanceResults({
+      selector: {
+        pageSize: `${pageSize}`,
+        page: `${page}`,
+        search: `${encodeURIComponent(search)}`,
+        order: `${encodeURIComponent(sortOrder)}`,
+      },
+      profileID: endpoint.split('/')[endpoint.split('/').length - 2],
+    }).subscribe({
+      next: (res) => {
+        // @ts-ignore
+        let result = res?.fetchResults;
+        if (typeof result !== 'undefined') {
+          updateProgress({ showProgress: false });
+
+          if (result) {
+            setCount(result.total_count);
+            setPageSize(result.page_size);
+            setSortOrder(sortOrder);
+            setSearch(search);
+            setResults(result.results);
+            setPageSize(result.page_size);
+          }
+        }
+      },
+      error: handleError,
+    });
+  }
 
   function handleError(error) {
     updateProgress({ showProgress: false });

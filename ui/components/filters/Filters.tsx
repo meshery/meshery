@@ -5,6 +5,7 @@ import _PromptComponent from '../PromptComponent';
 import { MesheryFiltersCatalog, VISIBILITY } from '../../utils/Enum';
 import ViewSwitch from '../ViewSwitch';
 import FiltersGrid from './FiltersGrid';
+import fetchCatalogFilter from '@/graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../../css/icons.styles';
 import { modifyRJSFSchema } from '../../utils/utils';
 import { getMeshModels } from '../../api/meshmodel';
@@ -29,7 +30,6 @@ import { keys } from '@/utils/permission_constants';
 import DefaultError from '../general/error-404/index';
 import {
   useGetFiltersQuery,
-  useLazyGetCatalogFiltersQuery,
   useCloneFilterMutation,
   usePublishFilterMutation,
   useUnpublishFilterMutation,
@@ -108,7 +108,6 @@ function MesheryFilters() {
 
   const catalogContentRef = useRef<any[]>([]);
   const catalogVisibilityRef = useRef<boolean>(false);
-  const disposeConfSubscriptionRef = useRef<{ dispose: () => void } | null>(null);
   const [visibilityFilter, setVisibilityFilter] = useState<string | null>(null);
 
   const [selectedFilters, setSelectedFilters] = useState<{ visibility: string }>({
@@ -245,7 +244,6 @@ function MesheryFilters() {
     pageSize,
     search,
     sortOrder,
-    disposeConfSubscriptionRef,
   });
   const handleSubmit = createHandleSubmit({
     notify,
@@ -317,34 +315,25 @@ function MesheryFilters() {
     if (viewType === 'grid') setSearch('');
   }, [viewType]);
 
-  const [triggerGetCatalogFilters] = useLazyGetCatalogFiltersQuery();
-
   useEffect(() => {
     catalogVisibilityRef.current = catalogVisibility;
-    let cancelled = false;
-    triggerGetCatalogFilters({
-      search: '',
-      order: '',
-      page: 0,
-      pagesize: 0,
-    })
-      .unwrap()
-      .then((result) => {
-        if (cancelled) return;
-        // The catalog endpoint unwraps the page envelope so result is an
-        // array, matching the legacy GraphQL resolver's contract that
-        // populated `catalogFilters`.
-        catalogContentRef.current = result;
+    const fetchCatalogFilters = fetchCatalogFilter({
+      selector: {
+        search: '',
+        order: '',
+        page: 0,
+        pagesize: 0,
+      },
+    }).subscribe({
+      next: (result) => {
+        catalogContentRef.current = result?.catalogFilters;
         initFiltersSubscription();
-      })
-      .catch((err) => {
-        console.error('There was an error fetching Catalog Filter:', err);
-        handleError({ error_msg: 'Failed to fetch catalog filters' })(err);
-      });
+      },
+      error: (err) => console.log('There was an error fetching Catalog Filter: ', err),
+    });
 
     return () => {
-      cancelled = true;
-      disposeConfSubscriptionRef.current?.dispose();
+      fetchCatalogFilters.unsubscribe();
     };
   }, []);
 
