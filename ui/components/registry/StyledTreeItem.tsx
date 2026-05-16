@@ -69,7 +69,7 @@ const StyledTreeItem = ({
               size="small"
               checked={checked}
               style={{
-                visibility: hover || checked ? 'hidden' : 'hidden', //TODO: make it visible when bulk status change is supported
+                visibility: hover || checked ? 'visible' : 'hidden',
               }}
             />
           )}
