@@ -328,7 +328,7 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true, style }) => {
             spacing={3}
             style={{
               marginBlock: '0.4rem',
-              maxWidth: title !== 'age' && 'fit-content', // for age, we need to show the full text it is used in kanvas
+              maxWidth: title !== 'age' && 'fit-content',
               marginRight: '1rem',
             }}
           >

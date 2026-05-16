@@ -157,7 +157,6 @@ describe('MesherySettingsPerformanceComponent', () => {
     render(<MesherySettingsPerformanceComponent />);
     expect(screen.getByText('fortio')).toBeInTheDocument();
     expect(screen.getByText('wrk2')).toBeInTheDocument();
-    expect(screen.getByText('nighthawk')).toBeInTheDocument();
   });
 
   it('calls updateLoadTestPrefs with the form values when Save is clicked', async () => {

@@ -93,15 +93,6 @@ export const adaptersList: AdaptersListType = {
     enabled: false,
     url: '',
   },
-  NIGHTHAWK: {
-    name: 'Nighthawk',
-    label: 'meshery-nighthawk',
-    imageSrc: '/static/img/adapters/nighthawk-logo.svg',
-    description: adaptersDescription('Performance Characterization by Meshery Nighthawk'),
-    defaultPort: 10013,
-    enabled: false,
-    url: '',
-  },
 };
 
 export const ADAPTER_STATUS = {
