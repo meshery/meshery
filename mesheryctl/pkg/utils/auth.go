@@ -115,8 +115,9 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 		if err != nil {
 			return nil, ErrReadResponseBody(err)
 		}
-		Log.Debugf("Response body for 404 Not Found: %s", string(bodyBytes))
-		return nil, ErrNotFound(errors.New(string(bodyBytes)))
+		bodyMessage := extractServerErrorMessage(bodyBytes)
+		Log.Debugf("Response body for 404 Not Found: %s", bodyMessage)
+		return nil, ErrNotFound(errors.New(bodyMessage))
 	}
 
 	if resp.StatusCode == http.StatusInternalServerError {
@@ -125,7 +126,7 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 		if err != nil {
 			return nil, ErrReadResponseBody(err)
 		}
-		return nil, ErrMesheryServerInternalError(errors.New(string(bodyBytes)))
+		return nil, ErrMesheryServerInternalError(errors.New(extractServerErrorMessage(bodyBytes)))
 	}
 
 	// failsafe for bad api call
@@ -138,10 +139,32 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 		if err != nil {
 			return nil, ErrReadResponseBody(err)
 		}
-		return nil, ErrFailReqStatus(resp.StatusCode, string(bodyBytes))
+		return nil, ErrFailReqStatus(resp.StatusCode, extractServerErrorMessage(bodyBytes))
 	}
 
 	return resp, nil
+}
+
+func extractServerErrorMessage(bodyBytes []byte) string {
+	if len(bodyBytes) == 0 {
+		return ""
+	}
+
+	// Server error contract (server/models/httputil) uses this shape.
+	var payload struct {
+		Error           string   `json:"error"`
+		LongDescription []string `json:"longDescription"`
+	}
+	if err := json.Unmarshal(bodyBytes, &payload); err == nil {
+		if payload.Error != "" {
+			return payload.Error
+		}
+		if len(payload.LongDescription) > 0 {
+			return strings.Join(payload.LongDescription, ". ")
+		}
+	}
+
+	return string(bodyBytes)
 }
 
 // Function checks the location of token and returns appropriate location of the token

@@ -98,3 +98,41 @@ func TestProviderUnmarshalJSON(t *testing.T) {
 		}
 	})
 }
+
+func TestExtractServerErrorMessage(t *testing.T) {
+	tests := []struct {
+		name   string
+		body   []byte
+		expect string
+	}{
+		{
+			name:   "returns error field from structured JSON",
+			body:   []byte(`{"error":"model not found","code":"meshery-server-1000"}`),
+			expect: "model not found",
+		},
+		{
+			name:   "falls back to longDescription if error missing",
+			body:   []byte(`{"longDescription":["line one","line two"]}`),
+			expect: "line one. line two",
+		},
+		{
+			name:   "falls back to raw body for plain text",
+			body:   []byte("internal server error"),
+			expect: "internal server error",
+		},
+		{
+			name:   "empty body",
+			body:   []byte(""),
+			expect: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual := extractServerErrorMessage(tt.body)
+			if actual != tt.expect {
+				t.Fatalf("expected %q, got %q", tt.expect, actual)
+			}
+		})
+	}
+}

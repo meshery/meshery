@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
@@ -38,6 +39,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/workspaces"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	logrus "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -95,8 +97,33 @@ func Execute() error {
 	//log formatter for improved UX
 	// Removing printing command usage on error
 	RootCmd.SilenceUsage = true
+	RootCmd.SilenceErrors = true
 	err := RootCmd.Execute()
+	if err != nil {
+		_, _ = fmt.Fprintln(RootCmd.ErrOrStderr(), formatCLIError(err, verbose))
+	}
 	return err
+}
+
+func formatCLIError(err error, verbose bool) string {
+	if verbose {
+		return err.Error()
+	}
+
+	// Prefer long description from MeshKit error metadata.
+	longDescription := meshkiterrors.GetLDescription(err)
+	if longDescription != "" && longDescription != "None" {
+		return longDescription
+	}
+
+	// Fallback: if the concatenated MeshKit string is present, keep only the
+	// primary message and drop the verbose metadata blocks.
+	message := err.Error()
+	if idx := strings.Index(message, " | Short Description: "); idx != -1 {
+		return message[:idx]
+	}
+
+	return message
 }
 
 func init() {
