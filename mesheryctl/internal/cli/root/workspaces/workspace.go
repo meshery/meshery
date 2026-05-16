@@ -16,6 +16,8 @@ package workspaces
 
 import (
 	"fmt"
+	"sort"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
@@ -52,7 +54,12 @@ mesheryctl workspace delete [workspaceId]
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [create, delete, list, view]. Use 'mesheryctl workspace --help' to display usage guide", args[0]))
+			names := make([]string, 0, len(availableSubcommands))
+			for _, sub := range availableSubcommands {
+				names = append(names, sub.Name())
+			}
+			sort.Strings(names)
+			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [%s]. Use 'mesheryctl workspace --help' to display usage guide", args[0], strings.Join(names, ", ")))
 		}
 
 		return nil

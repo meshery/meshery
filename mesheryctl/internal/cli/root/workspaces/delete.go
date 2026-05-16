@@ -19,7 +19,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-
+	mErrors "github.com/meshery/meshkit/errors"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -33,10 +33,14 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace
 // Delete a workspace
 mesheryctl workspace delete [workspaceId]
 `,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 {
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 || args[0] == "" {
 			const errMsg = "[ Workspace ID ] isn't specified\n\nUsage: mesheryctl workspace delete [workspaceId]\nRun 'mesheryctl workspace delete --help' to see detailed help message"
 			return utils.ErrInvalidArgument(errors.New(errMsg))
+		}
+
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(errors.New("too many arguments\n\nUsage: mesheryctl workspace delete [workspaceId]\nRun 'mesheryctl workspace delete --help' to see detailed help message"))
 		}
 
 		if !utils.IsUUID(args[0]) {
@@ -48,7 +52,11 @@ mesheryctl workspace delete [workspaceId]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		_, err := api.Delete(fmt.Sprintf("%s/%s", workspacesApiPath, args[0]))
 		if err != nil {
-			return err
+			if mErrors.GetCode(err) == utils.ErrNotFoundCode {
+				utils.Log.Infof("Workspace with ID %s not found", args[0])
+				return nil
+			}
+			return ErrDeleteWorkspace(err)
 		}
 
 		utils.Log.Infof("Workspace with ID %s has been deleted", args[0])
