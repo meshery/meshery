@@ -120,7 +120,7 @@ const K8sContextConnectionChip_ = ({
             iconSrc={
               connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                : '/static/img/integrations/kubernetes.svg'
+                : '/static/img/kubernetes.svg'
             }
             status={connectionStatus}
           />
@@ -282,10 +282,10 @@ function K8sContextMenu({
                   connectionMetadataState &&
                   connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                     ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                    : '/static/img/integrations/kubernetes.svg'
+                    : '/static/img/kubernetes.svg'
                 }
                 onError={(e) => {
-                  e.target.src = '/static/img/integrations/kubernetes.svg';
+                  e.target.src = '/static/img/kubernetes.svg';
                 }}
                 width="24px"
                 height="24px"

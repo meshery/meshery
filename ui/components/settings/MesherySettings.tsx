@@ -403,7 +403,7 @@ const MesherySettings = () => {
                       label={
                         <IconText>
                           Grafana
-                          <StyledIcon src="/static/img/integrations/grafana_icon.svg" />
+                          <StyledIcon src="/static/img/grafana_icon.svg" />
                         </IconText>
                       }
                     />
@@ -412,7 +412,7 @@ const MesherySettings = () => {
                       label={
                         <IconText>
                           Prometheus
-                          <StyledIcon src="/static/img/integrations/prometheus_logo_orange_circle.svg" />
+                          <StyledIcon src="/static/img/prometheus_logo_orange_circle.svg" />
                         </IconText>
                       }
                     />
