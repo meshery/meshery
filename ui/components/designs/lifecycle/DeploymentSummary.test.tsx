@@ -2,33 +2,39 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@sistent/sistent', () => ({
-  Box: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
-  Stack: ({ children }: any) => <div>{children}</div>,
-  Typography: ({ children }: any) => <span>{children}</span>,
-  Button: ({ children, onClick }: any) => (
-    <button type="button" onClick={onClick}>
-      {children}
-    </button>
-  ),
-  ExternalLinkIcon: () => <svg data-testid="external-link" />,
-  componentIcon: ({ kind }: any) => `/icons/${kind}.svg`,
+vi.mock('@/themes/index', () => ({
+  NOTIFICATIONCOLORS: { SUCCESS: '#0f0', ERROR: '#f00' },
 }));
 
-vi.mock('@/theme', () => ({
-  styled:
-    (_tag: any) =>
-    () =>
-    ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
-  useTheme: () => ({
-    palette: {
-      text: { default: '#000' },
-      background: { constant: { white: '#fff' } },
-      success: { main: '#0f0' },
-      error: { main: '#f00' },
-    },
-  }),
-}));
+vi.mock('@sistent/sistent', () => {
+  const styled = (_tag: any) => () => {
+    const Styled = ({ children, ...rest }: any) => <div {...rest}>{children}</div>;
+    Styled.displayName = 'StyledMock';
+    return Styled;
+  };
+  return {
+    styled,
+    Box: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    Stack: ({ children }: any) => <div>{children}</div>,
+    Typography: ({ children }: any) => <span>{children}</span>,
+    useTheme: () => ({
+      palette: {
+        text: { default: '#000' },
+        background: { constant: { white: '#fff' } },
+        success: { main: '#0f0' },
+        error: { main: '#f00' },
+        warning: { main: '#f80' },
+      },
+    }),
+    Button: ({ children, onClick }: any) => (
+      <button type="button" onClick={onClick}>
+        {children}
+      </button>
+    ),
+    ExternalLinkIcon: () => <svg data-testid="external-link" />,
+    componentIcon: ({ kind }: any) => `/icons/${kind}.svg`,
+  };
+});
 
 vi.mock('../../data-formatter', () => ({
   FormatStructuredData: ({ data }: any) => (
@@ -48,7 +54,6 @@ vi.mock('./common', () => ({
   ComponentIcon: ({ iconSrc, alt }: any) => (
     <img data-testid="component-icon" src={iconSrc} alt={alt} />
   ),
-  componentIcon: ({ kind }: any) => `/icons/${kind}.svg`,
 }));
 
 vi.mock('../../layout/NotificationCenter/formatters/error', () => ({
