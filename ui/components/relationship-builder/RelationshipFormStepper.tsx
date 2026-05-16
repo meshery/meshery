@@ -13,7 +13,6 @@ import {
   Grid2,
   MenuItem,
 } from '@sistent/sistent';
-import { GlobalStyles } from '@/theme';
 import { styled, DescriptionIcon, CodeIcon } from '@sistent/sistent';
 import { RelationshipDefinitionV1Beta2OpenApiSchema } from '@meshery/schemas';
 import {
@@ -41,6 +40,19 @@ const StyledDocsRedirectLink = styled('a')(({ theme }) => ({
 
 const RELATIONSHIP_DROPDOWN_Z_INDEX = 1600;
 
+const relationshipSelectMenuProps = {
+  anchorOrigin: {
+    vertical: 'bottom' as const,
+    horizontal: 'left' as const,
+  },
+  style: { zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX },
+  PaperProps: {
+    style: {
+      zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
+    },
+  },
+};
+
 const RelationshipFormStepper = React.memo(({ handleClose }) => {
   const RelationshipDefinitionSchema =
     RelationshipDefinitionV1Beta2OpenApiSchema.components.schemas.RelationshipDefinition;
@@ -50,26 +62,6 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
     'properties.selectors',
   ]);
   const selectorsSchema = pick(RelationshipDefinitionSchema.properties, ['selectors']);
-
-  // Keep dropdown menus above the Registry modal, which is stacked at zIndex 1500.
-  const globalStyles = (
-    <GlobalStyles
-      styles={{
-        '.react-select__menu': {
-          zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
-        },
-        '.MuiAutocomplete-popper': {
-          zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
-        },
-        '.MuiPopover-root': {
-          zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
-        },
-        '.MuiMenu-paper': {
-          zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
-        },
-      }}
-    />
-  );
 
   const [relationshipName, setRelationshipName] = React.useState('');
   const [formData, setFormData] = React.useState({});
@@ -192,14 +184,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                   <TextField
                     select={true}
                     SelectProps={{
-                      MenuProps: {
-                        anchorOrigin: {
-                          vertical: 'bottom',
-                          horizontal: 'left',
-                        },
-                        style: { zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX },
-                        getContentAnchorEl: null,
-                      },
+                      MenuProps: relationshipSelectMenuProps,
                       renderValue: (selected) => {
                         if (!selected || selected.length === 0) {
                           return <em>Select Category</em>;
@@ -233,14 +218,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                     select={true}
                     disabled={!selectedCategory}
                     SelectProps={{
-                      MenuProps: {
-                        anchorOrigin: {
-                          vertical: 'bottom',
-                          horizontal: 'left',
-                        },
-                        style: { zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX },
-                        getContentAnchorEl: null,
-                      },
+                      MenuProps: relationshipSelectMenuProps,
                       renderValue: (selected) => {
                         if (!selected || selected.length === 0) {
                           return <em>Select Model</em>;
@@ -431,7 +409,6 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
 
   return (
     <>
-      {globalStyles}
       <ModalBody>
         <CustomizedStepper {...relationshipStepper}>
           {relationshipStepper.activeStepComponent}
