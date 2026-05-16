@@ -251,12 +251,16 @@ function FiltersCard_({
               <Typography variant="h6">{name}</Typography>
               <CardHeaderRight>
                 <Tooltip
-                  title={owner ? `${owner.firstName || ''} ${owner.lastName || ''}`.trim() : ''}
+                  title={owner ? [owner.firstName, owner.lastName].filter(Boolean).join(' ') : ''}
                   placement="top"
                 >
-                  <Link href={`${MESHERY_CLOUD_PROD}/user/${ownerId}`} target="_blank">
+                  <Link
+                    href={`${MESHERY_CLOUD_PROD}/user/${ownerId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Avatar
-                      alt={owner ? `${owner.firstName || ''} ${owner.lastName || ''}`.trim() : ''}
+                      alt={owner ? [owner.firstName, owner.lastName].filter(Boolean).join(' ') : ''}
                       src={owner?.avatarUrl}
                     />
                   </Link>
