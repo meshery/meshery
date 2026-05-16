@@ -26,6 +26,7 @@ const StyledTreeItem = ({
 }: StyledTreeItemProps) => {
   const [checked, setChecked] = useState(false);
   const [hover, setHover] = useState(false);
+  const [focused, setFocused] = useState(false);
   const theme = useTheme();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -34,6 +35,8 @@ const StyledTreeItem = ({
     <StyledTreeItemRoot
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
       root={root}
       lineColor={theme.palette.text.default}
       label={
@@ -69,7 +72,7 @@ const StyledTreeItem = ({
               size="small"
               checked={checked}
               style={{
-                visibility: hover || checked ? 'visible' : 'hidden',
+                visibility: hover || checked || focused ? 'visible' : 'hidden',
               }}
             />
           )}
