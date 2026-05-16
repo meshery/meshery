@@ -14,6 +14,7 @@ import {
   MenuItem,
 } from '@sistent/sistent';
 import { styled, DescriptionIcon, CodeIcon } from '@sistent/sistent';
+import { GlobalStyles } from '@/theme';
 import { RelationshipDefinitionV1Beta2OpenApiSchema } from '@meshery/schemas';
 import {
   Link as LinkIcon,
@@ -38,17 +39,85 @@ const StyledDocsRedirectLink = styled('a')(({ theme }) => ({
   textDecoration: 'underline',
 }));
 
-const RELATIONSHIP_DROPDOWN_Z_INDEX = 1600;
+const RELATIONSHIP_DROPDOWN_Z_INDEX = 1700;
+const RELATIONSHIP_DROPDOWN_MAX_HEIGHT = 'min(320px, 40vh)';
+
+const relationshipDropdownGlobalStyles = {
+  '.MuiMenu-root, .MuiPopover-root': {
+    zIndex: `${RELATIONSHIP_DROPDOWN_Z_INDEX} !important`,
+  },
+  '.MuiMenu-root .MuiPaper-root, .MuiPopover-root .MuiPaper-root': {
+    zIndex: `${RELATIONSHIP_DROPDOWN_Z_INDEX} !important`,
+    maxHeight: RELATIONSHIP_DROPDOWN_MAX_HEIGHT,
+    overflowY: 'auto',
+  },
+  '.MuiMenu-root .MuiList-root, .MuiPopover-root .MuiList-root': {
+    maxHeight: 'inherit',
+    overflowY: 'auto',
+  },
+};
 
 const relationshipSelectMenuProps = {
   anchorOrigin: {
     vertical: 'bottom' as const,
     horizontal: 'left' as const,
   },
+  transformOrigin: {
+    vertical: 'top' as const,
+    horizontal: 'left' as const,
+  },
+  disablePortal: false,
+  sx: {
+    zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
+    '& .MuiPaper-root': {
+      maxHeight: RELATIONSHIP_DROPDOWN_MAX_HEIGHT,
+      overflowY: 'auto',
+    },
+    '& .MuiList-root': {
+      maxHeight: 'inherit',
+      overflowY: 'auto',
+    },
+  },
   style: { zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX },
   PaperProps: {
     style: {
       zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
+      maxHeight: RELATIONSHIP_DROPDOWN_MAX_HEIGHT,
+      overflowY: 'auto' as const,
+    },
+  },
+  slotProps: {
+    root: {
+      sx: {
+        zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
+      },
+      style: {
+        zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
+      },
+    },
+    paper: {
+      sx: {
+        zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
+        maxHeight: RELATIONSHIP_DROPDOWN_MAX_HEIGHT,
+        overflowY: 'auto',
+      },
+      style: {
+        zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
+        maxHeight: RELATIONSHIP_DROPDOWN_MAX_HEIGHT,
+        overflowY: 'auto' as const,
+      },
+    },
+    list: {
+      sx: {
+        maxHeight: 'inherit',
+        overflowY: 'auto',
+      },
+    },
+  },
+  MenuListProps: {
+    style: {
+      maxHeight: 'inherit',
+      overflowY: 'auto' as const,
     },
   },
 };
@@ -409,6 +478,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
 
   return (
     <>
+      <GlobalStyles styles={relationshipDropdownGlobalStyles} />
       <ModalBody>
         <CustomizedStepper {...relationshipStepper}>
           {relationshipStepper.activeStepComponent}
