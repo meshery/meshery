@@ -108,7 +108,7 @@ func init() {
 	cobra.OnInitialize(setupLogger)
 	cobra.OnInitialize(initConfig)
 
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "~/.meshery/config.yaml", "path to config file")
+    RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "~/.meshery/config.yaml", "path to config file")
 	// Preparing for an "edge" channel
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
 
@@ -164,7 +164,7 @@ const configFlagPlaceholder = "~/.meshery/config.yaml"
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	if cfgFile == configFlagPlaceholder {
-		cfgFile = utils.DefaultConfigPath
+    cfgFile = utils.DefaultConfigPath
 	}
 	utils.CfgFile = cfgFile
 	// initialize the path to the kubeconfig file
