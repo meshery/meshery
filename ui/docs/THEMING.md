@@ -304,7 +304,7 @@ the `legacyRestrictedImportOffenders` allowlist in the same file.
 
 If a color, spacing scale, typography setting, or other token you need is
 missing from Sistent's palette, **open an upstream PR to
-[Sistent](https://github.com/layer5io/sistent) rather than overriding
+[Sistent](https://npmjs.com/package/@sistent/sistent) rather than overriding
 locally.**
 
 Local overrides are how the sprawl regrew last time. The whole point of
@@ -356,7 +356,7 @@ Until then:
   describing target file layout, component conventions, and the broader
   Sistent migration. Created alongside this doc in Phase 1.
 - Parent epic — [meshery/meshery#18656](https://github.com/meshery/meshery/issues/18656).
-- Sistent design system — [layer5io/sistent](https://github.com/layer5io/sistent).
+- Sistent design system — [@sistent/sistent](https://npmjs.com/package/@sistent/sistent) on npm.
 - Lint rules that enforce the conventions in this document live in
   [`ui/eslint.config.js`](../eslint.config.js)
   (`no-restricted-imports`, `no-restricted-syntax`, and the

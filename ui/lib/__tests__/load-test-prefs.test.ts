@@ -13,13 +13,13 @@ describe('normalizeLoadTestPrefs', () => {
         c: '12',
         qps: 25,
         t: '5m',
-        gen: 'nighthawk',
+        gen: 'wrk2',
       }),
     ).toEqual({
       c: 12,
       qps: 25,
       t: '5m',
-      gen: 'nighthawk',
+      gen: 'wrk2',
     });
   });
 

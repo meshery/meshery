@@ -32,10 +32,10 @@ import ShareModal from '../ShareWorkspaceModal';
 import InfoModal from '../../shared/Modal/Information/InfoModal';
 import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import {
-  isDesignOpenInKanvas,
+  isDesignOpenInExtension,
   mergeDesignWithCurrent,
-  openDesignInKanvas,
-  useIsKanvasDesignerEnabled,
+  openDesignInExtension,
+  useIsDesignerEnabled,
 } from '@/utils/utils';
 import Router, { useRouter } from 'next/router';
 import CAN from '@/utils/can';
@@ -155,18 +155,18 @@ const MainDesignsContent = ({
   const ghostRef = useRef(null);
   const ghostTextNodeRef = useRef(null);
   const [updatePatterns] = useUpdatePatternFileMutation();
-  const isKanvasDesignerAvailable = useIsKanvasDesignerEnabled();
+  const isDesignerAvailable = useIsDesignerEnabled();
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
-  const handleOpenDesignInDesigner = (designId, designName) => {
+  const handleOpenDesignInExtension = (designId, designName) => {
     if (workspaceSwitcherContext?.closeModal) {
       workspaceSwitcherContext.closeModal();
     }
-    if (!isKanvasDesignerAvailable) {
+    if (!isDesignerAvailable) {
       router.push(`/configuration/designs/configurator?design_id=${designId}`);
       return;
     }
 
-    openDesignInKanvas(designId, designName, Router);
+    openDesignInExtension(designId, designName, Router);
   };
   const theme = useTheme();
   const DESIGN_ACTIONS = {
@@ -175,7 +175,7 @@ const MainDesignsContent = ({
       title: 'Merge Into Current Design',
       icon: <MergeOutlinedIcon fill={theme.palette.icon.default} />,
       enabled: () =>
-        isDesignOpenInKanvas() && CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject),
+        isDesignOpenInExtension() && CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject),
     },
     EXPORT_DESIGN: {
       id: 'export_design',
@@ -295,7 +295,7 @@ const MainDesignsContent = ({
                   type={RESOURCE_TYPE.DESIGN}
                   selectedItem={design}
                   handleItemClick={() => {
-                    handleOpenDesignInDesigner(design?.id, design?.name);
+                    handleOpenDesignInExtension(design?.id, design?.name);
                   }}
                   canChangeVisibility={canChangeVisibility}
                   onVisibilityChange={async (value, selectedItem) => {
