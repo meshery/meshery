@@ -5,7 +5,7 @@ import {
   Switch,
   CircularProgress,
   Typography,
-  InfoOutlinedIcon,
+  InfoOutlined as InfoOutlinedIcon,
 } from '@sistent/sistent';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '@/utils/custom-search';
