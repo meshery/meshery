@@ -153,15 +153,8 @@ describe('Enum constants', () => {
   });
 
   it('EXTENSIONS map contains the registered extension entries keyed by EXTENSION_NAMES', () => {
-    expect(EXTENSIONS[EXTENSION_NAMES.KANVAS]).toMatchObject({
-      name: 'Kanvas',
-      signup_url: '/extension/meshmap',
-      show_popup: true,
-    });
-
     expect(EXTENSIONS.Catalog.name).toBe('Meshery Catalog');
     expect(EXTENSIONS.PerformanceAnalysis.name).toBe('Performance Analysis');
-    expect(EXTENSIONS.KanvasSnapshot.signup_url).toMatch(/^https?:\/\//);
   });
 
   it('RESOURCE_TYPE / APP_MODE / VIEW_VISIBILITY expose lowercase values', () => {

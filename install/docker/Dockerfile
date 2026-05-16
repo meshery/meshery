@@ -66,14 +66,6 @@ RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/
 #     && tar xzf service-mesh-patterns.tgz --directory=service-mesh-patterns \
 #     && mv service-mesh-patterns/*/samples/* /seed_content/patterns/
 
-#FROM ubuntu AS nighthawk
-#RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
-#RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
-#RUN git config --global user.email "ci@meshery.io"
-#RUN git config --global user.name "meshery"
-#RUN git clone https://github.com/layer5io/nighthawk-go
-#RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
-
 # Build-time Extension Point: This stage prepares optional .meshery directory from build context.
 # System integrators can place a .meshery directory at the repository root to supply
 # build-time configuration, data, packages, etc., which will be copied into the image.
@@ -118,8 +110,6 @@ COPY --from=meshery-ui-provider-builder /app/out /app/provider-ui/out
 # COPY --from=wrk2 /wrk2 /app/server/cmd/wrk2
 # COPY --from=wrk2 /wrk2/wrk /usr/local/bin
 COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
-COPY --from=layer5/getnighthawk:v1.0.1 /usr/local/bin/nighthawk_service /app/server/cmd/
-COPY --from=layer5/getnighthawk:v1.0.1 /usr/local/bin/nighthawk_output_transform /app/server/cmd/
 
 # Permission keys are authorization keys which server will
 # seed on initial boot for local provider, if there is update on this path
