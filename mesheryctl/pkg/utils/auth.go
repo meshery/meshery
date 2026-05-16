@@ -156,11 +156,12 @@ func extractServerErrorMessage(bodyBytes []byte) string {
 		LongDescription []string `json:"longDescription"`
 	}
 	if err := json.Unmarshal(bodyBytes, &payload); err == nil {
+		// Prefer LongDescription (actual detail) over Error (generic ShortDescription from WriteMeshkitError).
+		if len(payload.LongDescription) > 0 {
+			return strings.Join(payload.LongDescription, " ")
+		}
 		if payload.Error != "" {
 			return payload.Error
-		}
-		if len(payload.LongDescription) > 0 {
-			return strings.Join(payload.LongDescription, ". ")
 		}
 	}
 

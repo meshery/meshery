@@ -2,6 +2,7 @@ package root
 
 import (
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -22,6 +23,18 @@ func TestFormatCLIError(t *testing.T) {
 		msg := formatCLIError(err, true)
 		if msg != err.Error() {
 			t.Fatalf("expected verbose message to match original error")
+		}
+	})
+
+	t.Run("joins multi-element long description with space not period", func(t *testing.T) {
+		// ErrCreateFile has a 2-element LongDescription; without this fix GetLDescription joins with "." (no space).
+		err := utils.ErrCreateFile("/tmp/test", errors.New("permission denied"))
+		msg := formatCLIError(err, false)
+		if strings.Contains(msg, ".permission") {
+			t.Fatalf("expected space-separated join, got period-concatenated: %q", msg)
+		}
+		if !strings.Contains(msg, "permission denied") {
+			t.Fatalf("expected error detail in message, got: %q", msg)
 		}
 	})
 }

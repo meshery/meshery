@@ -100,7 +100,7 @@ func Execute() error {
 	RootCmd.SilenceErrors = true
 	err := RootCmd.Execute()
 	if err != nil {
-		_, _ = fmt.Fprintln(RootCmd.ErrOrStderr(), formatCLIError(err, verbose))
+		_, _ = fmt.Fprintf(RootCmd.ErrOrStderr(), "Error: %s\n", formatCLIError(err, verbose))
 	}
 	return err
 }
@@ -110,17 +110,21 @@ func formatCLIError(err error, verbose bool) string {
 		return err.Error()
 	}
 
-	// Prefer long description from MeshKit error metadata.
-	longDescription := meshkiterrors.GetLDescription(err)
-	if longDescription != "" && longDescription != "None" {
-		return longDescription
+	// Prefer LongDescription directly from the struct; GetLDescription joins with "." (no space).
+	var mkErr *meshkiterrors.Error
+	if errors.As(err, &mkErr) && len(mkErr.LongDescription) > 0 {
+		joined := strings.Join(mkErr.LongDescription, " ")
+		if joined != "" && joined != "None" {
+			return joined
+		}
 	}
 
-	// Fallback: if the concatenated MeshKit string is present, keep only the
-	// primary message and drop the verbose metadata blocks.
+	// Fallback: strip pipe-delimited metadata blocks MeshKit appends to Error.Error().
 	message := err.Error()
-	if idx := strings.Index(message, " | Short Description: "); idx != -1 {
-		return message[:idx]
+	for _, marker := range []string{" | Short Description: ", " | Probable Cause: ", " | Suggested Remediation: "} {
+		if idx := strings.Index(message, marker); idx != -1 {
+			return strings.TrimSpace(message[:idx])
+		}
 	}
 
 	return message

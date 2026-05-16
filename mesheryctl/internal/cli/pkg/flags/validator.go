@@ -43,7 +43,8 @@ func (fv *FlagValidator) Validate(s interface{}) error {
 		case *validator.InvalidValidationError:
 			return utils.ErrFlagsInvalid(err)
 		case validator.ValidationErrors:
-			return utils.ErrFlagsInvalid(fv.ReadValidationErrorMessages(vErr))
+			// ReadValidationErrorMessages already returns a clean, human-readable string; no MeshKit wrapping needed.
+			return fv.ReadValidationErrorMessages(vErr)
 		default:
 			return utils.ErrFlagsInvalid(err)
 		}

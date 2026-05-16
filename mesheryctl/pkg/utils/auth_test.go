@@ -106,14 +106,21 @@ func TestExtractServerErrorMessage(t *testing.T) {
 		expect string
 	}{
 		{
-			name:   "returns error field from structured JSON",
+			// WriteMeshkitError shape: LongDescription=actual detail, Error=generic ShortDescription.
+			name:   "prefers longDescription over generic error field (WriteMeshkitError shape)",
+			body:   []byte(`{"error":"Internal Server Error","longDescription":["model \"Aws-route53-controller\" not found in CSV input"]}`),
+			expect: `model "Aws-route53-controller" not found in CSV input`,
+		},
+		{
+			// WriteJSONError shape: only error field, no longDescription.
+			name:   "returns error field when longDescription is absent",
 			body:   []byte(`{"error":"model not found","code":"meshery-server-1000"}`),
 			expect: "model not found",
 		},
 		{
-			name:   "falls back to longDescription if error missing",
+			name:   "returns longDescription joined with space when error field missing",
 			body:   []byte(`{"longDescription":["line one","line two"]}`),
-			expect: "line one. line two",
+			expect: "line one line two",
 		},
 		{
 			name:   "falls back to raw body for plain text",
