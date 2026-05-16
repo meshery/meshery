@@ -50,7 +50,7 @@ export function generatePerformanceProfile(data) {
   };
 }
 
-export const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
+export const loadGenerators = ['fortio', 'wrk2'];
 
 export const infoFlags = <>Only .json files are supported.</>;
 
@@ -66,11 +66,6 @@ export const infoloadGenerators = (
         other useful stats.{' '}
       </li>
       <li> wrk2 - A constant throughput, correct latency recording variant of wrk.</li>
-      <li>
-        {' '}
-        nighthawk - Enables users to run distributed performance tests to better mimic real-world,
-        distributed systems scenarios.
-      </li>
     </ul>
     <Link
       style={{ textDecoration: 'underline' }}
