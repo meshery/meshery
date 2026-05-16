@@ -6,7 +6,7 @@ const initialState = {
     page: 0,
     pagesize: 10,
     filters: {
-      initial: true,
+      status: STATUS.UNREAD,
     },
     has_more: true,
   },
