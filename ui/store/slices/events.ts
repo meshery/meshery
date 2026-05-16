@@ -1,5 +1,5 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
-import { SEVERITY, STATUS } from '../../components/NotificationCenter/constants';
+import { SEVERITY, STATUS } from '../../components/layout/NotificationCenter/constants';
 
 const initialState = {
   current_view: {
