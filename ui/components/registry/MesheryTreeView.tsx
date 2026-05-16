@@ -5,7 +5,7 @@ import {
   Switch,
   CircularProgress,
   Typography,
-  InfoOutlined as InfoOutlinedIcon,
+  InfoOutlined,
 } from '@sistent/sistent';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '@/utils/custom-search';
@@ -281,7 +281,7 @@ const MesheryTreeView = React.memo(
                     sx={{ margin: '0rem', padding: '0rem' }}
                   >
                     <IconButton>
-                      <InfoOutlinedIcon height={20} width={20} />
+                      <InfoOutlined height={20} width={20} />
                     </IconButton>
                   </CustomTextTooltip>
                 </>
