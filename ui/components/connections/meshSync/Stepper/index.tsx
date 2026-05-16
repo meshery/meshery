@@ -116,7 +116,7 @@ export default function CustomizedSteppers({
       ...prevState,
       onClose: onClose,
     }));
-  }, [sharedData]);
+  }, [onClose, setSharedData]);
 
   const ActiveStepContent = stepContent[String(activeStep + 1)].component;
 

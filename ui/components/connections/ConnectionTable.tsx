@@ -307,6 +307,10 @@ const ConnectionTable = ({
     setDeploymentModeAnchorEl(null);
   }, []);
 
+  const handleDeploymentModeAnchorOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
+    setDeploymentModeAnchorEl(event.currentTarget);
+  }, []);
+
   const getConnectionAtRowIndex = useCallback(
     (rowIndex?: number | null) => {
       if (rowIndex == null) {
@@ -364,46 +368,43 @@ const ConnectionTable = ({
     ],
   );
 
-  const handleFlushMeshSync = useCallback(
-    () => async () => {
-      handleActionMenuClose();
+  const handleFlushMeshSync = useCallback(async () => {
+    handleActionMenuClose();
 
-      const connection = getConnectionAtRowIndex(rowData?.rowIndex);
-      const connectionName = connection?.metadata?.name;
+    const connection = getConnectionAtRowIndex(rowData?.rowIndex);
+    const connectionName = connection?.metadata?.name;
 
-      if (!connection || !modalRef.current) {
-        return;
-      }
+    if (!connection || !modalRef.current) {
+      return;
+    }
 
-      const response = await modalRef.current.show({
-        title: `Flush MeshSync data for ${connectionName} ?`,
-        subtitle: `Are you sure to Flush MeshSync data for “${connectionName}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
-        primaryOption: 'PROCEED',
-        variant: PROMPT_VARIANTS.WARNING,
+    const response = await modalRef.current.show({
+      title: `Flush MeshSync data for ${connectionName} ?`,
+      subtitle: `Are you sure to Flush MeshSync data for “${connectionName}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
+      primaryOption: 'PROCEED',
+      variant: PROMPT_VARIANTS.WARNING,
+    });
+
+    if (response === 'PROCEED') {
+      updateProgress({ showProgress: true });
+      resetDatabase({
+        selector: {
+          clearDB: 'true',
+          ReSync: 'true',
+          hardReset: 'false',
+        },
+        k8scontextID: connection.metadata?.id || '',
+      }).subscribe({
+        next: (result) => {
+          updateProgress({ showProgress: false });
+          if (result.resetStatus === 'PROCESSING') {
+            notify({ message: `Database reset successful.`, event_type: EVENT_TYPES.SUCCESS });
+          }
+        },
+        error: handleError('Database is not reachable, try restarting server.'),
       });
-
-      if (response === 'PROCEED') {
-        updateProgress({ showProgress: true });
-        resetDatabase({
-          selector: {
-            clearDB: 'true',
-            ReSync: 'true',
-            hardReset: 'false',
-          },
-          k8scontextID: connection.metadata?.id || '',
-        }).subscribe({
-          next: (result) => {
-            updateProgress({ showProgress: false });
-            if (result.resetStatus === 'PROCESSING') {
-              notify({ message: `Database reset successful.`, event_type: EVENT_TYPES.SUCCESS });
-            }
-          },
-          error: handleError('Database is not reachable, try restarting server.'),
-        });
-      }
-    },
-    [getConnectionAtRowIndex, handleActionMenuClose, handleError, notify, rowData?.rowIndex],
-  );
+    }
+  }, [getConnectionAtRowIndex, handleActionMenuClose, handleError, notify, rowData?.rowIndex]);
 
   const handleEnvironmentSelect = useCallback(
     async (
@@ -501,26 +502,35 @@ const ConnectionTable = ({
     lastProcessedId: null,
   });
 
-  // Update rowsExpanded when a specific connection ID is selected
+  // Update rowsExpanded when a specific connection ID is selected.
+  // `filteredConnections` is excluded from deps intentionally: it gets a new
+  // reference on every RTK cache update and would re-trigger the effect,
+  // potentially clearing the URL param and starting an update loop (React
+  // error #185). Instead we read the latest value from a ref.
+  const filteredConnectionsRef = useRef(filteredConnections);
+  filteredConnectionsRef.current = filteredConnections;
+
   useEffect(() => {
     if (!selectedConnectionId || expansionFlags.current.isHandlingExpansion) return;
     if (expansionFlags.current.lastProcessedId === selectedConnectionId) return;
 
-    if (filteredConnections && filteredConnections.length > 0) {
+    const connections = filteredConnectionsRef.current;
+    if (connections && connections.length > 0) {
       expansionFlags.current.isUrlExpansion = true;
       expansionFlags.current.lastProcessedId = selectedConnectionId;
 
-      const index = filteredConnections?.findIndex((conn) => conn.id === selectedConnectionId);
+      const index = connections.findIndex((conn) => conn.id === selectedConnectionId);
       if (index !== -1) {
         setRowsExpanded([index]);
-      } else {
-        updateUrlWithConnectionId?.('');
       }
+      // Note: intentionally NOT clearing the URL when the connection is not
+      // found — doing so triggered a URL push → re-render → effect re-fire
+      // loop that caused React error #185.
 
       expansionFlags.current.isUrlExpansion = false;
       expansionFlags.current.isInitialLoad = false;
     }
-  }, [filteredConnections, selectedConnectionId, updateUrlWithConnectionId]);
+  }, [selectedConnectionId]);
 
   const columns = useConnectionColumns({
     url: CONNECTION_DOCS_URL,
@@ -555,18 +565,28 @@ const ConnectionTable = ({
     handleDeleteConnections,
   });
 
-  const [tableCols, updateCols] = useState(columns);
+  const [tableCols, setTableCols] = useState(columns);
+  const [prevColumns, setPrevColumns] = useState(columns);
 
-  useEffect(() => {
-    updateCols(columns);
-  }, [columns]);
+  if (columns !== prevColumns) {
+    setTableCols(columns);
+    setPrevColumns(columns);
+  }
 
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean | undefined>>(
     () => getResponsiveColumnVisibility(columnNames, colViews, width),
   );
 
   useEffect(() => {
-    setColumnVisibility(getResponsiveColumnVisibility(columnNames, colViews, width));
+    setColumnVisibility((prev) => {
+      const next = getResponsiveColumnVisibility(columnNames, colViews, width);
+      // Bail out if nothing changed to avoid a re-render cascade.
+      const keys = new Set([...Object.keys(prev), ...Object.keys(next)]);
+      for (const k of keys) {
+        if (prev[k] !== next[k]) return next;
+      }
+      return prev;
+    });
   }, [colViews, columnNames, width]);
 
   if (isConnectionLoading) {
@@ -593,7 +613,7 @@ const ConnectionTable = ({
         columns={columns}
         options={options}
         tableCols={tableCols}
-        updateCols={updateCols}
+        updateCols={setTableCols}
         columnVisibility={columnVisibility}
       />
 
@@ -602,8 +622,8 @@ const ConnectionTable = ({
         anchorEl={anchorEl}
         open={open}
         onClose={handleActionMenuClose}
-        onFlushMeshSync={handleFlushMeshSync()}
-        onDeploymentModeAnchor={(e) => setDeploymentModeAnchorEl(e.currentTarget)}
+        onFlushMeshSync={handleFlushMeshSync}
+        onDeploymentModeAnchor={handleDeploymentModeAnchorOpen}
       />
 
       <ConnectionDeploymentModeMenu
