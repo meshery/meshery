@@ -25,6 +25,13 @@ jobs:
           node-version: 22
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
+      - uses: actions/setup-go@master
+        with:
+          go-version: "1.25"
+          cache-dependency-path: "**/*.sum"
+          cache: true
+      - name: Build client-side relationship policy engine (WASM)
+        run: make wasm-engine
       - name: Build meshery-ui and provider-ui
         run: |
           make ui-build

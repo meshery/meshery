@@ -1,4 +1,16 @@
 // not in use
+//
+// This file is excluded from js/wasm builds. It is dead code (the
+// exported helpers have no callers anywhere in the repo) and its
+// transitive k8s/docker client imports do not compile under
+// GOOS=js GOARCH=wasm. Excluding it lets the registry-independent
+// relationship-evaluation orchestration in package policies — which
+// imports this package only for the wasm-safe version bridges — build
+// for the Go→WASM relationship engine. Server (non-js) builds are
+// unaffected: the file still compiles for every other target.
+
+//go:build !js
+
 package utils
 
 import (

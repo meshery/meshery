@@ -332,12 +332,12 @@ ui-provider-test: dep-check-node
 	cd provider-ui; npm run test; cd ..
 
 ## Buils all Meshery UIs  on your local machine.
-ui-build: ui-setup
+ui-build: ui-setup wasm-engine
 	cd ui; npm run lint:fix || echo "Warning: Lint issues detected in ui but continuing build"; npm run build; cd ..
 	cd provider-ui; npm run lint:fix || echo "Warning: Lint issues detected in provider-ui but continuing build"; npm run build; cd ..
 
 ## Build only Meshery UI on your local machine.
-ui-meshery-build: dep-check-node
+ui-meshery-build: dep-check-node wasm-engine
 	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
@@ -478,6 +478,39 @@ policy-lint:
 policy-test:
 	@echo "Running OPA Rego policy tests..."
 	@cd server/policies && go test -v ./...
+
+
+#-----------------------------------------------------------------------------
+# WASM - Client-side Relationship Policy Engine (in-browser consumer)
+#-----------------------------------------------------------------------------
+.PHONY: wasm-engine
+
+WASM_ENGINE_DIR        = ui/public/static/wasm
+WASM_ENGINE_OUT        = $(WASM_ENGINE_DIR)/policy_engine.wasm
+WASM_ENGINE_EXEC       = $(WASM_ENGINE_DIR)/wasm_exec.js
+WASM_ENGINE_ENTRYPOINT = ./server/cmd/wasm/relationship-engine
+# Go >= 1.24 ships wasm_exec.js at $(GOROOT)/lib/wasm; older toolchains
+# keep it under misc/wasm. Resolve whichever exists.
+WASM_EXEC_SRC          = $(firstword $(wildcard $(shell go env GOROOT)/lib/wasm/wasm_exec.js $(shell go env GOROOT)/misc/wasm/wasm_exec.js))
+
+## Build the Go->WASM relationship policy engine and copy the Go
+## runtime's wasm_exec.js alongside it. Both artifacts are .gitignored
+## (a 54 MB blob must not be recommitted on every rebuild); they are
+## regenerated on every UI build because wasm-engine is a prerequisite
+## of ui-meshery-build (and ui-build). The in-browser policy-engine
+## consumer loads /static/wasm/policy_engine.wasm at runtime.
+wasm-engine:
+	@echo "Building relationship policy engine -> $(WASM_ENGINE_OUT)"
+	@mkdir -p $(WASM_ENGINE_DIR)
+	GOOS=js GOARCH=wasm go build \
+		-ldflags "-X main.buildVersion=$(GIT_VERSION)-$(GIT_COMMITSHA)" \
+		-o $(WASM_ENGINE_OUT) $(WASM_ENGINE_ENTRYPOINT)
+	@test -n "$(WASM_EXEC_SRC)" || (echo "ERROR: wasm_exec.js not found under $(shell go env GOROOT)/{lib,misc}/wasm" && exit 1)
+	@rm -f "$(WASM_ENGINE_EXEC)"
+	@cp "$(WASM_EXEC_SRC)" "$(WASM_ENGINE_EXEC)"
+	@chmod u+w "$(WASM_ENGINE_OUT)" "$(WASM_ENGINE_EXEC)"
+	@echo "WASM artifacts:"
+	@ls -lh $(WASM_ENGINE_OUT) $(WASM_ENGINE_EXEC)
 
 
 #-----------------------------------------------------------------------------

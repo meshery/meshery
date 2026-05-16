@@ -11,7 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Masterminds/semver/v3"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/utils"
@@ -20,7 +19,6 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
-	coremodelv1beta2 "github.com/meshery/schemas/models/v1beta2/core"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	componentv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
 
@@ -41,230 +39,28 @@ const (
 	suffix                        = "_relationship"
 )
 
-const RELATIONSHIP_SUBTYPE_ALIAS = "alias"
+// Registry-independent relationship-evaluation orchestration now lives in
+// package policies (server/policies/orchestration.go) so that the HTTP
+// handler and the Go→WASM build consume one implementation and cannot
+// drift. The handler keeps its registry-bound steps (HydratePattern,
+// processEvaluationResponse, DehydratePattern) and delegates the shared
+// pieces below. These thin aliases preserve the handler's local call
+// sites without re-declaring the logic.
+const (
+	RELATIONSHIP_SUBTYPE_ALIAS = "alias"
 
-// Aliasses Are not resolved
-func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (coremodelv1beta2.NonResolvedAlias, bool) {
+	// MAX_RE_EVALUATION_DEPTH is re-exported from package policies so the
+	// handler and the WASM build share one parity-pinned constant.
+	MAX_RE_EVALUATION_DEPTH = gopolicies.MAX_RE_EVALUATION_DEPTH
+)
 
-	alias := coremodelv1beta2.NonResolvedAlias{}
-
-	if relationshipDeclaration.SubType != RELATIONSHIP_SUBTYPE_ALIAS {
-		return alias, false
-	}
-
-	if relationshipDeclaration.Selectors == nil {
-		return alias, false
-	}
-	selectors := *relationshipDeclaration.Selectors
-
-	if len(selectors) == 0 {
-		return alias, false
-	}
-
-	selector := selectors[0]
-	fromSet := selector.Allow.From
-	toSet := selector.Allow.To
-
-	if len(fromSet) == 0 || len(toSet) == 0 {
-		return alias, false
-	}
-
-	from := fromSet[0]
-	to := toSet[0]
-	if from.RelationshipDefinitionSelectorsPatch == nil || from.RelationshipDefinitionSelectorsPatch.MutatedRef == nil {
-		return alias, false
-	}
-	mutatedRefs := *from.RelationshipDefinitionSelectorsPatch.MutatedRef
-
-	if len(mutatedRefs) == 0 {
-		return alias, false
-	}
-
-	if to.ID == nil || from.ID == nil {
-		return alias, false
-	}
-
-	alias.ImmediateParentId = *to.ID
-	alias.AliasComponentId = *from.ID
-	alias.RelationshipId = relationshipDeclaration.ID
-	alias.ImmediateRefFieldPath = mutatedRefs[0]
-
-	return alias, true
-
-}
-
-func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (coremodelv1beta2.NonResolvedAlias, bool) {
-
-	for _, relationship := range relationships {
-		alias, ok := parseRelationshipToAlias(*relationship)
-		if !ok {
-			continue
-		}
-
-		if alias.AliasComponentId == component.ID {
-			return alias, true
-		}
-	}
-
-	return coremodelv1beta2.NonResolvedAlias{}, false
-}
-
-// getComponentById retrieves a component from the design by its ID
-func getComponentById(design pattern.PatternFile, id legacycoremodel.Uuid) *component.ComponentDefinition {
-	for _, comp := range design.Components {
-		if comp.ID == id {
-			return comp
-		}
-	}
-	return nil
-}
-
-func ResolveAlias(nonResolvedAlias coremodelv1beta2.NonResolvedAlias, currentNonResolved coremodelv1beta2.NonResolvedAlias, path []string, design pattern.PatternFile) coremodelv1beta2.ResolvedAlias {
-	parentComponent := getComponentById(design, currentNonResolved.ImmediateParentId)
-	if parentComponent == nil {
-		return coremodelv1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
-	}
-
-	parentAlias, ok := ParseComponentToAlias(*parentComponent, design.Relationships)
-
-	if !ok {
-
-		return coremodelv1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
-
-	}
-
-	// slicing from 1 to remove "configuration" prefix when building the resolved ref
-	// so we dont get something like configuration,spec,configuration , containers , _
-	// appending to aprentAlias.ImmediateReffiled , than path , because this a recursive function it will otherwise build the path in reverse
-	return ResolveAlias(nonResolvedAlias, parentAlias, append(parentAlias.ImmediateRefFieldPath, path[1:]...), design)
-}
-
-func ResolveAliasesInDesign(design pattern.PatternFile) map[string]coremodelv1beta2.ResolvedAlias {
-
-	resolvedAliases := make(map[string]coremodelv1beta2.ResolvedAlias)
-
-	for _, relationship := range design.Relationships {
-		nonResolvedalias, ok := parseRelationshipToAlias(*relationship)
-		if ok {
-			resolvedAlias := ResolveAlias(nonResolvedalias, nonResolvedalias, nonResolvedalias.ImmediateRefFieldPath, design)
-			resolvedAliases[resolvedAlias.AliasComponentId.String()] = resolvedAlias
-		}
-	}
-
-	return resolvedAliases
-
-}
-
-// mergeTraceUnique appends trace entries from src into dst, skipping duplicates by ID.
-func mergeTraceUnique(dst, src *pattern.Trace) {
-	compSeen := make(map[legacycoremodel.Uuid]bool)
-	for _, c := range dst.ComponentsAdded {
-		compSeen[c.ID] = true
-	}
-	for _, c := range dst.ComponentsUpdated {
-		compSeen[c.ID] = true
-	}
-	for _, c := range dst.ComponentsRemoved {
-		compSeen[c.ID] = true
-	}
-	relSeen := make(map[legacycoremodel.Uuid]bool)
-	for _, r := range dst.RelationshipsAdded {
-		relSeen[r.ID] = true
-	}
-	for _, r := range dst.RelationshipsUpdated {
-		relSeen[r.ID] = true
-	}
-	for _, r := range dst.RelationshipsRemoved {
-		relSeen[r.ID] = true
-	}
-
-	for _, c := range src.ComponentsAdded {
-		if !compSeen[c.ID] {
-			compSeen[c.ID] = true
-			dst.ComponentsAdded = append(dst.ComponentsAdded, c)
-		}
-	}
-	for _, c := range src.ComponentsRemoved {
-		if !compSeen[c.ID] {
-			compSeen[c.ID] = true
-			dst.ComponentsRemoved = append(dst.ComponentsRemoved, c)
-		}
-	}
-	for _, c := range src.ComponentsUpdated {
-		if !compSeen[c.ID] {
-			compSeen[c.ID] = true
-			dst.ComponentsUpdated = append(dst.ComponentsUpdated, c)
-		}
-	}
-	for _, r := range src.RelationshipsAdded {
-		if !relSeen[r.ID] {
-			relSeen[r.ID] = true
-			dst.RelationshipsAdded = append(dst.RelationshipsAdded, r)
-		}
-	}
-	for _, r := range src.RelationshipsRemoved {
-		if !relSeen[r.ID] {
-			relSeen[r.ID] = true
-			dst.RelationshipsRemoved = append(dst.RelationshipsRemoved, r)
-		}
-	}
-	for _, r := range src.RelationshipsUpdated {
-		if !relSeen[r.ID] {
-			relSeen[r.ID] = true
-			dst.RelationshipsUpdated = append(dst.RelationshipsUpdated, r)
-		}
-	}
-}
-
-// deduplicateActions removes duplicate actions by (op, id) key.
-func deduplicateActions(actions []pattern.Action) []pattern.Action {
-	type key struct {
-		op string
-		id string
-	}
-	seen := make(map[key]bool)
-	var result []pattern.Action
-	for _, a := range actions {
-		id := ""
-		if a.Value != nil {
-			if v, ok := a.Value["id"]; ok {
-				if s, ok := v.(string); ok {
-					id = s
-				}
-			}
-			// For add_component/add_relationship, the id is inside "item"
-			if id == "" {
-				if item, ok := a.Value["item"].(map[string]interface{}); ok {
-					if v, ok := item["id"]; ok {
-						if s, ok := v.(string); ok {
-							id = s
-						}
-					}
-				}
-			}
-		}
-		k := key{op: a.Op, id: id}
-		if !seen[k] {
-			seen[k] = true
-			result = append(result, a)
-		}
-	}
-	return result
-}
-
-func doesntNeedReeval(response pattern.EvaluationResponse) bool {
-
-	for _, action := range response.Actions {
-		if action.Op == "delete_component" || action.Op == "add_component" || action.Op == "update_component_configuration" {
-			return false
-		}
-	}
-
-	return true
-}
-
-// max number of time to keep revaluating the design till there are no reval triggering actions in the response
-const MAX_RE_EVALUATION_DEPTH = 5
+var (
+	parseRelationshipToAlias = gopolicies.ParseRelationshipToAlias
+	ResolveAliasesInDesign   = gopolicies.ResolveAliasesInDesign
+	mergeTraceUnique         = gopolicies.MergeTraceUnique
+	deduplicateActions       = gopolicies.DeduplicateActions
+	doesntNeedReeval         = gopolicies.DoesntNeedReeval
+)
 
 // defaultPolicyEvalTimeout bounds a single evaluation. Override via POLICY_EVAL_TIMEOUT.
 const defaultPolicyEvalTimeout = 3 * time.Minute
@@ -422,14 +218,10 @@ func processEvaluationResponse(reg *registry.RegistryManager, evalPayload patter
 	compsUpdated := []component.ComponentDefinition{}
 	compsAdded := []component.ComponentDefinition{}
 
-	// Bump the version of design
-	oldVersion, versionParseErr := semver.NewVersion(evalResponse.Design.Version)
-	if versionParseErr != nil {
-		oldVersion = semver.MustParse("0.0.0")
-	}
-
-	newVersion := oldVersion.IncPatch()
-	evalResponse.Design.Version = newVersion.String()
+	// Bump the version of design. Shared with the WASM build via
+	// policies.BumpDesignVersion so the two evaluators cannot diverge on
+	// versioning semantics.
+	gopolicies.BumpDesignVersion(&evalResponse.Design)
 
 	// components which were added by the evaluator based on the relationship definition, but doesn't exist in the registry.
 	unknownComponents := []*component.ComponentDefinition{}

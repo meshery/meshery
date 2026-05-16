@@ -8,6 +8,11 @@ RUN adduser --disabled-login appuser
 WORKDIR /github.com/meshery/meshery
 ADD . .
 RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
+# The client-side relationship policy engine WASM artifacts are not
+# committed (see .gitignore). The Node UI builder stage has no Go
+# toolchain, so produce them here (Go is already present) into
+# ui/public/static/wasm and ship them into the final image.
+RUN GOPROXY=https://proxy.golang.org GOSUMDB=off make wasm-engine
 
 FROM node:22-alpine AS base-node
 
@@ -106,6 +111,10 @@ COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=meshery-ui-builder /app/out /app/ui/out
 COPY --from=meshery-ui-builder /app/public /app/ui/public
+# Relationship policy engine WASM artifacts are .gitignored and produced
+# by `make wasm-engine` in the Go (meshery-server) stage, not the Node UI
+# stage. Layer them onto the served static bundle.
+COPY --from=meshery-server /github.com/meshery/meshery/ui/public/static/wasm /app/ui/public/static/wasm
 COPY --from=meshery-ui-provider-builder /app/out /app/provider-ui/out
 # COPY --from=wrk2 /wrk2 /app/server/cmd/wrk2
 # COPY --from=wrk2 /wrk2/wrk /usr/local/bin
