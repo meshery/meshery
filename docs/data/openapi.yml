@@ -67832,7 +67832,7 @@ components:
             path: github.com/gofrs/uuid
         loadGenerators:
           type: array
-          description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
+          description: Load generators (e.g. fortio, wrk2) to drive the profile's load test.
           minItems: 1
           items:
             type: string
@@ -68058,7 +68058,7 @@ components:
             path: github.com/gofrs/uuid
         loadGenerators:
           type: array
-          description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
+          description: Load generators (e.g. fortio, wrk2) to drive the profile's load test.
           minItems: 1
           items:
             type: string
@@ -68260,7 +68260,7 @@ components:
                   path: github.com/gofrs/uuid
               loadGenerators:
                 type: array
-                description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
+                description: Load generators (e.g. fortio, wrk2) to drive the profile's load test.
                 minItems: 1
                 items:
                   type: string
@@ -77726,7 +77726,7 @@ components:
                   path: github.com/gofrs/uuid
               loadGenerators:
                 type: array
-                description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
+                description: Load generators (e.g. fortio, wrk2) to drive the profile's load test.
                 minItems: 1
                 items:
                   type: string

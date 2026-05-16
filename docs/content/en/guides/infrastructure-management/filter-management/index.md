@@ -67,7 +67,6 @@ In addition to Envoy WASM filter management, we've also introduced new performan
 - ✅ Performance Profiles: Tailor your performance profiles to match your specific needs.
 - ✅ SSL Certificate Support: Benefit from SSL certificate support for Fortio in the server.
 - ✅ Performance Analysis Comparison: Compare performance with and without filters.
-- ✅ GetNighthawk and Cloud Native Performance Releases: Access the latest releases of GetNighthawk and Cloud Native Performance.
 
 **Meshery CLI**
 
