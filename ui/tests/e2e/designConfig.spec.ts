@@ -75,14 +75,6 @@ test.describe('Design Configurator Tests', () => {
     });
 
     await page.route('**/api/pattern', async (route: Route) => {
-      if (route.request().method() === 'GET') {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify([{ id: DESIGN_ID }] as DesignResponse[]),
-        });
-        return;
-      }
       await route.fulfill({
         status: 200,
         contentType: 'application/json',

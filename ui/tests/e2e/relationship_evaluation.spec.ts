@@ -99,7 +99,7 @@ interface RelationshipAnnotation {
 
 test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
   for (const { id, name } of DESIGNS_TO_TEST) {
-    test(`should identify relationships for ${name}`, async ({ request, testInfo }) => {
+    test(`should identify relationships for ${name}`, async ({ request }, testInfo) => {
       const designResponse = await request.get(
         `${ENV.REMOTE_PROVIDER_URL}/api/content/patterns/${id}`,
       );
@@ -145,10 +145,12 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
         }
 
         const found = actualRelationships.find((actualRel: Relationship) => {
-          const expectedSelector = expectedRel.selectors![0];
-          const actualSelector = actualRel.selectors![0];
+          const expectedSelector = expectedRel.selectors?.[0];
+          const actualSelector = actualRel.selectors?.[0];
 
           return (
+            !!expectedSelector &&
+            !!actualSelector &&
             actualRel.kind === expectedRel.kind &&
             actualRel.type === expectedRel.type &&
             actualRel.subType === expectedRel.subType &&
