@@ -32,7 +32,7 @@ export default function MyApp(props) {
     <CacheProvider value={emotionCache}>
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
-        <link rel="shortcut icon" href="/provider/static/img/icons/favicon.ico" />
+        <link rel="shortcut icon" href="/provider/favicon.ico" />
         <title>Provider | Meshery</title>
       </Head>
 

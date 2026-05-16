@@ -265,10 +265,7 @@ const PrometheusSelectionComponent = (props) => {
             onDelete={handlePrometheusChipDelete}
             onClick={handlePrometheusClick}
             icon={
-              <StyledIcon
-                src="/static/img/integrations/prometheus_logo_orange_circle.svg"
-                alt="Prometheus"
-              />
+              <StyledIcon src="/static/img/prometheus_logo_orange_circle.svg" alt="Prometheus" />
             }
             variant="outlined"
           />

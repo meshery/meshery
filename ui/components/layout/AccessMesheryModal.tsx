@@ -22,8 +22,8 @@ const InsideImgWrapper = styled('img')(({ theme }) => ({
   padding: '0rem 0.5rem',
   content:
     theme.palette.mode === 'dark'
-      ? "url('/static/img/meshery-logo/meshery-logo-text.svg')"
-      : "url('/static/img/meshery-logo/meshery-logo-light-text.svg')",
+      ? "url('/static/img/meshery-logo-text.svg')"
+      : "url('/static/img/meshery-logo-light-text.svg')",
 }));
 
 const InsideImgWrapperLogo = styled('img')({
@@ -84,11 +84,7 @@ const PlaygroundMeshDeploy: FC<PlaygroundMeshDeployProps> = ({ isOpen, closeForm
     >
       <PromoBody>
         <ImgWrapper>
-          <InsideImgWrapperLogo
-            width="20%"
-            height="20%"
-            src="/static/img/meshery-logo/meshery-logo.png"
-          />
+          <InsideImgWrapperLogo width="20%" height="20%" src="/static/img/meshery-logo.png" />
           <InsideImgWrapper width="50%" height="50%" />
         </ImgWrapper>
         <Typography gutterBottom>
