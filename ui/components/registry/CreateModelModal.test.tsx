@@ -2,11 +2,11 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@sistent/sistent', () => ({
-  Modal: ({ children, open, closeModal, title }: any) =>
-    open ? (
+vi.mock('@/components/shared/Modal', () => ({
+  Modal: ({ isOpen, onClose, title, children }: any) =>
+    isOpen ? (
       <div data-testid="modal" data-title={title}>
-        <button onClick={closeModal} data-testid="modal-close" type="button">
+        <button onClick={onClose} data-testid="modal-close" type="button">
           x
         </button>
         {children}

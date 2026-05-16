@@ -25,7 +25,7 @@ import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
 import { normalizeLoadTestPrefs } from '../../lib/load-test-prefs';
 
-const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
+const loadGenerators = ['fortio', 'wrk2'];
 
 const FormControlWrapper = styled(FormControl)({
   minWidth: 180,
