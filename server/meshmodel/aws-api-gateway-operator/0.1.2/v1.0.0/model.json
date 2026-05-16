@@ -23,7 +23,17 @@
     "name": "Cloud Native Network"
   },
   "subCategory": "Service Proxy",
-  "metadata": null,
+  "metadata": {
+  "capabilities": null,
+  "isAnnotation": false,
+  "primaryColor": "#ff9900",
+  "secondaryColor": "#F4BC79",
+  "shape": "triangle",
+  "styleOverrides": "",
+  "svgColor": "ui/public/static/img/meshmodels/aws-api-gateway-operator/color/awsapigateway-color.svg",
+  "svgComplete": "",
+  "svgWhite": "ui/public/static/img/meshmodels/aws-api-gateway-operator/white/awsapigateway-white.svg"
+  },
   "model": {
     "version": "0.1.2"
   },
