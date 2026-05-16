@@ -25,7 +25,7 @@ import { DesignList, LoadingContainer, GhostContainer, GhostImage, GhostText } f
 import { useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import ShareModal from '../ShareWorkspaceModal';
 import { ViewInfoModal } from '../ViewInfoModal';
-import { openViewInKanvas, useIsOperatorEnabled } from '@/utils/utils';
+import { openViewInExtension, useIsOperatorEnabled } from '@/utils/utils';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { Router, useRouter } from 'next/router';
@@ -180,13 +180,13 @@ const MainViewsContent = ({
     }
     return options.filter((option) => option.enabled({ view, userId: user?.id }));
   };
-  const isKanvasDesignerAvailable = useIsOperatorEnabled();
+  const isDesignerAvailable = useIsOperatorEnabled();
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
   const { notify } = useNotification();
   const handleOpenViewInOperator = (viewId, viewName) => {
-    if (!isKanvasDesignerAvailable) {
+    if (!isDesignerAvailable) {
       notify({
-        message: 'Kanvas Designer is not available',
+        message: 'Designer is not available',
         event_type: EVENT_TYPES.ERROR,
       });
       return;
@@ -195,7 +195,7 @@ const MainViewsContent = ({
       workspaceSwitcherContext.closeModal();
     }
 
-    openViewInKanvas(viewId, viewName, Router);
+    openViewInExtension(viewId, viewName, Router);
   };
   const isInitialFetch = isFetching && page === 0;
   const isEmpty = totalCount === 0;
@@ -283,7 +283,7 @@ const MainViewsContent = ({
         )}
       </DesignList>
       <GhostContainer ref={ghostRef}>
-        <GhostImage src="/static/img/service-mesh-pattern.png" height={30} width={30} />
+        <GhostImage src="/static/img/designs/service-mesh-pattern.png" height={30} width={30} />
         <GhostText ref={ghostTextNodeRef}></GhostText>
       </GhostContainer>
       {shareModal && (

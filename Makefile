@@ -81,15 +81,11 @@ docker-testing-env:
 #-----------------------------------------------------------------------------
 # Meshery Server Native Builds
 #-----------------------------------------------------------------------------
-.PHONY: server wrk2-setup nighthawk-setup server-local server-skip-compgen server-no-content golangci proto-build error build-server server-binary server-binary-local
+.PHONY: server wrk2-setup server-local server-skip-compgen server-no-content golangci proto-build error build-server server-binary server-binary-local
 ## Setup wrk2 for local development.
 wrk2-setup:
 	echo "setup-wrk does not work on Mac Catalina at the moment"
 	cd server; cd cmd; git clone https://github.com/layer5io/wrk2.git; cd wrk2; make; cd ..
-
-## Setup nighthawk for local development.
-nighthawk-setup: dep-check
-	cd server; cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd nighthawk-go; make setup; cd ..
 
 run-local: server-local error
 
@@ -105,22 +101,6 @@ server-local: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	OTEL_CONFIG=$(OTEL_CONFIG) \
-	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go
-
-server-kanvas: dep-check
-	cd server; cd cmd; go clean; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PROVIDER=Layer5 \
-	RELEASE_CHANNEL=kanvas \
-	PLAYGROUND=true \
-	OTEL_CONFIG=$(OTEL_CONFIG) \
-	PROVIDER_CAPABILITIES_FILEPATH=../../install/samples/provider_capabilities.json \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go
 
