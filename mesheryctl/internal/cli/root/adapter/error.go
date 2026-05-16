@@ -65,7 +65,7 @@ var (
 		[]string{"Network error or wrong environment configurations"},
 		[]string{"Ensure your have a strong connection and the right environment configuration"})
 
-	ErrSMIConformanceTestsFailed = errors.New(ErrSMIConformanceTestsFailedCode, errors.Fatal, []string{"SMI conformance tests failed"}, []string{"SMI conformance tests failed"}, []string{}, []string{"Join https://layer5io.slack.com/archives/C010H0HE2E6"})
+	ErrSMIConformanceTestsFailed = errors.New(ErrSMIConformanceTestsFailedCode, errors.Fatal, []string{"SMI conformance tests failed"}, []string{"SMI conformance tests failed"}, []string{}, []string{"Join https://mesheryio.slack.com/archives/C010H0HE2E6"})
 )
 
 // When unable to get release data

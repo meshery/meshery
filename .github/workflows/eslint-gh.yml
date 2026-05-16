@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
   pull-requests: write
 
 jobs:
@@ -104,7 +105,8 @@ jobs:
           fi
 
       - name: Post failure details to PR
-        if: failure() && github.event_name == 'pull_request'
+        # Forked pull_request runs get a read-only GITHUB_TOKEN, so skip comment writes there.
+        if: failure() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@v8
         with:
           script: |

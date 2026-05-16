@@ -34,8 +34,8 @@ import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import {
   isDesignOpenInExtension,
   mergeDesignWithCurrent,
-  openDesignInKanvas,
-  useIsKanvasDesignerEnabled,
+  openDesignInExtension,
+  useIsDesignerEnabled,
 } from '@/utils/utils';
 import Router, { useRouter } from 'next/router';
 import CAN from '@/utils/can';
@@ -155,18 +155,18 @@ const MainDesignsContent = ({
   const ghostRef = useRef(null);
   const ghostTextNodeRef = useRef(null);
   const [updatePatterns] = useUpdatePatternFileMutation();
-  const isKanvasDesignerAvailable = useIsKanvasDesignerEnabled();
+  const isDesignerAvailable = useIsDesignerEnabled();
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
-  const handleOpenDesignInDesigner = (designId, designName) => {
+  const handleOpenDesignInExtension = (designId, designName) => {
     if (workspaceSwitcherContext?.closeModal) {
       workspaceSwitcherContext.closeModal();
     }
-    if (!isKanvasDesignerAvailable) {
+    if (!isDesignerAvailable) {
       router.push(`/configuration/designs/configurator?design_id=${designId}`);
       return;
     }
 
-    openDesignInKanvas(designId, designName, Router);
+    openDesignInExtension(designId, designName, Router);
   };
   const theme = useTheme();
   const DESIGN_ACTIONS = {
@@ -295,7 +295,7 @@ const MainDesignsContent = ({
                   type={RESOURCE_TYPE.DESIGN}
                   selectedItem={design}
                   handleItemClick={() => {
-                    handleOpenDesignInDesigner(design?.id, design?.name);
+                    handleOpenDesignInExtension(design?.id, design?.name);
                   }}
                   canChangeVisibility={canChangeVisibility}
                   onVisibilityChange={async (value, selectedItem) => {
@@ -349,7 +349,7 @@ const MainDesignsContent = ({
         )}
       </DesignList>
       <GhostContainer ref={ghostRef}>
-        <GhostImage src="/static/img/service-mesh-pattern.png" height={30} width={30} />
+        <GhostImage src="/static/img/designs/service-mesh-pattern.png" height={30} width={30} />
         <GhostText ref={ghostTextNodeRef}></GhostText>
       </GhostContainer>
       <ExportDesignModal

@@ -267,7 +267,10 @@ describe('Navigator', () => {
   it('renders the sidebar drawer wrapper and logo', () => {
     render(<Navigator />);
     expect(screen.getByTestId('sidebar-drawer')).toBeInTheDocument();
-    expect(screen.getByTestId('main-logo')).toHaveAttribute('src', '/static/img/meshery-logo.png');
+    expect(screen.getByTestId('main-logo')).toHaveAttribute(
+      'src',
+      '/static/img/meshery-logo/meshery-logo.png',
+    );
   });
 
   it('renders the collapsed logos when the drawer is collapsed', () => {
