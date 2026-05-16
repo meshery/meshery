@@ -39,6 +39,8 @@ const StyledDocsRedirectLink = styled('a')(({ theme }) => ({
   textDecoration: 'underline',
 }));
 
+const RELATIONSHIP_DROPDOWN_Z_INDEX = 1600;
+
 const RelationshipFormStepper = React.memo(({ handleClose }) => {
   const RelationshipDefinitionSchema =
     RelationshipDefinitionV1Beta2OpenApiSchema.components.schemas.RelationshipDefinition;
@@ -49,21 +51,21 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
   ]);
   const selectorsSchema = pick(RelationshipDefinitionSchema.properties, ['selectors']);
 
-  // -> added zIndex so dropdown appears above the modal (mui default zIndex:1300)
+  // Keep dropdown menus above the Registry modal, which is stacked at zIndex 1500.
   const globalStyles = (
     <GlobalStyles
       styles={{
         '.react-select__menu': {
-          zIndex: 1500,
+          zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
         },
         '.MuiAutocomplete-popper': {
-          zIndex: 1500,
+          zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
         },
         '.MuiPopover-root': {
-          zIndex: 1500,
+          zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
         },
         '.MuiMenu-paper': {
-          zIndex: 1500,
+          zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
         },
       }}
     />
@@ -195,7 +197,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                           vertical: 'bottom',
                           horizontal: 'left',
                         },
-                        style: { zIndex: 1500 },
+                        style: { zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX },
                         getContentAnchorEl: null,
                       },
                       renderValue: (selected) => {
@@ -236,7 +238,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                           vertical: 'bottom',
                           horizontal: 'left',
                         },
-                        style: { zIndex: 1500 },
+                        style: { zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX },
                         getContentAnchorEl: null,
                       },
                       renderValue: (selected) => {
