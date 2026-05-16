@@ -566,7 +566,11 @@ func (h *Handler) resolveMetricsCredential(
 		writeMeshkitError(w, err, statusCode)
 		return "", "", false
 	}
-	apiKey, _ = cred.Secret["secret"].(string)
+	apiKey, ok = cred.Secret["secret"].(string)
+	if !ok {
+		writeMeshkitError(w, ErrInvalidRequestObject(connection.Name+": credential missing required 'secret' field"), http.StatusBadRequest)
+		return "", "", false
+	}
 	return url, apiKey, true
 }
 
