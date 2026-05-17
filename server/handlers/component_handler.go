@@ -1420,7 +1420,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			err = ErrBuildOCIImg(err)
 			h.log.Error(err)
-			http.Error(rw, ErrBuildOCIImg(err).Error(), http.StatusInternalServerError)
+			writeMeshkitError(rw, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
