@@ -127,7 +127,7 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
               width="100%"
               handlePing={() => ping(context.name, context.server, context.connectionId)}
               status={connectionStatus}
-              iconSrc={'/static/img/integrations/kubernetes.svg'}
+              iconSrc={'/static/img/kubernetes.svg'}
             />
           </Header>
           <ErrorBoundary>

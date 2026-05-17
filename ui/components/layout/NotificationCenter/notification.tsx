@@ -319,7 +319,7 @@ export const Notification = ({ event_id }) => {
       ? [
           {
             name: 'Meshery',
-            avatarUrl: '/static/img/meshery-logo/meshery-logo.png',
+            avatarUrl: '/static/img/meshery-logo.png',
             tooltip: `System ID: ${event.systemID}`,
           },
         ]

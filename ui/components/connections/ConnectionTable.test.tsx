@@ -209,10 +209,7 @@ vi.mock('react-redux', () => ({
       ui: {
         organization: { id: 'org-1' },
         connectionMetadataState: {
-          kubernetes: {
-            transitions: ['connected'],
-            icon: '/static/img/integrations/kubernetes.svg',
-          },
+          kubernetes: { transitions: ['connected'], icon: '/static/img/kubernetes.svg' },
         },
         controllerState: {},
       },

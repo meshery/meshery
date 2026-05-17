@@ -101,8 +101,8 @@ const MeshSyncEmptyState = () => {
           <img
             src={
               theme.palette.mode === 'dark'
-                ? '/static/img/integrations/meshsync-white.svg'
-                : '/static/img/extensions/meshsync.svg'
+                ? '/static/img/meshsync-white.svg'
+                : '/static/img/meshsync.svg'
             }
             alt="MeshSync"
             style={{ width: '24px', height: '24px' }}

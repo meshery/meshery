@@ -270,7 +270,7 @@ function MesheryPatternCard_({
                   data-testid="pattern-btn-design"
                 >
                   <img
-                    src="/static/img/designs/pattern_trans.svg"
+                    src="/static/img/pattern_trans.svg"
                     style={{ borderRadius: '50%', ...iconMedium }}
                     // imgProps={{ height: '16px', width: '16px' }}
                   />

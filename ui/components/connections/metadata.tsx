@@ -98,7 +98,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                     tooltip={`Server: ${metadata.server}`}
                     title={metadata.name}
                     status={connection.status}
-                    iconSrc={'/static/img/integrations/kubernetes.svg'}
+                    iconSrc={'/static/img/kubernetes.svg'}
                     handlePing={handleKubernetesClick}
                   />
                 </ListItem>
@@ -162,7 +162,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                       disabled={operatorState === CONTROLLER_STATES.UNDEPLOYED}
                       status={operatorState}
                       handlePing={handleOperatorClick}
-                      iconSrc="/static/img/integrations/meshery-operator.svg"
+                      iconSrc="/static/img/meshery-operator.svg"
                       width="9rem"
                     />
                   </ListItem>
@@ -179,7 +179,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                           title={'MeshSync'}
                           status={meshSyncState}
                           handlePing={handleMeshSyncClick}
-                          iconSrc="/static/img/extensions/meshsync.svg"
+                          iconSrc="/static/img/meshsync.svg"
                           width="9rem"
                         />
                       </ListItem>
@@ -193,7 +193,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                           title={'BROKER'}
                           status={natsState}
                           handlePing={handleNATSClick}
-                          iconSrc="/static/img/integrations/nats-icon-color.svg"
+                          iconSrc="/static/img/nats-icon-color.svg"
                           width="9rem"
                         />
                       </ListItem>
