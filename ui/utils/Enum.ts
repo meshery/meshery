@@ -139,8 +139,8 @@ export const EXTENSIONS = {
   Catalog: {
     name: 'Meshery Catalog',
   },
-  KanvasSnapshot: {
-    name: 'Kanvas Snapshot',
+  Snapshot: {
+    name: 'Snapshot',
     signup_url: 'https://meshery.io/extensions/github-action-meshery-snapshot',
   },
   PerformanceAnalysis: {

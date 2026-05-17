@@ -87,7 +87,7 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 
 ## Infrastructure Lifecycle Management
 
-Meshery manages the configuration, deployment, and operation of your Cloud services and Kubernetes clusters while supporting hundreds of different types of cloud native infrastructure integrations. Meshery supports [300+ integrations](https://meshery.io/integrations).
+Meshery manages the configuration, deployment, and operation of your Cloud services and Kubernetes clusters while supporting hundreds of different types of cloud native infrastructure integrations. Meshery supports [380+ integrations](https://meshery.io/integrations).
 
 <!--
 <a href="https://www.youtube.com/watch?v=034nVaQUyME"><img alt="Meshery cloud native management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshmap.gif"  style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" /></a>
@@ -196,12 +196,7 @@ Baseline and track your cloud native performance from release to release.
 <details>
 <summary><h4>Load Generation and Microservice Performance Characterization</h4></summary>
 
-<picture align="left">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg"  width="18%" align="left" style="margin-left:10px;" />
-  <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg" width="18%" align="left" style="margin-left:10px;" />
-</picture>
-
-- **Multiple Load Generators:** Meshery supports various load generators, including Fortio, Wrk2, and Nighthawk, allowing users to choose the tool that best suits your needs.
+- **Multiple Load Generators:** Meshery supports various load generators, including Fortio and Wrk2, allowing users to choose the tool that best suits your needs.
 - **Configurable Performance Profiles:** Meshery provides a highly configurable set of load profiles with tunable facets, enabling users to generate TCP, gRPC, and HTTP load. You can customize parameters such as duration, concurrent threads, concurrent generators, and load generator type. 
 - **Statistical Analysis:** Meshery performs statistical analysis on the results of performance tests, presenting data in the form of histograms with latency buckets. Understand the distribution of response times and identify potential bottlenecks.
 - **Comparison of Test Results:** Meshery enables you to compare the difference in request performance (latency and throughput) between independent performance tests. Save your load test configurations as Performance Profiles, making it easy to rerun tests with the same settings and track performance variations over time.
@@ -309,7 +304,7 @@ Learn more about the <a href="https://meshery.io/community#meshmates">MeshMates<
 
 Please do! We're a warm and welcoming community of open source contributors. Please join. All types of contributions are welcome. Be sure to read the [Contributor Guides](https://docs.meshery.io/project/contributing) for a tour of resources available to you and how to get started.
 
-**Naming conventions.** This repository adheres to the canonical camelCase-wire identifier-naming contract shared across the Meshery / Layer5 ecosystem. See the [identifier-naming contributor guide](https://github.com/meshery/schemas/blob/master/docs/identifier-naming-contributor-guide.md) in `meshery/schemas` for the full reader-friendly directory (26-row naming table with before/after and do/don't examples). Repo-specific mandates live in [`AGENTS.md § Identifier Naming Conventions`](./AGENTS.md).
+**Naming conventions.** This repository adheres to the canonical camelCase-wire identifier-naming contract shared across the Meshery ecosystem. See the [identifier-naming contributor guide](https://github.com/meshery/schemas/blob/master/docs/identifier-naming-contributor-guide.md) in `meshery/schemas` for the full reader-friendly directory (26-row naming table with before/after and do/don't examples). Repo-specific mandates live in [`AGENTS.md § Identifier Naming Conventions`](./AGENTS.md).
 
 <!-- <a href="https://youtu.be/MXQV-i-Hkf8"><img alt="Deploying Linkerd with Meshery" src="https://docs.meshery.io/assets/img/readme/deploying-linkerd-with-meshery.png" width="100%" align="center" /></a> -->
 

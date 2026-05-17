@@ -1,15 +1,5 @@
 name: Meshery UI and Server
 on:
-  pull_request_target:
-    types: [opened, synchronize, reopened]
-    branches:
-      - "master"
-    paths-ignore:
-      - "docs/**"
-      - "mesheryctl/**"
-      - "*.md"
-      - "*.github/**"
-      - "Makefile"
   push:
     branches:
       - "master"
@@ -30,10 +20,9 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
       - uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
       - name: Build meshery-ui and provider-ui
@@ -63,10 +52,8 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
-
       - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.13.0
+        uses: helm/kind-action@v1.14.0
         with:
           cluster_name: "kind-cluster"
       - name: Setup Go
@@ -78,7 +65,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
       - name: Download meshery-ui artifacts
@@ -112,35 +99,24 @@ jobs:
           REMOTE_PROVIDER_URL: "https://cloud.meshery.io"
           PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
         run: make ui-test-e2e-ci
-      - name: Save PR metadata
-        if: ${{ !cancelled() && github.event_name == 'pull_request_target' }}
-        run: |
-          mkdir -p ./pr
-          echo "${{ github.event.number }}" > ./pr/number
-          echo "${{ github.event.pull_request.head.sha }}" > ./pr/sha
 
       - name: Checkout QA
         uses: actions/checkout@v6
-        # run only for pushes to master
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
         with:
           repository: meshery/qa
           path: ./qa
           token: ${{ secrets.GH_ACCESS_TOKEN }}
 
       - name: Sync results with qa
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
         working-directory: qa
         run: |
           make meshery-results-sync MESHERY_RESULTS_PATH=../ui/allure-results
 
       - name: Pull latest qa changes
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
         working-directory: qa
         run: git pull --rebase --autostash origin master
 
       - name: Commit & push academy to qa
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "[Meshery] Sync Meshery E2E Test Results - ${GITHUB_SHA}"
@@ -198,49 +174,7 @@ jobs:
           sudo rm -rf /opt/ghc
           sudo rm -rf /opt/hostedtoolcache
       - name: Docker edge build & tag
-        if: startsWith(github.ref, 'refs/tags/') != true && success()
         env:
           RELEASE_CHANNEL: "edge"
         run: |
           DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
-          docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::8}
-      - name: Docker edge push
-        if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
-        run: |
-          docker push ${{ secrets.IMAGE_NAME }}:edge-latest
-          docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_REF/refs\/tags\//}
-          docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
-      - name: Docker Hub Description
-        if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
-        uses: peter-evans/dockerhub-description@v5
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          repository: ${{ secrets.IMAGE_NAME }}
-  # Run Rego policy tests
-  rego-tests:
-    name: Rego Policy Tests
-    if: >-
-      github.repository == 'meshery/meshery' && (
-      (
-        github.event_name == 'push' &&
-        (
-        contains(toJson(github.event.commits), '.rego') ||
-        contains(toJson(github.event.commits), 'server/policies/') ||
-        contains(toJson(github.event.commits), '.github/workflows/rego-lint-and-test.yml')
-        )
-      ) ||
-      (
-        github.event_name == 'pull_request_target' &&
-        (
-        contains(toJson(github.event.pull_request), '.rego') ||
-        contains(toJson(github.event.pull_request), 'server/policies/') ||
-        contains(toJson(github.event.pull_request), '.github/workflows/rego-lint-and-test.yml')
-        )
-      )
-      )
-
-    uses: ./.github/workflows/rego-lint-and-test.yml
-    permissions:
-      contents: write
-      pull-requests: write
