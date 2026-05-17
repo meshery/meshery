@@ -26,16 +26,16 @@ import useInfiniteScroll, {
 } from './hooks';
 import { MenuComponent } from './MenuComponent';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
-import ExportModal from '../../shared/Modal/ExportModal';
+import ExportDesignModal from '../../designs/export/ExportDesignModal';
 import { RESOURCE_TYPE } from '@/utils/Enum';
-import ShareModal from './ShareModal';
+import ShareModal from '../ShareWorkspaceModal';
 import InfoModal from '../../shared/Modal/Information/InfoModal';
 import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import {
-  isDesignOpenInKanvas,
+  isDesignOpenInExtension,
   mergeDesignWithCurrent,
-  openDesignInKanvas,
-  useIsKanvasDesignerEnabled,
+  openDesignInExtension,
+  useIsDesignerEnabled,
 } from '@/utils/utils';
 import Router, { useRouter } from 'next/router';
 import CAN from '@/utils/can';
@@ -155,18 +155,18 @@ const MainDesignsContent = ({
   const ghostRef = useRef(null);
   const ghostTextNodeRef = useRef(null);
   const [updatePatterns] = useUpdatePatternFileMutation();
-  const isKanvasDesignerAvailable = useIsKanvasDesignerEnabled();
+  const isDesignerAvailable = useIsDesignerEnabled();
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
-  const handleOpenDesignInDesigner = (designId, designName) => {
+  const handleOpenDesignInExtension = (designId, designName) => {
     if (workspaceSwitcherContext?.closeModal) {
       workspaceSwitcherContext.closeModal();
     }
-    if (!isKanvasDesignerAvailable) {
+    if (!isDesignerAvailable) {
       router.push(`/configuration/designs/configurator?design_id=${designId}`);
       return;
     }
 
-    openDesignInKanvas(designId, designName, Router);
+    openDesignInExtension(designId, designName, Router);
   };
   const theme = useTheme();
   const DESIGN_ACTIONS = {
@@ -175,7 +175,7 @@ const MainDesignsContent = ({
       title: 'Merge Into Current Design',
       icon: <MergeOutlinedIcon fill={theme.palette.icon.default} />,
       enabled: () =>
-        isDesignOpenInKanvas() && CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject),
+        isDesignOpenInExtension() && CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject),
     },
     EXPORT_DESIGN: {
       id: 'export_design',
@@ -265,9 +265,9 @@ const MainDesignsContent = ({
   const isInitialFetch = isFetching && page === 0;
   const isEmpty = totalCount === 0;
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
   const { organization: currentOrganization } = useSelector((state) => state.ui);
-  const providerUrl = capabilitiesRegistry?.providerUrl;
+  const providerUrl = providerCapabilities?.providerUrl;
   const [activeUsers] = useRoomActivity({
     providerUrl,
     getUserAccessToken: getUserAccessToken,
@@ -295,7 +295,7 @@ const MainDesignsContent = ({
                   type={RESOURCE_TYPE.DESIGN}
                   selectedItem={design}
                   handleItemClick={() => {
-                    handleOpenDesignInDesigner(design?.id, design?.name);
+                    handleOpenDesignInExtension(design?.id, design?.name);
                   }}
                   canChangeVisibility={canChangeVisibility}
                   onVisibilityChange={async (value, selectedItem) => {
@@ -352,7 +352,7 @@ const MainDesignsContent = ({
         <GhostImage src="/static/img/service-mesh-pattern.png" height={30} width={30} />
         <GhostText ref={ghostTextNodeRef}></GhostText>
       </GhostContainer>
-      <ExportModal
+      <ExportDesignModal
         downloadModal={downloadModal}
         handleDownloadDialogClose={handleDownloadDialogClose}
         handleDesignDownload={handleDesignDownload}

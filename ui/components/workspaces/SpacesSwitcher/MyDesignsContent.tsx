@@ -13,8 +13,8 @@ import {
   VisibilitySelect,
 } from './components';
 import { useContentDelete, useContentDownload } from './hooks';
-import ExportModal from '../../shared/Modal/ExportModal';
-import ShareModal from './ShareModal';
+import ExportDesignModal from '../../designs/export/ExportDesignModal';
+import ShareModal from '../ShareWorkspaceModal';
 import { useSelector } from 'react-redux';
 
 const MyDesignsContent = () => {
@@ -168,7 +168,7 @@ const MyDesignsContent = () => {
         totalCount={totalCount}
       />
       <PromptComponent ref={modalRef} />
-      <ExportModal
+      <ExportDesignModal
         downloadModal={downloadModal}
         handleDownloadDialogClose={handleDownloadModalClose}
         handleDesignDownload={handleDesignDownload}

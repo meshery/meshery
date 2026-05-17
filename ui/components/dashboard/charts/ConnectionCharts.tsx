@@ -39,7 +39,7 @@ export default function ConnectionStatsChart() {
       data: {
         columns: chartData,
         type: donut(),
-        colors: dataToColors(chartData),
+        colors: dataToColors(chartData, theme),
         onclick: function () {
           router.push('/management/connections');
         },
@@ -66,7 +66,7 @@ export default function ConnectionStatsChart() {
         },
       },
     }),
-    [chartData, router],
+    [chartData, router, theme],
   );
 
   const canViewConnections = CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject);

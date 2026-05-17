@@ -6,7 +6,6 @@ import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import { isMultiSelect, getDefaultFormState } from '@rjsf/utils';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
-import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import pluralize from 'pluralize';
 import { safeDisplayValue, safeStringTitle } from '../helper';
@@ -187,7 +186,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
             )}
             {props.rawErrors?.length > 0 && (
               <CustomTextTooltip
-                bgColor={ERROR_COLOR}
+                bgColor={theme.palette.error.main}
                 interactive={true}
                 title={safeStringTitle(
                   Array.isArray(props.rawErrors) ? props.rawErrors.join('  ') : props.rawErrors,

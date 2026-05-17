@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { useSelector } from '@xstate/react';
-import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@sistent/sistent';
+import { List, ListItemText, ListItemIcon, Typography, Collapse } from '@sistent/sistent';
 import { ExpandLess, ExpandMore } from '@/assets/icons';
 import { ComponentIcon, Loading, getSvgWhiteForComponent, processDesign } from './common';
 import {
@@ -11,7 +11,7 @@ import {
   useIsValidatingDesignSchema,
 } from '../../../machines/validator/designValidator';
 import AlertIcon from '@/assets/icons/AlertIcon';
-import { NOTIFICATIONCOLORS } from '@/themes/index';
+import { useTheme } from '@/theme';
 import {
   ValidatedComponent,
   ValidationErrorListItem,
@@ -21,6 +21,8 @@ import {
 } from './styles';
 
 const ComponentErrorList = ({ component, errors, validatorActor, canTapErrors }) => {
+  const theme = useTheme();
+
   const onErrorTap = (error) => {
     if (!canTapErrors) {
       return;
@@ -54,7 +56,7 @@ const ComponentErrorList = ({ component, errors, validatorActor, canTapErrors })
               width="30px"
               outline="#fff"
               bangFill="#fff"
-              fill={NOTIFICATIONCOLORS.WARNING}
+              fill={theme.palette.warning.main}
             />{' '}
           </ListItemIcon>
           <ListItemText primary={message(error)} disableTypography></ListItemText>
@@ -102,16 +104,16 @@ const ValidationResults_ = (props) => {
         aria-labelledby="nested-list-subheader"
         subheader={
           <ValidationSubHeader disableSticky="true" component="div" disablePadding>
-            <Typography varaint="h6" disablePadding style={{ color: theme.palette.text.default }}>
+            <Typography variant="h6" disablePadding style={{ color: theme.palette.text.default }}>
               {compCount} component{compCount > 1 ? 's' : ''} and {annotationCount} annotations
             </Typography>
 
             <Typography
-              varaint="h6"
+              variant="h6"
               disablePadding
               style={{
                 color: `${
-                  errorCount > 0 ? NOTIFICATIONCOLORS.WARNING : NOTIFICATIONCOLORS.SUCCESS_V2
+                  errorCount > 0 ? theme.palette.warning.main : theme.palette.success.main
                 }`,
               }}
             >
@@ -121,7 +123,7 @@ const ValidationResults_ = (props) => {
         }
       >
         {errorCount == 0 && (
-          <Typography varaint="h6" align="center" style={{ marginBlock: '1rem' }} disablePadding>
+          <Typography variant="h6" align="center" style={{ marginBlock: '1rem' }} disablePadding>
             No validation errors.
           </Typography>
         )}

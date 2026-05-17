@@ -10,7 +10,6 @@ import {
 } from '@sistent/sistent';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
-import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import {
@@ -94,7 +93,7 @@ export default function CustomSelectWidget({
             <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
               {rawErrors?.length > 0 && (
                 <CustomTextTooltip
-                  bgColor={ERROR_COLOR}
+                  bgColor={theme.palette.error.main}
                   flag={formContext?.overrideFlag}
                   title={rawErrors?.join('  ')}
                   interactive={true}
@@ -103,7 +102,7 @@ export default function CustomSelectWidget({
                     <ErrorOutlineIcon
                       width="14px"
                       height="14px"
-                      fill={ERROR_COLOR}
+                      fill={theme.palette.error.main}
                       style={{ verticalAlign: 'middle', ...iconSmall }}
                     />
                   </IconButton>

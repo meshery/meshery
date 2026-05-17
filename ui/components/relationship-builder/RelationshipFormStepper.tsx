@@ -13,8 +13,7 @@ import {
   Grid2,
   MenuItem,
 } from '@sistent/sistent';
-// eslint-disable-next-line no-restricted-imports -- GlobalStyles has no @sistent/sistent equivalent yet; tracked as the final straggler for Phase 2.
-import { GlobalStyles } from '@mui/material';
+import { GlobalStyles } from '@/theme';
 import { styled, DescriptionIcon, CodeIcon } from '@sistent/sistent';
 import { RelationshipDefinitionV1Beta2OpenApiSchema } from '@meshery/schemas';
 import {

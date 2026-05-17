@@ -86,7 +86,7 @@ vi.mock('../../../utils/responsive-column', () => ({
   getResponsiveColumnVisibility: (...args) => getResponsiveColumnVisibility(...args),
 }));
 
-vi.mock('./RegisterConnectionModal', () => ({
+vi.mock('../RegisterConnectionModal', () => ({
   default: () => <div />,
 }));
 

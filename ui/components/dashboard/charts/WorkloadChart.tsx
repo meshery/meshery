@@ -7,6 +7,7 @@ import Link from 'next/link';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { Box, MenuItem, Select, Typography } from '@sistent/sistent';
+import { useTheme } from '@/theme';
 
 type WorkloadResource = { kind?: string; count?: number };
 
@@ -25,6 +26,7 @@ export default function WorkloadChart({
   selectedNamespace = '',
   handleSetNamespace,
 }: WorkloadChartProps) {
+  const theme = useTheme();
   const chartData = useMemo(
     () =>
       (resourses || [])
@@ -38,7 +40,7 @@ export default function WorkloadChart({
       data: {
         columns: chartData,
         type: donut(),
-        colors: dataToColors(chartData),
+        colors: dataToColors(chartData, theme),
       },
       arc: {
         cornerRadius: {
@@ -65,7 +67,7 @@ export default function WorkloadChart({
         show: false,
       },
     }),
-    [chartData],
+    [chartData, theme],
   );
   const canViewConnections = CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject);
 

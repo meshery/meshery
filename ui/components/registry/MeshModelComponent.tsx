@@ -31,7 +31,7 @@ import { iconSmall } from 'css/icons.styles';
 import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
 import ImportModelModal from './ImportModelModal';
 import CreateModelModal from './CreateModelModal';
-import CreateRelationshipModal from '@/components/relationship-builder/CreateRelationshipModal';
+import CreateRelationshipModal from './CreateRelationshipModal';
 
 type MeshModelComponentProps = {
   settingsRouter?: (_router: any) => { handleChangeSelectedTab?: (_tab: string) => void };
