@@ -259,7 +259,12 @@ export default function Provider() {
                           <IconButton
                             size="small"
                             aria-label="More information about the Layer5 provider"
-                            onClick={(e) => e.stopPropagation()}
+                            data-testid="provider-learn-more-button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleClose();
+                              handleModalOpen();
+                            }}
                             sx={{ ml: 0.5, p: 0.25, color: accentGrey[60], "&:hover": { color: KEPPEL } }}
                           >
                             <InfoOutlinedIcon fontSize="small" />
