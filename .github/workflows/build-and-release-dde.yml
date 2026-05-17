@@ -43,7 +43,7 @@ jobs:
       - name: Checkout 🛎️ repo
         uses: actions/checkout@v6
       - name: Identify Release Values
-        if: "${{ github.event.inputs.release-ver}} != 'v' }}"
+        if: ${{ github.event.inputs.release-ver != 'v' }}
         run: |
           # GIT_TAG=`git symbolic-ref HEAD`
           if [[ ${GITHUB_REF} = refs/tags* ]]
@@ -52,8 +52,8 @@ jobs:
           else
             echo RELEASE_CHANNEL=edge >> $GITHUB_ENV
           fi
-          LATEST_VERSION=$(git ls-remote --sort='v:refname' --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g') >> $GITHUB_ENV
-          GIT_VERSION=$(git ls-remote --sort='v:refname' --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g') >> $GITHUB_ENV
+          LATEST_VERSION=$(git ls-remote --sort='v:refname' --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g')
+          GIT_VERSION=$(git ls-remote --sort='v:refname' --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g')
           GIT_STRIPPED_VERSION=$(git ls-remote --sort='v:refname' --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g' | cut -c2-)
           echo "Release channel determined to be $RELEASE_CHANNEL"
           echo "GIT_LATEST=$LATEST_VERSION" >> $GITHUB_ENV

@@ -16,17 +16,17 @@ on:
   workflow_dispatch:
     inputs:
       release-ver:
-          description: 'Stable Release Version'     
-          required: true
-          default: 'v'
+        description: 'Stable Release Version'
+        required: true
+        default: 'v'
       stripped-release-ver:
-          description: 'Stripped Stable Release Version'     
-          required: true
-          default: ''
+        description: 'Stripped Stable Release Version'
+        required: true
+        default: ''
       release-channel:
-          description: 'Release Channel'     
-          required: true
-          default: 'edge'
+        description: 'Release Channel'
+        required: true
+        default: 'edge'
 
 env:
   GIT_VERSION: ${{github.event.inputs.release-ver}}
@@ -59,7 +59,7 @@ jobs:
         uses: actions/checkout@v6
       - 
         name: Identify Release Values
-        if: "${{ github.event.inputs.release-ver}} != 'v' }}"
+        if: ${{ github.event.inputs.release-ver != 'v' }}
         run: |
           if [[ ${GITHUB_REF} = refs/tags* ]]
           then
@@ -67,8 +67,8 @@ jobs:
           else
             echo RELEASE_CHANNEL=edge >> $GITHUB_ENV
           fi
-          LATEST_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g') >> $GITHUB_ENV
-          GIT_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g') >> $GITHUB_ENV
+          LATEST_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g')
+          GIT_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g')
           # GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always) 
           GIT_STRIPPED_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g' | cut -c2-)
           echo "Release channel determined to be $RELEASE_CHANNEL"
