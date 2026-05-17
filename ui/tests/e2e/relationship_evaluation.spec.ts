@@ -185,7 +185,7 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
         }
       }
 
-      console.log(`Total relationship failures for ${design.name}: ${failures}`);
+      expect(failures, `Total relationship failures for ${design.name}`).toBe(0);
     });
   }
 });
