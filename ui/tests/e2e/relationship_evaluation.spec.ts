@@ -186,6 +186,24 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
       }
 
       expect(failures, `Total relationship failures for ${design.name}`).toBe(0);
+      expect(actualRelationships.length, `Unexpected relationship count for ${design.name}`).toBe(
+        design.relationships.filter(
+          (r) =>
+            r.status === 'approved' &&
+            r.selectors &&
+            !r?.metadata?.isAnnotation &&
+            r.subType !== 'annotation',
+        ).length,
+      );
+      expect(actualRelationships.length, `Unexpected relationship count for ${design.name}`).toBe(
+        design.relationships.filter(
+          (r) =>
+            r.status === 'approved' &&
+            r.selectors &&
+            !r?.metadata?.isAnnotation &&
+            r.subType !== 'annotation',
+        ).length,
+      );
     });
   }
 });
