@@ -10,11 +10,3 @@ description: Install Meshery CLI on Windows with Scoop
 # Install Meshery CLI with Scoop
 
 {{% mesheryctl/installation-scoop %}}
-
-# Related Reading
-
-## Mesheryctl Guides
-
-Guides to using Meshery's various features and components.
-
-{{< mesheryctl-guides-list >}}

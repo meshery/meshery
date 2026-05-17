@@ -31,15 +31,3 @@ Optionally, move the `mesheryctl` binary to a directory in your `PATH`.
   </pre>
 
 Type `yes` when prompted to choose to configure a file. To get started, choose Docker as your platform to deploy Meshery. -->
-
-# Related Reading
-
-## Meshery CLI Guides
-
-Guides to using Meshery's various features and components.
-
-{{< mesheryctl-guides-list >}}
-
-{{< related-discussions tag="mesheryctl" >}}
-
-### Installation Options

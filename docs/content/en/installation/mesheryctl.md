@@ -29,13 +29,3 @@ Mesheryctl is configured for Kubernetes by default. To specify a different suppo
 {{% mesheryctl/installation-scoop %}}
 
 Continue deploying Meshery onto one of the [Supported Platforms](/installation).
-
-# Related Reading
-
-## Meshery CLI Guides
-
-Guides to using Meshery's various features and components.
-
-{{< mesheryctl-guides-list >}}
-
-{{< related-discussions tag="mesheryctl" >}}

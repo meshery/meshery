@@ -1,0 +1,21 @@
+{{ $currentPage := . }}
+
+{{ $related := site.RegularPages.Related $currentPage | first 5 }}
+
+{{ with $related }}
+<h2>
+    Related Readings:
+</h2>
+<ul>
+    {{ range . }}
+        <li>
+            <a href="{{ .RelPermalink }}">
+                {{ .Title }}
+            </a>
+            {{ with .Params.abstract }}
+                - {{ . }}
+            {{ end }}
+        </li>
+    {{ end }}
+</ul>
+{{ end }}

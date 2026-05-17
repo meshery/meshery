@@ -93,15 +93,3 @@ If you plan to use Kubernetes, verify that your current context points to the ta
 - Choose the Meshery Playground when you want to try Meshery without installing anything locally. See [Try Meshery Playground](/playground).
 
 For rollout planning after initial installation, continue with [Upgrading Meshery](/installation/upgrades).
-
-## Related Reading
-
-- [Install mesheryctl](/installation/mesheryctl)
-- [Install Meshery on Docker](/installation/docker)
-- [Install Meshery on Kubernetes](/installation/kubernetes)
-- [Install Docker Extension for Meshery](/installation/docker/docker-extension)
-- [Build & Release (CI)](/project/contributing/build-and-release)
-- [Upgrading Meshery](/installation/upgrades)
-- [Running system checks using Meshery CLI](/guides/mesheryctl/running-system-checks-using-mesheryctl)
-- [Troubleshooting Meshery Installations](/guides/troubleshooting/installation)
-<!-- - [Test status](/project/contributing/test-status) for automated CI and integration test visibility -->

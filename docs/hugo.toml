@@ -212,3 +212,17 @@ enable = false
     source = "static"
     target = "static"
     disableWatch = true
+
+# hugo dynamic related reading
+
+[related]
+  includeNewer = true
+  threshold = 80
+
+  [[related.indices]]
+  name = "categories"
+  weight = 80
+
+  [[related.indices]]
+  name = "date"
+  weight = 10
