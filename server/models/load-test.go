@@ -137,7 +137,11 @@ func (m *MesheryResult) ConvertToSpec(log logger.Handler) (*PerformanceSpec, err
 	m.Result["RetCodes"] = retcodes
 	// loadGenerator := m.Result["load-generator"].(string)
 	log.Debug(fmt.Sprintf("result to be converted: %+v", m))
-	if m.Result["RunType"].(string) == "HTTP" {
+	runType, ok := m.Result["RunType"].(string)
+	if !ok {
+		return nil, fmt.Errorf("missing or invalid RunType in performance result")
+	}
+	if runType == "HTTP" {
 		httpResults := &fhttp.HTTPRunnerResults{}
 		resJ, err := json.Marshal(m.Result)
 		if err != nil {
