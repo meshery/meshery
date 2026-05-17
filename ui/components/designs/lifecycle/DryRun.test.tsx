@@ -23,6 +23,9 @@ vi.mock('@sistent/sistent', () => {
       palette: {
         text: { default: '#000' },
         background: { error: { default: '#f00' } },
+        success: { main: '#0f0' },
+        error: { main: '#f00' },
+        warning: { main: '#f80' },
       },
     }),
     ErrorIcon: () => <svg data-testid="error-icon" />,
