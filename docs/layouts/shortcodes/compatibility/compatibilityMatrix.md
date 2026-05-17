@@ -58,7 +58,6 @@
   <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/istio.svg" /><a href="{{ .Site.Params.repo }}-istio">meshery-istio</a></th>
   <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/linkerd.svg" /><a href="{{ .Site.Params.repo }}-linkerd">meshery-linkerd</a></th>
   <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/kuma.svg" /><a href="{{ .Site.Params.repo }}-kuma">meshery-kuma</a></th>
-  <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/adapters/nighthawk/nighthawk.svg" /><a href="{{ .Site.Params.repo }}-nighthawk">meshery-nighthawk</a></th>
   <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/nginx-sm.svg" /><a href="{{ .Site.Params.repo }}-nginx-sm">meshery-nginx-sm</a></th>
   <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/traefik-mesh.svg" /><a href="{{ .Site.Params.repo }}-traefik-mesh">meshery-traefik-mesh</a></th>
   <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/cilium.svg" /><a href="{{ .Site.Params.repo }}-cilium">meshery-cilium</a></th>

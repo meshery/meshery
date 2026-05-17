@@ -1193,6 +1193,12 @@ func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
 	return err
 }
 
+// LogoutMesheryServer is a no-op for the local provider: there is no
+// remote session to revoke.
+func (l *DefaultLocalProvider) LogoutMesheryServer() error {
+	return nil
+}
+
 // GetGenericPersister - to return persister
 func (l *DefaultLocalProvider) GetGenericPersister() *database.Handler {
 	return l.GenericPersister
@@ -1217,7 +1223,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	nilUserID := ""
 
 	// Use the relative directory for patterns
-	catalogDir := filepath.Join("..", "..", "docs", "catalog")
+	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
 
 	for _, seedContent := range seedContents {
 		go func(comp string, log logger.Handler) {
@@ -1924,7 +1930,12 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 // Events
 
 func (e *EventsPersister) PersistEvent(event events.Event, token string) error {
-	err := e.DB.Save(event).Error
+	// GORM's Save requires a pointer (it reflects on the struct to read/update
+	// the primary key and timestamps). Passing the value directly produced
+	// "invalid value, should be pointer to struct or slice" and dropped every
+	// system event silently — including the controller-emitted events that
+	// flow through PersistSystemEvent.
+	err := e.DB.Save(&event).Error
 	if err != nil {
 		return ErrPersistEvent(err)
 	}

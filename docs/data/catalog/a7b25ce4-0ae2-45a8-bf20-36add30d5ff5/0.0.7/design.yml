@@ -465,7 +465,7 @@
                     },
                     {
                       "name": "PROVIDER_BASE_URLS",
-                      "value": "https://cloud.meshery.io"
+                      "value": "https://cloud.layer5.io"
                     },
                     {
                       "name": "ADAPTER_URLS",

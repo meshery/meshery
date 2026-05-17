@@ -2,7 +2,6 @@
 title: REST API
 description: Meshery REST API documentation
 data: openapi
-display_toc: false
 aliases: 
 - /reference/rest-apis/swagger
 ---
@@ -77,8 +76,8 @@ Using curl, you can access Meshery's REST API by executing this command:
   <br/>
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">curl --location 'localhost:9081/api/&lt;endpoint&gt;' \
---header 'meshery-token: &lt;yourToken&gt;\
---header 'Cookie: meshery-provider=Layer5; cloud.meshery.io_ref=/;token=&lt;yourToken&gt;
+--header 'token: &lt;your-token&gt;\
+--header 'Cookie: provider=Meshery; cloud.meshery.io_ref=/;token=&lt;your-token&gt;
 </div>
 </div>
   </pre>

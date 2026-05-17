@@ -205,7 +205,7 @@ func main() {
 	log.Info("Using kubeconfig at: ", viper.GetString("KUBECONFIG_FOLDER"))
 	log.Info("Log level: ", log.GetLevel())
 
-	adapterURLs := viper.GetStringSlice("ADAPTER_URLS")
+	adapterURLs := utils.SplitAndTrim(viper.GetString("ADAPTER_URLS"), ", \t\n\r")
 
 	adapterTracker := helpers.NewAdaptersTracker(adapterURLs)
 	queryTracker := helpers.NewUUIDQueryTracker()
@@ -353,7 +353,7 @@ func main() {
 	provs[lProv.Name()] = lProv
 
 	providerEnvVar := viper.GetString(constants.ProviderENV)
-	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
+	RemoteProviderURLs := utils.SplitAndTrim(viper.GetString("PROVIDER_BASE_URLS"), ", \t\n\r")
 	for _, providerurl := range RemoteProviderURLs {
 		parsedURL, err := url.Parse(providerurl)
 		if err != nil {
@@ -453,8 +453,14 @@ func main() {
 		// so it doesn't throw error each server is stopped. Reason: support for none provider is not yet implemented
 		if p.Name() != "None" {
 			log.Info("De-registering Meshery server.")
-			err = p.DeleteMesheryConnection()
-			if err != nil {
+			if err = p.DeleteMesheryConnection(); err != nil {
+				log.Error(err)
+				continue
+			}
+			// Logout follows deregistration so the session that authorized
+			// the delete is revoked only after the connection is removed.
+			log.Info("Logging out Meshery server session.")
+			if err = p.LogoutMesheryServer(); err != nil {
 				log.Error(err)
 			}
 		}

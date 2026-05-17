@@ -1,5 +1,6 @@
 import {
   Button,
+  CloudUploadIcon,
   Typography,
   FormGroup,
   TextField,
@@ -14,14 +15,13 @@ import React from 'react';
 import { useRef } from 'react';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
 import _PromptComponent from './PromptComponent';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { CONNECTION_STATES } from '../utils/Enum';
 import { TooltipWrappedConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
-import useKubernetesHook from './hooks/useKubernetesHook';
+import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import { keys } from '@/utils/permission_constants';
-import useTestIDsGenerator from './hooks/useTestIDs';
+import useTestIDsGenerator from '@/utils/hooks/useTestIDs';
 import CAN from '@/utils/can';
 import { useAddKubernetesConfigMutation } from '../rtk-query/connection';
 import { updateProgress } from '@/store/slices/mesheryUi';

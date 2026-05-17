@@ -10,10 +10,10 @@ import {
   TableSortLabel,
   Tooltip,
 } from '@sistent/sistent';
-import Modal from './Modal';
+import Modal from './shared/Modal/Modal';
 import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
 import Moment from 'react-moment';
-import LoadingScreen from './LoadingComponents/LoadingComponent';
+import LoadingScreen from './shared/LoadingState/LoadingComponent';
 import { useNotification, useNotificationHandlers } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { updateVisibleColumns } from '../utils/responsive-column';
@@ -28,7 +28,7 @@ import {
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import type { RootState } from '@/store/store';
-import type { MUIDataTableColumn, MUIDataTableMeta } from 'mui-datatables';
+import type { MUIDataTableColumn, MUIDataTableMeta } from '@sistent/mui-datatables';
 
 const CredentialIcon = styled('img')({
   width: '24px',

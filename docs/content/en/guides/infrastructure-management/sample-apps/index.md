@@ -45,7 +45,7 @@ Emojivoto is a microservice application, originally built by Linkerd that allows
 
 <a href="./images/emojivoto.png"><img alt="Emojivoto" style="width:500px;height:auto;" src="./images/emojivoto.png" /></a>
 
-### [ImageHub](https://layer5.io/projects/image-hub)
+### [ImageHub](https://github.com/layer5io/image-hub)
 
 Image Hub is a sample application for exploring WebAssembly modules used as Envoy filters. The application was originally written to run on Consul. However, it doesn't have any dependency on Consul and can be deployed on any infrastructure. These modules can be used to implement multi-tenancy or to implement per user rate limiting in your application’s endpoints, without messing with your application infrastructure. 
 Follow this tutorial to set up [ImageHub with Ingress](https://github.com/layer5io/image-hub#use-image-hub)

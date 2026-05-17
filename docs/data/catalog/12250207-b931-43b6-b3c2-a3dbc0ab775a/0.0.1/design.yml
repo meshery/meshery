@@ -1,0 +1,18 @@
+{
+  "id": "12250207-b931-43b6-b3c2-a3dbc0ab775a",
+  "name": "Kyverno Policy Engine",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.4",
+  "metadata": {
+    "resolvedAliases": {}
+  },
+  "components": [],
+  "preferences": {
+    "layers": {
+      "relationships": {
+        "hierarchical-sibling-matchlabels": false
+      }
+    }
+  },
+  "relationships": []
+}
