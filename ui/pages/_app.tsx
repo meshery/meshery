@@ -59,7 +59,7 @@ import './styles/AnimatedFilter.css';
 import './styles/AnimatedMeshery.css';
 import './styles/AnimatedMeshPattern.css';
 import './styles/AnimatedMeshSync.css';
-import PlaygroundMeshDeploy from './extension/AccessMesheryModal';
+import PlaygroundMeshDeploy from '../components/layout/AccessMesheryModal';
 import Router from 'next/router';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from '../lib/relayEnvironment';
@@ -103,10 +103,10 @@ import RegistryModalContextProvider from '@/utils/context/RegistryModalContextPr
 import { DynamicFullScreenLoader } from '@/components/shared/LoadingState/DynamicFullscreenLoader';
 
 export const mesheryExtensionRoute = '/extension/meshmap';
-function isMesheryUIRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
+function isMesheryUIRestrictedAndThePageIsNotPlayground(providerCapabilities) {
   return (
     !window.location.pathname.startsWith(mesheryExtensionRoute) &&
-    capabilitiesRegistry?.restrictedAccess?.isMesheryUIRestricted
+    providerCapabilities?.restrictedAccess?.isMesheryUIRestricted
   );
 }
 
@@ -117,7 +117,7 @@ export function isExtensionOpen() {
 const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) => {
   const pageContext = useMemo(() => getPageContext(), []);
   const { k8sConfig } = useSelector((state) => state.ui);
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
   const { isDrawerCollapsed } = useSelector((state) => state.ui);
   const [fetchCredentialById] = useLazyGetCredentialByIdQuery();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
@@ -132,7 +132,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     isDrawerCollapsed: false,
     isFullScreenMode: false,
     isLoading: true,
-    k8sContexts: [],
+    k8sContexts: { totalCount: 0, contexts: [] },
     activeK8sContexts: [],
     mesheryControllerSubscription: null,
     disposeK8sContextSubscription: null,
@@ -477,7 +477,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
     if (
       typeof window !== 'undefined' &&
-      isMesheryUIRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)
+      isMesheryUIRestrictedAndThePageIsNotPlayground(providerCapabilities)
     ) {
       Router.push(mesheryExtensionRoute);
     }
@@ -493,7 +493,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
         initSubscriptions(ids);
       }
     }
-  }, [k8sConfig, capabilitiesRegistry]);
+  }, [k8sConfig, providerCapabilities]);
 
   const canShowNav = !state.isFullScreenMode && uiConfig?.components?.navigator !== false;
   const { extensionType } = useSelector((state) => state.ui);
@@ -578,7 +578,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                                 </StyledMainContent>
                                 <Footer
                                   handleMesheryCommunityClick={handleMesheryCommunityClick}
-                                  capabilitiesRegistry={capabilitiesRegistry}
+                                  providerCapabilities={providerCapabilities}
                                 />
                               </StyledContentWrapper>
                             </NotificationCenterProvider>

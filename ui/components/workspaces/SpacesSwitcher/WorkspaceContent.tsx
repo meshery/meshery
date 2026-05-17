@@ -31,7 +31,7 @@ import {
   useAssignViewToWorkspaceMutation,
 } from '@/rtk-query/workspace';
 import { getDefaultFilterType, useContentDelete, useContentDownload } from './hooks';
-import ExportModal from '../../shared/Modal/ExportModal';
+import ExportDesignModal from '../../designs/export/ExportDesignModal';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
@@ -336,7 +336,7 @@ const WorkspaceContent = ({ workspace }) => {
         </>
       </Box>
       <PromptComponent ref={modalRef} />
-      <ExportModal
+      <ExportDesignModal
         downloadModal={downloadModal}
         handleDownloadDialogClose={handleDownloadModalClose}
         handleDesignDownload={handleDesignDownload}

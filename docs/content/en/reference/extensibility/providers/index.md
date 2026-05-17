@@ -143,7 +143,7 @@ Meshery preserves the originally requested URL when authentication is required, 
 - The Local Provider supports this functionality, validating `ref` values to prevent open redirects (absolute URLs, protocol-relative URLs, and URLs with schemes/hosts are rejected)
 - If `ref` validation fails or is absent, users are redirected to the dashboard (`/`)
 
-**Example**: User visits `https://meshery.example.com/extension/meshmap` while unauthenticated → redirected to login with `ref` parameter → after login, automatically returned to MeshMap extension.
+**Example**: User visits `https://meshery.example.com/extension/meshmap` while unauthenticated → redirected to login with `ref` parameter → after login, automatically returned to the extension.
 
 {{% alert color="info" title="Deep-Link Security" %}}
 Deep-link targets are validated to prevent open redirect vulnerabilities. Only relative paths within the Meshery application are accepted.
@@ -301,7 +301,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
   "extensions": {
     "navigator": [
       {
-        "title": "MeshMap",
+        "title": "Designer",
         "href": {
           "uri": "/meshmap",
           "external": false

@@ -134,6 +134,7 @@
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/coverage-v8": "^4.1.6",
     "allure-playwright": "^3.7.2",
     "dotenv": "^17.4.2",
     "eslint": "^10.3.0",

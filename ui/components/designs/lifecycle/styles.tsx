@@ -1,5 +1,5 @@
-import { Box, List, ListItem, ListItemText, ListSubheader, styled, alpha } from '@sistent/sistent';
-import { NOTIFICATIONCOLORS } from '@/themes/index';
+import { Box, List, ListItem, ListItemText, ListSubheader } from '@sistent/sistent';
+import { alpha, styled } from '@/theme';
 
 export const ValidationErrorListItem = styled(ListItem, {
   shouldForwardProp: (prop) => prop !== 'clickable',
@@ -9,7 +9,7 @@ export const ValidationErrorListItem = styled(ListItem, {
   cursor: clickable ? 'pointer' : 'default',
   '&:hover': {
     backgroundColor: clickable
-      ? alpha(NOTIFICATIONCOLORS.WARNING, 0.25)
+      ? alpha(theme.palette.warning.main, 0.25)
       : theme.palette.background.card,
   },
 }));
@@ -18,17 +18,17 @@ export const DryRunErrorContainer = styled(ListItem)(({ theme }) => ({
   backgroundColor: theme.palette.background.card,
   cursor: 'pointer',
   '&:hover': {
-    backgroundColor: alpha(NOTIFICATIONCOLORS.ERROR_DARK, 0.25),
+    backgroundColor: alpha(theme.palette.error.dark, 0.25),
   },
 }));
 
-export const ComponentValidationListItem = styled(ListItem)({
+export const ComponentValidationListItem = styled(ListItem)(({ theme }) => ({
   gap: '0.5rem',
-  backgroundColor: NOTIFICATIONCOLORS.WARNING,
+  backgroundColor: theme.palette.warning.main,
   '&:hover': {
-    backgroundColor: NOTIFICATIONCOLORS.WARNING,
+    backgroundColor: theme.palette.warning.main,
   },
-});
+}));
 
 export const ValidatedComponent = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.card,
@@ -42,14 +42,14 @@ export const DryRunComponentStyled = styled(Box)(({ theme }) => ({
   marginBlock: '0.5rem',
 }));
 
-export const DryRunComponentLabel = styled(ListItem)({
-  backgroundColor: NOTIFICATIONCOLORS.ERROR_DARK,
+export const DryRunComponentLabel = styled(ListItem)(({ theme }) => ({
+  backgroundColor: theme.palette.error.dark,
   gap: '0.5rem',
   color: 'white',
   '&:hover': {
-    backgroundColor: NOTIFICATIONCOLORS.ERROR_DARK,
+    backgroundColor: theme.palette.error.dark,
   },
-});
+}));
 
 export const ValidationResultsListWrapper = styled(List)({
   width: '100%',

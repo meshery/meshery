@@ -28,7 +28,7 @@ function exportToJsonFile(jsonData, filename) {
  */
 const HeaderMenu = () => {
   const dispatch = useDispatch();
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
   const [userLoaded, setUserLoaded] = useState(false);
   const [account, setAccount] = useState([]);
   const capabilitiesLoadedRef = useRef(false);
@@ -104,13 +104,13 @@ const HeaderMenu = () => {
   }, [isTokenError, tokenError, notify]);
 
   useEffect(() => {
-    if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
+    if (!capabilitiesLoadedRef.current && providerCapabilities) {
       capabilitiesLoadedRef.current = true;
       setAccount(
-        ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account),
+        ExtensionPointSchemaValidator('account')(providerCapabilities?.extensions?.account),
       );
     }
-  }, [capabilitiesRegistry]);
+  }, [providerCapabilities]);
 
   const getAccountNavigationItems = () => {
     const accountItems = account.map((item) => ({

@@ -90,14 +90,6 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
     https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/web.yml) \
     && awk 'FNR==1 && NR>1 { printf("\n%s\n\n","---") } 1' /emojivoto/*.yml > /seed_content/applications/emojivoto.yml
 
-#FROM ubuntu as nighthawk
-#RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
-#RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
-#RUN git config --global user.email "meshery@meshery.io"
-#RUN git config --global user.name "meshery"
-#RUN git clone https://github.com/layer5io/nighthawk-go
-#RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
-
 FROM base-alpine
 ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc
 ENV GLIBC_VERSION=2.35-r1
@@ -128,8 +120,6 @@ COPY --from=ui-provider-builder /app/out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/server/cmd/wrk2
 COPY --from=wrk2 /wrk2/wrk /usr/local/bin
 COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
-COPY --from=layer5/getnighthawk:v1.0.1 /usr/local/bin/nighthawk_service /app/server/cmd/
-COPY --from=layer5/getnighthawk:v1.0.1 /usr/local/bin/nighthawk_output_transform /app/server/cmd/
 
 RUN addgroup docker
 RUN mkdir -p /var/run; chown -R appuser:docker /var/run/

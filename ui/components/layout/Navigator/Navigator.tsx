@@ -23,7 +23,7 @@ import {
 } from '@sistent/sistent';
 import ExtensionPointSchemaValidator from '../../../utils/ExtensionPointSchemaValidator';
 import { cursorNotAllowed, disabledStyle } from '../../../css/disableComponent.styles';
-import { CapabilitiesRegistry } from '../../../utils/disabledComponents';
+import { ProviderUiAccessControl } from '../../../utils/disabledComponents';
 import {
   CONFIGURATION,
   DASHBOARD,
@@ -68,8 +68,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   toggleDrawer,
   updateBetaBadge,
-  updateCapabilities,
   updateExtensionType,
+  updateProviderCapabilities,
   updateTitle,
 } from '@/store/slices/mesheryUi';
 import { useRouter } from 'next/router';
@@ -144,19 +144,19 @@ const buildLifecycleIcon = (adapterName, href, currentPath) => {
 };
 
 const resolveNavigatorComponents = ({
-  capabilityRegistryObj,
+  providerUiAccessControl,
   theme,
   meshAdapters,
   catalogVisibility,
   currentPath,
 }) => {
   const designPersistenceEnabled = Boolean(
-    capabilityRegistryObj?.capabilities?.some(
+    providerUiAccessControl?.providerCapabilities?.some(
       (capability) => capability.feature === 'persist-meshery-patterns',
     ),
   );
 
-  return getNavigatorComponents(capabilityRegistryObj, theme).map((category) => {
+  return getNavigatorComponents(providerUiAccessControl, theme).map((category) => {
     if (category.id === LIFECYCLE) {
       return {
         ...category,
@@ -234,22 +234,22 @@ const NavigatorContent = () => {
   const [showHelperButton, setShowHelperButton] = useState(false);
   const [openItems, setOpenItems] = useState<string[]>([]);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [capabilitiesRegistryObj, setCapabilitiesRegistryObj] =
-    useState<CapabilitiesRegistry | null>(null);
+  const [providerUiAccessControl, setProviderUiAccessControl] =
+    useState<ProviderUiAccessControl | null>(null);
   const [versionDetail, setVersionDetail] = useState(defaultVersionDetail);
   const navigatorComponents = useMemo(() => {
-    if (!capabilitiesRegistryObj) {
+    if (!providerUiAccessControl) {
       return [];
     }
 
     return resolveNavigatorComponents({
-      capabilityRegistryObj: capabilitiesRegistryObj,
+      providerUiAccessControl,
       theme,
       meshAdapters,
       catalogVisibility,
       currentPath,
     });
-  }, [capabilitiesRegistryObj, catalogVisibility, currentPath, meshAdapters, theme]);
+  }, [providerUiAccessControl, catalogVisibility, currentPath, meshAdapters, theme]);
 
   const ExternalLinkIcon = (
     <IconExternalLink
@@ -312,8 +312,8 @@ const NavigatorContent = () => {
       setNavigatorExtensions(
         ExtensionPointSchemaValidator('navigator')(result?.extensions?.navigator),
       );
-      setCapabilitiesRegistryObj(new CapabilitiesRegistry(result));
-      dispatch(updateCapabilities({ capabilitiesRegistry: result }));
+      setProviderUiAccessControl(new ProviderUiAccessControl(result));
+      dispatch(updateProviderCapabilities({ providerCapabilities: result }));
     }
     if (isError) {
       console.error('Error fetching capabilities', error);
@@ -652,14 +652,14 @@ const NavigatorContent = () => {
   const Title = (
     <div
       style={
-        !capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD]) ? cursorNotAllowed : {}
+        !providerUiAccessControl?.isNavigatorComponentEnabled([DASHBOARD]) ? cursorNotAllowed : {}
       }
     >
       <>
         <StyledListItem
           component="a"
           onClick={handleTitleClick}
-          disableLogo={!capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD])}
+          disableLogo={!providerUiAccessControl?.isNavigatorComponentEnabled([DASHBOARD])}
         >
           {isDrawerCollapsed ? (
             <>
@@ -876,12 +876,12 @@ const NavigatorContent = () => {
     <ChevronButtonWrapper
       isCollapsed={isDrawerCollapsed}
       style={
-        capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : cursorNotAllowed
+        providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : cursorNotAllowed
       }
     >
       <div
         style={
-          capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : disabledStyle
+          providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : disabledStyle
         }
         onClick={toggleMiniDrawer}
       >

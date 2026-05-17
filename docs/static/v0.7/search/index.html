@@ -4281,25 +4281,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 						"url": " /extensions/working-with-tags",
 						"content": "# Working with Tags\n\nKubernetes components can be assigned Label and Annotation key/value pairs, known as Tags. When pairs of Labels or Annotations match, a relationship is established and visualized as shown below.\n\n\n\nYou can group components using tags. Tags are key-value pairs that help you organize and categorize components within your design. Tags can be used to visually group components. You can also use tags to filter components and view only those that match the tag criteria.\n\n## Labels and Annotations\n\nDesigns support two different types of tags: Labels and Annotations. Labels are often used to identify components and are visible on the design canvas. Annotations are often used to provide additional information about components.\n\n\nPerformance Consideration\nTags are indexed and searchable. However, the performance of design operations may degrade as the number of tags increases. To ensure an optimal user experience, we recommend using tags judiciously and limiting the number of tags used in a design.\n\nUpon loading a design exceeds that exceeds 10 tags within a single design, Kanvas will automatically disable grouping by tags. You can manually enable grouping by tags by clicking the “Group Components” button in the Designer dock."
 					}
-					
-				
-		
-				
-		
-				
-					,
-					
-					"project-contributing-test-status": {
-						"id": "project-contributing-test-status",
-						"title": "End-to-End Test Status",
-						"categories": "",
-						"url": " /project/contributing/test-status",
-						"content": "This page contains results of tests performed in the development of Meshery.\n\n**Resources:**\n\n- See [Contributing to Meshery's End-to-End Tests](/project/contributing/contributing-ui-tests)\n- See the [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=0#gid=0) for a list of test cases.\n- See the [Compatibility Matrix](/installation/compatibility-matrix)\n\n## Relationships Test Results\n\n{% assign relationship_tests = site.data.relationshiptestresult.relationship-v07167-2 %}\n{% assign grouped_relationships = relationship_tests | group_by: \"name\" %}\n\n\n\n\n    \n        \n            Model\n            Meshery Version\n            Relationship Kind\n            Relationship Type\n            Relationship SubType\n            Test Result\n        \n    \n    \n        {% for group in grouped_relationships %}\n        \n        \n            {{ group.name }}\n        \n        \n        \n            \n                \n                    \n                        \n                            Meshery Version\n                            Relationship Kind\n                            Relationship Type\n                            Relationship SubType\n                            Test Result\n                        \n                    \n                    \n                        {% for item in group.items %}\n                        \n                            {{ item.extensionVersion }}\n                            {{ item.kind }}\n                            {{ item.type }}\n                            {{ item.subType }}\n                            \n                                {% if item.testResultPassed %}\n                                    \n                                {% else %}\n                                    \n                                {% endif %}\n                            \n                        \n                        {% endfor %}\n                    \n                \n            \n        \n        {% endfor %}"
-					}
-					
-				
-		
-				
 					,
 					
 					"installation-compatibility-matrix-meshery-traefik-mesh-past-results": {

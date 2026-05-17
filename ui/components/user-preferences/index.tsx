@@ -137,7 +137,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   const [providerInfo, setProviderInfo] = useState<_ProviderInfo>({});
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
   const {
     data: userData,
     isSuccess: isUserDataFetched,
@@ -231,14 +231,14 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   };
 
   useEffect(() => {
-    if (capabilitiesRegistry && !capabilitiesLoaded) {
+    if (providerCapabilities && !capabilitiesLoaded) {
       setCapabilitiesLoaded(true); // to prevent re-compute
       setUserPrefs(
-        ExtensionPointSchemaValidator('userPrefs')(capabilitiesRegistry?.extensions?.userPrefs),
+        ExtensionPointSchemaValidator('userPrefs')(providerCapabilities?.extensions?.userPrefs),
       );
-      setProviderType(capabilitiesRegistry?.providerType);
+      setProviderType(providerCapabilities?.providerType);
     }
-  }, [capabilitiesRegistry]);
+  }, [providerCapabilities]);
 
   useEffect(() => {
     if (isUserDataFetched && userData) {
