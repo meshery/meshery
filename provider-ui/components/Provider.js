@@ -30,22 +30,14 @@ import {
   CHINESE_SILVER,
   KEPPEL,
 } from "@sistent/sistent";
-
-import {
-  CloseIcon,
-  ClickAwayListener,
-  DropDownIcon,
-} from "@sistent/sistent";
-
+import { CloseIcon, ClickAwayListener, DropDownIcon } from "@sistent/sistent";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-
 function CustomDialogTitle(props) {
   const { children, onClose, ...other } = props;
 
   return (
     <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
       {children}
-
       {onClose ? (
         <IconButton
           aria-label="close"
@@ -68,17 +60,14 @@ CustomDialogTitle.propTypes = {
   children: PropTypes.node,
   onClose: PropTypes.func.isRequired,
 };
-
-// Styled Components
+//Styled-components:
 const StyledTypography = styled(Typography)(({ theme }) => ({
   fontWeight: 500,
   color: charcoal[100],
-  marginBottom: theme.spacing(2),
-
+  marginBottom: theme.spacing(2), // Equivalent to `gutterBottom`
   "& a": {
     fontWeight: "normal",
   },
-
   "& :hover": {
     color: CHINESE_SILVER,
   },
@@ -98,10 +87,8 @@ const StyledCustomDialogTitle = styled(CustomDialogTitle)(({ theme }) => ({
 const StyledButton = styled(Button)(({ theme }) => ({
   backgroundColor: theme.palette.IconButton,
 }));
-
 const StyledButtonGroup = styled(ButtonGroup)(() => ({
   border: "none",
-
   "& .MuiButtonGroup-grouped": {
     border: "none !important",
   },
@@ -118,8 +105,17 @@ export default function Provider() {
   const [availableProviders, setAvailableProviders] = useState({});
   const [selectedProvider, setSelectedProvider] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  /* eslint-disable no-unused-vars */
   const [openMenu, setOpenMenu] = useState(false);
-  const [openModal, setModalOpen] = useState(false);
+  const [openModal, setModalOpen] = React.useState(false);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const open = Boolean(anchorEl);
   const id = open ? "popover" : undefined;
@@ -135,53 +131,30 @@ export default function Provider() {
         method: "GET",
         credentials: "include",
       },
-
       (result) => {
-        if (result && typeof result === "object") {
+        if (typeof result !== "undefined") {
+          Object.keys(result).forEach((key) => {
+            if (result[key].ProviderType === "remote") {
+              setSelectedProvider(selectedProvider);
+            }
+          });
           setAvailableProviders(result);
-
-          // Auto-select first remote provider
-          const remoteProvider = Object.keys(result).find(
-            (key) => result[key]?.ProviderType === "remote"
-          );
-
-          if (remoteProvider) {
-            setSelectedProvider(remoteProvider);
-          }
         }
       },
-
       (error) => {
-        console.error(`Error fetching providers: ${error}`);
+        console.log(`there was an error fetching providers: ${error}`);
       }
     );
   }
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-    setOpenMenu(true);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-    setOpenMenu(false);
-  };
-
   const handleMenuItemClick = (event, provider) => {
     event.preventDefault();
-
     setSelectedProvider(provider);
     setOpenMenu(false);
     setIsLoading(true);
-
     const existingQueryString = window.location.search;
-    const existingQueryParams = new URLSearchParams(
-      existingQueryString
-    );
-
-    // Avoid duplicate provider params
-    existingQueryParams.set("provider", provider);
-
+    const existingQueryParams = new URLSearchParams(existingQueryString);
+    existingQueryParams.append("provider", encodeURIComponent(provider));
     window.location.href = `/api/provider?${existingQueryParams.toString()}`;
   };
 
@@ -197,13 +170,12 @@ export default function Provider() {
     <ProviderLayout>
       <MesheryLogo
         src="/provider/static/img/meshery-logo/meshery-logo-dark-text-noBG.png"
-        onError={(e) => {
-          e.target.src =
-            "/static/img/meshery-logo/meshery-logo-dark-text-noBG.png";
-        }}
+        onError={(e) =>
+          (e.target.src =
+            "/static/img/meshery-logo/meshery-logo-dark-text-noBG.png")
+        }
         alt="logo"
       />
-
       <LearnMore onClick={handleModalOpen}>
         <StyledTypography variant="h6" gutterBottom>
           <StyledTooltip
@@ -216,9 +188,8 @@ export default function Provider() {
           </StyledTooltip>
         </StyledTypography>
       </LearnMore>
-
       <CustomDiv>
-        {Object.keys(availableProviders).length > 0 && (
+        {availableProviders !== "" && (
           <Fragment>
             <StyledButtonGroup aria-label="split button">
               <Button
@@ -233,14 +204,12 @@ export default function Provider() {
                 {isLoading && (
                   <CircularProgress
                     size={20}
-                    sx={{
-                      color: "white",
-                      marginRight: 1,
-                    }}
+                    sx={{ color: "white", marginRight: 8 }}
                   />
                 )}
-
-                {selectedProvider || "Select your provider"}
+                {selectedProvider !== ""
+                  ? selectedProvider
+                  : "Select your provider"}
 
                 <DropDownIcon />
               </Button>
@@ -264,8 +233,7 @@ export default function Provider() {
                 <MenuList
                   sx={{
                     background: charcoal[20],
-                    color: (theme) =>
-                      theme.palette.text.inverse,
+                    color: (theme) => theme.palette.text.inverse,
                   }}
                   id="split-button-menu"
                   autoFocusItem
@@ -273,21 +241,15 @@ export default function Provider() {
                   {Object.keys(availableProviders).map((key) => (
                     <MenuItem
                       key={key}
-                      onClick={(e) =>
-                        handleMenuItemClick(e, key)
-                      }
+                      onClick={(e) => handleMenuItemClick(e, key)}
                       sx={{
-                        "&:hover": {
-                          backgroundColor: accentGrey[20],
-                        },
-
+                        "&:hover": { backgroundColor: accentGrey[20] },
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
                       }}
                     >
                       {key}
-
                       {key === "Layer5" && (
                         <Tooltip
                           title="Layer5 is Meshery's default remote provider."
@@ -303,15 +265,7 @@ export default function Provider() {
                               handleClose();
                               handleModalOpen();
                             }}
-                            sx={{
-                              ml: 0.5,
-                              p: 0.25,
-                              color: accentGrey[60],
-
-                              "&:hover": {
-                                color: KEPPEL,
-                              },
-                            }}
+                            sx={{ ml: 0.5, p: 0.25, color: accentGrey[60], "&:hover": { color: KEPPEL } }}
                           >
                             <InfoOutlinedIcon fontSize="small" />
                           </IconButton>
@@ -319,7 +273,6 @@ export default function Provider() {
                       )}
                     </MenuItem>
                   ))}
-
                   <Divider
                     sx={{
                       my: 0.5,
@@ -329,31 +282,30 @@ export default function Provider() {
                       marginBottom: "0px",
                     }}
                   />
-
                   <MenuProviderDisabled
                     sx={{ marginTop: "0px" }}
-                    disabled
+                    disabled={true}
+                    key="Exoscale Labs"
                   >
-                    Exoscale Labs <span>Offline</span>
-                  </MenuProviderDisabled>
-
-                  <MenuProviderDisabled disabled>
-                    Equinix US-DAL <span>Offline</span>
-                  </MenuProviderDisabled>
-
-                  <MenuProviderDisabled disabled>
-                    HPE Security <span>Offline</span>
-                  </MenuProviderDisabled>
-
-                  <MenuProviderDisabled disabled>
-                    F5 BIG IP iHealth <span>Offline</span>
-                  </MenuProviderDisabled>
-
-                  <MenuProviderDisabled disabled>
-                    The University of Texas at Austin{" "}
+                    Exoscale Labs{"\u00A0"}
                     <span>Offline</span>
                   </MenuProviderDisabled>
-
+                  <MenuProviderDisabled disabled={true} key="Equinix US-DAL">
+                    Equinix US-DAL{"\u00A0"}
+                    <span>Offline</span>
+                  </MenuProviderDisabled>
+                  <MenuProviderDisabled disabled={true} key="HPE Security">
+                    HPE Security{"\u00A0"}
+                    <span>Offline</span>
+                  </MenuProviderDisabled>
+                  <MenuProviderDisabled disabled={true} key="F5">
+                    F5 BIG IP iHealth{"\u00A0"}
+                    <span>Offline</span>
+                  </MenuProviderDisabled>
+                  <MenuProviderDisabled disabled={true} key="UT Austin">
+                    The University of Texas at Austin{"\u00A0"}
+                    <span> Offline</span>
+                  </MenuProviderDisabled>
                   <Divider
                     sx={{
                       my: 0.5,
@@ -363,10 +315,11 @@ export default function Provider() {
                       marginBottom: "0px",
                     }}
                   />
-
+                  {/* Use Sistent's Button as a link */}
                   <Button
                     component="a"
                     href="https://docs.meshery.io/extensibility/providers"
+                    aria-describedby={id}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Create Provider"
@@ -379,10 +332,11 @@ export default function Provider() {
                       textDecoration: "none",
                       cursor: "pointer",
                       width: "100%",
+                      backgroundColor: "none",
+                      justifySelf: "center",
                       textAlign: "center",
                       color: "#ccc",
                       alignItems: "center",
-
                       "&:hover": {
                         backgroundColor: accentGrey[20],
                         color: "#fff",
@@ -390,13 +344,11 @@ export default function Provider() {
                     }}
                   >
                     Create Your Own Provider&nbsp;
-
                     <img
                       src="/provider/static/img/external-link.svg"
-                      onError={(e) => {
-                        e.target.src =
-                          "/static/img/external-link.svg";
-                      }}
+                      onError={(e) =>
+                        (e.target.src = "/static/img/external-link.svg")
+                      }
                       width="16px"
                       alt="External link"
                       style={{
@@ -410,47 +362,71 @@ export default function Provider() {
           </Fragment>
         )}
       </CustomDiv>
-
       <CustomDialog
         onClose={handleModalClose}
         aria-labelledby="customized-dialog-title"
         open={openModal}
-        disableScrollLock
+        disableScrollLock={true}
         data-cy="providers-modal"
       >
         <StyledCustomDialogTitle
           id="customized-dialog-title"
           onClose={handleModalClose}
         >
-          <CustomTypography>
-            Choosing a Provider
-          </CustomTypography>
+          <CustomTypography>Choosing a Provider</CustomTypography>
         </StyledCustomDialogTitle>
 
         <StyledDialogBox id="customized-dialog-content">
-          Login to Meshery by choosing from the available providers.
-          Providers extend Meshery by offering various plugins and
-          services.
-
+          Login to Meshery by choosing from the available providers. Providers
+          extend Meshery by offering various plugins and services, including
+          identity services, long-term persistence, advanced performance
+          analysis, multi-player user collaboration, and so on.
           <h2>Available Providers</h2>
-
-          {Object.keys(availableProviders).map((key) => (
-            <React.Fragment
-              key={availableProviders[key].provider_name}
-            >
-              <p style={{ fontWeight: 700 }}>
-                {availableProviders[key].provider_name}
-              </p>
-
-              <ul>
-                {availableProviders[
-                  key
-                ].provider_description?.map((desc, i) => (
-                  <li key={`desc-${i}`}>{desc}</li>
-                ))}
-              </ul>
-            </React.Fragment>
-          ))}
+          {Object.keys(availableProviders).map((key) => {
+            return (
+              <React.Fragment key={availableProviders[key].provider_name}>
+                <p style={{ fontWeight: 700 }}>
+                  {availableProviders[key].provider_name}
+                </p>
+                <ul>
+                  {availableProviders[key].provider_description?.map(
+                    (desc, i) => (
+                      <li key={`desc-${i}`}>{desc}</li>
+                    )
+                  )}
+                </ul>
+              </React.Fragment>
+            );
+          })}
+          <p style={{ fontWeight: 700 }}>MIT</p>
+          <ul>
+            <li>Remote provider for performance testing</li>
+            <li>Provides provenence of test results and their persistence</li>
+            <li>Adaptive performance analysis - predictive optimization</li>
+          </ul>
+          <p style={{ fontWeight: 700 }}>The University of Texas at Austin</p>
+          <ul>
+            <li>Academic research and advanced studies by Ph.D. researchers</li>
+            <li>Used by school of Electrical and Computer Engineering (ECE)</li>
+          </ul>
+          <p style={{ fontWeight: 700 }}>
+            Cloud Native Computing Foundation Infrastructure Lab
+          </p>
+          <ul>
+            <li>
+              Performance and compatibility-centric research and validation
+            </li>
+            <li>Used by various cloud native projects</li>
+          </ul>
+          <p style={{ fontWeight: 700 }}>HPE Security</p>
+          <ul>
+            <li>Istio, SPIRE, and SPIFEE integration</li>
+          </ul>
+          <p style={{ fontWeight: 700 }}>Equinix</p>
+          <ul>
+            <li>Identity services</li>
+            <li>Bare-metal Kubernetes configuration</li>
+          </ul>
         </StyledDialogBox>
 
         <CustomDialogActions>
@@ -462,15 +438,13 @@ export default function Provider() {
               rel="noopener noreferrer"
               variant="text"
               sx={{
-                color: (theme) =>
-                  theme.palette.text.inverse,
+                color: (theme) => theme.palette.text.inverse,
                 textTransform: "none",
                 display: "flex",
                 alignItems: "center",
                 gap: "0.5rem",
                 fontWeight: 400,
                 fontSize: "1rem",
-
                 "&:hover": {
                   textDecoration: "underline",
                   backgroundColor: "transparent",
@@ -478,13 +452,11 @@ export default function Provider() {
               }}
             >
               Providers in Meshery Docs
-
               <img
                 src="/provider/static/img/external-link.svg"
-                onError={(e) => {
-                  e.target.src =
-                    "/static/img/external-link.svg";
-                }}
+                onError={(e) =>
+                  (e.target.src = "/static/img/external-link.svg")
+                }
                 width="16px"
                 alt="External link"
               />
@@ -497,10 +469,10 @@ export default function Provider() {
             sx={{
               background: KEPPEL,
               marginRight: "1rem",
-              color: (theme) =>
-                theme.palette.text.inverse,
+              color: (theme) => theme.palette.text.inverse,
             }}
           >
+            {" "}
             OK
           </StyledButton>
         </CustomDialogActions>
