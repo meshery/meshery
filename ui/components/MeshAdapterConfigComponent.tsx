@@ -3,7 +3,7 @@ import { Grid2, Chip, Button, TextField, Tooltip, Avatar, styled } from '@sisten
 import { NoSsr } from '@sistent/sistent';
 import ReactSelectWrapper from './ReactSelectWrapper';
 
-import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
+import changeAdapterState from '@/graphql/mutations/AdapterStatusMutation';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import BadgeAvatars from './CustomAvatar';

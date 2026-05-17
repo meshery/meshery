@@ -13,9 +13,9 @@ aliases:
 
 Meshery is a powerful multi-cloud management platform that enables you to configure, deploy, and manage AWS resources, such as EC2 instances. In order to manage AWS resources, Meshery uses [AWS Controllers for Kubernetes (ACK)](https://aws.amazon.com/blogs/containers/aws-controllers-for-kubernetes-ack/). ACK facilitates the bridge between Kubernetes and AWS services, enabling Meshery to manage AWS resources and Meshery enabling you to benefit from the enhanced experience that Meshery and its extensions offer.
 
-Meshery has a number of extensions, adapters, and plugins. In this tutorial, we will use the [Kanvas](/extensions/kanvas) extension to provide an intuitive, visual experience for configuring and deploying an AWS EC2 instance. Among other aspects, Kanvas provides an alternative to command-line tools like `kubectl` by offering infrastructure as design. Once you connect your Kubernetes cluster to Meshery, you can configure, deploy, and manage AWS resources directly from the Kanvas interface, making deployments more intuitive and collaborative 
+Meshery has a number of extensions, adapters, and plugins. In this tutorial, we will use the Meshery Design Configurator to provide an intuitive, visual experience for configuring and deploying an AWS EC2 instance. Among other aspects, the Design Configurator provides an alternative to command-line tools like `kubectl` by offering infrastructure as design. Once you connect your Kubernetes cluster to Meshery, you can configure, deploy, and manage AWS resources directly from the Meshery UI, making deployments more intuitive and collaborative 
 
-In this guide, you’ll explore how to deploy AWS resources, including setup and architecture details. This guide also covers how to access pre-configured designs from [Meshery Catalog](https://meshery.io/catalog) and demonstrates how to visualize deployed resources using Kanvas' operator mode, offering a comprehensive understanding of AWS resource management.
+In this guide, you'll explore how to deploy AWS resources, including setup and architecture details. This guide also covers how to access pre-configured designs from [Meshery Catalog](https://meshery.io/catalog) and demonstrates how to visualize deployed resources using Meshery Dashboard's operator mode, offering a comprehensive understanding of AWS resource management.
 
 ### Prerequisites
 
@@ -68,7 +68,7 @@ For this guide, the `in-cluster deployment` method is used.  Follow this [setup 
 
 In this section, you will set up the EC2 controller and configure it to connect to your AWS account. This process involves creating a Kubernetes secret that contains your AWS access keys and configuring the controller pod to consume this secret. While these configurations are already included in our designs, the steps will be demonstrated for clarity.
 
-1. **Clone the EC2 Controller Design**: Start by [cloning the EC2 controller design](https://meshery.io/catalog/deployment/ec2-controller-design-8f7e1431-3885-4ebf-9ef7-d2ec64bd4eb5.html) from the catalog. To do this, click on **Clone** on the catalog page. Once cloned, open the design in the playground, and you will see it displayed on the Kanvas.
+1. **Clone the EC2 Controller Design**: Start by [cloning the EC2 controller design](https://meshery.io/catalog/deployment/ec2-controller-design-8f7e1431-3885-4ebf-9ef7-d2ec64bd4eb5.html) from the catalog. To do this, click on **Clone** on the catalog page. Once cloned, open the design in the playground, and you will see it displayed on the canvas.
 
     ![EC2 Controller Chart](/guides/tutorials/images/aws-controllers/controller-chart.png)
 
@@ -110,9 +110,9 @@ While this step is already handled in the design, but it's worth clarifying how 
 
 After configuring your design, the next step is deployment. To learn more about deploying your designs in Meshery, see [Deploying Meshery Designs](https://cloud.meshery.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=deploying-meshery-designs). To deploy the resources, follow these steps:
 
-1. Click the **Actions** button at the top of the Kanvas and click **Deploy**.
+1. Click the **Actions** button at the top of the canvas and click **Deploy**.
 
-1. Once the deployment is complete, click **Open in Visualizer** to switch to Operator mode and see a pre-filtered view of your just deployed resources in the cluster. Alternatively, you can click *Operate* at the top of the Kanvas to enter Operater mode.
+1. Once the deployment is complete, click **Open in Visualizer** to switch to Operator mode and see a pre-filtered view of your just deployed resources in the cluster. Alternatively, you can click *Operate* at the top to enter Operator mode.
 
     ![Operator Mode](/guides/tutorials/images/aws-controllers/controller-operator-mode.png)
 
@@ -136,7 +136,7 @@ This step involves deploying all the necessary resources to create the VPC and o
 
 1. Start by [cloning the design](https://cloud.meshery.io/catalog/content/catalog/vpc-workflow-design-50cac19e-209c-4acf-b91c-4784281db033) from the catalog.
 
-2. Once cloned, open the design in the playground, and you will see it displayed on the Kanvas.
+2. Once cloned, open the design in the playground, and you will see it displayed on the canvas.
 
 3. You can adjust CIDR blocks, region, and other parameters as needed through the configuration tab. This design is configured to be deployed in the `us-east-1` region.
 
@@ -156,4 +156,4 @@ With the VPC and networking resources set up, deploy the EC2 instances within th
 
 ### Conclusion
 
-This guide covered the steps to deploy and manage EC2 instances using Meshery. It demonstrated how to leverage pre-configured catalog designs, configure and deploy resources, set up the controller and necessary secrets, configure VPC networking resources, and ultimately deploy the EC2 instances. It also showed how to visualize Kubernetes resources using Kanvas's operator mode. This process highlights the ease of managing AWS resources visually through Meshery’s Kanvas interface, eliminating the need for CLI commands.
+This guide covered the steps to deploy and manage EC2 instances using Meshery. It demonstrated how to leverage pre-configured catalog designs, configure and deploy resources, set up the controller and necessary secrets, configure VPC networking resources, and ultimately deploy the EC2 instances. It also showed how to visualize Kubernetes resources using Meshery Dashboard's operator mode. This process highlights the ease of managing AWS resources visually through Meshery's UI, eliminating the need for CLI commands.

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NoSsr } from '@sistent/sistent';
-import MesheryPerformanceComponent from '../../components/Performance/Dashboard';
+import MesheryPerformanceComponent from '../../components/performance/Dashboard';
 import Head from 'next/head';
 import { usePageTitle } from '@/utils/hooks';
 
