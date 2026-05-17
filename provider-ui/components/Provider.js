@@ -31,6 +31,7 @@ import {
   KEPPEL,
 } from "@sistent/sistent";
 import { CloseIcon, ClickAwayListener, DropDownIcon } from "@sistent/sistent";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 function CustomDialogTitle(props) {
   const { children, onClose, ...other } = props;
 
@@ -175,6 +176,18 @@ export default function Provider() {
         }
         alt="logo"
       />
+      <LearnMore onClick={handleModalOpen}>
+        <StyledTypography variant="h6" gutterBottom>
+          <StyledTooltip
+            title="Learn more about Meshery remote providers"
+            placement="bottom"
+            data-cy="providers-tooltip"
+            arrow
+          >
+            <span>Learn more about providers</span>
+          </StyledTooltip>
+        </StyledTypography>
+      </LearnMore>
       <CustomDiv>
         {availableProviders !== "" && (
           <Fragment>
@@ -229,9 +242,30 @@ export default function Provider() {
                     <MenuItem
                       key={key}
                       onClick={(e) => handleMenuItemClick(e, key)}
-                      sx={{ "&:hover": { backgroundColor: accentGrey[20] } }}
+                      sx={{
+                        "&:hover": { backgroundColor: accentGrey[20] },
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
                     >
                       {key}
+                      {key === "Layer5" && (
+                        <Tooltip
+                          title="Layer5 is Meshery's default remote provider."
+                          placement="right"
+                          arrow
+                        >
+                          <IconButton
+                            size="small"
+                            aria-label="More information about the Layer5 provider"
+                            onClick={(e) => e.stopPropagation()}
+                            sx={{ ml: 0.5, p: 0.25, color: accentGrey[60], "&:hover": { color: KEPPEL } }}
+                          >
+                            <InfoOutlinedIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      )}
                     </MenuItem>
                   ))}
                   <Divider
@@ -323,17 +357,6 @@ export default function Provider() {
           </Fragment>
         )}
       </CustomDiv>
-      <LearnMore onClick={handleModalOpen}>
-        <StyledTypography variant="h6" gutterBottom>
-          <StyledTooltip
-            title="Learn more about Meshery remote providers"
-            placement="bottom"
-            data-cy="providers-tooltip"
-          >
-            Learn more about providers
-          </StyledTooltip>
-        </StyledTypography>
-      </LearnMore>
       <CustomDialog
         onClose={handleModalClose}
         aria-labelledby="customized-dialog-title"
