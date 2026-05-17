@@ -12,7 +12,7 @@ import {
   DesignDetails,
   CopyButton
 } from "./style";
-import Tooltip from "@mui/material/Tooltip";
+import { Tooltip } from "@sistent/sistent";
 import ServiceMeshIcon from "../../assets/service-mesh";
 import WhiteDesignIcon from "../../assets/design-white";
 import DesignIcon from "../../assets/design";

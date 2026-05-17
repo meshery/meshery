@@ -1,6 +1,6 @@
 
-import { styled } from "@mui/material/styles";
-import { ButtonBase, Typography } from "@mui/material";
+import { styled, Typography } from "@sistent/sistent";
+import { ButtonBase } from "@mui/material";
 
 export const StyledDiv = styled('div')(() => ({
   paddingLeft: "0.2rem",
