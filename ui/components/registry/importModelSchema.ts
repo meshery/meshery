@@ -87,7 +87,7 @@ export const importModelSchema = {
   properties: {
     ...(ModelImportRjsfSchemaV1Beta2 as unknown as RJSFNode).properties,
     uploadType: {
-      ...(ModelImportRjsfSchemaV1Beta2 as unknown as RJSFNode).properties?.uploadType as any,
+      ...((ModelImportRjsfSchemaV1Beta2 as unknown as RJSFNode).properties?.uploadType as any),
       enum: [
         UPLOAD_TYPE_FILE,
         UPLOAD_TYPE_URL,

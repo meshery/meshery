@@ -156,6 +156,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 }
 
 func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
+	h.log.Info("GetMeshmodelModels called")
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	queryParams := r.URL.Query()
