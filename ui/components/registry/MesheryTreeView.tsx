@@ -324,10 +324,17 @@ const MesheryTreeView = React.memo(
           {renderHeader(type, !!data.length)}
           {data.length === 0 && !searchText ? (
             <JustifyAndAlignCenter style={{ height: '27rem' }}>
-              {isLoading || (data.length === 0 && !searchText) ? (
+              {isLoading ? (
                 <CircularProgress sx={{ color: theme.palette.primary.main }} />
               ) : (
-                <Typography>No {type.toLowerCase()} found</Typography>
+                <div style={{ textAlign: 'center' }}>
+                  <Typography variant="h6" color="textSecondary" gutterBottom>
+                    No {type.toLowerCase()} found
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Try synchronizing your registry or check your connection settings.
+                  </Typography>
+                </div>
               )}
             </JustifyAndAlignCenter>
           ) : data.length === 0 && searchText ? (

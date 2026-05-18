@@ -166,6 +166,7 @@ const ImportModelModal = memo<ImportModelModalProps>(
     const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
     const [importModelReq] = useImportMeshModelMutation();
     const [activeStep, setActiveStep] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
     const { notify } = useNotification();
 
     const handleClose = () => {
@@ -277,6 +278,7 @@ const ImportModelModal = memo<ImportModelModalProps>(
       // (the Finish step subscribes to the operations-center event bus and
       // only ever stops loading on a SUCCESS event).
       updateProgress({ showProgress: true });
+      setIsLoading(true);
       try {
         await importModelReq({ importBody: requestBody }).unwrap();
         setActiveStep(1);
@@ -287,6 +289,7 @@ const ImportModelModal = memo<ImportModelModalProps>(
         });
       } finally {
         updateProgress({ showProgress: false });
+        setIsLoading(false);
       }
     };
 
@@ -319,6 +322,7 @@ const ImportModelModal = memo<ImportModelModalProps>(
             onSubmit={handleImportModelSubmit}
             submitText="Next"
             helpText={helpText}
+            isSubmitDisabled={isLoading}
           />
         ) : (
           <Modal
