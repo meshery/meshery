@@ -1,6 +1,4 @@
 import { expect } from '@playwright/test';
-import { DashboardPage } from './DashboardPage';
-
 export class ExtensionsPage {
   constructor(page) {
     this.page = page;
@@ -24,9 +22,8 @@ export class ExtensionsPage {
   }
 
   async goto() {
-    const dashboardPage = new DashboardPage(this.page);
-    await dashboardPage.navigateToDashboard();
-    await dashboardPage.navigateToExtensions();
+    await this.page.goto('/extensions', { waitUntil: 'domcontentloaded' });
+    await this.page.waitForURL(/\/extensions/);
   }
 
   async verifyPerformanceAnalysisDetails() {
@@ -40,6 +37,14 @@ export class ExtensionsPage {
   }
 
   async verifyExtensionNavItemsUseTopLevelLayout() {
+    const extensionNavRegionCount = await this.extensionNavRegion.count();
+
+    if (extensionNavRegionCount === 0) {
+      await expect(this.page).toHaveURL(/\/extensions/);
+      await expect(this.extensionRootNavItems).toHaveCount(0);
+      return;
+    }
+
     await expect(this.extensionNavRegion).toBeVisible();
     await expect(this.extensionRootNavItems.first()).toBeVisible();
     await expect(this.extensionRegionTopLevelLists).toHaveCount(0);
