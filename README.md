@@ -20,8 +20,8 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
 <a href="https://bestpractices.coreinfrastructure.org/projects/3564" alt="CLI Best Practices">
   <img src="https://bestpractices.coreinfrastructure.org/projects/3564/badge" /></a>
 <a href="https://www.bestpractices.dev/projects/3564" alt="OpenSSF Best Practices Baseline"><img src="https://www.bestpractices.dev/projects/3564/baseline" alt="OpenSSF Best Practices Baseline" /></a>
-<a href="https://meshery.io/community#discussion-forums" alt="Discussion Forum">
-  <img src="https://img.shields.io/discourse/users?label=discuss&logo=discourse&server=https%3A%2F%2Fmeshery.io/community" /></a>
+<!-- <a href="https://meshery.io/community#discussion-forums" alt="Discussion Forum">
+  <img src="https://img.shields.io/discourse/users?label=discuss&logo=discourse&server=https%3A%2F%2Fmeshery.io/community" /></a> -->
 <a href="https://slack.meshery.io" alt="Join Slack">
   <img src="https://img.shields.io/badge/Slack-@meshery.svg?logo=slack" /></a>
 <a href="https://x.com/intent/follow?screen_name=mesheryio" alt="X Follow">
@@ -52,13 +52,11 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 <br />
 
 <div align="center" width="100%">
-<a href="https://www.youtube.com/watch?v=034nVaQUyME&list=PL3A-A6hPO2IO_yzN83wSJJUNQActzCJvO&index=9"><img src=".github/assets/images/readme/meshery-dashboard-hero-image.png" width="800px" /></a>
- <br />Try Meshery in your browser using the <a href="https://play.meshery.io">Cloud Native Playground</a> (<a href="https://www.youtube.com/watch?v=034nVaQUyME&list=PL3A-A6hPO2IO_yzN83wSJJUNQActzCJvO&index=9">teaser video</a>)
+<!-- <a href="https://www.youtube.com/watch?v=034nVaQUyME&list=PL3A-A6hPO2IO_yzN83wSJJUNQActzCJvO&index=9"><img src=".github/assets/images/readme/meshery-dashboard-hero-image.png" width="800px" /></a>
+ <br /> -->
+ 
+ Try Meshery in your browser using the <a href="https://play.meshery.io">Cloud Native Playground</a> (<a href="https://www.youtube.com/watch?v=034nVaQUyME&list=PL3A-A6hPO2IO_yzN83wSJJUNQActzCJvO&index=9">teaser video</a>)
 </div>
-
-<p align="center">
-<h4 align="center">Open Meshery extension, Kanvas, in your browser: https://kanvas.new</h4>
-</p>
 <br />
 <!--
 - [Functionality](#functionality)
