@@ -17,8 +17,8 @@ provider:
     name: a5eb9e0a-c9e3-4b66-890c-8f018e729306
 screenshots:
     - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/cfde9483-de24-498f-869f-d8d74353a2af-light.png
+      url: https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/master/action-assets/design-assets/cfde9483-de24-498f-869f-d8d74353a2af-light.png
     - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/cfde9483-de24-498f-869f-d8d74353a2af-dark.png
+      url: https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/master/action-assets/design-assets/cfde9483-de24-498f-869f-d8d74353a2af-dark.png
     - title: Meshery Project
       url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

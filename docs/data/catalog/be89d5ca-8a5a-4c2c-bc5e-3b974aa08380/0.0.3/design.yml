@@ -59,7 +59,7 @@
       },
       "styles": {
         "background-fit": "cover",
-        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-3.webp",
+        "background-image": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-3.webp",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
@@ -81,7 +81,7 @@
         "shape": "rectangle",
         "svgColor": "",
         "svgComplete": "",
-        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-3.webp",
+        "svgWhite": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-3.webp",
         "width": 114.98689,
         "z-index": 80
       },
@@ -211,7 +211,7 @@
       },
       "styles": {
         "background-fit": "cover",
-        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-5.webp",
+        "background-image": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-5.webp",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
@@ -233,7 +233,7 @@
         "shape": "rectangle",
         "svgColor": "",
         "svgComplete": "",
-        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-5.webp",
+        "svgWhite": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-5.webp",
         "width": 99.34555,
         "z-index": 460
       },
@@ -363,7 +363,7 @@
       },
       "styles": {
         "background-fit": "cover",
-        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-3.webp",
+        "background-image": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-3.webp",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
@@ -385,7 +385,7 @@
         "shape": "rectangle",
         "svgColor": "",
         "svgComplete": "",
-        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-3.webp",
+        "svgWhite": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-3.webp",
         "width": 139.09567,
         "z-index": 78
       },
@@ -515,7 +515,7 @@
       },
       "styles": {
         "background-fit": "cover",
-        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/configure-pod-3.webp",
+        "background-image": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/configure-pod-3.webp",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
@@ -537,7 +537,7 @@
         "shape": "rectangle",
         "svgColor": "",
         "svgComplete": "",
-        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/configure-pod-3.webp",
+        "svgWhite": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/configure-pod-3.webp",
         "width": 114.98663,
         "z-index": 70
       },
@@ -667,7 +667,7 @@
       },
       "styles": {
         "background-fit": "cover",
-        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/configure-pod-2.webp",
+        "background-image": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/configure-pod-2.webp",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
@@ -689,7 +689,7 @@
         "shape": "rectangle",
         "svgColor": "",
         "svgComplete": "",
-        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/configure-pod-2.webp",
+        "svgWhite": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/configure-pod-2.webp",
         "width": 61.75544,
         "z-index": 471
       },
@@ -819,7 +819,7 @@
       },
       "styles": {
         "background-fit": "cover",
-        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-2.webp",
+        "background-image": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-2.webp",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
@@ -841,7 +841,7 @@
         "shape": "rectangle",
         "svgColor": "",
         "svgComplete": "",
-        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-2.webp",
+        "svgWhite": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-2.webp",
         "width": 159.38277,
         "z-index": 35
       },
@@ -971,7 +971,7 @@
       },
       "styles": {
         "background-fit": "cover",
-        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-7.webp",
+        "background-image": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-7.webp",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
@@ -993,7 +993,7 @@
         "shape": "rectangle",
         "svgColor": "",
         "svgComplete": "",
-        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-7.webp",
+        "svgWhite": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-7.webp",
         "width": 91.60018,
         "z-index": 463
       },
@@ -1123,7 +1123,7 @@
       },
       "styles": {
         "background-fit": "cover",
-        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-6.webp",
+        "background-image": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-6.webp",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
@@ -1145,7 +1145,7 @@
         "shape": "rectangle",
         "svgColor": "",
         "svgComplete": "",
-        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-6.webp",
+        "svgWhite": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-6.webp",
         "width": 105.512146,
         "z-index": 462
       },
@@ -1275,7 +1275,7 @@
       },
       "styles": {
         "background-fit": "cover",
-        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/configure-pod-4.webp",
+        "background-image": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/configure-pod-4.webp",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
@@ -1297,7 +1297,7 @@
         "shape": "rectangle",
         "svgColor": "",
         "svgComplete": "",
-        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/configure-pod-4.webp",
+        "svgWhite": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/configure-pod-4.webp",
         "width": 78.27282,
         "z-index": 464
       },
@@ -1427,7 +1427,7 @@
       },
       "styles": {
         "background-fit": "cover",
-        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-2.webp",
+        "background-image": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-2.webp",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
@@ -1449,7 +1449,7 @@
         "shape": "rectangle",
         "svgColor": "",
         "svgComplete": "",
-        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-2.webp",
+        "svgWhite": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-2.webp",
         "width": 188.34198,
         "z-index": 56
       },
@@ -1579,7 +1579,7 @@
       },
       "styles": {
         "background-fit": "cover",
-        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/configure-pod-1.webp",
+        "background-image": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/configure-pod-1.webp",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
@@ -1601,7 +1601,7 @@
         "shape": "rectangle",
         "svgColor": "",
         "svgComplete": "",
-        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/configure-pod-1.webp",
+        "svgWhite": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/configure-pod-1.webp",
         "width": 63.791725,
         "z-index": 71
       },
@@ -1731,7 +1731,7 @@
       },
       "styles": {
         "background-fit": "cover",
-        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-9.webp",
+        "background-image": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-9.webp",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
@@ -1753,7 +1753,7 @@
         "shape": "rectangle",
         "svgColor": "",
         "svgComplete": "",
-        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-9.webp",
+        "svgWhite": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-9.webp",
         "width": 122.194046,
         "z-index": 77
       },
@@ -1883,7 +1883,7 @@
       },
       "styles": {
         "background-fit": "cover",
-        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-1.webp",
+        "background-image": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-1.webp",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
@@ -1905,7 +1905,7 @@
         "shape": "rectangle",
         "svgColor": "",
         "svgComplete": "",
-        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-1.webp",
+        "svgWhite": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/stand-alone-pod-1.webp",
         "width": 268.3073,
         "z-index": 109
       },
@@ -2035,7 +2035,7 @@
       },
       "styles": {
         "background-fit": "cover",
-        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-8.webp",
+        "background-image": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-8.webp",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
@@ -2057,7 +2057,7 @@
         "shape": "rectangle",
         "svgColor": "",
         "svgComplete": "",
-        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-8.webp",
+        "svgWhite": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-8.webp",
         "width": 95.8494,
         "z-index": 461
       },
@@ -2187,7 +2187,7 @@
       },
       "styles": {
         "background-fit": "cover",
-        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-1.webp",
+        "background-image": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-1.webp",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
@@ -2209,7 +2209,7 @@
         "shape": "rectangle",
         "svgColor": "",
         "svgComplete": "",
-        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-1.webp",
+        "svgWhite": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-1.webp",
         "width": 268.6787,
         "z-index": 50
       },
@@ -2339,7 +2339,7 @@
       },
       "styles": {
         "background-fit": "cover",
-        "background-image": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-4.webp",
+        "background-image": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-4.webp",
         "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
@@ -2361,7 +2361,7 @@
         "shape": "rectangle",
         "svgColor": "",
         "svgComplete": "",
-        "svgWhite": "https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-4.webp",
+        "svgWhite": "https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/refs/heads/master/assets/kanvas/getting-started/kubernetes-pod/validate-deploy-pod-4.webp",
         "width": 175.09639,
         "z-index": 67
       },
