@@ -1,5 +1,5 @@
 import React from 'react';
-import { DetailsContainer, Segment, FullWidth } from '@/assets/styles/general/tool.styles';
+import { Segment, FullWidth } from '@/assets/styles/general/tool.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { FormatStructuredData, reorderObjectProperties } from '@/components/data-formatter';
 import {
@@ -10,6 +10,7 @@ import {
   Button,
   DownloadIcon,
   ExpandMoreIcon,
+  Box,
 } from '@sistent/sistent';
 import { useTheme } from '@/theme';
 import { REGISTRY_ITEM_STATES } from '@/utils/Enum';
@@ -491,6 +492,42 @@ const StatusChip = ({ entityData, entityType }: { entityData: any; entityType: s
   );
 };
 
+const StyledDetailsContainer = styled(Box, {
+  shouldForwardProp: (prop) => prop !== 'isEmpty',
+})(({ theme, isEmpty }) => ({
+  width: '50%',
+  backgroundColor:
+    theme.palette.mode === 'dark'
+      ? theme.palette.background.constant.table
+      : theme.palette.border.default,
+  borderRadius: '6px',
+  padding: isEmpty ? '2.5rem' : '1rem 2rem',
+  height: '500px', // Fixed height for scrolling
+  overflowY: 'auto',
+  boxShadow: theme.shadows[2], // Add subtle shadow for depth
+  transition: 'all 0.3s ease',
+  '&::-webkit-scrollbar': {
+    width: '8px',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: theme.palette.divider,
+    borderRadius: '4px',
+  },
+  ...(isEmpty && {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: `2px dashed ${theme.palette.divider}`,
+  }),
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    padding: isEmpty ? '0.5rem' : '1rem',
+    height: 'auto',
+    maxHeight: '400px',
+  },
+}));
+
 const MeshModelDetails = ({
   view,
   showDetailsData,
@@ -521,9 +558,9 @@ const MeshModelDetails = ({
   };
 
   return (
-    <DetailsContainer isEmpty={isEmptyDetails}>
+    <StyledDetailsContainer isEmpty={isEmptyDetails}>
       {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
-    </DetailsContainer>
+    </StyledDetailsContainer>
   );
 };
 
