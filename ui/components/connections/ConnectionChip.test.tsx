@@ -26,11 +26,16 @@ vi.mock('@sistent/sistent', () => {
       </div>
     ),
     AssignmentTurnedInIcon: () => <svg data-testid="assignment-icon" />,
+    CancelIcon: () => <svg data-testid="cancel-icon" />,
+    CheckCircleIcon: () => <svg data-testid="check-circle-icon" />,
     CustomTooltip: ({ title, children }) => (
       <div data-testid="tooltip" data-title={String(title)}>
         {children}
       </div>
     ),
+    ExploreIcon: () => <svg data-testid="explore-icon" />,
+    HandymanIcon: () => <svg data-testid="handyman-icon" />,
+    RemoveIcon: () => <svg data-testid="remove-icon" />,
     Typography: ({ children }) => <span>{children}</span>,
     styled,
     createTheme: () => ({ breakpoints: {} }),
@@ -125,7 +130,7 @@ describe('ConnectionChip', () => {
       <ConnectionChip
         title="cluster-a"
         handlePing={handlePing}
-        iconSrc="/static/img/kubernetes.svg"
+        iconSrc="/static/img/integrations/kubernetes.svg"
         status="connected"
         width="12rem"
       />,
@@ -134,8 +139,13 @@ describe('ConnectionChip', () => {
     await user.click(screen.getByRole('button', { name: 'cluster-a' }));
 
     expect(handlePing).toHaveBeenCalledTimes(1);
-    expect(normalizeStaticImagePath).toHaveBeenCalledWith('/static/img/kubernetes.svg');
-    expect(screen.getByTestId('avatar')).toHaveAttribute('data-src', '/static/img/kubernetes.svg');
+    expect(normalizeStaticImagePath).toHaveBeenCalledWith(
+      '/static/img/integrations/kubernetes.svg',
+    );
+    expect(screen.getByTestId('avatar')).toHaveAttribute(
+      'data-src',
+      '/static/img/integrations/kubernetes.svg',
+    );
     expect(screen.getByTestId('chip-wrapper')).toHaveAttribute('data-width', '12rem');
     expect(screen.getByTestId('badge-avatar')).toHaveAttribute('data-color', 'brand');
   });

@@ -12,7 +12,7 @@ import {
   VisibilitySelect,
 } from './components';
 import { useContentDelete, useContentDownload } from './hooks';
-import ShareModal from './ShareModal';
+import ShareModal from '../ShareWorkspaceModal';
 
 const MyViewsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});

@@ -35,7 +35,7 @@ export const drawerIconsStyle = {
 };
 
 export const getNavigatorComponents = (
-  /** @type {CapabilitiesRegistry} */ capabilityRegistryObj,
+  /** @type {ProviderUiAccessControl} */ providerUiAccessControl,
   theme,
 ) => [
   {
@@ -44,7 +44,7 @@ export const getNavigatorComponents = (
     hovericon: <DashboardIcon style={drawerIconsStyle} />,
     href: '/',
     title: 'Dashboard',
-    show: capabilityRegistryObj.isNavigatorComponentEnabled([DASHBOARD]),
+    show: providerUiAccessControl.isNavigatorComponentEnabled([DASHBOARD]),
     link: true,
     submenu: true,
   },
@@ -55,14 +55,14 @@ export const getNavigatorComponents = (
     title: 'Lifecycle',
     link: true,
     href: '/management/connections',
-    show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE]),
+    show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE]),
     submenu: true,
     children: [
       {
         id: CONNECTION,
         href: '/management/connections',
         title: 'Connections',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
+        show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
         link: true,
         permission: {
           action: keys.VIEW_CONNECTIONS.action,
@@ -73,7 +73,7 @@ export const getNavigatorComponents = (
         id: ENVIRONMENT,
         href: '/management/environments',
         title: 'Environments',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, ENVIRONMENT]),
+        show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, ENVIRONMENT]),
         link: true,
         permission: {
           action: keys.VIEW_ENVIRONMENTS.action,
@@ -84,7 +84,7 @@ export const getNavigatorComponents = (
         id: WORKSPACE,
         href: '/management/workspaces',
         title: 'Workspaces',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, WORKSPACE]),
+        show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, WORKSPACE]),
         link: true,
         permission: {
           action: keys.VIEW_WORKSPACE.action,
@@ -111,7 +111,7 @@ export const getNavigatorComponents = (
     hovericon: <ConfigurationHover style={drawerIconsStyle} />,
     href: '/configuration/designs',
     title: 'Configuration',
-    show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION]),
+    show: providerUiAccessControl.isNavigatorComponentEnabled([CONFIGURATION]),
     link: true,
     submenu: true,
     children: [
@@ -135,7 +135,7 @@ export const getNavigatorComponents = (
         ),
         href: '/configuration/catalog',
         title: 'Catalog',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, CATALOG]),
+        show: providerUiAccessControl.isNavigatorComponentEnabled([CONFIGURATION, CATALOG]),
         link: true,
         isBeta: true,
         permission: {
@@ -148,7 +148,7 @@ export const getNavigatorComponents = (
         icon: <PatternIcon style={{ ...drawerIconsStyle }} />,
         href: '/configuration/designs',
         title: 'Designs',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
+        show: providerUiAccessControl.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
         link: true,
         isBeta: true,
         permission: {
@@ -164,7 +164,7 @@ export const getNavigatorComponents = (
     hovericon: <PerformanceHover style={drawerIconsStyle} />,
     href: '/performance',
     title: 'Performance',
-    show: capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE]),
+    show: providerUiAccessControl.isNavigatorComponentEnabled([PERFORMANCE]),
     link: true,
     submenu: true,
     children: [
@@ -173,7 +173,7 @@ export const getNavigatorComponents = (
         icon: <TachographDigitalIcon fill={theme.palette.icon.default} />,
         href: '/performance/profiles',
         title: 'Profiles',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
+        show: providerUiAccessControl.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
         link: true,
         permission: {
           action: keys.VIEW_PERFORMANCE_PROFILES.action,
@@ -187,7 +187,7 @@ export const getNavigatorComponents = (
     icon: <ExtensionIcon style={drawerIconsStyle} />,
     hovericon: <ExtensionIcon style={drawerIconsStyle} />,
     title: 'Extensions',
-    show: capabilityRegistryObj.isNavigatorComponentEnabled([EXTENSIONS]),
+    show: providerUiAccessControl.isNavigatorComponentEnabled([EXTENSIONS]),
     width: 12,
     link: true,
     href: '/extensions',

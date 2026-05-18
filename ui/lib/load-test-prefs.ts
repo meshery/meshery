@@ -1,4 +1,4 @@
-const validLoadGenerators = new Set(['fortio', 'wrk2', 'nighthawk']);
+const validLoadGenerators = new Set(['fortio', 'wrk2']);
 
 export const DEFAULT_LOAD_TEST_PREFS = {
   c: 0,

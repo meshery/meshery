@@ -9,10 +9,10 @@ import PatternServiceFormCore from '../../meshery-mesh-interface/PatternServiceF
 import InfoModal from '../../shared/Modal/Information/InfoModal';
 import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
 import _PromptComponent from '../../PromptComponent';
-import { CapabilitiesRegistry } from '../../../utils/disabledComponents';
+import { ProviderUiAccessControl } from '../../../utils/disabledComponents';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import Modal from '../../shared/Modal/Modal';
-import ExportModal from '../../shared/Modal/ExportModal';
+import ExportDesignModal from '../../designs/export/ExportDesignModal';
 import { FormatStructuredData } from '../../data-formatter';
 import { useFilterK8sContexts } from '@/utils/hooks/useKubernetesHook';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
@@ -26,10 +26,10 @@ import { ThemeTogglerCore } from '@/themes/hooks';
 import RJSFForm from '../../meshery-mesh-interface/PatternService/RJSF';
 import { DynamicFullScreenLoader } from '../../shared/LoadingState/DynamicFullscreenLoader';
 import Troubleshoot from '../../TroubleshootingComponent';
-import TypingFilter from '../../typing-filter';
+import TypingFilter from '@/components/shared/FormFields/typing-filter';
 import CreateModelModal from '../../registry/CreateModelModal';
 import ImportModelModal from '../../registry/ImportModelModal';
-import { ViewInfoModal } from '../../shared/Modal/ViewInfoModal';
+import { ViewInfoModal } from '../../workspaces/ViewInfoModal';
 import { selectK8sConfig, selectSelectedK8sClusters } from '@/store/slices/mesheryUi';
 import { useSelector } from 'react-redux';
 import { store } from '../../../store';
@@ -85,7 +85,7 @@ function NavigatorExtensionError({ error }: { error: unknown }) {
 
 function NavigatorExtension({ url }: NavigatorExtensionProps) {
   const {
-    capabilitiesRegistry,
+    providerCapabilities,
     selectedK8sContexts,
     organization: currentOrganization,
   } = useSelector((state) => state.ui);
@@ -108,11 +108,13 @@ function NavigatorExtension({ url }: NavigatorExtensionProps) {
       },
       InfoModal,
       ViewInfoModal,
-      ExportModal,
+      ExportModal: ExportDesignModal,
       GenericRJSFModal: Modal,
       _PromptComponent,
-      capabilitiesRegistry,
-      CapabilitiesRegistryClass: CapabilitiesRegistry,
+      providerCapabilities,
+      ProviderUiAccessControlClass: ProviderUiAccessControl,
+      // Backward-compatible alias for already-published remote extensions.
+      CapabilitiesRegistryClass: ProviderUiAccessControl,
       TypingFilter,
       useNotificationHook: useNotification,
       StructuredDataFormatter: FormatStructuredData,
@@ -138,7 +140,7 @@ function NavigatorExtension({ url }: NavigatorExtensionProps) {
       SetCurrentLoadedResourceInOrgWorkspaceSession: onLoadResource,
     }),
     [
-      capabilitiesRegistry,
+      providerCapabilities,
       currentOrganization,
       onLoadResource,
       openModalWithDefault,

@@ -11,7 +11,6 @@ import {
   Button,
   Checkbox,
   Typography,
-  Modal,
 } from '@sistent/sistent';
 
 const DRAWER_WIDTH = 300;
@@ -229,28 +228,5 @@ export const StyledTypography = styled(Typography)(({ theme }) => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
-  },
-}));
-
-export const StyledModal = styled(Modal)(({ theme }) => ({
-  '& .MuiDialog-paperFullScreen': {
-    margin: '0',
-  },
-
-  '& .MuiDialog-paperFullWidth': {
-    width: '90%',
-    height: '80%',
-  },
-
-  '& .MuiDialog-paper': {
-    maxWidth: '100%',
-
-    [theme.breakpoints.down('md')]: {
-      margin: '0',
-      width: '100%',
-      maxWidth: '100%',
-      height: '100%',
-      maxHeight: '100%',
-    },
   },
 }));

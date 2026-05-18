@@ -7,11 +7,11 @@ import {
   Select,
   MenuItem,
   CircularProgress,
-  useTheme,
   Button,
   DownloadIcon,
   ExpandMoreIcon,
 } from '@sistent/sistent';
+import { useTheme } from '@/theme';
 import { REGISTRY_ITEM_STATES } from '@/utils/Enum';
 import { normalizeStaticImagePath } from '@/utils/fallback';
 import {
@@ -117,7 +117,7 @@ const RenderContents = ({
             }}
           >
             <ReactJson
-              theme={reactJsonTheme(theme.palette.mode)}
+              theme={reactJsonTheme(theme)}
               name={false}
               displayDataTypes={false}
               iconStyle="circle"

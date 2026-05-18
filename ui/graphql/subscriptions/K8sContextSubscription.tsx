@@ -4,7 +4,7 @@ import { createSubscription } from 'lib/subscriptionHelper';
 const k8sContextSubscription = graphql`
   subscription K8sContextSubscription($selector: PageFilter!) {
     k8sContext: subscribeK8sContext(selector: $selector) {
-      total_count
+      totalCount: total_count
       contexts {
         id
         name
