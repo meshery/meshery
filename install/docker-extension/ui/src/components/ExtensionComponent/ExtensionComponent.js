@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { Typography, Button, Tooltip, Grid } from "@mui/material";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 // import ConsulIcon from '../../img/SVGs/consulIcon'
 // import IstioIcon from '../../img/SVGs/IstioIcon'
 // import KumaIcon from '../../img/SVGs/kumaIcon'
 // import LinkerdIcon from '../../img/SVGs/linkerdIcon'
 import Tour from "../Walkthrough/Tour";
 import PublishIcon from "../../assets/design";
+import { Avatar } from "@mui/material";
 // import NginxIcon from '../../img/SVGs/nginxIcon'
 // import AppmeshIcon from '../../img/SVGs/appmeshIcon'
 // import CiliumIcon from '../../img/SVGs/ciliumIcon'
@@ -12,6 +15,7 @@ import PublishIcon from "../../assets/design";
 import Meshery from "../../img/SVGs/meshery";
 import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import { DockerMuiThemeProvider } from "@docker/docker-mui-theme";
+import CssBaseline from "@mui/material/CssBaseline";
 import { LoadComp } from "../LoadingComponent/LoadComp";
 import {
   LoadingDiv,
@@ -31,16 +35,9 @@ import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
 import { randomApplicationNameGenerator } from "../../utils";
 import CatalogChart from "../Catalog/Chart";
 import {
-  Avatar,
-  Button,
   CatalogCard,
-  CssBaseline,
   FeedbackButton,
-  Grid,
-  OpenInNewIcon,
   SistentThemeProviderWithoutBaseLine,
-  Tooltip,
-  Typography,
 } from "@sistent/sistent";
 import {
   MESHMAP,

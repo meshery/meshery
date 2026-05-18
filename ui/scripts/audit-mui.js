@@ -14,6 +14,12 @@
  *   - ui/                          (main Next.js app)
  *   - install/docker-extension/ui/ (Docker Desktop extension sub-app)
  *
+ * Each scan walks a list of `dirs` and also picks up explicit `files`
+ * (top-level config files that no `dirs` entry would otherwise reach).
+ * Each scan has its own `allowlist` of files whose @mui imports are
+ * intentional; allowlisted files are excluded from the offender count
+ * and from the `--fail-on-new` gate.
+ *
  * Usage:
  *   node scripts/audit-mui.js                 # summary + top 20 offenders
  *   node scripts/audit-mui.js --all           # print every offending file
@@ -53,13 +59,19 @@ const SCANS = [
       'store',
       'rtk-query',
       'lib',
-      'hooks',
       'api',
       // Added 2026-05-17: ui/public/ holds drawer-icon hover React components
       // that import from @mui/icons-material. Without this entry the audit
       // missed an entire class of imports.
       'public',
     ],
+    // Top-level config files that aren't under any scanned `dirs` entry but
+    // can still hold @mui imports. The next.config.js webpack alias keys
+    // (e.g. `'@mui/material': path.resolve(...)`) don't match the audit
+    // regex (no `from`/`require(` prefix), so this list is currently just
+    // remote-component.config.js, which has many real require() calls.
+    // Listed by relative path; resolved from `root`.
+    files: ['remote-component.config.js'],
     // Approved single-boundary wrappers around @mui/* and @rjsf/mui.
     //
     // These files are the *only* places in ui/ allowed to import from the
@@ -78,21 +90,34 @@ const SCANS = [
       'components/shared/DatePicker/index.ts',
       'components/shared/DatePicker/MesheryDateTimePicker.tsx',
       'components/shared/FormFields/RJSFProvider.tsx',
+      // remote-component.config.js resolves @mui/icons-material for the
+      // @paciolan/remote-component plugin system; the require() entries
+      // hand the host's icon implementations to remote components. Not
+      // migratable without coordinating remote-component consumers.
+      'remote-component.config.js',
     ]),
   },
   {
     name: 'docker-extension',
     root: path.join(REPO_ROOT, 'install', 'docker-extension', 'ui'),
     dirs: ['src'],
-    // Documented exceptions where @sistent/sistent@0.16.10 (pinned in this
-    // sub-app, intentionally not bumped) lacks an equivalent symbol. Both
-    // are eliminable when this sub-app's Sistent is bumped to 0.21.x — see
-    // the design spec §7 follow-up list.
+    // Documented exceptions for this sub-app. Sistent 0.16.10 (pinned here,
+    // intentionally not bumped) ships its own nested `@mui/material@6.5.0`
+    // under `node_modules/@sistent/sistent/node_modules/@mui/`. Because
+    // `DockerMuiThemeProvider` resolves the root `@mui/material@^7`, the
+    // two MUI instances do not share a React Context — Sistent primitives
+    // rendered outside `SistentThemeProviderWithoutBaseLine` will not pick
+    // up the Docker Desktop theme. Until this sub-app's Sistent is bumped
+    // to a release that shares MUI with `@docker/docker-mui-theme` (see
+    // design spec §7.1 follow-up), the docker-extension intentionally
+    // imports MUI directly. These allowlisted files are exactly that.
     allowlist: new Set([
-      // ButtonBase — Sistent 0.16.10 has no equivalent.
+      'src/components/Catalog/CatalogCard.js',
+      'src/components/Catalog/style.js',
+      'src/components/ExtensionComponent/ExtensionComponent.js',
       'src/components/ExtensionComponent/styledComponents.js',
-      // HelpIcon — Sistent 0.16.10 has only HelpOutlinedIcon (different visual).
       'src/components/Walkthrough/Tour.js',
+      'src/components/Walkthrough/tourStyledComponents.js',
     ]),
   },
 ];
@@ -125,15 +150,11 @@ function walk(dir, out) {
   try {
     entries = fs.readdirSync(dir, { withFileTypes: true });
   } catch (err) {
-    // ENOENT is expected when a scan's `dirs` includes folders that don't
-    // exist in every root (e.g., docker-extension has no `components/`).
-    // Anything else (permissions, I/O) deserves a loud warning — otherwise
-    // a typo in `dirs` would silently zero out an entire scan and still
-    // pass --fail-on-new. That's the audit blind-spot pattern this script
-    // is meant to prevent.
-    if (err.code !== 'ENOENT') {
-      process.stderr.write(`audit-mui: ${dir}: ${err.message}\n`);
-    }
+    // Always report — this function is only called for subdirectories
+    // discovered during recursion, so any read failure is unexpected.
+    // The "is this configured scan dir missing?" check happens in
+    // runScan() *before* walk() runs.
+    process.stderr.write(`audit-mui: ${dir}: ${err.message}\n`);
     return;
   }
   for (const entry of entries) {
@@ -161,7 +182,27 @@ function scanFile(file) {
 function runScan(scan) {
   const files = [];
   for (const dir of scan.dirs) {
-    walk(path.join(scan.root, dir), files);
+    const full = path.join(scan.root, dir);
+    // A configured scan dir that doesn't exist is a config error, not
+    // expected absence. Warn loudly — otherwise a typo (or a renamed
+    // directory) would silently drop a whole scan target and `--fail-on-new`
+    // would still pass. This is exactly the audit blind-spot pattern this
+    // script exists to prevent.
+    if (!fs.existsSync(full)) {
+      process.stderr.write(`audit-mui: missing scan dir ${full}\n`);
+      continue;
+    }
+    walk(full, files);
+  }
+  // Explicit top-level files (e.g., config files that live at the scan
+  // root and aren't reached by walking any `dirs` entry).
+  for (const file of scan.files ?? []) {
+    const full = path.join(scan.root, file);
+    if (!fs.existsSync(full)) {
+      process.stderr.write(`audit-mui: missing scan file ${full}\n`);
+      continue;
+    }
+    files.push(full);
   }
 
   const offenders = [];
@@ -199,7 +240,11 @@ function main() {
   const totalFiles = results.reduce((acc, r) => acc + r.files, 0);
   const totalMatches = results.reduce((acc, r) => acc + r.matches, 0);
   const totalAllowlist = results.reduce((acc, r) => acc + r.allowlistSize, 0);
-  const allOffenders = results.flatMap((r) => r.offenders);
+  // Sort across all scans so the "Top N by match count" header is honest
+  // when there are offenders in more than one scan.
+  const allOffenders = results
+    .flatMap((r) => r.offenders)
+    .sort((a, b) => b.count - a.count || a.file.localeCompare(b.file));
 
   if (asJson) {
     process.stdout.write(

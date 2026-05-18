@@ -34,15 +34,16 @@ The remaining 10 files are the surprises that are genuinely worth migrating:
 
 The two facts above mean the recurring "Eliminate MUI" task has been mis-scoped by missing instrumentation, not by missing work. Closing the instrumentation gap is the long-term-maintainer move that prevents this from recurring.
 
-## 3. Decisions (locked during brainstorm)
+## 3. Decisions
 
-| Question | Decision |
+> **Post-review correction (2026-05-17):** The docker-extension primitive migration described in the original §4.3 was REVERTED during PR review (#19516) after `copilot-pull-request-reviewer` correctly flagged a theme-context regression. Sistent 0.16.10 ships its own nested `@mui/material@6.5.0` (verified: `install/docker-extension/ui/node_modules/@sistent/sistent/node_modules/@mui/material/package.json`). `DockerMuiThemeProvider` resolves the root `@mui/material@^7`, so the two MUI instances do not share a React Context. Migrating primitives to Sistent would render them outside the Docker Desktop theme — a real visual regression. All 6 docker-extension source files are now treated as allowlisted exceptions; the proper fix is the deferred Sistent bump in §7.1.
+
+| Question | Decision (current) |
 |---|---|
-| Scope | Drawer icons + `install/docker-extension/ui/` (6 files). The 5 approved `ui/` wrappers stay; the 7 `@sistent/mui-datatables` consumers are acceptable per task brief. |
-| Docker theme | Keep `DockerMuiThemeProvider` — Docker Desktop native theme integration is a feature, not collateral damage. `@docker/docker-mui-theme` peers MUI; this implies `@mui/material` and `@mui/icons-material` stay in `install/docker-extension/ui/package.json` regardless. |
-| Sistent 0.16.10 gaps (`ButtonBase`, `HelpIcon`) | Leave as documented exceptions. Adding to `install/docker-extension/` allowlist with inline reason. |
-| PR shape | Single PR, single commit. |
-| Audit hardening | In scope. Closes the regression hole that hid this work. |
+| Scope | `ui/` drawer icons (3 migrated + 1 deleted), `ui/scripts/audit-mui.js` hardening, `install/docker-extension/ui/package.json` `@mui/styles` cleanup. The 5 approved `ui/` wrappers stay. The 7 `@sistent/mui-datatables` consumers are acceptable per task brief. The 6 `install/docker-extension/ui/src/` files are kept on direct MUI and allowlisted (see post-review correction above). |
+| Docker theme | Keep `DockerMuiThemeProvider`. Sistent 0.16.10's nested MUI prevents theme-context sharing with the Docker provider, so docker-extension primitives must continue to import from root `@mui/material` until the Sistent bump in §7.1 lands. |
+| PR shape | Single PR; revert + cleanup landed as a follow-up commit on the PR after review. |
+| Audit hardening | In scope. Closes the regression hole that hid this work. Also added top-level `ui/` file scanning (catches `remote-component.config.js`) and global sort of `allOffenders` after multi-scan flatMap. |
 
 ## 4. Changes
 
@@ -74,20 +75,22 @@ Component output and prop interface are unchanged.
 
 Delete [ui/public/static/img/drawer-icons/conformance_hover_svg.js](../../../ui/public/static/img/drawer-icons/conformance_hover_svg.js). `ConformanceHover` is exported but never imported (verified via repo-wide grep). The "Conformance" navigator entry was removed earlier; the SVG component lingered.
 
-### 4.3 `install/docker-extension/ui/` — primitive migration
+### 4.3 `install/docker-extension/ui/` — primitive migration (REVERTED post-review)
 
-Symbol-by-symbol swap to `@sistent/sistent`, verified against the Sistent 0.16.10 dist tarball.
+**Status:** REVERTED on 2026-05-17 during PR #19516 review.
 
-| File | Imports changed | Imports kept (exception) |
-|---|---|---|
-| [styledComponents.js](../../../install/docker-extension/ui/src/components/ExtensionComponent/styledComponents.js) | `styled`, `Typography` → `@sistent/sistent` | `ButtonBase` from `@mui/material` (Sistent 0.16.10 has no equivalent) |
-| [Catalog/style.js](../../../install/docker-extension/ui/src/components/Catalog/style.js) | `styled`, `Box` → `@sistent/sistent` | — |
-| [Walkthrough/tourStyledComponents.js](../../../install/docker-extension/ui/src/components/Walkthrough/tourStyledComponents.js) | `styled` → `@sistent/sistent` | — |
-| [ExtensionComponent/ExtensionComponent.js](../../../install/docker-extension/ui/src/components/ExtensionComponent/ExtensionComponent.js) | `Typography`, `Button`, `Tooltip`, `Grid`, `Avatar`, `OpenInNewIcon`, `CssBaseline` → `@sistent/sistent` | `DockerMuiThemeProvider` from `@docker/docker-mui-theme` (intentional — Docker Desktop theme integration) |
-| [Catalog/CatalogCard.js](../../../install/docker-extension/ui/src/components/Catalog/CatalogCard.js) | `Tooltip` → `@sistent/sistent` | — |
-| [Walkthrough/Tour.js](../../../install/docker-extension/ui/src/components/Walkthrough/Tour.js) | `IconButton`, `Tooltip` → `@sistent/sistent` | `HelpIcon` from `@mui/icons-material/Help` (Sistent 0.16.10 has no `HelpIcon`, only `HelpOutlinedIcon` — visual divergence not acceptable) |
+**Reason:** Sistent 0.16.10 ships a nested `@mui/material@6.5.0` under its own `node_modules/`. `DockerMuiThemeProvider` resolves the root `@mui/material@^7.3.7`. Different MUI installations are different React Contexts, so Sistent primitives rendered outside `SistentThemeProviderWithoutBaseLine` would NOT inherit `DockerMuiThemeProvider`'s theme — silent visual regression in the Docker Desktop extension.
 
-**Prop-shape note:** Sistent's `<Button>` accepts both `label` and `children`. All four `<Button>` usages in `ExtensionComponent.js` pass children; no signature change needed.
+**Resolution:** All 6 source files retain their original `@mui/*` imports. They are added to the `docker-extension` allowlist in `ui/scripts/audit-mui.js` with the nested-MUI explanation inlined as a comment. The proper fix is the Sistent version bump in §7.1.
+
+The 6 allowlisted files are:
+
+- `install/docker-extension/ui/src/components/Catalog/CatalogCard.js`
+- `install/docker-extension/ui/src/components/Catalog/style.js`
+- `install/docker-extension/ui/src/components/ExtensionComponent/ExtensionComponent.js`
+- `install/docker-extension/ui/src/components/ExtensionComponent/styledComponents.js`
+- `install/docker-extension/ui/src/components/Walkthrough/Tour.js`
+- `install/docker-extension/ui/src/components/Walkthrough/tourStyledComponents.js`
 
 ### 4.4 `install/docker-extension/ui/package.json` — drop unused dep
 
@@ -134,15 +137,16 @@ Single signed commit (`git commit -s`):
 
 | Check | Command | Expected |
 |---|---|---|
-| Audit (informational) | `node ui/scripts/audit-mui.js` | `AUDIT mui files=0 matches=0` (with allowlist accounting for 5 ui wrappers + 2 docker-extension exceptions) |
+| Audit (informational) | `node ui/scripts/audit-mui.js` | `AUDIT mui files=0 matches=0` (with allowlist accounting for 6 ui entries + 6 docker-extension entries = 12 total) |
 | Audit (gate) | `node ui/scripts/audit-mui.js --fail-on-new` | Exit 0 |
 | Lint | `cd ui && npm run lint` | Green (no new no-restricted-imports violations) |
-| Unit tests | `cd ui && npm test` | Green. Drawer-icon mocks at [navigatorComponents.test.tsx:30-36](../../../ui/components/layout/Navigator/navigatorComponents.test.tsx) are transparent to import path; tests should pass unchanged. |
+| Unit tests (full run) | `cd ui && npm test` | Pre-existing failures unrelated to this PR (test files importing not-yet-implemented components, sistent-mock tests excluded in master's `vitest.config.ts` but not the branch's, palette-mock drift vs master). Documented in the PR description. |
+| Unit tests (suite this PR touches) | `cd ui && npx vitest run components/layout/Navigator/navigatorComponents.test.tsx` | Green. Drawer-icon mocks at [navigatorComponents.test.tsx:30-36](../../../ui/components/layout/Navigator/navigatorComponents.test.tsx) are transparent to import path. |
 | Build (main UI) | `cd ui && npm run build` | Green |
 | Build (docker-extension) | `cd install/docker-extension/ui && npm install --legacy-peer-deps && npm run build` | Green (matches Dockerfile `client-builder` stage) |
-| Repo-wide grep (`@mui/`) | `grep -rln "from ['\"]@mui/" --include="*.{ts,tsx,js,jsx}" --exclude-dir=node_modules .` | Drop from 15 to **7**: 4 ui/ approved wrappers (`theme/index.ts`, `TreeView.tsx`, `DatePicker/index.ts`, `MesheryDateTimePicker.tsx`), 1 audit script (regex string literals, not real imports), 2 docker-extension allowlisted exceptions (`styledComponents.js`, `Tour.js`). |
+| Repo-wide grep (`@mui/`) | `grep -rln "from ['\"]@mui/" --include="*.{ts,tsx,js,jsx}" --exclude-dir=node_modules --exclude-dir=build .` | Drop from 15 to **13**: 4 ui/ approved wrappers (`theme/index.ts`, `TreeView.tsx`, `DatePicker/index.ts`, `MesheryDateTimePicker.tsx`), 1 ui/ remote-component config, 1 audit script (regex string literals, not real imports), 6 docker-extension allowlisted exceptions (theme-context regression risk; see §3 docker-extension decision and §7.1 follow-up). The `--exclude-dir=build` filter is required because `install/docker-extension/ui/build/` holds CRA-compiled bundles. |
 | Repo-wide grep (`@rjsf/mui`) | `grep -rln "from ['\"]@rjsf/mui" --include="*.{ts,tsx,js,jsx}" --exclude-dir=node_modules .` | Unchanged at **1**: `ui/components/shared/FormFields/RJSFProvider.tsx` (5th approved wrapper). |
-| Sistent re-export sanity | Manual: render the navigator drawer at the three hover states; render the docker-extension `ExtensionComponent`, tour, and catalog cards. | No visual regression. |
+| Sistent re-export sanity | Manual: render the navigator drawer at the three hover states. | No visual regression. |
 
 **Manual visual verification of docker-extension is best-effort only.** The sub-app only runs fully inside Docker Desktop with the extension installed. Build success + symbol-for-symbol swap (no signature changes) is the realistic floor of pre-merge verification. Risk is mitigated by: (a) keeping diffs surgical; (b) the existing nested `SistentThemeProviderWithoutBaseLine` already proves Sistent components render correctly inside the Docker MUI theme tree.
 
