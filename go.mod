@@ -42,7 +42,6 @@ require (
 	github.com/grafana-tools/sdk v0.0.0-20220919052116-6562121319fc
 	github.com/jarcoal/httpmock v1.4.1
 	github.com/jinzhu/copier v0.4.0
-	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.12.1
 	github.com/manifoldco/promptui v0.9.0
