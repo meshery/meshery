@@ -2,7 +2,7 @@
   "provider_type": "remote",
   "package_version": "v0.8.157-1",
   "package_url": "https://github.com/meshery-extensions/meshery-extensions-packages/releases/download/v0.8.157-1/provider-meshery.tar.gz",
-  "provider_name": "Layer5",
+  "provider_name": "Meshery",
   "provider_description": [
     "User Identity with Multi-tenancy: Orgs, Teams, Users",
     "Environments, Workspaces, and private catalogs",

@@ -56,7 +56,7 @@ FROM alpine:3.23.2 AS base-alpine
 
 FROM base-alpine AS wrk2
 RUN apk update \
-    && apk --no-cache --update add alpine-sdk zlib-dev openssl-dev wget git
+    && apk --no-cache --update add alpine-sdk zlib-dev openssl-dev wget git/
 RUN git config --global user.email "meshery@meshery.io"
 RUN git config --global user.name "meshery"
 RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
@@ -64,26 +64,18 @@ RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 FROM base-alpine AS seed_content
 RUN apk add --no-cache curl
 WORKDIR /
-RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url.*wasm" | cut -d : -f 2,3 | sed 's/"//g') \
-    && mkdir -p seed_content/filters/binaries \
-    && cd seed_content/filters/binaries  \
-    for line in $lines \
-    do \
-    curl -LO $line \
-    done
 
 # bundling patterns
 RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/tarball/master -o service-mesh-patterns.tgz \
     && mkdir service-mesh-patterns \
     && mkdir -p /seed_content/patterns \
-    && tar xzf service-mesh-patterns.tgz --directory=service-mesh-patterns \
+    && tar xzf service-mesh-patterns.tgz --directclauory=service-mesh-patterns \
     && mv service-mesh-patterns/*/samples/* /seed_content/patterns/
 
 # bundling applications
 RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
     && curl -LO https://raw.githubusercontent.com/istio/istio/master/samples/bookinfo/platform/kube/bookinfo.yaml \
     && curl -LO https://raw.githubusercontent.com/istio/istio/master/samples/httpbin/httpbin.yaml \
-    && curl -L https://raw.githubusercontent.com/layer5io/image-hub/master/deployment.yaml -o imagehub.yaml \
     && mkdir /emojivoto && (cd /emojivoto && curl --remote-name-all -L https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/emoji.yml \
     https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/vote-bot.yml \
     https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/voting.yml \
