@@ -194,19 +194,21 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				h.log.Error(err)
 			}
 
-			go func(inst *machines.StateMachine) {
-				event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
-				if err != nil {
-					h.log.Error(err)
-					return
-				}
-				if event != nil {
-					_ = provider.PersistEvent(*event, token)
-					go h.config.EventBroadcaster.Publish(userID, event)
-				} else {
-					h.log.Warnf("SendEvent returned a nil event without an error for connection %s; skipping event persistence", inst.ID)
-				}
-			}(inst)
+			if inst != nil {
+				go func(inst *machines.StateMachine) {
+					event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
+					if err != nil {
+						h.log.Error(err)
+						return
+					}
+					if event != nil {
+						_ = provider.PersistEvent(*event, token)
+						go h.config.EventBroadcaster.Publish(userID, event)
+					} else {
+						h.log.Warnf("SendEvent returned a nil event without an error for connection %s; skipping event persistence", inst.ID)
+					}
+				}(inst)
+			}
 		}
 
 		eventMetadata[ctx.Name] = metadata
