@@ -530,8 +530,6 @@ const NavigatorContent = () => {
                 src={icon}
                 style={{
                   width: '20px',
-                  display: 'block',
-                  pointerEvents: 'none',
                   filter: currentPath === href ? activeIconFilter : '',
                 }}
               />
