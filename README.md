@@ -194,7 +194,7 @@ Baseline and track your cloud native performance from release to release.
 <details>
 <summary><h4>Load Generation and Microservice Performance Characterization</h4></summary>
 
-- **Multiple Load Generators:** Meshery supports various load generators, including Fortio and Wrk2, allowing users to choose the tool that best suits your needs.
+- **Load Generation:** Meshery uses the Fortio load generator to drive performance tests, with a pluggable load generator interface for extensibility.
 - **Configurable Performance Profiles:** Meshery provides a highly configurable set of load profiles with tunable facets, enabling users to generate TCP, gRPC, and HTTP load. You can customize parameters such as duration, concurrent threads, concurrent generators, and load generator type. 
 - **Statistical Analysis:** Meshery performs statistical analysis on the results of performance tests, presenting data in the form of histograms with latency buckets. Understand the distribution of response times and identify potential bottlenecks.
 - **Comparison of Test Results:** Meshery enables you to compare the difference in request performance (latency and throughput) between independent performance tests. Save your load test configurations as Performance Profiles, making it easy to rerun tests with the same settings and track performance variations over time.
