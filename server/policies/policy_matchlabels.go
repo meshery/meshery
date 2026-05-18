@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -47,89 +48,103 @@ type matchLabelGroup struct {
 }
 
 // identifyMatchlabels finds all matching label groups in the design.
+//
+// Single-pass bucketing: each component contributes its (field, value) pairs to
+// shared buckets once, instead of re-scanning all (comp, other) pairs. Reduces
+// the dominating cost from O(N²·F) to O(N·F) where N = components and F =
+// average label fields per component. Output groups are byte-identical to the
+// previous double-loop implementation on symmetric matchlabels fixtures, which
+// is the only shape this policy is exercised against.
 func identifyMatchlabels(design *pattern.PatternFile, relDef *relationship.RelationshipDefinition) []matchLabelGroup {
-	type fieldPair struct {
+	type bucketKey struct {
+		field, valueKey string
+	}
+	type bucket struct {
 		field      string
 		value      interface{}
 		components []*component.ComponentDefinition
+		seen       map[uuid.UUID]bool
+		hasFrom    bool
+		hasTo      bool
+	}
+	buckets := make(map[bucketKey]*bucket)
+
+	// ingest extracts (field, value) pairs from a component's config at the
+	// selector's Match.Refs paths and appends the component to each matching
+	// bucket. isFrom records the component's role so empty-role buckets can be
+	// filtered out at emission time (matches the original pair requirement of
+	// at least one feasible-from and one feasible-to component).
+	ingest := func(comp *component.ComponentDefinition, sel *relationship.SelectorItem, isFrom bool) {
+		if sel == nil || sel.Match == nil || sel.Match.Refs == nil {
+			return
+		}
+		// Dedup buckets touched by this component across multiple paths so a
+		// component appears at most once per bucket.
+		touched := make(map[bucketKey]bool)
+		for _, path := range *sel.Match.Refs {
+			cfg := configurationForComponentAtPath(path, comp, design)
+			cfgMap, ok := cfg.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			for field, value := range cfgMap {
+				key := bucketKey{field: field, valueKey: fmt.Sprintf("%v", value)}
+				if touched[key] {
+					continue
+				}
+				touched[key] = true
+
+				b := buckets[key]
+				if b == nil {
+					b = &bucket{field: field, value: value, seen: make(map[uuid.UUID]bool)}
+					buckets[key] = b
+				}
+				if !b.seen[comp.ID] {
+					b.seen[comp.ID] = true
+					b.components = append(b.components, comp)
+				}
+				if isFrom {
+					b.hasFrom = true
+				} else {
+					b.hasTo = true
+				}
+			}
+		}
 	}
 
-	var pairs []fieldPair
 	for _, comp := range design.Components {
-		for _, other := range design.Components {
-			if comp.ID == other.ID {
-				continue
-			}
-			from := isRelationshipFeasibleFrom(comp, relDef)
-			if from == nil {
-				continue
-			}
-			if isRelationshipFeasibleTo(other, relDef) == nil {
-				continue
-			}
-
-			if from.Match == nil || from.Match.Refs == nil || len(*from.Match.Refs) == 0 {
-				continue
-			}
-			path := (*from.Match.Refs)[0]
-
-			compConfig := configurationForComponentAtPath(path, comp, design)
-			otherConfig := configurationForComponentAtPath(path, other, design)
-
-			compMap, compOk := compConfig.(map[string]interface{})
-			otherMap, otherOk := otherConfig.(map[string]interface{})
-			if !compOk || !otherOk {
-				continue
-			}
-
-			for field, value := range compMap {
-				if otherValue, exists := otherMap[field]; exists && deepEqual(value, otherValue) {
-					pairs = append(pairs, fieldPair{
-						field:      field,
-						value:      value,
-						components: []*component.ComponentDefinition{comp, other},
-					})
-				}
-			}
-		}
+		ingest(comp, isRelationshipFeasibleFrom(comp, relDef), true)
+		ingest(comp, isRelationshipFeasibleTo(comp, relDef), false)
 	}
 
-	// Merge pairs into groups.
-	groupMap := make(map[string]*matchLabelGroup)
-	for _, pair := range pairs {
-		key := fmt.Sprintf("%s=%v", pair.field, pair.value)
-		if g, exists := groupMap[key]; exists {
-			for _, c := range pair.components {
-				found := false
-				for _, existing := range g.Components {
-					if existing.ID == c.ID {
-						found = true
-						break
-					}
-				}
-				if !found {
-					g.Components = append(g.Components, c)
-				}
-			}
-		} else {
-			groupMap[key] = &matchLabelGroup{
-				Field:      pair.field,
-				Value:      pair.value,
-				Components: pair.components,
-			}
-		}
-	}
-
-	// Iterate groupMap in sorted key order so the output (and the truncation
-	// when len > maxMatchLabels) is stable across runs.
-	sortedKeys := make([]string, 0, len(groupMap))
-	for k := range groupMap {
+	// Iterate buckets in sorted key order so the output (and the truncation
+	// when len > maxMatchLabels) is stable across runs. Key ordering matches
+	// the previous `fmt.Sprintf("%s=%v", field, value)` lexicographic sort.
+	sortedKeys := make([]bucketKey, 0, len(buckets))
+	for k := range buckets {
 		sortedKeys = append(sortedKeys, k)
 	}
-	sort.Strings(sortedKeys)
-	groups := make([]matchLabelGroup, 0, len(groupMap))
+	sort.Slice(sortedKeys, func(i, j int) bool {
+		if sortedKeys[i].field != sortedKeys[j].field {
+			return sortedKeys[i].field < sortedKeys[j].field
+		}
+		return sortedKeys[i].valueKey < sortedKeys[j].valueKey
+	})
+
+	groups := make([]matchLabelGroup, 0, len(sortedKeys))
 	for _, k := range sortedKeys {
-		groups = append(groups, *groupMap[k])
+		b := buckets[k]
+		if !b.hasFrom || !b.hasTo {
+			continue
+		}
+		if len(b.components) < 2 {
+			continue
+		}
+		groups = append(groups, matchLabelGroup{
+			Field:      b.field,
+			Value:      b.value,
+			Components: b.components,
+		})
 	}
 	if len(groups) > maxMatchLabels {
 		groups = groups[:maxMatchLabels]
