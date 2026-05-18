@@ -27,7 +27,6 @@ Meshery supports the following load generators and is [extendible](/extensibilit
 
 - [fortio](#fortio)
 - [wrk2](#wrk2)
-- [Nighthawk](#nighthawk)
 
 ### fortio
 
@@ -39,14 +38,6 @@ the server includes a simple web UI and graphical representation of the results
 ### wrk2
 
 It is a modern HTTP benchmarking tool capable of generating significant load when run on a single multi-core CPU. It combines a multithreaded design with scalable event notification systems such as epoll and kqueue.
-
-### Nighthawk
-
-NightHawk is an L7 (HTTP/HTTPS/HTTP2) performance characterization tool. It currently offers:
-
-- A load testing client which supports HTTP/1.1 and HTTP/2 over HTTP and HTTPS. (HTTPS certificates are not yet validated).
-- A simple test server which is capable of generating dynamic response sizes, as well as inject delays.
-- A binary to transform nighthawk output to well-known formats, allowing integration with other systems and dashboards.
 
 ## Configuring performance testing settings
 

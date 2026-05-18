@@ -80,7 +80,7 @@ mesheryctl perf apply Istio Performance Test
 You can also use flags to configure your performance test. For example:
 
 ```
-mesheryctl perf apply istio-soak-test --concurrent-requests 1 --duration 15s --load-generator nighthawk --mesh istio --url http://localhost:2323
+mesheryctl perf apply istio-soak-test --concurrent-requests 1 --duration 15s --load-generator fortio --mesh istio --url http://localhost:2323
 ```
 
 mesheryctl also supports test configurations written in SMP compatible format as shown below:
@@ -116,7 +116,7 @@ mesheryctl perf apply -f perf-config.yaml
 You can also override the configuration passed in the file with flags like shown below:
 
 ```
-mesheryctl perf apply -f perf-config.yaml --url http://localhost:2323/productpage?u=test --load-generator nighthawk --qps 5
+mesheryctl perf apply -f perf-config.yaml --url http://localhost:2323/productpage?u=test --load-generator fortio --qps 5
 ```
 
 ## Running Performance Benchmarks in your Pipelines

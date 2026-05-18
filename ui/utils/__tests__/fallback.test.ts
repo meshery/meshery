@@ -3,11 +3,13 @@ import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '../fallba
 
 describe('getFallbackImageBasedOnKind', () => {
   it('returns the meshery logo for the meshery kind', () => {
-    expect(getFallbackImageBasedOnKind('meshery')).toBe('static/img/meshery-logo.png');
+    expect(getFallbackImageBasedOnKind('meshery')).toBe('static/img/meshery-logo/meshery-logo.png');
   });
 
   it('returns the kubernetes svg for the kubernetes kind', () => {
-    expect(getFallbackImageBasedOnKind('kubernetes')).toBe('static/img/kubernetes.svg');
+    expect(getFallbackImageBasedOnKind('kubernetes')).toBe(
+      'static/img/integrations/kubernetes.svg',
+    );
   });
 
   it('returns undefined for unknown kinds', () => {
