@@ -414,7 +414,20 @@ const Description = ({ description }: { description?: string }) => {
       >
         Description
       </p>
-      <p style={{ margin: '0', fontSize: theme.typography.fontFamily }}>{description}</p>
+      {description ? (
+        <p style={{ margin: '0', fontSize: theme.typography.fontFamily }}>{description}</p>
+      ) : (
+        <p
+          style={{
+            margin: '0',
+            fontSize: theme.typography.fontFamily,
+            fontStyle: 'italic',
+            color: theme.palette.text.secondary,
+          }}
+        >
+          No description available.
+        </p>
+      )}
     </div>
   );
 };
