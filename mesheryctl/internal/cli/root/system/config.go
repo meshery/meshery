@@ -397,6 +397,17 @@ func setToken() error {
 		if err != nil {
 			return ErrSetCurrentContext(fmt.Errorf("error reading input: %s", err.Error()))
 		}
+		
+		// check if the choice is less than 1, so wait that's bad
+		if choice < 1 {
+			return ErrSetCurrentContext(fmt.Errorf("invalid choice... cant be less than 1"))
+		}
+		// also check if choice is bigger than the length of contexts
+		maxLen := len(contexts)
+		if choice > maxLen {
+			return ErrSetCurrentContext(fmt.Errorf("invalid choice... cant be greater than max length"))
+		}
+
 		choosenCtx = contexts[choice-1]
 	}
 
