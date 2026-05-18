@@ -21,7 +21,10 @@ func componentDeclarationByID(design *pattern.PatternFile, id string) *component
 	return nil
 }
 
-// fromComponentID returns the from component ID from a relationship definition.
+// fromComponentID returns the first from component ID from a relationship definition.
+// Engine-generated relationships always have a single-item From/To; callers that
+// need every referenced component (multi-container Pods, multi-ref bindings) should
+// iterate ss.Allow.From themselves.
 func fromComponentID(rel *relationship.RelationshipDefinition) string {
 	if rel.Selectors == nil || len(*rel.Selectors) == 0 {
 		return ""
@@ -36,7 +39,8 @@ func fromComponentID(rel *relationship.RelationshipDefinition) string {
 	return ss.Allow.From[0].ID.String()
 }
 
-// toComponentID returns the to component ID from a relationship definition.
+// toComponentID returns the first to component ID from a relationship definition.
+// See fromComponentID for the multi-item caveat.
 func toComponentID(rel *relationship.RelationshipDefinition) string {
 	if rel.Selectors == nil || len(*rel.Selectors) == 0 {
 		return ""
@@ -51,15 +55,34 @@ func toComponentID(rel *relationship.RelationshipDefinition) string {
 	return ss.Allow.To[0].ID.String()
 }
 
-// fromAndToComponentsExist checks if both from and to components still exist in the design.
+// fromAndToComponentsExist checks that every from and to component still exists in
+// the design. Multi-element From/To slices (multi-container Pods, multi-ref bindings)
+// require all referenced components to be present; if any one is missing the
+// relationship is considered invalid.
 func fromAndToComponentsExist(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
-	fromID := fromComponentID(rel)
-	toID := toComponentID(rel)
-	if fromID == "" || toID == "" {
+	if rel.Selectors == nil || len(*rel.Selectors) == 0 {
 		return false
 	}
-	return componentDeclarationByID(design, fromID) != nil &&
-		componentDeclarationByID(design, toID) != nil
+	ss := (*rel.Selectors)[0]
+	return allSelectorComponentsExist(ss.Allow.From, design) &&
+		allSelectorComponentsExist(ss.Allow.To, design)
+}
+
+// allSelectorComponentsExist returns true when sels is non-empty and every item has
+// a non-nil ID resolving to a component in design.
+func allSelectorComponentsExist(sels []relationship.SelectorItem, design *pattern.PatternFile) bool {
+	if len(sels) == 0 {
+		return false
+	}
+	for _, sel := range sels {
+		if sel.ID == nil {
+			return false
+		}
+		if componentDeclarationByID(design, sel.ID.String()) == nil {
+			return false
+		}
+	}
+	return true
 }
 
 // fromOrToComponentsDontExist returns true when one or both sides are missing.
@@ -142,6 +165,9 @@ func cleanupActionForPath(mutatedID string, mutatedPath []string, mutatedComp *c
 // When the relationship is in StatusDeleted, it emits reverse patches (schema default when
 // declared, otherwise remove) for fields that still hold the mutator's value, so deletion
 // restores the pre-mutation state.
+//
+// Pairs ss.Allow.From[i] with ss.Allow.To[i] by index so multi-selector relationships
+// (binding/network/wallet) emit actions for every pair rather than only [0].
 func patchMutatorsAction(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
 	if rel.Selectors == nil {
 		return nil
@@ -150,55 +176,52 @@ func patchMutatorsAction(rel *relationship.RelationshipDefinition, design *patte
 	var actions []PolicyAction
 
 	for _, ss := range *rel.Selectors {
-		if len(ss.Allow.From) == 0 || len(ss.Allow.To) == 0 {
-			continue
-		}
-		fromSel := ss.Allow.From[0]
-		toSel := ss.Allow.To[0]
-		if fromSel.RelationshipDefinitionSelectorsPatch == nil || toSel.RelationshipDefinitionSelectorsPatch == nil {
-			continue
-		}
-
-		fromID := selectorItemID(fromSel)
-		toID := selectorItemID(toSel)
-		fromComp := componentDeclarationByID(design, fromID)
-		toComp := componentDeclarationByID(design, toID)
-		if fromComp == nil || toComp == nil {
-			continue
-		}
-
-		mutatorRefs, mutatedRefs, mutatorComp, mutatedComp := resolveMutatorMutatedRefs(fromSel.RelationshipDefinitionSelectorsPatch, toSel.RelationshipDefinitionSelectorsPatch, fromComp, toComp)
-		if mutatorRefs == nil || mutatedRefs == nil {
-			continue
-		}
-
-		mutatedID := toID
-		if mutatedComp.ID == fromComp.ID {
-			mutatedID = fromID
-		}
-
-		count := len(mutatorRefs)
-		if len(mutatedRefs) < count {
-			count = len(mutatedRefs)
-		}
-
-		for i := 0; i < count; i++ {
-			mutatorValue := configurationForComponentAtPath(mutatorRefs[i], mutatorComp, design)
-			oldValue := configurationForComponentAtPath(mutatedRefs[i], mutatedComp, design)
-			if mutatorValue == nil {
+		pairCount := min(len(ss.Allow.From), len(ss.Allow.To))
+		for p := range pairCount {
+			fromSel := ss.Allow.From[p]
+			toSel := ss.Allow.To[p]
+			if fromSel.RelationshipDefinitionSelectorsPatch == nil || toSel.RelationshipDefinitionSelectorsPatch == nil {
 				continue
 			}
-			if reverse {
-				if !deepEqual(mutatorValue, oldValue) {
+
+			fromID := selectorItemID(fromSel)
+			toID := selectorItemID(toSel)
+			fromComp := componentDeclarationByID(design, fromID)
+			toComp := componentDeclarationByID(design, toID)
+			if fromComp == nil || toComp == nil {
+				continue
+			}
+
+			mutatorRefs, mutatedRefs, mutatorComp, mutatedComp := resolveMutatorMutatedRefs(fromSel.RelationshipDefinitionSelectorsPatch, toSel.RelationshipDefinitionSelectorsPatch, fromComp, toComp)
+			if mutatorRefs == nil || mutatedRefs == nil {
+				continue
+			}
+
+			mutatedID := toID
+			if mutatedComp.ID == fromComp.ID {
+				mutatedID = fromID
+			}
+
+			count := min(len(mutatorRefs), len(mutatedRefs))
+
+			for i := range count {
+				mutatorValue := configurationForComponentAtPath(mutatorRefs[i], mutatorComp, design)
+				oldValue := configurationForComponentAtPath(mutatedRefs[i], mutatedComp, design)
+				if mutatorValue == nil {
 					continue
 				}
-				actions = append(actions, cleanupActionForPath(mutatedID, mutatedRefs[i], mutatedComp))
-				continue
+				if reverse {
+					if !deepEqual(mutatorValue, oldValue) {
+						continue
+					}
+					actions = append(actions, cleanupActionForPath(mutatedID, mutatedRefs[i], mutatedComp))
+					continue
+				}
+				if deepEqual(mutatorValue, oldValue) {
+					continue
+				}
+				actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedRefs[i]), mutatedID, mutatedRefs[i], mutatorValue))
 			}
-			if deepEqual(mutatorValue, oldValue) {
-				continue
-			}
-			actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedRefs[i]), mutatedID, mutatedRefs[i], mutatorValue))
 		}
 	}
 	return actions
@@ -284,6 +307,9 @@ func sameRelationshipSelectorClause(a, b relationship.SelectorItem) bool {
 }
 
 // RelationshipsAreSame checks if two relationships are equivalent.
+//
+// Two selector sets match when their From and To slices have equal length and every
+// item pairs-equal; comparing only [0] would dedup distinct multi-selector relationships.
 func RelationshipsAreSame(relA, relB *relationship.RelationshipDefinition) bool {
 	if !sameRelationshipIdentifier(relA, relB) {
 		return false
@@ -293,17 +319,30 @@ func RelationshipsAreSame(relA, relB *relationship.RelationshipDefinition) bool 
 	}
 	for _, ssA := range *relA.Selectors {
 		for _, ssB := range *relB.Selectors {
-			if len(ssA.Allow.From) == 0 || len(ssB.Allow.From) == 0 ||
-				len(ssA.Allow.To) == 0 || len(ssB.Allow.To) == 0 {
+			if !sameSelectorItemSlice(ssA.Allow.From, ssB.Allow.From) {
 				continue
 			}
-			if sameRelationshipSelectorClause(ssA.Allow.From[0], ssB.Allow.From[0]) &&
-				sameRelationshipSelectorClause(ssA.Allow.To[0], ssB.Allow.To[0]) {
-				return true
+			if !sameSelectorItemSlice(ssA.Allow.To, ssB.Allow.To) {
+				continue
 			}
+			return true
 		}
 	}
 	return false
+}
+
+// sameSelectorItemSlice returns true when both slices are non-empty, the same length,
+// and every index pair satisfies sameRelationshipSelectorClause.
+func sameSelectorItemSlice(a, b []relationship.SelectorItem) bool {
+	if len(a) == 0 || len(b) == 0 || len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if !sameRelationshipSelectorClause(a[i], b[i]) {
+			return false
+		}
+	}
+	return true
 }
 
 // relationshipAlreadyExists checks if a relationship already exists in the design.

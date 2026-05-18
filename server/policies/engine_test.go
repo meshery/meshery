@@ -866,3 +866,164 @@ func TestPatchBindingMatchFieldsMultiItemPair(t *testing.T) {
 		t.Fatalf("expected actions targeting both Target components, got %#v", seenTargets)
 	}
 }
+
+// TestPatchMutatorsActionMultiSelectorPairs verifies the shared patchMutatorsAction
+// helper (used by binding / edge-network / wallet SideEffects) pairs every From[i]
+// with To[i] instead of dropping selectors past [0].
+func TestPatchMutatorsActionMultiSelectorPairs(t *testing.T) {
+	fromA, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	fromB, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	toA, _ := uuid.FromString("00000000-0000-0000-0000-00000000000a")
+	toB, _ := uuid.FromString("00000000-0000-0000-0000-00000000000b")
+
+	mkFrom := func(id uuid.UUID, name string) *component.ComponentDefinition {
+		c := &component.ComponentDefinition{
+			Component:     component.Component{Kind: "Namespace"},
+			Configuration: map[string]interface{}{"name": name},
+		}
+		c.ID = id
+		return c
+	}
+	mkTo := func(id uuid.UUID, ns string) *component.ComponentDefinition {
+		c := &component.ComponentDefinition{
+			Component:     component.Component{Kind: "Deployment"},
+			Configuration: map[string]interface{}{"namespace": ns},
+		}
+		c.ID = id
+		return c
+	}
+	nsA := mkFrom(fromA, "alpha")
+	nsB := mkFrom(fromB, "beta")
+	depA := mkTo(toA, "stale-a")
+	depB := mkTo(toB, "stale-b")
+
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "name"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "namespace"}}
+	fromSel := func(id uuid.UUID) relationship.SelectorItem {
+		return relationship.SelectorItem{
+			ID: &id,
+			RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+				MutatorRef: &mutatorRef,
+			},
+		}
+	}
+	toSel := func(id uuid.UUID) relationship.SelectorItem {
+		return relationship.SelectorItem{
+			ID: &id,
+			RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+				MutatedRef: &mutatedRef,
+			},
+		}
+	}
+
+	relStatus := relationship.RelationshipDefinitionStatus("approved")
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.RelationshipDefinitionKind("edge"),
+		RelationshipType: "non-binding",
+		Status:           &relStatus,
+		Selectors: &relationship.SelectorSet{
+			relationship.SelectorSetItem{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{fromSel(fromA), fromSel(fromB)},
+					To:   []relationship.SelectorItem{toSel(toA), toSel(toB)},
+				},
+			},
+		},
+	}
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-0000000000ff")
+
+	design := makePatternFile([]*component.ComponentDefinition{nsA, nsB, depA, depB}, nil)
+	actions := patchMutatorsAction(rel, design)
+
+	if len(actions) != 2 {
+		t.Fatalf("expected 2 patch actions for 2-pair selector, got %d", len(actions))
+	}
+	got := map[string]string{}
+	for _, a := range actions {
+		v, _ := a.UpdateValue.(string)
+		got[a.ID] = v
+	}
+	if got[toA.String()] != "alpha" {
+		t.Fatalf("expected to[0] to be patched with from[0] value 'alpha', got %q", got[toA.String()])
+	}
+	if got[toB.String()] != "beta" {
+		t.Fatalf("expected to[1] to be patched with from[1] value 'beta', got %q", got[toB.String()])
+	}
+}
+
+// TestRelationshipsAreSameMultiSelectorDoesNotFalseDedup verifies dedup compares
+// full From/To slices instead of only [0]. Two binding-like relationships that
+// share their first selector but differ at [1] must not collapse into one.
+func TestRelationshipsAreSameMultiSelectorDoesNotFalseDedup(t *testing.T) {
+	idA, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	idB, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	idC, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
+	idD, _ := uuid.FromString("00000000-0000-0000-0000-000000000004")
+
+	mkRel := func(fromIDs, toIDs []uuid.UUID) *relationship.RelationshipDefinition {
+		from := make([]relationship.SelectorItem, len(fromIDs))
+		for i, id := range fromIDs {
+			id := id
+			from[i] = relationship.SelectorItem{ID: &id}
+		}
+		to := make([]relationship.SelectorItem, len(toIDs))
+		for i, id := range toIDs {
+			id := id
+			to[i] = relationship.SelectorItem{ID: &id}
+		}
+		return &relationship.RelationshipDefinition{
+			Kind:             relationship.RelationshipDefinitionKind("edge"),
+			RelationshipType: "binding",
+			Selectors: &relationship.SelectorSet{
+				relationship.SelectorSetItem{
+					Allow: relationship.Selector{From: from, To: to},
+				},
+			},
+		}
+	}
+
+	relAB := mkRel([]uuid.UUID{idA, idB}, []uuid.UUID{idC, idD})
+	relAOnly := mkRel([]uuid.UUID{idA}, []uuid.UUID{idC})
+	relADifferentTail := mkRel([]uuid.UUID{idA, idC}, []uuid.UUID{idB, idD})
+
+	if RelationshipsAreSame(relAB, relAOnly) {
+		t.Error("relationships with different From lengths must not be equal")
+	}
+	if RelationshipsAreSame(relAB, relADifferentTail) {
+		t.Error("relationships sharing only [0] must not be equal")
+	}
+	if !RelationshipsAreSame(relAB, mkRel([]uuid.UUID{idA, idB}, []uuid.UUID{idC, idD})) {
+		t.Error("identical multi-selector relationships should be equal")
+	}
+}
+
+// TestFromAndToComponentsExistRejectsMissingTailComponent verifies validity check
+// considers every From/To item, not only [0]. A multi-element relationship whose
+// trailing From component has been deleted must be reported as invalid.
+func TestFromAndToComponentsExistRejectsMissingTailComponent(t *testing.T) {
+	keptID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	missingID, _ := uuid.FromString("00000000-0000-0000-0000-0000000000de")
+	toID, _ := uuid.FromString("00000000-0000-0000-0000-00000000000a")
+
+	keptComp := &component.ComponentDefinition{Component: component.Component{Kind: "Pod"}}
+	keptComp.ID = keptID
+	toComp := &component.ComponentDefinition{Component: component.Component{Kind: "Service"}}
+	toComp.ID = toID
+
+	design := makePatternFile([]*component.ComponentDefinition{keptComp, toComp}, nil)
+
+	rel := &relationship.RelationshipDefinition{
+		Selectors: &relationship.SelectorSet{
+			relationship.SelectorSetItem{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{{ID: &keptID}, {ID: &missingID}},
+					To:   []relationship.SelectorItem{{ID: &toID}},
+				},
+			},
+		},
+	}
+
+	if fromAndToComponentsExist(rel, design) {
+		t.Error("expected relationship referencing a missing tail component to be invalid")
+	}
+}
