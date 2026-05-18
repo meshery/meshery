@@ -83,13 +83,13 @@
 }
 .alert-secondary {
   border-style: solid;
-  border-color: #9FA6B2;
-  background-color: #d8dbe0;
+  border-color: var(--brand-color-secondary);
+  background-color: #00b39f22;
   border-width: 0 0 0 4px;
   font-size: 1rem;
   & .alert-heading > *,
   & .alert-heading {
-    color: #9FA6B2;
+    color: #007a6c;
     margin: 0;
     margin-bottom: 1rem;
   }
@@ -140,4 +140,3 @@
     max-width: 100%;
   }
 }
-
