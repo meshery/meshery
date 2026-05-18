@@ -63,7 +63,13 @@ jobs:
             echo "No changes to deploy"
           else
             git commit -m "Deploy preview for PR $PR_NUMBER"
-            git push
+            for i in {1..5}; do
+              git pull --rebase origin gh-pages
+              if git push; then
+                break
+              fi
+              sleep 5
+            done
           fi
 
       - name: Prune old PR previews
@@ -101,7 +107,13 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add pr-preview
           git commit -m "Prune old PR previews"
-          git push
+          for i in {1..5}; do
+            git pull --rebase origin gh-pages
+            if git push; then
+              break
+            fi
+            sleep 5
+          done
 
           echo "removed_prs_json=$(printf '%s\n' "${removed_prs[@]}" | jq -R . | jq -sc .)" >> "$GITHUB_OUTPUT"
 
@@ -175,7 +187,13 @@ jobs:
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add "pr-preview/pr-$PR_NUMBER"
             git commit -m "Remove preview for PR $PR_NUMBER (closed)"
-            git push
+            for i in {1..5}; do
+              git pull --rebase origin gh-pages
+              if git push; then
+                break
+              fi
+              sleep 5
+            done
             
             # Optionally comment about removal
             echo "Removed PR preview for PR $PR_NUMBER."
