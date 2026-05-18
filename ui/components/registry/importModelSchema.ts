@@ -62,8 +62,8 @@ const canonicalUploadType =
 export const UPLOAD_TYPE_FILE = 'file';
 export const UPLOAD_TYPE_URL = 'urlImport';
 export const UPLOAD_TYPE_CSV = 'csv';
-export const UPLOAD_TYPE_DOCKER = 'Docker Hub';
-export const UPLOAD_TYPE_GHCR = 'GHCR';
+export const UPLOAD_TYPE_DOCKER = 'docker';
+export const UPLOAD_TYPE_GHCR = 'ghcr';
 
 // Reuse the canonical's discriminator-conditional shape, but drop the
 // `required:` clauses on each branch. Two reasons:

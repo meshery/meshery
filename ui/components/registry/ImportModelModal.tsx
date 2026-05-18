@@ -49,6 +49,8 @@ import {
   UPLOAD_TYPE_CSV,
   UPLOAD_TYPE_FILE,
   UPLOAD_TYPE_URL,
+  UPLOAD_TYPE_DOCKER,
+  UPLOAD_TYPE_GHCR,
   decodeDataUrlToBytes,
   filenameFromDataUrl,
   findSelectedModelFile,
@@ -242,16 +244,31 @@ const ImportModelModal = memo<ImportModelModalProps>(
           }
           break;
         }
-        case UPLOAD_TYPE_URL: {
+        case UPLOAD_TYPE_URL:
+        case UPLOAD_TYPE_DOCKER:
+        case UPLOAD_TYPE_GHCR: {
           if (url) {
+            const backendUrl =
+              uploadType === UPLOAD_TYPE_DOCKER
+                ? `docker://${url}`
+                : uploadType === UPLOAD_TYPE_GHCR
+                  ? `ghcr://${url}`
+                  : url;
+
             requestBody = {
-              importBody: { url },
-              uploadType: UPLOAD_TYPE_URL,
+              importBody: { url: backendUrl },
+              uploadType: uploadType,
               register: true,
             };
           } else {
+            const message =
+              uploadType === UPLOAD_TYPE_URL
+                ? 'Please provide a model URL before continuing.'
+                : uploadType === UPLOAD_TYPE_DOCKER
+                  ? 'Please provide a Docker Hub image path before continuing.'
+                  : 'Please provide a GHCR image path before continuing.';
             notify({
-              message: 'Please provide a model URL before continuing.',
+              message,
               event_type: EVENT_TYPES.ERROR,
             });
             return;

@@ -4,30 +4,34 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const importModelReq = vi.fn();
 
-vi.mock('@sistent/sistent', () => ({
-  Modal: ({ children, open, title }: any) =>
-    open ? <div data-testid={`modal-${title}`}>{children}</div> : null,
-  FormControlLabel: ({ label, value, control }: any) => (
-    <label data-radio-value={value}>
-      {control}
-      {label}
-    </label>
-  ),
-  FormControl: ({ children }: any) => <div>{children}</div>,
-  RadioGroup: ({ children, value, onChange }: any) => (
-    <div data-testid="radio-group" data-value={value} onChange={onChange}>
-      {children}
-    </div>
-  ),
-  Radio: () => <input type="radio" />,
-  Typography: ({ children }: any) => <span>{children}</span>,
-  importModelUiSchema: { uploadType: {} },
-  importModelSchema: {
-    title: 'Import',
-    type: 'object',
-    properties: { uploadType: { enum: ['File Import', 'URL Import', 'CSV Import'] } },
-  },
-}));
+vi.mock('@sistent/sistent', async (importOriginal) => {
+  const actual = (await importOriginal()) as any;
+  return {
+    ...actual,
+    Modal: ({ children, open, title }: any) =>
+      open ? <div data-testid={`modal-${title}`}>{children}</div> : null,
+    FormControlLabel: ({ label, value, control }: any) => (
+      <label data-radio-value={value}>
+        {control}
+        {label}
+      </label>
+    ),
+    FormControl: ({ children }: any) => <div>{children}</div>,
+    RadioGroup: ({ children, value, onChange }: any) => (
+      <div data-testid="radio-group" data-value={value} onChange={onChange}>
+        {children}
+      </div>
+    ),
+    Radio: () => <input type="radio" />,
+    Typography: ({ children }: any) => <span>{children}</span>,
+    importModelUiSchema: { uploadType: {} },
+    importModelSchema: {
+      title: 'Import',
+      type: 'object',
+      properties: { uploadType: { enum: ['File Import', 'URL Import', 'CSV Import'] } },
+    },
+  };
+});
 
 vi.mock('../shared/Modal/Modal', () => ({
   RJSFModalWrapper: ({ handleSubmit, schema, widgets, helpText }: any) => (
@@ -80,9 +84,13 @@ vi.mock('@/rtk-query/meshModel', () => ({
   useImportMeshModelMutation: () => [importModelReq],
 }));
 
-vi.mock('@/store/slices/mesheryUi', () => ({
-  updateProgress: vi.fn(),
-}));
+vi.mock('@/store/slices/mesheryUi', async (importOriginal) => {
+  const actual = (await importOriginal()) as any;
+  return {
+    ...actual,
+    updateProgress: vi.fn(),
+  };
+});
 
 import ImportModelModal from './ImportModel';
 
