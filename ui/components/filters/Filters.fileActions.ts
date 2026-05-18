@@ -3,11 +3,11 @@ import _ from 'lodash';
 import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
 import { FILE_OPS } from '../../utils/Enum';
 import { EVENT_TYPES } from '../../lib/event-types';
-import { getUnit8ArrayDecodedFile } from '../../utils/utils';
 import { trueRandom } from '../../lib/trueRandom';
 import downloadContent from '../../utils/fileDownloader';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { ACTION_TYPES } from './Filters.constants';
+import { arrayBufferToBase64 } from '@/utils/binary';
 
 type Notify = (_args: { message: string; event_type: string; details?: string }) => void;
 
@@ -73,7 +73,7 @@ export function createHandleSubmit({
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
           ...body,
-          filterData: { filterFile: data, name: metadata.name },
+          filterData: { filterFile: data, name: metadata.name, encoding: 'base64' },
           config: metadata.config,
         });
       }
@@ -145,10 +145,10 @@ export function createUploadHandler({ handleSubmit }: CreateUploadHandlerArgs) {
 
     // Create a reader
     const reader = new FileReader();
-    reader.addEventListener('load', (event) => {
-      let uint8 = new Uint8Array(event.target!.result as ArrayBuffer);
+    reader.addEventListener('load', async (event) => {
+      const base64Data = await arrayBufferToBase64(event.target!.result as ArrayBuffer);
       handleSubmit({
-        data: Array.from(uint8) as any,
+        data: base64Data,
         name: file?.name || 'meshery_' + Math.floor(trueRandom() * 100),
         type: FILE_OPS.FILE_UPLOAD,
         metadata: metadata,
@@ -171,12 +171,12 @@ export function createHandleImportFilter({
   updateFilterFile,
   getFilters,
 }: CreateHandleImportFilterArgs) {
-  return function handleImportFilter(data: {
+  return async function handleImportFilter(data: {
     uploadType: string;
     config: string;
     name: string;
     url: string;
-    file: ArrayBuffer | string;
+    file: ArrayBuffer;
   }) {
     updateProgress({ showProgress: true });
     const { uploadType, name, config, url, file } = data;
@@ -188,7 +188,8 @@ export function createHandleImportFilter({
           save: true,
           filter_data: {
             name,
-            filter_file: getUnit8ArrayDecodedFile(file),
+            filter_file: typeof file === 'string' ? file : await arrayBufferToBase64(file),
+            encoding: 'base64',
           },
         });
         break;
