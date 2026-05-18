@@ -15,6 +15,8 @@ import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
 
 type ImportModelModalProps = {
   isImportModalOpen: boolean;
@@ -26,6 +28,7 @@ const ImportModelModal = React.memo(
     const [importModalDescription, setImportModalDescription] = useState('');
     const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
     const [importModelReq] = useImportMeshModelMutation();
+    const { notify } = useNotification();
     const handleGenerateModal = async (data) => {
       const { component_csv, model_csv, relationship_csv, register } = data;
       let requestBody = {
@@ -64,7 +67,10 @@ const ImportModelModal = React.memo(
               register: true,
             };
           } else {
-            console.error('Error: File data is empty or invalid');
+            notify({
+              message: 'Error: File data is empty or invalid',
+              event_type: EVENT_TYPES.ERROR,
+            });
             return;
           }
           break;
@@ -79,7 +85,46 @@ const ImportModelModal = React.memo(
               register: true,
             };
           } else {
-            console.error('Error: URL is empty');
+            notify({
+              message: 'Error: URL is empty',
+              event_type: EVENT_TYPES.ERROR,
+            });
+            return;
+          }
+          break;
+        }
+        case 'Docker Hub': {
+          if (url) {
+            requestBody = {
+              importBody: {
+                url: `docker://${url}`,
+              },
+              uploadType: 'docker',
+              register: true,
+            };
+          } else {
+            notify({
+              message: 'Error: Docker image path is empty',
+              event_type: EVENT_TYPES.ERROR,
+            });
+            return;
+          }
+          break;
+        }
+        case 'GHCR': {
+          if (url) {
+            requestBody = {
+              importBody: {
+                url: `ghcr://${url}`,
+              },
+              uploadType: 'ghcr',
+              register: true,
+            };
+          } else {
+            notify({
+              message: 'Error: GHCR image path is empty',
+              event_type: EVENT_TYPES.ERROR,
+            });
             return;
           }
           break;
@@ -90,7 +135,10 @@ const ImportModelModal = React.memo(
           return;
         }
         default: {
-          console.error('Error: Invalid upload type');
+          notify({
+            message: 'Error: Invalid upload type',
+            event_type: EVENT_TYPES.ERROR,
+          });
           return;
         }
       }

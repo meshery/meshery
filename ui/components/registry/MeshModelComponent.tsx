@@ -32,6 +32,8 @@ import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
 import ImportModelModal from './ImportModelModal';
 import CreateModelModal from './CreateModelModal';
 import CreateRelationshipModal from './CreateRelationshipModal';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
 
 type MeshModelComponentProps = {
   settingsRouter?: (_router: any) => { handleChangeSelectedTab?: (_tab: string) => void };
@@ -54,6 +56,7 @@ const MeshModelComponent_ = ({
       : { handleChangeSelectedTab: null };
   const [resourcesDetail, setResourcesDetail] = useState<any[]>([]);
   const { searchQuery, selectedPageSize, selectedTab } = useMeshModelComponentRouter();
+  const { notify } = useNotification();
   const [page, setPage] = useState<{ [key: string]: number }>({
     Models: 0,
     Components: 0,
@@ -209,7 +212,10 @@ const MeshModelComponent_ = ({
         }
       }
     } catch (error) {
-      console.error(`Failed to fetch ${view.toLowerCase()}:`, error);
+      notify({
+        message: `Failed to fetch ${view.toLowerCase()}`,
+        event_type: EVENT_TYPES.ERROR,
+      });
       setResourcesDetail([]); // Set empty array on error
     }
   }, [
