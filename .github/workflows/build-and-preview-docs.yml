@@ -1,7 +1,7 @@
-name: Build and Preview Docs
+name: Build Docs Preview
 
 on:
-  pull_request_target:
+  pull_request:
     branches: [master]
     types: [opened, synchronize, reopened, closed]
     paths:
@@ -11,11 +11,10 @@ on:
       - 'mesheryctl/doc/**'
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
-  group: preview-${{ github.event.pull_request.number || github.run_id }}
+  group: preview-build-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 defaults:
@@ -23,30 +22,17 @@ defaults:
     shell: bash
 
 jobs:
-  build-and-deploy-preview:
+  build-preview:
     runs-on: ubuntu-24.04
-    outputs:
-      removed_prs_json: ${{ steps.prune-previews.outputs.removed_prs_json }}
     env:
       HUGO_VERSION: 0.157.0
-      PREVIEW_RETENTION_LIMIT: 6
 
     steps:
       - name: Checkout PR code
         if: github.event.action != 'closed'
         uses: actions/checkout@v6
         with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.sha }}
-          persist-credentials: false
           submodules: recursive
-          fetch-depth: 0
-
-      - name: Checkout for cleanup
-        if: github.event.action == 'closed'
-        uses: actions/checkout@v6
-        with:
-          ref: gh-pages
           fetch-depth: 0
 
       - name: Install Hugo CLI
@@ -81,134 +67,23 @@ jobs:
         run: |
           make docs-build-production BASE_URL="/"
           find docs/public -maxdepth 1 -type d -name 'v0.*' -exec rm -rf {} +
-          cat > docs/public/robots.txt <<'EOF'
+          cat > docs/public/robots.txt <<'INNER_EOF'
           User-agent: *
           Disallow: /
-          EOF
+          INNER_EOF
 
-      - name: Deploy PR preview
-        if: github.event.action != 'closed'
-        uses: rossjrw/pr-preview-action@v1.6.3
-        with:
-          source-dir: ./docs/public
-          preview-branch: gh-pages
-          umbrella-dir: pr-preview
-          action: auto
-          comment: false
-
-      - name: Checkout gh-pages for preview retention
-        if: github.event.action != 'closed'
-        uses: actions/checkout@v6
-        with:
-          ref: gh-pages
-          fetch-depth: 0
-          path: gh-pages-maintenance
-
-      - name: Prune old PR previews
-        id: prune-previews
-        if: github.event.action != 'closed'
+      - name: Prepare Artifact Payload
         run: |
-          cd gh-pages-maintenance
-          mkdir -p pr-preview
-          removed_prs=()
-
-          mapfile -t previews < <(
-            while IFS= read -r preview; do
-              timestamp="$(git log -1 --format=%ct -- "pr-preview/$preview" 2>/dev/null || echo 0)"
-              printf '%s %s\n' "$timestamp" "$preview"
-            done < <(find pr-preview -mindepth 1 -maxdepth 1 -type d -name 'pr-*' -printf '%f\n') \
-              | sort -nr \
-              | awk '{print $2}'
-          )
-
-          if (( ${#previews[@]} <= PREVIEW_RETENTION_LIMIT )); then
-            echo "removed_prs_json=[]" >> "$GITHUB_OUTPUT"
-            exit 0
+          mkdir -p pr_payload
+          echo "${{ github.event.pull_request.number }}" > pr_payload/pr_number.txt
+          echo "${{ github.event.action }}" > pr_payload/pr_action.txt
+          if [ "${{ github.event.action }}" != "closed" ]; then
+            cp -r docs/public pr_payload/public
           fi
 
-          for preview in "${previews[@]:PREVIEW_RETENTION_LIMIT}"; do
-            rm -rf "pr-preview/$preview"
-            removed_prs+=("${preview#pr-}")
-          done
-
-          if git diff --quiet -- pr-preview; then
-            echo "removed_prs=" >> "$GITHUB_OUTPUT"
-            echo "removed_prs_json=[]" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add pr-preview
-          git commit -m "Prune old PR previews"
-          git push
-
-          echo "removed_prs=$(IFS=,; echo "${removed_prs[*]}")" >> "$GITHUB_OUTPUT"
-          echo "removed_prs_json=$(printf '%s\n' "${removed_prs[@]}" | jq -R . | jq -sc .)" >> "$GITHUB_OUTPUT"
-
-      - name: Comment PR with Preview URL
-        if: github.event.action != 'closed'
-        uses: marocchino/sticky-pull-request-comment@v2
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
-          header: pr-preview
-          message: |
-            🚀 Preview deployment: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-preview/pr-${{ github.event.pull_request.number }}/
-            > *Note: Preview may take a moment (GitHub Pages deployment in progress). Please wait and refresh. Track deployment [here](https://github.com/${{ github.repository }}/actions/workflows/pages/pages-build-deployment)*
-
-      - name: Comment on pruned previews
-        if: github.event.action != 'closed' && steps.prune-previews.outputs.removed_prs_json != '[]'
-        uses: actions/github-script@v7
-        env:
-          REMOVED_PRS_JSON: ${{ steps.prune-previews.outputs.removed_prs_json }}
-          PREVIEW_RETENTION_LIMIT: ${{ env.PREVIEW_RETENTION_LIMIT }}
-        with:
-          script: |
-            const removedPrs = JSON.parse(process.env.REMOVED_PRS_JSON);
-            const retentionLimit = process.env.PREVIEW_RETENTION_LIMIT;
-            const header = "pr-preview";
-            const marker = `<!-- Sticky Pull Request Comment${header} -->`;
-
-            for (const prNumber of removedPrs) {
-              const body =
-                `Preview deployment for PR #${prNumber} removed.\n\n` +
-                `This PR preview was automatically pruned because we keep only the ${retentionLimit} most recently updated previews on GitHub Pages to stay within deployment size limits.\n\n` +
-                `If needed, push a new commit to this PR to generate a fresh preview.\n` +
-                `${marker}`;
-
-              const { data: comments } = await github.rest.issues.listComments({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: Number(prNumber),
-                per_page: 100,
-              });
-
-              const existingComment = [...comments].reverse().find((comment) =>
-                comment.user?.login === "github-actions[bot]" &&
-                comment.body?.includes(marker)
-              );
-
-              if (existingComment) {
-                await github.rest.issues.updateComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  comment_id: existingComment.id,
-                  body,
-                });
-                continue;
-              }
-
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: Number(prNumber),
-                body,
-              });
-            }
-
-      - name: Cleanup PR preview on close
-        if: github.event.action == 'closed'
-        uses: rossjrw/pr-preview-action@v1.6.3
-        with:
-          preview-branch: gh-pages
-          umbrella-dir: pr-preview
-          action: remove
+          name: docs-preview-payload
+          path: pr_payload
+          retention-days: 1

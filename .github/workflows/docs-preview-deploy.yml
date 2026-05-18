@@ -1,0 +1,182 @@
+name: Deploy Docs Preview
+
+on:
+  workflow_run:
+    workflows: ["Build Docs Preview"]
+    types:
+      - completed
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: preview-deploy-${{ github.event.workflow_run.id }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-24.04
+    if: github.event.workflow_run.conclusion == 'success'
+    env:
+      PREVIEW_RETENTION_LIMIT: 6
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: docs-preview-payload
+          path: pr_payload
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Read PR details
+        id: pr-details
+        run: |
+          if [ ! -f pr_payload/pr_number.txt ]; then
+            echo "Artifact payload missing PR details"
+            exit 1
+          fi
+          PR_NUMBER=$(cat pr_payload/pr_number.txt)
+          PR_ACTION=$(cat pr_payload/pr_action.txt)
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "pr_action=$PR_ACTION" >> $GITHUB_OUTPUT
+
+      - name: Checkout gh-pages
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          fetch-depth: 0
+
+      - name: Deploy PR preview
+        if: steps.pr-details.outputs.pr_action != 'closed'
+        run: |
+          PR_NUMBER="${{ steps.pr-details.outputs.pr_number }}"
+          mkdir -p pr-preview/pr-$PR_NUMBER
+          rsync -a pr_payload/public/ pr-preview/pr-$PR_NUMBER/
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pr-preview/pr-$PR_NUMBER
+          
+          if git diff --staged --quiet; then
+            echo "No changes to deploy"
+          else
+            git commit -m "Deploy preview for PR $PR_NUMBER"
+            git push
+          fi
+
+      - name: Prune old PR previews
+        id: prune-previews
+        if: steps.pr-details.outputs.pr_action != 'closed'
+        run: |
+          mkdir -p pr-preview
+          removed_prs=()
+
+          mapfile -t previews < <(
+            while IFS= read -r preview; do
+              timestamp="$(git log -1 --format=%ct -- "pr-preview/$preview" 2>/dev/null || echo 0)"
+              printf '%s %s\n' "$timestamp" "$preview"
+            done < <(find pr-preview -mindepth 1 -maxdepth 1 -type d -name 'pr-*' -printf '%f\n') \
+              | sort -nr \
+              | awk '{print $2}'
+          )
+
+          if (( ${#previews[@]} <= PREVIEW_RETENTION_LIMIT )); then
+            echo "removed_prs_json=[]" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          for preview in "${previews[@]:PREVIEW_RETENTION_LIMIT}"; do
+            rm -rf "pr-preview/$preview"
+            removed_prs+=("${preview#pr-}")
+          done
+
+          if git diff --quiet -- pr-preview; then
+            echo "removed_prs_json=[]" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pr-preview
+          git commit -m "Prune old PR previews"
+          git push
+
+          echo "removed_prs_json=$(printf '%s\n' "${removed_prs[@]}" | jq -R . | jq -sc .)" >> "$GITHUB_OUTPUT"
+
+      - name: Comment PR with Preview URL
+        if: steps.pr-details.outputs.pr_action != 'closed'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          number: ${{ steps.pr-details.outputs.pr_number }}
+          header: pr-preview
+          message: |
+            🚀 Preview deployment: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-preview/pr-${{ steps.pr-details.outputs.pr_number }}/
+            > *Note: Preview may take a moment (GitHub Pages deployment in progress). Please wait and refresh. Track deployment [here](https://github.com/${{ github.repository }}/actions/workflows/pages/pages-build-deployment)*
+
+      - name: Comment on pruned previews
+        if: steps.pr-details.outputs.pr_action != 'closed' && steps.prune-previews.outputs.removed_prs_json != '[]'
+        uses: actions/github-script@v7
+        env:
+          REMOVED_PRS_JSON: ${{ steps.prune-previews.outputs.removed_prs_json }}
+          PREVIEW_RETENTION_LIMIT: ${{ env.PREVIEW_RETENTION_LIMIT }}
+        with:
+          script: |
+            const removedPrs = JSON.parse(process.env.REMOVED_PRS_JSON);
+            const retentionLimit = process.env.PREVIEW_RETENTION_LIMIT;
+            const header = "pr-preview";
+            const marker = `<!-- Sticky Pull Request Comment${header} -->`;
+
+            for (const prNumber of removedPrs) {
+              const body =
+                `Preview deployment for PR #${prNumber} removed.\n\n` +
+                `This PR preview was automatically pruned because we keep only the ${retentionLimit} most recently updated previews on GitHub Pages to stay within deployment size limits.\n\n` +
+                `If needed, push a new commit to this PR to generate a fresh preview.\n` +
+                `${marker}`;
+
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: Number(prNumber),
+                per_page: 100,
+              });
+
+              const existingComment = [...comments].reverse().find((comment) =>
+                comment.user?.login === "github-actions[bot]" &&
+                comment.body?.includes(marker)
+              );
+
+              if (existingComment) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existingComment.id,
+                  body,
+                });
+                continue;
+              }
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: Number(prNumber),
+                body,
+              });
+            }
+
+      - name: Cleanup PR preview on close
+        if: steps.pr-details.outputs.pr_action == 'closed'
+        run: |
+          PR_NUMBER="${{ steps.pr-details.outputs.pr_number }}"
+          if [ -d "pr-preview/pr-$PR_NUMBER" ]; then
+            rm -rf "pr-preview/pr-$PR_NUMBER"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add "pr-preview/pr-$PR_NUMBER"
+            git commit -m "Remove preview for PR $PR_NUMBER (closed)"
+            git push
+            
+            # Optionally comment about removal
+            echo "Removed PR preview for PR $PR_NUMBER."
+          fi
