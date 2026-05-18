@@ -1,8 +1,19 @@
 import { expect, test } from './fixtures/project';
 import { mockPerfApis } from './mocks/mockPerfApi';
 import { DashboardPage } from './pages/DashboardPage';
+import { Page } from '@playwright/test';
 
-const performanceProfiles = [
+interface PerformanceProfileConfig {
+  profileName: string;
+  serviceMesh: string;
+  url: string;
+  loadGenerator: string;
+  concurrentRequest: string;
+  qps: string;
+  duration: string;
+}
+
+const performanceProfiles: PerformanceProfileConfig[] = [
   // {
   //   profileName: 'Fortio-Perf-Test',
   //   serviceMesh: 'None',
@@ -14,18 +25,22 @@ const performanceProfiles = [
   // },
 ];
 
-performanceProfiles.forEach((config) => {
+performanceProfiles.forEach((config: PerformanceProfileConfig) => {
   const { profileName, serviceMesh, url, loadGenerator, concurrentRequest, qps, duration } = config;
 
   test.describe(`Performance Management Tests with ${loadGenerator}`, () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({ page }: { page: Page }) => {
       await mockPerfApis(page, config);
       const dashboardPage = new DashboardPage(page);
       await dashboardPage.navigateToDashboard();
       await dashboardPage.navigateToProfiles();
     });
 
-    test(`Add performance profile with load generator ${loadGenerator}`, async ({ page }) => {
+    test(`Add performance profile with load generator ${loadGenerator}`, async ({
+      page,
+    }: {
+      page: Page;
+    }) => {
       await page.getByLabel('Add Performance Profile').click();
       await page.getByLabel('Profile Name').fill(profileName);
       await page.getByLabel('Technology').click();
@@ -44,6 +59,8 @@ performanceProfiles.forEach((config) => {
 
     test(`View detailed result of a performance profile (Graph Visualiser) with load generator ${loadGenerator}`, async ({
       page,
+    }: {
+      page: Page;
     }) => {
       await expect(page.getByText(profileName)).toBeVisible();
       await page.getByRole('button', { name: 'View Results', exact: true }).first().click();
@@ -53,6 +70,8 @@ performanceProfiles.forEach((config) => {
 
     test(`Edit the configuration of a performance profile with load generator ${loadGenerator} and service mesh ${serviceMesh}`, async ({
       page,
+    }: {
+      page: Page;
     }) => {
       await page.getByText(profileName).click();
       await page.getByTestId('performanceProfileCard-edit').click();
@@ -69,6 +88,8 @@ performanceProfiles.forEach((config) => {
 
     test(`Compare test of a performance profile with load generator ${loadGenerator}`, async ({
       page,
+    }: {
+      page: Page;
     }) => {
       await page.getByRole('button', { name: 'View Results', exact: true }).first().click();
       await page.getByTestId('MUIDataTableBodyRow-0').locator('input[type="checkbox"]').check();
@@ -77,7 +98,11 @@ performanceProfiles.forEach((config) => {
       await expect(page.getByRole('heading', { name: 'Comparison' })).toBeVisible();
     });
 
-    test(`Delete a performance profile with load generator ${loadGenerator}`, async ({ page }) => {
+    test(`Delete a performance profile with load generator ${loadGenerator}`, async ({
+      page,
+    }: {
+      page: Page;
+    }) => {
       await page.getByText(profileName).click();
       await page.getByTestId('performanceProfileCard-delete').first().click();
       await expect(
