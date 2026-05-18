@@ -85,6 +85,11 @@ const StyledDialogBox = styled(DialogContentText)(({ theme }) => ({
   padding: "1.2rem",
 }));
 
+const PROVIDER_LOGO_SRC = "/provider/static/img/branding/meshery-logo-dark-text.png";
+const PROVIDER_LOGO_FALLBACK_SRC = "/static/img/branding/meshery-logo-dark-text.png";
+const EXTERNAL_LINK_ICON_SRC = "/provider/static/img/icons/external-link.svg";
+const EXTERNAL_LINK_ICON_FALLBACK_SRC = "/static/img/icons/external-link.svg";
+
 export default function Provider() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [availableProviders, setAvailableProviders] = useState({});
@@ -154,11 +159,8 @@ export default function Provider() {
   return (
     <ProviderLayout>
       <MesheryLogo
-        src="/provider/static/img/meshery-logo/meshery-logo-dark-text-noBG.png"
-        onError={(e) =>
-          (e.target.src =
-            "/static/img/meshery-logo/meshery-logo-dark-text-noBG.png")
-        }
+        src={PROVIDER_LOGO_SRC}
+        onError={(e) => (e.target.src = PROVIDER_LOGO_FALLBACK_SRC)}
         alt="logo"
       />
       <CustomDiv>
@@ -345,10 +347,8 @@ export default function Provider() {
                   >
                     Create Your Own Provider&nbsp;
                     <img
-                      src="/provider/static/img/external-link.svg"
-                      onError={(e) =>
-                        (e.target.src = "/static/img/external-link.svg")
-                      }
+                      src={EXTERNAL_LINK_ICON_SRC}
+                      onError={(e) => (e.target.src = EXTERNAL_LINK_ICON_FALLBACK_SRC)}
                       width="16px"
                       alt="External link"
                       style={{
@@ -454,10 +454,8 @@ export default function Provider() {
             >
               Providers in Meshery Docs
               <img
-                src="/provider/static/img/external-link.svg"
-                onError={(e) =>
-                  (e.target.src = "/static/img/external-link.svg")
-                }
+                src={EXTERNAL_LINK_ICON_SRC}
+                onError={(e) => (e.target.src = EXTERNAL_LINK_ICON_FALLBACK_SRC)}
                 width="16px"
                 alt="External link"
               />
