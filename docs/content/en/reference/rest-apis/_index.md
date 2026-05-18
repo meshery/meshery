@@ -10,8 +10,6 @@ aliases:
 
 Meshery's REST API specifications are now maintained and published from the [meshery/schemas](https://github.com/meshery/schemas) repository.
 
-### Related Reading
-
 - Published schemas: [schemas.meshery.io](https://schemas.meshery.io/)
 - Source repository: [github.com/meshery/schemas](https://github.com/meshery/schemas)
 - Contributor guide: [Schema-Driven Development](https://docs.meshery.io/project/contributing/contributing-schemas)
@@ -89,5 +87,7 @@ Using curl, you can access Meshery's REST API by executing this command:
 </details>
 
 ## Endpoints
+
+### Related Reading
 
 See the published Meshery OpenAPI bundles in [meshery/schemas](https://github.com/meshery/schemas) for the authoritative REST API definitions.
