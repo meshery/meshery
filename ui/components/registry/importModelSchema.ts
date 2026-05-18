@@ -62,6 +62,8 @@ const canonicalUploadType =
 export const UPLOAD_TYPE_FILE = 'file';
 export const UPLOAD_TYPE_URL = 'urlImport';
 export const UPLOAD_TYPE_CSV = 'csv';
+export const UPLOAD_TYPE_DOCKER = 'Docker Hub';
+export const UPLOAD_TYPE_GHCR = 'GHCR';
 
 // Reuse the canonical's discriminator-conditional shape, but drop the
 // `required:` clauses on each branch. Two reasons:
@@ -82,8 +84,49 @@ const stripRequired = (branch: RJSFNode): RJSFNode => {
 export const importModelSchema = {
   title: ModelImportRjsfSchemaV1Beta2.title,
   type: 'object',
-  properties: (ModelImportRjsfSchemaV1Beta2 as unknown as RJSFNode).properties,
-  allOf: ((ModelImportRjsfSchemaV1Beta2 as unknown as RJSFNode).allOf ?? []).map(stripRequired),
+  properties: {
+    ...(ModelImportRjsfSchemaV1Beta2 as unknown as RJSFNode).properties,
+    uploadType: {
+      ...((ModelImportRjsfSchemaV1Beta2 as unknown as RJSFNode).properties?.uploadType as any),
+      enum: [
+        UPLOAD_TYPE_FILE,
+        UPLOAD_TYPE_URL,
+        UPLOAD_TYPE_CSV,
+        UPLOAD_TYPE_DOCKER,
+        UPLOAD_TYPE_GHCR,
+      ],
+      enumNames: ['File Import', 'URL Import', 'CSV Import', 'Docker Hub', 'GHCR'],
+    },
+  },
+  allOf: [
+    ...((ModelImportRjsfSchemaV1Beta2 as unknown as RJSFNode).allOf ?? []).map(stripRequired),
+    {
+      if: { properties: { uploadType: { const: UPLOAD_TYPE_DOCKER } } },
+      then: {
+        properties: {
+          url: {
+            type: 'string',
+            title: 'Docker Image',
+            description: 'Enter the Docker Hub image path (e.g., meshery/meshery-istio:latest)',
+          },
+        },
+        required: ['url'],
+      },
+    },
+    {
+      if: { properties: { uploadType: { const: UPLOAD_TYPE_GHCR } } },
+      then: {
+        properties: {
+          url: {
+            type: 'string',
+            title: 'GHCR Image',
+            description: 'Enter the GHCR image path (e.g., ghcr.io/meshery/meshery:latest)',
+          },
+        },
+        required: ['url'],
+      },
+    },
+  ],
   required: ['uploadType'],
 };
 
@@ -97,9 +140,7 @@ export const importModelUiSchema = {
   ...ModelImportRjsfUiSchemaV1Beta2,
   uploadType: {
     'ui:widget': 'radio',
-    'ui:enumNames': Array.isArray(canonicalUploadType?.enumNames)
-      ? [...(canonicalUploadType.enumNames as string[])]
-      : undefined,
+    'ui:enumNames': ['File Import', 'URL Import', 'CSV Import', 'Docker Hub', 'GHCR'],
   },
   modelFile: { 'ui:widget': 'file' },
   fileName: { 'ui:widget': 'hidden' },

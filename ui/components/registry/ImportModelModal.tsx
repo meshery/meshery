@@ -215,7 +215,6 @@ const ImportModelModal = memo<ImportModelModalProps>(
                   fileName = inputFile.name;
                 }
               } catch (err) {
-                console.error('Error reading file from DOM:', err);
                 notify({
                   message: `Unable to read the selected file. Please try again.`,
                   event_type: EVENT_TYPES.ERROR,
@@ -282,7 +281,6 @@ const ImportModelModal = memo<ImportModelModalProps>(
         await importModelReq({ importBody: requestBody }).unwrap();
         setActiveStep(1);
       } catch (err) {
-        console.error('Failed to import model:', err);
         notify({
           message: 'Model import failed. Please verify the file or URL and try again.',
           event_type: EVENT_TYPES.ERROR,
