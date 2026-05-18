@@ -105,6 +105,14 @@ func resolveImportVariant(body pattern.MesheryPatternImportRequestBody) (importV
 // 404 HTML body isn't handed to the design parser as if it were a
 // valid import file.
 func fetchFileFromURL(fileURL string) (FileToImport, error) {
+	// Support for OCI artifacts using ORAS
+	if strings.HasPrefix(fileURL, "docker://") || strings.HasPrefix(fileURL, "ghcr://") {
+		// This is a placeholder for future ORAS implementation (Task 4)
+		// For now, we log the OCI fetch attempt
+		fmt.Printf("OCI Artifact Fetch Requested: %s\n", fileURL)
+		return FileToImport{}, fmt.Errorf("OCI registry fetch (ORAS) is currently being implemented for %s", fileURL)
+	}
+
 	resp, err := designImportHTTPClient.Get(fileURL)
 	if err != nil {
 		return FileToImport{}, models.ErrDoRequest(err, "GET", fileURL)
