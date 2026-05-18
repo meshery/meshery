@@ -527,6 +527,8 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 			if event != nil {
 				_ = provider.PersistEvent(*event, token)
 				h.config.EventBroadcaster.Publish(userID, event)
+			} else {
+				h.log.Warnf("SendEvent returned a nil event without an error for connection %s on status %q; skipping event persistence", inst.ID, status)
 			}
 		}(inst, connection.Status)
 	}
