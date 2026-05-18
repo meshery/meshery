@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Box, styled, Step } from '@sistent/sistent';
-import TipsCarousel from '../../../General/TipsCarousel';
+import TipsCarousel from '../../../general/TipsCarousel';
 import {
   ConnectionStepperTips,
   registerConnectionContent,

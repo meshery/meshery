@@ -473,40 +473,41 @@ export function isExtensionOpen() {
   return window.location.pathname.startsWith(mesheryExtensionRoute);
 }
 
-export const KANVAS_MODE = {
+export const EXTENSION_MODE = {
   DESIGN: 'design',
   OPERATOR: 'operator',
 };
 
-export function isDesignOpenInKanvas() {
+export function isDesignOpenInExtension() {
   const params = new URLSearchParams(window.location.search);
-  return params.has('design') && params.get('mode') === KANVAS_MODE.DESIGN;
+  return params.has('design') && params.get('mode') === EXTENSION_MODE.DESIGN;
 }
 
-export const isKanvasEnabled = (capabilitiesRegistry) => {
-  const navigatorExtension = _.get(capabilitiesRegistry, 'extensions.navigator') || [];
+export const isExtensionEnabled = (providerCapabilities) => {
+  const navigatorExtension = _.get(providerCapabilities, 'extensions.navigator') || [];
   return navigatorExtension.some((ext) => ext.title === 'Kanvas');
 };
 
-export const isOperatorEnabled = isKanvasEnabled;
-export const isKanvasDesignerEnabled = isKanvasEnabled;
+export const isOperatorEnabled = isExtensionEnabled;
+export const isDesignerEnabled = isExtensionEnabled;
 
-export const useIsKanvasEnabled = () => {
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+export const useIsExtensionEnabled = () => {
+  const { providerCapabilities } = useSelector((state) => state.ui);
 
-  return isKanvasEnabled(capabilitiesRegistry);
+  return isExtensionEnabled(providerCapabilities);
 };
 
-export const useIsOperatorEnabled = useIsKanvasEnabled;
-export const useIsKanvasDesignerEnabled = useIsKanvasEnabled;
+export const useisExtensionEnabled = useIsExtensionEnabled;
+export const useIsOperatorEnabled = useIsExtensionEnabled;
+export const useIsDesignerEnabled = useIsExtensionEnabled;
 
 export const openViewScopedToDesignInOperator = (designName, designId, router) => {
   if (isExtensionOpen()) {
     mesheryEventBus.publish({
       type: 'OPEN_VIEW_SCOPED_TO_DESIGN',
       data: {
-        design_id: designId,
-        design_name: designName,
+        designId,
+        designName,
       },
     });
     return;
@@ -526,13 +527,13 @@ export const mergeDesignWithCurrent = (designId, designName) => {
   return;
 };
 
-export const openDesignInKanvas = (designId, designName, router) => {
+export const openDesignInExtension = (designId, designName, router) => {
   if (isExtensionOpen()) {
     mesheryEventBus.publish({
-      type: 'OPEN_DESIGN_IN_KANVAS',
+      type: 'OPEN_DESIGN_IN_EXTENSION',
       data: {
-        design_id: designId,
-        design_name: designName,
+        designId,
+        designName,
       },
     });
     return;
@@ -541,14 +542,14 @@ export const openDesignInKanvas = (designId, designName, router) => {
   router.push(`/extension/meshmap?mode=design&type=design&id=${designId}`);
 };
 
-export const openViewInKanvas = (viewId, viewName, router) => {
-  console.log('openViewInKanvas', viewId, viewName, router);
+export const openViewInExtension = (viewId, viewName, router) => {
+  console.log('openViewInExtension', viewId, viewName, router);
   if (isExtensionOpen()) {
     mesheryEventBus.publish({
-      type: 'OPEN_VIEW_IN_KANVAS',
+      type: 'OPEN_VIEW_IN_EXTENSION',
       data: {
-        view_id: viewId,
-        view_name: viewName,
+        viewId,
+        viewName,
       },
     });
     return;
