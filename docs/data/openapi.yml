@@ -13204,7 +13204,7 @@ paths:
                     type: array
                     items:
                       type: object
-                      description: Represents a user in Layer5 Cloud (Meshery)
+                      description: Represents a user in Meshery Cloud (Meshery)
                       required:
                         - id
                         - userId
@@ -13240,7 +13240,7 @@ paths:
                         provider:
                           type: string
                           maxLength: 100
-                          description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
+                          description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
                           example:
                             - local
                             - github
@@ -13680,7 +13680,7 @@ paths:
                     type: array
                     items:
                       type: object
-                      description: Represents a user in Layer5 Cloud (Meshery)
+                      description: Represents a user in Meshery Cloud (Meshery)
                       required:
                         - id
                         - userId
@@ -13716,7 +13716,7 @@ paths:
                         provider:
                           type: string
                           maxLength: 100
-                          description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
+                          description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
                           example:
                             - local
                             - github
@@ -14118,7 +14118,7 @@ paths:
             application/json:
               schema:
                 type: object
-                description: Represents a user in Layer5 Cloud (Meshery)
+                description: Represents a user in Meshery Cloud (Meshery)
                 required:
                   - id
                   - userId
@@ -14154,7 +14154,7 @@ paths:
                   provider:
                     type: string
                     maxLength: 100
-                    description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
+                    description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
                     example:
                       - local
                       - github
@@ -14545,7 +14545,7 @@ paths:
             application/json:
               schema:
                 type: object
-                description: Represents a user in Layer5 Cloud (Meshery)
+                description: Represents a user in Meshery Cloud (Meshery)
                 required:
                   - id
                   - userId
@@ -14581,7 +14581,7 @@ paths:
                   provider:
                     type: string
                     maxLength: 100
-                    description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
+                    description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
                     example:
                       - local
                       - github
@@ -47211,7 +47211,7 @@ components:
             json: isAnnotation
     role_Role:
       type: object
-      description: Role definition for Layer5 Cloud (Meshery).
+      description: Role definition for Meshery Cloud (Meshery).
       required:
         - roleName
         - description
@@ -47330,7 +47330,7 @@ components:
           items:
             x-go-type: Role
             type: object
-            description: Role definition for Layer5 Cloud (Meshery).
+            description: Role definition for Meshery Cloud (Meshery).
             required:
               - roleName
               - description
@@ -48293,7 +48293,7 @@ components:
           description: The data of the teammemberspage.
     User_User:
       type: object
-      description: Represents a user in Layer5 Cloud (Meshery)
+      description: Represents a user in Meshery Cloud (Meshery)
       required:
         - id
         - userId
@@ -48329,7 +48329,7 @@ components:
         provider:
           type: string
           maxLength: 100
-          description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
+          description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
           example:
             - local
             - github
@@ -48700,7 +48700,7 @@ components:
           type: array
           items:
             type: object
-            description: Represents a user in Layer5 Cloud (Meshery)
+            description: Represents a user in Meshery Cloud (Meshery)
             required:
               - id
               - userId
@@ -48736,7 +48736,7 @@ components:
               provider:
                 type: string
                 maxLength: 100
-                description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
+                description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
                 example:
                   - local
                   - github
@@ -49108,7 +49108,7 @@ components:
           type: array
           items:
             type: object
-            description: Represents a user in Layer5 Cloud (Meshery)
+            description: Represents a user in Meshery Cloud (Meshery)
             required:
               - id
               - userId
@@ -49144,7 +49144,7 @@ components:
               provider:
                 type: string
                 maxLength: 100
-                description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
+                description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
                 example:
                   - local
                   - github
@@ -63014,7 +63014,7 @@ components:
             provider:
               type: string
               maxLength: 100
-              description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
+              description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
               example:
                 - local
                 - github
@@ -63674,7 +63674,7 @@ components:
                   provider:
                     type: string
                     maxLength: 100
-                    description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
+                    description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
                     example:
                       - local
                       - github
@@ -64868,7 +64868,7 @@ components:
                   provider:
                     type: string
                     maxLength: 100
-                    description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
+                    description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
                     example:
                       - local
                       - github
