@@ -84,6 +84,36 @@ const ImportModelModal = React.memo(
           }
           break;
         }
+        case 'Docker Hub': {
+          if (url) {
+            requestBody = {
+              importBody: {
+                url: `docker://${url}`,
+              },
+              uploadType: 'docker',
+              register: true,
+            };
+          } else {
+            console.error('Error: Docker image path is empty');
+            return;
+          }
+          break;
+        }
+        case 'GHCR': {
+          if (url) {
+            requestBody = {
+              importBody: {
+                url: `ghcr://${url}`,
+              },
+              uploadType: 'ghcr',
+              register: true,
+            };
+          } else {
+            console.error('Error: GHCR image path is empty');
+            return;
+          }
+          break;
+        }
         case 'CSV Import': {
           setIsImportModalOpen(false);
           setIsCsvModalOpen(true);

@@ -107,6 +107,7 @@ const RenderContents = ({
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon style={{ fill: theme.palette.text.default }} />}
+            data-testid="advanced-details-accordion-summary"
           >
             Advanced Details
           </AccordionSummary>
