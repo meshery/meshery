@@ -555,19 +555,29 @@ const ConnectionTable = ({
     handleDeleteConnections,
   });
 
+  // Purely derive responsive visibility to decouple it from the render cycle and avoid recursive setState loops.
+  // This replaces the useEffect based synchronization which triggered infinite updates due to unstable dependencies.
+  const responsiveVisibility = useMemo(
+    () => getResponsiveColumnVisibility(columnNames, colViews, width),
+    [columnNames, colViews, width],
+  );
+
+  // Track user-initiated column overrides separately to maintain clear precedence over responsive defaults.
+  // This state is now only updated on manual user interaction, preventing automatic render-loop triggers.
+  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean | undefined>>({});
+
+  // Compose responsive defaults with manual overrides into a single stable visibility map.
+  // Merging derived and state-based visibility ensures responsiveness without redundant side-effect cycles.
+  const mergedVisibility = useMemo(
+    () => ({ ...responsiveVisibility, ...columnVisibility }),
+    [responsiveVisibility, columnVisibility],
+  );
+
   const [tableCols, updateCols] = useState(columns);
 
   useEffect(() => {
     updateCols(columns);
   }, [columns]);
-
-  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean | undefined>>(
-    () => getResponsiveColumnVisibility(columnNames, colViews, width),
-  );
-
-  useEffect(() => {
-    setColumnVisibility(getResponsiveColumnVisibility(columnNames, colViews, width));
-  }, [colViews, columnNames, width]);
 
   if (isConnectionLoading) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Connections" />;
@@ -584,7 +594,7 @@ const ConnectionTable = ({
         setSelectedFilters={setSelectedFilters}
         handleApplyFilter={handleApplyFilter}
         columns={columns}
-        columnVisibility={columnVisibility}
+        columnVisibility={mergedVisibility}
         setColumnVisibility={setColumnVisibility}
       />
 
@@ -594,7 +604,7 @@ const ConnectionTable = ({
         options={options}
         tableCols={tableCols}
         updateCols={updateCols}
-        columnVisibility={columnVisibility}
+        columnVisibility={mergedVisibility}
       />
 
       <_PromptComponent ref={modalRef} />
