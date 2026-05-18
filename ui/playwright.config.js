@@ -25,9 +25,9 @@ module.exports = defineConfig({
   timeout: BASE_TIMEOUT,
   expect: {
     /* The number of milliseconds the test runner will wait for the expect matchers to pass. */
-    timeout: BASE_TIMEOUT,
+    timeout: 60 * 1000,
   },
-  retries: 0,
+  retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 4 : 4,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */

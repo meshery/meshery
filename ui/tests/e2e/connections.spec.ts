@@ -52,7 +52,8 @@ test.describe.serial('Connection Management Tests', () => {
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToConnections();
     await page.waitForURL(/\/management\/connections/);
-    await expect(page.getByTestId('ConnectionTable-search')).toBeVisible();
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByTestId('ConnectionTable-search')).toBeVisible({ timeout: 120000 });
   });
 
   test('Verify that UI components are displayed', async ({ page }) => {

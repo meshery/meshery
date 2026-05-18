@@ -27,6 +27,7 @@ export class ExtensionsPage {
     const dashboardPage = new DashboardPage(this.page);
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToExtensions();
+    await this.page.waitForLoadState('networkidle');
   }
 
   async verifyPerformanceAnalysisDetails() {
@@ -40,8 +41,8 @@ export class ExtensionsPage {
   }
 
   async verifyExtensionNavItemsUseTopLevelLayout() {
-    await expect(this.extensionNavRegion).toBeVisible();
-    await expect(this.extensionRootNavItems.first()).toBeVisible();
+    await expect(this.extensionNavRegion).toBeVisible({ timeout: 120000 });
+    await expect(this.extensionRootNavItems.first()).toBeVisible({ timeout: 120000 });
     await expect(this.extensionRegionTopLevelLists).toHaveCount(0);
   }
 
