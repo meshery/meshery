@@ -319,6 +319,10 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
 			if err != nil {
 				h.log.Error(err)
+				if event != nil {
+					_ = provider.PersistEvent(*event, token)
+					go h.config.EventBroadcaster.Publish(userUUID, event)
+				}
 				return
 			}
 			if event != nil {
@@ -385,6 +389,10 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
 			if err != nil {
 				h.log.Error(err)
+				if event != nil {
+					_ = provider.PersistEvent(*event, token)
+					go h.config.EventBroadcaster.Publish(userUUID, event)
+				}
 				return
 			}
 			if event != nil {
