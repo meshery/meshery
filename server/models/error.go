@@ -63,7 +63,7 @@ const (
 	ErrTokenExpiredCode                   = "meshery-server-1260"
 	ErrTokenClaimsCode                    = "meshery-server-1261"
 	ErrTokenClientCheckCode               = "meshery-server-1262"
-	ErrTokenPraseCode                     = "meshery-server-1263"
+	ErrTokenParseCode                     = "meshery-server-1263"
 	ErrJWKsKeysCode                       = "meshery-server-1264"
 	ErrDecodeBase64Code                   = "meshery-server-1265"
 	ErrMarshalPKIXCode                    = "meshery-server-1266"
@@ -486,8 +486,8 @@ func ErrTokenClientCheck(err error) error {
 	return errors.New(ErrTokenClientCheckCode, errors.Alert, []string{"Error occurred while performing token check HTTP request"}, []string{err.Error()}, []string{}, []string{})
 }
 
-func ErrTokenPrase(err error) error {
-	return errors.New(ErrTokenPraseCode, errors.Alert, []string{"Error occurred while Prasing and validating the token"}, []string{err.Error()}, []string{}, []string{})
+func ErrTokenParse(err error) error {
+	return errors.New(ErrTokenParseCode, errors.Alert, []string{"Error occurred while parsing and validating the token"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrJWKsKeys(err error) error {
