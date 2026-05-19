@@ -86,7 +86,7 @@ clients:
 duration: "30m"
 ```
 
-See this sample GitHub workflow (<a href="https://github.com/layer5io/meshery-performance-action/blob/master/action.yml">action.yml</a>) for more configuration details.
+See this sample GitHub workflow (<a href="https://github.com/meshery-extensions/meshery-performance-action/blob/master/action.yml">action.yml</a>) for more configuration details.
 
 <a href="./images/service-mesh-performance-profile-test-results.png"><img src="./images/service-mesh-performance-profile-test-results.png" className="image-center" alt="performance management dashboard" /></a>
 
