@@ -91,7 +91,10 @@ paths:
       summary: Evaluate relationships in a design
       description: >-
         Performs relationship evaluation on a given design, applying policies and updating components and relationships
-        as needed.
+        as needed. This `EvaluationResponse` contract is engine-agnostic: it is produced either by this server operation
+        or by an equivalent in-browser WebAssembly engine implementing the same contract. See
+        `docs/relationship-evaluation-engine-contract.md` for the authoritative engine contract, the in-browser engine
+        surface, and the registry-independent hydration boundary.
       requestBody:
         required: true
         content:
@@ -40852,7 +40855,7 @@ components:
           format: uri
           description: URL to the badge image.
           example: >-
-            https://raw.githubusercontent.com/layer5io/layer5-academy/refs/heads/master/static/11111111-1111-1111-1111-111111111111/images/meshery-logo-light.webp
+            https://raw.githubusercontent.com/meshery-extensions/meshery-academy/refs/heads/master/.github/assets/images/mershery-icon.png
           maxLength: 2048
           x-oapi-codegen-extra-tags:
             db: image_url
@@ -40928,7 +40931,7 @@ components:
           format: uri
           description: URL to the badge image.
           example: >-
-            https://raw.githubusercontent.com/layer5io/layer5-academy/refs/heads/master/static/11111111-1111-1111-1111-111111111111/images/meshery-logo-light.webp
+            https://raw.githubusercontent.com/meshery-extensions/meshery-academy/refs/heads/master/.github/assets/images/mershery-icon.png
           maxLength: 2048
           x-oapi-codegen-extra-tags:
             db: image_url
@@ -41039,7 +41042,7 @@ components:
                 format: uri
                 description: URL to the badge image.
                 example: >-
-                  https://raw.githubusercontent.com/layer5io/layer5-academy/refs/heads/master/static/11111111-1111-1111-1111-111111111111/images/meshery-logo-light.webp
+                  https://raw.githubusercontent.com/meshery-extensions/meshery-academy/refs/heads/master/.github/assets/images/mershery-icon.png
                 maxLength: 2048
                 x-oapi-codegen-extra-tags:
                   db: image_url
@@ -67832,7 +67835,7 @@ components:
             path: github.com/gofrs/uuid
         loadGenerators:
           type: array
-          description: Load generators (e.g. fortio, wrk2) to drive the profile's load test.
+          description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
           minItems: 1
           items:
             type: string
@@ -68058,7 +68061,7 @@ components:
             path: github.com/gofrs/uuid
         loadGenerators:
           type: array
-          description: Load generators (e.g. fortio, wrk2) to drive the profile's load test.
+          description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
           minItems: 1
           items:
             type: string
@@ -68260,7 +68263,7 @@ components:
                   path: github.com/gofrs/uuid
               loadGenerators:
                 type: array
-                description: Load generators (e.g. fortio, wrk2) to drive the profile's load test.
+                description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
                 minItems: 1
                 items:
                   type: string
@@ -77726,7 +77729,7 @@ components:
                   path: github.com/gofrs/uuid
               loadGenerators:
                 type: array
-                description: Load generators (e.g. fortio, wrk2) to drive the profile's load test.
+                description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
                 minItems: 1
                 items:
                   type: string

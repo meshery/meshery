@@ -10,11 +10,11 @@ As of this writing, you will be presented with two providers, _Layer5_ and _None
 ```bash
 Use the arrow keys to navigate: ↓ ↑ → ← 
 ? Select a Provider: 
-  ▸ Layer5
+  ▸ Meshery
     None
 ```
 
-- Selecting _Layer5_ will open a browser to complete the login and authentication process with Meshery Cloud. On successful authentication, you can close the window and return to the command prompt. 
+- Selecting _Meshery_ will open a browser to complete the login and authentication process with Meshery Cloud. On successful authentication, you can close the window and return to the command prompt. 
 
   Verify that an `auth.json` file was created in the `.meshery` folder in your home directory.
 
@@ -27,7 +27,7 @@ Use the arrow keys to navigate: ↓ ↑ → ←
   -rw-rw-r-- 1 ubuntu ubuntu 988 Dec 21 06:04 meshery.yaml
   ```
 
-  **_The need for authentication to `Layer5` [provider](/extensibility/providers) is to save your environment setup while also having persistent/steady sessions and to be able to retrieve performance test results._**
+  **_The need for authentication to `Meshery` [provider](/extensibility/providers) is to save your environment setup while also having persistent/steady sessions and to be able to retrieve performance test results._**
 
 - Selecting _None_ will create an empty `auth.json` file. All your work remains local and ephemeral. 
 
