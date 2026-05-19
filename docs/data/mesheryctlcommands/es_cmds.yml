@@ -275,8 +275,8 @@ perf:
         load-generator:
           name: --load-generator
           arg: apply
-          description: "Elección del generador de carga: fortio (OR) wrk2 (predeterminado: fortio)."
-          usage: mesheryctl perf apply [profile-name] --url [URL] --load-generator [fortio/wrk2]
+          description: "Elección del generador de carga: fortio (predeterminado: fortio)."
+          usage: mesheryctl perf apply [profile-name] --url [URL] --load-generator [fortio]
         mesh:
           name: --mesh
           arg: apply

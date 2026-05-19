@@ -26,7 +26,6 @@ Meshery provides users with a choice about the kind of load generator they prefe
 Meshery supports the following load generators and is [extendible](/extensibility) to support others:
 
 - [fortio](#fortio)
-- [wrk2](#wrk2)
 
 ### fortio
 
@@ -34,10 +33,6 @@ Fortio is a fast, small (3Mb docker image, minimal dependencies),
 reusable, embeddable go library as well as a command line tool and server process,
 the server includes a simple web UI and graphical representation of the results
 (both a single latency graph and a multiple results comparative min, max, avg, qps and percentiles graphs).
-
-### wrk2
-
-It is a modern HTTP benchmarking tool capable of generating significant load when run on a single multi-core CPU. It combines a multithreaded design with scalable event notification systems such as epoll and kqueue.
 
 ## Configuring performance testing settings
 
