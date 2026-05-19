@@ -24,25 +24,42 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request, p models.
 }
 
 // LogoutHandler destroys the session and redirects to home.
+//
+// CDA cookie-lifecycle: this server may bridge auth through a Meshery Cloud
+// custom-domain (e.g. cloud.meshery.io -> .meshery.io) that sets cookies at
+// a Domain scope different from the Meshery Server's own host. A
+// one-scope logout would leave those sibling-domain cookies in place and a
+// subsequent navigation could silently re-authenticate the browser. We
+// iterate every host scope the server knows about — the current host,
+// its PSL-derived eTLD+1, and every configured remote provider's host +
+// eTLD+1 — and emit a Set-Cookie clearance for each. See
+// auth_cookie_clear.go for the scope-resolution logic and the rationale
+// for using golang.org/x/net/publicsuffix instead of a naive dot split.
 func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, user *models.User, p models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	// Clear all Meshery cookies to ensure complete logout
-	for _, cookieName := range []string{
+	// Clear all Meshery cookies to ensure complete logout — across every
+	// host scope a CDA flow might have set them on.
+	cookieNames := []string{
 		h.config.ProviderCookieName,
 		models.TokenCookieName,
 		models.ProviderSessionCookieName,
-	} {
-		http.SetCookie(w, &http.Cookie{
-			Name:     cookieName,
-			Value:    "",
-			Path:     "/",
-			HttpOnly: true,
-			MaxAge:   -1,
-		})
 	}
+	providerURLs := []string{}
+	if h.config != nil {
+		for _, prov := range h.config.Providers {
+			if prov == nil {
+				continue
+			}
+			if u := prov.GetProviderURL(); u != "" {
+				providerURLs = append(providerURLs, u)
+			}
+		}
+	}
+	scopes := authCookieScopes(hostFromRequest(req), providerURLs)
+	clearAuthCookies(w, cookieNames, scopes)
 	_ = p.DeleteCapabilitiesForUser(user.ID.String())
 	err := p.Logout(w, req)
 	if err != nil {
