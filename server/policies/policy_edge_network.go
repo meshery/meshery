@@ -32,8 +32,5 @@ func (p *EdgeNonBindingPolicy) IdentifyRelationship(relDef *relationship.Relatio
 }
 
 func (p *EdgeNonBindingPolicy) SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
-	if getRelStatus(rel) == StatusDeleted {
-		return nil
-	}
 	return patchMutatorsAction(rel, design)
 }

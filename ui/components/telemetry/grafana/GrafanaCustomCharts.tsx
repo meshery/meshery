@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@sistent/sistent';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { ExpandMoreIcon, NoSsr } from '@sistent/sistent';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { StyledAccordion, StyledAccordionSummary } from '../../StyledAccordion';
 import GrafanaCustomChart from './GrafanaCustomChart';
@@ -131,7 +130,7 @@ const GrafanaCustomCharts = (props) => {
       <StyledChip
         label={grafanaURL}
         onClick={() => window.open(grafanaURL)}
-        icon={<StyledIcon src="/static/img/grafana_icon.svg" />}
+        icon={<StyledIcon src="/static/img/integrations/grafana_icon.svg" />}
         variant="outlined"
       />
     );

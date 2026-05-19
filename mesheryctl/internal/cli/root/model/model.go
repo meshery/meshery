@@ -102,7 +102,7 @@ mesheryctl model build [model-name]/[model-version]
 				return err
 			}
 
-			utils.DisplayCount("models", models.Count)
+			utils.DisplayCount("models", models.TotalCount)
 
 			return nil
 		}
@@ -139,5 +139,5 @@ func generateModelDataToDisplay(modelsResponse *models.MeshmodelsAPIResponse) ([
 		rows = append(rows, []string{model.ID.String(), modelName, string(model.Category.Name), model.Version})
 	}
 
-	return rows, int64(modelsResponse.Count)
+	return rows, modelsResponse.TotalCount
 }

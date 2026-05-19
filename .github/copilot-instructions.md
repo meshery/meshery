@@ -24,7 +24,7 @@ Meshery is a cloud native manager that enables the design and management of Kube
 - **Design System**: Material UI (MUI)
 - **State Management**: Redux Toolkit
 - **API Client**: Relay (GraphQL), REST
-- **Node Version**: 20 LTS
+- **Node Version**: 22 LTS
 
 ## Code Style and Conventions
 

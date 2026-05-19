@@ -8,7 +8,7 @@
     content="width=device-width, initial-scale=1, shrink-to-fit=no"
   />
   <meta name="generator" content="Hugo 0.154.5" />
-  <meta name="ROBOTS" content="INDEX, FOLLOW" />
+  <meta name="robots" content="noindex, follow" />
 
   <link
     rel="alternate"
@@ -366,7 +366,7 @@
 
       <button class="nav-mode-icon" id="mode-toggle-btn">
         <img
-          id="logo-dark-light"
+          class="logo-dark-light"
           src="/v0.9/images/nav-icons/mode-toggle-icon-moon.png"
           data-logo-for-dark="/v0.9/images/nav-icons/mode-toggle-icon-moon.png"
           data-logo-for-light="/v0.9/images/nav-icons/mode-toggle-icon-sun.png"
@@ -1177,7 +1177,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 • <code>REMOTE_PROVIDER_USER_PASSWORD</code> (Required): The password associated with your account within your provider.<br>
 • <code>PROVIDER_TOKEN</code> (Optional): Your provider token, can be generated from an account registered within your provider</p>
 <div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Accessing Remote Providers</div>
-<p>In the case you are using Layer5 Cloud as a remote provider, you can <a href="https://cloud.layer5.io/security/tokens">generate a token from your user account</a> to use while writing and executing tests.</p>
+<p>In the case you are using Meshery Cloud as a remote provider, you can <a href="https://cloud.layer5.io/security/tokens">generate a token from your user account</a> to use while writing and executing tests.</p>
 </div>
 <p>During the setup phase, Playwright utilizes these environment variables to log in and store credentials securely in the <code>playwright/.auth</code> directory. To protect sensitive data, the <code>.gitignore</code> file is configured to exclude the <code>.env</code> file and any JSON files within the <code>/playwright/.auth</code> directory from the GitHub repository.</p>
 <p>There are several tools to help you to working with environment variables locally for each project such as <a href="https://github.com/direnv/direnv">direnv</a>, it can work across multiple shell such as Bash, Powershell, Oh my zsh, Fish, etc</p>
@@ -3258,7 +3258,7 @@ test(&#39;Random test&#39;,  { tag: &#39;@unstable&#39; }, async ({ provider }) 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
     integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
     crossorigin="anonymous"></script>
-<script src="/js/navbar.js"></script>
+<script src="/v0.9/js/navbar.js"></script>
 <script src="/js/lightbox.js"></script>
 <script src="/js/main.js"></script>
 

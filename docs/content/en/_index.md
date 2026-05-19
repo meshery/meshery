@@ -149,11 +149,11 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-          <a href="/extensibility/integrations" class="text-black">Integrations</a>
+<a href="/extensions/models" class="text-black">Models</a>
         </p>
       </summary>
       <ul class="section-title">
-        <li>See all <a href="/extensions/models">{{< model-count >}} integrations</a></li>
+        <li>See all <a href="/extensions/models">{{< model-count >}} models</a></li>
       </ul>
     </details>
   </div>
