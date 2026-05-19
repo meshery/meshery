@@ -571,25 +571,35 @@ export default function MeshSyncTable(props) {
     lastProcessedId: null,
   });
 
-  // Find and expand the selected resource when it becomes available
+  // Find and expand the selected resource when it becomes available.
+  // `meshSyncResources` is excluded from deps intentionally: it gets a new
+  // reference on every RTK cache update and would re-trigger the effect,
+  // potentially clearing the URL param and starting an update loop (React
+  // error #185). Instead we read the latest value from a ref.
+  const meshSyncResourcesRef = useRef(meshSyncResources);
+  meshSyncResourcesRef.current = meshSyncResources;
+
   useEffect(() => {
     if (!selectedResourceId || expansionFlags.current.isHandlingExpansion) return;
     if (expansionFlags.current.lastProcessedId === selectedResourceId) return;
-    if (meshSyncResources && meshSyncResources.length > 0) {
+
+    const resources = meshSyncResourcesRef.current;
+    if (resources && resources.length > 0) {
       expansionFlags.current.isUrlExpansion = true;
       expansionFlags.current.lastProcessedId = selectedResourceId;
 
-      const index = meshSyncResources.findIndex((resource) => resource.id === selectedResourceId);
+      const index = resources.findIndex((resource) => resource.id === selectedResourceId);
       if (index !== -1) {
         setRowsExpanded([index]);
-      } else {
-        updateUrlWithResourceId('');
       }
+      // Note: intentionally NOT clearing the URL when the resource is not
+      // found — doing so triggered a URL push → re-render → effect re-fire
+      // loop that caused React error #185.
 
       expansionFlags.current.isUrlExpansion = false;
       expansionFlags.current.isInitialLoad = false;
     }
-  }, [selectedResourceId, meshSyncResources]);
+  }, [selectedResourceId]);
 
   const filters = {
     kind: {
@@ -638,7 +648,15 @@ export default function MeshSyncTable(props) {
   );
 
   useEffect(() => {
-    setColumnVisibility(getResponsiveColumnVisibility(columnNames, colViews, width));
+    setColumnVisibility((prev) => {
+      const next = getResponsiveColumnVisibility(columnNames, colViews, width);
+      // Bail out if nothing changed to avoid a re-render cascade.
+      const keys = new Set([...Object.keys(prev), ...Object.keys(next)]);
+      for (const k of keys) {
+        if (prev[k] !== next[k]) return next;
+      }
+      return prev;
+    });
   }, [colViews, columnNames, width]);
 
   return (
