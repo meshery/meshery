@@ -21,6 +21,7 @@ import {
   MenuList,
   MenuItem,
   Tooltip,
+  CustomTooltip,
   IconButton,
   CircularProgress,
   InfoOutlined,
@@ -59,11 +60,6 @@ CustomDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 //Styled-components:
-const StyledTooltip = styled(Tooltip)(({ theme }) => ({
-  color: theme.palette.text.inverse,
-  fontWeight: "normal",
-}));
-
 const StyledCustomDialogTitle = styled(CustomDialogTitle)(({ theme }) => ({
   background: accentGrey[10],
   color: theme.palette.text.inverse,
@@ -166,7 +162,7 @@ export default function Provider() {
       <CustomDiv>
         {availableProviders !== "" && (
           <Fragment>
-            <StyledTooltip
+            <CustomTooltip
               title="Learn more about Meshery remote providers"
               placement="bottom"
               data-cy="providers-tooltip"
@@ -183,7 +179,7 @@ export default function Provider() {
               >
                 Learn more about providers
               </LearnMore>
-            </StyledTooltip>
+            </CustomTooltip>
             <StyledButtonGroup aria-label="split button">
               <Button
                 size="large"
@@ -247,13 +243,13 @@ export default function Provider() {
                       <span>{key}</span>
                       {key === "Layer5" && (
                         <Tooltip
-                          title="Layer5 is Meshery's default remote provider."
+                          title="A remote provider offering identity services, additional plugins and extensions, granular and customizable RBAC."
                           placement="right"
                           arrow
                         >
                           <IconButton
                             size="small"
-                            aria-label="More information about the Layer5 provider"
+                            aria-label="More information about the remote provider"
                             data-testid="provider-learn-more-button"
                             onClick={(e) => {
                               e.stopPropagation();
