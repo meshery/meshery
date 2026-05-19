@@ -36,9 +36,11 @@ const localizer = momentLocalizer(moment);
  */
 function generateCalendarEventsFromResults(results) {
   return results.map(({ test_start_time, name, runner_results }, index) => {
-    // Remove incorrect timezone info
+    // parseZone preserves the offset embedded in the timestamp instead of
+    // converting to local time, and tolerates a missing test_start_time
+    // (utcOffset(null|undefined) returns a number, not a moment).
     const ntzStartTime = new Date(
-      moment(test_start_time).utcOffset(test_start_time).format('MM/DD/YYYY HH:mm'),
+      moment.parseZone(test_start_time).format('MM/DD/YYYY HH:mm'),
     );
     const ntzEndTime = ntzStartTime;
     ntzEndTime.setSeconds(ntzEndTime.getSeconds() + runner_results.ActualDuration / 1e9);
