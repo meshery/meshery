@@ -539,7 +539,7 @@ server-integration-tests-meshsync: docker-build server-integration-tests-meshsyn
 #-----------------------------------------------------------------------------
 # Testing - UI
 #-----------------------------------------------------------------------------
-.PHONY: ui-test-setup ui-test ui-test-e2e-ci
+.PHONY: ui-test-setup ui-test ui-test-e2e-full ui-test-e2e-local
 ## Install Playwright dependencies for UI tests
 ui-test-setup: dep-check-node
 	cd ui; npx playwright install chromium --with-deps; cd ..
@@ -549,10 +549,15 @@ ui-test: dep-check-node
 	 touch .env
 	 @set -a; source .env; set +a; cd ui; npm run test:e2e ; cd ..
 
-## Run Meshery UI End-to-End Tests in CI environment
-ui-test-e2e-ci: dep-check-node
+## Run Meshery UI End-to-End Tests in CI environment (Local and Remote Providers)
+ui-test-e2e-full: dep-check-node
 	 touch .env
-	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci ; cd ..
+	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci:full ; cd ..
+
+## Run Meshery UI End-to-End Tests in CI environment (Local Provider)
+ui-test-e2e-local: dep-check-node
+	 touch .env
+	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci:local ; cd ..
 
 #-----------------------------------------------------------------------------
 # Testing - Meshery CLI
