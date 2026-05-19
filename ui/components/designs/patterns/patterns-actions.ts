@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import yaml from 'js-yaml';
 import { PROMPT_VARIANTS } from '@sistent/sistent';
-import { encodeDesignFile, getUnit8ArrayDecodedFile } from '../../../utils/utils';
+import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../../../utils/utils';
 import { FILE_OPS } from '../../../utils/Enum';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import downloadContent from '../../../utils/fileDownloader';
@@ -43,6 +43,7 @@ export function createPatternsActions(deps) {
     notify,
     sistentInfoModal,
     getPatterns,
+    evaluateDesign,
   } = deps;
 
   const handleError = (action) => (error) => {
@@ -78,6 +79,39 @@ export function createPatternsActions(deps) {
       selectedK8sContexts,
     });
     updateProgress({ showProgress: false });
+  };
+
+  const handleEvaluateDesign = (e, pattern_file, name) => {
+    e.stopPropagation();
+    const design = parseDesignFile(pattern_file);
+    if (!design) {
+      notify({
+        message: `Failed to parse design "${name}"`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
+    updateProgress({ showProgress: true });
+    evaluateDesign({
+      evaluateBody: JSON.stringify({ design }),
+    })
+      .unwrap()
+      .then((response) => {
+        updateProgress({ showProgress: false });
+        const actionCount = response?.actions?.length || 0;
+        const version = response?.design?.version || 'unknown';
+        notify({
+          message: `Evaluation complete for "${name}": ${actionCount} change(s) at version ${version}`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      })
+      .catch((error) => {
+        updateProgress({ showProgress: false });
+        notify({
+          message: `Evaluation failed for "${name}": ${error?.data?.message || error?.message || 'Unknown error'}`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+      });
   };
 
   const handleUploadImport = () => {
@@ -405,5 +439,6 @@ export function createPatternsActions(deps) {
     deletePatterns,
     handleDownload,
     showModal,
+    handleEvaluateDesign,
   };
 }

@@ -7,6 +7,7 @@ import {
 import { NoSsr } from '@sistent/sistent';
 import React, { useEffect, useRef, useState } from 'react';
 import MesheryPatternGrid from './MesheryPatternGridView';
+
 import _PromptComponent from '../../PromptComponent';
 import LoadingScreen from '../../shared/LoadingState/LoadingComponent';
 import { MesheryPatternsCatalog, VISIBILITY } from '../../../utils/Enum';
@@ -32,6 +33,7 @@ import {
   useDeletePatternFileMutation,
   useDeletePatternMutation,
   useDeployPatternMutation,
+  useEvaluateDesignMutation,
   useGetPatternsQuery,
   useImportPatternMutation,
   usePublishPatternMutation,
@@ -111,6 +113,7 @@ function MesheryPatterns({
   const [updatePattern] = useUpdatePatternFileMutation();
   const [uploadPatternFile] = useUploadPatternFileMutation();
   const [deletePatternFile] = useDeletePatternFileMutation();
+  const [evaluateDesign] = useEvaluateDesignMutation();
 
   useEffect(() => {
     if (patternsData) {
@@ -185,6 +188,7 @@ function MesheryPatterns({
     deletePatterns,
     handleDownload,
     showModal,
+    handleEvaluateDesign,
   } = createPatternsActions({
     clonePattern,
     publishCatalog,
@@ -208,6 +212,7 @@ function MesheryPatterns({
     notify,
     sistentInfoModal,
     getPatterns,
+    evaluateDesign,
   });
 
   // const [loading, stillLoading] = useState(true);
@@ -413,6 +418,7 @@ function MesheryPatterns({
       handleInfoModal,
       handleUnpublishModal,
       userCanEdit,
+      handleEvaluateDesign,
     },
   });
 
@@ -574,6 +580,7 @@ function MesheryPatterns({
                 openValidationModal={openValidateModal}
                 openDryRunModal={openDryRunModal}
                 openDeployModal={openDeployModal}
+                handleEvaluateDesign={handleEvaluateDesign}
                 hideVisibility={hideVisibility}
                 arePatternsReadOnly={arePatternsReadOnly}
               />

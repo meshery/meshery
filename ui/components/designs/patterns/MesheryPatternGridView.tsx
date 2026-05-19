@@ -30,6 +30,7 @@ function PatternCardGridItem({
   setSelectedPatterns,
   user,
   handleInfoModal,
+  handleEvaluateDesign,
   hideVisibility = false,
   isReadOnly = false,
 }) {
@@ -57,6 +58,7 @@ function PatternCardGridItem({
         handleClone={handleClone}
         handleInfoModal={handleInfoModal}
         handleDownload={handleDownload}
+        handleEvaluateDesign={handleEvaluateDesign}
         deleteHandler={() =>
           handleSubmit({
             data: yaml,
@@ -141,6 +143,7 @@ function MesheryPatternGrid({
   openDryRunModal,
   hideVisibility = false,
   arePatternsReadOnly = false,
+  handleEvaluateDesign,
   'data-testid': testId = 'meshery-patterns-grid',
 }) {
   const { notify } = useNotification();
@@ -228,6 +231,9 @@ function MesheryPatternGrid({
               handleSubmit={handleSubmit}
               handleDownload={(e) => handleDesignDownloadModal(e, pattern)}
               setSelectedPatterns={setSelectedPattern}
+              handleEvaluateDesign={(e) =>
+                handleEvaluateDesign(e, pattern.patternFile, pattern.name)
+              }
               hideVisibility={hideVisibility}
               isReadOnly={arePatternsReadOnly}
             />
