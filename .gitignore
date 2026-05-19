@@ -58,7 +58,7 @@ docs/resources/
 docs/.hugo_build.lock
 docs/hugo_stats.json
 
-docs/static/v0.*/
+#docs/static/v0.*/
 
 dist/
 
@@ -91,6 +91,6 @@ ui/.env
 */.env
 docs/hugo_stats.json
 
-
 LLMs
 .copilot-tmp/*
+.claude/worktrees/*
