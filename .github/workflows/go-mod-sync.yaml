@@ -27,6 +27,12 @@ jobs:
         path: meshery
     - name: Check out code for meshery-extensions
       uses: actions/checkout@v6
+      # Meshery Extension Point
+      # ---
+      # Purpose: Notify Remote Providers of changes in Golang dependencies
+      # Learn more: See https://docs.meshery.io/extensibility
+      # Add your repository to the list: https://github.com/meshery/meshery/issues/new/choose
+      # ---
       with:
         repository: layer5labs/meshery-extensions
         token: ${{ secrets.GH_ACCESS_TOKEN }}
