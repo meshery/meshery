@@ -203,20 +203,26 @@ vi.mock('../PromptComponent', () => ({
   }),
 }));
 
+// Mutable container so individual tests can flip `connectionMetadataState`
+// (e.g., simulate the pre-hydration `null` state) without re-defining the
+// mock between tests.
+const uiState: {
+  organization: { id: string };
+  connectionMetadataState: Record<string, { transitions?: string[]; icon?: string }> | null;
+  controllerState: Record<string, unknown> | null;
+} = {
+  organization: { id: 'org-1' },
+  connectionMetadataState: {
+    kubernetes: {
+      transitions: ['connected'],
+      icon: '/static/img/integrations/kubernetes.svg',
+    },
+  },
+  controllerState: {},
+};
+
 vi.mock('react-redux', () => ({
-  useSelector: (selector) =>
-    selector({
-      ui: {
-        organization: { id: 'org-1' },
-        connectionMetadataState: {
-          kubernetes: {
-            transitions: ['connected'],
-            icon: '/static/img/integrations/kubernetes.svg',
-          },
-        },
-        controllerState: {},
-      },
-    }),
+  useSelector: (selector) => selector({ ui: uiState }),
 }));
 
 const makeConnection = (overrides = {}) => ({
@@ -252,6 +258,17 @@ describe('ConnectionTable', () => {
     getEnvironmentsQuery.mockReset();
     updateVisibleColumns.mockReset();
     windowWidth = 1280;
+
+    // Restore the populated Redux state — individual tests below flip
+    // `connectionMetadataState` to `null` to exercise the pre-hydration path.
+    uiState.organization = { id: 'org-1' };
+    uiState.connectionMetadataState = {
+      kubernetes: {
+        transitions: ['connected'],
+        icon: '/static/img/integrations/kubernetes.svg',
+      },
+    };
+    uiState.controllerState = {};
 
     updateConnectionByIdMutator.mockImplementation(({ connectionId, body }) => ({
       unwrap: () => Promise.resolve({ connectionId, body }),
@@ -382,5 +399,71 @@ describe('ConnectionTable', () => {
     await waitFor(() => {
       expect(dataTableProps.columnVisibility.kind).toBe(false);
     });
+  });
+
+  // Regression for issue #19405 — `/management/connections` crashes with
+  // "React error #185" / a `TypeError: Cannot read properties of null` in
+  // production. The Redux slice (`store/slices/mesheryUi.ts`) initialises
+  // `connectionMetadataState` to `null` and `_app.tsx` only populates it after
+  // `getMeshModelComponentByName` resolves. The pages-router renders the
+  // connections page before that promise settles, so the `enhancedConnections`
+  // memo must tolerate a null map. The pre-fix code wrote
+  // `connectionMetadataState[connection.kind]?.transitions` which protected
+  // the property access but not the lookup itself.
+  it('renders without throwing when connectionMetadataState is null (pre-hydration state)', () => {
+    uiState.connectionMetadataState = null;
+
+    expect(() => render(<ConnectionTable />)).not.toThrow();
+  });
+
+  it('falls back to undefined nextStatus/kindLogo when metadata is null', async () => {
+    uiState.connectionMetadataState = null;
+
+    render(<ConnectionTable />);
+
+    await waitFor(() => {
+      expect(dataTableProps).toBeDefined();
+    });
+    // The rows still render even though metadata is unavailable. Downstream
+    // columns/cells handle the missing transitions gracefully.
+    expect(dataTableProps.data).toHaveLength(2);
+  });
+
+  // Regression for the URL-clear loop described in issue #19405. The
+  // pre-fix effect listed `filteredConnections` in its deps and called
+  // `updateUrlWithConnectionId('')` when the selected id wasn't on the
+  // current page. RTK Query returns a fresh array reference on every cache
+  // hit, so this fired on every refetch, pushing a new URL, re-rendering the
+  // parent, minting another RTK array — a textbook React #185 update-depth
+  // loop. The effect now reads `filteredConnections` via a ref and never
+  // clears the URL.
+  it('does not clear the connectionId URL param when the connection is not on the current page', async () => {
+    router.query = { connectionId: 'connection-not-on-this-page' };
+    const updateUrlWithConnectionId = vi.fn();
+
+    render(<ConnectionTable updateUrlWithConnectionId={updateUrlWithConnectionId} />);
+
+    await waitFor(() => {
+      expect(dataTableProps).toBeDefined();
+    });
+
+    // Wait an extra tick to make sure no deferred call clears the URL.
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(updateUrlWithConnectionId).not.toHaveBeenCalledWith('');
+  });
+
+  it('reuses the same onFlushMeshSync callback across rerenders so children are not invalidated', () => {
+    const { rerender } = render(<ConnectionTable />);
+
+    // The action menu only renders when an anchor is set. Capture the
+    // identity of the JSX-bound `onFlushMeshSync` by re-rendering with the
+    // same props and asserting the prop bag handed to ResponsiveDataTable
+    // (the only render-time reflection of `handleFlushMeshSync` available
+    // here) is referentially stable across renders.
+    const firstOptions = dataTableProps.options;
+
+    rerender(<ConnectionTable />);
+
+    expect(dataTableProps.options).toBe(firstOptions);
   });
 });

@@ -491,7 +491,16 @@ export default function MeshSyncTable(props) {
 
       expansionFlags.current.isHandlingExpansion = true;
       const expandedRows = allRowsExpanded.slice(-1);
-      setRowsExpanded(expandedRows.map((item) => item.index));
+      // Bail out on a value-equal write — see ConnectionTable.options.tsx
+      // for the rationale.
+      const nextExpandedRows = expandedRows.map((item) => item.index);
+      const hasExpandedRowsChanged =
+        nextExpandedRows.length !== rowsExpanded.length ||
+        nextExpandedRows.some((rowIndex, index) => rowIndex !== rowsExpanded[index]);
+
+      if (hasExpandedRowsChanged) {
+        setRowsExpanded(nextExpandedRows);
+      }
 
       if (expandedRows.length > 0 && meshSyncResources) {
         const index = expandedRows[0].index;
@@ -571,25 +580,37 @@ export default function MeshSyncTable(props) {
     lastProcessedId: null,
   });
 
-  // Find and expand the selected resource when it becomes available
+  // Mirror of the ConnectionTable fix: `meshSyncResources` is intentionally
+  // accessed via a ref instead of being listed in the dep array. RTK Query
+  // hands back a fresh array reference on every refetch and on cache
+  // invalidation, and re-firing this effect on those churns previously
+  // cleared the URL param mid-refetch, pushing a new URL that re-rendered
+  // the parent and minted yet another RTK array reference — a classic React
+  // #185 update-depth loop.
+  const meshSyncResourcesRef = useRef(meshSyncResources);
+  meshSyncResourcesRef.current = meshSyncResources;
+
   useEffect(() => {
     if (!selectedResourceId || expansionFlags.current.isHandlingExpansion) return;
     if (expansionFlags.current.lastProcessedId === selectedResourceId) return;
-    if (meshSyncResources && meshSyncResources.length > 0) {
+
+    const resources = meshSyncResourcesRef.current;
+    if (resources && resources.length > 0) {
       expansionFlags.current.isUrlExpansion = true;
       expansionFlags.current.lastProcessedId = selectedResourceId;
 
-      const index = meshSyncResources.findIndex((resource) => resource.id === selectedResourceId);
+      const index = resources.findIndex((resource) => resource.id === selectedResourceId);
       if (index !== -1) {
         setRowsExpanded([index]);
-      } else {
-        updateUrlWithResourceId('');
       }
+      // Intentionally do NOT clear the URL when the resource isn't on the
+      // current page — pushing `connectionId=""` started a URL-push →
+      // re-render → effect-re-fire loop here too.
 
       expansionFlags.current.isUrlExpansion = false;
       expansionFlags.current.isInitialLoad = false;
     }
-  }, [selectedResourceId, meshSyncResources]);
+  }, [selectedResourceId]);
 
   const filters = {
     kind: {
@@ -638,7 +659,21 @@ export default function MeshSyncTable(props) {
   );
 
   useEffect(() => {
-    setColumnVisibility(getResponsiveColumnVisibility(columnNames, colViews, width));
+    setColumnVisibility((previous) => {
+      const next = getResponsiveColumnVisibility(columnNames, colViews, width);
+
+      // Bail out on a value-equal recomputation. Without this guard
+      // `getResponsiveColumnVisibility` (which always allocates a new object)
+      // enqueued a commit on every parent re-render even when no responsive
+      // breakpoint had crossed.
+      const keys = new Set([...Object.keys(previous), ...Object.keys(next)]);
+      for (const key of keys) {
+        if (previous[key] !== next[key]) {
+          return next;
+        }
+      }
+      return previous;
+    });
   }, [colViews, columnNames, width]);
 
   return (

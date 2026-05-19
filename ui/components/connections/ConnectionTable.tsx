@@ -188,12 +188,17 @@ const ConnectionTable = ({
   const enhancedConnections = useMemo(() => {
     if (!connectionData?.connections) return [];
 
+    // `connectionMetadataState` is `null` in the Redux initial state and is
+    // only populated after `_app.tsx`'s async `loadMeshModelComponent`
+    // completes. The pages-router routes to /management/connections before
+    // that promise resolves, so this memo must tolerate a null map.
     return connectionData.connections
       .filter((conn) => conn.name && conn.kind && conn.status)
       .map((connection) => ({
         ...connection,
-        nextStatus: connection.nextStatus || connectionMetadataState[connection.kind]?.transitions,
-        kindLogo: connection.kindLogo || connectionMetadataState[connection.kind]?.icon,
+        nextStatus:
+          connection.nextStatus || connectionMetadataState?.[connection.kind]?.transitions,
+        kindLogo: connection.kindLogo || connectionMetadataState?.[connection.kind]?.icon,
       }));
   }, [connectionData?.connections, connectionMetadataState]) as ConnectionRow[];
 
@@ -307,6 +312,10 @@ const ConnectionTable = ({
     setDeploymentModeAnchorEl(null);
   }, []);
 
+  const handleDeploymentModeAnchorOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
+    setDeploymentModeAnchorEl(event.currentTarget);
+  }, []);
+
   const getConnectionAtRowIndex = useCallback(
     (rowIndex?: number | null) => {
       if (rowIndex == null) {
@@ -364,46 +373,47 @@ const ConnectionTable = ({
     ],
   );
 
-  const handleFlushMeshSync = useCallback(
-    () => async () => {
-      handleActionMenuClose();
+  // The previous shape was `useCallback(() => async () => {...})` invoked as
+  // `handleFlushMeshSync()` in JSX, which created a new async closure on
+  // every render and minted a fresh `onFlushMeshSync` prop reference each
+  // commit. Returning the async function directly keeps the prop stable.
+  const handleFlushMeshSync = useCallback(async () => {
+    handleActionMenuClose();
 
-      const connection = getConnectionAtRowIndex(rowData?.rowIndex);
-      const connectionName = connection?.metadata?.name;
+    const connection = getConnectionAtRowIndex(rowData?.rowIndex);
+    const connectionName = connection?.metadata?.name;
 
-      if (!connection || !modalRef.current) {
-        return;
-      }
+    if (!connection || !modalRef.current) {
+      return;
+    }
 
-      const response = await modalRef.current.show({
-        title: `Flush MeshSync data for ${connectionName} ?`,
-        subtitle: `Are you sure to Flush MeshSync data for “${connectionName}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
-        primaryOption: 'PROCEED',
-        variant: PROMPT_VARIANTS.WARNING,
+    const response = await modalRef.current.show({
+      title: `Flush MeshSync data for ${connectionName} ?`,
+      subtitle: `Are you sure to Flush MeshSync data for “${connectionName}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
+      primaryOption: 'PROCEED',
+      variant: PROMPT_VARIANTS.WARNING,
+    });
+
+    if (response === 'PROCEED') {
+      updateProgress({ showProgress: true });
+      resetDatabase({
+        selector: {
+          clearDB: 'true',
+          ReSync: 'true',
+          hardReset: 'false',
+        },
+        k8scontextID: connection.metadata?.id || '',
+      }).subscribe({
+        next: (result) => {
+          updateProgress({ showProgress: false });
+          if (result.resetStatus === 'PROCESSING') {
+            notify({ message: `Database reset successful.`, event_type: EVENT_TYPES.SUCCESS });
+          }
+        },
+        error: handleError('Database is not reachable, try restarting server.'),
       });
-
-      if (response === 'PROCEED') {
-        updateProgress({ showProgress: true });
-        resetDatabase({
-          selector: {
-            clearDB: 'true',
-            ReSync: 'true',
-            hardReset: 'false',
-          },
-          k8scontextID: connection.metadata?.id || '',
-        }).subscribe({
-          next: (result) => {
-            updateProgress({ showProgress: false });
-            if (result.resetStatus === 'PROCESSING') {
-              notify({ message: `Database reset successful.`, event_type: EVENT_TYPES.SUCCESS });
-            }
-          },
-          error: handleError('Database is not reachable, try restarting server.'),
-        });
-      }
-    },
-    [getConnectionAtRowIndex, handleActionMenuClose, handleError, notify, rowData?.rowIndex],
-  );
+    }
+  }, [getConnectionAtRowIndex, handleActionMenuClose, handleError, notify, rowData?.rowIndex]);
 
   const handleEnvironmentSelect = useCallback(
     async (
@@ -501,26 +511,40 @@ const ConnectionTable = ({
     lastProcessedId: null,
   });
 
-  // Update rowsExpanded when a specific connection ID is selected
+  // `filteredConnections` is intentionally accessed via a ref rather than
+  // listed in the dep array: RTK Query hands back a fresh array reference on
+  // every successful refetch (and on cache invalidation triggered by a
+  // mutation), and re-firing this effect on those churns previously cleared
+  // the `connectionId` URL param mid-refetch — which pushed a new URL, which
+  // re-rendered the parent, which produced another new RTK array reference,
+  // etc. Reading the latest value from a ref keeps the effect single-fire per
+  // `selectedConnectionId` change.
+  const filteredConnectionsRef = useRef(filteredConnections);
+  filteredConnectionsRef.current = filteredConnections;
+
   useEffect(() => {
     if (!selectedConnectionId || expansionFlags.current.isHandlingExpansion) return;
     if (expansionFlags.current.lastProcessedId === selectedConnectionId) return;
 
-    if (filteredConnections && filteredConnections.length > 0) {
+    const connections = filteredConnectionsRef.current;
+    if (connections && connections.length > 0) {
       expansionFlags.current.isUrlExpansion = true;
       expansionFlags.current.lastProcessedId = selectedConnectionId;
 
-      const index = filteredConnections?.findIndex((conn) => conn.id === selectedConnectionId);
+      const index = connections.findIndex((conn) => conn.id === selectedConnectionId);
       if (index !== -1) {
         setRowsExpanded([index]);
-      } else {
-        updateUrlWithConnectionId?.('');
       }
+      // Intentionally do NOT clear the URL when the connection isn't on the
+      // current page: pagination, filter, or search may move it out of view,
+      // and pushing `connectionId=""` here started a URL-push → re-render →
+      // effect-re-fire loop that produced React error #185. If the connection
+      // shows up on a later page the user can still deep-link to it.
 
       expansionFlags.current.isUrlExpansion = false;
       expansionFlags.current.isInitialLoad = false;
     }
-  }, [filteredConnections, selectedConnectionId, updateUrlWithConnectionId]);
+  }, [selectedConnectionId]);
 
   const columns = useConnectionColumns({
     url: CONNECTION_DOCS_URL,
@@ -555,18 +579,41 @@ const ConnectionTable = ({
     handleDeleteConnections,
   });
 
-  const [tableCols, updateCols] = useState(columns);
+  const [tableCols, setTableCols] = useState(columns);
+  const [prevColumns, setPrevColumns] = useState(columns);
 
-  useEffect(() => {
-    updateCols(columns);
-  }, [columns]);
+  // Sync `tableCols` to `columns` using the documented React "store
+  // information from previous renders" pattern (https://react.dev/reference/react/useState#storing-information-from-previous-renders).
+  // The previous shape — `useEffect(() => updateCols(columns), [columns])` —
+  // queued a setState commit on every memo invalidation, contributing to the
+  // render churn that surfaced as React error #185. Comparing identities in
+  // render bails out without scheduling a second commit when nothing changed.
+  if (columns !== prevColumns) {
+    setTableCols(columns);
+    setPrevColumns(columns);
+  }
 
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean | undefined>>(
     () => getResponsiveColumnVisibility(columnNames, colViews, width),
   );
 
   useEffect(() => {
-    setColumnVisibility(getResponsiveColumnVisibility(columnNames, colViews, width));
+    setColumnVisibility((previous) => {
+      const next = getResponsiveColumnVisibility(columnNames, colViews, width);
+
+      // `getResponsiveColumnVisibility` always allocates a new object, so a
+      // plain `setColumnVisibility(next)` queues a commit even when the
+      // computed visibility matches the prior commit. Bail out on a
+      // value-equal computation to keep the table from re-rendering on every
+      // unrelated parent re-render that recomputes `columnNames`.
+      const keys = new Set([...Object.keys(previous), ...Object.keys(next)]);
+      for (const key of keys) {
+        if (previous[key] !== next[key]) {
+          return next;
+        }
+      }
+      return previous;
+    });
   }, [colViews, columnNames, width]);
 
   if (isConnectionLoading) {
@@ -593,7 +640,7 @@ const ConnectionTable = ({
         columns={columns}
         options={options}
         tableCols={tableCols}
-        updateCols={updateCols}
+        updateCols={setTableCols}
         columnVisibility={columnVisibility}
       />
 
@@ -602,8 +649,8 @@ const ConnectionTable = ({
         anchorEl={anchorEl}
         open={open}
         onClose={handleActionMenuClose}
-        onFlushMeshSync={handleFlushMeshSync()}
-        onDeploymentModeAnchor={(e) => setDeploymentModeAnchorEl(e.currentTarget)}
+        onFlushMeshSync={handleFlushMeshSync}
+        onDeploymentModeAnchor={handleDeploymentModeAnchorOpen}
       />
 
       <ConnectionDeploymentModeMenu
