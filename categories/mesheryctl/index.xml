@@ -139,43 +139,12 @@ scoop install mesheryctl&lt;/div&gt;&lt;/div&gt;
 &lt;/h3&gt;
 &lt;p&gt;You need to have &lt;code&gt;Brew&lt;/code&gt; installed on your &lt;strong&gt;Linux&lt;/strong&gt; or &lt;strong&gt;macOS&lt;/strong&gt; system to perform these actions.&lt;/p&gt;</description></item><item><title>Meshery CLI Guides</title><link>/guides/mesheryctl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/</guid><description>&lt;p&gt;From the Command Line: Guides to using Meshery&amp;rsquo;s various features and components.&lt;/p&gt;
 &lt;div class="related-discussions"&gt;
- &lt;h3&gt;Recent Discussions with "mesheryctl" Tag&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;
- &lt;a href="https://discuss.layer5.io/t/pairing-up-with-a-meshmate-to-gacefully-start-contributing-to-meshery-and-its-project-ecosystem/6957" target="_blank" rel="noopener noreferrer"&gt;
- Pairing up with a Meshmate to gacefully start contributing to Meshery and its project ecosystem
- &lt;/a&gt;
- &lt;/li&gt;&lt;li&gt;
- &lt;a href="https://discuss.layer5.io/t/development-meeting-contributing-to-meshery-cli-april-30-2025/6927" target="_blank" rel="noopener noreferrer"&gt;
- [Development Meeting] Contributing to Meshery CLI - April 30, 2025
- &lt;/a&gt;
- &lt;/li&gt;&lt;li&gt;
- &lt;a href="https://discuss.layer5.io/t/meshery-development-meeting-april-30th-2025/6926" target="_blank" rel="noopener noreferrer"&gt;
- Meshery Development Meeting | April 30th, 2025
- &lt;/a&gt;
- &lt;/li&gt;&lt;li&gt;
- &lt;a href="https://discuss.layer5.io/t/newcomers-meeting-end-to-end-testing-in-meshery-cli-using-bats-april-17-2025/6897" target="_blank" rel="noopener noreferrer"&gt;
- [Newcomers’ Meeting] End-to-End Testing in Meshery CLI using BATs – April 17, 2025
- &lt;/a&gt;
- &lt;/li&gt;&lt;li&gt;
- &lt;a href="https://discuss.layer5.io/t/unable-to-lint-mesheryctl/6854" target="_blank" rel="noopener noreferrer"&gt;
- unable to lint mesheryctl 
- &lt;/a&gt;
- &lt;/li&gt;&lt;li&gt;
- &lt;a href="https://discuss.layer5.io/t/mesheryctl-system-login-problem/6687" target="_blank" rel="noopener noreferrer"&gt;
- Mesheryctl system login problem
- &lt;/a&gt;
- &lt;/li&gt;&lt;li&gt;
- &lt;a href="https://discuss.layer5.io/t/error-while-launching-the-meshery-dashboard/6600" target="_blank" rel="noopener noreferrer"&gt;
- Error while launching the Meshery Dashboard
- &lt;/a&gt;
- &lt;/li&gt;&lt;li&gt;
- &lt;a href="https://discuss.layer5.io/t/cant-find-the-file-path-for-meshery-designs/6319" target="_blank" rel="noopener noreferrer"&gt;
- Can&amp;#39;t find the file path for meshery designs
- &lt;/a&gt;
- &lt;/li&gt;&lt;/ul&gt;&lt;p&gt;
+ &lt;h3&gt;Recent Discussions with "mesheryctl" Tag&lt;/h3&gt;&lt;p&gt;
  &lt;a href="https://discuss.layer5.io/tag/mesheryctl" target="_blank" rel="noopener noreferrer"&gt;
  View all discussions tagged with &lt;code&gt;mesheryctl&lt;/code&gt;
  &lt;/a&gt;
- &lt;/p&gt;</description></item><item><title>Mesheryctl system commands</title><link>/guides/mesheryctl/system-commands/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/system-commands/</guid><description>&lt;p&gt;Let&amp;rsquo;s get familiar with mesheryctl system commands. The syntax of the mesheryctl commands goes as follws : &lt;code&gt;mesheryctl &amp;lt;Main_command&amp;gt; &amp;lt;Argument&amp;gt; &amp;lt;Flags&amp;gt;&lt;/code&gt;&lt;/p&gt;
+ &lt;/p&gt;
+&lt;/div&gt;</description></item><item><title>Mesheryctl system commands</title><link>/guides/mesheryctl/system-commands/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/system-commands/</guid><description>&lt;p&gt;Let&amp;rsquo;s get familiar with mesheryctl system commands. The syntax of the mesheryctl commands goes as follws : &lt;code&gt;mesheryctl &amp;lt;Main_command&amp;gt; &amp;lt;Argument&amp;gt; &amp;lt;Flags&amp;gt;&lt;/code&gt;&lt;/p&gt;
 &lt;h2 id="main_command--system"&gt;
 	Main_command : system
 &lt;/h2&gt;
