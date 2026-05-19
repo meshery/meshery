@@ -4,7 +4,7 @@ description: Integrating your CI/CD pipelines with Meshery's GitHub Actions
 categories: [infrastructure]
 ---
 
-## <img style="height: 4rem; width: 4rem;" src="./images/kanvas-icon-color.svg" /> Meshery Snapshot GitHub Action
+## Meshery Snapshot GitHub Action
 
 - See your deployment before you merge
 - Connect Meshery to your GitHub repo and see changes pull request-to-pull request

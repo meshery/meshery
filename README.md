@@ -143,7 +143,7 @@ Workspaces let you organize your work and serve as the central point of collabor
 
 <img src=".github/assets/images/readme/meshery-snapshot.png" width="50%" alt="Infrastructure snapshot preview in GitHub pull request" loading="lazy" align="center" />
 
-Get snapshots of your infrastructure directly in your PRs. Preview your deployment, view changes pull request-to-pull request and get infrastructure snapshots within your PRs by connecting Kanvas to your GitHub repositories.
+Get snapshots of your infrastructure directly in your PRs. Preview your deployment, view changes pull request-to-pull request and get infrastructure snapshots within your PRs by connecting Meshery to your GitHub repositories.
 </details>
 
 <!-- <h3>Operate with configuration best practices</h3>
@@ -167,7 +167,7 @@ Extend Meshery as your self-service engineering platform by taking advantage of 
 
 Meshery offers robust capabilities for managing multiple tenants within a shared Kubernetes infrastructure. Meshery provides the tools and integrations necessary to create a secure, isolated, and manageable multi-tenant environments, allowing multiple teams or organizations with granular control over their role-based access controls.
 
-Meshery's "multi-player" functionality refers to its collaborative features that enable multiple users to interact with and manage cloud native infrastructure simultaneously. This is primarily facilitated through Kanvas, a Meshery extension visual designer and management interface.
+Meshery's "multi-player" functionality refers to its collaborative features that enable multiple users to interact with and manage cloud native infrastructure simultaneously. This is primarily facilitated through Meshery extensions.
 
 ## Performance Management
 
