@@ -186,7 +186,33 @@
 	👨🏽‍💻 Contributors
 &lt;/h2&gt;
 &lt;p&gt;Thank you to our contributors for making this release possible:
-@AsparkArcane, @CodexRaunak, @Copilot, @Jayyy19, @Maanvi212006, @Meeth-webdev, @Omkar-Ugal, @Pranav-d33, @Rudra2637, @Salmaan-M, @Sohamsig, @Suswetha6, @Umesh-Tiruvalluru, @Utkarsh-Mauryaa, @UtkarshAnandd, @WildTrio, @YASHMAHAKAL, @aabidsofi19, @alexquincy, @chaitanyamedidar, @dipanshurdev, @fitzergerald, @hamza-mohd, @hortison, @ianrwhitney, @jamieplu, @l5io, @leecalcote, @lekaf974, @marblom007, @matrixkavi, @meshery-ci, @miacycle, @naman79820, @pontusringblom, @rishiraj38, @ritzorama, @shteypandey28-hue, @simihablo, @stealthwhizz, @suzy-g38, @techySPHINX, @vidit-od, @winkletinkle, @yi-nuo426, [copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent%29"&gt;https://github.com/apps/copilot-swe-agent)&lt;/a&gt;, [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) and hamza-mohd&lt;/p&gt;</description></item><item><title>v1.0.21</title><link>/project/releases/v1.0.21/</link><pubDate>Tue, 12 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.21/</guid><description>&lt;h2 id="whats-new"&gt;
+@AsparkArcane, @CodexRaunak, @Copilot, @Jayyy19, @Maanvi212006, @Meeth-webdev, @Omkar-Ugal, @Pranav-d33, @Rudra2637, @Salmaan-M, @Sohamsig, @Suswetha6, @Umesh-Tiruvalluru, @Utkarsh-Mauryaa, @UtkarshAnandd, @WildTrio, @YASHMAHAKAL, @aabidsofi19, @alexquincy, @chaitanyamedidar, @dipanshurdev, @fitzergerald, @hamza-mohd, @hortison, @ianrwhitney, @jamieplu, @l5io, @leecalcote, @lekaf974, @marblom007, @matrixkavi, @meshery-ci, @miacycle, @naman79820, @pontusringblom, @rishiraj38, @ritzorama, @shteypandey28-hue, @simihablo, @stealthwhizz, @suzy-g38, @techySPHINX, @vidit-od, @winkletinkle, @yi-nuo426, [copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent%29"&gt;https://github.com/apps/copilot-swe-agent)&lt;/a&gt;, [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) and hamza-mohd&lt;/p&gt;</description></item><item><title>v1.0.24</title><link>/project/releases/v1.0.24/</link><pubDate>Tue, 19 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.24/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix(ui): stop React #185 update-depth loops on /management/connections @hortison (#19544)&lt;/li&gt;
+&lt;li&gt;[UI] Fix performance dashboard crash on null test_start_time @hortison (#19542)&lt;/li&gt;
+&lt;li&gt;fix permission issue in configuration panel @aabidsofi19 (#19546)&lt;/li&gt;
+&lt;li&gt;fix(ui): restore Navigator icons for Connections, Environments, Workspaces @hortison (#19543)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix(ui): stop React #185 update-depth loops on /management/connections @hortison (#19544)&lt;/li&gt;
+&lt;li&gt;[CI] Fix stable release workflow warnings @miacycle (#19541)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@aabidsofi19, @hortison, @jamieplu, @leecalcote, @miacycle and @ritzorama&lt;/p&gt;</description></item><item><title>v1.0.21</title><link>/project/releases/v1.0.21/</link><pubDate>Tue, 12 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.21/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -32839,7 +32865,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.23&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.24&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
