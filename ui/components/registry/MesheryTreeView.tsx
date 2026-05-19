@@ -5,8 +5,8 @@ import {
   Switch,
   CircularProgress,
   Typography,
-  InfoOutlinedIcon,
 } from '@sistent/sistent';
+import { InfoOutlinedIcon } from '@/assets/icons';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '@/utils/custom-search';
 import debounce from '@/utils/debounce';

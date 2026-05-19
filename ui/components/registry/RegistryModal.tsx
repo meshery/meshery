@@ -14,8 +14,6 @@ import { useContext, useState, useEffect, ReactNode, FC } from 'react';
 import {
   ModalBody,
   List,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   IconButton,
   ListItem,
   ListItemButton,
@@ -29,6 +27,7 @@ import {
   DARK_BLUE_GRAY,
   useMediaQuery,
 } from '@sistent/sistent';
+import { ChevronLeftIcon, ChevronRightIcon } from '@/assets/icons';
 import { styled, useTheme } from '@/theme';
 import { Modal } from '@/components/shared/Modal';
 import ConnectionIcon from '@/assets/icons/Connection';
