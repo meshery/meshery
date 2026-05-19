@@ -1,7 +1,6 @@
 package policies
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 
@@ -88,7 +87,7 @@ func identifyMatchlabels(design *pattern.PatternFile, relDef *relationship.Relat
 				continue
 			}
 			for field, value := range cfgMap {
-				key := bucketKey{field: field, valueKey: fmt.Sprintf("%v", value)}
+				key := bucketKey{field: field, valueKey: canonicalSeed(value)}
 				if touched[key] {
 					continue
 				}
