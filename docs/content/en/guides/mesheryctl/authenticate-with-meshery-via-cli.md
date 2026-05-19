@@ -6,7 +6,7 @@ description: Get your authentication token from Meshery CLI.
 
 To authenticate Meshery through `mesheryctl`, the Meshery CLI, you will use the `mesheryctl system login` command. On executing this command, you will be provided with a list of providers to choose from. You can then select a Provider of your choice to complete the authentication and authorization process.
 
-As of this writing, you will be presented with two providers, _Layer5_ and _None_. 
+As of this writing, you will be presented with two providers, _Meshery_ and _None_. 
 ```bash
 Use the arrow keys to navigate: ↓ ↑ → ← 
 ? Select a Provider: 
