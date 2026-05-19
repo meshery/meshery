@@ -35,7 +35,8 @@
 &lt;li&gt;[UI] Phase 6: Eliminate residual @mui/* imports from ui/public and docker-extension @ritzorama (#19516)&lt;/li&gt;
 &lt;li&gt;[mesheryctl] model init: use v1beta2 schema constructs for scaffold generation @YASHMAHAKAL (#19409)&lt;/li&gt;
 &lt;li&gt;[UI] Fix navigation menu font size and contrast in dark mode @YASHMAHAKAL (#18780)&lt;/li&gt;
-&lt;li&gt;Revert efactor: update fallback image paths and remove unused SVG files\ @fitzergerald (#19480)&lt;/li&gt;
+&lt;li&gt;Revert
+efactor: update fallback image paths and remove unused SVG files\ @fitzergerald (#19480)&lt;/li&gt;
 &lt;li&gt;[UI] Fix failing Vitest test suite @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#19472)&lt;/li&gt;
 &lt;li&gt;chore(ui/e2e): migrate remaining E2E specs to TypeScript @UtkarshAnandd (#19454)&lt;/li&gt;
 &lt;li&gt;refactor: update fallback image paths and remove unused SVG files @miacycle (#19474)&lt;/li&gt;
@@ -169,7 +170,7 @@
 &lt;li&gt;[Docs] Update community name reference in docs @yi-nuo426 (#19411)&lt;/li&gt;
 &lt;li&gt;[Docs] Displace vendor references from installation, concepts, guides, and reference pages @yi-nuo426 (#19406)&lt;/li&gt;
 &lt;li&gt;[Docs] Displace vendor references from remaining tutorial pages @yi-nuo426 (#19404)&lt;/li&gt;
-&lt;li&gt;[Docs] Displace Kanvas and Layer5 from Kubernetes tutorial pages @yi-nuo426 (#19403)&lt;/li&gt;
+&lt;li&gt;[Docs] Displace references from Kubernetes tutorial pages @yi-nuo426 (#19403)&lt;/li&gt;
 &lt;li&gt;Add attendance instructions to meeting index @YASHMAHAKAL (#19394)&lt;/li&gt;
 &lt;li&gt;[Docs] Enable intra-page navigation on REST API overview page @shteypandey28-hue (#19170)&lt;/li&gt;
 &lt;li&gt;Fix formatting and update Artifact Hub references @hortison (#19281)&lt;/li&gt;
@@ -5666,7 +5667,7 @@
 	⌨️ Meshery CLI
 &lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;[meshery] [mesheryctl] chore: update repo from layer5 to meshery: server and mesheryctl @n2h9 (#14917)&lt;/li&gt;
+&lt;li&gt;[meshery] [mesheryctl] chore: update repo to meshery: server and mesheryctl @n2h9 (#14917)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="-meshery-ui"&gt;
 	🖥 Meshery UI
@@ -5680,7 +5681,7 @@
 &lt;ul&gt;
 &lt;li&gt;rename remote provider @aabidsofi19 (#14918)&lt;/li&gt;
 &lt;li&gt;[docs] chore: remove old adapter labs @leecalcote (#14909)&lt;/li&gt;
-&lt;li&gt;[meshery] [mesheryctl] chore: update repo from layer5 to meshery: server and mesheryctl @n2h9 (#14917)&lt;/li&gt;
+&lt;li&gt;[meshery] [mesheryctl] chore: update repo to meshery: server and mesheryctl @n2h9 (#14917)&lt;/li&gt;
 &lt;li&gt;update docker user @vishalvivekm (#14915)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="-contributors"&gt;
