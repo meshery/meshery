@@ -638,7 +638,7 @@ meshery-custom-end -->
   <li><code class="language-plaintext highlighter-rouge">DOCKER_USERNAME</code>: Username of the Docker Hub user with the right privileges to push images</li>
   <li><code class="language-plaintext highlighter-rouge">DOCKER_PASSWORD</code>: Password for the Docker Hub user</li>
   <li><code class="language-plaintext highlighter-rouge">GO_VERSION</code>: As of December 9th 2020 it is 1.15</li>
-  <li><code class="language-plaintext highlighter-rouge">IMAGE_NAME</code>: appropriate image name for each of the Docker container images. All are under the <code class="language-plaintext highlighter-rouge">layer5io</code> org.</li>
+  <li><code class="language-plaintext highlighter-rouge">IMAGE_NAME</code>: appropriate image name for each of the Docker container images. All are under the <code class="language-plaintext highlighter-rouge">meshery</code> org.</li>
   <li><code class="language-plaintext highlighter-rouge">SLACK_BOT_TOKEN</code>: Used for notification of new GitHub stars given to the Meshery repo.</li>
   <li>CYPRESS_RECORD_KEY`: Used for integration with the Meshery account on Cypress.</li>
   <li><code class="language-plaintext highlighter-rouge">GLOBAL_TOKEN</code>: Used for securely transmitting performance test results for the None Provider.</li>
@@ -697,7 +697,7 @@ meshery-custom-end -->
 
 <h4 id="homebrew">Homebrew</h4>
 
-<p>GoReleaser facilitates the creation of a brew formula for mesheryctl. The <a href="https://github.com/layer5io/homebrew-tap">homebrew-tap</a> repository is the location for Meshery’s brew formulas.</p>
+<p>GoReleaser facilitates the creation of a brew formula for mesheryctl. The <a href="https://github.com/meshery/homebrew-tap">homebrew-tap</a> repository is the location for Meshery’s brew formulas.</p>
 
 <h4 id="scoop">Scoop</h4>
 
@@ -767,16 +767,16 @@ meshery-custom-end -->
 <p><strong>Latest Stable Image</strong></p>
 
 <ul>
-  <li>layer5/meshery:stable-latest</li>
-  <li>layer5/meshery:stable-v0.4.1</li>
-  <li>layer5/meshery:stable-324vdgb (sha)</li>
+  <li>meshery/meshery:stable-latest</li>
+  <li>meshery/meshery:stable-v0.4.1</li>
+  <li>meshery/meshery:stable-324vdgb (sha)</li>
 </ul>
 
 <p><strong>Older Stable Image</strong></p>
 
 <ul>
-  <li>layer5/meshery:stable-v0.4.0</li>
-  <li>layer5/meshery:stable-289d02 (sha)</li>
+  <li>meshery/meshery:stable-v0.4.0</li>
+  <li>meshery/meshery:stable-289d02 (sha)</li>
 </ul>
 
 <p>Every docker image built receives either the edge tags or the stable tabs. Which set of image tags assigned is determined by whether a release tag is present or not. In other words, stable channel docker images get the “stable” tags only in the presence of a release tag (e.g. v0.4.1).</p>
@@ -790,14 +790,14 @@ meshery-custom-end -->
 <p><strong>Latest Edge Image</strong></p>
 
 <ul>
-  <li>layer5/meshery:edge-latest</li>
-  <li>layer5/meshery:edge-289d02 (sha)</li>
+  <li>meshery/meshery:edge-latest</li>
+  <li>meshery/meshery:edge-289d02 (sha)</li>
 </ul>
 
 <p><strong>Older Edge Image</strong></p>
 
 <ul>
-  <li>layer5/meshery:edge-324vdgb (sha)</li>
+  <li>meshery/meshery:edge-324vdgb (sha)</li>
 </ul>
 
 <h3 id="switching-between-meshery-release-channels">Switching Between Meshery Release Channels</h3>
