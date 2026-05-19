@@ -14,7 +14,7 @@
 	Envoy WASM Filter Management
 &lt;/h2&gt;
 &lt;p&gt;As of Meshery v0.7, the management of Envoy WASM filters includes:&lt;/p&gt;</description></item><item><title>GitOps with Meshery</title><link>/guides/infrastructure-management/gitops-with-meshery/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/gitops-with-meshery/</guid><description>&lt;h2 id="meshery-snapshot-github-action"&gt;
-	&lt;img style="height: 4rem; width: 4rem;" src="./images/kanvas-icon-color.svg" /&gt; Meshery Snapshot GitHub Action
+	Meshery Snapshot GitHub Action
 &lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;See your deployment before you merge&lt;/li&gt;
