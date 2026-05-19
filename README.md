@@ -206,7 +206,7 @@ Baseline and track your cloud native performance from release to release.
 </details>
 
 <details>
-<summary><h4>Load Generation and Microservice Performance Characteristization</h4></summary>
+<summary><h4>Load Generation and Microservice Performance Characterization</h4></summary>
 
 <picture align="left">
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg"  width="18%" align="left" style="margin-left:10px;" />

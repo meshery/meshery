@@ -76,13 +76,13 @@ The informer in MeshSync actively listens to changes in resources and updates th
 
 ### Flushing MeshSync
 
-### Sythentic Test of MeshSync
+### Synthetic Test of MeshSync
 
 _TODO: Include example of how to invoke this built-in check._
 
 # Scalability and Performance
 
-One Meshery Operator and one MeshSync are deployed to each Kuberentes cluster under management.
+One Meshery Operator and one MeshSync are deployed to each Kubernetes cluster under management.
 
 ## Tiered Discovery
 
