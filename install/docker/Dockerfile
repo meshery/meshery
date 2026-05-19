@@ -63,7 +63,7 @@ RUN mkdir -p seed_content/filters/binaries && \
     curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | \
     grep '"browser_download_url":.*\.wasm"' | \
     cut -d '"' -f 4 | \
-    xargs -I {} curl -L -o seed_content/filters/binaries/$(basename {}) {}
+        xargs -n 1 curl -L -O --output-dir seed_content/filters/binaries
 
 # Build-time Extension Point: This stage prepares optional .meshery directory from build context.
 # System integrators can place a .meshery directory at the repository root to supply
@@ -93,7 +93,7 @@ RUN apt-get update && \
     mkdir -p /var/run /home/appuser/.meshery/config /app/ui/public && \
     # Fix ownership (files copied earlier are owned by root)
     chown -R appuser:docker /var/run/ && \
-    chown -R appuser:appuser /home/appuser/ /app/ui/public
+    chown -R appuser:docker /home/appuser/ /app/ui/public
 
 # Copy application artifacts
 COPY ./server/cmd/server-config.env /app/server/cmd/server-config.env
