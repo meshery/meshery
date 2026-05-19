@@ -24,6 +24,11 @@ on:
           description: 'Release Version'     
           required: false
           default: 'v'
+
+permissions:
+  contents: write      # Needs to create/push releases
+  packages: write      # Helm charts go to registry
+
 jobs:
   validate:
     runs-on: ubuntu-24.04
@@ -40,7 +45,7 @@ jobs:
       run: helm lint install/kubernetes/helm/meshery-operator --with-subcharts
   release-chart:
     runs-on: ubuntu-24.04
-    if: ${{ github.event_name != 'pull_request' }} && ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # master
       - name: set env

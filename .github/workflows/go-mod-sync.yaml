@@ -13,6 +13,11 @@ on:
       - "master"
     paths:
       - "go.mod"
+
+permissions:
+  contents: write      # Needs to commit changes
+  pull-requests: read  # May read PR data
+
 jobs:
   sync:
     if: github.repository == 'meshery/meshery'
@@ -26,7 +31,17 @@ jobs:
         token: ${{ secrets.GH_ACCESS_TOKEN }}
         path: meshery
     - name: Check out code for meshery-extensions
+<<<<<<< ci/pin-action-refs-to-sha
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+=======
+      uses: actions/checkout@v6
+      # Meshery Extension Point
+      # ---
+      # Purpose: Notify Remote Providers of changes in Golang dependencies
+      # Learn more: See https://docs.meshery.io/extensibility
+      # Add your repository to the list: https://github.com/meshery/meshery/issues/new/choose
+      # ---
+>>>>>>> master
       with:
         repository: layer5labs/meshery-extensions
         token: ${{ secrets.GH_ACCESS_TOKEN }}

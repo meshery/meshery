@@ -1,8 +1,11 @@
 import React from 'react';
 import { CatalogIcon, TachographDigitalIcon } from '@sistent/sistent';
 import ConfigurationIcon from '../../../assets/icons/ConfigurationIcon';
+import ConnectionIcon from '../../../assets/icons/Connection';
 import DashboardIcon from '@/assets/icons/DashboardIcon';
+import EnvironmentIcon from '../../../assets/icons/Environment';
 import ServiceMeshIcon from '../../../assets/icons/ServiceMeshIcon';
+import WorkspaceOutlinedIcon from '../../../assets/icons/WorkspaceOutlined';
 import LifecycleIcon from '../../../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../../../public/static/img/drawer-icons/performance_svg';
 import ExtensionIcon from '../../../public/static/img/drawer-icons/extensions_svg';
@@ -60,6 +63,7 @@ export const getNavigatorComponents = (
     children: [
       {
         id: CONNECTION,
+        icon: <ConnectionIcon style={{ ...drawerIconsStyle }} />,
         href: '/management/connections',
         title: 'Connections',
         show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
@@ -71,6 +75,7 @@ export const getNavigatorComponents = (
       },
       {
         id: ENVIRONMENT,
+        icon: <EnvironmentIcon style={{ ...drawerIconsStyle }} />,
         href: '/management/environments',
         title: 'Environments',
         show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, ENVIRONMENT]),
@@ -82,6 +87,7 @@ export const getNavigatorComponents = (
       },
       {
         id: WORKSPACE,
+        icon: <WorkspaceOutlinedIcon style={{ ...drawerIconsStyle }} />,
         href: '/management/workspaces',
         title: 'Workspaces',
         show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, WORKSPACE]),
