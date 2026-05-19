@@ -32,6 +32,12 @@ const defaultEventProperties = {
   status: STATUS.UNREAD,
 };
 
+const normalizeEvent = (event) => ({
+  ...event,
+  severity: event?.severity?.trim() || defaultEventProperties.severity,
+  status: event?.status?.trim() || defaultEventProperties.status,
+});
+
 const eventsEntityAdapter = createEntityAdapter({
   selectId: (event) => event.id,
   //sort based on createdAt timestamp(utc)
@@ -61,16 +67,15 @@ export const eventsSlice = createSlice({
 
     pushEvents: (state, action) => {
       // state.events = [...state.events, ...action.payload]
-      eventsEntityAdapter.addMany(state, action.payload);
-      state.current_view.has_more = action.payload.length == 0 ? false : true;
+      const events = Array.isArray(action.payload)
+        ? action.payload.filter(Boolean).map(normalizeEvent)
+        : [];
+      eventsEntityAdapter.addMany(state, events);
+      state.current_view.has_more = events.length == 0 ? false : true;
     },
 
     pushEvent: (state, action) => {
-      const event = {
-        ...action.payload,
-        severity: action.payload?.severity?.trim() || defaultEventProperties.severity,
-        status: action.payload?.status?.trim() || defaultEventProperties.status,
-      };
+      const event = normalizeEvent(action.payload);
       eventsEntityAdapter.addOne(state, event);
       // state.events = [event, ...state.events]
     },
