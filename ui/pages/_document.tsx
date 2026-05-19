@@ -62,7 +62,7 @@ class MesheryDocument extends Document<MyDocumentProps> {
            * content="no-referrer" included to avoid 403 errors on Google avatars
            */}
           <meta name="referrer" content="no-referrer" />
-          <link rel="icon" href="/static/favicon.png" />
+          <link rel="icon" href="/static/img/icons/favicon.png" />
 
           {/* Inject Emotion styles for SSR - prevents FOUC */}
           {this.props.emotionStyleTags}

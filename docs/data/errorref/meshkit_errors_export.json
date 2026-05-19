@@ -207,8 +207,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "",
-        "probable_cause": "invalid sourceurl provided\nrepository might be private",
-        "suggested_remediation": "provided sourceURL according to the format\nprovide approparite credentials to clone a private repository"
+        "probable_cause": "invalid sourceURL provided\nrepository might be private",
+        "suggested_remediation": "provide sourceURL according to the format\nprovide appropriate credentials to clone a private repository"
       },
       "11140": {
         "name": "ErrInvalidGitHubSourceURLCode",
@@ -217,7 +217,7 @@
         "long_description": "",
         "short_description": "",
         "probable_cause": "sourceURL provided might be invalid\nprovided repo/version tag does not exist",
-        "suggested_remediation": "ensure source url follows the format: git://<owner>/<repositoryname>/<branch>/<version>/<path from the root of repository>"
+        "suggested_remediation": "ensure sourceURL follows the format: git://<owner>/<repositoryname>/<branch>/<version>/<path from the root of repository>"
       },
       "11141": {
         "name": "ErrGetControllerStatusCode",

@@ -134,9 +134,9 @@ const MesheryCredentialComponent: React.FC = () => {
   const getCredentialsIcon = (type: string): React.ReactNode => {
     switch (type) {
       case 'prometheus':
-        return <CredentialIcon src="/static/img/prometheus_logo_orange_circle.svg" />;
+        return <CredentialIcon src="/static/img/integrations/prometheus_logo_orange_circle.svg" />;
       case 'grafana':
-        return <CredentialIcon src="/static/img/grafana_icon.svg" />;
+        return <CredentialIcon src="/static/img/integrations/grafana_icon.svg" />;
       case 'kubernetes':
         return (
           <CredentialIcon

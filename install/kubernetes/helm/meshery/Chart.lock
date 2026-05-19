@@ -26,9 +26,6 @@ dependencies:
 - name: meshery-cilium
   repository: ""
   version: 0.7.0
-- name: meshery-nighthawk
-  repository: ""
-  version: 0.7.0
 - name: meshery-operator
   repository: file://../meshery-operator
   version: 0.8.0

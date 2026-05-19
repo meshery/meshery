@@ -27,7 +27,6 @@ require (
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/docker/go-connections v0.7.0
 	github.com/eiannone/keyboard v0.0.0-20220611211555-0d226195f203
-	github.com/envoyproxy/go-control-plane/envoy v1.36.0
 	github.com/fatih/color v1.18.0
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/ghodss/yaml v1.0.0
@@ -43,15 +42,13 @@ require (
 	github.com/grafana-tools/sdk v0.0.0-20220919052116-6562121319fc
 	github.com/jarcoal/httpmock v1.4.1
 	github.com/jinzhu/copier v0.4.0
-	github.com/layer5io/gowrk2 v0.6.1
-	github.com/layer5io/nighthawk-go v1.0.8
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.12.1
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v0.8.11
 	github.com/meshery/meshkit v1.0.8
 	github.com/meshery/meshsync v1.0.0
-	github.com/meshery/schemas v1.2.19
+	github.com/meshery/schemas v1.2.20
 	github.com/nsf/termbox-go v1.1.1
 	github.com/oapi-codegen/runtime v1.4.0
 	github.com/olekukonko/tablewriter v1.1.4
@@ -155,7 +152,6 @@ require (
 	github.com/clipperhouse/displaywidth v0.10.0 // indirect
 	github.com/clipperhouse/uax29/v2 v2.6.0 // indirect
 	github.com/cloudflare/circl v1.6.3 // indirect
-	github.com/cncf/xds/go v0.0.0-20251210132809-ee656c7534f5 // indirect
 	github.com/cockroachdb/apd/v3 v3.2.1 // indirect
 	github.com/containerd/console v1.0.5 // indirect
 	github.com/containerd/containerd v1.7.30 // indirect
@@ -187,7 +183,6 @@ require (
 	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
 	github.com/emicklei/proto v1.14.3 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
-	github.com/envoyproxy/protoc-gen-validate v1.3.0 // indirect
 	github.com/evanphx/json-patch v5.9.11+incompatible // indirect
 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
 	github.com/fatih/camelcase v1.0.0 // indirect

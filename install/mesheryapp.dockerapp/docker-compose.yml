@@ -37,13 +37,6 @@ services:
     ports:
       - "${nsm.port}:10004"
     x-enabled: ${nsm.enabled}
-  meshery-nighthawk:
-    image: meshery/meshery-nighthawk:edge-latest
-    labels:
-      - ${labels.watchtower}
-    ports:
-      - "${nighthwak.port}:10013"
-    x-enabled: ${nighthawk.enabled}
   watchtower:
     image: containrrr/watchtower
     labels:
