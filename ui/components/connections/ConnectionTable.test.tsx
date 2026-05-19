@@ -438,10 +438,14 @@ describe('ConnectionTable', () => {
   // loop. The effect now reads `filteredConnections` via a ref and never
   // clears the URL.
   it('does not clear the connectionId URL param when the connection is not on the current page', async () => {
-    router.query = { connectionId: 'connection-not-on-this-page' };
     const updateUrlWithConnectionId = vi.fn();
 
-    render(<ConnectionTable updateUrlWithConnectionId={updateUrlWithConnectionId} />);
+    render(
+      <ConnectionTable
+        selectedConnectionId="connection-not-on-this-page"
+        updateUrlWithConnectionId={updateUrlWithConnectionId}
+      />,
+    );
 
     await waitFor(() => {
       expect(dataTableProps).toBeDefined();
@@ -450,6 +454,67 @@ describe('ConnectionTable', () => {
     // Wait an extra tick to make sure no deferred call clears the URL.
     await new Promise((resolve) => setTimeout(resolve, 50));
     expect(updateUrlWithConnectionId).not.toHaveBeenCalledWith('');
+  });
+
+  // Regression for the Copilot review feedback on PR #19544: the prior shape
+  // of this effect listed `filteredConnections` in its deps (loop-prone, was
+  // the cause of issue #19405) and the intermediate fix moved it to a ref
+  // and dropped the dep entirely, but set `lastProcessedId` *before*
+  // confirming the row was found — locking the effect out for the rest of
+  // the session whenever the user landed on a page that didn't contain the
+  // deep-linked id (slow network, page 2, filtered view).
+  it('still expands the row when the deep-linked id arrives on a later page', async () => {
+    const setRowsExpandedSpy = vi.fn();
+
+    // First load: deep-linked id is NOT in the visible page.
+    getConnectionsQuery.mockReturnValue({
+      data: {
+        connections: [
+          makeConnection({ id: 'page-1-conn-a' }),
+          makeConnection({ id: 'page-1-conn-b' }),
+        ],
+        totalCount: 4,
+      },
+      isError: false,
+      error: undefined,
+      refetch: refetchConnections,
+      isLoading: false,
+    });
+
+    const { rerender } = render(<ConnectionTable selectedConnectionId="deep-link-target" />);
+
+    await waitFor(() => {
+      expect(dataTableProps).toBeDefined();
+    });
+
+    // The row isn't on this page, so nothing should be expanded yet.
+    const initialRowsExpanded = dataTableProps.options.rowsExpanded;
+    expect(initialRowsExpanded).toEqual([]);
+
+    // User paginates and the deep-linked id is now in the visible set.
+    getConnectionsQuery.mockReturnValue({
+      data: {
+        connections: [
+          makeConnection({ id: 'page-2-conn-a' }),
+          makeConnection({ id: 'deep-link-target', name: 'cluster-deep' }),
+        ],
+        totalCount: 4,
+      },
+      isError: false,
+      error: undefined,
+      refetch: refetchConnections,
+      isLoading: false,
+    });
+
+    rerender(<ConnectionTable selectedConnectionId="deep-link-target" />);
+
+    // The effect must re-fire and expand index 1 now that the id is visible.
+    await waitFor(() => {
+      expect(dataTableProps.options.rowsExpanded).toEqual([1]);
+    });
+
+    // Sanity check that the linter isn't optimizing the spy away.
+    expect(setRowsExpandedSpy).not.toHaveBeenCalled();
   });
 
   it('reuses the same onFlushMeshSync callback across rerenders so children are not invalidated', () => {

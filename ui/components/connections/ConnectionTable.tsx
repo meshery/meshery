@@ -52,7 +52,11 @@ const ConnectionTable = ({
     (state: {
       ui: {
         organization?: { id?: string };
-        connectionMetadataState: Record<string, { transitions?: string[]; icon?: string }>;
+        // `null` matches the Redux initial state (see
+        // `store/slices/mesheryUi.ts`). The slice is only populated after
+        // `_app.tsx`'s async `loadMeshModelComponent` resolves, which can
+        // race the first render of this page.
+        connectionMetadataState: Record<string, { transitions?: string[]; icon?: string }> | null;
         controllerState: unknown;
       };
     }) => state.ui,
@@ -511,40 +515,52 @@ const ConnectionTable = ({
     lastProcessedId: null,
   });
 
-  // `filteredConnections` is intentionally accessed via a ref rather than
-  // listed in the dep array: RTK Query hands back a fresh array reference on
-  // every successful refetch (and on cache invalidation triggered by a
-  // mutation), and re-firing this effect on those churns previously cleared
-  // the `connectionId` URL param mid-refetch — which pushed a new URL, which
-  // re-rendered the parent, which produced another new RTK array reference,
-  // etc. Reading the latest value from a ref keeps the effect single-fire per
-  // `selectedConnectionId` change.
+  // `filteredConnections` is accessed via a ref so RTK Query's identity
+  // churn on every cache hit doesn't re-fire this effect. The effect re-fires
+  // through `filteredConnectionsKey` (a primitive snapshot of the visible id
+  // set), which only changes when the *content* of the visible page changes
+  // — which is exactly the condition under which a previously-missing deep
+  // link could now succeed (data finished loading, user paginated, filter
+  // changed). Same-data refetches produce the same key string, so they bail
+  // out of the effect via `Object.is` equality on the dep.
   const filteredConnectionsRef = useRef(filteredConnections);
   filteredConnectionsRef.current = filteredConnections;
+
+  const filteredConnectionsKey = useMemo(
+    () => filteredConnections.map((conn) => conn.id).join('|'),
+    [filteredConnections],
+  );
 
   useEffect(() => {
     if (!selectedConnectionId || expansionFlags.current.isHandlingExpansion) return;
     if (expansionFlags.current.lastProcessedId === selectedConnectionId) return;
 
     const connections = filteredConnectionsRef.current;
-    if (connections && connections.length > 0) {
-      expansionFlags.current.isUrlExpansion = true;
-      expansionFlags.current.lastProcessedId = selectedConnectionId;
-
-      const index = connections.findIndex((conn) => conn.id === selectedConnectionId);
-      if (index !== -1) {
-        setRowsExpanded([index]);
-      }
-      // Intentionally do NOT clear the URL when the connection isn't on the
-      // current page: pagination, filter, or search may move it out of view,
-      // and pushing `connectionId=""` here started a URL-push → re-render →
-      // effect-re-fire loop that produced React error #185. If the connection
-      // shows up on a later page the user can still deep-link to it.
-
-      expansionFlags.current.isUrlExpansion = false;
-      expansionFlags.current.isInitialLoad = false;
+    if (!connections || connections.length === 0) {
+      // Data not loaded yet. The effect will re-fire as soon as
+      // `filteredConnectionsKey` flips on first arrival.
+      return;
     }
-  }, [selectedConnectionId]);
+
+    const index = connections.findIndex((conn) => conn.id === selectedConnectionId);
+    if (index === -1) {
+      // The deep-linked connection isn't on the current page. Do not mark
+      // `lastProcessedId` — that would lock the effect out for the rest of
+      // the session. If the user paginates or filters into a page that does
+      // include this id, `filteredConnectionsKey` will change and the effect
+      // re-runs to expand the row. Intentionally do NOT clear the URL: the
+      // pre-fix code pushed `connectionId=""` here, which kicked off a
+      // URL-push → re-render → effect-re-fire loop that surfaced as React
+      // error #185.
+      return;
+    }
+
+    expansionFlags.current.isUrlExpansion = true;
+    expansionFlags.current.lastProcessedId = selectedConnectionId;
+    setRowsExpanded([index]);
+    expansionFlags.current.isUrlExpansion = false;
+    expansionFlags.current.isInitialLoad = false;
+  }, [selectedConnectionId, filteredConnectionsKey]);
 
   const columns = useConnectionColumns({
     url: CONNECTION_DOCS_URL,

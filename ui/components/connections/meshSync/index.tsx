@@ -580,37 +580,48 @@ export default function MeshSyncTable(props) {
     lastProcessedId: null,
   });
 
-  // Mirror of the ConnectionTable fix: `meshSyncResources` is intentionally
-  // accessed via a ref instead of being listed in the dep array. RTK Query
-  // hands back a fresh array reference on every refetch and on cache
-  // invalidation, and re-firing this effect on those churns previously
-  // cleared the URL param mid-refetch, pushing a new URL that re-rendered
-  // the parent and minted yet another RTK array reference — a classic React
-  // #185 update-depth loop.
+  // Mirror of the ConnectionTable fix: `meshSyncResources` is accessed via a
+  // ref so RTK Query's identity churn on cache hits doesn't re-fire this
+  // effect, while `meshSyncResourcesKey` (a primitive snapshot of the visible
+  // id set) keys the effect to actual content changes — which is exactly the
+  // condition under which a previously-missing deep link could now succeed
+  // (data finished loading, user paginated, filter changed). Same-data
+  // refetches produce the same key string and bail out via `Object.is`.
   const meshSyncResourcesRef = useRef(meshSyncResources);
   meshSyncResourcesRef.current = meshSyncResources;
+
+  const meshSyncResourcesKey = useMemo(
+    () => (meshSyncResources ?? []).map((resource) => resource.id).join('|'),
+    [meshSyncResources],
+  );
 
   useEffect(() => {
     if (!selectedResourceId || expansionFlags.current.isHandlingExpansion) return;
     if (expansionFlags.current.lastProcessedId === selectedResourceId) return;
 
     const resources = meshSyncResourcesRef.current;
-    if (resources && resources.length > 0) {
-      expansionFlags.current.isUrlExpansion = true;
-      expansionFlags.current.lastProcessedId = selectedResourceId;
-
-      const index = resources.findIndex((resource) => resource.id === selectedResourceId);
-      if (index !== -1) {
-        setRowsExpanded([index]);
-      }
-      // Intentionally do NOT clear the URL when the resource isn't on the
-      // current page — pushing `connectionId=""` started a URL-push →
-      // re-render → effect-re-fire loop here too.
-
-      expansionFlags.current.isUrlExpansion = false;
-      expansionFlags.current.isInitialLoad = false;
+    if (!resources || resources.length === 0) {
+      // Data not loaded yet. Re-fires once `meshSyncResourcesKey` flips.
+      return;
     }
-  }, [selectedResourceId]);
+
+    const index = resources.findIndex((resource) => resource.id === selectedResourceId);
+    if (index === -1) {
+      // Resource not on this page — do not lock out the effect by marking
+      // `lastProcessedId` here. If the user paginates or filters into a page
+      // that does include this id, `meshSyncResourcesKey` will change and the
+      // effect re-runs. Intentionally do NOT clear the URL: pushing
+      // `connectionId=""` started a URL-push → re-render → effect-re-fire
+      // loop that surfaced as React error #185.
+      return;
+    }
+
+    expansionFlags.current.isUrlExpansion = true;
+    expansionFlags.current.lastProcessedId = selectedResourceId;
+    setRowsExpanded([index]);
+    expansionFlags.current.isUrlExpansion = false;
+    expansionFlags.current.isInitialLoad = false;
+  }, [selectedResourceId, meshSyncResourcesKey]);
 
   const filters = {
     kind: {
