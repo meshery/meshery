@@ -151,7 +151,7 @@ const resolveNavigatorComponents = ({
   currentPath,
 }) => {
   const designPersistenceEnabled = Boolean(
-    providerUiAccessControl?.providerCapabilities?.some(
+    providerUiAccessControl?.providerPayload?.providerCapabilities?.some(
       (capability) => capability.feature === 'persist-meshery-patterns',
     ),
   );
@@ -175,11 +175,8 @@ const resolveNavigatorComponents = ({
     }
 
     if (category.id === CONFIGURATION) {
-      let show = false;
-
       const children = category.children?.map((child) => {
         if (child.id === 'Designs') {
-          show = designPersistenceEnabled;
           return {
             ...child,
             show: designPersistenceEnabled,
@@ -198,7 +195,6 @@ const resolveNavigatorComponents = ({
 
       return {
         ...category,
-        show,
         children,
       };
     }
