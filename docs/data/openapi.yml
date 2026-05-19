@@ -91,7 +91,10 @@ paths:
       summary: Evaluate relationships in a design
       description: >-
         Performs relationship evaluation on a given design, applying policies and updating components and relationships
-        as needed.
+        as needed. This `EvaluationResponse` contract is engine-agnostic: it is produced either by this server operation
+        or by an equivalent in-browser WebAssembly engine implementing the same contract. See
+        `docs/relationship-evaluation-engine-contract.md` for the authoritative engine contract, the in-browser engine
+        surface, and the registry-independent hydration boundary.
       requestBody:
         required: true
         content:
@@ -13204,7 +13207,7 @@ paths:
                     type: array
                     items:
                       type: object
-                      description: Represents a user in Meshery Cloud (Meshery)
+                      description: Represents a user in Layer5 Cloud (Meshery)
                       required:
                         - id
                         - userId
@@ -13240,7 +13243,7 @@ paths:
                         provider:
                           type: string
                           maxLength: 100
-                          description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
+                          description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
                           example:
                             - local
                             - github
@@ -13680,7 +13683,7 @@ paths:
                     type: array
                     items:
                       type: object
-                      description: Represents a user in Meshery Cloud (Meshery)
+                      description: Represents a user in Layer5 Cloud (Meshery)
                       required:
                         - id
                         - userId
@@ -13716,7 +13719,7 @@ paths:
                         provider:
                           type: string
                           maxLength: 100
-                          description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
+                          description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
                           example:
                             - local
                             - github
@@ -14118,7 +14121,7 @@ paths:
             application/json:
               schema:
                 type: object
-                description: Represents a user in Meshery Cloud (Meshery)
+                description: Represents a user in Layer5 Cloud (Meshery)
                 required:
                   - id
                   - userId
@@ -14154,7 +14157,7 @@ paths:
                   provider:
                     type: string
                     maxLength: 100
-                    description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
+                    description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
                     example:
                       - local
                       - github
@@ -14545,7 +14548,7 @@ paths:
             application/json:
               schema:
                 type: object
-                description: Represents a user in Meshery Cloud (Meshery)
+                description: Represents a user in Layer5 Cloud (Meshery)
                 required:
                   - id
                   - userId
@@ -14581,7 +14584,7 @@ paths:
                   provider:
                     type: string
                     maxLength: 100
-                    description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
+                    description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
                     example:
                       - local
                       - github
@@ -40852,7 +40855,7 @@ components:
           format: uri
           description: URL to the badge image.
           example: >-
-            https://raw.githubusercontent.com/layer5io/layer5-academy/refs/heads/master/static/11111111-1111-1111-1111-111111111111/images/meshery-logo-light.webp
+            https://raw.githubusercontent.com/meshery-extensions/meshery-academy/refs/heads/master/.github/assets/images/mershery-icon.png
           maxLength: 2048
           x-oapi-codegen-extra-tags:
             db: image_url
@@ -40928,7 +40931,7 @@ components:
           format: uri
           description: URL to the badge image.
           example: >-
-            https://raw.githubusercontent.com/layer5io/layer5-academy/refs/heads/master/static/11111111-1111-1111-1111-111111111111/images/meshery-logo-light.webp
+            https://raw.githubusercontent.com/meshery-extensions/meshery-academy/refs/heads/master/.github/assets/images/mershery-icon.png
           maxLength: 2048
           x-oapi-codegen-extra-tags:
             db: image_url
@@ -41039,7 +41042,7 @@ components:
                 format: uri
                 description: URL to the badge image.
                 example: >-
-                  https://raw.githubusercontent.com/layer5io/layer5-academy/refs/heads/master/static/11111111-1111-1111-1111-111111111111/images/meshery-logo-light.webp
+                  https://raw.githubusercontent.com/meshery-extensions/meshery-academy/refs/heads/master/.github/assets/images/mershery-icon.png
                 maxLength: 2048
                 x-oapi-codegen-extra-tags:
                   db: image_url
@@ -47211,7 +47214,7 @@ components:
             json: isAnnotation
     role_Role:
       type: object
-      description: Role definition for Meshery Cloud (Meshery).
+      description: Role definition for Layer5 Cloud (Meshery).
       required:
         - roleName
         - description
@@ -47330,7 +47333,7 @@ components:
           items:
             x-go-type: Role
             type: object
-            description: Role definition for Meshery Cloud (Meshery).
+            description: Role definition for Layer5 Cloud (Meshery).
             required:
               - roleName
               - description
@@ -48293,7 +48296,7 @@ components:
           description: The data of the teammemberspage.
     User_User:
       type: object
-      description: Represents a user in Meshery Cloud (Meshery)
+      description: Represents a user in Layer5 Cloud (Meshery)
       required:
         - id
         - userId
@@ -48329,7 +48332,7 @@ components:
         provider:
           type: string
           maxLength: 100
-          description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
+          description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
           example:
             - local
             - github
@@ -48700,7 +48703,7 @@ components:
           type: array
           items:
             type: object
-            description: Represents a user in Meshery Cloud (Meshery)
+            description: Represents a user in Layer5 Cloud (Meshery)
             required:
               - id
               - userId
@@ -48736,7 +48739,7 @@ components:
               provider:
                 type: string
                 maxLength: 100
-                description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
+                description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
                 example:
                   - local
                   - github
@@ -49108,7 +49111,7 @@ components:
           type: array
           items:
             type: object
-            description: Represents a user in Meshery Cloud (Meshery)
+            description: Represents a user in Layer5 Cloud (Meshery)
             required:
               - id
               - userId
@@ -49144,7 +49147,7 @@ components:
               provider:
                 type: string
                 maxLength: 100
-                description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
+                description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
                 example:
                   - local
                   - github
@@ -63014,7 +63017,7 @@ components:
             provider:
               type: string
               maxLength: 100
-              description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
+              description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
               example:
                 - local
                 - github
@@ -63674,7 +63677,7 @@ components:
                   provider:
                     type: string
                     maxLength: 100
-                    description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
+                    description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
                     example:
                       - local
                       - github
@@ -64868,7 +64871,7 @@ components:
                   provider:
                     type: string
                     maxLength: 100
-                    description: Authentication provider (e.g., Meshery Cloud, Twitter, Facebook, Github)
+                    description: Authentication provider (e.g., Layer5 Cloud, Twitter, Facebook, Github)
                     example:
                       - local
                       - github
@@ -67832,7 +67835,7 @@ components:
             path: github.com/gofrs/uuid
         loadGenerators:
           type: array
-          description: Load generators (e.g. fortio, wrk2) to drive the profile's load test.
+          description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
           minItems: 1
           items:
             type: string
@@ -68058,7 +68061,7 @@ components:
             path: github.com/gofrs/uuid
         loadGenerators:
           type: array
-          description: Load generators (e.g. fortio, wrk2) to drive the profile's load test.
+          description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
           minItems: 1
           items:
             type: string
@@ -68260,7 +68263,7 @@ components:
                   path: github.com/gofrs/uuid
               loadGenerators:
                 type: array
-                description: Load generators (e.g. fortio, wrk2) to drive the profile's load test.
+                description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
                 minItems: 1
                 items:
                   type: string
@@ -77726,7 +77729,7 @@ components:
                   path: github.com/gofrs/uuid
               loadGenerators:
                 type: array
-                description: Load generators (e.g. fortio, wrk2) to drive the profile's load test.
+                description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
                 minItems: 1
                 items:
                   type: string
