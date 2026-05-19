@@ -167,7 +167,7 @@ const resolveNavigatorComponents = ({
 
           return {
             ...child,
-            icon: buildLifecycleIcon(child.id, child.href, currentPath),
+            icon: child.icon ?? buildLifecycleIcon(child.id, child.href, currentPath),
             children: buildAdapterChildren(meshAdapters, child.id),
           };
         }),
