@@ -200,10 +200,10 @@ func TestForwardAdapterEventBatches_FlushesAtBatchSize(t *testing.T) {
 	if len(events) != 3 {
 		t.Fatalf("expected 3 events in batch, got %d", len(events))
 	}
-	for i, event := range events {
+	for i := range events {
 		expected := "event-" + string(rune('1'+i))
-		if event.Summary != expected {
-			t.Fatalf("expected event %d summary %q, got %q", i, expected, event.Summary)
+		if events[i].Summary != expected {
+			t.Fatalf("expected event %d summary %q, got %q", i, expected, events[i].Summary)
 		}
 	}
 	if processed.Load() != 3 {
