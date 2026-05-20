@@ -189,7 +189,7 @@ vi.mock('@/rtk-query/user', () => ({
         latest: '1.0.0',
         outdated: false,
         commitsha: 'abc',
-        release_channel: 'stable',
+        releaseChannel: 'stable',
       },
       isSuccess: true,
       isError: false,

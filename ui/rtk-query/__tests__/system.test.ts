@@ -43,7 +43,8 @@ describe('system endpoints', () => {
 
   it('exports the expected hooks', async () => {
     const mod = await import('../system');
-    expect(mod.useGetDatabaseSummaryQuery).toBeTypeOf('function');
+    expect(mod.useGetSystemDatabaseQuery).toBeTypeOf('function');
+    expect(mod.useResetSystemDatabaseMutation).toBeTypeOf('function');
     expect(mod.useGetAdaptersQuery).toBeTypeOf('function');
     expect(mod.useGetAvailableAdaptersQuery).toBeTypeOf('function');
     expect(mod.useLazyPingAdapterQuery).toBeTypeOf('function');
@@ -56,23 +57,34 @@ describe('system endpoints', () => {
     expect(mod.useLazyGetSmiResultsQuery).toBeTypeOf('function');
   });
 
-  it('getDatabaseSummary issues GET with pagination params', async () => {
+  it('getSystemDatabase issues GET with pagination params', async () => {
     const { api, store } = await setupStore();
     await store.dispatch(
-      api.endpoints.getDatabaseSummary.initiate({
+      api.endpoints.getSystemDatabase.initiate({
         page: 1,
-        pagesize: 20,
+        pageSize: 20,
         search: 'foo',
-        order: 'name',
+        sort: 'name',
+        order: 'desc',
       }),
     );
     const req = fetchMock.mock.calls[0][0] as Request;
     expect(req.method).toBe('GET');
     expect(req.url).toContain('/api/system/database');
     expect(req.url).toContain('page=1');
-    expect(req.url).toContain('pagesize=20');
+    expect(req.url).toContain('pageSize=20');
     expect(req.url).toContain('search=foo');
-    expect(req.url).toContain('order=name');
+    expect(req.url).toContain('sort=name');
+    expect(req.url).toContain('order=desc');
+  });
+
+  it('resetSystemDatabase issues DELETE /api/system/database/reset', async () => {
+    const { api, store } = await setupStore();
+    await store.dispatch(api.endpoints.resetSystemDatabase.initiate(undefined));
+    const req = fetchMock.mock.calls[0][0] as Request;
+    expect(req.method).toBe('DELETE');
+    expect(req.url).toContain('/api/system/database/reset');
+    expect(req.credentials).toBe('include');
   });
 
   it('getAdapters issues GET /api/system/adapters with credentials include', async () => {

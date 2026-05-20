@@ -7,12 +7,14 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strconv"
 	"time"
 
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
+	systemv1beta1 "github.com/meshery/schemas/models/v1beta1/system"
 	"github.com/spf13/viper"
 	"gorm.io/gorm/clause"
 )
@@ -21,7 +23,11 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	var tables []*models.SqliteSchema
 	var recordCount int
 	var totalTables int64
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, sortColumn, sortDesc, err := getSystemDatabaseQueryParams(r)
+	if err != nil {
+		writeJSONError(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	tableFinder := h.dbHandler.DB.Table("sqlite_schema").
 		Where("type = ?", "table")
@@ -38,28 +44,31 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	if offset != 0 {
 		tableFinder = tableFinder.Offset(offset)
 	}
-	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
-	if order != "" {
-		if sort == "desc" {
-			tableFinder = tableFinder.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
-		} else {
-			tableFinder = tableFinder.Order(order)
-		}
+	if sortColumn != "" {
+		tableFinder = tableFinder.Order(clause.OrderByColumn{Column: clause.Column{Name: sortColumn}, Desc: sortDesc})
 	}
 
 	tableFinder.Find(&tables)
 
+	responseTables := make([]systemv1beta1.SystemDatabaseTable, 0, len(tables))
 	for _, table := range tables {
 		h.dbHandler.DB.Table(table.Name).Count(&table.Count)
 		recordCount += int(table.Count)
+		name := table.Name
+		tableType := table.Type
+		responseTables = append(responseTables, systemv1beta1.SystemDatabaseTable{
+			Count: table.Count,
+			Name:  &name,
+			Type:  &tableType,
+		})
 	}
 
-	databaseSummary := &models.DatabaseSummary{
+	databaseSummary := &systemv1beta1.SystemDatabaseSummary{
 		Page:        page,
 		PageSize:    limit,
 		TotalTables: int(totalTables),
 		RecordCount: recordCount,
-		Tables:      tables,
+		Tables:      responseTables,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -71,6 +80,53 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	if _, err := fmt.Fprint(w, string(val)); err != nil {
 		h.log.Error(err)
 	}
+}
+
+func getSystemDatabaseQueryParams(req *http.Request) (page, offset, limit int, search, sortColumn string, sortDesc bool, err error) {
+	urlValues := req.URL.Query()
+
+	page, _ = strconv.Atoi(urlValues.Get("page"))
+	if page < 0 {
+		page = 0
+	}
+
+	pageSize := urlValues.Get("pageSize")
+	if pageSize == "" {
+		pageSize = urlValues.Get("pagesize")
+	}
+	if pageSize == "" {
+		limit = defaultPageSize
+	} else {
+		limit, err = strconv.Atoi(pageSize)
+		if err != nil || limit < 1 {
+			return 0, 0, 0, "", "", false, fmt.Errorf("pageSize must be an integer greater than 0")
+		}
+	}
+
+	sortColumns := map[string]string{
+		"name": "name",
+	}
+	sort := urlValues.Get("sort")
+	if sort != "" {
+		var ok bool
+		sortColumn, ok = sortColumns[sort]
+		if !ok {
+			return 0, 0, 0, "", "", false, fmt.Errorf("sort must be name")
+		}
+	}
+
+	order := urlValues.Get("order")
+	switch order {
+	case "", "asc":
+	case "desc":
+		sortDesc = true
+	default:
+		return 0, 0, 0, "", "", false, fmt.Errorf("order must be asc or desc")
+	}
+
+	search = urlValues.Get("search")
+	offset = page * limit
+	return
 }
 
 // Reset the system database to its initial state.
@@ -166,6 +222,9 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 		h.registryManager = rm
+		if h.ConnectionToStateMachineInstanceTracker != nil {
+			h.ConnectionToStateMachineInstanceTracker.Clear()
+		}
 
 		krh, err := models.NewKeysRegistrationHelper(dbHandler, h.log)
 		if err != nil {
@@ -176,6 +235,6 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			models.SeedComponents(h.log, h.config, h.registryManager)
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		}()
-		writeJSONMessage(w, map[string]string{"message": "Database reset successful"}, http.StatusOK)
+		writeJSONMessage(w, systemv1beta1.SystemMessageResponse{Message: "Database reset"}, http.StatusOK)
 	}
 }

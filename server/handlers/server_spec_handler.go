@@ -8,25 +8,20 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/utils"
+	systemv1beta1 "github.com/meshery/schemas/models/v1beta1/system"
 	"github.com/spf13/viper"
 )
-
-// Version defines the Json payload structure for version api\
-type Version struct {
-	Build          string `json:"build,omitempty"`
-	Latest         string `json:"latest,omitempty"`
-	Outdated       *bool  `json:"outdated,omitempty"`
-	CommitSHA      string `json:"commitsha,omitempty"`
-	ReleaseChannel string `json:"releaseChannel,omitempty"`
-}
 
 // ServerVersionHandler handles the version api request for the server
 func (h *Handler) ServerVersionHandler(w http.ResponseWriter, _ *http.Request) {
 	// Default values incase any errors
-	version := &Version{
-		Build:          viper.GetString("BUILD"),
-		CommitSHA:      viper.GetString("COMMITSHA"),
-		ReleaseChannel: viper.GetString("RELEASE_CHANNEL"),
+	build := viper.GetString("BUILD")
+	commitSHA := viper.GetString("COMMITSHA")
+	releaseChannel := viper.GetString("RELEASE_CHANNEL")
+	version := &systemv1beta1.SystemVersion{
+		Build:          &build,
+		Commitsha:      &commitSHA,
+		ReleaseChannel: &releaseChannel,
 	}
 
 	// if r.Method != http.MethodGet {
@@ -35,12 +30,12 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, _ *http.Request) {
 	// }
 
 	// compare the server build with the target build
-	isOutdated, latestVersion, err := CheckLatestVersion(version.Build)
+	isOutdated, latestVersion, err := CheckLatestVersion(build)
 	if err != nil {
 		h.log.Error(err)
 	} else {
 		// Add "Latest" and "Outdated" fields to the response
-		version.Latest = latestVersion
+		version.Latest = &latestVersion
 		version.Outdated = isOutdated
 	}
 
@@ -49,7 +44,7 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, _ *http.Request) {
 	err = json.NewEncoder(w).Encode(version)
 	if err != nil {
 		h.log.Error(models.ErrEncoding(err, "server-version"))
-		writeMeshkitError(w, models.ErrEncoding(err, "server-version"), http.StatusNotFound)
+		writeMeshkitError(w, models.ErrEncoding(err, "server-version"), http.StatusInternalServerError)
 	}
 }
 

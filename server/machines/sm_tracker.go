@@ -24,6 +24,12 @@ func (smt *ConnectionToStateMachineInstanceTracker) Remove(id core.Uuid) {
 	delete(smt.ConnectToInstanceMap, id)
 }
 
+func (smt *ConnectionToStateMachineInstanceTracker) Clear() {
+	smt.mx.Lock()
+	defer smt.mx.Unlock()
+	smt.ConnectToInstanceMap = map[core.Uuid]*StateMachine{}
+}
+
 func (smt *ConnectionToStateMachineInstanceTracker) Add(id core.Uuid, inst *StateMachine) {
 	smt.mx.Lock()
 	defer smt.mx.Unlock()

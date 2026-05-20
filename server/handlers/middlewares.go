@@ -333,6 +333,10 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		)
 		if err != nil {
 			h.log.Error(err)
+			continue
+		}
+		if inst == nil {
+			continue
 		}
 
 		inst.ResetState()
@@ -367,6 +371,9 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 	dataHandlers := []*dataHandlerToClusterID{}
 	clusterIDs := []string{}
 	for _, k8sContext := range connectedK8sContexts {
+		if k8sContext == nil {
+			continue
+		}
 		machineCtx := &kubernetes.MachineCtx{
 			K8sContext:         *k8sContext,
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
@@ -392,6 +399,10 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		)
 		if err != nil {
 			h.log.Error(err)
+			continue
+		}
+		if inst == nil {
+			continue
 		}
 
 		inst.ResetState()

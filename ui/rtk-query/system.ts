@@ -1,27 +1,19 @@
 import { api, mesheryApiPath } from './index';
 import { normalizeKubernetesContextsResponse } from './transforms';
+import {
+  mesheryApi,
+  useGetSystemDatabaseQuery,
+  useGetSystemSyncQuery,
+  useResetSystemDatabaseMutation,
+} from '@meshery/schemas/mesheryApi';
 
 const TAGS = {
   SYSTEM: 'system',
   ADAPTERS: 'adapters',
-  SYNC: 'sync',
 };
 
 const systemApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getDatabaseSummary: builder.query({
-      query: (queryArg) => ({
-        url: mesheryApiPath(`system/database`),
-        params: {
-          page: queryArg.page,
-          pagesize: queryArg.pagesize,
-          search: queryArg.search,
-          order: queryArg.order,
-        },
-        method: 'GET',
-      }),
-      providesTags: () => [{ type: TAGS.SYSTEM }],
-    }),
     getAdapters: builder.query({
       query: () => ({
         url: mesheryApiPath('system/adapters'),
@@ -47,14 +39,6 @@ const systemApi = api.injectEndpoints({
         credentials: 'include',
       }),
       providesTags: (result, error, adapterLoc) => [{ type: TAGS.ADAPTERS, id: adapterLoc }],
-    }),
-    getSystemSync: builder.query({
-      query: () => ({
-        url: mesheryApiPath('system/sync'),
-        method: 'GET',
-        credentials: 'include',
-      }),
-      providesTags: [TAGS.SYNC],
     }),
 
     getKubernetesContexts: builder.query({
@@ -119,15 +103,16 @@ const systemApi = api.injectEndpoints({
 });
 
 export const {
-  useGetDatabaseSummaryQuery,
   useGetAdaptersQuery,
   useGetAvailableAdaptersQuery,
   useLazyPingAdapterQuery,
   useManageAdapterMutation,
-  useGetSystemSyncQuery,
-  useLazyGetSystemSyncQuery,
   useGetKubernetesContextsQuery,
   useLazyGetKubernetesContextsQuery,
   useAdapterOperationMutation,
   useLazyGetSmiResultsQuery,
 } = systemApi;
+
+export { useGetSystemDatabaseQuery, useGetSystemSyncQuery, useResetSystemDatabaseMutation };
+
+export const useLazyGetSystemSyncQuery = mesheryApi.endpoints.getSystemSync.useLazyQuery;

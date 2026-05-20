@@ -89,10 +89,10 @@ func InitializeMachineWithContext(
 	}
 	inst.Provider = provider
 	_, err = inst.Start(ctx, machineCtx, log, initFunc)
-	smInstanceTracker.Add(ID, inst)
 	if err != nil {
 		return nil, err
 	}
 
+	smInstanceTracker.Add(ID, inst)
 	return inst, nil
 }

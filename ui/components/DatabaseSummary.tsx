@@ -1,12 +1,11 @@
 import React, { useState, FC } from 'react';
 import { Button, Typography, ResponsiveDataTable, useTheme } from '@sistent/sistent';
-import resetDatabase from '@/graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import SearchBar from '../utils/custom-search';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
-import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
+import { useGetSystemDatabaseQuery, useResetSystemDatabaseMutation } from '@/rtk-query/system';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { PROMPT_VARIANTS } from '@sistent/sistent';
@@ -22,8 +21,10 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchText, setSearchText] = useState('');
   const { notify } = useNotification();
-  const [sortOrder, setSortOrder] = useState('');
+  const [sortField, setSortField] = useState('');
+  const [sortDirection, setSortDirection] = useState('');
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [resetSystemDatabase] = useResetSystemDatabaseMutation();
 
   const handleError = (msg) => (error) => {
     updateProgress({ showProgress: false });
@@ -34,11 +35,12 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
     });
   };
 
-  const { data: databaseSummary, refetch } = useGetDatabaseSummaryQuery({
+  const { data: databaseSummary, refetch } = useGetSystemDatabaseQuery({
     page: page,
-    pagesize: rowsPerPage,
+    pageSize: rowsPerPage,
     search: searchText,
-    order: sortOrder,
+    sort: sortField,
+    order: sortDirection,
   });
 
   const handleResetDatabase = () => {
@@ -51,23 +53,14 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
       });
       if (responseOfResetDatabase === 'RESET') {
         updateProgress({ showProgress: true });
-        resetDatabase({
-          selector: {
-            clearDB: 'true',
-            ReSync: 'true',
-            hardReset: 'true',
-          },
-          k8scontextID: '',
-        }).subscribe({
-          next: (res) => {
-            updateProgress({ showProgress: false });
-            if (res.resetStatus === 'PROCESSING') {
-              notify({ message: 'Database reset successful.', event_type: EVENT_TYPES.SUCCESS });
-              refetch();
-            }
-          },
-          error: handleError('Database is not reachable, try restarting server.'),
-        });
+        try {
+          await resetSystemDatabase().unwrap();
+          updateProgress({ showProgress: false });
+          notify({ message: 'Database reset.', event_type: EVENT_TYPES.SUCCESS });
+          refetch();
+        } catch (error) {
+          handleError('Database is not reachable, try restarting server.')(error);
+        }
       }
     };
   };
@@ -84,7 +77,7 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
       name: 'count',
       label: 'Count',
       options: {
-        sort: true,
+        sort: false,
       },
     },
   ];
@@ -101,7 +94,7 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
     fixedHeader: true,
     serverSide: true,
     rowsPerPage: rowsPerPage,
-    count: databaseSummary?.total_tables,
+    count: databaseSummary?.totalTables,
     page: page,
     onChangePage: debounce((p) => setPage(p), 200),
     onChangeRowsPerPage: debounce((p) => setRowsPerPage(p), 200),
@@ -109,8 +102,14 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
       if (searchText) setPage(0);
       setSearchText(searchText != null ? searchText : '');
     }),
-    onColumnSortChange: (_, direction) => {
-      setSortOrder(`name ${direction}`);
+    onColumnSortChange: (column, direction) => {
+      if (column === 'name' && ['asc', 'desc'].includes(direction)) {
+        setSortField('name');
+        setSortDirection(direction);
+        return;
+      }
+      setSortField('');
+      setSortDirection('');
     },
   };
 

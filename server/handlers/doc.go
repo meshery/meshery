@@ -9,6 +9,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/models/events"
+	systemv1beta1 "github.com/meshery/schemas/models/v1beta1/system"
 	workspace "github.com/meshery/schemas/models/v1beta1/workspace"
 	v1 "k8s.io/api/core/v1"
 )
@@ -229,7 +230,7 @@ type providerPropertiesRespWrapper struct {
 
 type mesheryVersionRespWrapper struct {
 	// in: body
-	Body Version
+	Body systemv1beta1.SystemVersion
 }
 
 type applicationFilesResponseWrapper struct {
