@@ -78,7 +78,7 @@ export const LearnMore = styled("a")(({ theme }) => ({
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
-  color: theme.palette.text.default,
+  color: theme.palette.text.inverse,
   textDecoration: "none",
   fontSize: "1rem",
   lineHeight: 1.4,
