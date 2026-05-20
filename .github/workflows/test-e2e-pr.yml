@@ -64,7 +64,6 @@ jobs:
         run: |
           docker run -d \
             -p 9081:8080 \
-            -e USE_GO_POLICY_ENGINE=true \
             --name meshery \
             meshery-server:ci
 
