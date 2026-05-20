@@ -28,7 +28,7 @@ const (
 	ErrUserPromptCode               = "mesheryctl-1160"
 	ErrConvertConcurrentRequestCode = "mesheryctl-1161"
 	ErrConvertQPSCode               = "mesheryctl-1162"
-	ErrPerfProfileServerCode        = "mesheryctl-1165"
+	ErrPerfProfileServerCode        = "mesheryctl-1245"
 )
 
 func ErrReadFilepath(err error) error {
