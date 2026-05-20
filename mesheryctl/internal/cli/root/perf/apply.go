@@ -17,6 +17,11 @@ package perf
 import (
 	"bytes"
 	"encoding/json"
+	"io"
+	"net/http"
+	"os"
+	"strconv"
+	"strings"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/ghodss/yaml"
@@ -24,12 +29,8 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	"io"
-	"net/http"
-	"os"
-	"strconv"
-	"strings"
 
+	
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -456,7 +457,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return "", "", ErrPerfProfileServer(errors.New("failed to save performance profile on server"))
+		return "", "", ErrPerfProfileServer(err)
 	}
 
 	var response *models.PerformanceProfile
