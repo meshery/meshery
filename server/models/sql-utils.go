@@ -2,10 +2,12 @@ package models
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"strings"
 	"sync"
 
+	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/sirupsen/logrus"
@@ -51,7 +53,6 @@ func setNewDBInstance() {
 	mx.Lock()
 	defer mx.Unlock()
 
-	// Initialize Logger instance
 	logLevel := viper.GetInt("LOG_LEVEL")
 	log, err := logger.New("meshery", logger.Options{
 		Format:   logger.SyslogLogFormat,
@@ -62,14 +63,43 @@ func setNewDBInstance() {
 		os.Exit(1)
 	}
 
-	dbHandler, err = database.New(database.Options{
-		Filename: fmt.Sprintf("file:%s/mesherydb.sql?cache=private&mode=rwc&_busy_timeout=10000&_journal_mode=WAL", viper.GetString("USER_DATA_FOLDER")),
-		Engine:   database.SQLITE,
-		Logger:   log,
-	})
+	databaseURL := viper.GetString("DATABASE_URL")
+	var dbOptions database.Options
+
+	if databaseURL != "" {
+		u, err := url.Parse(databaseURL)
+		if err != nil {
+			log.Error(fmt.Errorf("invalid DATABASE_URL format: %v", err))
+			os.Exit(1)
+		}
+
+		engine := u.Scheme
+		if engine == "postgres" || engine == "postgresql" {
+			engine = database.POSTGRES
+		}
+
+		dbOptions = database.Options{
+			ConnectionURI: databaseURL,
+			Engine:        engine,
+			Logger:        log,
+		}
+	} else {
+		dbOptions = database.Options{
+			Filename: fmt.Sprintf("file:%s/mesherydb.sql?cache=private&mode=rwc&_busy_timeout=10000&_journal_mode=WAL", viper.GetString("USER_DATA_FOLDER")),
+			Engine:   database.SQLITE,
+			Logger:   log,
+		}
+	}
+
+	dbHandler, err = database.New(dbOptions)
+
 	if err != nil {
 		err = ErrInitializeDBHandler(err)
 		log.Error(err)
+	}
+	err = dbHandler.Use(&utils.PostgresConsistencyPlugin{}) //A non-working fix that I've just left for now
+	if err != nil {
+		log.Fatalf("Failed to register Postgres plugin: %v", err)
 	}
 }
 

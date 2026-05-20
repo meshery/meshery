@@ -225,6 +225,11 @@ func main() {
 	defer preferencePersister.ClosePersister()
 
 	dbHandler := models.GetNewDBInstance()
+	if dbHandler == nil || dbHandler.DB == nil {
+		log.Error(fmt.Errorf("Database connection failed. Check your DATABASE_URL and credentials."))
+		os.Exit(1)
+	}
+
 	regManager, err := meshmodel.NewRegistryManager(dbHandler)
 	if err != nil {
 		log.Error(ErrInitializingRegistryManager(err))
@@ -234,11 +239,12 @@ func main() {
 	brokerConn := nats.NewEmptyConnection
 
 	err = dbHandler.AutoMigrate(
-		&meshsyncmodel.KubernetesKeyValue{},
 		&meshsyncmodel.KubernetesResource{},
+		&meshsyncmodel.KubernetesResourceObjectMeta{},
+		&meshsyncmodel.KubernetesKeyValue{},
 		&meshsyncmodel.KubernetesResourceSpec{},
 		&meshsyncmodel.KubernetesResourceStatus{},
-		&meshsyncmodel.KubernetesResourceObjectMeta{},
+		&meshsyncmodel.KubernetesResource{},
 		&models.PerformanceProfile{},
 		&models.MesheryResult{},
 		&models.MesheryPattern{},

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/meshery/meshery/server/models"
@@ -14,168 +15,168 @@ import (
 	"github.com/meshery/meshkit/utils"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
-	"gorm.io/gorm/clause"
 )
 
 func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	var tables []*models.SqliteSchema
+	var tables []*models.TableSchema
 	var recordCount int
-	var totalTables int64
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, _, _, _ := getPaginationParams(r)
 
-	tableFinder := h.dbHandler.DB.Table("sqlite_schema").
-		Where("type = ?", "table")
-
-	if search != "" {
-		tableFinder = tableFinder.Where("name LIKE ?", "%"+search+"%")
+	tableNames, err := h.dbHandler.DB.Migrator().GetTables()
+	if err != nil {
+		http.Error(w, "Failed to fetch tables", http.StatusInternalServerError)
+		return
 	}
 
-	tableFinder.Count(&totalTables)
-
-	if limit != 0 {
-		tableFinder = tableFinder.Limit(limit)
-	}
-	if offset != 0 {
-		tableFinder = tableFinder.Offset(offset)
-	}
-	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
-	if order != "" {
-		if sort == "desc" {
-			tableFinder = tableFinder.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
-		} else {
-			tableFinder = tableFinder.Order(order)
+	for _, name := range tableNames {
+		if search != "" && !strings.Contains(name, search) {
+			continue
 		}
+
+		var count int64
+		h.dbHandler.DB.Table(name).Count(&count)
+
+		tables = append(tables, &models.TableSchema{
+			Name:  name,
+			Count: count,
+		})
+		recordCount += int(count)
 	}
 
-	tableFinder.Find(&tables)
+	totalTables := len(tables)
 
-	for _, table := range tables {
-		h.dbHandler.DB.Table(table.Name).Count(&table.Count)
-		recordCount += int(table.Count)
+	if offset > totalTables {
+		offset = totalTables
 	}
+	end := offset + limit
+	if limit == 0 || end > totalTables {
+		end = totalTables
+	}
+
+	paginatedTables := tables[offset:end]
 
 	databaseSummary := &models.DatabaseSummary{
 		Page:        page,
 		PageSize:    limit,
-		TotalTables: int(totalTables),
+		TotalTables: totalTables,
 		RecordCount: recordCount,
-		Tables:      tables,
+		Tables:      paginatedTables,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 
 	val, err := json.Marshal(databaseSummary)
 	if err != nil {
-		fmt.Println(err)
-	}
-	if _, err := fmt.Fprint(w, string(val)); err != nil {
 		h.log.Error(err)
+	}
+	_, err = fmt.Fprint(w, string(val))
+	if err != nil {
+		return
 	}
 }
 
 // Reset the system database to its initial state.
 func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	isSQLite := viper.GetString("DATABASE_URL") == ""
 
-	mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
-	err := os.Mkdir(path.Join(mesherydbPath, ".archive"), os.ModePerm)
-	if err != nil && os.IsNotExist(err) {
-		writeMeshkitError(w, ErrCreateDatabaseArchiveDir(err), http.StatusInternalServerError)
-		return
-	}
-	src := path.Join(mesherydbPath, "mesherydb.sql")
-	currentTime := time.Now().Format("20060102150407")
-	newFileName := ".archive/mesherydb" + currentTime + ".sql"
-	dst := path.Join(mesherydbPath, newFileName)
-
-	fin, err := os.Open(src)
-	if err != nil {
-		writeMeshkitError(w, ErrOpenDatabaseFile(err), http.StatusInternalServerError)
-		return
-	}
-	defer func() {
-		if err := fin.Close(); err != nil {
-			h.log.Error(err)
+	if isSQLite {
+		mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
+		err := os.MkdirAll(path.Join(mesherydbPath, ".archive"), os.ModePerm) // Заменил Mkdir на MkdirAll для надежности
+		if err != nil {
+			http.Error(w, "Directory could not be created.", http.StatusInternalServerError)
+			return
 		}
-	}()
 
-	fout, err := os.Create(dst)
-	if err != nil {
-		writeMeshkitError(w, ErrCreateDatabaseArchiveFile(err), http.StatusInternalServerError)
-		return
-	}
-	defer func() {
-		if err := fout.Close(); err != nil {
-			h.log.Error(err)
+		src := path.Join(mesherydbPath, "mesherydb.sql")
+		currentTime := time.Now().Format("20060102150407")
+		dst := path.Join(mesherydbPath, ".archive/mesherydb"+currentTime+".sql")
+
+		fin, err := os.Open(src)
+		if err != nil {
+			http.Error(w, "Database file does not exist", http.StatusInternalServerError)
+			return
 		}
-	}()
 
-	_, err = io.Copy(fout, fin)
-	if err != nil {
-		writeMeshkitError(w, ErrCopyDatabaseFile(err), http.StatusInternalServerError)
-		return
+		fout, err := os.Create(dst)
+		if err != nil {
+			fin.Close()
+			http.Error(w, "Destination file can not be created", http.StatusInternalServerError)
+			return
+		}
+
+		_, err = io.Copy(fout, fin)
+		fin.Close()
+		fout.Close()
+		if err != nil {
+			http.Error(w, "Can not copy file", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	dbHandler := provider.GetGenericPersister()
 	if dbHandler == nil {
 		writeMeshkitError(w, ErrObtainDatabaseHandler(), http.StatusInternalServerError)
 		return
-	} else {
-		dbHandler.Lock()
-		defer dbHandler.Unlock()
+	}
 
-		tables, err := dbHandler.Migrator().GetTables()
+	dbHandler.Lock()
+	defer dbHandler.Unlock()
+
+	tables, err := dbHandler.Migrator().GetTables()
+	if err != nil {
+		http.Error(w, "Can not access database tables", http.StatusInternalServerError)
+		return
+	}
+
+	for _, table := range tables {
+		err = dbHandler.Migrator().DropTable(table)
 		if err != nil {
-			writeMeshkitError(w, ErrAccessDatabaseTables(err), http.StatusInternalServerError)
+			http.Error(w, "Cannot drop table from database", http.StatusInternalServerError)
 			return
 		}
+	}
 
-		for _, table := range tables {
-			err = dbHandler.Migrator().DropTable(table)
-			if err != nil {
-				writeMeshkitError(w, ErrDropDatabaseTable(err), http.StatusInternalServerError)
-				return
-			}
-		}
+	err = dbHandler.AutoMigrate(
+		&meshsyncmodel.KubernetesKeyValue{},
+		&meshsyncmodel.KubernetesResource{},
+		&meshsyncmodel.KubernetesResourceSpec{},
+		&meshsyncmodel.KubernetesResourceStatus{},
+		&meshsyncmodel.KubernetesResourceObjectMeta{},
+		&models.PerformanceProfile{},
+		&models.MesheryResult{},
+		&models.MesheryPattern{},
+		&models.MesheryFilter{},
+		&models.PatternResource{},
+		&models.MesheryApplication{},
+		&models.UserPreference{},
+		&models.PerformanceTestConfig{},
+		&models.SmiResultWithID{},
+		&models.K8sContext{},
+	)
 
-		err = dbHandler.AutoMigrate(
-			&meshsyncmodel.KubernetesKeyValue{},
-			&meshsyncmodel.KubernetesResource{},
-			&meshsyncmodel.KubernetesResourceSpec{},
-			&meshsyncmodel.KubernetesResourceStatus{},
-			&meshsyncmodel.KubernetesResourceObjectMeta{},
-			&models.PerformanceProfile{},
-			&models.MesheryResult{},
-			&models.MesheryPattern{},
-			&models.MesheryFilter{},
-			&models.PatternResource{},
-			&models.MesheryApplication{},
-			&models.UserPreference{},
-			&models.PerformanceTestConfig{},
-			&models.SmiResultWithID{},
-			&models.K8sContext{},
-		)
+	if err != nil {
+		http.Error(w, "Can not migrate tables to database", http.StatusInternalServerError)
+		return
+	}
 
-		if err != nil {
-			writeMeshkitError(w, ErrMigrateDatabaseTables(err), http.StatusInternalServerError)
-			return
-		}
+	rm, err := registry.NewRegistryManager(dbHandler)
+	if err != nil {
+		http.Error(w, "Can not migrate tables to database", http.StatusInternalServerError)
+		return
+	}
+	h.registryManager = rm
 
-		rm, err := registry.NewRegistryManager(dbHandler)
-		if err != nil {
-			writeMeshkitError(w, ErrMigrateDatabaseTables(err), http.StatusInternalServerError)
-			return
-		}
-		h.registryManager = rm
-
-		krh, err := models.NewKeysRegistrationHelper(dbHandler, h.log)
-		if err != nil {
-			writeMeshkitError(w, ErrMigrateDatabaseTables(err), http.StatusInternalServerError)
-			return
-		}
-		go func() {
-			models.SeedComponents(h.log, h.config, h.registryManager)
-			krh.SeedKeys(viper.GetString("KEYS_PATH"))
-		}()
-		writeJSONMessage(w, map[string]string{"message": "Database reset successful"}, http.StatusOK)
+	krh, err := models.NewKeysRegistrationHelper(dbHandler, h.log)
+	if err != nil {
+		http.Error(w, "Can not migrate tables to database", http.StatusInternalServerError)
+		return
+	}
+	go func() {
+		models.SeedComponents(h.log, h.config, h.registryManager)
+		krh.SeedKeys(viper.GetString("KEYS_PATH"))
+	}()
+	w.Header().Set("Content-Type", "application/json")
+	if _, err := fmt.Fprint(w, "Database reset successful"); err != nil {
+		h.log.Error(err)
 	}
 }
