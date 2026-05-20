@@ -31,19 +31,27 @@ func (c *Broadcast) Subscribe(id core.Uuid) (chan interface{}, func()) {
 		if !ok {
 			return
 		}
-		cc := v.(*clients)
+		cc, ok := v.(*clients)
+		if !ok {
+			return
+		}
 
 		cc.mu.Lock()
+		found := false
 		updated := make([]chan interface{}, 0, len(cc.listeners))
 		for _, l := range cc.listeners {
-			if l != ch {
-				updated = append(updated, l)
+			if l == ch {
+				found = true
+				continue
 			}
+			updated = append(updated, l)
 		}
 		cc.listeners = updated
 		cc.mu.Unlock()
 
-		close(ch)
+		if found {
+			close(ch)
+		}
 	}
 	return ch, unsubscribe
 }
