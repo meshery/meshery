@@ -45,7 +45,6 @@ import {
   MainLogoText,
   MainLogoTextCollapsed,
   NavigatorList,
-  NavigatorListItem,
   NavigatorListItemII,
   NavigatorListItemIII,
   RootDiv,
@@ -234,6 +233,7 @@ const NavigatorContent = () => {
   const [showHelperButton, setShowHelperButton] = useState(false);
   const [openItems, setOpenItems] = useState<string[]>([]);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [hoveredExtensionId, setHoveredExtensionId] = useState<string | null>(null);
   const [providerUiAccessControl, setProviderUiAccessControl] =
     useState<ProviderUiAccessControl | null>(null);
   const [versionDetail, setVersionDetail] = useState(defaultVersionDetail);
@@ -452,22 +452,6 @@ const NavigatorContent = () => {
     );
   };
 
-  const handleExtensionIconMouseEnter = (event: React.MouseEvent<HTMLImageElement>) => {
-    const image = event.currentTarget;
-
-    image.style.transform = 'translate(-20%, -25%)';
-    image.style.top = '0';
-    image.style.right = '0';
-  };
-
-  const handleExtensionIconMouseLeave = (event: React.MouseEvent<HTMLImageElement>) => {
-    const image = event.currentTarget;
-
-    image.style.transform = 'translate(0, 0)';
-    image.style.top = 'auto';
-    image.style.right = 'auto';
-  };
-
   const renderNavigatorExtensions = (children, depth) => {
     if (!children || children.length === 0) {
       return null;
@@ -483,17 +467,33 @@ const NavigatorContent = () => {
 
         const isActive = currentPath === href;
         const childExtensions = renderNavigatorExtensions(subItems, depth + 1);
+        const isRootItem = depth === 1;
+        const ListItemComponent = isRootItem ? SideBarListItem : NavigatorListItemII;
+        const isHovered = hoveredExtensionId === id;
+
+        const listItemProps = isRootItem
+          ? {
+              button: true,
+              dense: true,
+              link: true,
+              isActive,
+              onMouseOver: () => (isDrawerCollapsed ? setHoveredExtensionId(id) : null),
+              onMouseLeave: () => setHoveredExtensionId(null),
+            }
+          : {
+              button: true,
+              depth,
+              isDrawerCollapsed,
+              isActive,
+              onMouseOver: () => (isDrawerCollapsed ? setHoveredExtensionId(id) : null),
+              onMouseLeave: () => setHoveredExtensionId(null),
+            };
 
         return (
           <RootDiv key={id} data-testid={depth === 1 ? 'extension-nav-root-item' : undefined}>
-            <NavigatorListItem
-              button
-              depth={depth}
-              isDrawerCollapsed={isDrawerCollapsed}
-              isActive={isActive}
-            >
-              {extensionPointContent(icon, href, title, isDrawerCollapsed)}
-            </NavigatorListItem>
+            <ListItemComponent {...listItemProps}>
+              {extensionPointContent(icon, href, title, isDrawerCollapsed, isHovered)}
+            </ListItemComponent>
             {childExtensions}
           </RootDiv>
         );
@@ -515,16 +515,28 @@ const NavigatorContent = () => {
     );
   };
 
-  const extensionPointContent = (icon, href, name, drawerCollapsed) => {
-    let content = (
-      <>
-        <NavigatorLink data-testid={name}>
-          <CustomTooltip
-            title={name}
-            placement="right"
-            disableFocusListener={!drawerCollapsed}
-            disableTouchListener={!drawerCollapsed}
-          >
+  const extensionPointContent = (icon, href, name, drawerCollapsed, isHovered) => {
+    const content = (
+      <NavigatorLink data-testid={name}>
+        <CustomTooltip
+          title={name}
+          placement="right"
+          disableFocusListener={!drawerCollapsed}
+          disableTouchListener={!drawerCollapsed}
+        >
+          {drawerCollapsed && isHovered ? (
+            <div>
+              <ListItemIcon style={{ marginLeft: '20%', marginBottom: '0.4rem' }}>
+                <img
+                  src={icon}
+                  style={{
+                    width: '20px',
+                    filter: currentPath === href ? activeIconFilter : '',
+                  }}
+                />
+              </ListItemIcon>
+            </div>
+          ) : (
             <MainListIcon>
               <img
                 src={icon}
@@ -534,24 +546,24 @@ const NavigatorContent = () => {
                 }}
               />
             </MainListIcon>
-          </CustomTooltip>
-          <SideBarText drawerCollapsed={drawerCollapsed}>{name}</SideBarText>
-        </NavigatorLink>
-      </>
+          )}
+        </CustomTooltip>
+        <SideBarText drawerCollapsed={drawerCollapsed}>{name}</SideBarText>
+      </NavigatorLink>
     );
 
-    if (href) {
-      content = (
-        <Link
-          href={href}
-          onClick={() => dispatch(updateExtensionType({ extensionType: 'navigator' }))}
-        >
-          <Box>{content}</Box>
-        </Link>
-      );
+    if (!href) {
+      return content;
     }
 
-    return content;
+    return (
+      <Link
+        href={href}
+        onClick={() => dispatch(updateExtensionType({ extensionType: 'navigator' }))}
+      >
+        {content}
+      </Link>
+    );
   };
 
   const renderChildren = (idname, children, depth) => {
