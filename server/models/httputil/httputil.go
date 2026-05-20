@@ -23,6 +23,7 @@
 package httputil
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
@@ -44,9 +45,34 @@ func WriteJSONError(w http.ResponseWriter, message string, status int) {
 // errorResponse is the wire shape for all non-2xx responses from Meshery Server.
 // Fields mirror github.com/meshery/meshkit/errors.Error; omitempty keeps the
 // body small for bare-string errors that carry no MeshKit metadata.
+// requestIDCtxKey is an unexported typed constant so it can only be
+// retrieved through the helper below — preventing context-key sprawl
+// across the httputil package.
+type requestIDKey struct{}
+
+// NewContextWithRequestID returns a new context with the given request ID.
+func NewContextWithRequestID(ctx context.Context, id string) context.Context {
+	return context.WithValue(ctx, requestIDKey{}, id)
+}
+
+// RequestIDFromContext returns the request ID stored in ctx, or "" if absent.
+func RequestIDFromContext(ctx context.Context) string {
+	if id, ok := ctx.Value(requestIDKey{}).(string); ok {
+		return id
+	}
+	return ""
+}
+
+// RequestIDFromRequest returns the request ID stored in the request's
+// context (set by RequestIDMiddleware), or "" if absent.
+func RequestIDFromRequest(r *http.Request) string {
+	return RequestIDFromContext(r.Context())
+}
+
 type errorResponse struct {
 	Error                string   `json:"error"`
 	Code                 string   `json:"code,omitempty"`
+	RequestID            string   `json:"requestId,omitempty"`
 	Severity             string   `json:"severity,omitempty"`
 	ProbableCause        []string `json:"probableCause,omitempty"`
 	SuggestedRemediation []string `json:"suggestedRemediation,omitempty"`
@@ -59,15 +85,30 @@ type errorResponse struct {
 // produce a JSON body — they just carry only the .Error() string, matching
 // WriteJSONError's shape so clients never see plain text from this package.
 //
+// To include a requestId in the response use WriteMeshkitErrorWithRequest instead.
+//
 // Prefer this over http.Error for every handler error path. RTK Query's
 // baseQuery dispatches on Content-Type and crashes on plain-text bodies that
 // happen to start with a letter (e.g. "Status Code: 404 ...").
 func WriteMeshkitError(w http.ResponseWriter, err error, status int) {
+	encodeError(w, err, status, "")
+}
+
+// WriteMeshkitErrorWithRequest is like WriteMeshkitError but also populates
+// the requestId field from the given *http.Request's context (set by
+// RequestIDMiddleware).
+func WriteMeshkitErrorWithRequest(w http.ResponseWriter, r *http.Request, err error, status int) {
+	encodeError(w, err, status, RequestIDFromRequest(r))
+}
+
+func encodeError(w http.ResponseWriter, err error, status int, reqID string) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(status)
 
-	resp := errorResponse{}
+	resp := errorResponse{
+		RequestID: reqID,
+	}
 	if err == nil {
 		resp.Error = http.StatusText(status)
 		_ = json.NewEncoder(w).Encode(resp)
@@ -76,14 +117,10 @@ func WriteMeshkitError(w http.ResponseWriter, err error, status int) {
 
 	resp.Error = err.Error()
 
-	// Populate MeshKit fields only when the error carries them. GetCode etc.
-	// return the "None" sentinel for non-MeshKit errors; treat that as absent.
 	if code := meshkiterrors.GetCode(err); code != "" && code != "None" {
 		resp.Code = code
 		resp.Severity = severityString(meshkiterrors.GetSeverity(err))
 		if short := meshkiterrors.GetSDescription(err); short != "" && short != "None" {
-			// Use ShortDescription as the user-facing `error` when available —
-			// err.Error() on a MeshKit error concatenates every field with pipes.
 			resp.Error = short
 		}
 		if long := meshkiterrors.GetLDescription(err); long != "" && long != "None" {
