@@ -86,7 +86,6 @@ export const LearnMore = styled("a")(({ theme }) => ({
   cursor: "pointer",
   transition: "color 120ms ease, opacity 120ms ease",
   "&:hover": {
-    color: theme.palette.text.inverse,
     textDecoration: "underline",
     opacity: 0.92,
   },
