@@ -244,6 +244,7 @@ type HandlerInterface interface {
 	AddTeamToWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	RemoveTeamFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	K8sHealthzHandler(w http.ResponseWriter, r *http.Request)
+	SystemStatusHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath string)
 }

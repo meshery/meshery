@@ -445,6 +445,10 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.HandleFunc("/healthz/live", h.K8sHealthzHandler).Methods("GET")
 	gMux.HandleFunc("/healthz/ready", h.K8sHealthzHandler).Methods("GET")
 
+	// System Status — comprehensive dependency health report
+	gMux.Handle("/api/system/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SystemStatusHandler), models.ProviderAuth))).
+		Methods("GET")
+
 	fs := http.FileServer(http.Dir("../../ui"))
 	gMux.PathPrefix("/ui/public/static/img/meshmodels").Handler(http.StripPrefix("/ui/", fs)).Methods("GET", "HEAD")
 
