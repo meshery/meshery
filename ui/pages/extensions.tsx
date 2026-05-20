@@ -304,7 +304,7 @@ const CloudExtension = () => (
         <Button
           variant="contained"
           color="primary"
-          data-testid="layer5-cloud-learn-more-btn"
+          data-testid="cloud-learn-more-btn"
           onClick={openExternal('https://meshery.io/extensions/layer5-cloud')}
         >
           Learn More
