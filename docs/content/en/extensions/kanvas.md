@@ -65,11 +65,10 @@ Helpful resources:
 
 ### Limitations
 
-Generated outputs may still require:
-- manual validation,
-- environment-specific configuration,
-- or additional customization before production deployment.
+- Manual validation.
+- Environment-specific configuration.
+- Additional customization before production deployment.
 
 ### Feedback and Roadmap
 
-Users are encouraged to share feedback, feature requests, and roadmap suggestions through the Meshery community discussion forums and GitHub repositories. 
+Users are encouraged to share feedback, feature requests, and roadmap suggestions through the Meshery community discussion forums and GitHub repositories.
