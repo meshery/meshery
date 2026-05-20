@@ -2,6 +2,7 @@ package policies
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/meshery/schemas/models/v1beta2/relationship"
@@ -119,9 +120,16 @@ func identifyMatchlabels(design *pattern.PatternFile, relDef *relationship.Relat
 		}
 	}
 
+	// Iterate groupMap in sorted key order so the output (and the truncation
+	// when len > maxMatchLabels) is stable across runs.
+	sortedKeys := make([]string, 0, len(groupMap))
+	for k := range groupMap {
+		sortedKeys = append(sortedKeys, k)
+	}
+	sort.Strings(sortedKeys)
 	groups := make([]matchLabelGroup, 0, len(groupMap))
-	for _, g := range groupMap {
-		groups = append(groups, *g)
+	for _, k := range sortedKeys {
+		groups = append(groups, *groupMap[k])
 	}
 	if len(groups) > maxMatchLabels {
 		groups = groups[:maxMatchLabels]
@@ -161,7 +169,19 @@ func identifyMatchlabelRelationships(relDef *relationship.RelationshipDefinition
 			},
 		}
 
-		id := staticUUID(fmt.Sprintf("%v%s", ss, "sibling_match_labels_policy")).String()
+		compIDs := make([]string, 0, len(group.Components))
+		for _, c := range group.Components {
+			compIDs = append(compIDs, c.ID.String())
+		}
+		sort.Strings(compIDs)
+		seed := map[string]any{
+			"policy": "sibling_match_labels_policy",
+			"field":  group.Field,
+			"value":  group.Value,
+			"comps":  compIDs,
+		}
+		uuid := staticUUID(seed)
+		id := uuid.String()
 		if seen[id] {
 			continue
 		}
@@ -170,7 +190,7 @@ func identifyMatchlabelRelationships(relDef *relationship.RelationshipDefinition
 		decl := deepCopyRelDef(relDef)
 		selectors := relationship.SelectorSet{ss}
 		decl.Selectors = &selectors
-		decl.ID = staticUUID(fmt.Sprintf("%v%s", ss, "sibling_match_labels_policy"))
+		decl.ID = uuid
 		setRelStatus(decl, StatusIdentified)
 
 		identified = append(identified, decl)
