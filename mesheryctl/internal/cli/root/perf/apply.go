@@ -457,7 +457,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return "", "", ErrPerfProfileServer(err)
+		return "", "", ErrPerfProfileServer(errors.New("failed to save performance profile on server"))
 	}
 
 	var response *models.PerformanceProfile
