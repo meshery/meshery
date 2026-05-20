@@ -85,7 +85,7 @@ const defaultVersionDetail = {
   latest: '',
   outdated: false,
   commitsha: '',
-  release_channel: 'NA',
+  releaseChannel: 'NA',
 };
 
 const findNavigatorItemByPath = (items, path) => {
@@ -381,11 +381,11 @@ const NavigatorContent = () => {
   };
 
   const getMesheryVersionText = () => {
-    const { build, outdated, release_channel } = versionDetail;
+    const { build, outdated, releaseChannel } = versionDetail;
 
-    if (release_channel === 'edge' && outdated) return `${build}`;
-    if (release_channel === 'edge' && !outdated) return `${release_channel}-latest`;
-    if (release_channel === 'stable') return `${release_channel}-${build}`;
+    if (releaseChannel === 'edge' && outdated) return `${build}`;
+    if (releaseChannel === 'edge' && !outdated) return `${releaseChannel}-latest`;
+    if (releaseChannel === 'stable') return `${releaseChannel}-${build}`;
 
     return `${build}`;
   };
@@ -420,9 +420,9 @@ const NavigatorContent = () => {
   };
 
   const openReleaseNotesInNew = () => {
-    const { release_channel, build } = versionDetail;
+    const { releaseChannel, build } = versionDetail;
 
-    if (release_channel === 'edge')
+    if (releaseChannel === 'edge')
       return (
         <a
           href="https://docs.meshery.io/project/releases"

@@ -54,12 +54,10 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	for _, table := range tables {
 		h.dbHandler.DB.Table(table.Name).Count(&table.Count)
 		recordCount += int(table.Count)
-		name := table.Name
-		tableType := table.Type
 		responseTables = append(responseTables, systemv1beta1.SystemDatabaseTable{
 			Count: table.Count,
-			Name:  &name,
-			Type:  &tableType,
+			Name:  table.Name,
+			Type:  table.Type,
 		})
 	}
 
