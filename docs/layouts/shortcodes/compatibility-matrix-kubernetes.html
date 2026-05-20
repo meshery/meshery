@@ -32,13 +32,28 @@
 {{- $versions = $reversed -}}
 
 <style>
-  td:hover,tr:hover {
+  tr:hover {
       background-color: var(--color-primary-dark);
-      cursor:pointer;
     }
     td.details {
       background-color: #fafafa;
       cursor:text;
+    }
+    .compatibility-status {
+      align-items: center;
+      background: transparent;
+      border: 0;
+      color: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      justify-content: center;
+      min-height: 2.75rem;
+      min-width: 2.75rem;
+      padding: 0;
+    }
+    .compatibility-status:focus-visible {
+      outline: 2px solid var(--color-primary-dark);
+      outline-offset: 2px;
     }
     .yellowCheckbox{
       width:2.5rem
@@ -46,7 +61,7 @@
     .tooltipss{
       position:relative;
       width:fit-content;
-      cursor:pointer;
+      cursor:inherit;
       margin-right: auto;
       margin-left: auto;
     }
@@ -77,7 +92,8 @@
     border-style: solid;
     border-color: #555 transparent transparent transparent;
   }
-  .tooltipss:hover .tooltiptext {
+  .tooltipss:hover .tooltiptext,
+  .compatibility-status:focus-visible .tooltiptext {
     visibility: visible;
     opacity: 1;
 }
@@ -146,66 +162,80 @@
         <td style="padding: 10px;">{{ . }}</td>
         
         {{- /* Istio */ -}}
-        <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-istio" onclick="redirectToPastResults('meshery-istio')">
-          {{- if index $adapters "meshery-istio" -}}
-            {{- $latest := index (sort (index $adapters "meshery-istio") "Params.meshery-component-version" "desc") 0 -}}
-            {{- $status := index $latest.Params "overall-status" -}}
-            {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
-          {{- else -}}N/A{{- end -}}
+        <td style="text-align: center; padding: 10px;">
+          <button type="button" class="compatibility-status" data-adapter="meshery-istio" aria-label="View past results for Meshery Istio">
+            {{- if index $adapters "meshery-istio" -}}
+              {{- $latest := index (sort (index $adapters "meshery-istio") "Params.meshery-component-version" "desc") 0 -}}
+              {{- $status := index $latest.Params "overall-status" -}}
+              {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
+            {{- else -}}N/A{{- end -}}
+          </button>
         </td>
         
         {{- /* Linkerd */ -}}
-        <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-linkerd" onclick="redirectToPastResults('meshery-linkerd')">
-          {{- if index $adapters "meshery-linkerd" -}}
-            {{- $latest := index (sort (index $adapters "meshery-linkerd") "Params.meshery-component-version" "desc") 0 -}}
-            {{- $status := index $latest.Params "overall-status" -}}
-            {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
-          {{- else -}}N/A{{- end -}}
+        <td style="text-align: center; padding: 10px;">
+          <button type="button" class="compatibility-status" data-adapter="meshery-linkerd" aria-label="View past results for Meshery Linkerd">
+            {{- if index $adapters "meshery-linkerd" -}}
+              {{- $latest := index (sort (index $adapters "meshery-linkerd") "Params.meshery-component-version" "desc") 0 -}}
+              {{- $status := index $latest.Params "overall-status" -}}
+              {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
+            {{- else -}}N/A{{- end -}}
+          </button>
         </td>
         
         {{- /* Kuma */ -}}
-        <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-kuma" onclick="redirectToPastResults('meshery-kuma')">
-          {{- if index $adapters "meshery-kuma" -}}
-            {{- $latest := index (sort (index $adapters "meshery-kuma") "Params.meshery-component-version" "desc") 0 -}}
-            {{- $status := index $latest.Params "overall-status" -}}
-            {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
-          {{- else -}}N/A{{- end -}}
+        <td style="text-align: center; padding: 10px;">
+          <button type="button" class="compatibility-status" data-adapter="meshery-kuma" aria-label="View past results for Meshery Kuma">
+            {{- if index $adapters "meshery-kuma" -}}
+              {{- $latest := index (sort (index $adapters "meshery-kuma") "Params.meshery-component-version" "desc") 0 -}}
+              {{- $status := index $latest.Params "overall-status" -}}
+              {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
+            {{- else -}}N/A{{- end -}}
+          </button>
         </td>
         
         {{- /* NGINX SM */ -}}
-        <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')">
-          {{- if index $adapters "meshery-nginx-sm" -}}
-            {{- $latest := index (sort (index $adapters "meshery-nginx-sm") "Params.meshery-component-version" "desc") 0 -}}
-            {{- $status := index $latest.Params "overall-status" -}}
-            {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
-          {{- else -}}N/A{{- end -}}
+        <td style="text-align: center; padding: 10px;">
+          <button type="button" class="compatibility-status" data-adapter="meshery-nginx-sm" aria-label="View past results for Meshery NGINX Service Mesh">
+            {{- if index $adapters "meshery-nginx-sm" -}}
+              {{- $latest := index (sort (index $adapters "meshery-nginx-sm") "Params.meshery-component-version" "desc") 0 -}}
+              {{- $status := index $latest.Params "overall-status" -}}
+              {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
+            {{- else -}}N/A{{- end -}}
+          </button>
         </td>
         
         {{- /* Traefik Mesh */ -}}
-        <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-traefik-mesh" onclick="redirectToPastResults('meshery-traefik-mesh')">
-          {{- if index $adapters "meshery-traefik-mesh" -}}
-            {{- $latest := index (sort (index $adapters "meshery-traefik-mesh") "Params.meshery-component-version" "desc") 0 -}}
-            {{- $status := index $latest.Params "overall-status" -}}
-            {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
-          {{- else -}}N/A{{- end -}}
+        <td style="text-align: center; padding: 10px;">
+          <button type="button" class="compatibility-status" data-adapter="meshery-traefik-mesh" aria-label="View past results for Meshery Traefik Mesh">
+            {{- if index $adapters "meshery-traefik-mesh" -}}
+              {{- $latest := index (sort (index $adapters "meshery-traefik-mesh") "Params.meshery-component-version" "desc") 0 -}}
+              {{- $status := index $latest.Params "overall-status" -}}
+              {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
+            {{- else -}}N/A{{- end -}}
+          </button>
         </td>
         
         {{- /* Cilium */ -}}
-        <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-cilium" onclick="redirectToPastResults('meshery-cilium')">
-          {{- if index $adapters "meshery-cilium" -}}
-            {{- $latest := index (sort (index $adapters "meshery-cilium") "Params.meshery-component-version" "desc") 0 -}}
-            {{- $status := index $latest.Params "overall-status" -}}
-            {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
-          {{- else -}}N/A{{- end -}}
+        <td style="text-align: center; padding: 10px;">
+          <button type="button" class="compatibility-status" data-adapter="meshery-cilium" aria-label="View past results for Meshery Cilium">
+            {{- if index $adapters "meshery-cilium" -}}
+              {{- $latest := index (sort (index $adapters "meshery-cilium") "Params.meshery-component-version" "desc") 0 -}}
+              {{- $status := index $latest.Params "overall-status" -}}
+              {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
+            {{- else -}}N/A{{- end -}}
+          </button>
         </td>
         
         {{- /* Consul */ -}}
-        <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-consul" onclick="redirectToPastResults('meshery-consul')">
-          {{- if index $adapters "meshery-consul" -}}
-            {{- $latest := index (sort (index $adapters "meshery-consul") "Params.meshery-component-version" "desc") 0 -}}
-            {{- $status := index $latest.Params "overall-status" -}}
-            {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
-          {{- else -}}N/A{{- end -}}
+        <td style="text-align: center; padding: 10px;">
+          <button type="button" class="compatibility-status" data-adapter="meshery-consul" aria-label="View past results for Meshery Consul">
+            {{- if index $adapters "meshery-consul" -}}
+              {{- $latest := index (sort (index $adapters "meshery-consul") "Params.meshery-component-version" "desc") 0 -}}
+              {{- $status := index $latest.Params "overall-status" -}}
+              {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
+            {{- else -}}N/A{{- end -}}
+          </button>
         </td>
       </tr>
     {{- end -}}
@@ -237,36 +267,50 @@
       let status = statusCells[i].innerHTML.trim();
       if (status === "✓") {
         statusCells[i].innerHTML = `
-          <div class="tooltipss" style="text-align:center; cursor: pointer;">
+          <div class="tooltipss">
             <img src="/installation/compatibility-matrix/images/service-meshes/passing.svg" class="yellowCheckbox" alt="Passing" />
             <span class="tooltiptext">Passing</span>
           </div>`;
       } else if (status === "✗") {
         statusCells[i].innerHTML = `
-          <div class="tooltipss" style="text-align:center; cursor: pointer;">
+          <div class="tooltipss">
             <img src="/installation/compatibility-matrix/images/service-meshes/failing.svg" class="yellowCheckbox" alt="Failing" />
             <span class="tooltiptext">Failing</span>
           </div>`;
       } else if (status === "—") {
         statusCells[i].innerHTML = `
-          <div class="tooltipss" style="text-align:center; cursor: pointer;">
+          <div class="tooltipss">
             <img src="/installation/compatibility-matrix/images/service-meshes/passing.svg" class="yellowCheckbox" alt="Partial" />
             <span class="tooltiptext">Partial</span>
           </div>`;
       } else if (status === "N/A") {
         statusCells[i].innerHTML = `
-          <div class="tooltipss" style="text-align:center; cursor: pointer;">
+          <div class="tooltipss">
             <img src="/installation/compatibility-matrix/images/service-meshes/na-icon.svg" class="yellowCheckbox" alt="Not Applicable" />
             <span class="tooltiptext">Not Applicable</span>
           </div>`;
       }
     }
   }
+
+  function bindCompatibilityStatusNavigation() {
+    let statusButtons = document.querySelectorAll(".compatibility-status");
+    for(let i = 0; i < statusButtons.length; i++) {
+      statusButtons[i].addEventListener('click', function() {
+        redirectToPastResults(this.dataset.adapter);
+      });
+    }
+  }
+
+  function initializeCompatibilityMatrix() {
+    showCompatability();
+    bindCompatibilityStatusNavigation();
+  }
   
   // Call function when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', showCompatability);
+    document.addEventListener('DOMContentLoaded', initializeCompatibilityMatrix);
   } else {
-    showCompatability();
+    initializeCompatibilityMatrix();
   }
 </script>
