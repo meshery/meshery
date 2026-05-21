@@ -64,8 +64,8 @@ export const stepsData = [
   {
     id: 2,
     isVisit: false,
-    title: 'GitOps your infra with Kanvas Snapshots',
-    subTitle: 'Connect your GitHub repository to receive Kanvas snapshots in your pull requests.',
+    title: 'GitOps your infra with snapshots',
+    subTitle: 'Connect your GitHub repository to receive snapshots in your pull requests.',
     isDisabled: false,
     journey: [
       {
