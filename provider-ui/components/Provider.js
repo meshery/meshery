@@ -20,7 +20,6 @@ import {
   DialogTitle,
   MenuList,
   MenuItem,
-  Tooltip,
   CustomTooltip,
   IconButton,
   CircularProgress,
@@ -247,7 +246,7 @@ export default function Provider() {
                       >
                         <span>{key}</span>
                         {isRemote && (
-                          <Tooltip
+                          <CustomTooltip
                             title="A remote provider offering identity services, additional plugins and extensions, granular and customizable RBAC."
                             placement="right"
                             arrow
@@ -272,7 +271,7 @@ export default function Provider() {
                             >
                               <InfoOutlined width={18} height={18} />
                             </IconButton>
-                          </Tooltip>
+                          </CustomTooltip>
                         )}
                       </MenuItem>
                     );
