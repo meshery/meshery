@@ -19,10 +19,6 @@ export const REMOTE_PROVIDERS = [
         url: "https://cloud.meshery.io",
     },
     {
-        name: "Layer5",
-        url: "https://cloud.layer5.io",
-    },
-    {
         name: "Exoscale",
         url: "https://cloud.exoscale.com",
     },
