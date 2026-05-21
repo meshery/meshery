@@ -377,21 +377,20 @@ docs-setup:
 
 ## Run Meshery Docs. Listen for changes.
 docs: check-go
-	cd docs; hugo server -D -F
+	@$(MAKE) -C docs site
 
 ## Run Meshery Docs. Do not listen for changes.
 docs-serve: check-go
-	cd docs; hugo server -D -F --watch=false
+	cd docs; npx hugo server -D -F --watch=false
 
 ## Run Meshery Docs. Do not listen for changes.
 docs-clean: check-go
-	cd docs; hugo --cleanDestinationDir
-	make docs
+	@$(MAKE) -C docs clean
 
 
 ## Build Meshery Docs on your local machine.
 docs-build: check-go
-	cd docs; hugo
+	@$(MAKE) -C docs build
 
 ## Build Meshery Docs for production. BASE_URL is optional.
 ## Example: make docs-build-production BASE_URL=https://example.com
