@@ -1,0 +1,16 @@
+apiVersion: relationships.meshery.io/v1beta2
+kind: RelationshipDefinition
+metadata:
+  name: RouteTableToInternetGateway
+spec:
+  kind: Edge
+  type: Network
+  subType: NonBinding
+  selectors:
+    - allow:
+        from:
+          - kind: RouteTable
+            model: aws-ec2-controller
+        to:
+          - kind: InternetGateway
+            model: aws-ec2-controller
