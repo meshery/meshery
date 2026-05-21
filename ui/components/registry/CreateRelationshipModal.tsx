@@ -12,18 +12,11 @@
 import { FC } from 'react';
 import { Modal } from '@/components/shared/Modal';
 import RelationshipFormStepper from '../relationship-builder/RelationshipFormStepper';
-import { styled } from '@/theme';
 
 export interface CreateRelationshipModalProps {
   isRelationshipModalOpen: boolean;
   setIsRelationshipModalOpen: (_open: boolean) => void;
 }
-
-const NESTED_RELATIONSHIP_MODAL_Z_INDEX = 1600;
-
-const StyledCreateRelationshipModal = styled(Modal)(() => ({
-  zIndex: NESTED_RELATIONSHIP_MODAL_Z_INDEX,
-}));
 
 const CreateRelationshipModal: FC<CreateRelationshipModalProps> = ({
   isRelationshipModalOpen,
@@ -32,7 +25,7 @@ const CreateRelationshipModal: FC<CreateRelationshipModalProps> = ({
   const handleClose = () => setIsRelationshipModalOpen(false);
 
   return (
-    <StyledCreateRelationshipModal
+    <Modal
       isOpen={isRelationshipModalOpen}
       onClose={handleClose}
       title="Create Relationship"
@@ -40,7 +33,7 @@ const CreateRelationshipModal: FC<CreateRelationshipModalProps> = ({
       disableBodyWrap
     >
       <RelationshipFormStepper handleClose={handleClose} />
-    </StyledCreateRelationshipModal>
+    </Modal>
   );
 };
 

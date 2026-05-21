@@ -39,25 +39,32 @@ const StyledDocsRedirectLink = styled('a')(({ theme }) => ({
   textDecoration: 'underline',
 }));
 
-const RELATIONSHIP_DROPDOWN_Z_INDEX = 1700;
-const RELATIONSHIP_DROPDOWN_MAX_HEIGHT = 'min(320px, 40vh)';
+const RELATIONSHIP_DROPDOWN_MAX_HEIGHT = 'min(220px, 30vh)';
+const RELATIONSHIP_SELECT_MENU_CLASS = 'relationship-select-menu';
+const RELATIONSHIP_SELECT_MENU_PAPER_CLASS = 'relationship-select-menu__paper';
+const RELATIONSHIP_SELECT_MENU_LIST_CLASS = 'relationship-select-menu__list';
 
-const relationshipDropdownGlobalStyles = {
-  '.MuiMenu-root, .MuiPopover-root': {
-    zIndex: `${RELATIONSHIP_DROPDOWN_Z_INDEX} !important`,
-  },
-  '.MuiMenu-root .MuiPaper-root, .MuiPopover-root .MuiPaper-root': {
-    zIndex: `${RELATIONSHIP_DROPDOWN_Z_INDEX} !important`,
-    maxHeight: RELATIONSHIP_DROPDOWN_MAX_HEIGHT,
+const relationshipSelectMenuStyles = {
+  [`.${RELATIONSHIP_SELECT_MENU_PAPER_CLASS}`]: {
+    maxHeight: `${RELATIONSHIP_DROPDOWN_MAX_HEIGHT} !important`,
     overflowY: 'auto',
   },
-  '.MuiMenu-root .MuiList-root, .MuiPopover-root .MuiList-root': {
+  [`.${RELATIONSHIP_SELECT_MENU_LIST_CLASS}`]: {
+    maxHeight: 'inherit',
+    overflowY: 'auto',
+  },
+  [`.${RELATIONSHIP_SELECT_MENU_CLASS} .MuiPaper-root`]: {
+    maxHeight: `${RELATIONSHIP_DROPDOWN_MAX_HEIGHT} !important`,
+    overflowY: 'auto',
+  },
+  [`.${RELATIONSHIP_SELECT_MENU_CLASS} .MuiList-root`]: {
     maxHeight: 'inherit',
     overflowY: 'auto',
   },
 };
 
 const relationshipSelectMenuProps = {
+  className: RELATIONSHIP_SELECT_MENU_CLASS,
   anchorOrigin: {
     vertical: 'bottom' as const,
     horizontal: 'left' as const,
@@ -66,9 +73,7 @@ const relationshipSelectMenuProps = {
     vertical: 'top' as const,
     horizontal: 'left' as const,
   },
-  disablePortal: false,
   sx: {
-    zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
     '& .MuiPaper-root': {
       maxHeight: RELATIONSHIP_DROPDOWN_MAX_HEIGHT,
       overflowY: 'auto',
@@ -78,31 +83,24 @@ const relationshipSelectMenuProps = {
       overflowY: 'auto',
     },
   },
-  style: { zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX },
   PaperProps: {
+    className: RELATIONSHIP_SELECT_MENU_PAPER_CLASS,
+    sx: {
+      maxHeight: RELATIONSHIP_DROPDOWN_MAX_HEIGHT,
+      overflowY: 'auto',
+    },
     style: {
-      zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
       maxHeight: RELATIONSHIP_DROPDOWN_MAX_HEIGHT,
       overflowY: 'auto' as const,
     },
   },
   slotProps: {
-    root: {
-      sx: {
-        zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
-      },
-      style: {
-        zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
-      },
-    },
     paper: {
       sx: {
-        zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
         maxHeight: RELATIONSHIP_DROPDOWN_MAX_HEIGHT,
         overflowY: 'auto',
       },
       style: {
-        zIndex: RELATIONSHIP_DROPDOWN_Z_INDEX,
         maxHeight: RELATIONSHIP_DROPDOWN_MAX_HEIGHT,
         overflowY: 'auto' as const,
       },
@@ -115,6 +113,7 @@ const relationshipSelectMenuProps = {
     },
   },
   MenuListProps: {
+    className: RELATIONSHIP_SELECT_MENU_LIST_CLASS,
     style: {
       maxHeight: 'inherit',
       overflowY: 'auto' as const,
@@ -262,6 +261,18 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                       },
                       displayEmpty: true,
                     }}
+                    slotProps={{
+                      select: {
+                        MenuProps: relationshipSelectMenuProps,
+                        renderValue: (selected) => {
+                          if (!selected || selected.length === 0) {
+                            return <em>Select Category</em>;
+                          }
+                          return selected;
+                        },
+                        displayEmpty: true,
+                      },
+                    }}
                     id="category-selector"
                     value={selectedCategory || ''}
                     onChange={handleCategoryChange}
@@ -295,6 +306,18 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                         return selected;
                       },
                       displayEmpty: true,
+                    }}
+                    slotProps={{
+                      select: {
+                        MenuProps: relationshipSelectMenuProps,
+                        renderValue: (selected) => {
+                          if (!selected || selected.length === 0) {
+                            return <em>Select Model</em>;
+                          }
+                          return selected;
+                        },
+                        displayEmpty: true,
+                      },
                     }}
                     id="model-selector"
                     value={selectedModel || ''}
@@ -478,7 +501,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
 
   return (
     <>
-      <GlobalStyles styles={relationshipDropdownGlobalStyles} />
+      <GlobalStyles styles={relationshipSelectMenuStyles} />
       <ModalBody>
         <CustomizedStepper {...relationshipStepper}>
           {relationshipStepper.activeStepComponent}

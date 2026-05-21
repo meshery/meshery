@@ -14,8 +14,8 @@ import { useContext, useState, useEffect, ReactNode, FC } from 'react';
 import {
   ModalBody,
   List,
-  ChevronLeftIcon,
-  ChevronRightIcon,
+  ChevronLeft,
+  ChevronRight,
   IconButton,
   ListItem,
   ListItemButton,
@@ -129,7 +129,6 @@ const StyledMainContent = styled(Box)(() => ({
 // viewport in normal mode and collapses to a full-width sheet on smaller
 // screens. Mirrors the legacy `StyledModal` behaviour.
 const StyledRegistryModal = styled(Modal)(({ theme }) => ({
-  zIndex: 1500,
   '& .MuiDialog-paperFullScreen': {
     margin: 0,
   },
@@ -331,7 +330,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
         </List>
         <DrawerHeader open={open}>
           <IconButton onClick={handleDrawerToggle}>
-            {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            {open ? <ChevronLeft /> : <ChevronRight />}
           </IconButton>
         </DrawerHeader>
       </StyledDrawer>
