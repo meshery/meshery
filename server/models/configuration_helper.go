@@ -2,8 +2,6 @@ package models
 
 import (
 	"sync"
-
-	"github.com/meshery/meshery/server/helpers/utils"
 )
 
 type ConfigurationChannel struct {
@@ -29,8 +27,9 @@ func (c *ConfigurationChannel) SubscribeApplications(ch chan struct{}) {
 
 func (c *ConfigurationChannel) PublishApplications() {
 	for _, ch := range c.ApplicationsChannel {
-		if !utils.IsClosed(ch) {
-			ch <- struct{}{}
+		select {
+		case ch <- struct{}{}:
+		default:
 		}
 	}
 }
@@ -43,8 +42,9 @@ func (c *ConfigurationChannel) SubscribePatterns(ch chan struct{}) {
 
 func (c *ConfigurationChannel) PublishPatterns() {
 	for _, ch := range c.PatternsChannel {
-		if !utils.IsClosed(ch) {
-			ch <- struct{}{}
+		select {
+		case ch <- struct{}{}:
+		default:
 		}
 	}
 }
@@ -57,8 +57,9 @@ func (c *ConfigurationChannel) SubscribeFilters(ch chan struct{}) {
 
 func (c *ConfigurationChannel) PublishFilters() {
 	for _, ch := range c.FiltersChannel {
-		if !utils.IsClosed(ch) {
-			ch <- struct{}{}
+		select {
+		case ch <- struct{}{}:
+		default:
 		}
 	}
 }

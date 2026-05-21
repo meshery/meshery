@@ -2,8 +2,6 @@ package models
 
 import (
 	"sync"
-
-	"github.com/meshery/meshery/server/helpers/utils"
 )
 
 type DashboardK8sResourcesChan struct {
@@ -26,8 +24,9 @@ func (d *DashboardK8sResourcesChan) SubscribeDashbordK8Resources(ch chan struct{
 
 func (d *DashboardK8sResourcesChan) PublishDashboardK8sResources() {
 	for _, ch := range d.ResourcesChan {
-		if !utils.IsClosed(ch) {
-			ch <- struct{}{}
+		select {
+		case ch <- struct{}{}:
+		default:
 		}
 	}
 }
