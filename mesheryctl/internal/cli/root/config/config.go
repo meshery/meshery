@@ -59,11 +59,15 @@ func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 	// Silent in-memory migration: the built-in local provider was renamed
 	// "None" -> "Local". Rewrite legacy values so commands behave consistently
 	// against post-rename servers. The on-disk config is only updated the next
-	// time something else calls viper.WriteConfig.
+	// time something else calls viper.WriteConfig. A debug log is emitted so
+	// that --verbose runs surface the migration when troubleshooting.
 	for name, ctx := range c.Contexts {
 		if strings.EqualFold(ctx.Provider, "None") {
 			ctx.Provider = "Local"
 			c.Contexts[name] = ctx
+			if mesheryctllogger.Log != nil {
+				mesheryctllogger.Log.Debugf("config: migrated legacy provider %q -> %q in context %q (in-memory)", "None", "Local", name)
+			}
 		}
 	}
 	return c, nil

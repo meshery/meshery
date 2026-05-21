@@ -229,9 +229,10 @@ export default function Provider() {
                   autoFocusItem
                 >
                   {Object.keys(availableProviders).map((key) => {
+                    // /api/providers serializes ProviderProperties with
+                    // camelCase JSON tags (see server/models/providers.go).
                     const isRemote =
-                      availableProviders[key]?.provider_type === "remote" ||
-                      availableProviders[key]?.ProviderType === "remote";
+                      availableProviders[key]?.providerType === "remote";
                     return (
                       <MenuItem
                         key={key}
