@@ -70,12 +70,12 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 		writeMeshkitError(w, models.ErrMarshal(err, obj), http.StatusInternalServerError)
 		return
 	}
-	if err := json.Unmarshal(prefData, &data.AdditionalProperties); err != nil {
-		obj := "user config data"
-		h.log.Error(models.ErrMarshal(err, obj))
-		writeMeshkitError(w, models.ErrMarshal(err, obj), http.StatusInternalServerError)
-		return
-	}
+if err := json.Unmarshal(prefData, &data.AdditionalProperties); err != nil {
+	obj := "user config data"
+	h.log.Error(models.ErrUnmarshal(err, obj))
+	writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusInternalServerError)
+	return
+}
 
 	err = json.NewEncoder(w).Encode(data)
 	if err != nil {
