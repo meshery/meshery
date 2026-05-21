@@ -271,7 +271,7 @@ const MesheryDesignEmbedExtension = () => (
           variant="contained"
           color="primary"
           data-testid="design-embed-learn-more-btn"
-          onClick={openExternal('https://docs.meshery.io/extensions/')}
+          onClick={openExternal('https://meshery.io/extensions/meshery-design-embed/')}
         >
           Learn More
         </Button>
@@ -289,7 +289,7 @@ const CloudExtension = () => (
 
       <UnifiedDescription hasIcon>
         <ResponsiveImage
-          src="/static/img/meshery-logo.png"
+          src="/static/img/meshery-logo/meshery-logo.png"
           alt="Cloud Logo"
           testId="meshery-cloud-image"
         />
@@ -304,7 +304,7 @@ const CloudExtension = () => (
         <Button
           variant="contained"
           color="primary"
-          data-testid="layer5-cloud-learn-more-btn"
+          data-testid="cloud-learn-more-btn"
           onClick={openExternal('https://meshery.io/extensions/layer5-cloud')}
         >
           Learn More
