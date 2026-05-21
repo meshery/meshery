@@ -970,10 +970,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/checkout@v3</span><span class="w"> </span><span class="c">#this step would go and would be no longer needed to be written</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">action</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">repository</span><span class="p">:</span><span class="w"> </span><span class="l">layer5labs/kanvas-snapshot</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">test_result</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">layer5labs/MeshMap-Snapshot@v0.0.4</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">githubToken</span><span class="p">:</span><span class="w"> </span><span class="l">${{ secrets.GITHUB_TOKEN }}</span><span class="w"> </span><span class="c"># github&#39;s personal access token example: &#34;ghp_....&#34;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">providerToken</span><span class="p">:</span><span class="w"> </span><span class="l">${{ secrets.PROVIDER_TOKEN }}</span><span class="w"> </span><span class="c"># Meshery Cloud Authentication token, signin to meshery-cloud to get one, example: ey.....</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">prNumber</span><span class="p">:</span><span class="w"> </span><span class="l">${{ env.PULL_NO }}</span><span class="w"> </span><span class="c"># auto-filled from the above step</span><span class="w">
@@ -1002,9 +999,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/checkout@v3</span><span class="w"> </span><span class="c">#this step would go and would be no longer needed to be written</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">action</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">repository</span><span class="p">:</span><span class="w"> </span><span class="l">layer5labs/kanvas-snapshot</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">test_result</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">layer5labs/MeshMap-Snapshot@v0.0.4</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">githubToken</span><span class="p">:</span><span class="w"> </span><span class="l">${{ secrets.GITHUB_TOKEN }}</span><span class="w"> </span><span class="c"># github&#39;s personal access token example: &#34;ghp_....&#34;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">providerToken</span><span class="p">:</span><span class="w"> </span><span class="l">${{ secrets.PROVIDER_TOKEN }}</span><span class="w"> </span><span class="c"># Meshery Cloud Authentication token, signin to meshery-cloud to get one, example: ey.....</span><span class="w">
@@ -1100,15 +1095,6 @@ For detailed information about each event, including its properties and payloads
 	Usage:
 </h2>
 <p>After testing you can <a href="https://github.com/actions/toolkit/blob/master/docs/action-versioning.md">create a v1 tag</a> to reference the stable and latest V1 action</p>
-<h1 id="general-upgrade-guide">
-	General Upgrade Guide
-</h1>
-<p><a href="https://github.com/layer5labs/kanvas-snapshot/releases">Kanvas Snapshot Release Page</a></p>
-<pre tabindex="0"><code> - id: test_result
-        uses: layer5labs/MeshMap-Snapshot@v0.0.5 # &lt;-- Update the version to latest from the Kanvas-Snapshot release page
-        with:
-        ...
-</code></pre><h2 id="upgrademigrate-guide---for-meshery">
 	Upgrade/Migrate Guide - For Meshery
 </h2>
 <ol>
