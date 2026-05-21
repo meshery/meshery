@@ -15,8 +15,12 @@ export const topicsList = [
 // This is a list of remote providers that are supported by the Meshery Docker Extension.
 export const REMOTE_PROVIDERS = [
     {
-        name: "Layer5",
+        name: "Meshery",
         url: "https://cloud.meshery.io",
+    },
+    {
+        name: "Layer5",
+        url: "https://cloud.layer5.io",
     },
     {
         name: "Exoscale",
