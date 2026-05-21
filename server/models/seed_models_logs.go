@@ -173,36 +173,51 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		log.Error(err)
 	}
 
+	kindSummaries := make(map[string]v1beta1.EntitySummary)
+	orderedKinds := make([]string, 0, len(hosts))
 	for _, host := range hosts {
+		current, exists := kindSummaries[host.Kind]
+		if !exists {
+			orderedKinds = append(orderedKinds, host.Kind)
+		}
+		current.Models += host.Summary.Models
+		current.Components += host.Summary.Components
+		current.Relationships += host.Summary.Relationships
+		current.Policies += host.Summary.Policies
+		kindSummaries[host.Kind] = current
+	}
+
+	for _, kind := range orderedKinds {
+		summary := kindSummaries[kind]
 		eventBuilder := events.NewEvent().FromSystem(sysID).FromUser(sysID).WithCategory("entity").WithAction("get_summary")
-		successMessage := fmt.Sprintf("For registrant %s imported", host.Kind)
+		successMessage := fmt.Sprintf("For registrant %s imported", kind)
 		appendIfNonZero := func(value int64, label string) {
 			if value != 0 {
 				successMessage += fmt.Sprintf(" %d %s,", value, label)
 			}
 		}
-		appendIfNonZero(host.Summary.Models, "models")
-		appendIfNonZero(host.Summary.Components, "components")
-		appendIfNonZero(host.Summary.Relationships, "relationships")
-		appendIfNonZero(host.Summary.Policies, "policies")
+		appendIfNonZero(summary.Models, "models")
+		appendIfNonZero(summary.Components, "components")
+		appendIfNonZero(summary.Relationships, "relationships")
+		appendIfNonZero(summary.Policies, "policies")
 
 		successMessage = strings.TrimSuffix(successMessage, ",") + "."
 
 		log.Info(successMessage)
 		eventBuilder.WithMetadata(map[string]interface{}{
-			"kind":    host.Kind,
+			"kind":    kind,
 			"doclink": "https://docs.meshery.io/concepts/logical#logical-concepts",
 		})
 		eventBuilder.WithSeverity(events.Informational).WithDescription(successMessage)
 		successEvent := eventBuilder.Build()
 		_ = provider.PersistSystemEvent(*successEvent)
 
-		failLog, err := FailedEventCompute(host.Kind, sysID, &provider, "", handlerConfig.EventBroadcaster, regErrorStore)
+		failLog, err := FailedEventCompute(kind, sysID, &provider, "", handlerConfig.EventBroadcaster, regErrorStore)
 		if err != nil {
 			log.Error(err)
 		}
 		if failLog != "" {
-			log.Error(meshmodel.ErrRegisteringEntity(failLog, host.Kind))
+			log.Error(meshmodel.ErrRegisteringEntity(failLog, kind))
 		}
 
 	}
