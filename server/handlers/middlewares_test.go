@@ -109,6 +109,28 @@ func TestResolveProviderName(t *testing.T) {
 			enforcedProvider: "",
 			want:             "Local",
 		},
+		{
+			name: "lowercase canonical name normalizes to canonical Local",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: cookieName, Value: "local"})
+			},
+			enforcedProvider: "",
+			want:             "Local",
+		},
+		{
+			name: "uppercase canonical name normalizes to canonical Local",
+			setup:            nil,
+			enforcedProvider: "LOCAL",
+			want:             "Local",
+		},
+		{
+			name: "non-local provider name is returned verbatim (remote names not normalized)",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: cookieName, Value: "Meshery"})
+			},
+			enforcedProvider: "",
+			want:             "Meshery",
+		},
 	}
 
 	for _, tc := range tests {
