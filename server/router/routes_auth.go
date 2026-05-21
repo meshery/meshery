@@ -90,7 +90,7 @@ func registerAuthRoutes(gMux *mux.Router, h models.HandlerInterface) {
 			Value:    token,
 			Path:     "/",
 			HttpOnly: true,
-			Secure:   true,
+			Secure:   r.TLS != nil,
 			SameSite: http.SameSiteLaxMode,
 			Expires:  time.Now().Add(24 * time.Hour),
 		})
