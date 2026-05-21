@@ -24,11 +24,11 @@ site: check-go
 
 ## Build docs.meshery.io on your local machine.
 build:
-	hugo
+	npx hugo
 
 ## Empty build cache and run docs.meshery.io on your local machine.
 clean: 
-	hugo --cleanDestinationDir
+	npx hugo --cleanDestinationDir
 	make site
 
 ## Validate Go is installed by delegating to the root Makefile check.
