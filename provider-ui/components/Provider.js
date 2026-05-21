@@ -228,49 +228,54 @@ export default function Provider() {
                   id="split-button-menu"
                   autoFocusItem
                 >
-                  {Object.keys(availableProviders).map((key) => (
-                    <MenuItem
-                      key={key}
-                      onClick={(e) => handleMenuItemClick(e, key)}
-                      sx={{
-                        "&:hover": { backgroundColor: accentGrey[20] },
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: 1,
-                      }}
-                    >
-                      <span>{key}</span>
-                      {key === "Layer5" && (
-                        <Tooltip
-                          title="A remote provider offering identity services, additional plugins and extensions, granular and customizable RBAC."
-                          placement="right"
-                          arrow
-                        >
-                          <IconButton
-                            size="small"
-                            aria-label="More information about the remote provider"
-                            data-testid="provider-learn-more-button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleClose();
-                              handleModalOpen();
-                            }}
-                            sx={{
-                              ml: "auto",
-                              p: 0.25,
-                              flexShrink: 0,
-                              color: KEPPEL,
-                              opacity: 0.95,
-                              "&:hover": { color: KEPPEL, opacity: 1 },
-                            }}
+                  {Object.keys(availableProviders).map((key) => {
+                    const isRemote =
+                      availableProviders[key]?.provider_type === "remote" ||
+                      availableProviders[key]?.ProviderType === "remote";
+                    return (
+                      <MenuItem
+                        key={key}
+                        onClick={(e) => handleMenuItemClick(e, key)}
+                        sx={{
+                          "&:hover": { backgroundColor: accentGrey[20] },
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          gap: 1,
+                        }}
+                      >
+                        <span>{key}</span>
+                        {isRemote && (
+                          <Tooltip
+                            title="A remote provider offering identity services, additional plugins and extensions, granular and customizable RBAC."
+                            placement="right"
+                            arrow
                           >
-                            <InfoOutlined width={18} height={18} />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                    </MenuItem>
-                  ))}
+                            <IconButton
+                              size="small"
+                              aria-label="More information about the remote provider"
+                              data-testid="provider-learn-more-button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleClose();
+                                handleModalOpen();
+                              }}
+                              sx={{
+                                ml: "auto",
+                                p: 0.25,
+                                flexShrink: 0,
+                                color: KEPPEL,
+                                opacity: 0.95,
+                                "&:hover": { color: KEPPEL, opacity: 1 },
+                              }}
+                            >
+                              <InfoOutlined width={18} height={18} />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                      </MenuItem>
+                    );
+                  })}
                   <Divider
                     sx={{
                       my: 0.5,

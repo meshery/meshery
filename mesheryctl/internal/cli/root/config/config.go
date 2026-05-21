@@ -56,6 +56,16 @@ func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 	if err != nil {
 		return nil, ErrInvalidMeshConfig(err)
 	}
+	// Silent in-memory migration: the built-in local provider was renamed
+	// "None" -> "Local". Rewrite legacy values so commands behave consistently
+	// against post-rename servers. The on-disk config is only updated the next
+	// time something else calls viper.WriteConfig.
+	for name, ctx := range c.Contexts {
+		if strings.EqualFold(ctx.Provider, "None") {
+			ctx.Provider = "Local"
+			c.Contexts[name] = ctx
+		}
+	}
 	return c, nil
 }
 

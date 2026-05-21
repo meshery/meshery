@@ -54,7 +54,9 @@ var (
 )
 
 const (
-	// DefaultProviderURL is the provider url for the "none" provider
+	// DefaultProviderURL is the ProviderBaseURL stamped on the built-in local
+	// provider. It is used for capability/package paths only; the local
+	// provider does not authenticate against this URL.
 	DefaultProviderURL = "https://cloud.meshery.io"
 	RelationshipsPath  = "../meshmodel/kubernetes/"
 )
@@ -449,9 +451,9 @@ func main() {
 	log.Info("Doing seeded content cleanup...")
 
 	for _, p := range hc.Providers {
-		// skipping none provider for now
-		// so it doesn't throw error each server is stopped. Reason: support for none provider is not yet implemented
-		if p.Name() != "None" {
+		// Skip the local provider: it does not register a remote session, so
+		// there is nothing to de-register or log out on shutdown.
+		if p.Name() != models.LocalProviderName {
 			log.Info("De-registering Meshery server.")
 			if err = p.DeleteMesheryConnection(); err != nil {
 				log.Error(err)

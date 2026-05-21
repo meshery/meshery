@@ -10,7 +10,7 @@ import (
 
 // ProviderHandler - handles the choice of provider
 func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
-	provider := r.URL.Query().Get("provider")
+	provider := models.NormalizeProviderName(r.URL.Query().Get("provider"))
 	for _, p := range h.config.Providers {
 		if provider == p.Name() {
 			http.SetCookie(w, &http.Cookie{
@@ -73,11 +73,12 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
 // the operator at least gets the provider-chooser page (degraded UX, but
 // reachable) and a clear log line pointing at the deployment misconfig.
 func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
-	if h.Provider != "" {
-		if h.config.Providers[h.Provider] != nil {
+	enforcedProvider := models.NormalizeProviderName(h.Provider)
+	if enforcedProvider != "" {
+		if h.config.Providers[enforcedProvider] != nil {
 			http.SetCookie(w, &http.Cookie{
 				Name:     h.config.ProviderCookieName,
-				Value:    h.Provider,
+				Value:    enforcedProvider,
 				Path:     "/",
 				HttpOnly: true,
 			})

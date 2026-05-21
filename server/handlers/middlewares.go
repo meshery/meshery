@@ -45,16 +45,17 @@ const providerQParamName = "provider"
 // boundaries and was the trigger for an observed /user/login ⇄ /provider
 // redirect loop on enforced-provider hosts.
 func resolveProviderName(req *http.Request, cookieName, enforcedProvider string) string {
+	var name string
 	if ck, err := req.Cookie(cookieName); err == nil && ck.Value != "" {
-		return ck.Value
+		name = ck.Value
+	} else if hdr := req.Header.Get(cookieName); hdr != "" {
+		name = hdr
+	} else if q := req.URL.Query().Get(providerQParamName); q != "" {
+		name = q
+	} else {
+		name = enforcedProvider
 	}
-	if hdr := req.Header.Get(cookieName); hdr != "" {
-		return hdr
-	}
-	if q := req.URL.Query().Get(providerQParamName); q != "" {
-		return q
-	}
-	return enforcedProvider
+	return models.NormalizeProviderName(name)
 }
 
 // ProviderMiddleware is a middleware to validate if a provider is set

@@ -2,6 +2,7 @@ package models
 
 import (
 	"net/http"
+	"strings"
 
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models/connections"
@@ -341,7 +342,21 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 	return "", false
 }
 
+// NormalizeProviderName maps the legacy local-provider alias ("None") to its
+// canonical name ("Local"). Any other input is returned unchanged. The mapping
+// is case-insensitive on the alias so a stale "none" cookie or PROVIDER env
+// var still resolves. This is the single source of truth for the rename — call
+// it once at the request edge (resolveProviderName) rather than scattering
+// equivalent checks across handlers.
+func NormalizeProviderName(name string) string {
+	if strings.EqualFold(name, LocalProviderLegacyAlias) {
+		return LocalProviderName
+	}
+	return name
+}
+
 func VerifyMesheryProvider(provider string, supportedProviders map[string]Provider) bool {
+	provider = NormalizeProviderName(provider)
 	for prov := range supportedProviders {
 		if prov == provider {
 			return true

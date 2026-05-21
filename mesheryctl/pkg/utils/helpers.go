@@ -264,6 +264,15 @@ var (
 
 var CfgFile string
 
+// IsLocalProvider reports whether the given provider name refers to the
+// built-in local provider. Accepts both the canonical name ("Local") and the
+// legacy alias ("None") so client commands keep working against older Meshery
+// servers and pre-rename ~/.meshery/config.yaml entries.
+func IsLocalProvider(name string) bool {
+	return strings.EqualFold(name, models.LocalProviderName) ||
+		strings.EqualFold(name, models.LocalProviderLegacyAlias)
+}
+
 // GetActiveConfigPath returns the meshconfig path selected for the current command.
 // Prefer the explicit CLI flag value, then the config file Viper has already loaded,
 // and finally fall back to the default meshconfig path.

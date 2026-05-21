@@ -69,12 +69,12 @@ func TestResolveProviderName(t *testing.T) {
 			want:             "Meshery",
 		},
 		{
-			name: "query wins over enforced when no cookie/header",
+			name: "query wins over enforced when no cookie/header (None alias normalized to Local)",
 			setup: func(r *http.Request) {
 				r.URL.RawQuery = "provider=None"
 			},
 			enforcedProvider: "Layer5",
-			want:             "None",
+			want:             "Local",
 		},
 		{
 			name: "cookie with whitespace value is honored verbatim",
@@ -83,6 +83,31 @@ func TestResolveProviderName(t *testing.T) {
 			},
 			enforcedProvider: "",
 			want:             "Layer5",
+		},
+		// Backward-compat guard for the "None" -> "Local" rename. Stale
+		// browser cookies, hand-written scripts, and older mesheryctl all
+		// keep sending "None" — the request edge must accept it.
+		{
+			name: "legacy None cookie normalizes to Local",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: cookieName, Value: "None"})
+			},
+			enforcedProvider: "",
+			want:             "Local",
+		},
+		{
+			name: "legacy None enforced default normalizes to Local",
+			setup:            nil,
+			enforcedProvider: "None",
+			want:             "Local",
+		},
+		{
+			name: "alias matching is case-insensitive",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: cookieName, Value: "none"})
+			},
+			enforcedProvider: "",
+			want:             "Local",
 		},
 	}
 
