@@ -66,9 +66,10 @@ jobs:
         env:
           DART_SASS_VERSION: 1.79.5
         run: |
-          set -euo pipefail
-          curl -fsSL "https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz" \
-            | sudo tar -xz -C /usr/local/lib
+          set -eu
+          cd "${RUNNER_TEMP}"
+          curl -fsSL -o dart-sass.tar.gz "https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz"
+          sudo tar -xzf dart-sass.tar.gz -C /usr/local/lib
           sudo ln -sf /usr/local/lib/dart-sass/sass /usr/local/bin/sass
           sudo ln -sf /usr/local/lib/dart-sass/sass /usr/local/bin/dart-sass
           dart-sass --version
