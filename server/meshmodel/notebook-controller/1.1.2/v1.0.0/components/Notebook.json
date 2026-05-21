@@ -204,6 +204,7 @@
     "kind": "Notebook",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"format\": \"textarea\",\n   \"properties\": {\n    \"template\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster Important: Run \\\"make\\\" to regenerate code after modifying this file\",\n     \"format\": \"textarea\",\n     \"properties\": {\n      \"spec\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Notebook\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

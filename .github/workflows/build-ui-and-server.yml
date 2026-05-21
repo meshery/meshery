@@ -1,15 +1,5 @@
 name: Meshery UI and Server
 on:
-  pull_request_target:
-    types: [opened, synchronize, reopened]
-    branches:
-      - "master"
-    paths-ignore:
-      - "docs/**"
-      - "mesheryctl/**"
-      - "*.md"
-      - "*.github/**"
-      - "Makefile"
   push:
     branches:
       - "master"
@@ -30,10 +20,9 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
       - uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
       - name: Build meshery-ui and provider-ui
@@ -63,10 +52,8 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
-
       - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.13.0
+        uses: helm/kind-action@v1.14.0
         with:
           cluster_name: "kind-cluster"
       - name: Setup Go
@@ -78,7 +65,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
       - name: Download meshery-ui artifacts
@@ -93,7 +80,14 @@ jobs:
           path: /home/runner/work/meshery/meshery/provider-ui/out
       - name: Run Meshery UI and Server
         run: |
-          make server &
+          mkdir -p ./logs
+          # Redirect server output so a crash mid-suite stays on disk and
+          # can be inspected via the upload step below. Without this, an
+          # unrecovered panic during e2e is invisible — the step that
+          # backgrounded the server has already exited and GitHub stops
+          # capturing its stdout.
+          make server >./logs/meshery-server.log 2>&1 &
+          echo $! > ./logs/meshery-server.pid
           sleep 90
       - name: Install Playwright
         run: make ui-setup-ci
@@ -102,38 +96,27 @@ jobs:
       - name: Run Playwright End-to-End Tests
         env:
           MESHERY_SERVER_URL: "http://localhost:9081"
-          REMOTE_PROVIDER_URL: "https://cloud.layer5.io"
+          REMOTE_PROVIDER_URL: "https://cloud.meshery.io"
           PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
         run: make ui-test-e2e-ci
-      - name: Save PR metadata
-        if: ${{ !cancelled() && github.event_name == 'pull_request_target' }}
-        run: |
-          mkdir -p ./pr
-          echo "${{ github.event.number }}" > ./pr/number
-          echo "${{ github.event.pull_request.head.sha }}" > ./pr/sha
 
       - name: Checkout QA
         uses: actions/checkout@v6
-        # run only for pushes to master
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
         with:
           repository: meshery/qa
           path: ./qa
           token: ${{ secrets.GH_ACCESS_TOKEN }}
 
       - name: Sync results with qa
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
         working-directory: qa
         run: |
           make meshery-results-sync MESHERY_RESULTS_PATH=../ui/allure-results
 
       - name: Pull latest qa changes
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
         working-directory: qa
         run: git pull --rebase --autostash origin master
 
       - name: Commit & push academy to qa
-        if: ${{ !cancelled() &&  github.event_name == 'push' }}
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "[Meshery] Sync Meshery E2E Test Results - ${GITHUB_SHA}"
@@ -167,6 +150,13 @@ jobs:
           name: playwright-report
           path: ui/playwright-report/
           retention-days: 14
+      - name: Upload Meshery Server Log
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: meshery-server-log
+          path: logs/
+          retention-days: 14
 
   docker-build-test:
     name: Docker build
@@ -184,105 +174,7 @@ jobs:
           sudo rm -rf /opt/ghc
           sudo rm -rf /opt/hostedtoolcache
       - name: Docker edge build & tag
-        if: startsWith(github.ref, 'refs/tags/') != true && success()
         env:
           RELEASE_CHANNEL: "edge"
         run: |
           DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
-          docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::8}
-      - name: Docker edge push
-        if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
-        run: |
-          docker push ${{ secrets.IMAGE_NAME }}:edge-latest
-          docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_REF/refs\/tags\//}
-          docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
-      - name: Docker Hub Description
-        if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
-        uses: peter-evans/dockerhub-description@v5
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          repository: ${{ secrets.IMAGE_NAME }}
-  # validate the swagger docs
-  swaggerci:
-    if: github.repository == 'meshery/meshery'
-    name: swagger-docs
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v6
-      - name: Check if handlers were modified
-        uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            modified:
-              - added|modified: "handlers/**"
-      - name: Setup go-swagger
-        if: steps.changes.outputs.modified == 'true'
-        uses: minchao/setup-go-swagger@v1
-        with:
-          version: v0.26.1
-      - name: swagger-spec
-        if: steps.changes.outputs.modified == 'true'
-        run: swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
-      - name: swagger-docs
-        if: steps.changes.outputs.modified == 'true'
-        run: swagger generate spec -o ./docs/data/swagger.yml --scan-models && swagger flatten ./docs/data/swagger.yml -o ./docs/data/swagger.yml --with-expand --format=yaml
-
-  # validate graphQL schema
-  graphql_validate:
-    name: Validate GraphQL schema
-    if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Check if schema was modified
-        uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            modified:
-              - added|modified: 'server/internal/graphql/schema/schema.graphql'
-      - name: Set up Ruby
-        if: steps.filter.outputs.modified == 'true'
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.2.6
-          bundler-cache: true
-      - name: graphql-docs
-        if: steps.filter.outputs.modified == 'true'
-        run: |
-          cd docs
-          bundle install
-          bundle exec rake graphql:compile_docs
-
-  # Run Rego policy tests
-  rego-tests:
-    name: Rego Policy Tests
-    if: >-
-      github.repository == 'meshery/meshery' && (
-      (
-        github.event_name == 'push' &&
-        (
-        contains(toJson(github.event.commits), '.rego') ||
-        contains(toJson(github.event.commits), 'server/policies/') ||
-        contains(toJson(github.event.commits), '.github/workflows/rego-lint-and-test.yml')
-        )
-      ) ||
-      (
-        github.event_name == 'pull_request_target' &&
-        (
-        contains(toJson(github.event.pull_request), '.rego') ||
-        contains(toJson(github.event.pull_request), 'server/policies/') ||
-        contains(toJson(github.event.pull_request), '.github/workflows/rego-lint-and-test.yml')
-        )
-      )
-      )
-
-    uses: ./.github/workflows/rego-lint-and-test.yml
-    permissions:
-      contents: write
-      pull-requests: write

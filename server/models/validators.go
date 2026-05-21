@@ -21,7 +21,12 @@ func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) erro
 		return ErrTestClient
 	}
 
-	validGenerators := []string{Wrk2LG.Name(), FortioLG.Name()}
+	// fortio is the only supported load generator. The removed "wrk2" is
+	// retained purely as a backward-compatibility alias so performance
+	// profiles saved before its removal still validate; such profiles
+	// transparently run on fortio (see executeLoadTest). An empty value is
+	// treated as the default (fortio). Any other value is rejected.
+	validGenerators := []string{FortioLG.Name(), "wrk2", ""}
 	for _, testClient := range perfTest.Clients {
 		if testClient.Protocol.String() == "" {
 			return ErrProtocol
@@ -33,8 +38,9 @@ func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) erro
 		if len(testClient.EndpointUrls) < 1 {
 			return ErrTestEndpoint
 		}
-		for _, URL := range testClient.EndpointUrls {
-			if _, err := url.Parse(URL); err != nil {
+		for _, rawURL := range testClient.EndpointUrls {
+			parsedURL, err := url.ParseRequestURI(rawURL)
+			if err != nil || parsedURL.Scheme == "" || parsedURL.Host == "" {
 				return ErrValidURL
 			}
 		}

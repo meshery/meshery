@@ -4,7 +4,7 @@
 Passionate Full Stack Developer focused on building scalable and real-world applications.  
 Interested in Cloud-Native Technologies, AI-powered systems, and Open Source.
 
- I actively contribute to the Layer5 community and have worked on Meshery (a cloud-native management platform).
+ I actively contribute to the Meshery community and have worked on Meshery (a cloud-native management platform).
 
 - Collaborated with global contributors  
 - Worked on bug fixes and feature enhancements  
