@@ -80,7 +80,7 @@ Name: **"Meshery"** (default), URL: `https://cloud.meshery.io`
 - Retrieve performance test results.
 - Events are stored locally and can be published to remote provider. [Read more about server events](/project/contributing/contributing-server-events)
 
-Name: **"Layer5"**, URL: `https://cloud.layer5.io`
+Name: **"Digital Ocean"**, URL: `https://meshery.digitalocean.com`
 
 - Alternate remote provider, also shipped in the default `PROVIDER_BASE_URLS` list.
 - Same capability surface as the Meshery remote provider; choose based on your organization's account.
