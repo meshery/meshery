@@ -176,11 +176,6 @@ meshery-cilium:
   enabled: false
   fullnameOverride: meshery-cilium
 
-meshery-nighthawk:
-  enabled: false
-  fullnameOverride: meshery-nighthawk
-  serviceAccountNameOverride: meshery-server
-
 # If there need the test cases set it as true.
 #
 testCase:

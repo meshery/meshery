@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import Document, {
   Html,
   Head,
@@ -9,7 +9,7 @@ import Document, {
 } from 'next/document';
 import createEmotionServer from '@emotion/server/create-instance';
 import createCache from '@emotion/cache';
-import { PureHtmlLoadingScreen } from '@/components/LoadingComponents/LoadingComponentServer';
+import { PureHtmlLoadingScreen } from '@/components/shared/LoadingState/LoadingComponentServer';
 
 // Create emotion cache for SSR
 const createEmotionCache = () => {
@@ -62,7 +62,7 @@ class MesheryDocument extends Document<MyDocumentProps> {
            * content="no-referrer" included to avoid 403 errors on Google avatars
            */}
           <meta name="referrer" content="no-referrer" />
-          <link rel="icon" href="/static/favicon.png" />
+          <link rel="icon" href="/static/img/icons/favicon.png" />
 
           {/* Inject Emotion styles for SSR - prevents FOUC */}
           {this.props.emotionStyleTags}
@@ -70,12 +70,6 @@ class MesheryDocument extends Document<MyDocumentProps> {
           {/* Preload Qanelas Soft font for loading screen */}
           <link
             rel="preload"
-            href="/static/fonts/qanelas-soft/QanelasSoftRegular.otf"
-            as="font"
-            type="font/otf"
-            crossOrigin="anonymous"
-          />
-          <link
             href="/static/fonts/qanelas-soft/QanelasSoftRegular.otf"
             as="font"
             type="font/otf"
@@ -111,6 +105,12 @@ class MesheryDocument extends Document<MyDocumentProps> {
            */}
           <style type="text/css">
             {`
+              @font-face {
+                font-family: 'Qanelas Soft';
+                src: url('/static/fonts/qanelas-soft/QanelasSoftRegular.otf') format('opentype');
+                font-weight: 400;
+                font-display: swap;
+              }
               .hide-scrollbar::-webkit-scrollbar {
                 width: 0 !important;
               }

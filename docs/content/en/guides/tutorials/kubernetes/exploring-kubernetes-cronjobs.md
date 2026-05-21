@@ -56,7 +56,7 @@ To deploy a web application on Meshery, follow these steps:
 
 <!-- 
 
-Convey to user that Kanvas Designs are auto-saved. 
+Convey to user that Designs are auto-saved. 
 
 -->
 
@@ -67,15 +67,15 @@ Convey to user that Kanvas Designs are auto-saved.
 
 <!--
 
-Show user how to do this using Kanvas Designer to drag and drop components and configure them.
+Show user how to do this using Meshery Design Configurator to drag and drop components and configure them.
 
 -->
 
-1. Open the Kanvas tab located in the left panel.
-2. Upon opening Kanvas, ensure that you are on the Design tab, which can be found at the top center of the canvas.
+1. Open the Designer tab located in the left panel.
+2. Upon opening the Designer, ensure that you are on the Design tab, which can be found at the top center of the canvas.
 3. Navigate to the Design option located in the top menu of the left panel. Using the search bar, type in the name of your app, which in this instance is the Minecraft App.
 4. Once your app appears in the list, click on it to upload the design file onto the canvas.
-[![Navigate Kanvas](/guides/tutorials/images/navigate-kanvas.png)](/guides/tutorials/images/navigate-kanvas.png)
+[![Navigate Designer](/guides/tutorials/images/navigate-kanvas.png)](/guides/tutorials/images/navigate-kanvas.png)
 5. Locate the control panel at the bottom of the canvas and choose the Kubernetes option.
 6. Using the search bar, enter "Cron Job" and click on the corresponding icon to display it on the canvas.
 [![Select CronJob item](/guides/tutorials/images/select-cronjob.png)](/guides/tutorials/images/select-cronjob.png)
@@ -95,7 +95,7 @@ Show user how to do this using Kanvas Designer to drag and drop components and c
 #### 4. **Verifying CronJob Execution:**
    - Monitor the execution of the CronJob and verify that backups are created at the specified intervals.
 
-To view the resources created for the CronJob, we will utilize the Visualize tab of the Kanvas. A view will be created with necessary filters to display the relevant resources.
+To view the resources created for the CronJob, we will utilize the Visualize tab of the Meshery Dashboard. A view will be created with necessary filters to display the relevant resources.
 
    1. Ensure that you are on the Visualize tab, located at the top center of the canvas.
    2. Give the view a name.
@@ -107,7 +107,7 @@ To view the resources created for the CronJob, we will utilize the Visualize tab
 
 <!-- 
 
-Show user how to use Views and filters in Kanvas Visualizer.
+Show user how to use Views and filters in Meshery Dashboard.
 
 -->
 
@@ -129,11 +129,11 @@ Show user how to use Views and filters in Kanvas Visualizer.
         [![Vizualize CronJob](/guides/tutorials/images/scale.png)](/guides/tutorials/images/scale.png)
 
    7.  Save Changes:
-        After verifying the adjustments, save the changes made to the CronJob settings within the Kanvas Designer interface to ensure they are retained for future reference.
+        After verifying the adjustments, save the changes made to the CronJob settings within the Meshery Design Configurator interface to ensure they are retained for future reference.
         [![Save CronJob](/guides/tutorials/images/save.png)](/guides/tutorials/images/save.png)
 <!-- 
 
-Show user how to use Designs and components in Kanvas Designer.
+Show user how to use Designs and components in Meshery Design Configurator.
 
 -->
 
@@ -148,11 +148,11 @@ Use Meshery Playground to visualize the changes and observe the impact on the sc
     Click on the CronJob component to open the tooltip. This action will enable access to the delete icon. Click to delete the CronJob.
     [![Save CronJob](/guides/tutorials/images/delete.png)](/guides/tutorials/images/delete.png)
 3. Save Changes:
-    After deleting the CronJob, save the changes made within the Kanvas Designer interface to reflect the cleanup.
+    After deleting the CronJob, save the changes made within the Meshery Design Configurator interface to reflect the cleanup.
     [![Save CronJob](/guides/tutorials/images/save-app.png)](/guides/tutorials/images/save-app.png)
 <!-- 
 
-Show user how to use Designs and components in Kanvas Designer.
+Show user how to use Designs and components in Meshery Design Configurator.
 
 -->
 
@@ -163,13 +163,13 @@ Show user how to use Designs and components in Kanvas Designer.
 
   
 1. Save Your Scenario:
-   - Click the save option in Kanvas Designer and give your scenario a descriptive name.
+   - Click the save option in Meshery Design Configurator and give your scenario a descriptive name.
 
 2. Make Design Public:
    - Toggle the visibility of your design to "Public" to allow others to view it.
 
 3. Share Your Design:
-   - Copy the shareable link or invite collaborators directly from Kanvas Designer.
+   - Copy the shareable link or invite collaborators directly from Meshery Design Configurator.
 
 4. Invite Friends to Collaborate:
    - Share the link with friends or collaborators to enable collaboration on your design.
@@ -182,7 +182,7 @@ Show user how to use Designs and components in Kanvas Designer.
 
 <!-- 
 
-Show user how to make Design public and share with other users in Kanvas Designer.
+Show user how to make Design public and share with other users in Meshery Design Configurator.
 
 -->
 

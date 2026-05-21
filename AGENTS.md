@@ -282,8 +282,9 @@ make docs-docker
 # Build GraphQL schema
 make graphql-build
 
-# Generate GraphQL documentation
-make graphql-docs-build
+# GraphQL is self-documenting via the introspection endpoint and the GraphQL
+# Playground at http://localhost:9081/api/system/graphql/playground.
+# A static reference snapshot lives at docs/content/en/reference/graphql-apis.md.
 ```
 
 ### Helm Charts
@@ -574,6 +575,7 @@ Packaged, repeatable workflows live in `.agents/skills/`. Each skill has a `SKIL
 |-------|-----------|------------|---------|
 | gen-test | `.agents/skills/gen-test/` | User-invoked | Generate idiomatic Go tests |
 | api-doc | `.agents/skills/api-doc/` | User or agent | Document REST/GraphQL endpoints |
+| gen-relationship | `.agents/skills/gen-relationship/` | User or agent | Generate schema-backed relationships |
 
 ## Automation Hooks
 

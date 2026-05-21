@@ -81,7 +81,10 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	connectionID := req.URL.Query().Get("connection_id")
+	// Canonical query param is `connectionId` (camelCase per the schemas
+	// identifier-naming contract); legacy `connection_id` is still
+	// dual-accepted by handlers but should not be used in new client code.
+	connectionID := req.URL.Query().Get("connectionId")
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("ping")
 	if connectionID != "" {
 		// Get the context associated with this ID

@@ -48,9 +48,9 @@ type errorResponse struct {
 	Error                string   `json:"error"`
 	Code                 string   `json:"code,omitempty"`
 	Severity             string   `json:"severity,omitempty"`
-	ProbableCause        []string `json:"probable_cause,omitempty"`
-	SuggestedRemediation []string `json:"suggested_remediation,omitempty"`
-	LongDescription      []string `json:"long_description,omitempty"`
+	ProbableCause        []string `json:"probableCause,omitempty"`
+	SuggestedRemediation []string `json:"suggestedRemediation,omitempty"`
+	LongDescription      []string `json:"longDescription,omitempty"`
 }
 
 // WriteMeshkitError writes a JSON error response that preserves MeshKit error
