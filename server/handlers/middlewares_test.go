@@ -137,9 +137,47 @@ func TestResolveProviderName(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			got := resolveProviderName(mkReq(tc.setup), cookieName, tc.enforcedProvider)
+			got, _ := resolveProviderName(mkReq(tc.setup), cookieName, tc.enforcedProvider)
 			if got != tc.want {
 				t.Fatalf("resolveProviderName: want %q, got %q", tc.want, got)
+			}
+		})
+	}
+}
+
+// TestResolveProviderName_ReturnsLegacyAliasFlag locks in the second return
+// value used by ProviderMiddleware to drive the one-shot deprecation warning.
+// The boolean must be true for any casing of the legacy alias and false for
+// canonical names (including the canonical local provider name).
+func TestResolveProviderName_ReturnsLegacyAliasFlag(t *testing.T) {
+	const cookieName = "meshery-provider"
+	mkReq := func(cookieValue string) *http.Request {
+		req := httptest.NewRequest(http.MethodGet, "/user/login", nil)
+		if cookieValue != "" {
+			req.AddCookie(&http.Cookie{Name: cookieName, Value: cookieValue})
+		}
+		return req
+	}
+
+	cases := []struct {
+		name      string
+		cookie    string
+		wantFlag  bool
+	}{
+		{"canonical Local does not flag legacy", "Local", false},
+		{"lowercase local does not flag legacy", "local", false},
+		{"legacy None flags legacy", "None", true},
+		{"lowercase none flags legacy", "none", true},
+		{"uppercase NONE flags legacy", "NONE", true},
+		{"remote Meshery does not flag legacy", "Meshery", false},
+		{"empty does not flag legacy", "", false},
+	}
+	for _, c := range cases {
+		c := c
+		t.Run(c.name, func(t *testing.T) {
+			_, got := resolveProviderName(mkReq(c.cookie), cookieName, "")
+			if got != c.wantFlag {
+				t.Errorf("usedLegacyAlias = %v, want %v", got, c.wantFlag)
 			}
 		})
 	}
