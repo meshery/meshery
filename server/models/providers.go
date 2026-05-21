@@ -346,7 +346,7 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 // provider to its canonical name. Both the canonical name ("Local") and the
 // legacy alias ("None") are matched case-insensitively, so "local", "LOCAL",
 // "none", "NONE", and stale "None" cookies all resolve to "Local". Any other
-// input — including remote provider names like "Meshery" or "Layer5", whose
+// input — including remote provider names like "Meshery" or "Digital Ocean", whose
 // canonical casing originates from the remote /capabilities response — is
 // returned unchanged. This is the single source of truth for the rename;
 // call it once at the request edge (resolveProviderName) rather than
