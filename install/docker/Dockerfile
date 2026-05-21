@@ -42,16 +42,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY provider-ui .
 RUN npm run build
 
-FROM alpine:3.23.2 AS seed_content
-RUN apk add --no-cache curl
-WORKDIR /
-RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url.*wasm" | cut -d : -f 2,3 | sed 's/"//g') \
-    && mkdir -p seed_content/filters/binaries \
-    && cd seed_content/filters/binaries  \
-    for line in $lines \
-    do \
-    curl -LO $line \
-    done
+# FROM alpine:3.23.2 AS seed_content
+# RUN apk add --no-cache curl
+# WORKDIR /
 # Antiquated patterns; no longer compatible with the current version of Meshery
 # RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/tarball/master -o service-mesh-patterns.tgz \
 #     && mkdir service-mesh-patterns \
