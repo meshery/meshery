@@ -457,9 +457,9 @@ perf:
         load-generator:
           name: --load-generator
           arg: apply
-          description: "Choice of load generator - fortio (OR) wrk2 (default: fortio)."
-          usage: mesheryctl perf apply [profile-name] --url [URL] --load-generator [fortio/wrk2]
-          example: mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --load-generator wrk2
+          description: "Choice of load generator - fortio (default: fortio)."
+          usage: mesheryctl perf apply [profile-name] --url [URL] --load-generator [fortio]
+          example: mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --load-generator fortio
 
         mesh:
           name: --mesh

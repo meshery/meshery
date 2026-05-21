@@ -153,10 +153,10 @@ describe('MesherySettingsPerformanceComponent', () => {
     expect(qpsInput).toHaveValue(50);
   });
 
-  it('renders all load generators as radio options', () => {
+  it('renders only fortio as a load generator radio option', () => {
     render(<MesherySettingsPerformanceComponent />);
     expect(screen.getByText('fortio')).toBeInTheDocument();
-    expect(screen.getByText('wrk2')).toBeInTheDocument();
+    expect(screen.queryByText('wrk2')).not.toBeInTheDocument();
   });
 
   it('calls updateLoadTestPrefs with the form values when Save is clicked', async () => {
