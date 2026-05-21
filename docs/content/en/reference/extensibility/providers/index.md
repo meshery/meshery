@@ -172,7 +172,6 @@ This environment variable enforces a specific provider, bypassing the provider s
 Accepted values:
 - `Local` - Enforces the Local Provider (no authentication). `None` is accepted as a legacy alias.
 - `Meshery` - Enforces the Meshery (Meshery Cloud) Remote Provider
-- `Layer5` - Enforces the Layer5 Cloud Remote Provider
 - Any other registered remote provider name
 
 Example: `PROVIDER=Local`
