@@ -12,7 +12,7 @@ func TestFormatCLIError(t *testing.T) {
 	t.Run("uses meshkit long description in non verbose mode", func(t *testing.T) {
 		err := utils.ErrInvalidArgument(errors.New("this command takes no arguments"))
 		msg := formatCLIError(err, false)
-		expected := "this command takes no arguments"
+		expected := "this command takes no arguments\nPlease check the arguments passed"
 		if msg != expected {
 			t.Fatalf("expected %q, got %q", expected, msg)
 		}
@@ -35,6 +35,15 @@ func TestFormatCLIError(t *testing.T) {
 		}
 		if !strings.Contains(msg, "permission denied") {
 			t.Fatalf("expected error detail in message, got: %q", msg)
+		}
+	})
+
+	t.Run("strips pipe-delimited metadata from plain errors", func(t *testing.T) {
+		// Simulate what MeshKit Error.Error() produces for errors that go through fallback path.
+		raw := errors.New("model not found | Short Description: Internal Server Error | Probable Cause: something | Suggested Remediation: try again")
+		msg := formatCLIError(raw, false)
+		if msg != "model not found" {
+			t.Fatalf("expected stripped message, got %q", msg)
 		}
 	})
 }

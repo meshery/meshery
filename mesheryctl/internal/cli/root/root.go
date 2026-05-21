@@ -110,24 +110,41 @@ func formatCLIError(err error, verbose bool) string {
 		return err.Error()
 	}
 
+	var primaryMsg, remediation string
+
 	// Prefer LongDescription directly from the struct; GetLDescription joins with "." (no space).
 	var mkErr *meshkiterrors.Error
 	if errors.As(err, &mkErr) && len(mkErr.LongDescription) > 0 {
 		joined := strings.Join(mkErr.LongDescription, " ")
 		if joined != "" && joined != "None" {
-			return joined
+			primaryMsg = joined
+		}
+		if len(mkErr.SuggestedRemediation) > 0 {
+			rem := strings.Join(mkErr.SuggestedRemediation, " ")
+			if rem != "" && rem != "None" {
+				remediation = rem
+			}
 		}
 	}
 
 	// Fallback: strip pipe-delimited metadata blocks MeshKit appends to Error.Error().
-	message := err.Error()
-	for _, marker := range []string{" | Short Description: ", " | Probable Cause: ", " | Suggested Remediation: "} {
-		if idx := strings.Index(message, marker); idx != -1 {
-			return strings.TrimSpace(message[:idx])
+	if primaryMsg == "" {
+		message := err.Error()
+		for _, marker := range []string{" | Short Description: ", " | Probable Cause: ", " | Suggested Remediation: "} {
+			if idx := strings.Index(message, marker); idx != -1 {
+				primaryMsg = strings.TrimSpace(message[:idx])
+				break
+			}
+		}
+		if primaryMsg == "" {
+			primaryMsg = message
 		}
 	}
 
-	return message
+	if remediation != "" {
+		return primaryMsg + "\n" + remediation
+	}
+	return primaryMsg
 }
 
 func init() {
