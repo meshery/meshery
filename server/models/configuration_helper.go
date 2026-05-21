@@ -26,7 +26,12 @@ func (c *ConfigurationChannel) SubscribeApplications(ch chan struct{}) {
 }
 
 func (c *ConfigurationChannel) PublishApplications() {
-	for _, ch := range c.ApplicationsChannel {
+	c.mx.Lock()
+	subscribers := make([]chan struct{}, len(c.ApplicationsChannel))
+	copy(subscribers, c.ApplicationsChannel)
+	c.mx.Unlock()
+
+	for _, ch := range subscribers {
 		select {
 		case ch <- struct{}{}:
 		default:
@@ -41,7 +46,12 @@ func (c *ConfigurationChannel) SubscribePatterns(ch chan struct{}) {
 }
 
 func (c *ConfigurationChannel) PublishPatterns() {
-	for _, ch := range c.PatternsChannel {
+	c.mx.Lock()
+	subscribers := make([]chan struct{}, len(c.PatternsChannel))
+	copy(subscribers, c.PatternsChannel)
+	c.mx.Unlock()
+
+	for _, ch := range subscribers {
 		select {
 		case ch <- struct{}{}:
 		default:
@@ -56,7 +66,12 @@ func (c *ConfigurationChannel) SubscribeFilters(ch chan struct{}) {
 }
 
 func (c *ConfigurationChannel) PublishFilters() {
-	for _, ch := range c.FiltersChannel {
+	c.mx.Lock()
+	subscribers := make([]chan struct{}, len(c.FiltersChannel))
+	copy(subscribers, c.FiltersChannel)
+	c.mx.Unlock()
+
+	for _, ch := range subscribers {
 		select {
 		case ch <- struct{}{}:
 		default:

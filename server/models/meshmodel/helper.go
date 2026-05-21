@@ -22,7 +22,12 @@ func (c *SummaryChannel) Subscribe(ch chan struct{}) {
 }
 
 func (c *SummaryChannel) Publish() {
-	for _, ch := range c.channel {
+	c.mx.Lock()
+	subscribers := make([]chan struct{}, len(c.channel))
+	copy(subscribers, c.channel)
+	c.mx.Unlock()
+
+	for _, ch := range subscribers {
 		select {
 		case ch <- struct{}{}:
 		default:

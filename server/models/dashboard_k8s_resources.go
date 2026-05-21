@@ -23,7 +23,12 @@ func (d *DashboardK8sResourcesChan) SubscribeDashbordK8Resources(ch chan struct{
 }
 
 func (d *DashboardK8sResourcesChan) PublishDashboardK8sResources() {
-	for _, ch := range d.ResourcesChan {
+	d.mx.Lock()
+	subscribers := make([]chan struct{}, len(d.ResourcesChan))
+	copy(subscribers, d.ResourcesChan)
+	d.mx.Unlock()
+
+	for _, ch := range subscribers {
 		select {
 		case ch <- struct{}{}:
 		default:
