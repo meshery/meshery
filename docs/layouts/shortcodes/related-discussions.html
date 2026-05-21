@@ -8,9 +8,7 @@
     <ul>
       {{- range first 8 $data.topic_list.topics -}}
         <li>
-          <a href="https://discuss.layer5.io/t/{{ .slug }}/{{ .id }}" target="_blank" rel="noopener noreferrer">
-            {{ .title }}
-          </a>
+          {{ .title }}
         </li>
       {{- end -}}
     </ul>
