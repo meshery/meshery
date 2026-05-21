@@ -137,7 +137,7 @@ func TestPolicyImplication(t *testing.T) {
 		&HierarchicalParentChildPolicy{},
 		&EdgeNonBindingPolicy{},
 		&AliasPolicy{},
-		&MatchLabelsPolicy{},
+		&TagPolicy{},
 	}
 
 	tests := []struct {
@@ -634,11 +634,11 @@ func TestAliasIsInvalidStatusMatrix(t *testing.T) {
 	}
 }
 
-// MatchLabelsPolicy must produce identical relationship UUIDs across runs for
+// TagPolicy must produce identical relationship UUIDs across runs for
 // the same input. Pre-fix, sibling identification leaked Go map iteration order
 // (groupMap range) and pointer addresses (fmt.Sprintf("%v", selectorSetItem))
 // into the generated IDs.
-func TestMatchLabelsPolicyIdentificationIsDeterministic(t *testing.T) {
+func TestTagPolicyIdentificationIsDeterministic(t *testing.T) {
 	pod := func(idHex string) *component.ComponentDefinition {
 		c := &component.ComponentDefinition{
 			Component: component.Component{Kind: "Pod"},
@@ -670,11 +670,11 @@ func TestMatchLabelsPolicyIdentificationIsDeterministic(t *testing.T) {
 	}
 
 	design := makePatternFile([]*component.ComponentDefinition{podA, podB, podC}, nil)
-	p := &MatchLabelsPolicy{}
+	p := &TagPolicy{}
 
 	first := p.IdentifyRelationship(makeRel(), design)
 	if len(first) == 0 {
-		t.Fatal("expected at least one matchlabels relationship")
+		t.Fatal("expected at least one tag relationship")
 	}
 	for i := 0; i < 5; i++ {
 		again := p.IdentifyRelationship(makeRel(), design)

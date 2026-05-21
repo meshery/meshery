@@ -9,11 +9,11 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
-// buildMatchlabelsBenchFixture returns n Pods sharing label values across a
-// small number of groups so identifyMatchlabels has nontrivial bucketing work.
+// buildTagsBenchFixture returns n Pods sharing label values across a
+// small number of groups so identifyTags has nontrivial bucketing work.
 // Each pod has two labels (app, version) whose values come from a small pool,
 // producing several non-trivial groups regardless of n.
-func buildMatchlabelsBenchFixture(n int) (*pattern.PatternFile, *relationship.RelationshipDefinition) {
+func buildTagsBenchFixture(n int) (*pattern.PatternFile, *relationship.RelationshipDefinition) {
 	comps := make([]*component.ComponentDefinition, 0, n)
 	groups := n/5 + 1
 	for i := 0; i < n; i++ {
@@ -46,20 +46,20 @@ func buildMatchlabelsBenchFixture(n int) (*pattern.PatternFile, *relationship.Re
 			},
 		},
 	}
-	relDef.ID = staticUUID("rel-matchlabels-bench")
+	relDef.ID = staticUUID("rel-tags-bench")
 
 	return &pattern.PatternFile{Components: comps}, relDef
 }
 
-// BenchmarkIdentifyMatchlabels measures identifyMatchlabels as the component
+// BenchmarkIdentifyTags measures identifyTags as the component
 // count grows, so the perf delta from the O(N²·F) → O(N·F) rewrite is visible.
-func BenchmarkIdentifyMatchlabels(b *testing.B) {
+func BenchmarkIdentifyTags(b *testing.B) {
 	for _, n := range []int{10, 50, 200} {
-		design, relDef := buildMatchlabelsBenchFixture(n)
+		design, relDef := buildTagsBenchFixture(n)
 		b.Run(fmt.Sprintf("N=%d", n), func(b *testing.B) {
 			b.ReportAllocs()
 			for i := 0; i < b.N; i++ {
-				_ = identifyMatchlabels(design, relDef)
+				_ = identifyTags(design, relDef)
 			}
 		})
 	}
