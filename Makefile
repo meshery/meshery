@@ -291,6 +291,9 @@ error-util:
 ## Build Meshery UI; Build and run Meshery Server on your local machine.
 ui-server: ui-meshery-build ui-provider-build server
 
+## Build Meshery UI, Server, and point to locally hosted Remote Provider
+ui-server-local: ui-meshery-build ui-provider-build server-local
+
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds.
 #-----------------------------------------------------------------------------
