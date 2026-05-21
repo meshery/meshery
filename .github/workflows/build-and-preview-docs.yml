@@ -55,12 +55,23 @@ jobs:
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
 
-      # Hugo Extended (v0.114+) ships embedded Dart Sass, which the docs
-      # consume via `resources.toCSS` with `transpiler: "dartsass"`. We
-      # used to also `sudo snap install dart-sass` here, but snap.io's
-      # storeserver was flaky in GitHub-hosted runners and that step kept
-      # breaking unrelated PRs (see #19574). The embedded transpiler is
-      # sufficient; no external dart-sass binary is needed.
+      - name: Install Dart Sass
+        # Direct download from the dart-sass GitHub release rather than
+        # `sudo snap install dart-sass` (snap.io's storeserver was flaky
+        # in GitHub-hosted runners and broke this workflow on unrelated
+        # PRs, see #19574). Hugo Extended ships embedded Dart Sass as of
+        # v0.114+ but having the standalone binary on PATH is the most
+        # reliable path through `resources.toCSS` with transpiler "dartsass".
+        if: github.event.action != 'closed'
+        env:
+          DART_SASS_VERSION: 1.79.5
+        run: |
+          set -euo pipefail
+          curl -fsSL "https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz" \
+            | sudo tar -xz -C /usr/local/lib
+          sudo ln -sf /usr/local/lib/dart-sass/sass /usr/local/bin/sass
+          sudo ln -sf /usr/local/lib/dart-sass/sass /usr/local/bin/dart-sass
+          dart-sass --version
 
       - name: Setup Node
         if: github.event.action != 'closed'
