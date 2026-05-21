@@ -349,7 +349,7 @@ const MainDesignsContent = ({
         )}
       </DesignList>
       <GhostContainer ref={ghostRef}>
-        <GhostImage src="/static/img/service-mesh-pattern.png" height={30} width={30} />
+        <GhostImage src="/static/img/designs/service-mesh-pattern.png" height={30} width={30} />
         <GhostText ref={ghostTextNodeRef}></GhostText>
       </GhostContainer>
       <ExportDesignModal

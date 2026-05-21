@@ -1,6 +1,7 @@
 package policies
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/meshery/schemas/models/v1beta2/relationship"
@@ -167,7 +168,14 @@ func identifyBindingRelationships(relDef *relationship.RelationshipDefinition, d
 		fromComps := filterComponentsByKindSetTyped(design.Components, fromSelByKind)
 		toComps := filterComponentsByToSelectorsTyped(design.Components, ss.Allow.To)
 
-		for bindingKind := range bindingKinds {
+		// Iterate kinds in sorted order so identification output (and thus
+		// generated relationship IDs) does not depend on map iteration randomness.
+		sortedBindingKinds := make([]string, 0, len(bindingKinds))
+		for k := range bindingKinds {
+			sortedBindingKinds = append(sortedBindingKinds, k)
+		}
+		sort.Strings(sortedBindingKinds)
+		for _, bindingKind := range sortedBindingKinds {
 			bindingDecls := filterComponentsByKindTyped(design.Components, bindingKind)
 			if len(bindingDecls) == 0 {
 				continue

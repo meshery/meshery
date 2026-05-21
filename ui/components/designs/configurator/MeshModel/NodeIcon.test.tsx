@@ -75,7 +75,7 @@ describe('GetNodeIcon', () => {
     const { container } = render(<GetNodeIcon metadata={{}} />);
     const img = container.querySelector('img');
     expect(img).not.toBeNull();
-    expect(img).toHaveAttribute('src', '/static/img/kubernetes.svg');
+    expect(img).toHaveAttribute('src', '/static/img/integrations/kubernetes.svg');
   });
 
   it('renders an inline image when svgComplete is provided', () => {

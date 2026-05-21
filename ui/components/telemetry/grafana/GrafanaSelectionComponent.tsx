@@ -221,7 +221,7 @@ function GrafanaSelectionComponent(props) {
             label={grafanaURL}
             onDelete={handleGrafanaChipDelete}
             onClick={handleGrafanaClick}
-            icon={<GrafanaIcon src="/static/img/grafana_icon.svg" />}
+            icon={<GrafanaIcon src="/static/img/integrations/grafana_icon.svg" />}
             key="graf-key"
             variant="outlined"
           />
