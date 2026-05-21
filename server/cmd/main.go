@@ -393,18 +393,26 @@ func main() {
 		//      return "Layer5"). The later iteration silently overwrites the
 		//      earlier and operators see one provider in /api/providers when
 		//      they configured two.
-		// In either case we fall back to the URL host as the key and warn so
-		// the misconfiguration is visible at startup instead of being silently
-		// dropped.
+		// On collision we re-key the EARLIER entry by its URL host and let the
+		// new entry claim the canonical name. This preserves the historical
+		// "last URL wins the canonical name" routing that integrations rely
+		// on (e.g. tokens minted against cloud.layer5.io expect the cookie
+		// value "Layer5" to resolve to cloud.layer5.io regardless of the
+		// iteration order of PROVIDER_BASE_URLS), while still giving the
+		// re-keyed provider an addressable home in /api/providers.
 		key := cp.Name()
 		if key == "" {
 			key = parsedURL.Host
 			log.Warnf("remote provider at %q returned an empty providerName from /capabilities; registering it under host %q so it remains addressable. Verify the remote is reachable and returns a providerName.", providerurl, key)
 		}
 		if existing, ok := provs[key]; ok {
-			conflictHost := parsedURL.Host
-			log.Warnf("provider name collision: %q is already registered for %q; re-keying %q as %q so both remain addressable. Ensure each remote provider's /capabilities returns a unique providerName.", key, existing.GetProviderURL(), providerurl, conflictHost)
-			key = conflictHost
+			existingHost := existing.GetProviderURL()
+			if u, err := url.Parse(existingHost); err == nil && u.Host != "" {
+				existingHost = u.Host
+			}
+			log.Warnf("provider name collision: %q is already registered for %q; re-keying the earlier entry as %q so both remain addressable, and giving the canonical name %q to %q. Ensure each remote provider's /capabilities returns a unique providerName.", key, existing.GetProviderURL(), existingHost, key, providerurl)
+			provs[existingHost] = existing
+			delete(provs, key)
 		}
 		provs[key] = cp
 	}
