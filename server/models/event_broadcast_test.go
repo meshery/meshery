@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 )
 
 // TestBroadcast_MultipleSubscribersSameID asserts that two Subscribe calls
@@ -15,7 +15,7 @@ import (
 // first subscriber's listener slice entry.
 func TestBroadcast_MultipleSubscribersSameID(t *testing.T) {
 	b := NewBroadcaster("test")
-	id := uuid.New()
+	id := uuid.Must(uuid.NewV4())
 
 	ch1, unsub1 := b.Subscribe(id)
 	ch2, unsub2 := b.Subscribe(id)
@@ -41,7 +41,7 @@ func TestBroadcast_MultipleSubscribersSameID(t *testing.T) {
 // close-of-closed-channel.
 func TestBroadcast_DoubleUnsubscribe(t *testing.T) {
 	b := NewBroadcaster("test")
-	id := uuid.New()
+	id := uuid.Must(uuid.NewV4())
 
 	_, unsub := b.Subscribe(id)
 	unsub()
@@ -61,7 +61,7 @@ func TestBroadcast_DoubleUnsubscribe(t *testing.T) {
 // unsubscribe.
 func TestBroadcast_ConcurrentPublishUnsubscribe(t *testing.T) {
 	b := NewBroadcaster("test")
-	id := uuid.New()
+	id := uuid.Must(uuid.NewV4())
 
 	const subscribers = 50
 	const publishesPerSubscriber = 10
@@ -108,4 +108,34 @@ func TestBroadcast_ConcurrentPublishUnsubscribe(t *testing.T) {
 	<-bgDone
 
 	t.Logf("background publishes: %d", bgPublishes.Load())
+}
+
+// TestBroadcast_BestEffortDeliveryWhenBufferFull locks in the documented
+// behaviour of Publish: each subscriber's channel has buffer 1, and a
+// second publish before the subscriber drains the first is dropped
+// rather than blocking or panicking.
+func TestBroadcast_BestEffortDeliveryWhenBufferFull(t *testing.T) {
+	b := NewBroadcaster("test")
+	id := uuid.Must(uuid.NewV4())
+
+	ch, unsub := b.Subscribe(id)
+	defer unsub()
+
+	b.Publish(id, "first")
+	b.Publish(id, "dropped")
+
+	select {
+	case v := <-ch:
+		if v != "first" {
+			t.Errorf("got %v, want first", v)
+		}
+	case <-time.After(100 * time.Millisecond):
+		t.Fatal("expected first event in buffer")
+	}
+
+	select {
+	case v := <-ch:
+		t.Errorf("expected no second event, got %v", v)
+	case <-time.After(50 * time.Millisecond):
+	}
 }

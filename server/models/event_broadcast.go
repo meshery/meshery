@@ -56,6 +56,11 @@ func (c *Broadcast) Subscribe(id core.Uuid) (chan interface{}, func()) {
 	return ch, unsubscribe
 }
 
+// Publish delivers data to every subscriber for id. Delivery is
+// best-effort: each listener channel has a buffer of 1, and a non-blocking
+// send is used so a slow subscriber cannot block other subscribers or the
+// publisher. If the listener buffer is full, the event is dropped for that
+// subscriber.
 func (c *Broadcast) Publish(id core.Uuid, data interface{}) {
 	v, ok := c.clients.Load(id)
 	if !ok {
