@@ -1,11 +1,13 @@
 apiVersion: relationships.meshery.io/v1beta2
 kind: RelationshipDefinition
 metadata:
-  name: RouteTableToInternetGateway
+  name: route-table-to-internet-gateway
 spec:
   kind: Edge
   type: Network
   subType: NonBinding
+  display_name: Route Table to Internet Gateway
+  description: "This relationship defines the connectivity between a Route Table and an Internet Gateway"
   selectors:
     - allow:
         from:
