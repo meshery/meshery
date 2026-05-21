@@ -389,15 +389,15 @@ func main() {
 		//      cp.Name() == "". Without disambiguation, every such provider
 		//      collides at provs[""].
 		//   2. Two configured URLs report the SAME name from /capabilities (for
-		//      example, both cloud.meshery.io and cloud.layer5.io currently
-		//      return "Layer5"). The later iteration silently overwrites the
+		//      example, both cloud.meshery.io and cloud.acme.io currently
+		//      return "Meshery"). The later iteration silently overwrites the
 		//      earlier and operators see one provider in /api/providers when
 		//      they configured two.
 		// On collision we re-key the EARLIER entry by its URL host and let the
 		// new entry claim the canonical name. This preserves the historical
 		// "last URL wins the canonical name" routing that integrations rely
-		// on (e.g. tokens minted against cloud.layer5.io expect the cookie
-		// value "Layer5" to resolve to cloud.layer5.io regardless of the
+		// on (e.g. tokens minted against cloud.acme.io expect the cookie
+		// value "Meshery" to resolve to cloud.acme.io regardless of the
 		// iteration order of PROVIDER_BASE_URLS), while still giving the
 		// re-keyed provider an addressable home in /api/providers.
 		key := cp.Name()
