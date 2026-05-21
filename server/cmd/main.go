@@ -383,7 +383,30 @@ func main() {
 
 		cp.SyncPreferences()
 		defer cp.StopSyncPreferences()
-		provs[cp.Name()] = cp
+
+		// Pick a registration key that survives two failure modes:
+		//   1. /capabilities was unreachable or returned no providerName, leaving
+		//      cp.Name() == "". Without disambiguation, every such provider
+		//      collides at provs[""].
+		//   2. Two configured URLs report the SAME name from /capabilities (for
+		//      example, both cloud.meshery.io and cloud.layer5.io currently
+		//      return "Layer5"). The later iteration silently overwrites the
+		//      earlier and operators see one provider in /api/providers when
+		//      they configured two.
+		// In either case we fall back to the URL host as the key and warn so
+		// the misconfiguration is visible at startup instead of being silently
+		// dropped.
+		key := cp.Name()
+		if key == "" {
+			key = parsedURL.Host
+			log.Warnf("remote provider at %q returned an empty providerName from /capabilities; registering it under host %q so it remains addressable. Verify the remote is reachable and returns a providerName.", providerurl, key)
+		}
+		if existing, ok := provs[key]; ok {
+			conflictHost := parsedURL.Host
+			log.Warnf("provider name collision: %q is already registered for %q; re-keying %q as %q so both remain addressable. Ensure each remote provider's /capabilities returns a unique providerName.", key, existing.GetProviderURL(), providerurl, conflictHost)
+			key = conflictHost
+		}
+		provs[key] = cp
 	}
 
 	// verifies if the provider specified in the "PROVIDER" environment variable is from one of the supported providers.
