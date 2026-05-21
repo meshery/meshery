@@ -133,10 +133,10 @@ describe('user endpoints', () => {
     expect(mod.getAllUsers).toBeTypeOf('function');
   });
 
-  it('getLoadTestPrefs GETs /api/user/prefs with context query and normalizes prefs', async () => {
+  it('getLoadTestPrefs GETs /api/user/prefs with context query and coerces legacy wrk2 to fortio', async () => {
     fetchMock.mockResolvedValue(
       okResponse({
-        loadTestPrefs: { c: 5, qps: 10, t: '60s', gen: 'fortio' },
+        loadTestPrefs: { c: 5, qps: 10, t: '60s', gen: 'wrk2' },
       }),
     );
     const { api, store } = await setupStore();
@@ -161,7 +161,7 @@ describe('user endpoints', () => {
     await store.dispatch(
       api.endpoints.updateLoadTestPrefs.initiate({
         selectedK8sContexts: ['ctx-a'],
-        loadTestPrefs: { c: 3, qps: 5, t: '20s', gen: 'wrk2' },
+        loadTestPrefs: { c: 3, qps: 5, t: '20s', gen: 'fortio' },
       }),
     );
     const req = fetchMock.mock.calls[0][0] as Request;
@@ -169,7 +169,7 @@ describe('user endpoints', () => {
     expect(req.url).toContain('/api/user/prefs?contexts=ctx-a');
     expect(req.headers.get('content-type')).toContain('application/json');
     const body = JSON.parse(await req.text());
-    expect(body).toEqual({ loadTestPrefs: { c: 3, qps: 5, t: '20s', gen: 'wrk2' } });
+    expect(body).toEqual({ loadTestPrefs: { c: 3, qps: 5, t: '20s', gen: 'fortio' } });
   });
 
   it('getToken GETs /api/token', async () => {

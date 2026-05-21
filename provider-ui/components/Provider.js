@@ -21,13 +21,13 @@ import {
   MenuList,
   MenuItem,
   Tooltip,
-  Typography,
+  CustomTooltip,
   IconButton,
   CircularProgress,
+  InfoOutlined,
   styled,
   charcoal,
   accentGrey,
-  CHINESE_SILVER,
   KEPPEL,
 } from "@sistent/sistent";
 import { CloseIcon, ClickAwayListener, DropDownIcon } from "@sistent/sistent";
@@ -60,24 +60,6 @@ CustomDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 //Styled-components:
-const StyledTypography = styled(Typography)(({ theme }) => ({
-  fontWeight: 500,
-  color: charcoal[100],
-  marginBottom: theme.spacing(2), // Equivalent to `gutterBottom`
-  "& a": {
-    fontWeight: "normal",
-  },
-  "& :hover": {
-    color: CHINESE_SILVER,
-  },
-}));
-
-const StyledTooltip = styled(Tooltip)(({ theme }) => ({
-  color: theme.palette.text.inverse,
-  cursor: "pointer",
-  fontWeight: "normal",
-}));
-
 const StyledCustomDialogTitle = styled(CustomDialogTitle)(({ theme }) => ({
   background: accentGrey[10],
   color: theme.palette.text.inverse,
@@ -180,6 +162,24 @@ export default function Provider() {
       <CustomDiv>
         {availableProviders !== "" && (
           <Fragment>
+            <CustomTooltip
+              title="Learn more about Meshery remote providers"
+              placement="bottom"
+              data-cy="providers-tooltip"
+              arrow
+            >
+              <LearnMore
+                href="#provider-guidance-dialog"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleModalOpen();
+                }}
+                aria-haspopup="dialog"
+                aria-controls="provider-guidance-dialog"
+              >
+                Learn more about providers
+              </LearnMore>
+            </CustomTooltip>
             <StyledButtonGroup aria-label="split button">
               <Button
                 size="large"
@@ -223,6 +223,7 @@ export default function Provider() {
                   sx={{
                     background: charcoal[20],
                     color: (theme) => theme.palette.text.inverse,
+                    minWidth: 260,
                   }}
                   id="split-button-menu"
                   autoFocusItem
@@ -231,9 +232,43 @@ export default function Provider() {
                     <MenuItem
                       key={key}
                       onClick={(e) => handleMenuItemClick(e, key)}
-                      sx={{ "&:hover": { backgroundColor: accentGrey[20] } }}
+                      sx={{
+                        "&:hover": { backgroundColor: accentGrey[20] },
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: 1,
+                      }}
                     >
-                      {key}
+                      <span>{key}</span>
+                      {key === "Layer5" && (
+                        <Tooltip
+                          title="A remote provider offering identity services, additional plugins and extensions, granular and customizable RBAC."
+                          placement="right"
+                          arrow
+                        >
+                          <IconButton
+                            size="small"
+                            aria-label="More information about the remote provider"
+                            data-testid="provider-learn-more-button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleClose();
+                              handleModalOpen();
+                            }}
+                            sx={{
+                              ml: "auto",
+                              p: 0.25,
+                              flexShrink: 0,
+                              color: KEPPEL,
+                              opacity: 0.95,
+                              "&:hover": { color: KEPPEL, opacity: 1 },
+                            }}
+                          >
+                            <InfoOutlined width={18} height={18} />
+                          </IconButton>
+                        </Tooltip>
+                      )}
                     </MenuItem>
                   ))}
                   <Divider
@@ -323,20 +358,10 @@ export default function Provider() {
           </Fragment>
         )}
       </CustomDiv>
-      <LearnMore onClick={handleModalOpen}>
-        <StyledTypography variant="h6" gutterBottom>
-          <StyledTooltip
-            title="Learn more about Meshery remote providers"
-            placement="bottom"
-            data-cy="providers-tooltip"
-          >
-            Learn more about providers
-          </StyledTooltip>
-        </StyledTypography>
-      </LearnMore>
       <CustomDialog
         onClose={handleModalClose}
         aria-labelledby="customized-dialog-title"
+        id="provider-guidance-dialog"
         open={openModal}
         disableScrollLock={true}
         data-cy="providers-modal"
