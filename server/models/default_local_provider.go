@@ -70,9 +70,19 @@ type DefaultLocalProvider struct {
 	MeshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode
 }
 
+// LocalProviderName is the canonical name of the built-in local provider.
+// LocalProviderLegacyAlias is the prior name ("None"). It is still accepted on
+// inbound cookies/headers/env so existing sessions and ~/.meshery/config.yaml
+// entries continue to work after the rename. Normalization happens in
+// NormalizeProviderName (see models/providers.go).
+const (
+	LocalProviderName        = "Local"
+	LocalProviderLegacyAlias = "None"
+)
+
 // Initialize will initialize the local provider
 func (l *DefaultLocalProvider) Initialize() {
-	l.ProviderName = "None"
+	l.ProviderName = LocalProviderName
 	l.ProviderDescription = []string{
 		"Ephemeral sessions",
 		"Environment setup not saved",

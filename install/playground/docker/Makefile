@@ -4,7 +4,10 @@
 
 DEBUG=true
 PROD_PLAYGROUND_PORT=80
-REMOTE_PROVIDER=https://cloud.meshery.io
+# Despite the name, REMOTE_PROVIDER here holds the PROVIDER_BASE_URLS list
+# (comma-separated remote-provider endpoints), NOT a provider name. The
+# provider *name* in install/Makefile.core.mk is the empty string by default.
+REMOTE_PROVIDER=https://cloud.meshery.io,https://cloud.layer5.io
 
 #-----------------------------------------------------------------------------
 # Meshery Playground Production Deployment

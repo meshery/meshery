@@ -54,7 +54,9 @@ var (
 )
 
 const (
-	// DefaultProviderURL is the provider url for the "none" provider
+	// DefaultProviderURL is the ProviderBaseURL stamped on the built-in local
+	// provider. It is used for capability/package paths only; the local
+	// provider does not authenticate against this URL.
 	DefaultProviderURL = "https://cloud.meshery.io"
 	RelationshipsPath  = "../meshmodel/kubernetes/"
 )
@@ -381,7 +383,38 @@ func main() {
 
 		cp.SyncPreferences()
 		defer cp.StopSyncPreferences()
-		provs[cp.Name()] = cp
+
+		// Pick a registration key that survives two failure modes:
+		//   1. /capabilities was unreachable or returned no providerName, leaving
+		//      cp.Name() == "". Without disambiguation, every such provider
+		//      collides at provs[""].
+		//   2. Two configured URLs report the SAME name from /capabilities (for
+		//      example, both cloud.meshery.io and cloud.layer5.io currently
+		//      return "Layer5"). The later iteration silently overwrites the
+		//      earlier and operators see one provider in /api/providers when
+		//      they configured two.
+		// On collision we re-key the EARLIER entry by its URL host and let the
+		// new entry claim the canonical name. This preserves the historical
+		// "last URL wins the canonical name" routing that integrations rely
+		// on (e.g. tokens minted against cloud.layer5.io expect the cookie
+		// value "Layer5" to resolve to cloud.layer5.io regardless of the
+		// iteration order of PROVIDER_BASE_URLS), while still giving the
+		// re-keyed provider an addressable home in /api/providers.
+		key := cp.Name()
+		if key == "" {
+			key = parsedURL.Host
+			log.Warnf("remote provider at %q returned an empty providerName from /capabilities; registering it under host %q so it remains addressable. Verify the remote is reachable and returns a providerName.", providerurl, key)
+		}
+		if existing, ok := provs[key]; ok {
+			existingHost := existing.GetProviderURL()
+			if u, err := url.Parse(existingHost); err == nil && u.Host != "" {
+				existingHost = u.Host
+			}
+			log.Warnf("provider name collision: %q is already registered for %q; re-keying the earlier entry as %q so both remain addressable, and giving the canonical name %q to %q. Ensure each remote provider's /capabilities returns a unique providerName.", key, existing.GetProviderURL(), existingHost, key, providerurl)
+			provs[existingHost] = existing
+			delete(provs, key)
+		}
+		provs[key] = cp
 	}
 
 	// verifies if the provider specified in the "PROVIDER" environment variable is from one of the supported providers.
@@ -449,9 +482,9 @@ func main() {
 	log.Info("Doing seeded content cleanup...")
 
 	for _, p := range hc.Providers {
-		// skipping none provider for now
-		// so it doesn't throw error each server is stopped. Reason: support for none provider is not yet implemented
-		if p.Name() != "None" {
+		// Skip the local provider: it does not register a remote session, so
+		// there is nothing to de-register or log out on shutdown.
+		if p.Name() != models.LocalProviderName {
 			log.Info("De-registering Meshery server.")
 			if err = p.DeleteMesheryConnection(); err != nil {
 				log.Error(err)
