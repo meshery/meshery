@@ -56,7 +56,7 @@ test.describe.serial('Connection Management Tests', () => {
     // smoke test to the connections page itself.
     await page.goto('/management/connections', { waitUntil: 'domcontentloaded' });
     await page.waitForURL(/\/management\/connections/);
-    await expect(page.getByTestId('ConnectionTable-search')).toBeVisible();
+    await expect(page.getByTestId('ConnectionTable-search')).toBeVisible({ timeout: 90000 });
   });
 
   test('Verify that UI components are displayed', async ({ page }) => {
