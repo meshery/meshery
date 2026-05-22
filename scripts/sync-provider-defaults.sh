@@ -35,6 +35,21 @@ PAIRS=(
 # sentinel. If it does not, the regex would silently no-op and the file would
 # stay out of sync without CI noticing. Fail loudly instead so the person
 # adding a new managed file remembers to seed the sentinel comment first.
+#
+# Post-check: assert the new replacement line is present after the perl run.
+# This catches the "pattern stopped matching" failure mode (e.g., someone
+# reformats the YAML indentation, so the regex no longer matches even though
+# the sentinel comment is still on the line). Without this check, perl would
+# no-op, the sentinel post-check would pass (sentinel still there, just on
+# the stale line), and `ci-verify-provider-defaults` would only catch drift
+# when the canonical URLs themselves change.
+#
+# Pattern/replacement injection safety: both are passed via env vars so shell
+# metacharacters in the values (single quotes, backslashes, etc.) cannot
+# break the perl invocation. Pattern is compiled as a Perl regex; replacement
+# is interpolated into the substitution side, so the replacement strings
+# below must not contain $1-style backreferences (they don't - URLs and the
+# sentinel marker are plain text).
 replace_single_line() {
 	local file="$1" pattern="$2" replacement="$3"
 	if [ ! -f "$file" ]; then
@@ -46,9 +61,16 @@ replace_single_line() {
 		echo "  Add the sentinel as a comment on the line you want managed, then re-run." >&2
 		exit 1
 	fi
-	R="$replacement" perl -i -pe 'BEGIN{$r=$ENV{R}} s~'"$pattern"'~$r~' "$file"
+	P="$pattern" R="$replacement" perl -i -pe 'BEGIN{$p=$ENV{P}; $r=$ENV{R}} s/$p/$r/' "$file"
 	if ! grep -qF "$MARK" "$file"; then
 		echo "sync-provider-defaults: sentinel $MARK not found in $file after rewrite" >&2
+		exit 1
+	fi
+	if ! grep -qF -- "$replacement" "$file"; then
+		echo "sync-provider-defaults: replacement line not present in $file after rewrite." >&2
+		echo "  Pattern probably stopped matching - check whether indentation, quotes," >&2
+		echo "  or the leading token format on the managed line changed." >&2
+		echo "  Expected line: $replacement" >&2
 		exit 1
 	fi
 }

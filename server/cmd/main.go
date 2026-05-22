@@ -56,8 +56,10 @@ var (
 const (
 	// DefaultProviderURL is the ProviderBaseURL stamped on the built-in local
 	// provider. It is used for capability/package paths only; the local
-	// provider does not authenticate against this URL.
-	DefaultProviderURL = "https://cloud.meshery.io"
+	// provider does not authenticate against this URL. Sourced from the
+	// canonical primary provider host so it cannot drift from the
+	// PROVIDER_BASE_URLS default registered with viper a few lines below.
+	DefaultProviderURL = models.PrimaryProviderURL
 	RelationshipsPath  = "../meshmodel/kubernetes/"
 )
 
