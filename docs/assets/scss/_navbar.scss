@@ -33,10 +33,6 @@ html {
   left: 0;
   right: 0;
 
-  // @media (max-width: 600px) {
-  //   // height: calc(var(--navbar-height) - 2.5rem);
-  // }
-
   & .nav-btn {
     background-color: var(--brand-color-secondary);
     color: var(--color-white);
@@ -179,10 +175,6 @@ html {
       transform: translateX(100%);
       transition: all 0.5s ease-in-out;
     }
-
-    // @media (max-width: 600px) {
-    //   top: calc(var(--navbar-height) - 2.5rem);
-    // }
 
     & .navbar-nav {
       white-space: nowrap;
