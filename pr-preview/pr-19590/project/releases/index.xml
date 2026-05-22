@@ -1,4 +1,66 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Tue, 19 May 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.23</title><link>/project/releases/v1.0.23/</link><pubDate>Tue, 19 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.23/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 22 May 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.26</title><link>/project/releases/v1.0.26/</link><pubDate>Fri, 22 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.26/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Update Dockerfile @leecalcote (#19597)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@arjunmehta-git, @fitzergerald and @leecalcote&lt;/p&gt;</description></item><item><title>v1.0.25</title><link>/project/releases/v1.0.25/</link><pubDate>Thu, 21 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.25/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Added a paragraph that tells about the openness and vendor neutrality… @Utkarsh-Mauryaa (#19583)&lt;/li&gt;
+&lt;li&gt;fix(docs): improve UX and security for external links in README @Maanvi212006 (#19213)&lt;/li&gt;
+&lt;li&gt;[Chore]: Bump meshery/schemas to v1.2.22 @l5io (#19551)&lt;/li&gt;
+&lt;li&gt;[Server] Fix non-determinism in relationship eval engine @guan404ming (#19127)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Refactor providers: rename Local provider (was \None) and remote providers @hortison (#19574)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;UI: Compatability with CASL v7 @hortison (#19595)&lt;/li&gt;
+&lt;li&gt;Refactor providers: rename Local provider (was \None) and remote providers @hortison (#19574)&lt;/li&gt;
+&lt;li&gt;Make \Add a Connection\ a button, fix Edit icon theme contrast, and update sistent @Rajesh-Nagarajan-11 (#19562)&lt;/li&gt;
+&lt;li&gt;Update Provider.style.js @CodexRaunak (#19560)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Refactor providers: rename Local provider (was \None) and remote providers @hortison (#19574)&lt;/li&gt;
+&lt;li&gt;ci: add additional workflows for E2E report on pull request comment @ianrwhitney (#19561)&lt;/li&gt;
+&lt;li&gt;ci: add least-privilege permissions blocks to CI workflows @NSTKrishna (#19358)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Refactor providers: rename Local provider (was \None) and remote providers @hortison (#19574)&lt;/li&gt;
+&lt;li&gt;Add attendance instructions to meeting index @YASHMAHAKAL (#19586)&lt;/li&gt;
+&lt;li&gt;Remove shortcode temporarily @PragalvaXFREZ (#19584)&lt;/li&gt;
+&lt;li&gt;fix:[docs] Update sidebar theme styles @Sbragul26 (#19450)&lt;/li&gt;
+&lt;li&gt;Resolved &lt;code&gt;make site&lt;/code&gt; failure @Utkarsh-Mauryaa (#19558)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@CodexRaunak, @Maanvi212006, @NSTKrishna, @PragalvaXFREZ, @Rajesh-Nagarajan-11, @Sbragul26, @Utkarsh-Mauryaa, @YASHMAHAKAL, @alexquincy, @banana-three-join, @fitzergerald, @guan404ming, @hortison, @ianrwhitney, @l5io, @leecalcote, @meshery-ci, @miacycle, @ritzorama and @winkletinkle&lt;/p&gt;</description></item><item><title>v1.0.23</title><link>/project/releases/v1.0.23/</link><pubDate>Tue, 19 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.23/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -32866,7 +32928,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.24&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.26&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
