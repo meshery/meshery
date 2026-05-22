@@ -4,7 +4,7 @@ description: Integrating your CI/CD pipelines with Meshery's GitHub Actions
 categories: [infrastructure]
 ---
 
-## <img style="height: 4rem; width: 4rem;" src="./images/kanvas-icon-color.svg" /> Meshery Snapshot GitHub Action
+## Meshery Snapshot GitHub Action
 
 - See your deployment before you merge
 - Connect Meshery to your GitHub repo and see changes pull request-to-pull request
@@ -57,7 +57,7 @@ jobs:
           driver: docker
 
       - name: Run Performance Test
-        uses: layer5io/meshery-smp-action@master
+        uses: meshery-extensions/meshery-performance-action@master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: docker
@@ -86,7 +86,7 @@ clients:
 duration: "30m"
 ```
 
-See this sample GitHub workflow (<a href="https://github.com/layer5io/meshery-smp-action/blob/master/action.yml">action.yml</a>) for more configuration details.
+See this sample GitHub workflow (<a href="https://github.com/meshery-extensions/meshery-performance-action/blob/master/action.yml">action.yml</a>) for more configuration details.
 
 <a href="./images/service-mesh-performance-profile-test-results.png"><img src="./images/service-mesh-performance-profile-test-results.png" className="image-center" alt="performance management dashboard" /></a>
 

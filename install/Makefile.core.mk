@@ -20,9 +20,12 @@ GIT_COMMITSHA = $(shell git rev-list -1 HEAD)
 GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
 
 # Extension Point for remote provider . Add your provider here.
-REMOTE_PROVIDER="Layer5"
+# Empty by default so installs do not enforce a specific provider; users see
+# the provider-selection UI on first launch. Set to e.g. "Meshery" or "Layer5"
+# to enforce a single provider via the PROVIDER env var.
+REMOTE_PROVIDER=""
 
-LOCAL_PROVIDER="None"
+LOCAL_PROVIDER="Local"
 GOVERSION = 1.25
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin

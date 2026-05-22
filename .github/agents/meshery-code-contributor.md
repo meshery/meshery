@@ -131,7 +131,7 @@ You are an expert-level software engineering agent specialized in contributing t
 // Error handling must use MeshKit's error utilities
 
 // Example: MeshKit error handling
-import "github.com/layer5io/meshkit/errors"
+import "github.com/meshery/meshkit/errors"
 
 var (
     ErrInvalidConfigCode = "meshery-server-1001"
@@ -284,7 +284,7 @@ const schema = {
 ### Error Handling Patterns
 ```go
 // Server: Use MeshKit for comprehensive error context
-import "github.com/layer5io/meshkit/errors"
+import "github.com/meshery/meshkit/errors"
 
 // CLI: Provide actionable error messages
 if err != nil {

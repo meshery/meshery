@@ -13,7 +13,7 @@ image:
 
 env:
   EVENT: mesheryLocal
-  PROVIDER_BASE_URLS: https://cloud.meshery.io
+  PROVIDER_BASE_URLS: "https://cloud.meshery.io,https://cloud.layer5.io"
   ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-app-mesh:10005 meshery-traefik-mesh:10006 meshery-cilium:10012
   PROVIDER: ""
   KEYS_PATH: "../../server/permissions/keys.csv"
@@ -175,11 +175,6 @@ meshery-traefik-mesh:
 meshery-cilium:
   enabled: false
   fullnameOverride: meshery-cilium
-
-meshery-nighthawk:
-  enabled: false
-  fullnameOverride: meshery-nighthawk
-  serviceAccountNameOverride: meshery-server
 
 # If there need the test cases set it as true.
 #
