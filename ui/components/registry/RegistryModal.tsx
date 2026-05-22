@@ -14,8 +14,8 @@ import { useContext, useState, useEffect, ReactNode, FC } from 'react';
 import {
   ModalBody,
   List,
-  ChevronLeft,
-  ChevronRight,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   IconButton,
   ListItem,
   ListItemButton,
@@ -330,7 +330,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
         </List>
         <DrawerHeader open={open}>
           <IconButton onClick={handleDrawerToggle}>
-            {open ? <ChevronLeft /> : <ChevronRight />}
+            {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </DrawerHeader>
       </StyledDrawer>
