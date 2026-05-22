@@ -29,7 +29,7 @@ The Meshery project consists of multiple repositories. Each repository is subjec
 
 ### Who are Maintainers?
 
-The current maintainers of a repo can be found in [MAINTAINERS.md](./MAINTAINERS.md) file of the repo.
+The current maintainers for all Meshery repositories and their respective directories can be found in the central [MAINTAINERS.md](https://github.com/meshery/meshery/blob/master/MAINTAINERS.md) file in the `meshery/meshery` repository.
 
 Maintainers are individuals that have demonstrated their dedication the betterment of the project and dedication to Maintainers are empowered to review, approve, merge, close issues and pull requests. Maintainers are empowered to make releases. These individuals are most experience with the given project (or specific repo) and are expected to lead its growth and improvement. Adding and removing maintainers for a given repo is the responsibility of the existing maintainer team for that repo and therefore does not require approval from the steering committee.
 
@@ -53,7 +53,7 @@ The process of nominating and voting for maintainers involves the following step
 
 This process ensures that new maintainers are selected in a transparent and democratic way, with input from the entire community. It also helps maintain the health and sustainability of the project by ensuring that those who take on leadership roles are committed to its success and have the support of their peers.
 
-Maintainers will be added to the GitHub @meshery/maintainers team, and made a GitHub maintainer of that team. They will be given write permission to the Meshery GitHub repository <https://github.com/meshery/meshery> repo.
+Maintainer rights are granted by adding users to specific GitHub teams for each repository and/or directory they are responsible for. They will be given write permission to their respective Meshery GitHub repositories.
 
 ### Maintainer Responsibilities
 
