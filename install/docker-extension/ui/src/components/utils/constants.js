@@ -18,11 +18,7 @@ export const REMOTE_PROVIDERS = [
     {
         name: "Meshery",
         url: "https://cloud.meshery.io",
-    },
-    {
-        name: "Layer5",
-        url: "https://cloud.layer5.io",
-    },
+    }
     // END AUTO-GENERATED
 ];
 
