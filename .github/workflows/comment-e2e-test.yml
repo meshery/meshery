@@ -76,18 +76,18 @@ jobs:
       with:
         script: |
           const fs = require('fs')
-          const PRNumber = Number(fs.readFileSync('./pr/number', 'utf8').trim())
-          const PRSha = fs.readFileSync('./pr/sha', 'utf8').trim()
-          const E2ETestReporter = fs.readFileSync('./ui/test-report.md', 'utf8')
+          const prNumber = Number(fs.readFileSync('./pr/number', 'utf8').trim())
+          const prSha = fs.readFileSync('./pr/sha', 'utf8').trim()
+          const e2eTestReporter = fs.readFileSync('./ui/test-report.md', 'utf8')
                 
           const body = `        
-            **Commit SHA:** \`${PRSha}\`  
+            **Commit SHA:** \`${prSha}\`
 
-            ${E2ETestReporter}
+            ${e2eTestReporter}
             `
           await github.rest.issues.createComment({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            issue_number: PRNumber,
+            issue_number: prNumber,
             body: body
           })

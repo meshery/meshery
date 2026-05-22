@@ -91,11 +91,11 @@ jobs:
         continue-on-error: true
 
       - name: Save PR metadata for comment workflow
-        if: ${{ inputs.pr-number != '' && inputs.pr-sha != '' }}
+        if: ${{ inputs.pr-number && inputs.pr-sha }}
         run: |
           mkdir -p ./pr
-          printf '%s\n' '${{ inputs.pr-number }}' > ./pr/number
-          printf '%s\n' '${{ inputs.pr-sha }}' > ./pr/sha
+          echo "${{ inputs.pr-number }}" > ./pr/number
+          echo "${{ inputs.pr-sha }}" > ./pr/sha
 
       - name: Upload PR comment handoff artifact
         if: always()
