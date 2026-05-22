@@ -17,45 +17,57 @@ The extensible authorization system is available to both Local and Remote Provid
 
 ### Adding a New Permission Key
 
-Permission keys are the atomic units of this authorization system. Each key is a UUID that maps to a specific action like deploying a design, validating a configuration, or managing a connection. Keys are defined in the [`meshery/schemas`](https://github.com/meshery/schemas) repository and consumed by both Meshery Server and Meshery UI.
+Permission keys are the atomic units of this authorization system. Each key is a UUID that maps to a specific capability—for example, creating a workspace, deleting a connection, or evaluating a design. Keys are authored in [`meshery/schemas`](https://github.com/meshery/schemas) and then wired into Meshery UI and the Local Provider database through a **two-repository workflow**.
+
+#### How Permission Checks Work at Runtime
+
+Meshery UI does **not** import the generated `typescript/permissions.ts` from schemas. Instead:
+
+1. The provider returns the user's assigned keys (each with a UUID `id` and a `function` name).
+2. [`ui/rtk-query/ability.tsx`](https://github.com/meshery/meshery/blob/master/ui/rtk-query/ability.tsx) maps those keys into CASL abilities.
+3. Components call `CAN(keys.<NAME>.action, keys.<NAME>.subject)` using entries from the manually maintained [`ui/utils/permission_constants.ts`](https://github.com/meshery/meshery/blob/master/ui/utils/permission_constants.ts).
+
+Meshery Server does not call a `HasPermission` helper today. UI authorization is enforced client-side via CASL; Remote Providers enforce authorization on their own backend using the generated Go constants from schemas.
 
 #### Prerequisites
 
-You will need access to these repositories [`meshery/schemas`](https://github.com/meshery/schemas) and [`meshery/meshery`](https://github.com/meshery/meshery). Ensure Node.js and Go are installed.
+Clone both repositories locally and install Node.js and Go:
 
 {{< code code=`git clone https://github.com/meshery/schemas.git
-cd schemas
-make setup` >}}
+git clone https://github.com/meshery/meshery.git
+cd schemas && make setup` >}}
 
 #### Step-by-Step Guide
 
-##### Step 1: Generate a UUID
+#### Step 1: Generate a UUID
 
-Each permission key requires a globally unique UUID v4.
+Each permission key requires a globally unique UUID v4:
 
 {{< code code=`uuidgen | tr '[:upper:]' '[:lower:]'` >}}
 
-##### Step 2: Add a Row to `permissions.csv`
+#### Step 2: Add a Row to `permissions.csv`
 
-Open [`build/permissions.csv`](https://github.com/meshery/schemas/blob/master/build/permissions.csv) and add a new row. Use an existing row in the same category as a reference. The key columns are:
+Open [`build/permissions.csv`](https://github.com/meshery/schemas/blob/master/build/permissions.csv) and **copy an existing row in the same category**, then modify it. The spreadsheet has many columns; do not create a sparse row with only the fields below.
 
 | Column | Description | Example |
 |--------|-------------|---------|
-| **Theme** | The high-level category theme. | `Catalog Management` |
-| **Category** | The specific feature category. | `Designs` |
-| **Function** | The permission name (in Title Case). | `Evaluate Design` |
-| **Feature** | Description of the permission capability. | `Evaluate relationships in a design by applying policies.` |
-| **Primary Persona** | The default persona for this permission. | `Operator` |
-| **Source** | The license source identifier. | `Open` |
-| **Subscription Tier** | The subscription tier required. | `TeamDesigner` |
-| **Key ID** | The newly generated UUID v4. | `5ad992cc-2288-42c4-8259-40fba1500224` |
-| **Inserted** | Database seeding flag (set to `FALSE`). | `FALSE` |
+| **Theme** | High-level category (also used as keychain name). | `Workspace Management` |
+| **Category** | Specific feature category. | `Workspace` |
+| **Function** | Permission name shown in UI and provider responses. | `Create Workspace` |
+| **Feature** | Human-readable description of the capability. | `Create new workspace` |
+| **Key ID** | The UUID from Step 1. | `eb42ac41-a883-465e-843c-d64e962a3a0e` |
+| **Local Provider** | Set to `TRUE` if the key should be seeded for Local Provider development. | `TRUE` |
+| **Inserted** | Leave as `FALSE` for new keys. | `FALSE` |
 
-Place the new row near logically related entries (e.g., next to existing permissions under the same Category).
+Place the new row near logically related entries under the same Theme/Category.
 
-##### Step 3: Run the Generators
+{{% alert color="info" title="Local Provider Requirement" %}}
+If `Local Provider` is `FALSE`, the key will not appear in [`server/permissions/keys.csv`](https://github.com/meshery/meshery/blob/master/server/permissions/keys.csv) seed data and cannot be tested against the Local Provider until that column is set to `TRUE` and the CSV sync completes.
+{{% /alert %}}
 
-From the `meshery/schemas` root, generate both Go and TypeScript permission key constants:
+#### Step 3: Run the Generators
+
+From the `meshery/schemas` root:
 
 {{< code code=`make generate-permissions` >}}
 
@@ -65,80 +77,112 @@ To generate only one at a time:
 
 {{< code code=`make generate-permissions-ts` >}}
 
-This regenerates two files from the CSV:
-- [`models/permissions/permissions.go`](https://github.com/meshery/schemas/blob/master/models/permissions/permissions.go) — Go constants used by Meshery Server
-- [`typescript/permissions.ts`](https://github.com/meshery/schemas/blob/master/typescript/permissions.ts) — TypeScript constants
+This regenerates:
+
+- [`models/permissions/permissions.go`](https://github.com/meshery/schemas/blob/master/models/permissions/permissions.go) — Go constants for Remote Providers and other downstream Go consumers
+- [`typescript/permissions.ts`](https://github.com/meshery/schemas/blob/master/typescript/permissions.ts) — TypeScript constants for downstream consumers
 
 {{% alert color="warning" title="Do Not Edit Generated Files" %}}
 Never edit `permissions.go` or `permissions.ts` directly. All changes must go through `permissions.csv` and the generators.
 {{% /alert %}}
 
-##### Step 4: Add the Key to Meshery UI
+{{% alert color="info" title="Meshery UI Uses a Separate Map" %}}
+Meshery UI reads from [`ui/utils/permission_constants.ts`](https://github.com/meshery/meshery/blob/master/ui/utils/permission_constants.ts), not from `typescript/permissions.ts`. You must add the key there manually in Step 6.
+{{% /alert %}}
 
-The Meshery UI maintains a separate, manually-maintained permission mapping in [`ui/utils/permission_constants.ts`](https://github.com/meshery/meshery/blob/master/ui/utils/permission_constants.ts). Add your key to the `keys` object using the template below:
+Go constant names combine **Theme + Function** in PascalCase with spaces removed. For example, `Workspace Management` + `Create Workspace` → `WorkspaceManagementCreateWorkspace`.
+
+#### Step 4: Open a Pull Request in `meshery/schemas`
+
+Commit the CSV and generated files, then validate before pushing:
+
+{{< code code=`make validate-schemas && make consumer-audit` >}}
+
+Open a PR against [`meshery/schemas`](https://github.com/meshery/schemas). After it merges and a new schemas release is tagged, proceed to the Meshery repository changes.
+
+#### Step 5: Wait for `keys.csv` Sync in `meshery/meshery`
+
+[`server/permissions/keys.csv`](https://github.com/meshery/meshery/blob/master/server/permissions/keys.csv) is updated automatically by the [`Import Keys`](https://github.com/meshery/meshery/blob/master/.github/workflows/generate_keys.yml) workflow, which pulls from the permissions spreadsheet daily. Keys with `Local Provider = TRUE` in the spreadsheet appear here and are seeded into the Local Provider database on server startup via [`SeedKeys`](https://github.com/meshery/meshery/blob/master/server/models/keys_helper.go).
+
+If you need the key immediately for local testing, coordinate with maintainers to trigger the workflow or temporarily add the row to `server/permissions/keys.csv` in your PR (following the column layout of existing rows).
+
+#### Step 6: Add the Key to Meshery UI
+
+Add an entry to the `keys` object in [`ui/utils/permission_constants.ts`](https://github.com/meshery/meshery/blob/master/ui/utils/permission_constants.ts):
 
 {{< code code=`<CONSTANT_NAME>: {
   subject: '<Function>',
   action: '<Generated UUID>',
 },` >}}
 
-For example:
+Example for the existing `Create Workspace` permission:
 
-{{< code code=`EVALUATE_DESIGN: {
-  subject: 'Evaluate Design',
-  action: '5ad992cc-2288-42c4-8259-40fba1500224',
+{{< code code=`CREATE_WORKSPACE: {
+  subject: 'Create Workspace',
+  action: 'eb42ac41-a883-465e-843c-d64e962a3a0e',
 },` >}}
 
-*   `<CONSTANT_NAME>`: Typically a `SCREAMING_SNAKE_CASE` representation of your permission function.
-*   `subject`: Must exactly match the value in the `Function` column of the CSV.
-*   `action`: The UUID generated in Step 1.
+*   `<CONSTANT_NAME>`: A `SCREAMING_SNAKE_CASE` label used in UI code (for example, `CREATE_WORKSPACE`).
+*   `subject`: Must **exactly** match the `Function` column in `permissions.csv` (including capitalization and punctuation).
+*   `action`: The UUID from Step 1.
 
-##### Step 5: Verify
+Also mirror the same entry in [`docs/static/js/permission_constants.js`](https://github.com/meshery/meshery/blob/master/docs/static/js/permission_constants.js) so the [Permission Keys Reference](/reference/permissions) page displays the correct Moniker column.
 
-Run the schema audit from the `meshery/schemas` checkout to confirm correctness:
+#### Step 7: Gate UI with `CAN`
+
+Import `CAN` and `keys`, then conditionally render or disable the control:
+
+{{< code code=`import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
+
+const canCreate = CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject);
+
+return (
+  <Button disabled={!canCreate} onClick={handleCreate}>
+    Create Workspace
+  </Button>
+);` >}}
+
+This matches production usage in components such as [`ui/components/workspaces/index.tsx`](https://github.com/meshery/meshery/blob/master/ui/components/workspaces/index.tsx).
+
+#### Step 8: Verify End-to-End
+
+From `meshery/schemas`:
 
 {{< code code=`make validate-schemas && make consumer-audit` >}}
 
-#### Using Permission Keys
+From `meshery/meshery`:
 
-##### In Go Server Handlers
+{{< code code=`make ui-lint
+make docs-build` >}}
 
-Import the generated constants from `github.com/meshery/schemas/models/permissions` and check the key before processing a request. The constant name is generated by combining the `Theme` and `Function` columns in `PascalCase` (with spaces removed):
+Then run Meshery locally, assign a role that includes your new key, and confirm the gated UI element appears only when the user holds the permission. For Local Provider testing, restart Meshery Server (or reset the database) after `keys.csv` contains your key with `Local Provider = TRUE`.
 
-{{< code code=`import (
-    "github.com/meshery/schemas/models/permissions"
-)
+#### Using Generated Go Constants (Remote Providers)
 
-if !provider.HasPermission(r.Context(), permissions.<Theme><Function>) {
-    http.Error(w, "Forbidden", http.StatusForbidden)
-    return
-}` >}}
+Remote Providers and other Go services import constants from `github.com/meshery/schemas/models/permissions`. The constant for a key is `<Theme><Function>` in PascalCase—for example, `permissions.WorkspaceManagementCreateWorkspace`.
 
-For example, using the `Catalog Management` theme and `Evaluate Design` function:
+Meshery Server itself does not import this package for request-handler checks today. If you are building authorization logic in a Remote Provider, consume the generated constant UUID there using your provider's own enforcement mechanism.
 
-{{< code code=`if !provider.HasPermission(r.Context(), permissions.CatalogManagementEvaluateDesign) {
-    http.Error(w, "Forbidden", http.StatusForbidden)
-    return
-}` >}}
+#### Using Permission Keys in Meshery UI
 
-##### In React / TypeScript UI
+Import the `CAN` utility and the `keys` map:
 
-Import the `CAN` utility and the permission `keys` object to evaluate permissions in UI components:
-
-{{< code code=`import CAN from 'utils/can';
-import { keys } from 'utils/permission_constants';
+{{< code code=`import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const hasAccess = CAN(keys.<CONSTANT_NAME>.action, keys.<CONSTANT_NAME>.subject);
 return hasAccess ? <YourComponent /> : <FallbackComponent />;` >}}
 
-For example:
+Example with a key that exists today:
 
-{{< code code=`import CAN from 'utils/can';
-import { keys } from 'utils/permission_constants';
+{{< code code=`import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
-const canEvaluate = CAN(keys.EVALUATE_DESIGN.action, keys.EVALUATE_DESIGN.subject);
-return canEvaluate ? <EvaluateButton /> : null;` >}}
+const canCreate = CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject);
+return canCreate ? <CreateWorkspaceButton /> : null;` >}}
 
+`CAN` compares the UUID (`action`) and lowercased function name (`subject`) against the abilities loaded from the provider session.
 
 ## Authorization Framework
 
@@ -170,4 +214,3 @@ It's important to understand not all pages uses CASL authorization, means even i
 Meshery's built-in identity provider, "Local" Provider, operates with a large set of predefined keys interspersed throughout Meshery UI and persisted in [Meshery Database]({{< ref "concepts/architecture/database/index.md" >}}). These keys are used to evaluate the permissions of a given user and render the UI accordingly. The keys are grouped into three categories: `action`, `subject`, and `object`.
 
 {{< discuss >}}
-
