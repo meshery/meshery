@@ -65,18 +65,40 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 	query.Table("connections").Count(&count)
 	Paginate(uint(page), uint(pageSize))(query).Find(&connectionsFetched)
 
-	for _, connectionFetched := range connectionsFetched {
-		// Declare a fresh slice per iteration so GORM's Find(&slice)
-		// populates a distinct underlying array for each connection. If
-		// the slice were hoisted out of the loop, all connections would
-		// end up sharing the same header and subsequent iterations would
-		// clobber earlier results.
-		environmentsFetched := []*environments.EnvironmentData{}
-		cp.DB.Table("environment_connection_mappings").Joins("LEFT JOIN environments ON environments.id = environment_connection_mappings.environment_id").Select("environments.*").
-			Where("connection_id = ?", connectionFetched.ID).
-			Find(&environmentsFetched)
+	// Batch-load environments for all connections on the page in a single
+	// query rather than issuing one query per connection (N+1 problem).
+	if len(connectionsFetched) > 0 {
+		connectionIDs := make([]core.Uuid, len(connectionsFetched))
+		for i, conn := range connectionsFetched {
+			connectionIDs[i] = conn.ID
+		}
 
-		connectionFetched.Environments = environmentsFetched
+		// envWithConnID augments EnvironmentData with the join-table's
+		// connection_id so we can group results after scanning.
+		type envWithConnID struct {
+			environments.EnvironmentData
+			ConnectionID core.Uuid `gorm:"column:connection_id"`
+		}
+
+		var envMappings []envWithConnID
+		cp.DB.Table("environment_connection_mappings").
+			Joins("LEFT JOIN environments ON environments.id = environment_connection_mappings.environment_id").
+			Select("environments.*, environment_connection_mappings.connection_id").
+			Where("environment_connection_mappings.connection_id IN ?", connectionIDs).
+			Find(&envMappings)
+
+		envsByConnID := make(map[core.Uuid][]*environments.EnvironmentData)
+		for i := range envMappings {
+			connID := envMappings[i].ConnectionID
+			envsByConnID[connID] = append(envsByConnID[connID], &envMappings[i].EnvironmentData)
+		}
+
+		for _, conn := range connectionsFetched {
+			conn.Environments = envsByConnID[conn.ID]
+			if conn.Environments == nil {
+				conn.Environments = []*environments.EnvironmentData{}
+			}
+		}
 	}
 	statusSummary, err := cp.getConnectionsStatusSummary()
 	if err != nil {
