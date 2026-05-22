@@ -116,14 +116,9 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 		loadTestOptions.HTTPQPS = 0
 	}
 
-	loadGenerator := testClient.LoadGenerator
-
-	switch loadGenerator {
-	case models.Wrk2LG.Name():
-		loadTestOptions.LoadGenerator = models.Wrk2LG
-	default:
-		loadTestOptions.LoadGenerator = models.FortioLG
-	}
+	// fortio is the only supported load generator. Any generator carried by
+	// an existing profile (including the removed "wrk2") runs on fortio.
+	loadTestOptions.LoadGenerator = models.FortioLG
 	loadTestOptions.AllowInitialErrors = true
 
 	h.loadTestHelperHandler(w, req, profileID, testName, meshName, "", prefObj, loadTestOptions, provider)
@@ -315,14 +310,9 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	}
 	loadTestOptions.HTTPQPS = qps
 
-	loadGenerator := q.Get("loadGenerator")
-
-	switch loadGenerator {
-	case models.Wrk2LG.Name():
-		loadTestOptions.LoadGenerator = models.Wrk2LG
-	default:
-		loadTestOptions.LoadGenerator = models.FortioLG
-	}
+	// fortio is the only supported load generator. Any generator passed by
+	// the client (including the removed "wrk2") runs on fortio.
+	loadTestOptions.LoadGenerator = models.FortioLG
 	h.log.Info("perf test with config: ", loadTestOptions)
 	h.loadTestHelperHandler(w, req, profileID, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
 }
@@ -418,13 +408,8 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 		resultInst *periodic.RunnerResults
 		err        error
 	)
-	switch loadTestOptions.LoadGenerator {
-	case models.Wrk2LG:
-		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions, h.log)
-
-	default:
-		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions, h.log)
-	}
+	// fortio is the only supported load generator.
+	resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions, h.log)
 	if err != nil {
 		h.log.Error(ErrLoadTest(err, "unable to perform"))
 		respChan <- &models.LoadTestResponse{

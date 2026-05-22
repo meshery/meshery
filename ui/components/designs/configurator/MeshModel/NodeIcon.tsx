@@ -135,7 +135,7 @@ export default function GetNodeIcon({ metadata, otherOverrides = {}, className }
         className={clsx(className, NODE_ICON_WRAPPER_CLASS)}
         width={40}
         height={40}
-        src="/static/img/kubernetes.svg"
+        src="/static/img/integrations/kubernetes.svg"
         {...otherOverrides}
       />
     );

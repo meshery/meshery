@@ -54,7 +54,6 @@
       <link>/v0.9/installation/kubernetes/minikube/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>/v0.9/installation/kubernetes/minikube/</guid>
-      <description>&lt;h1&gt;Quick Start with Minikube &lt;img src=&#34;/v0.9/installation/kubernetes/images/minikube.png&#34; style=&#34;width:35px;height:35px;&#34; /&gt;&lt;/h1&gt;&#xA;&lt;p&gt;Meshery can manage your minikube clusters and is particularly useful for multi-cluster management and deployments.&lt;/p&gt;&#xA;&lt;p&gt;For Meshery to manage your Minikube cluster, it has to be discovered and added as a Kubernetes connection in the Meshery server.&lt;/p&gt;&#xA;&lt;p&gt;After your cluster has been added as a connection, you can use Meshery to make infrastructure deployments of your &lt;a href=&#34;https://cloud.layer5.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=creating-designs&#34;&gt;Meshery Designs&lt;/a&gt; to your cluster. To learn more about this, See &lt;a href=&#34;https://cloud.layer5.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=deploying-meshery-designs&#34;&gt;Deploying Meshery Designs&lt;/a&gt;. You can also Visualize the resources in your cluster in Operator Mode, See &lt;a href=&#34;https://docs.layer5.io/kanvas/operator/operator-views/&#34;&gt;Views in Visualizer&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

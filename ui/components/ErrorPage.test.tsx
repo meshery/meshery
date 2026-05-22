@@ -68,7 +68,7 @@ describe('CustomErrorMessage (ErrorPage)', () => {
     render(<CustomErrorMessage />);
     const img = screen.getByTestId('box-img');
     expect(img).toBeInTheDocument();
-    expect(img).toHaveAttribute('src', '/static/img/service-mesh.svg');
+    expect(img).toHaveAttribute('src', '/static/img/designs/service-mesh.svg');
     expect(img).toHaveAttribute('alt', 'service meshed');
   });
 

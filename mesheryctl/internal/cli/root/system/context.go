@@ -43,7 +43,7 @@ type cmdContextCreateFlags struct {
 	URL        string   `json:"url" validate:"omitempty,url"`
 	Components []string `json:"components" validate:"omitempty"`
 	Platform   string   `json:"platform" validate:"omitempty,oneof=docker kubernetes"`
-	Provider   string   `json:"provider" validate:"omitempty,oneof=Layer5 None"`
+	Provider   string   `json:"provider" validate:"omitempty"`
 	Set        bool     `json:"set" validate:"boolean"`
 }
 
@@ -471,7 +471,7 @@ func init() {
 	createContextCmd.Flags().BoolVarP(&contextCreateFlags.Set, "set", "s", false, "Set as current context")
 	createContextCmd.Flags().StringArrayVarP(&contextCreateFlags.Components, "components", "a", nil, "List of components")
 	createContextCmd.Flags().StringVarP(&contextCreateFlags.Platform, "platform", "p", "", "Platform to deploy Meshery (docker or kubernetes)")
-	createContextCmd.Flags().StringVar(&contextCreateFlags.Provider, "provider", "", "Provider to use with the Meshery server (Layer5 or None)")
+	createContextCmd.Flags().StringVar(&contextCreateFlags.Provider, "provider", "", "Provider to use with the Meshery server (run 'mesheryctl system provider list' to see options)")
 	deleteContextCmd.Flags().StringVarP(&contextDeleteFlags.Set, "set", "s", "", "New context to deploy Meshery")
 	viewContextCmd.Flags().StringVarP(&contextViewFlags.Context, "context", "c", "", "Show config for the context")
 	viewContextCmd.Flags().BoolVar(&contextViewFlags.All, "all", false, "Show configs for all of the context")
