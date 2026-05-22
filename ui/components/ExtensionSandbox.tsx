@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import normalizeURI from '../utils/normalizeURI';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
-import LoadingScreen from './LoadingComponents/LoadingComponent';
+import LoadingScreen from './shared/LoadingState/LoadingComponent';
 import { toggleDrawer } from '@/store/slices/mesheryUi';
 import type {
   NavigatorSchema,
@@ -224,7 +224,7 @@ const ExtensionSandbox = React.memo<ExtensionSandboxProps>(
       NavigatorSchema[] | UserPrefSchema[] | AccountSchema[] | CollaboratorSchema[]
     >([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const { capabilitiesRegistry, isDrawerCollapsed } = useSelector((state: RootState) => state.ui);
+    const { providerCapabilities, isDrawerCollapsed } = useSelector((state: RootState) => state.ui);
     const dispatch = useDispatch();
 
     // close the drawer when extension is loaded/mounted
@@ -239,9 +239,9 @@ const ExtensionSandbox = React.memo<ExtensionSandboxProps>(
     );
 
     useEffect(() => {
-      if (capabilitiesRegistry && capabilitiesRegistry.extensions) {
+      if (providerCapabilities && providerCapabilities.extensions) {
         try {
-          const extensionData = capabilitiesRegistry.extensions[type];
+          const extensionData = providerCapabilities.extensions[type];
           const processedData = ExtensionPointSchemaValidator(type)(extensionData);
           setExtension(processedData);
           setIsLoading(false);
@@ -258,7 +258,7 @@ const ExtensionSandbox = React.memo<ExtensionSandboxProps>(
         setExtension([]);
         setIsLoading(true);
       };
-    }, [type, capabilitiesRegistry]);
+    }, [type, providerCapabilities]);
 
     const renderContent = (): React.ReactNode => {
       if (isLoading) {

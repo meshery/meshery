@@ -103,7 +103,7 @@ const GrafanaCharts = ({ grafanaURL, boardPanelConfigs }) => {
                     <Suspense fallback={null}>
                       <LazyGrafanaPanelIframe
                         key={`url_-_-${ind}`}
-                        src={`${adjustedGrafanaURL}/d-solo/${config.board.uid}/${config.board.slug}?theme=light&orgId=${config.board.org_id}&panelId=${panel.id}&refresh=${refresh}&from=${from}&to=${to}&${config.templateVars
+                        src={`${adjustedGrafanaURL}/d-solo/${config.board.uid}/${config.board.slug}?theme=light&orgId=${config.board.orgId ?? config.board.org_id}&panelId=${panel.id}&refresh=${refresh}&from=${from}&to=${to}&${config.templateVars
                           .map((tv) => `var-${tv}`)
                           .join('&')}`}
                         title={`${config.board.title} panel ${panel.id}`}

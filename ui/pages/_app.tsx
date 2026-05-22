@@ -1,7 +1,11 @@
-import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
+import {
+  CheckCircleIcon as CheckCircle,
+  ErrorIcon as Error,
+  InfoIcon as Info,
+  WarningIcon as Warning,
+} from '@sistent/sistent';
 import { Footer, KubernetesSubscription, NavigationBar } from '../components/AppComponents';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { AdapterMoment, LocalizationProvider } from '@/components/shared/DatePicker';
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
 import 'billboard.js/dist/theme/dark.min.css';
@@ -11,7 +15,7 @@ import { SnackbarProvider } from 'notistack';
 import React, { useEffect, useMemo, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { startSessionTimer } from '../lib/sessionTimer';
-import Header from '../components/Header';
+import Header from '../components/layout/Header/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import getPageContext from '../components/PageContext';
 import { MESHERY_CONTROLLER_SUBSCRIPTION } from '../components/subscription/helpers';
@@ -55,13 +59,13 @@ import './styles/AnimatedFilter.css';
 import './styles/AnimatedMeshery.css';
 import './styles/AnimatedMeshPattern.css';
 import './styles/AnimatedMeshSync.css';
-import PlaygroundMeshDeploy from './extension/AccessMesheryModal';
+import PlaygroundMeshDeploy from '../components/layout/AccessMesheryModal';
 import Router from 'next/router';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
 import uiConfig from '../ui.config';
-import { NotificationCenterProvider } from '../components/NotificationCenter';
+import { NotificationCenterProvider } from '../components/layout/NotificationCenter';
 import { getMeshModelComponentByName } from '../api/meshmodel';
 import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../utils/Enum';
 import { ability } from '../utils/can';
@@ -72,7 +76,7 @@ import { useThemePreference } from '@/themes/hooks';
 import { CssBaseline, NoSsr, SistentThemeProvider } from '@/theme';
 import { ErrorBoundary } from '@sistent/sistent';
 import { LoadSessionGuard } from '@/rtk-query/ability';
-import CustomErrorFallback from '@/components/General/ErrorBoundary';
+import CustomErrorFallback from '@/components/shared/ErrorBoundary/ErrorBoundary';
 import { normalizeLoadTestPrefs } from '../lib/load-test-prefs';
 import {
   StyledAppContent,
@@ -96,13 +100,13 @@ import { updateAdaptersInfo } from '@/store/slices/adapter';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
 import RegistryModalContextProvider from '@/utils/context/RegistryModalContextProvider';
-import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
+import { DynamicFullScreenLoader } from '@/components/shared/LoadingState/DynamicFullscreenLoader';
 
 export const mesheryExtensionRoute = '/extension/meshmap';
-function isMesheryUIRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
+function isMesheryUIRestrictedAndThePageIsNotPlayground(providerCapabilities) {
   return (
     !window.location.pathname.startsWith(mesheryExtensionRoute) &&
-    capabilitiesRegistry?.restrictedAccess?.isMesheryUIRestricted
+    providerCapabilities?.restrictedAccess?.isMesheryUIRestricted
   );
 }
 
@@ -113,7 +117,7 @@ export function isExtensionOpen() {
 const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) => {
   const pageContext = useMemo(() => getPageContext(), []);
   const { k8sConfig } = useSelector((state) => state.ui);
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
   const { isDrawerCollapsed } = useSelector((state) => state.ui);
   const [fetchCredentialById] = useLazyGetCredentialByIdQuery();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
@@ -128,7 +132,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     isDrawerCollapsed: false,
     isFullScreenMode: false,
     isLoading: true,
-    k8sContexts: [],
+    k8sContexts: { totalCount: 0, contexts: [] },
     activeK8sContexts: [],
     mesheryControllerSubscription: null,
     disposeK8sContextSubscription: null,
@@ -178,7 +182,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
           };
           dispatch(updatePrometheusConfig(promCfg));
         } else {
-          const credentialID = connection?.credential_id;
+          const credentialID = connection?.credentialId;
           fetchCredentialById(credentialID)
             .unwrap()
             .then((credRes) => {
@@ -327,7 +331,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
       try {
         const ctx = await fetchKubernetesContexts({ pagesize: 10, search }).unwrap();
         setState((prevState) => ({ ...prevState, k8sContexts: ctx }));
-        const active = ctx?.contexts?.find((c) => c.is_current_context === true);
+        const active = ctx?.contexts?.find((c) => c.isCurrentContext === true);
         if (active) {
           setState((prevState) => ({ ...prevState, activeK8sContexts: [active?.id] }));
           activeContextChangeCallback([active?.id]);
@@ -473,7 +477,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
     if (
       typeof window !== 'undefined' &&
-      isMesheryUIRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)
+      isMesheryUIRestrictedAndThePageIsNotPlayground(providerCapabilities)
     ) {
       Router.push(mesheryExtensionRoute);
     }
@@ -489,7 +493,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
         initSubscriptions(ids);
       }
     }
-  }, [k8sConfig, capabilitiesRegistry]);
+  }, [k8sConfig, providerCapabilities]);
 
   const canShowNav = !state.isFullScreenMode && uiConfig?.components?.navigator !== false;
   const { extensionType } = useSelector((state) => state.ui);
@@ -574,7 +578,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                                 </StyledMainContent>
                                 <Footer
                                   handleMesheryCommunityClick={handleMesheryCommunityClick}
-                                  capabilitiesRegistry={capabilitiesRegistry}
+                                  providerCapabilities={providerCapabilities}
                                 />
                               </StyledContentWrapper>
                             </NotificationCenterProvider>

@@ -4,7 +4,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/models/events"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -46,6 +48,93 @@ func TestSaveUserCredentialReturnsPopulatedCredential(t *testing.T) {
 	}
 	if got.Type != cred.Type {
 		t.Errorf("got Type=%q, want %q", got.Type, cred.Type)
+	}
+}
+
+// TestEventsPersisterPersistEventAcceptsStructValue verifies that PersistEvent
+// successfully writes events when called with a struct value (the shape
+// callers pass via `PersistSystemEvent(*event)`). The function previously
+// passed `event` directly to gorm's `Save`, which requires a pointer; gorm
+// returned "invalid value, should be pointer to struct or slice" and every
+// system event was silently dropped — visible on /management/connections via
+// repeated "failed to persist event" logs whenever the controller emitted a
+// connection event.
+func TestEventsPersisterPersistEventAcceptsStructValue(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to open in-memory database: %v", err)
+	}
+	if err := db.AutoMigrate(&events.Event{}); err != nil {
+		t.Fatalf("failed to migrate event schema: %v", err)
+	}
+
+	persister := &EventsPersister{DB: &database.Handler{DB: db}}
+
+	eventID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate event id: %v", err)
+	}
+	systemID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate system id: %v", err)
+	}
+
+	built := events.NewEvent().
+		FromSystem(systemID).
+		WithCategory("connection").
+		WithAction("update").
+		WithSeverity(events.Informational).
+		WithDescription("test event").
+		Build()
+	built.ID = eventID
+
+	if err := persister.PersistEvent(*built, ""); err != nil {
+		t.Fatalf("PersistEvent returned error: %v", err)
+	}
+
+	var stored events.Event
+	if err := db.First(&stored, "id = ?", eventID).Error; err != nil {
+		t.Fatalf("event was not persisted: %v", err)
+	}
+	if stored.Category != "connection" || stored.Action != "update" {
+		t.Errorf("stored event mismatch: got category=%q action=%q",
+			stored.Category, stored.Action)
+	}
+}
+
+// TestEventsPersisterPersistSystemEventAcceptsStructValue mirrors the above
+// for PersistSystemEvent — the controller helper path called from
+// MesheryControllersHelper.emitEvent that surfaced the original bug.
+func TestEventsPersisterPersistSystemEventAcceptsStructValue(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to open in-memory database: %v", err)
+	}
+	if err := db.AutoMigrate(&events.Event{}); err != nil {
+		t.Fatalf("failed to migrate event schema: %v", err)
+	}
+
+	persister := &EventsPersister{DB: &database.Handler{DB: db}}
+
+	systemID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate system id: %v", err)
+	}
+	eventID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate event id: %v", err)
+	}
+
+	built := events.NewEvent().
+		FromSystem(systemID).
+		WithCategory("connection").
+		WithAction("update").
+		WithSeverity(events.Informational).
+		Build()
+	built.ID = eventID
+
+	if err := persister.PersistSystemEvent(*built); err != nil {
+		t.Fatalf("PersistSystemEvent returned error: %v", err)
 	}
 }
 

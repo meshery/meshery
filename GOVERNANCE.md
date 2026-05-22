@@ -4,6 +4,10 @@ This document defines governance policies for the Meshery project.
 
 Anyone can become a Meshery contributor by contributing to the project, with code, documentation, design, or other forms of participation. As with all Meshery community members, contributors are expected to follow the [Code of Conduct](./CODE_OF_CONDUCT.md).
 
+Meshery is a vendor-neutral project. Project blogs and announcements do not favor or advertise any specific vendor, and vendor participation rules across Slack and social media are applied equally to all. Community meetings, code, and documentation are hosted on neutral platforms such as CNCF Zoom and GitHub.
+
+No single vendor controls the project's features or roadmap. Architectural decisions are made openly with equal opportunity for community input, and no vendor may block reasonable contributions from other organizations. No single organization holds sole decision-making authority; leadership is open to any contributor regardless of employer or affiliation, and unresolved conflicts may be escalated to the [CNCF TOC](https://github.com/cncf/toc).
+
 ## Contributors
 
 Contributors are community members who participate in Meshery's development and support. You become a contributor by making at least one substantive contribution (for example, a pull request, documentation update, issue report, design feedback, or community support). Start by following the [Contributing Guide](./CONTRIBUTING.md).

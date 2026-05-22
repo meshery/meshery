@@ -1,6 +1,6 @@
 import React from 'react';
 import { NoSsr } from '@sistent/sistent';
-import MesheryFilters from '../../components/MesheryFilters/Filters';
+import MesheryFilters from '../../components/filters/Filters';
 import Head from 'next/head';
 import { Box } from '@sistent/sistent';
 import { usePageTitle } from '@/utils/hooks';

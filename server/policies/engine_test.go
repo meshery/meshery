@@ -633,3 +633,58 @@ func TestAliasIsInvalidStatusMatrix(t *testing.T) {
 		})
 	}
 }
+
+// MatchLabelsPolicy must produce identical relationship UUIDs across runs for
+// the same input. Pre-fix, sibling identification leaked Go map iteration order
+// (groupMap range) and pointer addresses (fmt.Sprintf("%v", selectorSetItem))
+// into the generated IDs.
+func TestMatchLabelsPolicyIdentificationIsDeterministic(t *testing.T) {
+	pod := func(idHex string) *component.ComponentDefinition {
+		c := &component.ComponentDefinition{
+			Component: component.Component{Kind: "Pod"},
+			Configuration: map[string]interface{}{
+				"metadata": map[string]interface{}{
+					"labels": map[string]interface{}{"app": "meshery", "tier": "api"},
+				},
+			},
+		}
+		c.ID, _ = uuid.FromString("00000000-0000-0000-0000-" + idHex)
+		return c
+	}
+	podA, podB, podC := pod("00000000aaa1"), pod("00000000bbb2"), pod("00000000ccc3")
+
+	makeRel := func() *relationship.RelationshipDefinition {
+		kind := "Pod"
+		refs := [][]string{{"configuration", "metadata", "labels"}}
+		ss := relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{{Kind: &kind, Match: &relationship.MatchSelector{Refs: &refs}}},
+				To:   []relationship.SelectorItem{{Kind: &kind, Match: &relationship.MatchSelector{Refs: &refs}}},
+			},
+		}
+		return &relationship.RelationshipDefinition{
+			Kind:             relationship.RelationshipDefinitionKind("edge"),
+			RelationshipType: "sibling",
+			Selectors:        &relationship.SelectorSet{ss},
+		}
+	}
+
+	design := makePatternFile([]*component.ComponentDefinition{podA, podB, podC}, nil)
+	p := &MatchLabelsPolicy{}
+
+	first := p.IdentifyRelationship(makeRel(), design)
+	if len(first) == 0 {
+		t.Fatal("expected at least one matchlabels relationship")
+	}
+	for i := 0; i < 5; i++ {
+		again := p.IdentifyRelationship(makeRel(), design)
+		if len(again) != len(first) {
+			t.Fatalf("identification count drift: run %d got %d, first run %d", i, len(again), len(first))
+		}
+		for j := range first {
+			if first[j].ID != again[j].ID {
+				t.Fatalf("UUID drift run=%d index=%d: %v vs %v", i, j, first[j].ID, again[j].ID)
+			}
+		}
+	}
+}
