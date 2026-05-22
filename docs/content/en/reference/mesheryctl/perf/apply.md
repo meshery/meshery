@@ -119,7 +119,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
       --concurrent-requests string   (optional) Number of Parallel Requests
       --disable-cert                 (optional) Do not use certificate present in the profile
       --duration string              (optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration
-  -f, --file string                  (optional) File containing SMP-compatible test configuration. For more, see https://github.com/meshery-extensions/service-mesh-performance-specification
+  -f, --file string                  (optional) File containing SMP-compatible test configuration. For more, see https://smp-spec.io
   -h, --help                         help for apply
       --load-generator string        (optional) Load-Generator to be used (fortio)
       --mesh string                  (optional) Name of the infrastructure
