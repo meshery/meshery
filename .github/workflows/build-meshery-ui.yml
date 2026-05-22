@@ -33,6 +33,9 @@ jobs:
           cache-dependency-path: "**/*.sum"
           cache: true
 
+      - name: Install binaryen (wasm-opt)
+        run: sudo apt-get update && sudo apt-get install -y binaryen
+
       - name: Build client-side relationship policy engine (WASM)
         run: make wasm-engine
 
