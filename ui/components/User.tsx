@@ -30,19 +30,7 @@ const User = (props) => {
     return (account || [])?.find((item) => item.title === 'Cloud Account')?.href;
   };
 
-  const goToProfile = () => {
-    const profileUrl = getProfileUrl();
-    if (profileUrl) {
-      const newWindow = window.open(profileUrl, '_blank', 'noopener,noreferrer');
-      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-        notify({
-          message: `Popup blocked. Please allow popups in your browser to view your profile or manually open: ${profileUrl}.`,
-          event_type: EVENT_TYPES.WARNING,
-        });
-      }
-      return;
-    }
-  };
+  const profileUrl = getProfileUrl();
 
   useEffect(() => {
     if (!userLoaded && isGetUserSuccess) {
@@ -88,13 +76,20 @@ const User = (props) => {
     <div>
       <NoSsr>
         <div data-testid="profile-button">
-          <IconButtonAvatar color={color} aria-haspopup="true" onClick={goToProfile}>
-            <Avatar
-              sx={{ height: 36, width: 36 }}
-              src={isGetUserSuccess ? userData?.avatarUrl : null}
-              imgProps={{ referrerPolicy: 'no-referrer' }}
-            />
-          </IconButtonAvatar>
+          <a
+            href={profileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: 'none' }}
+          >
+            <IconButtonAvatar color={color} aria-haspopup="true">
+              <Avatar
+                sx={{ height: 36, width: 36 }}
+                src={isGetUserSuccess ? userData?.avatarUrl : null}
+                imgProps={{ referrerPolicy: 'no-referrer' }}
+              />
+            </IconButtonAvatar>
+          </a>
         </div>
       </NoSsr>
     </div>
