@@ -25,12 +25,14 @@ Each evaluation cycle visits every registered policy and applies it to the curre
 
 **Built-in policies**
 
-- **Hierarchical parent-child** connects components that nest naturally (Namespace owning Deployments, Deployment owning Pods).
-- **Hierarchical alias** declares an alias node that resolves to a path inside another component (a container port, for example).
-- **Inventory** auto-adds parent declarations when a child references a parent that is not yet present in the design.
-- **Sibling matchLabels** groups components that share the same value at a configured field path (typically labels).
-- **Edge non-binding** is a logical reference between two components, with no configuration mutation.
-- **Edge binding** is a 3-party relationship (from, binding, to) that patches both endpoints through the binding component.
+Each policy is responsible for a specific relationship, matched by its `kind` / `type` / `subType`:
+
+- **Hierarchical parent-child** (`hierarchical` / `parent` / `inventory`) connects components that nest naturally (Namespace owning Deployments, Deployment owning Pods).
+- **Hierarchical alias** (`hierarchical` / `parent` / `alias`) declares an alias node that resolves to a path inside another component (a container port, for example).
+- **Inventory** (`hierarchical` / `parent` / `inventory`) auto-adds parent declarations when a child references a parent that is not yet present in the design.
+- **Sibling matchLabels** (type `sibling`) groups components that share the same value at a configured field path (typically labels).
+- **Edge non-binding** (`edge` / `non-binding`) is a logical reference between two components, with no configuration mutation.
+- **Edge binding** (`edge` / `binding`) is a 3-party relationship (from, binding, to) that patches both endpoints through the binding component.
 
 The same Go codebase is built for two targets: the native server binary that ships with Meshery Server, and a `js/wasm` WebAssembly module that runs the identical evaluation logic in the browser, enabling client-side relationship evaluation in the Meshery UI without a server round trip.
 
