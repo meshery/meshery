@@ -33,7 +33,13 @@ const User = (props) => {
   const goToProfile = () => {
     const profileUrl = getProfileUrl();
     if (profileUrl) {
-      window.location = profileUrl;
+      const newWindow = window.open(profileUrl, '_blank', 'noopener,noreferrer');
+      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+        notify({
+          message: `Popup blocked. Please allow popups in your browser to view your profile or manually open: ${profileUrl}.`,
+          event_type: EVENT_TYPES.WARNING,
+        });
+      }
       return;
     }
   };
