@@ -60,7 +60,7 @@ PROVIDER_CAPABILITIES_FILEPATH="" # Path to capabilities file for remote provide
 # REMOTE_PROVIDER_URLS is the comma-joined list of Meshery's production remote
 # providers, derived from the single canonical source install/providers.env. Edit
 # providers.env (not this line) and run `make generate-install` to propagate the change
-# to every install artifact. See docs/superpowers/specs/2026-05-22-canonical-provider-urls-design.md.
+# to every install artifact.
 REMOTE_PROVIDER_URLS := $(shell awk -F= '/^[A-Za-z]/ {print $$2}' install/providers.env | paste -sd, -)
 
 #-----------------------------------------------------------------------------

@@ -1,19 +1,17 @@
 #!/usr/bin/env python3
-"""Propagate the canonical remote-provider list to every install artifact.
+"""Propagate the canonical remote-provider roster to every install artifact.
 
-`install/providers.env` is the single source of truth (Name=URL per line). This script
-derives the per-artifact PROVIDER_BASE_URLS value and rewrites the managed line in each
-install file in place, and emits the generated Go fallback constant for mesheryctl.
+`install/providers.env` is the single source of truth. Each `Name=URL` line is an
+ACTIVE provider (registered at startup, emitted into PROVIDER_BASE_URLS); lines prefixed
+`#inactive ` are DECLARED-but-inactive (documented, not registered until their DNS
+resolves). The first active provider is the PRIMARY, used by single-URL consumers.
+
+This script rewrites the managed value in each consumer, regenerates the docker-extension
+provider chooser, and emits the Go constant files for the server and mesheryctl.
 
 Usage:
-    sync-provider-urls.py            # rewrite all managed artifacts in place
-    sync-provider-urls.py --check    # verify artifacts are in sync; exit 1 + diff if not
-
-Profiles:
-    full       - every provider in providers.env, comma-joined (standard installs)
-    playground - the Meshery provider only (hosted playground / pre-selected demo)
-
-See docs/superpowers/specs/2026-05-22-canonical-provider-urls-design.md.
+    sync-provider-urls.py            # rewrite all generated artifacts in place
+    sync-provider-urls.py --check    # verify everything is in sync; exit 1 + diff if not
 """
 
 from __future__ import annotations
@@ -26,31 +24,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PROVIDERS_ENV = ROOT / "install" / "providers.env"
-
-# The provider whose URL alone composes the "playground" profile. It must exist in
-# providers.env; it is also the value pre-selected via PROVIDER=<name>.
-PLAYGROUND_PROVIDER = "Meshery"
-
-
-def load_providers() -> "list[tuple[str, str]]":
-    """Return ordered (name, url) pairs from providers.env."""
-    if not PROVIDERS_ENV.is_file():
-        die(f"canonical source not found: {PROVIDERS_ENV}")
-    pairs: list[tuple[str, str]] = []
-    for raw in PROVIDERS_ENV.read_text().splitlines():
-        line = raw.strip()
-        if not line or line.startswith("#"):
-            continue
-        if "=" not in line:
-            die(f"malformed line in providers.env (expected Name=URL): {raw!r}")
-        name, url = line.split("=", 1)
-        name, url = name.strip(), url.strip()
-        if not name or not url:
-            die(f"malformed line in providers.env (empty name or url): {raw!r}")
-        pairs.append((name, url))
-    if not pairs:
-        die("providers.env contains no providers")
-    return pairs
+MARKER = "// AUTO-GENERATED from install/providers.env - run `make generate-install`"
 
 
 def die(msg: str) -> "None":
@@ -58,25 +32,44 @@ def die(msg: str) -> "None":
     raise SystemExit(2)
 
 
+def load_active() -> "list[tuple[str, str]]":
+    """Return ordered (name, url) pairs for ACTIVE providers (uncommented lines)."""
+    if not PROVIDERS_ENV.is_file():
+        die(f"canonical source not found: {PROVIDERS_ENV}")
+    pairs: list[tuple[str, str]] = []
+    for raw in PROVIDERS_ENV.read_text().splitlines():
+        line = raw.rstrip()
+        if not line or line.startswith("#"):
+            continue  # blank, comment, or `#inactive ` declaration
+        if "=" not in line:
+            die(f"malformed active line (expected Name=URL): {raw!r}")
+        name, url = (s.strip() for s in line.split("=", 1))
+        if not name or not url:
+            die(f"malformed active line (empty name or url): {raw!r}")
+        pairs.append((name, url))
+    if not pairs:
+        die("providers.env has no active providers")
+    return pairs
+
+
 # ---------------------------------------------------------------------------
-# Per-format value replacement. Each returns the new file content, and raises
-# on a missing/ambiguous managed line so drift surfaces loudly.
+# Format-specific replacers. Each raises on a missing/ambiguous managed line so
+# drift surfaces loudly rather than silently no-op'ing.
 # ---------------------------------------------------------------------------
+
+def _one(matches: "list[int]", path: Path, what: str) -> int:
+    if len(matches) != 1:
+        die(f"{path}: expected exactly one {what}, found {len(matches)}")
+    return matches[0]
+
 
 def replace_kv(text: str, key: str, value: str, path: Path) -> str:
-    """Replace the value in a `<prefix>KEY=<value>[<closing-quote>]` assignment line.
-
-    Handles docker-compose list items (quoted or unquoted) and Makefile variables.
-    """
-    pattern = re.compile(rf'^(?P<pre>.*?{re.escape(key)}=)(?P<val>[^"\n]*)(?P<post>"?\s*)$')
-    matches = [i for i, ln in enumerate(text.splitlines()) if pattern.match(ln)]
-    if len(matches) != 1:
-        die(f"{path}: expected exactly one `{key}=` line, found {len(matches)}")
+    """Replace the value in a `<prefix>KEY=<value>[<closing-quote>][ # comment]` line."""
+    pat = re.compile(rf'^(?P<pre>.*?{re.escape(key)}=)(?P<val>[^"\n]*?)(?P<post>"?\s*)$')
     lines = text.splitlines(keepends=True)
-    idx = matches[0]
-    newline = "\n" if lines[idx].endswith("\n") else ""
-    stripped = lines[idx].rstrip("\n")
-    lines[idx] = pattern.sub(rf'\g<pre>{value}\g<post>', stripped) + newline
+    idx = _one([i for i, ln in enumerate(lines) if pat.match(ln.rstrip("\n"))], path, f"`{key}=` line")
+    nl = "\n" if lines[idx].endswith("\n") else ""
+    lines[idx] = pat.sub(rf'\g<pre>{value}\g<post>', lines[idx].rstrip("\n")) + nl
     return "".join(lines)
 
 
@@ -84,87 +77,130 @@ def replace_k8s(text: str, key: str, value: str, path: Path) -> str:
     """Replace the `value:` line following a `- name: KEY` line in a k8s manifest."""
     lines = text.splitlines(keepends=True)
     name_re = re.compile(rf'^\s*-?\s*name:\s*{re.escape(key)}\s*$')
-    value_re = re.compile(r'^(?P<pre>\s*value:\s*)(?P<val>.*?)(?P<post>\s*)$')
-    hits = 0
-    for i, ln in enumerate(lines):
-        if not name_re.match(ln.rstrip("\n")):
-            continue
-        hits += 1
-        if i + 1 >= len(lines) or not value_re.match(lines[i + 1].rstrip("\n")):
-            die(f"{path}: `name: {key}` not followed by a `value:` line")
-        nl = "\n" if lines[i + 1].endswith("\n") else ""
-        lines[i + 1] = value_re.sub(rf'\g<pre>{value}', lines[i + 1].rstrip("\n")) + nl
-    if hits != 1:
-        die(f"{path}: expected exactly one `name: {key}` block, found {hits}")
+    value_re = re.compile(r'^(?P<pre>\s*value:\s*).*$')
+    hits = [i for i, ln in enumerate(lines) if name_re.match(ln.rstrip("\n"))]
+    idx = _one(hits, path, f"`name: {key}` block")
+    if idx + 1 >= len(lines) or not value_re.match(lines[idx + 1].rstrip("\n")):
+        die(f"{path}: `name: {key}` not followed by a `value:` line")
+    nl = "\n" if lines[idx + 1].endswith("\n") else ""
+    lines[idx + 1] = value_re.sub(rf'\g<pre>{value}', lines[idx + 1].rstrip("\n")) + nl
     return "".join(lines)
 
 
 def replace_helm(text: str, key: str, value: str, path: Path) -> str:
     """Replace the quoted scalar in a `  KEY: "<value>"` Helm values mapping."""
-    pattern = re.compile(rf'^(?P<pre>\s*{re.escape(key)}:\s*")(?P<val>[^"]*)(?P<post>".*)$')
-    matches = [i for i, ln in enumerate(text.splitlines()) if pattern.match(ln)]
-    if len(matches) != 1:
-        die(f"{path}: expected exactly one `{key}:` mapping, found {len(matches)}")
+    pat = re.compile(rf'^(?P<pre>\s*{re.escape(key)}:\s*")(?P<val>[^"]*)(?P<post>".*)$')
     lines = text.splitlines(keepends=True)
-    idx = matches[0]
+    idx = _one([i for i, ln in enumerate(lines) if pat.match(ln.rstrip("\n"))], path, f"`{key}:` mapping")
     nl = "\n" if lines[idx].endswith("\n") else ""
-    lines[idx] = pattern.sub(rf'\g<pre>{value}\g<post>', lines[idx].rstrip("\n")) + nl
+    lines[idx] = pat.sub(rf'\g<pre>{value}\g<post>', lines[idx].rstrip("\n")) + nl
     return "".join(lines)
 
 
-REPLACERS = {"kv": replace_kv, "k8s": replace_k8s, "helm": replace_helm}
-
-# (relative path, format, key, profile)
-MANAGED_FILES = [
-    ("install/docker/docker-compose.yaml", "kv", "PROVIDER_BASE_URLS", "full"),
-    ("install/mesheryapp.dockerapp/docker-compose.yml", "kv", "PROVIDER_BASE_URLS", "full"),
-    ("install/docker-extension/docker-compose.yaml", "kv", "PROVIDER_BASE_URLS", "full"),
-    ("install/deployment_yamls/k8s/meshery-deployment.yaml", "k8s", "PROVIDER_BASE_URLS", "full"),
-    ("install/kubernetes/helm/meshery/values.yaml", "helm", "PROVIDER_BASE_URLS", "full"),
-    ("install/playground/docker/docker-compose.yaml", "kv", "PROVIDER_BASE_URLS", "playground"),
-    ("install/playground/kubernetes/playground-deployment.yaml", "k8s", "PROVIDER_BASE_URLS", "playground"),
-    ("install/playground/docker/Makefile", "kv", "REMOTE_PROVIDER", "playground"),
-]
-
-GO_FILE = "mesheryctl/pkg/utils/providers_gen.go"
+def replace_js(text: str, lhs: str, quote: str, value: str, path: Path) -> str:
+    """Replace the quoted string assigned by `<lhs><quote>...<quote>;`, appending MARKER."""
+    q = re.escape(quote)
+    pat = re.compile(rf'^(?P<pre>{re.escape(lhs)}{q})[^{q}]*(?P<mid>{q}\s*;).*$', re.M)
+    matches = list(pat.finditer(text))
+    _one([m.start() for m in matches], path, f"assignment `{lhs}`")
+    return pat.sub(lambda m: f"{m.group('pre')}{value}{m.group('mid')} {MARKER}", text)
 
 
-def render_go(full: str) -> str:
+def replace_chooser(text: str, active: "list[tuple[str, str]]", path: Path) -> str:
+    """Regenerate the docker-extension REMOTE_PROVIDERS array from the active roster."""
+    entries = "".join(
+        f'    {{\n        name: "{name}",\n        url: "{url}",\n    }},\n'
+        for name, url in active
+    )
+    block = (
+        "export const REMOTE_PROVIDERS = [\n"
+        "    // BEGIN AUTO-GENERATED from install/providers.env - run `make generate-install`\n"
+        f"{entries}"
+        "    // END AUTO-GENERATED\n"
+        "];"
+    )
+    pat = re.compile(r'export const REMOTE_PROVIDERS = \[[\s\S]*?\];')
+    if not pat.search(text):
+        die(f"{path}: REMOTE_PROVIDERS array not found")
+    return pat.sub(lambda _m: block, text, count=1)
+
+
+def render_go_mesheryctl(full: str) -> str:
     return (
         "// Code generated by install/scripts/sync-provider-urls.py from "
-        "install/providers.env; DO NOT EDIT.\n"
-        "\n"
-        "package utils\n"
-        "\n"
-        "// DefaultProviderBaseURLs is the canonical comma-joined list of Meshery's\n"
-        "// production remote providers, compiled into mesheryctl as the fallback used\n"
-        "// when the install docker-compose file cannot be downloaded.\n"
+        "install/providers.env; DO NOT EDIT.\n\n"
+        "package utils\n\n"
+        "// DefaultProviderBaseURLs is the canonical comma-joined list of Meshery's active\n"
+        "// remote providers, compiled into mesheryctl as the fallback used when the install\n"
+        "// docker-compose file cannot be downloaded.\n"
         f'const DefaultProviderBaseURLs = "{full}"\n'
     )
 
 
+def render_go_server(full: str, primary: str) -> str:
+    return (
+        "// Code generated by install/scripts/sync-provider-urls.py from "
+        "install/providers.env; DO NOT EDIT.\n\n"
+        "package models\n\n"
+        "// DefaultRemoteProviderURLs is the comma-joined list of active default remote\n"
+        "// provider URLs. The server seeds it via SetDefault(\"PROVIDER_BASE_URLS\", ...) so\n"
+        "// operators who do not set the env var still register the canonical providers.\n"
+        f'const DefaultRemoteProviderURLs = "{full}"\n\n'
+        "// PrimaryProviderURL is the single canonical provider host used by single-URL\n"
+        "// consumers (the built-in local provider's capability paths, SaaS deep links,\n"
+        "// provider-ui return-to fallback, e2e defaults).\n"
+        f'const PrimaryProviderURL = "{primary}"\n'
+    )
+
+
 def desired_contents() -> "dict[str, str]":
-    providers = load_providers()
-    urls = {name: url for name, url in providers}
-    full = ",".join(url for _, url in providers)
-    if PLAYGROUND_PROVIDER not in urls:
-        die(f"playground provider {PLAYGROUND_PROVIDER!r} not present in providers.env")
-    profiles = {"full": full, "playground": urls[PLAYGROUND_PROVIDER]}
+    active = load_active()
+    full = ",".join(url for _, url in active)
+    primary = active[0][1]
+
+    # (relative path, builder)
+    plan = [
+        ("install/docker/docker-compose.yaml",
+         lambda t, p: replace_kv(t, "PROVIDER_BASE_URLS", full, p)),
+        ("install/mesheryapp.dockerapp/docker-compose.yml",
+         lambda t, p: replace_kv(t, "PROVIDER_BASE_URLS", full, p)),
+        ("install/deployment_yamls/k8s/meshery-deployment.yaml",
+         lambda t, p: replace_k8s(t, "PROVIDER_BASE_URLS", full, p)),
+        ("install/kubernetes/helm/meshery/values.yaml",
+         lambda t, p: replace_helm(t, "PROVIDER_BASE_URLS", full, p)),
+        ("install/docker-extension/docker-compose.yaml",
+         lambda t, p: replace_kv(t, "PROVIDER_BASE_URLS", primary, p)),
+        ("install/playground/docker/docker-compose.yaml",
+         lambda t, p: replace_kv(t, "PROVIDER_BASE_URLS", primary, p)),
+        ("install/playground/kubernetes/playground-deployment.yaml",
+         lambda t, p: replace_k8s(t, "PROVIDER_BASE_URLS", primary, p)),
+        ("install/playground/docker/Makefile",
+         lambda t, p: replace_kv(t, "REMOTE_PROVIDER", primary, p)),
+        ("ui/constants/endpoints.ts",
+         lambda t, p: replace_js(t, "export const MESHERY_CLOUD_PROD = ", "'", primary, p)),
+        ("provider-ui/lib/data-fetch.js",
+         lambda t, p: replace_js(t, "export const PROVIDER_URL = ", '"', primary, p)),
+        ("ui/tests/e2e/env.js",
+         lambda t, p: replace_js(
+             t, "const REMOTE_PROVIDER_URL = process.env.REMOTE_PROVIDER_URL || ", "'", primary, p)),
+        ("install/docker-extension/ui/src/components/utils/constants.js",
+         lambda t, p: replace_chooser(t, active, p)),
+    ]
 
     out: dict[str, str] = {}
-    for rel, fmt, key, profile in MANAGED_FILES:
+    for rel, builder in plan:
         path = ROOT / rel
         if not path.is_file():
             die(f"managed file not found: {path}")
-        out[rel] = REPLACERS[fmt](path.read_text(), key, profiles[profile], path)
-    out[GO_FILE] = render_go(full)
+        out[rel] = builder(path.read_text(), path)
+    out["mesheryctl/pkg/utils/providers_gen.go"] = render_go_mesheryctl(full)
+    out["server/models/default_remote_providers.go"] = render_go_server(full, primary)
     return out
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--check", action="store_true",
-                    help="verify artifacts are in sync; do not write")
+    ap.add_argument("--check", action="store_true", help="verify in sync; do not write")
     args = ap.parse_args()
 
     desired = desired_contents()

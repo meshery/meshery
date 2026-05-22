@@ -6,6 +6,10 @@ on:
     paths:
       - "install/**"
       - "mesheryctl/pkg/utils/providers_gen.go"
+      - "server/models/default_remote_providers.go"
+      - "ui/constants/endpoints.ts"
+      - "ui/tests/e2e/env.js"
+      - "provider-ui/lib/data-fetch.js"
       - ".github/workflows/check-install.yml"
   pull_request:
     branches:
@@ -13,6 +17,10 @@ on:
     paths:
       - "install/**"
       - "mesheryctl/pkg/utils/providers_gen.go"
+      - "server/models/default_remote_providers.go"
+      - "ui/constants/endpoints.ts"
+      - "ui/tests/e2e/env.js"
+      - "provider-ui/lib/data-fetch.js"
       - ".github/workflows/check-install.yml"
   workflow_dispatch:
 
