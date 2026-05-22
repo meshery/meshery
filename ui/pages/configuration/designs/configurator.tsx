@@ -1,5 +1,5 @@
 import React from 'react';
-import DesignConfigurator from '../../../components/configuratorComponents/MeshModel';
+import DesignConfigurator from '@/components/designs/configurator/MeshModel';
 import { MesheryPage } from '@/components/MesheryPage';
 
 function DesignConfiguratorPage() {

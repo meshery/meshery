@@ -1,5 +1,5 @@
 import React from 'react';
-import { WorkspacesComponent } from '../../components/Lifecycle';
+import { WorkspacesComponent } from '@/components/lifecycle';
 import { MesheryPage, PageContainer } from '../../components/MesheryPage';
 
 const Workspaces = () => (
