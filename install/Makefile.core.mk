@@ -47,18 +47,52 @@ ADAPTER_URLS ?= ""
 #-----------------------------------------------------------------------------
 # Providers (Add your provider here. See https://docs.meshery.io/extensibility/providers)
 #-----------------------------------------------------------------------------
+# Dev / staging / local provider hosts. These are intentional overrides used
+# by specific make targets (server-stg, server-local-provider, etc.) and are
+# NOT part of the canonical default provider list.
 REMOTE_PROVIDER_LOCAL="http://localhost:9876"
 EQUINIX_DEV="http://meshery.console.equinix.com"
 EQUINIX_DEV2="http://meshery-2.console.equinix.com"
 MESHERY_CLOUD_DEV="http://localhost:9876"
-MESHERY_CLOUD_PROD="https://cloud.meshery.io"
 MESHERY_CLOUD_STAGING="https://staging-cloud.meshery.io"
-EXOSCALE_PROD="https://sks.exoscale.com"
 EXOSCALE_STG="https://stg-sks.exoscale.com"
 EXOSCALE_DEV="https://dev-sks.exoscale.com"
-LAYER5_CLOUD_PROD="https://cloud.layer5.io"
 PROVIDER_CAPABILITIES_FILEPATH="" # Path to capabilities file for remote provider. If empty, capabilities will be fetched from remote provider.
-REMOTE_PROVIDER_URLS=$(MESHERY_CLOUD_PROD),$(LAYER5_CLOUD_PROD)
+
+# --- AUTO-SYNC SOURCE: edit here, then run `make sync-provider-defaults` ---
+# Canonical list of default remote providers. This is the single source of
+# truth — every consumer (helm values.yaml, docker-compose, k8s manifests,
+# mesheryctl Services map, UI constants, docker-extension chooser, the
+# server's viper SetDefault, etc.) is regenerated from these variables by
+# scripts/sync-provider-defaults.sh. To add or change a default provider,
+# edit the URL / NAME pair below and run `make sync-provider-defaults`.
+MESHERY_CLOUD_PROD="https://cloud.meshery.io"
+LAYER5_CLOUD_PROD="https://cloud.layer5.io"
+MESHERY_DIGITALOCEAN_PROD="https://meshery.digitalocean.com"
+CLEVERLUCK_PROD="https://idp.cleverluck.com"
+EXOSCALE_PROD="https://designer.exoscale.com"
+INTEL_PROD="https://perf.platorm.intel.com"
+UTAUSTIN_PROD="https://ppf.research.utexas.edu"
+TCSLABS_PROD="https://tcs-labs.in"
+REMOTE_PROVIDER_URLS=$(MESHERY_CLOUD_PROD),$(LAYER5_CLOUD_PROD),$(MESHERY_DIGITALOCEAN_PROD),$(CLEVERLUCK_PROD),$(EXOSCALE_PROD),$(INTEL_PROD),$(UTAUSTIN_PROD),$(TCSLABS_PROD)
+PRIMARY_PROVIDER_URL=$(MESHERY_CLOUD_PROD)
+# Display names paired with each URL (consumed by the docker-extension
+# chooser generator to produce {name, url} pairs).
+MESHERY_NAME="Meshery"
+LAYER5_NAME="Layer5"
+MESHERY_DIGITALOCEAN_NAME="DigitalOcean"
+CLEVERLUCK_NAME="CleverLuck"
+EXOSCALE_NAME="Exoscale"
+INTEL_NAME="Intel"
+UTAUSTIN_NAME="UT Austin"
+TCSLABS_NAME="TCS Labs"
+# --- END AUTO-SYNC SOURCE ---
+
+# Helper target for the sync script: `make -s print-VARNAME` echoes the
+# resolved value of any Make variable. Used by scripts/sync-provider-defaults.sh
+# to read the canonical block above.
+print-%:
+	@echo $($*)
 
 #-----------------------------------------------------------------------------
 # Server

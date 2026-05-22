@@ -96,7 +96,7 @@ jobs:
       - name: Run Playwright End-to-End Tests
         env:
           MESHERY_SERVER_URL: "http://localhost:9081"
-          REMOTE_PROVIDER_URL: "https://cloud.meshery.io"
+          REMOTE_PROVIDER_URL: "https://cloud.meshery.io" # AUTO-GENERATED-FROM-MAKEFILE - edit install/Makefile.core.mk then run make sync-provider-defaults
           PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
         run: make ui-test-e2e-ci
 

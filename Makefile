@@ -16,6 +16,39 @@ include install/Makefile.core.mk
 include install/Makefile.show-help.mk
 
 #-----------------------------------------------------------------------------
+# Provider Defaults Sync
+#-----------------------------------------------------------------------------
+.PHONY: sync-provider-defaults ci-verify-provider-defaults
+
+## Regenerate every sentinel-managed line/block from install/Makefile.core.mk.
+sync-provider-defaults:
+	@bash scripts/sync-provider-defaults.sh
+
+## Fail if the committed files drift from the canonical Makefile values.
+ci-verify-provider-defaults:
+	@bash scripts/sync-provider-defaults.sh
+	@if ! git diff --quiet -- \
+		install/kubernetes/helm/meshery/values.yaml \
+		install/docker/docker-compose.yaml \
+		install/mesheryapp.dockerapp/docker-compose.yml \
+		install/deployment_yamls/k8s/meshery-deployment.yaml \
+		install/docker-extension/docker-compose.yaml \
+		install/playground/docker/docker-compose.yaml \
+		install/playground/docker/Makefile \
+		install/docker-extension/ui/src/components/utils/constants.js \
+		mesheryctl/pkg/utils/helpers.go \
+		ui/constants/endpoints.ts \
+		provider-ui/lib/data-fetch.js \
+		ui/tests/e2e/env.js \
+		.github/workflows/build-ui-and-server.yml \
+		server/models/default_remote_providers.go; then \
+		echo "ci-verify-provider-defaults: provider defaults drifted from install/Makefile.core.mk."; \
+		echo "Run 'make sync-provider-defaults' and commit the result."; \
+		git --no-pager diff --stat; \
+		exit 1; \
+	fi
+
+#-----------------------------------------------------------------------------
 # Docker-based Builds
 #-----------------------------------------------------------------------------
 .PHONY: docker-build docker-local-cloud docker-cloud docker-playground-build docker-testing-env-build docker-testing-env

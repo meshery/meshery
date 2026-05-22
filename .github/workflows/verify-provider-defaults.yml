@@ -1,0 +1,56 @@
+name: Verify Provider Defaults
+on:
+  push:
+    branches:
+      - "master"
+    paths:
+      - "install/Makefile.core.mk"
+      - "install/kubernetes/helm/meshery/values.yaml"
+      - "install/docker/docker-compose.yaml"
+      - "install/mesheryapp.dockerapp/docker-compose.yml"
+      - "install/deployment_yamls/k8s/meshery-deployment.yaml"
+      - "install/docker-extension/docker-compose.yaml"
+      - "install/docker-extension/ui/src/components/utils/constants.js"
+      - "install/playground/docker/docker-compose.yaml"
+      - "install/playground/docker/Makefile"
+      - "mesheryctl/pkg/utils/helpers.go"
+      - "ui/constants/endpoints.ts"
+      - "provider-ui/lib/data-fetch.js"
+      - "ui/tests/e2e/env.js"
+      - ".github/workflows/build-ui-and-server.yml"
+      - "server/models/default_remote_providers.go"
+      - "scripts/sync-provider-defaults.sh"
+      - ".github/workflows/verify-provider-defaults.yml"
+  pull_request:
+    branches:
+      - "master"
+    paths:
+      - "install/Makefile.core.mk"
+      - "install/kubernetes/helm/meshery/values.yaml"
+      - "install/docker/docker-compose.yaml"
+      - "install/mesheryapp.dockerapp/docker-compose.yml"
+      - "install/deployment_yamls/k8s/meshery-deployment.yaml"
+      - "install/docker-extension/docker-compose.yaml"
+      - "install/docker-extension/ui/src/components/utils/constants.js"
+      - "install/playground/docker/docker-compose.yaml"
+      - "install/playground/docker/Makefile"
+      - "mesheryctl/pkg/utils/helpers.go"
+      - "ui/constants/endpoints.ts"
+      - "provider-ui/lib/data-fetch.js"
+      - "ui/tests/e2e/env.js"
+      - ".github/workflows/build-ui-and-server.yml"
+      - "server/models/default_remote_providers.go"
+      - "scripts/sync-provider-defaults.sh"
+      - ".github/workflows/verify-provider-defaults.yml"
+
+permissions: read-all
+
+jobs:
+  verify:
+    name: Verify provider defaults are in sync
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Run sync and check for drift
+        run: make ci-verify-provider-defaults

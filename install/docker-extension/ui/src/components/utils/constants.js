@@ -11,17 +11,44 @@ export const topicsList = [
     { label: "Resiliency", value: "resiliency" },
 ];
 
-// Extension Point: Add more remote providers here as needed.
-// This is a list of remote providers that are supported by the Meshery Docker Extension.
+// Remote providers supported by the Meshery Docker Extension.
+// To add or change entries, edit install/Makefile.core.mk and run
+// `make sync-provider-defaults`. Do not hand-edit the array body.
 export const REMOTE_PROVIDERS = [
+    // BEGIN AUTO-GENERATED-FROM-MAKEFILE
     {
         name: "Meshery",
         url: "https://cloud.meshery.io",
     },
     {
-        name: "Exoscale",
-        url: "https://cloud.exoscale.com",
+        name: "Layer5",
+        url: "https://cloud.layer5.io",
     },
+    {
+        name: "DigitalOcean",
+        url: "https://meshery.digitalocean.com",
+    },
+    {
+        name: "CleverLuck",
+        url: "https://idp.cleverluck.com",
+    },
+    {
+        name: "Exoscale",
+        url: "https://designer.exoscale.com",
+    },
+    {
+        name: "Intel",
+        url: "https://perf.platorm.intel.com",
+    },
+    {
+        name: "UT Austin",
+        url: "https://ppf.research.utexas.edu",
+    },
+    {
+        name: "TCS Labs",
+        url: "https://tcs-labs.in",
+    },
+    // END AUTO-GENERATED-FROM-MAKEFILE
 ];
 
 export const SELECTED_REMOTE_PROVIDER =

@@ -122,6 +122,7 @@ func main() {
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
 	viper.SetDefault("INSTANCE_ID", &instanceID)
 	viper.SetDefault(constants.ProviderENV, "")
+	viper.SetDefault(constants.ProviderURLsENV, models.DefaultRemoteProviderURLs)
 	viper.SetDefault("REGISTER_STATIC_K8S", true)
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
 	viper.SetDefault("SKIP_DOWNLOAD_EXTENSIONS", false)

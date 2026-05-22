@@ -4,10 +4,7 @@
 
 DEBUG=true
 PROD_PLAYGROUND_PORT=80
-# Despite the name, REMOTE_PROVIDER here holds the PROVIDER_BASE_URLS list
-# (comma-separated remote-provider endpoints), NOT a provider name. The
-# provider *name* in install/Makefile.core.mk is the empty string by default.
-REMOTE_PROVIDER=https://cloud.meshery.io
+PROVIDER_BASE_URLS=https://cloud.meshery.io  # AUTO-GENERATED-FROM-MAKEFILE - edit install/Makefile.core.mk then run make sync-provider-defaults
 
 #-----------------------------------------------------------------------------
 # Meshery Playground Production Deployment
@@ -18,7 +15,7 @@ REMOTE_PROVIDER=https://cloud.meshery.io
 play-prod-run:
 	(docker rm -f meshery) || true
 	docker run -d --name meshery \
-	-e PROVIDER_BASE_URLS=$(REMOTE_PROVIDER) \
+	-e PROVIDER_BASE_URLS=$(PROVIDER_BASE_URLS) \
 	-e DEBUG=$(DEBUG) \
 	-e PLAYGROUND=true \
 	-e MESHERY_SERVER_CALLBACK_URL=https://playground.meshery.io/api/user/token \ 
