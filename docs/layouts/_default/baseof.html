@@ -81,7 +81,7 @@
             <h1>{{ .Title }}</h1>
           {{ end }}
           {{ block "main" . }}{{ end }}
-          {{ if .IsPage }}
+          {{ if and (or .IsPage .IsSection) (not .IsHome) (ne .Params.hide_related true) (ne .Params.suggested_reading false) }}
             {{ partial "related-reading.html" . }}
           {{ end }}
         </div>

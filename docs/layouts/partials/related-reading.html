@@ -4,7 +4,7 @@
 
 {{ with $related }}
 <h2>
-    Related Readings:
+    Related Reading:
 </h2>
 <ul>
     {{ range . }}
@@ -12,7 +12,7 @@
             <a href="{{ .RelPermalink }}">
                 {{ .Title }}
             </a>
-            {{ with .Params.abstract }}
+            {{ with .Params.abstract | default .Description }}
                 - {{ . }}
             {{ end }}
         </li>

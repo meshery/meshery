@@ -224,5 +224,9 @@ enable = false
   weight = 80
 
   [[related.indices]]
+  name = "tags"
+  weight = 50
+
+  [[related.indices]]
   name = "date"
   weight = 10
