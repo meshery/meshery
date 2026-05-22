@@ -13,7 +13,9 @@
  &lt;/pre&gt;
 &lt;br /&gt;
 &lt;br /&gt;
-#### Option 2: Install `mesheryctl` binary and deploy Meshery on Docker
+&lt;h4 id="option-2-install-mesheryctl-binary-and-deploy-meshery-on-docker"&gt;
+	Option 2: Install &lt;code&gt;mesheryctl&lt;/code&gt; binary and deploy Meshery on Docker
+&lt;/h4&gt;
  &lt;pre class="codeblock-pre"&gt;
  &lt;div class="codeblock"&gt;
  &lt;div class="clipboardjs"&gt;
@@ -22,7 +24,9 @@
  &lt;/pre&gt;
 &lt;br /&gt;
 &lt;br /&gt;
-#### Option 3: Install `mesheryctl` binary and deploy Meshery on Kubernetes
+&lt;h4 id="option-3-install-mesheryctl-binary-and-deploy-meshery-on-kubernetes"&gt;
+	Option 3: Install &lt;code&gt;mesheryctl&lt;/code&gt; binary and deploy Meshery on Kubernetes
+&lt;/h4&gt;
  &lt;pre class="codeblock-pre"&gt;
  &lt;div class="codeblock"&gt;
  &lt;div class="clipboardjs"&gt;
@@ -31,7 +35,9 @@
  &lt;/pre&gt;
 &lt;br /&gt;
 &lt;br /&gt;
-#### Option 4: Install `mesheryctl` binary and Meshery adapter(s)
+&lt;h4 id="option-4-install-mesheryctl-binary-and-meshery-adapters"&gt;
+	Option 4: Install &lt;code&gt;mesheryctl&lt;/code&gt; binary and Meshery adapter(s)
+&lt;/h4&gt;
 &lt;p&gt;Install &lt;code&gt;mesheryctl&lt;/code&gt; binary and include one or more &lt;a href="../../concepts/architecture/adapters/"&gt;adapters&lt;/a&gt; to be deployed&lt;/p&gt;</description></item><item><title>Brew</title><link>/installation/linux-mac/brew/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/linux-mac/brew/</guid><description>&lt;h1 id="install-meshery-cli-with-homebrew"&gt;
 	Install Meshery CLI with Homebrew
 &lt;/h1&gt;
