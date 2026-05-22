@@ -76,8 +76,8 @@ const User = (props) => {
     <div>
       <NoSsr>
         <div data-testid="profile-button">
-          <a
-            href={profileUrl}
+          <Link
+            href={profileUrl || '#'}
             target="_blank"
             rel="noopener noreferrer"
             style={{ textDecoration: 'none' }}
@@ -89,7 +89,7 @@ const User = (props) => {
                 imgProps={{ referrerPolicy: 'no-referrer' }}
               />
             </IconButtonAvatar>
-          </a>
+          </Link>
         </div>
       </NoSsr>
     </div>
