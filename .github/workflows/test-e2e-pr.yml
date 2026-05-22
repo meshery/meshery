@@ -98,7 +98,7 @@ jobs:
           echo "${{ inputs.pr-sha }}" > ./pr/sha
 
       - name: Upload PR comment handoff artifact
-        if: always()
+        if: ${{ always() && inputs.pr-number && inputs.pr-sha }}
         uses: actions/upload-artifact@v6
         with:
           name: e2e-test-reporter
