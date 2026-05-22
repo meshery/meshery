@@ -1,19 +1,12 @@
 import React from 'react';
-import { NoSsr } from '@sistent/sistent';
-import Head from 'next/head';
-import DesignConfigurator from '../../../components/designs/configurator/MeshModel';
-import { usePageTitle } from '@/utils/hooks';
+import DesignConfigurator from '../../../components/configuratorComponents/MeshModel';
+import { MesheryPage } from '@/components/MesheryPage';
 
 function DesignConfiguratorPage() {
-  usePageTitle('Configure Design');
-
   return (
-    <NoSsr>
-      <Head>
-        <title>Designs Configurator</title>
-      </Head>
+    <MesheryPage title="Configure Design" headTitle="Designs Configurator">
       <DesignConfigurator />
-    </NoSsr>
+    </MesheryPage>
   );
 }
 
