@@ -59,7 +59,7 @@ Users can:
 Generated shapes and components can be further customized using Meshery Models and configuration management capabilities.
 
 Helpful resources:
-- [Importing a Design](https://docs.kanvas.new)
+- [Importing a Design](https://docs.layer5.io/kanvas/getting-started/import-designs/)
 - [Publishing a Design](https://docs.kanvas.new)
 - [Meshery Documentation](https://docs.meshery.io)
 
