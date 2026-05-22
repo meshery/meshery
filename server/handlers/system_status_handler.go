@@ -22,6 +22,7 @@ import (
 //
 //	{
 //	  "status": "healthy" | "degraded" | "unhealthy",
+//	  "healthy": true,
 //	  "dependencies": {
 //	    "database":      { "status": "healthy", "error": "" },
 //	    "natsBroker":    { "status": "healthy", "error": "" },
@@ -44,6 +45,7 @@ func (h *Handler) SystemStatusHandler(w http.ResponseWriter, r *http.Request, _ 
 		},
 	}
 	status.Status = computeOverallStatus(status.Dependencies)
+	status.Healthy = status.Status == "healthy"
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
@@ -59,6 +61,7 @@ func (h *Handler) SystemStatusHandler(w http.ResponseWriter, r *http.Request, _ 
 
 type systemStatus struct {
 	Status       string             `json:"status"`
+	Healthy      bool               `json:"healthy"`
 	Dependencies systemDependencies `json:"dependencies"`
 }
 
