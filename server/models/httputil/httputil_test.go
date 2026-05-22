@@ -424,6 +424,174 @@ func TestBufferEncodePattern_SuccessPathWritesAtomicResponse(t *testing.T) {
 	}
 }
 
+func TestWriteAPIResponse_WrapsDataInEnvelope(t *testing.T) {
+	rec := httptest.NewRecorder()
+	WriteAPIResponse(rec, http.StatusOK, map[string]string{"id": "abc-123", "name": "my-design"})
+
+	resp := rec.Result()
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("expected status %d, got %d", http.StatusOK, resp.StatusCode)
+	}
+	if ct := resp.Header.Get("Content-Type"); ct != "application/json; charset=utf-8" {
+		t.Errorf("expected Content-Type %q, got %q", "application/json; charset=utf-8", ct)
+	}
+	if nosniff := resp.Header.Get("X-Content-Type-Options"); nosniff != "nosniff" {
+		t.Errorf("expected X-Content-Type-Options: nosniff, got %q", nosniff)
+	}
+
+	var decoded struct {
+		Data map[string]string `json:"data"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&decoded); err != nil {
+		t.Fatalf("body did not parse as JSON: %v", err)
+	}
+	if decoded.Data["id"] != "abc-123" || decoded.Data["name"] != "my-design" {
+		t.Errorf("expected data {id: abc-123, name: my-design}, got %+v", decoded.Data)
+	}
+}
+
+func TestWriteAPIResponse_DefaultsInvalidStatusTo200(t *testing.T) {
+	tests := []struct {
+		name     string
+		status   int
+		expected int
+	}{
+		{"zero status defaults to 200", 0, http.StatusOK},
+		{"negative status defaults to 200", -1, http.StatusOK},
+		{"valid status is preserved", http.StatusCreated, http.StatusCreated},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			WriteAPIResponse(rec, tt.status, "payload")
+			if rec.Code != tt.expected {
+				t.Errorf("expected status %d, got %d", tt.expected, rec.Code)
+			}
+		})
+	}
+}
+
+func TestWriteAPIResponse_SetsHeaders(t *testing.T) {
+	rec := httptest.NewRecorder()
+	WriteAPIResponse(rec, http.StatusOK, "payload")
+
+	if ct := rec.Header().Get("Content-Type"); ct != "application/json; charset=utf-8" {
+		t.Errorf("expected Content-Type %q, got %q", "application/json; charset=utf-8", ct)
+	}
+	if nosniff := rec.Header().Get("X-Content-Type-Options"); nosniff != "nosniff" {
+		t.Errorf("expected X-Content-Type-Options: nosniff, got %q", nosniff)
+	}
+}
+
+func TestWriteAPIListResponse_WrapsDataInEnvelope(t *testing.T) {
+	items := []map[string]string{
+		{"id": "abc"},
+		{"id": "def"},
+	}
+	rec := httptest.NewRecorder()
+	WriteAPIListResponse(rec, http.StatusOK, items, 1, 25, 42)
+
+	resp := rec.Result()
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("expected status %d, got %d", http.StatusOK, resp.StatusCode)
+	}
+	if ct := resp.Header.Get("Content-Type"); ct != "application/json; charset=utf-8" {
+		t.Errorf("expected Content-Type %q, got %q", "application/json; charset=utf-8", ct)
+	}
+	if nosniff := resp.Header.Get("X-Content-Type-Options"); nosniff != "nosniff" {
+		t.Errorf("expected X-Content-Type-Options: nosniff, got %q", nosniff)
+	}
+
+	var decoded struct {
+		Data []map[string]string `json:"data"`
+		Meta *struct {
+			Page       int `json:"page"`
+			PageSize   int `json:"pageSize"`
+			TotalCount int `json:"totalCount"`
+		} `json:"meta"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&decoded); err != nil {
+		t.Fatalf("body did not parse as JSON: %v", err)
+	}
+	if len(decoded.Data) != 2 {
+		t.Fatalf("expected 2 items, got %d", len(decoded.Data))
+	}
+	if decoded.Data[0]["id"] != "abc" || decoded.Data[1]["id"] != "def" {
+		t.Errorf("unexpected data: %+v", decoded.Data)
+	}
+	if decoded.Meta == nil {
+		t.Fatal("expected meta block when pagination params provided")
+	}
+	if decoded.Meta.Page != 1 || decoded.Meta.PageSize != 25 || decoded.Meta.TotalCount != 42 {
+		t.Errorf("unexpected meta: %+v", decoded.Meta)
+	}
+}
+
+func TestWriteAPIListResponse_NilDataBecomesEmptyArray(t *testing.T) {
+	rec := httptest.NewRecorder()
+	WriteAPIListResponse(rec, http.StatusOK, nil, 0, 0, 0)
+
+	var decoded struct {
+		Data any `json:"data"`
+	}
+	if err := json.NewDecoder(rec.Body).Decode(&decoded); err != nil {
+		t.Fatalf("body did not parse as JSON: %v", err)
+	}
+	if decoded.Data == nil {
+		t.Fatal("expected data to be non-nil (coerced to [])")
+	}
+
+	switch v := decoded.Data.(type) {
+	case []any:
+		if len(v) != 0 {
+			t.Errorf("expected empty array, got %v", v)
+		}
+	default:
+		t.Errorf("expected data to be an array, got %T: %v", decoded.Data, decoded.Data)
+	}
+}
+
+func TestWriteAPIListResponse_OmitsMetaWhenParamsAreZero(t *testing.T) {
+	rec := httptest.NewRecorder()
+	WriteAPIListResponse(rec, http.StatusOK, []string{"a", "b"}, 0, 0, 0)
+
+	var decoded struct {
+		Data []string `json:"data"`
+		Meta any      `json:"meta,omitempty"`
+	}
+	if err := json.NewDecoder(rec.Body).Decode(&decoded); err != nil {
+		t.Fatalf("body did not parse as JSON: %v", err)
+	}
+	if decoded.Meta != nil {
+		t.Errorf("expected meta to be omitted when page/pageSize/totalCount are all 0, got %+v", decoded.Meta)
+	}
+}
+
+func TestWriteAPIListResponse_DefaultsInvalidStatusTo200(t *testing.T) {
+	tests := []struct {
+		name     string
+		status   int
+		expected int
+	}{
+		{"zero status defaults to 200", 0, http.StatusOK},
+		{"negative status defaults to 200", -1, http.StatusOK},
+		{"valid status preserved", http.StatusAccepted, http.StatusAccepted},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			WriteAPIListResponse(rec, tt.status, []string{}, 0, 0, 0)
+			if rec.Code != tt.expected {
+				t.Errorf("expected status %d, got %d", tt.expected, rec.Code)
+			}
+		})
+	}
+}
+
 // flakyResponseWriter is a minimal http.ResponseWriter that succeeds on
 // WriteHeader, writes the first failAfter bytes of any Write call into an
 // internal buffer, and then fails subsequent writes. It's the simplest model
