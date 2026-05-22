@@ -83,10 +83,12 @@ func setNewDBInstance() {
 	if err != nil {
 		err = ErrInitializeDBHandler(err)
 		log.Error(err)
+		return
 	}
 	sqlDB, err := dbHandler.DB.DB()
 	if err != nil {
 		log.Error(err)
+		dbHandler = database.Handler{} // reset to zero value so callers can't use half-initialized handler
 		return
 	}
 	sqlDB.SetMaxOpenConns(maxOpenConns)
