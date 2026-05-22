@@ -799,7 +799,6 @@ func RunSelectPrompt(label string, items []string) (int, error) {
 func ParseURLGithub(URL string) (string, string, error) {
 	// GitHub URL:
 	// - https://github.com/meshery/meshery/blob/master/.goreleaser.yml
-	// - https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml
 	parsedURL, err := url.Parse(URL)
 	if err != nil {
 		return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
