@@ -7,6 +7,14 @@ on:
         description: 'Name of the Docker image artifact to download'
         required: true
         type: string
+      pr-number:
+        description: 'Pull request number for the PR comment handoff artifact'
+        required: false
+        type: string
+      pr-sha:
+        description: 'Pull request head SHA for the PR comment handoff artifact'
+        required: false
+        type: string
     
     outputs:
       test-report-artifact:
@@ -29,7 +37,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     outputs:
-      test-report-artifact: e2e-test-report
+      test-report-artifact: e2e-test-reporter
       allure-results-artifact: allure-results
       playwright-traces-artifact: playwright-traces
       playwright-report-artifact: playwright-report
@@ -81,12 +89,28 @@ jobs:
           cd ui
           npx playwright test --project=chromium-local-provider
         continue-on-error: true
-      
+
+      - name: Save PR metadata for comment workflow
+        if: ${{ inputs.pr-number != '' && inputs.pr-sha != '' }}
+        run: |
+          mkdir -p ./pr
+          printf '%s\n' '${{ inputs.pr-number }}' > ./pr/number
+          printf '%s\n' '${{ inputs.pr-sha }}' > ./pr/sha
+
+      - name: Upload PR comment handoff artifact
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: e2e-test-reporter
+          path: |
+            ui/test-report.md
+            pr/
+          retention-days: 14
+          if-no-files-found: ignore
+
       - name: Upload Test Artifacts
         if: always()
         uses: ./.github/actions/upload-test-artifacts
-        with:
-          include-pr-metadata: ${{ github.event_name == 'pull_request' }}
 
       - name: Fail job when Playwright reports test failures
         if: ${{ steps.playwright-tests.outcome == 'failure' }}

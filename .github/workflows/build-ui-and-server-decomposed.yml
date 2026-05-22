@@ -23,3 +23,5 @@ jobs:
     uses: ./.github/workflows/test-e2e-pr.yml
     with:
       meshery-image: ${{ needs.build-meshery.outputs.meshery-image }}
+      pr-number: ${{ github.event_name == 'pull_request' && github.event.number || '' }}
+      pr-sha: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || '' }}
