@@ -21,7 +21,7 @@ Permission keys are the atomic units of this authorization system. Each key is a
 
 #### Prerequisites
 
-You will need write access to the [`meshery/schemas`](https://github.com/meshery/schemas) and [`meshery/meshery`](https://github.com/meshery/meshery) repositories. Ensure Node.js and Go are installed.
+You will need access to these repositories [`meshery/schemas`](https://github.com/meshery/schemas) and [`meshery/meshery`](https://github.com/meshery/meshery). Ensure Node.js and Go are installed.
 
 {{< code code=`git clone https://github.com/meshery/schemas.git
 cd schemas
@@ -59,7 +59,7 @@ From the `meshery/schemas` root, generate both Go and TypeScript permission key 
 
 {{< code code=`make generate-permissions` >}}
 
-To generate only one language at a time:
+To generate only one at a time:
 
 {{< code code=`make generate-permissions-go` >}}
 
@@ -123,18 +123,20 @@ For example, using the `Catalog Management` theme and `Evaluate Design` function
 
 ##### In React / TypeScript UI
 
-Use the `useIsAuthorized` hook with the key's `action` UUID:
+Import the `CAN` utility and the permission `keys` object to evaluate permissions in UI components:
 
-{{< code code=`import { keys } from 'utils/permission_constants';
+{{< code code=`import CAN from 'utils/can';
+import { keys } from 'utils/permission_constants';
 
-const isAuthorized = useIsAuthorized({ key: keys.<CONSTANT_NAME>.action });
-return isAuthorized ? <YourComponent /> : <FallbackComponent />;` >}}
+const hasAccess = CAN(keys.<CONSTANT_NAME>.action, keys.<CONSTANT_NAME>.subject);
+return hasAccess ? <YourComponent /> : <FallbackComponent />;` >}}
 
 For example:
 
-{{< code code=`import { keys } from 'utils/permission_constants';
+{{< code code=`import CAN from 'utils/can';
+import { keys } from 'utils/permission_constants';
 
-const canEvaluate = useIsAuthorized({ key: keys.EVALUATE_DESIGN.action });
+const canEvaluate = CAN(keys.EVALUATE_DESIGN.action, keys.EVALUATE_DESIGN.subject);
 return canEvaluate ? <EvaluateButton /> : null;` >}}
 
 
