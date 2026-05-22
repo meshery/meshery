@@ -24,30 +24,6 @@ export const REMOTE_PROVIDERS = [
         name: "Layer5",
         url: "https://cloud.layer5.io",
     },
-    {
-        name: "DigitalOcean",
-        url: "https://meshery.digitalocean.com",
-    },
-    {
-        name: "CleverLuck",
-        url: "https://idp.cleverluck.com",
-    },
-    {
-        name: "Exoscale",
-        url: "https://designer.exoscale.com",
-    },
-    {
-        name: "Intel",
-        url: "https://perf.platorm.intel.com",
-    },
-    {
-        name: "UT Austin",
-        url: "https://ppf.research.utexas.edu",
-    },
-    {
-        name: "TCS Labs",
-        url: "https://tcs-labs.in",
-    },
     // END AUTO-GENERATED-FROM-MAKEFILE
 ];
 

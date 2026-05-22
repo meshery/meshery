@@ -61,23 +61,36 @@ PROVIDER_CAPABILITIES_FILEPATH="" # Path to capabilities file for remote provide
 
 # --- AUTO-SYNC SOURCE: edit here, then run `make sync-provider-defaults` ---
 # Canonical list of default remote providers. This is the single source of
-# truth — every consumer (helm values.yaml, docker-compose, k8s manifests,
+# truth - every consumer (helm values.yaml, docker-compose, k8s manifests,
 # mesheryctl Services map, UI constants, docker-extension chooser, the
 # server's viper SetDefault, etc.) is regenerated from these variables by
 # scripts/sync-provider-defaults.sh. To add or change a default provider,
-# edit the URL / NAME pair below and run `make sync-provider-defaults`.
+# add it to REMOTE_PROVIDER_URLS (and to the PAIRS array in
+# scripts/sync-provider-defaults.sh) and run `make sync-provider-defaults`.
+#
+# Active default providers. These MUST resolve in DNS - the server retries
+# each unreachable URL 10x with a 3s sleep at startup (see
+# server/models/remote_provider.go loadCapabilities), so adding an
+# unreachable host adds ~30s to startup before the HTTP listener accepts
+# traffic, which breaks the e2e and meshsync integration tests.
 MESHERY_CLOUD_PROD="https://cloud.meshery.io"
 LAYER5_CLOUD_PROD="https://cloud.layer5.io"
+# Declared-but-not-yet-active providers. Their hostnames do not currently
+# resolve in DNS, so registering them at startup would block the server
+# behind retry timeouts. Keep the declarations here so re-enabling is a
+# one-line change once DNS is set up; move into REMOTE_PROVIDER_URLS
+# below (and add to PAIRS in scripts/sync-provider-defaults.sh) when ready.
 MESHERY_DIGITALOCEAN_PROD="https://meshery.digitalocean.com"
 CLEVERLUCK_PROD="https://idp.cleverluck.com"
 EXOSCALE_PROD="https://designer.exoscale.com"
-INTEL_PROD="https://perf.platorm.intel.com"
+INTEL_PROD="https://perf.platform.intel.com"
 UTAUSTIN_PROD="https://ppf.research.utexas.edu"
 TCSLABS_PROD="https://tcs-labs.in"
-REMOTE_PROVIDER_URLS=$(MESHERY_CLOUD_PROD),$(LAYER5_CLOUD_PROD),$(MESHERY_DIGITALOCEAN_PROD),$(CLEVERLUCK_PROD),$(EXOSCALE_PROD),$(INTEL_PROD),$(UTAUSTIN_PROD),$(TCSLABS_PROD)
+REMOTE_PROVIDER_URLS=$(MESHERY_CLOUD_PROD),$(LAYER5_CLOUD_PROD)
 PRIMARY_PROVIDER_URL=$(MESHERY_CLOUD_PROD)
 # Display names paired with each URL (consumed by the docker-extension
-# chooser generator to produce {name, url} pairs).
+# chooser generator to produce {name, url} pairs). Keep parallel with
+# REMOTE_PROVIDER_URLS - only the active providers are rendered.
 MESHERY_NAME="Meshery"
 LAYER5_NAME="Layer5"
 MESHERY_DIGITALOCEAN_NAME="DigitalOcean"

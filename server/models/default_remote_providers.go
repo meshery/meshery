@@ -7,7 +7,7 @@ package models
 // default remote provider URLs. The server seeds this into viper via
 // SetDefault("PROVIDER_BASE_URLS", ...) so operators who do not set the
 // env var still register the canonical providers.
-const DefaultRemoteProviderURLs = "https://cloud.meshery.io,https://cloud.layer5.io,https://meshery.digitalocean.com,https://idp.cleverluck.com,https://designer.exoscale.com,https://perf.platorm.intel.com,https://ppf.research.utexas.edu,https://tcs-labs.in"
+const DefaultRemoteProviderURLs = "https://cloud.meshery.io,https://cloud.layer5.io"
 
 // PrimaryProviderURL is the single canonical provider host used by
 // single-URL consumers (SaaS deep-link constants, provider-ui return-to

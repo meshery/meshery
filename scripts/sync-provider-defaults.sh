@@ -21,16 +21,11 @@ PRIMARY=$(read_mk PRIMARY_PROVIDER_URL)
 
 # Parallel name/url arrays for the docker-extension chooser. Each entry is
 # "<NAME_VAR>|<URL_VAR>"; the order here is the order rendered into the
-# REMOTE_PROVIDERS JS array.
+# REMOTE_PROVIDERS JS array. Keep parallel with REMOTE_PROVIDER_URLS in
+# install/Makefile.core.mk - only list the active providers.
 PAIRS=(
 	"MESHERY_NAME|MESHERY_CLOUD_PROD"
 	"LAYER5_NAME|LAYER5_CLOUD_PROD"
-	"MESHERY_DIGITALOCEAN_NAME|MESHERY_DIGITALOCEAN_PROD"
-	"CLEVERLUCK_NAME|CLEVERLUCK_PROD"
-	"EXOSCALE_NAME|EXOSCALE_PROD"
-	"INTEL_NAME|INTEL_PROD"
-	"UTAUSTIN_NAME|UTAUSTIN_PROD"
-	"TCSLABS_NAME|TCSLABS_PROD"
 )
 
 # replace_single_line <file> <perl-regex-matching-old-line> <new-line>
