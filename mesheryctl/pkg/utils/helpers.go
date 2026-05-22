@@ -303,12 +303,18 @@ var TemplateContext = config.Context{
 	Version:    "latest",
 }
 
+// Services is the built-in fallback docker-compose definition used when the install
+// docker-compose file cannot be downloaded. The provider list is sourced from the
+// canonical install/providers.env via DefaultProviderBaseURLs (see providers_gen.go);
+// edit providers.env and run `make generate-install` rather than hardcoding URLs here.
+//
+//go:generate python3 ../../../install/scripts/sync-provider-urls.py
 var Services = map[string]Service{
 	"meshery": {
 		Image:  "meshery/meshery:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Environment: []string{
-			"PROVIDER_BASE_URLS=https://cloud.meshery.io,https://meshery.digitalocean.com,https://idp.cleverluck.com,https://cloud.layer5.io",
+			"PROVIDER_BASE_URLS=" + DefaultProviderBaseURLs,
 			"ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012",
 			"EVENT=mesheryLocal",
 			"PORT=9081",
