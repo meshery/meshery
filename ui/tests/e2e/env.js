@@ -1,5 +1,5 @@
 const MESHERY_SERVER_URL = process.env.MESHERY_SERVER_URL || 'http://localhost:9081';
-const REMOTE_PROVIDER_URL = process.env.REMOTE_PROVIDER_URL || 'https://cloud.meshery.io'; // AUTO-GENERATED-FROM-MAKEFILE - edit install/Makefile.core.mk then run make sync-provider-defaults
+const REMOTE_PROVIDER_URL = process.env.REMOTE_PROVIDER_URL || 'https://cloud.meshery.io'; // AUTO-GENERATED-FROM-MAKEFILE
 
 const USER_EMAIL = process.env.REMOTE_PROVIDER_USER_EMAIL;
 const USER_PASSWORD = process.env.REMOTE_PROVIDER_USER_PASSWORD;

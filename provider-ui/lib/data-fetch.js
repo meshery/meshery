@@ -1,4 +1,4 @@
-export const PROVIDER_URL = "https://cloud.meshery.io"; // AUTO-GENERATED-FROM-MAKEFILE - edit install/Makefile.core.mk then run make sync-provider-defaults
+export const PROVIDER_URL = "https://cloud.meshery.io"; // AUTO-GENERATED-FROM-MAKEFILE
 
 // This can be migrated as a custom hook in React
 const dataFetch = (url, options = {}, successFn, errorFn) => {

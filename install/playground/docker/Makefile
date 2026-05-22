@@ -4,7 +4,7 @@
 
 DEBUG=true
 PROD_PLAYGROUND_PORT=80
-PROVIDER_BASE_URLS=https://cloud.meshery.io  # AUTO-GENERATED-FROM-MAKEFILE - edit install/Makefile.core.mk then run make sync-provider-defaults
+PROVIDER_BASE_URLS=https://cloud.meshery.io  # AUTO-GENERATED-FROM-MAKEFILE
 
 #-----------------------------------------------------------------------------
 # Meshery Playground Production Deployment
