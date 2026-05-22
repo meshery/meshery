@@ -711,7 +711,7 @@ const NavigatorContent = () => {
                   isActive={currentPath === href}
                   isShow={!show}
                   onClick={() => toggleItemCollapse(childId)}
-                  onMouseOver={() => (isDrawerCollapsed ? setHoveredId(childId) : null)}
+                  onMouseOver={() => setHoveredId(childId)}
                   onMouseLeave={() =>
                     !submenu || !openItems.includes(childId) ? setHoveredId(null) : null
                   }
@@ -739,12 +739,16 @@ const NavigatorContent = () => {
                                 onClick={() => toggleItemCollapse(childId)}
                                 style={{ marginLeft: '20%', marginBottom: '0.4rem' }}
                               >
-                                {hovericon}
+                                {icon}
                               </ListItemIcon>
                             </CustomTooltip>
                           </div>
                         ) : (
-                          <MainListIcon>{icon}</MainListIcon>
+                          <MainListIcon>
+                            {!isDrawerCollapsed && hoveredId === childId && hovericon
+                              ? hovericon
+                              : icon}
+                          </MainListIcon>
                         )}
                       </CustomTooltip>
                       <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>
