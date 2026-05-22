@@ -14,7 +14,7 @@ In order to pull in these environment metrics, you can also manually configure M
 
 <div class="tab-container">
   
-  <input id="tab1" type="radio" name="tabs" checked>
+  <input id="tab1" type="radio" name="meshery-metrics-tabs" checked>
   <label for="tab1">Prometheus Metrics</label>
   <section class="tabbed" id="content1">
     <p>User needs to set the Prometheus URL and API key to create and query boards.</p>
@@ -23,7 +23,7 @@ In order to pull in these environment metrics, you can also manually configure M
 
   </section>
     
-  <input id="tab2" type="radio" name="tabs">
+  <input id="tab2" type="radio" name="meshery-metrics-tabs">
   <label for="tab2">Grafana Charts</label>
   <section class="tabbed" id="content2">
     <p>User needs to set the Grafana URL and API key to create and query boards.</p>
@@ -32,7 +32,7 @@ In order to pull in these environment metrics, you can also manually configure M
 
   </section>
     
-  <input id="tab3" type="radio" name="tabs">
+  <input id="tab3" type="radio" name="meshery-metrics-tabs">
   <label for="tab3">Static Boards</label>
   <section class="tabbed" id="content3">
     <p>
@@ -40,7 +40,7 @@ In order to pull in these environment metrics, you can also manually configure M
     </p>
   </section>
     
-  <input id="tab4" type="radio" name="tabs">
+  <input id="tab4" type="radio" name="meshery-metrics-tabs">
   <label for="tab4">Dynamic Boards</label>
   <section class="tabbed" id="content4">
     <p>
