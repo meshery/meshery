@@ -117,7 +117,7 @@ if !provider.HasPermission(r.Context(), permissions.<Theme><Function>) {
 For example, using the `Catalog Management` theme and `Evaluate Design` function:
 
 {{< code code=`if !provider.HasPermission(r.Context(), permissions.CatalogManagementEvaluateDesign) {
-    http.Error(w, "Unauthorized", http.StatusForbidden)
+    http.Error(w, "Forbidden", http.StatusForbidden)
     return
 }` >}}
 
