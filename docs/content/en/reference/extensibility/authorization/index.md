@@ -110,7 +110,7 @@ Import the generated constants from `github.com/meshery/schemas/models/permissio
 )
 
 if !provider.HasPermission(r.Context(), permissions.<Theme><Function>) {
-    http.Error(w, "Unauthorized", http.StatusForbidden)
+    http.Error(w, "Forbidden", http.StatusForbidden)
     return
 }` >}}
 
