@@ -1,4 +1,66 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Meshery Documentation on Documentation</title><link>/</link><description>Recent content in Meshery Documentation on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Tue, 19 May 2026 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.23</title><link>/project/releases/v1.0.23/</link><pubDate>Tue, 19 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.23/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Meshery Documentation on Documentation</title><link>/</link><description>Recent content in Meshery Documentation on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 22 May 2026 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.26</title><link>/project/releases/v1.0.26/</link><pubDate>Fri, 22 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.26/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Update Dockerfile @leecalcote (#19597)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@arjunmehta-git, @fitzergerald and @leecalcote&lt;/p&gt;</description></item><item><title>v1.0.25</title><link>/project/releases/v1.0.25/</link><pubDate>Thu, 21 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.25/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Added a paragraph that tells about the openness and vendor neutrality… @Utkarsh-Mauryaa (#19583)&lt;/li&gt;
+&lt;li&gt;fix(docs): improve UX and security for external links in README @Maanvi212006 (#19213)&lt;/li&gt;
+&lt;li&gt;[Chore]: Bump meshery/schemas to v1.2.22 @l5io (#19551)&lt;/li&gt;
+&lt;li&gt;[Server] Fix non-determinism in relationship eval engine @guan404ming (#19127)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Refactor providers: rename Local provider (was \None) and remote providers @hortison (#19574)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;UI: Compatability with CASL v7 @hortison (#19595)&lt;/li&gt;
+&lt;li&gt;Refactor providers: rename Local provider (was \None) and remote providers @hortison (#19574)&lt;/li&gt;
+&lt;li&gt;Make \Add a Connection\ a button, fix Edit icon theme contrast, and update sistent @Rajesh-Nagarajan-11 (#19562)&lt;/li&gt;
+&lt;li&gt;Update Provider.style.js @CodexRaunak (#19560)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Refactor providers: rename Local provider (was \None) and remote providers @hortison (#19574)&lt;/li&gt;
+&lt;li&gt;ci: add additional workflows for E2E report on pull request comment @ianrwhitney (#19561)&lt;/li&gt;
+&lt;li&gt;ci: add least-privilege permissions blocks to CI workflows @NSTKrishna (#19358)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Refactor providers: rename Local provider (was \None) and remote providers @hortison (#19574)&lt;/li&gt;
+&lt;li&gt;Add attendance instructions to meeting index @YASHMAHAKAL (#19586)&lt;/li&gt;
+&lt;li&gt;Remove shortcode temporarily @PragalvaXFREZ (#19584)&lt;/li&gt;
+&lt;li&gt;fix:[docs] Update sidebar theme styles @Sbragul26 (#19450)&lt;/li&gt;
+&lt;li&gt;Resolved &lt;code&gt;make site&lt;/code&gt; failure @Utkarsh-Mauryaa (#19558)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@CodexRaunak, @Maanvi212006, @NSTKrishna, @PragalvaXFREZ, @Rajesh-Nagarajan-11, @Sbragul26, @Utkarsh-Mauryaa, @YASHMAHAKAL, @alexquincy, @banana-three-join, @fitzergerald, @guan404ming, @hortison, @ianrwhitney, @l5io, @leecalcote, @meshery-ci, @miacycle, @ritzorama and @winkletinkle&lt;/p&gt;</description></item><item><title>v1.0.23</title><link>/project/releases/v1.0.23/</link><pubDate>Tue, 19 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.23/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -33507,24 +33569,9 @@ Learn how to use Kubernetes CronJobs to schedule and automate periodic backups o
 &lt;h2 id="build-time-extension-point"&gt;
 	Build-time Extension Point
 &lt;/h2&gt;
-&lt;p&gt;The build-time extension point allows you to supply custom content by placing a &lt;code&gt;.meshery&lt;/code&gt; directory at the root of the Meshery repository before building the Docker image. The contents of this directory will be copied into the container image and made available to Meshery at runtime.&lt;/p&gt;</description></item><item><title>Extensibility: Load Generators</title><link>/reference/extensibility/load-generators/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/extensibility/load-generators/</guid><description>&lt;p&gt;Users may prefer to use one load generator over the next given the difference of capabilities between load generators, so Meshery provides a &lt;code&gt;load generator interface&lt;/code&gt; (a gRPC interface) behind which a load generator can be implemented. Meshery provides users with choice of which load generator they prefer to use for a given performance test. Users may configure their own preference for the load generator, different from the default load generator.&lt;/p&gt;</description></item><item><title>Extensibility: Providers</title><link>/reference/extensibility/providers/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/extensibility/providers/</guid><description>&lt;p&gt;Meshery offers &lt;em&gt;Providers&lt;/em&gt; as a point of extensibility. It has a built-in Local Provider, named &lt;strong&gt;&amp;ldquo;None&amp;rdquo;&lt;/strong&gt; and supports &lt;em&gt;Remote Providers&lt;/em&gt; that are designed to be pluggable. &lt;em&gt;Remote Providers&lt;/em&gt; offer a point of extension to users / integrators to deliver enhanced functionality such as authentication and authorization, using Meshery as a platform.&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;Extensibility points offer clean separation of Meshery&amp;rsquo;s core functionality versus plugin functionality.&lt;/strong&gt;
-&lt;ul&gt;
-&lt;li&gt;See a list of &lt;a href="https://meshery.io/extensions"&gt;Meshery&amp;rsquo;s extensions&lt;/a&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Remote Providers should be able to offer custom RBAC, custom UI components, and custom backend components&lt;/strong&gt;
-&lt;ul&gt;
-&lt;li&gt;Dynamically loadable frameworks need to be identified or created to serve each of these purposes.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id="what-functionality-do-providers-offer"&gt;
-	What functionality do Providers offer?
-&lt;/h3&gt;
-&lt;p&gt;The functionalities offerred by a &lt;em&gt;Remote Provider&lt;/em&gt; may vary broadly between providers. Meshery offers extension points that Remote Providers are able to use to inject various functionalities, functionalities that are specific to that provider.
-Some examples include:&lt;/p&gt;</description></item><item><title>Extensibility: Schemas</title><link>/reference/extensibility/schemas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/extensibility/schemas/</guid><description>&lt;p&gt;Meshery follows a &lt;a href="./project/contributing/contributing-schemas/"&gt;Schema-Driven Development&lt;/a&gt; approach in which schemas define the structure of data across the platform. To support remote providers, Meshery schemas are intentionally extensible via &lt;code&gt;x-*&lt;/code&gt; vendor extensions — a standard OpenAPI mechanism that allows custom metadata to be attached to a schema without affecting tools or validators that don&amp;rsquo;t recognize it.&lt;/p&gt;
+&lt;p&gt;The build-time extension point allows you to supply custom content by placing a &lt;code&gt;.meshery&lt;/code&gt; directory at the root of the Meshery repository before building the Docker image. The contents of this directory will be copied into the container image and made available to Meshery at runtime.&lt;/p&gt;</description></item><item><title>Extensibility: Load Generators</title><link>/reference/extensibility/load-generators/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/extensibility/load-generators/</guid><description>&lt;p&gt;Users may prefer to use one load generator over the next given the difference of capabilities between load generators, so Meshery provides a &lt;code&gt;load generator interface&lt;/code&gt; (a gRPC interface) behind which a load generator can be implemented. Meshery provides users with choice of which load generator they prefer to use for a given performance test. Users may configure their own preference for the load generator, different from the default load generator.&lt;/p&gt;</description></item><item><title>Extensibility: Providers</title><link>/reference/extensibility/providers/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/extensibility/providers/</guid><description>&lt;p&gt;Meshery offers &lt;em&gt;Providers&lt;/em&gt; as a point of extensibility. It has a built-in Local Provider, named &lt;strong&gt;&amp;ldquo;Local&amp;rdquo;&lt;/strong&gt; and supports &lt;em&gt;Remote Providers&lt;/em&gt; that are designed to be pluggable. &lt;em&gt;Remote Providers&lt;/em&gt; offer a point of extension to users / integrators to deliver enhanced functionality such as authentication and authorization, using Meshery as a platform.&lt;/p&gt;
+&lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Naming change&lt;/div&gt;
+&lt;p&gt;The built-in local provider was previously named &lt;strong&gt;&amp;ldquo;None&amp;rdquo;&lt;/strong&gt; and is now named &lt;strong&gt;&amp;ldquo;Local&amp;rdquo;&lt;/strong&gt;. Meshery Server accepts &lt;code&gt;&amp;quot;None&amp;quot;&lt;/code&gt; as a backward-compatible alias on cookies, the &lt;code&gt;PROVIDER&lt;/code&gt; environment variable, and &lt;code&gt;~/.meshery/config.yaml&lt;/code&gt;, so existing sessions and configurations continue to work without changes.&lt;/p&gt;</description></item><item><title>Extensibility: Schemas</title><link>/reference/extensibility/schemas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/extensibility/schemas/</guid><description>&lt;p&gt;Meshery follows a &lt;a href="./project/contributing/contributing-schemas/"&gt;Schema-Driven Development&lt;/a&gt; approach in which schemas define the structure of data across the platform. To support remote providers, Meshery schemas are intentionally extensible via &lt;code&gt;x-*&lt;/code&gt; vendor extensions — a standard OpenAPI mechanism that allows custom metadata to be attached to a schema without affecting tools or validators that don&amp;rsquo;t recognize it.&lt;/p&gt;
 &lt;h2 id="x-annotations-as-an-extension-point"&gt;
 	x-annotations as an Extension Point
 &lt;/h2&gt;
@@ -33779,7 +33826,7 @@ A &lt;strong&gt;&lt;a href="./concepts/logical/designs/"&gt;design&lt;/a&gt;&lt;
 &lt;h2 id="hands-on-lab"&gt;
 	Hands-on Lab
 &lt;/h2&gt;
-&lt;p&gt;Perform the following steps in order:&lt;/p&gt;</description></item><item><title>Kubevault</title><link>/extensions/models/kubevault/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault/</guid><description/></item><item><title>Kubevault Catalog</title><link>/extensions/models/kubevault-catalog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-catalog/</guid><description/></item><item><title>Kubevault Crds</title><link>/extensions/models/kubevault-crds/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-crds/</guid><description/></item><item><title>Kubevault Metrics</title><link>/extensions/models/kubevault-metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-metrics/</guid><description/></item><item><title>Kubevault Operator</title><link>/extensions/models/kubevault-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-operator/</guid><description/></item><item><title>Kubevela</title><link>/extensions/models/kubevela/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevela/</guid><description/></item><item><title>Kubevirt</title><link>/extensions/models/kubevirt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevirt/</guid><description/></item><item><title>Kuma</title><link>/extensions/models/kuma/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kuma/</guid><description/></item><item><title>Kured</title><link>/extensions/models/kured/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kured/</guid><description/></item><item><title>Kusk Gateway</title><link>/extensions/models/kusk-gateway/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kusk-gateway/</guid><description/></item><item><title>Kyverno</title><link>/extensions/models/kyverno/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno/</guid><description/></item><item><title>Kyverno Monitor</title><link>/extensions/models/kyverno-monitor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-monitor/</guid><description/></item><item><title>Kyverno Operator</title><link>/extensions/models/kyverno-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-operator/</guid><description/></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.24&lt;/h2&gt;</description></item><item><title>Linkerd</title><link>/extensions/models/linkerd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linkerd/</guid><description/></item><item><title>Linux</title><link>/extensions/models/linux/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linux/</guid><description/></item><item><title>Litmus Chaos</title><link>/extensions/models/litmus-core/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/litmus-core/</guid><description/></item><item><title>Loki</title><link>/extensions/models/loki/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki/</guid><description/></item><item><title>Loki Simple Scalable</title><link>/extensions/models/loki-simple-scalable/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki-simple-scalable/</guid><description/></item><item><title>Longhorn</title><link>/extensions/models/longhorn/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/longhorn/</guid><description/></item><item><title>LoxiLB</title><link>/extensions/models/loxilb/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loxilb/</guid><description/></item><item><title>Managing Connections</title><link>/guides/infrastructure-management/lifecycle-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/lifecycle-management/</guid><description>&lt;p&gt;&lt;a name="lifecycle-management"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Perform the following steps in order:&lt;/p&gt;</description></item><item><title>Kubevault</title><link>/extensions/models/kubevault/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault/</guid><description/></item><item><title>Kubevault Catalog</title><link>/extensions/models/kubevault-catalog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-catalog/</guid><description/></item><item><title>Kubevault Crds</title><link>/extensions/models/kubevault-crds/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-crds/</guid><description/></item><item><title>Kubevault Metrics</title><link>/extensions/models/kubevault-metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-metrics/</guid><description/></item><item><title>Kubevault Operator</title><link>/extensions/models/kubevault-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-operator/</guid><description/></item><item><title>Kubevela</title><link>/extensions/models/kubevela/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevela/</guid><description/></item><item><title>Kubevirt</title><link>/extensions/models/kubevirt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevirt/</guid><description/></item><item><title>Kuma</title><link>/extensions/models/kuma/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kuma/</guid><description/></item><item><title>Kured</title><link>/extensions/models/kured/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kured/</guid><description/></item><item><title>Kusk Gateway</title><link>/extensions/models/kusk-gateway/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kusk-gateway/</guid><description/></item><item><title>Kyverno</title><link>/extensions/models/kyverno/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno/</guid><description/></item><item><title>Kyverno Monitor</title><link>/extensions/models/kyverno-monitor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-monitor/</guid><description/></item><item><title>Kyverno Operator</title><link>/extensions/models/kyverno-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-operator/</guid><description/></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.26&lt;/h2&gt;</description></item><item><title>Linkerd</title><link>/extensions/models/linkerd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linkerd/</guid><description/></item><item><title>Linux</title><link>/extensions/models/linux/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linux/</guid><description/></item><item><title>Litmus Chaos</title><link>/extensions/models/litmus-core/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/litmus-core/</guid><description/></item><item><title>Loki</title><link>/extensions/models/loki/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki/</guid><description/></item><item><title>Loki Simple Scalable</title><link>/extensions/models/loki-simple-scalable/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki-simple-scalable/</guid><description/></item><item><title>Longhorn</title><link>/extensions/models/longhorn/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/longhorn/</guid><description/></item><item><title>LoxiLB</title><link>/extensions/models/loxilb/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loxilb/</guid><description/></item><item><title>Managing Connections</title><link>/guides/infrastructure-management/lifecycle-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/lifecycle-management/</guid><description>&lt;p&gt;&lt;a name="lifecycle-management"&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Meshery manages hundreds of different types of cloud native infrastructure. See the &lt;a href="./extensibility/integrations"&gt;full set of integrations&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="cloud-native-infrastructure-lifecycle-management"&gt;
 	Cloud Native Infrastructure Lifecycle Management
@@ -36534,7 +36581,7 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
  -a, --components stringArray List of components
  -h, --help help for create
  -p, --platform string Platform to deploy Meshery (docker or kubernetes)
- --provider string Provider to use with the Meshery server (Meshery or None)
+ --provider string Provider to use with the Meshery server (run 'mesheryctl system provider list' to see options)
  -s, --set Set as current context
  -u, --url string Meshery Server URL with Port (default: http://localhost:9081)
 
