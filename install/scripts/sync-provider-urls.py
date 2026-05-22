@@ -32,18 +32,31 @@ def die(msg: str) -> "None":
     raise SystemExit(2)
 
 
+def _unquote(s: str) -> str:
+    """Strip a single pair of surrounding matching quotes, e.g. `"TCS Labs"` -> `TCS Labs`."""
+    s = s.strip()
+    if len(s) >= 2 and s[0] == s[-1] and s[0] in ('"', "'"):
+        return s[1:-1]
+    return s
+
+
 def load_active() -> "list[tuple[str, str]]":
-    """Return ordered (name, url) pairs for ACTIVE providers (uncommented lines)."""
+    """Return ordered (name, url) pairs for ACTIVE providers (uncommented lines).
+
+    Names may be quoted (recommended when they contain whitespace, e.g. "TCS Labs");
+    surrounding quotes are stripped. Commented lines are declared-but-inactive.
+    """
     if not PROVIDERS_ENV.is_file():
         die(f"canonical source not found: {PROVIDERS_ENV}")
     pairs: list[tuple[str, str]] = []
     for raw in PROVIDERS_ENV.read_text().splitlines():
-        line = raw.rstrip()
+        line = raw.strip()
         if not line or line.startswith("#"):
-            continue  # blank, comment, or `#inactive ` declaration
+            continue  # blank or commented (declared-but-inactive) line
         if "=" not in line:
             die(f"malformed active line (expected Name=URL): {raw!r}")
-        name, url = (s.strip() for s in line.split("=", 1))
+        name, url = line.split("=", 1)
+        name, url = _unquote(name), _unquote(url)
         if not name or not url:
             die(f"malformed active line (empty name or url): {raw!r}")
         pairs.append((name, url))

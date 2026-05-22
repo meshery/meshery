@@ -61,7 +61,10 @@ PROVIDER_CAPABILITIES_FILEPATH="" # Path to capabilities file for remote provide
 # providers, derived from the single canonical source install/providers.env. Edit
 # providers.env (not this line) and run `make generate-install` to propagate the change
 # to every install artifact.
-REMOTE_PROVIDER_URLS := $(shell awk -F= '/^[A-Za-z]/ {print $$2}' install/providers.env | paste -sd, -)
+# The `\#` is escaped so Make passes a literal `#` to awk instead of treating the rest
+# of the line as a Make comment. awk skips comment/blank lines, requires an `=`, and
+# prints everything after the first `=` (the URL), so quoted names like "TCS Labs" work.
+REMOTE_PROVIDER_URLS := $(shell awk '!/^[[:space:]]*\#/ && /=/ { sub(/^[^=]*=/, ""); print }' install/providers.env | paste -sd, -)
 
 #-----------------------------------------------------------------------------
 # Server

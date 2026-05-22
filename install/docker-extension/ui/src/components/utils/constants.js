@@ -18,7 +18,19 @@ export const REMOTE_PROVIDERS = [
     {
         name: "Meshery",
         url: "https://cloud.meshery.io",
-    }
+    },
+    {
+        name: "Intel",
+        url: "https://perf.smp-spec.io",
+    },
+    {
+        name: "Layer5",
+        url: "https://cloud.layer5.io",
+    },
+    {
+        name: "TCS Labs",
+        url: "https://meshery.tcs-labs.in",
+    },
     // END AUTO-GENERATED
 ];
 
