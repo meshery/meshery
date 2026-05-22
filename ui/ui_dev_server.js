@@ -9,6 +9,15 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 var httpProxy = require('http-proxy');
 
+function printDevCompilationNotice(port) {
+  const url = `http://localhost:${port}`;
+  console.info('ℹ️ Meshery UI uses on-demand compilation in development mode.');
+  console.info(
+    `Open http://localhost:3000 in your browser (or ${url} if PORT is set) to start compiling pages.`,
+  );
+  console.info('If compilation does not begin, refresh the browser once.');
+}
+
 var proxy = httpProxy.createProxyServer({ target: { host: 'localhost', port: 9081 } });
 
 proxy.on('error', function (err, req, res) {
@@ -47,5 +56,8 @@ app.prepare().then(() => {
   server.listen(port, (err) => {
     if (err) throw err;
     console.log(`> Ready on http://localhost:${port}`);
+    if (dev) {
+      printDevCompilationNotice(port);
+    }
   });
 });
