@@ -173,6 +173,12 @@ type listMeta struct {
 
 // WriteAPIResponse encodes data as the canonical single-resource response.
 // If status is 0 or negative, it defaults to 200.
+//
+// Example output:
+//
+//	{
+//	  "data": { "id": "abc-123", "name": "my-design" }
+//	}
 func WriteAPIResponse(w http.ResponseWriter, status int, data any) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
@@ -190,6 +196,21 @@ func WriteAPIResponse(w http.ResponseWriter, status int, data any) {
 //
 // Pass page=0, pageSize=0, totalCount=0 to omit the meta block (for
 // non-paginated endpoints that still return a list under "data").
+//
+// Example outputs:
+//
+// Paginated:
+//
+//	{
+//	  "data": [ { "id": "abc" }, { "id": "def" } ],
+//	  "meta": { "page": 1, "pageSize": 25, "totalCount": 42 }
+//	}
+//
+// Non-paginated (meta omitted):
+//
+//	{
+//	  "data": [ { "id": "abc" }, { "id": "def" } ]
+//	}
 func WriteAPIListResponse(w http.ResponseWriter, status int, data any, page, pageSize, totalCount int) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
