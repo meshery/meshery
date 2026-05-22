@@ -81,11 +81,13 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 		}
 
 		var envMappings []envWithConnID
-		cp.DB.Table("environment_connection_mappings").
+		if err := cp.DB.Table("environment_connection_mappings").
 			Joins("LEFT JOIN environments ON environments.id = environment_connection_mappings.environment_id").
 			Select("environments.*, environment_connection_mappings.connection_id").
 			Where("environment_connection_mappings.connection_id IN ?", connectionIDs).
-			Find(&envMappings)
+			Find(&envMappings).Error; err != nil {
+			return nil, fmt.Errorf("error fetching environments for connections: %v", err)
+		}
 
 		envsByConnID := make(map[core.Uuid][]*environments.EnvironmentData)
 		for i := range envMappings {
