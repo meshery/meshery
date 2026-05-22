@@ -30,7 +30,7 @@ docker-build:
 docker-playground-build:
 	# `make docker-playground-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t meshery/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) --build-arg PLAYGROUND=true .
+	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t meshery/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) --build-arg PLAYGROUND=true .
 
 ## Build Meshery Server and UI container for e2e testing.
 docker-testing-env-build:
@@ -56,7 +56,7 @@ docker-local-cloud:
 docker-cloud:
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
-	-e PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	-e PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
 	-e KEYS_PATH=$(KEYS_PATH) \
@@ -69,7 +69,7 @@ docker-cloud:
 ## Remote Provider for user authentication.
 docker-testing-env:
 	docker run --rm --name mesherytesting  -d \
-	-e PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	-e PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
 	-e KEYS_PATH=$(KEYS_PATH) \
@@ -104,7 +104,7 @@ server-local: dep-check
 build-server: dep-check
 	cd server; cd cmd; go mod tidy; cd "../.."
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD),$(LAYER5_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -117,7 +117,7 @@ build-server: dep-check
 server-binary:
 	cd server/cmd; \
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -168,7 +168,7 @@ server: dep-check
 server-with-adapters: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -181,7 +181,7 @@ server-with-adapters: dep-check
 server-without-operator: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DISABLE_OPERATOR=true \
 	DEBUG=true \
@@ -194,7 +194,7 @@ server-without-operator: dep-check
 server-skip-compgen:
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -209,7 +209,7 @@ server-without-k8s: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	REGISTER_STATIC_K8S=false \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -221,7 +221,7 @@ server-remote-provider: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER=$(REMOTE_PROVIDER) \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -245,7 +245,7 @@ server-local-provider: dep-check
 server-no-content:
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -258,7 +258,7 @@ server-playground: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER=$(REMOTE_PROVIDER) \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -290,6 +290,9 @@ error-util:
 
 ## Build Meshery UI; Build and run Meshery Server on your local machine.
 ui-server: ui-meshery-build ui-provider-build server
+
+## Build Meshery UI, Server, and point to locally hosted Remote Provider
+ui-server-local: ui-meshery-build ui-provider-build server-local
 
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds.
