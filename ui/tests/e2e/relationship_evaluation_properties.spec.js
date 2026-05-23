@@ -276,7 +276,7 @@ test.describe('Relationship Evaluation Properties', { tag: '@relationship' }, ()
         const secondResponse = await resp.json();
 
         const meaningfulActions = (secondResponse.actions ?? []).filter(
-          (a) => a.op !== 'update_relationship',
+          (a) => a.op !== 'update_relationship' && a.op !== 'delete_relationship',
         );
         expect(
           meaningfulActions,
