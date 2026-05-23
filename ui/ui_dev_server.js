@@ -13,7 +13,7 @@ function printDevCompilationNotice(port) {
   const url = `http://localhost:${port}`;
   console.info('ℹ️ Meshery UI uses on-demand compilation in development mode.');
   console.info(
-    `Open http://localhost:3000 in your browser (or ${url} if PORT is set) to start compiling pages.`,
+    `Open http://localhost:${port} in your browser (or ${url} if PORT is set) to start compiling pages.`,
   );
   console.info('If compilation does not begin, refresh the browser once.');
 }
@@ -27,9 +27,8 @@ proxy.on('error', function (err, req, res) {
 
 app.prepare().then(() => {
   let server = createServer((req, res) => {
-    // Be sure to pass `true` as the second argument to `url.parse`.
-    // This tells it to parse the query portion of the URL.
     const { pathname } = parse(req.url, true);
+
     if (
       pathname.startsWith('/api') ||
       pathname.startsWith('/user/logout') ||
@@ -45,6 +44,7 @@ app.prepare().then(() => {
 
   server.on('upgrade', (req, socket, head) => {
     const { pathname } = parse(req.url, true);
+
     if (!pathname.startsWith('/_next/webpack-hmr')) {
       proxy.ws(req, socket, head, (err) => {
         socket.write('HTTP/' + req.httpVersion + ' 500 Connection error\r\n\r\n');
@@ -56,7 +56,8 @@ app.prepare().then(() => {
   server.listen(port, (err) => {
     if (err) throw err;
     console.log(`> Ready on http://localhost:${port}`);
-    if (dev) {
+
+    if (process.env.NODE_ENV !== 'production') {
       printDevCompilationNotice(port);
     }
   });

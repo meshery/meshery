@@ -22,6 +22,7 @@ vi.mock('@sistent/sistent', () => ({
     title: string;
   }) => {
     plainCardSpy({ resources, title });
+
     return (
       <div data-testid="plain-card" data-title={title}>
         {icon}
@@ -48,23 +49,27 @@ import HelpCenterWidget from './HelpCenterWidget';
 describe('HelpCenterWidget', () => {
   it('renders the help center title and document icon', () => {
     plainCardSpy.mockReset();
+
     render(<HelpCenterWidget />);
+
     expect(screen.getByTestId('plain-card')).toHaveAttribute('data-title', 'HELP CENTER');
+
     expect(screen.getByTestId('document-icon')).toBeInTheDocument();
   });
 
   it('renders the documented set of help center resources', () => {
     plainCardSpy.mockReset();
+
     render(<HelpCenterWidget />);
 
     const links = screen.getAllByTestId('link');
 
-    // check that links exist
+    // must render links
     expect(links.length).toBeGreaterThan(0);
 
-    // verify important resources by URL instead of fragile text labels
     const hrefs = links.map((a) => a.getAttribute('href'));
 
+    // flexible validation (stable)
     expect(hrefs).toEqual(
       expect.arrayContaining([
         expect.stringContaining('docs'),
@@ -73,11 +78,20 @@ describe('HelpCenterWidget', () => {
         expect.stringContaining('support'),
       ]),
     );
+
+    // strong validation for critical support link (IMPORTANT)
+    const support = links.find((a) => a.textContent === 'Support Request');
+
+    expect(support).toBeTruthy();
+
+    expect(support).toHaveAttribute('href', 'https://cloud.meshery.io/support');
   });
 
   it('passes one DesignIcon per resource to the PlainCard', () => {
     plainCardSpy.mockReset();
+
     render(<HelpCenterWidget />);
+
     expect(plainCardSpy.mock.calls[0][0].resources).toHaveLength(5);
   });
 });
