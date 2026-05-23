@@ -14,6 +14,7 @@ import (
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
+	system "github.com/meshery/schemas/models/v1beta1/system"
 	"github.com/spf13/viper"
 	"gorm.io/gorm/clause"
 )
@@ -21,7 +22,7 @@ import (
 const maxDatabaseBackups = 5
 
 func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	var tables []*models.SqliteSchema
+	var tables []system.SystemDatabaseTable
 	var recordCount int
 	var totalTables int64
 	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
@@ -52,12 +53,12 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 
 	tableFinder.Find(&tables)
 
-	for _, table := range tables {
-		h.dbHandler.DB.Table(table.Name).Count(&table.Count)
-		recordCount += int(table.Count)
+	for i := range tables {
+		h.dbHandler.DB.Table(tables[i].Name).Count(&tables[i].Count)
+		recordCount += int(tables[i].Count)
 	}
 
-	databaseSummary := &models.DatabaseSummary{
+	databaseSummary := &system.SystemDatabaseSummary{
 		Page:        page,
 		PageSize:    limit,
 		TotalTables: int(totalTables),
@@ -182,7 +183,7 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			models.SeedComponents(h.log, h.config, h.registryManager)
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		}()
-		writeJSONMessage(w, map[string]string{"message": "Database reset successful"}, http.StatusOK)
+		writeJSONMessage(w, system.SystemMessageResponse{Message: "Database reset successful"}, http.StatusOK)
 	}
 }
 

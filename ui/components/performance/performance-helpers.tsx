@@ -50,7 +50,7 @@ export function generatePerformanceProfile(data) {
   };
 }
 
-export const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
+export const loadGenerators = ['fortio'];
 
 export const infoFlags = <>Only .json files are supported.</>;
 
@@ -64,12 +64,6 @@ export const infoloadGenerators = (
         fortio - Fortio load testing library, command line tool, advanced echo server and web UI in
         go (golang). Allows to specify a set query-per-second load and record latency histograms and
         other useful stats.{' '}
-      </li>
-      <li> wrk2 - A constant throughput, correct latency recording variant of wrk.</li>
-      <li>
-        {' '}
-        nighthawk - Enables users to run distributed performance tests to better mimic real-world,
-        distributed systems scenarios.
       </li>
     </ul>
     <Link

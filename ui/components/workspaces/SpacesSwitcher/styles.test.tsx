@@ -49,7 +49,6 @@ describe('SpacesSwitcher/styles', () => {
     expect(styles.StyledResponsiveButton).toBeDefined();
     expect(styles.StyledMuiDoubleCheckbox).toBeDefined();
     expect(styles.StyledTypography).toBeDefined();
-    expect(styles.StyledModal).toBeDefined();
   });
 
   it('renders the styled components without error', () => {

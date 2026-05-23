@@ -82,8 +82,9 @@ vi.mock('./CreateModelModal', () => ({
     isCreateModalOpen ? <div data-testid="create-modal" /> : null,
 }));
 
-vi.mock('@/components/relationship-builder/CreateRelationshipModal', () => ({
-  default: ({ open }: any) => (open ? <div data-testid="create-relationship-modal" /> : null),
+vi.mock('./CreateRelationshipModal', () => ({
+  default: ({ isRelationshipModalOpen }: any) =>
+    isRelationshipModalOpen ? <div data-testid="create-relationship-modal" /> : null,
 }));
 
 vi.mock('css/icons.styles', () => ({
