@@ -9,11 +9,20 @@ vi.mock('@sistent/sistent', () => ({
 vi.mock('../../../assets/icons/ConfigurationIcon', () => ({
   default: () => <svg data-testid="configuration-icon" />,
 }));
+vi.mock('../../../assets/icons/Connection', () => ({
+  default: () => <svg data-testid="connection-icon" />,
+}));
 vi.mock('@/assets/icons/DashboardIcon', () => ({
   default: () => <svg data-testid="dashboard-icon" />,
 }));
+vi.mock('../../../assets/icons/Environment', () => ({
+  default: () => <svg data-testid="environment-icon" />,
+}));
 vi.mock('../../../assets/icons/ServiceMeshIcon', () => ({
   default: () => <svg data-testid="service-mesh-icon" />,
+}));
+vi.mock('../../../assets/icons/WorkspaceOutlined', () => ({
+  default: () => <svg data-testid="workspace-outlined-icon" />,
 }));
 vi.mock('../../../public/static/img/drawer-icons/lifecycle_mgmt_svg', () => ({
   default: () => <svg data-testid="lifecycle-icon" />,

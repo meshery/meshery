@@ -3,7 +3,7 @@ import type { Theme } from '@sistent/sistent';
 /**
  * Meshery UI theme entry point.
  *
- * This module is a thin wrapper around {@link https://github.com/layer5io/sistent Sistent},
+ * This module is a thin wrapper around Sistent,
  * the Meshery design system. It exists so that every consumer in the
  * Meshery UI imports theme primitives (`useTheme`, `styled`, `alpha`,
  * `lighten`, ...) from a single, project-local path.

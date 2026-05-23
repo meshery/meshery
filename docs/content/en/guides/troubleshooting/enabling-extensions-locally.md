@@ -38,7 +38,7 @@ Problems with tightly-coupled extensions are often **not traditional code bugs**
 
 You don't have permission to access the private code repository. This means:
 - You **cannot build the extension from source**
-- Your only option is using a [pre-built package](https://github.com/layer5labs/meshery-extensions-packages)
+- Your only option is using a [pre-built package](https://github.com/meshery-extensions/meshery-extensions-packages)
 
 #### The dependency mismatch problem
 
@@ -53,7 +53,7 @@ Tightly-coupled plugins require **exact package matches** between the extension 
 
 Given that you cannot build the extension from source, a solution typically requires seeking assistance.
 
-While you can attempt to experiment by manually testing different versions of packages from the [meshery-extensions-packages](https://github.com/layer5labs/meshery-extensions-packages) repository, this trial-and-error method is not guaranteed to work.
+While you can attempt to experiment by manually testing different versions of packages from the [meshery-extensions-packages](https://github.com/meshery-extensions/meshery-extensions-packages) repository, this trial-and-error method is not guaranteed to work.
 
 The most reliable path forward is to:
 - **Seek assistance:** Ask for guidance in the [Meshery community](/project/community).

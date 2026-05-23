@@ -206,7 +206,7 @@ vi.mock('./HeaderMenu', () => ({
   default: () => <div data-testid="header-menu" />,
 }));
 
-vi.mock('../../shared/Modal/ConnectionModal', () => ({
+vi.mock('../../connections/ConnectionFormModal', () => ({
   default: ({ isOpenModal }: any) => (isOpenModal ? <div data-testid="connection-modal" /> : null),
 }));
 
