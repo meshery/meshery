@@ -1,5 +1,5 @@
 import React from 'react';
-import MesheryFilters from '../../components/MesheryFilters/Filters';
+import MesheryFilters from '@/components/filters/Filters';
 import { MesheryPage, PageContainer } from '../../components/MesheryPage';
 
 function NewFilters() {

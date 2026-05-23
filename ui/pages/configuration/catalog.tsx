@@ -2,8 +2,8 @@ import React from 'react';
 import { VISIBILITY } from '../../utils/Enum';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import DefaultError from '@/components/General/error-404';
-import MesheryPatterns from '@/components/MesheryPatterns/MesheryPatterns';
+import DefaultError from '@/components/general/error-404/index';
+import MesheryPatterns from '@/components/designs/patterns/MesheryPatterns';
 import { MesheryPage } from '@/components/MesheryPage';
 
 function CatalogPage() {

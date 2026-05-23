@@ -1,5 +1,5 @@
 import React from 'react';
-import MesheryPatterns from '../../../components/MesheryPatterns/MesheryPatterns';
+import MesheryPatterns from '@/components/designs/patterns/MesheryPatterns';
 import { MesheryPage } from '@/components/MesheryPage';
 
 function Patterns() {
