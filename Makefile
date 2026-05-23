@@ -327,7 +327,7 @@ ui-provider-lint: dep-check-node
 ui-provider-test: dep-check-node
 	cd provider-ui; npm run test; cd ..
 
-## Buils all Meshery UIs  on your local machine.
+## Builds all Meshery UIs  on your local machine.
 ui-build: ui-setup
 	cd ui; npm run lint:fix || echo "Warning: Lint issues detected in ui but continuing build"; npm run build; cd ..
 	cd provider-ui; npm run lint:fix || echo "Warning: Lint issues detected in provider-ui but continuing build"; npm run build; cd ..

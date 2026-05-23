@@ -29,7 +29,7 @@ Milestones on Meshery's high-level roadmap:
 **Lifecycle Management**
 
 - [CLI] Create `mesh` (adapter operations)
-- [CLI] pervasive kubernetes support
+- [CLI] pervasive Kubernetes support
 - [CLI] Initial `patterns` support
 - [CLI] Refactoring `perf` to support SMP better
 - [CLI] Confirm support for Linux, Windows, and MacOS across all current commands
@@ -91,7 +91,7 @@ Milestones on Meshery's high-level roadmap:
 **Lifecycle Management**
 
 - [Server/UI] Robust Model Generator
-- [Server/UI] 25% coverage of Relationships all Models
+- [Server/UI] 25% coverage of Relationships across all Models
 - [Server/UI] Model Import/Export, OCI, Extensible
 - [Server] Initial GCP and AWS as Models
 - [Server] Initial Environments and Workspaces
@@ -101,7 +101,7 @@ Code coverage goal: 25%
 
 - [Server] Component Generator: Direct Chart or Manifest (Operatorhub)
 - [Server] Registry: Model import/export; OCI
-- [CLI] Support for commands: model, component, releationship, registry, environment, connection, credential
+- [CLI] Support for commands: model, component, relationship, registry, environment, connection, credential
 
 **Extensibility**
 
