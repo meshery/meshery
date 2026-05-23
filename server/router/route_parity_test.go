@@ -3,6 +3,7 @@ package router
 import (
 	"context"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/gorilla/mux"
@@ -425,4 +426,71 @@ func TestRouteParity(t *testing.T) {
 		t.Fatal("Walk returned zero routes")
 	}
 	t.Logf("Total unique route paths: %d", len(paths))
+}
+
+// TestRouteOrdering verifies that domain route files are registered in the same
+// order as the original monolithic server.go, using a unique marker route from
+// each registerXxxRoutes function. Since Gorilla Mux matches the first
+// registered route for overlapping patterns, preserving order is semantically
+// important.
+func TestRouteOrdering(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping route ordering test in short mode")
+	}
+
+	h := &mockHandler{}
+	r := NewRouter(context.Background(), h, 0, http.DefaultServeMux, http.DefaultServeMux)
+	if r == nil {
+		t.Fatal("NewRouter returned nil")
+	}
+
+	// A unique marker route from each domain file, listed in the expected
+	// registration order that mirrors the original server.go.
+	type domainMarker struct {
+		name   string
+		marker string // a route path that appears in this domain file
+	}
+	markers := []domainMarker{
+		{"System", "/api/system/graphql/query"},
+		{"Auth", "/api/provider/capabilities"},
+		{"Patterns", "/api/pattern/deploy"},
+		{"Performance", "/api/perf/profile"},
+		{"Kubernetes", "/api/system/kubernetes"},
+		{"Telemetry", "/api/telemetry/metrics/grafana/config"},
+		{"Mesh", "/api/system/adapter/manage"},
+		{"Remaining", "/api/integrations/credentials"},
+	}
+
+	var paths []string
+	_ = r.S.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
+		if p, _ := route.GetPathTemplate(); p != "" {
+			paths = append(paths, p)
+		}
+		return nil
+	})
+
+	if len(paths) == 0 {
+		t.Fatal("Walk returned zero routes")
+	}
+
+	lastPos := -1
+	for _, m := range markers {
+		pos := -1
+		for i, p := range paths {
+			if strings.HasPrefix(p, m.marker) {
+				pos = i
+				break
+			}
+		}
+		if pos < 0 {
+			t.Errorf("domain %q marker route %q not found in registered routes", m.name, m.marker)
+			continue
+		}
+		if pos < lastPos {
+			t.Errorf("domain %q (first route %q at position %d) registered out of order: expected position >= %d",
+				m.name, m.marker, pos, lastPos)
+		}
+		lastPos = pos
+		t.Logf("domain %-12s marker %-55s position %d", m.name, m.marker, pos)
+	}
 }
