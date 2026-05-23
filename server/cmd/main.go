@@ -56,8 +56,10 @@ var (
 const (
 	// DefaultProviderURL is the ProviderBaseURL stamped on the built-in local
 	// provider. It is used for capability/package paths only; the local
-	// provider does not authenticate against this URL.
-	DefaultProviderURL = "https://cloud.meshery.io"
+	// provider does not authenticate against this URL. Sourced from the canonical
+	// primary provider host (install/providers.env) so it cannot drift from the
+	// PROVIDER_BASE_URLS default seeded into viper below.
+	DefaultProviderURL = models.PrimaryProviderURL
 	RelationshipsPath  = "../meshmodel/kubernetes/"
 )
 
@@ -122,6 +124,9 @@ func main() {
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
 	viper.SetDefault("INSTANCE_ID", &instanceID)
 	viper.SetDefault(constants.ProviderENV, "")
+	// Seed the canonical active remote-provider list (install/providers.env) so a
+	// server started without PROVIDER_BASE_URLS still registers the default providers.
+	viper.SetDefault(constants.ProviderURLsENV, models.DefaultRemoteProviderURLs)
 	viper.SetDefault("REGISTER_STATIC_K8S", true)
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
 	viper.SetDefault("SKIP_DOWNLOAD_EXTENSIONS", false)

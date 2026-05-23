@@ -16,6 +16,19 @@ include install/Makefile.core.mk
 include install/Makefile.show-help.mk
 
 #-----------------------------------------------------------------------------
+# Install artifact generation
+#-----------------------------------------------------------------------------
+.PHONY: generate-install check-install
+
+## Propagate install/providers.env to every generated install artifact.
+generate-install:
+	python3 install/scripts/sync-provider-urls.py
+
+## Verify generated install artifacts are in sync with install/providers.env (CI gate).
+check-install:
+	python3 install/scripts/sync-provider-urls.py --check
+
+#-----------------------------------------------------------------------------
 # Docker-based Builds
 #-----------------------------------------------------------------------------
 .PHONY: docker-build docker-local-cloud docker-cloud docker-playground-build docker-testing-env-build docker-testing-env
