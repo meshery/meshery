@@ -10,6 +10,9 @@ const PROVIDERS = {
 
 // Authenticate as the built-in Local provider and persist the auth state.
 setup('authenticate as Local provider', async ({ page, provider }) => {
+  // Increase timeout for authentication setup (default 60s → 120s)
+  setup.setTimeout(120000);
+
   console.log(`Provider in auth setup: ${provider}`);
 
   // Perform authentication steps. Replace these actions with your own.
