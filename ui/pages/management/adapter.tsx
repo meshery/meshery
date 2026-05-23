@@ -1,20 +1,11 @@
-import { NoSsr } from '@sistent/sistent';
-import Head from 'next/head';
 import React from 'react';
 import MesheryPlayComponent from '../../components/MesheryPlayComponent';
-import { usePageTitle } from '@/utils/hooks';
+import { MesheryPage } from '../../components/MesheryPage';
 
-const Manage = () => {
-  usePageTitle('Adapter');
-
-  return (
-    <NoSsr>
-      <Head>
-        <title>Adapter | Meshery </title>
-      </Head>
-      <MesheryPlayComponent />
-    </NoSsr>
-  );
-};
+const Manage = () => (
+  <MesheryPage title="Adapter">
+    <MesheryPlayComponent />
+  </MesheryPage>
+);
 
 export default Manage;
