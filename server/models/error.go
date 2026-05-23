@@ -306,7 +306,7 @@ func ErrRemoteProviderCapabilities(err error) error {
 		ErrRemoteProviderCapabilitiesCode,
 		errors.Alert,
 		[]string{"Failed to load capabilities from remote provider"},
-		[]string{fmt.Sprintf("Meshery Server could not retrieve the feature manifest from the remote provider: %v", err)},
+		[]string{"Meshery Server could not retrieve the feature manifest from the remote provider."},
 		[]string{"Remote provider is unreachable, the manifest endpoint is down, or the response is malformed."},
 		[]string{"Verify the remote provider is reachable, check its manifest endpoint, and retry."},
 	)
