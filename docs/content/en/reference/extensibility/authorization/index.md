@@ -29,6 +29,71 @@ Meshery UI does **not** import the generated `typescript/permissions.ts` from sc
 
 Meshery Server does not call a `HasPermission` helper today. UI authorization is enforced client-side via CASL; Remote Providers enforce authorization on their own backend using the generated Go constants from schemas.
 
+#### End-to-End Manifest Example
+
+The following uses the existing **Create Workspace** permission to show how the same key appears across each layer. Substitute your own UUID, function name, and constant when adding a new key.
+
+**1. Provider key manifest** — returned by `GET /api/identity/orgs/{orgId}/users/keys` in the canonical [`Key`](https://github.com/meshery/schemas/blob/master/schemas/constructs/v1beta2/key/key.yaml) format:
+
+{{< code code=`{
+  "page": 0,
+  "pageSize": 100,
+  "totalCount": 1,
+  "keys": [
+    {
+      "id": "eb42ac41-a883-465e-843c-d64e962a3a0e",
+      "owner": "00000000-0000-0000-0000-000000000000",
+      "function": "Create Workspace",
+      "category": "Workspace Management",
+      "subcategory": "Workspace",
+      "description": "Create new workspace",
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z"
+    }
+  ]
+}` >}}
+
+**2. UI constant map** — entry in [`ui/utils/permission_constants.ts`](https://github.com/meshery/meshery/blob/master/ui/utils/permission_constants.ts) (`subject` must match `function`; `action` must match `id`):
+
+{{< code code=`CREATE_WORKSPACE: {
+  subject: 'Create Workspace',
+  action: 'eb42ac41-a883-465e-843c-d64e962a3a0e',
+},` >}}
+
+**3. Local Provider seed row** — entry in [`server/permissions/keys.csv`](https://github.com/meshery/meshery/blob/master/server/permissions/keys.csv) (only rows with `Local Provider = TRUE` are registered):
+
+{{< code code=`Workspace,Create Workspace,Create new workspace,...,Workspace Management,eb42ac41-a883-465e-843c-d64e962a3a0e,X,TRUE` >}}
+
+**4. CASL ability mapping** — [`ui/rtk-query/ability.tsx`](https://github.com/meshery/meshery/blob/master/ui/rtk-query/ability.tsx) converts provider keys into runtime abilities:
+
+{{< code code=`const abilities = data?.keys?.map((key) => ({
+  action: key.id,
+  subject: _.lowerCase(key.function),
+}));` >}}
+
+**5. Minimal working UI component** — gate a control with `CAN(...)`:
+
+{{< code code=`import React from 'react';
+import { Button } from '@mui/material';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
+
+export const CreateWorkspaceButton = ({ onCreate }) => {
+  const canCreate = CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject);
+
+  if (!canCreate) {
+    return null;
+  }
+
+  return (
+    <Button variant="contained" onClick={onCreate}>
+      Create Workspace
+    </Button>
+  );
+};` >}}
+
+When the user holds this key, CASL evaluates `can('eb42ac41-a883-465e-843c-d64e962a3a0e', 'create workspace')` as `true` and the button renders.
+
 #### Prerequisites
 
 Clone both repositories locally and install Node.js and Go:
@@ -130,7 +195,7 @@ Also mirror the same entry in [`docs/static/js/permission_constants.js`](https:/
 
 #### Step 7: Gate UI with `CAN`
 
-Import `CAN` and `keys`, then conditionally render or disable the control:
+See the [minimal working UI component](#end-to-end-manifest-example) in the end-to-end example above. In an existing page, import `CAN` and `keys`, then conditionally render or disable the control:
 
 {{< code code=`import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -143,7 +208,7 @@ return (
   </Button>
 );` >}}
 
-This matches production usage in components such as [`ui/components/workspaces/index.tsx`](https://github.com/meshery/meshery/blob/master/ui/components/workspaces/index.tsx).
+This matches production usage in [`ui/components/workspaces/index.tsx`](https://github.com/meshery/meshery/blob/master/ui/components/workspaces/index.tsx).
 
 #### Step 8: Verify End-to-End
 
@@ -157,12 +222,6 @@ From `meshery/meshery`:
 make docs-build` >}}
 
 Then run Meshery locally, assign a role that includes your new key, and confirm the gated UI element appears only when the user holds the permission. For Local Provider testing, restart Meshery Server (or reset the database) after `keys.csv` contains your key with `Local Provider = TRUE`.
-
-#### Using Generated Go Constants (Remote Providers)
-
-Remote Providers and other Go services import constants from `github.com/meshery/schemas/models/permissions`. The constant for a key is `<Theme><Function>` in PascalCase—for example, `permissions.WorkspaceManagementCreateWorkspace`.
-
-Meshery Server itself does not import this package for request-handler checks today. If you are building authorization logic in a Remote Provider, consume the generated constant UUID there using your provider's own enforcement mechanism.
 
 #### Using Permission Keys in Meshery UI
 
