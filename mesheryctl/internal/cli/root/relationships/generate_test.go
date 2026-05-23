@@ -24,7 +24,7 @@ func resetGenerateFlags() {
 	// Reset Cobra's internal flag state to prevent bleed between tests
 	generateCmd.Flags().VisitAll(func(f *pflag.Flag) {
 		f.Changed = false
-		f.Value.Set(f.DefValue)
+		_ = f.Value.Set(f.DefValue)
 	})
 }
 
