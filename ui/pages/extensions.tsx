@@ -271,7 +271,7 @@ const MesheryDesignEmbedExtension = () => (
           variant="contained"
           color="primary"
           data-testid="design-embed-learn-more-btn"
-          onClick={openExternal('https://meshery.io/extensions/meshery-design-embed/')}
+          onClick={openExternal('https://docs.meshery.io/extensions')}
         >
           Learn More
         </Button>
