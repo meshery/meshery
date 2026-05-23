@@ -11,53 +11,41 @@ vi.mock('@sistent/sistent', () => ({
       {label}
     </label>
   ),
-  Button: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
   FormControl: ({ children }: any) => <div>{children}</div>,
   RadioGroup: ({ children }: any) => <div>{children}</div>,
   Radio: () => <input type="radio" />,
   Typography: ({ children }: any) => <span>{children}</span>,
-  ModalFooter: ({ children }: any) => <div data-testid="modal-footer">{children}</div>,
   Box: ({ children }: any) => <div>{children}</div>,
-  Modal: ({ children, open, title }: any) =>
-    open ? <div data-testid={`modal-${title}`}>{children}</div> : null,
-  useTheme: () => ({
-    palette: { background: { surfaces: '#fff' } },
-  }),
+  ModalButtonPrimary: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
 }));
 
-vi.mock('@meshery/schemas', () => ({
-  ModelImportRjsfSchemaV1Beta2: {
-    title: 'Import',
-    properties: { uploadType: { enumNames: ['File', 'URL', 'CSV'] } },
-    allOf: [],
-  },
-  ModelImportRjsfUiSchemaV1Beta2: {},
-}));
-
-vi.mock('@/components/shared/Modal/Modal', () => ({
-  RJSFModalWrapper: ({ handleSubmit, helpText }: any) => (
-    <div data-testid="rjsf-wrapper">
-      {helpText}
-      <button
-        data-testid="submit-url"
-        onClick={() => handleSubmit({ uploadType: 'urlImport', url: 'https://x.com' })}
-      >
-        submit-url
-      </button>
-      <button
-        data-testid="submit-empty-url"
-        onClick={() => handleSubmit({ uploadType: 'urlImport', url: '' })}
-      >
-        submit-empty-url
-      </button>
-      <button data-testid="submit-csv" onClick={() => handleSubmit({ uploadType: 'csv' })}>
-        submit-csv
-      </button>
-      <button data-testid="submit-invalid" onClick={() => handleSubmit({ uploadType: 'unknown' })}>
-        submit-invalid
-      </button>
-    </div>
-  ),
+vi.mock('@/components/shared/Modal', () => ({
+  Modal: ({ isOpen, title, children }: any) =>
+    isOpen ? <div data-testid={`modal-${title}`}>{children}</div> : null,
+  FormModal: ({ isOpen, title, helpText, onSubmit }: any) =>
+    isOpen ? (
+      <div data-testid={`modal-${title}`}>
+        <div data-testid="rjsf-wrapper">{helpText}</div>
+        <button
+          data-testid="submit-url"
+          onClick={() => onSubmit({ uploadType: 'urlImport', url: 'https://x.com' })}
+        >
+          submit-url
+        </button>
+        <button
+          data-testid="submit-empty-url"
+          onClick={() => onSubmit({ uploadType: 'urlImport', url: '' })}
+        >
+          submit-empty-url
+        </button>
+        <button data-testid="submit-csv" onClick={() => onSubmit({ uploadType: 'csv' })}>
+          submit-csv
+        </button>
+        <button data-testid="submit-invalid" onClick={() => onSubmit({ uploadType: 'unknown' })}>
+          submit-invalid
+        </button>
+      </div>
+    ) : null,
 }));
 
 vi.mock('./Stepper/CSVStepper', () => ({
@@ -68,8 +56,10 @@ vi.mock('@/constants/endpoints', () => ({
   MESHERY_DOCS_URL: 'https://docs.meshery.io',
 }));
 
-vi.mock('@/utils/utils', () => ({
-  getUnit8ArrayDecodedFile: (d: any) => (d ? [1, 2, 3] : null),
+vi.mock('@/theme', () => ({
+  useTheme: () => ({
+    palette: { background: { surfaces: '#fff' } },
+  }),
 }));
 
 vi.mock('@/rtk-query/meshModel', () => ({
@@ -106,6 +96,22 @@ vi.mock('./Stepper/style', () => ({
   StyledDocsRedirectLink: ({ children, href }: any) => <a href={href}>{children}</a>,
 }));
 
+vi.mock('./importModelSchema', () => ({
+  UPLOAD_TYPE_CSV: 'csv',
+  UPLOAD_TYPE_FILE: 'file',
+  UPLOAD_TYPE_URL: 'urlImport',
+  decodeDataUrlToBytes: (d: any) => (d ? [1, 2, 3] : null),
+  filenameFromDataUrl: () => 'model.yml',
+  findSelectedModelFile: () => null,
+  importModelSchema: { properties: { uploadType: { description: 'Import help text' } } },
+  importModelUiSchema: {},
+  readFileAsBytes: vi.fn(),
+}));
+
+vi.mock('@/utils/hooks/useNotification', () => ({
+  useNotification: () => ({ notify: vi.fn() }),
+}));
+
 vi.mock('@/store/slices/mesheryUi', () => ({
   updateProgress: vi.fn(),
 }));
@@ -115,6 +121,7 @@ import ImportModelModal from './ImportModelModal';
 describe('ImportModelModal', () => {
   beforeEach(() => {
     importModelReq.mockReset();
+    importModelReq.mockReturnValue({ unwrap: () => Promise.resolve({}) });
   });
 
   it('renders the main Import Model modal when open', () => {
@@ -129,10 +136,11 @@ describe('ImportModelModal', () => {
     expect(screen.queryByTestId('modal-Import Model')).not.toBeInTheDocument();
   });
 
-  it('calls importModelReq on URL submission with a non-empty url', () => {
+  it('calls importModelReq on URL submission with a non-empty url', async () => {
     render(<ImportModelModal isImportModalOpen={true} setIsImportModalOpen={vi.fn()} />);
 
     fireEvent.click(screen.getByTestId('submit-url'));
+    await Promise.resolve();
     expect(importModelReq).toHaveBeenCalled();
   });
 
@@ -160,8 +168,6 @@ describe('ImportModelModal', () => {
 
     fireEvent.click(screen.getByTestId('submit-csv'));
     expect(setIsImportModalOpen).toHaveBeenCalledWith(false);
-    // The CSV modal should now be open since handleClose closes the import modal
-    // and sets the CSV one open.
     expect(screen.getByTestId('modal-Import CSV')).toBeInTheDocument();
   });
 });

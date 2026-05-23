@@ -8,10 +8,15 @@ import {
   charcoal,
 } from "@sistent/sistent";
 export const CustomDiv = styled("div")(({ theme }) => ({
-  width: "60%",
+  width: "100%",
+  maxWidth: theme.spacing(52),
   marginLeft: "auto",
   marginRight: "auto",
-  marginTop: theme.spacing(3),
+  marginTop: theme.spacing(4),
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: theme.spacing(3),
 }));
 
 export const CustomTypography = styled(Typography)(({ theme }) => ({
@@ -69,11 +74,24 @@ export const StyledPopover = styled(Popover)(({ theme }) => ({
     color: theme.palette.text.default,
   },
 }));
-export const LearnMore = styled("div")(() => ({
-  marginLeft: "auto",
-  marginRight: "auto",
-  marginTop: "3rem",
-  "& :hover": {
-    cursor: "pointer",
+export const LearnMore = styled("a")(({ theme }) => ({
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  color: theme.palette.text.inverse,
+  textDecoration: "none",
+  fontSize: "1rem",
+  lineHeight: 1.4,
+  fontWeight: 500,
+  cursor: "pointer",
+  transition: "color 120ms ease, opacity 120ms ease",
+  "&:hover": {
+    textDecoration: "underline",
+    opacity: 0.92,
+  },
+  "&:focus-visible": {
+    outline: `2px solid ${theme.palette.primary.main}`,
+    outlineOffset: "4px",
+    borderRadius: "4px",
   },
 }));

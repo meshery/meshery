@@ -130,7 +130,7 @@ const buildLifecycleIcon = (adapterName, href, currentPath) => {
   const normalizedName = adapterName?.toLowerCase();
   const image = normalizedName
     ? `/static/img/${normalizedName}-light.svg`
-    : '/static/img/meshery-logo.png';
+    : '/static/img/meshery-logo/meshery-logo.png';
 
   return (
     <img
@@ -151,7 +151,7 @@ const resolveNavigatorComponents = ({
   currentPath,
 }) => {
   const designPersistenceEnabled = Boolean(
-    providerUiAccessControl?.providerCapabilities?.some(
+    providerUiAccessControl?.providerPayload?.providerCapabilities?.some(
       (capability) => capability.feature === 'persist-meshery-patterns',
     ),
   );
@@ -167,7 +167,7 @@ const resolveNavigatorComponents = ({
 
           return {
             ...child,
-            icon: buildLifecycleIcon(child.id, child.href, currentPath),
+            icon: child.icon ?? buildLifecycleIcon(child.id, child.href, currentPath),
             children: buildAdapterChildren(meshAdapters, child.id),
           };
         }),
@@ -175,11 +175,8 @@ const resolveNavigatorComponents = ({
     }
 
     if (category.id === CONFIGURATION) {
-      let show = false;
-
       const children = category.children?.map((child) => {
         if (child.id === 'Designs') {
-          show = designPersistenceEnabled;
           return {
             ...child,
             show: designPersistenceEnabled,
@@ -198,7 +195,6 @@ const resolveNavigatorComponents = ({
 
       return {
         ...category,
-        show,
         children,
       };
     }
@@ -663,16 +659,25 @@ const NavigatorContent = () => {
         >
           {isDrawerCollapsed ? (
             <>
-              <MainLogoCollapsed src="/static/img/meshery-logo.png" onClick={handleTitleClick} />
+              <MainLogoCollapsed
+                src="/static/img/meshery-logo/meshery-logo.png"
+                onClick={handleTitleClick}
+              />
               <MainLogoTextCollapsed
-                src="/static/img/meshery-logo-text.png"
+                src="/static/img/meshery-logo/meshery-logo-text.png"
                 onClick={handleTitleClick}
               />
             </>
           ) : (
             <>
-              <MainLogo src="/static/img/meshery-logo.png" onClick={handleTitleClick} />
-              <MainLogoText src="/static/img/meshery-logo-text.png" onClick={handleTitleClick} />
+              <MainLogo
+                src="/static/img/meshery-logo/meshery-logo.png"
+                onClick={handleTitleClick}
+              />
+              <MainLogoText
+                src="/static/img/meshery-logo/meshery-logo-text.png"
+                onClick={handleTitleClick}
+              />
             </>
           )}
         </StyledListItem>
@@ -756,7 +761,7 @@ const NavigatorContent = () => {
                 <Collapse
                   in={openItems.includes(childId)}
                   style={{
-                    backgroundColor: theme.palette.background.tabs,
+                    backgroundColor: theme.palette.navigation.secondary,
                     opacity: '100%',
                   }}
                 >

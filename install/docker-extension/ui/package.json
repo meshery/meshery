@@ -15,7 +15,6 @@
     "@mui/icons-material": "^7.3.7",
     "@mui/material": "^7.3.7",
     "@mui/styled-engine-sc": "^7.3.7",
-    "@mui/styles": "^6.4.8",
     "@sistent/mui-datatables": "^5.1.4",
     "@sistent/sistent": "0.16.10",
     "@testing-library/jest-dom": "^6.9.1",

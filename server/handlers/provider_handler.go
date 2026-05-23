@@ -10,12 +10,16 @@ import (
 
 // ProviderHandler - handles the choice of provider
 func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
-	provider := r.URL.Query().Get("provider")
-	for _, p := range h.config.Providers {
-		if provider == p.Name() {
+	provider := models.NormalizeProviderName(r.URL.Query().Get("provider"))
+	// Match against the registration map key, not p.Name(). When two
+	// remote URLs report the same providerName from /capabilities, the
+	// server keys the second by its URL host so both stay addressable;
+	// p.Name() would only ever match the first.
+	for key := range h.config.Providers {
+		if provider == key {
 			http.SetCookie(w, &http.Cookie{
 				Name:     h.config.ProviderCookieName,
-				Value:    p.Name(),
+				Value:    key,
 				Path:     "/",
 				HttpOnly: true,
 			})
@@ -33,9 +37,15 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
 	// 	return
 	// }
 
+	// Key the response by the registration map key — that is the value a
+	// client must put in the meshery-provider cookie to route to this
+	// provider. Using p.Name() here would collapse entries whenever two
+	// remote URLs report the same providerName from /capabilities (their
+	// shared name overwrites in the output even though the registration
+	// map disambiguates them by URL host).
 	providers := map[string]models.ProviderProperties{}
-	for _, p := range h.config.Providers {
-		providers[p.Name()] = (p.GetProviderProperties())
+	for key, p := range h.config.Providers {
+		providers[key] = p.GetProviderProperties()
 	}
 	bd, err := json.Marshal(providers)
 	if err != nil {
@@ -73,11 +83,12 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
 // the operator at least gets the provider-chooser page (degraded UX, but
 // reachable) and a clear log line pointing at the deployment misconfig.
 func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
-	if h.Provider != "" {
-		if h.config.Providers[h.Provider] != nil {
+	enforcedProvider := models.NormalizeProviderName(h.Provider)
+	if enforcedProvider != "" {
+		if h.config.Providers[enforcedProvider] != nil {
 			http.SetCookie(w, &http.Cookie{
 				Name:     h.config.ProviderCookieName,
-				Value:    h.Provider,
+				Value:    enforcedProvider,
 				Path:     "/",
 				HttpOnly: true,
 			})
