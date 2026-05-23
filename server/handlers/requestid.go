@@ -9,7 +9,7 @@ import (
 )
 
 // RequestIDMiddleware generates or propagates a unique request ID for every
-// incoming HTTP request.  The ID is:
+// incoming HTTP request. The ID is:
 //  1. Read from the X-Request-ID header if present (for distributed tracing
 //     where an upstream proxy or ingress already assigned one).
 //  2. Generated as a v4 UUID otherwise.
@@ -17,13 +17,20 @@ import (
 // The ID is stored in the request context and set on the response via the
 // X-Request-ID header so clients and downstream middleware can correlate
 // error bodies, log entries, and traces.
+//
+// Downstream propagation: handlers that make outbound calls (gRPC adapters,
+// remote providers, database queries) should extract the request ID via
+// httputil.RequestIDFromRequest(r) and forward it in the outgoing context or
+// metadata headers. Error responses can surface the ID by using
+// httputil.WriteMeshkitErrorWithRequest(w, r, err, status) which populates
+// the "requestId" field in the error envelope.
 func (h *Handler) RequestIDMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		reqID := r.Header.Get("X-Request-ID")
 		if reqID == "" {
 			uid, err := uuid.NewV4()
 			if err != nil {
-				h.log.Warn(fmt.Errorf("failed to generate request ID, falling back to empty"))
+				h.log.Warn(fmt.Errorf("failed to generate request ID for %s %s: %w", r.Method, r.URL.Path, err))
 				reqID = ""
 			} else {
 				reqID = uid.String()

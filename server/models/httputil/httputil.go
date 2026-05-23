@@ -35,11 +35,25 @@ import (
 // response parsers — notably RTK Query's default baseQuery, which parses by
 // Content-Type and treats application/json as JSON — from choking on error
 // bodies that happen to start with a letter (e.g. "WorkspaceID or OrgID ...").
+//
+// To include the requestId from the middleware context, use
+// WriteJSONErrorWithRequest instead.
 func WriteJSONError(w http.ResponseWriter, message string, status int) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(map[string]string{"error": message})
+	_ = json.NewEncoder(w).Encode(errorResponse{Error: message})
+}
+
+// WriteJSONErrorWithRequest is like WriteJSONError but also populates the
+// requestId field from the given *http.Request's context (set by
+// RequestIDMiddleware). Use this in handlers that have access to the request
+// to enable caller-side correlation of error responses.
+func WriteJSONErrorWithRequest(w http.ResponseWriter, r *http.Request, message string, status int) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(status)
+	_ = json.NewEncoder(w).Encode(errorResponse{Error: message, RequestID: RequestIDFromRequest(r)})
 }
 
 // errorResponse is the wire shape for all non-2xx responses from Meshery Server.
