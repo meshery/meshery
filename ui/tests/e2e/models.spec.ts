@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
-import { DashboardPage } from './pages/DashboardPage';
+import { ENV } from './env';
 
 // Strongly typed inline to avoid JS linter false positives
 const model: {
@@ -39,9 +39,11 @@ const model_import: {
 
 test.describe.serial('Model Workflow Tests', () => {
   test.beforeEach(async ({ page }) => {
-    const dashboardPage = new DashboardPage(page);
-    await dashboardPage.navigateToDashboard();
-    await dashboardPage.navigateToSettings();
+    // Direct URL — avoids flaky nav-click chain in CI
+    await page.goto(`${ENV.MESHERY_SERVER_URL}/settings`);
+    await page.waitForSelector('[data-testid="settings-tab-registry"]', {
+      timeout: 30000,
+    });
     await page.getByTestId('settings-tab-registry').click();
   });
 
