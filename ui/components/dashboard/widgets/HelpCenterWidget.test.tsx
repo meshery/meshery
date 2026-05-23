@@ -58,7 +58,7 @@ describe('HelpCenterWidget', () => {
     render(<HelpCenterWidget />);
     const links = screen.getAllByTestId('link');
     const linkSet = new Set(links.map((a) => a.textContent));
-    expect(linkSet).toContain('Cloud Docs');
+    expect(linkSet).toContain('Meshery Docs');
     expect(linkSet).toContain('Slack');
     expect(linkSet).toContain('Discussion Forum');
     expect(linkSet).toContain('Support Request');

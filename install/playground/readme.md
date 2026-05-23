@@ -3,6 +3,21 @@
 
 _Deployment Topology - see Meshery Architecture deck_
 
+## Production (CNCF) Deployment
+
+The live playground (`playground.meshery.io`) runs as the `playground` Deployment in the
+`meshery` namespace on the CNCF cluster (kube-context `prod`). Its canonical spec lives at
+[`kubernetes/playground-deployment.yaml`](kubernetes/playground-deployment.yaml) - apply it
+with `kubectl -n meshery apply -f kubernetes/playground-deployment.yaml`.
+
+Provider configuration is set there: the playground offers only the **Meshery** provider
+(`PROVIDER_BASE_URLS=https://cloud.meshery.io`) and pre-selects it on load
+(`PROVIDER=Meshery`). Releases update only the container image via
+`.github/workflows/cncf-playground-deploy-meshery.yaml` (`kubectl set image`); they do not
+reconcile env, so changes to provider configuration must be applied from the manifest above.
+
+_The bare-metal/Equinix notes below describe an earlier topology and are retained for reference._
+
 ### DNS
 playground.meshery.io - 147.28.141.9
 
