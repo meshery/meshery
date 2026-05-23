@@ -31,7 +31,7 @@ The resources that are present inside the cluster are discovered efficiently wit
 
 ### Greenfield: Tracking newly created resources
 
-Meshery earmarks infrastucture for which it is the original lifecycle manager. In other words, Meshery tags the resources it creates. In Kubernetes deployments, earmarking is performed using annotations, notably the key/value pair:
+Meshery earmarks infrastructure for which it is the original lifecycle manager. In other words, Meshery tags the resources it creates. In Kubernetes deployments, earmarking is performed using annotations, notably the key/value pair:
 
 `designs.meshery.io: <design-id>`
 
@@ -54,7 +54,7 @@ Fingerprinting, the process of positively identifying and classifying resources,
 - Prometheus typically offers metrics on 9090/tcp, but not always.
 - Prometheus is typically deployed from a prebuilt container offered by the open source project, but not always.
 
-See Connnection State Management for additional information.
+See Connection State Management for additional information.
 
 Fingerprinting is the act of uniquely identifying managed infrastructure, their versions and other specific characteristics.
 
@@ -76,17 +76,17 @@ The informer in MeshSync actively listens to changes in resources and updates th
 
 ### Flushing MeshSync
 
-### Sythentic Test of MeshSync
+### Synthetic Test of MeshSync
 
 _TODO: Include example of how to invoke this built-in check._
 
 # Scalability and Performance
 
-One Meshery Operator and one MeshSync are deployed to each Kuberentes cluster under management.
+One Meshery Operator and one MeshSync are deployed to each Kubernetes cluster under management.
 
 ## Tiered Discovery
 
-Kubernetes clusters may grow very large with thousands of objects on them. The process of positively identifying and classifying resources by type, aligning them with Meshery's object model can be intense. Discovery tiers (for speed and scalability of MeshSync) successively refine the process of infrastructure identification (see [Composite Prints](#composite-fingerprints)).
+Kubernetes clusters may grow very large with thousands of objects within them. The process of positively identifying and classifying resources by type, aligning them with Meshery's object model can be intense. Discovery tiers (for speed and scalability of MeshSync) successively refine the process of infrastructure identification (see [Composite Prints](#composite-fingerprints)).
 
 For efficient management of large Kubernetes clusters, MeshSync uses tiered discovery. This approach progressively refines the identification of relevant infrastructure, optimizing the speed and scalability of MeshSync. You have control over the depth of object discovery, enabling you to strike the right balance between granularity and performance for efficient cluster management.
 
