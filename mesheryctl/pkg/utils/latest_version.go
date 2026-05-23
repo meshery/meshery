@@ -14,7 +14,9 @@ func GetLatestVersionForMesheryctl() (string, error) {
 		return "", err
 	}
 
-	client := http.Client{}
+	client := http.Client{
+		Timeout: 2 * time.Second,
+	}
 
 	resp, err := client.Do(req)
 	if err != nil {
