@@ -373,31 +373,31 @@ Meshery workflows are classified by workflow type, security level, trigger model
 
 #### Security Levels
 
-|Level|Description|
+| Level | Description |
 |---|---|
-|S0|Read-only validation workflows with no repository mutation or privileged secrets|
-|S1|Artifact generation or reporting workflows with limited write access|
-|S2|Repository-mutating workflows that commit, push, or synchronize repository state|
-|S3|Deployment or infrastructure workflows using deployment credentials, SSH access, or privileged secrets|
-|S4|Workflows executing untrusted or externally controlled code under privileged execution contexts|
+| S0 | Read-only validation workflows with no repository mutation or privileged secrets |
+| S1 | Artifact generation or reporting workflows with limited write access |
+| S2 | Repository-mutating workflows that commit, push, or synchronize repository state |
+| S3 | Deployment or infrastructure workflows using deployment credentials, SSH access, or privileged secrets |
+| S4 | Workflows executing untrusted or externally controlled code under privileged execution contexts such as `pull_request_target` |
 
 #### Trigger Models
 
-|Trigger Model|Description|
+| Trigger Model | Description |
 |---|---|
-|event-driven|Triggered automatically by repository events such as `push`, `pull_request`, or `release`|
-|reusable-invoked|Triggered through `workflow_call` by upstream workflows|
-|manual|Triggered explicitly through `workflow_dispatch`|
-|scheduled|Triggered by cron schedules for recurring automation|
-|hybrid|Combines multiple trigger mechanisms within a single workflow|
+| event-driven | Triggered automatically by repository events such as `push`, `pull_request`, or `release` |
+| workflow-call | Triggered through `workflow_call` by upstream workflows |
+| manual | Triggered explicitly through `workflow_dispatch` |
+| scheduled | Triggered by cron schedules for recurring automation |
+| hybrid | Combines multiple trigger mechanisms within a single workflow |
 
 #### CI-Gating Behavior
 
-|Value|Description|
+| Value | Description |
 |---|---|
-|required|Must pass before pull requests can merge|
-|optional|Runs automatically but does not block merges|
-|informational|Provides visibility or reporting without affecting mergeability|
+| required | Must pass before pull requests can merge |
+| optional | Runs automatically but does not block merges |
+| informational | Provides visibility or reporting without affecting mergeability |
 
 ### Release Notes
 
