@@ -3,7 +3,52 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+
+	"github.com/meshery/meshery/server/models/httputil"
 )
+
+// Response helpers
+// ----------------
+//
+// These four helpers are the canonical way to write an HTTP response from
+// server/handlers. Never use http.Error — it emits Content-Type: text/plain
+// which crashes RTK Query's default baseQuery on the UI (see
+// docs/content/en/project/contributing/error-contract.md).
+//
+// The real implementations live in server/models/httputil so both
+// server/handlers and server/models (and any future sibling) can call them
+// without an import cycle. These wrappers preserve the original unexported
+// identifiers so none of the ~150 existing call sites in this package had to
+// change during the migration.
+//
+// Reach for:
+//   - writeMeshkitError     — ANY error path. If err wraps a *meshkiterrors.Error
+//                             or *ErrorV2, the code/severity/cause/remediation
+//                             survive onto the wire. If it doesn't, the .Error()
+//                             string is still emitted as JSON.
+//   - writeJSONError        — error paths where the message is a bare string with
+//                             no MeshKit wrapper. Prefer promoting the string to
+//                             a MeshKit error and using writeMeshkitError instead.
+//   - writeJSONMessage      — success paths that return a small status or result
+//                             payload (e.g. {"message": "deleted"}).
+//   - writeJSONEmptyObject  — success paths that need to return an empty JSON
+//                             object ({}) with the Content-Type header set.
+
+func writeJSONError(w http.ResponseWriter, message string, status int) {
+	httputil.WriteJSONError(w, message, status)
+}
+
+func writeMeshkitError(w http.ResponseWriter, err error, status int) {
+	httputil.WriteMeshkitError(w, err, status)
+}
+
+func writeJSONMessage(w http.ResponseWriter, payload any, status int) {
+	httputil.WriteJSONMessage(w, payload, status)
+}
+
+func writeJSONEmptyObject(w http.ResponseWriter, status int) {
+	httputil.WriteJSONEmptyObject(w, status)
+}
 
 const (
 	defaultPageSize = 25
@@ -50,27 +95,3 @@ func extractBoolQueryParams(r *http.Request, params ...string) (map[string]bool,
 	}
 	return result, nil
 }
-
-// TODO: Remone completely after confirm is no more needed
-// func getLatestKubeVersionFromRegistry(reg *registry.RegistryManager) string {
-// 	entities, _, _, _ := reg.GetEntities(&v1beta1.ModelFilter{
-// 		Name: "kubernetes",
-// 	})
-
-// 	versions := []string{}
-
-// 	for _, entity := range entities {
-// 		modelDef, err := utils.Cast[*model.ModelDefinition](entity)
-// 		if err != nil {
-// 			continue
-// 		}
-// 		versions = append(versions, modelDef.Model.Version)
-// 	}
-// 	if len(versions) == 0 {
-// 		return ""
-// 	}
-
-// 	versions = utils.SortDottedStringsByDigits(versions)
-
-// 	return versions[0]
-// }

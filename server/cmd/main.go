@@ -8,7 +8,10 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"strings"
 	"time"
+
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
 	"github.com/meshery/schemas/models/core"
 
@@ -36,10 +39,9 @@ import (
 	"github.com/meshery/meshkit/utils/broadcast"
 	"github.com/meshery/meshkit/utils/events"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
-	schemasOrganization "github.com/meshery/schemas/models/v1beta1/organization"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
+	schemasOrganization "github.com/meshery/schemas/models/v1beta2/organization"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -52,8 +54,12 @@ var (
 )
 
 const (
-	// DefaultProviderURL is the provider url for the "none" provider
-	DefaultProviderURL = "https://cloud.layer5.io"
+	// DefaultProviderURL is the ProviderBaseURL stamped on the built-in local
+	// provider. It is used for capability/package paths only; the local
+	// provider does not authenticate against this URL. Sourced from the canonical
+	// primary provider host (install/providers.env) so it cannot drift from the
+	// PROVIDER_BASE_URLS default seeded into viper below.
+	DefaultProviderURL = models.PrimaryProviderURL
 	RelationshipsPath  = "../meshmodel/kubernetes/"
 )
 
@@ -118,23 +124,33 @@ func main() {
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
 	viper.SetDefault("INSTANCE_ID", &instanceID)
 	viper.SetDefault(constants.ProviderENV, "")
+	// Seed the canonical active remote-provider list (install/providers.env) so a
+	// server started without PROVIDER_BASE_URLS still registers the default providers.
+	viper.SetDefault(constants.ProviderURLsENV, models.DefaultRemoteProviderURLs)
 	viper.SetDefault("REGISTER_STATIC_K8S", true)
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
 	viper.SetDefault("SKIP_DOWNLOAD_EXTENSIONS", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
 	viper.SetDefault("PLAYGROUND", false)
-	viper.SetDefault("MESHSYNC_DEFAULT_DEPLOYMENT_MODE", schemasConnection.MeshsyncDeploymentModeDefault)
+	viper.SetDefault("MESHSYNC_DEFAULT_DEPLOYMENT_MODE", connections.MeshsyncDeploymentModeDefault)
 	store.Initialize()
 
-	// initialize tracing
-	otelConfigString := viper.GetString("OTEL_CONFIG")
-	log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
-	tracingProvider, err := tracing.InitTracerFromYamlConfig(context.Background(), otelConfigString)
-
-	if err != nil {
-		log.Error(fmt.Errorf("failed to initialize OpenTelemetry tracing: %v", err))
+	// initialize tracing. Skip entirely when OTEL_CONFIG is unset so local dev
+	// doesn't pay for a failing OTLP gRPC exporter that logs
+	// "traces export: ... connection refused" every ~10s.
+	var tracingProvider *sdktrace.TracerProvider
+	otelConfigString := strings.TrimSpace(viper.GetString("OTEL_CONFIG"))
+	if otelConfigString == "" {
+		log.Info("OpenTelemetry config not set; tracing disabled")
 	} else {
-		log.Info("OpenTelemetry tracing initialized with config:" + otelConfigString)
+		log.Info("Initializing OpenTelemetry tracing with config:", otelConfigString)
+		provider, err := tracing.InitTracerFromYamlConfig(context.Background(), otelConfigString)
+		if err != nil {
+			log.Error(fmt.Errorf("failed to initialize OpenTelemetry tracing: %v", err))
+		} else {
+			tracingProvider = provider
+			log.Info("OpenTelemetry tracing initialized with config:" + otelConfigString)
+		}
 	}
 	// Defer shutdown of tracer provider
 	defer func() {
@@ -196,7 +212,7 @@ func main() {
 	log.Info("Using kubeconfig at: ", viper.GetString("KUBECONFIG_FOLDER"))
 	log.Info("Log level: ", log.GetLevel())
 
-	adapterURLs := viper.GetStringSlice("ADAPTER_URLS")
+	adapterURLs := utils.SplitAndTrim(viper.GetString("ADAPTER_URLS"), ", \t\n\r")
 
 	adapterTracker := helpers.NewAdaptersTracker(adapterURLs)
 	queryTracker := helpers.NewUUIDQueryTracker()
@@ -258,12 +274,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	meshsyncDefaultDeploymentMode := schemasConnection.MeshsyncDeploymentModeFromString(
+	meshsyncDefaultDeploymentMode := connections.MeshsyncDeploymentModeFromString(
 		viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"),
 	)
 
-	if meshsyncDefaultDeploymentMode == schemasConnection.MeshsyncDeploymentModeUndefined {
-		meshsyncDefaultDeploymentMode = schemasConnection.MeshsyncDeploymentModeDefault
+	if meshsyncDefaultDeploymentMode == connections.MeshsyncDeploymentModeUndefined {
+		meshsyncDefaultDeploymentMode = connections.MeshsyncDeploymentModeDefault
 	}
 
 	lProv := &models.DefaultLocalProvider{
@@ -344,7 +360,7 @@ func main() {
 	provs[lProv.Name()] = lProv
 
 	providerEnvVar := viper.GetString(constants.ProviderENV)
-	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
+	RemoteProviderURLs := utils.SplitAndTrim(viper.GetString("PROVIDER_BASE_URLS"), ", \t\n\r")
 	for _, providerurl := range RemoteProviderURLs {
 		parsedURL, err := url.Parse(providerurl)
 		if err != nil {
@@ -372,7 +388,38 @@ func main() {
 
 		cp.SyncPreferences()
 		defer cp.StopSyncPreferences()
-		provs[cp.Name()] = cp
+
+		// Pick a registration key that survives two failure modes:
+		//   1. /capabilities was unreachable or returned no providerName, leaving
+		//      cp.Name() == "". Without disambiguation, every such provider
+		//      collides at provs[""].
+		//   2. Two configured URLs report the SAME name from /capabilities (for
+		//      example, both cloud.meshery.io and cloud.acme.io currently
+		//      return "Meshery"). The later iteration silently overwrites the
+		//      earlier and operators see one provider in /api/providers when
+		//      they configured two.
+		// On collision we re-key the EARLIER entry by its URL host and let the
+		// new entry claim the canonical name. This preserves the historical
+		// "last URL wins the canonical name" routing that integrations rely
+		// on (e.g. tokens minted against cloud.acme.io expect the cookie
+		// value "Meshery" to resolve to cloud.acme.io regardless of the
+		// iteration order of PROVIDER_BASE_URLS), while still giving the
+		// re-keyed provider an addressable home in /api/providers.
+		key := cp.Name()
+		if key == "" {
+			key = parsedURL.Host
+			log.Warnf("remote provider at %q returned an empty providerName from /capabilities; registering it under host %q so it remains addressable. Verify the remote is reachable and returns a providerName.", providerurl, key)
+		}
+		if existing, ok := provs[key]; ok {
+			existingHost := existing.GetProviderURL()
+			if u, err := url.Parse(existingHost); err == nil && u.Host != "" {
+				existingHost = u.Host
+			}
+			log.Warnf("provider name collision: %q is already registered for %q; re-keying the earlier entry as %q so both remain addressable, and giving the canonical name %q to %q. Ensure each remote provider's /capabilities returns a unique providerName.", key, existing.GetProviderURL(), existingHost, key, providerurl)
+			provs[existingHost] = existing
+			delete(provs, key)
+		}
+		provs[key] = cp
 	}
 
 	// verifies if the provider specified in the "PROVIDER" environment variable is from one of the supported providers.
@@ -440,12 +487,18 @@ func main() {
 	log.Info("Doing seeded content cleanup...")
 
 	for _, p := range hc.Providers {
-		// skipping none provider for now
-		// so it doesn't throw error each server is stopped. Reason: support for none provider is not yet implemented
-		if p.Name() != "None" {
+		// Skip the local provider: it does not register a remote session, so
+		// there is nothing to de-register or log out on shutdown.
+		if p.Name() != models.LocalProviderName {
 			log.Info("De-registering Meshery server.")
-			err = p.DeleteMesheryConnection()
-			if err != nil {
+			if err = p.DeleteMesheryConnection(); err != nil {
+				log.Error(err)
+				continue
+			}
+			// Logout follows deregistration so the session that authorized
+			// the delete is revoked only after the connection is removed.
+			log.Info("Logging out Meshery server session.")
+			if err = p.LogoutMesheryServer(); err != nil {
 				log.Error(err)
 			}
 		}

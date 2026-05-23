@@ -2,6 +2,7 @@ package models
 
 import (
 	"net/http"
+	"strings"
 
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models/connections"
@@ -12,7 +13,7 @@ import (
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/environment"
-	"github.com/meshery/schemas/models/v1beta1/workspace"
+	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 )
 
 // ContextKey is a custom type for setting context key
@@ -42,12 +43,12 @@ type ProviderType string
 
 // ProviderProperties represents the structure of properties that a provider has
 type ProviderProperties struct {
-	ProviderType        ProviderType      `json:"provider_type,omitempty"`
-	PackageVersion      string            `json:"package_version,omitempty"`
-	PackageURL          string            `json:"package_url,omitempty"`
-	ProviderName        string            `json:"provider_name,omitempty"`
-	ProviderDescription []string          `json:"provider_description,omitempty"`
-	ProviderURL         string            `json:"provider_url,omitempty"`
+	ProviderType        ProviderType      `json:"providerType,omitempty"`
+	PackageVersion      string            `json:"packageVersion,omitempty"`
+	PackageURL          string            `json:"packageUrl,omitempty"`
+	ProviderName        string            `json:"providerName,omitempty"`
+	ProviderDescription []string          `json:"providerDescription,omitempty"`
+	ProviderURL         string            `json:"providerUrl,omitempty"`
 	Extensions          Extensions        `json:"extensions,omitempty"`
 	Capabilities        Capabilities      `json:"capabilities,omitempty"`
 	RestrictedAccess    RestrictedAccess  `json:"restrictedAccess,omitempty"`
@@ -96,14 +97,14 @@ type MesheryUICapabilities struct {
 }
 
 type RestrictedAccess struct {
-	IsMesheryUIRestricted bool                  `json:"isMesheryUiRestricted"`
+	IsMesheryUIRestricted bool                  `json:"isMesheryUIRestricted"`
 	AllowedComponents     MesheryUICapabilities `json:"allowedComponents,omitempty"`
 }
 
 // Extensions defines the UI extension points
 type Extensions struct {
 	Navigator    NavigatorExtensions    `json:"navigator,omitempty"`
-	UserPrefs    UserPrefsExtensions    `json:"user_prefs,omitempty"`
+	UserPrefs    UserPrefsExtensions    `json:"userPrefs,omitempty"`
 	GraphQL      GraphQLExtensions      `json:"graphql,omitempty"`
 	Acccount     AccountExtensions      `json:"account,omitempty"`
 	Collaborator CollaboratorExtensions `json:"collaborator,omitempty"`
@@ -151,7 +152,7 @@ type MeshMapComponentSet struct {
 // NavigatorExtension describes the Navigator extension point in the UI
 type NavigatorExtension struct {
 	Title           string              `json:"title,omitempty"`
-	OnClickCallback int                 `json:"on_click_callback,omitempty"`
+	OnClickCallback int                 `json:"onClickCallback,omitempty"`
 	Href            Href                `json:"href,omitempty"`
 	Component       string              `json:"component,omitempty"`
 	Icon            string              `json:"icon,omitempty"`
@@ -166,7 +167,7 @@ type NavigatorExtension struct {
 // AccountExtension describes the Account extension point in the UI
 type AccountExtension struct {
 	Title           string            `json:"title,omitempty"`
-	OnClickCallback int               `json:"on_click_callback,omitempty"`
+	OnClickCallback int               `json:"onClickCallback,omitempty"`
 	Href            Href              `json:"href,omitempty"`
 	Component       string            `json:"component,omitempty"`
 	Link            *bool             `json:"link,omitempty"`
@@ -204,13 +205,13 @@ type Capability struct {
 
 // K8sContextResponse - struct of response sent by provider when requested to persist k8s config
 type K8sContextPersistResponse struct {
-	K8sContext K8sContext `json:"k8s_context,omitempty"`
+	K8sContext K8sContext `json:"k8sContext,omitempty"`
 	Inserted   bool       `json:"inserted,omitempty"`
 }
 
 type ExtensionProxyResponse struct {
 	Body       []byte `json:"body,omitempty"`
-	StatusCode int    `json:"status_code,omitempty"`
+	StatusCode int    `json:"statusCode,omitempty"`
 }
 
 // Feature is a type to store the features of the provider
@@ -341,7 +342,25 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 	return "", false
 }
 
+// NormalizeProviderName collapses casing variants of the built-in local
+// provider to its canonical name. Both the canonical name ("Local") and the
+// legacy alias ("None") are matched case-insensitively, so "local", "LOCAL",
+// "none", "NONE", and stale "None" cookies all resolve to "Local". Any other
+// input — including remote provider names like "Meshery" or "Digital Ocean", whose
+// canonical casing originates from the remote /capabilities response — is
+// returned unchanged. This is the single source of truth for the rename;
+// call it once at the request edge (resolveProviderName) rather than
+// scattering equivalent checks across handlers.
+func NormalizeProviderName(name string) string {
+	if strings.EqualFold(name, LocalProviderName) ||
+		strings.EqualFold(name, LocalProviderLegacyAlias) {
+		return LocalProviderName
+	}
+	return name
+}
+
 func VerifyMesheryProvider(provider string, supportedProviders map[string]Provider) bool {
+	provider = NormalizeProviderName(provider)
 	for prov := range supportedProviders {
 		if prov == provider {
 			return true
@@ -451,8 +470,6 @@ type Provider interface {
 	GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error)
 	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool, resource string) ([]byte, error)
 
-	SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error)
-	SaveApplicationSourceContent(token string, applicationID string, sourceContent []byte) error
 	GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplications(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
@@ -480,6 +497,10 @@ type Provider interface {
 	UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error)
 	DeleteConnection(req *http.Request, connID core.Uuid) (*connections.Connection, error)
 	DeleteMesheryConnection() error
+	// LogoutMesheryServer revokes the server-cached user session against the
+	// provider. Called at shutdown after DeleteMesheryConnection so that
+	// logout occurs post-deregistration.
+	LogoutMesheryServer() error
 
 	SaveUserCredential(token string, credential *Credential) (*Credential, error)
 	GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)

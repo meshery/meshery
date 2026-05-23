@@ -11,7 +11,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/database"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
+	schemasConnection "github.com/meshery/schemas/models/v1beta3/connection"
 	"gorm.io/gorm"
 )
 
@@ -63,15 +63,44 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 
 	connectionsFetched := []*connections.Connection{}
 	query.Table("connections").Count(&count)
-	environmentsFetched := []*environments.EnvironmentData{}
 	Paginate(uint(page), uint(pageSize))(query).Find(&connectionsFetched)
 
-	for _, connectionFetched := range connectionsFetched {
-		cp.DB.Table("environment_connection_mappings").Joins("LEFT JOIN environments ON environments.id = environment_connection_mappings.environment_id").Select("environments.*").
-			Where("connection_id = ?", connectionFetched.ID).
-			Find(&environmentsFetched)
+	// Batch-load environments for all connections on the page in a single
+	// query rather than issuing one query per connection (N+1 problem).
+	if len(connectionsFetched) > 0 {
+		connectionIDs := make([]core.Uuid, len(connectionsFetched))
+		for i, conn := range connectionsFetched {
+			connectionIDs[i] = conn.ID
+		}
 
-		connectionFetched.Environments = environmentsFetched
+		// envWithConnID augments EnvironmentData with the join-table's
+		// connection_id so we can group results after scanning.
+		type envWithConnID struct {
+			environments.EnvironmentData
+			ConnectionID core.Uuid `gorm:"column:connection_id"`
+		}
+
+		var envMappings []envWithConnID
+		if err := cp.DB.Table("environment_connection_mappings").
+			Joins("LEFT JOIN environments ON environments.id = environment_connection_mappings.environment_id").
+			Select("environments.*, environment_connection_mappings.connection_id").
+			Where("environment_connection_mappings.connection_id IN ?", connectionIDs).
+			Find(&envMappings).Error; err != nil {
+			return nil, fmt.Errorf("error fetching environments for connections: %v", err)
+		}
+
+		envsByConnID := make(map[core.Uuid][]*environments.EnvironmentData)
+		for i := range envMappings {
+			connID := envMappings[i].ConnectionID
+			envsByConnID[connID] = append(envsByConnID[connID], &envMappings[i].EnvironmentData)
+		}
+
+		for _, conn := range connectionsFetched {
+			conn.Environments = envsByConnID[conn.ID]
+			if conn.Environments == nil {
+				conn.Environments = []*environments.EnvironmentData{}
+			}
+		}
 	}
 	statusSummary, err := cp.getConnectionsStatusSummary()
 	if err != nil {
@@ -89,8 +118,13 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 	return connectionsPage, nil
 }
 
-// getConnectionsStatusSummary returns a map of connection status to count
-func (cp *ConnectionPersister) getConnectionsStatusSummary() (*map[schemasConnection.ConnectionStatus]int, error) {
+// getConnectionsStatusSummary returns a map of connection status to count.
+// The v1beta3 connection schema narrowed ConnectionPage.StatusSummary from
+// map[ConnectionStatus]int to map[ConnectionStatusValue]int (the two types
+// carry the same canonical values but ConnectionStatusValue is the one the
+// paginated list envelope now speaks), so build the summary against the
+// page-side type directly.
+func (cp *ConnectionPersister) getConnectionsStatusSummary() (*map[schemasConnection.ConnectionStatusValue]int, error) {
 	var statusCounts []struct {
 		Status string `gorm:"column:status"`
 		Count  int    `gorm:"column:count"`
@@ -105,9 +139,9 @@ func (cp *ConnectionPersister) getConnectionsStatusSummary() (*map[schemasConnec
 		return nil, fmt.Errorf("error fetching connection status summary: %v", err)
 	}
 
-	summary := make(map[schemasConnection.ConnectionStatus]int)
+	summary := make(map[schemasConnection.ConnectionStatusValue]int)
 	for _, sc := range statusCounts {
-		summary[schemasConnection.ConnectionStatus(sc.Status)] = sc.Count
+		summary[schemasConnection.ConnectionStatusValue(sc.Status)] = sc.Count
 	}
 
 	return &summary, nil

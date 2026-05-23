@@ -446,12 +446,26 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.HandleFunc("/healthz/ready", h.K8sHealthzHandler).Methods("GET")
 
 	fs := http.FileServer(http.Dir("../../ui"))
-	gMux.PathPrefix("/ui/public/static/img/meshmodels").Handler(http.StripPrefix("/ui/", fs)).Methods("GET")
+	gMux.PathPrefix("/ui/public/static/img/meshmodels").Handler(http.StripPrefix("/ui/", fs)).Methods("GET", "HEAD")
+
+	// Serve Next.js build artifacts (/_next/data/<buildId>/<route>.json,
+	// /_next/static/*) without the auth middleware. Next.js client-side
+	// route transitions fetch the <route>.json blob to hydrate page props;
+	// when that fetch is gated by AuthMiddleware and auth fails, the 302
+	// redirect HTML cannot be parsed as JSON and the SPA navigation
+	// silently breaks (e.g. clicking through to /extension/meshmap).
+	// This mirrors the existing /provider/_next passthrough above.
+	gMux.PathPrefix("/_next").
+		Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			h.ServeUI(w, r, "", "../../ui/out/")
+		})).
+		Methods("GET", "HEAD")
+
 	gMux.PathPrefix("/").
 		Handler(h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			h.ServeUI(w, r, "", "../../ui/out/")
 		}), models.ProviderAuth))).
-		Methods("GET")
+		Methods("GET", "HEAD")
 
 	return &Router{
 		S:    gMux,

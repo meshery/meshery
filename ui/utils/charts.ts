@@ -1,38 +1,34 @@
+import { darken, lighten, type Theme } from '@/theme';
+
 export const isValidColumnName = (name) => {
   return name !== '' && name !== ' ' && name != undefined && name != null;
 };
 
-export const CHART_COLORS = [
-  '#14232A', // Gunmetal
-  // '#213A45',
-  '#2E5261',
-  // '#294957',
-  '#3B697D', // Paynes' Gray
-  // '#396679',
-  '#4A839C',
-  // '#477E96', Teal Blue
-  '#5996B1',
-  // '#639CB5',
-  '#74A8BE',
-  // '#8Bb2C6',
-  '#90B9CB',
-  // '#AACCBD8', // Columbia Blue
-  '#CBDEE6',
-  // '#EEF4F7'
-];
+/**
+ * Donut/bar chart slice palette, derived from `theme.palette` so it adapts
+ * to light/dark mode. Callers must thread the active `theme` through because
+ * this `.ts` module cannot call `useTheme()` directly.
+ */
+export const getChartColors = (theme: Theme): string[] => {
+  const primary = theme.palette.primary.main;
+  const info = theme.palette.info.main;
+  return [
+    darken(primary, 0.6),
+    darken(primary, 0.35),
+    darken(primary, 0.15),
+    primary,
+    lighten(primary, 0.2),
+    lighten(info, 0.1),
+    lighten(info, 0.35),
+    lighten(info, 0.65),
+  ];
+};
 
-export const dataToColors = (data) => {
-  const columns = data.map((item) => item[0]);
-  const colors = {};
-  let colorIdx = 0;
-
-  columns.forEach((col) => {
-    if (colorIdx >= CHART_COLORS.length) {
-      colorIdx = 0;
-    }
-    colors[col] = CHART_COLORS[colorIdx];
-    colorIdx += 1;
+export const dataToColors = (data: unknown[][], theme: Theme): Record<string, string> => {
+  const palette = getChartColors(theme);
+  const colors: Record<string, string> = {};
+  data.forEach((item, idx) => {
+    colors[String(item[0])] = palette[idx % palette.length];
   });
-
   return colors;
 };

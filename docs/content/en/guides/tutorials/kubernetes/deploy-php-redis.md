@@ -50,7 +50,7 @@ These YAML files contain the Service definitions and Deployment configurations f
 
 1. Log in to the [Meshery Playground](https://play.meshery.io) using your credentials. On successful login, you should be at the dashboard. Press the **X** on the _Where do you want to start?_ popup to close it (if required).
 
-2. Click **Explore** in the Cloud Native Playground tile to navigate to _MeshMap_
+2. Click **Explore** in the Cloud Native Playground tile to navigate to the _Meshery Design Configurator_
 
 
 #### Import the Files to Meshery Playground

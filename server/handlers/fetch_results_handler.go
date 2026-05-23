@@ -18,7 +18,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 	err := req.ParseForm()
 	if err != nil {
 		h.log.Error(ErrParseForm(err))
-		http.Error(w, "unable to process the received data", http.StatusForbidden)
+		writeMeshkitError(w, ErrParseForm(err), http.StatusForbidden)
 		return
 	}
 	q := req.Form
@@ -27,7 +27,8 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 
 	bdr, err := p.FetchResults(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), profileID)
 	if err != nil {
-		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
+		h.log.Error(ErrFetchResults(err))
+		writeMeshkitError(w, ErrFetchResults(err), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("content-type", "application/json")
@@ -39,7 +40,7 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 	err := req.ParseForm()
 	if err != nil {
 		h.log.Error(ErrParseForm(err))
-		http.Error(w, "unable to process the received data", http.StatusForbidden)
+		writeMeshkitError(w, ErrParseForm(err), http.StatusForbidden)
 		return
 	}
 	q := req.Form
@@ -48,7 +49,8 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 
 	bdr, err := p.FetchAllResults(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
 	if err != nil {
-		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
+		h.log.Error(ErrFetchResults(err))
+		writeMeshkitError(w, ErrFetchResults(err), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("content-type", "application/json")
@@ -65,13 +67,13 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 	id := mux.Vars(req)["id"]
 	if id == "" {
 		h.log.Error(ErrQueryGet("id"))
-		http.Error(w, "please provide a result id", http.StatusBadRequest)
+		writeMeshkitError(w, ErrMissingResultID(), http.StatusBadRequest)
 		return
 	}
 	key := uuid.FromStringOrNil(id)
 	if key == uuid.Nil {
 		h.log.Error(ErrQueryGet("key"))
-		http.Error(w, "please provide a valid result id", http.StatusBadRequest)
+		writeMeshkitError(w, ErrInvalidUUID(fmt.Errorf("invalid result id: %q", id)), http.StatusBadRequest)
 		return
 	}
 
@@ -80,13 +82,13 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 	bdr, err := p.GetResult(tokenString, key)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
+		writeMeshkitError(w, ErrGetResult(err), http.StatusInternalServerError)
 		return
 	}
 	sp, err := bdr.ConvertToSpec(h.log)
 	if err != nil {
 		h.log.Error(ErrConvertToSpec(err))
-		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
+		writeMeshkitError(w, ErrConvertToSpec(err), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("content-type", "application/yaml")
@@ -94,7 +96,10 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 	b, err := yaml.Marshal(sp)
 	if err != nil {
 		h.log.Error(models.ErrMarshal(err, "test result"))
-		http.Error(w, "error while getting test result", http.StatusInternalServerError)
+		// yaml.Marshal failed before we wrote the body; send JSON error with
+		// the marshal failure context. Override content-type back to JSON.
+		w.Header().Set("content-type", "application/json")
+		writeMeshkitError(w, models.ErrMarshal(err, "test result"), http.StatusInternalServerError)
 		return
 	}
 	_, _ = w.Write(b)
@@ -105,14 +110,16 @@ func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Reques
 	err := req.ParseForm()
 	if err != nil {
 		h.log.Error(ErrParseForm(err))
-		http.Error(w, ErrParseForm(err).Error(), http.StatusForbidden)
+		writeMeshkitError(w, ErrParseForm(err), http.StatusForbidden)
+		return
 	}
 	q := req.Form
 
 	bdr, err := p.FetchSmiResults(req, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		h.log.Error(ErrFetchSMIResults(err))
-		http.Error(w, ErrFetchSMIResults(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrFetchSMIResults(err), http.StatusInternalServerError)
+		return
 	}
 	_, _ = w.Write(bdr)
 }
@@ -123,20 +130,22 @@ func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.R
 	err := req.ParseForm()
 	if err != nil {
 		h.log.Error(ErrParseForm(err))
-		http.Error(w, ErrParseForm(err).Error(), http.StatusForbidden)
+		writeMeshkitError(w, ErrParseForm(err), http.StatusForbidden)
+		return
 	}
 	q := req.Form
 	id := mux.Vars(req)["id"]
 	key := uuid.FromStringOrNil(id)
 	if key == uuid.Nil {
 		h.log.Error(ErrQueryGet("key"))
-		http.Error(w, "please provide a valid result id", http.StatusBadRequest)
+		writeMeshkitError(w, ErrInvalidUUID(fmt.Errorf("invalid result id: %q", id)), http.StatusBadRequest)
 		return
 	}
 	bdr, err := p.FetchSmiResult(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), key)
 	if err != nil {
 		h.log.Error(ErrFetchSMIResults(err))
-		http.Error(w, ErrFetchSMIResults(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrFetchSMIResults(err), http.StatusInternalServerError)
+		return
 	}
 	_, _ = w.Write(bdr)
 }
