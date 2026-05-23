@@ -20,13 +20,13 @@ type HelpCenterWidgetProps = {
 
 const HELP_CENTER_RESOURCES = [
   {
-    name: 'Cloud Docs',
-    link: 'https://docs.layer5.io/cloud',
+    name: 'Meshery Docs',
+    link: 'https://docs.meshery.io',
     external: true,
   },
   {
-    name: 'Kanvas Docs',
-    link: 'https://docs.layer5.io/kanvas',
+    name: 'GitHub Issues',
+    link: 'https://github.com/meshery/meshery/issues',
     external: true,
   },
   {

@@ -22,14 +22,6 @@ setup() {
     assert_line --partial "Test Completed"
 }
 
-@test "mesheryctl perf apply uses specified load generator wrk2" {
-    run $MESHERYCTL_BIN perf apply test-profile --load-generator wrk2
-
-    assert_success
-    assert_line --partial "Initiating Performance test"
-    assert_line --partial "Test Completed"
-}
-
 @test "mesheryctl perf apply with URL and mesh istio runs successfully" {
     run $MESHERYCTL_BIN perf apply test-profile --url https://192.168.1.15/productpage --mesh istio
 

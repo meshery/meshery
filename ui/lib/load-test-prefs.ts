@@ -1,4 +1,6 @@
-const validLoadGenerators = new Set(['fortio', 'wrk2']);
+// fortio is the only supported load generator. wrk2 was removed; any stored
+// "wrk2" preference is coerced to the fortio default by toLoadGenerator.
+const validLoadGenerators = new Set(['fortio']);
 
 export const DEFAULT_LOAD_TEST_PREFS = {
   c: 0,
