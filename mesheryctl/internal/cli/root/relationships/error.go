@@ -6,7 +6,7 @@ import (
 
 var (
 	ErrEmptySheetDataCode = "mesheryctl-1204"
-	ErrEmptyCSVDataCode   = "mesheryctl-1230"
+	ErrEmptyCSVDataCode   = "mesheryctl-1246"
 )
 
 const (

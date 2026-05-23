@@ -108,7 +108,9 @@ func generateFromCSV(filePath, outputPath string) error {
 	if err != nil {
 		return utils.ErrFileRead(err)
 	}
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 
 	reader := csv.NewReader(f)
 	reader.FieldsPerRecord = -1
