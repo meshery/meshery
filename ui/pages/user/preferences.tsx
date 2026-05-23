@@ -1,13 +1,10 @@
-import UserPreferences from '../../components/user-preferences';
-import Head from 'next/head';
 import React from 'react';
-import { NoSsr } from '@sistent/sistent';
+import UserPreferences from '@/components/user-preferences';
 import { useSelector } from 'react-redux';
 import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
-import { usePageTitle } from '@/utils/hooks';
+import { MesheryPage } from '../../components/MesheryPage';
 
 const UserPref = () => {
-  usePageTitle('User Preferences');
   const { selectedK8sContext } = useSelector((state) => state.ui);
   const { data: prefData } = useGetUserPrefWithContextQuery(selectedK8sContext);
 
@@ -19,12 +16,9 @@ const UserPref = () => {
   }
 
   return (
-    <NoSsr>
-      <Head>
-        <title>Preferences | Meshery</title>
-      </Head>
+    <MesheryPage title="User Preferences">
       <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats} />
-    </NoSsr>
+    </MesheryPage>
   );
 };
 

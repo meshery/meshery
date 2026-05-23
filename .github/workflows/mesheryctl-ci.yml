@@ -12,6 +12,9 @@ on:
         required: true
         default: "warning"
 
+permissions:
+  contents: read   # Testing/validation only
+
 jobs:
   mesheryctl_docs:
     if: "always() && github.event_name != 'pull_request' && github.repository == 'meshery/meshery' "

@@ -59,12 +59,12 @@ func TestResolvePostLoginRedirect(t *testing.T) {
 		},
 		{
 			name:     "/user/login with query falls back",
-			rawRef:   "/user/login?provider=Layer5",
+			rawRef:   "/user/login?provider=Meshery",
 			expected: fallback,
 		},
 		{
 			name:     "encoded /user/login ref falls back",
-			rawRef:   base64.RawURLEncoding.EncodeToString([]byte("/user/login?provider=Layer5")),
+			rawRef:   base64.RawURLEncoding.EncodeToString([]byte("/user/login?provider=Meshery")),
 			expected: fallback,
 		},
 		{
