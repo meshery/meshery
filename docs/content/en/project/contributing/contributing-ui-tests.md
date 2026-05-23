@@ -146,7 +146,7 @@ test('Random test', async ({ provider }) => {
     // Run this for testing Meshery provider
   }
 
-  if (provider === "None") {
+  if (provider === "Local") {
     // Run this for testing Local provider
   }
 });` >}}

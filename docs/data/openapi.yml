@@ -25,6 +25,8 @@ tags:
     description: Operations related to features and entitlements
   - name: Support_Support
     description: Operations related to help and support requests
+  - name: System_API_System
+    description: Operational endpoints for Meshery Server.
   - name: Badge_Badge
     description: Operations related to user and organization badges.
   - name: credential_credentials
@@ -8734,6 +8736,279 @@ paths:
                 type: string
         '500':
           description: Internal server error
+  /api/system/database:
+    get:
+      x-internal:
+        - meshery
+      tags:
+        - System_API_System
+      summary: Get a summary of the Meshery server's database
+      description: Returns a paginated summary of Meshery database tables and row counts.
+      operationId: getSystemDatabase
+      parameters:
+        - name: page
+          in: query
+          description: Zero-based page index for the table list.
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+        - name: pageSize
+          in: query
+          description: Number of tables to include per page.
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - name: search
+          in: query
+          description: Substring filter applied to table names.
+          required: false
+          schema:
+            type: string
+            maxLength: 255
+        - name: sort
+          in: query
+          description: Column to order the table list by.
+          required: false
+          schema:
+            type: string
+            enum:
+              - name
+        - name: order
+          in: query
+          description: Sort direction for the `sort` column.
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+      responses:
+        '200':
+          description: Database summary
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Paginated summary of the Meshery server's embedded database.
+                additionalProperties: false
+                required:
+                  - page
+                  - pageSize
+                  - totalTables
+                  - recordCount
+                  - tables
+                properties:
+                  page:
+                    type: integer
+                    description: Zero-based page index of the returned table slice.
+                    minimum: 0
+                  pageSize:
+                    type: integer
+                    description: Number of tables included in this page.
+                    minimum: 1
+                  totalTables:
+                    type: integer
+                    description: Total number of tables in the database matching the search filter.
+                    minimum: 0
+                  recordCount:
+                    type: integer
+                    description: Aggregate row count across the tables returned in this page.
+                    minimum: 0
+                  tables:
+                    type: array
+                    description: Tables included in this page, with per-table row counts.
+                    items:
+                      type: object
+                      description: Database table summary.
+                      additionalProperties: false
+                      required:
+                        - name
+                        - type
+                        - count
+                      properties:
+                        name:
+                          type: string
+                          description: Name of the table.
+                          maxLength: 255
+                        type:
+                          type: string
+                          description: SQLite object type (e.g. `table`).
+                          maxLength: 64
+                        count:
+                          type: integer
+                          description: Number of rows currently in the table.
+                          format: int64
+                          minimum: 0
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+  /api/system/database/reset:
+    delete:
+      x-internal:
+        - meshery
+      tags:
+        - System_API_System
+      summary: Reset the Meshery server's database
+      description: Resets the Meshery server database. This is a destructive operation.
+      operationId: resetSystemDatabase
+      responses:
+        '200':
+          description: Database reset
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Status message response.
+                additionalProperties: false
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    description: Human-readable status message.
+                    minLength: 1
+                    maxLength: 1024
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error during reset (archive, drop, migrate, or reseed).
+  /api/system/version:
+    get:
+      x-internal:
+        - cloud
+        - meshery
+      tags:
+        - System_API_System
+      summary: Get the running Meshery server's version metadata
+      description: Returns version metadata for the running Meshery service.
+      operationId: getSystemVersion
+      security: []
+      responses:
+        '200':
+          description: Server version metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Version metadata for a running Meshery service.
+                additionalProperties: false
+                properties:
+                  version:
+                    type: string
+                    description: Meshery Cloud deployment version.
+                    maxLength: 128
+                  build:
+                    type: string
+                    description: Build identifier (typically the git tag of the running binary).
+                    maxLength: 128
+                  latest:
+                    type: string
+                    description: Latest available Meshery release tag fetched from GitHub.
+                    maxLength: 128
+                  outdated:
+                    type: boolean
+                    description: True when the running build is older than the latest available release.
+                  commitsha:
+                    type: string
+                    description: Git commit SHA of the running service. The wire field is `commitsha`.
+                    maxLength: 64
+                  releaseChannel:
+                    type: string
+                    description: Release channel of the running binary (e.g. `stable`, `edge`).
+                    maxLength: 64
+        '500':
+          description: Encoding error while serializing the version payload.
+  /api/system/sync:
+    get:
+      x-internal:
+        - meshery
+      tags:
+        - System_API_System
+      summary: Get initial session bootstrap data
+      description: Returns session bootstrap data for the authenticated user.
+      operationId: getSystemSync
+      responses:
+        '200':
+          description: Session sync payload
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Session bootstrap payload for the authenticated user.
+                additionalProperties: true
+                properties:
+                  k8sConfig:
+                    type: array
+                    description: Kubernetes contexts currently tracked by the Meshery server.
+                    items:
+                      type: object
+                      description: Kubernetes context tracked by Meshery.
+                      additionalProperties: false
+                      properties:
+                        id:
+                          type: string
+                          description: Stable identifier for the Kubernetes context.
+                          x-id-format: external
+                          minLength: 32
+                          maxLength: 32
+                          pattern: ^[0-9a-f]{32}$
+                        name:
+                          type: string
+                          description: Human-readable name of the Kubernetes context.
+                          maxLength: 255
+                        clusterConfigured:
+                          type: boolean
+                          description: True when Meshery has a usable kubeconfig for this context.
+                        server:
+                          type: string
+                          description: API server URL for the Kubernetes context.
+                          maxLength: 2048
+                        clusterId:
+                          description: Kubernetes server ID associated with this context.
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                        createdAt:
+                          description: When the context was first registered with Meshery.
+                          x-go-type: time.Time
+                          type: string
+                          format: date-time
+                          x-go-name: CreatedAt
+                          x-oapi-codegen-extra-tags:
+                            db: created_at
+                            yaml: created_at
+                          x-go-type-skip-optional-pointer: true
+                        updatedAt:
+                          description: When the context was last updated.
+                          x-go-type: time.Time
+                          type: string
+                          format: date-time
+                          x-go-name: UpdatedAt
+                          x-oapi-codegen-extra-tags:
+                            db: updated_at
+                            yaml: updated_at
+                          x-go-type-skip-optional-pointer: true
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Marshal error while serializing the session sync payload.
   /api/integrations/credentials:
     get:
       x-internal:
