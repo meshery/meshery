@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func GetLatestVersionForMesheryctl() (string, error) {
