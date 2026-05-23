@@ -53,7 +53,9 @@ func GetOperator(kubeclient *mesherykube.Client) (string, string, error) {
 		return "", "", ErrMesheryClientNil
 	}
 
-	dep, err := kubeclient.KubeClient.AppsV1().Deployments("meshery").Get(context.TODO(), "meshery-operator", metav1.GetOptions{})
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	dep, err := kubeclient.KubeClient.AppsV1().Deployments("meshery").Get(ctx, "meshery-operator", metav1.GetOptions{})
 	if err != nil && !kubeerror.IsNotFound(err) {
 		return "", "", ErrMesheryClient(err)
 	}

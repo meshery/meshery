@@ -799,7 +799,7 @@ func SetKubeConfig() {
 }
 
 func ForceCleanupCluster() error {
-	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), constants.K8sDeleteTimeout)
 	defer cancel()
 
 	client, err := meshkitkube.New([]byte(""))

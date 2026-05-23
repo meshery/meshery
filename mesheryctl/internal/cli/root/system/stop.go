@@ -18,9 +18,9 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	apiextension "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
@@ -258,7 +258,7 @@ func invokeDeleteCRs(ctx context.Context, client *meshkitkube.Client) error {
 }
 
 func deleteCR(ctx context.Context, resourceName, instanceName string, client *meshkitkube.Client) error {
-	timeoutCtx, cancel := context.WithTimeout(ctx, 300*time.Second)
+	timeoutCtx, cancel := context.WithTimeout(ctx, constants.K8sDeleteTimeout)
 	defer cancel()
 	return client.DynamicKubeClient.Resource(schema.GroupVersionResource{
 		Group:    v1alpha1.GroupVersion.Group,
@@ -267,7 +267,7 @@ func deleteCR(ctx context.Context, resourceName, instanceName string, client *me
 	}).Namespace(utils.MesheryNamespace).Delete(timeoutCtx, instanceName, metav1.DeleteOptions{})
 }
 
-// invokeDeleteCRs is a wrapper of deleteCRD to delete CRDs (brokers and meshsyncs)
+// invokeDeleteCRDs is a wrapper of deleteCRD to delete CRDs (brokers and meshsyncs)
 func invokeDeleteCRDs(ctx context.Context) error {
 	const (
 		brokerCRDName   = "brokers.meshery.io"
@@ -306,15 +306,15 @@ func invokeDeleteCRDs(ctx context.Context) error {
 	return nil
 }
 
-// deleteCRs delete the specified CRD in the clusters
+// deleteCRD deletes the specified CRD in the clusters
 func deleteCRD(ctx context.Context, name string, client *apiextension.Clientset) error {
-	timeoutCtx, cancel := context.WithTimeout(ctx, 300*time.Second)
+	timeoutCtx, cancel := context.WithTimeout(ctx, constants.K8sDeleteTimeout)
 	defer cancel()
 	return client.ApiextensionsV1().CustomResourceDefinitions().Delete(timeoutCtx, name, metav1.DeleteOptions{})
 }
 
 func deleteNs(ctx context.Context, ns string, client *kubernetes.Clientset) error {
-	timeoutCtx, cancel := context.WithTimeout(ctx, 300*time.Second)
+	timeoutCtx, cancel := context.WithTimeout(ctx, constants.K8sDeleteTimeout)
 	defer cancel()
 	return client.CoreV1().Namespaces().Delete(timeoutCtx, ns, metav1.DeleteOptions{})
 }
