@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/handlers"
@@ -177,24 +178,24 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, con
 
 	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
 	if !ok {
-		return unknowStatus, nil
+		return unknowStatus, fmt.Errorf("failed to retrieve handler from context for connection %s", connectionID)
 	}
 
 	inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
 	// If machine instance is not present or points to nil, return unknown status
 	if !ok || inst == nil {
-		return unknowStatus, nil
+		return unknowStatus, fmt.Errorf("state machine instance not found for connection %s", connectionID)
 	}
 
 	machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
 	if err != nil {
 		r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
-		return unknowStatus, nil
+		return unknowStatus, fmt.Errorf("failed to cast machine context for connection %s: %w", connectionID, err)
 	}
 
 	controllerhandler := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
 	if !ok {
-		return unknowStatus, nil
+		return unknowStatus, fmt.Errorf("controller handlers not available for connection %s", connectionID)
 	}
 	status := controllerhandler[models.MesheryOperator].GetStatus()
 	return &model.MesheryControllersStatusListItem{
@@ -213,19 +214,19 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 
 	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
 	if !ok {
-		return unknowStatus, nil
+		return unknowStatus, fmt.Errorf("failed to retrieve handler from context for connection %s", connectionID)
 	}
 
 	inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
 	// If machine instance is not present or points to nil, return unknown status
 	if !ok || inst == nil {
-		return unknowStatus, nil
+		return unknowStatus, fmt.Errorf("state machine instance not found for connection %s", connectionID)
 	}
 
 	machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
 	if err != nil {
 		r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
-		return unknowStatus, nil
+		return unknowStatus, fmt.Errorf("failed to cast machine context for connection %s: %w", connectionID, err)
 	}
 
 	status := model.GetMeshSyncInfo(
@@ -247,24 +248,24 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, 
 
 	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
 	if !ok {
-		return unknowStatus, nil
+		return unknowStatus, fmt.Errorf("failed to retrieve handler from context for connection %s", connectionID)
 	}
 
 	connectionUUID := uuid.FromStringOrNil(connectionID)
 	if connectionUUID == uuid.Nil {
-		return unknowStatus, nil
+		return unknowStatus, fmt.Errorf("invalid connection ID: %q", connectionID)
 	}
 
 	inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(connectionUUID)
 	// If machine instance is not present or points to nil, return unknown status
 	if !ok || inst == nil {
-		return unknowStatus, nil
+		return unknowStatus, fmt.Errorf("state machine instance not found for connection %s", connectionID)
 	}
 
 	machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
 	if err != nil {
 		r.Log.Error(model.ErrMesheryControllersStatusSubscription(err))
-		return unknowStatus, nil
+		return unknowStatus, fmt.Errorf("failed to cast machine context for connection %s: %w", connectionID, err)
 	}
 
 	status := model.GetBrokerInfo(
