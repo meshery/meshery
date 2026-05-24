@@ -5,7 +5,6 @@ import {
   Switch,
   CircularProgress,
   Typography,
-  InfoOutlinedIcon,
 } from '@sistent/sistent';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '@/utils/custom-search';
@@ -16,6 +15,7 @@ import { CustomTextTooltip } from '@/components/meshery-mesh-interface/PatternSe
 import _ from 'lodash';
 import CollapseAllIcon from '@/assets/icons/CollapseAll';
 import ExpandAllIcon from '@/assets/icons/ExpandAll';
+import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { useTheme } from '@/theme';
 import { JustifyAndAlignCenter, MesheryTreeViewWrapper } from './MeshModel.style';
 import { useRegistryRouter } from './hooks';
