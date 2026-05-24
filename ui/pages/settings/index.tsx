@@ -1,19 +1,12 @@
-import MesherySettings from '../../components/settings/MesherySettings';
-import { NoSsr } from '@sistent/sistent';
-import Head from 'next/head';
 import React from 'react';
-import { usePageTitle } from '@/utils/hooks';
+import MesherySettings from '@/components/settings/MesherySettings';
+import { MesheryPage } from '../../components/MesheryPage';
 
 function Settings() {
-  usePageTitle('Settings');
-
   return (
-    <NoSsr>
-      <Head>
-        <title>Settings | Meshery</title>
-      </Head>
+    <MesheryPage title="Settings">
       <MesherySettings />
-    </NoSsr>
+    </MesheryPage>
   );
 }
 
