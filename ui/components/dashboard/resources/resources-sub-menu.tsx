@@ -51,13 +51,11 @@ const ResourcesSubMenu = ({
     [CRDsKeys, isCRDS],
   );
 
-  // Call tableConfig() unconditionally to keep hook count stable across renders.
-  // Config functions (e.g. WorkloadTableConfig) contain React hooks internally,
-  // so they must always be called regardless of whether the result is used.
-  const tableConfigResult = useMemo(() => resource.tableConfig(), [resource]);
+  const tableConfigResult = resource?.tableConfig ? resource.tableConfig() : {};
+  const configKeysStr = Object.keys(tableConfigResult).join(',');
   const tabs = useMemo(
-    () => (isCRDS ? crdsKind : Object.keys(tableConfigResult)),
-    [crdsKind, isCRDS, tableConfigResult],
+    () => (isCRDS ? crdsKind : configKeysStr ? configKeysStr.split(',') : []),
+    [crdsKind, isCRDS, configKeysStr],
   );
 
   useEffect(() => {

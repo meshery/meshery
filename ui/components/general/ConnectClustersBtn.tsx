@@ -6,9 +6,10 @@ import { AddCircleIcon as AddIcon, Button, useTheme } from '@sistent/sistent';
 function ConnectClustersBtn() {
   const theme = useTheme();
   return (
-    <Link href="/management/connections">
+    <Link href="/management/connections" passHref>
       <Button
-        type="submit"
+        component="a"
+        type="button"
         variant="contained"
         color="primary"
         size="large"

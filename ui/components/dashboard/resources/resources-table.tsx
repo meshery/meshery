@@ -101,26 +101,16 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
     setView(view);
   };
 
-  const tableConfig = useMemo(() => {
-    const resolvedConfig = resourceConfig(
-      switchView,
-      meshSyncResources,
-      k8sConfig,
-      connectionMetadataState,
-      workloadType,
-      selectedK8sContexts,
-    );
-
-    return submenu ? resolvedConfig[workloadType] : resolvedConfig;
-  }, [
-    connectionMetadataState,
-    k8sConfig,
+  const resolvedConfig = resourceConfig(
+    switchView,
     meshSyncResources,
-    resourceConfig,
-    selectedK8sContexts,
-    submenu,
+    k8sConfig,
+    connectionMetadataState,
     workloadType,
-  ]);
+    selectedK8sContexts,
+  );
+
+  const tableConfig = submenu ? resolvedConfig[workloadType] : resolvedConfig;
 
   const encodedClusterIds = useMemo(() => JSON.stringify(clusterIds), [clusterIds]);
 
