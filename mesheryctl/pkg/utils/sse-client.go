@@ -3,10 +3,12 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
+	"sync"
 )
 
 // Event represents a Server-Sent Event
@@ -23,26 +25,43 @@ type EventData struct {
 }
 
 // ConvertRespToSSE converts a connection to a stream of server sent events
-func ConvertRespToSSE(resp *http.Response) (chan Event, error) {
+func ConvertRespToSSE(ctx context.Context, resp *http.Response) (chan Event, error) {
 	events := make(chan Event)
 	reader := bufio.NewReader(resp.Body)
 
-	go loop(reader, events)
+	go loop(ctx, reader, events)
 
 	return events, nil
 }
 
-func loop(reader *bufio.Reader, events chan Event) {
+func loop(ctx context.Context, reader *bufio.Reader, events chan Event) {
 	ev := Event{}
 
 	var buf bytes.Buffer
 
+	// closeEvents ensures we only ever close the events chan once for this loop
+	var once sync.Once
+	closeEvents := func() { once.Do(func() { close(events) }) }
+
+	// Note: reader.ReadBytes is blocking; ctx cancellation is checked on each
+	// loop iteration but may not be noticed while ReadBytes blocks waiting for
+	// network data. This is acceptable here because callers cancel the context
+	// when they stop consuming; the loop will exit when ReadBytes returns or
+	// after the next iteration when ctx.Done() is observed.
+
 	for {
+		select {
+		case <-ctx.Done():
+			closeEvents()
+			return
+		default:
+		}
+
 		line, err := reader.ReadBytes('\n')
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error during resp.Body read:%s\n", err)
 
-			close(events)
+			closeEvents()
 			return
 		}
 
@@ -79,16 +98,21 @@ func loop(reader *bufio.Reader, events chan Event) {
 
 				err := json.Unmarshal(b, &data)
 
-				if err == nil {
-					ev.Data = data
-					buf.Reset()
-					events <- ev
-					ev = Event{}
-				}
+					if err == nil {
+						ev.Data = data
+						buf.Reset()
+						select {
+						case events <- ev:
+						case <-ctx.Done():
+							closeEvents()
+							return
+						}
+						ev = Event{}
+					}
 			}
 
 		default:
-			close(events)
+			closeEvents()
 			return
 		}
 	}

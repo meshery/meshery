@@ -15,6 +15,7 @@
 package adapter
 
 import (
+	"context"
 	"errors"
 	"io"
 	"net/http"
@@ -238,42 +239,35 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	}
 	defer func() { _ = res.Body.Close() }()
 
-	event, err := utils.ConvertRespToSSE(res)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	event, err := utils.ConvertRespToSSE(ctx, res)
 	if err != nil {
 		return "", ErrCreatingDeployResponseStream(err)
 	}
 
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
 	defer timer.Stop()
-	done := make(chan struct{})
-	defer close(done)
-	eventChan := make(chan string)
+	eventChan := make(chan string, 1)
 
 	// Run a goroutine to wait for the response
 	go func() {
 		for {
 			select {
-			case <-done:
+			case <-ctx.Done():
 				return
 			case i, ok := <-event:
 				if !ok {
 					return
 				}
 				if strings.Contains(i.Data.Details, query) {
-					select {
-					case eventChan <- "successful":
-					case <-done:
-						return
-					}
 					utils.Log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
+					eventChan <- "successful"
 					return
-				} else if strings.Contains(i.Data.Details, "Error") {
-					select {
-					case eventChan <- "error":
-					case <-done:
-						return
-					}
+				} else if strings.Contains(strings.ToLower(i.Data.Details), "error") {
 					utils.Log.Infof("%s\n", i.Data.Summary)
+					eventChan <- "error"
 					return
 				}
 			}
@@ -306,43 +300,37 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	if err != nil {
 		return "", ErrCreatingValidateRequest(err)
 	}
+	defer func() { _ = res.Body.Close() }()
 
-	event, err := utils.ConvertRespToSSE(res)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	event, err := utils.ConvertRespToSSE(ctx, res)
 	if err != nil {
 		return "", ErrCreatingValidateResponseStream(err)
 	}
 
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
 	defer timer.Stop()
-	done := make(chan struct{})
-	defer close(done)
-	eventChan := make(chan string)
+	eventChan := make(chan string, 1)
 
 	// Run a goroutine to wait for the response
 	go func() {
 		for {
 			select {
-			case <-done:
+			case <-ctx.Done():
 				return
 			case i, ok := <-event:
 				if !ok {
 					return
 				}
-				if strings.Contains(i.Data.Summary, query) {
-					select {
-					case eventChan <- "successful":
-					case <-done:
-						return
-					}
+				if strings.Contains(i.Data.Details, query) {
 					utils.Log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
+					eventChan <- "successful"
 					return
-				} else if strings.Contains(i.Data.Details, "error") {
-					select {
-					case eventChan <- "error":
-					case <-done:
-						return
-					}
+				} else if strings.Contains(strings.ToLower(i.Data.Details), "error") {
 					utils.Log.Infof("%s", i.Data.Summary)
+					eventChan <- "error"
 					return
 				}
 			}
