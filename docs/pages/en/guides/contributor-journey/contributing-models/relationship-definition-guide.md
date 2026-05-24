@@ -85,7 +85,9 @@ This real-world example shows the AWS IAM Roles for Service Accounts pattern:
   "kind": "binding",
   "type": "edge",
   "direction": "bidirectional"
-}
+  "evalProperties": {
+    "direction": "bidirectional"
+  }
 ```
 
 ### 2. Hierarchical Relationships
@@ -99,7 +101,9 @@ This real-world example shows the AWS IAM Roles for Service Accounts pattern:
   "type": "inventory",
   "subType": "parent",
   "direction": "directed"
-}
+  "evalProperties": {
+    "direction": "directed"
+  }
 ```
 
 ### 3. Reference Relationships (Visual Only)
@@ -113,7 +117,9 @@ This real-world example shows the AWS IAM Roles for Service Accounts pattern:
   "type": "edge",
   "subType": "visual",
   "direction": "directed"
-}
+  "evalProperties": {
+    "direction": "directed"
+  }
 ```
 
 ## Field Reference
@@ -122,9 +128,9 @@ This real-world example shows the AWS IAM Roles for Service Accounts pattern:
 |-------|---------|---------|
 | `kind` | Type of relationship | `"binding"`, `"hierarchical"`, `"reference"` |
 | `type` | Edge or inventory | `"edge"`, `"inventory"` |
-| `subType` | Category | `"security"`, `"network"`, `"compute"`, `"storage"` |
-| `direction` | Flow direction | `"directed"`, `"bidirectional"` |
-| `model` | Source component model | `"aws-iam-controller"` |
+| subType | Category | "security", "network", "compute", "storage", "identity" |
+| evalProperties.direction | Flow direction | "directed", "bidirectional" |
+| model | The model defining the relationship | "aws-iam-controller" |
 | `selectors` | Matching conditions | See examples below |
 
 ## Selector Patterns
@@ -235,7 +241,7 @@ These are frequently needed patterns:
 4. Add a clear description and use case
 5. Create a sample architecture in Meshery Playground or Kanvas
 6. Attach screenshots of the relationship flow in your PR
-7. Reference Issue #17096 when applicable
+7. Reference the relevant issue or epic in your pull request description
 
 ## Resources
 
