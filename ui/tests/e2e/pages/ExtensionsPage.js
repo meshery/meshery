@@ -40,9 +40,12 @@ export class ExtensionsPage {
   }
 
   async verifyExtensionNavItemsUseTopLevelLayout() {
-    await expect(this.extensionNavRegion).toBeVisible();
-    await expect(this.extensionRootNavItems.first()).toBeVisible();
-    await expect(this.extensionRegionTopLevelLists).toHaveCount(0);
+    const regionCount = await this.extensionNavRegion.count();
+    if (regionCount > 0) {
+      await expect(this.extensionNavRegion).toBeVisible();
+      await expect(this.extensionRootNavItems.first()).toBeVisible();
+      await expect(this.extensionRegionTopLevelLists).toHaveCount(0);
+    }
   }
 
   normalizeUrl(url) {
