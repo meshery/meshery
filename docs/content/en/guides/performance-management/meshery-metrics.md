@@ -12,41 +12,27 @@ In order to pull in these environment metrics, you can also manually configure M
 
 ---
 
-<div class="tab-container">
-  
-  <input id="tab1" type="radio" name="meshery-metrics-tabs" checked>
-  <label for="tab1">Prometheus Metrics</label>
-  <section class="tabbed" id="content1">
-    <p>User needs to set the Prometheus URL and API key to create and query boards.</p>
-    <img src="/guides/performance-management/images/PrometheusCharts.svg" 
-      alt="Prometheus Metrics in Meshery" />
+{{< tabs id="meshery-metrics-tabs" >}}
+Prometheus Metrics
 
-  </section>
-    
-  <input id="tab2" type="radio" name="meshery-metrics-tabs">
-  <label for="tab2">Grafana Charts</label>
-  <section class="tabbed" id="content2">
-    <p>User needs to set the Grafana URL and API key to create and query boards.</p>
-    <img src="/guides/performance-management/images/GrafanaBoards.svg"
-      alt="Grafana Charts in Meshery" />
+User needs to set the Prometheus URL and API key to create and query boards.
 
-  </section>
-    
-  <input id="tab3" type="radio" name="meshery-metrics-tabs">
-  <label for="tab3">Static Boards</label>
-  <section class="tabbed" id="content3">
-    <p>
-      Static Boards capture the standard performance metrics included in every Meshery performance test irrespective of which load generator is used. A set calculations are made using statistical analysis of the metrics gathered in the static boards. Static Boards Queries Prometheus SDK directly.
-    </p>
-  </section>
-    
-  <input id="tab4" type="radio" name="meshery-metrics-tabs">
-  <label for="tab4">Dynamic Boards</label>
-  <section class="tabbed" id="content4">
-    <p>
-      Dynamic Boards can be generated from Prometheus or Grafana. These boards are defined by the user. Grafana SDK is used for these boards.
-    </p>
+<img src="/guides/performance-management/images/PrometheusCharts.svg" alt="Prometheus Metrics in Meshery" />
 
-  </section>
-    
-</div>
+<!-- tab -->
+Grafana Charts
+
+User needs to set the Grafana URL and API key to create and query boards.
+
+<img src="/guides/performance-management/images/GrafanaBoards.svg" alt="Grafana Charts in Meshery" />
+
+<!-- tab -->
+Static Boards
+
+Static Boards capture the standard performance metrics included in every Meshery performance test irrespective of which load generator is used. A set calculations are made using statistical analysis of the metrics gathered in the static boards. Static Boards Queries Prometheus SDK directly.
+
+<!-- tab -->
+Dynamic Boards
+
+Dynamic Boards can be generated from Prometheus or Grafana. These boards are defined by the user. Grafana SDK is used for these boards.
+{{< /tabs >}}

@@ -11,33 +11,30 @@ Each of Meshery's APIs are subject to the following authentication and authoriza
 
 ### API Reference
 
-<div class="tab-container">
-  <!-- Tab 1: REST API -->
-  <input id="tab1" type="radio" name="tabs" checked>
-  <label for="tab1" data-icon="&#xf1cb;">REST API</label>
-  <section class="tabbed" id="content1">
-    <p>Meshery Server's REST API is available at <code>[hostname]:[port]/api/</code>.</p>
-    {{% alert color="dark" title="Meshery's REST API Reference" %}}
-See [REST API Reference](/reference/rest-apis) Self-generated API documentation for Meshery's REST API. Documentation is generated from Meshery's Open API schema.
-    {{% /alert %}}
-  </section>
+{{< tabs id="api-reference-tabs" >}}
+REST API
 
-  <!-- Tab 2: GraphQL API -->
-  <input id="tab2" type="radio" name="tabs">
-  <label for="tab2" data-icon="&#xf17d;">GraphQL API</label>
-  <section class="tabbed" id="content2">
-    <p>Meshery Server's GraphQl API is available at <code>{hostname]:[port]/api/graphql/query</code>. A GraphQL request can be made as a POST request to the endpoint with the query as the payload. Meshery Server's GraphQL API can be used to perform three operations:</p>
-    <ul>
-      <li>Queries for data retrieval.</li>
-      <li>Mutations for creating, updating, and deleting data.</li>
-      <li>Subscriptions for watching for any data changes.</li>
-    </ul>
-    <p>Explore the Meshery GraphQL API using the interactive Playground provided with Meshery instance at http://localhost:9081/api/system/graphql/playground.</p>
-    {{% alert color="dark" title="Meshery's GraphQL API Reference" %}}
+Meshery Server's REST API is available at <code>[hostname]:[port]/api/</code>.
+
+{{% alert color="dark" title="Meshery's REST API Reference" %}}
+See [REST API Reference](/reference/rest-apis) Self-generated API documentation for Meshery's REST API. Documentation is generated from Meshery's Open API schema.
+{{% /alert %}}
+
+<!-- tab -->
+GraphQL API
+
+Meshery Server's GraphQl API is available at <code>{hostname]:[port]/api/graphql/query</code>. A GraphQL request can be made as a POST request to the endpoint with the query as the payload. Meshery Server's GraphQL API can be used to perform three operations:
+
+- Queries for data retrieval.
+- Mutations for creating, updating, and deleting data.
+- Subscriptions for watching for any data changes.
+
+Explore the Meshery GraphQL API using the interactive Playground provided with Meshery instance at http://localhost:9081/api/system/graphql/playground.
+
+{{% alert color="dark" title="Meshery's GraphQL API Reference" %}}
 See [GraphQL API Reference](/reference/graphql-apis) Self-generated API documentation for Meshery's GraphQL API. The API can be explored interactively using the GraphQL Playground. Documentation is generated from Meshery's GraphQL schema. Each table below documents a GraphQL type.
-    {{% /alert %}}
-  </section>
-</div>
+{{% /alert %}}
+{{< /tabs >}}
 
 ### Authentication
 

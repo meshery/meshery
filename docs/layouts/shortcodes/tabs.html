@@ -1,0 +1,27 @@
+{{- $group := .Get "id" -}}
+{{- if not $group -}}
+  {{- errorf "The %q shortcode requires an 'id' argument: see %s" .Name .Position -}}
+{{- end -}}
+
+{{- $blocks := split (trim .InnerDeindent "\n\r\t ") "<!-- tab -->" -}}
+{{- $page := .Page -}}
+<div class="tab-container">
+{{- range $index, $raw := $blocks -}}
+  {{- $block := trim $raw "\n\r\t " -}}
+  {{- if ne $block "" -}}
+    {{- $parts := split $block "\n\n" -}}
+    {{- $title := trim (index $parts 0) "\n\r\t " -}}
+    {{- $content := "" -}}
+    {{- if gt (len $parts) 1 -}}
+      {{- $content = delimit (after 1 $parts) "\n\n" -}}
+    {{- end -}}
+    {{- $tabID := printf "%s-%d" $group (add $index 1) -}}
+    {{- $contentID := printf "%s-content-%d" $group (add $index 1) -}}
+    <input id="{{ $tabID }}" type="radio" name="{{ $group }}"{{ if eq $index 0 }} checked{{ end }}>
+    <label for="{{ $tabID }}">{{ $title }}</label>
+    <section class="tabbed" id="{{ $contentID }}">
+      {{- $content | $page.RenderString -}}
+    </section>
+  {{- end -}}
+{{- end -}}
+</div>
