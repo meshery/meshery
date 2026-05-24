@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -23,21 +24,28 @@ type EventData struct {
 }
 
 // ConvertRespToSSE converts a connection to a stream of server sent events
-func ConvertRespToSSE(resp *http.Response) (chan Event, error) {
+func ConvertRespToSSE(ctx context.Context, resp *http.Response) (chan Event, error) {
 	events := make(chan Event)
 	reader := bufio.NewReader(resp.Body)
 
-	go loop(reader, events)
+	go loop(ctx, reader, events)
 
 	return events, nil
 }
 
-func loop(reader *bufio.Reader, events chan Event) {
+func loop(ctx context.Context, reader *bufio.Reader, events chan Event) {
 	ev := Event{}
 
 	var buf bytes.Buffer
 
 	for {
+		select {
+		case <-ctx.Done():
+			close(events)
+			return
+		default:
+		}
+
 		line, err := reader.ReadBytes('\n')
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error during resp.Body read:%s\n", err)
@@ -82,7 +90,12 @@ func loop(reader *bufio.Reader, events chan Event) {
 				if err == nil {
 					ev.Data = data
 					buf.Reset()
-					events <- ev
+					select {
+					case events <- ev:
+					case <-ctx.Done():
+						close(events)
+						return
+					}
 					ev = Event{}
 				}
 			}

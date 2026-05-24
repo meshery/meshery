@@ -15,6 +15,7 @@
 package adapter
 
 import (
+	"context"
 	"errors"
 	"io"
 	"net/http"
@@ -238,7 +239,10 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	}
 	defer func() { _ = res.Body.Close() }()
 
-	event, err := utils.ConvertRespToSSE(res)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	event, err := utils.ConvertRespToSSE(ctx, res)
 	if err != nil {
 		return "", ErrCreatingDeployResponseStream(err)
 	}
@@ -276,17 +280,20 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	method := "GET"
 	client := &http.Client{}
 	req, err := utils.NewRequest(method, path, nil)
-	req.Header.Add("Accept", "text/event-stream")
 	if err != nil {
 		return "", ErrCreatingDeployResponseRequest(err)
 	}
+	req.Header.Add("Accept", "text/event-stream")
 
 	res, err := client.Do(req)
 	if err != nil {
 		return "", ErrCreatingValidateRequest(err)
 	}
 
-	event, err := utils.ConvertRespToSSE(res)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	event, err := utils.ConvertRespToSSE(ctx, res)
 	if err != nil {
 		return "", ErrCreatingValidateResponseStream(err)
 	}
