@@ -244,17 +244,38 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	}
 
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
+	defer timer.Stop()
+	done := make(chan struct{})
+	defer close(done)
 	eventChan := make(chan string)
 
 	// Run a goroutine to wait for the response
 	go func() {
-		for i := range event {
-			if strings.Contains(i.Data.Details, query) {
-				eventChan <- "successful"
-				utils.Log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
-			} else if strings.Contains(i.Data.Details, "Error") {
-				eventChan <- "error"
-				utils.Log.Infof("%s\n", i.Data.Summary)
+		for {
+			select {
+			case <-done:
+				return
+			case i, ok := <-event:
+				if !ok {
+					return
+				}
+				if strings.Contains(i.Data.Details, query) {
+					select {
+					case eventChan <- "successful":
+					case <-done:
+						return
+					}
+					utils.Log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
+					return
+				} else if strings.Contains(i.Data.Details, "Error") {
+					select {
+					case eventChan <- "error":
+					case <-done:
+						return
+					}
+					utils.Log.Infof("%s\n", i.Data.Summary)
+					return
+				}
 			}
 		}
 	}()
@@ -292,17 +313,38 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	}
 
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
+	defer timer.Stop()
+	done := make(chan struct{})
+	defer close(done)
 	eventChan := make(chan string)
 
 	// Run a goroutine to wait for the response
 	go func() {
-		for i := range event {
-			if strings.Contains(i.Data.Summary, query) {
-				eventChan <- "successful"
-				utils.Log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
-			} else if strings.Contains(i.Data.Details, "error") {
-				eventChan <- "error"
-				utils.Log.Infof("%s", i.Data.Summary)
+		for {
+			select {
+			case <-done:
+				return
+			case i, ok := <-event:
+				if !ok {
+					return
+				}
+				if strings.Contains(i.Data.Summary, query) {
+					select {
+					case eventChan <- "successful":
+					case <-done:
+						return
+					}
+					utils.Log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
+					return
+				} else if strings.Contains(i.Data.Details, "error") {
+					select {
+					case eventChan <- "error":
+					case <-done:
+						return
+					}
+					utils.Log.Infof("%s", i.Data.Summary)
+					return
+				}
 			}
 		}
 	}()
