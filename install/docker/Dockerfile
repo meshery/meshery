@@ -9,9 +9,8 @@ WORKDIR /github.com/meshery/meshery
 
 # Cache Go module downloads across builds so a new dependency only
 # fetches what's missing instead of redownloading everything.
+COPY go.mod go.sum ./
 RUN --mount=type=cache,target=/go/pkg/mod \
-    --mount=type=cache,target=/root/.cache/go-build \
-    cd server/cmd && \
     GOPROXY=https://proxy.golang.org GOSUMDB=off go mod download
 ADD . .
 RUN --mount=type=cache,target=/go/pkg/mod \
