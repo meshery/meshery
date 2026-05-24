@@ -4,10 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
 
+	"github.com/meshery/meshery/server/meshes"
 	"github.com/meshery/meshery/server/models"
 )
 
@@ -26,19 +28,19 @@ import (
 //	  "dependencies": {
 //	    "database":      { "status": "healthy", "error": "" },
 //	    "natsBroker":    { "status": "healthy", "error": "" },
-//	    "kubernetes":    { "status": "healthy", "clusterCount": 2, "error": "" },
+//	    "kubernetes":    { "status": "healthy", "clusterCount": 2, "version": "v1.29.0", "error": "" },
 //	    "meshsync":      { "status": "healthy", "error": "" },
 //	    "remoteProvider":{ "status": "healthy", "error": "" },
-//	    "adapters":      [ { "name": "istio", "status": "healthy", "location": "..." } ]
+//	    "adapters":      [ { "name": "istio", "status": "healthy", "location": "...", "error": "" } ]
 //	  }
 //	}
-func (h *Handler) SystemStatusHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
+func (h *Handler) SystemStatusHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	ctx := r.Context()
 	status := systemStatus{
 		Dependencies: systemDependencies{
 			Database:       checkDatabase(h),
 			NATSBroker:     checkNATS(h),
-			Kubernetes:     checkKubernetes(h),
+			Kubernetes:     checkKubernetes(h, provider),
 			MeshSync:       checkMeshSync(h),
 			RemoteProvider: checkRemoteProvider(h),
 			Adapters:       checkAdapters(ctx, h),
@@ -83,12 +85,14 @@ type k8sStatus struct {
 	Status       string `json:"status"`
 	Error        string `json:"error,omitempty"`
 	ClusterCount int    `json:"clusterCount,omitempty"`
+	Version      string `json:"version,omitempty"`
 }
 
 type adapterStatus struct {
 	Name     string `json:"name"`
 	Status   string `json:"status"`
 	Location string `json:"location,omitempty"`
+	Error    string `json:"error,omitempty"`
 }
 
 // ---------------------------------------------------------------------------
@@ -121,14 +125,27 @@ func checkNATS(h *Handler) dependencyStatus {
 	return dependencyStatus{Status: "healthy"}
 }
 
-func checkKubernetes(h *Handler) k8sStatus {
+func checkKubernetes(h *Handler, provider models.Provider) k8sStatus {
+	// Attempt a real K8s API ping via the provider's global KubeClient.
+	kubeClient := provider.GetKubeClient()
+	if kubeClient != nil && kubeClient.KubeClient != nil {
+		version, err := kubeClient.KubeClient.ServerVersion()
+		if err != nil {
+			return k8sStatus{
+				Status: "unhealthy",
+				Error:  fmt.Sprintf("Kubernetes API unreachable: %v", err),
+			}
+		}
+		return k8sStatus{Status: "healthy", ClusterCount: 1, Version: version.GitVersion}
+	}
+
+	// Fallback: check the kubeconfig folder for configuration files.
 	if h.config == nil {
 		return k8sStatus{Status: "unknown", Error: "handler config not initialized"}
 	}
 	if h.config.KubeConfigFolder == "" {
 		return k8sStatus{Status: "degraded", Error: "kubeconfig folder not configured"}
 	}
-	// Check if the kubeconfig folder exists and has contents.
 	info, err := os.Stat(h.config.KubeConfigFolder)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -149,7 +166,7 @@ func checkKubernetes(h *Handler) k8sStatus {
 			count++
 		}
 	}
-	return k8sStatus{Status: "healthy", ClusterCount: count}
+	return k8sStatus{Status: "degraded", Error: "kubeconfig exists but no active KubeClient", ClusterCount: count}
 }
 
 func checkMeshSync(h *Handler) dependencyStatus {
@@ -198,7 +215,22 @@ func checkAdapters(ctx context.Context, h *Handler) []adapterStatus {
 			Status:   "unknown",
 		}
 		if a.Location != "" {
-			s.Status = "healthy"
+			probeCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
+			mClient, err := meshes.CreateClient(probeCtx, a.Location)
+			if err != nil {
+				s.Status = "unhealthy"
+				s.Error = fmt.Sprintf("gRPC dial failed: %v", err)
+			} else {
+				_, err := mClient.MClient.MeshName(probeCtx, &meshes.MeshNameRequest{})
+				if err != nil {
+					s.Status = "unhealthy"
+					s.Error = fmt.Sprintf("MeshName RPC failed: %v", err)
+				} else {
+					s.Status = "healthy"
+				}
+				mClient.Close()
+			}
+			cancel()
 		}
 		results = append(results, s)
 	}
