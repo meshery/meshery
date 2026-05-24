@@ -47,10 +47,16 @@ const transitionTests: TransitionTest[] = [
 
 test.describe.serial('Connection Management Tests', () => {
   test.beforeEach(async ({ page }) => {
-    // Direct URL navigation — avoids flaky nav-click chain in CI
-    await page.goto(`${ENV.MESHERY_SERVER_URL}/management/connections`);
+    // Navigate directly to the page under test rather than clicking through
+    // the dashboard's left nav. The nav path was a known flake source: it
+    // depends on `lifecycle` and `connection` data-testids being present
+    // before either is clickable, and on the lifecycle sub-menu animating
+    // open before the connection child accepts a click. Loading the URL
+    // directly mirrors what real users do via deep links and isolates the
+    // smoke test to the connections page itself.
+    await page.goto('/management/connections', { waitUntil: 'domcontentloaded' });
     await page.waitForURL(/\/management\/connections/);
-    await expect(page.getByTestId('ConnectionTable-search')).toBeVisible({ timeout: 30000 });
+    await expect(page.getByTestId('ConnectionTable-search')).toBeVisible();
   });
 
   test('Verify that UI components are displayed', async ({ page }) => {

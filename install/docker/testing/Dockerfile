@@ -18,7 +18,7 @@ WORKDIR /app
 
 COPY ui/package.json ui/package-lock.json ./
 ENV HUSKY=0
-RUN npm ci --omit=dev --legacy-peer-deps --ignore-scripts
+RUN npm ci --legacy-peer-deps --ignore-scripts
 
 FROM base-node AS ui-builder
 WORKDIR /app
@@ -37,7 +37,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 # Install dependencies based on the preferred package manager
 COPY provider-ui/package.json provider-ui/package-lock.json ./
-RUN npm ci --omit=dev --legacy-peer-deps
+RUN npm ci --legacy-peer-deps
 
 FROM base-node AS ui-provider-builder
 WORKDIR /app
@@ -51,26 +51,12 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY provider-ui .
 RUN npm run build
 
-# This image will be reuse for wrk2, seed content and the last built
+# This image is reused for seed content and the last built
 FROM alpine:3.23.2 AS base-alpine
-
-FROM base-alpine AS wrk2
-RUN apk update \
-    && apk --no-cache --update add alpine-sdk zlib-dev openssl-dev wget git
-RUN git config --global user.email "meshery@meshery.io"
-RUN git config --global user.name "meshery"
-RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 
 FROM base-alpine AS seed_content
 RUN apk add --no-cache curl
 WORKDIR /
-RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url.*wasm" | cut -d : -f 2,3 | sed 's/"//g') \
-    && mkdir -p seed_content/filters/binaries \
-    && cd seed_content/filters/binaries  \
-    for line in $lines \
-    do \
-    curl -LO $line \
-    done
 
 # bundling patterns
 RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/tarball/master -o service-mesh-patterns.tgz \
@@ -83,7 +69,6 @@ RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/ta
 RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
     && curl -LO https://raw.githubusercontent.com/istio/istio/master/samples/bookinfo/platform/kube/bookinfo.yaml \
     && curl -LO https://raw.githubusercontent.com/istio/istio/master/samples/httpbin/httpbin.yaml \
-    && curl -L https://raw.githubusercontent.com/layer5io/image-hub/master/deployment.yaml -o imagehub.yaml \
     && mkdir /emojivoto && (cd /emojivoto && curl --remote-name-all -L https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/emoji.yml \
     https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/vote-bot.yml \
     https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/voting.yml \
@@ -117,8 +102,6 @@ COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=ui-builder /app/out /app/ui/out
 COPY --from=ui-builder /app/public /app/ui/public
 COPY --from=ui-provider-builder /app/out /app/provider-ui/out
-COPY --from=wrk2 /wrk2 /app/server/cmd/wrk2
-COPY --from=wrk2 /wrk2/wrk /usr/local/bin
 COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
 
 RUN addgroup docker
