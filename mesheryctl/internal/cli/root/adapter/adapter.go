@@ -17,6 +17,7 @@ package adapter
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -237,7 +238,11 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	if err != nil {
 		return "", ErrCreatingDeployResponseRequest(err)
 	}
-	defer func() { _ = res.Body.Close() }()
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			utils.Log.Warn(fmt.Errorf("error closing validate response body: %w", err))
+		}
+	}()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -281,7 +286,7 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	client := &http.Client{}
 	req, err := utils.NewRequest(method, path, nil)
 	if err != nil {
-		return "", ErrCreatingDeployResponseRequest(err)
+		return "", ErrCreatingValidateRequest(err)
 	}
 	req.Header.Add("Accept", "text/event-stream")
 
@@ -289,6 +294,11 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	if err != nil {
 		return "", ErrCreatingValidateRequest(err)
 	}
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			utils.Log.Warn(fmt.Errorf("error closing validate response body: %w", err))
+		}
+	}()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

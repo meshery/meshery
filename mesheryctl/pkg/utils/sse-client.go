@@ -24,7 +24,7 @@ type EventData struct {
 }
 
 // ConvertRespToSSE converts a connection to a stream of server sent events
-func ConvertRespToSSE(ctx context.Context, resp *http.Response) (chan Event, error) {
+func ConvertRespToSSE(ctx context.Context, resp *http.Response) (<-chan Event, error) {
 	events := make(chan Event)
 	reader := bufio.NewReader(resp.Body)
 
@@ -33,7 +33,7 @@ func ConvertRespToSSE(ctx context.Context, resp *http.Response) (chan Event, err
 	return events, nil
 }
 
-func loop(ctx context.Context, reader *bufio.Reader, events chan Event) {
+func loop(ctx context.Context, reader *bufio.Reader, events chan<- Event) {
 	ev := Event{}
 
 	var buf bytes.Buffer
