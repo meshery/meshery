@@ -165,6 +165,7 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 		return
 	}
 
+	writeJSONMessage(w, map[string]string{"message": "Event status updated"}, http.StatusOK)
 }
 
 func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -191,6 +192,7 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 		return
 	}
 
+	writeJSONMessage(w, map[string]string{"message": "Event statuses updated"}, http.StatusOK)
 }
 
 func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -215,6 +217,8 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 		writeMeshkitError(w, _err, http.StatusInternalServerError)
 		return
 	}
+
+	writeJSONMessage(w, map[string]string{"message": "Events deleted"}, http.StatusOK)
 }
 
 func (h *Handler) DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -228,6 +232,8 @@ func (h *Handler) DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj 
 		writeMeshkitError(w, _err, http.StatusInternalServerError)
 		return
 	}
+
+	writeJSONMessage(w, map[string]string{"message": "Event deleted"}, http.StatusOK)
 }
 
 func getEventFilter(req *http.Request) (*events.EventsFilter, error) {
