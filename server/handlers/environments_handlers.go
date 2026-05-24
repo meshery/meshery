@@ -76,10 +76,7 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -98,10 +95,7 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
@@ -133,11 +127,7 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 	description := fmt.Sprintf("Environment %s created.", environment.Name)
 
 	h.log.Info(description)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusCreated)
 }
 
 func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -149,10 +139,7 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
@@ -191,14 +178,7 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 	description := fmt.Sprintf("Environment %s updated.", environment.Name)
 	h.log.Info(description)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_, err = w.Write(respJSON)
-	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		// Headers already committed; log only. Writing another body would corrupt the stream.
-		return
-	}
+	writeJSONBytes(w, respJSON, http.StatusOK)
 }
 
 func (h *Handler) AddConnectionToEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -211,10 +191,7 @@ func (h *Handler) AddConnectionToEnvironmentHandler(w http.ResponseWriter, r *ht
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -227,10 +204,7 @@ func (h *Handler) RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, 
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -242,8 +216,5 @@ func (h *Handler) GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, r *h
 		writeMeshkitError(w, ErrGetResult(err), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
