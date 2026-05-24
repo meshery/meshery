@@ -10,7 +10,7 @@
  * file can render its own `ModalBody` matching the original 90%/80% layout.
  * Migrated to shared primitives as part of Phase 5.b.6 (#18754).
  */
-import React, { useContext, useState, useEffect, ReactNode, FC } from 'react';
+import { useContext, useState, useEffect, ReactNode, FC } from 'react';
 import {
   ModalBody,
   List,
