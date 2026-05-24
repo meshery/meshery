@@ -176,13 +176,17 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, con
 		Controller:   model.GetInternalController(models.MesheryOperator),
 	}
 
+	connectionUUID := uuid.FromStringOrNil(connectionID)
+	if connectionUUID == uuid.Nil {
+		return unknowStatus, fmt.Errorf("invalid connection ID: %q", connectionID)
+	}
+
 	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
 	if !ok {
 		return unknowStatus, fmt.Errorf("failed to retrieve handler from context for connection %s", connectionID)
 	}
 
-	inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
-	// If machine instance is not present or points to nil, return unknown status
+	inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(connectionUUID)
 	if !ok || inst == nil {
 		return unknowStatus, fmt.Errorf("state machine instance not found for connection %s", connectionID)
 	}
@@ -194,10 +198,11 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, con
 	}
 
 	controllerhandler := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
+	ctrl, ok := controllerhandler[models.MesheryOperator]
 	if !ok {
-		return unknowStatus, fmt.Errorf("controller handlers not available for connection %s", connectionID)
+		return unknowStatus, fmt.Errorf("controller handler for operator not found for connection %s", connectionID)
 	}
-	status := controllerhandler[models.MesheryOperator].GetStatus()
+	status := ctrl.GetStatus()
 	return &model.MesheryControllersStatusListItem{
 		ConnectionID: connectionID,
 		Status:       model.GetInternalControllerStatus(status),
@@ -210,6 +215,11 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 		ConnectionID: connectionID,
 		Status:       model.Status(model.MesheryControllerStatusUnkown.String()),
 		Name:         model.GetInternalController(models.Meshsync).String(),
+	}
+
+	connectionUUID := uuid.FromStringOrNil(connectionID)
+	if connectionUUID == uuid.Nil {
+		return unknowStatus, fmt.Errorf("invalid connection ID: %q", connectionID)
 	}
 
 	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
