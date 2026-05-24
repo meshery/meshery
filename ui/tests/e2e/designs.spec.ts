@@ -82,7 +82,7 @@ test.describe('Design Page Tests', () => {
 
       await ImportModal.importDesign(type, pathOrUrl, designName);
 
-      await waitForSnackBar(designPage.page, `${designName}" design uploaded`);
+      await waitForSnackBar(designPage.page, `"${designName}" design uploaded`);
     });
   });
 
