@@ -429,7 +429,7 @@ func TestWriteAPIResponse_WrapsDataInEnvelope(t *testing.T) {
 	WriteAPIResponse(rec, http.StatusOK, map[string]string{"id": "abc-123", "name": "my-design"})
 
 	resp := rec.Result()
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		t.Fatalf("expected status %d, got %d", http.StatusOK, resp.StatusCode)
@@ -494,7 +494,7 @@ func TestWriteAPIListResponse_WrapsDataInEnvelope(t *testing.T) {
 	WriteAPIListResponse(rec, http.StatusOK, items, 1, 25, 42)
 
 	resp := rec.Result()
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		t.Fatalf("expected status %d, got %d", http.StatusOK, resp.StatusCode)
