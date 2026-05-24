@@ -43,8 +43,8 @@ vi.mock('../utils/ExtensionPointSchemaValidator', () => ({
 }));
 
 vi.mock('next/link', () => ({
-  default: ({ href, children }: any) => (
-    <a data-testid="next-link" href={href}>
+  default: ({ href, target, rel, 'aria-label': ariaLabel, children }: any) => (
+    <a data-testid="next-link" href={href} target={target} rel={rel} aria-label={ariaLabel}>
       {children}
     </a>
   ),
@@ -207,8 +207,7 @@ describe('User component', () => {
     expect(payload.details).toBe('oops');
   });
 
-  it('navigates to the profile URL when the avatar is clicked', async () => {
-    const user = userEvent.setup();
+  it('renders a Link with the profile URL that opens in a new tab', async () => {
     mockGetUserQuery = {
       data: { status: 'authenticated' },
       isSuccess: true,
@@ -227,8 +226,10 @@ describe('User component', () => {
     // Trigger a re-render of the providerCapabilities effect.
     await waitFor(() => expect(ExtensionPointSchemaValidator).toHaveBeenCalledWith('account'));
 
-    await user.click(screen.getByTestId('icon-button-avatar'));
-    expect(window.location.href).toContain('https://cloud.test/profile');
+    const profileLink = screen.getByRole('link', { name: 'profile link' });
+    expect(profileLink).toHaveAttribute('href', 'https://cloud.test/profile');
+    expect(profileLink).toHaveAttribute('target', '_blank');
+    expect(profileLink).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
   it('does not redirect when no profile URL is present', async () => {

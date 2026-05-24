@@ -80,6 +80,7 @@ const User = (props) => {
             href={profileUrl || '#'}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="profile link"
             style={{ textDecoration: 'none' }}
           >
             <IconButtonAvatar color={color} aria-haspopup="true">
