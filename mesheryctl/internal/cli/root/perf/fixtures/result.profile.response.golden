@@ -11,7 +11,7 @@
         "fortio"
       ],
       "endpoints": [
-        "https://twitter.com/layer5"
+        "https://x.com/mesheryio"
       ],
       "serviceMesh": "consul",
       "concurrentRequest": 10,

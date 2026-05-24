@@ -7,8 +7,11 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
+	core "github.com/meshery/schemas/models/core"
 )
 
 var tempProfileID = "a2a555cf-ae16-479c-b5d2-a35656ba741e"
@@ -65,6 +68,16 @@ func TestResultCmd(t *testing.T) {
 				{Method: "GET", URL: resultURL, Response: "result.list.response.golden", ResponseCode: 200},
 			},
 			ExpectedResponse: "result.yaml.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name: "result output tolerates empty load generators",
+			Args: []string{"result", "John Doe"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: "result.profile.emptyLoadGenerators.response.golden", ResponseCode: 200},
+				{Method: "GET", URL: resultURL, Response: "result.list.response.golden", ResponseCode: 200},
+			},
+			ExpectedResponse: "result.list.output.golden",
 			ExpectError:      false,
 		},
 	}
@@ -150,4 +163,30 @@ func TestResultCmd(t *testing.T) {
 
 	// Run tests in logger format
 	utils.RunMesheryctlMultiURLTests(t, update, PerfCmd, loggerTests, currDir, "perf", resetVariables)
+}
+
+func TestProfilesToStringArraysHandlesMissingLoadGenerators(t *testing.T) {
+	t.Parallel()
+
+	id := core.Uuid(uuid.Nil)
+	data := profilesToStringArrays([]models.PerformanceProfile{
+		{
+			ID:             &id,
+			Name:           "test-profile",
+			TotalResults:   3,
+			LoadGenerators: nil,
+		},
+	})
+
+	if len(data) != 1 {
+		t.Fatalf("expected 1 row, got %d", len(data))
+	}
+
+	if len(data[0]) != 5 {
+		t.Fatalf("expected 5 columns, got %d", len(data[0]))
+	}
+
+	if data[0][3] != "" {
+		t.Fatalf("expected empty load generator cell, got %q", data[0][3])
+	}
 }

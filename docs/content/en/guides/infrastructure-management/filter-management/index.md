@@ -14,8 +14,8 @@ Meshery offers powerful features that simplify the management of Envoy WASM filt
 - **Import WASM Envoy Filters**: Easily import your WebAssembly Envoy filters into Meshery using the intuitive UI or the command-line interface ([CLI](https://docs.meshery.io/reference/mesheryctl#data-plane-intelligence)).
 - **Publish and Clone Filters**: Share your filters with the community by publishing them in the [Meshery Catalog](https://meshery.io/catalog) and make it effortless for others to clone them.
 - **Download WASM Binaries**: Access and download WebAssembly binaries directly from your Remote Provider like [Meshery Cloud](https://cloud.meshery.io/).
-- **Efficient Data Plane Design**: Seamlessly design and deploy Istio and Envoy data planes using extensions like [Kanvas](https://layer5.io/cloud-native-management/kanvas).
-- **Contribute to Open Source**: Get involved with the cloud native community by contributing to any of the open source [wasm-filters](https://github.com/layer5io/wasm-filters) developed by the Meshery community.
+- **Efficient Data Plane Design**: Seamlessly design and deploy Istio and Envoy data planes using Meshery.
+- **Contribute to Open Source**: Get involved with the cloud native community by contributing to any of the open source [wasm-filters](https://github.com/meshery-extensions/wasm-filters) developed by the Meshery community.
 
 <img src="https://mcusercontent.com/6b50be5aea3dfe1fd4c041d80/images/a07ef29a-4cf8-986e-9bd3-78db7dc00ce1.png" width="100px" style="float:left;position:relative;margin: 1rem 1rem 1rem 0rem" />
 
@@ -36,7 +36,7 @@ As of Meshery v0.7, the management of Envoy WASM filters includes:
 - ✅ View Filters: Gain insights into your filters using `mesheryctl filter view [filter-name | ID]`.
 - ✅ List and Search Filters: Easily navigate filters with `mesheryctl filter list [filter-name | ID]`.
 
-**Kanvas Integration**
+**Design Configurator Integration**
 
 - ✅ Apply WASM Filters: Hierarchically apply filters to your Envoy configurations.
 - ✅ Deploy/Undeploy Filters: Streamline the deployment and removal of filters with custom configurations.
@@ -67,7 +67,6 @@ In addition to Envoy WASM filter management, we've also introduced new performan
 - ✅ Performance Profiles: Tailor your performance profiles to match your specific needs.
 - ✅ SSL Certificate Support: Benefit from SSL certificate support for Fortio in the server.
 - ✅ Performance Analysis Comparison: Compare performance with and without filters.
-- ✅ GetNighthawk and Cloud Native Performance Releases: Access the latest releases of GetNighthawk and Cloud Native Performance.
 
 **Meshery CLI**
 
@@ -101,7 +100,7 @@ Meshery manages WASM filters for data plane proxies for:
 
 ### Q: What is Envoy proxy?
 
-An <strong>Envoy</strong> is a high performance, programmable L3/L4 and L7 proxy that a number of service mesh use as their data plane. See the [service mesh landscape](https://layer5.io/service-mesh-landscape) for a complete list. Connection and request handling are at the core of Envoy’s focus. Envoy's has a pluggable filter module that allows the incorporation of WebAssembly filters that provide additional traffic filtering intelligence. Often this includes higher order functions such as access control, transformation, data enrichment, auditing and more.
+An <strong>Envoy</strong> is a high performance, programmable L3/L4 and L7 proxy that a number of service mesh use as their data plane. See the service mesh landscape for a complete list. Connection and request handling are at the core of Envoy’s focus. Envoy's has a pluggable filter module that allows the incorporation of WebAssembly filters that provide additional traffic filtering intelligence. Often this includes higher order functions such as access control, transformation, data enrichment, auditing and more.
 
 ### Q: What is WASM ?
 
