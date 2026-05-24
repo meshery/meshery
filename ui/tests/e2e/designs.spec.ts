@@ -28,6 +28,7 @@ const DESIGN_TYPES = [
 ];
 
 // Skipped: DesignPage.navigateTo() is flaky in CI due to beforeEach timeout issues.
+// Tracked in: https://github.com/meshery/meshery/issues/19650
 test.describe.skip('Design Page Tests', () => {
   let designPage: DesignPage;
 
