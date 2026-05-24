@@ -100,12 +100,12 @@ vi.mock('./importModelSchema', () => ({
   UPLOAD_TYPE_CSV: 'csv',
   UPLOAD_TYPE_FILE: 'file',
   UPLOAD_TYPE_URL: 'urlImport',
-  decodeDataUrlToBytes: (d: any) => (d ? [1, 2, 3] : null),
+  decodeDataUrlToBase64: (d: any) => (d ? 'AQID' : null),
   filenameFromDataUrl: () => 'model.yml',
   findSelectedModelFile: () => null,
   importModelSchema: { properties: { uploadType: { description: 'Import help text' } } },
   importModelUiSchema: {},
-  readFileAsBytes: vi.fn(),
+  readFileAsBase64: vi.fn(),
 }));
 
 vi.mock('@/utils/hooks/useNotification', () => ({

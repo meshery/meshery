@@ -6,7 +6,6 @@
  * shape and the rationale behind each consumer-specific override.
  */
 import { ModelImportRjsfSchemaV1Beta2, ModelImportRjsfUiSchemaV1Beta2 } from '@meshery/schemas';
-import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 
 // Canonical RJSF form schemas authored in `meshery/schemas` and validated
 // by its `validation/forms_test.go` to be a strict subset of the OpenAPI
@@ -119,10 +118,13 @@ export const filenameFromDataUrl = (dataUrl: string | undefined): string | undef
   return match ? decodeURIComponent(match[1]) : undefined;
 };
 
-// Decode an RJSF data URL into the byte array the server expects.
-export const decodeDataUrlToBytes = (dataUrl: string | undefined): number[] | null => {
+// Extract the base64 payload from an RJSF data URL. The server's Go
+// ImportBody model uses []byte, so JSON decoding accepts the same base64
+// string that mesheryctl sends after encoding []byte.
+export const decodeDataUrlToBase64 = (dataUrl: string | undefined): string | null => {
   if (!dataUrl) return null;
-  return getUnit8ArrayDecodedFile(dataUrl);
+  const [, base64Content] = dataUrl.split(';base64,');
+  return base64Content || null;
 };
 
 // Locate the `<input type="file">` rendered for the modelFile field. RJSF
@@ -141,18 +143,22 @@ export const findSelectedModelFile = (): File | undefined => {
   return undefined;
 };
 
-// Read a `File` synchronously-from-the-DOM-but-asynchronously-into-bytes,
-// matching the wire shape `getUnit8ArrayDecodedFile` produces from a
-// data URL. Used as the synchronous fallback when RJSF's form data
-// hasn't received the data URL yet (the FileReader chain inside
-// CustomFileWidget can lose the race against a quick Next-click).
-export const readFileAsBytes = (file: File): Promise<number[]> =>
+// Read a `File` synchronously-from-the-DOM-but-asynchronously-into-base64.
+// Used as the fallback when RJSF's form data hasn't received the data URL yet
+// because the FileReader chain inside CustomFileWidget can lose the race
+// against a quick Next-click.
+export const readFileAsBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
-      const buffer = reader.result as ArrayBuffer;
-      resolve(Array.from(new Uint8Array(buffer)));
+      const dataUrl = reader.result as string;
+      const base64Content = decodeDataUrlToBase64(dataUrl);
+      if (!base64Content) {
+        reject(new Error('Unable to read selected file as base64 data URL'));
+        return;
+      }
+      resolve(base64Content);
     };
     reader.onerror = () => reject(reader.error);
-    reader.readAsArrayBuffer(file);
+    reader.readAsDataURL(file);
   });

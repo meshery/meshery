@@ -49,12 +49,12 @@ import {
   UPLOAD_TYPE_CSV,
   UPLOAD_TYPE_FILE,
   UPLOAD_TYPE_URL,
-  decodeDataUrlToBytes,
+  decodeDataUrlToBase64,
   filenameFromDataUrl,
   findSelectedModelFile,
   importModelSchema,
   importModelUiSchema,
-  readFileAsBytes,
+  readFileAsBase64,
 } from './importModelSchema';
 
 const FinishDeploymentStep = ({ deploymentType }: { deploymentType: string }) => {
@@ -202,14 +202,14 @@ const ImportModelModal = memo<ImportModelModalProps>(
           // bytes if the FileReader race lost (paths 1 -> 3 for bytes), and
           // ALWAYS prefer the DOM filename for `fileName` (path 3 for
           // name) — paths 1 and 2 just don't carry it.
-          let fileData: number[] | null = decodeDataUrlToBytes(modelFile);
+          let fileData: string | null = decodeDataUrlToBase64(modelFile);
           let fileName: string | undefined = formFileName || filenameFromDataUrl(modelFile);
           if (!fileData || !fileName) {
             const inputFile = findSelectedModelFile();
             if (inputFile) {
               try {
                 if (!fileData) {
-                  fileData = await readFileAsBytes(inputFile);
+                  fileData = await readFileAsBase64(inputFile);
                 }
                 if (!fileName) {
                   fileName = inputFile.name;
