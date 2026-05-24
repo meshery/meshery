@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"sort"
 	"time"
 
 	"github.com/meshery/meshery/server/models"
@@ -17,6 +18,8 @@ import (
 	"github.com/spf13/viper"
 	"gorm.io/gorm/clause"
 )
+
+const maxDatabaseBackups = 5
 
 func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	var tables []system.SystemDatabaseTable
@@ -116,6 +119,9 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 		return
 	}
 
+	archiveDir := path.Join(mesherydbPath, ".archive")
+	go pruneOldBackups(archiveDir, h)
+
 	dbHandler := provider.GetGenericPersister()
 	if dbHandler == nil {
 		writeMeshkitError(w, ErrObtainDatabaseHandler(), http.StatusInternalServerError)
@@ -178,5 +184,47 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		}()
 		writeJSONMessage(w, system.SystemMessageResponse{Message: "Database reset successful"}, http.StatusOK)
+	}
+}
+
+// pruneOldBackups removes the oldest backup files from archiveDir, keeping at
+// most maxDatabaseBackups files. Errors are logged but do not fail the reset.
+func pruneOldBackups(archiveDir string, h *Handler) {
+	entries, err := os.ReadDir(archiveDir)
+	if err != nil {
+		h.log.Error(ErrPruneArchives(err))
+		return
+	}
+
+	type backupFile struct {
+		name    string
+		modTime time.Time
+	}
+
+	var backups []backupFile
+	for _, e := range entries {
+		if e.IsDir() {
+			continue
+		}
+		info, err := e.Info()
+		if err != nil {
+			continue
+		}
+		backups = append(backups, backupFile{name: e.Name(), modTime: info.ModTime()})
+	}
+
+	if len(backups) <= maxDatabaseBackups {
+		return
+	}
+
+	sort.Slice(backups, func(i, j int) bool {
+		return backups[i].modTime.Before(backups[j].modTime)
+	})
+
+	toDelete := backups[:len(backups)-maxDatabaseBackups]
+	for _, f := range toDelete {
+		if err := os.Remove(path.Join(archiveDir, f.name)); err != nil {
+			h.log.Error(ErrPruneArchives(err))
+		}
 	}
 }
