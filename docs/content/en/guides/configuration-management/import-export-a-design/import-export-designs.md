@@ -1,5 +1,5 @@
 ---
-title: Import and Export Designs
+title: Importing and Exporting Designs
 description: Manage and transfer Meshery designs seamlessly through import and export using CLI and UI.
 aliases:
 - /guides/configuration-management/importing-designs
@@ -8,23 +8,26 @@ aliases:
 display_title: false
 ---
 
-# Import and Export Designs
+# Importing and Exporting Designs
 
 Meshery supports two primary operations for working with designs: **Import** and **Export**.
 A **[design](/concepts/logical/designs)** in Meshery is a structured model describing how various components (e.g., Kubernetes manifests, Helm charts, or Docker Compose objects) should be managed and deployed. This document details the core concepts, the import/export processes, and the available methods to perform them.
 
-## Core Operations
+As a refresher, [designs](/concepts/logical/designs) consist of:
 
-Meshery treats each design as a combination of:
 - **Components**: Defined resources or services (e.g., Deployments, Services).
 - **Relationships**: Possible connections or dependencies among components (e.g., hierarchical, sibling, edge).
 
-When **importing** a design, Meshery:
-1. **Parses** and **validates** the design file.
-2. Processes design structure, applying transformations as needed.
-3. **Routes** validated components to the appropriate Meshery Adapters for further deployment or processing.
+When **importing** a design, Meshery performs the following steps:
+
+1. **Parses** and **validates** the design file, processing design structure, applying transformations as needed.
+
+<!-- 
+Meshery does this when deploying, not when importing.
+1. **Routes** validated components to the appropriate Meshery Adapters for further deployment or processing. -->
 
 When **exporting** a design, Meshery:
+
 1. **Fetches** the design data from the Meshery database using `/api/pattern/download/{id}`.
 2. **Converts** the design format if necessary (e.g., from V1alpha2 to V1beta1).
 3. **Applies** requested export format (e.g., `current`, `original`, `oci`, `helm-chart`).
@@ -34,7 +37,7 @@ When **exporting** a design, Meshery:
 
 You can import designs into Meshery through either **[Meshery CLI](/reference/mesheryctl)** or **Meshery UI**.
 
-#### 1. Using Meshery CLI
+### 1. Using Meshery CLI
 
 ```bash
 mesheryctl design import --file <PATH/URL> --source-type <TYPE>
@@ -84,7 +87,7 @@ mesheryctl design export --type <FORMAT> --output <DIRECTORY>
 mesheryctl design export --type oci -o ./exports
 ```
 
-#### 2. Using Meshery UI
+### 2. Using Meshery UI
 
 1. Go to **Designs > My Designs** and select the design you want to export.
 2. Click the **Export** action button.
