@@ -96,7 +96,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			}
 		}
 
-		adapterImage := "layer5/" + adapter.Name + ":stable-latest"
+		adapterImage := "meshery/" + adapter.Name + ":stable-latest"
 
 		resp, err := cli.ImagePull(ctx, adapterImage, image.PullOptions{})
 		if err != nil {

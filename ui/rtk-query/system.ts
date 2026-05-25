@@ -1,4 +1,5 @@
 import { api, mesheryApiPath } from './index';
+import { normalizeKubernetesContextsResponse } from './transforms';
 
 const TAGS = {
   SYSTEM: 'system',
@@ -65,6 +66,7 @@ const systemApi = api.injectEndpoints({
         },
         method: 'GET',
       }),
+      transformResponse: normalizeKubernetesContextsResponse,
       providesTags: [TAGS.SYSTEM],
     }),
 

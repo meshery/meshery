@@ -67,7 +67,7 @@ Meshery publishes `stable` and `edge` release channels. Use the release channel 
 | [`stable`](/project/contributing/build-and-release/#stable-channel) | Production environments and conservative upgrades | Use for environments that stay on maintained platform releases and adopt Kubernetes upgrades through planned release management. |
 | [`edge`](/project/contributing/build-and-release/#edge-channel) | Early validation, development, and upcoming-platform testing | Use when validating Meshery against newly introduced platform releases before they become part of your normal stable rollout. |
 
-Stable and edge artifacts are published separately in Meshery's build and release process, so cluster compatibility validation should be considered together with your selected release channel, your [upgrade path](/installation/upgrades), and the current [test status](/project/contributing/test-status).
+Stable and edge artifacts are published separately in Meshery's build and release process, so cluster compatibility validation should be considered together with your selected release channel and your [upgrade path](/installation/upgrades).
 
 ## Validation Checks
 
@@ -104,4 +104,3 @@ For rollout planning after initial installation, continue with [Upgrading Mesher
 - [Upgrading Meshery](/installation/upgrades)
 - [Running system checks using Meshery CLI](/guides/mesheryctl/running-system-checks-using-mesheryctl)
 - [Troubleshooting Meshery Installations](/guides/troubleshooting/installation)
-<!-- - [Test status](/project/contributing/test-status) for automated CI and integration test visibility -->

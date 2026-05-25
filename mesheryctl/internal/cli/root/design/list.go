@@ -81,7 +81,7 @@ mesheryctl design list --count
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		header := func(provider string) []string {
-			if provider == "None" {
+			if utils.IsLocalProvider(provider) {
 				return []string{"DESIGN ID", "NAME", "CREATED", "UPDATED"}
 			}
 			return []string{"DESIGN ID", "USER ID", "NAME", "CREATED", "UPDATED"}
@@ -110,7 +110,7 @@ func processDesignData(data *models.PatternsAPIResponse) ([][]string, int64) {
 		createdAt := formatTimeToString(v.CreatedAt, verbose)
 		updatedAt := formatTimeToString(v.UpdatedAt, verbose)
 
-		if provider != "None" {
+		if !utils.IsLocalProvider(provider) {
 			userID := func(userID *string) string {
 				if userID != nil {
 					if verbose {

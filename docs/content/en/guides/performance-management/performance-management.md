@@ -80,7 +80,7 @@ mesheryctl perf apply Istio Performance Test
 You can also use flags to configure your performance test. For example:
 
 ```
-mesheryctl perf apply istio-soak-test --concurrent-requests 1 --duration 15s --load-generator nighthawk --mesh istio --url http://localhost:2323
+mesheryctl perf apply istio-soak-test --concurrent-requests 1 --duration 15s --load-generator fortio --mesh istio --url http://localhost:2323
 ```
 
 mesheryctl also supports test configurations written in SMP compatible format as shown below:
@@ -116,12 +116,12 @@ mesheryctl perf apply -f perf-config.yaml
 You can also override the configuration passed in the file with flags like shown below:
 
 ```
-mesheryctl perf apply -f perf-config.yaml --url http://localhost:2323/productpage?u=test --load-generator nighthawk --qps 5
+mesheryctl perf apply -f perf-config.yaml --url http://localhost:2323/productpage?u=test --load-generator fortio --qps 5
 ```
 
 ## Running Performance Benchmarks in your Pipelines
 
-Meshery also has a [meshery-smp-action](https://github.com/layer5io/meshery-smp-action) which is a GitHub action that can be used to run performance tests in your CI/CD pipelines.
+Meshery also has a [meshery-performance-action](https://github.com/meshery-extensions/meshery-performance-action) which is a GitHub action that can be used to run performance tests in your CI/CD pipelines.
 
 Download the token from the Meshery Dashboard by clicking on the profile icon on the top-right corner.
 
@@ -135,7 +135,7 @@ You can use this token to authenticate the instance of Meshery running in your C
 You can use the <a href='https://docs.github.com/en/actions/reference/encrypted-secrets'>secrets feature in GitHub</a> to store the token.
 {{% /alert %}}
 
-The action can be used by defining your test configuration in a performance profile in Meshery or by writing your test configuration in [SMP compatible format](https://github.com/layer5io/meshery-smp-action#smp-compatible-test-configuration-file).
+The action can be used by defining your test configuration in a performance profile in Meshery or by writing your test configuration in [SMP compatible format](https://github.com/meshery-extensions/meshery-performance-action#smp-compatible-test-configuration-file).
 
 The action can then be configured as shown below:
 
@@ -164,13 +164,13 @@ jobs:
           driver: docker
 
       - name: Run Performance Test
-        uses: layer5io/meshery-smp-action@master
+        uses: meshery-extensions/meshery-performance-action@master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: docker
           profile_name: soak-test
 ```
 
-More configuration details of the action can be found [here](https://github.com/layer5io/meshery-smp-action/blob/master/action.yml).
+More configuration details of the action can be found [here](https://github.com/meshery-extensions/meshery-performance-action/blob/master/action.yml).
 
-See [sample configurations](https://github.com/layer5io/meshery-smp-action#sample-configuration) for more workflow examples using this action.
+See [sample configurations](https://github.com/meshery-extensions/meshery-performance-action#sample-configuration) for more workflow examples using this action.

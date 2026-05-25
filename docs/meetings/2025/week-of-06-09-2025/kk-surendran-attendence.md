@@ -1,1 +1,0 @@
-KK Surendran attended today

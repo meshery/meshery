@@ -33,7 +33,7 @@ func TestListWorkspaces(t *testing.T) {
 		{
 			Name:             "given organization ID when workspace list then return workspaces under that organization",
 			Args:             []string{"list", "--orgId", testOrgId},
-			URL:              fmt.Sprintf("/%s?orgID=%s&page=0&pagesize=10", workspacesApiPath, testOrgId),
+			URL:              fmt.Sprintf("/%s?orgId=%s&page=0&pagesize=10", workspacesApiPath, testOrgId),
 			Fixture:          "list.workspace.api.response.golden",
 			ExpectedResponse: "list.workspace.output.golden",
 			ExpectError:      false,
@@ -41,7 +41,7 @@ func TestListWorkspaces(t *testing.T) {
 		{
 			Name:             "given organization ID without workspaces when workspace list then return empty result",
 			Args:             []string{"list", "--orgId", testOrgId},
-			URL:              fmt.Sprintf("/%s?orgID=%s&page=0&pagesize=10", workspacesApiPath, testOrgId),
+			URL:              fmt.Sprintf("/%s?orgId=%s&page=0&pagesize=10", workspacesApiPath, testOrgId),
 			Fixture:          "list.workspace.empty.api.response.golden",
 			ExpectedResponse: "list.workspace.empty.output.golden",
 			ExpectError:      false,

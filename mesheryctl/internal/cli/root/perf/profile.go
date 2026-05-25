@@ -121,8 +121,8 @@ mesheryctl perf profile test --view
 			fmt.Printf("Name: %v\n", a.Name)
 			fmt.Printf("ID: %s\n", a.ID.String())
 			fmt.Printf("Total Results: %d\n", a.TotalResults)
-			fmt.Printf("Endpoint: %v\n", a.Endpoints[0])
-			fmt.Printf("Load Generators: %v\n", a.LoadGenerators[0])
+			fmt.Printf("Endpoint: %v\n", firstString(a.Endpoints))
+			fmt.Printf("Load Generators: %v\n", firstString(a.LoadGenerators))
 			fmt.Printf("Test run duration: %v\n", a.Duration)
 			fmt.Printf("QPS: %d\n", a.QPS)
 			fmt.Printf("Infrastructure: %v\n", a.ServiceMesh)
@@ -188,15 +188,24 @@ func profilesToStringArrays(profiles []models.PerformanceProfile) [][]string {
 	var data [][]string
 
 	for _, profile := range profiles {
+		loadGenerator := firstString(profile.LoadGenerators)
 		// adding profile to data for list output
 		if profile.LastRun != nil {
-			data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), profile.LoadGenerators[0], profile.LastRun.Time.Format("2006-01-02 15:04:05")})
+			data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), loadGenerator, profile.LastRun.Time.Format("2006-01-02 15:04:05")})
 		} else {
-			data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), profile.LoadGenerators[0], ""})
+			data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), loadGenerator, ""})
 		}
 	}
 
 	return data
+}
+
+func firstString[S ~[]string](values S) string {
+	if len(values) == 0 {
+		return ""
+	}
+
+	return values[0]
 }
 
 func userPrompt(key string, label string, data [][]string) (int, error) {

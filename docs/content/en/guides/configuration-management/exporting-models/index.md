@@ -54,4 +54,4 @@ This Meshery model will include components, relationships.
 
 <a href="./images/ExportModel.gif"><img alt="Export-Model" style="width:500px;height:auto;" src="./images/ExportModel.gif" /></a>
 
-Once the Meshery model has been exported, you can export your model anytime back using `Import` on UI and then visualize on Kanvas, operate and observe your components that are geneated from the crd. You can also use Meshery to deploy your Meshery Model in form of a design to any of your connected kubernetes clusters. For more information, see [connections](/installation/kubernetes)
+Once the Meshery model has been exported, you can export your model anytime back using `Import` on UI and then visualize in Meshery, operate and observe your components that are geneated from the crd. You can also use Meshery to deploy your Meshery Model in form of a design to any of your connected kubernetes clusters. For more information, see [connections](/installation/kubernetes)

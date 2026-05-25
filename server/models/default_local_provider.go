@@ -70,9 +70,19 @@ type DefaultLocalProvider struct {
 	MeshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode
 }
 
+// LocalProviderName is the canonical name of the built-in local provider.
+// LocalProviderLegacyAlias is the prior name ("None"). It is still accepted on
+// inbound cookies/headers/env so existing sessions and ~/.meshery/config.yaml
+// entries continue to work after the rename. Normalization happens in
+// NormalizeProviderName (see models/providers.go).
+const (
+	LocalProviderName        = "Local"
+	LocalProviderLegacyAlias = "None"
+)
+
 // Initialize will initialize the local provider
 func (l *DefaultLocalProvider) Initialize() {
-	l.ProviderName = "None"
+	l.ProviderName = LocalProviderName
 	l.ProviderDescription = []string{
 		"Ephemeral sessions",
 		"Environment setup not saved",
@@ -1223,7 +1233,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	nilUserID := ""
 
 	// Use the relative directory for patterns
-	catalogDir := filepath.Join("..", "..", "docs", "catalog")
+	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
 
 	for _, seedContent := range seedContents {
 		go func(comp string, log logger.Handler) {
@@ -1930,7 +1940,12 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 // Events
 
 func (e *EventsPersister) PersistEvent(event events.Event, token string) error {
-	err := e.DB.Save(event).Error
+	// GORM's Save requires a pointer (it reflects on the struct to read/update
+	// the primary key and timestamps). Passing the value directly produced
+	// "invalid value, should be pointer to struct or slice" and dropped every
+	// system event silently — including the controller-emitted events that
+	// flow through PersistSystemEvent.
+	err := e.DB.Save(&event).Error
 	if err != nil {
 		return ErrPersistEvent(err)
 	}

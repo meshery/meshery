@@ -3,7 +3,7 @@ import type { Theme } from '@sistent/sistent';
 /**
  * Meshery UI theme entry point.
  *
- * This module is a thin wrapper around {@link https://github.com/layer5io/sistent Sistent},
+ * This module is a thin wrapper around Sistent,
  * the Meshery design system. It exists so that every consumer in the
  * Meshery UI imports theme primitives (`useTheme`, `styled`, `alpha`,
  * `lighten`, ...) from a single, project-local path.
@@ -47,6 +47,19 @@ export {
   CssBaseline,
   NoSsr,
 } from '@sistent/sistent';
+
+// `darken` is not currently re-exported by `@sistent/sistent` (only `lighten`
+// is). Until Sistent re-exports it, pull it from the same upstream module
+// `lighten` ultimately comes from so callers can still go through `@/theme`
+// as the project-local front door.
+// eslint-disable-next-line no-restricted-imports
+export { darken } from '@mui/material';
+
+// Bridged from MUI: Sistent doesn't yet export GlobalStyles. Routed through
+// `@/theme` so the rest of the app can stay off `@mui/material` directly;
+// this is the project's approved single bridge.
+// eslint-disable-next-line no-restricted-imports
+export { GlobalStyles } from '@mui/material';
 
 export type { Theme };
 

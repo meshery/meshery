@@ -3,6 +3,7 @@ import {
   Button,
   Divider,
   MenuItem,
+  SettingsIcon,
   TextField,
   Grid2,
   Typography,
@@ -13,7 +14,6 @@ import {
   NoSsr,
 } from '@sistent/sistent';
 import { useRouter } from 'next/router';
-import SettingsIcon from '@mui/icons-material/Settings';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAdapter } from '@/store/slices/adapter';
@@ -98,7 +98,7 @@ const MesheryPlayComponent = () => {
   };
 
   const pickImage = (adapter) => {
-    let image = '/static/img/meshery-logo.png';
+    let image = '/static/img/meshery-logo/meshery-logo.png';
     let imageIcon = <img src={image} style={{ width: '24px' }} alt="Meshery Logo" />;
     if (adapter && adapter.name) {
       image = `/static/img/${adapter.name.toLowerCase()}.svg`;

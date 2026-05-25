@@ -33,15 +33,13 @@ Learn how to create, manage, and explore _Kubernetes Deployments_ within the con
 #### Access Meshery Playground
 
 - Log in to the [Meshery Playground](https://playground.meshery.io) using your credentials. On successful login, you should be at the dashboard. Press the **X** on the _Where do you want to start?_ popup to close it (if required).
-- Click **Kanvas** from the left menu to navigate to the _Kanvas_ design page.
+- Click **Designer** from the left menu to navigate to the _Meshery Design Configurator_ page.
 
   ![](/guides/tutorials/images/kubernetes-deployments/2025-02-27_16-59.png)
 
-> **_NOTE:_** Kanvas is still in beta.
-
 #### Create a Deployment
 
-1. In the _Kanvas Design_ page, start by renaming the design to a name of your choice for easier identification later.
+1. In the _Design_ page, start by renaming the design to a name of your choice for easier identification later.
     ![](/guides/tutorials/images/kubernetes-deployments/2025-02-27_17-03.png)
 2. From the floating dock below, click the **Kubernetes** icon and then click **Deployment** from the list. This will create the _Deployment_ component on the design canvas. 
     ![](/guides/tutorials/images/kubernetes-deployments/2025-02-27_17-16.png)
@@ -87,7 +85,7 @@ You should see a few alerts on the bottom right about the deployment.
 
 #### Viewing and Operating the Deployment
 
-To view and perform operations on the resources deployed, i.e. the _Deployment_ in this exmaple, we will use the **Operate** functionality of _Kanvas_. You can open the design in _Operate_ mode during the _Deploy_ workflow or later by click the **Operate** tab. It will load the deployed resources in _Operate_ view similar to the screenshot below.
+To view and perform operations on the resources deployed, i.e. the _Deployment_ in this exmaple, we will use the **Operate** functionality of _Meshery Dashboard_. You can open the design in _Operate_ mode during the _Deploy_ workflow or later by click the **Operate** tab. It will load the deployed resources in _Operate_ view similar to the screenshot below.
 ![](/guides/tutorials/images/kubernetes-deployments/2025-02-28_15-03.png)
 
 You can click on any of the resources to view various details and actions applicable to them. For example, click on the _Deployment_ i.e. `deployment-bl` in this case (shown with a green border in the image below), to view deployment details such as _Age_, _Kind_, _Pods_, _Replicas_, _Namespace_ etc. 

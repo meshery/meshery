@@ -163,7 +163,7 @@ func writeLogsToFiles(regLog *RegistrationFailureLog) error {
 }
 
 func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *meshmodel.RegistryManager, regErrorStore *RegistrationFailureLog) {
-	provider := handlerConfig.Providers["None"]
+	provider := handlerConfig.Providers[LocalProviderName]
 
 	systemID := viper.GetString("INSTANCE_ID")
 

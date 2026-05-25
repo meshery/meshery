@@ -48,7 +48,7 @@ func GetIndexForRegisterCol(cols []string, shouldRegister string) int {
 }
 
 func GenerateMDXStyleDocs(model meshkitRegistryUtils.ModelCSV, components []meshkitRegistryUtils.ComponentCSV, modelPath, imgPath string) error {
-	// ../layer5/src/collections/integrations ../layer5/src/collections/integrations
+	// ../src/collections/integrations ../src/collections/integrations
 	modelName := utils.FormatName(model.Model)
 	// create dir for model
 	modelDir, _ := filepath.Abs(filepath.Join("../", modelPath, modelName))

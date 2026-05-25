@@ -166,7 +166,7 @@ export const useGetCategoriesSummary = () => {
         { category: category.name, params: { page: 1, pagesize: 1 } },
         true,
       );
-      categoryMap[category.name] = data?.total_count || 0;
+      categoryMap[category.name] = data?.totalCount ?? data?.total_count ?? 0;
     });
     await Promise.allSettled(requests);
     return categoryMap;

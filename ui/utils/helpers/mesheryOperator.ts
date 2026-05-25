@@ -1,5 +1,5 @@
 import { CONTROLLER_STATES } from '../Enum';
-import fetchMesheryOperatorStatus from '../../components/graphql/queries/OperatorStatusQuery';
+import fetchMesheryOperatorStatus from '@/graphql/queries/OperatorStatusQuery';
 
 export const isMesheryOperatorConnected = ({ operatorInstalled }) => operatorInstalled;
 

@@ -16,14 +16,10 @@ import (
 type LoadGenerator string
 
 const (
-	// FortioLG - represents the Fortio load generator
+	// FortioLG - represents the Fortio load generator. fortio is the only
+	// supported load generator; legacy/unknown generator identifiers run
+	// on fortio.
 	FortioLG LoadGenerator = "fortio"
-
-	// Wrk2LG - represents the wrk2 load generator
-	Wrk2LG LoadGenerator = "wrk2"
-
-	// NighthawkLG - represents the nighthawk load generator
-	NighthawkLG LoadGenerator = "nighthawk"
 )
 
 // Name - retrieves a string value for the generator

@@ -12,8 +12,6 @@ toc_hide: true
 
 Meshery Server and Meshery Adapters are tested daily for their compatibility with the infrastructure they manage and the platforms Meshery deploys on (Kubernetes and Docker). End-to-end test results are automatically posted to the following compatibility matrix.
 
-See also [test status](/project/contributing/test-status), which needs to be combined with the Compatibility Matrix test results to come together under a unified page (set of drillable pages).
-
 {{< compatibility-matrix-kubernetes >}}
 
 ## Integration Tests

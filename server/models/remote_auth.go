@@ -170,9 +170,15 @@ func (l *RemoteProvider) doRequestHelper(req *http.Request, token string) (*http
 		Transport: tracing.NewTransport(http.DefaultTransport), // Create tracing transport to pass tracing context
 	}
 	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", token))
-	// if token == models.GlobalTokenForAnonymousResults { // disabling because of import cycle
-	req.Header.Set("X-API-Key", token) // adds the token as special passphrase incase the token is a special passphrase
-	// }
+	if token == GlobalTokenForAnonymousResults {
+		req.Header.Set("X-API-Key", token)
+	} else {
+		// Defensive: drop any inbound X-API-Key copied through proxy paths
+		// (e.g. ExtensionProxy). The cloud's static-token fallback rejects
+		// anything other than GlobalTokenForAnonymousResults, so leaking a
+		// caller-supplied value here would only confuse the auth path.
+		req.Header.Del("X-API-Key")
+	}
 	req.Header.Set("SystemID", viper.GetString("INSTANCE_ID")) // Adds the system id to the header for event tracking
 	resp, err := c.Do(req)
 	if err != nil {

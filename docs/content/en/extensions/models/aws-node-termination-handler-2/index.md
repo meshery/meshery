@@ -18,7 +18,7 @@ relationships:
 relationship-count: 0
 featureList: [
   "Keep revision history and audit trail of all configuration changes",
-  "Use Kanvas&lsquo;s visual designer to explore your App Mesh configuration",
+  "Use Meshery to explore your App Mesh configuration",
   "Deploy Meshery on your EKS clusters for App Mesh management"
 ]
 howItWorks: "Collaborative Infrastructure as Design"

@@ -102,9 +102,9 @@ get_component_configuration(component, design) := configuration if {
 
 	# print("configuration from Alias is ==>",alias)
 
-	parent := component_declaration_by_id(design, alias.resolved_parent_id)
+	parent := component_declaration_by_id(design, alias.resolvedParentId)
 
-	configuration := object_get_nested(parent, alias.resolved_ref_field_path, null)
+	configuration := object_get_nested(parent, alias.resolvedRefFieldPath, null)
 	# print("Configuration got from Alias " ,configuration)
 }
 

@@ -519,7 +519,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 	msgs := []patterns.DeploymentMessagePerContext{}
 	for _, host := range ccp.Hosts {
 		// Hack until adapters fix the concurrent client
-		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
+		// creation issue: https://github.com/meshery/meshery-adapter-library/issues/32
 		time.Sleep(50 * time.Microsecond)
 		sap.log.Debug("Execute operations on: ", host.Kind)
 

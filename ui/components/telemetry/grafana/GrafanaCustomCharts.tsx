@@ -130,7 +130,7 @@ const GrafanaCustomCharts = (props) => {
       <StyledChip
         label={grafanaURL}
         onClick={() => window.open(grafanaURL)}
-        icon={<StyledIcon src="/static/img/grafana_icon.svg" />}
+        icon={<StyledIcon src="/static/img/integrations/grafana_icon.svg" />}
         variant="outlined"
       />
     );

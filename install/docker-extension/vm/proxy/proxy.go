@@ -229,7 +229,7 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			})
 			req.AddCookie(&http.Cookie{
 				Name:     "meshery-provider",
-				Value:    "Layer5",
+				Value:    "Meshery",
 				Path:     "/",
 				HttpOnly: true,
 			})

@@ -10,7 +10,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/schemas/models/v1beta1/workspace"
+	"github.com/meshery/schemas/models/v1beta3/workspace"
 	"github.com/spf13/cobra"
 )
 
@@ -61,24 +61,25 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		workspaceNameOrID := args[0]
-		selectedWorkspace := new(workspace.Workspace)
+		var selectedWorkspace workspace.AvailableWorkspace
 
 		var urlPath string
 		var displayData display.DisplayDataAsync
 
+		viewUrlValue := url.Values{}
+		viewUrlValue.Add("orgId", workspaceViewFlagsProvided.OrgID)
 		if utils.IsUUID(workspaceNameOrID) {
 			query := url.Values{}
-			query.Set("orgID", workspaceViewFlagsProvided.OrgID)
+			query.Set("orgId", workspaceViewFlagsProvided.OrgID)
 			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.PathEscape(workspaceNameOrID), query.Encode())
-			fetchedWorkspace, err := api.Fetch[workspace.Workspace](urlPath)
+			fetchedWorkspace, err := api.Fetch[workspace.AvailableWorkspace](urlPath)
 			if err != nil {
 				return err
 			}
-			*selectedWorkspace = *fetchedWorkspace
+
+			selectedWorkspace = *fetchedWorkspace
 		} else {
 			selectedAvailableWorkspace := new(workspace.AvailableWorkspace)
-			viewUrlValue := url.Values{}
-			viewUrlValue.Add("orgID", workspaceViewFlagsProvided.OrgID)
 			viewUrlValue.Add("search", workspaceNameOrID)
 
 			urlPath = fmt.Sprintf("%s?%s", workspacesApiPath, viewUrlValue.Encode())
@@ -100,17 +101,18 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 			}
 
 			query := url.Values{}
-			query.Set("orgID", workspaceViewFlagsProvided.OrgID)
+			query.Set("orgId", workspaceViewFlagsProvided.OrgID)
 			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.PathEscape(selectedAvailableWorkspace.ID.String()), query.Encode())
-			fetchedWorkspace, err := api.Fetch[workspace.Workspace](urlPath)
+			fetchedWorkspace, err := api.Fetch[workspace.AvailableWorkspace](urlPath)
 			if err != nil {
 				return err
 			}
-			*selectedWorkspace = *fetchedWorkspace
+
+			selectedWorkspace = *fetchedWorkspace
 		}
 
-		outputFormatterFactory := display.OutputFormatterFactory[workspace.Workspace]{}
-		outputFormatter, err := outputFormatterFactory.New(workspaceViewFlagsProvided.OutputFormat, *selectedWorkspace)
+		outputFormatterFactory := display.OutputFormatterFactory[workspace.AvailableWorkspace]{}
+		outputFormatter, err := outputFormatterFactory.New(workspaceViewFlagsProvided.OutputFormat, selectedWorkspace)
 		if err != nil {
 			return err
 		}
@@ -128,7 +130,7 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 				workspaceString = selectedWorkspace.ID.String()
 			}
 			fileName := filepath.Join(utils.MesheryFolder, fmt.Sprintf("workspace_%s.%s", workspaceString, workspaceViewFlagsProvided.OutputFormat))
-			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[workspace.Workspace]{}
+			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[workspace.AvailableWorkspace]{}
 			outputFormatterSaver, err := outputFormatterSaverFactory.New(workspaceViewFlagsProvided.OutputFormat, outputFormatter)
 			if err != nil {
 				return err

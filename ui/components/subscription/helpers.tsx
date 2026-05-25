@@ -1,4 +1,4 @@
-import subscribeMesheryControllersStatus from '../graphql/subscriptions/MesheryControllersStatusSubscription';
+import subscribeMesheryControllersStatus from '@/graphql/subscriptions/MesheryControllersStatusSubscription';
 import { isMesheryControllerStateSubscriptionDataUpdated } from './comparatorFns';
 import { mergeMesheryController } from './mergeFns';
 

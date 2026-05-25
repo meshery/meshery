@@ -22,6 +22,9 @@ on:
   schedule:
     - cron: '26 22 * * 6'
 
+permissions:
+  contents: read  # Only needs to read code for scanning
+
 jobs:
   analyze:
     name: Analyze
