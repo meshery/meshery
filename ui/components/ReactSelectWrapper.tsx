@@ -2,16 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CreateSelect from 'react-select/creatable';
 import {
+  CancelIcon,
   Typography,
   TextField,
   Paper,
   Chip,
-  MenuItem,
+  ListItemButton,
   useTheme,
   styled,
   NoSsr,
 } from '@sistent/sistent';
-import CancelIcon from '@mui/icons-material/Cancel';
 
 const StyledNoOptionsMessage = styled(Typography)(({ theme }) => ({
   padding: '0.2rem',
@@ -79,7 +79,7 @@ function Control(props) {
 
 function Option(props) {
   return (
-    <MenuItem
+    <ListItemButton
       ref={props.innerRef}
       selected={props.isFocused}
       component="div"
@@ -87,7 +87,7 @@ function Option(props) {
       {...props.innerProps}
     >
       {props.children}
-    </MenuItem>
+    </ListItemButton>
   );
 }
 
