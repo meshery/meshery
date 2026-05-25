@@ -65,10 +65,13 @@ jobs:
     steps:
       - name: Set adapter_name for output
         id: adapter_name
+        uses: actions/github-script@v8
         env:
           USER_INPUT: ${{ inputs.adapter_name }}
-        run: |
-          echo "value=${USER_INPUT:-meshery}" >> "$GITHUB_OUTPUT"
+        with:
+          script: |
+            const adapterName = process.env.USER_INPUT || 'meshery';
+            core.setOutput('value', adapterName);
       - name: Setting up minikube
         id: setk8s
         uses: manusa/actions-setup-minikube@v2.13.0
