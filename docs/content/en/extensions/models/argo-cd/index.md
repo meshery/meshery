@@ -30,7 +30,7 @@ relationships:
 relationship-count: 0
 featureList: [
   "Gain mastery over Argo as a workflow engine for Kubernetes",
-  "Design application definitions using the intuitive, context-aware visual designer, Kanvas.",
+  "Design application definitions using the intuitive, context-aware visual designer.",
   "Visualize your declarative, GitOps continuous delivery tool for Kubernetes."
 ]
 howItWorks: "Collaborative Infrastructure as Design"
