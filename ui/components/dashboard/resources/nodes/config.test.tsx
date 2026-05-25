@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../../../../utils/k8s-utils', () => ({
@@ -41,7 +41,7 @@ vi.mock('../config', () => ({ SINGLE_VIEW: 'single' }));
 import { NodeTableConfig } from './config';
 
 describe('NodeTableConfig', () => {
-  const config = NodeTableConfig(vi.fn(), [{}], {}, {}, 'Node');
+  const config = renderHook(() => NodeTableConfig(vi.fn(), [{}], {}, {}, 'Node')).result.current;
 
   it('describes the Node columns with the documented column names', () => {
     expect(config.name).toBe('Node');

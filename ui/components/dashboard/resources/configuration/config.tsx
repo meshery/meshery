@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import { buildConfigMapColumns } from './configmap-columns';
 import { buildSecretColumns } from './secret-columns';
@@ -19,25 +20,27 @@ export const ConfigurationTableConfig = (
   workloadType,
 ) => {
   const ping = useKubernetesHook();
-  const args = {
-    switchView,
-    meshSyncResources,
-    k8sConfig,
-    connectionMetadataState,
-    workloadType,
-    ping,
-  };
-  return {
-    ConfigMap: buildConfigMapColumns(args),
-    Secret: buildSecretColumns(args),
-    ResourceQuota: buildResourceQuotaColumns(args),
-    LimitRange: buildLimitRangeColumns(args),
-    HorizontalPodAutoscaler: buildHorizontalPodAutoscalerColumns(args),
-    VerticalPodAutoscaler: buildVerticalPodAutoscalerColumns(args),
-    PodDisruptionBudget: buildPodDisruptionBudgetColumns(args),
-    PriorityClass: buildPriorityClassColumns(args),
-    RuntimeClass: buildRuntimeClassColumns(args),
-    Leases: buildLeasesColumns(args),
-    MutatingWebhookConfiguration: buildMutatingWebhookConfigurationColumns(args),
-  };
+  return useMemo(() => {
+    const args = {
+      switchView,
+      meshSyncResources,
+      k8sConfig,
+      connectionMetadataState,
+      workloadType,
+      ping,
+    };
+    return {
+      ConfigMap: buildConfigMapColumns(args),
+      Secret: buildSecretColumns(args),
+      ResourceQuota: buildResourceQuotaColumns(args),
+      LimitRange: buildLimitRangeColumns(args),
+      HorizontalPodAutoscaler: buildHorizontalPodAutoscalerColumns(args),
+      VerticalPodAutoscaler: buildVerticalPodAutoscalerColumns(args),
+      PodDisruptionBudget: buildPodDisruptionBudgetColumns(args),
+      PriorityClass: buildPriorityClassColumns(args),
+      RuntimeClass: buildRuntimeClassColumns(args),
+      Leases: buildLeasesColumns(args),
+      MutatingWebhookConfiguration: buildMutatingWebhookConfigurationColumns(args),
+    };
+  }, [switchView, meshSyncResources, k8sConfig, connectionMetadataState, workloadType, ping]);
 };

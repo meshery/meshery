@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import { buildServiceColumns } from './service-columns';
 import { buildEndpointsColumns } from './endpoints-columns';
@@ -14,20 +15,22 @@ export const NetWorkTableConfig = (
   workloadType,
 ) => {
   const ping = useKubernetesHook();
-  const args = {
-    switchView,
-    meshSyncResources,
-    k8sConfig,
-    connectionMetadataState,
-    workloadType,
-    ping,
-  };
-  return {
-    Service: buildServiceColumns(args),
-    Endpoints: buildEndpointsColumns(args),
-    EndpointSlice: buildEndpointSliceColumns(args),
-    Ingress: buildIngressColumns(args),
-    IngressClass: buildIngressClassColumns(args),
-    NetworkPolicy: buildNetworkPolicyColumns(args),
-  };
+  return useMemo(() => {
+    const args = {
+      switchView,
+      meshSyncResources,
+      k8sConfig,
+      connectionMetadataState,
+      workloadType,
+      ping,
+    };
+    return {
+      Service: buildServiceColumns(args),
+      Endpoints: buildEndpointsColumns(args),
+      EndpointSlice: buildEndpointSliceColumns(args),
+      Ingress: buildIngressColumns(args),
+      IngressClass: buildIngressClassColumns(args),
+      NetworkPolicy: buildNetworkPolicyColumns(args),
+    };
+  }, [switchView, meshSyncResources, k8sConfig, connectionMetadataState, workloadType, ping]);
 };

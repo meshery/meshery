@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../../../../utils/k8s-utils', () => ({
@@ -42,13 +42,15 @@ import { NamespaceTableConfig } from './config';
 
 describe('NamespaceTableConfig', () => {
   const switchView = vi.fn();
-  const config = NamespaceTableConfig(
-    switchView,
-    [{ metadata: { name: 'ns1' } }],
-    {},
-    { kubernetes: { icon: '/k.svg' } },
-    'Namespace',
-  );
+  const config = renderHook(() =>
+    NamespaceTableConfig(
+      switchView,
+      [{ metadata: { name: 'ns1' } }],
+      {},
+      { kubernetes: { icon: '/k.svg' } },
+      'Namespace',
+    ),
+  ).result.current;
 
   it('exposes the canonical Namespace config shape', () => {
     expect(config.name).toBe('Namespace');
@@ -93,7 +95,9 @@ describe('NamespaceTableConfig', () => {
   });
 
   it('falls back to empty icon when connection metadata is missing', () => {
-    const minimalConfig = NamespaceTableConfig(switchView, [], {}, null, 'Namespace');
+    const minimalConfig = renderHook(() =>
+      NamespaceTableConfig(switchView, [], {}, null, 'Namespace'),
+    ).result.current;
     const clusterCol = minimalConfig.columns.find((c: any) => c.name === 'cluster_id');
     expect(typeof clusterCol.options.customBodyRender).toBe('function');
   });

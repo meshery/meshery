@@ -1,3 +1,4 @@
+import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../../../../utils/k8s-utils', () => ({
@@ -30,7 +31,8 @@ vi.mock('../config', () => ({ SINGLE_VIEW: 'single' }));
 import { SecurityTypesConfig } from './config';
 
 describe('SecurityTypesConfig', () => {
-  const config = SecurityTypesConfig(vi.fn(), [], {}, {}, 'ServiceAccount');
+  const config = renderHook(() => SecurityTypesConfig(vi.fn(), [], {}, {}, 'ServiceAccount')).result
+    .current;
 
   it('exposes the documented security resource kinds', () => {
     expect(Object.keys(config)).toEqual([

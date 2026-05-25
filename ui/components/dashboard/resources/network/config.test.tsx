@@ -1,3 +1,4 @@
+import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/utils/hooks/useKubernetesHook', () => ({
@@ -27,8 +28,8 @@ import { NetWorkTableConfig } from './config';
 
 describe('NetWorkTableConfig', () => {
   it('exposes the documented network workload configs', () => {
-    const result = NetWorkTableConfig(vi.fn(), [], {}, {}, 'Service');
-    expect(Object.keys(result)).toEqual([
+    const { result } = renderHook(() => NetWorkTableConfig(vi.fn(), [], {}, {}, 'Service'));
+    expect(Object.keys(result.current)).toEqual([
       'Service',
       'Endpoints',
       'EndpointSlice',
@@ -36,6 +37,6 @@ describe('NetWorkTableConfig', () => {
       'IngressClass',
       'NetworkPolicy',
     ]);
-    expect(result.Service.name).toBe('Service');
+    expect(result.current.Service.name).toBe('Service');
   });
 });

@@ -1,3 +1,4 @@
+import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/utils/hooks/useKubernetesHook', () => ({
@@ -29,9 +30,9 @@ import { WorkloadTableConfig } from './config';
 
 describe('WorkloadTableConfig', () => {
   it('aggregates all the workload column builders into a kind-keyed object', () => {
-    const result = WorkloadTableConfig(vi.fn(), [], {}, {}, 'Pod');
+    const { result } = renderHook(() => WorkloadTableConfig(vi.fn(), [], {}, {}, 'Pod'));
 
-    expect(Object.keys(result)).toEqual([
+    expect(Object.keys(result.current)).toEqual([
       'Pod',
       'Deployment',
       'DaemonSet',
@@ -41,6 +42,6 @@ describe('WorkloadTableConfig', () => {
       'Job',
       'CronJob',
     ]);
-    expect(result.Pod.name).toBe('Pod');
+    expect(result.current.Pod.name).toBe('Pod');
   });
 });

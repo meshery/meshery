@@ -1,3 +1,4 @@
+import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/utils/hooks/useKubernetesHook', () => ({
@@ -45,8 +46,8 @@ import { ConfigurationTableConfig } from './config';
 
 describe('ConfigurationTableConfig', () => {
   it('exposes the canonical configuration workload configs', () => {
-    const result = ConfigurationTableConfig(vi.fn(), [], {}, {}, 'ConfigMap');
-    expect(Object.keys(result)).toEqual([
+    const { result } = renderHook(() => ConfigurationTableConfig(vi.fn(), [], {}, {}, 'ConfigMap'));
+    expect(Object.keys(result.current)).toEqual([
       'ConfigMap',
       'Secret',
       'ResourceQuota',
@@ -59,6 +60,6 @@ describe('ConfigurationTableConfig', () => {
       'Leases',
       'MutatingWebhookConfiguration',
     ]);
-    expect(result.ConfigMap.name).toBe('ConfigMap');
+    expect(result.current.ConfigMap.name).toBe('ConfigMap');
   });
 });

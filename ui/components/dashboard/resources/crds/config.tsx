@@ -35,143 +35,146 @@ export const CustomResourceConfig = (
   const customResources = useMemo(() => {
     return getAllCustomResourceDefinitionsKinds(clusterSummary?.kinds);
   }, [clusterSummary?.kinds]);
-  const customResourceConfigs = {};
 
-  customResources?.forEach((resource) => {
-    customResourceConfigs[resource?.Kind] = {
-      name: resource?.Kind,
-      model: resource?.Model, // model is used to identify the resource image
-      colViews: [
-        ['id', 'na'],
-        ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
-        ['metadata.namespace', 'm'],
-        ['cluster_id', 'xs'],
-        ['metadata.creationTimestamp', 'l'],
-      ],
-      columns: [
-        {
-          name: 'id',
-          label: 'ID',
-          options: {
-            display: false,
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
-            },
-            customBodyRender: (value) => <FormatId id={value} />,
-          },
-        },
-        {
-          name: 'metadata.name',
-          label: 'Name',
-          options: {
-            sort: false,
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
-            },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <Title
-                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  value={value}
-                  kind={resource?.Kind}
-                  model={resource?.Model}
-                />
-              );
+  const customResourceConfigs = useMemo(() => {
+    const configs = {};
+    customResources?.forEach((resource) => {
+      configs[resource?.Kind] = {
+        name: resource?.Kind,
+        model: resource?.Model, // model is used to identify the resource image
+        colViews: [
+          ['id', 'na'],
+          ['metadata.name', 'xs'],
+          ['apiVersion', 's'],
+          ['metadata.namespace', 'm'],
+          ['cluster_id', 'xs'],
+          ['metadata.creationTimestamp', 'l'],
+        ],
+        columns: [
+          {
+            name: 'id',
+            label: 'ID',
+            options: {
+              display: false,
+              customHeadRender: function CustomHead({ ...column }) {
+                return <DefaultTableCell columnData={column} />;
+              },
+              customBodyRender: (value) => <FormatId id={value} />,
             },
           },
-        },
-        {
-          name: 'apiVersion',
-          label: 'API version',
-          options: {
-            sort: true,
-            sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
-          },
-        },
-        {
-          name: 'metadata.namespace',
-          label: 'Namespace',
-          options: {
-            sort: true,
-            sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
-            customBodyRender: function CustomBody(value) {
-              return <>{value}</>;
-            },
-          },
-        },
-        {
-          name: 'cluster_id',
-          label: 'Cluster',
-          options: {
-            sort: true,
-            sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
-            customBodyRender: function CustomBody(val) {
-              let context = getK8sContextFromClusterId(val, k8sConfig);
-
-              return (
-                <>
-                  <TooltipWrappedConnectionChip
-                    title={context.name}
-                    iconSrc={
-                      connectionMetadataState
-                        ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
-                        : ''
-                    }
-                    handlePing={() => ping(context.name, context.server, context.connectionId)}
+          {
+            name: 'metadata.name',
+            label: 'Name',
+            options: {
+              sort: false,
+              customHeadRender: function CustomHead({ ...column }) {
+                return <DefaultTableCell columnData={column} />;
+              },
+              customBodyRender: function CustomBody(value, tableMeta) {
+                return (
+                  <Title
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                    value={value}
+                    kind={resource?.Kind}
+                    model={resource?.Model}
                   />
-                </>
-              );
+                );
+              },
             },
           },
-        },
-        {
-          name: 'metadata.creationTimestamp',
-          label: 'Age',
-          options: {
-            sort: false,
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
-            },
-            customBodyRender: function CustomBody(value) {
-              let time = timeAgo(value);
-              return <>{time}</>;
+          {
+            name: 'apiVersion',
+            label: 'API version',
+            options: {
+              sort: true,
+              sortThirdClickReset: true,
+              customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+                return (
+                  <SortableTableCell
+                    index={index}
+                    columnData={column}
+                    columnMeta={columnMeta}
+                    onSort={() => sortColumn(index)}
+                  />
+                );
+              },
             },
           },
-        },
-      ],
-    };
-  });
+          {
+            name: 'metadata.namespace',
+            label: 'Namespace',
+            options: {
+              sort: true,
+              sortThirdClickReset: true,
+              customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+                return (
+                  <SortableTableCell
+                    index={index}
+                    columnData={column}
+                    columnMeta={columnMeta}
+                    onSort={() => sortColumn(index)}
+                  />
+                );
+              },
+              customBodyRender: function CustomBody(value) {
+                return <>{value}</>;
+              },
+            },
+          },
+          {
+            name: 'cluster_id',
+            label: 'Cluster',
+            options: {
+              sort: true,
+              sortThirdClickReset: true,
+              customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+                return (
+                  <SortableTableCell
+                    index={index}
+                    columnData={column}
+                    columnMeta={columnMeta}
+                    onSort={() => sortColumn(index)}
+                  />
+                );
+              },
+              customBodyRender: function CustomBody(val) {
+                let context = getK8sContextFromClusterId(val, k8sConfig);
+
+                return (
+                  <>
+                    <TooltipWrappedConnectionChip
+                      title={context.name}
+                      iconSrc={
+                        connectionMetadataState
+                          ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                          : ''
+                      }
+                      handlePing={() => ping(context.name, context.server, context.connectionId)}
+                    />
+                  </>
+                );
+              },
+            },
+          },
+          {
+            name: 'metadata.creationTimestamp',
+            label: 'Age',
+            options: {
+              sort: false,
+              customHeadRender: function CustomHead({ ...column }) {
+                return <DefaultTableCell columnData={column} />;
+              },
+              customBodyRender: function CustomBody(value) {
+                let time = timeAgo(value);
+                return <>{time}</>;
+              },
+            },
+          },
+        ],
+      };
+    });
+    return configs;
+  }, [customResources, switchView, meshSyncResources, k8sConfig, connectionMetadataState, ping]);
 
   return customResourceConfigs;
 };

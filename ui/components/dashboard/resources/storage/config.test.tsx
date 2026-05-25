@@ -1,3 +1,4 @@
+import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../../../../utils/k8s-utils', () => ({
@@ -34,7 +35,8 @@ vi.mock('../config', () => ({ SINGLE_VIEW: 'single' }));
 import { StorageTableConfig } from './config';
 
 describe('StorageTableConfig', () => {
-  const config = StorageTableConfig(vi.fn(), [], {}, {}, 'PersistentVolume');
+  const config = renderHook(() => StorageTableConfig(vi.fn(), [], {}, {}, 'PersistentVolume'))
+    .result.current;
 
   it('exposes three storage workload configs', () => {
     expect(Object.keys(config)).toEqual([

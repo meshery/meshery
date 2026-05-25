@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import { buildPodColumns } from './pod-columns';
 import { buildDeploymentColumns } from './deployment-columns';
@@ -16,22 +17,24 @@ export const WorkloadTableConfig = (
   workloadType,
 ) => {
   const ping = useKubernetesHook();
-  const args = {
-    switchView,
-    meshSyncResources,
-    k8sConfig,
-    connectionMetadataState,
-    workloadType,
-    ping,
-  };
-  return {
-    Pod: buildPodColumns(args),
-    Deployment: buildDeploymentColumns(args),
-    DaemonSet: buildDaemonSetColumns(args),
-    StatefulSet: buildStatefulSetColumns(args),
-    ReplicaSet: buildReplicaSetColumns(args),
-    ReplicationController: buildReplicationControllerColumns(args),
-    Job: buildJobColumns(args),
-    CronJob: buildCronJobColumns(args),
-  };
+  return useMemo(() => {
+    const args = {
+      switchView,
+      meshSyncResources,
+      k8sConfig,
+      connectionMetadataState,
+      workloadType,
+      ping,
+    };
+    return {
+      Pod: buildPodColumns(args),
+      Deployment: buildDeploymentColumns(args),
+      DaemonSet: buildDaemonSetColumns(args),
+      StatefulSet: buildStatefulSetColumns(args),
+      ReplicaSet: buildReplicaSetColumns(args),
+      ReplicationController: buildReplicationControllerColumns(args),
+      Job: buildJobColumns(args),
+      CronJob: buildCronJobColumns(args),
+    };
+  }, [switchView, meshSyncResources, k8sConfig, connectionMetadataState, workloadType, ping]);
 };
