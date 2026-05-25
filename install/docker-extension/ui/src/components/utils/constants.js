@@ -14,14 +14,20 @@ export const topicsList = [
 // Extension Point: Add more remote providers here as needed.
 // This is a list of remote providers that are supported by the Meshery Docker Extension.
 export const REMOTE_PROVIDERS = [
+    // BEGIN AUTO-GENERATED from install/providers.env - run `make generate-install`
     {
-        name: "Layer5",
+        name: "Meshery",
         url: "https://cloud.meshery.io",
     },
     {
-        name: "Exoscale",
-        url: "https://cloud.exoscale.com",
+        name: "Intel",
+        url: "https://perf.smp-spec.io",
     },
+    {
+        name: "TCS Labs",
+        url: "https://meshery.tcs-labs.in",
+    },
+    // END AUTO-GENERATED
 ];
 
 export const SELECTED_REMOTE_PROVIDER =
