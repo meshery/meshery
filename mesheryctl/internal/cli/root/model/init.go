@@ -185,10 +185,10 @@ func init() {
 
 const (
 	initModelDirPerm                  = 0o755
-	initModelModelSchema              = "schemas/constructs/v1beta1/model/model.yaml"
-	initModelTemplatePathModel        = "schemas/constructs/v1beta1/model/templates/model_template"
-	initModelTemplatePathComponent    = "schemas/constructs/v1beta1/component/templates/component_template"
-	initModelTemplatePathRelationship = "schemas/constructs/v1alpha3/relationship/templates/relationship_template"
+	initModelModelSchema              = "schemas/constructs/v1beta2/model/model.yaml"
+	initModelTemplatePathModel        = "schemas/constructs/v1beta2/model/templates/model_template"
+	initModelTemplatePathComponent    = "schemas/constructs/v1beta3/component/templates/component_template"
+	initModelTemplatePathRelationship = "schemas/constructs/v1beta3/relationship/templates/relationship_template"
 )
 
 // TODO: Connection templates are temporarily disabled.

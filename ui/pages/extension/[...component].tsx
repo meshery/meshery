@@ -1,4 +1,4 @@
-import NavigatorExtension from '../../components/NavigatorExtension';
+import NavigatorExtension from '../../components/layout/Navigator/NavigatorExtension';
 import ExtensionSandbox, {
   getComponentTitleFromPath,
   getComponentIsBetaFromPath,
@@ -9,14 +9,14 @@ import React, { useEffect, useMemo } from 'react';
 import RemoteComponent from '../../components/RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import { useRouter } from 'next/router';
-import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
+import { DynamicFullScreenLoader } from '@/components/shared/LoadingState/DynamicFullscreenLoader';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import {
   updateBetaBadge,
-  updateCapabilities,
   updateExtensionType,
   updatePagePath,
   updateTitle,
+  updateProviderCapabilities,
 } from '@/store/slices/mesheryUi';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetStaticPaths, GetStaticProps } from 'next';
@@ -48,19 +48,19 @@ function RemoteExtension() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { extensionType } = useSelector((state) => state.ui);
-  const { data: capabilitiesRegistry, isLoading } = useGetProviderCapabilitiesQuery();
+  const { data: providerCapabilities, isLoading } = useGetProviderCapabilitiesQuery();
 
   // Resolve the active extension that matches the current path. Derived from
-  // capabilitiesRegistry rather than mirrored into local state to avoid
+  // providerCapabilities rather than mirrored into local state to avoid
   // duplicating Redux state and stale-closure bugs. The `typeof window`
   // guard prevents getPath() from crashing during static prerender
   // (this page uses getStaticPaths/getStaticProps).
   const matchedExtension = useMemo(() => {
     if (typeof window === 'undefined') return null;
-    if (!capabilitiesRegistry?.extensions) return null;
+    if (!providerCapabilities?.extensions) return null;
     const path = getPath();
-    for (const key of Object.keys(capabilitiesRegistry.extensions)) {
-      const value = capabilitiesRegistry.extensions[key];
+    for (const key of Object.keys(providerCapabilities.extensions)) {
+      const value = providerCapabilities.extensions[key];
       if (!Array.isArray(value)) continue;
       for (const comp of value) {
         if (
@@ -78,12 +78,12 @@ function RemoteExtension() {
       }
     }
     return null;
-  }, [capabilitiesRegistry, router.query.component]);
+  }, [providerCapabilities, router.query.component]);
 
   useEffect(() => {
-    if (!capabilitiesRegistry?.extensions) return;
-    dispatch(updateCapabilities({ capabilitiesRegistry }));
-  }, [dispatch, capabilitiesRegistry]);
+    if (!providerCapabilities?.extensions) return;
+    dispatch(updateProviderCapabilities({ providerCapabilities }));
+  }, [dispatch, providerCapabilities]);
 
   useEffect(() => {
     if (!matchedExtension) return;
@@ -103,7 +103,7 @@ function RemoteExtension() {
         <title>{`${matchedExtension?.title ?? ''} | Meshery`}</title>
       </Head>
       <DynamicFullScreenLoader isLoading={isLoading}>
-        {capabilitiesRegistry !== null && extensionType ? (
+        {providerCapabilities !== null && extensionType ? (
           <NoSsr>
             {extensionType === 'navigator' ? (
               <ExtensionSandbox type={extensionType} Extension={NavigatorExtension} />
