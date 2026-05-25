@@ -191,6 +191,10 @@ describe('operationsCenter machine', () => {
 
   it('forwards subscription event batches into the machine via the next callback', () => {
     const { actor } = startActor();
+    const seen: unknown[] = [];
+    actor.on('*', (event) => {
+      seen.push(event);
+    });
     const eventBatch = [
       { id: 'live-1', description: 'streamed one', severity: 'warning' },
       { id: 'live-2', description: 'streamed two', severity: 'informational' },
@@ -198,6 +202,11 @@ describe('operationsCenter machine', () => {
     subscriptionState.onEvent?.({ events: eventBatch });
     expect(pushEvents).toHaveBeenCalledWith(eventBatch);
     expect(pushEvent).not.toHaveBeenCalled();
+    const emitted = seen.find(
+      (e: { type?: string }) => e?.type === OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+    ) as { data?: { event?: unknown } } | undefined;
+    expect(emitted?.data?.event).toEqual(eventBatch);
+    expect(Array.isArray(emitted?.data?.event)).toBe(true);
     actor.stop();
   });
 

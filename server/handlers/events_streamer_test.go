@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -271,6 +272,35 @@ func TestForwardAdapterEventBatches_FlushesOnStreamClose(t *testing.T) {
 	}
 
 	waitForSignal(t, done, "stream-close forwarder shutdown")
+}
+
+func TestForwardAdapterEventBatches_FlushesPendingBatchOnStreamError(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	log := newTestLogger(t)
+	eventResults := make(chan adapterEventStreamResult)
+	respChan := make(chan []byte, 1)
+	done := make(chan struct{})
+
+	go func() {
+		forwardAdapterEventBatches(ctx, eventResults, respChan, log, 50, time.Hour, nil)
+		close(done)
+	}()
+
+	eventResults <- adapterEventStreamResult{event: &meshes.EventsResponse{Summary: "pending-before-error"}}
+	eventResults <- adapterEventStreamResult{err: errors.New("adapter stream failed")}
+
+	payload := waitForPayload(t, respChan, "stream-error flush")
+	events := decodeAdapterEventBatch(t, payload)
+	if len(events) != 1 {
+		t.Fatalf("expected 1 event in error batch, got %d", len(events))
+	}
+	if events[0].Summary != "pending-before-error" {
+		t.Fatalf("expected pending event summary, got %q", events[0].Summary)
+	}
+
+	waitForSignal(t, done, "stream-error forwarder shutdown")
 }
 
 func TestWriteEventStream_StopsOnContextCancellation(t *testing.T) {

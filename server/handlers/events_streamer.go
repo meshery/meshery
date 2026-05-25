@@ -40,6 +40,11 @@ func defaultSubscribeToEventStream(eb *_events.EventStreamer, ch chan interface{
 const eventStreamDrainTimeout = 100 * time.Millisecond
 
 const (
+	// Adapter streams can emit very high-volume bursts during MeshSync. Sending
+	// each event individually means a 1,000-event burst becomes 1,000 SSE writes
+	// and 1,000 downstream UI update opportunities. Batching 50 at a time turns
+	// the same burst into about 20 SSE writes, while the 250ms window caps the
+	// added latency for smaller trickles at a quarter second.
 	adapterEventStreamBatchSize   = 50
 	adapterEventStreamBatchWindow = 250 * time.Millisecond
 )
