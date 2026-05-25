@@ -23,7 +23,12 @@ import {
   CustomTooltip,
   IconButton,
   CircularProgress,
-  InfoOutlinedIcon,
+  // Sistent re-exports the underlying InfoOutlinedIcon as InfoOutlined;
+  // the bundle does NOT export the original name, so importing it
+  // directly resolves to undefined and crashes at render with
+  // "Element type is invalid". Alias on import to keep the rest of the
+  // JSX untouched.
+  InfoOutlined as InfoOutlinedIcon,
   Popover,
   styled,
   charcoal,
