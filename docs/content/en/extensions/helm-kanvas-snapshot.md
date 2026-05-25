@@ -34,7 +34,7 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-     <div class="clipboardjs"> helm plugin install https://github.com/meshery-extensions/helm-kanvas-snapshot </div>
+     <div class="clipboardjs"> helm plugin install https://github.com/meshery-extensions/helm-snapshot </div>
    </div>
 </pre>
 

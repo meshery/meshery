@@ -237,7 +237,7 @@ const MesheryHelmExtension = () => (
           variant="contained"
           color="primary"
           data-testid="helm-learn-more-btn"
-          onClick={openExternal('https://docs.meshery.io/extensions/helm-kanvas-snapshot')}
+          onClick={openExternal('https://docs.meshery.io/extensions/helm-snapshot')}
         >
           Learn More
         </Button>
