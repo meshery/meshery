@@ -71,8 +71,8 @@ describe('Enum constants', () => {
     expect(EVENT_TYPES.MODIFIED).toBe('MODIFIED');
   });
 
-  it('EXTENSION_NAMES exposes Kanvas', () => {
-    expect(EXTENSION_NAMES.KANVAS).toBe('kanvas');
+  it('EXTENSION_NAMES exposes the example extension', () => {
+    expect(EXTENSION_NAMES.EXTENSION).toBe('kanvas');
   });
 
   it('REGISTRY_ITEM_STATES and transition map line up by key', () => {

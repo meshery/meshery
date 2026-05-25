@@ -35,11 +35,6 @@ export const EVENT_TYPES = {
   MODIFIED: 'MODIFIED',
 };
 
-//ExtensionPoint: Insert extension names here
-export const EXTENSION_NAMES = {
-  KANVAS: 'kanvas',
-};
-
 export const REGISTRY_ITEM_STATES = {
   ENABLED: 'enabled',
   IGNORED: 'ignored',
@@ -129,10 +124,10 @@ export const PATTERN = 'pattern';
 // Add your UI plugin into this extension point.
 // Learn more: https://docs.meshery.io/extensibility/ui
 export const EXTENSIONS = {
-  [EXTENSION_NAMES.KANVAS]: {
-    name: 'Kanvas',
+  [EXTENSION_NAMES.EXTENSION]: {
+    name: 'Extension',
     signup_header: 'Visual design and operation',
-    signup_button: 'Open Kanvas',
+    signup_button: 'Open Extension',
     signup_url: '/extension/meshmap',
     show_popup: true,
   },
@@ -162,4 +157,15 @@ export const APP_MODE = {
 export const VIEW_VISIBILITY = {
   PUBLIC: 'public',
   PRIVATE: 'private',
+};
+
+// Meshery Extension Point
+// ---
+// Purpose: Notify Remote Providers of changes in Golang dependencies
+// Learn more: See https://docs.meshery.io/extensibility
+// Add your repository to the list: https://github.com/meshery/meshery/issues/new/choose
+// ---
+
+export const EXTENSION_NAMES = {
+  EXTENSION: 'kanvas',
 };
