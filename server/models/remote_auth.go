@@ -344,8 +344,16 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	})
 
 	if err != nil {
-		return nil, ErrTokenPrase(err)
+		return nil, ErrTokenParse(err)
 	}
+
+	if l.ExpectedIssuer != "" {
+		iss, issErr := claims.GetIssuer()
+		if issErr != nil || iss != l.ExpectedIssuer {
+			return nil, ErrTokenIssuerMismatch
+		}
+	}
+
 	if tokenClaims, ok := token.Claims.(jwt.MapClaims); ok {
 		return &tokenClaims, nil
 	}

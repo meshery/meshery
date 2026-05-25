@@ -63,7 +63,7 @@ const (
 	ErrTokenExpiredCode                   = "meshery-server-1260"
 	ErrTokenClaimsCode                    = "meshery-server-1261"
 	ErrTokenClientCheckCode               = "meshery-server-1262"
-	ErrTokenPraseCode                     = "meshery-server-1263"
+	ErrTokenParseCode                     = "meshery-server-1263"
 	ErrJWKsKeysCode                       = "meshery-server-1264"
 	ErrDecodeBase64Code                   = "meshery-server-1265"
 	ErrMarshalPKIXCode                    = "meshery-server-1266"
@@ -151,6 +151,7 @@ const (
 	ErrMeshsyncStoreUpdatesCode           = "meshery-server-1380"
 	ErrRemoteProviderCapabilitiesCode     = "meshery-server-1420"
 	ErrRemoteProviderAuthExhaustedCode    = "meshery-server-1421"
+	ErrTokenIssuerMismatchCode            = "meshery-server-1430"
 )
 
 var (
@@ -182,6 +183,7 @@ var (
 	ErrTokenRetry              = errors.New(ErrTokenRetryCode, errors.Alert, []string{"Error occurred, retrying after refresh to fetch token"}, []string{}, []string{}, []string{})
 	ErrOperationNotAvailable   = errors.New(ErrOperationNotAvailableCode, errors.Alert, []string{"Operation not available"}, []string{}, []string{}, []string{})
 	ErrEmptySession            = errors.New(ErrEmptySessionCode, errors.Alert, []string{"No session found in the request"}, []string{"Unable to find \"token\" cookie in the request."}, []string{"User is not authenticated with the selected Provider.", "Browser might be restricting use of cookies."}, []string{"Choose a Provider and login to establish an active session (receive a new token and cookie). Optionally, try using a private/incognito browser window.", "Verify that your browser settings allow cookies."})
+	ErrTokenIssuerMismatch     = errors.New(ErrTokenIssuerMismatchCode, errors.Alert, []string{"Token issuer mismatch"}, []string{"The token's issuer claim does not match the expected issuer"}, []string{"The token was issued by an authority different from the one configured in PROVIDER_TOKEN_ISSUER", "Misconfiguration of the remote provider's canonical URL"}, []string{"Set PROVIDER_TOKEN_ISSUER to the expected issuer URL (iss claim) of your provider, or remove it to disable strict validation"})
 )
 
 func ErrCloseIoReader(err error) error {
@@ -484,8 +486,8 @@ func ErrTokenClientCheck(err error) error {
 	return errors.New(ErrTokenClientCheckCode, errors.Alert, []string{"Error occurred while performing token check HTTP request"}, []string{err.Error()}, []string{}, []string{})
 }
 
-func ErrTokenPrase(err error) error {
-	return errors.New(ErrTokenPraseCode, errors.Alert, []string{"Error occurred while Prasing and validating the token"}, []string{err.Error()}, []string{}, []string{})
+func ErrTokenParse(err error) error {
+	return errors.New(ErrTokenParseCode, errors.Alert, []string{"Error occurred while parsing and validating the token"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrJWKsKeys(err error) error {
