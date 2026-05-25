@@ -14,5 +14,5 @@ jobs:
       uses: layer5io/trigger-remote-provider-action@master
       with:
         name: "Build and Rollout Kanvas"
-        repo: layer5labs/meshery-extensions-packages
+        repo: meshery-extensions/meshery-extensions-packages
         token: ${{ secrets.MESHERY_CI }}

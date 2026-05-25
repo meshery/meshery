@@ -280,7 +280,7 @@
         "long_description": "SMI conformance tests failed",
         "short_description": "SMI conformance tests failed",
         "probable_cause": "",
-        "suggested_remediation": "Join https://layer5io.slack.com/archives/C010H0HE2E6"
+        "suggested_remediation": "Join https://mesheryio.slack.com/archives/C010H0HE2E6"
       },
       "1033": {
         "name": "ErrValidateAdapterCode",
@@ -2018,6 +2018,15 @@
         "short_description": "Meshery endpoint is not yet accessible",
         "probable_cause": "Meshery server may still be initializing or failed to start",
         "suggested_remediation": "Check the status later with `mesheryctl system status`"
+      },
+      "1245": {
+        "name": "ErrPerfProfileServerCode",
+        "code": "1245",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Server error while saving performance profile",
+        "probable_cause": "Provider Database could be down or not reachable",
+        "suggested_remediation": "Make sure provider is up and reachable"
       }
     }
   }

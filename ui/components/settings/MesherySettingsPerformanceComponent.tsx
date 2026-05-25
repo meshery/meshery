@@ -25,7 +25,7 @@ import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
 import { normalizeLoadTestPrefs } from '../../lib/load-test-prefs';
 
-const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
+const loadGenerators = ['fortio'];
 
 const FormControlWrapper = styled(FormControl)({
   minWidth: 180,
@@ -215,11 +215,11 @@ const MesherySettingsPerformanceComponent = () => {
                 >
                   {loadGenerators.map((lg) => (
                     <FormControlLabel
+                      key={lg}
                       value={lg}
                       control={
                         <Radio
                           color="primary"
-                          disabled={lg === 'wrk2'}
                           sx={{
                             '&.Mui-checked': {
                               color:

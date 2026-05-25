@@ -1380,30 +1380,12 @@
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1154": {
-        "name": "ErrStartingNighthawkServerCode",
-        "code": "1154",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to start the nighthawk server",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
       "1155": {
         "name": "ErrTransformingDataCode",
         "code": "1155",
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error while transforming data",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "1156": {
-        "name": "ErrRunningNighthawkServerCode",
-        "code": "1156",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error while running nighthawk server",
         "probable_cause": "",
         "suggested_remediation": ""
       },
