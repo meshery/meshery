@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import dataFetch from "../lib/data-fetch";
 import ProviderLayout from "./ProviderLayout";
@@ -24,6 +24,7 @@ import {
   IconButton,
   CircularProgress,
   InfoOutlinedIcon,
+  Popover,
   styled,
   charcoal,
   accentGrey,
@@ -87,12 +88,25 @@ const EXTERNAL_LINK_ICON_FALLBACK_SRC = "/static/img/icons/external-link.svg";
 
 export default function Provider() {
   const [anchorEl, setAnchorEl] = useState(null);
+  // Each entry: { ...ProviderProperties, _status: "checking"|"online"|"offline", _error?: string }
+  // _-prefixed keys are client-only metadata stitched in from the SSE event
+  // envelope; they never collide with server-emitted ProviderProperties fields.
   const [availableProviders, setAvailableProviders] = useState({});
   const [selectedProvider, setSelectedProvider] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   /* eslint-disable no-unused-vars */
   const [openMenu, setOpenMenu] = useState(false);
   const [openModal, setModalOpen] = React.useState(false);
+  // Per-provider info popover state. The info button next to each remote
+  // entry opens this with the provider's name and the providerDescription
+  // list returned by that provider's /capabilities, so the chooser surfaces
+  // exactly what each remote describes about itself rather than a generic
+  // hardcoded blurb.
+  const [providerInfo, setProviderInfo] = useState({
+    anchor: null,
+    provider: null,
+  });
+  const eventSourceRef = useRef(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -105,8 +119,70 @@ export default function Provider() {
   const open = Boolean(anchorEl);
   const id = open ? "popover" : undefined;
 
+  const openProviderInfo = (event, provider) => {
+    event.stopPropagation();
+    setProviderInfo({ anchor: event.currentTarget, provider });
+  };
+  const closeProviderInfo = () => {
+    setProviderInfo({ anchor: null, provider: null });
+  };
+  const providerInfoOpen = Boolean(providerInfo.anchor);
+
   useEffect(() => {
-    loadProvidersFromServer();
+    // Prefer the SSE stream so the chooser renders the local provider
+    // immediately and each remote updates independently as its probe
+    // settles on the server. Fall back to the legacy /api/providers
+    // polling endpoint if the browser does not implement EventSource or
+    // if the stream errors out before delivering its first event - that
+    // keeps older clients and proxies that strip text/event-stream usable.
+    if (typeof EventSource === "undefined") {
+      loadProvidersFromServer();
+      return undefined;
+    }
+
+    const es = new EventSource("/api/providers/stream", { withCredentials: true });
+    eventSourceRef.current = es;
+    let receivedAny = false;
+    let fellBack = false;
+
+    const handleEvent = (e) => {
+      try {
+        const evt = JSON.parse(e.data);
+        if (!evt || !evt.key) return;
+        receivedAny = true;
+        setAvailableProviders((prev) => ({
+          ...prev,
+          [evt.key]: {
+            ...(evt.properties || {}),
+            _status: evt.status,
+            _error: evt.error || "",
+          },
+        }));
+      } catch (err) {
+        console.error("provider stream: failed to parse event", err);
+      }
+    };
+
+    // The server names its events `provider`; default `message` listeners
+    // would miss them. Subscribe to both for compatibility with any
+    // intermediate proxy that drops the event-name line.
+    es.addEventListener("provider", handleEvent);
+    es.onmessage = handleEvent;
+    es.onerror = (err) => {
+      console.warn("provider stream: error", err);
+      // The browser will auto-reconnect EventSource. If we still have
+      // nothing to render after the first error, fall back so the
+      // chooser is not stuck on a blank state.
+      if (!receivedAny && !fellBack) {
+        fellBack = true;
+        loadProvidersFromServer();
+      }
+    };
+
+    return () => {
+      es.close();
+      eventSourceRef.current = null;
+    };
   }, []);
 
   function loadProvidersFromServer() {
@@ -118,12 +194,24 @@ export default function Provider() {
       },
       (result) => {
         if (typeof result !== "undefined") {
+          // Polling fallback: stamp _status from capabilities presence so
+          // the chooser renders without an SSE feed. Remotes with no
+          // capabilities are treated as offline, matching how the SSE
+          // stream would have classified them.
+          const next = {};
           Object.keys(result).forEach((key) => {
-            if (result[key].ProviderType === "remote") {
-              setSelectedProvider(selectedProvider);
-            }
+            const p = result[key] || {};
+            const isRemote = p.providerType === "remote";
+            next[key] = {
+              ...p,
+              _status: isRemote
+                ? p.capabilities?.length
+                  ? "online"
+                  : "offline"
+                : "online",
+            };
           });
-          setAvailableProviders(result);
+          setAvailableProviders(next);
         }
       },
       (error) => {
@@ -228,59 +316,70 @@ export default function Provider() {
                   autoFocusItem
                 >
                   {Object.keys(availableProviders).map((key) => {
-                    // /api/providers serializes ProviderProperties with
-                    // camelCase JSON tags (see server/models/providers.go).
+                    // /api/providers and /api/providers/stream both
+                    // serialize ProviderProperties with camelCase JSON
+                    // tags; the stream also stitches in _status / _error
+                    // markers from the ProviderStatusEvent envelope.
                     const provider = availableProviders[key];
                     const isRemote = provider?.providerType === "remote";
-                    const isOffline =
-                      isRemote && !provider?.capabilities?.length;
-                    if (isOffline) return null;
+                    const status = provider?._status || "online";
+                    if (status === "offline") return null;
                     // Prefer the explicit providerName so the chooser shows
                     // the friendly name rather than the registration key
                     // (which can fall back to the URL host for remotes that
                     // were unreachable when the server booted).
                     const label = provider?.providerName || key;
+                    const isChecking = status === "checking";
                     return (
                       <MenuItem
                         key={key}
-                        onClick={(e) => handleMenuItemClick(e, key)}
+                        onClick={(e) =>
+                          isChecking ? undefined : handleMenuItemClick(e, key)
+                        }
+                        disabled={isChecking}
                         sx={{
                           "&:hover": { backgroundColor: accentGrey[20] },
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "space-between",
                           gap: 1,
+                          opacity: isChecking ? 0.7 : 1,
                         }}
                       >
                         <span>{label}</span>
-                        {isRemote && (
-                          <CustomTooltip
-                            title="A remote provider offering identity services, additional plugins and extensions, granular and customizable RBAC."
-                            placement="right"
-                            arrow
-                          >
-                            <IconButton
-                              size="small"
-                              aria-label="More information about the remote provider"
-                              data-testid="provider-learn-more-button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleClose();
-                                handleModalOpen();
-                              }}
-                              sx={{
-                                ml: "auto",
-                                p: 0.25,
-                                flexShrink: 0,
-                                color: KEPPEL,
-                                opacity: 0.95,
-                                "&:hover": { color: KEPPEL, opacity: 1 },
-                              }}
+                        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          {isChecking && (
+                            <CircularProgress
+                              size={14}
+                              sx={{ color: accentGrey[40] }}
+                              aria-label="Verifying availability"
+                            />
+                          )}
+                          {isRemote && (
+                            <CustomTooltip
+                              title="More information about this provider"
+                              placement="right"
+                              arrow
                             >
-                              <InfoOutlinedIcon width={18} height={18} />
-                            </IconButton>
-                          </CustomTooltip>
-                        )}
+                              <IconButton
+                                size="small"
+                                aria-label="More information about the remote provider"
+                                data-testid="provider-learn-more-button"
+                                onClick={(e) => openProviderInfo(e, provider)}
+                                sx={{
+                                  ml: "auto",
+                                  p: 0.25,
+                                  flexShrink: 0,
+                                  color: KEPPEL,
+                                  opacity: 0.95,
+                                  "&:hover": { color: KEPPEL, opacity: 1 },
+                                }}
+                              >
+                                <InfoOutlinedIcon width={18} height={18} />
+                              </IconButton>
+                            </CustomTooltip>
+                          )}
+                        </span>
                       </MenuItem>
                     );
                   })}
@@ -295,10 +394,7 @@ export default function Provider() {
                   />
                   {Object.keys(availableProviders).map((key) => {
                     const provider = availableProviders[key];
-                    const isOffline =
-                      provider?.providerType === "remote" &&
-                      !provider?.capabilities?.length;
-                    if (!isOffline) return null;
+                    if (provider?._status !== "offline") return null;
                     const label = provider?.providerName || key;
                     return (
                       <MenuProviderDisabled disabled={true} key={key}>
@@ -307,30 +403,13 @@ export default function Provider() {
                       </MenuProviderDisabled>
                     );
                   })}
-                  <MenuProviderDisabled
-                    sx={{ marginTop: "0px" }}
-                    disabled={true}
-                    key="Exoscale Labs"
-                  >
-                    Exoscale Labs{"\u00A0"}
-                    <span>Offline</span>
-                  </MenuProviderDisabled>
-                  <MenuProviderDisabled disabled={true} key="Equinix US-DAL">
-                    Equinix US-DAL{"\u00A0"}
-                    <span>Offline</span>
-                  </MenuProviderDisabled>
-                  <MenuProviderDisabled disabled={true} key="HPE Security">
-                    HPE Security{"\u00A0"}
-                    <span>Offline</span>
-                  </MenuProviderDisabled>
-                  <MenuProviderDisabled disabled={true} key="F5">
-                    F5 BIG IP iHealth{"\u00A0"}
-                    <span>Offline</span>
-                  </MenuProviderDisabled>
-                  <MenuProviderDisabled disabled={true} key="UT Austin">
-                    The University of Texas at Austin{"\u00A0"}
-                    <span> Offline</span>
-                  </MenuProviderDisabled>
+                  {/*
+                    The chooser is now strictly driven by the server's
+                    /api/providers/stream feed (see useEffect above);
+                    static "Offline" entries for providers the server
+                    does not know about have been removed so the menu
+                    cannot misrepresent Meshery's actual provider state.
+                  */}
                   <Divider
                     sx={{
                       my: 0.5,
@@ -382,6 +461,74 @@ export default function Provider() {
                 </MenuList>
               </ClickAwayListener>
             </StyledPopover>
+
+            {/*
+              Per-provider info popover. Anchored to the InfoOutlined icon
+              next to each remote entry. Renders the descriptive blurb the
+              remote returns from its own /capabilities (providerName +
+              providerDescription) so the chooser explains what each
+              specific provider offers instead of showing the legacy
+              one-size-fits-all "Choosing a Provider" dialog.
+            */}
+            <Popover
+              open={providerInfoOpen}
+              anchorEl={providerInfo.anchor}
+              onClose={closeProviderInfo}
+              anchorOrigin={{ vertical: "center", horizontal: "right" }}
+              transformOrigin={{ vertical: "center", horizontal: "left" }}
+              PaperProps={{
+                sx: {
+                  background: charcoal[20],
+                  color: (theme) => theme.palette.text.inverse,
+                  maxWidth: 360,
+                  p: 2,
+                  borderLeft: `3px solid ${KEPPEL}`,
+                },
+              }}
+            >
+              {providerInfo.provider && (
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: "1rem" }}>
+                    {providerInfo.provider.providerName ||
+                      "Remote Provider"}
+                  </div>
+                  {providerInfo.provider.providerUrl && (
+                    <div
+                      style={{
+                        fontSize: "0.75rem",
+                        opacity: 0.7,
+                        marginTop: 2,
+                        marginBottom: 8,
+                        wordBreak: "break-all",
+                      }}
+                    >
+                      {providerInfo.provider.providerUrl}
+                    </div>
+                  )}
+                  {Array.isArray(providerInfo.provider.providerDescription) &&
+                  providerInfo.provider.providerDescription.length > 0 ? (
+                      <ul style={{ paddingLeft: "1.1rem", margin: 0 }}>
+                        {providerInfo.provider.providerDescription.map(
+                          (line, i) => (
+                            <li
+                              key={`${providerInfo.provider.providerName || "p"}-${i}`}
+                              style={{ marginBottom: 4 }}
+                            >
+                              {line}
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    ) : (
+                      <div style={{ fontSize: "0.85rem", opacity: 0.85 }}>
+                        {providerInfo.provider._status === "checking"
+                          ? "Verifying availability and loading capabilities..."
+                          : "This provider has not published a description."}
+                      </div>
+                    )}
+                </div>
+              )}
+            </Popover>
           </Fragment>
         )}
       </CustomDiv>
@@ -407,50 +554,35 @@ export default function Provider() {
           analysis, multi-player user collaboration, and so on.
           <h2>Available Providers</h2>
           {Object.keys(availableProviders).map((key) => {
+            const provider = availableProviders[key] || {};
+            // /api/providers serializes ProviderProperties with camelCase
+            // JSON tags (server/models/providers.go). The previous
+            // snake_case lookup silently rendered nothing - producing an
+            // empty list under "Available Providers" - because no field
+            // by those names exists in the response.
+            const name = provider.providerName || key;
+            const description = Array.isArray(provider.providerDescription)
+              ? provider.providerDescription
+              : [];
             return (
-              <React.Fragment key={availableProviders[key].provider_name}>
-                <p style={{ fontWeight: 700 }}>
-                  {availableProviders[key].provider_name}
-                </p>
-                <ul>
-                  {availableProviders[key].provider_description?.map(
-                    (desc, i) => (
-                      <li key={`desc-${i}`}>{desc}</li>
-                    )
-                  )}
-                </ul>
+              <React.Fragment key={key}>
+                <p style={{ fontWeight: 700 }}>{name}</p>
+                {description.length > 0 ? (
+                  <ul>
+                    {description.map((desc, i) => (
+                      <li key={`${key}-desc-${i}`}>{desc}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p style={{ fontStyle: "italic", opacity: 0.8 }}>
+                    {provider._status === "checking"
+                      ? "Loading description..."
+                      : "No description available."}
+                  </p>
+                )}
               </React.Fragment>
             );
           })}
-          <p style={{ fontWeight: 700 }}>MIT</p>
-          <ul>
-            <li>Remote provider for performance testing</li>
-            <li>Provides provenence of test results and their persistence</li>
-            <li>Adaptive performance analysis - predictive optimization</li>
-          </ul>
-          <p style={{ fontWeight: 700 }}>The University of Texas at Austin</p>
-          <ul>
-            <li>Academic research and advanced studies by Ph.D. researchers</li>
-            <li>Used by school of Electrical and Computer Engineering (ECE)</li>
-          </ul>
-          <p style={{ fontWeight: 700 }}>
-            Cloud Native Computing Foundation Infrastructure Lab
-          </p>
-          <ul>
-            <li>
-              Performance and compatibility-centric research and validation
-            </li>
-            <li>Used by various cloud native projects</li>
-          </ul>
-          <p style={{ fontWeight: 700 }}>HPE Security</p>
-          <ul>
-            <li>Istio, SPIRE, and SPIFEE integration</li>
-          </ul>
-          <p style={{ fontWeight: 700 }}>Equinix</p>
-          <ul>
-            <li>Identity services</li>
-            <li>Bare-metal Kubernetes configuration</li>
-          </ul>
         </StyledDialogBox>
 
         <CustomDialogActions>
