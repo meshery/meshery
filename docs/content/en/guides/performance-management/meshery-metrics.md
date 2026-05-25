@@ -15,24 +15,25 @@ In order to pull in these environment metrics, you can also manually configure M
 {{< tabs id="meshery-metrics-tabs" >}}
 Prometheus Metrics
 
-User needs to set the Prometheus URL and API key to create and query boards.
+<p>User needs to set the Prometheus URL and API key to create and query boards.</p>
 
 <img src="/guides/performance-management/images/PrometheusCharts.svg" alt="Prometheus Metrics in Meshery" />
 
 <!-- tab -->
 Grafana Charts
 
-User needs to set the Grafana URL and API key to create and query boards.
+<p>User needs to set the Grafana URL and API key to create and query boards.</p>
 
 <img src="/guides/performance-management/images/GrafanaBoards.svg" alt="Grafana Charts in Meshery" />
 
 <!-- tab -->
 Static Boards
 
-Static Boards capture the standard performance metrics included in every Meshery performance test irrespective of which load generator is used. A set calculations are made using statistical analysis of the metrics gathered in the static boards. Static Boards Queries Prometheus SDK directly.
+<p>Static Boards capture the standard performance metrics included in every Meshery performance test irrespective of which load generator is used. A set calculations are made using statistical analysis of the metrics gathered in the static boards. Static Boards Queries Prometheus SDK directly.</p>
 
 <!-- tab -->
 Dynamic Boards
 
-Dynamic Boards can be generated from Prometheus or Grafana. These boards are defined by the user. Grafana SDK is used for these boards.
+<p>Dynamic Boards can be generated from Prometheus or Grafana. These boards are defined by the user. Grafana SDK is used for these boards.</p>
+
 {{< /tabs >}}

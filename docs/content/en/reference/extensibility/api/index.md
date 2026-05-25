@@ -12,24 +12,24 @@ Each of Meshery's APIs are subject to the following authentication and authoriza
 ### API Reference
 
 {{< tabs id="api-reference-tabs" >}}
-REST API
+REST API | fa fa-cube
 
-Meshery Server's REST API is available at <code>[hostname]:[port]/api/</code>.
+<p>Meshery Server's REST API is available at <code>http://[hostname]:[port]/api/</code>.</p>
 
 {{% alert color="dark" title="Meshery's REST API Reference" %}}
 See [REST API Reference](/reference/rest-apis) Self-generated API documentation for Meshery's REST API. Documentation is generated from Meshery's Open API schema.
 {{% /alert %}}
 
 <!-- tab -->
-GraphQL API
+GraphQL API | fa fa-globe
 
-Meshery Server's GraphQl API is available at <code>{hostname]:[port]/api/graphql/query</code>. A GraphQL request can be made as a POST request to the endpoint with the query as the payload. Meshery Server's GraphQL API can be used to perform three operations:
+<p>Meshery Server's GraphQl API is available at <code>{hostname]:[port]/api/graphql/query</code>. A GraphQL request can be made as a POST request to the endpoint with the query as the payload. Meshery Server's GraphQL API can be used to perform three operations:</p>
 
 - Queries for data retrieval.
 - Mutations for creating, updating, and deleting data.
 - Subscriptions for watching for any data changes.
 
-Explore the Meshery GraphQL API using the interactive Playground provided with Meshery instance at http://localhost:9081/api/system/graphql/playground.
+<p>Explore the Meshery GraphQL API using the interactive Playground provided with Meshery instance at http://localhost:9081/api/system/graphql/playground.</p>
 
 {{% alert color="dark" title="Meshery's GraphQL API Reference" %}}
 See [GraphQL API Reference](/reference/graphql-apis) Self-generated API documentation for Meshery's GraphQL API. The API can be explored interactively using the GraphQL Playground. Documentation is generated from Meshery's GraphQL schema. Each table below documents a GraphQL type.
