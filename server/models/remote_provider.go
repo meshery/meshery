@@ -565,7 +565,7 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 
 	l.Log.Infof("Redirecting after intercept base redirect url: %s , interceptedRequestURI %s ", redirectURL, req.URL.String())
 
-	// if request was directly intercepted from the kanvas page ( /extension ) , then the ref might not be present
+	// if request was directly intercepted from the extension page ( /extension ) , then the ref might not be present
 	// so we can directly redirect back to intercepted page
 	if strings.HasPrefix(req.URL.Path, "/extension") {
 		// redirect to the intercepted page with all original query params
@@ -589,7 +589,7 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 		l.Log.Info("No navigator extension found, redirecting to /error")
 		redirectURL = errorUI
 	}
-	l.Log.Infof("No source refs resolved , Redirecting to base kanvas page  %s", redirectURL)
+	l.Log.Infof("No source refs resolved , Redirecting to base extension page  %s", redirectURL)
 	http.Redirect(res, req, redirectURL, http.StatusFound)
 }
 
@@ -2344,7 +2344,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 
 	switch resp.StatusCode {
 	case http.StatusRequestEntityTooLarge:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again. See https://docs.layer5.io/kanvas/advanced/performance/ for performance limitations and performance tuning tips", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again.", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	case http.StatusUnauthorized:
 		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your permissions", pattern.Name, l.ProviderName), "", resp.StatusCode)
