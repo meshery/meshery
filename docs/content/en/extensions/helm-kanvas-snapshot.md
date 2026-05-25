@@ -1,17 +1,16 @@
 ---
-title: Helm Kanvas Snapshot
+title: Helm Snapshot
 description: Helm CLI plugin to visually render a snapshot of your Helm charts.
 display_title: false
-categories: [kanvas]
 ---
 
-# <img style="height: 4rem; width: 4rem;" src="/extensions/images/helm-chart-color.svg" /> Helm Kanvas Snapshot
+# <img style="height: 4rem; width: 4rem;" src="/extensions/images/helm-chart-color.svg" /> Helm Snapshot
 
 ## Extension Overview
 
-The **Kanvas Snapshot Helm Plugin** allows users to generate a visual snapshot of their Helm charts directly from the command line. It simplifies the process of creating Meshery Snapshots, providing a visual representation of packaged Helm charts. This plugin integrates with Meshery Cloud and GitHub Actions to automate the workflow of snapshot creation, which is especially useful for Helm users who need to quickly visualize their chart configurations.
+The **Helm Snapshot Plugin** allows users to generate a visual snapshot of their Helm charts directly from the command line. It simplifies the process of creating Meshery Snapshots, providing a visual representation of packaged Helm charts. This plugin integrates with Meshery Cloud and GitHub Actions to automate the workflow of snapshot creation, which is especially useful for Helm users who need to quickly visualize their chart configurations.
 
-Helm charts can be complex, especially when custom configurations are applied via `values.yaml` files. This Meshery extension bridges the gap between Helm chart configurations and their visual representation by converting Helm charts into **Kanvas Snapshots**. These snapshots can be received either via email or as a URL displayed directly in the terminal.
+Helm charts can be complex, especially when custom configurations are applied via `values.yaml` files. This Meshery extension bridges the gap between Helm chart configurations and their visual representation by converting Helm charts into snapshots. These snapshots can be received either via email or as a URL displayed directly in the terminal.
 
 ### Features
 
@@ -31,11 +30,11 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
 
 **Plugin Installation**
 
-1. Run the following command to install the Helm Kanvas Snapshot plugin:
+1. Run the following command to install the Helm Snapshot plugin:
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-     <div class="clipboardjs"> helm plugin install https://github.com/meshery/helm-kanvas-snapshot </div>
+     <div class="clipboardjs"> helm plugin install https://github.com/meshery-extensions/helm-kanvas-snapshot </div>
    </div>
 </pre>
 
@@ -48,7 +47,7 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
    </div>
 </pre>
 
-   You should see the Kanvas Snapshot listed as `helm-kanvas-snapshot`.
+   You should see the snapshot listed as `helm-snapshot`.
 
 4. Set up the required environment variables (see the [Environment Variables](#environment-variables) section).
 
