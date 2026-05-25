@@ -11,7 +11,75 @@
 	👨🏽‍💻 Contributors
 &lt;/h2&gt;
 &lt;p&gt;Thank you to our contributors for making this release possible:
-@arjunmehta-git, @fitzergerald and @leecalcote&lt;/p&gt;</description></item><item><title>v1.0.25</title><link>/project/releases/v1.0.25/</link><pubDate>Thu, 21 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.25/</guid><description>&lt;h2 id="whats-new"&gt;
+@arjunmehta-git, @fitzergerald and @leecalcote&lt;/p&gt;</description></item><item><title>v1.0.27</title><link>/project/releases/v1.0.27/</link><pubDate>Fri, 22 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.27/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Chore]: Bump meshery/schemas to v1.2.23 @l5io (#19623)&lt;/li&gt;
+&lt;li&gt;[Server] Index matchlabels and binding identification loops @guan404ming (#19529)&lt;/li&gt;
+&lt;li&gt;chore(system): consume meshery/schemas v1.2.23 system types @leecalcote (#19600)&lt;/li&gt;
+&lt;li&gt;fix: batch-load connection environments to eliminate N+1 queries @hortison (#19599)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Single-source the remote-provider list across install artifacts @hortison (#19621)&lt;/li&gt;
+&lt;li&gt;fix: improve error handling for performance profile server failures @Omkar-Ugal (#19571)&lt;/li&gt;
+&lt;li&gt;Remove example URL from ParseURLGithub @arjunmehta-git (#19598)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Single-source the remote-provider list across install artifacts @hortison (#19621)&lt;/li&gt;
+&lt;li&gt;refactor(ui): consolidate duplicate NoSsr/Head/usePageTitle boilerplate into MesheryPage @leecalcote (#19290)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Single-source the remote-provider list across install artifacts @hortison (#19621)&lt;/li&gt;
+&lt;li&gt;Bump github.com/containerd/containerd from 1.7.30 to 1.7.32 @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19593)&lt;/li&gt;
+&lt;li&gt;Bump github.com/containerd/containerd/v2 from 2.2.0 to 2.2.4 @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19594)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Fix heading formatting @rishiraj38 (#19627)&lt;/li&gt;
+&lt;li&gt;Single-source the remote-provider list across install artifacts @hortison (#19621)&lt;/li&gt;
+&lt;li&gt;Intro Meshery - Maanvi @Maanvi212006 (#19626)&lt;/li&gt;
+&lt;li&gt;intro to meetings - week of 21/05 @ayushHardeniya (#19617)&lt;/li&gt;
+&lt;li&gt;docs: Akshit Tomar&amp;rsquo;s commit @akshyyyt (#19616)&lt;/li&gt;
+&lt;li&gt;Create akash-sah.md @SuperNeom (#19614)&lt;/li&gt;
+&lt;li&gt;Riteshbabu Allam @riteshbabuallam (#19613)&lt;/li&gt;
+&lt;li&gt;Add Yash Mahakal&amp;rsquo;s introduction to meeting notes @YASHMAHAKAL (#19612)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Maanvi212006, @Omkar-Ugal, @SuperNeom, @YASHMAHAKAL, @akshyyyt, @alexquincy, @arjunmehta-git, @ayushHardeniya, @fitzergerald, @guan404ming, @hortison, @l5io, @leecalcote, @lekaf974, @meshery-ci, @pontusringblom, @rishiraj38, @riteshbabuallam, @ritzorama, @simihablo and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.28</title><link>/project/releases/v1.0.28/</link><pubDate>Fri, 22 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.28/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[UI] Fix Next.js build imports and builder deps @hortison (#19629)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@hortison, @pontusringblom, @ritzorama and @simihablo&lt;/p&gt;</description></item><item><title>v1.0.25</title><link>/project/releases/v1.0.25/</link><pubDate>Thu, 21 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.25/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -32928,7 +32996,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.26&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.28&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
