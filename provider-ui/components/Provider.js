@@ -23,7 +23,7 @@ import {
   CustomTooltip,
   IconButton,
   CircularProgress,
-  InfoOutlined,
+  InfoOutlinedIcon,
   styled,
   charcoal,
   accentGrey,
@@ -269,7 +269,7 @@ export default function Provider() {
                                 "&:hover": { color: KEPPEL, opacity: 1 },
                               }}
                             >
-                              <InfoOutlined width={18} height={18} />
+                              <InfoOutlinedIcon width={18} height={18} />
                             </IconButton>
                           </CustomTooltip>
                         )}
