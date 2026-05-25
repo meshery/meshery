@@ -235,6 +235,11 @@ export default function Provider() {
                     const isOffline =
                       isRemote && !provider?.capabilities?.length;
                     if (isOffline) return null;
+                    // Prefer the explicit providerName so the chooser shows
+                    // the friendly name rather than the registration key
+                    // (which can fall back to the URL host for remotes that
+                    // were unreachable when the server booted).
+                    const label = provider?.providerName || key;
                     return (
                       <MenuItem
                         key={key}
@@ -247,7 +252,7 @@ export default function Provider() {
                           gap: 1,
                         }}
                       >
-                        <span>{key}</span>
+                        <span>{label}</span>
                         {isRemote && (
                           <CustomTooltip
                             title="A remote provider offering identity services, additional plugins and extensions, granular and customizable RBAC."
@@ -294,9 +299,10 @@ export default function Provider() {
                       provider?.providerType === "remote" &&
                       !provider?.capabilities?.length;
                     if (!isOffline) return null;
+                    const label = provider?.providerName || key;
                     return (
                       <MenuProviderDisabled disabled={true} key={key}>
-                        {key}{"\u00A0"}
+                        {label}{"\u00A0"}
                         <span>Offline</span>
                       </MenuProviderDisabled>
                     );

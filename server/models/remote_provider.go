@@ -130,6 +130,13 @@ func (l *RemoteProvider) Initialize() {
 		l.Log.Warnf("[RemoteProvider.Initialize] failed to load capabilities from remote provider: %v", err)
 		providerProperties.ProviderType = RemoteProviderType
 		providerProperties.ProviderURL = l.RemoteProviderURL
+		// Capabilities did not load, so providerName is unknown. Fall back
+		// to the URL host so the chooser and /api/providers expose a
+		// recognizable identifier instead of an empty name (which would
+		// force callers to invent one or display a raw URL).
+		if u, perr := url.Parse(l.RemoteProviderURL); perr == nil && u.Host != "" {
+			providerProperties.ProviderName = u.Host
+		}
 	}
 	l.ProviderProperties = providerProperties
 }
@@ -301,11 +308,16 @@ func (l *RemoteProvider) GetProviderType() ProviderType {
 // GetProviderProperties - Returns all the provider properties required
 func (l *RemoteProvider) GetProviderProperties() ProviderProperties {
 
-	// If the provider properties are not loaded yet, load them
-	if l.ProviderType == "" && l.RemoteProviderURL != "" {
+	// Treat empty Capabilities as "not yet successfully loaded" so a remote
+	// that was unreachable at Initialize() can self-heal once it comes back.
+	// ProviderType alone is not a safe sentinel: Initialize() now stamps it
+	// even on failure to keep the chooser able to render the offline entry,
+	// which would otherwise lock the provider into a degraded state until
+	// the server is restarted.
+	if len(l.Capabilities) == 0 && l.RemoteProviderURL != "" {
 		providerProperties, err := l.loadCapabilities("")
 		if err != nil {
-			l.Log.Error(fmt.Errorf("[RemoteProvider.GetProviderProperties] failed to load capabilities from remote provider: %v", err))
+			l.Log.Warnf("[RemoteProvider.GetProviderProperties] failed to load capabilities from remote provider: %v", err)
 			return l.ProviderProperties
 		}
 		l.SetProviderProperties(providerProperties)
