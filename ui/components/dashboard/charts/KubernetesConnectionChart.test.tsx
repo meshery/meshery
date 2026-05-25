@@ -78,7 +78,7 @@ vi.mock('./ConnectCluster', () => ({
 
 vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
-  InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
+  InfoOutlined: () => <svg data-testid="info-icon" />,
   KubernetesIcon: () => <svg data-testid="k8s-icon" />,
   Typography: ({ children }: { children?: React.ReactNode }) => <p>{children}</p>,
   useTheme: () => ({

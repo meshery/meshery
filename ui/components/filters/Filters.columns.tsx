@@ -1,6 +1,10 @@
 import React from 'react';
 import { Edit as EditIcon, GetApp as GetAppIcon, Public as PublicIcon } from '@/assets/icons';
-import { InfoOutlinedIcon } from '@sistent/sistent';
+// Sistent re-exports InfoOutlinedIcon as `InfoOutlined`; the original
+// symbol is not on the bundle, so a direct InfoOutlinedIcon import
+// resolves to undefined and crashes at render. Alias on import keeps
+// all JSX call sites unchanged.
+import { InfoOutlined as InfoOutlinedIcon } from '@sistent/sistent';
 import Moment from 'react-moment';
 import CloneIcon from '../../public/static/img/CloneIcon';
 import { iconMedium } from '../../css/icons.styles';

@@ -280,6 +280,36 @@ const (
 	PersistAnonymousUser Feature = "persist-anonymous-user"
 )
 
+// ProviderStatusKind reports the availability of a provider as observed by
+// the server-side availability checker. It is emitted as the `status` field of
+// ProviderStatusEvent on the /api/providers/stream SSE channel so the UI can
+// distinguish "probe in flight" from "remote is unreachable".
+type ProviderStatusKind string
+
+const (
+	// ProviderStatusChecking - availability probe is in flight; the UI should
+	// render the entry but defer interaction until a terminal status arrives.
+	ProviderStatusChecking ProviderStatusKind = "checking"
+	// ProviderStatusOnline - the provider responded successfully to its
+	// capability probe (or, for the local provider, is implicitly available).
+	ProviderStatusOnline ProviderStatusKind = "online"
+	// ProviderStatusOffline - the provider's capability probe failed after
+	// the bounded retries; the entry should render in the offline section.
+	ProviderStatusOffline ProviderStatusKind = "offline"
+)
+
+// ProviderStatusEvent is the per-provider availability snapshot broadcast by
+// ProviderTracker. It carries the same ProviderProperties shape the legacy
+// /api/providers endpoint returns so existing UI fields keep working, plus
+// the registration Key and the new Status / Error markers required for the
+// streaming chooser.
+type ProviderStatusEvent struct {
+	Key        string             `json:"key"`
+	Status     ProviderStatusKind `json:"status"`
+	Properties ProviderProperties `json:"properties"`
+	Error      string             `json:"error,omitempty"`
+}
+
 const (
 	// LocalProviderType - represents local providers
 	LocalProviderType ProviderType = "local"

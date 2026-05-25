@@ -7,7 +7,10 @@ import {
   Typography,
   Link,
   useTheme,
-  InfoOutlinedIcon,
+  // Sistent re-exports InfoOutlinedIcon as `InfoOutlined`; the original
+  // symbol is not on the bundle, so a direct InfoOutlinedIcon import
+  // resolves to undefined and crashes at render.
+  InfoOutlined as InfoOutlinedIcon,
 } from '@sistent/sistent';
 import { CustomTooltip, VisibilityChipMenu } from '@sistent/sistent';
 import {

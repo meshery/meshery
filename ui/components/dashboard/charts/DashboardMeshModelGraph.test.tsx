@@ -65,7 +65,7 @@ vi.mock('../style', () => ({
 
 vi.mock('@sistent/sistent', () => ({
   Grid2: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
-  InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
+  InfoOutlined: () => <svg data-testid="info-icon" />,
   Typography: ({ children }: { children?: React.ReactNode }) => <p>{children}</p>,
   useTheme: () => ({ palette: { icon: { default: '#000' } } }),
 }));
