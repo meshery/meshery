@@ -103,7 +103,7 @@ Code coverage goal: 25%
 - [Server] Registry: Model import/export; OCI
 - [CLI] Support for commands: model, component, releationship, registry, environment, connection, credential
 
-**Extensibilityy / Extensions**
+**Extensibility / Extensions**
 
 - [UI] Extensible Authorization
 - [CLI] Helm Snapshot
