@@ -230,8 +230,11 @@ export default function Provider() {
                   {Object.keys(availableProviders).map((key) => {
                     // /api/providers serializes ProviderProperties with
                     // camelCase JSON tags (see server/models/providers.go).
-                    const isRemote =
-                      availableProviders[key]?.providerType === "remote";
+                    const provider = availableProviders[key];
+                    const isRemote = provider?.providerType === "remote";
+                    const isOffline =
+                      isRemote && !provider?.capabilities?.length;
+                    if (isOffline) return null;
                     return (
                       <MenuItem
                         key={key}
@@ -285,6 +288,19 @@ export default function Provider() {
                       marginBottom: "0px",
                     }}
                   />
+                  {Object.keys(availableProviders).map((key) => {
+                    const provider = availableProviders[key];
+                    const isOffline =
+                      provider?.providerType === "remote" &&
+                      !provider?.capabilities?.length;
+                    if (!isOffline) return null;
+                    return (
+                      <MenuProviderDisabled disabled={true} key={key}>
+                        {key}{"\u00A0"}
+                        <span>Offline</span>
+                      </MenuProviderDisabled>
+                    );
+                  })}
                   <MenuProviderDisabled
                     sx={{ marginTop: "0px" }}
                     disabled={true}

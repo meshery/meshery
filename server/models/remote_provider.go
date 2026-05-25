@@ -127,10 +127,11 @@ func (l *RemoteProvider) Initialize() {
 	// of the provider
 	providerProperties, err := l.loadCapabilities("")
 	if err != nil {
-		l.Log.Error(fmt.Errorf("[RemoteProvider.Initialize] failed to load capabilities from remote provider: %v", err))
-	} else {
-		l.ProviderProperties = providerProperties
+		l.Log.Warnf("[RemoteProvider.Initialize] failed to load capabilities from remote provider: %v", err)
+		providerProperties.ProviderType = RemoteProviderType
+		providerProperties.ProviderURL = l.RemoteProviderURL
 	}
+	l.ProviderProperties = providerProperties
 }
 
 func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProperties) {
@@ -201,22 +202,14 @@ func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, err
 
 	// If not token is provided then make a simple GET request
 	if token == "" {
-		c := &http.Client{}
-
-		const maxRetries = 10
+		c := &http.Client{Timeout: 3 * time.Second}
+		const maxRetries = 3
 		for i := 0; i < maxRetries; i++ {
 			resp, err = c.Do(req)
 			if err == nil && resp != nil {
-				break // Successfully fetched response
+				break
 			}
-			if i == 0 {
-				l.Log.Warnf("Failed to fetch capabilities from remote provider (URL: %s). Retrying (%d)... ", remoteProviderURL.String(), i)
-			}
-			l.Log.Debugf("Attempt %d/%d: Failed to fetch capabilities: %v. Retrying in 3 seconds...", i+1, maxRetries, err)
-			time.Sleep(3 * time.Second)
-		}
-		if err != nil || resp == nil {
-			l.Log.Warnf("Failed to fetch capabilities after %d attempts", maxRetries)
+			l.Log.Debugf("Attempt %d/%d: failed to fetch capabilities: %v", i+1, maxRetries, err)
 		}
 
 	} else {
@@ -224,14 +217,14 @@ func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, err
 		resp, err = l.DoRequest(req, token)
 	}
 	if err != nil && resp == nil {
-		l.Log.Error(ErrUnreachableRemoteProvider(err))
+		l.Log.Warn(ErrUnreachableRemoteProvider(err))
 		return providerProperties, ErrUnreachableRemoteProvider(err)
 	}
 	if err != nil || resp.StatusCode != http.StatusOK {
 		if err == nil {
 			err = ErrStatusCode(resp.StatusCode)
 		}
-		l.Log.Error(ErrFetch(err, "Capabilities", http.StatusInternalServerError))
+		l.Log.Warn(ErrFetch(err, "Capabilities", http.StatusInternalServerError))
 		return providerProperties, ErrFetch(err, "Capabilities", http.StatusInternalServerError)
 	}
 	defer func() {
@@ -306,7 +299,7 @@ func (l *RemoteProvider) GetProviderType() ProviderType {
 func (l *RemoteProvider) GetProviderProperties() ProviderProperties {
 
 	// If the provider properties are not loaded yet, load them
-	if (l.PackageVersion == "" || l.PackageURL == "" || len(l.Capabilities) == 0) && l.RemoteProviderURL != "" {
+	if l.ProviderType == "" && l.RemoteProviderURL != "" {
 		providerProperties, err := l.loadCapabilities("")
 		if err != nil {
 			l.Log.Error(fmt.Errorf("[RemoteProvider.GetProviderProperties] failed to load capabilities from remote provider: %v", err))
