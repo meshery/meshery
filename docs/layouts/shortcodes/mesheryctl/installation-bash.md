@@ -11,6 +11,7 @@ To install or upgrade `mesheryctl` using `bash`, execute anyone of the following
  </pre>
 <br />
 <br />
+
 #### Option 2: Install `mesheryctl` binary and deploy Meshery on Docker
 
  <pre class="codeblock-pre">
@@ -21,6 +22,7 @@ To install or upgrade `mesheryctl` using `bash`, execute anyone of the following
  </pre>
 <br />
 <br />
+
 #### Option 3: Install `mesheryctl` binary and deploy Meshery on Kubernetes
 
  <pre class="codeblock-pre">
@@ -31,6 +33,7 @@ To install or upgrade `mesheryctl` using `bash`, execute anyone of the following
  </pre>
 <br />
 <br />
+
 #### Option 4: Install `mesheryctl` binary and Meshery adapter(s)
 
 Install `mesheryctl` binary and include one or more [adapters](/concepts/architecture/adapters) to be deployed
@@ -43,6 +46,7 @@ Install `mesheryctl` binary and include one or more [adapters](/concepts/archite
  </pre>
 <br />
 <br />
+
 ### Start Meshery
 You are ready to deploy Meshery `mesheryctl`. To do so, execute the following command.
 

@@ -1,6 +1,6 @@
 ---
 title: Kubernetes Request Flow – A Visual Guide
-description: A visual walkthrough of how user requests flow through Kubernetes components using Meshery Kanvas.
+description: A visual walkthrough of how user requests flow through Kubernetes components using Meshery Design Configurator.
 model: kubernetes
 params:
   kind: deployments
@@ -8,7 +8,7 @@ categories: [tutorials]
 aliases: 
 - /guides/tutorials/kubernetes-request-flow
 ---
-In this tutorial, we will explore the exact journey a request takes inside a Kubernetes cluster from the moment a user hits "Enter" in their browser, to the moment a response is sent back. We will understand the fundamental data path of a request - from the user to the container, using a **diagram built in Meshery Kanvas**.
+In this tutorial, we will explore the exact journey a request takes inside a Kubernetes cluster from the moment a user hits "Enter" in their browser, to the moment a response is sent back. We will understand the fundamental data path of a request - from the user to the container, using a **diagram built in Meshery Design Configurator**.
 
 > **_Note:_** This tutorial is completely visual and beginner-friendly. No YAML or CLI is required.
 
@@ -32,19 +32,19 @@ This is a common real-world pattern seen in microservices architectures and back
 
 ### Objective
 
- We will visually explore how all the kubernetes components come together using Meshery Kanvas, and learn how this understanding can simplify debugging and designing applications.
+ We will visually explore how all the kubernetes components come together using Meshery Design Configurator, and learn how this understanding can simplify debugging and designing applications.
 
 
-## Walkthrough in Meshery Kanvas
+## Walkthrough in Meshery Design Configurator
 
 ### Accessing the Visual Guide Design
 
 - Start by opening the prebuilt design from here:
-  [![Kubernetes Flow Diagram](/guides/tutorials/images/kubernetes-request-flow/k8s-request-flow.png)](https://kanvas.new/extension/meshmap?mode=design&design=629b6039-ebb3-4bd8-9b1b-19184fade225)
+  [![Kubernetes Flow Diagram](/guides/tutorials/images/kubernetes-request-flow/k8s-request-flow.png)](https://playground.meshery.io)
 
->  Click the image above to open the interactive design in Meshery Kanvas.
+>  Click the image above to open the interactive design in Meshery Design Configurator.
 
-- Once inside Kanvas, we will see a complete layout of how a request flows through the Kubernetes architecture. We are going to understand what’s happening in this architecture.
+- Once inside the Meshery Design Configurator, we will see a complete layout of how a request flows through the Kubernetes architecture. We are going to understand what’s happening in this architecture.
 - If it looks a bit overwhelming at first, zoom in/out or drag around the canvas to get comfortable with the layout.
 
 
@@ -98,7 +98,7 @@ Think of this request path as the backbone of your Kubernetes understanding. Eve
 
 ### Operate This Flow
 
-- If we want to go beyond just “viewing” the flow, we can switch to **Meshery Kanvas → Operate Mode** to interact with real Kubernetes clusters. 
+- If we want to go beyond just "viewing" the flow, we can switch to **Meshery Dashboard → Operate Mode** to interact with real Kubernetes clusters. 
 This lets us:
 
 - Swap containers inside Pods
@@ -110,14 +110,14 @@ All of this happens visually, without having to write or apply any YAML.
 
 ## Want to Try Building It Yourself?
 
-If we want to recreate this flow from scratch, we can drag and drop the same components inside Meshery Kanvas → Design Mode. It’s a great way to test our understanding and see how things fit together.
+If we want to recreate this flow from scratch, we can drag and drop the same components inside Meshery Design Configurator. It's a great way to test our understanding and see how things fit together.
 
 
 ### Diagram Screenshot
 
 [![Kubernetes Flow Diagram](/guides/tutorials/images/kubernetes-request-flow/k8s-request-flow.png)](/guides/tutorials/images/kubernetes-request-flow/k8s-request-flow.png)
 
-> Note: You can design this yourself using the components in Meshery Kanvas.
+> Note: You can design this yourself using the components in Meshery Design Configurator.
 
 
 ## Conclusion

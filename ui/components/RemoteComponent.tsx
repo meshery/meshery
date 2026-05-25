@@ -4,7 +4,7 @@ import {
   getDependencies,
   createRequires,
 } from '@paciolan/remote-component';
-import LoadingScreen from './LoadingComponents/LoadingComponent';
+import LoadingScreen from './shared/LoadingState/LoadingComponent';
 
 const requires = createRequires(getDependencies);
 

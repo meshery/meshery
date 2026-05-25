@@ -7,7 +7,7 @@ import {
   TextField,
   Paper,
   Chip,
-  MenuItem,
+  ListItemButton,
   useTheme,
   styled,
   NoSsr,
@@ -79,7 +79,7 @@ function Control(props) {
 
 function Option(props) {
   return (
-    <MenuItem
+    <ListItemButton
       ref={props.innerRef}
       selected={props.isFocused}
       component="div"
@@ -87,7 +87,7 @@ function Option(props) {
       {...props.innerProps}
     >
       {props.children}
-    </MenuItem>
+    </ListItemButton>
   );
 }
 

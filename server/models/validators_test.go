@@ -29,7 +29,7 @@ func TestSMPPerformanceTestConfigValidator(t *testing.T) {
 			wantError: ErrValidURL,
 		},
 		{
-			name: "given valid absolute endpoints, when validating config, then no error is returned",
+			name: "given a legacy wrk2 generator, when validating config, then it is tolerated and no error is returned",
 			config: &SMP.PerformanceTestConfig{
 				Name:     "valid endpoints",
 				Duration: "30s",
@@ -40,13 +40,31 @@ func TestSMPPerformanceTestConfigValidator(t *testing.T) {
 						EndpointUrls:  []string{"https://meshery.io/api/health"},
 					},
 					{
-						LoadGenerator: Wrk2LG.Name(),
+						// "wrk2" was removed as a load generator; existing
+						// profiles carrying it must still validate (they run
+						// on fortio). Regression guard for graceful fallback.
+						LoadGenerator: "wrk2",
 						Protocol:      SMP.PerformanceTestConfig_Client_PROTOCOL_TCP,
 						EndpointUrls:  []string{"tcp://127.0.0.1:8080"},
 					},
 				},
 			},
 			wantError: nil,
+		},
+		{
+			name: "given an unrecognized generator, when validating config, then ErrLoadgenerator is returned",
+			config: &SMP.PerformanceTestConfig{
+				Name:     "bogus generator",
+				Duration: "30s",
+				Clients: []*SMP.PerformanceTestConfig_Client{
+					{
+						LoadGenerator: "bogus",
+						Protocol:      SMP.PerformanceTestConfig_Client_PROTOCOL_HTTP,
+						EndpointUrls:  []string{"https://meshery.io/api/health"},
+					},
+				},
+			},
+			wantError: ErrLoadgenerator,
 		},
 	}
 

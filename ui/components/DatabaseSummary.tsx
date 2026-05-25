@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { Button, Typography, ResponsiveDataTable } from '@sistent/sistent';
-import PropTypes from 'prop-types';
-import resetDatabase from './graphql/queries/ResetDatabaseQuery';
+import React, { useState, FC } from 'react';
+import { Button, Typography, ResponsiveDataTable, useTheme } from '@sistent/sistent';
+import resetDatabase from '@/graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
@@ -13,7 +12,12 @@ import { keys } from '@/utils/permission_constants';
 import { PROMPT_VARIANTS } from '@sistent/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
-const DatabaseSummary = (props) => {
+interface DatabaseSummaryProps {
+  promptRef: React.RefObject<any>;
+}
+
+const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
+  const theme = useTheme();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchText, setSearchText] = useState('');
@@ -135,8 +139,8 @@ const DatabaseSummary = (props) => {
             variant="contained"
             data-testid="database-reset-button"
             color="error"
-            style={{
-              backgroundColor: '#8F1F00',
+            sx={{
+              backgroundColor: theme.palette.error.dark,
             }}
             size="medium"
             disabled={!CAN(keys.RESET_DATABASE.action, keys.RESET_DATABASE.subject)}
@@ -172,11 +176,7 @@ const DatabaseSummary = (props) => {
   );
 };
 
-DatabaseSummary.propTypes = {
-  promptRef: PropTypes.object.isRequired,
-};
-
-const DatabaseSummaryTable = (props) => {
+const DatabaseSummaryTable: FC<DatabaseSummaryProps> = (props) => {
   return <DatabaseSummary {...props} />;
 };
 

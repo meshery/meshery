@@ -46,7 +46,7 @@ These YAML files contain the Cassandra Service and Cassandra StatefulSet manifes
 
 1. Log in to the [Meshery Playground](https://play.meshery.io/) using your credentials. On successful login, you should be at the dashboard. Press the **X** on the _Where do you want to start?_ popup to close it (if required).
 
-2. Click **Explore** in the Cloud Native Playground tile to navigate to _MeshMap_
+2. Click **Explore** in the Cloud Native Playground tile to navigate to the _Meshery Design Configurator_
 
 #### Import the Files to Meshery Playground
 
@@ -95,7 +95,7 @@ To merge the Service deployment design with the StatefulSet deployment design:
 
 #### Visualizing the Deployed Resources
 
-To view the resources deployed we will use the Visualize section of the _MeshMap_. In this section, you can apply filters to display the specific resources you want to see.
+To view the resources deployed we will use the Visualize section of the _Meshery Dashboard_. In this section, you can apply filters to display the specific resources you want to see.
 
 1. Move to the Visualize tab.
 2. Click the filter icon and choose the appropriate filters

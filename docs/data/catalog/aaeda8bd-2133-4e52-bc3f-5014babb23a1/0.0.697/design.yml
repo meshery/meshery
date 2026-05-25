@@ -2,7 +2,7 @@
   "id": "aaeda8bd-2133-4e52-bc3f-5014babb23a1",
   "name": "LoxiLB Multi-Cloud VPN \u0026 Connectivity",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.699",
+  "version": "0.0.700",
   "metadata": {
     "resolvedAliases": {}
   },
@@ -14,17 +14,18 @@
       "displayName": "IP Sec VPN",
       "description": "A lock icon, indicating security or restricted access.",
       "format": "JSON",
+      "model": null,
       "modelReference": {
-        "version": "v1.0.0",
-        "name": "meshery-simple-line-icons",
         "displayName": "Simple Line Icons",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-simple-line-icons",
         "registrant": {
           "kind": "meshery"
         },
-        "model": {
-          "version": "0.7.2"
-        }
+        "version": "v1.0.0"
       },
       "styles": {
         "background-opacity": 0,
@@ -87,17 +88,18 @@
       "displayName": "IP Sec VPN",
       "description": "A lock icon, indicating security or restricted access.",
       "format": "JSON",
+      "model": null,
       "modelReference": {
-        "version": "v1.0.0",
-        "name": "meshery-simple-line-icons",
         "displayName": "Simple Line Icons",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-simple-line-icons",
         "registrant": {
           "kind": "meshery"
         },
-        "model": {
-          "version": "0.7.2"
-        }
+        "version": "v1.0.0"
       },
       "styles": {
         "background-opacity": 0,
@@ -160,17 +162,18 @@
       "displayName": "AWS GW",
       "description": "",
       "format": "JSON",
+      "model": null,
       "modelReference": {
-        "version": "v1.0.0",
-        "name": "aws-apigatewayv2-controller",
         "displayName": "AWS API Gateway v2",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.2.3"
+        },
+        "name": "aws-apigatewayv2-controller",
         "registrant": {
           "kind": "github"
         },
-        "model": {
-          "version": "v1.2.1"
-        }
+        "version": "v1.0.0"
       },
       "styles": {
         "background-opacity": 1,
@@ -187,8 +190,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 877.7503997880644,
-          "y": -16.08735670715499
+          "x": 877.7704126049649,
+          "y": -16.169474584641566
         },
         "primaryColor": "#ff9900",
         "secondaryColor": "#F4BC79",
@@ -239,17 +242,18 @@
       "displayName": "S3",
       "description": "",
       "format": "JSON",
+      "model": null,
       "modelReference": {
-        "version": "v1.0.0",
-        "name": "aws-s3-controller",
         "displayName": "AWS Simple Storage Service (S3)",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.5.0"
+        },
+        "name": "aws-s3-controller",
         "registrant": {
           "kind": "github"
         },
-        "model": {
-          "version": "v1.2.2"
-        }
+        "version": "v1.0.0"
       },
       "styles": {
         "background-opacity": 1,
@@ -266,8 +270,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 993.9547125296159,
-          "y": -14.618844149445087
+          "x": 993.9747253465164,
+          "y": -14.700962026931665
         },
         "primaryColor": "#7AA116",
         "secondaryColor": "#00D3A9",
@@ -347,17 +351,18 @@
       "displayName": "BGP Peer",
       "description": "",
       "format": "JSON",
+      "model": null,
       "modelReference": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
         "displayName": "Kubernetes",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.1"
+        },
+        "name": "kubernetes",
         "registrant": {
           "kind": "github"
         },
-        "model": {
-          "version": "v1.35.0-rc.1"
-        }
+        "version": "v1.0.0"
       },
       "styles": {
         "background-opacity": 1,
@@ -374,8 +379,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 654.7450417764829,
-          "y": 54.102853416681484
+          "x": 654.7480691823919,
+          "y": 54.099664197671274
         },
         "primaryColor": "#326CE5",
         "secondaryColor": "#7aa1f0",
@@ -418,17 +423,18 @@
       "displayName": "gateway-hq",
       "description": "",
       "format": "JSON",
+      "model": null,
       "modelReference": {
-        "version": "v1.0.0",
-        "name": "istio-base",
         "displayName": "Istio",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "1.16.0"
+        },
+        "name": "istio-base",
         "registrant": {
           "kind": "artifacthub"
         },
-        "model": {
-          "version": "1.16.0"
-        }
+        "version": "v1.0.0"
       },
       "styles": {
         "background-opacity": 1,
@@ -445,8 +451,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 872.3133688485019,
-          "y": 150.17953395518978
+          "x": 872.3157030290281,
+          "y": 150.17431671011283
         },
         "primaryColor": "#466BB0",
         "secondaryColor": "#93b0e7",
@@ -491,17 +497,18 @@
       "displayName": "EC2",
       "description": "",
       "format": "JSON",
+      "model": null,
       "modelReference": {
-        "version": "v1.0.0",
-        "name": "aws-ec2-controller",
         "displayName": "AWS EC2",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.12.0"
+        },
+        "name": "aws-ec2-controller",
         "registrant": {
           "kind": "github"
         },
-        "model": {
-          "version": "v1.9.2"
-        }
+        "version": "v1.0.0"
       },
       "styles": {
         "background-opacity": 1,
@@ -518,8 +525,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 936.213509917812,
-          "y": -12.57210725963856
+          "x": 936.2165373237209,
+          "y": -12.57529647864877
         },
         "primaryColor": "#ED7100",
         "secondaryColor": "#00D3A9",
@@ -573,17 +580,18 @@
       "displayName": "default",
       "description": "",
       "format": "JSON",
+      "model": null,
       "modelReference": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
         "displayName": "Kubernetes",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.1"
+        },
+        "name": "kubernetes",
         "registrant": {
           "kind": "github"
         },
-        "model": {
-          "version": "v1.35.0-rc.1"
-        }
+        "version": "v1.0.0"
       },
       "styles": {
         "background-image": "none",
@@ -591,7 +599,7 @@
         "border-style": "dashed",
         "border-width": 2,
         "position": {
-          "x": 593.318972516691,
+          "x": 721.0526196802725,
           "y": 84.53273592761127
         },
         "primaryColor": "#326CE5",
@@ -629,17 +637,18 @@
       "displayName": "AWS",
       "description": "",
       "format": "JSON",
+      "model": null,
       "modelReference": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
         "displayName": "Kubernetes",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.1"
+        },
+        "name": "kubernetes",
         "registrant": {
           "kind": "github"
         },
-        "model": {
-          "version": "v1.35.0-rc.1"
-        }
+        "version": "v1.0.0"
       },
       "styles": {
         "background-image": "none",
@@ -658,8 +667,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 933.9031872091491,
-          "y": -1.3297319833967727
+          "x": 936.1225689757407,
+          "y": -2.435218305786613
         },
         "primaryColor": "#326CE5",
         "secondaryColor": "#7aa1f0",
@@ -701,17 +710,18 @@
       "displayName": "AZURE",
       "description": "",
       "format": "JSON",
+      "model": null,
       "modelReference": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
         "displayName": "Kubernetes",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.1"
+        },
+        "name": "kubernetes",
         "registrant": {
           "kind": "github"
         },
-        "model": {
-          "version": "v1.35.0-rc.1"
-        }
+        "version": "v1.0.0"
       },
       "styles": {
         "background-image": "none",
@@ -730,8 +740,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 950.1002730207392,
-          "y": 164.90760955851863
+          "x": 950.1014401110024,
+          "y": 164.90500093598018
         },
         "primaryColor": "#326CE5",
         "secondaryColor": "#7aa1f0",
@@ -773,17 +783,18 @@
       "displayName": "User 2",
       "description": "",
       "format": "JSON",
+      "model": null,
       "modelReference": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
         "displayName": "Kubernetes",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.1"
+        },
+        "name": "kubernetes",
         "registrant": {
           "kind": "github"
         },
-        "model": {
-          "version": "v1.35.0-rc.1"
-        }
+        "version": "v1.0.0"
       },
       "styles": {
         "background-opacity": 0.5,
@@ -847,17 +858,18 @@
       "displayName": "EC2",
       "description": "",
       "format": "JSON",
+      "model": null,
       "modelReference": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
         "displayName": "Kubernetes",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.1"
+        },
+        "name": "kubernetes",
         "registrant": {
           "kind": "github"
         },
-        "model": {
-          "version": "v1.35.0-rc.1"
-        }
+        "version": "v1.0.0"
       },
       "styles": {
         "background-image": "none",
@@ -919,17 +931,18 @@
       "displayName": "User 1",
       "description": "",
       "format": "JSON",
+      "model": null,
       "modelReference": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
         "displayName": "Kubernetes",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.1"
+        },
+        "name": "kubernetes",
         "registrant": {
           "kind": "github"
         },
-        "model": {
-          "version": "v1.35.0-rc.1"
-        }
+        "version": "v1.0.0"
       },
       "styles": {
         "background-opacity": 0.5,
@@ -990,17 +1003,18 @@
       "displayName": "External Load Balancer",
       "description": "",
       "format": "JSON",
+      "model": null,
       "modelReference": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
         "displayName": "Kubernetes",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.1"
+        },
+        "name": "kubernetes",
         "registrant": {
           "kind": "github"
         },
-        "model": {
-          "version": "v1.35.0-rc.1"
-        }
+        "version": "v1.0.0"
       },
       "styles": {
         "background-opacity": 1,
@@ -1062,17 +1076,18 @@
       "displayName": "Router",
       "description": "",
       "format": "JSON",
+      "model": null,
       "modelReference": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
         "displayName": "Kubernetes",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.36.1"
+        },
+        "name": "kubernetes",
         "registrant": {
           "kind": "github"
         },
-        "model": {
-          "version": "v1.35.0-rc.1"
-        }
+        "version": "v1.0.0"
       },
       "styles": {
         "background-opacity": 1,
@@ -1134,17 +1149,18 @@
       "displayName": "storage-account-fq",
       "description": "",
       "format": "JSON",
+      "model": null,
       "modelReference": {
-        "version": "v1.0.0",
-        "name": "azure-storage",
         "displayName": "Azure Storage",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
+        },
+        "name": "azure-storage",
         "registrant": {
           "kind": "github"
         },
-        "model": {
-          "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
-        }
+        "version": "v1.0.0"
       },
       "styles": {
         "background-opacity": 1,
@@ -1231,34 +1247,29 @@
   },
   "relationships": [
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "registrant": {
-          "kind": "meshery"
-        },
-        "model": {
-          "version": "0.7.2"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "0c9e2c0a-899c-47e1-a7c8-68d753c51ab9",
+      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "isAnnotation": false,
         "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
           "primaryColor": "",
           "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
+          "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -1269,19 +1280,20 @@
                 "id": "1c2e7892-dce2-4651-a6aa-01acdd4b492c",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -1289,59 +1301,54 @@
                 "id": "685e574d-8c25-4f8b-a10a-3bcbd0d711dd",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "pending",
       "subType": "annotation",
+      "status": "pending",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "0.7.2"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "0df0a1a1-bd51-4b4b-8692-dba033b36b03",
+      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "isAnnotation": false,
         "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
           "primaryColor": "",
           "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
+          "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -1352,19 +1359,20 @@
                 "id": "9511e6c9-f952-405d-ba8d-d618d99db565",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -1372,46 +1380,33 @@
                 "id": "4e59e6f2-3f2e-43be-94a2-e479c9024f44",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "pending",
       "subType": "annotation",
+      "status": "pending",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "registrant": {
-          "kind": "github"
-        },
-        "model": {
-          "version": "v1.32.0-alpha.3"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "3d5f57df-a333-4fe9-aa49-4e4cbe0058f6",
+      "evaluationQuery": null,
       "kind": "hierarchical",
       "metadata": {
         "description": "Namespace to namespaced components",
@@ -1421,6 +1416,18 @@
           "svgColor": "",
           "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -1431,6 +1438,19 @@
                 "id": "cc8bc187-0bc7-4564-a3db-0ea73b482497",
                 "kind": "*",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -1440,18 +1460,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -1460,6 +1468,19 @@
                 "id": "685e574d-8c25-4f8b-a10a-3bcbd0d711dd",
                 "kind": "Namespace",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -1467,18 +1488,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
@@ -1489,19 +1498,20 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "kubernetes",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
                   "registrant": {
                     "kind": "github"
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -1509,59 +1519,54 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "kubernetes",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
                   "registrant": {
                     "kind": "github"
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "approved",
       "subType": "inventory",
+      "status": "approved",
       "type": "parent",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "0.7.2"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "4106becc-b013-4a50-b6ef-31e33450a580",
+      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "isAnnotation": false,
         "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
           "primaryColor": "",
           "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
+          "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -1572,19 +1577,20 @@
                 "id": "af1abed9-0d41-4323-8452-ff1b098db5b3",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -1592,59 +1598,54 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "pending",
       "subType": "annotation",
+      "status": "pending",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "0.7.2"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "491238f0-4b9d-4aa3-9456-c9ce8e2f8871",
+      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "isAnnotation": false,
         "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
           "primaryColor": "",
           "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
+          "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -1655,19 +1656,20 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -1675,59 +1677,54 @@
                 "id": "af1abed9-0d41-4323-8452-ff1b098db5b3",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "pending",
       "subType": "annotation",
+      "status": "pending",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "0.7.2"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "4b61c4b9-219e-494f-96c0-1eb68c539d86",
+      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "isAnnotation": false,
         "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
           "primaryColor": "",
           "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
+          "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -1738,19 +1735,20 @@
                 "id": "9ec88b65-e6c2-4c98-8db6-344550dfece3",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -1758,46 +1756,33 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "pending",
       "subType": "annotation",
+      "status": "pending",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "registrant": {
-          "kind": "github"
-        },
-        "model": {
-          "version": "v1.32.0-alpha.3"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "4bf6dd0b-89a6-4eb1-ab0d-5faa5c5aa7f1",
+      "evaluationQuery": null,
       "kind": "hierarchical",
       "metadata": {
         "description": "Namespace to namespaced components",
@@ -1807,6 +1792,18 @@
           "svgColor": "",
           "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -1817,6 +1814,19 @@
                 "id": "c7406967-281a-4ea8-81c6-9e4ceaa5d062",
                 "kind": "*",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -1826,18 +1836,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -1846,6 +1844,19 @@
                 "id": "9737bbef-fe02-463a-9c2d-4ee7dd983127",
                 "kind": "Namespace",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -1853,18 +1864,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
@@ -1875,19 +1874,20 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "kubernetes",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
                   "registrant": {
                     "kind": "github"
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -1895,59 +1895,54 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "kubernetes",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
                   "registrant": {
                     "kind": "github"
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "approved",
       "subType": "inventory",
+      "status": "approved",
       "type": "parent",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "0.7.2"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "60d6a89d-ca1d-47b1-9ae3-d2f67f4d5821",
+      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "isAnnotation": false,
         "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
           "primaryColor": "",
           "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
+          "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -1958,19 +1953,20 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -1978,46 +1974,33 @@
                 "id": "1c2e7892-dce2-4651-a6aa-01acdd4b492c",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "pending",
       "subType": "annotation",
+      "status": "pending",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "registrant": {
-          "kind": "github"
-        },
-        "model": {
-          "version": "v1.32.0-alpha.3"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "70c23129-8fb5-442e-9caa-fa5da6cff592",
+      "evaluationQuery": null,
       "kind": "hierarchical",
       "metadata": {
         "description": "Namespace to namespaced components",
@@ -2027,6 +2010,18 @@
           "svgColor": "",
           "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -2037,6 +2032,19 @@
                 "id": "038ed3b9-b2f1-4e94-9999-07a7d298095d",
                 "kind": "*",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -2046,18 +2054,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -2066,6 +2062,19 @@
                 "id": "685e574d-8c25-4f8b-a10a-3bcbd0d711dd",
                 "kind": "Namespace",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -2073,18 +2082,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
@@ -2095,19 +2092,20 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "kubernetes",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
                   "registrant": {
                     "kind": "github"
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -2115,59 +2113,54 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "kubernetes",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
                   "registrant": {
                     "kind": "github"
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "approved",
       "subType": "inventory",
+      "status": "approved",
       "type": "parent",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "0.7.2"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "7cc4ce0d-2e4e-4c3d-aef8-c688b37fa638",
+      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "isAnnotation": false,
         "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
           "primaryColor": "",
           "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
+          "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -2178,19 +2171,20 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -2198,59 +2192,54 @@
                 "id": "9ec88b65-e6c2-4c98-8db6-344550dfece3",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "pending",
       "subType": "annotation",
+      "status": "pending",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "0.7.2"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "7f5ae72a-31d5-4096-921e-d04b13b9c717",
+      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "isAnnotation": false,
         "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
           "primaryColor": "",
           "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
+          "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -2261,19 +2250,20 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -2281,59 +2271,54 @@
                 "id": "1f35b40a-05ff-4715-a733-4dd03b775ce1",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "pending",
       "subType": "annotation",
+      "status": "pending",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "registrant": {
-          "kind": "meshery"
-        },
-        "model": {
-          "version": "0.7.2"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "8696cc53-1ad3-40c2-8ab1-536692405918",
+      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "isAnnotation": false,
         "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
           "primaryColor": "",
           "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
+          "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -2344,19 +2329,20 @@
                 "id": "685e574d-8c25-4f8b-a10a-3bcbd0d711dd",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -2364,59 +2350,54 @@
                 "id": "1c2e7892-dce2-4651-a6aa-01acdd4b492c",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "pending",
       "subType": "annotation",
+      "status": "pending",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "0.7.2"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "a0298926-9a4e-45d7-843c-21124749421e",
+      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "isAnnotation": false,
         "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
           "primaryColor": "",
           "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
+          "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -2427,19 +2408,20 @@
                 "id": "1c2e7892-dce2-4651-a6aa-01acdd4b492c",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -2447,46 +2429,33 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "pending",
       "subType": "annotation",
+      "status": "pending",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "registrant": {
-          "kind": "github"
-        },
-        "model": {
-          "version": "v1.32.0-alpha.3"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "a02b3f63-8726-43c5-9d7b-69e83f7e9332",
+      "evaluationQuery": null,
       "kind": "hierarchical",
       "metadata": {
         "description": "Namespace to namespaced components",
@@ -2496,6 +2465,18 @@
           "svgColor": "",
           "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -2506,6 +2487,19 @@
                 "id": "29b3cdd2-b369-401a-95c3-3b85c63de697",
                 "kind": "*",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -2515,18 +2509,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -2535,6 +2517,19 @@
                 "id": "685e574d-8c25-4f8b-a10a-3bcbd0d711dd",
                 "kind": "Namespace",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -2542,18 +2537,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
@@ -2564,19 +2547,20 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "kubernetes",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
                   "registrant": {
                     "kind": "github"
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -2584,46 +2568,33 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "kubernetes",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
                   "registrant": {
                     "kind": "github"
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "approved",
       "subType": "inventory",
+      "status": "approved",
       "type": "parent",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "registrant": {
-          "kind": "github"
-        },
-        "model": {
-          "version": "v1.32.0-alpha.3"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "b96d17a6-5be2-4cb0-a221-5e75d47e1706",
+      "evaluationQuery": null,
       "kind": "hierarchical",
       "metadata": {
         "description": "Namespace to namespaced components",
@@ -2633,6 +2604,18 @@
           "svgColor": "",
           "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -2643,6 +2626,19 @@
                 "id": "0e2d22f6-4a46-41ef-9e84-cde48b16732b",
                 "kind": "*",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -2652,18 +2648,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -2672,6 +2656,19 @@
                 "id": "9737bbef-fe02-463a-9c2d-4ee7dd983127",
                 "kind": "Namespace",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -2679,18 +2676,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
@@ -2701,19 +2686,20 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "kubernetes",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
                   "registrant": {
                     "kind": "github"
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -2721,59 +2707,54 @@
                 "id": null,
                 "kind": "Namespace",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "kubernetes",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
                   "registrant": {
                     "kind": "github"
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "approved",
       "subType": "inventory",
+      "status": "approved",
       "type": "parent",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "0.7.2"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "bca7bf82-ece4-4145-94b2-c92a91c4e067",
+      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "isAnnotation": false,
         "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
           "primaryColor": "",
           "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
+          "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -2784,19 +2765,20 @@
                 "id": "4e59e6f2-3f2e-43be-94a2-e479c9024f44",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -2804,59 +2786,54 @@
                 "id": "9511e6c9-f952-405d-ba8d-d618d99db565",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "pending",
       "subType": "annotation",
+      "status": "pending",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "0.7.2"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "d2bbe33d-0a0e-4c68-bc13-7cbaaaf379a1",
+      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "isAnnotation": false,
         "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
           "primaryColor": "",
           "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
+          "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -2867,19 +2844,20 @@
                 "id": "1f35b40a-05ff-4715-a733-4dd03b775ce1",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -2887,225 +2865,212 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "pending",
       "subType": "annotation",
+      "status": "pending",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "registrant": {
-          "kind": "meshery"
-        },
-        "model": {
-          "version": "0.7.2"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "d32d6ed4-1825-468c-9f85-e1bb1555dc46",
-      "kind": "edge",
-      "metadata": {
-        "description": "A relationship that defines annotation edges between components",
-        "isAnnotation": false,
-        "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
-        }
-      },
-      "schemaVersion": "",
-      "selectors": [
-        {
-          "allow": {
-            "from": [
-              {
-                "id": "9737bbef-fe02-463a-9c2d-4ee7dd983127",
-                "kind": "*",
-                "match": {},
-                "patch": null,
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
-                }
-              }
-            ],
-            "to": [
-              {
-                "id": "1f35b40a-05ff-4715-a733-4dd03b775ce1",
-                "kind": "*",
-                "match": {},
-                "patch": null,
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "status": "pending",
-      "subType": "annotation",
-      "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "version": ""
-    },
-    {
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "0.7.2"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
       "evaluationQuery": null,
-      "id": "d6f811f1-0146-4133-9208-e01835490ada",
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "isAnnotation": false,
         "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
           "primaryColor": "",
           "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
+          "svgWhite": ""
         }
       },
-      "schemaVersion": "",
-      "selectors": [
-        {
-          "allow": {
-            "from": [
-              {
-                "id": "4e59e6f2-3f2e-43be-94a2-e479c9024f44",
-                "kind": "*",
-                "match": {},
-                "patch": null,
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
-                }
-              }
-            ],
-            "to": [
-              {
-                "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
-                "kind": "*",
-                "match": {},
-                "patch": null,
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "status": "pending",
-      "subType": "annotation",
-      "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "version": ""
-    },
-    {
       "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
         "displayName": "Meshery Shapes",
         "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
         "registrant": {
           "kind": "meshery"
         },
-        "model": {
-          "version": "0.7.2"
-        }
+        "version": "v1.0.0"
       },
-      "created_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "9737bbef-fe02-463a-9c2d-4ee7dd983127",
+                "kind": "*",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "1f35b40a-05ff-4715-a733-4dd03b775ce1",
+                "kind": "*",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "d6f811f1-0146-4133-9208-e01835490ada",
       "evaluationQuery": null,
-      "id": "e05ba27d-9eef-4d01-a854-6f1a8536d13a",
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "isAnnotation": false,
         "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
           "primaryColor": "",
           "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
+          "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "4e59e6f2-3f2e-43be-94a2-e479c9024f44",
+                "kind": "*",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
+                "kind": "*",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "e05ba27d-9eef-4d01-a854-6f1a8536d13a",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -3116,19 +3081,20 @@
                 "id": "1f35b40a-05ff-4715-a733-4dd03b775ce1",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -3136,59 +3102,54 @@
                 "id": "9737bbef-fe02-463a-9c2d-4ee7dd983127",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "pending",
       "subType": "annotation",
+      "status": "pending",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "meshery-shapes",
-        "displayName": "Meshery Shapes",
-        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "0.7.2"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": null,
       "id": "e25fbb84-e36f-43f7-bcc8-5476934ee7a1",
+      "evaluationQuery": null,
       "kind": "edge",
       "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "isAnnotation": false,
         "styles": {
-          "line-color": "#00B39F",
-          "line-style": "solid",
           "primaryColor": "",
           "svgColor": "",
-          "svgWhite": "",
-          "target-arrow-color": "#00B39F",
-          "target-arrow-shape": "triangle"
+          "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "",
       "selectors": [
@@ -3199,19 +3160,20 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ],
             "to": [
@@ -3219,46 +3181,33 @@
                 "id": "4e59e6f2-3f2e-43be-94a2-e479c9024f44",
                 "kind": "*",
                 "match": {},
-                "patch": null,
+                "matchStrategyMatrix": null,
                 "model": {
-                  "version": "",
-                  "name": "*",
                   "displayName": "",
                   "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
                   "registrant": {
                     "kind": ""
                   },
-                  "model": {
-                    "version": ""
-                  }
-                }
+                  "version": ""
+                },
+                "patch": null
               }
             ]
           }
         }
       ],
-      "status": "pending",
       "subType": "annotation",
+      "status": "pending",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": ""
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "v1.32.0-alpha.3"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": "",
       "id": "052c6590-1710-419d-b0a7-1d92831c287b",
+      "evaluationQuery": "",
       "kind": "hierarchical",
       "metadata": {
         "description": "Namespace to namespaced components",
@@ -3269,6 +3218,18 @@
           "svgWhite": ""
         }
       },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
+      },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
         {
@@ -3278,6 +3239,19 @@
                 "id": "9ec88b65-e6c2-4c98-8db6-344550dfece3",
                 "kind": "*",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -3287,18 +3261,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -3307,6 +3269,19 @@
                 "id": "345afb6f-fec3-4224-a715-0ddc5e8cb704",
                 "kind": "Namespace",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -3314,46 +3289,20 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
           }
         }
       ],
-      "status": "approved",
       "subType": "inventory",
+      "status": "approved",
       "type": "parent",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "registrant": {
-          "kind": "github"
-        },
-        "model": {
-          "version": "v1.35.0-rc.1"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": "",
       "id": "21e304ba-464e-4039-a10f-f95146ab0b07",
+      "evaluationQuery": "",
       "kind": "edge",
       "metadata": {
         "description": "",
@@ -3364,6 +3313,18 @@
           "svgWhite": ""
         }
       },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.35.0-rc.1"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
         {
@@ -3373,6 +3334,19 @@
                 "id": "9511e6c9-f952-405d-ba8d-d618d99db565",
                 "kind": "Service",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -3396,18 +3370,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -3416,6 +3378,19 @@
                 "id": "af1abed9-0d41-4323-8452-ff1b098db5b3",
                 "kind": "Pod",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -3442,18 +3417,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
@@ -3464,28 +3427,14 @@
           }
         }
       ],
-      "status": "approved",
       "subType": "network",
+      "status": "approved",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "registrant": {
-          "kind": "github"
-        },
-        "model": {
-          "version": "v1.35.0-rc.1"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": "",
       "id": "2659e27b-9ff2-4a7b-853b-b78f7e37eded",
+      "evaluationQuery": "",
       "kind": "edge",
       "metadata": {
         "description": "",
@@ -3496,6 +3445,18 @@
           "svgWhite": ""
         }
       },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.35.0-rc.1"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
         {
@@ -3505,6 +3466,19 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "Service",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -3528,18 +3502,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -3548,6 +3510,19 @@
                 "id": "cc8bc187-0bc7-4564-a3db-0ea73b482497",
                 "kind": "Pod",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -3574,18 +3549,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
@@ -3596,28 +3559,14 @@
           }
         }
       ],
-      "status": "approved",
       "subType": "network",
+      "status": "approved",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "registrant": {
-          "kind": "github"
-        },
-        "model": {
-          "version": "v1.35.0-rc.1"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": "",
       "id": "34eb6098-b916-434b-bbd4-47a2ba8de719",
+      "evaluationQuery": "",
       "kind": "edge",
       "metadata": {
         "description": "",
@@ -3628,6 +3577,18 @@
           "svgWhite": ""
         }
       },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.35.0-rc.1"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
         {
@@ -3637,6 +3598,19 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "Service",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -3660,18 +3634,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -3680,6 +3642,19 @@
                 "id": "af1abed9-0d41-4323-8452-ff1b098db5b3",
                 "kind": "Pod",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -3706,18 +3681,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
@@ -3728,28 +3691,14 @@
           }
         }
       ],
-      "status": "approved",
       "subType": "network",
+      "status": "approved",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "v1.32.0-alpha.3"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": "",
       "id": "73c0c0ca-1ba9-465a-814d-24d8f9ece445",
+      "evaluationQuery": "",
       "kind": "hierarchical",
       "metadata": {
         "description": "Namespace to namespaced components",
@@ -3759,6 +3708,18 @@
           "svgColor": "",
           "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
@@ -3769,6 +3730,19 @@
                 "id": "af1abed9-0d41-4323-8452-ff1b098db5b3",
                 "kind": "*",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -3778,18 +3752,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -3798,6 +3760,19 @@
                 "id": "345afb6f-fec3-4224-a715-0ddc5e8cb704",
                 "kind": "Namespace",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -3805,46 +3780,20 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
           }
         }
       ],
-      "status": "approved",
       "subType": "inventory",
+      "status": "approved",
       "type": "parent",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "v1.32.0-alpha.3"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": "",
       "id": "777686ee-b6cf-4d64-aa78-750d9cb5aaec",
+      "evaluationQuery": "",
       "kind": "hierarchical",
       "metadata": {
         "description": "Namespace to namespaced components",
@@ -3855,6 +3804,18 @@
           "svgWhite": ""
         }
       },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
+      },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
         {
@@ -3864,6 +3825,19 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "*",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -3873,18 +3847,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -3893,6 +3855,19 @@
                 "id": "345afb6f-fec3-4224-a715-0ddc5e8cb704",
                 "kind": "Namespace",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -3900,46 +3875,20 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
           }
         }
       ],
-      "status": "approved",
       "subType": "inventory",
+      "status": "approved",
       "type": "parent",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "registrant": {
-          "kind": "github"
-        },
-        "model": {
-          "version": "v1.35.0-rc.1"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": "",
       "id": "8793b0e2-4a61-4924-8401-410394c742e2",
+      "evaluationQuery": "",
       "kind": "edge",
       "metadata": {
         "description": "",
@@ -3950,6 +3899,18 @@
           "svgWhite": ""
         }
       },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.35.0-rc.1"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
         {
@@ -3959,6 +3920,19 @@
                 "id": "9511e6c9-f952-405d-ba8d-d618d99db565",
                 "kind": "Service",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -3982,18 +3956,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -4002,6 +3964,19 @@
                 "id": "9ec88b65-e6c2-4c98-8db6-344550dfece3",
                 "kind": "Pod",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -4028,18 +4003,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
@@ -4050,28 +4013,14 @@
           }
         }
       ],
-      "status": "approved",
       "subType": "network",
+      "status": "approved",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "registrant": {
-          "kind": "github"
-        },
-        "model": {
-          "version": "v1.35.0-rc.1"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": "",
       "id": "90bb0d03-be0a-449a-82cd-fe997ac7acd4",
+      "evaluationQuery": "",
       "kind": "edge",
       "metadata": {
         "description": "",
@@ -4082,6 +4031,18 @@
           "svgWhite": ""
         }
       },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.35.0-rc.1"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
         {
@@ -4091,6 +4052,19 @@
                 "id": "9511e6c9-f952-405d-ba8d-d618d99db565",
                 "kind": "Service",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -4114,18 +4088,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -4134,6 +4096,19 @@
                 "id": "cc8bc187-0bc7-4564-a3db-0ea73b482497",
                 "kind": "Pod",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -4160,18 +4135,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
@@ -4182,28 +4145,14 @@
           }
         }
       ],
-      "status": "approved",
       "subType": "network",
+      "status": "approved",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "registrant": {
-          "kind": "github"
-        },
-        "model": {
-          "version": "v1.35.0-rc.1"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": "",
       "id": "95689d2b-957a-4631-80f8-e1eb9befb504",
+      "evaluationQuery": "",
       "kind": "edge",
       "metadata": {
         "description": "",
@@ -4214,6 +4163,18 @@
           "svgWhite": ""
         }
       },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.35.0-rc.1"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
         {
@@ -4223,6 +4184,19 @@
                 "id": "97c3b3d1-5a9d-4583-ba41-1cc6c2656d74",
                 "kind": "Service",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -4246,18 +4220,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -4266,6 +4228,19 @@
                 "id": "9ec88b65-e6c2-4c98-8db6-344550dfece3",
                 "kind": "Pod",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -4292,18 +4267,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
@@ -4314,28 +4277,14 @@
           }
         }
       ],
-      "status": "approved",
       "subType": "network",
+      "status": "approved",
       "type": "non-binding",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "v1.32.0-alpha.3"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": "",
       "id": "ba41331a-2bf2-4dd1-ae05-65d6a7ec6962",
+      "evaluationQuery": "",
       "kind": "hierarchical",
       "metadata": {
         "description": "Namespace to namespaced components",
@@ -4345,6 +4294,18 @@
           "svgColor": "",
           "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
@@ -4355,6 +4316,19 @@
                 "id": "38ab526d-eb19-4aa8-ac7e-b3b8e457c193",
                 "kind": "*",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -4364,18 +4338,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -4384,6 +4346,19 @@
                 "id": "345afb6f-fec3-4224-a715-0ddc5e8cb704",
                 "kind": "Namespace",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -4391,46 +4366,20 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
           }
         }
       ],
-      "status": "approved",
       "subType": "inventory",
+      "status": "approved",
       "type": "parent",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "v1.32.0-alpha.3"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": "",
       "id": "ecec8596-499b-46b2-8c5b-7fc0780d3277",
+      "evaluationQuery": "",
       "kind": "hierarchical",
       "metadata": {
         "description": "Namespace to namespaced components",
@@ -4440,6 +4389,18 @@
           "svgColor": "",
           "svgWhite": ""
         }
+      },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
       },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
@@ -4450,6 +4411,19 @@
                 "id": "9511e6c9-f952-405d-ba8d-d618d99db565",
                 "kind": "*",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -4459,18 +4433,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -4479,6 +4441,19 @@
                 "id": "345afb6f-fec3-4224-a715-0ddc5e8cb704",
                 "kind": "Namespace",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -4486,46 +4461,20 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
           }
         }
       ],
-      "status": "approved",
       "subType": "inventory",
+      "status": "approved",
       "type": "parent",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     },
     {
-      "model": {
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
-        "registrant": {
-          "kind": ""
-        },
-        "model": {
-          "version": "v1.32.0-alpha.3"
-        }
-      },
-      "created_at": "0001-01-01T00:00:00Z",
-      "evaluationQuery": "",
       "id": "fb1e484c-6523-4a6e-a788-aac366952e71",
+      "evaluationQuery": "",
       "kind": "hierarchical",
       "metadata": {
         "description": "Namespace to namespaced components",
@@ -4536,6 +4485,18 @@
           "svgWhite": ""
         }
       },
+      "model": {
+        "displayName": "Kubernetes",
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
+      },
       "schemaVersion": "relationships.meshery.io/v1alpha3",
       "selectors": [
         {
@@ -4545,6 +4506,19 @@
                 "id": "4e59e6f2-3f2e-43be-94a2-e479c9024f44",
                 "kind": "*",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatedRef": [
                     [
@@ -4554,18 +4528,6 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "*",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": ""
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ],
@@ -4574,6 +4536,19 @@
                 "id": "345afb6f-fec3-4224-a715-0ddc5e8cb704",
                 "kind": "Namespace",
                 "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "kubernetes",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
                 "patch": {
                   "mutatorRef": [
                     [
@@ -4581,28 +4556,15 @@
                     ]
                   ],
                   "patchStrategy": "replace"
-                },
-                "model": {
-                  "version": "",
-                  "name": "kubernetes",
-                  "displayName": "",
-                  "id": "00000000-0000-0000-0000-000000000000",
-                  "registrant": {
-                    "kind": "github"
-                  },
-                  "model": {
-                    "version": ""
-                  }
                 }
               }
             ]
           }
         }
       ],
-      "status": "approved",
       "subType": "inventory",
+      "status": "approved",
       "type": "parent",
-      "updated_at": "0001-01-01T00:00:00Z",
       "version": "v1.0.0"
     }
   ]

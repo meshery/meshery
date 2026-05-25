@@ -67,34 +67,34 @@ func TestAuth(t *testing.T) {
 
 func TestProviderUnmarshalJSON(t *testing.T) {
 	t.Run("Given canonical camelCase provider fields, When unmarshaled, Then it populates Provider correctly", func(t *testing.T) {
-		payload := []byte(`{"providerUrl":"https://cloud.layer5.io","providerName":"Layer5"}`)
+		payload := []byte(`{"providerUrl":"https://cloud.meshery.io","providerName":"Meshery"}`)
 		provider := Provider{}
 
 		if err := json.Unmarshal(payload, &provider); err != nil {
 			t.Fatalf("failed to unmarshal provider payload: %v", err)
 		}
 
-		if provider.ProviderName != "Layer5" {
-			t.Fatalf("expected provider name Layer5, got %q", provider.ProviderName)
+		if provider.ProviderName != "Meshery" {
+			t.Fatalf("expected provider name Meshery, got %q", provider.ProviderName)
 		}
-		if provider.ProviderURL != "https://cloud.layer5.io" {
-			t.Fatalf("expected provider URL https://cloud.layer5.io, got %q", provider.ProviderURL)
+		if provider.ProviderURL != "https://cloud.meshery.io" {
+			t.Fatalf("expected provider URL https://cloud.meshery.io, got %q", provider.ProviderURL)
 		}
 	})
 
 	t.Run("Given legacy snake_case provider fields, When unmarshaled, Then it populates Provider correctly", func(t *testing.T) {
-		payload := []byte(`{"provider_url":"https://cloud.layer5.io","provider_name":"Layer5"}`)
+		payload := []byte(`{"provider_url":"https://cloud.meshery.io","provider_name":"Meshery"}`)
 		provider := Provider{}
 
 		if err := json.Unmarshal(payload, &provider); err != nil {
 			t.Fatalf("failed to unmarshal provider payload: %v", err)
 		}
 
-		if provider.ProviderName != "Layer5" {
-			t.Fatalf("expected provider name Layer5, got %q", provider.ProviderName)
+		if provider.ProviderName != "Meshery" {
+			t.Fatalf("expected provider name Meshery, got %q", provider.ProviderName)
 		}
-		if provider.ProviderURL != "https://cloud.layer5.io" {
-			t.Fatalf("expected provider URL https://cloud.layer5.io, got %q", provider.ProviderURL)
+		if provider.ProviderURL != "https://cloud.meshery.io" {
+			t.Fatalf("expected provider URL https://cloud.meshery.io, got %q", provider.ProviderURL)
 		}
 	})
 }

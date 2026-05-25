@@ -106,12 +106,6 @@
         </a>
       </th>
       <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
-        <a href="https://github.com/meshery/meshery-nighthawk" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
-          <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/nighthawk.svg" />
-          meshery-nighthawk
-        </a>
-      </th>
-      <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
         <a href="https://github.com/meshery/meshery-nginx-sm" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
           <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/nginx-sm.svg" />
           meshery-nginx-sm
@@ -178,15 +172,6 @@
           {{- else -}}N/A{{- end -}}
         </td>
         
-        {{- /* Nighthawk */ -}}
-        <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nighthawk" onclick="redirectToPastResults('meshery-nighthawk')">
-          {{- if index $adapters "meshery-nighthawk" -}}
-            {{- $latest := index (sort (index $adapters "meshery-nighthawk") "Params.meshery-component-version" "desc") 0 -}}
-            {{- $status := index $latest.Params "overall-status" -}}
-            {{- if eq $status "passing" -}}✓{{- else if eq $status "failing" -}}✗{{- else -}}—{{- end -}}
-          {{- else -}}N/A{{- end -}}
-        </td>
-        
         {{- /* NGINX SM */ -}}
         <td style="text-align: center; padding: 10px; cursor: pointer;" class="compatibility-status" data-adapter="meshery-nginx-sm" onclick="redirectToPastResults('meshery-nginx-sm')">
           {{- if index $adapters "meshery-nginx-sm" -}}
@@ -234,7 +219,6 @@
       'meshery-istio': 'meshery-istio-past-results',
       'meshery-linkerd': 'meshery-linkerd-past-results',
       'meshery-kuma': 'meshery-kuma-past-results',
-      'meshery-nighthawk': 'meshery-nighthawk-past-results',
       'meshery-nginx-sm': 'meshery-nginx-sm-past-results',
       'meshery-traefik-mesh': 'meshery-traefik-mesh-past-results',
       'meshery-cilium': 'meshery-cilium-past-results',

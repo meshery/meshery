@@ -4,24 +4,34 @@ on:
     paths:
       - 'ui/**'
       - 'provider-ui/**'
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   eslint:
     name: runner / eslint
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v6
-    - name: Install dependencies in Meshery UI and Provider UI
-      run: |
-        cd ui && npm ci && cd ..
-        cd provider-ui && npm ci && cd ..
-    - name: Run ESLint Meshery-UI
-      run: cd ui && npm run lint
-    - name: Run ESLint Provider-UI
-      run: cd provider-ui && npm run lint
+      - uses: actions/checkout@v6
+      - name: Setup Node.js v22
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - name: Install dependencies in Meshery UI and Provider UI
+        run: |
+          cd ui && npm ci && cd ..
+          cd provider-ui && npm ci && cd ..
+      - name: Run ESLint Meshery-UI
+        run: cd ui && npm run lint
+      - name: Run ESLint Provider-UI
+        run: cd provider-ui && npm run lint
 
     # Replace the steps above with the following make targets and autocommit when ready.
     # - name: Run eslint Meshery UI
-    #   run: make ui-lint 
+    #   run: make ui-lint
     # - name: Run eslint Provider UI
     #   run: make ui-provider-lint
     # - name: Commit changes
@@ -32,3 +42,118 @@ jobs:
     #     commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
     #     commit_options: "--signoff"
     #     commit_message: "[UI] Chore: eslint fixes"
+
+  ui-unit-tests:
+    name: runner / ui-unit-tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Node.js v22
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: 'ui/package-lock.json'
+      - name: Install Meshery UI dependencies
+        working-directory: ui
+        run: npm ci
+      - name: Run Vitest unit + React Testing Library tests
+        working-directory: ui
+        env:
+          CI: 'true'
+        # --testTimeout: CI runners are ~1.4x slower than typical local boxes,
+        #   so the default 5s would false-fail any test near that boundary.
+        # --reporter=verbose: lists each test as it runs so failures are
+        #   identifiable in the inline workflow log.
+        # --bail=1: stop at first failure so the relevant stderr stays close
+        #   to the tail of the step output.
+        run: |
+          npm test -- \
+            --reporter=verbose \
+            --reporter=junit --outputFile=./test-report.junit.xml \
+            --testTimeout=30000 \
+            --hookTimeout=30000 \
+            --bail=1 \
+            2>&1 | tee ./test-output.log
+          exit "${PIPESTATUS[0]}"
+
+      - name: Surface failure context
+        if: failure()
+        working-directory: ui
+        run: |
+          echo "=========== TAIL OF TEST OUTPUT ==========="
+          tail -200 ./test-output.log || echo "(test-output.log not present)"
+          echo "==========================================="
+          if [ -f ./test-report.junit.xml ]; then
+            node -e '
+              const fs = require("fs");
+              const xml = fs.readFileSync("./test-report.junit.xml", "utf8");
+              const cases = xml.split(/<testcase\s/).slice(1);
+              const lines = ["", "=========== JUNIT FAILURES ==========="];
+              for (const raw of cases) {
+                if (!/<failure/.test(raw)) continue;
+                const cls = (raw.match(/classname="([^"]*)"/) || [, ""])[1];
+                const nm = (raw.match(/name="([^"]*)"/) || [, ""])[1];
+                const failMsg = (raw.match(/<failure[^>]*message="([^"]*)"/) || [, ""])[1];
+                lines.push("FAIL: " + cls + " > " + nm);
+                lines.push("  msg: " + failMsg);
+              }
+              lines.push("======================================");
+              console.log(lines.join("\n"));
+            '
+          fi
+
+      - name: Post failure details to PR
+        # Forked pull_request runs get a read-only GITHUB_TOKEN, so skip comment writes there.
+        if: failure() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const xmlPath = path.join('ui', 'test-report.junit.xml');
+            const logPath = path.join('ui', 'test-output.log');
+            let body = '## :x: ui-unit-tests failed\n\n';
+            if (fs.existsSync(xmlPath)) {
+              const xml = fs.readFileSync(xmlPath, 'utf8');
+              const cases = xml.split(/<testcase\s/).slice(1);
+              const failures = [];
+              for (const raw of cases) {
+                if (!/<failure/.test(raw)) continue;
+                const cls = (raw.match(/classname="([^"]*)"/) || [, ""])[1];
+                const nm = (raw.match(/name="([^"]*)"/) || [, ""])[1];
+                const failMsg = (raw.match(/<failure[^>]*message="([^"]*)"/) || [, ""])[1];
+                const body2 = ((raw.match(/<failure[^>]*>([\s\S]*?)<\/failure>/) || [, ""])[1] || "")
+                  .replace(/<!\[CDATA\[/g, "")
+                  .replace(/\]\]>/g, "")
+                  .split(/\r?\n/)
+                  .slice(0, 20)
+                  .join("\n");
+                failures.push(`### ${cls} › ${nm}\n\n**Message:** ${failMsg}\n\n\`\`\`\n${body2}\n\`\`\`\n`);
+              }
+              body += failures.length
+                ? failures.join('\n')
+                : '_JUnit XML had no <failure> entries; see TAIL OF TEST OUTPUT below._\n\n';
+            } else {
+              body += '_JUnit XML missing._\n\n';
+            }
+            if (fs.existsSync(logPath)) {
+              const log = fs.readFileSync(logPath, 'utf8');
+              const tail = log.split(/\r?\n/).slice(-120).join('\n');
+              body += `\n### Last 120 lines of test output\n\n\`\`\`\n${tail}\n\`\`\`\n`;
+            }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: body.slice(0, 60000),
+            });
+
+      - name: Upload test report on failure
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: ui-unit-tests-report
+          path: ui/test-report.junit.xml
+          retention-days: 7

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { isNil, isUndefined } from 'lodash';
 import { CardContainer, FrontSideDescription, ImageWrapper } from '../../../css/icons.styles';
 import { ADAPTER_STATUS, adaptersList, AdaptersListType } from './constants';
-import changeAdapterState from '../../graphql/mutations/AdapterStatusMutation';
+import changeAdapterState from '@/graphql/mutations/AdapterStatusMutation';
 import { LARGE_6_MED_12_GRID_STYLE } from '../../../css/grid.style';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';

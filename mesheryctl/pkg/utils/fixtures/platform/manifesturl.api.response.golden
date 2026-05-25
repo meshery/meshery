@@ -800,7 +800,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/d3bf5c33c8750a1e431f3ec042653fe5ad8162c5"
 },
 {
-"path": "docs/_adapters/consul/layer5-image-hub-on-hashicorp-consul.png",
+"path": "docs/_adapters/consul/image-hub-on-hashicorp-consul.png",
 "mode": "100644",
 "type": "blob",
 "sha": "69a94e5369ad53430bfbd94e266f98f2e38d3e86",

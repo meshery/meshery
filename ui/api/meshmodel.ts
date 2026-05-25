@@ -42,9 +42,8 @@ export async function getDuplicateModels(model, version) {
 }
 
 export async function getDuplicateComponents(componentKind, apiVersion, modelName) {
-  return await promisifiedDataFetch(
-    `${COMPONENTS_ENDPOINT}/${componentKind}?apiVersion=${apiVersion}&?model=${modelName}`,
-  );
+  const query = new URLSearchParams({ apiVersion, model: modelName }).toString();
+  return await promisifiedDataFetch(`${COMPONENTS_ENDPOINT}/${componentKind}?${query}`);
 }
 
 export async function getMeshModelRegistrants(page = 1, pageSize = 'all') {
@@ -65,11 +64,11 @@ export async function getVersionedComponentFromModel(
 }
 
 export async function getComponentsDetail(page) {
-  return await promisifiedDataFetch(`api/meshmodels/components?page=${page}`);
+  return await promisifiedDataFetch(`/api/meshmodels/components?page=${page}`);
 }
 
 export async function getRelationshipsDetail(page) {
-  return await promisifiedDataFetch(`api/meshmodels/relationships?page=${page}`);
+  return await promisifiedDataFetch(`/api/meshmodels/relationships?page=${page}`);
 }
 
 export async function getMeshModelComponent(model, component, version, apiVersion) {

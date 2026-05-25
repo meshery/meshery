@@ -49,7 +49,7 @@ func selectPostLoginRefValue(r *http.Request, cookieName string) string {
 // Post-login redirects must never land on one of these, otherwise the browser
 // immediately re-enters the OAuth dance and the original target is lost. The
 // intermittent Kanvas-never-loads behavior was reproduced as exactly this:
-// TokenHandler succeeded and then redirected to /user/login?provider=Layer5,
+// TokenHandler succeeded and then redirected to /user/login?provider=Meshery,
 // which restarted InitiateLogin mid-mount.
 var authInitiationPaths = []string{
 	"/user/login",

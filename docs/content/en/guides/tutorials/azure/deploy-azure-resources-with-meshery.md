@@ -38,8 +38,8 @@ Before you begin, ensure you have the following:
    
    * 3.1 [Deploy ASO Operator](#31-deploy-aso-operator)
    * 3.2 [Create Azure Credentials Secret](#32-create-azure-credentials-secret)
-4. [Deploy ASO Operator using Kanvas](#4-deploy-aso-using-kanvas)
-5. [Start deploying azure resources in Kanvas](#5-start-deployment-of-azure-resources-using-kanvas)
+4. [Deploy ASO Operator](#4-deploy-aso)
+5. [Start deploying azure resources](#5-start-deployment-of-azure-resources)
 6. [Conclusion](#6-conclusion)
 
 ### 1. Create Azure Service Principal
@@ -114,34 +114,31 @@ Azure Service Operator requires a Kubernetes secret with your Azure identity:
 </code>
 </div></pre>
 
+### 4. Deploy Azure Service Operator
 
-### 4. Deploy Azure Service Operator using Kanvas
-
-1. In the Meshery UI, navigate to **Kanvas**.
-2. Click **Catalog**, filter by **Azure**, and select the **Azure Operator** design.
-3. Click **Clone** to add it to your canvas.
-4. Update the secret **aso-controller-settings** in the design template. The details are also mentioned in the catalog
+1. In the Meshery UI, navigate to **Designs**. 
+2. Filter by **Azure**, and select the **Azure Operator** design.
+3. Click **Clone** to add it to workspace.
+4. Update the secret **aso-controller-settings** in the design. The details are also mentioned in the catalog.
 5. Click **Actions → Deploy**.
 
+### 5. Start deployment of Azure resources
 
-
-### 5. Start deployment of Azure resources using Kanvas
-
-* Go to Kanvas and start by picking up Azure components and putting it to design area.
-* Click **Actions → Deploy**.
-* **Azure Portal**: Confirm the new Storage Account appears in your specified resource group.
-
-
+* Create a new design.
+* Add the Azure Storage Account component to your design, and configure your components.
+* Click **Save**, and close the Design Configurator.
+* Find your design and click **Actions → Deploy**.
+* In the **Azure Portal**, confirm the new Storage Account appears in your specified resource group.
 
 ### 6. Conclusion
 
 You have successfully:
 
-* Created an Azure Service Principal for Meshery
-* Connected your Kubernetes cluster to Meshery
-* Installed the Azure Service Operator (Meshery managed CRDs)
-* Created a Kubernetes secret for Azure credentials
-* Designed and deployed Azure resources using Meshery’s Kanvas
+* Created an Azure Service Principal for Meshery.
+* Connected your Kubernetes cluster to Meshery.
+* Installed the Azure Service Operator (Meshery managed CRDs).
+* Created a Kubernetes secret for Azure credentials.
+* Designed and deployed Azure resources using Meshery.
 
 ---
 

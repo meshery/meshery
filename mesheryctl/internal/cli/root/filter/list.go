@@ -87,7 +87,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 		var footer []string
 
 		if verbose {
-			if provider == "None" {
+			if utils.IsLocalProvider(provider) {
 				for _, v := range response.Filters {
 					FilterID := v.ID.String()
 					FilterName := v.Name
@@ -114,7 +114,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 				header = []string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}
 				footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""}
 			}
-		} else if provider == "None" {
+		} else if utils.IsLocalProvider(provider) {
 			for _, v := range response.Filters {
 				FilterName := strings.Trim(v.Name, filepath.Ext(v.Name))
 				FilterID := utils.TruncateID(v.ID.String())

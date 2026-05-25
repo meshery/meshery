@@ -11,8 +11,8 @@ import {
   Tooltip,
 } from '@sistent/sistent';
 import { UnControlled as CodeMirror } from './CodeMirror';
-import { YamlDialogTitleText, StyledDialog } from './MesheryPatterns/style';
-import { StyledCodeMirrorWrapper } from './MesheryPatterns/Cards.styles';
+import { YamlDialogTitleText, StyledDialog } from './designs/patterns/style';
+import { StyledCodeMirrorWrapper } from './designs/patterns/Cards.styles';
 
 const YAMLDialog = ({
   fullScreen,

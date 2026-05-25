@@ -9,6 +9,8 @@ import { initiateQuery } from './utils';
 import { useGetOrgsQuery } from './organization';
 import { useGetWorkspacesQuery } from './workspace';
 import { normalizeLoadTestPrefs } from '../lib/load-test-prefs';
+import { normalizeProviderCapabilities } from './transforms';
+import { normalizeUserProfileSummary } from './userProfile';
 
 const Tags = {
   USER_PREF: 'userPref',
@@ -108,6 +110,7 @@ export const userApi = api
       getProviderCapabilities: builder.query({
         query: () => '/api/provider/capabilities',
         method: 'GET',
+        transformResponse: normalizeProviderCapabilities,
       }),
       getUserProfileSummaryById: builder.query({
         query: (queryArg) => ({
@@ -129,19 +132,7 @@ export const userApi = api
             }
           },
         }),
-        transformResponse: (response) => {
-          if (!response || typeof response !== 'object') {
-            return undefined;
-          }
-          return {
-            id: response.id,
-            email: response.email,
-            user_id: response.user_id,
-            avatar_url: response.avatar_url,
-            first_name: response.first_name,
-            last_name: response.last_name,
-          };
-        },
+        transformResponse: normalizeUserProfileSummary,
       }),
       getExtensionsByType: builder.query({
         query: () => ({

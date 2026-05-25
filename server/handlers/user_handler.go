@@ -130,14 +130,12 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 			return
 		}
 
+		// fortio is the only supported load generator. An empty value
+		// (default) and the removed "wrk2" (legacy preferences) are
+		// tolerated and transparently run on fortio. Any other value is
+		// rejected as an invalid generator.
 		loadGen := prefObj.LoadTestPreferences.LoadGenerator
-		loadGenSupported := false
-		for _, lg := range []models.LoadGenerator{models.FortioLG, models.Wrk2LG, models.NighthawkLG} {
-			if lg.Name() == loadGen {
-				loadGenSupported = true
-			}
-		}
-		if !loadGenSupported {
+		if loadGen != "" && loadGen != models.FortioLG.Name() && loadGen != "wrk2" {
 			err := fmt.Errorf("invalid load generator: %s", loadGen)
 			h.log.Error(ErrSavingUserPreference(err))
 			writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusBadRequest)

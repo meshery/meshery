@@ -766,7 +766,7 @@
         "long_description": "",
         "short_description": "Error failed to save design.",
         "probable_cause": "Cannot save the design due to an invalid path or URL",
-        "suggested_remediation": "Verify that you have an active user session. Try logging and in again.\nConfirm that you have sufficient permissions to save the design.\nTry reducing the size of the design file by removing the number of images, using alternative image formats or removing other non-critical components from the design. See https://docs.layer5.io/kanvas/advanced/performance/."
+        "suggested_remediation": "Verify that you have an active user session. Try logging and in again.\nConfirm that you have sufficient permissions to save the design.\nTry reducing the size of the design file by removing the number of images, using alternative image formats or removing other non-critical components from the design."
       },
       "1086": {
         "name": "ErrSaveApplicationCode",
@@ -1380,30 +1380,12 @@
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1154": {
-        "name": "ErrStartingNighthawkServerCode",
-        "code": "1154",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to start the nighthawk server",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
       "1155": {
         "name": "ErrTransformingDataCode",
         "code": "1155",
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error while transforming data",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "1156": {
-        "name": "ErrRunningNighthawkServerCode",
-        "code": "1156",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error while running nighthawk server",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -3835,7 +3817,7 @@
         "long_description": "",
         "short_description": "Extension proxy request failed",
         "probable_cause": "The remote provider could not be reached (network failure, DNS resolution, or TLS handshake failure).\nThe remote provider returned a non-2xx response that the proxy could not translate.\nThe active provider is the local provider, which has no extensions backend.",
-        "suggested_remediation": "Verify the remote provider is reachable from this Meshery instance and that the user's session token has not expired. Retry the request after re-authenticating if the failure persists.\nIf running against the local provider, switch to a remote provider (Layer5 Cloud) that exposes the extensions surface."
+        "suggested_remediation": "Verify the remote provider is reachable from this Meshery instance and that the user's session token has not expired. Retry the request after re-authenticating if the failure persists.\nIf running against the local provider, switch to a remote provider that exposes the extensions surface."
       },
       "1428": {
         "name": "ErrInitializeMachineCode",

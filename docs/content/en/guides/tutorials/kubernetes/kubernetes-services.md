@@ -34,16 +34,14 @@ Learn how to create, manage, and explore _Kubernetes Services_ to expose applica
 #### Access Meshery Playground
 - Log in to the [Meshery Playground](https://playground.meshery.io/) using your credentials.  
 - On successful login, you should be at the dashboard.
-- Click **Kanvas** from the left menu to navigate to the [_Kanvas_ design](https://kanvas.new/extension/meshmap) page.
+- Click **Designer** from the left menu to navigate to the _Meshery Design Configurator_ page.
 
   ![](/guides/tutorials/images/kubernetes-deployments/2025-02-27_16-59.png)
-
-> **_NOTE:_** Kanvas is still in beta.
 
 
 #### Create a Deployment
 
-1. In the _Kanvas Design_ page, start by renaming the design to a name of your choice for easier identification later.
+1. In the _Design_ page, start by renaming the design to a name of your choice for easier identification later.
 
     ![](/guides/tutorials/images/kubernetes-services/2025-09-04_02.png)
 
@@ -183,7 +181,7 @@ To remove all the resources you created in this tutorial: in Design mode, go to 
 
 Congratulations! You've successfully completed the lab on exploring Kubernetes Services with Meshery Playground. You created and deployed a sample application, then exposed it with different Service types (ClusterIP, NodePort, LoadBalancer).
 
-Continue exploring more scenarios in the Meshery Kanvas to enhance your skills.
+Continue exploring more scenarios in the Meshery Playground to enhance your skills.
 
 
 ---

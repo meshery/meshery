@@ -68,7 +68,7 @@ const CustomErrorMessage = ({ message, showImage = true }: CustomErrorMessagePro
           {showImage && (
             <Box
               component="img"
-              src="/static/img/service-mesh.svg"
+              src="/static/img/designs/service-mesh.svg"
               alt="service meshed"
               sx={{
                 display: 'block',

@@ -34,14 +34,14 @@ func newTestHandler(t *testing.T, providers map[string]models.Provider, provider
 	}
 }
 
-func TestProviderHandler_NoneRedirectsThroughLogin(t *testing.T) {
+func TestProviderHandler_LocalRedirectsThroughLogin(t *testing.T) {
 	local := &models.DefaultLocalProvider{}
 	local.Initialize()
 
 	providers := map[string]models.Provider{local.Name(): local}
 	h := newTestHandler(t, providers, "")
 
-	req := httptest.NewRequest(http.MethodGet, "/api/provider?provider=None", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/provider?provider=Local", nil)
 	rec := httptest.NewRecorder()
 
 	h.ProviderHandler(rec, req)
@@ -58,28 +58,64 @@ func TestProviderHandler_NoneRedirectsThroughLogin(t *testing.T) {
 	}
 
 	loc := resp.Header.Get("Location")
-	if loc != "/user/login?provider=None" {
-		t.Errorf("expected redirect to /user/login?provider=None, got %s", loc)
+	if loc != "/user/login?provider=Local" {
+		t.Errorf("expected redirect to /user/login?provider=Local, got %s", loc)
 	}
 
 	// Verify provider cookie is set
 	var found bool
 	for _, c := range resp.Cookies() {
-		if c.Name == "meshery-provider" && c.Value == "None" {
+		if c.Name == "meshery-provider" && c.Value == "Local" {
 			found = true
 			break
 		}
 	}
 	if !found {
-		t.Error("expected meshery-provider cookie to be set to None")
+		t.Error("expected meshery-provider cookie to be set to Local")
 	}
 }
 
-func TestProviderUIHandler_NoneEnvVarRedirectsThroughLogin(t *testing.T) {
+// TestProviderHandler_NoneAliasResolvesToLocal is the backward-compatibility
+// guard: clients (browsers with stale cookies, older mesheryctl, hand-written
+// scripts) that still send "None" must be accepted and mapped to "Local".
+func TestProviderHandler_NoneAliasResolvesToLocal(t *testing.T) {
 	local := &models.DefaultLocalProvider{}
 	local.Initialize()
 
 	providers := map[string]models.Provider{local.Name(): local}
+	h := newTestHandler(t, providers, "")
+
+	req := httptest.NewRequest(http.MethodGet, "/api/provider?provider=None", nil)
+	rec := httptest.NewRecorder()
+
+	h.ProviderHandler(rec, req)
+
+	resp := rec.Result()
+	t.Cleanup(func() { _ = resp.Body.Close() })
+
+	if resp.StatusCode != http.StatusFound {
+		t.Fatalf("expected 302 Found, got %d", resp.StatusCode)
+	}
+
+	for _, c := range resp.Cookies() {
+		if c.Name == "meshery-provider" {
+			if c.Value != "Local" {
+				t.Errorf("None alias should resolve to Local; got cookie value %q", c.Value)
+			}
+			return
+		}
+	}
+	t.Error("expected meshery-provider cookie to be set when sending legacy None alias")
+}
+
+func TestProviderUIHandler_LocalEnvVarRedirectsThroughLogin(t *testing.T) {
+	local := &models.DefaultLocalProvider{}
+	local.Initialize()
+
+	providers := map[string]models.Provider{local.Name(): local}
+	// Pass the legacy alias as PROVIDER env to confirm the auto-select path
+	// still works after the rename — backward-compat guard for stale
+	// Helm/Compose deployments.
 	h := newTestHandler(t, providers, "None")
 
 	req := httptest.NewRequest(http.MethodGet, "/provider", nil)
@@ -160,7 +196,7 @@ func assertNoProviderCookieSet(t *testing.T, resp *http.Response, cookieName str
 func TestProviderUIHandler_LoopGuards(t *testing.T) {
 	local := &models.DefaultLocalProvider{}
 	local.Initialize()
-	registered := map[string]models.Provider{local.Name(): local} // local.Name() == "None"
+	registered := map[string]models.Provider{local.Name(): local} // local.Name() == "Local"
 
 	tests := []struct {
 		name             string
