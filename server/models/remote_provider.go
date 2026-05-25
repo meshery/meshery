@@ -210,6 +210,9 @@ func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, err
 				break
 			}
 			l.Log.Debugf("Attempt %d/%d: failed to fetch capabilities: %v", i+1, maxRetries, err)
+			if i < maxRetries-1 {
+				time.Sleep(1 * time.Second)
+			}
 		}
 
 	} else {
