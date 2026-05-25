@@ -1,0 +1,35 @@
+name: Install Artifacts Drift Check
+on:
+  push:
+    branches:
+      - "master"
+    paths:
+      - "install/**"
+      - "mesheryctl/pkg/utils/providers_gen.go"
+      - "server/models/default_remote_providers.go"
+      - "ui/constants/endpoints.ts"
+      - "ui/tests/e2e/env.js"
+      - "provider-ui/lib/data-fetch.js"
+      - ".github/workflows/check-install.yml"
+  pull_request:
+    branches:
+      - "master"
+    paths:
+      - "install/**"
+      - "mesheryctl/pkg/utils/providers_gen.go"
+      - "server/models/default_remote_providers.go"
+      - "ui/constants/endpoints.ts"
+      - "ui/tests/e2e/env.js"
+      - "provider-ui/lib/data-fetch.js"
+      - ".github/workflows/check-install.yml"
+  workflow_dispatch:
+
+jobs:
+  check-install:
+    name: Verify install artifacts match install/providers.env
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check provider-URL artifacts are in sync
+        run: make check-install

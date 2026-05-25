@@ -20,7 +20,7 @@ setup:
 
 ## Run docs.meshery.io on your local machine with draft and future content enabled.
 site: check-go
-	hugo server -D -F
+	npx hugo server -D -F
 
 ## Build docs.meshery.io on your local machine.
 build:

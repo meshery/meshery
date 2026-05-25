@@ -929,14 +929,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <h1>Authenticating Meshery via CLI</h1>
           
           <p>To authenticate Meshery through <code>mesheryctl</code>, the Meshery CLI, you will use the <code>mesheryctl system login</code> command. On executing this command, you will be provided with a list of providers to choose from. You can then select a Provider of your choice to complete the authentication and authorization process.</p>
-<p>As of this writing, you will be presented with two providers, <em>Layer5</em> and <em>None</em>.</p>
+<p>As of this writing, you will be presented with two providers, <em>Meshery</em> and <em>None</em>.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Use the arrow keys to navigate: ↓ ↑ → ← 
 </span></span><span class="line"><span class="cl">? Select a Provider: 
-</span></span><span class="line"><span class="cl">  ▸ Layer5
+</span></span><span class="line"><span class="cl">  ▸ Meshery
 </span></span><span class="line"><span class="cl">    None
 </span></span></code></pre></div><ul>
 <li>
-<p>Selecting <em>Layer5</em> will open a browser to complete the login and authentication process with Meshery Cloud. On successful authentication, you can close the window and return to the command prompt.</p>
+<p>Selecting <em>Meshery</em> will open a browser to complete the login and authentication process with Meshery Cloud. On successful authentication, you can close the window and return to the command prompt.</p>
 <p>Verify that an <code>auth.json</code> file was created in the <code>.meshery</code> folder in your home directory.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ls -l <span class="nv">$HOME</span>/.meshery/
 </span></span><span class="line"><span class="cl">
@@ -944,7 +944,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </span></span><span class="line"><span class="cl">-rw-rw-r-- <span class="m">1</span> ubuntu ubuntu  <span class="m">39</span> Dec <span class="m">21</span> 06:13 auth.json
 </span></span><span class="line"><span class="cl">-rw-rw-r-- <span class="m">1</span> ubuntu ubuntu <span class="m">260</span> Dec <span class="m">21</span> 06:04 config.yaml
 </span></span><span class="line"><span class="cl">-rw-rw-r-- <span class="m">1</span> ubuntu ubuntu <span class="m">988</span> Dec <span class="m">21</span> 06:04 meshery.yaml
-</span></span></code></pre></div><p><strong><em>The need for authentication to <code>Layer5</code> <a href="/v0.9/extensibility/providers/">provider</a> is to save your environment setup while also having persistent/steady sessions and to be able to retrieve performance test results.</em></strong></p>
+</span></span></code></pre></div><p><strong><em>The need for authentication to <code>Meshery</code> <a href="/v0.9/extensibility/providers/">provider</a> is to save your environment setup while also having persistent/steady sessions and to be able to retrieve performance test results.</em></strong></p>
 </li>
 <li>
 <p>Selecting <em>None</em> will create an empty <code>auth.json</code> file. All your work remains local and ephemeral.</p>
@@ -952,7 +952,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </ul>
 <p>If <code>mesheryctl</code> is running in a system that does not have a browser, you can download an auth token file from your Meshery Cloud account and copy it into the <code>.meshery</code> folder in your home directory. The following steps show how you can generate and download a token:</p>
 <ol>
-<li>Navigate to <a href="https://cloud.layer5.io/security/tokens">https://cloud.layer5.io/security/tokens</a> and sign-in.
+<li>Navigate to <a href="https://cloud.meshery.io/security/tokens">https://cloud.meshery.io/security/tokens</a> and sign-in.
 Ensure you are in the right organization and click <strong>Create</strong>.</li>
 </ol>
 <p><a href="/guides/mesheryctl/images/create-token.png"><img alt="Create Token" src="/guides/mesheryctl/images/create-token.png" /></a></p>
@@ -970,39 +970,39 @@ Ensure you are in the right organization and click <strong>Create</strong>.</li>
 <p>For an exhaustive list of <code>mesheryctl</code> commands and syntax, visit <a href="/v0.9/reference/mesheryctl/"><code>mesheryctl</code> Command Reference</a>.</p>
 <div class="related-discussions">
   <h3>Recent Discussions with "mesheryctl" Tag</h3><ul><li>
-          <a href="https://discuss.layer5.io/t/pairing-up-with-a-meshmate-to-gacefully-start-contributing-to-meshery-and-its-project-ecosystem/6957" target="_blank" rel="noopener noreferrer">
+          <a href="https://discuss.meshery.io/t/pairing-up-with-a-meshmate-to-gacefully-start-contributing-to-meshery-and-its-project-ecosystem/6957" target="_blank" rel="noopener noreferrer">
             Pairing up with a Meshmate to gacefully start contributing to Meshery and its project ecosystem
           </a>
         </li><li>
-          <a href="https://discuss.layer5.io/t/development-meeting-contributing-to-meshery-cli-april-30-2025/6927" target="_blank" rel="noopener noreferrer">
+          <a href="https://discuss.meshery.io/t/development-meeting-contributing-to-meshery-cli-april-30-2025/6927" target="_blank" rel="noopener noreferrer">
             [Development Meeting] Contributing to Meshery CLI - April 30, 2025
           </a>
         </li><li>
-          <a href="https://discuss.layer5.io/t/meshery-development-meeting-april-30th-2025/6926" target="_blank" rel="noopener noreferrer">
+          <a href="https://discuss.meshery.io/t/meshery-development-meeting-april-30th-2025/6926" target="_blank" rel="noopener noreferrer">
             Meshery Development Meeting | April 30th, 2025
           </a>
         </li><li>
-          <a href="https://discuss.layer5.io/t/newcomers-meeting-end-to-end-testing-in-meshery-cli-using-bats-april-17-2025/6897" target="_blank" rel="noopener noreferrer">
+          <a href="https://discuss.meshery.io/t/newcomers-meeting-end-to-end-testing-in-meshery-cli-using-bats-april-17-2025/6897" target="_blank" rel="noopener noreferrer">
             [Newcomers’ Meeting] End-to-End Testing in Meshery CLI using BATs – April 17, 2025
           </a>
         </li><li>
-          <a href="https://discuss.layer5.io/t/unable-to-lint-mesheryctl/6854" target="_blank" rel="noopener noreferrer">
+          <a href="https://discuss.meshery.io/t/unable-to-lint-mesheryctl/6854" target="_blank" rel="noopener noreferrer">
             unable to lint mesheryctl 
           </a>
         </li><li>
-          <a href="https://discuss.layer5.io/t/mesheryctl-system-login-problem/6687" target="_blank" rel="noopener noreferrer">
+          <a href="https://discuss.meshery.io/t/mesheryctl-system-login-problem/6687" target="_blank" rel="noopener noreferrer">
             Mesheryctl system login problem
           </a>
         </li><li>
-          <a href="https://discuss.layer5.io/t/error-while-launching-the-meshery-dashboard/6600" target="_blank" rel="noopener noreferrer">
+          <a href="https://discuss.meshery.io/t/error-while-launching-the-meshery-dashboard/6600" target="_blank" rel="noopener noreferrer">
             Error while launching the Meshery Dashboard
           </a>
         </li><li>
-          <a href="https://discuss.layer5.io/t/cant-find-the-file-path-for-meshery-designs/6319" target="_blank" rel="noopener noreferrer">
+          <a href="https://discuss.meshery.io/t/cant-find-the-file-path-for-meshery-designs/6319" target="_blank" rel="noopener noreferrer">
             Can&#39;t find the file path for meshery designs
           </a>
         </li></ul><p>
-    <a href="https://discuss.layer5.io/tag/mesheryctl" target="_blank" rel="noopener noreferrer">
+    <a href="https://discuss.meshery.io/tag/mesheryctl" target="_blank" rel="noopener noreferrer">
       View all discussions tagged with <code>mesheryctl</code>
     </a>
   </p>
