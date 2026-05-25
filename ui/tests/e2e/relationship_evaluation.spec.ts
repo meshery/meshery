@@ -192,9 +192,10 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
         !r?.metadata?.isAnnotation &&
         r.subType !== 'annotation';
 
-      expect(actualRelationships.filter(isValid).length, 'Unexpected relationship count for ' + design.name).toBe(
-        design.relationships.filter(isValid).length,
-      );
+      expect(
+        actualRelationships.filter(isValid).length,
+        'Unexpected relationship count for ' + design.name,
+      ).toBe(design.relationships.filter(isValid).length);
     });
   }
 });
