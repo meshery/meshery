@@ -4511,7 +4511,7 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID core.Uuid)
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionID))
-	fmt.Println("\n\n url :", remoteProviderURL.String())
+	l.Log.Debugf("fetching connection %s from remote provider at %s", connectionID, remoteProviderURL.String())
 
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
