@@ -13,6 +13,14 @@ spec:
         from:
           - kind: RouteTable
             model: aws-ec2-controller
+            patch:
+              mutatorRef:
+                - ["configuration", "spec", "routes", "0", "gatewayID"]
+              patchStrategy: replace
         to:
           - kind: InternetGateway
             model: aws-ec2-controller
+            patch:
+              mutatedRef:
+                - ["displayName"]
+              patchStrategy: replace
