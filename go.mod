@@ -6,6 +6,8 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 replace github.com/compose-spec/compose-go/v2 => github.com/compose-spec/compose-go/v2 v2.9.1
 
+replace github.com/service-mesh-performance/service-mesh-performance => github.com/layer5io/service-mesh-performance v0.6.2
+
 // The following replaces are used for local development
 
 // replace github.com/meshery/schemas => ../schemas
@@ -42,7 +44,6 @@ require (
 	github.com/grafana-tools/sdk v0.0.0-20220919052116-6562121319fc
 	github.com/jarcoal/httpmock v1.4.1
 	github.com/jinzhu/copier v0.4.0
-	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.12.1
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v0.8.11
@@ -58,6 +59,7 @@ require (
 	github.com/prometheus/client_golang v1.23.2
 	github.com/prometheus/common v0.67.5
 	github.com/qri-io/jsonschema v0.2.1
+	github.com/service-mesh-performance/service-mesh-performance v0.6.2
 	github.com/sirupsen/logrus v1.9.4
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10

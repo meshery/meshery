@@ -39,15 +39,15 @@ func TestResolveProviderName(t *testing.T) {
 		{
 			name:             "no signals, enforced default returned",
 			setup:            nil,
-			enforcedProvider: "Layer5",
-			want:             "Layer5",
+			enforcedProvider: "Meshery",
+			want:             "Meshery",
 		},
 		{
 			name: "cookie wins over enforced default",
 			setup: func(r *http.Request) {
 				r.AddCookie(&http.Cookie{Name: cookieName, Value: "Meshery"})
 			},
-			enforcedProvider: "Layer5",
+			enforcedProvider: "Meshery",
 			want:             "Meshery",
 		},
 		{
@@ -56,7 +56,7 @@ func TestResolveProviderName(t *testing.T) {
 				r.AddCookie(&http.Cookie{Name: cookieName, Value: ""})
 				r.Header.Set(cookieName, "Meshery")
 			},
-			enforcedProvider: "Layer5",
+			enforcedProvider: "Meshery",
 			want:             "Meshery",
 		},
 		{
@@ -65,7 +65,7 @@ func TestResolveProviderName(t *testing.T) {
 				r.Header.Set(cookieName, "Meshery")
 				r.URL.RawQuery = "provider=None"
 			},
-			enforcedProvider: "Layer5",
+			enforcedProvider: "Meshery",
 			want:             "Meshery",
 		},
 		{
@@ -73,16 +73,16 @@ func TestResolveProviderName(t *testing.T) {
 			setup: func(r *http.Request) {
 				r.URL.RawQuery = "provider=None"
 			},
-			enforcedProvider: "Layer5",
+			enforcedProvider: "Meshery",
 			want:             "Local",
 		},
 		{
 			name: "cookie with whitespace value is honored verbatim",
 			setup: func(r *http.Request) {
-				r.AddCookie(&http.Cookie{Name: cookieName, Value: "Layer5"})
+				r.AddCookie(&http.Cookie{Name: cookieName, Value: "Meshery"})
 			},
 			enforcedProvider: "",
-			want:             "Layer5",
+			want:             "Meshery",
 		},
 		// Backward-compat guard for the "None" -> "Local" rename. Stale
 		// browser cookies, hand-written scripts, and older mesheryctl all
@@ -96,7 +96,7 @@ func TestResolveProviderName(t *testing.T) {
 			want:             "Local",
 		},
 		{
-			name: "legacy None enforced default normalizes to Local",
+			name:             "legacy None enforced default normalizes to Local",
 			setup:            nil,
 			enforcedProvider: "None",
 			want:             "Local",
@@ -118,7 +118,7 @@ func TestResolveProviderName(t *testing.T) {
 			want:             "Local",
 		},
 		{
-			name: "uppercase canonical name normalizes to canonical Local",
+			name:             "uppercase canonical name normalizes to canonical Local",
 			setup:            nil,
 			enforcedProvider: "LOCAL",
 			want:             "Local",
@@ -160,9 +160,9 @@ func TestResolveProviderName_ReturnsLegacyAliasFlag(t *testing.T) {
 	}
 
 	cases := []struct {
-		name      string
-		cookie    string
-		wantFlag  bool
+		name     string
+		cookie   string
+		wantFlag bool
 	}{
 		{"canonical Local does not flag legacy", "Local", false},
 		{"lowercase local does not flag legacy", "local", false},

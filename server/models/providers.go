@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	SMP "github.com/layer5io/service-mesh-performance/spec"
+	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/database"

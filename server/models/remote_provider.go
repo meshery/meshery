@@ -26,7 +26,7 @@ import (
 	"github.com/meshery/schemas/models/core"
 
 	"github.com/gofrs/uuid"
-	SMP "github.com/layer5io/service-mesh-performance/spec"
+	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 	servercore "github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/httputil"
