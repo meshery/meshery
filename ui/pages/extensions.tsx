@@ -271,7 +271,7 @@ const MesheryDesignEmbedExtension = () => (
           variant="contained"
           color="primary"
           data-testid="design-embed-learn-more-btn"
-          onClick={openExternal('https://meshery.io/extensions/meshery-design-embed/')}
+          onClick={openExternal('https://meshery.io/extensions/meshery-design-embed')}
         >
           Learn More
         </Button>
@@ -304,7 +304,7 @@ const CloudExtension = () => (
         <Button
           variant="contained"
           color="primary"
-          data-testid="layer5-cloud-learn-more-btn"
+          data-testid="cloud-learn-more-btn"
           onClick={openExternal('https://meshery.io/extensions/layer5-cloud')}
         >
           Learn More

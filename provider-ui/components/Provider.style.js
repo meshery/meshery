@@ -78,7 +78,7 @@ export const LearnMore = styled("a")(({ theme }) => ({
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
-  color: theme.palette.text.default,
+  color: theme.palette.text.inverse,
   textDecoration: "none",
   fontSize: "1rem",
   lineHeight: 1.4,
@@ -86,7 +86,6 @@ export const LearnMore = styled("a")(({ theme }) => ({
   cursor: "pointer",
   transition: "color 120ms ease, opacity 120ms ease",
   "&:hover": {
-    color: theme.palette.text.inverse,
     textDecoration: "underline",
     opacity: 0.92,
   },

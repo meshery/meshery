@@ -58,7 +58,7 @@ docs/resources/
 docs/.hugo_build.lock
 docs/hugo_stats.json
 
-docs/static/v0.*/
+#docs/static/v0.*/
 
 dist/
 
@@ -89,8 +89,11 @@ install/docker-extension/vm/vm
 ui/.env
 *.env
 */.env
+# install/providers.env is the canonical, version-controlled remote-provider list,
+# not a secrets file - keep it tracked despite the *.env rules above.
+!install/providers.env
 docs/hugo_stats.json
-
 
 LLMs
 .copilot-tmp/*
+.claude/worktrees/*
