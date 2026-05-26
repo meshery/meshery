@@ -16,7 +16,9 @@ import { DashboardSection } from '../style';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
-import { Grid2, InfoOutlined, Typography, useTheme } from '@sistent/sistent';
+// Sistent re-exports InfoOutlinedIcon as `InfoOutlined`; alias on
+// import so call sites stay unchanged.
+import { Grid2, InfoOutlined as InfoOutlinedIcon, Typography, useTheme } from '@sistent/sistent';
 
 function MeshModelContructs() {
   const params = {
@@ -90,7 +92,7 @@ function MeshModelContructs() {
               title={`The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. [Learn More](https://docs.meshery.io/concepts/logical/registry)`}
             >
               <div>
-                <InfoOutlined
+                <InfoOutlinedIcon
                   color={theme.palette.icon.default}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
                 />
@@ -168,7 +170,7 @@ function MeshModelCategories() {
               placement="left"
             >
               <div>
-                <InfoOutlined
+                <InfoOutlinedIcon
                   color={theme.palette.icon.default}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
                 />

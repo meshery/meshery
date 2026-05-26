@@ -7,6 +7,9 @@ import {
   Grid2,
   FormControl,
   TableCell,
+  // Sistent re-exports InfoOutlinedIcon as `InfoOutlined`; alias on
+  // import so call sites stay unchanged.
+  InfoOutlined as InfoOutlinedIcon,
 } from '@sistent/sistent';
 import { ConnectionStyledSelect } from './styles';
 import { FormatId } from '../data-formatter';
@@ -20,7 +23,6 @@ import MultiSelectWrapper from '../multi-select-wrapper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
-import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { formatDate } from '../data-formatter';
 import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
 import { CONNECTION_STATE_TRANSITIONS } from './ConnectionTable.constants';
