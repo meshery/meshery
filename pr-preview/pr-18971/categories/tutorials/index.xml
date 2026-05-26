@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tutorials on Documentation</title><link>/categories/tutorials/</link><description>Recent content in Tutorials on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/categories/tutorials/index.xml" rel="self" type="application/rss+xml"/><item><title>Deploy AWS EC2 Instances with Meshery</title><link>/guides/tutorials/aws/deploy-aws-ec2-instances-with-meshery/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/tutorials/aws/deploy-aws-ec2-instances-with-meshery/</guid><description>&lt;h3 id="introduction"&gt;
+	Introduction
+&lt;/h3&gt;
+&lt;p&gt;Meshery is a powerful multi-cloud management platform that enables you to configure, deploy, and manage AWS resources, such as EC2 instances. In order to manage AWS resources, Meshery uses &lt;a href="https://aws.amazon.com/blogs/containers/aws-controllers-for-kubernetes-ack/"&gt;AWS Controllers for Kubernetes (ACK)&lt;/a&gt;. ACK facilitates the bridge between Kubernetes and AWS services, enabling Meshery to manage AWS resources and Meshery enabling you to benefit from the enhanced experience that Meshery and its extensions offer.&lt;/p&gt;
+&lt;p&gt;Meshery has a number of extensions, adapters, and plugins. In this tutorial, we will use the Meshery Design Configurator to provide an intuitive, visual experience for configuring and deploying an AWS EC2 instance. Among other aspects, the Design Configurator provides an alternative to command-line tools like &lt;code&gt;kubectl&lt;/code&gt; by offering infrastructure as design. Once you connect your Kubernetes cluster to Meshery, you can configure, deploy, and manage AWS resources directly from the Meshery UI, making deployments more intuitive and collaborative&lt;/p&gt;</description></item><item><title>Deploy Azure resources with Meshery</title><link>/guides/tutorials/azure/deploy-azure-resources-with-meshery/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/tutorials/azure/deploy-azure-resources-with-meshery/</guid><description>&lt;h3 id="introduction"&gt;
+	Introduction
+&lt;/h3&gt;
+&lt;p&gt;Meshery now supports managing Azure resources declaratively through Kubernetes by integrating with Azure Service Operator (ASO). With this capability, you can visually design, deploy, and manage a variety of Azure resources—such as Storage Accounts, Key Vaults, SQL Servers, and more—directly from Meshery’s UI. In this tutorial, you’ll install the ASO operator (without CRD pattern configurations, as Meshery will handle them), create a Service Principal and a Kubernetes secret with your Azure credentials, and use Meshery to provision Azure resources seamlessly into your subscription.&lt;/p&gt;</description></item><item><title>Deploy Azure Storage Account with Meshery</title><link>/guides/tutorials/azure/deploy-azure-storage-account-with-meshery/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/tutorials/azure/deploy-azure-storage-account-with-meshery/</guid><description>&lt;h3 id="introduction"&gt;
+	Introduction
+&lt;/h3&gt;
+&lt;p&gt;Meshery enables you to manage Azure Storage Accounts declaratively through Kubernetes by leveraging the Azure Service Operator (ASO). In this tutorial, you&amp;rsquo;ll install the ASO operator (without CRD pattern configurations, which Meshery will manage), create a Service Principal and a Kubernetes secret with your Azure credentials, and use Meshery&amp;rsquo;s UI to visually design and deploy a Storage Account resource to your Azure subscription.&lt;/p&gt;
+&lt;h3 id="prerequisites"&gt;
+	Prerequisites
+&lt;/h3&gt;
+&lt;p&gt;Before you begin, ensure you have the following:&lt;/p&gt;</description></item><item><title>Embedding a Meshery Design in a WordPress Post</title><link>/guides/tutorials/wordpress/embedding-meshery-design-in-wordpress/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/tutorials/wordpress/embedding-meshery-design-in-wordpress/</guid><description>&lt;h3 id="introduction"&gt;
+	Introduction
+&lt;/h3&gt;
+&lt;p&gt;In this tutorial, we will learn how to embed a &lt;strong&gt;Meshery Design&lt;/strong&gt; in a WordPress post using the &lt;strong&gt;Embed&lt;/strong&gt; option in &lt;strong&gt;Meshery Design Configurator&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;This tutorial assumes that you have created a design or have an existing one. If not, you can use one of the numerous public designs available in &lt;strong&gt;Meshery Design Configurator&lt;/strong&gt; for this tutorial.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Expand the &lt;strong&gt;Designs&lt;/strong&gt; menu on the left.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Click the &lt;strong&gt;Quick actions&lt;/strong&gt; button to the left of the design (inverted ellipsis) and select &lt;strong&gt;Export Design&lt;/strong&gt;.&lt;/p&gt;</description></item><item><title>Publishing Meshery Designs to Artifact Hub</title><link>/guides/tutorials/artifacthub/publish-to-artifacthub/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/tutorials/artifacthub/publish-to-artifacthub/</guid><description>&lt;p&gt;In this tutorial, we&amp;rsquo;ll see how to export a design from Meshery, which we will use to populate an Artifact Hub repository.&lt;/p&gt;
+&lt;h2 id="prerequisites"&gt;
+	Prerequisites
+&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Access to Meshery. &lt;a href="../../installation/"&gt;Install Meshery&lt;/a&gt; or access the &lt;a href="https://play.meshery.io"&gt;Meshery Playground&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;An Artifact Hub repository.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="steps"&gt;
+	Steps
+&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Navigate to the Designs page. You can access it from the left-hand menu in Meshery. The URL will be:
+&lt;ul&gt;
+&lt;li&gt;Locally: &lt;a href="http://localhost:9081/configuration/designs?view=grid"&gt;http://localhost:9081/configuration/designs?view=grid&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Playground: &lt;a href="https://playground.meshery.io/configuration/designs?view=grid"&gt;https://playground.meshery.io/configuration/designs?view=grid&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img class="content-image" src="../../guides/tutorials/artifacthub/images/publish-to-artifacthub/designs.png" alt="" /&gt;&lt;/p&gt;
+&lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Can't find your design?&lt;/div&gt;
+&lt;p&gt;If you don&amp;rsquo;t see your design, check your Organization and Workspace selections. Designs are scoped to a Workspace, so make sure you have the correct Workspace selected in the dropdown at the top of the page. If you don&amp;rsquo;t have any designs in that Workspace, you can switch to another Workspace or create a new design in the current one.&lt;/p&gt;</description></item><item><title>Tutorials</title><link>/guides/tutorials/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/tutorials/</guid><description>&lt;p&gt;🧑‍🔬 Explore these tutorials to learn how to use Meshery for collaboratively managing infrastructure. Access the &lt;a href="../../installation/playground/"&gt;Meshery Playground&lt;/a&gt; as a convenient resource for the labs in these tutorials.&lt;/p&gt;</description></item></channel></rss>
