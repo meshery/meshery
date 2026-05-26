@@ -91,13 +91,13 @@ export const StyledPopover = styled(Popover)(({ theme }) => ({
   // MenuList shows through past the rounded Paper corners as four square
   // notches at each corner. Setting Paper to the same color as the
   // MenuList collapses the two surfaces into one continuous rounded fill.
-  ".MuiPaper-root": {
+  "& .MuiPaper-root": {
     backgroundColor: charcoal[20],
     color: theme.palette.text.inverse,
     borderRadius: theme.spacing(1),
     overflow: "hidden",
   },
-  ".MuiList-root": {
+  "& .MuiList-root": {
     backgroundColor: "transparent",
   },
 }));
@@ -106,7 +106,7 @@ export const StyledPopover = styled(Popover)(({ theme }) => ({
 // stays on-brand across Sistent palettes; the KEPPEL accent border matches
 // the InfoOutlined icon's color in the menu, tying the trigger to its panel.
 export const ProviderInfoPopover = styled(Popover)(({ theme }) => ({
-  ".MuiPaper-root": {
+  "& .MuiPaper-root": {
     background: charcoal[20],
     // Force inheritance for every nested Typography/Link so the dark
     // surface is not undone by MUI defaults (Typography defaults to
