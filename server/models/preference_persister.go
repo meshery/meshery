@@ -14,7 +14,7 @@ type SessionPreferencePersister struct {
 	DB *database.Handler
 }
 type UserPreference struct {
-	ID              string `json:"userId"`
+	ID              string `json:"userID"`
 	PreferenceBytes []byte `json:"preference"`
 }
 
@@ -25,7 +25,7 @@ func (s *SessionPreferencePersister) ReadFromPersister(userID string) (*Preferen
 	}
 
 	if userID == "" {
-		return nil, ErrUserID
+		return nil, ErruserID
 	}
 
 	data := NewDefaultPreference()
@@ -61,7 +61,7 @@ func (s *SessionPreferencePersister) WriteToPersister(userID string, data *Prefe
 	}
 
 	if userID == "" {
-		return ErrUserID
+		return ErruserID
 	}
 
 	if data == nil {
@@ -88,7 +88,7 @@ func (s *SessionPreferencePersister) DeleteFromPersister(userID string) error {
 	}
 
 	if userID == "" {
-		return ErrUserID
+		return ErruserID
 	}
 
 	return s.DB.Model(&UserPreference{}).Where("id = ?", userID).Delete(&UserPreference{}).Error

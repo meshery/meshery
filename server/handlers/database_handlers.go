@@ -39,7 +39,7 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	if offset != 0 {
 		tableFinder = tableFinder.Offset(offset)
 	}
-	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = models.SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "name"})
 	if order != "" {
 		if sort == "desc" {
 			tableFinder = tableFinder.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})

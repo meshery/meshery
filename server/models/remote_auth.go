@@ -373,7 +373,7 @@ func (l *RemoteProvider) revokeToken(tokenString string) error {
 
 	remoteURL, err := url.Parse(fmt.Sprintf("%s/revoke", l.RemoteProviderURL))
 	if err != nil {
-		l.Log.Error(ErrUrlParse(err))
+		l.Log.Error(ErrURLParse(err))
 		return err
 	}
 	r, err := http.Post(remoteURL.String(), "application/json", bytes.NewReader(body))
@@ -407,7 +407,7 @@ func (l *RemoteProvider) introspectToken(tokenString string) error {
 
 	remoteURL, err := url.Parse(fmt.Sprintf("%s/introspect", l.RemoteProviderURL))
 	if err != nil {
-		l.Log.Error(ErrUrlParse(err))
+		l.Log.Error(ErrURLParse(err))
 		return err
 	}
 	r, err := http.Post(remoteURL.String(), "application/json", bytes.NewReader(body))

@@ -66,7 +66,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 			// Ideally iterate all Connection defs, extract fingerprint composite key and try to match with the given obj,
 			// For all connections that match the fingerprint and autoRegsiter is set to true, try to do auto registration.
 
-			userID := data.MeshsyncDataHandler.UserID
+			userID := data.MeshsyncDataHandler.userID
 			compMetadata := data.Obj.ComponentMetadata
 			compCapabilites, ok := compMetadata["capabilities"].(map[string]interface{})
 			if !ok {
@@ -102,7 +102,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 
 						connectionPayload, id := getConnectionPayload(connType, data.Obj.KubernetesResourceMeta.Name, data.Obj.ID, url, userID, &connectionDef, connMetadata)
 
-						machineInst, err := InitializeMachineWithContext(connectionPayload, ctx, id, data.MeshsyncDataHandler.UserID, arh.smInstanceTracker, arh.log, data.MeshsyncDataHandler.Provider, machines.DISCOVERED, connType, nil)
+						machineInst, err := InitializeMachineWithContext(connectionPayload, ctx, id, data.MeshsyncDataHandler.userID, arh.smInstanceTracker, arh.log, data.MeshsyncDataHandler.Provider, machines.DISCOVERED, connType, nil)
 
 						if err != nil {
 							arh.log.Error(ErrAutoRegister(err, connType))
@@ -126,9 +126,9 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 						// Delete the meshsync resource which has been upgraded to Connection.
 						_ = arh.dbHandler.Model(&meshsyncmodel.KubernetesResource{}).Delete(&meshsyncmodel.KubernetesResource{ID: data.Obj.ID})
 
-						event = events.NewEvent().WithCategory("connection").WithAction("register").FromUser(data.MeshsyncDataHandler.UserID).ActedUpon(data.MeshsyncDataHandler.ConnectionID).WithDescription(fmt.Sprintf("Auto Registered connection of type \"%s\" at %s", connectionName, url)).Build()
+						event = events.NewEvent().WithCategory("connection").WithAction("register").FromUser(data.MeshsyncDataHandler.userID).ActedUpon(data.MeshsyncDataHandler.ConnectionID).WithDescription(fmt.Sprintf("Auto Registered connection of type \"%s\" at %s", connectionName, url)).Build()
 
-						go arh.eventBroadcast.Publish(data.MeshsyncDataHandler.UserID, event)
+						go arh.eventBroadcast.Publish(data.MeshsyncDataHandler.userID, event)
 						_ = data.MeshsyncDataHandler.Provider.PersistSystemEvent(*event)
 					}
 				}

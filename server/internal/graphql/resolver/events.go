@@ -37,8 +37,8 @@ func (r *Resolver) eventsResolver(ctx context.Context, provider models.Provider,
 					SystemID:    event.SystemID.String(),
 				}
 
-				if event.UserID != nil {
-					_event.UserID = event.UserID.String()
+				if event.userID != nil {
+					_event.userID = event.userID.String()
 				}
 
 				eventsChan <- _event

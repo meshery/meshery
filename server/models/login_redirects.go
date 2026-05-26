@@ -13,7 +13,7 @@ func resolvePostLoginRedirect(rawRef, fallback string) string {
 		return fallback
 	}
 
-	if decoded, err := core.DecodeRefURL(rawRef); err == nil && isSafeRedirect(decoded) {
+	if decoded, err := core.DecoderefURL(rawRef); err == nil && isSafeRedirect(decoded) {
 		return decoded
 	}
 
@@ -32,7 +32,7 @@ func resolvePostLoginRedirect(rawRef, fallback string) string {
 // ?ref= query param is a fallback for callers that never went through
 // InitiateLogin (mesheryctl, direct extension callbacks) and for older
 // provider deployments that still echo a ref back to us. We deliberately do
-// not try to merge the two — when the cookie is present it wins outright,
+// not try to merge the two â€” when the cookie is present it wins outright,
 // since stale provider-side state (e.g. a synthesized ref baked into Hydra
 // state during a custom-domain bounce) was the bug this routing change was
 // introduced to fix.

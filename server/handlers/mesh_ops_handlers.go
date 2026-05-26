@@ -24,7 +24,7 @@ func (h *Handler) AvailableAdaptersHandler(w http.ResponseWriter, _ *http.Reques
 	if err != nil {
 		obj := "data"
 		// Encode streams to w; failure here means the body has already
-		// started — log only, don't double-write.
+		// started â€” log only, don't double-write.
 		if isClientDisconnect(err) {
 			h.log.Debug(models.ErrMarshal(err, obj))
 		} else {
@@ -52,7 +52,7 @@ func (h *Handler) AdaptersHandler(w http.ResponseWriter, req *http.Request, pref
 	err := json.NewEncoder(w).Encode(h.config.AdapterTracker.GetAdapters(req.Context()))
 	if err != nil {
 		obj := "data"
-		// Streaming encode failure — log only.
+		// Streaming encode failure â€” log only.
 		if isClientDisconnect(err) {
 			h.log.Debug(models.ErrMarshal(err, obj))
 		} else {
@@ -140,14 +140,14 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 			return // error is handled appropriately in the relevant method
 		}
 	default:
-		// Correct status is 405 (Method Not Allowed), not 404 — the
+		// Correct status is 405 (Method Not Allowed), not 404 â€” the
 		// endpoint exists but the verb is wrong. Fixing alongside JSON.
 		writeMeshkitError(w, ErrMethodNotAllowed(req.Method), http.StatusMethodNotAllowed)
 		return
 	}
 
 	prefObj.MeshAdapters = meshAdapters
-	err = provider.RecordPreferences(req, user.UserId, prefObj)
+	err = provider.RecordPreferences(req, user.userID, prefObj)
 	if err != nil {
 		h.log.Error(ErrRecordPreferences(err))
 		writeMeshkitError(w, ErrRecordPreferences(err), http.StatusInternalServerError)
@@ -157,7 +157,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	err = json.NewEncoder(w).Encode(meshAdapters)
 	if err != nil {
 		obj := "data"
-		// Streaming encode failure — log only.
+		// Streaming encode failure â€” log only.
 		if isClientDisconnect(err) {
 			h.log.Debug(models.ErrMarshal(err, obj))
 		} else {
@@ -191,7 +191,7 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		// operators can distinguish DNS resolution from TLS handshake from
 		// dial timeout when troubleshooting, while still being able to grep
 		// the stable error code for cross-referencing with docs or support
-		// tickets. The wrapped ErrMeshClient is still what we return — the
+		// tickets. The wrapped ErrMeshClient is still what we return â€” the
 		// public error shape stays unchanged.
 		h.log.Debugf("adapter unreachable at %s (%s): %v", meshLocationURL, ErrMeshClientCode, err)
 		return meshAdapters, ErrMeshClient
@@ -339,7 +339,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
 		OperationId: operationID.String(),
 		OpName:      opName,
-		Username:    user.UserId,
+		Username:    user.userID,
 		Namespace:   namespace,
 		CustomBody:  customBody,
 		DeleteOp:    (deleteOp != ""),

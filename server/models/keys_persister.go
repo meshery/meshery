@@ -15,7 +15,7 @@ type KeyPersister struct {
 
 // GetUsersKeys returns all keys based on search, order, and updatedAfter without pagination
 func (kp *KeyPersister) GetUsersKeys(search, order, updatedAfter string) ([]byte, error) {
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "function", "category", "subcategory"})
+	order = SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "function", "category", "subcategory"})
 
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
@@ -24,7 +24,7 @@ func (kp *KeyPersister) GetUsersKeys(search, order, updatedAfter string) ([]byte
 	count := int64(0)
 	keys := []Key{}
 
-	query := kp.DB.Where("updated_at > ?", updatedAfter).Order(order)
+	query := kp.DB.Where("UpdatedAt > ?", updatedAfter).Order(order)
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"

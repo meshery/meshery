@@ -19,7 +19,7 @@ type OrganizationPersister struct {
 
 // GetMesheryApplications returns all of the applications
 func (op *OrganizationPersister) GetOrganizations(search, order string, page, pageSize uint64, updatedAfter string) ([]byte, error) {
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "name"})
 
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
@@ -28,7 +28,7 @@ func (op *OrganizationPersister) GetOrganizations(search, order string, page, pa
 	count := int64(0)
 	organizations := []*organization.Organization{}
 
-	query := op.DB.Where("updated_at > ?", updatedAfter).Order(order)
+	query := op.DB.Where("UpdatedAt > ?", updatedAfter).Order(order)
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"

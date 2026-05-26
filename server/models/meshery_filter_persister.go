@@ -29,7 +29,7 @@ type MesheryFilterPage struct {
 // GetMesheryFilters returns all of the 'private' filters. Though private has no meaning here since there is only
 // one local user. We make this distinction to be consistent with the remote provider
 func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page, pageSize uint64, visibility []string) ([]byte, error) {
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "name"})
 
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
@@ -67,7 +67,7 @@ func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page,
 // GetMesheryCatalogFilters returns all of the published filters
 func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, search, order string) ([]byte, error) {
 	var err error
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "name"})
 
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
@@ -177,12 +177,12 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilter(filter *MesheryFilter) ([]b
 // SaveMesheryFilters batch inserts the given filters
 func (mfp *MesheryFilterPersister) SaveMesheryFilters(filters []MesheryFilter) ([]byte, error) {
 	finalFilters := []MesheryFilter{}
-	nilUserID := ""
+	niluserID := ""
 	for _, filter := range filters {
 		if filter.Visibility == "" {
 			filter.Visibility = Private
 		}
-		filter.UserID = &nilUserID
+		filter.userID = &niluserID
 		if filter.ID == nil {
 			id, err := uuid.NewV4()
 			if err != nil {

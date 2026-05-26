@@ -90,7 +90,7 @@ type MesheryPattern struct {
 	PatternFile string `json:"patternFile"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	UserID *string `json:"userId"`
+	userID *string `json:"userID"`
 
 	Location      isql.Map             `json:"location"`
 	Visibility    string               `json:"visibility"`
@@ -106,7 +106,7 @@ type MesheryPattern struct {
 	DownloadCount   int       `json:"downloadCount" db:"download_count"`
 	CloneCount      int       `json:"cloneCount" db:"clone_count"`
 	DeploymentCount int       `json:"deploymentCount" db:"deployment_count"`
-	WorkspaceID     core.Uuid `json:"workspaceId,omitempty" db:"-"`
+	workspaceID     core.Uuid `json:"workspaceID,omitempty" db:"-"`
 	OrgID           core.Uuid `json:"orgId,omitempty" db:"-"`
 }
 

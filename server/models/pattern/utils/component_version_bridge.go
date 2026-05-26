@@ -31,7 +31,7 @@ import (
 // ComponentV1beta1ToV1beta2 returns a v1beta2/component.ComponentDefinition
 // whose inner reference-typed fields (Model pointer, Capabilities slice,
 // Configuration map, Styles pointer, Metadata.AdditionalProperties map,
-// ModelId pointer) alias the source. Mutations through those aliased maps /
+// modelID pointer) alias the source. Mutations through those aliased maps /
 // pointer targets on the returned value remain visible on the source; scalar
 // field updates on the returned value do NOT.
 func ComponentV1beta1ToV1beta2(src *componentv1beta1.ComponentDefinition) *componentv1beta2.ComponentDefinition {
@@ -66,7 +66,7 @@ func ComponentV1beta1ToV1beta2(src *componentv1beta1.ComponentDefinition) *compo
 		},
 		CreatedAt: src.CreatedAt,
 		UpdatedAt: src.UpdatedAt,
-		ModelId:   src.ModelId,
+		modelID:   src.modelID,
 	}
 	if src.Status != nil {
 		st := componentv1beta2.ComponentDefinitionStatus(*src.Status)
@@ -77,7 +77,7 @@ func ComponentV1beta1ToV1beta2(src *componentv1beta1.ComponentDefinition) *compo
 
 // ComponentV1beta2ToV1beta1 is the inverse bridge: a shallow field copy that
 // keeps pointer/reference-typed inner fields (Model, Styles, Capabilities,
-// Configuration, Metadata.AdditionalProperties, ModelId) aliased across both
+// Configuration, Metadata.AdditionalProperties, modelID) aliased across both
 // versions so mutations remain visible across the bridge.
 func ComponentV1beta2ToV1beta1(src *componentv1beta2.ComponentDefinition) *componentv1beta1.ComponentDefinition {
 	if src == nil {
@@ -111,7 +111,7 @@ func ComponentV1beta2ToV1beta1(src *componentv1beta2.ComponentDefinition) *compo
 		},
 		CreatedAt: src.CreatedAt,
 		UpdatedAt: src.UpdatedAt,
-		ModelId:   src.ModelId,
+		modelID:   src.modelID,
 	}
 	if src.Status != nil {
 		st := componentv1beta1.ComponentDefinitionStatus(*src.Status)
@@ -123,7 +123,7 @@ func ComponentV1beta2ToV1beta1(src *componentv1beta2.ComponentDefinition) *compo
 // ComponentV1beta2ToV1beta3 returns a v1beta3/component.ComponentDefinition
 // whose inner reference-typed fields (Model pointer, Capabilities slice,
 // Configuration map, Styles pointer, Metadata.AdditionalProperties map,
-// ModelId pointer) alias the source. Mutations to those aliased maps /
+// modelID pointer) alias the source. Mutations to those aliased maps /
 // pointer targets on the returned value are visible on the source;
 // scalar field updates on the returned value are NOT. Use this at the
 // meshkit-boundary only; prefer working on the native v1beta2 value
@@ -160,7 +160,7 @@ func ComponentV1beta2ToV1beta3(src *componentv1beta2.ComponentDefinition) *compo
 		},
 		CreatedAt: src.CreatedAt,
 		UpdatedAt: src.UpdatedAt,
-		ModelID:   src.ModelId,
+		modelID:   src.modelID,
 	}
 	if src.Status != nil {
 		st := componentv1beta3.ComponentDefinitionStatus(*src.Status)
@@ -171,7 +171,7 @@ func ComponentV1beta2ToV1beta3(src *componentv1beta2.ComponentDefinition) *compo
 
 // ComponentV1beta3ToV1beta2 is the inverse bridge: a shallow field copy
 // that keeps pointer/reference-typed inner fields (Model, Styles,
-// Capabilities, Configuration, Metadata.AdditionalProperties, ModelID)
+// Capabilities, Configuration, Metadata.AdditionalProperties, modelID)
 // aliased across both versions so mutations remain visible across the
 // bridge. Use it at read-boundaries where a meshkit helper has handed
 // back a v1beta3 value but the rest of the pattern pipeline expects
@@ -208,7 +208,7 @@ func ComponentV1beta3ToV1beta2(src *componentv1beta3.ComponentDefinition) *compo
 		},
 		CreatedAt: src.CreatedAt,
 		UpdatedAt: src.UpdatedAt,
-		ModelId:   src.ModelID,
+		modelID:   src.modelID,
 	}
 	if src.Status != nil {
 		st := componentv1beta2.ComponentDefinitionStatus(*src.Status)
@@ -223,7 +223,7 @@ func ComponentV1beta3ToV1beta2(src *componentv1beta3.ComponentDefinition) *compo
 // that may REPLACE Configuration rather than mutate it. Because
 // ComponentV1beta2ToV1beta3 aliases the Configuration map between the
 // two values, mutations made via the returned v1beta3 value are already
-// visible on the source — this copy-back only matters when the helper
+// visible on the source â€” this copy-back only matters when the helper
 // replaces a map.
 func ApplyV1beta3MetadataChanges(
 	src *componentv1beta3.ComponentDefinition,
@@ -236,8 +236,8 @@ func ApplyV1beta3MetadataChanges(
 	// v1beta2/componentv1beta2.ComponentDefinition.Metadata and v1beta3's
 	// Metadata are structurally identical (same package-level type across
 	// the two generated schemas), so a direct conversion copies every
-	// field — AdditionalProperties, Published, IsAnnotation, IsNamespaced,
-	// Genealogy, Shape, SvgColor, etc. — rather than leaving new fields
+	// field â€” AdditionalProperties, Published, IsAnnotation, IsNamespaced,
+	// Genealogy, Shape, SvgColor, etc. â€” rather than leaving new fields
 	// out of sync between the registry-hydrated v1beta3 and the pattern-
 	// level v1beta2 components.
 	dst.Metadata = componentv1beta2.ComponentDefinition_Metadata(src.Metadata)

@@ -69,7 +69,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 
 		userUUID := user.ID
 		credential, err := p.SaveUserCredential(token, &models.Credential{
-			UserId: userUUID,
+			userID: userUUID,
 			Type:   "grafana",
 			Secret: grafanaCred,
 			Name:   credName,
@@ -187,7 +187,7 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	}
 	err = json.NewEncoder(w).Encode(boards)
 	if err != nil {
-		// Response body has already started streaming via json.Encoder —
+		// Response body has already started streaming via json.Encoder â€”
 		// a fresh error response would corrupt the in-flight JSON, so log only.
 		h.log.Error(models.ErrMarshal(err, "boards payload"))
 		return

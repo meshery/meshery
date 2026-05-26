@@ -21,7 +21,7 @@ func TestControllerEventActedUponPrefersConnectionID(t *testing.T) {
 	}
 }
 
-func TestControllerEventActedUponFallsBackToUserID(t *testing.T) {
+func TestControllerEventActedUponFallsBackTouserID(t *testing.T) {
 	userID := uuid.Must(uuid.NewV4())
 
 	actedUpon := controllerEventActedUpon(userID, map[string]any{

@@ -160,7 +160,7 @@ func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ 
 
 // InitiateLogin - initiates login flow and redirects to home for local provider.
 // When called from AuthMiddleware (fromMiddleWare=true), it's a no-op since the
-// local provider doesn't require authentication — the middleware will allow the
+// local provider doesn't require authentication ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â the middleware will allow the
 // request to proceed. When called from the /user/login route (fromMiddleWare=false),
 // it redirects to / or to the deep-link target from the ref query param.
 func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
@@ -172,14 +172,14 @@ func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Requ
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
-	avatarUrl := ""
+	avatarURL := ""
 	localEmail := types.Email("meshery@meshery.local")
 	return &User{
-		UserId:    "meshery",
+		userID:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
 		Email:     localEmail,
-		AvatarUrl: &avatarUrl,
+		avatarURL: &avatarURL,
 	}
 }
 
@@ -211,12 +211,12 @@ func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID 
 }
 
 func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
-	orgId := core.Uuid(environmentPayload.OrgId)
+	orgID := core.Uuid(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
-		OrganizationID: orgId,
+		organizationID: orgID,
 		Owner:          &uuid.Nil, // "Meshery"
 		UpdatedAt:      time.Now(),
 	}
@@ -225,13 +225,13 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 
 func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
 	id, _ := uuid.FromString(environmentID)
-	orgId := core.Uuid(environmentPayload.OrgId)
+	orgID := core.Uuid(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		ID:             id,
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
-		OrganizationID: orgId,
+		organizationID: orgID,
 		Owner:          &uuid.Nil, // "Meshery"
 		UpdatedAt:      time.Now(),
 	}
@@ -239,20 +239,20 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 }
 
 func (l *DefaultLocalProvider) AddConnectionToEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
-	envId, _ := uuid.FromString(environmentID)
-	conId, _ := uuid.FromString(connectionID)
-	return l.EnvironmentPersister.AddConnectionToEnvironment(envId, conId)
+	envID, _ := uuid.FromString(environmentID)
+	conID, _ := uuid.FromString(connectionID)
+	return l.EnvironmentPersister.AddConnectionToEnvironment(envID, conID)
 }
 
 func (l *DefaultLocalProvider) RemoveConnectionFromEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
-	envId, _ := uuid.FromString(environmentID)
-	conId, _ := uuid.FromString(connectionID)
-	return l.EnvironmentPersister.DeleteConnectionFromEnvironment(envId, conId)
+	envID, _ := uuid.FromString(environmentID)
+	conID, _ := uuid.FromString(connectionID)
+	return l.EnvironmentPersister.DeleteConnectionFromEnvironment(envID, conID)
 }
 
 func (l *DefaultLocalProvider) GetConnectionsOfEnvironment(_ *http.Request, environmentID, page, pageSize, search, order, filter string) ([]byte, error) {
-	envId, _ := uuid.FromString(environmentID)
-	return l.EnvironmentPersister.GetEnvironmentConnections(envId, search, order, page, pageSize, filter)
+	envID, _ := uuid.FromString(environmentID)
+	return l.EnvironmentPersister.GetEnvironmentConnections(envID, search, order, page, pageSize, filter)
 }
 
 // GetSession - returns the session
@@ -468,7 +468,7 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 		return "", ErrMarshal(err, "meshery result for shipping")
 	}
 	user, _ := l.GetUserDetails(req)
-	pref, _ := l.ReadFromPersister(user.UserId)
+	pref, _ := l.ReadFromPersister(user.userID)
 	if !pref.AnonymousPerfResults {
 		return "", nil
 	}
@@ -765,7 +765,7 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, ord
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, search, order, _ string, populate, class, technology, patternType, orgID, workspaceID, userid []string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, search, order, _ string, populate, class, technology, patternType, orgID, workspaceID, userID []string) ([]byte, error) {
 	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(page, pageSize, search, order)
 }
 
@@ -1135,7 +1135,7 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 		Kind:         conn.Kind,
 		Metadata:     conn.MetaData,
 		Status:       conn.Status,
-		UserID:       &uuid.Nil,
+		userID:       &uuid.Nil,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 	}
@@ -1177,7 +1177,7 @@ func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connecti
 	return updatedConnection, http.StatusOK, nil
 }
 
-func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, _ string) (*connections.Connection, error) {
+func (l *DefaultLocalProvider) UpdateConnectionByID(token string, conn *connections.ConnectionPayload, _ string) (*connections.Connection, error) {
 	connection := connections.Connection{
 		ID:           conn.ID,
 		Name:         conn.Name,
@@ -1194,7 +1194,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 }
 
 func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, connectionID core.Uuid) (*connections.Connection, error) {
-	return l.ConnectionPersister.DeleteConnectionById(connectionID)
+	return l.ConnectionPersister.DeleteConnectionByID(connectionID)
 }
 
 func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
@@ -1230,7 +1230,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 		seededUUIDsMu sync.Mutex
 	)
 	seedContents := []string{"Pattern", "Filter"}
-	nilUserID := ""
+	niluserID := ""
 
 	// Use the relative directory for patterns
 	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
@@ -1265,7 +1265,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 								PatternFile: file.Content,
 								Name:        patternName,
 								ID:          &id,
-								UserID:      &nilUserID,
+								userID:      &niluserID,
 								Visibility:  Published,
 								Location: map[string]interface{}{
 									"host":   "",
@@ -1298,7 +1298,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							FilterFile: []byte(content[i]),
 							Name:       name,
 							ID:         &id,
-							UserID:     &nilUserID,
+							userID:     &niluserID,
 							Visibility: Published,
 							Location: map[string]interface{}{
 								"host":   "",
@@ -1373,7 +1373,7 @@ func (l *DefaultLocalProvider) GetCredentialByID(token string, credentialID core
 }
 
 func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error) {
-	result := l.GetGenericPersister().Select("*").Where("user_id=? and deleted_at is NULL", userID)
+	result := l.GetGenericPersister().Select("*").Where("user_id=? and DeletedAt is NULL", userID)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -1413,12 +1413,12 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 
 func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
 	updatedCredential := &Credential{}
-	db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserId, credential.ID).Updates(credential)
+	db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND DeletedAt is NULL", credential.userID, credential.ID).Updates(credential)
 	if db.Error != nil {
 		return nil, fmt.Errorf("error updating user credential: %v", db.Error)
 	}
 
-	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserId, credential.ID).First(updatedCredential).Error; err != nil {
+	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.userID, credential.ID).First(updatedCredential).Error; err != nil {
 		return nil, fmt.Errorf("error getting updated user credential: %v", err)
 	}
 	return updatedCredential, nil
@@ -1426,7 +1426,7 @@ func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential 
 
 func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialID core.Uuid) (*Credential, error) {
 	delCredential := &Credential{}
-	if err := l.GetGenericPersister().Model(&Credential{}).Where("id = ?", credentialID).Update("deleted_at", time.Now()).Error; err != nil {
+	if err := l.GetGenericPersister().Model(&Credential{}).Where("id = ?", credentialID).Update("DeletedAt", time.Now()).Error; err != nil {
 		return nil, err
 	}
 	if err := l.GetGenericPersister().Where("id = ?", credentialID).First(delCredential).Error; err != nil {
@@ -1481,29 +1481,29 @@ func (l *DefaultLocalProvider) GetWorkspaces(_, page, pageSize, search, order, f
 	return l.WorkspacePersister.GetWorkspaces(orgID, search, order, page, pageSize, filter)
 }
 
-func (l *DefaultLocalProvider) GetWorkspaceByID(_ *http.Request, workspaceID string, _ string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetWorkspaceByID(_ *http.Request, workspaceIDstring, _ string) ([]byte, error) {
 	id := uuid.FromStringOrNil(workspaceID)
 	return l.WorkspacePersister.GetWorkspaceByID(id)
 }
 
-func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID string) ([]byte, error) {
+func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceIDstring) ([]byte, error) {
 	id := uuid.FromStringOrNil(workspaceID)
 	return l.WorkspacePersister.DeleteWorkspaceByID(id)
 }
 
 func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
-	orgID := core.Uuid(workspacePayload.OrganizationID)
+	orgID := core.Uuid(workspacePayload.organizationID)
 	ws := &workspace.Workspace{
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
-		OrganizationID: orgID,
+		organizationID: orgID,
 		UpdatedAt:      time.Now(),
 	}
 	return l.WorkspacePersister.SaveWorkspace(ws)
 }
 
-func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspaceUpdatePayload, workspaceID string) (*workspace.Workspace, error) {
+func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspaceUpdatePayload, workspaceIDstring) (*workspace.Workspace, error) {
 	id, err := uuid.FromString(workspaceID)
 	if err != nil {
 		return nil, err
@@ -1511,35 +1511,35 @@ func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload
 	return l.WorkspacePersister.UpdateWorkspace(id, workspacePayload)
 }
 
-func (l *DefaultLocalProvider) AddEnvironmentToWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	envId, _ := uuid.FromString(environmentID)
-	return l.WorkspacePersister.AddEnvironmentToWorkspace(workspaceId, envId)
+func (l *DefaultLocalProvider) AddEnvironmentToWorkspace(_ *http.Request, workspaceIDstring, environmentID string) ([]byte, error) {
+	workspaceID, _ := uuid.FromString(workspaceID)
+	envID, _ := uuid.FromString(environmentID)
+	return l.WorkspacePersister.AddEnvironmentToWorkspace(workspaceID, envID)
 }
 
-func (l *DefaultLocalProvider) RemoveEnvironmentFromWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	envId, _ := uuid.FromString(environmentID)
-	return l.WorkspacePersister.DeleteEnvironmentFromWorkspace(workspaceId, envId)
+func (l *DefaultLocalProvider) RemoveEnvironmentFromWorkspace(_ *http.Request, workspaceIDstring, environmentID string) ([]byte, error) {
+	workspaceID, _ := uuid.FromString(workspaceID)
+	envID, _ := uuid.FromString(environmentID)
+	return l.WorkspacePersister.DeleteEnvironmentFromWorkspace(workspaceID, envID)
 }
 
 func (l *DefaultLocalProvider) GetEnvironmentsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	return l.WorkspacePersister.GetWorkspaceEnvironments(workspaceId, search, order, page, pageSize, filter)
+	workspaceID, _ := uuid.FromString(workspaceID)
+	return l.WorkspacePersister.GetWorkspaceEnvironments(workspaceID, search, order, page, pageSize, filter)
 }
 
-func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	designId, _ := uuid.FromString(designID)
-	return l.WorkspacePersister.AddDesignToWorkspace(workspaceId, designId)
+func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, workspaceIDstring, designID string) ([]byte, error) {
+	workspaceID, _ := uuid.FromString(workspaceID)
+	designID, _ := uuid.FromString(designID)
+	return l.WorkspacePersister.AddDesignToWorkspace(workspaceID, designID)
 }
 
 func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string, visibility []string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	return l.WorkspacePersister.GetWorkspaceDesigns(workspaceId, search, order, page, pageSize, filter, visibility)
+	workspaceID, _ := uuid.FromString(workspaceID)
+	return l.WorkspacePersister.GetWorkspaceDesigns(workspaceID, search, order, page, pageSize, filter, visibility)
 }
 
-func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
+func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, workspaceIDstring, designID string) ([]byte, error) {
 	wsID, err := uuid.FromString(workspaceID)
 	if err != nil {
 		return nil, err
@@ -1559,7 +1559,7 @@ func (l *DefaultLocalProvider) GetViewsOfWorkspace(_ *http.Request, workspaceID,
 	return l.WorkspacePersister.GetWorkspaceViews(wsID, search, order, page, pageSize, filter)
 }
 
-func (l *DefaultLocalProvider) AddViewToWorkspace(_ *http.Request, workspaceID string, viewID string) ([]byte, error) {
+func (l *DefaultLocalProvider) AddViewToWorkspace(_ *http.Request, workspaceIDstring, viewID string) ([]byte, error) {
 	wsID, err := uuid.FromString(workspaceID)
 	if err != nil {
 		return nil, err
@@ -1571,7 +1571,7 @@ func (l *DefaultLocalProvider) AddViewToWorkspace(_ *http.Request, workspaceID s
 	return l.WorkspacePersister.AddViewToWorkspace(wsID, vID)
 }
 
-func (l *DefaultLocalProvider) RemoveViewFromWorkspace(_ *http.Request, workspaceID string, viewID string) ([]byte, error) {
+func (l *DefaultLocalProvider) RemoveViewFromWorkspace(_ *http.Request, workspaceIDstring, viewID string) ([]byte, error) {
 	wsID, err := uuid.FromString(workspaceID)
 	if err != nil {
 		return nil, err
@@ -1591,7 +1591,7 @@ func (l *DefaultLocalProvider) GetTeamsOfWorkspace(_ *http.Request, workspaceID,
 	return l.WorkspacePersister.GetWorkspaceTeams(wsID, search, order, page, pageSize, filter)
 }
 
-func (l *DefaultLocalProvider) AddTeamToWorkspace(_ *http.Request, workspaceID string, teamID string) ([]byte, error) {
+func (l *DefaultLocalProvider) AddTeamToWorkspace(_ *http.Request, workspaceIDstring, teamID string) ([]byte, error) {
 	wsID, err := uuid.FromString(workspaceID)
 	if err != nil {
 		return nil, err
@@ -1603,7 +1603,7 @@ func (l *DefaultLocalProvider) AddTeamToWorkspace(_ *http.Request, workspaceID s
 	return l.WorkspacePersister.AddTeamToWorkspace(wsID, tID)
 }
 
-func (l *DefaultLocalProvider) RemoveTeamFromWorkspace(_ *http.Request, workspaceID string, teamID string) ([]byte, error) {
+func (l *DefaultLocalProvider) RemoveTeamFromWorkspace(_ *http.Request, workspaceIDstring, teamID string) ([]byte, error) {
 	wsID, err := uuid.FromString(workspaceID)
 	if err != nil {
 		return nil, err
@@ -1616,8 +1616,8 @@ func (l *DefaultLocalProvider) RemoveTeamFromWorkspace(_ *http.Request, workspac
 }
 
 // GetOrganization returns the organization for the given organizationID
-func (l *DefaultLocalProvider) GetOrganization(_ *http.Request, organizationId string) ([]byte, error) {
-	id := uuid.FromStringOrNil(organizationId)
+func (l *DefaultLocalProvider) GetOrganization(_ *http.Request, organizationID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(organizationID)
 	return l.OrganizationPersister.GetOrganzation(id)
 }
 
@@ -1943,7 +1943,7 @@ func (e *EventsPersister) PersistEvent(event events.Event, token string) error {
 	// GORM's Save requires a pointer (it reflects on the struct to read/update
 	// the primary key and timestamps). Passing the value directly produced
 	// "invalid value, should be pointer to struct or slice" and dropped every
-	// system event silently — including the controller-emitted events that
+	// system event silently ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â including the controller-emitted events that
 	// flow through PersistSystemEvent.
 	err := e.DB.Save(&event).Error
 	if err != nil {
@@ -1985,7 +1985,7 @@ func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.Even
 		finder = finder.Where("acted_upon in ?", eventsFilter.ActedUpon)
 	}
 
-	sortOn := SanitizeOrderInput(fmt.Sprintf("%s %s", eventsFilter.SortOn, eventsFilter.Order), []string{"created_at", "updated_at", "name"})
+	sortOn := SanitizeOrderInput(fmt.Sprintf("%s %s", eventsFilter.SortOn, eventsFilter.Order), []string{"CreatedAt", "UpdatedAt", "name"})
 	finder = finder.Order(sortOn)
 
 	var count int64

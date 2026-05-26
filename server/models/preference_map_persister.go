@@ -45,7 +45,7 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 	}
 
 	if userID == "" {
-		return nil, ErrUserID
+		return nil, ErruserID
 	}
 
 	dataCopyB, ok := s.db.Load(userID)
@@ -73,7 +73,7 @@ func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preferenc
 	}
 
 	if userID == "" {
-		return ErrUserID
+		return ErruserID
 	}
 
 	if data == nil {
@@ -97,7 +97,7 @@ func (s *MapPreferencePersister) DeleteFromPersister(userID string) error {
 	}
 
 	if userID == "" {
-		return ErrUserID
+		return ErruserID
 	}
 	s.db.Delete(userID)
 	return nil

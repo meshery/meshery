@@ -233,7 +233,7 @@ func TestGetComponentMetadataReturnsAssociatedModelName(t *testing.T) {
 
 	componentDef := component.ComponentDefinition{
 		ID:      componentID,
-		ModelID: &modelID,
+		modelID: &modelID,
 		Component: component.Component{
 			Kind:    "Pod",
 			Version: "v1",

@@ -28,7 +28,7 @@ type MeshsyncDataHandler struct {
 	dbHandler    database.Handler
 	log          logger.Handler
 	Provider     Provider
-	UserID       core.Uuid
+	userID       core.Uuid
 	ConnectionID core.Uuid
 	InstanceID   core.Uuid
 	Token        string
@@ -44,7 +44,7 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 		dbHandler:    dbHandler,
 		log:          log,
 		Provider:     provider,
-		UserID:       userID,
+		userID:       userID,
 		ConnectionID: connID,
 		InstanceID:   instanceID,
 		Token:        token,
@@ -348,10 +348,10 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 		return
 	}
 
-	if componentDef.ModelID != nil {
+	if componentDef.modelID != nil {
 		modelDef := modelv1beta1.ModelDefinition{}
 		result = mh.dbHandler.Session(&gorm.Session{NewDB: true}).Model(&modelv1beta1.ModelDefinition{}).
-			Where("id = ?", componentDef.ModelID).
+			Where("id = ?", componentDef.modelID).
 			First(&modelDef)
 		if result.Error == nil {
 			componentDef.Model = &modelDef

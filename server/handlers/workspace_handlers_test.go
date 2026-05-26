@@ -114,10 +114,10 @@ func TestGetWorkspacesHandler_AcceptsOrgIdAndLegacyOrgID(t *testing.T) {
 	}
 }
 
-// TestGetWorkspaceByIdHandler_AcceptsOrgIdAndLegacyOrgID mirrors the coverage
+// TestGetWorkspaceByIDHandler_AcceptsOrgIdAndLegacyOrgID mirrors the coverage
 // above for the single-workspace endpoint: canonical `orgId` preferred,
 // legacy `orgID` dual-accepted during Phase 2.
-func TestGetWorkspaceByIdHandler_AcceptsOrgIdAndLegacyOrgID(t *testing.T) {
+func TestGetWorkspaceByIDHandler_AcceptsOrgIdAndLegacyOrgID(t *testing.T) {
 	cases := []struct {
 		name         string
 		rawQuery     string
@@ -157,7 +157,7 @@ func TestGetWorkspaceByIdHandler_AcceptsOrgIdAndLegacyOrgID(t *testing.T) {
 			req = mux.SetURLVars(req, map[string]string{"id": "workspace-1"})
 			rec := httptest.NewRecorder()
 
-			h.GetWorkspaceByIdHandler(rec, req, nil, nil, provider)
+			h.GetWorkspaceByIDHandler(rec, req, nil, nil, provider)
 
 			if rec.Code != tc.wantStatus {
 				t.Fatalf("expected status %d, got %d (body=%q)", tc.wantStatus, rec.Code, rec.Body.String())
@@ -176,12 +176,12 @@ func TestGetWorkspaceByIdHandler_AcceptsOrgIdAndLegacyOrgID(t *testing.T) {
 
 // TestWorkspacePayloadWire_UnmarshalJSON exercises the dual-accept body
 // contract for POST /api/workspaces. The schemas-generated struct tags
-// OrganizationID as json:"organization_id", but canonical in-repo consumers
-// now emit `organizationId`. Go's case-insensitive tag fallback does NOT
+// organizationID as json:"organization_id", but canonical in-repo consumers
+// now emit `organizationID`. Go's case-insensitive tag fallback does NOT
 // match across an underscore boundary, so the wrapper's UnmarshalJSON must
 // intercept both spellings during the Phase 2 deprecation window. Canonical
 // must win when both are supplied. Table is kept narrow on purpose: the
-// wrapper only routes OrganizationID, so we only assert that field here.
+// wrapper only routes organizationID, so we only assert that field here.
 func TestWorkspacePayloadWire_UnmarshalJSON(t *testing.T) {
 	const (
 		canonicalUUID = "11111111-1111-1111-1111-111111111111"
@@ -194,8 +194,8 @@ func TestWorkspacePayloadWire_UnmarshalJSON(t *testing.T) {
 		wantOrg string
 	}{
 		{
-			name:    "canonical organizationId only",
-			body:    `{"name":"ws","organizationId":"` + canonicalUUID + `"}`,
+			name:    "canonical organizationID only",
+			body:    `{"name":"ws","organizationID":"` + canonicalUUID + `"}`,
 			wantOrg: canonicalUUID,
 		},
 		{
@@ -205,7 +205,7 @@ func TestWorkspacePayloadWire_UnmarshalJSON(t *testing.T) {
 		},
 		{
 			name:    "both supplied, canonical wins",
-			body:    `{"name":"ws","organizationId":"` + canonicalUUID + `","organization_id":"` + legacyUUID + `"}`,
+			body:    `{"name":"ws","organizationID":"` + canonicalUUID + `","organization_id":"` + legacyUUID + `"}`,
 			wantOrg: canonicalUUID,
 		},
 	}
@@ -216,8 +216,8 @@ func TestWorkspacePayloadWire_UnmarshalJSON(t *testing.T) {
 			if err := json.Unmarshal([]byte(tc.body), &wire); err != nil {
 				t.Fatalf("unexpected unmarshal error: %v", err)
 			}
-			if got := wire.OrganizationID.String(); got != tc.wantOrg {
-				t.Fatalf("OrganizationID = %q, want %q", got, tc.wantOrg)
+			if got := wire.organizationID.String(); got != tc.wantOrg {
+				t.Fatalf("organizationID = %q, want %q", got, tc.wantOrg)
 			}
 			if wire.Name != "ws" {
 				t.Fatalf("Name = %q, want %q", wire.Name, "ws")
@@ -228,8 +228,8 @@ func TestWorkspacePayloadWire_UnmarshalJSON(t *testing.T) {
 
 // TestWorkspaceUpdatePayloadWire_UnmarshalJSON mirrors the payload coverage
 // for the PUT /api/workspaces/{id} path: the update wrapper must route both
-// `organizationId` (canonical) and `organization_id` (legacy) onto the
-// underlying schemas-generated OrganizationID field, with canonical taking
+// `organizationID` (canonical) and `organization_id` (legacy) onto the
+// underlying schemas-generated organizationID field, with canonical taking
 // precedence when both are present.
 func TestWorkspaceUpdatePayloadWire_UnmarshalJSON(t *testing.T) {
 	const (
@@ -243,8 +243,8 @@ func TestWorkspaceUpdatePayloadWire_UnmarshalJSON(t *testing.T) {
 		wantOrg string
 	}{
 		{
-			name:    "canonical organizationId only",
-			body:    `{"name":"ws","organizationId":"` + canonicalUUID + `"}`,
+			name:    "canonical organizationID only",
+			body:    `{"name":"ws","organizationID":"` + canonicalUUID + `"}`,
 			wantOrg: canonicalUUID,
 		},
 		{
@@ -254,7 +254,7 @@ func TestWorkspaceUpdatePayloadWire_UnmarshalJSON(t *testing.T) {
 		},
 		{
 			name:    "both supplied, canonical wins",
-			body:    `{"name":"ws","organizationId":"` + canonicalUUID + `","organization_id":"` + legacyUUID + `"}`,
+			body:    `{"name":"ws","organizationID":"` + canonicalUUID + `","organization_id":"` + legacyUUID + `"}`,
 			wantOrg: canonicalUUID,
 		},
 	}
@@ -265,8 +265,8 @@ func TestWorkspaceUpdatePayloadWire_UnmarshalJSON(t *testing.T) {
 			if err := json.Unmarshal([]byte(tc.body), &wire); err != nil {
 				t.Fatalf("unexpected unmarshal error: %v", err)
 			}
-			if got := wire.OrganizationID.String(); got != tc.wantOrg {
-				t.Fatalf("OrganizationID = %q, want %q", got, tc.wantOrg)
+			if got := wire.organizationID.String(); got != tc.wantOrg {
+				t.Fatalf("organizationID = %q, want %q", got, tc.wantOrg)
 			}
 		})
 	}

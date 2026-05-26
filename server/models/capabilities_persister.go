@@ -20,7 +20,7 @@ func (u *UserCapabilitiesPersister) ReadCapabilitiesForUser(userID string) (*Pro
 	}
 
 	if userID == "" {
-		return nil, ErrUserID
+		return nil, ErruserID
 	}
 
 	capabilities := &UserCapabilities{}
@@ -39,7 +39,7 @@ func (u *UserCapabilitiesPersister) WriteCapabilitiesForUser(userID string, data
 	}
 
 	if userID == "" {
-		return ErrUserID
+		return ErruserID
 	}
 
 	userCapabilities := &UserCapabilities{
@@ -62,7 +62,7 @@ func (u *UserCapabilitiesPersister) DeleteCapabilitiesForUser(userID string) err
 	}
 
 	if userID == "" {
-		return ErrUserID
+		return ErruserID
 	}
 
 	return u.DB.Delete(&UserCapabilities{ID: userID}).Error

@@ -43,7 +43,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	}
 	h.log.Debug("final list of active adapters: ", meshAdapters)
 	prefObj.MeshAdapters = meshAdapters
-	err := provider.RecordPreferences(req, user.UserId, prefObj)
+	err := provider.RecordPreferences(req, user.userID, prefObj)
 	if err != nil { // ignoring errors in this context
 		h.log.Error(ErrSaveSession(err))
 	}

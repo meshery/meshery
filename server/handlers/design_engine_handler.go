@@ -150,7 +150,7 @@ func (h *Handler) PatternFileHandler(
 		Provider:               provider,
 		Pattern:                patternFile,
 		PrefObj:                prefObj,
-		UserID:                 user.ID.String(),
+		userID:                 user.ID.String(),
 		IsDelete:               isDelete,
 		Validate:               validate,
 		DryRun:                 isDryRun,
@@ -195,7 +195,7 @@ func (h *Handler) PatternFileHandler(
 	description = fmt.Sprintf("%s.", description)
 	metadata["viewLink"] = viewLink
 	metadata["designName"] = patternFile.Name
-	metadata["designId"] = patternID
+	metadata["designID"] = patternID
 
 	var event *events.Event
 	if action == "deploy" || action == "dry-run" {
@@ -249,7 +249,7 @@ func _processPattern(opts *patterncore.ProcessPatternOptions) (map[string]interf
 			log:                    opts.Log,
 			provider:               opts.Provider,
 			prefObj:                opts.PrefObj,
-			userID:                 opts.UserID,
+			userID:                 opts.userID,
 			registry:               opts.Registry,
 			skipPrintLogs:          opts.SkipPrintLogs,
 			skipCrdAndOperator:     opts.SkipCRDAndOperator,

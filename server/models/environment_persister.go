@@ -25,7 +25,7 @@ type EnvironmentPersister struct {
 func (ep *EnvironmentPersister) fetchUserDetails() *User {
 
 	return &User{
-		UserId:    "meshery",
+		userID:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
 	}
@@ -34,7 +34,7 @@ func (ep *EnvironmentPersister) fetchUserDetails() *User {
 // GetEnvironments returns all of the environments
 func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, pageSize, filter string) ([]byte, error) {
 	// Sanitize the order input
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "name"})
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
 	}
@@ -134,7 +134,7 @@ func (ep *EnvironmentPersister) DeleteEnvironment(environment *environment.Envir
 	}
 	err = ep.DB.Delete(environment).Error
 	if err != nil {
-		return nil, ErrDBDelete(err, ep.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, ep.fetchUserDetails().userID)
 	}
 
 	// Marshal the environment to JSON
@@ -192,7 +192,7 @@ func (ep *EnvironmentPersister) UpdateEnvironment(environmentID core.Uuid, paylo
 
 	env.Name = payload.Name
 	env.Description = payload.Description
-	env.OrganizationID = core.Uuid(payload.OrgId)
+	env.organizationID = core.Uuid(payload.OrgId)
 
 	return ep.UpdateEnvironmentByID(env)
 }
@@ -238,9 +238,9 @@ func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connec
 // GetEnvironmentConnections returns connections for an environment
 func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uuid, search, order, page, pageSize, filter string) ([]byte, error) {
 	// Sanitize the order input
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "name"})
 	if order == "" {
-		order = "connections.updated_at desc"
+		order = "connections.UpdatedAt desc"
 	}
 
 	isAssigned := true
@@ -262,12 +262,12 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 		// Query for connection that are assigned to given environment
 		query = ep.DB.Table("environment_connection_mappings").
 			Joins("JOIN connections ON connections.id = environment_connection_mappings.connection_id").
-			Select("connections.name, connections.id, connections.metadata, connections.status, connections.type, connections.sub_type, connections.created_at, connections.updated_at, connections.deleted_at, connections.kind, connections.user_id").
+			Select("connections.name, connections.id, connections.metadata, connections.status, connections.type, connections.sub_type, connections.CreatedAt, connections.UpdatedAt, connections.DeletedAt, connections.kind, connections.user_id").
 			Where("environment_connection_mappings.environment_id = ?", environmentID)
 	} else {
 		// Query for connections that are not assigned to the given environment
 		query = ep.DB.Table("connections").
-			Select("connections.name, connections.id, connections.metadata, connections.status, connections.type, connections.sub_type, connections.created_at, connections.updated_at, connections.deleted_at, connections.kind, connections.user_id").
+			Select("connections.name, connections.id, connections.metadata, connections.status, connections.type, connections.sub_type, connections.CreatedAt, connections.UpdatedAt, connections.DeletedAt, connections.kind, connections.user_id").
 			Joins("LEFT JOIN environment_connection_mappings ON environment_connection_mappings.connection_id = connections.id AND environment_connection_mappings.environment_id = ?", environmentID).
 			Where("environment_connection_mappings.connection_id IS NULL")
 	}
@@ -332,7 +332,7 @@ func (ep *EnvironmentPersister) DeleteConnectionFromEnvironment(environmentID, c
 
 	// Delete the connection mapping
 	if err := ep.DB.Delete(&envConMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, ep.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, ep.fetchUserDetails().userID)
 	}
 
 	envJSON, err := json.Marshal(envConMapping)

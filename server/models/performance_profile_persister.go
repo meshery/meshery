@@ -28,7 +28,7 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 	// (`lastRun`) and the legacy snake_case key (`last_run`) for the
 	// Phase 2.K cascade deprecation window. Once all UI callers emit
 	// `lastRun` exclusively, drop the snake_case entry.
-	order = SanitizeOrderInput(order, []string{"updated_at", "created_at", "name", "last_run", "lastRun"})
+	order = SanitizeOrderInput(order, []string{"UpdatedAt", "CreatedAt", "name", "last_run", "lastRun"})
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
 	}
@@ -49,8 +49,8 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 		id, name, load_generators,
 		endpoints, qps, service_mesh,
 		duration, request_headers, request_cookies,
-		request_body, content_type, created_at,
-		updated_at, (?) as last_run, (?) as total_results`,
+		request_body, content_type, CreatedAt,
+		UpdatedAt, (?) as last_run, (?) as total_results`,
 			ppp.DB.Table("meshery_results").Select("DATETIME(MAX(meshery_results.test_start_time))").Where("performance_profile = performance_profiles.id"),
 			ppp.DB.Table("meshery_results").Select("COUNT(meshery_results.name)").Where("performance_profile = performance_profiles.id"),
 		).

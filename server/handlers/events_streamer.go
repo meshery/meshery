@@ -79,7 +79,7 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	err = json.NewEncoder(w).Encode(e)
 
 	if err != nil {
-		// Response body has already started streaming via json.Encoder —
+		// Response body has already started streaming via json.Encoder â€”
 		// Content-Type: application/json is committed and a partial JSON
 		// envelope is on the wire. A fresh error response would corrupt
 		// it, so log only.
@@ -123,7 +123,7 @@ func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefOb
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(eventTypes)
 	if err != nil {
-		// Response body has already started streaming via json.Encoder —
+		// Response body has already started streaming via json.Encoder â€”
 		// Content-Type: application/json is committed and a partial JSON
 		// envelope is on the wire. A fresh error response would corrupt
 		// it, so log only.
@@ -287,7 +287,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 	if !ok {
 		// This precondition fires BEFORE the SSE Content-Type headers are
 		// committed (set 3 lines below). The response is therefore a regular
-		// JSON error envelope, not a text/event-stream chunk — emit it via
+		// JSON error envelope, not a text/event-stream chunk â€” emit it via
 		// writeMeshkitError so RTK Query can parse it like any other error.
 		h.log.Error(ErrEventStreamingNotSupported)
 		writeMeshkitError(w, ErrEventStreamingNotSupported, http.StatusInternalServerError)
@@ -394,7 +394,7 @@ func writeEventStream(ctx context.Context, w io.Writer, respChan <-chan []byte, 
 			log.Debug("received new data on response channel")
 			if _, err := fmt.Fprintf(w, "data: %s\n\n", data); err != nil {
 				// A write failure here almost always means the client
-				// disconnected (broken pipe) — stop the loop so we don't
+				// disconnected (broken pipe) â€” stop the loop so we don't
 				// spin publishing into a dead socket.
 				log.Error(fmt.Errorf("failed to write event stream: %w", err))
 				return
@@ -421,7 +421,7 @@ func sendStreamEvent(ctx context.Context, respChan chan<- []byte, data []byte) b
 
 func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp chan []byte, log logger.Handler, _ models.Provider, subscribe subscribeFunc) {
 	// Subscribe synchronously so the subscription is registered before any
-	// events can be published to datach — running Subscribe in a goroutine
+	// events can be published to datach â€” running Subscribe in a goroutine
 	// left a window in which early Publish calls could be dropped.
 	datach := make(chan interface{}, 10)
 	subscribe(eb, datach)

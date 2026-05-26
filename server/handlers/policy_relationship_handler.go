@@ -41,14 +41,14 @@ const (
 	suffix                        = "_relationship"
 )
 
-const RELATIONSHIP_SUBTYPE_ALIAS = "alias"
+const RelationshipSubtypeAlias = "alias"
 
 // Aliasses Are not resolved
 func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (coremodelv1beta2.NonResolvedAlias, bool) {
 
 	alias := coremodelv1beta2.NonResolvedAlias{}
 
-	if relationshipDeclaration.SubType != RELATIONSHIP_SUBTYPE_ALIAS {
+	if relationshipDeclaration.SubType != RelationshipSubtypeAlias {
 		return alias, false
 	}
 
@@ -109,8 +109,8 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 	return coremodelv1beta2.NonResolvedAlias{}, false
 }
 
-// getComponentById retrieves a component from the design by its ID
-func getComponentById(design pattern.PatternFile, id legacycoremodel.Uuid) *component.ComponentDefinition {
+// getComponentByID retrieves a component from the design by its ID
+func getComponentByID(design pattern.PatternFile, id legacycoremodel.Uuid) *component.ComponentDefinition {
 	for _, comp := range design.Components {
 		if comp.ID == id {
 			return comp
@@ -120,7 +120,7 @@ func getComponentById(design pattern.PatternFile, id legacycoremodel.Uuid) *comp
 }
 
 func ResolveAlias(nonResolvedAlias coremodelv1beta2.NonResolvedAlias, currentNonResolved coremodelv1beta2.NonResolvedAlias, path []string, design pattern.PatternFile) coremodelv1beta2.ResolvedAlias {
-	parentComponent := getComponentById(design, currentNonResolved.ImmediateParentId)
+	parentComponent := getComponentByID(design, currentNonResolved.ImmediateParentId)
 	if parentComponent == nil {
 		return coremodelv1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
 	}
@@ -264,7 +264,7 @@ func doesntNeedReeval(response pattern.EvaluationResponse) bool {
 }
 
 // max number of time to keep revaluating the design till there are no reval triggering actions in the response
-const MAX_RE_EVALUATION_DEPTH = 5
+const MaxReEvaluationDepth = 5
 
 // defaultPolicyEvalTimeout bounds a single evaluation. Override via POLICY_EVAL_TIMEOUT.
 const defaultPolicyEvalTimeout = 3 * time.Minute
@@ -275,7 +275,7 @@ var errEvalTimeout = errors.New("relationship policy evaluation timed out")
 // the relationship-evaluation success event. Extracted into a named
 // function so the canonical camelCase keys (`historyTitle`, `trace`,
 // `evaluationResponse`, `evaluatedAt`) are pinned by a focused unit test
-// — see TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys.
+// ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â see TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys.
 // Drift here would silently re-introduce the snake_case keys that
 // production carried for 125,840 rows pre-flip.
 func buildPolicyEvaluationEventMetadata(resp pattern.EvaluationResponse) map[string]interface{} {
@@ -314,7 +314,7 @@ func (h *Handler) EvaluateDesign(
 		if roundtripped, rtErr := utils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
 			relationshipPolicyEvalPayload.Design = *roundtripped
 		} else if rtErr != nil {
-			h.log.Warnf("failed v1beta3→v1beta1 round-trip after Hydrate; evaluation will proceed against the pre-hydration design: %v", rtErr)
+			h.log.Warnf("failed v1beta3ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢v1beta1 round-trip after Hydrate; evaluation will proceed against the pre-hydration design: %v", rtErr)
 		}
 	} else if bridgeErr != nil {
 		h.log.Warnf("failed to bridge pattern for evaluation: %v", bridgeErr)
@@ -341,7 +341,7 @@ func (h *Handler) EvaluateDesign(
 		convertedRels = gopolicies.ConvertRelationships(relInterfaces)
 	}
 
-	for i := range MAX_RE_EVALUATION_DEPTH {
+	for i := range MaxReEvaluationDepth {
 
 		var evaluationResponse pattern.EvaluationResponse
 		var err error
@@ -385,8 +385,8 @@ func (h *Handler) EvaluateDesign(
 			h.log.Info("Evaluation completed in iteration ", i+1)
 			break
 		}
-		if i == (MAX_RE_EVALUATION_DEPTH - 1) {
-			h.log.Warnf("Evaluation depth limit of %d reached; returning partial result", MAX_RE_EVALUATION_DEPTH)
+		if i == (MaxReEvaluationDepth - 1) {
+			h.log.Warnf("Evaluation depth limit of %d reached; returning partial result", MaxReEvaluationDepth)
 			break
 		}
 
@@ -399,14 +399,14 @@ func (h *Handler) EvaluateDesign(
 	lastEvaluationResponse.Actions = deduplicateActions(lastEvaluationResponse.Actions)
 
 	// dehydrate the design file components to remove unnecessary details.
-	// Same v1beta1 ↔ v1beta3 bridge rationale as the HydratePattern call
+	// Same v1beta1 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â v1beta3 bridge rationale as the HydratePattern call
 	// above: meshkit is v1beta3-only, this carve-out is v1beta1.
 	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&lastEvaluationResponse.Design); bridgeErr == nil && bridged != nil {
 		patternHelpers.DehydratePattern(bridged)
 		if roundtripped, rtErr := utils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
 			lastEvaluationResponse.Design = *roundtripped
 		} else if rtErr != nil {
-			h.log.Warnf("failed v1beta3→v1beta1 round-trip after Dehydrate; response will ship un-dehydrated: %v", rtErr)
+			h.log.Warnf("failed v1beta3ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢v1beta1 round-trip after Dehydrate; response will ship un-dehydrated: %v", rtErr)
 		}
 	} else if bridgeErr != nil {
 		h.log.Warnf("failed to bridge pattern for dehydration: %v", bridgeErr)
@@ -612,22 +612,22 @@ func componentDefinitionToMap(comp *component.ComponentDefinition) (map[string]i
 
 // registryComponentDefinitionToV1beta1 bridges the v1beta3 ComponentDefinition
 // the meshkit registry returns into the v1beta1 ComponentDefinition that
-// pattern.PatternFile.Components is typed against. This handler — and every
-// caller of processEvaluationResponse — operates on v1beta1; v1beta3 is only
+// pattern.PatternFile.Components is typed against. This handler ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â and every
+// caller of processEvaluationResponse ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â operates on v1beta1; v1beta3 is only
 // the registry's storage representation.
 //
 // Mechanism: a shallow field copy that keeps pointer- and reference-typed
 // inner fields (Model, Styles, Capabilities, Configuration,
-// Metadata.AdditionalProperties, ModelID) aliased across both versions, so
+// Metadata.AdditionalProperties, modelID) aliased across both versions, so
 // later in-place mutations meshkit helpers (e.g.
 // orchestration.EnrichComponentWithMesheryMetadata) might make through one
 // of those pointers remain visible from the v1beta1 view. This parallels
-// the existing models/pattern/utils.ComponentV1beta3ToV1beta2 bridge — same
+// the existing models/pattern/utils.ComponentV1beta3ToV1beta2 bridge ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â same
 // pattern, different target version.
 //
 // Why not json.Marshal/json.Unmarshal: a JSON round-trip silently drops
-// fields whose tags differ across versions (already true today —
-// v1beta1 uses `json:"created_at,omitempty"` while v1beta3 uses
+// fields whose tags differ across versions (already true today ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â
+// v1beta1 uses `json:"CreatedAt,omitempty"` while v1beta3 uses
 // `json:"createdAt"`) and deep-clones the inner pointer targets, which
 // breaks the alias contract the existing bridge documents. Future tag
 // drift would compound the data loss with no compile-time signal.
@@ -670,7 +670,7 @@ func registryComponentDefinitionToV1beta1(entity interface{}) (*component.Compon
 		},
 		CreatedAt: src.CreatedAt,
 		UpdatedAt: src.UpdatedAt,
-		ModelId:   src.ModelID,
+		modelID:   src.modelID,
 	}
 	if src.Status != nil {
 		st := component.ComponentDefinitionStatus(*src.Status)
@@ -806,7 +806,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		h.evalTracker,
 		designKey,
 		func() (pattern.EvaluationResponse, error) {
-			return h.EvaluateDesign(relationshipPolicyEvalPayload, MAX_RE_EVALUATION_DEPTH)
+			return h.EvaluateDesign(relationshipPolicyEvalPayload, MaxReEvaluationDepth)
 		},
 		evalRespChan,
 		evalErrChan,
@@ -868,7 +868,7 @@ func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResul
 		Actions:        result.resp.Actions,
 	}
 	if err := ec.Encode(response); err != nil {
-		// Response body has already started streaming via json.Encoder —
+		// Response body has already started streaming via json.Encoder ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â
 		// a partial JSON envelope is on the wire and a fresh error
 		// response would corrupt it, so log only.
 		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))

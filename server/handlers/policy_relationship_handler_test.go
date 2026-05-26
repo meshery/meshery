@@ -69,7 +69,7 @@ func TestRunRelationshipEvaluation_RecoversPanic(t *testing.T) {
 	select {
 	case <-done:
 	case <-time.After(2 * time.Second):
-		t.Fatal("goroutine did not return — recover path is broken")
+		t.Fatal("goroutine did not return â€” recover path is broken")
 	}
 
 	select {
@@ -86,7 +86,7 @@ func TestRunRelationshipEvaluation_RecoversPanic(t *testing.T) {
 		assert.Error(t, res.err, "follower must observe the panic as an error, not block forever")
 		assert.Contains(t, res.err.Error(), "synthetic engine explosion")
 	case <-time.After(time.Second):
-		t.Fatal("follower never unblocked — coalesced clients would hang")
+		t.Fatal("follower never unblocked â€” coalesced clients would hang")
 	}
 
 	select {
@@ -97,9 +97,9 @@ func TestRunRelationshipEvaluation_RecoversPanic(t *testing.T) {
 }
 
 func TestRunRelationshipEvaluation_PanicDoesNotDeadlock(t *testing.T) {
-	// If the leader has already given up — typically via the surrounding
+	// If the leader has already given up â€” typically via the surrounding
 	// handler's evalCtx.Done() case returning before this goroutine
-	// finishes — the request handler is no longer reading errCh. A
+	// finishes â€” the request handler is no longer reading errCh. A
 	// blocking send from inside the recover path would then leak this
 	// goroutine forever. Use unbuffered channels with no reader and
 	// trigger a real panic so the recover-path's non-blocking send is
@@ -167,7 +167,7 @@ func TestRunRelationshipEvaluation_PassesThroughEvalError(t *testing.T) {
 }
 
 // seedTestComponent registers a v1beta3.ComponentDefinition into the given
-// RegistryManager using the registry's own RegisterEntity API — no raw SQL.
+// RegistryManager using the registry's own RegisterEntity API â€” no raw SQL.
 // The returned component has Kind/Version matching the evalResp fixture so
 // that ComponentFilter.Get finds it and returns the canonical registry type.
 func seedTestComponent(t *testing.T, rm *registry.RegistryManager) {
@@ -248,7 +248,7 @@ func TestProcessEvaluationResponse_NilPointerGuard(t *testing.T) {
 
 	t.Run("empty registry routes to unknownComponents", func(t *testing.T) {
 		t.Parallel()
-		// len(entities)==0 guard: registry has no match → unknownComponents, no panic.
+		// len(entities)==0 guard: registry has no match â†’ unknownComponents, no panic.
 		rm, _ := newTestRegistryManager(t)
 		var got []*component.ComponentDefinition
 		require.NotPanics(t, func() {
@@ -362,7 +362,7 @@ func TestProcessEvaluationResponse_NilPointerGuard(t *testing.T) {
 		// Annotation flag on the eval-trace entry must propagate to the registry
 		// component after hydration (line: _component.Metadata.IsAnnotation = _c.Metadata.IsAnnotation).
 		// With an empty registry the component is unknown, but the metadata copy
-		// code path is reachable once the guard passes — documented here.
+		// code path is reachable once the guard passes â€” documented here.
 		rm, _ := newTestRegistryManager(t)
 		resp := &pattern.EvaluationResponse{
 			Design: pattern.PatternFile{Version: "0.0.1"},
@@ -390,7 +390,7 @@ func TestProcessEvaluationResponse_NilPointerGuard(t *testing.T) {
 // scenarios have two distinct kinds with two distinct styles to
 // disambiguate. Reuses the same connection/model identity as
 // seedTestComponent (kubernetes v1.25.0) to keep the model_dbs row
-// shared — RegisterEntity rejects two components claiming the same
+// shared â€” RegisterEntity rejects two components claiming the same
 // generated model ID via separate registrations otherwise.
 func seedNamespaceComponent(t *testing.T, rm *registry.RegistryManager) {
 	t.Helper()
@@ -440,16 +440,16 @@ func seedNamespaceComponent(t *testing.T, rm *registry.RegistryManager) {
 // component (e.g. Namespace auto-added for a Pod), the user's custom
 // styling on EXISTING design components (e.g. a Pod whose color the user
 // changed from green to red) must not be overwritten. Hydration is for
-// new components only — existing components flow through unmodified.
+// new components only â€” existing components flow through unmodified.
 //
 // This is the contract that lets users customize node appearance without
 // losing those customizations every time the evaluator runs (and the
 // evaluator runs after almost every UI mutation: ADD_COMPONENT,
-// UPDATE_CONFIGURATION, MERGE_DESIGN, …).
+// UPDATE_CONFIGURATION, MERGE_DESIGN, â€¦).
 //
 // Regression guard: a future "improvement" that loops over
-// Design.Components and applies registry styles to all of them — rather
-// than only to Trace.ComponentsAdded — would silently destroy every
+// Design.Components and applies registry styles to all of them â€” rather
+// than only to Trace.ComponentsAdded â€” would silently destroy every
 // per-instance customization in the design. This test fails fast if that
 // happens.
 func TestProcessEvaluationResponse_PreservesUserCustomizationsOnExistingComponents(t *testing.T) {
@@ -475,7 +475,7 @@ func TestProcessEvaluationResponse_PreservesUserCustomizationsOnExistingComponen
 		Styles:      &core.ComponentStyles{BackgroundColor: &userBg},
 	}
 
-	// New component the evaluator just added — bare, no styles.
+	// New component the evaluator just added â€” bare, no styles.
 	addedNamespace := &component.ComponentDefinition{
 		ID:          addedNamespaceID,
 		Component:   component.Component{Kind: "Namespace", Version: "v1"},
@@ -537,8 +537,8 @@ func TestProcessEvaluationResponse_HydratesMultipleAddedComponents(t *testing.T)
 	t.Parallel()
 
 	rm, _ := newTestRegistryManager(t)
-	seedTestComponent(t, rm)       // Job → BackgroundColor "#123456"
-	seedNamespaceComponent(t, rm)  // Namespace → BackgroundColor "#326CE5"
+	seedTestComponent(t, rm)       // Job â†’ BackgroundColor "#123456"
+	seedNamespaceComponent(t, rm)  // Namespace â†’ BackgroundColor "#326CE5"
 
 	jobID, err := uuid.NewV4()
 	require.NoError(t, err)
@@ -577,7 +577,7 @@ func TestProcessEvaluationResponse_HydratesMultipleAddedComponents(t *testing.T)
 		byID[c.ID] = c
 	}
 
-	// Each kind hydrates to ITS OWN registry colour — no cross-bleed
+	// Each kind hydrates to ITS OWN registry colour â€” no cross-bleed
 	// from registry-cache reuse.
 	require.NotNil(t, byID[jobID].Styles)
 	require.NotNil(t, byID[jobID].Styles.BackgroundColor)
@@ -608,7 +608,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 		{
 			name: "nil Selectors returns false",
 			input: relationship.RelationshipDefinition{
-				SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+				SubType:   RelationshipSubtypeAlias,
 				Selectors: nil,
 			},
 			wantOk: false,
@@ -616,7 +616,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 		{
 			name: "empty Selectors returns false",
 			input: relationship.RelationshipDefinition{
-				SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+				SubType:   RelationshipSubtypeAlias,
 				Selectors: &relationship.SelectorSet{},
 			},
 			wantOk: false,
@@ -633,7 +633,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 					},
 				}
 				return relationship.RelationshipDefinition{
-					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					SubType:   RelationshipSubtypeAlias,
 					Selectors: &ss,
 				}
 			}(),
@@ -651,7 +651,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 					},
 				}
 				return relationship.RelationshipDefinition{
-					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					SubType:   RelationshipSubtypeAlias,
 					Selectors: &ss,
 				}
 			}(),
@@ -669,7 +669,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 					},
 				}
 				return relationship.RelationshipDefinition{
-					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					SubType:   RelationshipSubtypeAlias,
 					Selectors: &ss,
 				}
 			}(),
@@ -694,7 +694,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 					},
 				}
 				return relationship.RelationshipDefinition{
-					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					SubType:   RelationshipSubtypeAlias,
 					Selectors: &ss,
 				}
 			}(),
@@ -720,7 +720,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 					},
 				}
 				return relationship.RelationshipDefinition{
-					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					SubType:   RelationshipSubtypeAlias,
 					Selectors: &ss,
 				}
 			}(),
@@ -746,7 +746,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 					},
 				}
 				return relationship.RelationshipDefinition{
-					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					SubType:   RelationshipSubtypeAlias,
 					Selectors: &ss,
 				}
 			}(),
@@ -772,7 +772,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 					},
 				}
 				return relationship.RelationshipDefinition{
-					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					SubType:   RelationshipSubtypeAlias,
 					Selectors: &ss,
 				}
 			}(),
@@ -798,7 +798,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 					},
 				}
 				rd := relationship.RelationshipDefinition{
-					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					SubType:   RelationshipSubtypeAlias,
 					Selectors: &ss,
 				}
 				rd.ID = relID

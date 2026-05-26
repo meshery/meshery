@@ -326,8 +326,8 @@ const (
 	// UserCtxKey is the context key for persisting user to context
 	UserCtxKey ContextKey = "user"
 
-	// UserIDCtxKey is the context key for persisting userID to context
-	UserIDCtxKey ContextKey = "user_id"
+	// userIDCtxKey is the context key for persisting userID to context
+	userIDCtxKey ContextKey = "user_id"
 
 	// UserPrefsCtxKey is the context key for persisting user preferences to context
 	PerfObjCtxKey ContextKey = "perf_obj"
@@ -376,8 +376,8 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 // provider to its canonical name. Both the canonical name ("Local") and the
 // legacy alias ("None") are matched case-insensitively, so "local", "LOCAL",
 // "none", "NONE", and stale "None" cookies all resolve to "Local". Any other
-// input — including remote provider names like "Meshery" or "Digital Ocean", whose
-// canonical casing originates from the remote /capabilities response — is
+// input ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â including remote provider names like "Meshery" or "Digital Ocean", whose
+// canonical casing originates from the remote /capabilities response ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â is
 // returned unchanged. This is the single source of truth for the rename;
 // call it once at the request edge (resolveProviderName) rather than
 // scattering equivalent checks across handlers.
@@ -474,7 +474,7 @@ type Provider interface {
 
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
 	GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string, visbility []string, includeMetrics string, populate []string) ([]byte, error)
-	GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order string, includeMetrics string, populate, class, technology, patternType, orgID, workspaceID, userid []string) ([]byte, error)
+	GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order string, includeMetrics string, populate, class, technology, patternType, orgID, workspaceID, userID []string) ([]byte, error)
 	PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	UnPublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
@@ -523,7 +523,7 @@ type Provider interface {
 	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error)
 	GetConnectionByID(token string, connectionID core.Uuid) (*connections.Connection, int, error)
 	UpdateConnection(req *http.Request, conn *connections.Connection) (*connections.Connection, error)
-	UpdateConnectionById(token string, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error)
+	UpdateConnectionByID(token string, conn *connections.ConnectionPayload, connID string) (*connections.Connection, error)
 	UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error)
 	DeleteConnection(req *http.Request, connID core.Uuid) (*connections.Connection, error)
 	DeleteMesheryConnection() error

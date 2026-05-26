@@ -32,7 +32,7 @@ type MesheryPatternPage struct {
 // GetMesheryPatterns returns all of the 'private' patterns. Though private has no meaning here since there is only
 // one local user. We make this distinction to be consistent with the remote provider
 func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, page, pageSize uint64, updatedAfter string, visibility []string) ([]byte, error) {
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "name"})
 
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
@@ -47,7 +47,7 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 		query = query.Where("visibility in (?)", visibility)
 	}
 
-	query = query.Where("updated_at > ?", updatedAfter).Order(order)
+	query = query.Where("UpdatedAt > ?", updatedAfter).Order(order)
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
@@ -70,7 +70,7 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 // GetMesheryCatalogPatterns returns all of the published patterns
 func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(page, pageSize, search, order string) ([]byte, error) {
 	var err error
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "name"})
 
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
@@ -211,7 +211,7 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 // SaveMesheryPatterns batch inserts the given patterns
 func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []MesheryPattern) ([]byte, error) {
 	finalPatterns := []MesheryPattern{}
-	nilUserID := ""
+	niluserID := ""
 	for _, pattern := range mesheryPatterns {
 
 		pf, err := patterns.GetPatternFormat(pattern.PatternFile)
@@ -222,7 +222,7 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 		if pattern.Visibility == "" {
 			pattern.Visibility = Private
 		}
-		pattern.UserID = &nilUserID
+		pattern.userID = &niluserID
 		if pattern.ID == nil {
 			id, err := uuid.NewV4()
 			if err != nil {

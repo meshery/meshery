@@ -39,36 +39,36 @@ type ApplicationResult struct {
 	Name            string      `json:"name"`
 	ApplicationFile string      `json:"application_file"`
 	Type            *NullString `json:"type"`
-	UserID          string      `json:"user_id"`
+	userID          string      `json:"user_id"`
 	Location        *Location   `json:"location"`
 	Visibility      string      `json:"visibility"`
-	CreatedAt       *string     `json:"created_at,omitempty"`
-	UpdatedAt       *string     `json:"updated_at,omitempty"`
+	CreatedAt       *string     `json:"CreatedAt,omitempty"`
+	UpdatedAt       *string     `json:"UpdatedAt,omitempty"`
 }
 
 type CatalogFilter struct {
 	ID             string         `json:"id"`
 	Name           string         `json:"name"`
 	FilterFile     string         `json:"filter_file"`
-	UserID         string         `json:"user_id"`
+	userID         string         `json:"user_id"`
 	Location       *Location      `json:"location"`
 	FilterResource string         `json:"filter_resource"`
 	Visibility     string         `json:"visibility"`
 	CatalogData    map[string]any `json:"catalog_data,omitempty"`
-	CreatedAt      *string        `json:"created_at,omitempty"`
-	UpdatedAt      *string        `json:"updated_at,omitempty"`
+	CreatedAt      *string        `json:"CreatedAt,omitempty"`
+	UpdatedAt      *string        `json:"UpdatedAt,omitempty"`
 }
 
 type CatalogPattern struct {
 	ID          string         `json:"id"`
 	Name        string         `json:"name"`
-	UserID      string         `json:"user_id"`
+	userID      string         `json:"user_id"`
 	PatternFile string         `json:"pattern_file"`
 	Location    *Location      `json:"location"`
 	Visibility  string         `json:"visibility"`
 	CatalogData map[string]any `json:"catalog_data,omitempty"`
-	CreatedAt   *string        `json:"created_at,omitempty"`
-	UpdatedAt   *string        `json:"updated_at,omitempty"`
+	CreatedAt   *string        `json:"CreatedAt,omitempty"`
+	UpdatedAt   *string        `json:"UpdatedAt,omitempty"`
 }
 
 type CatalogSelector struct {
@@ -81,9 +81,9 @@ type CatalogSelector struct {
 	Class       []*string `json:"class,omitempty"`
 	Technology  []*string `json:"technology,omitempty"`
 	PatternType []*string `json:"patternType,omitempty"`
-	Userid      []*string `json:"userid,omitempty"`
+	userID      []*string `json:"userID,omitempty"`
 	OrgID       []*string `json:"orgID,omitempty"`
-	WorkspaceID []*string `json:"workspaceID,omitempty"`
+	workspaceID []*string `json:"workspaceID,omitempty"`
 }
 
 type ClusterResources struct {
@@ -148,7 +148,7 @@ type Error struct {
 
 type Event struct {
 	ID          string         `json:"id"`
-	UserID      string         `json:"userID"`
+	userID      string         `json:"userID"`
 	ActedUpon   string         `json:"actedUpon"`
 	OperationID string         `json:"operationID"`
 	SystemID    string         `json:"systemID"`
@@ -175,12 +175,12 @@ type FilterResult struct {
 	Name           string         `json:"name"`
 	FilterFile     string         `json:"filter_file"`
 	FilterResource string         `json:"filter_resource"`
-	UserID         string         `json:"user_id"`
+	userID         string         `json:"user_id"`
 	Location       *Location      `json:"location"`
 	Visibility     string         `json:"visibility"`
 	CatalogData    map[string]any `json:"catalog_data,omitempty"`
-	CreatedAt      *string        `json:"created_at,omitempty"`
-	UpdatedAt      *string        `json:"updated_at,omitempty"`
+	CreatedAt      *string        `json:"CreatedAt,omitempty"`
+	UpdatedAt      *string        `json:"UpdatedAt,omitempty"`
 }
 
 type K8sContext struct {
@@ -257,9 +257,9 @@ type MesheryResult struct {
 	ServerMetrics      *string        `json:"server_metrics,omitempty"`
 	ServerBoardConfig  *string        `json:"server_board_config,omitempty"`
 	TestStartTime      *string        `json:"test_start_time,omitempty"`
-	UserID             *string        `json:"user_id,omitempty"`
-	UpdatedAt          *string        `json:"updated_at,omitempty"`
-	CreatedAt          *string        `json:"created_at,omitempty"`
+	userID             *string        `json:"user_id,omitempty"`
+	UpdatedAt          *string        `json:"UpdatedAt,omitempty"`
+	CreatedAt          *string        `json:"CreatedAt,omitempty"`
 }
 
 type Mutation struct {
@@ -310,15 +310,15 @@ type PatternPageResult struct {
 type PatternResult struct {
 	ID          string         `json:"id"`
 	Name        string         `json:"name"`
-	UserID      string         `json:"user_id"`
+	userID      string         `json:"user_id"`
 	Location    *Location      `json:"location"`
 	PatternFile string         `json:"pattern_file"`
 	Visibility  string         `json:"visibility"`
 	CatalogData map[string]any `json:"catalog_data,omitempty"`
 	CanSupport  bool           `json:"canSupport"`
 	Errmsg      *string        `json:"errmsg,omitempty"`
-	CreatedAt   *string        `json:"created_at,omitempty"`
-	UpdatedAt   *string        `json:"updated_at,omitempty"`
+	CreatedAt   *string        `json:"CreatedAt,omitempty"`
+	UpdatedAt   *string        `json:"UpdatedAt,omitempty"`
 	Type        *NullString    `json:"type,omitempty"`
 }
 
@@ -338,7 +338,7 @@ type PerfPageResult struct {
 
 type PerfProfile struct {
 	ConcurrentRequest int            `json:"concurrent_request"`
-	CreatedAt         *string        `json:"created_at,omitempty"`
+	CreatedAt         *string        `json:"CreatedAt,omitempty"`
 	Duration          string         `json:"duration"`
 	Endpoints         []*string      `json:"endpoints,omitempty"`
 	ID                string         `json:"id"`
@@ -347,8 +347,8 @@ type PerfProfile struct {
 	Name              *string        `json:"name,omitempty"`
 	QPS               *int           `json:"qps,omitempty"`
 	TotalResults      *int           `json:"total_results,omitempty"`
-	UpdatedAt         *string        `json:"updated_at,omitempty"`
-	UserID            string         `json:"user_id"`
+	UpdatedAt         *string        `json:"UpdatedAt,omitempty"`
+	userID            string         `json:"user_id"`
 	RequestHeaders    *string        `json:"request_headers,omitempty"`
 	RequestCookies    *string        `json:"request_cookies,omitempty"`
 	RequestBody       *string        `json:"request_body,omitempty"`

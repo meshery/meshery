@@ -64,7 +64,7 @@ func TestMapPreferencePersisterReadFromPersisterReturnsPersistedPreference(t *te
 	want := &Preference{
 		AnonymousUsageStats:    false,
 		AnonymousPerfResults:   false,
-		SelectedOrganizationID: "org-1",
+		SelectedorganizationID: "org-1",
 		DashboardPreferences: map[string]interface{}{
 			"theme": "dark",
 		},

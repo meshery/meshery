@@ -51,7 +51,7 @@ func New(initialState StateType, ID string, userID core.Uuid, log logger.Handler
 
 	return &StateMachine{
 		ID:            connectionID,
-		UserID:        userID,
+		userID:        userID,
 		Name:          mtype,
 		PreviousState: DefaultState,
 		InitialState:  initialState,

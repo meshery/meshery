@@ -128,8 +128,8 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 }
 
 // Deep-link and redirect support to land user on their originally requested page post authentication instead of dropping user on the root (home) page.
-func GetRefURL(req *http.Request) string {
-	return core.EncodeRefUrl(*req.URL)
+func GetrefURL(req *http.Request) string {
+	return core.EncodeRefURL(*req.URL)
 }
 
 func (h *Handler) HandleErrorHandler(w http.ResponseWriter, r *http.Request) {

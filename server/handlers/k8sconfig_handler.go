@@ -214,7 +214,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
-		// Response body has already started streaming via json.Encoder —
+		// Response body has already started streaming via json.Encoder â€”
 		// a partial JSON envelope is on the wire and a fresh error
 		// response would corrupt it, so log only.
 		h.log.Error(models.ErrMarshal(err, "kubeconfig"))
@@ -224,7 +224,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 
 func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, _ *http.Request, _ models.Provider) {
 	// prefObj.K8SConfig = nil
-	// err := provider.RecordPreferences(req, user.UserId, prefObj)
+	// err := provider.RecordPreferences(req, user.userID, prefObj)
 	// if err != nil {
 	// 	logrus.Error(ErrRecordPreferences(err))
 	// 	http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
@@ -263,7 +263,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 
 	err = json.NewEncoder(w).Encode(contexts)
 	if err != nil {
-		// Response body has already started streaming via json.Encoder —
+		// Response body has already started streaming via json.Encoder â€”
 		// a partial JSON envelope is on the wire and a fresh error
 		// response would corrupt it, so log only.
 		h.log.Error(models.ErrMarshal(err, "kube-context"))
@@ -311,7 +311,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		if err = json.NewEncoder(w).Encode(map[string]string{
 			"server_version": version.String(),
 		}); err != nil {
-			// Response body has already started streaming via json.Encoder —
+			// Response body has already started streaming via json.Encoder â€”
 			// a partial JSON envelope is on the wire and a fresh error
 			// response would corrupt it, so log only.
 			err = errors.Wrap(err, "unable to marshal the payload")

@@ -163,7 +163,7 @@ type DesignPostPayload struct {
 	DesignFile design.PatternFile `json:"designFile"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	UserID      *string              `json:"userId"`
+	userID      *string              `json:"userID"`
 	Visibility  string               `json:"visibility"`
 	CatalogData v1alpha1.CatalogData `json:"catalogData,omitempty"`
 }
@@ -172,7 +172,7 @@ type DesignPostPayload struct {
 // (`design_file`) spellings for the design payload field so external
 // consumers on either vocabulary keep working while they migrate.
 // The alternate "pattern file" spellings (`patternFile` / `pattern_file`)
-// are accepted on the Unmarshal path but not emitted — they exist only
+// are accepted on the Unmarshal path but not emitted Ã¢â‚¬â€ they exist only
 // so clients that speak the legacy "pattern" vocabulary continue to
 // parse, not so Meshery introduces new wire forms.
 func (p DesignPostPayload) MarshalJSON() ([]byte, error) {
@@ -194,7 +194,7 @@ func (p DesignPostPayload) MarshalJSON() ([]byte, error) {
 //
 // Implementation uses the embedded-alias pattern so every non-custom
 // field on DesignPostPayload (including any added later) unmarshals
-// via stdlib default rules — only the design-file key-precedence is
+// via stdlib default rules Ã¢â‚¬â€ only the design-file key-precedence is
 // custom-handled here. The inner `*alias` is initialised to point at
 // the receiver, so fields absent from the input naturally reset to
 // their zero value per stdlib json.Unmarshal semantics; DesignFile is
@@ -215,7 +215,7 @@ func (p *DesignPostPayload) UnmarshalJSON(data []byte) error {
 	}
 	// Depth-0 aux fields win the `designFile` tag over the embedded
 	// alias's DesignFile by Go's json struct-tag precedence rules, so
-	// the alias's DesignFile is never populated directly — we apply the
+	// the alias's DesignFile is never populated directly Ã¢â‚¬â€ we apply the
 	// precedence-winning spelling below. Reset first so a reused receiver
 	// zeros cleanly when all four spellings are absent.
 	p.DesignFile = design.PatternFile{}
@@ -255,7 +255,7 @@ func (h *Handler) PatternFileRequestHandler(
 // buildDesignSavedEventMetadata builds the metadata map emitted on the
 // design-saved event. Extracted into a named function so the canonical
 // camelCase keys (`historyTitle`, `design`, `doclink`) are pinned by a
-// focused unit test — see TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys.
+// focused unit test Ã¢â‚¬â€ see TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys.
 // Drift here would silently re-introduce the snake_case `history_title`
 // key that production carried for 263,378 rows pre-flip.
 func buildDesignSavedEventMetadata(designFile design.PatternFile) map[string]interface{} {
@@ -384,7 +384,7 @@ func (h *Handler) handlePatternPOST(
 	mesheryPatternRecord := models.MesheryPattern{
 		ID:          requestPayload.ID,
 		PatternFile: designFile,
-		UserID:      requestPayload.UserID,
+		userID:      requestPayload.userID,
 		Name:        requestPayload.Name,
 		Visibility:  requestPayload.Visibility,
 		CatalogData: requestPayload.CatalogData,
@@ -687,7 +687,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 		err := json.Unmarshal([]byte(visibility), &filter.Visibility)
 		if err != nil {
 			h.log.Error(ErrFetchPattern(err))
-			// The visibility JSON comes from the query string — a client-side
+			// The visibility JSON comes from the query string Ã¢â‚¬â€ a client-side
 			// input, so a parse failure is a 400, not a 500.
 			writeMeshkitError(rw, ErrFetchPattern(err), http.StatusBadRequest)
 			return
@@ -702,7 +702,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 		return
 	}
 
-	// mc := NewContentModifier(token, provider, prefObj, user.UserId)
+	// mc := NewContentModifier(token, provider, prefObj, user.userID)
 	// //acts like a middleware, modifying the bytes lazily just before sending them back
 	// err = mc.AddMetadataForPatterns(r.Context(), &resp)
 	// if err != nil {
@@ -735,7 +735,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 		}
 	}
 
-	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"), q["populate"], q["class"], q["technology"], q["type"], orgIDs, q["workspaceID"], q["userid"])
+	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"), q["populate"], q["class"], q["technology"], q["type"], orgIDs, q["workspaceID"], q["userID"])
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		writeMeshkitError(rw, ErrFetchPattern(err), http.StatusInternalServerError)
@@ -1158,7 +1158,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		reader := bytes.NewReader(content)
 		if _, err := io.Copy(rw, reader); err != nil {
 			// Headers have already been committed and the tar stream has
-			// started — we cannot send a fresh JSON error response here.
+			// started Ã¢â‚¬â€ we cannot send a fresh JSON error response here.
 			// Log and emit the event, then return.
 			h.log.Error(ErrIOReader(err))
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
@@ -1661,7 +1661,7 @@ func (h *Handler) GetMesheryPatternHandler(
 	rw.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(rw).Encode(pattern); err != nil {
 		// Content-Type header is already set, so the response has started.
-		// Log only — a fresh JSON error response cannot be sent.
+		// Log only Ã¢â‚¬â€ a fresh JSON error response cannot be sent.
 		h.log.Error(ErrEncodeResponse(err))
 		return
 	}

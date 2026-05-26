@@ -52,7 +52,7 @@ func TestSessionPreferencePersisterReadFromPersisterReturnsPersistedPreference(t
 	want := &Preference{
 		AnonymousUsageStats:    false,
 		AnonymousPerfResults:   false,
-		SelectedOrganizationID: "org-1",
+		SelectedorganizationID: "org-1",
 		DashboardPreferences: map[string]interface{}{
 			"theme": "dark",
 		},
@@ -79,8 +79,8 @@ func TestSessionPreferencePersisterReadFromPersisterReturnsPersistedPreference(t
 		t.Errorf("got AnonymousPerfResults=%v, want %v", got.AnonymousPerfResults, want.AnonymousPerfResults)
 	}
 
-	if got.SelectedOrganizationID != want.SelectedOrganizationID {
-		t.Errorf("got SelectedOrganizationID=%q, want %q", got.SelectedOrganizationID, want.SelectedOrganizationID)
+	if got.SelectedorganizationID != want.SelectedorganizationID {
+		t.Errorf("got SelectedorganizationID=%q, want %q", got.SelectedorganizationID, want.SelectedorganizationID)
 	}
 
 	if got.DashboardPreferences["theme"] != want.DashboardPreferences["theme"] {

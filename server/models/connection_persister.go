@@ -23,7 +23,7 @@ type ConnectionPersister struct {
 
 // GetConnections returns all of the connections
 func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSize int, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "name"})
 
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
@@ -73,14 +73,14 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 			connectionIDs[i] = conn.ID
 		}
 
-		// envWithConnID augments EnvironmentData with the join-table's
+		// envWithconnID augments EnvironmentData with the join-table's
 		// connection_id so we can group results after scanning.
-		type envWithConnID struct {
+		type envWithconnID struct {
 			environments.EnvironmentData
 			ConnectionID core.Uuid `gorm:"column:connection_id"`
 		}
 
-		var envMappings []envWithConnID
+		var envMappings []envWithconnID
 		if err := cp.DB.Table("environment_connection_mappings").
 			Joins("LEFT JOIN environments ON environments.id = environment_connection_mappings.environment_id").
 			Select("environments.*, environment_connection_mappings.connection_id").
@@ -89,14 +89,14 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 			return nil, fmt.Errorf("error fetching environments for connections: %v", err)
 		}
 
-		envsByConnID := make(map[core.Uuid][]*environments.EnvironmentData)
+		envsByconnID := make(map[core.Uuid][]*environments.EnvironmentData)
 		for i := range envMappings {
 			connID := envMappings[i].ConnectionID
-			envsByConnID[connID] = append(envsByConnID[connID], &envMappings[i].EnvironmentData)
+			envsByconnID[connID] = append(envsByconnID[connID], &envMappings[i].EnvironmentData)
 		}
 
 		for _, conn := range connectionsFetched {
-			conn.Environments = envsByConnID[conn.ID]
+			conn.Environments = envsByconnID[conn.ID]
 			if conn.Environments == nil {
 				conn.Environments = []*environments.EnvironmentData{}
 			}
@@ -170,7 +170,7 @@ func (cp *ConnectionPersister) SaveConnection(connection *connections.Connection
 	return connection, err
 }
 
-func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*connections.Connection, error) {
+func (cp *ConnectionPersister) DeleteConnectionByID(connectionID core.Uuid) (*connections.Connection, error) {
 	connection := connections.Connection{}
 	err := cp.DB.Where("id = ?", connectionID).First(&connection).Error
 	if err != nil {
@@ -180,7 +180,7 @@ func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*co
 	}
 	err = cp.DB.Delete(connection).Error
 	if err != nil {
-		return nil, ErrDBDelete(err, cp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, cp.fetchUserDetails().userID)
 	}
 
 	return &connection, nil
@@ -189,7 +189,7 @@ func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*co
 func (cp *ConnectionPersister) fetchUserDetails() *User {
 
 	return &User{
-		UserId:    "meshery",
+		userID:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
 	}

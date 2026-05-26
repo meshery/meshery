@@ -42,7 +42,7 @@ func uuidPtr(u core.Uuid) *core.Uuid {
 
 func (wp *WorkspacePersister) fetchUserDetails() *User {
 	return &User{
-		UserId:    "meshery",
+		userID:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
 	}
@@ -51,7 +51,7 @@ func (wp *WorkspacePersister) fetchUserDetails() *User {
 // GetWorkspaces returns all of the workspaces
 func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize, filter string) ([]byte, error) {
 	// Sanitize the order input
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "name"})
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
 	}
@@ -112,7 +112,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 			Description:    ws.Description,
 			ID:             ws.ID,
 			Name:           ws.Name,
-			OrganizationId: uuidPtr(ws.OrganizationID),
+			organizationID: uuidPtr(ws.organizationID),
 			OwnerId:        ws.Owner,
 			UpdatedAt:      ws.UpdatedAt,
 		}
@@ -166,7 +166,7 @@ func (wp *WorkspacePersister) DeleteWorkspace(workspace *workspace.Workspace) ([
 	}
 	err = wp.DB.Delete(workspace).Error
 	if err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().userID)
 	}
 
 	// Marshal the workspace to JSON
@@ -230,9 +230,9 @@ func (wp *WorkspacePersister) UpdateWorkspace(workspaceID core.Uuid, payload *wo
 	if payload.Description != "" {
 		ws.Description = payload.Description
 	}
-	organizationID := core.Uuid(payload.OrganizationID)
+	organizationID := core.Uuid(payload.organizationID)
 	if organizationID != uuid.Nil {
-		ws.OrganizationID = organizationID
+		ws.organizationID = organizationID
 	}
 
 	return wp.UpdateWorkspaceByID(ws)
@@ -252,7 +252,7 @@ func (wp *WorkspacePersister) DeleteWorkspaceByID(workspaceID core.Uuid) ([]byte
 func (wp *WorkspacePersister) AddEnvironmentToWorkspace(workspaceID, environmentID core.Uuid) ([]byte, error) {
 	wsEnvMapping := workspace.WorkspacesEnvironmentsMapping{
 		EnvironmentID: environmentID,
-		WorkspaceID:   workspaceID,
+		workspaceID:   workspaceID,
 		CreatedAt:     time.Now(),
 		UpdatedAt:     time.Now(),
 	}
@@ -284,7 +284,7 @@ type WorkspaceFilter struct {
 // GetWorkspaceEnvironments returns environments for a workspace
 func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, search, order, page, pageSize, filter string) ([]byte, error) {
 	// Sanitize the order input
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "name"})
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
 	}
@@ -303,7 +303,7 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, se
 	// Handle filter for whether environments are assigned or not
 	if workspaceFilter.Assigned {
 		// Environments assigned to the workspace
-		query = query.Where("EXISTS (SELECT 1 FROM workspaces_environments_mappings AS wem WHERE e.id = wem.environment_id AND wem.workspace_id = ? AND wem.deleted_at IS NULL)", workspaceID)
+		query = query.Where("EXISTS (SELECT 1 FROM workspaces_environments_mappings AS wem WHERE e.id = wem.environment_id AND wem.workspace_id = ? AND wem.DeletedAt IS NULL)", workspaceID)
 	} else {
 		// Environments not assigned to the workspace
 		query = query.Joins("LEFT JOIN workspaces_environments_mappings AS wem ON e.id = wem.environment_id AND wem.workspace_id = ?", workspaceID).
@@ -311,9 +311,9 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, se
 	}
 
 	if workspaceFilter.DeletedAt {
-		query = query.Where("e.deleted_at IS NOT NULL")
+		query = query.Where("e.DeletedAt IS NOT NULL")
 	} else {
-		query = query.Where("e.deleted_at IS NULL")
+		query = query.Where("e.DeletedAt IS NULL")
 	}
 
 	if search != "" {
@@ -383,7 +383,7 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
 
 	// Delete the environment mapping
 	if err := wp.DB.Delete(&wsEnvMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().userID)
 	}
 
 	wsJSON, err := json.Marshal(wsEnvMapping)
@@ -404,8 +404,8 @@ func (wp *WorkspacePersister) AddDesignToWorkspace(workspaceID, designID core.Uu
 	}
 
 	wsDesignMapping := workspace.WorkspacesDesignsMapping{
-		DesignID:    designID,
-		WorkspaceID: workspaceID,
+		designID:    designID,
+		workspaceID: workspaceID,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
@@ -442,7 +442,7 @@ func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID co
 
 	// Delete the design mapping
 	if err := wp.DB.Delete(&wsDesignMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().userID)
 	}
 
 	wsJSON, err := json.Marshal(wsDesignMapping)
@@ -455,7 +455,7 @@ func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID co
 
 func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search, order, page, pageSize, filter string, visibility []string) ([]byte, error) {
 	// Sanitize the order input
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "name"})
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
 	}
@@ -476,7 +476,7 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 	// Build the query to find designs associated with the given workspace ID
 	if workspaceFilter.Assigned {
 		// Designs assigned to the workspace
-		query = query.Where("EXISTS (SELECT 1 FROM workspaces_designs_mappings AS wdm WHERE d.id = wdm.design_id AND wdm.workspace_id = ? AND wdm.deleted_at IS NULL)", workspaceID)
+		query = query.Where("EXISTS (SELECT 1 FROM workspaces_designs_mappings AS wdm WHERE d.id = wdm.design_id AND wdm.workspace_id = ? AND wdm.DeletedAt IS NULL)", workspaceID)
 	} else {
 		// Designs not assigned to the workspace
 		query = query.Joins("LEFT JOIN workspaces_designs_mappings AS wdm ON d.id = wdm.design_id AND wdm.workspace_id = ?", workspaceID).
@@ -558,7 +558,7 @@ func schemaMesheryPatterns(patterns []*MesheryPattern) ([]patternv1beta1.Meshery
 func (wp *WorkspacePersister) AddViewToWorkspace(workspaceID, viewID core.Uuid) ([]byte, error) {
 	wsViewMapping := workspace.WorkspacesViewsMapping{
 		ViewID:      viewID,
-		WorkspaceID: workspaceID,
+		workspaceID: workspaceID,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
@@ -592,7 +592,7 @@ func (wp *WorkspacePersister) DeleteViewFromWorkspace(workspaceID, viewID core.U
 	}
 
 	if err := wp.DB.Delete(&wsViewMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().userID)
 	}
 
 	wsJSON, err := json.Marshal(wsViewMapping)
@@ -604,7 +604,7 @@ func (wp *WorkspacePersister) DeleteViewFromWorkspace(workspaceID, viewID core.U
 }
 
 func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, order, page, pageSize, filter string) ([]byte, error) {
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "name"})
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
 	}
@@ -621,16 +621,16 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 	query := wp.DB.Table("meshery_views AS v").Select("*")
 
 	if workspaceFilter.Assigned {
-		query = query.Where("EXISTS (SELECT 1 FROM workspaces_views_mappings AS wvm WHERE v.id = wvm.view_id AND wvm.workspace_id = ? AND wvm.deleted_at IS NULL)", workspaceID)
+		query = query.Where("EXISTS (SELECT 1 FROM workspaces_views_mappings AS wvm WHERE v.id = wvm.view_id AND wvm.workspace_id = ? AND wvm.DeletedAt IS NULL)", workspaceID)
 	} else {
 		query = query.Joins("LEFT JOIN workspaces_views_mappings AS wvm ON v.id = wvm.view_id AND wvm.workspace_id = ?", workspaceID).
 			Where("wvm.workspace_id IS NULL")
 	}
 
 	if workspaceFilter.DeletedAt {
-		query = query.Where("v.deleted_at IS NOT NULL")
+		query = query.Where("v.DeletedAt IS NOT NULL")
 	} else {
-		query = query.Where("v.deleted_at IS NULL")
+		query = query.Where("v.DeletedAt IS NULL")
 	}
 
 	if search != "" {
@@ -686,7 +686,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 func (wp *WorkspacePersister) AddTeamToWorkspace(workspaceID, teamID core.Uuid) ([]byte, error) {
 	wsTeamMapping := workspace.WorkspacesTeamsMapping{
 		TeamID:      teamID,
-		WorkspaceID: workspaceID,
+		workspaceID: workspaceID,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
@@ -720,7 +720,7 @@ func (wp *WorkspacePersister) DeleteTeamFromWorkspace(workspaceID, teamID core.U
 	}
 
 	if err := wp.DB.Delete(&wsTeamMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().userID)
 	}
 
 	wsJSON, err := json.Marshal(wsTeamMapping)
@@ -732,7 +732,7 @@ func (wp *WorkspacePersister) DeleteTeamFromWorkspace(workspaceID, teamID core.U
 }
 
 func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, order, page, pageSize, filter string) ([]byte, error) {
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "name"})
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
 	}
@@ -749,16 +749,16 @@ func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, o
 	query := wp.DB.Table("teams AS t").Select("*")
 
 	if workspaceFilter.Assigned {
-		query = query.Where("EXISTS (SELECT 1 FROM workspaces_teams_mappings AS wtm WHERE t.id = wtm.team_id AND wtm.workspace_id = ? AND wtm.deleted_at IS NULL)", workspaceID)
+		query = query.Where("EXISTS (SELECT 1 FROM workspaces_teams_mappings AS wtm WHERE t.id = wtm.team_id AND wtm.workspace_id = ? AND wtm.DeletedAt IS NULL)", workspaceID)
 	} else {
 		query = query.Joins("LEFT JOIN workspaces_teams_mappings AS wtm ON t.id = wtm.team_id AND wtm.workspace_id = ?", workspaceID).
 			Where("wtm.workspace_id IS NULL")
 	}
 
 	if workspaceFilter.DeletedAt {
-		query = query.Where("t.deleted_at IS NOT NULL")
+		query = query.Where("t.DeletedAt IS NOT NULL")
 	} else {
-		query = query.Where("t.deleted_at IS NULL")
+		query = query.Where("t.DeletedAt IS NULL")
 	}
 
 	if search != "" {
@@ -783,9 +783,9 @@ func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, o
 	type Team struct {
 		ID        core.Uuid  `json:"id" db:"id"`
 		Name      string     `json:"name" db:"name"`
-		CreatedAt time.Time  `json:"createdAt" db:"created_at"`
-		UpdatedAt time.Time  `json:"updatedAt" db:"updated_at"`
-		DeletedAt *time.Time `json:"deletedAt,omitempty" db:"deleted_at"`
+		CreatedAt time.Time  `json:"createdAt" db:"CreatedAt"`
+		UpdatedAt time.Time  `json:"updatedAt" db:"UpdatedAt"`
+		DeletedAt *time.Time `json:"deletedAt,omitempty" db:"DeletedAt"`
 	}
 
 	teamsFetched := []Team{}

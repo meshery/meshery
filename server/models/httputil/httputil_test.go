@@ -19,12 +19,12 @@ import (
 // symptom this prevents is RTK Query's default baseQuery (which dispatches
 // on Content-Type) throwing `SyntaxError: Unexpected token 'W', "WorkspaceI"...`
 // when the server emitted a plain-text 400 body like
-// "WorkspaceID or OrgID cannot be empty". The contract: status code is
+// "workspaceID or OrgID cannot be empty". The contract: status code is
 // honored, Content-Type is application/json, and the body JSON-parses to
 // {"error": "<message>"}.
 func TestWriteJSONError_ShapeIsParseableJSON(t *testing.T) {
 	rec := httptest.NewRecorder()
-	WriteJSONError(rec, "WorkspaceID or OrgID cannot be empty", http.StatusBadRequest)
+	WriteJSONError(rec, "workspaceID or OrgID cannot be empty", http.StatusBadRequest)
 
 	resp := rec.Result()
 	defer func() { _ = resp.Body.Close() }()
@@ -34,7 +34,7 @@ func TestWriteJSONError_ShapeIsParseableJSON(t *testing.T) {
 	}
 
 	if ct := resp.Header.Get("Content-Type"); ct != "application/json; charset=utf-8" {
-		t.Errorf("expected Content-Type %q, got %q — a non-JSON Content-Type is what broke RTK Query", "application/json; charset=utf-8", ct)
+		t.Errorf("expected Content-Type %q, got %q â€” a non-JSON Content-Type is what broke RTK Query", "application/json; charset=utf-8", ct)
 	}
 
 	if nosniff := resp.Header.Get("X-Content-Type-Options"); nosniff != "nosniff" {
@@ -46,18 +46,18 @@ func TestWriteJSONError_ShapeIsParseableJSON(t *testing.T) {
 		t.Fatalf("expected body to parse as JSON, got %v", err)
 	}
 
-	if got := decoded["error"]; got != "WorkspaceID or OrgID cannot be empty" {
-		t.Errorf("expected error field %q, got %q", "WorkspaceID or OrgID cannot be empty", got)
+	if got := decoded["error"]; got != "workspaceID or OrgID cannot be empty" {
+		t.Errorf("expected error field %q, got %q", "workspaceID or OrgID cannot be empty", got)
 	}
 }
 
 // TestWriteJSONError_DoesNotStartWithBareWord pins the regression-of-interest:
 // a plain-text body beginning with "W" (as http.Error would emit for the
-// "WorkspaceID or OrgID cannot be empty" message) is exactly what crashed
+// "workspaceID or OrgID cannot be empty" message) is exactly what crashed
 // RTK Query's JSON parser. A JSON-encoded body must start with '{'.
 func TestWriteJSONError_DoesNotStartWithBareWord(t *testing.T) {
 	rec := httptest.NewRecorder()
-	WriteJSONError(rec, "WorkspaceID or OrgID cannot be empty", http.StatusBadRequest)
+	WriteJSONError(rec, "workspaceID or OrgID cannot be empty", http.StatusBadRequest)
 
 	body := rec.Body.Bytes()
 	if len(body) == 0 {
@@ -68,7 +68,7 @@ func TestWriteJSONError_DoesNotStartWithBareWord(t *testing.T) {
 		if end > len(body) {
 			end = len(body)
 		}
-		t.Errorf("expected body to start with '{' (JSON object), got %q — this is the hazard RTK Query trips on", string(body[:end]))
+		t.Errorf("expected body to start with '{' (JSON object), got %q â€” this is the hazard RTK Query trips on", string(body[:end]))
 	}
 }
 
@@ -124,7 +124,7 @@ func TestWriteMeshkitError_SerializesMeshKitStructure(t *testing.T) {
 
 // TestWriteMeshkitError_NilFallsBackToGenericMessage verifies that a nil
 // error still produces a parseable JSON body carrying the stock status-text
-// message. This is the "don't crash the wire format" safeguard — a handler
+// message. This is the "don't crash the wire format" safeguard â€” a handler
 // bug that passes nil should never reach the client as an empty body.
 func TestWriteMeshkitError_NilFallsBackToGenericMessage(t *testing.T) {
 	rec := httptest.NewRecorder()
@@ -141,7 +141,7 @@ func TestWriteMeshkitError_NilFallsBackToGenericMessage(t *testing.T) {
 
 // TestWriteMeshkitError_NonMeshkitErrorStillJSON verifies stdlib errors
 // (e.g. fmt.Errorf) that slipped through without a MeshKit wrapper still
-// produce JSON — never plain text. No code/severity fields are emitted in
+// produce JSON â€” never plain text. No code/severity fields are emitted in
 // that case (omitempty keeps the body small).
 func TestWriteMeshkitError_NonMeshkitErrorStillJSON(t *testing.T) {
 	rec := httptest.NewRecorder()
@@ -162,7 +162,7 @@ func TestWriteMeshkitError_NonMeshkitErrorStillJSON(t *testing.T) {
 
 // TestWriteJSONMessage_SetsHeadersAndEncodesPayload verifies the success-path
 // helper matches the defensive-header posture of the error helpers and produces
-// parseable JSON. Kept deliberately simple — WriteJSONMessage is thin, but it's
+// parseable JSON. Kept deliberately simple â€” WriteJSONMessage is thin, but it's
 // called from many handlers that promote bare-string success responses (e.g.
 // "Database reset successful") to {"message": "..."}.
 func TestWriteJSONMessage_SetsHeadersAndEncodesPayload(t *testing.T) {
@@ -252,7 +252,7 @@ func TestWriteJSONEmptyObject_HonorsNon200Status(t *testing.T) {
 // files reference this pattern directly via commit ed1ce9f25c. A future
 // refactor that re-introduces the "encode straight into the ResponseWriter"
 // anti-pattern at the provider layer is therefore a test bug here only if it
-// also stops calling WriteMeshkitError on encode failure — but the pattern
+// also stops calling WriteMeshkitError on encode failure â€” but the pattern
 // these tests enforce (encode-to-intermediate-writer first, ResponseWriter
 // only on success) is the discipline the provider files now follow.
 
@@ -260,7 +260,7 @@ func TestWriteJSONEmptyObject_HonorsNon200Status(t *testing.T) {
 // then returns an error from Write. It mimics a real transport that fails
 // partway through a streaming JSON encode (connection reset, broken pipe).
 // Used by TestBufferEncodePattern_PartialFailureDoesNotCorruptResponse to
-// drive a partial-write failure with a JSON-encodable payload — exercising
+// drive a partial-write failure with a JSON-encodable payload â€” exercising
 // the exact failure mode the buffer-encode pattern exists to contain. Distinct
 // from flakyResponseWriter (below), which models a full http.ResponseWriter
 // for the demo-the-anti-pattern test.
@@ -305,7 +305,7 @@ func TestBufferEncodePattern_PartialFailureDoesNotCorruptResponse(t *testing.T) 
 
 	// Mirror the provider-layer pattern: encode into a separate writer first.
 	// The writer fails mid-write after accepting a partial JSON prefix, so
-	// Encode returns an error and the partial bytes are isolated to buf —
+	// Encode returns an error and the partial bytes are isolated to buf â€”
 	// they never reach the ResponseWriter.
 	buf := &flakyWriter{failAfter: 16}
 	encErr := json.NewEncoder(buf).Encode(payload)
@@ -316,7 +316,7 @@ func TestBufferEncodePattern_PartialFailureDoesNotCorruptResponse(t *testing.T) 
 		t.Fatal("expected flaky writer to receive partial payload bytes before failing")
 	}
 
-	// At this point the ResponseWriter has had nothing written to it — the
+	// At this point the ResponseWriter has had nothing written to it â€” the
 	// partial bytes are trapped in buf. Now emit the error response.
 	WriteMeshkitError(rec, fmt.Errorf("encode payload: %w", encErr), http.StatusInternalServerError)
 
@@ -338,7 +338,7 @@ func TestBufferEncodePattern_PartialFailureDoesNotCorruptResponse(t *testing.T) 
 		t.Fatal("expected a non-empty error envelope body")
 	}
 	// A correct buffer-then-write pattern leaves the response containing
-	// exactly the error envelope — a single JSON object that starts with '{'.
+	// exactly the error envelope â€” a single JSON object that starts with '{'.
 	// If a future refactor encodes payload into the writer first, the body
 	// would either start with truncated payload bytes or contain two
 	// concatenated JSON objects, both of which fail this assertion.
@@ -347,7 +347,7 @@ func TestBufferEncodePattern_PartialFailureDoesNotCorruptResponse(t *testing.T) 
 		if end > len(bodyBytes) {
 			end = len(bodyBytes)
 		}
-		t.Errorf("body must start with '{' (single JSON object). got prefix %q — partial payload bytes leaked before the envelope", string(bodyBytes[:end]))
+		t.Errorf("body must start with '{' (single JSON object). got prefix %q â€” partial payload bytes leaked before the envelope", string(bodyBytes[:end]))
 	}
 
 	var decoded map[string]interface{}
@@ -362,7 +362,7 @@ func TestBufferEncodePattern_PartialFailureDoesNotCorruptResponse(t *testing.T) 
 	// does, the writer was corrupted by a partial encode of `payload`
 	// followed by the envelope.
 	if _, leaked := decoded["bad"]; leaked {
-		t.Errorf("error envelope unexpectedly contains payload field 'bad' — buffer-encode pattern is broken: %+v", decoded)
+		t.Errorf("error envelope unexpectedly contains payload field 'bad' â€” buffer-encode pattern is broken: %+v", decoded)
 	}
 }
 
@@ -372,7 +372,7 @@ func TestBufferEncodePattern_PartialFailureDoesNotCorruptResponse(t *testing.T) 
 // stray error envelope. Together with the partial-failure test this covers
 // both branches of the pattern.
 //
-// Scope note: this exercises the bytes.Buffer-then-WriteTo mechanic itself —
+// Scope note: this exercises the bytes.Buffer-then-WriteTo mechanic itself â€”
 // it deliberately does NOT assert Content-Type, because asserting a header
 // the test just set on the same recorder would be self-fulfilling. The
 // content-type contract is owned by WriteJSONMessage / WriteMeshkitError /
@@ -416,7 +416,7 @@ func TestBufferEncodePattern_SuccessPathWritesAtomicResponse(t *testing.T) {
 	if decoded["meshery-provider"] != "Local" {
 		t.Errorf("expected payload field meshery-provider=Local, got %v", decoded["meshery-provider"])
 	}
-	// The success body must be just the payload — no leaked error field
+	// The success body must be just the payload â€” no leaked error field
 	// from a stray WriteMeshkitError, which would indicate the pattern
 	// took both branches.
 	if _, leaked := decoded["error"]; leaked {
@@ -435,7 +435,7 @@ func TestBufferEncodePattern_SuccessPathWritesAtomicResponse(t *testing.T) {
 // pattern) is vulnerable to this: by the time Encode returns an error, the
 // writer has already committed a partial body and (for net/http) the 200 OK
 // status. A follow-up WriteMeshkitError then either appends a second JSON
-// object behind the partial body or — for a real http.ResponseWriter — has
+// object behind the partial body or â€” for a real http.ResponseWriter â€” has
 // its WriteHeader call silently dropped because headers are already on the
 // wire.
 type flakyResponseWriter struct {
@@ -491,7 +491,7 @@ func (f *flakyResponseWriter) Write(p []byte) (int, error) {
 //
 // The test simulates a transport that fails mid-write, so reviewers reading
 // this file see *why* the buffer-first pattern at the four provider sites
-// matters. The test asserts that two corruption signatures are observable —
+// matters. The test asserts that two corruption signatures are observable â€”
 // (a) the 500 status passed to WriteMeshkitError is silently dropped because
 // the writer already committed 200 OK, and (b) the body is not a single
 // well-formed JSON object.
@@ -501,7 +501,7 @@ func TestEncodeIntoResponseWriter_DemonstratesLatentBug(t *testing.T) {
 		"token":            "this-payload-leaks-onto-the-wire",
 	}
 
-	// Fail after 8 bytes — enough to commit "200 OK" + a partial JSON body
+	// Fail after 8 bytes â€” enough to commit "200 OK" + a partial JSON body
 	// like `{"meshe` before the transport breaks.
 	w := newFlakyResponseWriter(8)
 
@@ -511,9 +511,9 @@ func TestEncodeIntoResponseWriter_DemonstratesLatentBug(t *testing.T) {
 	if encErr == nil {
 		// Test premise violated: the flaky writer is sized so Encode must
 		// fail. If it doesn't, the demo no longer demonstrates corruption
-		// and the regression signal is gone — fail loudly so maintainers
+		// and the regression signal is gone â€” fail loudly so maintainers
 		// re-validate the assumptions instead of silently skipping.
-		t.Fatalf("flaky writer unexpectedly accepted full payload — demo must fail so maintainers re-validate the corruption assumptions")
+		t.Fatalf("flaky writer unexpectedly accepted full payload â€” demo must fail so maintainers re-validate the corruption assumptions")
 	}
 
 	// (a) Headers are already committed at 200 OK. The follow-up
@@ -521,7 +521,7 @@ func TestEncodeIntoResponseWriter_DemonstratesLatentBug(t *testing.T) {
 	WriteMeshkitError(w, fmt.Errorf("encode payload: %w", encErr), http.StatusInternalServerError)
 
 	if w.statusCode != http.StatusOK {
-		t.Errorf("expected status to remain 200 (committed by streaming encode); got %d. encoding/json no longer commits headers eagerly — re-validate the regression tests.", w.statusCode)
+		t.Errorf("expected status to remain 200 (committed by streaming encode); got %d. encoding/json no longer commits headers eagerly â€” re-validate the regression tests.", w.statusCode)
 	}
 
 	// (b) Body is corrupted. It either fails to parse as a single JSON
@@ -536,16 +536,16 @@ func TestEncodeIntoResponseWriter_DemonstratesLatentBug(t *testing.T) {
 	var first map[string]interface{}
 	firstErr := dec.Decode(&first)
 	if firstErr != nil {
-		// Truncated leading bytes — corruption confirmed.
+		// Truncated leading bytes â€” corruption confirmed.
 		return
 	}
 	var second map[string]interface{}
 	secondErr := dec.Decode(&second)
 	if !errors.Is(secondErr, io.EOF) {
-		// Two values on the stream — concatenated corruption confirmed.
+		// Two values on the stream â€” concatenated corruption confirmed.
 		// (errors.Is(nil, io.EOF) is false, so a successful second decode
 		// also takes this branch.)
 		return
 	}
-	t.Errorf("expected truncation or concatenation as proof of corruption; got a single clean object %+v with body=%q. The standard library may have changed — re-validate buffer-encode regression tests.", first, string(bodyBytes))
+	t.Errorf("expected truncation or concatenation as proof of corruption; got a single clean object %+v with body=%q. The standard library may have changed â€” re-validate buffer-encode regression tests.", first, string(bodyBytes))
 }

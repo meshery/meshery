@@ -40,7 +40,7 @@ const (
 	ErrPatternFileNameCode                = "meshery-server-1237"
 	ErrMakeDirCode                        = "meshery-server-1238"
 	ErrFolderStatCode                     = "meshery-server-1239"
-	ErrUserIDCode                         = "meshery-server-1240"
+	ErruserIDCode                         = "meshery-server-1240"
 	ErrDBConnectionCode                   = "meshery-server-1241"
 	ErrNilConfigDataCode                  = "meshery-server-1242"
 	ErrDBOpenCode                         = "meshery-server-1243"
@@ -119,7 +119,7 @@ const (
 	ErrSessionNotReadIntactCode           = "meshery-server-1332"
 	ErrSessionNotFoundCode                = "meshery-server-1333"
 	ErrTokenRetryCode                     = "meshery-server-1334"
-	ErrUrlParseCode                       = "meshery-server-1335"
+	ErrURLParseCode                       = "meshery-server-1335"
 	ErrCloseIoReaderCode                  = "meshery-server-1336"
 	ErrDownloadPackageCode                = "meshery-server-1337"
 	ErrOperationNotAvailableCode          = "meshery-server-1338"
@@ -160,7 +160,7 @@ var (
 	ErrApplicationFileName     = errors.New(ErrApplicationFileNameCode, errors.Alert, []string{"Invalid Applicationfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
 	ErrFilterFileName          = errors.New(ErrFilterFileNameCode, errors.Alert, []string{"Invalid Filterfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
 	ErrPatternFileName         = errors.New(ErrPatternFileNameCode, errors.Alert, []string{"Invalid Patternfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
-	ErrUserID                  = errors.New(ErrUserIDCode, errors.Alert, []string{"User ID is empty"}, []string{}, []string{}, []string{})
+	ErruserID                  = errors.New(ErruserIDCode, errors.Alert, []string{"User ID is empty"}, []string{}, []string{}, []string{})
 	ErrDBConnection            = errors.New(ErrDBConnectionCode, errors.Alert, []string{"Connection to database does not exist"}, []string{}, []string{}, []string{})
 	ErrNilConfigData           = errors.New(ErrNilConfigDataCode, errors.Alert, []string{"Given config data is nil"}, []string{}, []string{}, []string{})
 	ErrNilJWKs                 = errors.New(ErrNilJWKsCode, errors.Alert, []string{"Invalid JWks"}, []string{"Value of JWKs is nil"}, []string{}, []string{})
@@ -194,8 +194,8 @@ func ErrCloseIoReader(err error) error {
 func ErrGetPackage(err error) error {
 	return errors.New(ErrGetPackageCode, errors.Alert, []string{"Could not get the package"}, []string{"", err.Error()}, []string{""}, []string{"Make sure the configurations are correct"})
 }
-func ErrUrlParse(err error) error {
-	return errors.New(ErrUrlParseCode, errors.Alert, []string{"Error parsing the URL"}, []string{"", err.Error()}, []string{""}, []string{"Make sure the URL is correct"})
+func ErrURLParse(err error) error {
+	return errors.New(ErrURLParseCode, errors.Alert, []string{"Error parsing the URL"}, []string{"", err.Error()}, []string{""}, []string{"Make sure the URL is correct"})
 }
 func ErrBrokerSubscription(err error) error {
 	return errors.New(ErrBrokerSubscriptionCode, errors.Alert, []string{"Could not subscribe to the broker subject"}, []string{"", err.Error()}, []string{""}, []string{"Make sure meshery broker is healthy"})
@@ -662,7 +662,7 @@ func ErrMeshsyncDataHandler(err error) error {
 
 // ErrWorkspaceMissingInput is used by both the list-workspaces handler
 // (which requires only orgId from the query string) and the
-// get-workspace-by-id handler (which reads workspaceId from the URL path
+// get-workspace-by-id handler (which reads workspaceID from the URL path
 // and orgId from the query string). The message is kept generic so the
 // same constructor fits both call sites; callers may log the specific
 // missing field alongside this error for clarity.
@@ -671,9 +671,9 @@ func ErrWorkspaceMissingInput() error {
 		ErrWorkspaceMissingInputCode,
 		errors.Alert,
 		[]string{"Invalid input for workspace operation"},
-		[]string{"a required workspace input was not provided (orgId is required; workspaceId is required for single-workspace operations)"},
+		[]string{"a required workspace input was not provided (orgId is required; workspaceID is required for single-workspace operations)"},
 		[]string{"Required workspace input values were not provided for this operation."},
-		[]string{"Ensure orgId is provided as a query parameter (and workspaceId is provided in the URL path for single-workspace operations)."},
+		[]string{"Ensure orgId is provided as a query parameter (and workspaceID is provided in the URL path for single-workspace operations)."},
 	)
 }
 

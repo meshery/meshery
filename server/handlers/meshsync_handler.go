@@ -51,8 +51,8 @@ func MapToStruct(data map[string]interface{}, targetStruct interface{}) error {
 	return nil
 }
 
-// JsonParse safely parses a JSON string into an interface{} with a fallback default value.
-func JsonParse(input *string, allowEmpty bool, defaultValue interface{}) interface{} {
+// JSONParse safely parses a JSON string into an interface{} with a fallback default value.
+func JSONParse(input *string, allowEmpty bool, defaultValue interface{}) interface{} {
 	if input == nil {
 		return defaultValue
 	}
@@ -80,7 +80,7 @@ func KubernetesResourceToComponentDef(resource model.KubernetesResource, stripSc
 
 	var spec interface{}
 	if resource.Spec != nil {
-		spec = JsonParse(&resource.Spec.Attribute, true, map[string]interface{}{})
+		spec = JSONParse(&resource.Spec.Attribute, true, map[string]interface{}{})
 	}
 
 	labels := map[string]string{}
@@ -112,7 +112,7 @@ func KubernetesResourceToComponentDef(resource model.KubernetesResource, stripSc
 	componentDef.Configuration = map[string]interface{}{
 		"metadata": metadata,
 		"spec":     spec,
-		"data":     JsonParse(&resource.Data, true, map[string]interface{}{}),
+		"data":     JSONParse(&resource.Data, true, map[string]interface{}{}),
 	}
 
 	if componentDef.Metadata.AdditionalProperties == nil {

@@ -11,7 +11,7 @@ import (
 // ----------------
 //
 // These four helpers are the canonical way to write an HTTP response from
-// server/handlers. Never use http.Error — it emits Content-Type: text/plain
+// server/handlers. Never use http.Error â€” it emits Content-Type: text/plain
 // which crashes RTK Query's default baseQuery on the UI (see
 // docs/content/en/project/contributing/error-contract.md).
 //
@@ -22,16 +22,16 @@ import (
 // change during the migration.
 //
 // Reach for:
-//   - writeMeshkitError     — ANY error path. If err wraps a *meshkiterrors.Error
+//   - writeMeshkitError     â€” ANY error path. If err wraps a *meshkiterrors.Error
 //                             or *ErrorV2, the code/severity/cause/remediation
 //                             survive onto the wire. If it doesn't, the .Error()
 //                             string is still emitted as JSON.
-//   - writeJSONError        — error paths where the message is a bare string with
+//   - writeJSONError        â€” error paths where the message is a bare string with
 //                             no MeshKit wrapper. Prefer promoting the string to
 //                             a MeshKit error and using writeMeshkitError instead.
-//   - writeJSONMessage      — success paths that return a small status or result
+//   - writeJSONMessage      â€” success paths that return a small status or result
 //                             payload (e.g. {"message": "deleted"}).
-//   - writeJSONEmptyObject  — success paths that need to return an empty JSON
+//   - writeJSONEmptyObject  â€” success paths that need to return an empty JSON
 //                             object ({}) with the Content-Type header set.
 
 func writeJSONError(w http.ResponseWriter, message string, status int) {
@@ -78,7 +78,7 @@ func getPaginationParams(req *http.Request) (page, offset, limit int, search, or
 	offset = page * limit
 
 	if sortOnCol == "" {
-		sortOnCol = "updated_at"
+		sortOnCol = "UpdatedAt"
 	}
 	return
 }

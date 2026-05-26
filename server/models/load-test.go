@@ -115,7 +115,7 @@ type MesheryResult struct {
 
 	UpdatedAt string `json:"updatedAt,omitempty"`
 	CreatedAt string `json:"createdAt,omitempty"`
-	UserID    string `json:"userId,omitempty"`
+	userID    string `json:"userID,omitempty"`
 }
 
 // ConvertToSpec - converts meshery result to SMP

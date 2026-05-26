@@ -15,8 +15,8 @@ type CatalogRequest struct {
 	LastName    string               `json:"lastName,omitempty" db:"last_name"`
 	Email       string               `json:"email,omitempty" db:"email"`
 	Status      CatalogRequestStatus `json:"status,omitempty" db:"status"`
-	CreatedAt   time.Time            `json:"createdAt,omitempty" db:"created_at"`
-	UpdatedAt   time.Time            `json:"updatedAt,omitempty" db:"updated_at"`
+	CreatedAt   time.Time            `json:"createdAt,omitempty" db:"CreatedAt"`
+	UpdatedAt   time.Time            `json:"updatedAt,omitempty" db:"UpdatedAt"`
 }
 
 type CatalogContentType string

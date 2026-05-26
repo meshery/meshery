@@ -52,7 +52,7 @@ var legacyProviderAliasWarnOnce sync.Once
 //
 // Falling through to enforcedProvider here is what removes the need for a
 // cookie round-trip via /provider, which is fragile across SameSite/popup/CDN
-// boundaries and was the trigger for an observed /user/login ⇄ /provider
+// boundaries and was the trigger for an observed /user/login Ã¢â€¡â€ž /provider
 // redirect loop on enforced-provider hosts.
 func resolveProviderName(req *http.Request, cookieName, enforcedProvider string) (string, bool) {
 	var name string
@@ -97,7 +97,7 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 		ctx = context.WithValue(ctx, models.MesheryServerCallbackURL, callbackURL)
 		_url, err := url.Parse(callbackURL)
 		if err != nil {
-			h.log.Error(ErrParsingCallBackUrl(err))
+			h.log.Error(ErrParsingCallBackURL(err))
 		} else {
 			ctx = context.WithValue(ctx, models.MesheryServerURL, fmt.Sprintf("%s://%s", _url.Scheme, _url.Host))
 		}
@@ -121,7 +121,7 @@ func (h *Handler) NoCacheMiddleware(next http.Handler) http.Handler {
 // AuthMiddleware is a middleware to validate if a user is authenticated
 func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMechanism) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
-		refURLB64 := GetRefURL(req)
+		refURLB64 := GetrefURL(req)
 
 		providerH := h.Provider
 		if auth == models.NoAuth && providerH != "" {
@@ -235,14 +235,14 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			// match without reading PR #18919.
 			//
 			// Behavioral consequence: on a transient provider error we must NOT
-			// destroy the user's session by logging them out — that would cause
+			// destroy the user's session by logging them out Ã¢â‚¬â€ that would cause
 			// a redirect loop when Cloud recovers. A missing/invalid token
 			// cookie still falls through to the genuine auth-failure path below.
 			if isTransientProviderError(err) {
 				writeMeshkitError(w, ErrTransientProvider(err), http.StatusServiceUnavailable)
 				return
 			}
-			// Genuine auth failure — logout and redirect to login
+			// Genuine auth failure Ã¢â‚¬â€ logout and redirect to login
 			err1 := provider.Logout(w, req)
 			if err1 != nil {
 				h.log.Error(models.ErrLogout(err1))
@@ -252,14 +252,14 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			writeMeshkitError(w, ErrGetUserDetails(err), http.StatusUnauthorized)
 			return
 		}
-		prefObj, err := provider.ReadFromPersister(user.UserId)
+		prefObj, err := provider.ReadFromPersister(user.userID)
 		if err != nil {
 			// log underlying error from persister along with high-level context
-			h.log.Warn(fmt.Errorf("%w: userID=%s: %v", ErrReadSessionPersistor, user.UserId, err))
+			h.log.Warn(fmt.Errorf("%w: userID=%s: %v", ErrReadSessionPersistor, user.userID, err))
 			prefObj = models.NewDefaultPreference()
 		} else if prefObj == nil {
 			// persister unexpectedly returned a nil preference without error
-			h.log.Warn(fmt.Errorf("%w: persister returned nil preference without error for userID=%s", ErrReadSessionPersistor, user.UserId))
+			h.log.Warn(fmt.Errorf("%w: persister returned nil preference without error for userID=%s", ErrReadSessionPersistor, user.userID))
 			prefObj = models.NewDefaultPreference()
 		}
 

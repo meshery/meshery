@@ -129,7 +129,7 @@ func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachin
 
 	return &machines.StateMachine{
 		ID:            connectionID,
-		UserID:        userID,
+		userID:        userID,
 		Name:          machineName,
 		PreviousState: machines.DefaultState,
 		InitialState:  machines.InitialState,

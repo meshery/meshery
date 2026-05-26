@@ -12,12 +12,12 @@ import (
 
 // TestAssignInitialCtx_AttachesLoggerBeforeClientSetAssignment guards against
 // a nil-pointer panic on login when a persisted K8s context can't be reached:
-// GenerateKubeHandler errors → GenerateK8sClientSet hits its log.Warn path →
+// GenerateKubeHandler errors â†’ GenerateK8sClientSet hits its log.Warn path â†’
 // interface-method-on-nil panic.
 //
 // The bug was an ordering mistake in AssignInitialCtx: machinectx.log was
 // assigned AFTER AssignClientSetToContext, which threaded the still-nil
-// log through GenerateClientSetAction → GenerateK8sClientSet. Any persisted
+// log through GenerateClientSetAction â†’ GenerateK8sClientSet. Any persisted
 // context whose API server wasn't reachable (common: stale contexts from a
 // remote provider pointing at clusters this host can't route to) produced
 // the panic on every /api request that went through K8sFSMMiddleware.
@@ -50,7 +50,7 @@ func TestAssignInitialCtx_AttachesLoggerBeforeClientSetAssignment(t *testing.T) 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, models.UserCtxKey, user)
 	ctx = context.WithValue(ctx, models.SystemIDKey, &sysID)
-	// ProviderCtxKey: a typed-nil is fine — AssignControllerHandlers is only
+	// ProviderCtxKey: a typed-nil is fine â€” AssignControllerHandlers is only
 	// reached after AssignClientSetToContext, and that's the point we want
 	// to defend. If AssignClientSetToContext returns an error we never reach
 	// controller setup, which matches the production scenario.
@@ -72,13 +72,13 @@ func TestAssignInitialCtx_AttachesLoggerBeforeClientSetAssignment(t *testing.T) 
 
 	result, _, err := AssignInitialCtx(ctx, machinectx, log)
 
-	// AssignClientSetToContext must fail for an unreachable/invalid context —
+	// AssignClientSetToContext must fail for an unreachable/invalid context â€”
 	// that's the exact production regression we're guarding. If this ever
 	// returns nil here, either the test lost its repro or GenerateK8sClientSet
 	// started tolerating unreachable servers, both of which invalidate this
 	// guard.
 	if err == nil {
-		t.Fatal("expected AssignInitialCtx to return an error for an unreachable K8s context, got nil — the regression guard is no longer exercising the panicking path")
+		t.Fatal("expected AssignInitialCtx to return an error for an unreachable K8s context, got nil â€” the regression guard is no longer exercising the panicking path")
 	}
 	if result != nil {
 		t.Fatalf("expected nil machine context on AssignClientSetToContext error, got %#v", result)

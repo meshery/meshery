@@ -219,7 +219,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		page = 0
 	}
 	if order == "" {
-		order = "updated_at desc"
+		order = "UpdatedAt desc"
 	}
 
 	err := req.ParseForm()
@@ -302,7 +302,7 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 		page = 0
 	}
 	if order == "" {
-		order = "updated_at desc"
+		order = "UpdatedAt desc"
 	}
 
 	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s, kind: %s", page+1, pageSize, search, order, connectionKind))
@@ -356,7 +356,7 @@ func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ 
 	}
 }
 
-func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) UpdateConnectionByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	userID := user.ID
 
@@ -436,7 +436,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
-	updatedConnection, err := provider.UpdateConnectionById(token, connection, mux.Vars(req)["connectionId"])
+	updatedConnection, err := provider.UpdateConnectionByID(token, connection, mux.Vars(req)["connectionId"])
 	if err != nil {
 		_err := ErrFailToSave(err, obj)
 		metadata := map[string]interface{}{

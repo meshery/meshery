@@ -2,7 +2,7 @@ package models
 
 const (
 	cookieSuffix              = "_referrer"
-	defaultOrderUpdatedAtDesc = "updated_at desc"
+	defaultOrderUpdatedAtDesc = "UpdatedAt desc"
 	mesheryGitHubOrg          = "meshery"
 	mesheryGitHubRepo         = "meshery"
 	Private                   = "private"

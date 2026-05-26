@@ -20,7 +20,7 @@ import (
 // query then it will be IGNORED and an empty query would be returned instead
 //
 // SanitizeOrderInput also expects the query to be no longer than two words, that is
-// the query may look like "updated_at DESC" or "name ASC"
+// the query may look like "UpdatedAt DESC" or "name ASC"
 func SanitizeOrderInput(order string, validColumns []string) string {
 	parsedOrderStr := strings.Split(order, " ")
 	if len(parsedOrderStr) != 2 {

@@ -15,7 +15,7 @@ import (
 
 // workspacePayloadWire is a handler-local dual-accept wrapper around
 // workspace.WorkspacePayload (now v1beta3, canonical-camelCase). The
-// canonical wire form emits `organizationId`; the legacy `organization_id`
+// canonical wire form emits `organizationID`; the legacy `organization_id`
 // spelling is still accepted for the Phase 5 deprecation window so any
 // unmigrated client (e.g. mesheryctl, Meshery UI) keeps working.
 // Go's encoding/json case-insensitive tag fallback does NOT match across
@@ -30,23 +30,23 @@ func (p *workspacePayloadWire) UnmarshalJSON(data []byte) error {
 	type alias workspace.WorkspacePayload
 	aux := struct {
 		*alias
-		OrganizationIDCamel *openapi_types.UUID `json:"organizationId,omitempty"`
-		OrganizationIDSnake *openapi_types.UUID `json:"organization_id,omitempty"`
+		organizationIDCamel *openapi_types.UUID `json:"organizationID,omitempty"`
+		organizationIDSnake *openapi_types.UUID `json:"organization_id,omitempty"`
 	}{alias: (*alias)(&p.WorkspacePayload)}
 
-	// Zero OrganizationID so a reused receiver does not carry stale data
+	// Zero organizationID so a reused receiver does not carry stale data
 	// when the next payload omits both spellings.
-	p.OrganizationID = openapi_types.UUID{}
+	p.organizationID = openapi_types.UUID{}
 
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
 	}
 	// Canonical wins when both are supplied.
 	switch {
-	case aux.OrganizationIDCamel != nil:
-		p.OrganizationID = *aux.OrganizationIDCamel
-	case aux.OrganizationIDSnake != nil:
-		p.OrganizationID = *aux.OrganizationIDSnake
+	case aux.organizationIDCamel != nil:
+		p.organizationID = *aux.organizationIDCamel
+	case aux.organizationIDSnake != nil:
+		p.organizationID = *aux.organizationIDSnake
 	}
 	return nil
 }
@@ -60,20 +60,20 @@ func (p *workspaceUpdatePayloadWire) UnmarshalJSON(data []byte) error {
 	type alias workspace.WorkspaceUpdatePayload
 	aux := struct {
 		*alias
-		OrganizationIDCamel *openapi_types.UUID `json:"organizationId,omitempty"`
-		OrganizationIDSnake *openapi_types.UUID `json:"organization_id,omitempty"`
+		organizationIDCamel *openapi_types.UUID `json:"organizationID,omitempty"`
+		organizationIDSnake *openapi_types.UUID `json:"organization_id,omitempty"`
 	}{alias: (*alias)(&p.WorkspaceUpdatePayload)}
 
-	p.OrganizationID = openapi_types.UUID{}
+	p.organizationID = openapi_types.UUID{}
 
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
 	}
 	switch {
-	case aux.OrganizationIDCamel != nil:
-		p.OrganizationID = *aux.OrganizationIDCamel
-	case aux.OrganizationIDSnake != nil:
-		p.OrganizationID = *aux.OrganizationIDSnake
+	case aux.organizationIDCamel != nil:
+		p.organizationID = *aux.organizationIDCamel
+	case aux.organizationIDSnake != nil:
+		p.organizationID = *aux.organizationIDSnake
 	}
 	return nil
 }
@@ -113,7 +113,7 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 	}
 }
 
-func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+func (h *Handler) GetWorkspaceByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(r)["id"]
 	q := r.URL.Query()
 	// Canonical form is `orgId`; `orgID` is dual-accepted during the Phase 2

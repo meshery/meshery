@@ -107,7 +107,7 @@ type RemoteProvider struct {
 }
 type AnonymousFlowResponse struct {
 	AccessToken string    `json:"accessToken"`
-	UserID      core.Uuid `json:"userId,omitempty"`
+	userID      core.Uuid `json:"userID,omitempty"`
 }
 
 type userSession struct {
@@ -279,7 +279,7 @@ func (l *RemoteProvider) fetchCapabilities(ctx context.Context, token string, ve
 	finalURL = strings.TrimSuffix(finalURL, "\n")
 	remoteProviderURL, err := url.Parse(finalURL)
 	if err != nil {
-		l.Log.Error(ErrUrlParse(err))
+		l.Log.Error(ErrURLParse(err))
 		return providerProperties, err
 	}
 
@@ -552,9 +552,9 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 
 	l.SetJWTCookie(res, flowResponse.AccessToken)
 
-	err = l.WriteCapabilitiesForUser(flowResponse.UserID.String(), &providerProperties)
+	err = l.WriteCapabilitiesForUser(flowResponse.userID.String(), &providerProperties)
 	if err != nil {
-		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.UserID.String(), err))
+		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.userID.String(), err))
 		l.Log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 
@@ -577,11 +577,11 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 	// The 'ref' query parameter is a base64 encoded URL of the original page the user was on.
 	// It is used to redirect the user back to that page after a successful login.
 	// if the ref points to some page other than under /extension then skip ref
-	refUrl, err := servercore.GetRefURLFromRequest(req)
-	l.Log.Infof("Referrer URL: %s , %v", refUrl, err)
-	if strings.HasPrefix(refUrl, "/extension") {
-		l.Log.Infof("Redirecting to referrer %s", refUrl)
-		http.Redirect(res, req, refUrl, http.StatusFound)
+	refURL, err := servercore.GetrefURLFromRequest(req)
+	l.Log.Infof("Referrer URL: %s , %v", refURL, err)
+	if strings.HasPrefix(refURL, "/extension") {
+		l.Log.Infof("Redirecting to referrer %s", refURL)
+		http.Redirect(res, req, refURL, http.StatusFound)
 		return
 	}
 
@@ -697,10 +697,10 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 		return nil, ErrUnmarshal(err, "User Pref")
 	}
 
-	prefLocal, _ := l.ReadFromPersister(up.UserId)
+	prefLocal, _ := l.ReadFromPersister(up.userID)
 
 	if prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences) {
-		_ = l.WriteToPersister(up.UserId, up.Preferences)
+		_ = l.WriteToPersister(up.userID, up.Preferences)
 	}
 
 	// Uncomment when Debug verbosity is figured out project wide. | @leecalcote
@@ -878,12 +878,12 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 	// Step 1: Verify JWT signature and claims locally
 	jwtClaims, verifyErr := l.VerifyToken(ts)
 	if verifyErr != nil {
-		// Local verification failed — try introspection as fallback
+		// Local verification failed ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â try introspection as fallback
 		if introspectErr := l.introspectToken(ts); introspectErr == nil {
 			return nil
 		}
 		l.Log.Info("Token verification and introspection failed, attempting refresh")
-		// Both failed — attempt token refresh as last resort
+		// Both failed ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â attempt token refresh as last resort
 		newts, refreshErr := l.refreshToken(ts)
 		if refreshErr != nil {
 			l.Log.Error(ErrTokenRefresh(refreshErr))
@@ -902,11 +902,11 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 	}
 
 	// Step 2: If JWT has an expiry claim, introspect to confirm it's not revoked.
-	// Tokens without exp are infinite JWTs — skip introspection for those.
+	// Tokens without exp are infinite JWTs ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â skip introspection for those.
 	if (*jwtClaims)["exp"] != nil {
 		if introspectErr := l.introspectToken(ts); introspectErr != nil {
 			l.Log.Info("Token introspection failed, attempting refresh")
-			// Introspection failed — attempt token refresh before giving up
+			// Introspection failed ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â attempt token refresh before giving up
 			newts, refreshErr := l.refreshToken(ts)
 			if refreshErr != nil {
 				l.Log.Error(ErrTokenRefresh(refreshErr))
@@ -1006,7 +1006,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 // HandleUnAuthenticated
 //
 // Redirects to alert user of expired session.
-// Includes redirect loop detection — if the user has been redirected more than
+// Includes redirect loop detection ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â if the user has been redirected more than
 // MaxAuthRetries times within a short window, an error page is served instead
 // of continuing the redirect chain.
 func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.Request) {
@@ -2294,7 +2294,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	// meshery-cloud commit 5d6f13e1b12, server/handlers/meshery_patterns.go:144).
 	// PR #18855 regressed this to `pattern_data`, which encoding/json
 	// does NOT match against a `patternData` tag (case-insensitive tag
-	// fallback does not bridge the underscore) — so remote-provider
+	// fallback does not bridge the underscore) ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â so remote-provider
 	// pattern creation silently dropped the payload until this revert.
 	data, err := json.Marshal(map[string]interface{}{
 		"patternData": pattern,
@@ -2432,7 +2432,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order, includeMetrics string, populate, class, technology, patternType, orgID, workspaceID, userid []string) ([]byte, error) {
+func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order, includeMetrics string, populate, class, technology, patternType, orgID, workspaceID, userID []string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return []byte{}, ErrInvalidCapability("MesheryPatternsCatalog", l.ProviderName)
@@ -2481,15 +2481,15 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 		}
 	}
 
-	if len(userid) > 0 {
-		for _, user := range userid {
-			q.Add("userid", user)
+	if len(userID) > 0 {
+		for _, user := range userID {
+			q.Add("userID", user)
 		}
 	}
 
 	if len(workspaceID) > 0 {
 		for _, workspace := range workspaceID {
-			q.Add("workspaceid", workspace)
+			q.Add("workspaceID", workspace)
 		}
 	}
 
@@ -4722,8 +4722,8 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connect
 	return nil, ErrFetch(fmt.Errorf("failed to update the connection"), string(bdr), resp.StatusCode)
 }
 
-// UpdateConnectionById - to update an existing connection using the connection id
-func (l *RemoteProvider) UpdateConnectionById(token string, connection *connections.ConnectionPayload, connId string) (*connections.Connection, error) {
+// UpdateConnectionByID - to update an existing connection using the connection id
+func (l *RemoteProvider) UpdateConnectionByID(token string, connection *connections.ConnectionPayload, connID string) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -4734,7 +4734,7 @@ func (l *RemoteProvider) UpdateConnectionById(token string, connection *connecti
 		return nil, err
 	}
 	bf := bytes.NewBuffer(_conn)
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connId))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connID))
 	l.Log.Debug("Making request to : ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 	tokenString := token
@@ -4886,7 +4886,7 @@ func (l *RemoteProvider) clearMostRecentToken() {
 func (l *RemoteProvider) LogoutMesheryServer() error {
 	token := l.getMostRecentToken()
 	if token == "" {
-		// nothing to revoke — user never logged in during this run
+		// nothing to revoke ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â user never logged in during this run
 		return nil
 	}
 	defer l.clearMostRecentToken()
@@ -6099,7 +6099,7 @@ func (l *RemoteProvider) GetEnvironmentsOfWorkspace(req *http.Request, workspace
 	return nil, ErrFetch(fmt.Errorf("failed to get environments of workspace"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) AddDesignToWorkspace(req *http.Request, workspaceID string, designId string) ([]byte, error) {
+func (l *RemoteProvider) AddDesignToWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvailable)
 
@@ -6107,7 +6107,7 @@ func (l *RemoteProvider) AddDesignToWorkspace(req *http.Request, workspaceID str
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/designs/" + designId)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/designs/" + designID)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {

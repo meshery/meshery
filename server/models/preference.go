@@ -68,7 +68,7 @@ type Preference struct {
 	AnonymousPerfResults              bool                   `json:"anonymousPerfResults"`
 	UpdatedAt                         time.Time              `json:"updatedAt,omitempty"`
 	DashboardPreferences              map[string]interface{} `json:"dashboardPreferences,omitempty"`
-	SelectedOrganizationID            string                 `json:"selectedOrganizationID,omitempty"`
+	SelectedorganizationID            string                 `json:"selectedorganizationID,omitempty"`
 	SelectedWorkspaceForOrganizations map[string]string      `json:"selectedWorkspaceForOrganizations,omitempty"` // map[orgID]workspaceID
 	UsersExtensionPreferences         map[string]interface{} `json:"usersExtensionPreferences,omitempty"`
 	RemoteProviderPreferences         map[string]interface{} `json:"remoteProviderPreferences,omitempty"`

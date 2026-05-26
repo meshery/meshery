@@ -17,7 +17,7 @@ type MesheryFilter struct {
 	FilterFile []byte `json:"filterFile"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	UserID *string `json:"userId"`
+	userID *string `json:"userID"`
 
 	Location       sql.Map    `json:"location"`
 	Visibility     string     `json:"visibility"`
@@ -34,7 +34,7 @@ type MesheryFilterPayload struct {
 	FilterFile []byte `json:"filterFile"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	UserID *string `json:"userId"`
+	userID *string `json:"userID"`
 
 	Location       sql.Map    `json:"location"`
 	Visibility     string     `json:"visibility"`
@@ -72,7 +72,7 @@ type MesheryCloneFilterRequestBody struct {
 // has not yet been migrated to accept `filterData`. Flipping the
 // outbound without cloud dual-accept would silently drop the payload
 // (encoding/json does not match `filterData` to a `filter_data`
-// tag even case-insensitively — the underscore is significant). That
+// tag even case-insensitively â€” the underscore is significant). That
 // cross-repo coordination is tracked as part of the per-resource
 // Phase 3 migration for filter.
 type MesheryFilterRequestBody struct {

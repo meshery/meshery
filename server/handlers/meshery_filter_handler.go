@@ -163,7 +163,7 @@ func (h *Handler) handleFilterPOST(
 			FilterFile:     parsedBody.FilterData.FilterFile,
 			Name:           parsedBody.FilterData.Name,
 			ID:             parsedBody.FilterData.ID,
-			UserID:         parsedBody.FilterData.UserID,
+			userID:         parsedBody.FilterData.userID,
 			UpdatedAt:      parsedBody.FilterData.UpdatedAt,
 			Location:       parsedBody.FilterData.Location,
 			FilterResource: filterResource,
@@ -240,7 +240,7 @@ func (h *Handler) GetMesheryFiltersHandler(
 	if visibility != "" {
 		err := json.Unmarshal([]byte(visibility), &filter.Visibility)
 		if err != nil {
-			// Visibility is a URL query string — unmarshal failure is a
+			// Visibility is a URL query string â€” unmarshal failure is a
 			// client-side bad request, not a 500.
 			h.log.Error(ErrFetchFilter(err))
 			writeMeshkitError(rw, ErrFetchFilter(err), http.StatusBadRequest)

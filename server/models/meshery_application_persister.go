@@ -26,7 +26,7 @@ type MesheryApplicationPage struct {
 
 // GetMesheryApplications returns all of the applications
 func (maap *MesheryApplicationPersister) GetMesheryApplications(search, order string, page, pageSize uint64, updatedAfter string) ([]byte, error) {
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "name"})
 
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
@@ -35,7 +35,7 @@ func (maap *MesheryApplicationPersister) GetMesheryApplications(search, order st
 	count := int64(0)
 	applications := []*MesheryApplication{}
 
-	query := maap.DB.Where("updated_at > ?", updatedAfter).Order(order)
+	query := maap.DB.Where("UpdatedAt > ?", updatedAfter).Order(order)
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"

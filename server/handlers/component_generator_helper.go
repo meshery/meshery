@@ -56,7 +56,7 @@ func (h *Handler) sendSuccessResponse(rw http.ResponseWriter, userID core.Uuid, 
 	h.sendFileEvent(userID, provider, response, token)
 	rw.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(rw).Encode(response); err != nil {
-		// Response body has already been committed with StatusOK —
+		// Response body has already been committed with StatusOK â€”
 		// a fresh http.Error would try to re-write headers and corrupt
 		// the in-flight JSON envelope. Log only.
 		h.log.Error(err)

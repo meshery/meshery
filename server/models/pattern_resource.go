@@ -10,7 +10,7 @@ import (
 // by meshery
 type PatternResource struct {
 	ID        *core.Uuid `json:"id,omitempty"`
-	UserID    *core.Uuid `json:"userId,omitempty"`
+	userID    *core.Uuid `json:"userID,omitempty"`
 	Name      string     `json:"name,omitempty"`
 	Namespace string     `json:"namespace,omitempty"`
 	Type      string     `json:"type,omitempty"`

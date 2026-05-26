@@ -794,7 +794,7 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 	err = helpers.WriteLogsToFiles()
 	if err != nil {
 		// WriteLogsToFiles is an internal flush of registry-attempt
-		// state to REGISTRY_LOG_FILE — the failure is server-side
+		// state to REGISTRY_LOG_FILE Ã¢â‚¬â€ the failure is server-side
 		// (filesystem permissions, disk full, marshal error), so
 		// surface a 500 with structured remediation instead of the
 		// previous raw 400.
@@ -1270,7 +1270,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 }
 
 func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
-	modelId := r.URL.Query().Get("id")
+	modelID := r.URL.Query().Get("id")
 	name := r.URL.Query().Get("name")
 	version := r.URL.Query().Get("version")
 	outputFormat := r.URL.Query().Get("output_format")
@@ -1293,7 +1293,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 	// 1. Get the model data
 	modelFilter := &regv1beta1.ModelFilter{
-		Id:            modelId,
+		Id:            modelID,
 		Name:          name,
 		Components:    hasComponents,
 		Relationships: hasRelationships,
@@ -1313,8 +1313,8 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	// In this case, we return a 404 error
 	if len(e) == 0 {
 		message := "model with "
-		if modelId != "" {
-			message += fmt.Sprintf("id %s ", modelId)
+		if modelID != "" {
+			message += fmt.Sprintf("id %s ", modelID)
 		}
 		if name != "" {
 			message += fmt.Sprintf("name %s ", name)

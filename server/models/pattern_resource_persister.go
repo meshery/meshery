@@ -58,7 +58,7 @@ func (prp *PatternResourcePersister) GetPatternResourceByAttributes(name, namesp
 }
 
 func (prp *PatternResourcePersister) GetPatternResources(search, order, name, namespace, typ, oamType string, page, pageSize uint64) (*PatternResourcePage, error) {
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"CreatedAt", "UpdatedAt", "name"})
 
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc

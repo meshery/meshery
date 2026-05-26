@@ -34,9 +34,9 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 	}
 
 	// Bind credential ownership to the authenticated user AFTER unmarshal so a
-	// client-supplied `userId` in the request body cannot redirect a credential
+	// client-supplied `userID` in the request body cannot redirect a credential
 	// onto another user's account.
-	credential.UserId = userUUID
+	credential.userID = userUUID
 
 	createdCredential, err := provider.SaveUserCredential(token, &credential)
 	if err != nil {
@@ -84,7 +84,7 @@ func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _
 		page = 0
 	}
 	if order == "" {
-		order = "created_at desc"
+		order = "CreatedAt desc"
 	}
 
 	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
@@ -123,10 +123,10 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 	}
 
 	// Bind credential ownership to the authenticated user AFTER unmarshal so a
-	// client-supplied `userId` in the request body cannot hijack another user's
+	// client-supplied `userID` in the request body cannot hijack another user's
 	// credential (the provider layer's authorization check should rely on this
 	// field to confirm the caller owns the credential being updated).
-	credential.UserId = userUUID
+	credential.userID = userUUID
 
 	_, err = provider.UpdateUserCredential(req, credential)
 	if err != nil {

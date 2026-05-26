@@ -39,7 +39,7 @@ const (
 // viper.GetStringSlice does not split a single delimited env-var value into
 // multiple slice entries when AutomaticEnv is enabled, so the whole string
 // flows through as one element. Pass the full set of expected separator
-// characters — e.g. ", \t\n\r" — to accept either comma-separated or
+// characters â€” e.g. ", \t\n\r" â€” to accept either comma-separated or
 // whitespace-separated configurations, which both forms appear across the
 // Meshery manifests in install/.
 func SplitAndTrim(s, delims string) []string {
@@ -392,12 +392,12 @@ func ApplyFilters(query *gorm.DB, filter string, dynamicKeys []string) *gorm.DB 
 		filterVal := strings.Join(filterArr[1:], " ")
 
 		switch filterKey {
-		case "deleted_at":
-			// Handle deleted_at filter
+		case "DeletedAt":
+			// Handle DeletedAt filter
 			if filterVal == "Deleted" {
-				query = query.Where("deleted_at IS NOT NULL")
+				query = query.Where("DeletedAt IS NOT NULL")
 			} else {
-				query = query.Where("deleted_at IS NULL")
+				query = query.Where("DeletedAt IS NULL")
 			}
 		default:
 			// Handle dynamic keys

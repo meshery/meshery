@@ -89,7 +89,7 @@ func (mc *ContentModifier) isPatternSupported(ctx context.Context, patternFileSt
 		Provider:               mc.provider,
 		Pattern:                *patternFile,
 		PrefObj:                mc.prefObj,
-		UserID:                 mc.userID,
+		userID:                 mc.userID,
 		IsDelete:               false,
 		Validate:               true,
 		DryRun:                 true,

@@ -27,7 +27,7 @@ import (
 
 // FileToImport is the internal tuple of bytes + filename that the
 // import pipeline works with after the request-body variant has been
-// resolved. It is not part of the wire contract — see the schemas
+// resolved. It is not part of the wire contract â€” see the schemas
 // repo's MesheryPatternImportRequestBody for that.
 type FileToImport struct {
 	Data     []byte
@@ -45,7 +45,7 @@ type importVariant struct {
 
 // designImportHTTPClient is the shared client used for URL-variant
 // imports. A bounded Timeout prevents a slow or unresponsive remote
-// from hanging the handler goroutine indefinitely — the default
+// from hanging the handler goroutine indefinitely â€” the default
 // http.Client has no timeout, which is the class of bug review
 // feedback on meshery/meshery#18845 called out. 60s is generous for
 // a single-file fetch (Kubernetes manifests, Helm charts, Meshery
@@ -56,7 +56,7 @@ var designImportHTTPClient = &http.Client{
 
 // resolveImportVariant decodes the request body against the two oneOf
 // variants published in the schema, enforces the "exactly one of"
-// invariant, and — for the URL variant — fetches the remote file
+// invariant, and â€” for the URL variant â€” fetches the remote file
 // before returning. On error, the returned importVariant carries any
 // context we could extract (the caller's supplied Name plus, for the
 // URL variant, the URL echoed in FileName) so that the downstream
@@ -312,7 +312,7 @@ func (h *Handler) DesignFileImportHandler(
 
 	variant, err := resolveImportVariant(importBody)
 	if err != nil {
-		// resolveImportVariant failures are 400-class — either the body
+		// resolveImportVariant failures are 400-class â€” either the body
 		// violated the oneOf contract (already wrapped as
 		// ErrInvalidImportRequest) or the URL variant couldn't be
 		// fetched (already wrapped as models.ErrDoRequest). Either way
@@ -346,7 +346,7 @@ func (h *Handler) DesignFileImportHandler(
 	}
 
 	// Only overwrite the design name when the caller supplied one in
-	// the request — leaving it unset should preserve whatever name the
+	// the request â€” leaving it unset should preserve whatever name the
 	// import pipeline parsed out of the source file (e.g. `metadata.name`
 	// from a design YAML, or the derived name from a Kubernetes manifest).
 	// Fall back to the filename (without extension) when neither the caller

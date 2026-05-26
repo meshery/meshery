@@ -32,7 +32,7 @@ type UserKeys struct {
 	Category    string `json:"category,omitempty"`
 	Description string `json:"description,omitempty"`
 	Subcategory string `json:"subcategory,omitempty"`
-	Created_at  string `json:"createdAt,omitempty"`
-	Updated_at  string `json:"updatedAt,omitempty"`
-	Deleted_at  string `json:"deletedAt,omitempty"`
+	CreatedAt  string `json:"createdAt,omitempty"`
+	UpdatedAt  string `json:"updatedAt,omitempty"`
+	DeletedAt  string `json:"deletedAt,omitempty"`
 }

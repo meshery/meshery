@@ -47,7 +47,7 @@ func TestSchemasWorkspaceAutoMigrateAndPersistMetadata(t *testing.T) {
 		Name:           "Regression Workspace",
 		Description:    "verifies schemas workspace metadata storage",
 		Metadata:       core.Map{"source": "test", "mode": "gorm"},
-		OrganizationID: organizationID,
+		organizationID: organizationID,
 	}
 
 	if err := dbHandler.Create(&ws).Error; err != nil {
@@ -68,7 +68,7 @@ func TestSchemasWorkspaceAutoMigrateAndPersistMetadata(t *testing.T) {
 	}
 }
 
-func TestWorkspacePersisterUpdateWorkspace_PreservesOrganizationIDWhenOmitted(t *testing.T) {
+func TestWorkspacePersisterUpdateWorkspace_PreservesorganizationIDWhenOmitted(t *testing.T) {
 	dbHandler := newWorkspaceTestDB(t)
 	if err := dbHandler.AutoMigrate(&workspace.Workspace{}); err != nil {
 		t.Fatalf("failed to auto-migrate schemas workspace: %v", err)
@@ -92,7 +92,7 @@ func TestWorkspacePersisterUpdateWorkspace_PreservesOrganizationIDWhenOmitted(t 
 		Name:           "Original Workspace",
 		Description:    "before update",
 		Metadata:       core.Map{},
-		OrganizationID: organizationID,
+		organizationID: organizationID,
 	}
 
 	if err := dbHandler.Create(&ws).Error; err != nil {
@@ -110,8 +110,8 @@ func TestWorkspacePersisterUpdateWorkspace_PreservesOrganizationIDWhenOmitted(t 
 	if updated.Name != "Updated Workspace" {
 		t.Fatalf("expected updated name, got %q", updated.Name)
 	}
-	if updated.OrganizationID != organizationID {
-		t.Fatalf("expected organization ID %s to be preserved, got %s", organizationID, updated.OrganizationID)
+	if updated.organizationID != organizationID {
+		t.Fatalf("expected organization ID %s to be preserved, got %s", organizationID, updated.organizationID)
 	}
 }
 

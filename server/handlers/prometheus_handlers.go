@@ -189,7 +189,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 
 		userUUID := user.ID
 		credential, err := provider.SaveUserCredential(token, &models.Credential{
-			UserId: userUUID,
+			userID: userUUID,
 			Type:   "prometheus",
 			Secret: promCred,
 			Name:   credName,
@@ -229,7 +229,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		h.log.Debug("Prometheus URL %s saved", promURL)
 	}
 
-	err := provider.RecordPreferences(req, user.UserId, prefObj)
+	err := provider.RecordPreferences(req, user.userID, prefObj)
 	if err != nil {
 		h.log.Error(ErrRecordPreferences(err))
 		writeMeshkitError(w, ErrRecordPreferences(err), http.StatusInternalServerError)
@@ -291,7 +291,7 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 	}
 	err = json.NewEncoder(w).Encode(board)
 	if err != nil {
-		// Response body has already started streaming via json.Encoder —
+		// Response body has already started streaming via json.Encoder â€”
 		// a fresh error response would corrupt the in-flight JSON, so log only.
 		h.log.Error(models.ErrMarshal(err, "board instance"))
 		return
@@ -416,7 +416,7 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 
 	err = json.NewEncoder(w).Encode(result)
 	if err != nil {
-		// Response body has already started streaming via json.Encoder —
+		// Response body has already started streaming via json.Encoder â€”
 		// a fresh error response would corrupt the in-flight JSON, so log only.
 		h.log.Error(models.ErrMarshal(err, "board instance"))
 		return
