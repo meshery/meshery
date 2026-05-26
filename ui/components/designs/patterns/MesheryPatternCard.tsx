@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
-import { Avatar, Divider, Grid2, IconButton, Typography, Link, useTheme } from '@sistent/sistent';
+import {
+  Avatar,
+  Divider,
+  Grid2,
+  IconButton,
+  Typography,
+  Link,
+  useTheme,
+  // Sistent re-exports InfoOutlinedIcon as `InfoOutlined`; the original
+  // symbol is not on the bundle, so a direct InfoOutlinedIcon import
+  // resolves to undefined and crashes at render.
+  InfoOutlined as InfoOutlinedIcon,
+} from '@sistent/sistent';
 import { CustomTooltip, VisibilityChipMenu } from '@sistent/sistent';
 import {
   Delete as DeleteIcon,
@@ -25,13 +37,7 @@ import {
   StyledCodeMirrorWrapper,
 } from './Cards.styles';
 import YAMLDialog from '../../YamlDialog';
-import {
-  Public as PublicIcon,
-  Edit,
-  Lock,
-  Public,
-  InfoOutlined as InfoOutlinedIcon,
-} from '@/assets/icons';
+import { Public as PublicIcon, Edit, Lock, Public } from '@/assets/icons';
 import TooltipButton from '@/utils/TooltipButton';
 import CloneIcon from '../../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';

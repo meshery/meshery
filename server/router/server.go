@@ -38,6 +38,13 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.HandleFunc("/error", h.HandleErrorHandler)
 	gMux.HandleFunc("/api/providers", h.ProvidersHandler).
 		Methods("GET")
+	// Server-Sent Events stream of per-provider availability transitions.
+	// The provider-ui chooser subscribes here so it can render the local
+	// provider immediately and update each remote entry independently as
+	// its capability probe settles, instead of blocking on the slowest
+	// remote like the old polling-based /api/providers did.
+	gMux.HandleFunc("/api/providers/stream", h.ProvidersStreamHandler).
+		Methods("GET")
 	gMux.PathPrefix("/api/provider/extension").
 		Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.ProviderComponentsHandler)), models.ProviderAuth))).
 		Methods("GET", "POST", "OPTIONS", "PUT", "DELETE")

@@ -17,7 +17,7 @@ import (
 // JSON tag requires. A regression to "patternFile" or "pattern_data" at
 // the wrapper would cause Cloud to decode PatternData as nil and return
 // 400 "invalid request", which the server translates to the user-visible
-// "Bad request. The design might be corrupt" on the Kanvas save path.
+// "Bad request. The design might be corrupt" on the save path.
 func TestSaveMesheryPattern_SendsPatternDataWrapperKey(t *testing.T) {
 	// Errors encountered inside the httptest handler goroutine are
 	// recorded onto these atomics and asserted after SaveMesheryPattern

@@ -13,7 +13,9 @@ import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
 
-import { Box, InfoOutlined, Typography, useTheme } from '@sistent/sistent';
+// Sistent re-exports InfoOutlinedIcon as `InfoOutlined`; alias on
+// import so call sites stay unchanged.
+import { Box, InfoOutlined as InfoOutlinedIcon, Typography, useTheme } from '@sistent/sistent';
 
 type ChartColumn = [string, number];
 
@@ -103,7 +105,7 @@ export default function MesheryConfigurationChart() {
               title={`Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured. [Learn more](https://docs.meshery.io/concepts/logical/designs)`}
             >
               <div>
-                <InfoOutlined
+                <InfoOutlinedIcon
                   color={theme.palette.icon.default}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
                 />
