@@ -159,12 +159,23 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 				// ticker for keeping connection alive with pod each 10 seconds
 				ticker := time.NewTicker(10 * time.Second)
+				// also listen to command context done channel so the goroutine
+				// exits when the cobra command context is cancelled
+				ctxDone := cmd.Context().Done()
+				// listen to portforward stop channel so goroutine exits when
+				// port-forward stops internally
+				stopCh := portforward.GetStop()
 				go func() {
+					defer ticker.Stop()
 					for {
 						select {
 						case <-signals:
 							portforward.Stop()
-							ticker.Stop()
+							return
+						case <-ctxDone:
+							portforward.Stop()
+							return
+						case <-stopCh:
 							return
 						case <-ticker.C:
 							keepConnectionAlive(mesheryURL)
@@ -179,7 +190,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 					utils.Log.Warnf("Opening Meshery UI in browser at %s.", currCtx.GetEndpoint())
 				}
 
-				<-portforward.GetStop()
+				<-stopCh
 				return nil
 			}
 
