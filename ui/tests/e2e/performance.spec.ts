@@ -41,6 +41,7 @@ test.describe('Performance Section Tests', () => {
 
   test.describe('Configure Metrics Navigation and Settings', () => {
     test.beforeEach(async ({ page }: { page: Page }) => {
+      await expect(page.getByTestId('configure-metrics-button')).toBeVisible();
       await page.getByTestId('configure-metrics-button').click();
       await expect(page).toHaveURL(/metrics/i);
     });
