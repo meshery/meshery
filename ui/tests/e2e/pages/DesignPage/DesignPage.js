@@ -1,11 +1,10 @@
 import { ImportModal } from './components/ImportModal';
-import { DashboardPage } from '../DashboardPage';
 import { DeployModal } from './components/DeployModal';
 
 export class DesignPage {
   constructor(page) {
     this.page = page;
-    this.DashboardPage = new DashboardPage(page);
+
     this.DeployModal = new DeployModal(page);
     this.ImportModal = new ImportModal(page);
 
@@ -27,8 +26,7 @@ export class DesignPage {
   }
 
   async navigateTo() {
-    await this.DashboardPage.navigateToDashboard();
-    await this.DashboardPage.navigateToDesigns();
+    await this.page.goto('/configuration/designs', { waitUntil: 'domcontentloaded' });
     await this.pageLoader.waitFor({ state: 'detached' });
   }
 
