@@ -1,6 +1,7 @@
 import { expect, Page, Response } from '@playwright/test';
 import { test } from './fixtures/project';
 import { ENV } from './env';
+import { DashboardPage } from './pages/DashboardPage';
 import { waitForSnackBar } from './utils/waitForSnackBar';
 
 // Define the shape of the transition test objects
@@ -47,11 +48,12 @@ const transitionTests: TransitionTest[] = [
 
 test.describe.serial('Connection Management Tests', () => {
   test.beforeEach(async ({ page }) => {
+    const dashboardPage = new DashboardPage(page);
+    await dashboardPage.navigateToDashboard();
     const initialConnectionsRes = waitForConnectionsApiResponse(page);
-    await page.goto('/management/connections', { waitUntil: 'domcontentloaded' });
+    await dashboardPage.navigateToConnections();
     await page.waitForURL(/\/management\/connections/);
     await initialConnectionsRes;
-    await page.waitForLoadState('networkidle');
     await expect(page.getByTestId('ConnectionTable-search')).toBeVisible();
   });
 
