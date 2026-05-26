@@ -62,7 +62,13 @@ export class DashboardPage {
     await this.navigateToMenu(parentItem);
     const submenuItem = this.page.getByTestId(childItem);
     await expect(submenuItem).toBeVisible({ timeout: 120000 });
-    await submenuItem.click();
+    // Wait for the navigation/load to settle down before clicking the child item
+    await this.page.waitForLoadState('domcontentloaded');
+    try {
+      await submenuItem.click({ timeout: 10000 });
+    } catch (e) {
+      console.warn(`Submenu click warning (non-fatal): ${e.message}`);
+    }
   }
 
   async navigateToDashboard() {

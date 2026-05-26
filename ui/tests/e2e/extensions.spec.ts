@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { test, expect } from './fixtures/project';
 import { ExtensionsPage } from './pages/ExtensionsPage';
 
 const URLS = {
@@ -18,7 +18,8 @@ const URLS = {
 test.describe('Extensions Section Tests', () => {
   let extensionsPage: ExtensionsPage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, provider }) => {
+    test.skip(provider === 'Local', 'Local provider does not support extensions');
     extensionsPage = new ExtensionsPage(page);
     await extensionsPage.goto();
   });
