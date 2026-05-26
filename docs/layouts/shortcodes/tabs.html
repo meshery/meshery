@@ -4,20 +4,19 @@
   {{- errorf "The %q shortcode requires an 'id' argument: see %s" .Name .Position -}}
 {{- end -}}
 
-{{- /* Ensure a per-page instance counter to namespace radio groups */ -}}
-{{- if not (isset .Page.Scratch "tabs-instance-counter") -}}
-  {{- .Page.Scratch.Set "tabs-instance-counter" 0 -}}
-{{- end -}}
-{{- $instance := add (.Page.Scratch.Get "tabs-instance-counter") 1 -}}
+{{- /* Ensure each tabs shortcode on a page gets an isolated radio group. */ -}}
+{{- $instance := add (default 0 (.Page.Scratch.Get "tabs-instance-counter")) 1 -}}
 {{- .Page.Scratch.Set "tabs-instance-counter" $instance -}}
 
 {{- $blocks := split (trim .InnerDeindent "\n\r\t ") "<!-- tab -->" -}}
 {{- $page := .Page -}}
 <div class="tab-container tab-level-{{ $level }}{{ if gt $level 1 }} tab-container--nested{{ end }}">
 {{- $checked := false -}}
+{{- $tabIndex := 0 -}}
 {{- range $index, $raw := $blocks -}}
   {{- $block := trim $raw "\n\r\t " -}}
   {{- if ne $block "" -}}
+    {{- $tabIndex = add $tabIndex 1 -}}
     {{- $parts := split $block "\n\n" -}}
     {{- $title := trim (index $parts 0) "\n\r\t " -}}
     {{- $titleParts := split $title "|" -}}
@@ -30,9 +29,10 @@
     {{- if gt (len $parts) 1 -}}
       {{- $content = delimit (after 1 $parts) "\n\n" -}}
     {{- end -}}
-    {{- $tabID := printf "%s-%d-%d" $group $instance (add $index 1) -}}
-    {{- $contentID := printf "%s-content-%d-%d" $group $instance (add $index 1) -}}
-    <input id="{{ $tabID }}" type="radio" name="{{ printf "%s-%d" $group $instance }}"{{ if not $checked }} checked{{ end }}>
+    {{- $groupName := printf "%s-%d" $group $instance -}}
+    {{- $tabID := printf "%s-%d" $groupName $tabIndex -}}
+    {{- $contentID := printf "%s-content-%d" $groupName $tabIndex -}}
+    <input id="{{ $tabID }}" type="radio" name="{{ $groupName }}"{{ if not $checked }} checked{{ end }}>
     <label for="{{ $tabID }}">
       {{- if ne $iconRaw "" -}}
         {{- if hasPrefix $iconRaw "fa" -}}
