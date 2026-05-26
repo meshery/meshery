@@ -54,6 +54,10 @@ test.describe.serial('Model Workflow Tests', () => {
     // test.slow() triples the default timeout (60s → 180s).
     test.slow();
     test.setTimeout(600_000);
+    test.skip(
+      !!process.env.CI,
+      'GitHub-backed model generation remains too slow for the local-provider CI workflow.',
+    );
 
     await page.getByTestId('TabBar-Button-CreateModel').click();
 
