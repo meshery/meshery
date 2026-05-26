@@ -1,4 +1,5 @@
 import { expect, test, Page } from '@playwright/test';
+import { DashboardPage } from './pages/DashboardPage';
 
 const SETTINGS_TABS: string[] = [
   'settings-tab-adapters',
@@ -24,9 +25,9 @@ const COMMON_UI_ELEMENTS: string[] = [
 
 test.describe('Performance Section Tests', () => {
   test.beforeEach(async ({ page }: { page: Page }) => {
-    await page.goto('/performance', { waitUntil: 'domcontentloaded' });
-    await page.waitForURL(/\/performance/);
-    await page.waitForLoadState('networkidle');
+    const dashboardPage = new DashboardPage(page);
+    await dashboardPage.navigateToDashboard();
+    await dashboardPage.navigateToPerformance();
   });
 
   test('Common UI elements', async ({ page }: { page: Page }) => {

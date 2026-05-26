@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
+import { DashboardPage } from './pages/DashboardPage';
 
 // Strongly typed inline to avoid JS linter false positives
 const model: {
@@ -38,10 +39,10 @@ const model_import: {
 
 test.describe.serial('Model Workflow Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/settings', { waitUntil: 'domcontentloaded' });
-    await page.waitForURL(/\/settings/);
-    await page.waitForLoadState('networkidle');
-    await expect(page.getByTestId('settings-tab-registry')).toBeVisible();
+    const dashboardPage = new DashboardPage(page);
+    await dashboardPage.navigateToDashboard();
+    await dashboardPage.navigateToSettings();
+    await expect(page.getByTestId('settings-tab-registry')).toBeVisible({ timeout: 120000 });
     await page.getByTestId('settings-tab-registry').click();
   });
 
