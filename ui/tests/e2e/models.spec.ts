@@ -42,6 +42,7 @@ test.describe.serial('Model Workflow Tests', () => {
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToSettings();
+    await expect(page.getByTestId('settings-tab-registry')).toBeVisible({ timeout: 120000 });
     await page.getByTestId('settings-tab-registry').click();
   });
 

@@ -1,12 +1,14 @@
 import React from 'react';
-import { Box } from '@sistent/sistent';
+// Sistent re-exports InfoOutlinedIcon as `InfoOutlined`; alias on
+// import so call sites stay unchanged.
+import { Box, InfoOutlined as InfoOutlinedIcon } from '@sistent/sistent';
 import Moment from 'react-moment';
 import { GetApp as GetAppIcon } from '@/assets/icons';
 import { DoneAll as DoneAllIcon, Public as PublicIcon } from '@/assets/icons';
 import UndeployIcon from '../../../public/static/img/UndeployIcon';
 import CloneIcon from '../../../public/static/img/CloneIcon';
 import { Edit as EditIcon } from '@/assets/icons';
-import { InfoOutlined as InfoOutlinedIcon } from '@/assets/icons';
+
 import { DefaultTableCell, SortableTableCell } from '../../connections/common';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
