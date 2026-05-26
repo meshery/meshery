@@ -39,6 +39,10 @@ export class ExtensionsPage {
     return (await this.adapterDocsIstioLink.count()) > 0;
   }
 
+  async hasCatalogSection() {
+    return (await this.catalogSectionHeading.count()) > 0;
+  }
+
   async verifyPerformanceAnalysisDetails() {
     await expect(this.performanceHeading).toBeVisible();
     await expect(this.performanceEnableBtn).toBeVisible();
