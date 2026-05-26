@@ -13,6 +13,6 @@ jobs:
     - name: trigger plugins for edge
       uses: layer5io/trigger-remote-provider-action@master
       with:
-        name: "Build and Rollout Kanvas"
+        name: "Build and Rollout Extensions"
         repo: meshery-extensions/meshery-extensions-packages
         token: ${{ secrets.MESHERY_CI }}

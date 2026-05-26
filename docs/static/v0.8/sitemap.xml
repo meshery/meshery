@@ -441,22 +441,7 @@
      <changefreq>weekly</changefreq>
     </url>
 <url>
-     <loc>https://docs.meshery.io/extensions/kanvas</loc>
-     <lastmod>2026-03-05</lastmod>
-     <changefreq>weekly</changefreq>
-    </url>
-<url>
-     <loc>https://docs.meshery.io/extensions/helm-kanvas-snapshot</loc>
-     <lastmod>2026-03-05</lastmod>
-     <changefreq>weekly</changefreq>
-    </url>
-<url>
      <loc>https://docs.meshery.io/extensions/kubectl-meshsync-snapshot</loc>
-     <lastmod>2026-03-05</lastmod>
-     <changefreq>weekly</changefreq>
-    </url>
-<url>
-     <loc>https://docs.meshery.io/extensions/kanvas-snapshot</loc>
      <lastmod>2026-03-05</lastmod>
      <changefreq>weekly</changefreq>
     </url>
@@ -1650,7 +1635,7 @@
      <changefreq>weekly</changefreq>
     </url>
 <url>
-     <loc>https://docs.meshery.io/extensions/kubectl-kanvas-snapshot</loc>
+     <loc>https://docs.meshery.io/extensions/kubectl--snapshot</loc>
      <lastmod>2026-03-05</lastmod>
      <changefreq>weekly</changefreq>
     </url>

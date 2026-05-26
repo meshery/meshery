@@ -10,7 +10,7 @@ import (
 // `isMesheryUIRestricted` (uppercase UI). Meshery Cloud emits this exact
 // key on the /{version}/capabilities response; the legacy lowercase-Ui tag
 // silently dropped that value and left the playground/restricted-UI gate
-// stuck at false, which presented as a cloud.layer5.io ⇄ localhost:9081
+// stuck at false, which presented as a cloud.meshery.io ⇄ localhost:9081
 // redirect loop on enforced-provider hosts. Guarding the tag here means a
 // future tag refactor can't reintroduce that class of bug without flipping
 // this assertion as well.
