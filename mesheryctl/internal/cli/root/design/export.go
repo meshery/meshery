@@ -79,9 +79,9 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 			return err
 		}
 
-		baseURL := mctlCfg.GetBaseMesheryURL()
+		BaseURL := mctlCfg.GetBaseMesheryURL()
 		if !isID {
-			if design, err = fetchPatternIDByName(baseURL, design); err != nil {
+			if design, err = fetchPatternIDByName(BaseURL, design); err != nil {
 				return err
 			}
 		}
@@ -91,7 +91,7 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 			designType = "current"
 		}
 
-		if err := exportDesign(baseURL, design, designType); err != nil {
+		if err := exportDesign(BaseURL, design, designType); err != nil {
 			return err
 		}
 
@@ -99,8 +99,8 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 	},
 }
 
-func fetchPatternIDByName(baseURL, patternName string) (string, error) {
-	patternURL := fmt.Sprintf("%s/api/pattern?search=%s", baseURL, url.QueryEscape(patternName))
+func fetchPatternIDByName(BaseURL, patternName string) (string, error) {
+	patternURL := fmt.Sprintf("%s/api/pattern?search=%s", BaseURL, url.QueryEscape(patternName))
 	req, err := utils.NewRequest(http.MethodGet, patternURL, nil)
 	if err != nil {
 		return "", err
@@ -134,21 +134,21 @@ func fetchPatternIDByName(baseURL, patternName string) (string, error) {
 		return response.Patterns[0].ID.String(), nil
 	}
 
-	selectedPattern, err := selectPatternPrompt(response.Patterns, baseURL)
+	selectedPattern, err := selectPatternPrompt(response.Patterns, BaseURL)
 	if err != nil {
 		return "", err
 	}
 	return selectedPattern.ID.String(), nil
 }
 
-func exportDesign(baseURL, design, designType string) error {
-	dataURL := fmt.Sprintf("%s/api/pattern/%s", baseURL, design)
+func exportDesign(BaseURL, design, designType string) error {
+	dataURL := fmt.Sprintf("%s/api/pattern/%s", BaseURL, design)
 	pattern, err := fetchPatternData(dataURL)
 	if err != nil {
 		return err
 	}
 
-	url := fmt.Sprintf("%s/api/pattern/download/%s", baseURL, design)
+	url := fmt.Sprintf("%s/api/pattern/download/%s", BaseURL, design)
 	switch designType {
 	case "oci":
 		url += "?oci=true"
@@ -245,8 +245,8 @@ func centerAlign(text string, width int) string {
 	return strings.Repeat(" ", leftPadding) + text + strings.Repeat(" ", rightPadding)
 }
 
-func getOwnerName(ownerID string, baseURL string) (string, error) {
-	url := fmt.Sprintf("%s/api/user/profile/%s", baseURL, ownerID)
+func getOwnerName(ownerID string, BaseURL string) (string, error) {
+	url := fmt.Sprintf("%s/api/user/profile/%s", BaseURL, ownerID)
 	resp, err := makeRequest(http.MethodGet, url)
 	if err != nil {
 		return "", err
@@ -269,7 +269,7 @@ func getOwnerName(ownerID string, baseURL string) (string, error) {
 	return fmt.Sprintf("%s %s", userProfile.FirstName, userProfile.LastName), nil
 }
 
-func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) (models.MesheryPattern, error) {
+func selectPatternPrompt(patterns []models.MesheryPattern, BaseURL string) (models.MesheryPattern, error) {
 	columns := []string{"Design Name", "Created At", "Updated At", "Type", "Owner", "Pattern ID"}
 	widths := []int{20, 20, 20, 20, 20, 10}
 
@@ -293,7 +293,7 @@ func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) (mode
 			updatedAt = pattern.UpdatedAt.Format("2006-01-02 15:04:05")
 		}
 		if pattern.UserID != nil {
-			ownerName, err := getOwnerName(*pattern.UserID, baseURL)
+			ownerName, err := getOwnerName(*pattern.UserID, BaseURL)
 			if err == nil {
 				owner = ownerName
 			}

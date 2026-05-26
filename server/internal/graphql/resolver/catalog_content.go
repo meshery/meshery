@@ -72,10 +72,10 @@ func (r *queryResolver) fetchCatalogPattern(ctx context.Context, provider models
 		}
 	}
 
-	userID := []string{}
-	for _, userIDPtr := range selector.userID {
+	UserID := []string{}
+	for _, userIDPtr := range selector.UserID {
 		if userIDPtr != nil {
-			userID = append(userID, *userIDPtr)
+			UserID = append(UserID, *userIDPtr)
 		}
 	}
 
@@ -86,7 +86,7 @@ func (r *queryResolver) fetchCatalogPattern(ctx context.Context, provider models
 		}
 	}
 
-	resp, err := provider.GetCatalogMesheryPatterns(token, selector.Page, selector.Pagesize, selector.Search, selector.Order, metrics, populate, class, technology, patternType, orgID, workspaceID, userID)
+	resp, err := provider.GetCatalogMesheryPatterns(token, selector.Page, selector.Pagesize, selector.Search, selector.Order, metrics, populate, class, technology, patternType, orgID, workspaceID, UserID)
 
 	if err != nil {
 		r.Log.Error(err)

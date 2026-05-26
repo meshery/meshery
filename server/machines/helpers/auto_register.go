@@ -66,7 +66,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 			// Ideally iterate all Connection defs, extract fingerprint composite key and try to match with the given obj,
 			// For all connections that match the fingerprint and autoRegsiter is set to true, try to do auto registration.
 
-			userID := data.MeshsyncDataHandler.userID
+			UserID := data.MeshsyncDataHandler.UserID
 			compMetadata := data.Obj.ComponentMetadata
 			compCapabilites, ok := compMetadata["capabilities"].(map[string]interface{})
 			if !ok {
@@ -90,7 +90,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 						return
 					}
 
-					ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: userID})
+					ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: UserID})
 					ctx = context.WithValue(ctx, models.SystemIDKey, sysID)
 					ctx = context.WithValue(ctx, models.TokenCtxKey, data.MeshsyncDataHandler.Token)
 
@@ -100,9 +100,9 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 							"url":  url,
 						}
 
-						connectionPayload, id := getConnectionPayload(connType, data.Obj.KubernetesResourceMeta.Name, data.Obj.ID, url, userID, &connectionDef, connMetadata)
+						connectionPayload, id := getConnectionPayload(connType, data.Obj.KubernetesResourceMeta.Name, data.Obj.ID, url, UserID, &connectionDef, connMetadata)
 
-						machineInst, err := InitializeMachineWithContext(connectionPayload, ctx, id, data.MeshsyncDataHandler.userID, arh.smInstanceTracker, arh.log, data.MeshsyncDataHandler.Provider, machines.DISCOVERED, connType, nil)
+						machineInst, err := InitializeMachineWithContext(connectionPayload, ctx, id, data.MeshsyncDataHandler.UserID, arh.smInstanceTracker, arh.log, data.MeshsyncDataHandler.Provider, machines.DISCOVERED, connType, nil)
 
 						if err != nil {
 							arh.log.Error(ErrAutoRegister(err, connType))
@@ -126,9 +126,9 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 						// Delete the meshsync resource which has been upgraded to Connection.
 						_ = arh.dbHandler.Model(&meshsyncmodel.KubernetesResource{}).Delete(&meshsyncmodel.KubernetesResource{ID: data.Obj.ID})
 
-						event = events.NewEvent().WithCategory("connection").WithAction("register").FromUser(data.MeshsyncDataHandler.userID).ActedUpon(data.MeshsyncDataHandler.ConnectionID).WithDescription(fmt.Sprintf("Auto Registered connection of type \"%s\" at %s", connectionName, url)).Build()
+						event = events.NewEvent().WithCategory("connection").WithAction("register").FromUser(data.MeshsyncDataHandler.UserID).ActedUpon(data.MeshsyncDataHandler.ConnectionID).WithDescription(fmt.Sprintf("Auto Registered connection of type \"%s\" at %s", connectionName, url)).Build()
 
-						go arh.eventBroadcast.Publish(data.MeshsyncDataHandler.userID, event)
+						go arh.eventBroadcast.Publish(data.MeshsyncDataHandler.UserID, event)
 						_ = data.MeshsyncDataHandler.Provider.PersistSystemEvent(*event)
 					}
 				}
@@ -138,11 +138,11 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 	}
 }
 
-func getConnectionPayload(connType, objName, objID string, identifier interface{}, userID core.Uuid, connectionDef *component.ComponentDefinition, connMetadata map[string]interface{}) (connections.ConnectionPayload, core.Uuid) {
+func getConnectionPayload(connType, objName, objID string, identifier interface{}, UserID core.Uuid, connectionDef *component.ComponentDefinition, connMetadata map[string]interface{}) (connections.ConnectionPayload, core.Uuid) {
 
 	id, _ := generateUUID(map[string]interface{}{
 		"name":       objName,
-		"user_id":    userID,
+		"user_id":    UserID,
 		"identifier": identifier,
 	})
 

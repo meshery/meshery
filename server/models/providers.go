@@ -326,7 +326,7 @@ const (
 	// UserCtxKey is the context key for persisting user to context
 	UserCtxKey ContextKey = "user"
 
-	// userIDCtxKey is the context key for persisting userID to context
+	// userIDCtxKey is the context key for persisting UserID to context
 	userIDCtxKey ContextKey = "user_id"
 
 	// UserPrefsCtxKey is the context key for persisting user preferences to context
@@ -376,8 +376,8 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 // provider to its canonical name. Both the canonical name ("Local") and the
 // legacy alias ("None") are matched case-insensitively, so "local", "LOCAL",
 // "none", "NONE", and stale "None" cookies all resolve to "Local". Any other
-// input ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â including remote provider names like "Meshery" or "Digital Ocean", whose
-// canonical casing originates from the remote /capabilities response ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â is
+// input ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â including remote provider names like "Meshery" or "Digital Ocean", whose
+// canonical casing originates from the remote /capabilities response ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â is
 // returned unchanged. This is the single source of truth for the rename;
 // call it once at the request edge (resolveProviderName) rather than
 // scattering equivalent checks across handlers.
@@ -427,7 +427,7 @@ type Provider interface {
 	ExtractToken(http.ResponseWriter, *http.Request)
 	GetSession(req *http.Request) error
 	GetUserDetails(*http.Request) (*User, error)
-	GetUserByID(req *http.Request, userID string) ([]byte, error)
+	GetUserByID(req *http.Request, UserID string) ([]byte, error)
 	GetUsers(token, page, pageSize, search, order, filter string) ([]byte, error)
 	GetUsersKeys(token, page, pageSize, search, order, filter string, orgID string) ([]byte, error)
 	GetProviderToken(req *http.Request) (string, error)
@@ -444,7 +444,7 @@ type Provider interface {
 	PublishSmiResults(result *SmiResult) (string, error)
 	PublishMetrics(tokenVal string, data *MesheryResult) error
 	GetResult(tokenVal string, resultID core.Uuid) (*MesheryResult, error)
-	RecordPreferences(req *http.Request, userID string, data *Preference) error
+	RecordPreferences(req *http.Request, UserID string, data *Preference) error
 
 	// PersistEvent persists a user-initiated event to the remote provider using the given auth token.
 	PersistEvent(event events.Event, token string) error
@@ -474,7 +474,7 @@ type Provider interface {
 
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
 	GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string, visbility []string, includeMetrics string, populate []string) ([]byte, error)
-	GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order string, includeMetrics string, populate, class, technology, patternType, orgID, workspaceID, userID []string) ([]byte, error)
+	GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order string, includeMetrics string, populate, class, technology, patternType, orgID, workspaceID, UserID []string) ([]byte, error)
 	PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	UnPublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
@@ -520,7 +520,7 @@ type Provider interface {
 	ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error)
 
 	SaveConnection(conn *connections.ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error)
-	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error)
+	GetConnections(req *http.Request, UserID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error)
 	GetConnectionByID(token string, connectionID core.Uuid) (*connections.Connection, int, error)
 	UpdateConnection(req *http.Request, conn *connections.Connection) (*connections.Connection, error)
 	UpdateConnectionByID(token string, conn *connections.ConnectionPayload, connID string) (*connections.Connection, error)
@@ -533,7 +533,7 @@ type Provider interface {
 	LogoutMesheryServer() error
 
 	SaveUserCredential(token string, credential *Credential) (*Credential, error)
-	GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
+	GetUserCredentials(req *http.Request, UserID string, page, pageSize int, search, order string) (*CredentialsPage, error)
 	GetCredentialByID(token string, credentialID core.Uuid) (*Credential, int, error)
 	UpdateUserCredential(req *http.Request, credential *Credential) (*Credential, error)
 	DeleteUserCredential(req *http.Request, credentialID core.Uuid) (*Credential, error)
@@ -568,8 +568,8 @@ type Provider interface {
 	RemoveTeamFromWorkspace(req *http.Request, workspaceID string, teamID string) ([]byte, error)
 
 	// events
-	GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error)
-	GetEventTypes(token string, userID core.Uuid, sysID core.Uuid) (EventTypesResponse, error)
+	GetEvents(token string, eventsFilter *events.EventsFilter, page int, UserID core.Uuid, sysID core.Uuid) (*EventsResponse, error)
+	GetEventTypes(token string, UserID core.Uuid, sysID core.Uuid) (EventTypesResponse, error)
 	UpdateEventStatus(token string, eventID core.Uuid, status string) error
 	BulkUpdateEventStatus(token string, eventIDs []*core.Uuid, status string) error
 	DeleteEvent(token string, eventID core.Uuid) error

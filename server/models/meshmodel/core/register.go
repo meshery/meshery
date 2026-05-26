@@ -51,13 +51,13 @@ type names struct {
 	Kind string `json:"kind"`
 }
 
-func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context, config []byte, ctxID string, connectionID string, userID string, mesheryInstanceID core.Uuid, reg *registry.RegistryManager, ec *models.Broadcast, log logger.Handler, ctxName string) (err error) {
+func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context, config []byte, ctxID string, connectionID string, UserID string, mesheryInstanceID core.Uuid, reg *registry.RegistryManager, ec *models.Broadcast, log logger.Handler, ctxName string) (err error) {
 	connectionUUID := uuid.FromStringOrNil(connectionID)
-	userUUID := uuid.FromStringOrNil(userID)
+	userUUID := uuid.FromStringOrNil(UserID)
 
 	man, err := GetK8sMeshModelComponents(config)
 	eventMetadata := make(map[string]interface{}, 0)
-	ctx := models.K8sContextsFromKubeconfig(*provider, userID, ec, config, &mesheryInstanceID, eventMetadata, log)
+	ctx := models.K8sContextsFromKubeconfig(*provider, UserID, ec, config, &mesheryInstanceID, eventMetadata, log)
 	if err != nil {
 		return ErrCreatingKubernetesComponents(err, ctxID)
 	}
@@ -92,7 +92,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	event := events.NewEvent().ActedUpon(connectionUUID).WithCategory("kubernetes_components").WithAction("registration").FromSystem(mesheryInstanceID).FromUser(userUUID).WithSeverity(events.Informational).WithDescription(fmt.Sprintf("%d Kubernetes components registered for %s", count, ctxName)).WithMetadata(map[string]interface{}{
 		"doc": "https://docs.meshery.io/tasks/lifecycle-management",
 	}).Build()
-	_, err = helpers.FailedEventCompute("Kubernetes", mesheryInstanceID, provider, userID, ec)
+	_, err = helpers.FailedEventCompute("Kubernetes", mesheryInstanceID, provider, UserID, ec)
 	if err != nil {
 		return err
 	}

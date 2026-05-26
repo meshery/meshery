@@ -1237,7 +1237,7 @@ func CheckFileExists(name string) (bool, error) {
 // HandlePagination handles interactive pagination and prints the content in the terminal.
 // It takes the page size, data to paginate, header for the data table, and an optional footer.
 // If no footer is provided, it will be omitted.
-// Pagination allows users to navigate through the data using Enter or â†“ to continue,
+// Pagination allows users to navigate through the data using Enter or Ã¢â€ â€œ to continue,
 // Esc or Ctrl+C (Ctrl+Cmd for OS users) to exit.
 func HandlePagination(pageSize int, component string, data [][]string, header []string, footer ...[]string) error {
 	startIndex := 0

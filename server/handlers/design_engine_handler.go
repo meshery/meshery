@@ -45,7 +45,7 @@ func (h *Handler) PatternFileHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	userID := user.ID
+	UserID := user.ID
 	token, ok := r.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		tokenErr := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
@@ -88,16 +88,16 @@ func (h *Handler) PatternFileHandler(
 	isDesignInAlpha2Format, err := patternutils.IsDesignInAlpha2Format(payload.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)
-		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
+		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromUser(UserID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
 		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(UserID, event)
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusInternalServerError)
 		return
 	}
 
 	if isDesignInAlpha2Format {
-		eventBuilder := events.NewEvent().ActedUpon(patternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
+		eventBuilder := events.NewEvent().ActedUpon(patternID).FromSystem(*h.SystemID).FromUser(UserID).WithCategory("pattern").WithAction("convert")
 
 		_, patternFileStr, err := h.convertV1alpha2ToV1beta3(&models.MesheryPattern{
 			ID:          &patternID,
@@ -106,7 +106,7 @@ func (h *Handler) PatternFileHandler(
 
 		event := eventBuilder.Build()
 		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(UserID, event)
 
 		if err != nil {
 			h.log.Error(err)
@@ -150,7 +150,7 @@ func (h *Handler) PatternFileHandler(
 		Provider:               provider,
 		Pattern:                patternFile,
 		PrefObj:                prefObj,
-		userID:                 user.ID.String(),
+		UserID:                 user.ID.String(),
 		IsDelete:               isDelete,
 		Validate:               validate,
 		DryRun:                 isDryRun,
@@ -163,7 +163,7 @@ func (h *Handler) PatternFileHandler(
 	}
 	response, err := _processPattern(opts)
 
-	eventBuilder := events.NewEvent().ActedUpon(patternID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
+	eventBuilder := events.NewEvent().ActedUpon(patternID).FromUser(UserID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
 
 	if err != nil {
 		err := ErrPatternDeploy(err, patternFile.Name)
@@ -173,7 +173,7 @@ func (h *Handler) PatternFileHandler(
 
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to %s design '%s'.", action, patternFile.Name)).WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(UserID, event)
 
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusInternalServerError)
@@ -206,7 +206,7 @@ func (h *Handler) PatternFileHandler(
 
 	_ = provider.PersistEvent(*event, token)
 	go func() {
-		h.config.EventBroadcaster.Publish(userID, event)
+		h.config.EventBroadcaster.Publish(UserID, event)
 
 	}()
 
@@ -249,7 +249,7 @@ func _processPattern(opts *patterncore.ProcessPatternOptions) (map[string]interf
 			log:                    opts.Log,
 			provider:               opts.Provider,
 			prefObj:                opts.PrefObj,
-			userID:                 opts.userID,
+			UserID:                 opts.UserID,
 			registry:               opts.Registry,
 			skipPrintLogs:          opts.SkipPrintLogs,
 			skipCrdAndOperator:     opts.SkipCRDAndOperator,
@@ -341,7 +341,7 @@ type serviceActionProvider struct {
 	// kubeClient      *meshkube.Client
 	ctxTokubeconfig map[string]string
 	opIsDelete      bool
-	userID          string
+	UserID          string
 	// kubeconfig  []byte
 	// kubecontext     *models.K8sContext
 	skipCrdAndOperator     bool
@@ -537,7 +537,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 				sap.opIsDelete,
 				sap.patternName,
 				sap.eventsChannel,
-				sap.userID,
+				sap.UserID,
 				sap.provider,
 				host,
 				sap.skipCrdAndOperator,
@@ -584,7 +584,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			return nil, err
 		}
 		resp, err := mClient.MClient.Provision(context.TODO(), &meshes.ProvisionRequest{
-			Username:     sap.userID,
+			Username:     sap.UserID,
 			DeleteOp:     sap.opIsDelete,
 			KubeConfigs:  kconfigs,
 			Declarations: []string{compStr},

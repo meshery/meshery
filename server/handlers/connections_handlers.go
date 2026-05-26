@@ -142,7 +142,7 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 
 func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
-	userID := user.ID
+	UserID := user.ID
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		writeMeshkitError(w, ErrRequestBody(err), http.StatusInternalServerError)
@@ -159,7 +159,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 		return
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
+	eventBuilder := events.NewEvent().ActedUpon(UserID).FromUser(UserID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	if token == "" {
@@ -176,7 +176,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error creating connection %s", connection.Name)).WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(UserID, event)
 
 		h.log.Error(_err)
 		writeMeshkitError(w, _err, http.StatusInternalServerError)
@@ -187,7 +187,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	go h.config.EventBroadcaster.Publish(UserID, event)
 
 	h.log.Info(description)
 	w.WriteHeader(http.StatusCreated)
@@ -358,7 +358,7 @@ func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ 
 
 func (h *Handler) UpdateConnectionByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
-	userID := user.ID
+	UserID := user.ID
 
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -367,7 +367,7 @@ func (h *Handler) UpdateConnectionByID(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(UserID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
 
 	connection := &connections.ConnectionPayload{}
 	err = json.Unmarshal(bd, connection)
@@ -391,7 +391,7 @@ func (h *Handler) UpdateConnectionByID(w http.ResponseWriter, req *http.Request,
 			connectionID,
 			connection,
 			token,
-			userID,
+			UserID,
 			provider,
 		)
 		if err != nil {
@@ -402,7 +402,7 @@ func (h *Handler) UpdateConnectionByID(w http.ResponseWriter, req *http.Request,
 			}
 			event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to handle meshsync deployment mode change").WithMetadata(metadata).Build()
 			_ = provider.PersistEvent(*event, token)
-			go h.config.EventBroadcaster.Publish(userID, event)
+			go h.config.EventBroadcaster.Publish(UserID, event)
 
 			h.log.Error(meshSyncErr)
 			writeMeshkitError(w, meshSyncErr, http.StatusInternalServerError)
@@ -419,7 +419,7 @@ func (h *Handler) UpdateConnectionByID(w http.ResponseWriter, req *http.Request,
 			}
 			event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
 			_ = provider.PersistEvent(*event, token)
-			go h.config.EventBroadcaster.Publish(userID, event)
+			go h.config.EventBroadcaster.Publish(UserID, event)
 
 			h.log.Info(description)
 		}
@@ -432,7 +432,7 @@ func (h *Handler) UpdateConnectionByID(w http.ResponseWriter, req *http.Request,
 		}).WithDescription("No auth token provided in the request.").Build()
 
 		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(UserID, event)
 		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
@@ -444,7 +444,7 @@ func (h *Handler) UpdateConnectionByID(w http.ResponseWriter, req *http.Request,
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error updating connection").WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(UserID, event)
 
 		h.log.Error(_err)
 		writeMeshkitError(w, _err, http.StatusInternalServerError)
@@ -456,21 +456,21 @@ func (h *Handler) UpdateConnectionByID(w http.ResponseWriter, req *http.Request,
 	eventBuilder = eventBuilder.WithDescription(description)
 
 	if connection.Status != "" {
-		event, _ := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
+		event, _ := h.NotifySmOfConnectionStatusChange(req.Context(), UserID, provider, token, connection)
 		_ = provider.PersistEvent(event, token)
 	}
 
 	event := eventBuilder.WithSeverity(events.Informational).Build()
 	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	go h.config.EventBroadcaster.Publish(UserID, event)
 	h.log.Info(description)
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, userID core.Uuid, provider models.Provider, token string, connection *connections.ConnectionPayload) (events.Event, error) {
+func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, UserID core.Uuid, provider models.Provider, token string, connection *connections.ConnectionPayload) (events.Event, error) {
 	connectionID := connection.ID
 
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(UserID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
 
 	if connection.Status != "" {
 		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
@@ -505,7 +505,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 			machineCtx,
 			context,
 			connectionID,
-			userID,
+			UserID,
 			smInstanceTracker,
 			h.log,
 			provider,
@@ -526,7 +526,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 			if err != nil {
 				h.log.Error(err)
 				_ = provider.PersistEvent(*event, token)
-				h.config.EventBroadcaster.Publish(userID, event)
+				h.config.EventBroadcaster.Publish(UserID, event)
 				return
 			}
 
@@ -535,7 +535,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 			}
 
 			_ = provider.PersistEvent(*event, token)
-			h.config.EventBroadcaster.Publish(userID, event)
+			h.config.EventBroadcaster.Publish(UserID, event)
 		}(inst, connection.Status)
 	}
 
@@ -544,14 +544,14 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
-	userID := user.ID
+	UserID := user.ID
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
 		h.log.Error(ErrRetrieveUserToken(err))
 		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(UserID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
@@ -562,7 +562,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error deleting connection").WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(UserID, event)
 
 		if errors.GetCode(err) == models.ErrResultNotFoundCode {
 			h.log.Warnf("No connection with ID %q found to delete", connectionID)
@@ -578,7 +578,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 
 	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	go h.config.EventBroadcaster.Publish(UserID, event)
 
 	h.log.Info("connection deleted.")
 	w.WriteHeader(http.StatusOK)
@@ -592,7 +592,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 	connectionID core.Uuid,
 	newConnection *connections.ConnectionPayload,
 	token string,
-	userID core.Uuid,
+	UserID core.Uuid,
 	provider models.Provider,
 ) (connections.MeshsyncDeploymentMode, connections.MeshsyncDeploymentMode, bool, error) {
 	if newConnection == nil {
@@ -669,7 +669,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
 				DeployUndeployedOperators(machineCtx.OperatorTracker).
-				AddMeshsynDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
+				AddMeshsynDataHandlers(ctx, machineCtx.K8sContext, UserID, mesheryInstanceID, provider)
 		}
 
 	}

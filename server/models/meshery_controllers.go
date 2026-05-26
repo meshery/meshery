@@ -115,7 +115,7 @@ func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value connections
 // initialized yet. Apart from updating the map, it also runs the handler after
 // updating the map. The presence of a handler for a context in a map indicate that
 // the meshsync data for that context is properly being handled
-func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context, k8scontext K8sContext, userID, mesheryInstanceID core.Uuid, provider Provider) *MesheryControllersHelper {
+func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context, k8scontext K8sContext, UserID, mesheryInstanceID core.Uuid, provider Provider) *MesheryControllersHelper {
 	// only checking those contexts whose MesheryConrollers are active
 	// go func(mch *MesheryControllersHelper) {
 
@@ -126,13 +126,13 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 
 		switch mch.meshsyncDeploymentMode {
 		case connections.MeshsyncDeploymentModeOperator:
-			brokerHandler = mch.meshsynDataHandlersNatsBroker(k8scontext, userID)
+			brokerHandler = mch.meshsynDataHandlersNatsBroker(k8scontext, UserID)
 		case connections.MeshsyncDeploymentModeEmbedded:
 			brokerHandler = channelBroker.NewChannelBrokerHandler()
 			// use a standalone context here context.Background(), as
 			// meshsync run must be stopped only when meshsync data handler is deregistered
 			// and ctx which is passed from above, could be closed earlier
-			stop, err := mch.meshsynDataHandlersStartLibMeshsyncRun(context.Background(), brokerHandler, k8scontext, userID)
+			stop, err := mch.meshsynDataHandlersStartLibMeshsyncRun(context.Background(), brokerHandler, k8scontext, UserID)
 			if err != nil {
 				mch.log.Error(err)
 				mch.emitErrorEvent("Failed to start MeshSync library run", err, map[string]any{
@@ -140,7 +140,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 					"k8sContextName":         k8scontext.Name,
 					"connectionID":           k8scontext.ConnectionID,
 					"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
-				}, userID)
+				}, UserID)
 				return mch
 			}
 			stopFunc = stop
@@ -154,7 +154,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 				"k8sContextName":         k8scontext.Name,
 				"connectionID":           k8scontext.ConnectionID,
 				"meshsyncDeploymentMode": string(mch.meshsyncDeploymentMode),
-			}, userID)
+			}, UserID)
 			return mch
 		}
 
@@ -164,11 +164,11 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 				"k8sContextID":   ctxID,
 				"k8sContextName": k8scontext.Name,
 				"connectionID":   k8scontext.ConnectionID,
-			}, userID)
+			}, UserID)
 			return mch
 		}
 		token, _ := ctx.Value(TokenCtxKey).(string)
-		msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token, stopFunc)
+		msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, UserID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token, stopFunc)
 		err := msDataHandler.Run()
 		if err != nil {
 			mch.log.Warn(err)
@@ -177,7 +177,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 				"k8sContextID":   ctxID,
 				"k8sContextName": k8scontext.Name,
 				"connectionID":   k8scontext.ConnectionID,
-			}, userID)
+			}, UserID)
 			return mch
 		}
 		mch.ctxMeshsyncDataHandler = msDataHandler
@@ -202,7 +202,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 			"connectionID":           k8scontext.ConnectionID,
 			"meshsyncDeploymentMode": string(mch.meshsyncDeploymentMode),
 		},
-		userID,
+		UserID,
 	)
 
 	return mch
@@ -210,7 +210,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 
 func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 	k8scontext K8sContext,
-	userID core.Uuid,
+	UserID core.Uuid,
 ) broker.Handler {
 	ctxID := k8scontext.ID
 	controllerHandlers := mch.ctxControllerHandlers
@@ -225,7 +225,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 				"k8sContextID":   ctxID,
 				"k8sContextName": k8scontext.Name,
 				"connectionID":   k8scontext.ConnectionID,
-			}, userID)
+			}, UserID)
 		}
 		mch.log.Info(
 			fmt.Sprintf("Meshery Broker unreachable for Kubernetes context (%v)", ctxID),
@@ -234,7 +234,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 			"k8sContextID":   ctxID,
 			"k8sContextName": k8scontext.Name,
 			"connectionID":   k8scontext.ConnectionID,
-		}, userID)
+		}, UserID)
 		return nil
 	}
 	brokerHandler, err := nats.New(nats.Options{
@@ -255,7 +255,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 			"k8sContextName": k8scontext.Name,
 			"connectionID":   k8scontext.ConnectionID,
 			"brokerEndpoint": brokerEndpoint,
-		}, userID)
+		}, UserID)
 		return nil
 	}
 	mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID))
@@ -268,7 +268,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersStartLibMeshsyncRun(
 	ctx context.Context,
 	brokerHandler broker.Handler,
 	k8sContext K8sContext,
-	userID core.Uuid,
+	UserID core.Uuid,
 ) (func(), error) {
 	kubeConfig, err := k8sContext.GenerateKubeConfig()
 	if err != nil {
@@ -292,7 +292,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersStartLibMeshsyncRun(
 				"k8sContextName":         k8sContext.Name,
 				"connectionID":           k8sContext.ConnectionID,
 				"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
-			}, userID)
+			}, UserID)
 		}
 	}()
 
@@ -648,9 +648,9 @@ func SetOverrideValuesForMesheryDeploy(adapters []Adapter, adapter Adapter, inst
 }
 
 // General helper method to emit events for system-level operations
-func (mch *MesheryControllersHelper) emitEvent(description string, severity events.EventSeverity, metadata map[string]any, userID core.Uuid) {
+func (mch *MesheryControllersHelper) emitEvent(description string, severity events.EventSeverity, metadata map[string]any, UserID core.Uuid) {
 	if mch.eventBroadcaster != nil && mch.systemID != nil {
-		actedUpon := controllerEventActedUpon(userID, metadata)
+		actedUpon := controllerEventActedUpon(UserID, metadata)
 
 		eventBuilder := events.NewEvent().
 			FromSystem(*mch.systemID).
@@ -660,8 +660,8 @@ func (mch *MesheryControllersHelper) emitEvent(description string, severity even
 			WithDescription(description).
 			WithMetadata(metadata)
 
-		if userID != uuid.Nil {
-			eventBuilder = eventBuilder.FromUser(userID)
+		if UserID != uuid.Nil {
+			eventBuilder = eventBuilder.FromUser(UserID)
 		}
 
 		if actedUpon != uuid.Nil {
@@ -671,7 +671,7 @@ func (mch *MesheryControllersHelper) emitEvent(description string, severity even
 		event := eventBuilder.Build()
 
 		if mch.provider != nil {
-			if shouldPersistControllerEvent(userID, actedUpon) {
+			if shouldPersistControllerEvent(UserID, actedUpon) {
 				if err := mch.provider.PersistSystemEvent(*event); err != nil {
 					mch.log.Error(fmt.Errorf("failed to persist event: %w", err))
 				}
@@ -679,11 +679,11 @@ func (mch *MesheryControllersHelper) emitEvent(description string, severity even
 				mch.log.Debug("skipping remote persistence for controller event without valid user or resource association")
 			}
 		}
-		go mch.eventBroadcaster.Publish(userID, event)
+		go mch.eventBroadcaster.Publish(UserID, event)
 	}
 }
 
-func controllerEventActedUpon(userID core.Uuid, metadata map[string]any) core.Uuid {
+func controllerEventActedUpon(UserID core.Uuid, metadata map[string]any) core.Uuid {
 	if metadata != nil {
 		switch connectionID := metadata["connectionID"].(type) {
 		case string:
@@ -701,19 +701,19 @@ func controllerEventActedUpon(userID core.Uuid, metadata map[string]any) core.Uu
 		}
 	}
 
-	if userID != uuid.Nil {
-		return userID
+	if UserID != uuid.Nil {
+		return UserID
 	}
 
 	return uuid.Nil
 }
 
-func shouldPersistControllerEvent(userID, actedUpon core.Uuid) bool {
-	return userID != uuid.Nil && actedUpon != uuid.Nil
+func shouldPersistControllerEvent(UserID, actedUpon core.Uuid) bool {
+	return UserID != uuid.Nil && actedUpon != uuid.Nil
 }
 
 // Common helper for both error and warning events with error information
-func (mch *MesheryControllersHelper) emitEventWithError(description string, severity events.EventSeverity, err error, metadata map[string]any, userID core.Uuid) {
+func (mch *MesheryControllersHelper) emitEventWithError(description string, severity events.EventSeverity, err error, metadata map[string]any, UserID core.Uuid) {
 	eventMetadata := make(map[string]any)
 
 	if metadata != nil {
@@ -724,15 +724,15 @@ func (mch *MesheryControllersHelper) emitEventWithError(description string, seve
 		eventMetadata["error"] = err.Error()
 	}
 
-	mch.emitEvent(description, severity, eventMetadata, userID)
+	mch.emitEvent(description, severity, eventMetadata, UserID)
 }
 
 // Helper method to emit error events
-func (mch *MesheryControllersHelper) emitErrorEvent(description string, err error, metadata map[string]any, userID core.Uuid) {
-	mch.emitEventWithError(description, events.Error, err, metadata, userID)
+func (mch *MesheryControllersHelper) emitErrorEvent(description string, err error, metadata map[string]any, UserID core.Uuid) {
+	mch.emitEventWithError(description, events.Error, err, metadata, UserID)
 }
 
 // Helper method to emit warning events
-func (mch *MesheryControllersHelper) emitWarningEvent(description string, err error, metadata map[string]any, userID core.Uuid) {
-	mch.emitEventWithError(description, events.Warning, err, metadata, userID)
+func (mch *MesheryControllersHelper) emitWarningEvent(description string, err error, metadata map[string]any, UserID core.Uuid) {
+	mch.emitEventWithError(description, events.Warning, err, metadata, UserID)
 }

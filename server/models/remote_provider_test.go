@@ -178,7 +178,7 @@ func TestRemoteProvider_GetUserByID_SystemInstanceReturnsSentinel(t *testing.T) 
 		t.Errorf("expected nil body for system instance ID, got %q", string(body))
 	}
 	if err == nil {
-		t.Fatal("expected ErrUserIsSystemInstance, got nil â€” silent (nil, nil) is the old bug")
+		t.Fatal("expected ErrUserIsSystemInstance, got nil Ã¢â‚¬â€ silent (nil, nil) is the old bug")
 	}
 	if !stderrors.Is(err, ErrUserIsSystemInstance) {
 		t.Errorf("expected err to match ErrUserIsSystemInstance via errors.Is, got %v", err)

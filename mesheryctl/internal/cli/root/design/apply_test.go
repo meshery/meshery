@@ -32,13 +32,13 @@ func TestApplyCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
-					URL:          testContext.baseURL + "/api/pattern",
+					URL:          testContext.BaseURL + "/api/pattern",
 					Response:     "apply.designSave.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.baseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
 					Response:     "apply.designDeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -53,7 +53,7 @@ func TestApplyCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
-					URL:          testContext.baseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
 					Response:     "apply.designDeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -78,7 +78,7 @@ func TestApplyCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
-					URL:          testContext.baseURL + "/api/pattern",
+					URL:          testContext.BaseURL + "/api/pattern",
 					Response:     "apply.invalidJSON.response.golden",
 					ResponseCode: 200,
 				},

@@ -16,8 +16,8 @@ type EventTypesResponse struct {
 }
 
 type MesheryEvents interface {
-	// GetAllEvents(eventFilter *events.EventsFilter, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error)
-	// GetEventTypes(userID core.Uuid, sysID core.Uuid) (map[string]interface{}, error)
+	// GetAllEvents(eventFilter *events.EventsFilter, UserID core.Uuid, sysID core.Uuid) (*EventsResponse, error)
+	// GetEventTypes(UserID core.Uuid, sysID core.Uuid) (map[string]interface{}, error)
 	DeleteEvent(eventID core.Uuid) error
 	UpdateEventStatus(eventID core.Uuid, status string) (*events.Event, error)
 	BulkUpdateEventStatus(eventID []*core.Uuid, status string) ([]*events.Event, error)

@@ -32,25 +32,25 @@ func TestDeployCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.baseURL + "/api/pattern/types",
+					URL:          testContext.BaseURL + "/api/pattern/types",
 					Response:     "view.designTypes.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.baseURL + "/api/pattern/Kubernetes%20Manifest",
+					URL:          testContext.BaseURL + "/api/pattern/Kubernetes%20Manifest",
 					Response:     "deploy.applicationSave.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.baseURL + "/api/pattern/import",
+					URL:          testContext.BaseURL + "/api/pattern/import",
 					Response:     "apply.designSave.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.baseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
 					Response:     "deploy.designdeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -64,25 +64,25 @@ func TestDeployCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.baseURL + "/api/pattern/types",
+					URL:          testContext.BaseURL + "/api/pattern/types",
 					Response:     "view.designTypes.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.baseURL + "/api/pattern",
+					URL:          testContext.BaseURL + "/api/pattern",
 					Response:     "apply.designSave.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.baseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
 					Response:     "deploy.designdeploy.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.baseURL + "/api/pattern/import",
+					URL:          testContext.BaseURL + "/api/pattern/import",
 					Response:     "apply.designSave.response.golden",
 					ResponseCode: 200,
 				},
@@ -96,7 +96,7 @@ func TestDeployCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.baseURL + "/api/pattern/types",
+					URL:          testContext.BaseURL + "/api/pattern/types",
 					Response:     "view.designTypes.response.golden",
 					ResponseCode: 200,
 				},
@@ -112,13 +112,13 @@ func TestDeployCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.baseURL + "/api/pattern/types",
+					URL:          testContext.BaseURL + "/api/pattern/types",
 					Response:     "view.designTypes.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.baseURL + "/api/pattern?populate=pattern_file&search=nonexistent-design",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=nonexistent-design",
 					Response:     "pattern.empty.response.golden",
 					ResponseCode: 200,
 				},

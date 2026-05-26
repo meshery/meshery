@@ -12,7 +12,7 @@ import (
 
 func expectedViewFlagError(outputFormat string, orgID string) error {
 	fv := mesheryctlflags.GetFlagValidator()
-	return fv.Validate(&workspaceViewFlags{OutputFormat: outputFormat, orgID: orgID})
+	return fv.Validate(&workspaceViewFlags{OutputFormat: outputFormat, OrgId: orgID})
 }
 
 func TestViewWorkspace(t *testing.T) {

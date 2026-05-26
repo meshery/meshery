@@ -27,7 +27,7 @@ type CountBySeverityLevel struct {
 	Count    int    `json:"count"`
 }
 
-func (e *EventsPersister) getCountBySeverity(userID core.Uuid, eventStatus events.EventStatus) ([]*CountBySeverityLevel, error) {
+func (e *EventsPersister) getCountBySeverity(UserID core.Uuid, eventStatus events.EventStatus) ([]*CountBySeverityLevel, error) {
 	if eventStatus == "" {
 		eventStatus = events.Unread
 	}
@@ -38,7 +38,7 @@ func (e *EventsPersister) getCountBySeverity(userID core.Uuid, eventStatus event
 	eventsBySeverity := []*CountBySeverityLevel{}
 	err := e.DB.Model(&events.Event{}).
 		Select("severity, count(severity) as count").
-		Where("status = ? AND (user_id = ? OR user_id = ?)", eventStatus, userID, sysID).
+		Where("status = ? AND (user_id = ? OR user_id = ?)", eventStatus, UserID, sysID).
 		Group("severity").
 		Find(&eventsBySeverity).Error
 

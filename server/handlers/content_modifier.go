@@ -15,18 +15,18 @@ type ContentModifier struct {
 	token    string
 	provider models.Provider
 	prefObj  *models.Preference
-	userID   string
+	UserID   string
 }
 
 func NewContentModifier(token string,
 	provider models.Provider,
 	prefObj *models.Preference,
-	userID string) *ContentModifier {
+	UserID string) *ContentModifier {
 	return &ContentModifier{
 		token:    token,
 		provider: provider,
 		prefObj:  prefObj,
-		userID:   userID,
+		UserID:   UserID,
 	}
 }
 
@@ -66,7 +66,7 @@ func (mc *ContentModifier) AddMetadataForPatterns(ctx context.Context, contentBy
 			msg, ok := mc.isPatternSupported(ctx, patterncontent)
 			(*p)[i]["canSupport"] = ok
 			(*p)[i]["errmsg"] = msg
-		}(pattern, i, &p, mc.token, mc.provider, mc.prefObj, mc.userID)
+		}(pattern, i, &p, mc.token, mc.provider, mc.prefObj, mc.UserID)
 	}
 	wg.Wait()
 	patternsPageMap["patterns"] = p
@@ -89,7 +89,7 @@ func (mc *ContentModifier) isPatternSupported(ctx context.Context, patternFileSt
 		Provider:               mc.provider,
 		Pattern:                *patternFile,
 		PrefObj:                mc.prefObj,
-		userID:                 mc.userID,
+		UserID:                 mc.UserID,
 		IsDelete:               false,
 		Validate:               true,
 		DryRun:                 true,

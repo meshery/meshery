@@ -42,7 +42,7 @@ func TestConnectionDeleteCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
-					URL:          testContext.baseURL + "/api/integrations/connections/" + connectionID,
+					URL:          testContext.BaseURL + "/api/integrations/connections/" + connectionID,
 					Response:     "delete.connection.notfound.response.golden",
 					ResponseCode: 404,
 				},
@@ -56,7 +56,7 @@ func TestConnectionDeleteCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
-					URL:          testContext.baseURL + "/api/integrations/connections/" + connectionID,
+					URL:          testContext.BaseURL + "/api/integrations/connections/" + connectionID,
 					Response:     "delete.connection.success.response.golden",
 					ResponseCode: 200,
 				},

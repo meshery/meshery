@@ -13,18 +13,18 @@ type UserCapabilities struct {
 	Capabilities ProviderProperties `json:"capabilities" gorm:"type:bytes;serializer:json" db:"capabilities"`
 }
 
-// ReadFromPersister - reads the capabilities for the given userID
-func (u *UserCapabilitiesPersister) ReadCapabilitiesForUser(userID string) (*ProviderProperties, error) {
+// ReadFromPersister - reads the capabilities for the given UserID
+func (u *UserCapabilitiesPersister) ReadCapabilitiesForUser(UserID string) (*ProviderProperties, error) {
 	if u.DB == nil {
 		return nil, ErrDBConnection
 	}
 
-	if userID == "" {
-		return nil, ErruserID
+	if UserID == "" {
+		return nil, ErrUserID
 	}
 
 	capabilities := &UserCapabilities{}
-	err := u.DB.Model(capabilities).Where("id = ?", userID).First(capabilities).Error
+	err := u.DB.Model(capabilities).Where("id = ?", UserID).First(capabilities).Error
 	if err != nil {
 		return nil, err
 	}
@@ -33,21 +33,21 @@ func (u *UserCapabilitiesPersister) ReadCapabilitiesForUser(userID string) (*Pro
 }
 
 // WriteToPersister persists the capabilities for the user
-func (u *UserCapabilitiesPersister) WriteCapabilitiesForUser(userID string, data *ProviderProperties) error {
+func (u *UserCapabilitiesPersister) WriteCapabilitiesForUser(UserID string, data *ProviderProperties) error {
 	if u.DB == nil {
 		return ErrDBConnection
 	}
 
-	if userID == "" {
-		return ErruserID
+	if UserID == "" {
+		return ErrUserID
 	}
 
 	userCapabilities := &UserCapabilities{
-		ID:           userID,
+		ID:           UserID,
 		Capabilities: *data,
 	}
 
-	err := u.DB.Model(&UserCapabilities{}).Where("id = ?", userID).Save(userCapabilities).Error
+	err := u.DB.Model(&UserCapabilities{}).Where("id = ?", UserID).Save(userCapabilities).Error
 	if err != nil {
 		return err
 	}
@@ -56,14 +56,14 @@ func (u *UserCapabilitiesPersister) WriteCapabilitiesForUser(userID string, data
 }
 
 // DeleteFromPersister removes the capabilities for the user
-func (u *UserCapabilitiesPersister) DeleteCapabilitiesForUser(userID string) error {
+func (u *UserCapabilitiesPersister) DeleteCapabilitiesForUser(UserID string) error {
 	if u.DB == nil {
 		return ErrDBConnection
 	}
 
-	if userID == "" {
-		return ErruserID
+	if UserID == "" {
+		return ErrUserID
 	}
 
-	return u.DB.Delete(&UserCapabilities{ID: userID}).Error
+	return u.DB.Delete(&UserCapabilities{ID: UserID}).Error
 }

@@ -68,10 +68,10 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 }
 
 func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	userID := user.ID
+	UserID := user.ID
 	contextID := mux.Vars(req)["id"]
 
-	eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(contextID)).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+	eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(contextID)).FromUser(UserID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
 
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
@@ -108,7 +108,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		machineCtx,
 		req.Context(),
 		connectionUUID,
-		userID,
+		UserID,
 		smInstanceTracker,
 		h.log,
 		provider,
@@ -134,9 +134,9 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		})
 		event := eventBuilder.Build()
 		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(UserID, event)
 	}
-	// go h.config.EventBroadcaster.Publish(userID, event)
+	// go h.config.EventBroadcaster.Publish(UserID, event)
 
 	// h.config.K8scontextChannel.PublishContext()
 }

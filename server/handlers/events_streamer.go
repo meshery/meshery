@@ -49,7 +49,7 @@ type statusIDs struct {
 }
 
 func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	userID := user.ID
+	UserID := user.ID
 	page, offset, limit,
 		search, order, sortOnCol, status := getPaginationParams(req)
 	// eventCategory :=
@@ -67,7 +67,7 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	ctx := req.Context()
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
-	e, err := provider.GetEvents(token, filter, page, userID, *h.SystemID)
+	e, err := provider.GetEvents(token, filter, page, UserID, *h.SystemID)
 
 	if err != nil || e == nil {
 		h.log.Error(ErrGetEvents(err))
@@ -79,7 +79,7 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	err = json.NewEncoder(w).Encode(e)
 
 	if err != nil {
-		// Response body has already started streaming via json.Encoder â€”
+		// Response body has already started streaming via json.Encoder Ã¢â‚¬â€
 		// Content-Type: application/json is committed and a partial JSON
 		// envelope is on the wire. A fresh error response would corrupt
 		// it, so log only.
@@ -90,7 +90,7 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	// w.Header().Set("Content-Type", "application/json")
 	// w.Write(e)
 
-	// eventsResult, err := provider.GetAllEvents(filter, userID, *h.SystemID)
+	// eventsResult, err := provider.GetAllEvents(filter, UserID, *h.SystemID)
 	// eventsR ,err := provider.GetEvents(token string, page string, pageSize string, search string, order string)
 	// //
 	// if err != nil {
@@ -109,9 +109,9 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 }
 
 func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	userID := user.ID
+	UserID := user.ID
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	eventTypes, err := provider.GetEventTypes(token, userID, *h.SystemID)
+	eventTypes, err := provider.GetEventTypes(token, UserID, *h.SystemID)
 
 	if err != nil {
 		retrieveErr := ErrRetrieveEventTypes(err)
@@ -123,7 +123,7 @@ func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefOb
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(eventTypes)
 	if err != nil {
-		// Response body has already started streaming via json.Encoder â€”
+		// Response body has already started streaming via json.Encoder Ã¢â‚¬â€
 		// Content-Type: application/json is committed and a partial JSON
 		// envelope is on the wire. A fresh error response would corrupt
 		// it, so log only.
@@ -287,7 +287,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 	if !ok {
 		// This precondition fires BEFORE the SSE Content-Type headers are
 		// committed (set 3 lines below). The response is therefore a regular
-		// JSON error envelope, not a text/event-stream chunk â€” emit it via
+		// JSON error envelope, not a text/event-stream chunk Ã¢â‚¬â€ emit it via
 		// writeMeshkitError so RTK Query can parse it like any other error.
 		h.log.Error(ErrEventStreamingNotSupported)
 		writeMeshkitError(w, ErrEventStreamingNotSupported, http.StatusInternalServerError)
@@ -394,7 +394,7 @@ func writeEventStream(ctx context.Context, w io.Writer, respChan <-chan []byte, 
 			log.Debug("received new data on response channel")
 			if _, err := fmt.Fprintf(w, "data: %s\n\n", data); err != nil {
 				// A write failure here almost always means the client
-				// disconnected (broken pipe) â€” stop the loop so we don't
+				// disconnected (broken pipe) Ã¢â‚¬â€ stop the loop so we don't
 				// spin publishing into a dead socket.
 				log.Error(fmt.Errorf("failed to write event stream: %w", err))
 				return
@@ -421,7 +421,7 @@ func sendStreamEvent(ctx context.Context, respChan chan<- []byte, data []byte) b
 
 func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp chan []byte, log logger.Handler, _ models.Provider, subscribe subscribeFunc) {
 	// Subscribe synchronously so the subscription is registered before any
-	// events can be published to datach â€” running Subscribe in a goroutine
+	// events can be published to datach Ã¢â‚¬â€ running Subscribe in a goroutine
 	// left a window in which early Publish calls could be dropped.
 	datach := make(chan interface{}, 10)
 	subscribe(eb, datach)
@@ -464,10 +464,10 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 		}
 	}
 }
-func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID core.Uuid, userID string) {
+func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID core.Uuid, UserID string) {
 	log.Debug("Received a stream client...")
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
-	userUUID := uuid.FromStringOrNil(userID)
+	userUUID := uuid.FromStringOrNil(UserID)
 	streamClient, err := mClient.MClient.StreamEvents(ctx, &meshes.EventsRequest{})
 	if err != nil {
 		log.Error(ErrStreamEvents(err))
@@ -529,7 +529,7 @@ func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapter
 }
 
 func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	userID := user.ID
+	UserID := user.ID
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
 		h.log.Error(ErrRetrieveUserToken(err))
@@ -563,7 +563,7 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		return
 	}
 
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).
+	eventBuilder := events.NewEvent().FromUser(UserID).FromSystem(*h.SystemID).
 		WithCategory(evt.Category).WithAction(evt.Action).WithSeverity(events.EventSeverity(evt.Severity)).
 		WithDescription(evt.Description).WithMetadata(evt.Metadata).ActedUpon(evt.ActedUpon)
 
@@ -575,7 +575,7 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		return
 
 	}
-	go h.config.EventBroadcaster.Publish(userID, event)
+	go h.config.EventBroadcaster.Publish(UserID, event)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)

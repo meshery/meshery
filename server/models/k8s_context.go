@@ -178,7 +178,7 @@ func NewK8sContextWithServerID(
 
 // K8sContextsFromKubeconfig takes in a kubeconfig and meshery instance ID and generates
 // kubernetes contexts from it
-func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler) []*K8sContext {
+func K8sContextsFromKubeconfig(provider Provider, UserID string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler) []*K8sContext {
 	kcs := []*K8sContext{}
 
 	parsed, _, err := kubernetes.ProcessConfig(kubeconfig, "")
@@ -186,7 +186,7 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, k
 		return kcs
 	}
 
-	userUUID := uuid.FromStringOrNil(userID)
+	userUUID := uuid.FromStringOrNil(UserID)
 
 	kcfg := InternalKubeConfig{}
 	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
@@ -463,10 +463,10 @@ func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 }
 
 // FlushMeshSyncData will flush the meshsync data for the passed kubernetes contextID
-func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Provider, eventsChan *Broadcast, userID string, mesheryInstanceID *core.Uuid, log logger.Handler) {
+func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Provider, eventsChan *Broadcast, UserID string, mesheryInstanceID *core.Uuid, log logger.Handler) {
 	ctxID := k8sContext.ID
 	ctxUUID, _ := uuid.FromString(ctxID)
-	userUUID, _ := uuid.FromString(userID)
+	userUUID, _ := uuid.FromString(UserID)
 	// Gets all the available kubernetes contexts
 
 	ctxName := k8sContext.Name

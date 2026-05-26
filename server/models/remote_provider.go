@@ -107,7 +107,7 @@ type RemoteProvider struct {
 }
 type AnonymousFlowResponse struct {
 	AccessToken string    `json:"accessToken"`
-	userID      core.Uuid `json:"userID,omitempty"`
+	UserID      core.Uuid `json:"UserID,omitempty"`
 }
 
 type userSession struct {
@@ -417,7 +417,7 @@ func (l *RemoteProvider) SyncPreferences() {
 }
 
 // GetProviderCapabilities returns all of the provider properties
-func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *http.Request, userID string) {
+func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *http.Request, UserID string) {
 	tokenString := req.Context().Value(TokenCtxKey).(string)
 
 	providerProperties, err := l.loadCapabilities(tokenString)
@@ -429,8 +429,8 @@ func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *htt
 	}
 
 	providerProperties.ProviderURL = l.RemoteProviderURL
-	if err := l.WriteCapabilitiesForUser(userID, &providerProperties); err != nil {
-		l.Log.Error(ErrDBPut(errors.Join(err, fmt.Errorf("failed to write capabilities for the user %s to the server store", userID))))
+	if err := l.WriteCapabilitiesForUser(UserID, &providerProperties); err != nil {
+		l.Log.Error(ErrDBPut(errors.Join(err, fmt.Errorf("failed to write capabilities for the user %s to the server store", UserID))))
 	}
 
 	// Encode into a buffer first so that headers are not committed before we
@@ -552,9 +552,9 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 
 	l.SetJWTCookie(res, flowResponse.AccessToken)
 
-	err = l.WriteCapabilitiesForUser(flowResponse.userID.String(), &providerProperties)
+	err = l.WriteCapabilitiesForUser(flowResponse.UserID.String(), &providerProperties)
 	if err != nil {
-		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.userID.String(), err))
+		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.UserID.String(), err))
 		l.Log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 
@@ -697,10 +697,10 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 		return nil, ErrUnmarshal(err, "User Pref")
 	}
 
-	prefLocal, _ := l.ReadFromPersister(up.userID)
+	prefLocal, _ := l.ReadFromPersister(up.UserID)
 
 	if prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences) {
-		_ = l.WriteToPersister(up.userID, up.Preferences)
+		_ = l.WriteToPersister(up.UserID, up.Preferences)
 	}
 
 	// Uncomment when Debug verbosity is figured out project wide. | @leecalcote
@@ -708,9 +708,9 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 	return &up.User, nil
 }
 
-func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, error) {
+func (l *RemoteProvider) GetUserByID(req *http.Request, UserID string) ([]byte, error) {
 	systemID := viper.GetString("INSTANCE_ID")
-	if userID == systemID {
+	if UserID == systemID {
 		// Designs/events created by Meshery itself (not a logged-in user)
 		// carry the instance's UUID as user_id. The remote provider has no
 		// record for it; surface a typed sentinel so the handler can decide
@@ -725,7 +725,7 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(UsersProfile)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, userID))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, UserID))
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {
@@ -754,7 +754,7 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 		l.Log.Info("User profile retrieved from remote provider.")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf("error retrieving user with ID: %s", userID), "User Profile", resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("error retrieving user with ID: %s", UserID), "User Profile", resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -878,12 +878,12 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 	// Step 1: Verify JWT signature and claims locally
 	jwtClaims, verifyErr := l.VerifyToken(ts)
 	if verifyErr != nil {
-		// Local verification failed ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â try introspection as fallback
+		// Local verification failed ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â try introspection as fallback
 		if introspectErr := l.introspectToken(ts); introspectErr == nil {
 			return nil
 		}
 		l.Log.Info("Token verification and introspection failed, attempting refresh")
-		// Both failed ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â attempt token refresh as last resort
+		// Both failed ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â attempt token refresh as last resort
 		newts, refreshErr := l.refreshToken(ts)
 		if refreshErr != nil {
 			l.Log.Error(ErrTokenRefresh(refreshErr))
@@ -902,11 +902,11 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 	}
 
 	// Step 2: If JWT has an expiry claim, introspect to confirm it's not revoked.
-	// Tokens without exp are infinite JWTs ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â skip introspection for those.
+	// Tokens without exp are infinite JWTs ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â skip introspection for those.
 	if (*jwtClaims)["exp"] != nil {
 		if introspectErr := l.introspectToken(ts); introspectErr != nil {
 			l.Log.Info("Token introspection failed, attempting refresh")
-			// Introspection failed ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â attempt token refresh before giving up
+			// Introspection failed ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â attempt token refresh before giving up
 			newts, refreshErr := l.refreshToken(ts)
 			if refreshErr != nil {
 				l.Log.Error(ErrTokenRefresh(refreshErr))
@@ -1006,7 +1006,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 // HandleUnAuthenticated
 //
 // Redirects to alert user of expired session.
-// Includes redirect loop detection ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â if the user has been redirected more than
+// Includes redirect loop detection ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â if the user has been redirected more than
 // MaxAuthRetries times within a short window, an error page is served instead
 // of continuing the redirect chain.
 func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.Request) {
@@ -1728,7 +1728,7 @@ func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString stri
 	return nil
 }
 
-func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {
+func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, UserID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {
 	if !l.Capabilities.IsSupported(PersistEvents) {
 		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
 		return nil, ErrInvalidCapability("PersistEvents", l.ProviderName)
@@ -1800,7 +1800,7 @@ func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilt
 
 }
 
-func (l *RemoteProvider) GetEventTypes(token string, userID core.Uuid, sysID core.Uuid) (EventTypesResponse, error) {
+func (l *RemoteProvider) GetEventTypes(token string, UserID core.Uuid, sysID core.Uuid) (EventTypesResponse, error) {
 
 	eventTypes := EventTypesResponse{}
 
@@ -2294,7 +2294,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	// meshery-cloud commit 5d6f13e1b12, server/handlers/meshery_patterns.go:144).
 	// PR #18855 regressed this to `pattern_data`, which encoding/json
 	// does NOT match against a `patternData` tag (case-insensitive tag
-	// fallback does not bridge the underscore) ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â so remote-provider
+	// fallback does not bridge the underscore) ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â so remote-provider
 	// pattern creation silently dropped the payload until this revert.
 	data, err := json.Marshal(map[string]interface{}{
 		"patternData": pattern,
@@ -2432,7 +2432,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order, includeMetrics string, populate, class, technology, patternType, orgID, workspaceID, userID []string) ([]byte, error) {
+func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order, includeMetrics string, populate, class, technology, patternType, orgID, workspaceID, UserID []string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return []byte{}, ErrInvalidCapability("MesheryPatternsCatalog", l.ProviderName)
@@ -2481,9 +2481,9 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 		}
 	}
 
-	if len(userID) > 0 {
-		for _, user := range userID {
-			q.Add("userID", user)
+	if len(UserID) > 0 {
+		for _, user := range UserID {
+			q.Add("UserID", user)
 		}
 	}
 
@@ -4072,12 +4072,12 @@ func (l *RemoteProvider) DeleteSchedule(req *http.Request, scheduleID string) ([
 }
 
 // RecordPreferences - records the user preference
-func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
+func (l *RemoteProvider) RecordPreferences(req *http.Request, UserID string, data *Preference) error {
 	if !l.Capabilities.IsSupported(SyncPrefs) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return ErrInvalidCapability("SyncPrefs", l.ProviderName)
 	}
-	if err := l.WriteToPersister(userID, data); err != nil {
+	if err := l.WriteToPersister(UserID, data); err != nil {
 		return err
 	}
 	tokenVal, _ := l.GetToken(req)
@@ -4524,7 +4524,7 @@ func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, tok
 	return nil, ErrPost(fmt.Errorf("failed to save the connection \"%s\" of type \"%s\" with status \"%s\"", conn.Name, conn.Kind, conn.Status), string(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
+func (l *RemoteProvider) GetConnections(req *http.Request, UserID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -4886,7 +4886,7 @@ func (l *RemoteProvider) clearMostRecentToken() {
 func (l *RemoteProvider) LogoutMesheryServer() error {
 	token := l.getMostRecentToken()
 	if token == "" {
-		// nothing to revoke ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â user never logged in during this run
+		// nothing to revoke ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â user never logged in during this run
 		return nil
 	}
 	defer l.clearMostRecentToken()

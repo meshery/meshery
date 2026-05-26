@@ -52,7 +52,7 @@ mesheryctl environment view --orgID [orgID]
 		}
 
 		if !utils.IsUUID(environmentViewFlagsProvided.orgID) {
-			return utils.ErrInvalidUUID(fmt.Errorf("invalid orgID: %s", environmentViewFlagsProvided.orgID))
+			return utils.ErrInvalidUUID(fmt.Errorf("invalid OrgId: %s", environmentViewFlagsProvided.orgID))
 		}
 
 		return display.ValidateOutputFormat(environmentViewFlagsProvided.outputFormat)

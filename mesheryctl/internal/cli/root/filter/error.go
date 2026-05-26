@@ -38,19 +38,19 @@ const (
 )
 
 func formatErrorWithReference(subCmdUsed string) string {
-	baseURL := "reference/mesheryctl/filter"
+	BaseURL := "reference/mesheryctl/filter"
 	switch subCmdUsed {
 	case "import":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/import")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/import")
 	case "view":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/view")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/view")
 	case "delete":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/delete")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/delete")
 	case "list":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/list")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/list")
 
 	}
-	return fmt.Sprintf("\nSee %s for usage details\n", baseURL)
+	return fmt.Sprintf("\nSee %s for usage details\n", BaseURL)
 }
 
 func ErrFetchFilter(err error) error {

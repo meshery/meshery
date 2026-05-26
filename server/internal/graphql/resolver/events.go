@@ -11,12 +11,12 @@ import (
 )
 
 func (r *Resolver) eventsResolver(ctx context.Context, provider models.Provider, user models.User) (<-chan *model.Event, error) {
-	userID := user.ID
-	ch, unsubscribe := r.Config.EventBroadcaster.Subscribe(userID)
+	UserID := user.ID
+	ch, unsubscribe := r.Config.EventBroadcaster.Subscribe(UserID)
 
 	eventsChan := make(chan *model.Event)
-	go func(userID core.Uuid) {
-		r.Log.Infof("Events Subscription started for %s", userID)
+	go func(UserID core.Uuid) {
+		r.Log.Infof("Events Subscription started for %s", UserID)
 		for {
 			select {
 			case ech := <-ch:
@@ -37,8 +37,8 @@ func (r *Resolver) eventsResolver(ctx context.Context, provider models.Provider,
 					SystemID:    event.SystemID.String(),
 				}
 
-				if event.userID != nil {
-					_event.userID = event.userID.String()
+				if event.UserID != nil {
+					_event.UserID = event.UserID.String()
 				}
 
 				eventsChan <- _event
@@ -46,10 +46,10 @@ func (r *Resolver) eventsResolver(ctx context.Context, provider models.Provider,
 				unsubscribe()
 				close(eventsChan)
 
-				r.Log.Infof("Events Subscription stopped for %s", userID)
+				r.Log.Infof("Events Subscription stopped for %s", UserID)
 				return
 			}
 		}
-	}(userID)
+	}(UserID)
 	return eventsChan, nil
 }

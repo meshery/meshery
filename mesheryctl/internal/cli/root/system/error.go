@@ -87,40 +87,40 @@ var (
 
 // A Format reference that returns Mesheryctl's URL docs for system command and sub commands
 func FormatErrorReference() string {
-	baseURL := "https://docs.meshery.io/reference/mesheryctl/system"
+	BaseURL := "https://docs.meshery.io/reference/mesheryctl/system"
 	switch cmdType {
 	case "channel":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/channel")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/channel")
 	case "context":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/context")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/context")
 	case "config":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/context")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/context")
 	case "dashboard":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/dashboard")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/dashboard")
 	case "login":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/login")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/login")
 	case "logout":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/logout")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/logout")
 	case "logs":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/logs")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/logs")
 	case "provider":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/provider")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/provider")
 	case "reset":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/reset")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/reset")
 	case "restart":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/restart")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/restart")
 	case "start":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/start")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/start")
 	case "status":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/status")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/status")
 	case "stop":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/stop")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/stop")
 	case "token":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/token")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/token")
 	case "update":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/update")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/update")
 	}
-	return fmt.Sprintf("\nSee %s for usage details\n", baseURL)
+	return fmt.Sprintf("\nSee %s for usage details\n", BaseURL)
 }
 
 func ErrHealthCheckFailed(err error) error {

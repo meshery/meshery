@@ -26,13 +26,13 @@ func TestDeleteCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
-					URL:          testContext.baseURL + "/api/filter/c0c6035a-b1b9-412d-aab2-4ed1f1d51f84",
+					URL:          testContext.BaseURL + "/api/filter/c0c6035a-b1b9-412d-aab2-4ed1f1d51f84",
 					Response:     "delete.kuma.api.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.baseURL + "/api/filter?page_size=10000",
+					URL:          testContext.BaseURL + "/api/filter?page_size=10000",
 					Response:     "filter.list.api.response.golden",
 					ResponseCode: 200,
 				},
@@ -45,13 +45,13 @@ func TestDeleteCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
-					URL:          testContext.baseURL + "/api/filter/d0e09134-acb6-4c71-b051-3d5611653f70",
+					URL:          testContext.BaseURL + "/api/filter/d0e09134-acb6-4c71-b051-3d5611653f70",
 					Response:     "delete.rollout.api.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.baseURL + "/api/filter?page_size=10000",
+					URL:          testContext.BaseURL + "/api/filter?page_size=10000",
 					Response:     "filter.list.api.response.golden",
 					ResponseCode: 200,
 				},

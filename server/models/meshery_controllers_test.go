@@ -9,10 +9,10 @@ import (
 )
 
 func TestControllerEventActedUponPrefersConnectionID(t *testing.T) {
-	userID := uuid.Must(uuid.NewV4())
+	UserID := uuid.Must(uuid.NewV4())
 	connectionID := uuid.Must(uuid.NewV4())
 
-	actedUpon := controllerEventActedUpon(userID, map[string]any{
+	actedUpon := controllerEventActedUpon(UserID, map[string]any{
 		"connectionID": connectionID.String(),
 	})
 
@@ -21,15 +21,15 @@ func TestControllerEventActedUponPrefersConnectionID(t *testing.T) {
 	}
 }
 
-func TestControllerEventActedUponFallsBackTouserID(t *testing.T) {
-	userID := uuid.Must(uuid.NewV4())
+func TestControllerEventActedUponFallsBackToUserID(t *testing.T) {
+	UserID := uuid.Must(uuid.NewV4())
 
-	actedUpon := controllerEventActedUpon(userID, map[string]any{
+	actedUpon := controllerEventActedUpon(UserID, map[string]any{
 		"connectionID": "not-a-uuid",
 	})
 
-	if actedUpon != userID {
-		t.Fatalf("expected actedUpon to fall back to userID, got %s", actedUpon)
+	if actedUpon != UserID {
+		t.Fatalf("expected actedUpon to fall back to UserID, got %s", actedUpon)
 	}
 }
 
@@ -44,10 +44,10 @@ func TestControllerEventActedUponReturnsNilWithoutValidIDs(t *testing.T) {
 }
 
 func TestShouldPersistControllerEvent(t *testing.T) {
-	userID := uuid.Must(uuid.NewV4())
+	UserID := uuid.Must(uuid.NewV4())
 	resourceID := uuid.Must(uuid.NewV4())
 
-	if !shouldPersistControllerEvent(userID, resourceID) {
+	if !shouldPersistControllerEvent(UserID, resourceID) {
 		t.Fatal("expected controller event to be persisted when user and resource IDs are valid")
 	}
 
@@ -55,7 +55,7 @@ func TestShouldPersistControllerEvent(t *testing.T) {
 		t.Fatal("expected controller event persistence to be skipped when user ID is nil")
 	}
 
-	if shouldPersistControllerEvent(userID, uuid.Nil) {
+	if shouldPersistControllerEvent(UserID, uuid.Nil) {
 		t.Fatal("expected controller event persistence to be skipped when actedUpon is nil")
 	}
 }

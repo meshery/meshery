@@ -51,7 +51,7 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 		ServerMetrics:      &serverMetrics,
 		ServerBoardConfig:  &serverBoardConfig,
 		TestStartTime:      &startTime,
-		userID:             &bdr.userID,
+		UserID:             &bdr.UserID,
 		UpdatedAt:          &bdr.UpdatedAt,
 		CreatedAt:          &bdr.CreatedAt,
 	}, nil

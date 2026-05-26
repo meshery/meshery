@@ -14,7 +14,7 @@ type ProcessPatternOptions struct {
 	Provider               models.Provider
 	Pattern                pattern.PatternFile
 	PrefObj                *models.Preference
-	userID                 string
+	UserID                 string
 	IsDelete               bool
 	Validate               bool
 	DryRun                 bool

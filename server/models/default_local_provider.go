@@ -160,7 +160,7 @@ func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ 
 
 // InitiateLogin - initiates login flow and redirects to home for local provider.
 // When called from AuthMiddleware (fromMiddleWare=true), it's a no-op since the
-// local provider doesn't require authentication ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â the middleware will allow the
+// local provider doesn't require authentication ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â the middleware will allow the
 // request to proceed. When called from the /user/login route (fromMiddleWare=false),
 // it redirects to / or to the deep-link target from the ref query param.
 func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
@@ -172,14 +172,14 @@ func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Requ
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
-	avatarURL := ""
+	AvatarURL := ""
 	localEmail := types.Email("meshery@meshery.local")
 	return &User{
-		userID:    "meshery",
+		UserID:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
 		Email:     localEmail,
-		avatarURL: &avatarURL,
+		AvatarURL: &AvatarURL,
 	}
 }
 
@@ -468,7 +468,7 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 		return "", ErrMarshal(err, "meshery result for shipping")
 	}
 	user, _ := l.GetUserDetails(req)
-	pref, _ := l.ReadFromPersister(user.userID)
+	pref, _ := l.ReadFromPersister(user.UserID)
 	if !pref.AnonymousPerfResults {
 		return "", nil
 	}
@@ -608,8 +608,8 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 }
 
 // RecordPreferences - records the user preference
-func (l *DefaultLocalProvider) RecordPreferences(_ *http.Request, userID string, data *Preference) error {
-	return l.WriteToPersister(userID, data)
+func (l *DefaultLocalProvider) RecordPreferences(_ *http.Request, UserID string, data *Preference) error {
+	return l.WriteToPersister(UserID, data)
 }
 
 // UpdateToken - specific to remote auth
@@ -765,7 +765,7 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, ord
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, search, order, _ string, populate, class, technology, patternType, orgID, workspaceID, userID []string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, search, order, _ string, populate, class, technology, patternType, orgID, workspaceID, UserID []string) ([]byte, error) {
 	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(page, pageSize, search, order)
 }
 
@@ -1135,7 +1135,7 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 		Kind:         conn.Kind,
 		Metadata:     conn.MetaData,
 		Status:       conn.Status,
-		userID:       &uuid.Nil,
+		UserID:       &uuid.Nil,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 	}
@@ -1146,7 +1146,7 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 	return connectionCreated, nil
 }
 
-func (l *DefaultLocalProvider) GetConnections(_ *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
+func (l *DefaultLocalProvider) GetConnections(_ *http.Request, UserID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
 	connectionsPage, err := l.ConnectionPersister.GetConnections(search, order, page, pageSize, filter, status, kind, connType, name)
 	if err != nil {
 		return nil, err
@@ -1230,7 +1230,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 		seededUUIDsMu sync.Mutex
 	)
 	seedContents := []string{"Pattern", "Filter"}
-	niluserID := ""
+	nilUserID := ""
 
 	// Use the relative directory for patterns
 	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
@@ -1265,7 +1265,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 								PatternFile: file.Content,
 								Name:        patternName,
 								ID:          &id,
-								userID:      &niluserID,
+								UserID:      &nilUserID,
 								Visibility:  Published,
 								Location: map[string]interface{}{
 									"host":   "",
@@ -1298,7 +1298,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							FilterFile: []byte(content[i]),
 							Name:       name,
 							ID:         &id,
-							userID:     &niluserID,
+							UserID:     &nilUserID,
 							Visibility: Published,
 							Location: map[string]interface{}{
 								"host":   "",
@@ -1372,8 +1372,8 @@ func (l *DefaultLocalProvider) GetCredentialByID(token string, credentialID core
 	return nil, http.StatusForbidden, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error) {
-	result := l.GetGenericPersister().Select("*").Where("user_id=? and DeletedAt is NULL", userID)
+func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, UserID string, page, pageSize int, search, order string) (*CredentialsPage, error) {
+	result := l.GetGenericPersister().Select("*").Where("user_id=? and DeletedAt is NULL", UserID)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -1386,14 +1386,14 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 
 	var count int64
 	if err := result.Count(&count).Error; err != nil {
-		return nil, fmt.Errorf("error retrieving count of credentials for user id: %s - %v", userID, err)
+		return nil, fmt.Errorf("error retrieving count of credentials for user id: %s - %v", UserID, err)
 	}
 
 	var credentialsList []Credential
 	if count > 0 {
 		if err := result.Offset(page * pageSize).Limit(pageSize).Find(&credentialsList).Error; err != nil {
 			if err != gorm.ErrRecordNotFound {
-				return nil, fmt.Errorf("error retrieving credentials for user id: %s - %v", userID, err)
+				return nil, fmt.Errorf("error retrieving credentials for user id: %s - %v", UserID, err)
 			}
 		}
 	}
@@ -1413,12 +1413,12 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 
 func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
 	updatedCredential := &Credential{}
-	db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND DeletedAt is NULL", credential.userID, credential.ID).Updates(credential)
+	db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND DeletedAt is NULL", credential.UserID, credential.ID).Updates(credential)
 	if db.Error != nil {
 		return nil, fmt.Errorf("error updating user credential: %v", db.Error)
 	}
 
-	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.userID, credential.ID).First(updatedCredential).Error; err != nil {
+	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserID, credential.ID).First(updatedCredential).Error; err != nil {
 		return nil, fmt.Errorf("error getting updated user credential: %v", err)
 	}
 	return updatedCredential, nil
@@ -1943,7 +1943,7 @@ func (e *EventsPersister) PersistEvent(event events.Event, token string) error {
 	// GORM's Save requires a pointer (it reflects on the struct to read/update
 	// the primary key and timestamps). Passing the value directly produced
 	// "invalid value, should be pointer to struct or slice" and dropped every
-	// system event silently ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â including the controller-emitted events that
+	// system event silently ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â including the controller-emitted events that
 	// flow through PersistSystemEvent.
 	err := e.DB.Save(&event).Error
 	if err != nil {
@@ -1956,10 +1956,10 @@ func (e *EventsPersister) PersistSystemEvent(event events.Event) error {
 	return e.PersistEvent(event, "")
 }
 
-func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {
+func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, UserID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {
 	e := l.EventsPersister
 	eventsDB := []*events.Event{}
-	finder := e.DB.Model(&events.Event{}).Where("user_id = ? OR user_id = ?", userID, sysID)
+	finder := e.DB.Model(&events.Event{}).Where("user_id = ? OR user_id = ?", UserID, sysID)
 
 	if len(eventsFilter.Category) != 0 {
 		finder = finder.Where("category IN ?", eventsFilter.Category)
@@ -2003,7 +2003,7 @@ func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.Even
 		return nil, err
 	}
 
-	countBySeverity, err := e.getCountBySeverity(userID, eventsFilter.Status)
+	countBySeverity, err := e.getCountBySeverity(UserID, eventsFilter.Status)
 	if err != nil {
 		return nil, err
 	}
@@ -2016,18 +2016,18 @@ func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.Even
 	}, nil
 }
 
-func (l *DefaultLocalProvider) GetEventTypes(token string, userID core.Uuid, sysID core.Uuid) (EventTypesResponse, error) {
+func (l *DefaultLocalProvider) GetEventTypes(token string, UserID core.Uuid, sysID core.Uuid) (EventTypesResponse, error) {
 	e := l.EventsPersister
 
 	eventTypes := EventTypesResponse{}
 
 	var categories, actions []string
-	err := e.DB.Table("events").Distinct("category").Where("user_id = ? OR user_id = ?", userID, sysID).Find(&categories).Error
+	err := e.DB.Table("events").Distinct("category").Where("user_id = ? OR user_id = ?", UserID, sysID).Find(&categories).Error
 	if err != nil {
 		return eventTypes, err
 	}
 
-	err = e.DB.Table("events").Distinct("action").Where("user_id = ?", userID).Find(&actions).Error
+	err = e.DB.Table("events").Distinct("action").Where("user_id = ?", UserID).Find(&actions).Error
 	if err != nil {
 		return eventTypes, err
 	}

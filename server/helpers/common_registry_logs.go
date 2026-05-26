@@ -174,7 +174,7 @@ func FailedMsgCompute(failedMsg string, hostName string) (string, error) {
 	return failedMsg, nil
 }
 
-func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, provider *models.Provider, userID string, ec *models.Broadcast) (string, error) {
+func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, provider *models.Provider, UserID string, ec *models.Broadcast) (string, error) {
 
 	failedMsg, err := FailedMsgCompute("", hostname)
 	if err != nil {
@@ -191,8 +191,8 @@ func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, provider *
 			"ViewLink":         filePath,
 		})
 		_ = (*provider).PersistSystemEvent(*errorEvent)
-		if userID != "" {
-			userUUID := gofrs.FromStringOrNil(userID)
+		if UserID != "" {
+			userUUID := gofrs.FromStringOrNil(UserID)
 			ec.Publish(userUUID, errorEvent)
 
 		}

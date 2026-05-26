@@ -28,7 +28,7 @@ type MeshsyncDataHandler struct {
 	dbHandler    database.Handler
 	log          logger.Handler
 	Provider     Provider
-	userID       core.Uuid
+	UserID       core.Uuid
 	ConnectionID core.Uuid
 	InstanceID   core.Uuid
 	Token        string
@@ -38,13 +38,13 @@ type MeshsyncDataHandler struct {
 	listenerWg   *sync.WaitGroup
 }
 
-func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler, provider Provider, userID, connID, instanceID core.Uuid, token string, stopFunc func()) *MeshsyncDataHandler {
+func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler, provider Provider, UserID, connID, instanceID core.Uuid, token string, stopFunc func()) *MeshsyncDataHandler {
 	return &MeshsyncDataHandler{
 		broker:       broker,
 		dbHandler:    dbHandler,
 		log:          log,
 		Provider:     provider,
-		userID:       userID,
+		UserID:       UserID,
 		ConnectionID: connID,
 		InstanceID:   instanceID,
 		Token:        token,

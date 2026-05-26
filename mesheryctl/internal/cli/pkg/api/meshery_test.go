@@ -40,7 +40,7 @@ func TestMakeRequest_Failures(t *testing.T) {
 			hasToken:         true,
 			expectedResponse: nil,
 			expectedError: func() error {
-				errCtx := fmt.Sprintf("Unable to connect to Meshery server at %s (current context).", testContext.baseURL)
+				errCtx := fmt.Sprintf("Unable to connect to Meshery server at %s (current context).", testContext.BaseURL)
 				failedReqErr := utils.ErrFailRequest(fmt.Errorf("%s", errCtx))
 				errRemediation := errors.GetRemedy(failedReqErr)
 				return utils.ErrFailRequest(fmt.Errorf("%s\n%s\n%s", errCtx, errRemediation, generateErrorReferenceDetails("ErrFailRequestCode", utils.ErrFailRequestCode)))
@@ -56,7 +56,7 @@ func TestMakeRequest_Failures(t *testing.T) {
 				utils.TokenFlag = utils.GetToken(t)
 			}
 
-			url := testContext.baseURL + tt.URLPath
+			url := testContext.BaseURL + tt.URLPath
 
 			httpmock.RegisterResponder(tt.httpMethod, url, nil)
 

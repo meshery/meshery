@@ -90,7 +90,7 @@ func TestModelGenerate(t *testing.T) {
 			if tt.URL != "" {
 				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).LoadByte()
 
-				httpmock.RegisterResponder("POST", testContext.baseURL+tt.URL, func(req *http.Request) (*http.Response, error) {
+				httpmock.RegisterResponder("POST", testContext.BaseURL+tt.URL, func(req *http.Request) (*http.Response, error) {
 
 					return httpmock.NewBytesResponse(tt.HTTPCode, apiResponse), nil
 				})

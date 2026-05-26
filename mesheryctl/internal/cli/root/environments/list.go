@@ -60,7 +60,7 @@ mesheryctl environment list --orgID [orgID] --pagesize [pagesize]
 		}
 
 		if !utils.IsUUID(environmentListFlagsProvided.orgID) {
-			return utils.ErrInvalidUUID(fmt.Errorf("invalid orgID: %s", environmentListFlagsProvided.orgID))
+			return utils.ErrInvalidUUID(fmt.Errorf("invalid OrgId: %s", environmentListFlagsProvided.orgID))
 		}
 
 		return nil

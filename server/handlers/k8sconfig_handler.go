@@ -64,7 +64,7 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 // Connections which have state as "registered" are the only new ones, hence the GraphQL K8sContext subscription only sends an update to UI if any connection has registered state.
 // A registered connection might have been regsitered previously and is not required for K8sContext Subscription to notify, but this case is not considered here.
 func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
-	userID := user.ID
+	UserID := user.ID
 
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
@@ -94,7 +94,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		ErroredContexts:    make([]models.K8sContext, 0),
 	}
 
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create").
+	eventBuilder := events.NewEvent().FromUser(UserID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create").
 		WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
 	eventMetadata := map[string]interface{}{}
 	contexts := models.K8sContextsFromKubeconfig(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
@@ -181,7 +181,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				machineCtx,
 				req.Context(),
 				connection.ID,
-				userID,
+				UserID,
 				smInstanceTracker,
 				h.log,
 				provider,
@@ -197,7 +197,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
 				if err != nil {
 					_ = provider.PersistEvent(*event, token)
-					go h.config.EventBroadcaster.Publish(userID, event)
+					go h.config.EventBroadcaster.Publish(UserID, event)
 				}
 			}(inst)
 		}
@@ -211,10 +211,10 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
 	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	go h.config.EventBroadcaster.Publish(UserID, event)
 
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
-		// Response body has already started streaming via json.Encoder â€”
+		// Response body has already started streaming via json.Encoder Ã¢â‚¬â€
 		// a partial JSON envelope is on the wire and a fresh error
 		// response would corrupt it, so log only.
 		h.log.Error(models.ErrMarshal(err, "kubeconfig"))
@@ -224,7 +224,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 
 func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, _ *http.Request, _ models.Provider) {
 	// prefObj.K8SConfig = nil
-	// err := provider.RecordPreferences(req, user.userID, prefObj)
+	// err := provider.RecordPreferences(req, user.UserID, prefObj)
 	// if err != nil {
 	// 	logrus.Error(ErrRecordPreferences(err))
 	// 	http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
@@ -263,7 +263,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 
 	err = json.NewEncoder(w).Encode(contexts)
 	if err != nil {
-		// Response body has already started streaming via json.Encoder â€”
+		// Response body has already started streaming via json.Encoder Ã¢â‚¬â€
 		// a partial JSON envelope is on the wire and a fresh error
 		// response would corrupt it, so log only.
 		h.log.Error(models.ErrMarshal(err, "kube-context"))
@@ -311,7 +311,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		if err = json.NewEncoder(w).Encode(map[string]string{
 			"server_version": version.String(),
 		}); err != nil {
-			// Response body has already started streaming via json.Encoder â€”
+			// Response body has already started streaming via json.Encoder Ã¢â‚¬â€
 			// a partial JSON envelope is on the wire and a fresh error
 			// response would corrupt it, so log only.
 			err = errors.Wrap(err, "unable to marshal the payload")
@@ -336,9 +336,9 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 	writeJSONMessage(w, map[string]string{"status": "accepted"}, http.StatusAccepted)
 }
 
-func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, prov models.Provider) ([]*models.K8sContext, error) {
+func (h *Handler) DiscoverK8SContextFromKubeConfig(UserID string, token string, prov models.Provider) ([]*models.K8sContext, error) {
 	var contexts []*models.K8sContext
-	// userUUID := uuid.FromStringOrNil(userID)
+	// userUUID := uuid.FromStringOrNil(UserID)
 
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*core.Uuid)
@@ -395,7 +395,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		return contexts, err
 	}
 
-	ctxs := models.K8sContextsFromKubeconfig(prov, userID, h.config.EventBroadcaster, cfg, mid, eventMetadata, h.log)
+	ctxs := models.K8sContextsFromKubeconfig(prov, UserID, h.config.EventBroadcaster, cfg, mid, eventMetadata, h.log)
 
 	// Do not persist the generated contexts
 	// consolidate this func and addK8sConfig. In this we explicitly updated status as well as this func perfomr greeedy upload so while consolidating make sure to handle the case.

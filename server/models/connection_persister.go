@@ -180,7 +180,7 @@ func (cp *ConnectionPersister) DeleteConnectionByID(connectionID core.Uuid) (*co
 	}
 	err = cp.DB.Delete(connection).Error
 	if err != nil {
-		return nil, ErrDBDelete(err, cp.fetchUserDetails().userID)
+		return nil, ErrDBDelete(err, cp.fetchUserDetails().UserID)
 	}
 
 	return &connection, nil
@@ -189,7 +189,7 @@ func (cp *ConnectionPersister) DeleteConnectionByID(connectionID core.Uuid) (*co
 func (cp *ConnectionPersister) fetchUserDetails() *User {
 
 	return &User{
-		userID:    "meshery",
+		UserID:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
 	}

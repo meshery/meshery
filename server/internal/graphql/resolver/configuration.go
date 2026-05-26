@@ -9,17 +9,17 @@ import (
 )
 
 func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.Provider, user models.User, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
-	userID := user.ID
+	UserID := user.ID
 
-	chp, unsubscribePatterns := r.Config.PatternChannel.Subscribe(userID)
+	chp, unsubscribePatterns := r.Config.PatternChannel.Subscribe(UserID)
 	// Filters are not widely used, better to keep the subscription for filters disable.
-	// chf, unsubscribeFilters := r.Config.FilterChannel.Subscribe(userID)
+	// chf, unsubscribeFilters := r.Config.FilterChannel.Subscribe(UserID)
 
-	r.Config.PatternChannel.Publish(userID, struct{}{})
-	// r.Config.FilterChannel.Publish(userID, struct{}{})
+	r.Config.PatternChannel.Publish(UserID, struct{}{})
+	// r.Config.FilterChannel.Publish(UserID, struct{}{})
 	configuration := make(chan *model.ConfigurationPage, 1)
 
-	go func(userID core.Uuid) {
+	go func(UserID core.Uuid) {
 		defer close(configuration)
 
 		r.Log.Info("Configuration subscription started")
@@ -44,6 +44,6 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 
 			}
 		}
-	}(userID)
+	}(UserID)
 	return configuration, nil
 }

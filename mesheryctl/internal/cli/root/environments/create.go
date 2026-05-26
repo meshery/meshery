@@ -53,7 +53,7 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
 		}
 
 		createEnvironmentPayload := environment.EnvironmentPayload{
-			orgID:       organizationID,
+			OrgId:       organizationID,
 			Name:        createEnvironmentFlags.Name,
 			Description: createEnvironmentFlags.Description,
 		}

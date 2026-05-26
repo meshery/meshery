@@ -161,10 +161,10 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 }
 
 // Pagination(making multiple requests) to retrieve filter Data in batches
-func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*models.FiltersAPIResponse, error) {
+func fetchFilters(BaseURL, searchString string, pageSize, pageNumber int) (*models.FiltersAPIResponse, error) {
 	var response *models.FiltersAPIResponse
 
-	url := baseURL + "/api/filter"
+	url := BaseURL + "/api/filter"
 
 	url = fmt.Sprintf("%s?pagesize=%d&page=%d", url, pageSize, pageNumber)
 	if searchString != "" {

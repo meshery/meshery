@@ -32,7 +32,7 @@ type DeploymentMessagePerContext struct {
 	Location   string
 }
 
-func Process(kconfigs []string, componets []component.ComponentDefinition, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, connection connection.Connection, skipCrdAndOperator, upgradeExistingRelease bool) ([]DeploymentMessagePerContext, error) {
+func Process(kconfigs []string, componets []component.ComponentDefinition, isDel bool, patternName string, ec *models.Broadcast, UserID string, provider models.Provider, connection connection.Connection, skipCrdAndOperator, upgradeExistingRelease bool) ([]DeploymentMessagePerContext, error) {
 	action := "deploy"
 	if isDel {
 		action = "undeploy"

@@ -39,7 +39,7 @@ type ApplicationResult struct {
 	Name            string      `json:"name"`
 	ApplicationFile string      `json:"application_file"`
 	Type            *NullString `json:"type"`
-	userID          string      `json:"user_id"`
+	UserID          string      `json:"user_id"`
 	Location        *Location   `json:"location"`
 	Visibility      string      `json:"visibility"`
 	CreatedAt       *string     `json:"CreatedAt,omitempty"`
@@ -50,7 +50,7 @@ type CatalogFilter struct {
 	ID             string         `json:"id"`
 	Name           string         `json:"name"`
 	FilterFile     string         `json:"filter_file"`
-	userID         string         `json:"user_id"`
+	UserID         string         `json:"user_id"`
 	Location       *Location      `json:"location"`
 	FilterResource string         `json:"filter_resource"`
 	Visibility     string         `json:"visibility"`
@@ -62,7 +62,7 @@ type CatalogFilter struct {
 type CatalogPattern struct {
 	ID          string         `json:"id"`
 	Name        string         `json:"name"`
-	userID      string         `json:"user_id"`
+	UserID      string         `json:"user_id"`
 	PatternFile string         `json:"pattern_file"`
 	Location    *Location      `json:"location"`
 	Visibility  string         `json:"visibility"`
@@ -81,7 +81,7 @@ type CatalogSelector struct {
 	Class       []*string `json:"class,omitempty"`
 	Technology  []*string `json:"technology,omitempty"`
 	PatternType []*string `json:"patternType,omitempty"`
-	userID      []*string `json:"userID,omitempty"`
+	UserID      []*string `json:"UserID,omitempty"`
 	OrgID       []*string `json:"orgID,omitempty"`
 	workspaceID []*string `json:"workspaceID,omitempty"`
 }
@@ -148,7 +148,7 @@ type Error struct {
 
 type Event struct {
 	ID          string         `json:"id"`
-	userID      string         `json:"userID"`
+	UserID      string         `json:"UserID"`
 	ActedUpon   string         `json:"actedUpon"`
 	OperationID string         `json:"operationID"`
 	SystemID    string         `json:"systemID"`
@@ -175,7 +175,7 @@ type FilterResult struct {
 	Name           string         `json:"name"`
 	FilterFile     string         `json:"filter_file"`
 	FilterResource string         `json:"filter_resource"`
-	userID         string         `json:"user_id"`
+	UserID         string         `json:"user_id"`
 	Location       *Location      `json:"location"`
 	Visibility     string         `json:"visibility"`
 	CatalogData    map[string]any `json:"catalog_data,omitempty"`
@@ -257,7 +257,7 @@ type MesheryResult struct {
 	ServerMetrics      *string        `json:"server_metrics,omitempty"`
 	ServerBoardConfig  *string        `json:"server_board_config,omitempty"`
 	TestStartTime      *string        `json:"test_start_time,omitempty"`
-	userID             *string        `json:"user_id,omitempty"`
+	UserID             *string        `json:"user_id,omitempty"`
 	UpdatedAt          *string        `json:"UpdatedAt,omitempty"`
 	CreatedAt          *string        `json:"CreatedAt,omitempty"`
 }
@@ -310,7 +310,7 @@ type PatternPageResult struct {
 type PatternResult struct {
 	ID          string         `json:"id"`
 	Name        string         `json:"name"`
-	userID      string         `json:"user_id"`
+	UserID      string         `json:"user_id"`
 	Location    *Location      `json:"location"`
 	PatternFile string         `json:"pattern_file"`
 	Visibility  string         `json:"visibility"`
@@ -348,7 +348,7 @@ type PerfProfile struct {
 	QPS               *int           `json:"qps,omitempty"`
 	TotalResults      *int           `json:"total_results,omitempty"`
 	UpdatedAt         *string        `json:"UpdatedAt,omitempty"`
-	userID            string         `json:"user_id"`
+	UserID            string         `json:"user_id"`
 	RequestHeaders    *string        `json:"request_headers,omitempty"`
 	RequestCookies    *string        `json:"request_cookies,omitempty"`
 	RequestBody       *string        `json:"request_body,omitempty"`

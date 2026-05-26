@@ -14,23 +14,23 @@ type SessionPreferencePersister struct {
 	DB *database.Handler
 }
 type UserPreference struct {
-	ID              string `json:"userID"`
+	ID              string `json:"UserID"`
 	PreferenceBytes []byte `json:"preference"`
 }
 
-// ReadFromPersister - reads the session data for the given userID
-func (s *SessionPreferencePersister) ReadFromPersister(userID string) (*Preference, error) {
+// ReadFromPersister - reads the session data for the given UserID
+func (s *SessionPreferencePersister) ReadFromPersister(UserID string) (*Preference, error) {
 	if s.DB == nil {
 		return nil, ErrDBConnection
 	}
 
-	if userID == "" {
-		return nil, ErruserID
+	if UserID == "" {
+		return nil, ErrUserID
 	}
 
 	data := NewDefaultPreference()
 	var u UserPreference
-	err := s.DB.Model(&UserPreference{}).Where("id = ?", userID).First(&u).Error
+	err := s.DB.Model(&UserPreference{}).Where("id = ?", UserID).First(&u).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return data, nil
@@ -45,23 +45,23 @@ func (s *SessionPreferencePersister) ReadFromPersister(userID string) (*Preferen
 }
 
 // WriteToPersister persists session for the user
-func (s *SessionPreferencePersister) WriteToPersister(userID string, data *Preference) error {
+func (s *SessionPreferencePersister) WriteToPersister(UserID string, data *Preference) error {
 	var u UserPreference
-	err := s.DB.Model(&UserPreference{}).Where("id = ?", userID).First(&u).Error
+	err := s.DB.Model(&UserPreference{}).Where("id = ?", UserID).First(&u).Error
 	if err == nil {
 		data.UpdatedAt = time.Now()
 		p, err := json.Marshal(data)
 		if err != nil {
 			return err
 		}
-		return s.DB.Model(&UserPreference{}).Where("id = ?", userID).Update("preference_bytes", p).Error
+		return s.DB.Model(&UserPreference{}).Where("id = ?", UserID).Update("preference_bytes", p).Error
 	}
 	if s.DB == nil {
 		return ErrDBConnection
 	}
 
-	if userID == "" {
-		return ErruserID
+	if UserID == "" {
+		return ErrUserID
 	}
 
 	if data == nil {
@@ -75,23 +75,23 @@ func (s *SessionPreferencePersister) WriteToPersister(userID string, data *Prefe
 
 	var p = UserPreference{
 		PreferenceBytes: dataB,
-		ID:              userID,
+		ID:              UserID,
 	}
 
 	return s.DB.Model(&UserPreference{}).Create(&p).Error
 }
 
 // DeleteFromPersister removes the session for the user
-func (s *SessionPreferencePersister) DeleteFromPersister(userID string) error {
+func (s *SessionPreferencePersister) DeleteFromPersister(UserID string) error {
 	if s.DB == nil {
 		return ErrDBConnection
 	}
 
-	if userID == "" {
-		return ErruserID
+	if UserID == "" {
+		return ErrUserID
 	}
 
-	return s.DB.Model(&UserPreference{}).Where("id = ?", userID).Delete(&UserPreference{}).Error
+	return s.DB.Model(&UserPreference{}).Where("id = ?", UserID).Delete(&UserPreference{}).Error
 }
 
 // // ClosePersister closes the badger store

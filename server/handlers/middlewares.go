@@ -52,7 +52,7 @@ var legacyProviderAliasWarnOnce sync.Once
 //
 // Falling through to enforcedProvider here is what removes the need for a
 // cookie round-trip via /provider, which is fragile across SameSite/popup/CDN
-// boundaries and was the trigger for an observed /user/login Ã¢â€¡â€ž /provider
+// boundaries and was the trigger for an observed /user/login ÃƒÂ¢Ã¢â‚¬Â¡Ã¢â‚¬Å¾ /provider
 // redirect loop on enforced-provider hosts.
 func resolveProviderName(req *http.Request, cookieName, enforcedProvider string) (string, bool) {
 	var name string
@@ -235,14 +235,14 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			// match without reading PR #18919.
 			//
 			// Behavioral consequence: on a transient provider error we must NOT
-			// destroy the user's session by logging them out Ã¢â‚¬â€ that would cause
+			// destroy the user's session by logging them out ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â that would cause
 			// a redirect loop when Cloud recovers. A missing/invalid token
 			// cookie still falls through to the genuine auth-failure path below.
 			if isTransientProviderError(err) {
 				writeMeshkitError(w, ErrTransientProvider(err), http.StatusServiceUnavailable)
 				return
 			}
-			// Genuine auth failure Ã¢â‚¬â€ logout and redirect to login
+			// Genuine auth failure ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â logout and redirect to login
 			err1 := provider.Logout(w, req)
 			if err1 != nil {
 				h.log.Error(models.ErrLogout(err1))
@@ -252,14 +252,14 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			writeMeshkitError(w, ErrGetUserDetails(err), http.StatusUnauthorized)
 			return
 		}
-		prefObj, err := provider.ReadFromPersister(user.userID)
+		prefObj, err := provider.ReadFromPersister(user.UserID)
 		if err != nil {
 			// log underlying error from persister along with high-level context
-			h.log.Warn(fmt.Errorf("%w: userID=%s: %v", ErrReadSessionPersistor, user.userID, err))
+			h.log.Warn(fmt.Errorf("%w: UserID=%s: %v", ErrReadSessionPersistor, user.UserID, err))
 			prefObj = models.NewDefaultPreference()
 		} else if prefObj == nil {
 			// persister unexpectedly returned a nil preference without error
-			h.log.Warn(fmt.Errorf("%w: persister returned nil preference without error for userID=%s", ErrReadSessionPersistor, user.userID))
+			h.log.Warn(fmt.Errorf("%w: persister returned nil preference without error for UserID=%s", ErrReadSessionPersistor, user.UserID))
 			prefObj = models.NewDefaultPreference()
 		}
 

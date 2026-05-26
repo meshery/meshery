@@ -40,13 +40,13 @@ func TestRemoveMesh(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.baseURL + "/api/system/sync",
+					URL:          testContext.BaseURL + "/api/system/sync",
 					Response:     "sync.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.baseURL + "/api/system/adapter/operation",
+					URL:          testContext.BaseURL + "/api/system/adapter/operation",
 					Response:     "deploy.golden",
 					ResponseCode: 200,
 				},
@@ -61,13 +61,13 @@ func TestRemoveMesh(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.baseURL + "/api/system/sync",
+					URL:          testContext.BaseURL + "/api/system/sync",
 					Response:     "sync.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.baseURL + "/api/system/adapter/operation",
+					URL:          testContext.BaseURL + "/api/system/adapter/operation",
 					Response:     "deploy.golden",
 					ResponseCode: 200,
 				},
@@ -82,13 +82,13 @@ func TestRemoveMesh(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.baseURL + "/api/system/sync",
+					URL:          testContext.BaseURL + "/api/system/sync",
 					Response:     "sync.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.baseURL + "/api/system/adapter/operation",
+					URL:          testContext.BaseURL + "/api/system/adapter/operation",
 					Response:     "deploy.golden",
 					ResponseCode: 200,
 				},

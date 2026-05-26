@@ -71,7 +71,7 @@ func TestUndeployCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          fmt.Sprintf("%s/api/pattern", testContext.baseURL),
+					URL:          fmt.Sprintf("%s/api/pattern", testContext.BaseURL),
 					Response:     "undeploy.empty.response.golden",
 					ResponseCode: 200,
 				},

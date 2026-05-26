@@ -10,7 +10,7 @@ import (
 )
 
 // ErrUserIsSystemInstance is returned by Provider.GetUserByID when the
-// requested userID matches this Meshery instance's own INSTANCE_ID. Callers
+// requested UserID matches this Meshery instance's own INSTANCE_ID. Callers
 // can use errors.Is to detect the sentinel and return a policy-appropriate
 // response (e.g. a 204 so the UI renders a "system" placeholder) instead of
 // conflating it with a missing user.
@@ -160,7 +160,7 @@ var (
 	ErrApplicationFileName     = errors.New(ErrApplicationFileNameCode, errors.Alert, []string{"Invalid Applicationfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
 	ErrFilterFileName          = errors.New(ErrFilterFileNameCode, errors.Alert, []string{"Invalid Filterfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
 	ErrPatternFileName         = errors.New(ErrPatternFileNameCode, errors.Alert, []string{"Invalid Patternfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
-	ErruserID                  = errors.New(ErruserIDCode, errors.Alert, []string{"User ID is empty"}, []string{}, []string{}, []string{})
+	ErrUserID                  = errors.New(ErruserIDCode, errors.Alert, []string{"User ID is empty"}, []string{}, []string{}, []string{})
 	ErrDBConnection            = errors.New(ErrDBConnectionCode, errors.Alert, []string{"Connection to database does not exist"}, []string{}, []string{}, []string{})
 	ErrNilConfigData           = errors.New(ErrNilConfigDataCode, errors.Alert, []string{"Given config data is nil"}, []string{}, []string{}, []string{})
 	ErrNilJWKs                 = errors.New(ErrNilJWKsCode, errors.Alert, []string{"Invalid JWks"}, []string{"Value of JWKs is nil"}, []string{}, []string{})
@@ -385,17 +385,17 @@ func ErrDownloadPackage(err error, packageName string) error {
 	return errors.New(ErrDownloadPackageCode, errors.Alert, []string{fmt.Sprintf("Error downloading %s ", packageName)}, []string{err.Error()}, []string{}, []string{})
 
 }
-func ErrSessionNotReadIntact(userID string) error {
+func ErrSessionNotReadIntact(UserID string) error {
 	return errors.New(ErrSessionNotReadIntactCode, errors.Alert,
-		[]string{fmt.Sprintf("session for user with id: %s was NOT read intact.", userID)},
+		[]string{fmt.Sprintf("session for user with id: %s was NOT read intact.", UserID)},
 		[]string{},
 		[]string{"The session data might be corrupted or not properly saved."},
 		[]string{""})
 }
 
-func ErrSessionNotFound(userID string) error {
+func ErrSessionNotFound(UserID string) error {
 	return errors.New(ErrSessionNotFoundCode, errors.Alert,
-		[]string{fmt.Sprintf("unable to find session for user with id: %s.", userID)},
+		[]string{fmt.Sprintf("unable to find session for user with id: %s.", UserID)},
 		[]string{},
 		[]string{"The session might not exist or could have been deleted."},
 		[]string{"Check if the session data was correctly saved."})

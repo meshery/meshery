@@ -165,7 +165,7 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 		Slug:         slug.Make(board.Title),
 		TemplateVars: []*GrafanaTemplateVars{},
 		Panels:       []*sdk.Panel{},
-		OrgID:        orgID,
+		OrgId:        orgID,
 	}
 	var err error
 

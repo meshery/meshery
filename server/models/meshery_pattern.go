@@ -90,7 +90,7 @@ type MesheryPattern struct {
 	PatternFile string `json:"patternFile"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	userID *string `json:"userID"`
+	UserID *string `json:"UserID"`
 
 	Location      isql.Map             `json:"location"`
 	Visibility    string               `json:"visibility"`

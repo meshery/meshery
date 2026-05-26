@@ -27,7 +27,7 @@ import (
 
 // FileToImport is the internal tuple of bytes + filename that the
 // import pipeline works with after the request-body variant has been
-// resolved. It is not part of the wire contract â€” see the schemas
+// resolved. It is not part of the wire contract Ã¢â‚¬â€ see the schemas
 // repo's MesheryPatternImportRequestBody for that.
 type FileToImport struct {
 	Data     []byte
@@ -45,7 +45,7 @@ type importVariant struct {
 
 // designImportHTTPClient is the shared client used for URL-variant
 // imports. A bounded Timeout prevents a slow or unresponsive remote
-// from hanging the handler goroutine indefinitely â€” the default
+// from hanging the handler goroutine indefinitely Ã¢â‚¬â€ the default
 // http.Client has no timeout, which is the class of bug review
 // feedback on meshery/meshery#18845 called out. 60s is generous for
 // a single-file fetch (Kubernetes manifests, Helm charts, Meshery
@@ -56,7 +56,7 @@ var designImportHTTPClient = &http.Client{
 
 // resolveImportVariant decodes the request body against the two oneOf
 // variants published in the schema, enforces the "exactly one of"
-// invariant, and â€” for the URL variant â€” fetches the remote file
+// invariant, and Ã¢â‚¬â€ for the URL variant Ã¢â‚¬â€ fetches the remote file
 // before returning. On error, the returned importVariant carries any
 // context we could extract (the caller's supplied Name plus, for the
 // URL variant, the URL echoed in FileName) so that the downstream
@@ -237,7 +237,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	return design, identifiedFile.Type, err
 }
 
-func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider models.Provider, err error, userID core.Uuid, eventBuilder *events.EventBuilder) {
+func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider models.Provider, err error, UserID core.Uuid, eventBuilder *events.EventBuilder) {
 
 	h.log.Error(ErrRetrieveUserToken(err))
 	writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
@@ -248,12 +248,12 @@ func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider mode
 		}).WithDescription("No auth token provided in the request.").Build()
 
 		_ = provider.PersistEvent(*event, "")
-		go h.config.EventBroadcaster.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(UserID, event)
 	}
 
 }
 
-func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider models.Provider, err error, userID core.Uuid, eventBuilder *events.EventBuilder) {
+func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider models.Provider, err error, UserID core.Uuid, eventBuilder *events.EventBuilder) {
 
 	h.log.Error(ErrRequestBody(err))
 	writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
@@ -264,7 +264,7 @@ func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider mo
 		}).WithDescription("Unable to parse request body").Build()
 
 		_ = provider.PersistEvent(*event, "")
-		go h.config.EventBroadcaster.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(UserID, event)
 	}
 }
 
@@ -292,27 +292,27 @@ func (h *Handler) DesignFileImportHandler(
 	}()
 
 	var err error
-	userID := user.ID
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("create").ActedUpon(userID).WithSeverity(events.Informational)
+	UserID := user.ID
+	eventBuilder := events.NewEvent().FromUser(UserID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("create").ActedUpon(UserID).WithSeverity(events.Informational)
 
 	var importBody pattern.MesheryPatternImportRequestBody
 
 	if err := json.NewDecoder(r.Body).Decode(&importBody); err != nil {
-		h.logErrorParsingRequestBody(rw, provider, err, userID, eventBuilder)
+		h.logErrorParsingRequestBody(rw, provider, err, UserID, eventBuilder)
 		return
 	}
-	actedUpon := &userID
+	actedUpon := &UserID
 	eventBuilder.ActedUpon(*actedUpon)
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil || token == " " {
-		h.logErrorGettingUserToken(rw, provider, err, userID, eventBuilder)
+		h.logErrorGettingUserToken(rw, provider, err, UserID, eventBuilder)
 		return
 	}
 
 	variant, err := resolveImportVariant(importBody)
 	if err != nil {
-		// resolveImportVariant failures are 400-class â€” either the body
+		// resolveImportVariant failures are 400-class Ã¢â‚¬â€ either the body
 		// violated the oneOf contract (already wrapped as
 		// ErrInvalidImportRequest) or the URL variant couldn't be
 		// fetched (already wrapped as models.ErrDoRequest). Either way
@@ -322,7 +322,7 @@ func (h *Handler) DesignFileImportHandler(
 		writeMeshkitError(rw, err, http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, variant, err)
 		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(UserID, event)
 		return
 	}
 
@@ -341,12 +341,12 @@ func (h *Handler) DesignFileImportHandler(
 		writeMeshkitError(rw, wrappedErr, http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, variant, wrappedErr)
 		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(UserID, event)
 		return
 	}
 
 	// Only overwrite the design name when the caller supplied one in
-	// the request â€” leaving it unset should preserve whatever name the
+	// the request Ã¢â‚¬â€ leaving it unset should preserve whatever name the
 	// import pipeline parsed out of the source file (e.g. `metadata.name`
 	// from a design YAML, or the derived name from a Kubernetes manifest).
 	// Fall back to the filename (without extension) when neither the caller
@@ -369,7 +369,7 @@ func (h *Handler) DesignFileImportHandler(
 		}).WithDescription(ErrSavePattern(err).Error()).Build()
 
 		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(UserID, event)
 		return
 	}
 
@@ -386,7 +386,7 @@ func (h *Handler) DesignFileImportHandler(
 
 	savedDesignByt, err := provider.SaveMesheryPattern(token, &designRecord)
 	if err != nil {
-		h.handleProviderPatternSaveError(rw, eventBuilder, userID, savedDesignByt, err, provider, token)
+		h.handleProviderPatternSaveError(rw, eventBuilder, UserID, savedDesignByt, err, provider, token)
 		return
 	}
 
@@ -394,6 +394,6 @@ func (h *Handler) DesignFileImportHandler(
 
 	event := eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Imported design '%s' of type '%s'", design.Name, sourceFileType)).Build()
 	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	go h.config.EventBroadcaster.Publish(UserID, event)
 
 }

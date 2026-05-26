@@ -113,16 +113,16 @@ func ErrInvalidTestConfigFile() error {
 }
 
 func formatErrorWithReference() string {
-	baseURL := "https://docs.meshery.io/reference/mesheryctl/perf"
+	BaseURL := "https://docs.meshery.io/reference/mesheryctl/perf"
 	switch cmdUsed {
 	case "apply":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/apply")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/apply")
 	case "profile":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/profile")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/profile")
 	case "result":
-		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/result")
+		return fmt.Sprintf("\nSee %s for usage details\n", BaseURL+"/result")
 	}
-	return fmt.Sprintf("\nSee %s for usage details\n", baseURL)
+	return fmt.Sprintf("\nSee %s for usage details\n", BaseURL)
 }
 
 func ErrorArgumentOverflow() error {

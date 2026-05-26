@@ -55,7 +55,7 @@ type StateMachine struct {
 	// ID to trace the events originated from the machine, also used in logs
 	ID core.Uuid
 
-	userID core.Uuid
+	UserID core.Uuid
 
 	// Given name for the machine, used in logs to track issues
 	Name string
@@ -126,7 +126,7 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 }
 
 // Returns events.Event and error. The func invoking the SendEvent should handle the error and publish the event.
-// wherever possible use the userID and systemID from context as the events can be created from other comps or actors and not only user actors.
+// wherever possible use the UserID and systemID from context as the events can be created from other comps or actors and not only user actors.
 // In cases when the event is received as part of some other event and not explicitly created by an actor, use the useID and systemID of the actor who initially invoked the machine.
 func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) (*events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)

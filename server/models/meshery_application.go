@@ -39,7 +39,7 @@ type MesheryApplication struct {
 	ApplicationFile string `json:"applicationFile"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	userID        *string        `json:"userID" gorm:"-"`
+	UserID        *string        `json:"UserID" gorm:"-"`
 	Location      isql.Map       `json:"location"`
 	Type          sql.NullString `json:"type"`
 	SourceContent []byte         `json:"sourceContent"`

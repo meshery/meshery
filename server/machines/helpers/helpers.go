@@ -34,12 +34,12 @@ func StatusToEvent(status connections.ConnectionStatus) machines.EventType {
 	}
 	return machines.EventType(machines.DefaultState)
 }
-func getMachine(initialState machines.StateType, mtype, id string, userID core.Uuid, log logger.Handler, dbHandler *database.Handler) (*machines.StateMachine, error) {
+func getMachine(initialState machines.StateType, mtype, id string, UserID core.Uuid, log logger.Handler, dbHandler *database.Handler) (*machines.StateMachine, error) {
 	switch mtype {
 	case "kubernetes":
-		return kubernetes.New(id, userID, log)
+		return kubernetes.New(id, UserID, log)
 	case "grafana":
-		mch, err := machines.New(initialState, id, userID, log, mtype)
+		mch, err := machines.New(initialState, id, UserID, log, mtype)
 		if err != nil {
 			return mch, err
 		}
@@ -50,7 +50,7 @@ func getMachine(initialState machines.StateType, mtype, id string, userID core.U
 		mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
 		return mch, nil
 	case "prometheus":
-		mch, err := machines.New(initialState, id, userID, log, mtype)
+		mch, err := machines.New(initialState, id, UserID, log, mtype)
 		if err != nil {
 			return mch, err
 		}
@@ -69,7 +69,7 @@ func InitializeMachineWithContext(
 	machineCtx interface{},
 	ctx context.Context,
 	ID core.Uuid,
-	userID core.Uuid,
+	UserID core.Uuid,
 	smInstanceTracker *machines.ConnectionToStateMachineInstanceTracker,
 	log logger.Handler,
 	provider models.Provider,
@@ -82,7 +82,7 @@ func InitializeMachineWithContext(
 		return inst, nil
 	}
 
-	inst, err := getMachine(initialState, mtype, ID.String(), userID, log, provider.GetGenericPersister())
+	inst, err := getMachine(initialState, mtype, ID.String(), UserID, log, provider.GetGenericPersister())
 	if err != nil {
 		log.Error(err)
 		return nil, err

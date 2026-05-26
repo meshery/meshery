@@ -76,11 +76,11 @@ func makeRequest(URLPath string, httpMethod string, body io.Reader, headers map[
 		return nil, utils.ErrLoadConfig(err)
 	}
 
-	baseURL := mctlCfg.GetBaseMesheryURL()
+	BaseURL := mctlCfg.GetBaseMesheryURL()
 
-	utils.Log.Debugf("%s %s/%s\n", httpMethod, baseURL, URLPath)
+	utils.Log.Debugf("%s %s/%s\n", httpMethod, BaseURL, URLPath)
 
-	req, err := utils.NewRequest(httpMethod, fmt.Sprintf("%s/%s", baseURL, URLPath), body)
+	req, err := utils.NewRequest(httpMethod, fmt.Sprintf("%s/%s", BaseURL, URLPath), body)
 	if err != nil {
 		return nil, err
 	}

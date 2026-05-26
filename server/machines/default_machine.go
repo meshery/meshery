@@ -43,7 +43,7 @@ func Initial() State {
 		RegisterEvent(Connect, CONNECTED)
 }
 
-func New(initialState StateType, ID string, userID core.Uuid, log logger.Handler, mtype string) (*StateMachine, error) {
+func New(initialState StateType, ID string, UserID core.Uuid, log logger.Handler, mtype string) (*StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
 	if err != nil {
 		return nil, ErrInititalizeK8sMachine(err)
@@ -51,7 +51,7 @@ func New(initialState StateType, ID string, userID core.Uuid, log logger.Handler
 
 	return &StateMachine{
 		ID:            connectionID,
-		userID:        userID,
+		UserID:        UserID,
 		Name:          mtype,
 		PreviousState: DefaultState,
 		InitialState:  initialState,

@@ -492,8 +492,8 @@ func ErrInvalidKubeConfig(err error, content string) error {
 	return errors.New(ErrInvalidKubeConfigCode, errors.Alert, []string{"Invalid Kube Config ", content}, []string{err.Error()}, []string{"Meshery handler failed to find a valid Kubernetes config for the deployment"}, []string{"Try uploading a new kubeconfig and also ensure that Meshery can reach Kubernetes API server"})
 }
 
-func ErrInvalidKubeHandler(err error, userID string) error {
-	return errors.New(ErrInvalidKubeHandlerCode, errors.Alert, []string{"Kubernetes cluster is unavailable for ", userID}, []string{err.Error()}, []string{"There might be a network disruption or the Meshery server does not have valid credentials."}, []string{"Try uploading a new kubeconfig.", "Check the network connection and Kubernetes cluster status.", "Verify that the Meshery server has valid and updated credentials to access the Kubernetes cluster."})
+func ErrInvalidKubeHandler(err error, UserID string) error {
+	return errors.New(ErrInvalidKubeHandlerCode, errors.Alert, []string{"Kubernetes cluster is unavailable for ", UserID}, []string{err.Error()}, []string{"There might be a network disruption or the Meshery server does not have valid credentials."}, []string{"Try uploading a new kubeconfig.", "Check the network connection and Kubernetes cluster status.", "Verify that the Meshery server has valid and updated credentials to access the Kubernetes cluster."})
 }
 
 func ErrInvalidKubeContext(err error, content string) error {
@@ -557,11 +557,11 @@ func ErrGetPattern(err error) error {
 		[]string{
 			"The design ID in the URL is malformed or does not exist.",
 			"The design has been deleted by its owner.",
-			"Your account does not have permission to view this design â€” it may belong to another organization or be set to private.",
+			"Your account does not have permission to view this design Ã¢â‚¬â€ it may belong to another organization or be set to private.",
 			"Your session has expired or the remote provider is currently unreachable.",
 		},
 		[]string{
-			"Verify the design link â€” confirm the full design ID is intact, with no missing or extra characters.",
+			"Verify the design link Ã¢â‚¬â€ confirm the full design ID is intact, with no missing or extra characters.",
 			"Open My Designs and confirm the design still exists; if it was shared with you, ask the owner to re-share or grant access.",
 			"Sign out and sign back in to refresh your session, then retry.",
 		},
@@ -575,8 +575,8 @@ func ErrDeletePattern(err error) error {
 		[]string{"Unable to delete this design"},
 		[]string{fmt.Sprintf("The server could not delete the requested design. Underlying error: %v", err)},
 		[]string{
-			"The design ID is malformed or no longer exists â€” it may already have been deleted.",
-			"Your account does not have permission to delete this design â€” only authorized users (such as the owner) can delete it.",
+			"The design ID is malformed or no longer exists Ã¢â‚¬â€ it may already have been deleted.",
+			"Your account does not have permission to delete this design Ã¢â‚¬â€ only authorized users (such as the owner) can delete it.",
 			"Your session has expired or the remote provider is currently unreachable.",
 		},
 		[]string{
@@ -687,7 +687,7 @@ func ErrGetEvents(err error) error {
 	return errors.New(ErrGetEventsCode, errors.Alert, []string{"Could not retrieve events"}, []string{err.Error()}, []string{"Request contains unknown query variables.", "Database is not reachable or corrupt."}, []string{"Check the request URL and try again."})
 }
 
-// ErrRetrieveEventTypes wraps failures from provider.GetEventTypes â€” the
+// ErrRetrieveEventTypes wraps failures from provider.GetEventTypes Ã¢â‚¬â€ the
 // endpoint that returns the catalogue of event categories + actions the
 // UI uses to populate the notification filter drop-downs.
 func ErrRetrieveEventTypes(err error) error {
@@ -775,8 +775,8 @@ func ErrEmptyOCIImage(err error) error {
 	return errors.New(ErrEmptyOCIImageCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
 }
 
-func ErrGetCapabilities(err error, userID string) error {
-	return errors.New(ErrGetCapabilitiesCode, errors.Alert, []string{fmt.Sprintf("failed to get capabilities for the user with id: \"%s\"", userID)}, []string{err.Error()}, []string{"Remote provider server may be down or not accepting requests."}, []string{"Make sure remote provider server is healthy and accepting requests."})
+func ErrGetCapabilities(err error, UserID string) error {
+	return errors.New(ErrGetCapabilitiesCode, errors.Alert, []string{fmt.Sprintf("failed to get capabilities for the user with id: \"%s\"", UserID)}, []string{err.Error()}, []string{"Remote provider server may be down or not accepting requests."}, []string{"Make sure remote provider server is healthy and accepting requests."})
 }
 
 func ErrExportPatternInFormat(err error, format, designName string) error {
@@ -801,8 +801,8 @@ func ErrExtensionEndpointNotRegistered(endpoint string) error {
 	return errors.New(ErrExtensionEndpointNotRegisteredCode, errors.Alert, []string{"No extension is registered for endpoint: ", endpoint}, []string{}, []string{"Requested extension is not loaded into this Meshery server"}, []string{"Install the extension or check that its provider registered the route on startup"})
 }
 
-func ErrUserNotFound(userID string) error {
-	return errors.New(ErrUserNotFoundCode, errors.Alert, []string{"User not found"}, []string{fmt.Sprintf("No user exists with id: %s", userID)}, []string{"The user may have been deleted or the id is incorrect"}, []string{"Verify the user id is correct and that the user has not been removed"})
+func ErrUserNotFound(UserID string) error {
+	return errors.New(ErrUserNotFoundCode, errors.Alert, []string{"User not found"}, []string{fmt.Sprintf("No user exists with id: %s", UserID)}, []string{"The user may have been deleted or the id is incorrect"}, []string{"Verify the user id is correct and that the user has not been removed"})
 }
 
 func ErrFetchToken(err error) error {
@@ -874,7 +874,7 @@ func ErrAccessDatabaseTables(err error) error {
 }
 
 func ErrDropDatabaseTable(err error) error {
-	return errors.New(ErrDropDatabaseTableCode, errors.Alert, []string{"Cannot drop table from database"}, []string{err.Error()}, []string{"Migrator could not drop an existing table â€” schema or connection issue"}, []string{"Check server logs for details and verify database integrity"})
+	return errors.New(ErrDropDatabaseTableCode, errors.Alert, []string{"Cannot drop table from database"}, []string{err.Error()}, []string{"Migrator could not drop an existing table Ã¢â‚¬â€ schema or connection issue"}, []string{"Check server logs for details and verify database integrity"})
 }
 
 func ErrMigrateDatabaseTables(err error) error {
@@ -930,7 +930,7 @@ func ErrUpdateConnection(err error) error {
 	return errors.New(ErrUpdateConnectionCode, errors.Alert, []string{"Could not update the connection"}, []string{err.Error()}, []string{"Remote provider is unreachable.", "Connection has been deleted since it was loaded.", "Persisted metadata is corrupt."}, []string{"Verify provider connectivity and that the connection still exists, then retry."})
 }
 
-// ErrExportModel wraps failures in the ExportModel pipeline â€” building the
+// ErrExportModel wraps failures in the ExportModel pipeline Ã¢â‚¬â€ building the
 // OCI image, writing the model definition, saving the tar/gzip archive, or
 // creating the scratch directories. The origin string identifies which
 // sub-step failed so the UI can surface a specific remediation.
@@ -971,19 +971,19 @@ func ErrInvalidBase64Data(err error) error {
 }
 
 // ErrInvalidImportRequest wraps oneOf-invariant violations on the design
-// import endpoint â€” e.g. the request body had both a File and URL variant
+// import endpoint Ã¢â‚¬â€ e.g. the request body had both a File and URL variant
 // set, or neither. Emitted with HTTP 400 because the caller needs to
 // correct the request shape, not the server to recover.
 func ErrInvalidImportRequest(err error) error {
-	return errors.New(ErrInvalidImportRequestCode, errors.Alert, []string{"Invalid design import request"}, []string{err.Error()}, []string{"The request body did not match exactly one variant of the import oneOf â€” the File variant requires `file` and `file_name`, the URL variant requires `url`.", "Both variants were provided, or neither was."}, []string{"Send a request body with exactly one variant set: either {\"file\": <bytes>, \"file_name\": \"design.yml\"} or {\"url\": \"https://...\"}."})
+	return errors.New(ErrInvalidImportRequestCode, errors.Alert, []string{"Invalid design import request"}, []string{err.Error()}, []string{"The request body did not match exactly one variant of the import oneOf Ã¢â‚¬â€ the File variant requires `file` and `file_name`, the URL variant requires `url`.", "Both variants were provided, or neither was."}, []string{"Send a request body with exactly one variant set: either {\"file\": <bytes>, \"file_name\": \"design.yml\"} or {\"url\": \"https://...\"}."})
 }
 
 // ErrConvertToDesign wraps failures in the conversion pipeline that
 // turns a source file (Helm chart, Kubernetes manifest, Docker Compose,
 // Kustomize, or a Meshery design) into a v1beta3 design. These failures
-// are often rooted in malformed or unsupported input â€” a corrupt
+// are often rooted in malformed or unsupported input Ã¢â‚¬â€ a corrupt
 // archive, an unrecognized file extension, or a manifest the registry
-// could not map onto known component definitions â€” but the same
+// could not map onto known component definitions Ã¢â‚¬â€ but the same
 // pipeline is also re-run server-side during download/view of a
 // non-design pattern, where the same wrap surfaces. The HTTP status
 // returned for this error is therefore determined by the calling
@@ -1017,9 +1017,9 @@ func ErrWriteRegistryLogs(err error) error {
 // `status` (enabled/disabled/etc.) of a model or component definition
 // through the entity-status endpoint. Emitted with HTTP 500 because
 // the failure originates in the registry persistence layer, not in
-// caller input â€” input validation runs upstream of this site.
+// caller input Ã¢â‚¬â€ input validation runs upstream of this site.
 func ErrUpdateEntityStatus(err error) error {
-	return errors.New(ErrUpdateEntityStatusCode, errors.Alert, []string{"Failed to update entity status"}, []string{err.Error()}, []string{"The entity ID does not exist in the registry.", "The registry's persistence layer rejected the status update â€” typically a database connection or transaction failure."}, []string{"Verify the entity ID exists by listing the entities of the same type. If it does, retry the request and inspect server logs for the underlying registry error."})
+	return errors.New(ErrUpdateEntityStatusCode, errors.Alert, []string{"Failed to update entity status"}, []string{err.Error()}, []string{"The entity ID does not exist in the registry.", "The registry's persistence layer rejected the status update Ã¢â‚¬â€ typically a database connection or transaction failure."}, []string{"Verify the entity ID exists by listing the entities of the same type. If it does, retry the request and inspect server logs for the underlying registry error."})
 }
 
 // ErrExtensionProxy wraps failures of provider.ExtensionProxy when a
@@ -1042,7 +1042,7 @@ func ErrInitializeMachine(err error) error {
 
 // ErrSendMachineEvent wraps failures of *StateMachine.SendEvent, which
 // drives a connection through its registered transitions (e.g.
-// REGISTERED â†’ DISCOVERED â†’ CONNECTED). Emitted with HTTP 500 because
+// REGISTERED Ã¢â€ â€™ DISCOVERED Ã¢â€ â€™ CONNECTED). Emitted with HTTP 500 because
 // the event-driven transition failed inside the state machine, not in
 // caller input.
 func ErrSendMachineEvent(err error) error {

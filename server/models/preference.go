@@ -89,20 +89,20 @@ func init() {
 
 // PreferencePersister defines methods for a session persister
 type PreferencePersister interface {
-	ReadFromPersister(userID string) (*Preference, error)
-	WriteToPersister(userID string, data *Preference) error
-	DeleteFromPersister(userID string) error
+	ReadFromPersister(UserID string) (*Preference, error)
+	WriteToPersister(UserID string, data *Preference) error
+	DeleteFromPersister(UserID string) error
 
-	// Lock(userID string)
-	// Unlock(userID string)
+	// Lock(UserID string)
+	// Unlock(UserID string)
 	// ClosePersister()
 }
 
 // CapabilitiesPersister defines methods for a capability persister
 type CapabilitiesPersister interface {
-	ReadCapabilitiesForUser(userID string) (*ProviderProperties, error)
-	WriteCapabilitiesForUser(userID string, data *ProviderProperties) error
-	DeleteCapabilitiesForUser(userID string) error
+	ReadCapabilitiesForUser(UserID string) (*ProviderProperties, error)
+	WriteCapabilitiesForUser(UserID string, data *ProviderProperties) error
+	DeleteCapabilitiesForUser(UserID string) error
 }
 
 // Parameters to save Grafana configuration

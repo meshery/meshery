@@ -24,8 +24,8 @@ func NewMapPreferencePersister() (*MapPreferencePersister, error) {
 	}, nil
 }
 
-// ReadFromPersister reads the session data for the given userID
-func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, error) {
+// ReadFromPersister reads the session data for the given UserID
+func (s *MapPreferencePersister) ReadFromPersister(UserID string) (*Preference, error) {
 	logLevel := viper.GetInt("LOG_LEVEL")
 	if viper.GetBool("DEBUG") {
 		logLevel = int(logrus.DebugLevel)
@@ -44,22 +44,22 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 		return nil, ErrDBConnection
 	}
 
-	if userID == "" {
-		return nil, ErruserID
+	if UserID == "" {
+		return nil, ErrUserID
 	}
 
-	dataCopyB, ok := s.db.Load(userID)
+	dataCopyB, ok := s.db.Load(UserID)
 	if ok {
-		log.Debug(fmt.Sprintf("retrieved session for user with id: %s", userID))
+		log.Debug(fmt.Sprintf("retrieved session for user with id: %s", UserID))
 		newData, ok1 := dataCopyB.(*Preference)
 		if ok1 {
-			log.Debug(fmt.Sprintf("session for user with id: %s was read in tact.", userID))
+			log.Debug(fmt.Sprintf("session for user with id: %s was read in tact.", UserID))
 			data = newData
 		} else {
-			log.Warn(ErrSessionNotReadIntact(userID))
+			log.Warn(ErrSessionNotReadIntact(UserID))
 		}
 	} else {
-		log.Debug(ErrSessionNotFound(userID))
+		log.Debug(ErrSessionNotFound(UserID))
 		// Do not store the freshly created default preference on read-miss.
 		// Let callers explicitly persist preferences via WriteToPersister.
 	}
@@ -67,13 +67,13 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 }
 
 // WriteToPersister persists session for the user
-func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preference) error {
+func (s *MapPreferencePersister) WriteToPersister(UserID string, data *Preference) error {
 	if s.db == nil {
 		return ErrDBConnection
 	}
 
-	if userID == "" {
-		return ErruserID
+	if UserID == "" {
+		return ErrUserID
 	}
 
 	if data == nil {
@@ -85,21 +85,21 @@ func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preferenc
 		return ErrSessionCopy(err)
 	}
 
-	s.db.Store(userID, newSess)
+	s.db.Store(UserID, newSess)
 
 	return nil
 }
 
 // DeleteFromPersister removes the session for the user
-func (s *MapPreferencePersister) DeleteFromPersister(userID string) error {
+func (s *MapPreferencePersister) DeleteFromPersister(UserID string) error {
 	if s.db == nil {
 		return ErrDBConnection
 	}
 
-	if userID == "" {
-		return ErruserID
+	if UserID == "" {
+		return ErrUserID
 	}
-	s.db.Delete(userID)
+	s.db.Delete(UserID)
 	return nil
 }
 

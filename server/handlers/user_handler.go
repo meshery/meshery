@@ -27,13 +27,13 @@ func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.
 }
 
 func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	userID := mux.Vars(r)["id"]
-	_, err := uuid.FromString(userID)
+	UserID := mux.Vars(r)["id"]
+	_, err := uuid.FromString(UserID)
 	if err != nil {
 		writeMeshkitError(w, ErrInvalidUUID(err), http.StatusBadRequest)
 		return
 	}
-	resp, err := provider.GetUserByID(r, userID)
+	resp, err := provider.GetUserByID(r, UserID)
 	if err != nil {
 		if errors.Is(err, models.ErrUserIsSystemInstance) {
 			// The requested ID is this Meshery instance's own system UUID; it
@@ -48,7 +48,7 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 	}
 
 	if resp == nil {
-		writeMeshkitError(w, ErrUserNotFound(userID), http.StatusNotFound)
+		writeMeshkitError(w, ErrUserNotFound(UserID), http.StatusNotFound)
 		return
 	}
 
@@ -143,7 +143,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		}
 	}
 
-	if err := provider.RecordPreferences(req, user.userID, prefObj); err != nil {
+	if err := provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
 		err := fmt.Errorf("unable to save user preferences: %v", err)
 		h.log.Error(ErrSavingUserPreference(err))
 		writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusInternalServerError)

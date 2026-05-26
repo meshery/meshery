@@ -171,7 +171,7 @@ func TestListAsyncPagination(t *testing.T) {
 				t.Fatalf("Failed to marshal API response: %v", err)
 			}
 
-			url := testContext.baseURL + tt.URLPath
+			url := testContext.BaseURL + tt.URLPath
 
 			httpmock.RegisterResponder("GET", url,
 				httpmock.NewStringResponder(tt.apiResponse.Code, string(mAPIResponse)))
@@ -304,7 +304,7 @@ func TestPromptAsyncPagination(t *testing.T) {
 				t.Fatalf("Failed to marshal API response: %v", err)
 			}
 
-			mockURL := testContext.baseURL + "/test?page=0&pagesize=10&search=" + tt.searchTerm
+			mockURL := testContext.BaseURL + "/test?page=0&pagesize=10&search=" + tt.searchTerm
 			httpmock.RegisterResponder("GET", mockURL,
 				httpmock.NewStringResponder(tt.apiStatusCode, string(mAPIResponse)))
 

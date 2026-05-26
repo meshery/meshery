@@ -55,7 +55,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 		credName, _ := payload.CredentialSecret["name"].(string)
 		credential, err = provider.SaveUserCredential(token, &models.Credential{
 			Name:   credName,
-			userID: userUUID,
+			UserID: userUUID,
 			Type:   payload.Kind,
 			Secret: payload.CredentialSecret,
 		})

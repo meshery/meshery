@@ -32,7 +32,7 @@ func TestDeleteCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
-					URL:          testContext.baseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
 					Response:     "delete.response.golden",
 					ResponseCode: 200,
 				},
@@ -55,13 +55,13 @@ func TestDeleteCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.baseURL + "/api/pattern?populate=pattern_file&page_size=10000",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&page_size=10000",
 					Response:     "delete.idList.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "DELETE",
-					URL:          testContext.baseURL + "/api/pattern/" + nonExistentID,
+					URL:          testContext.BaseURL + "/api/pattern/" + nonExistentID,
 					Response:     "delete.error.response.golden",
 					ResponseCode: 404,
 				},
