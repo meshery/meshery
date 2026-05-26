@@ -28,6 +28,8 @@ test.describe('Performance Section Tests', () => {
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToPerformance();
+    await expect(page).toHaveURL(/\/performance/i, { timeout: 120000 });
+    await expect(page.getByTestId('configure-metrics-button')).toBeVisible({ timeout: 120000 });
   });
 
   test('Common UI elements', async ({ page }: { page: Page }) => {
