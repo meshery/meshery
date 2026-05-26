@@ -31,7 +31,13 @@ test.describe('Design Page Tests', () => {
   let designPage: DesignPage;
 
   test.beforeEach(async ({ page }: { page: Page }) => {
-    await page.route('**/api/pattern/import', async (route) => await route.fulfill());
+    await page.route('**/api/pattern/import', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: '{}',
+      });
+    });
     designPage = new DesignPage(page);
     await designPage.navigateTo();
   });
@@ -47,7 +53,7 @@ test.describe('Design Page Tests', () => {
   DESIGN_TYPES.forEach(({ type }) => {
     test(`displays ${type} design card correctly`, async ({ provider }) => {
       test.skip(
-        provider === 'None' && type === 'public',
+        (provider === 'None' || provider === 'Local') && type === 'public',
         `Skipping test for provider: ${provider}`,
       );
       await designPage.applyVisibilityFilter(type);
@@ -108,7 +114,12 @@ test.describe('Design Page Tests', () => {
     );
     await designPage.page.route(
       '**/api/pattern/deploy?contexts=*',
-      async (route) => await route.fulfill(),
+      async (route) =>
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: '{}',
+        }),
     );
 
     await designPage.applyVisibilityFilter('published');

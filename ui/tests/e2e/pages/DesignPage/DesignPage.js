@@ -27,8 +27,8 @@ export class DesignPage {
   }
 
   async navigateTo() {
-    await this.page.goto('/configuration/designs', { waitUntil: 'domcontentloaded' });
-    await this.page.waitForURL(/\/configuration\/designs/);
+    await this.DashboardPage.navigateToDashboard();
+    await this.DashboardPage.navigateToDesigns();
     await this.pageLoader.waitFor({ state: 'detached' });
   }
 
