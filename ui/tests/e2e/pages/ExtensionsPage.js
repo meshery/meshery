@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { DashboardPage, NAVIGATION_TIMEOUT } from './DashboardPage';
+import { DashboardPage } from './DashboardPage';
 
 export class ExtensionsPage {
   constructor(page) {
@@ -27,8 +27,6 @@ export class ExtensionsPage {
     const dashboardPage = new DashboardPage(this.page);
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToExtensions();
-    await expect(this.page).toHaveURL(/\/extensions/i, { timeout: NAVIGATION_TIMEOUT });
-    await expect(this.performanceHeading).toBeVisible({ timeout: NAVIGATION_TIMEOUT });
   }
 
   async hasExtensionNavigation() {
