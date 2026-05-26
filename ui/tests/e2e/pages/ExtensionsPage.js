@@ -27,8 +27,8 @@ export class ExtensionsPage {
     const dashboardPage = new DashboardPage(this.page);
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToExtensions();
-    await expect(this.page).toHaveURL(/\/extensions/i, { timeout: 120000 });
-    await expect(this.extensionNavRegion).toBeVisible({ timeout: 120000 });
+    await expect(this.page).toHaveURL(/\/extensions/i, { timeout: NAVIGATION_TIMEOUT });
+    await expect(this.extensionNavRegion).toBeVisible({ timeout: NAVIGATION_TIMEOUT });
   }
 
   async verifyPerformanceAnalysisDetails() {
