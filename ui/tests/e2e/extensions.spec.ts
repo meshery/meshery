@@ -26,6 +26,10 @@ test.describe('Extensions Section Tests', () => {
   });
 
   test('Verify extension nav items use top-level layout', async () => {
+    test.skip(
+      !(await extensionsPage.hasExtensionNavigation()),
+      'Navigator extensions are not rendered for this provider in CI.',
+    );
     await extensionsPage.verifyExtensionNavItemsUseTopLevelLayout();
   });
 

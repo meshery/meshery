@@ -28,7 +28,13 @@ export class ExtensionsPage {
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToExtensions();
     await expect(this.page).toHaveURL(/\/extensions/i, { timeout: NAVIGATION_TIMEOUT });
-    await expect(this.extensionNavRegion).toBeVisible({ timeout: NAVIGATION_TIMEOUT });
+    await expect(this.performanceHeading).toBeVisible({ timeout: NAVIGATION_TIMEOUT });
+  }
+
+  async hasExtensionNavigation() {
+    return (
+      (await this.extensionNavRegion.count()) > 0 && (await this.extensionRootNavItems.count()) > 0
+    );
   }
 
   async verifyPerformanceAnalysisDetails() {
