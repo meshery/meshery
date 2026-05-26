@@ -228,7 +228,7 @@ func checkAdapters(ctx context.Context, h *Handler) []adapterStatus {
 				} else {
 					s.Status = "healthy"
 				}
-				mClient.Close()
+				_ = mClient.Close()
 			}
 			cancel()
 		}
