@@ -28,13 +28,13 @@ func TestDesignView(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&page_size=10000",
+					URL:          testContext.baseURL + "/api/pattern?populate=pattern_file&page_size=10000",
 					Response:     "view.design.api.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=desgin",
+					URL:          testContext.baseURL + "/api/pattern?populate=pattern_file&search=desgin",
 					Response:     "view.design.api.response.golden",
 					ResponseCode: 200,
 				},
@@ -48,13 +48,13 @@ func TestDesignView(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&page_size=10000",
+					URL:          testContext.baseURL + "/api/pattern?populate=pattern_file&page_size=10000",
 					Response:     "view.design.api.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern/3817ec9a-1d83-4f6f-9154-0fd4408ba9f0",
+					URL:          testContext.baseURL + "/api/pattern/3817ec9a-1d83-4f6f-9154-0fd4408ba9f0",
 					Response:     "view.design.by.id.api.response.golden",
 					ResponseCode: 200,
 				},
@@ -77,13 +77,13 @@ func TestDesignView(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&page_size=10000",
+					URL:          testContext.baseURL + "/api/pattern?populate=pattern_file&page_size=10000",
 					Response:     "view.design.api.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=nonexistent-design",
+					URL:          testContext.baseURL + "/api/pattern?populate=pattern_file&search=nonexistent-design",
 					Response:     "pattern.empty.response.golden",
 					ResponseCode: 200,
 				},

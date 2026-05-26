@@ -14,7 +14,7 @@ import (
 type makeRequestTestCase struct {
 	name             string
 	httpMethod       string
-	urlPath          string
+	URLPath          string
 	hasToken         bool
 	expectedResponse *http.Response
 	expectedError    error
@@ -28,7 +28,7 @@ func TestMakeRequest_Failures(t *testing.T) {
 		{
 			name:             "Given no token provided when received a GET request then an error is returned",
 			httpMethod:       http.MethodGet,
-			urlPath:          "/",
+			URLPath:          "/",
 			hasToken:         false,
 			expectedResponse: nil,
 			expectedError:    utils.ErrAttachAuthToken(fmt.Errorf("Not Set does not exist")),
@@ -36,11 +36,11 @@ func TestMakeRequest_Failures(t *testing.T) {
 		{
 			name:             "Given server not reachable when received a GET request then an error is returned",
 			httpMethod:       http.MethodGet,
-			urlPath:          "/",
+			URLPath:          "/",
 			hasToken:         true,
 			expectedResponse: nil,
 			expectedError: func() error {
-				errCtx := fmt.Sprintf("Unable to connect to Meshery server at %s (current context).", testContext.BaseURL)
+				errCtx := fmt.Sprintf("Unable to connect to Meshery server at %s (current context).", testContext.baseURL)
 				failedReqErr := utils.ErrFailRequest(fmt.Errorf("%s", errCtx))
 				errRemediation := errors.GetRemedy(failedReqErr)
 				return utils.ErrFailRequest(fmt.Errorf("%s\n%s\n%s", errCtx, errRemediation, generateErrorReferenceDetails("ErrFailRequestCode", utils.ErrFailRequestCode)))
@@ -56,7 +56,7 @@ func TestMakeRequest_Failures(t *testing.T) {
 				utils.TokenFlag = utils.GetToken(t)
 			}
 
-			url := testContext.BaseURL + tt.urlPath
+			url := testContext.baseURL + tt.URLPath
 
 			httpmock.RegisterResponder(tt.httpMethod, url, nil)
 

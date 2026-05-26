@@ -77,7 +77,7 @@ mesheryctl design delete [file | URL]
 
 		var patternFileByt []byte
 		// If file path not a valid URL, treat it like a local file path
-		if !govalidator.IsURL(file) {
+		if !govalidator.isURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
 				return utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, file))

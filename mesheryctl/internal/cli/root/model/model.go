@@ -96,7 +96,7 @@ mesheryctl model build [model-name]/[model-version]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		countFlag, _ := cmd.Flags().GetBool("count")
 		if countFlag {
-			models, err := api.Fetch[models.MeshmodelsAPIResponse](fmt.Sprintf("%s?page=1", modelsApiPath))
+			models, err := api.Fetch[models.MeshmodelsAPIResponse](fmt.Sprintf("%s?page=1", modelsAPIPath))
 
 			if err != nil {
 				return err

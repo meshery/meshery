@@ -62,15 +62,15 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		componentDefinition := args[0]
-		urlPath := componentApiPath
+		URLPath := componentAPIPath
 		searchTerm := ""
 
 		// build url for uuid
 		if utils.IsUUID(componentDefinition) {
-			viewUrlValue := url.Values{}
-			viewUrlValue.Add("id", componentDefinition)
+			viewURLValue := url.Values{}
+			viewURLValue.Add("id", componentDefinition)
 
-			urlPath = fmt.Sprintf("%s?%s", urlPath, viewUrlValue.Encode())
+			URLPath = fmt.Sprintf("%s?%s", URLPath, viewURLValue.Encode())
 		} else {
 			searchTerm = componentDefinition
 		}
@@ -79,7 +79,7 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 
 		err := display.PromptAsyncPagination(
 			display.DisplayDataAsync{
-				UrlPath:        urlPath,
+				URLPath:        URLPath,
 				ErrNotFoundMsg: fmt.Sprintf("%s%s", errNoComponentFound, componentDefinition),
 				SearchTerm:     searchTerm,
 			},

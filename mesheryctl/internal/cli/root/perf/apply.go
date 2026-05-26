@@ -263,14 +263,14 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		}
 
 		if testURL == "" {
-			return ErrNoTestURL()
+			return ErrNotestURL()
 		}
 
 		utils.Log.Debugf("performance profile is: %s", profileName)
 		utils.Log.Debugf("test-url set to %s", testURL)
 
 		// Method to check if the entered Test URL is valid or not
-		if validURL := govalidator.IsURL(testURL); !validURL {
+		if validURL := govalidator.isURL(testURL); !validURL {
 			return ErrNotValidURL()
 		}
 
@@ -344,11 +344,11 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 
 	// ask for test url first
 	if testURL == "" {
-		return "", "", ErrNoTestURL()
+		return "", "", ErrNotestURL()
 	}
 
 	// Method to check if the entered Test URL is valid or not
-	if validURL := govalidator.IsURL(testURL); !validURL {
+	if validURL := govalidator.isURL(testURL); !validURL {
 		return "", "", ErrNotValidURL()
 	}
 

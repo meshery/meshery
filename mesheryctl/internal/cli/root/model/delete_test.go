@@ -18,7 +18,7 @@ func TestDeleteModel(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 
-	modelId := "d56fb25b-f92c-4cd6-821b-2cfd6bb87259"
+	modelID := "d56fb25b-f92c-4cd6-821b-2cfd6bb87259"
 
 	tests := []utils.MesheryCommandTest{
 		{
@@ -26,7 +26,7 @@ func TestDeleteModel(t *testing.T) {
 			Args:             []string{"delete"},
 			HttpMethod:       "DELETE",
 			HttpStatusCode:   200,
-			URL:              fmt.Sprintf("/%s", modelsApiPath),
+			URL:              fmt.Sprintf("/%s", modelsAPIPath),
 			Fixture:          "",
 			ExpectedResponse: "",
 			ExpectError:      true,
@@ -35,10 +35,10 @@ func TestDeleteModel(t *testing.T) {
 		},
 		{
 			Name:             "given a valid model-id when running model delete then model is deleted successfully",
-			Args:             []string{"delete", modelId},
+			Args:             []string{"delete", modelID},
 			HttpMethod:       "DELETE",
 			HttpStatusCode:   200,
-			URL:              fmt.Sprintf("/%s/%s", modelsApiPath, modelId),
+			URL:              fmt.Sprintf("/%s/%s", modelsAPIPath, modelID),
 			Fixture:          "delete.model.response.golden",
 			ExpectedResponse: "delete.model.success.golden",
 			ExpectError:      false,
@@ -48,7 +48,7 @@ func TestDeleteModel(t *testing.T) {
 			Args:             []string{"delete", "nonexistent-model"},
 			HttpMethod:       "GET",
 			HttpStatusCode:   404,
-			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=nonexistent-model", modelsApiPath),
+			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=nonexistent-model", modelsAPIPath),
 			Fixture:          "delete.model.empty.response.golden",
 			ExpectedResponse: "delete.model.empty.output.golden",
 			ExpectError:      false,

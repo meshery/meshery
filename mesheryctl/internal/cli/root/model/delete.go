@@ -46,7 +46,7 @@ mesheryctl model delete [model-name]
 
 		// Delete model by ID
 		if utils.IsUUID(modelArg) {
-			_, err := api.Delete(fmt.Sprintf("%s/%s", modelsApiPath, modelArg))
+			_, err := api.Delete(fmt.Sprintf("%s/%s", modelsAPIPath, modelArg))
 			if err != nil {
 				return ErrDeleteModel(err, modelArg)
 			}
@@ -55,7 +55,7 @@ mesheryctl model delete [model-name]
 		}
 
 		// Delete model by name, for multiple matches use pagination selection prompt
-		selectedModel, err := promptModelSelection(modelArg, modelsApiPath)
+		selectedModel, err := promptModelSelection(modelArg, modelsAPIPath)
 		if err != nil {
 			return err
 		}
@@ -66,7 +66,7 @@ mesheryctl model delete [model-name]
 		}
 
 		// Delete the selected model by its UUID
-		_, err = api.Delete(fmt.Sprintf("%s/%s", modelsApiPath, selectedModel.ID.String()))
+		_, err = api.Delete(fmt.Sprintf("%s/%s", modelsAPIPath, selectedModel.ID.String()))
 		if err != nil {
 			return ErrDeleteModel(err, modelArg)
 		}

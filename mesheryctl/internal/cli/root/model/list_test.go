@@ -17,13 +17,13 @@ func TestListModel(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	testUrl := fmt.Sprintf("/%s?page=0&pagesize=10", modelsApiPath)
+	testURL := fmt.Sprintf("/%s?page=0&pagesize=10", modelsAPIPath)
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "List model",
 			Args:             []string{"list", "--page", "1"},
-			URL:              testUrl,
+			URL:              testURL,
 			Fixture:          "list.model.api.response.golden",
 			ExpectedResponse: "list.model.output.golden",
 			ExpectError:      false,
@@ -31,7 +31,7 @@ func TestListModel(t *testing.T) {
 		{
 			Name:             "List model no data",
 			Args:             []string{"list"},
-			URL:              testUrl,
+			URL:              testURL,
 			Fixture:          "list.model.empty.api.response.golden",
 			ExpectedResponse: "list.model.empty.output.golden",
 			ExpectError:      false,
@@ -39,7 +39,7 @@ func TestListModel(t *testing.T) {
 		{
 			Name:             "Display model count no data",
 			Args:             []string{"list", "--count"},
-			URL:              testUrl,
+			URL:              testURL,
 			Fixture:          "list.model.empty.api.response.golden",
 			ExpectedResponse: "list.model.count.empty.ouput.golden",
 			ExpectError:      false,
@@ -47,7 +47,7 @@ func TestListModel(t *testing.T) {
 		{
 			Name:             "Display count model",
 			Args:             []string{"list", "--count"},
-			URL:              testUrl,
+			URL:              testURL,
 			Fixture:          "list.model.api.response.golden",
 			ExpectedResponse: "list.model.count.ouput.golden",
 			ExpectError:      false,

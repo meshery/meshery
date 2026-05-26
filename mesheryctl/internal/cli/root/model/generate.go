@@ -22,7 +22,7 @@ type ModelGenerator interface {
 	Generate() error
 }
 
-type UrlModelGenerator struct {
+type URLModelGenerator struct {
 	TemplateFile string
 	Url          string
 	SkipRegister bool
@@ -74,18 +74,18 @@ mesheryctl model generate --f [URL] -t [path-to-template.json] -r
 
 		}
 
-		isUrl := utils.IsValidUrl(path)
-		if isUrl {
+		isURL := utils.IsValidUrl(path)
+		if isURL {
 			if modelGenerateFlags.Template == "" {
 				return ErrTemplateFileNotPresent()
 			}
 
-			urlModelGenerator := &UrlModelGenerator{
+			URLModelGenerator := &URLModelGenerator{
 				TemplateFile: modelGenerateFlags.Template,
 				Url:          path,
 				SkipRegister: modelGenerateFlags.Register,
 			}
-			return urlModelGenerator.Generate()
+			return URLModelGenerator.Generate()
 		}
 
 		// Path is a file or directory
@@ -122,7 +122,7 @@ func init() {
 
 }
 
-func (u *UrlModelGenerator) Generate() error {
+func (u *URLModelGenerator) Generate() error {
 	utils.Log.Info("Generating model from URL: ", u.Url)
 
 	fileData, err := os.ReadFile(u.TemplateFile)

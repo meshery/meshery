@@ -12,7 +12,7 @@ import (
 const (
 	ErrReadFilepathCode             = "mesheryctl-1040"
 	ErrNoProfileNameCode            = "mesheryctl-1041"
-	ErrNoTestURLCode                = "mesheryctl-1042"
+	ErrNotestURLCode                = "mesheryctl-1042"
 	ErrNotValidURLCode              = "mesheryctl-1043"
 	ErrFailMarshalCode              = "mesheryctl-1044"
 	ErrFailUnmarshalCode            = "mesheryctl-1045"
@@ -47,8 +47,8 @@ func ErrNoProfileName() error {
 		[]string{"Provide a profile-name", formatErrorWithReference()})
 }
 
-func ErrNoTestURL() error {
-	return errors.New(ErrNoTestURLCode, errors.Alert,
+func ErrNotestURL() error {
+	return errors.New(ErrNotestURLCode, errors.Alert,
 		[]string{"No URL"},
 		[]string{"Unable to get URL for performing test"},
 		[]string{"No URL provided for performing tests"},

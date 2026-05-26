@@ -52,7 +52,7 @@ mesheryctl component list --count
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		componentData := display.DisplayDataAsync{
-			UrlPath:          componentApiPath,
+			URLPath:          componentAPIPath,
 			DataType:         "component",
 			Header:           []string{"ID", "Name", "Model", "Version"},
 			Page:             cmdComponentListFlag.Page,

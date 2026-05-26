@@ -155,7 +155,7 @@ func isArgumentUUID(arg string) bool {
 }
 
 func fetchConnectionByID(connectionID string) (*connection.Connection, error) {
-	url := fmt.Sprintf("%s/%s", connectionApiPath, connectionID)
+	url := fmt.Sprintf("%s/%s", connectionAPIPath, connectionID)
 	fetchedConnection, err := api.Fetch[connection.Connection](url)
 	if err != nil {
 		return nil, err
@@ -164,13 +164,13 @@ func fetchConnectionByID(connectionID string) (*connection.Connection, error) {
 }
 
 func fetchConnectionByName(connectionName string) (*connection.Connection, error) {
-	viewUrlValue := url.Values{}
-	viewUrlValue.Add("search", connectionName)
-	viewUrlValue.Add("pagesize", "all")
+	viewURLValue := url.Values{}
+	viewURLValue.Add("search", connectionName)
+	viewURLValue.Add("pagesize", "all")
 
-	urlPath := fmt.Sprintf("%s?%s", connectionApiPath, viewUrlValue.Encode())
+	URLPath := fmt.Sprintf("%s?%s", connectionAPIPath, viewURLValue.Encode())
 
-	connectionsResponse, err := api.Fetch[connection.ConnectionPage](urlPath)
+	connectionsResponse, err := api.Fetch[connection.ConnectionPage](URLPath)
 	if err != nil {
 		return nil, err
 	}

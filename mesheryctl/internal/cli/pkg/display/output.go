@@ -60,7 +60,7 @@ func (o *OutputFormatterSaverFactory[T]) New(format string, outputFormatter Outp
 	}
 }
 
-type JsonEncoderSettings struct {
+type JSONEncoderSettings struct {
 	SetEscapeHTML bool
 	IndentPrefix  string
 	IndentValue   string
@@ -68,7 +68,7 @@ type JsonEncoderSettings struct {
 
 type JSONOutputFormatter[T any] struct {
 	Data            T
-	EncoderSettings JsonEncoderSettings
+	EncoderSettings JSONEncoderSettings
 	Out             io.Writer
 }
 
@@ -90,7 +90,7 @@ type YAMLOutputFormatterSaver[T any] struct {
 func NewJSONOutputFormatter[T any](data T) OutputFormatter[T] {
 	return &JSONOutputFormatter[T]{
 		Data: data,
-		EncoderSettings: JsonEncoderSettings{
+		EncoderSettings: JSONEncoderSettings{
 			SetEscapeHTML: false,
 			IndentPrefix:  "",
 			IndentValue:   "  ",
@@ -118,7 +118,7 @@ func (j *JSONOutputFormatter[T]) WithOutput(out io.Writer) OutputFormatter[T] {
 	return j
 }
 
-func (j *JSONOutputFormatter[T]) WithEncoderSettings(settings JsonEncoderSettings) OutputFormatter[T] {
+func (j *JSONOutputFormatter[T]) WithEncoderSettings(settings JSONEncoderSettings) OutputFormatter[T] {
 	j.EncoderSettings = settings
 	return j
 }

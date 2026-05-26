@@ -29,7 +29,7 @@ import (
 
 var (
 	availableSubcommands = []*cobra.Command{viewCmd, generateCmd, listCmd, searchCmd}
-	relationshipApiPath  = "api/meshmodels/relationships"
+	relationshipAPIPath  = "api/meshmodels/relationships"
 )
 
 type MeshmodelRelationshipsAPIResponse struct {
@@ -72,7 +72,7 @@ mesheryctl relationship view [model-name]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		countFlag, _ := cmd.Flags().GetBool("count")
 		if countFlag {
-			models, err := api.Fetch[MeshmodelRelationshipsAPIResponse](relationshipApiPath)
+			models, err := api.Fetch[MeshmodelRelationshipsAPIResponse](relationshipAPIPath)
 
 			if err != nil {
 				return err

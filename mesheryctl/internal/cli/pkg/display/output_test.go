@@ -76,7 +76,7 @@ func Test_Given_JSONOutputFormatterSaver_With_Filepath_When_Save_Then_File_Is_Cr
 
 	jsonFormatter := JSONOutputFormatter[testStruct]{
 		Data: data,
-		EncoderSettings: JsonEncoderSettings{
+		EncoderSettings: JSONEncoderSettings{
 			SetEscapeHTML: false,
 			IndentPrefix:  "",
 			IndentValue:   "  ",
@@ -101,7 +101,7 @@ func Test_Given_JSONOutputFormatterSaver_With_NoFilepath_When_Save_Then_Error_Is
 	utils.SetupMeshkitLoggerTesting(t, false)
 	jsonFormatter := JSONOutputFormatter[testStruct]{
 		Data: data,
-		EncoderSettings: JsonEncoderSettings{
+		EncoderSettings: JSONEncoderSettings{
 			SetEscapeHTML: false,
 			IndentPrefix:  "",
 			IndentValue:   "  ",

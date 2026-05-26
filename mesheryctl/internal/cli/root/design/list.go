@@ -88,7 +88,7 @@ mesheryctl design list --count
 		}(provider)
 
 		designData := display.DisplayDataAsync{
-			UrlPath:          "api/pattern",
+			URLPath:          "api/pattern",
 			DataType:         "design",
 			Header:           header,
 			Page:             page,
@@ -104,7 +104,7 @@ mesheryctl design list --count
 func processDesignData(data *models.PatternsAPIResponse) ([][]string, int64) {
 	var displayData [][]string
 	for _, v := range data.Patterns {
-		designId := v.ID.String()
+		designID := v.ID.String()
 
 		designName := strings.Trim(v.Name, filepath.Ext(v.Name))
 		createdAt := formatTimeToString(v.CreatedAt, verbose)
@@ -120,9 +120,9 @@ func processDesignData(data *models.PatternsAPIResponse) ([][]string, int64) {
 				}
 				return "null"
 			}(v.UserID)
-			displayData = append(displayData, []string{designId, userID, designName, createdAt, updatedAt})
+			displayData = append(displayData, []string{designID, userID, designName, createdAt, updatedAt})
 		} else {
-			displayData = append(displayData, []string{designId, designName, createdAt, updatedAt})
+			displayData = append(displayData, []string{designID, designName, createdAt, updatedAt})
 		}
 	}
 	return displayData, int64(data.TotalCount)

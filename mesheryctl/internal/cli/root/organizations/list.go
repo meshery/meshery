@@ -41,7 +41,7 @@ mesheryctl organization list --count
 		pagesize, _ := cmd.Flags().GetInt("pagesize")
 		count, _ := cmd.Flags().GetBool("count")
 		data := display.DisplayDataAsync{
-			UrlPath:          organizationsApiPath,
+			URLPath:          organizationsAPIPath,
 			Page:             page,
 			PageSize:         pagesize,
 			DataType:         "organizations",

@@ -80,7 +80,7 @@ mesheryctl design undeploy -f [filepath]
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
 
-		if !govalidator.IsURL(file) {
+		if !govalidator.isURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
 				return utils.ErrFileRead(err)

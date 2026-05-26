@@ -39,8 +39,8 @@ func TestConnectionViewCmd(t *testing.T) {
 		},
 		{
 			Name:           "given an invalid argument for --output-format flag provided when connection view then throw error",
-			Args:           []string{"view", connectionId, "--output-format", "foo"},
-			URL:            "/api/integrations/connections/" + connectionId,
+			Args:           []string{"view", connectionID, "--output-format", "foo"},
+			URL:            "/api/integrations/connections/" + connectionID,
 			Fixture:        "view.connection.api.empty.response.golden",
 			ExpectError:    true,
 			ExpectedError:  display.ErrInvalidOutputFormat("foo"),
@@ -48,8 +48,8 @@ func TestConnectionViewCmd(t *testing.T) {
 		},
 		{
 			Name:             "given a valid connection-id provided when connection view then display detailed information",
-			Args:             []string{"view", connectionId},
-			URL:              "/api/integrations/connections/" + connectionId,
+			Args:             []string{"view", connectionID},
+			URL:              "/api/integrations/connections/" + connectionID,
 			Fixture:          "view.connection.api.response.golden",
 			ExpectedResponse: "view.connection.yaml.output.golden",
 			ExpectError:      false,
@@ -57,8 +57,8 @@ func TestConnectionViewCmd(t *testing.T) {
 		},
 		{
 			Name:             "given a valid --output-format argument provided when connection view then display detailed information in the specified format",
-			Args:             []string{"view", connectionId, "--output-format", "yaml"},
-			URL:              "/api/integrations/connections/" + connectionId,
+			Args:             []string{"view", connectionID, "--output-format", "yaml"},
+			URL:              "/api/integrations/connections/" + connectionID,
 			Fixture:          "view.connection.api.response.golden",
 			ExpectedResponse: "view.connection.yaml.output.golden",
 			ExpectError:      false,

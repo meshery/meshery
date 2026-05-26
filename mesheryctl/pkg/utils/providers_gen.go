@@ -2,7 +2,7 @@
 
 package utils
 
-// DefaultProviderBaseURLs is the canonical comma-joined list of Meshery's active
+// DefaultProviderbaseURLs is the canonical comma-joined list of Meshery's active
 // remote providers, compiled into mesheryctl as the fallback used when the install
 // docker-compose file cannot be downloaded.
-const DefaultProviderBaseURLs = "https://cloud.meshery.io,https://perf.smp-spec.io,https://cloud.layer5.io,https://meshery.tcs-labs.in"
+const DefaultProviderbaseURLs = "https://cloud.meshery.io,https://perf.smp-spec.io,https://cloud.layer5.io,https://meshery.tcs-labs.in"

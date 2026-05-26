@@ -70,17 +70,17 @@ func GenerateDataFromBodyResponse[T any](response *http.Response) (*T, error) {
 }
 
 // Send a Http request to meshery server from mesheryctl cli
-func makeRequest(urlPath string, httpMethod string, body io.Reader, headers map[string]string) (*http.Response, error) {
+func makeRequest(URLPath string, httpMethod string, body io.Reader, headers map[string]string) (*http.Response, error) {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return nil, utils.ErrLoadConfig(err)
 	}
 
-	baseUrl := mctlCfg.GetBaseMesheryURL()
+	baseURL := mctlCfg.GetBaseMesheryURL()
 
-	utils.Log.Debugf("%s %s/%s\n", httpMethod, baseUrl, urlPath)
+	utils.Log.Debugf("%s %s/%s\n", httpMethod, baseURL, URLPath)
 
-	req, err := utils.NewRequest(httpMethod, fmt.Sprintf("%s/%s", baseUrl, urlPath), body)
+	req, err := utils.NewRequest(httpMethod, fmt.Sprintf("%s/%s", baseURL, URLPath), body)
 	if err != nil {
 		return nil, err
 	}

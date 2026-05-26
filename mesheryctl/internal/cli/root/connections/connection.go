@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-const connectionApiPath = "api/integrations/connections"
+const connectionAPIPath = "api/integrations/connections"
 
 var (
 	availableSubcommands = []*cobra.Command{listConnectionsCmd, deleteConnectionCmd, viewConnectionCmd, createConnectionCmd}
@@ -50,7 +50,7 @@ mesheryctl connection delete [connection_id]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		countFlag, _ := cmd.Flags().GetBool("count")
 		if countFlag {
-			connectionsResponse, err := api.Fetch[connection.ConnectionPage](connectionApiPath)
+			connectionsResponse, err := api.Fetch[connection.ConnectionPage](connectionAPIPath)
 
 			if err != nil {
 				return err

@@ -66,7 +66,7 @@ mesheryctl relationship list --count
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dataToDisplay := display.DisplayDataAsync{
-			UrlPath:          relationshipApiPath,
+			URLPath:          relationshipAPIPath,
 			DataType:         "relationship",
 			Header:           []string{"ID", "Kind", "API Version", "Model Name", "Sub Type", "Type"},
 			Page:             relationshipListFlags.Page,

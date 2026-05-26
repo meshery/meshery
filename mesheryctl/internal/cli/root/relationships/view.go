@@ -65,7 +65,7 @@ mesheryctl relationship view [model-name] --output-format json --save
 		// Fetch paginated data with selection prompt
 		err := display.PromptAsyncPagination(
 			display.DisplayDataAsync{
-				UrlPath:        relationshipAPIPath,
+				URLPath:        relationshipAPIPath,
 				ErrNotFoundMsg: fmt.Sprintf("No relationship(s) found for the model with name: %s", model),
 			},
 			formatLabel,

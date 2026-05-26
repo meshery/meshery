@@ -79,9 +79,9 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 			return err
 		}
 
-		baseUrl := mctlCfg.GetBaseMesheryURL()
+		baseURL := mctlCfg.GetBaseMesheryURL()
 		if !isID {
-			if design, err = fetchPatternIDByName(baseUrl, design); err != nil {
+			if design, err = fetchPatternIDByName(baseURL, design); err != nil {
 				return err
 			}
 		}
@@ -91,7 +91,7 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 			designType = "current"
 		}
 
-		if err := exportDesign(baseUrl, design, designType); err != nil {
+		if err := exportDesign(baseURL, design, designType); err != nil {
 			return err
 		}
 
@@ -99,9 +99,9 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 	},
 }
 
-func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
-	patternUrl := fmt.Sprintf("%s/api/pattern?search=%s", baseUrl, url.QueryEscape(patternName))
-	req, err := utils.NewRequest(http.MethodGet, patternUrl, nil)
+func fetchPatternIDByName(baseURL, patternName string) (string, error) {
+	patternURL := fmt.Sprintf("%s/api/pattern?search=%s", baseURL, url.QueryEscape(patternName))
+	req, err := utils.NewRequest(http.MethodGet, patternURL, nil)
 	if err != nil {
 		return "", err
 	}
@@ -113,7 +113,7 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", models.ErrDoRequest(err, resp.Request.Method, patternUrl)
+		return "", models.ErrDoRequest(err, resp.Request.Method, patternURL)
 	}
 	buf, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -134,21 +134,21 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 		return response.Patterns[0].ID.String(), nil
 	}
 
-	selectedPattern, err := selectPatternPrompt(response.Patterns, baseUrl)
+	selectedPattern, err := selectPatternPrompt(response.Patterns, baseURL)
 	if err != nil {
 		return "", err
 	}
 	return selectedPattern.ID.String(), nil
 }
 
-func exportDesign(baseUrl, design, designType string) error {
-	dataURL := fmt.Sprintf("%s/api/pattern/%s", baseUrl, design)
+func exportDesign(baseURL, design, designType string) error {
+	dataURL := fmt.Sprintf("%s/api/pattern/%s", baseURL, design)
 	pattern, err := fetchPatternData(dataURL)
 	if err != nil {
 		return err
 	}
 
-	url := fmt.Sprintf("%s/api/pattern/download/%s", baseUrl, design)
+	url := fmt.Sprintf("%s/api/pattern/download/%s", baseURL, design)
 	switch designType {
 	case "oci":
 		url += "?oci=true"

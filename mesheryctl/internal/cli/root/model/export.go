@@ -86,7 +86,7 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 			queryParams.Set("version", exportModelFlagsProvided.Version)
 		}
 
-		urlPath := fmt.Sprintf("api/meshmodels/export?%s", queryParams.Encode())
+		URLPath := fmt.Sprintf("api/meshmodels/export?%s", queryParams.Encode())
 
 		output := &outputDetail{
 			Format: exportModelFlagsProvided.OutputFormat,
@@ -94,7 +94,7 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 			Path:   exportModelFlagsProvided.OutputLocation,
 		}
 
-		exportedModelData, err := api.FetchData(urlPath)
+		exportedModelData, err := api.FetchData(URLPath)
 		if err != nil {
 			return err
 		}

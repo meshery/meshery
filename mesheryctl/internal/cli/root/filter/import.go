@@ -74,7 +74,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 
 		uri := args[0]
 
-		if validURL := govalidator.IsURL(uri); validURL {
+		if validURL := govalidator.isURL(uri); validURL {
 			body.URL = uri
 		} else {
 			filterFile, err := os.ReadFile(uri)

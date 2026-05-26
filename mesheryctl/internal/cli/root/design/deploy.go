@@ -108,11 +108,11 @@ mesheryctl design deploy -f [filepath] -s [source type]
 			queryParams := url.Values{}
 			queryParams.Set("populate", "pattern_file")
 			queryParams.Set("search", url.QueryEscape(patternName))
-			urlPath := fmt.Sprintf("%s?%s", patternURLPath, queryParams.Encode())
+			URLPath := fmt.Sprintf("%s?%s", patternURLPath, queryParams.Encode())
 			// search and fetch patterns with pattern-name
 			utils.Log.Debug("Fetching designs")
 
-			response, err := api.Fetch[models.PatternsAPIResponse](urlPath)
+			response, err := api.Fetch[models.PatternsAPIResponse](URLPath)
 			if err != nil {
 				return err
 			}

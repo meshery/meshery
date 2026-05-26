@@ -36,8 +36,8 @@ func TestResultCmd(t *testing.T) {
 	currDir := filepath.Dir(filename)
 	testToken := filepath.Join(currDir, "fixtures", "auth.json")
 
-	profileURL := testContext.BaseURL + "/api/user/performance/profiles"
-	resultURL := testContext.BaseURL + "/api/user/performance/profiles/" + tempProfileID + "/results"
+	profileURL := testContext.baseURL + "/api/user/performance/profiles"
+	resultURL := testContext.baseURL + "/api/user/performance/profiles/" + tempProfileID + "/results"
 
 	listTests := []utils.MesheryMultiURLCommamdTest{
 		{

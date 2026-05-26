@@ -79,7 +79,7 @@ mesheryctl relationship search [--kind <kind>] [--page <int>]`,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dataToDisplay := display.DisplayDataAsync{
-			UrlPath:          buildSearchUrl(),
+			URLPath:          buildSearchURL(),
 			DataType:         "relationship",
 			Header:           []string{"ID", "Kind", "API Version", "Model Name", "Sub Type", "Type"},
 			Page:             searchRelationshipFlagsProvided.Page,
@@ -104,8 +104,8 @@ func init() {
 
 }
 
-// buildSearchUrl constructs the API URL for the relationship search endpoint.
-func buildSearchUrl() string {
+// buildSearchURL constructs the API URL for the relationship search endpoint.
+func buildSearchURL() string {
 	base := "api/meshmodels/relationships"
 
 	if searchRelationshipFlagsProvided.Model != "" {

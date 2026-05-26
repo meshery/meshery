@@ -12,7 +12,7 @@ import (
 
 func expectedViewFlagError(outputFormat string, orgID string) error {
 	fv := mesheryctlflags.GetFlagValidator()
-	return fv.Validate(&workspaceViewFlags{OutputFormat: outputFormat, OrgID: orgID})
+	return fv.Validate(&workspaceViewFlags{OutputFormat: outputFormat, orgID: orgID})
 }
 
 func TestViewWorkspace(t *testing.T) {
@@ -25,7 +25,7 @@ func TestViewWorkspace(t *testing.T) {
 	mesheryctlflags.InitValidators(WorkSpaceCmd)
 
 	testWorkspaceID := "0dd47d1a-d1c9-47dc-897c-40bf4a71d96b"
-	testOrgId := "da154170-4582-46d7-8c0f-ea5f1964776d"
+	testorgID := "da154170-4582-46d7-8c0f-ea5f1964776d"
 
 	tests := []utils.MesheryCommandTest{
 		{
@@ -54,16 +54,16 @@ func TestViewWorkspace(t *testing.T) {
 		},
 		{
 			Name:             "given valid workspace ID when running workspace view then display workspace details",
-			Args:             []string{"view", testWorkspaceID, "--orgId", testOrgId},
+			Args:             []string{"view", testWorkspaceID, "--orgID", testorgID},
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
-			URL:              fmt.Sprintf("/%s/%s?orgId=%s", workspacesApiPath, testWorkspaceID, testOrgId),
+			URL:              fmt.Sprintf("/%s/%s?orgID=%s", workspacesApiPath, testWorkspaceID, testorgID),
 			Fixture:          "view.workspace.api.response.golden",
 			ExpectedResponse: "view.workspace.output.golden",
 			ExpectError:      false,
 		},
 		{
-			Name:             "given workspace name without orgId when running workspace view then return error",
+			Name:             "given workspace name without orgID when running workspace view then return error",
 			Args:             []string{"view", "my-workspace"},
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
@@ -76,15 +76,15 @@ func TestViewWorkspace(t *testing.T) {
 		},
 		{
 			Name:             "given invalid output format flag when running workspace view then return error",
-			Args:             []string{"view", testWorkspaceID, "--output-format", "invalid", "--orgId", testOrgId},
+			Args:             []string{"view", testWorkspaceID, "--output-format", "invalid", "--orgID", testorgID},
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
-			URL:              fmt.Sprintf("/%s/%s?orgId=%s", workspacesApiPath, testWorkspaceID, testOrgId),
+			URL:              fmt.Sprintf("/%s/%s?orgID=%s", workspacesApiPath, testWorkspaceID, testorgID),
 			Fixture:          "view.workspace.api.response.golden",
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    expectedViewFlagError("invalid", testOrgId),
+			ExpectedError:    expectedViewFlagError("invalid", testorgID),
 		},
 	}
 

@@ -35,10 +35,10 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace
 	Example: `
 
 // To view a list workspaces
-mesheryctl workspace list --orgId [orgId]
+mesheryctl workspace list --orgID [orgID]
 
 // To create a workspace
-mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
+mesheryctl workspace create --orgID [orgID] --name [name] --description [description]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 || len(args) > 1 {

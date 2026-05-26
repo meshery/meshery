@@ -21,10 +21,10 @@ func TestViewModel(t *testing.T) {
 
 	const modelName = "model-test-0"
 	const nonExistentModelName = "non-existent-model"
-	const modelId = "00000000-0000-0000-0000-000000000000"
+	const modelID = "00000000-0000-0000-0000-000000000000"
 
 	currDir := filepath.Dir(filename)
-	modelsApiPath = "api/meshmodels/models"
+	modelsAPIPath = "api/meshmodels/models"
 
 	tests := []utils.MesheryCommandTest{
 		{
@@ -40,8 +40,8 @@ func TestViewModel(t *testing.T) {
 		},
 		{
 			Name:             "given a valid model-id when model view then display detailed information",
-			Args:             []string{"view", modelId},
-			URL:              fmt.Sprintf("/api/meshmodels/models?id=%s&page=0&pagesize=10", url.QueryEscape(modelId)),
+			Args:             []string{"view", modelID},
+			URL:              fmt.Sprintf("/api/meshmodels/models?id=%s&page=0&pagesize=10", url.QueryEscape(modelID)),
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
 			Fixture:          "list.model.api.response.golden",
@@ -86,7 +86,7 @@ func TestViewModel(t *testing.T) {
 		{
 			Name:           "given an invalid format when model view then throw error",
 			Args:           []string{"view", modelName, "--output-format", "invalid-format"},
-			URL:            fmt.Sprintf("/%s", getModelViewUrlPath(url.QueryEscape(modelName))),
+			URL:            fmt.Sprintf("/%s", getModelViewURLPath(url.QueryEscape(modelName))),
 			HttpMethod:     "GET",
 			HttpStatusCode: 200,
 			Fixture:        "list.model.empty.api.response.golden",
@@ -97,7 +97,7 @@ func TestViewModel(t *testing.T) {
 		{
 			Name:             "given a valid format when model view then display detailed information",
 			Args:             []string{"view", modelName, "--output-format", "json"},
-			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=%s", modelsApiPath, url.QueryEscape(modelName)),
+			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=%s", modelsAPIPath, url.QueryEscape(modelName)),
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
 			Fixture:          "list.model.api.response.golden",

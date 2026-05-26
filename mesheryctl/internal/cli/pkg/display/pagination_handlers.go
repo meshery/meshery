@@ -49,7 +49,7 @@ func listPageHandler[T any](displayData DisplayDataAsync, processDataFunc listRo
 
 		// If the URL already contains "pagesize=all", it means all data has been fetched in one go,
 		// so we can break the loop without waiting for user input
-		if strings.Contains(displayData.UrlPath, "pagesize=all") {
+		if strings.Contains(displayData.URLPath, "pagesize=all") {
 			return false, nil
 		}
 

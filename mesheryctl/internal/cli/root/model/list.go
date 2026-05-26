@@ -50,7 +50,7 @@ mesheryctl model list --count
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		modelData := display.DisplayDataAsync{
-			UrlPath:          modelsApiPath,
+			URLPath:          modelsAPIPath,
 			DataType:         "model",
 			Header:           []string{"ID", "Model", "Category", "Version"},
 			Page:             modelListFlags.Page,

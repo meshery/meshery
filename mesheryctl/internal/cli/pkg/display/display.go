@@ -23,7 +23,7 @@ type DisplayedData struct {
 
 type DisplayDataAsync struct {
 	// Core fields
-	UrlPath  string
+	URLPath  string
 	PageSize int
 	Page     int
 	// List-only fields
@@ -98,7 +98,7 @@ func SelectFromPagedResults[T any](rows []T, formatLabel promptLabelBuilder[T], 
 		Items: names,
 		Size:  6,
 		Templates: &promptui.SelectTemplates{
-			Help: "Use ↑/↓/←/→ to navigate, Ctrl+C to cancel",
+			Help: "Use â†‘/â†“/â†/â†’ to navigate, Ctrl+C to cancel",
 		},
 	}
 

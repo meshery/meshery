@@ -27,7 +27,7 @@ import (
 
 var (
 	availableSubcommands = []*cobra.Command{listEnvironmentCmd, createEnvironmentCmd, deleteEnvironmentCmd, viewEnvironmentCmd}
-	environmentApiPath   = "api/environments"
+	environmentAPIPath   = "api/environments"
 )
 
 var EnvironmentCmd = &cobra.Command{
@@ -38,16 +38,16 @@ Find more information at: https://docs.meshery.io/concepts/logical/environments
 	`,
 	Example: `
 // Create an environment in an organization
-mesheryctl environment create --orgId [orgId] --name [name] --description [description]
+mesheryctl environment create --orgID [orgID] --name [name] --description [description]
 
 // Delete an environment in an organization
 mesheryctl environment delete environment-id
 
 // List of registered environments in an organization
-mesheryctl environment list --orgId [orgId]
+mesheryctl environment list --orgID [orgID]
 
 // View a particular environment
-mesheryctl environment view --orgId [orgId]
+mesheryctl environment view --orgID [orgID]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {

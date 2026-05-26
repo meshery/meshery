@@ -88,7 +88,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
 		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory | Individual CSV files ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nmesheryctl registry generate --model-csv [path] --component-csv [path] --relationship-csv [path]\nRun 'mesheryctl registry generate --help' to see detailed help message"
 
-		spreadsheetIdFlag, _ := cmd.Flags().GetString("spreadsheet-id")
+		spreadsheetIDFlag, _ := cmd.Flags().GetString("spreadsheet-id")
 		registrantDefFlag, _ := cmd.Flags().GetString("registrant-def")
 		directory, _ := cmd.Flags().GetString("directory")
 		modelCSV, _ := cmd.Flags().GetString("model-csv")
@@ -97,14 +97,14 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		// Check if individual CSV flags are provided
 		hasIndividualCSVs := modelCSV != "" && componentCSV != ""
 
-		if spreadsheetIdFlag == "" && registrantDefFlag == "" && directory == "" && !hasIndividualCSVs {
+		if spreadsheetIDFlag == "" && registrantDefFlag == "" && directory == "" && !hasIndividualCSVs {
 			return errors.New(utils.RegistryError(errorMsg, "generate"))
 		}
 
 		spreadsheetCredFlag, _ := cmd.Flags().GetString("spreadsheet-cred")
 		registrantCredFlag, _ := cmd.Flags().GetString("registrant-cred")
 
-		if spreadsheetIdFlag != "" && spreadsheetCredFlag == "" {
+		if spreadsheetIDFlag != "" && spreadsheetCredFlag == "" {
 			return errors.New(utils.RegistryError("Spreadsheet Credentials is required\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help'", "generate"))
 		}
 
@@ -144,7 +144,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 
 		// Print start message with timestamp
 		startTime := time.Now()
-		fmt.Printf("\n⏱️ Starting model generation at %s\n", startTime.Format("15:04:05"))
+		fmt.Printf("\nâ±ï¸ Starting model generation at %s\n", startTime.Format("15:04:05"))
 		fmt.Printf("   Output directory: %s\n", registryLocation)
 		fmt.Printf("   Logs directory: %s\n", logDirPath)
 		fmt.Printf("   Per-model timeout: %v\n", modelTimeout)
@@ -162,7 +162,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 			LatestVersionOnly: latestVersionOnly,
 			ProgressCallback: func(modelName string, current, total int) {
 				remaining := total - current
-				fmt.Printf("📦 [%d/%d] Processing: %s (remaining: %d)\n", current, total, modelName, remaining)
+				fmt.Printf("ðŸ“¦ [%d/%d] Processing: %s (remaining: %d)\n", current, total, modelName, remaining)
 			},
 		}
 
@@ -171,7 +171,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 			modelCSVFilePath = modelCSVFlag
 			componentCSVFilePath = componentCSVFlag
 			relationshipCSVFilePath = relationshipCSVFlag
-			fmt.Println("📁 Using individual CSV files for generation:")
+			fmt.Println("ðŸ“ Using individual CSV files for generation:")
 			fmt.Printf("   Model CSV: %s\n", modelCSVFilePath)
 			fmt.Printf("   Component CSV: %s\n", componentCSVFilePath)
 			if relationshipCSVFilePath != "" {
@@ -180,7 +180,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 			fmt.Println()
 		} else if csvDirectory == "" {
 			// Using Google Spreadsheet
-			fmt.Println("📊 Connecting to Google Spreadsheet...")
+			fmt.Println("ðŸ“Š Connecting to Google Spreadsheet...")
 			srv, err = mutils.NewSheetSRV(spreadsheeetCred)
 			if err != nil {
 				return errors.New(utils.RegistryError("Invalid JWT Token: Ensure the provided token is a base64-encoded, valid Google Spreadsheets API token.", "generate"))
@@ -191,7 +191,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 				utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
 				return err
 			}
-			fmt.Println("✅ Connected to spreadsheet successfully")
+			fmt.Println("âœ… Connected to spreadsheet successfully")
 
 			sheetGID = GetSheetIDFromTitle(resp, "Models")
 			componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
@@ -199,7 +199,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 			fmt.Println()
 		} else {
 			// Using directory with CSV files
-			fmt.Printf("📁 Reading CSV files from directory: %s\n", csvDirectory)
+			fmt.Printf("ðŸ“ Reading CSV files from directory: %s\n", csvDirectory)
 			modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath, err = meshkitRegistryUtils.GetCsv(csvDirectory)
 			if err != nil {
 				return fmt.Errorf("error reading the directory: %v", err)
@@ -207,11 +207,11 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 			if modelCSVFilePath == "" || componentCSVFilePath == "" {
 				return fmt.Errorf("ModelCSV and ComponentCSV files must be present in the directory")
 			}
-			fmt.Println("✅ CSV files found successfully")
+			fmt.Println("âœ… CSV files found successfully")
 			fmt.Println()
 		}
 
-		fmt.Println("🔄 Generating models and components...")
+		fmt.Println("ðŸ”„ Generating models and components...")
 		fmt.Println("   (Each model has a timeout of", modelTimeout, ")")
 		fmt.Println()
 
@@ -220,15 +220,15 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		elapsed := time.Since(startTime).Round(time.Second)
 		fmt.Println()
 		if err != nil {
-			fmt.Printf("❌ Model generation completed with errors after %v\n", elapsed)
+			fmt.Printf("âŒ Model generation completed with errors after %v\n", elapsed)
 			utils.Log.Error(err)
 			fmt.Printf("   Check error logs at: %s\n", filepath.Join(logDirPath, "registry-errors.log"))
 		} else {
-			fmt.Printf("✅ Model generation completed successfully in %v\n", elapsed)
+			fmt.Printf("âœ… Model generation completed successfully in %v\n", elapsed)
 		}
 
 		// Print final summary
-		fmt.Printf("\n📋 Generation Summary:\n")
+		fmt.Printf("\nðŸ“‹ Generation Summary:\n")
 		fmt.Printf("   Output: %s\n", registryLocation)
 		fmt.Printf("   Logs: %s\n", logDirPath)
 		fmt.Printf("   Total time: %v\n", elapsed)

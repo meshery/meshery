@@ -28,7 +28,7 @@ import (
 
 type TestHelper struct {
 	Version string
-	BaseURL string
+	baseURL string
 }
 
 type MockURL struct {
@@ -45,7 +45,7 @@ type MockURL struct {
 func NewTestHelper(_ *testing.T) *TestHelper {
 	return &TestHelper{
 		Version: "v0.5.10",
-		BaseURL: MesheryEndpoint,
+		baseURL: MesheryEndpoint,
 	}
 }
 
@@ -372,7 +372,7 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 
 			TokenFlag = GetToken(t)
 
-			httpmock.RegisterResponder("GET", testContext.BaseURL+tt.URL,
+			httpmock.RegisterResponder("GET", testContext.baseURL+tt.URL,
 				httpmock.NewStringResponder(200, apiResponse))
 
 			testdataDir := filepath.Join(commandDir, "testdata")
@@ -473,7 +473,7 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 
 				TokenFlag = GetToken(t)
 
-				url := testContext.BaseURL + tt.URL
+				url := testContext.baseURL + tt.URL
 				httpMethod := tt.HttpMethod
 
 				if tt.HttpStatusCode < 0 {

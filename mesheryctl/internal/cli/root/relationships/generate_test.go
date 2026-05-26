@@ -15,7 +15,7 @@ import (
 	"google.golang.org/api/sheets/v4"
 )
 
-func expectedViewFlagError(spreadsheetId string, spreadsheetCred string) error {
+func expectedViewFlagError(spreadsheetID string, spreadsheetCred string) error {
 	if spreadsheetCred == "" {
 		return utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --spreadsheet-cred ''"))
 	}
@@ -60,7 +60,7 @@ func TestGenerateErrorOutput(t *testing.T) {
 
 			defer func() {
 				relationshipGenerateFlag.SpreadsheetCred = ""
-				relationshipGenerateFlag.SpreadsheetID = ""
+				relationshipGenerateFlag.spreadsheetID = ""
 			}()
 
 			mesheryctlflags.InitValidators(RelationshipCmd)
@@ -124,7 +124,7 @@ func TestGenerateDataOutput(t *testing.T) {
 
 			defer func() {
 				relationshipGenerateFlag.SpreadsheetCred = ""
-				relationshipGenerateFlag.SpreadsheetID = ""
+				relationshipGenerateFlag.spreadsheetID = ""
 			}()
 
 			fixturesDir := filepath.Join(currDir, "fixtures")

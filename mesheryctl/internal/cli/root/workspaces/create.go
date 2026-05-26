@@ -30,7 +30,7 @@ import (
 )
 
 type cmdWorkspaceCreateFlags struct {
-	OrganizationID string `json:"orgId" validate:"required,uuid"`
+	OrganizationID string `json:"orgID" validate:"required,uuid"`
 	Name           string `json:"name" validate:"required"`
 	Description    string `json:"description" validate:"omitempty"`
 }
@@ -44,7 +44,7 @@ var createWorkspaceCmd = &cobra.Command{
 Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace/create`,
 	Example: `
 // Create a new workspace in an organization
-mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
+mesheryctl workspace create --orgID [orgID] --name [name] --description [description]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &workspaceCreateFlags)
@@ -79,7 +79,7 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 }
 
 func init() {
-	createWorkspaceCmd.Flags().StringVarP(&workspaceCreateFlags.OrganizationID, "orgId", "o", "", "Organization ID")
+	createWorkspaceCmd.Flags().StringVarP(&workspaceCreateFlags.OrganizationID, "orgID", "o", "", "Organization ID")
 	createWorkspaceCmd.Flags().StringVarP(&workspaceCreateFlags.Name, "name", "n", "", "Name of the workspace")
 	createWorkspaceCmd.Flags().StringVarP(&workspaceCreateFlags.Description, "description", "d", "", "(Optional) Description of the workspace")
 }

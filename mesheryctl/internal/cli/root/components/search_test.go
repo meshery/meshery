@@ -45,7 +45,7 @@ func TestSearchComponent(t *testing.T) {
 		{
 			Name:             "given valid name provided when component search then display matching results",
 			Args:             []string{"search", "Test"},
-			URL:              fmt.Sprintf("/%s?search=Test&page=0&pagesize=10", componentApiPath),
+			URL:              fmt.Sprintf("/%s?search=Test&page=0&pagesize=10", componentAPIPath),
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "components.search.success.output.golden",
 			ExpectError:      false,
@@ -53,7 +53,7 @@ func TestSearchComponent(t *testing.T) {
 		{
 			Name:             "given valid name provided with page flag when component search then display matching results",
 			Args:             []string{"search", "Test", "--page", "2"},
-			URL:              fmt.Sprintf("/%s?search=Test&page=1&pagesize=10", componentApiPath),
+			URL:              fmt.Sprintf("/%s?search=Test&page=1&pagesize=10", componentAPIPath),
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "components.search.output.golden",
 			ExpectError:      false,

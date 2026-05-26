@@ -28,7 +28,7 @@ import (
 )
 
 type cmdEnvironmentCreateFlags struct {
-	OrganizationID string `json:"orgId" validate:"required,uuid"`
+	OrganizationID string `json:"orgID" validate:"required,uuid"`
 	Name           string `json:"name" validate:"required"`
 	Description    string `json:"description" validate:"required"`
 }
@@ -42,7 +42,7 @@ var createEnvironmentCmd = &cobra.Command{
 Find more information at: https://docs.meshery.io/reference/mesheryctl/environment/create`,
 	Example: `
 // Create a new environment
-mesheryctl environment create --orgId [orgId] --name [name] --description [description]`,
+mesheryctl environment create --orgID [orgID] --name [name] --description [description]`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &createEnvironmentFlags)
 	},
@@ -53,7 +53,7 @@ mesheryctl environment create --orgId [orgId] --name [name] --description [descr
 		}
 
 		createEnvironmentPayload := environment.EnvironmentPayload{
-			OrgId:       organizationID,
+			orgID:       organizationID,
 			Name:        createEnvironmentFlags.Name,
 			Description: createEnvironmentFlags.Description,
 		}
@@ -62,7 +62,7 @@ mesheryctl environment create --orgId [orgId] --name [name] --description [descr
 			return utils.ErrUnmarshal(err)
 		}
 
-		_, err = api.Add(environmentApiPath, bytes.NewBuffer(payloadBytes), nil)
+		_, err = api.Add(environmentAPIPath, bytes.NewBuffer(payloadBytes), nil)
 		if err != nil {
 			if mErrors.GetCode(err) == utils.ErrFailReqStatusCode {
 				return errCreateEnvironment(createEnvironmentFlags.Name, createEnvironmentFlags.OrganizationID)
@@ -76,7 +76,7 @@ mesheryctl environment create --orgId [orgId] --name [name] --description [descr
 }
 
 func init() {
-	createEnvironmentCmd.Flags().StringVarP(&createEnvironmentFlags.OrganizationID, "orgId", "o", "", "Organization ID")
+	createEnvironmentCmd.Flags().StringVarP(&createEnvironmentFlags.OrganizationID, "orgID", "o", "", "Organization ID")
 	createEnvironmentCmd.Flags().StringVarP(&createEnvironmentFlags.Name, "name", "n", "", "Name of the environment")
 	createEnvironmentCmd.Flags().StringVarP(&createEnvironmentFlags.Description, "description", "d", "", "Description of the environment")
 }

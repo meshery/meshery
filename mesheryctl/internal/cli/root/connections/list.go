@@ -53,7 +53,7 @@ mesheryctl connection list --count
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		urlPath := connectionApiPath
+		URLPath := connectionAPIPath
 		querySearch := url.Values{}
 
 		kindQuery, err := json.Marshal(connectionListFlagsProvided.kind)
@@ -76,14 +76,14 @@ mesheryctl connection list --count
 		}
 
 		if len(querySearch) > 0 {
-			urlPath += fmt.Sprintf("?%s", querySearch.Encode())
+			URLPath += fmt.Sprintf("?%s", querySearch.Encode())
 		}
-		utils.Log.Debug("Final URL: ", urlPath)
+		utils.Log.Debug("Final URL: ", URLPath)
 
 		header := []string{"id", "Name", "Type", "Kind", "Status"}
 
 		data := display.DisplayDataAsync{
-			UrlPath:          urlPath,
+			URLPath:          URLPath,
 			DataType:         "connection",
 			Header:           header,
 			Page:             connectionListFlagsProvided.page,

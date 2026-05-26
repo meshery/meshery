@@ -10,13 +10,13 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/model"
 )
 
-var modelsApiPath = "api/meshmodels/models"
+var modelsAPIPath = "api/meshmodels/models"
 
 func promptModelSelection(modelSearchTerm string, apiPath string) (*model.ModelDefinition, error) {
 	selectedModel := new(model.ModelDefinition)
 	err := display.PromptAsyncPagination(
 		display.DisplayDataAsync{
-			UrlPath:    apiPath,
+			URLPath:    apiPath,
 			SearchTerm: modelSearchTerm,
 		},
 		formatLabel,

@@ -47,7 +47,7 @@ mesheryctl model search [query-text] --pagesize [pagesize-number]
 		page, _ := cmd.Flags().GetInt("page")
 		pageSize, _ := cmd.Flags().GetInt("pagesize")
 		modelData := display.DisplayDataAsync{
-			UrlPath:  fmt.Sprintf("%s?search=%s", modelsApiPath, url.QueryEscape(args[0])),
+			URLPath:  fmt.Sprintf("%s?search=%s", modelsAPIPath, url.QueryEscape(args[0])),
 			DataType: "model",
 			Header:   []string{"ID", "Model", "Category", "Version"},
 			Page:     page,

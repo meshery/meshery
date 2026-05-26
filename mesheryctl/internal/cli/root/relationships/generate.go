@@ -11,7 +11,7 @@ import (
 )
 
 type cmdRelationshipGenerateFlag struct {
-	SpreadsheetID   string `json:"spreadsheet-id" validate:"required"`
+	spreadsheetID   string `json:"spreadsheet-id" validate:"required"`
 	SpreadsheetCred string `json:"spreadsheet-cred" validate:"required"`
 }
 
@@ -57,7 +57,7 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 		return mesheryctlflags.ValidateCmdFlags(cmd, &relationshipGenerateFlag)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := fetchSheetValues(relationshipGenerateFlag.SpreadsheetID, relationshipGenerateFlag.SpreadsheetCred)
+		resp, err := fetchSheetValues(relationshipGenerateFlag.spreadsheetID, relationshipGenerateFlag.SpreadsheetCred)
 		if err != nil {
 			return err
 		}
@@ -68,7 +68,7 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 		}
 
 		// If no error, fetch the data from the sheet
-		err = createJsonFile(resp, relationshipsOutputPath)
+		err = createJSONFile(resp, relationshipsOutputPath)
 		if err != nil {
 			return err
 		}
@@ -77,11 +77,11 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 }
 
 func init() {
-	generateCmd.PersistentFlags().StringVar(&relationshipGenerateFlag.SpreadsheetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
+	generateCmd.PersistentFlags().StringVar(&relationshipGenerateFlag.spreadsheetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
 	generateCmd.PersistentFlags().StringVar(&relationshipGenerateFlag.SpreadsheetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 }
 
-func createJsonFile(resp *sheets.ValueRange, jsonFilePath string) error {
+func createJSONFile(resp *sheets.ValueRange, jsonFilePath string) error {
 
 	var customResp []CustomValueRange
 
