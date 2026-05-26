@@ -39,15 +39,15 @@ func TestResolveProviderName(t *testing.T) {
 		{
 			name:             "no signals, enforced default returned",
 			setup:            nil,
-			enforcedProvider: "Meshery",
-			want:             "Meshery",
+			enforcedProvider: "Enforced",
+			want:             "Enforced",
 		},
 		{
 			name: "cookie wins over enforced default",
 			setup: func(r *http.Request) {
 				r.AddCookie(&http.Cookie{Name: cookieName, Value: "Meshery"})
 			},
-			enforcedProvider: "Meshery",
+			enforcedProvider: "Enforced",
 			want:             "Meshery",
 		},
 		{
@@ -56,7 +56,7 @@ func TestResolveProviderName(t *testing.T) {
 				r.AddCookie(&http.Cookie{Name: cookieName, Value: ""})
 				r.Header.Set(cookieName, "Meshery")
 			},
-			enforcedProvider: "Meshery",
+			enforcedProvider: "Enforced",
 			want:             "Meshery",
 		},
 		{
@@ -65,7 +65,7 @@ func TestResolveProviderName(t *testing.T) {
 				r.Header.Set(cookieName, "Meshery")
 				r.URL.RawQuery = "provider=None"
 			},
-			enforcedProvider: "Meshery",
+			enforcedProvider: "Enforced",
 			want:             "Meshery",
 		},
 		{
@@ -73,16 +73,16 @@ func TestResolveProviderName(t *testing.T) {
 			setup: func(r *http.Request) {
 				r.URL.RawQuery = "provider=None"
 			},
-			enforcedProvider: "Meshery",
+			enforcedProvider: "Enforced",
 			want:             "Local",
 		},
 		{
 			name: "cookie with whitespace value is honored verbatim",
 			setup: func(r *http.Request) {
-				r.AddCookie(&http.Cookie{Name: cookieName, Value: "Meshery"})
+				r.AddCookie(&http.Cookie{Name: cookieName, Value: "  Meshery  "})
 			},
 			enforcedProvider: "",
-			want:             "Meshery",
+			want:             "  Meshery  ",
 		},
 		// Backward-compat guard for the "None" -> "Local" rename. Stale
 		// browser cookies, hand-written scripts, and older mesheryctl all

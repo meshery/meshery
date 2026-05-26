@@ -123,6 +123,10 @@ export const PATTERN = 'pattern';
 // Meshery Extension Point
 // Add your UI plugin into this extension point.
 // Learn more: https://docs.meshery.io/extensibility/ui
+export const EXTENSION_NAMES = {
+  EXTENSION: 'kanvas',
+};
+
 export const EXTENSIONS = {
   [EXTENSION_NAMES.EXTENSION]: {
     name: 'Extension',
@@ -165,7 +169,3 @@ export const VIEW_VISIBILITY = {
 // Learn more: See https://docs.meshery.io/extensibility
 // Add your repository to the list: https://github.com/meshery/meshery/issues/new/choose
 // ---
-
-export const EXTENSION_NAMES = {
-  EXTENSION: 'kanvas',
-};
