@@ -189,7 +189,14 @@ function CapabilityChip({ label, count }) {
       role="img"
       aria-label={`${count} ${label} capabilities`}
       sx={{
+        // flexShrink:0 + whiteSpace:nowrap keep each chip at its natural
+        // content width. Without them flexbox shrinks the chip below the
+        // label's intrinsic width and the inner Box clips ("Identit"
+        // instead of "Identity"). The parent Stack uses flexWrap:"wrap",
+        // so non-shrinking chips push to the next row when there's no
+        // horizontal room - which is the desired behavior.
         display: "inline-flex",
+        flexShrink: 0,
         alignItems: "stretch",
         borderRadius: "12px",
         overflow: "hidden",
@@ -197,6 +204,7 @@ function CapabilityChip({ label, count }) {
         fontSize: "0.7rem",
         fontWeight: 600,
         lineHeight: 1.4,
+        whiteSpace: "nowrap",
       }}
     >
       <Box
