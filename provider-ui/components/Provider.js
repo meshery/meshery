@@ -178,6 +178,334 @@ function countExtensionComponents(extensions) {
   }, 0);
 }
 
+// Two-tone "shield" chip used for the per-category capability counts.
+// The left half carries the category label on a KEPPEL-tinted background;
+// the right half carries the count on a darker KEPPEL fill so the number
+// reads as a distinct value, not part of the label text. Built from raw
+// Boxes (not MUI Chip) because Chip renders a single contiguous fill.
+function CapabilityChip({ label, count }) {
+  return (
+    <Box
+      role="img"
+      aria-label={`${count} ${label} capabilities`}
+      sx={{
+        display: "inline-flex",
+        alignItems: "stretch",
+        borderRadius: "12px",
+        overflow: "hidden",
+        border: "1px solid rgba(0,179,159,0.35)",
+        fontSize: "0.7rem",
+        fontWeight: 600,
+        lineHeight: 1.4,
+      }}
+    >
+      <Box
+        sx={{
+          background: "rgba(0,179,159,0.12)",
+          color: KEPPEL,
+          padding: "1px 8px",
+        }}
+      >
+        {label}
+      </Box>
+      <Box
+        sx={{
+          background: "rgba(0,179,159,0.32)",
+          color: "#fff",
+          padding: "1px 8px",
+          borderLeft: "1px solid rgba(0,179,159,0.35)",
+        }}
+      >
+        {count}
+      </Box>
+    </Box>
+  );
+}
+
+CapabilityChip.propTypes = {
+  label: PropTypes.string.isRequired,
+  count: PropTypes.number.isRequired,
+};
+
+// Renders the body of the per-provider info popover. Defined at module
+// scope (not as an IIFE inside the parent JSX) so the layout, derived
+// values, and per-section visibility rules are testable in isolation and
+// readable apart from the chooser's state plumbing. Returns null when
+// `provider` is absent so the parent can mount the component
+// unconditionally inside an empty Popover.
+function ProviderInfoContent({ provider }) {
+  if (!provider) return null;
+
+  const status = provider._status || "online";
+  const totalCaps = Array.isArray(provider.capabilities)
+    ? provider.capabilities.length
+    : 0;
+  const categories = summarizeCapabilities(provider.capabilities);
+  const extensionCount = countExtensionComponents(provider.extensions);
+  const restricted = Boolean(provider.restrictedAccess?.isMesheryUIRestricted);
+  const statusColor =
+    status === "online"
+      ? CARIBBEAN_GREEN
+      : status === "checking"
+        ? SAFFRON
+        : accentGrey[40];
+  const statusLabel =
+    status === "checking"
+      ? "Checking"
+      : status === "offline"
+        ? "Offline"
+        : "Online";
+  const hasDescription =
+    Array.isArray(provider.providerDescription) &&
+    provider.providerDescription.length > 0;
+  const hasMetaChips = Boolean(provider.packageVersion) || totalCaps > 0 || restricted;
+
+  return (
+    <Box sx={{ width: "100%" }}>
+      {/* Three-column header: name (left), URL (center, flex-1 truncate),
+          status chip (right). All three share one vertical row using
+          space-between so the header reads as a single dense identity
+          band rather than a stacked title/url/status sequence. */}
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        spacing={1}
+        sx={{ width: "100%" }}
+      >
+        <Typography
+          component="div"
+          sx={{
+            fontWeight: 700,
+            fontSize: "1.05rem",
+            lineHeight: 1.3,
+            flexShrink: 0,
+          }}
+        >
+          {provider.providerName || "Remote Provider"}
+        </Typography>
+        {provider.providerUrl ? (
+          <Link
+            href={provider.providerUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            underline="hover"
+            sx={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 0.5,
+              minWidth: 0,
+              flex: 1,
+              justifyContent: "center",
+              fontSize: "0.75rem",
+              color: "inherit",
+              opacity: 0.75,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              "&:hover": { opacity: 1, color: KEPPEL },
+            }}
+          >
+            <span
+              style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {provider.providerUrl.toLowerCase()}
+            </span>
+            <ExternalLinkIcon
+              width={12}
+              height={12}
+              aria-hidden="true"
+              style={{ flexShrink: 0 }}
+            />
+          </Link>
+        ) : (
+          // Keep the flex skeleton consistent so the status chip stays
+          // anchored on the right whether or not a URL is present.
+          <span style={{ flex: 1 }} aria-hidden="true" />
+        )}
+        <Chip
+          size="small"
+          label={statusLabel}
+          aria-label={`Provider status: ${statusLabel}`}
+          icon={
+            <span
+              aria-hidden="true"
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: "50%",
+                background: statusColor,
+                marginLeft: 8,
+              }}
+            />
+          }
+          sx={{
+            flexShrink: 0,
+            background: "rgba(255,255,255,0.08)",
+            color: "inherit",
+            fontWeight: 600,
+            letterSpacing: "0.02em",
+            ".MuiChip-icon": { ml: 1 },
+          }}
+        />
+      </Stack>
+
+      {hasMetaChips && (
+        <>
+          <ProviderInfoSectionRule />
+          <Stack
+            direction="row"
+            spacing={0.75}
+            useFlexGap
+            flexWrap="wrap"
+            alignItems="center"
+          >
+            {provider.packageVersion && (
+              <Chip
+                size="small"
+                label={provider.packageVersion}
+                aria-label={`Package version ${provider.packageVersion}`}
+                sx={{
+                  background: "rgba(255,255,255,0.08)",
+                  color: "inherit",
+                  fontFamily:
+                    "ui-monospace, SFMono-Regular, Menlo, monospace",
+                  fontSize: "0.7rem",
+                }}
+              />
+            )}
+            {totalCaps > 0 && (
+              <Chip
+                size="small"
+                label={`${totalCaps} capabilities`}
+                aria-label={`${totalCaps} capabilities`}
+                sx={{
+                  background: "rgba(255,255,255,0.08)",
+                  color: "inherit",
+                  fontSize: "0.7rem",
+                }}
+              />
+            )}
+            {restricted && (
+              <CustomTooltip
+                title="This provider restricts which Meshery UI components are available"
+                placement="top"
+                arrow
+              >
+                <Chip
+                  size="small"
+                  icon={
+                    <LockIcon width={12} height={12} aria-hidden="true" />
+                  }
+                  label="Restricted UI"
+                  aria-label="Restricted UI"
+                  sx={{
+                    background: "rgba(255,184,0,0.12)",
+                    color: SAFFRON,
+                    fontSize: "0.7rem",
+                    ".MuiChip-icon": { color: SAFFRON },
+                  }}
+                />
+              </CustomTooltip>
+            )}
+          </Stack>
+        </>
+      )}
+
+      {categories.length > 0 && (
+        <>
+          <ProviderInfoSectionRule />
+          <ProviderInfoSectionHeading component="h4">
+            Capabilities
+          </ProviderInfoSectionHeading>
+          {/* width:100% so the wrap boundary is the popover Paper, not
+              the chips' intrinsic content width - otherwise a long row
+              of chips overflows past the Paper's right edge instead of
+              wrapping. */}
+          <Stack
+            direction="row"
+            spacing={0.5}
+            useFlexGap
+            flexWrap="wrap"
+            sx={{ width: "100%" }}
+          >
+            {categories.map(({ label, count }) => (
+              <CapabilityChip key={label} label={label} count={count} />
+            ))}
+          </Stack>
+        </>
+      )}
+
+      <ProviderInfoSectionRule />
+      <ProviderInfoSectionHeading component="h4">
+        What this provider offers
+      </ProviderInfoSectionHeading>
+      {hasDescription ? (
+        <ProviderInfoDescriptionList>
+          {provider.providerDescription.map((line, i) => (
+            <li key={`${provider.providerName || "p"}-${i}`}>{line}</li>
+          ))}
+        </ProviderInfoDescriptionList>
+      ) : (
+        <Typography
+          component="div"
+          sx={{ fontSize: "0.85rem", opacity: 0.8, fontStyle: "italic" }}
+        >
+          {status === "checking"
+            ? "Verifying availability and loading capabilities..."
+            : "This provider has not published a description."}
+        </Typography>
+      )}
+
+      {extensionCount > 0 && (
+        <>
+          <ProviderInfoSectionRule />
+          <ProviderInfoSectionHeading component="h4">
+            Extensions
+          </ProviderInfoSectionHeading>
+          {/* Chips sit on their own row below the section heading, matching
+              the Capabilities section pattern (heading on its own line,
+              then chips beneath). */}
+          <Stack
+            direction="row"
+            spacing={0.75}
+            flexWrap="wrap"
+            useFlexGap
+            sx={{ width: "100%" }}
+          >
+            {Object.keys(provider.extensions || {}).map((slot) => {
+              const list = provider.extensions[slot];
+              const n = Array.isArray(list) ? list.length : 0;
+              if (n === 0) return null;
+              return (
+                <Chip
+                  key={slot}
+                  size="small"
+                  label={n > 1 ? `${slot} · ${n}` : slot}
+                  aria-label={`${slot} extension`}
+                  sx={{
+                    background: "rgba(255,255,255,0.08)",
+                    color: "inherit",
+                    fontSize: "0.7rem",
+                  }}
+                />
+              );
+            })}
+          </Stack>
+        </>
+      )}
+    </Box>
+  );
+}
+
+ProviderInfoContent.propTypes = {
+  provider: PropTypes.object,
+};
+
 export default function Provider() {
   const [anchorEl, setAnchorEl] = useState(null);
   // Each entry: { ...ProviderProperties, _status: "checking"|"online"|"offline", _error?: string }
@@ -338,7 +666,7 @@ export default function Provider() {
         onError={(e) => (e.target.src = PROVIDER_LOGO_FALLBACK_SRC)}
         alt="logo"
       />
-      {availableProviders !== "" && (
+      {Object.keys(availableProviders).length > 0 && (
         // LearnMore is a sibling of (not a child of) CustomDiv so the
         // logo -> link -> dropdown layout stacks as three blocks with
         // balanced vertical spacing; LearnMore's own marginTop/marginBottom
@@ -357,7 +685,7 @@ export default function Provider() {
         </LearnMore>
       )}
       <CustomDiv>
-        {availableProviders !== "" && (
+        {Object.keys(availableProviders).length > 0 && (
           <Fragment>
             <StyledButtonGroup aria-label="split button">
               <Button
@@ -434,7 +762,11 @@ export default function Provider() {
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList
                   sx={{
-                    background: charcoal[20],
+                    // Background is provided by StyledPopover's Paper so
+                    // the rounded corners clip a single continuous surface
+                    // (avoids the square artifact at each corner where a
+                    // mismatched MenuList background bleeds past the
+                    // Paper's border-radius).
                     color: (theme) => theme.palette.text.inverse,
                     minWidth: 260,
                   }}
@@ -445,16 +777,21 @@ export default function Provider() {
                     // Local is pinned to the top of the chooser with a
                     // divider immediately after, so the built-in option is
                     // visually distinct from the remote providers below.
-                    // Remotes follow in registration order; Object.keys'
-                    // insertion order matches the server's registration map.
+                    // Match Local by an explicit `providerType === "local"`
+                    // (positive) rather than `!== "remote"` (negative).
+                    // The negative form pulled in providers whose
+                    // capabilities had not yet loaded (providerType absent),
+                    // putting unreachable remotes in the Local bucket.
+                    // There are only two categories of providers: Local and
+                    // Remote.
                     const entries = Object.keys(availableProviders).map(
                       (key) => ({ key, provider: availableProviders[key] })
                     );
                     const localEntries = entries.filter(
-                      (e) => e.provider?.providerType !== "remote"
+                      (e) => e.provider?.providerType === "local"
                     );
                     const remoteEntries = entries.filter(
-                      (e) => e.provider?.providerType === "remote"
+                      (e) => e.provider?.providerType !== "local"
                     );
                     const renderRow = ({ key, provider }) => {
                       const status = provider?._status || "online";
@@ -520,11 +857,11 @@ export default function Provider() {
                         {localEntries.length > 0 && remoteEntries.length > 0 && (
                           <Divider
                             sx={{
-                              my: 0.5,
+                              mt: 0.5,
+                              mb: 0,
+                              mx: "auto",
                               backgroundColor: accentGrey[40],
                               width: "80%",
-                              margin: "auto",
-                              marginBottom: "0px",
                             }}
                           />
                         )}
@@ -534,11 +871,11 @@ export default function Provider() {
                   })()}
                   <Divider
                     sx={{
-                      my: 0.5,
+                      mt: 0.5,
+                      mb: 0,
+                      mx: "auto",
                       backgroundColor: accentGrey[40],
                       width: "80%",
-                      margin: "auto",
-                      marginBottom: "0px",
                     }}
                   />
                   {Object.keys(availableProviders).map((key) => {
@@ -561,11 +898,11 @@ export default function Provider() {
                   */}
                   <Divider
                     sx={{
-                      my: 0.5,
+                      mt: 0.5,
+                      mb: 0,
+                      mx: "auto",
                       backgroundColor: accentGrey[40],
                       width: "80%",
-                      margin: "auto",
-                      marginBottom: "0px",
                     }}
                   />
                   {/* Use Sistent's Button as a link */}
@@ -629,277 +966,7 @@ export default function Provider() {
               transformOrigin={{ vertical: "center", horizontal: "left" }}
               data-testid="provider-info-popover"
             >
-              {providerInfo.provider && (() => {
-                const p = providerInfo.provider;
-                const status = p._status || "online";
-                const categories = summarizeCapabilities(p.capabilities);
-                const totalCaps = Array.isArray(p.capabilities)
-                  ? p.capabilities.length
-                  : 0;
-                const extensionCount = countExtensionComponents(p.extensions);
-                const restricted = Boolean(
-                  p.restrictedAccess?.isMesheryUIRestricted
-                );
-                const statusColor =
-                  status === "online"
-                    ? CARIBBEAN_GREEN
-                    : status === "checking"
-                      ? SAFFRON
-                      : accentGrey[40];
-                const statusLabel =
-                  status === "checking"
-                    ? "Checking"
-                    : status === "offline"
-                      ? "Offline"
-                      : "Online";
-                const hasDescription =
-                  Array.isArray(p.providerDescription) &&
-                  p.providerDescription.length > 0;
-                return (
-                  <Box>
-                    <Stack
-                      direction="row"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      spacing={1}
-                    >
-                      <Typography
-                        component="div"
-                        sx={{
-                          fontWeight: 700,
-                          fontSize: "1.05rem",
-                          lineHeight: 1.3,
-                        }}
-                      >
-                        {p.providerName || "Remote Provider"}
-                      </Typography>
-                      <Chip
-                        size="small"
-                        label={statusLabel}
-                        aria-label={`Provider status: ${statusLabel}`}
-                        icon={
-                          <span
-                            aria-hidden="true"
-                            style={{
-                              width: 8,
-                              height: 8,
-                              borderRadius: "50%",
-                              background: statusColor,
-                              marginLeft: 8,
-                            }}
-                          />
-                        }
-                        sx={{
-                          background: "rgba(255,255,255,0.08)",
-                          color: "inherit",
-                          fontWeight: 600,
-                          letterSpacing: "0.02em",
-                          ".MuiChip-icon": { ml: 1 },
-                        }}
-                      />
-                    </Stack>
-
-                    {p.providerUrl && (
-                      <Box
-                        sx={{
-                          mt: 0.25,
-                          display: "flex",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <Link
-                          href={p.providerUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          underline="hover"
-                          sx={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: 0.5,
-                            fontSize: "0.75rem",
-                            color: "inherit",
-                            opacity: 0.75,
-                            wordBreak: "break-all",
-                            textAlign: "center",
-                            "&:hover": { opacity: 1, color: KEPPEL },
-                          }}
-                        >
-                          {p.providerUrl.toLowerCase()}
-                          <ExternalLinkIcon
-                            width={12}
-                            height={12}
-                            aria-hidden="true"
-                          />
-                        </Link>
-                      </Box>
-                    )}
-
-                    {(p.packageVersion || totalCaps > 0 || restricted) && (
-                      <>
-                        <ProviderInfoSectionRule />
-                        <Stack
-                          direction="row"
-                          spacing={0.75}
-                          useFlexGap
-                          flexWrap="wrap"
-                          alignItems="center"
-                        >
-                          {p.packageVersion && (
-                            <Chip
-                              size="small"
-                              label={p.packageVersion}
-                              aria-label={`Package version ${p.packageVersion}`}
-                              sx={{
-                                background: "rgba(255,255,255,0.08)",
-                                color: "inherit",
-                                fontFamily:
-                                  "ui-monospace, SFMono-Regular, Menlo, monospace",
-                                fontSize: "0.7rem",
-                              }}
-                            />
-                          )}
-                          {totalCaps > 0 && (
-                            <Chip
-                              size="small"
-                              label={`${totalCaps} capabilities`}
-                              aria-label={`${totalCaps} capabilities`}
-                              sx={{
-                                background: "rgba(255,255,255,0.08)",
-                                color: "inherit",
-                                fontSize: "0.7rem",
-                              }}
-                            />
-                          )}
-                          {restricted && (
-                            <CustomTooltip
-                              title="This provider restricts which Meshery UI components are available"
-                              placement="top"
-                              arrow
-                            >
-                              <Chip
-                                size="small"
-                                icon={
-                                  <LockIcon
-                                    width={12}
-                                    height={12}
-                                    aria-hidden="true"
-                                  />
-                                }
-                                label="Restricted UI"
-                                aria-label="Restricted UI"
-                                sx={{
-                                  background: "rgba(255,184,0,0.12)",
-                                  color: SAFFRON,
-                                  fontSize: "0.7rem",
-                                  ".MuiChip-icon": { color: SAFFRON },
-                                }}
-                              />
-                            </CustomTooltip>
-                          )}
-                        </Stack>
-                      </>
-                    )}
-
-                    {categories.length > 0 && (
-                      <>
-                        <ProviderInfoSectionRule />
-                        <ProviderInfoSectionHeading component="h4">
-                          Capabilities
-                        </ProviderInfoSectionHeading>
-                        <Stack
-                          direction="row"
-                          spacing={0.5}
-                          useFlexGap
-                          flexWrap="wrap"
-                        >
-                          {categories.map(({ label, count }) => (
-                            <Chip
-                              key={label}
-                              size="small"
-                              label={`${label} · ${count}`}
-                              aria-label={`${count} ${label} capabilities`}
-                              sx={{
-                                background: "rgba(0,179,159,0.12)",
-                                color: KEPPEL,
-                                border: `1px solid rgba(0,179,159,0.35)`,
-                                fontSize: "0.7rem",
-                                fontWeight: 600,
-                              }}
-                            />
-                          ))}
-                        </Stack>
-                      </>
-                    )}
-
-                    <ProviderInfoSectionRule />
-                    <ProviderInfoSectionHeading component="h4">
-                      What this provider offers
-                    </ProviderInfoSectionHeading>
-                    {hasDescription ? (
-                      <ProviderInfoDescriptionList>
-                        {p.providerDescription.map((line, i) => (
-                          <li
-                            key={`${p.providerName || "p"}-${i}`}
-                          >
-                            {line}
-                          </li>
-                        ))}
-                      </ProviderInfoDescriptionList>
-                    ) : (
-                      <Typography
-                        component="div"
-                        sx={{
-                          fontSize: "0.85rem",
-                          opacity: 0.8,
-                          fontStyle: "italic",
-                        }}
-                      >
-                        {status === "checking"
-                          ? "Verifying availability and loading capabilities..."
-                          : "This provider has not published a description."}
-                      </Typography>
-                    )}
-
-                    {extensionCount > 0 && (
-                      <>
-                        <ProviderInfoSectionRule />
-                        <Stack
-                          direction="row"
-                          alignItems="center"
-                          spacing={0.75}
-                          flexWrap="wrap"
-                          useFlexGap
-                        >
-                          <ProviderInfoSectionHeading
-                            component="h4"
-                            sx={{ mb: 0 }}
-                          >
-                            Extensions
-                          </ProviderInfoSectionHeading>
-                          {Object.keys(p.extensions || {}).map((slot) => {
-                            const list = p.extensions[slot];
-                            const n = Array.isArray(list) ? list.length : 0;
-                            if (n === 0) return null;
-                            return (
-                              <Chip
-                                key={slot}
-                                size="small"
-                                label={n > 1 ? `${slot} · ${n}` : slot}
-                                aria-label={`${slot} extension`}
-                                sx={{
-                                  background: "rgba(255,255,255,0.08)",
-                                  color: "inherit",
-                                  fontSize: "0.7rem",
-                                }}
-                              />
-                            );
-                          })}
-                        </Stack>
-                      </>
-                    )}
-                  </Box>
-                );
-              })()}
+              <ProviderInfoContent provider={providerInfo.provider} />
             </ProviderInfoPopover>
           </Fragment>
         )}

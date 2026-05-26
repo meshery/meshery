@@ -86,14 +86,19 @@ export const CustomDialogActions = styled(DialogActions)(({ theme }) => ({
 }));
 export const StyledPopover = styled(Popover)(({ theme }) => ({
   // borderRadius + overflow:hidden clip MenuItem hover backgrounds against
-  // the rounded corners; without overflow:hidden the hover state's solid
-  // fill extends to the actual rectangular Paper edge and produces the
-  // square "artifact" notches at each corner.
+  // the rounded corners. The Paper background must match the MenuList's
+  // own background (charcoal[20]) — when the two differ, the rectangular
+  // MenuList shows through past the rounded Paper corners as four square
+  // notches at each corner. Setting Paper to the same color as the
+  // MenuList collapses the two surfaces into one continuous rounded fill.
   ".MuiPaper-root": {
-    backgroundColor: theme.palette.background.brand.disabled,
-    color: theme.palette.text.default,
+    backgroundColor: charcoal[20],
+    color: theme.palette.text.inverse,
     borderRadius: theme.spacing(1),
     overflow: "hidden",
+  },
+  ".MuiList-root": {
+    backgroundColor: "transparent",
   },
 }));
 // Per-provider info popover. Anchored to the InfoOutlined icon next to each
