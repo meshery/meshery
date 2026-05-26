@@ -33,43 +33,55 @@ These rules must pass for `make validate-schemas` to succeed. A selection of key
 | 25 | List endpoints reference shared pagination parameters (`page`, `pagesize`) |
 | 26–28 | `POST`/`PUT` `requestBody` references `*Payload`, not the entity schema directly |
 | 29–31 | Response codes match HTTP method semantics (201 for create-only POST, 204 for DELETE) |
-| 32 | DB-backed property names match their `db:` tag value exactly |
-| 33 | Pagination envelopes use `page_size` and `total_count`, not `pageSize`/`totalCount` |
+| 32 | DB-backed property names use camelCase on the wire; `db:` tag carries the snake_case column name separately |
+| 33 | Pagination envelopes in existing published API versions retain `page_size`/`total_count`; new canonical-casing versions use `pageSize`/`totalCount` |
 | 34–36 | Template files exist; `additionalProperties: false` on entity YAML |
 
-### Rule 32 — DB-backed properties must match their `db:` tag {#rule-32}
+### Rule 32 — DB-backed properties use camelCase on the wire {#rule-32}
 
-If a property has `x-oapi-codegen-extra-tags: { db: "column_name" }` and `column_name` is snake_case, then the schema property name MUST be `column_name`:
+The schema property name is the JSON wire-format name. Under the canonical naming contract, wire is camelCase everywhere — including DB-backed fields. The `db:` tag carries the snake_case column name separately. They **differ by design**; the ORM layer is the sole translation boundary.
 
 ```yaml
-# WRONG — property name createdAt does not match db tag created_at
-createdAt:
+# WRONG — property name matches the db tag (snake_case on the wire)
+created_at:
   $ref: ../core/api.yml#/components/schemas/created_at
   x-oapi-codegen-extra-tags:
     db: created_at
 
-# CORRECT
-created_at:
+# CORRECT — camelCase on the wire; db: tag retains the column name
+createdAt:
   $ref: ../core/api.yml#/components/schemas/created_at
+  x-oapi-codegen-extra-tags:
+    db: created_at
 ```
 
-### Rule 33 — Pagination envelopes use snake_case {#rule-33}
+{{% alert color="info" title="Legacy exception" %}}
+Existing published API versions that already expose `snake_case` on the wire retain that form within the same version. Migrate to camelCase only when introducing a new API version bump. Do not recase fields in-place.
+{{% /alert %}}
+
+### Rule 33 — Pagination envelopes {#rule-33}
+
+For **existing published API versions**, `page_size` and `total_count` are the accepted wire forms and must not be recased in-place. For **newly authored canonical-casing API versions**, use `pageSize` and `totalCount`.
 
 ```yaml
-# WRONG
+# For a new canonical-casing API version — CORRECT
 pageSize:
   type: integer
+  minimum: 1
 totalCount:
   type: integer
 
-# CORRECT
+# For an existing published API version — acceptable (do not recase in-place)
 page_size:
   type: integer
   minimum: 1
 total_count:
   type: integer
-  minimum: 0
 ```
+
+{{% alert color="info" title="Migration path" %}}
+Each resource migrates its pagination envelope from `page_size`/`total_count` to `pageSize`/`totalCount` at its next canonical-casing API-version bump. Do not mix both forms within the same API version.
+{{% /alert %}}
 
 ## Advisory rules (37–42) {#advisory-rules}
 
@@ -333,6 +345,12 @@ properties:
   created_at:
     x-order: 10
 ```
+
+### `x-annotations` for Remote Providers {#x-annotations}
+
+All the extensions above are consumed by Meshery's internal build pipeline. `x-annotations` is different — it is the designated extension point for **remote providers** to attach provider-specific metadata to Meshery schemas at runtime. Meshery core does not read, validate, or act on `x-annotations`; only your provider-side code does.
+
+For full documentation including usage boundaries and a concrete example, see [Extensibility: Schemas](/reference/extensibility/schemas/).
 
 ## Versioning and the deprecation lifecycle {#versioning}
 
