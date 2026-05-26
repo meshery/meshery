@@ -224,6 +224,35 @@ func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete
 	return string(body), nil
 }
 
+func waitForSSEEvent(ctx context.Context, event <-chan utils.Event, query string, successLogFormat, errorLogFormat string) <-chan string {
+	eventChan := make(chan string, 1)
+
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case i, ok := <-event:
+				if !ok {
+					return
+				}
+				if strings.Contains(i.Data.Details, query) {
+					utils.Log.Infof(successLogFormat, i.Data.Summary, i.Data.Details)
+					eventChan <- "successful"
+					return
+				}
+				if strings.Contains(strings.ToLower(i.Data.Details), "error") {
+					utils.Log.Infof(errorLogFormat, i.Data.Summary)
+					eventChan <- "error"
+					return
+				}
+			}
+		}
+	}()
+
+	return eventChan
+}
+
 func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_deploy"
 	method := "GET"
@@ -249,36 +278,13 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
 	defer timer.Stop()
-	eventChan := make(chan string, 1)
-
-	// Run a goroutine to wait for the response
-	go func() {
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case i, ok := <-event:
-				if !ok {
-					return
-				}
-				if strings.Contains(i.Data.Details, query) {
-					utils.Log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
-					eventChan <- "successful"
-					return
-				} else if strings.Contains(strings.ToLower(i.Data.Details), "error") {
-					utils.Log.Infof("%s\n", i.Data.Summary)
-					eventChan <- "error"
-					return
-				}
-			}
-		}
-	}()
+	eventChan := waitForSSEEvent(ctx, event, query, "%s\n%s\n", "%s\n")
 
 	select {
 	case <-timer.C:
 		return "", ErrTimeoutWaitingForDeployResponse
-	case event := <-eventChan:
-		if event != "successful" {
+	case eventStatus := <-eventChan:
+		if eventStatus != "successful" {
 			return "", ErrFailedDeployingMesh
 		}
 	}
@@ -291,10 +297,10 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	method := "GET"
 	client := &http.Client{}
 	req, err := utils.NewRequest(method, path, nil)
-	req.Header.Add("Accept", "text/event-stream")
 	if err != nil {
-		return "", ErrCreatingDeployResponseRequest(err)
+		return "", ErrCreatingValidateResponseRequest(err)
 	}
+	req.Header.Add("Accept", "text/event-stream")
 
 	res, err := client.Do(req)
 	if err != nil {
@@ -312,36 +318,13 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
 	defer timer.Stop()
-	eventChan := make(chan string, 1)
-
-	// Run a goroutine to wait for the response
-	go func() {
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case i, ok := <-event:
-				if !ok {
-					return
-				}
-				if strings.Contains(i.Data.Details, query) {
-					utils.Log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
-					eventChan <- "successful"
-					return
-				} else if strings.Contains(strings.ToLower(i.Data.Details), "error") {
-					utils.Log.Infof("%s", i.Data.Summary)
-					eventChan <- "error"
-					return
-				}
-			}
-		}
-	}()
+	eventChan := waitForSSEEvent(ctx, event, query, "%s\n%s", "%s")
 
 	select {
 	case <-timer.C:
 		return "", ErrTimeoutWaitingForValidateResponse
-	case event := <-eventChan:
-		if event != "successful" {
+	case eventStatus := <-eventChan:
+		if eventStatus != "successful" {
 			return "", ErrSMIConformanceTestsFailed
 		}
 	}
