@@ -66,6 +66,8 @@ const MesheryPerformanceComponent_ = (props) => {
   const [additionalOptionsState, setAdditionalOptions] = useState(additional_options || '');
   const [testResult, setTestResult] = useState();
   const [testResultsOpen, setTestResultsOpen] = useState(false);
+  const { selectedK8sContexts, k8sConfig } = useSelector((state) => state.ui);
+  const { prometheus, staticPrometheusBoardConfig } = useSelector((state) => state.telemetry);
 
   const [headersState, setHeaders] = useState(headers || '');
   const [cookiesState, setCookies] = useState(cookies || '');
@@ -90,8 +92,6 @@ const MesheryPerformanceComponent_ = (props) => {
   const [staticPrometheusBoardConfigState, setStaticPrometheusBoardConfig] = useState(
     staticPrometheusBoardConfig,
   );
-  const { selectedK8sContexts, k8sConfig } = useSelector((state) => state.ui);
-  const { prometheus, staticPrometheusBoardConfig } = useSelector((state) => state.telemetry);
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const { data: userData, isSuccess: isUserDataFetched } =
@@ -473,7 +473,9 @@ const MesheryPerformanceComponent_ = (props) => {
 
   const getSMPMeshes = () => {
     if (isSMPMeshesFetched && smpMeshes) {
-      setAvailableSMPMeshes([...smpMeshes.available_meshes].sort((m1, m2) => m1.localeCompare(m2))); // shallow copy of the array to sort it
+      setAvailableSMPMeshes(
+        [...(smpMeshes.availableMeshes || [])].sort((m1, m2) => m1.localeCompare(m2)),
+      );
     } else if (isSMPMeshError) {
       handleError('unable to fetch SMP meshes');
     }

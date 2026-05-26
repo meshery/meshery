@@ -3,8 +3,6 @@ import { useRouter } from 'next/router';
 import MesheryMetrics from './MesheryMetrics';
 import PerformanceCalendar from './PerformanceCalendar';
 import MesheryPerformanceComponent from './index';
-import fetchPerformanceProfiles from '@/graphql/queries/PerformanceProfilesQuery';
-import fetchAllResults from '@/graphql/queries/FetchAllResultsQuery';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import CAN from '@/utils/can';
@@ -13,6 +11,8 @@ import DefaultError from '@/components/general/error-404/index';
 import { Modal, Button, Grid2, Paper, Typography, useTheme, styled } from '@sistent/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { useSelector } from 'react-redux';
+import { useGetPerformanceProfilesQuery } from '@/rtk-query/performance-profile';
+import { useGetPerformanceResultsQuery } from '@meshery/schemas/mesheryApi';
 
 const StyledPaper = styled(Paper)({
   padding: '1rem',
@@ -64,74 +64,60 @@ function Dashboard() {
   const router = useRouter();
   const { grafana } = useSelector((state) => state.telemetry);
   const theme = useTheme();
+  const {
+    data: performanceProfilesData,
+    isFetching: isFetchingProfiles,
+    isError: isProfilesError,
+    error: profilesError,
+  } = useGetPerformanceProfilesQuery({
+    page: 0,
+    pagesize: 10,
+    search: '',
+    order: '',
+  });
+  const {
+    data: performanceResultsData,
+    isFetching: isFetchingResults,
+    isError: isResultsError,
+    error: resultsError,
+  } = useGetPerformanceResultsQuery({
+    page: '0',
+    pageSize: '10',
+    search: '',
+    order: '',
+    from: '',
+    to: '',
+  });
 
-  /**
-   * fetch performance profiles when the page loads
-   */
   useEffect(() => {
-    fetchTestProfiles();
-    fetchTests();
-  }, []);
+    updateProgress({ showProgress: isFetchingProfiles || isFetchingResults });
+  }, [isFetchingProfiles, isFetchingResults]);
 
-  function fetchTestProfiles() {
-    updateProgress({ showProgress: true });
+  useEffect(() => {
+    if (!performanceProfilesData) return;
 
-    fetchPerformanceProfiles({
-      selector: {
-        // default
-        pageSize: `10`,
-        page: `0`,
-        search: ``,
-        order: ``,
-      },
-    }).subscribe({
-      next: (res) => {
-        // @ts-ignore
-        let result = res?.getPerformanceProfiles;
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          if (result) {
-            setProfiles({
-              count: result.total_count || 0,
-              profiles: result.profiles || [],
-            });
-          }
-        }
-      },
-      error: handleError('Failed to Fetch Profiles'),
+    setProfiles({
+      count: performanceProfilesData.totalCount || 0,
+      profiles: performanceProfilesData.profiles || [],
     });
-  }
+  }, [performanceProfilesData]);
 
-  function fetchTests() {
-    updateProgress({ showProgress: true });
+  useEffect(() => {
+    if (isProfilesError) handleError('Failed to Fetch Profiles')(profilesError);
+  }, [isProfilesError, profilesError]);
 
-    fetchAllResults({
-      selector: {
-        // default
-        pageSize: `10`,
-        page: `0`,
-        search: ``,
-        order: ``,
-        from: ``,
-        to: ``,
-      },
-    }).subscribe({
-      next: (res) => {
-        // @ts-ignore
-        let result = res?.fetchAllResults;
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          if (result) {
-            setTests({
-              count: result.total_count || 0,
-              tests: result.results || [],
-            });
-          }
-        }
-      },
-      error: handleError('Failed to Fetch Results'),
+  useEffect(() => {
+    if (!performanceResultsData) return;
+
+    setTests({
+      count: performanceResultsData.totalCount || 0,
+      tests: performanceResultsData.results || [],
     });
-  }
+  }, [performanceResultsData]);
+
+  useEffect(() => {
+    if (isResultsError) handleError('Failed to Fetch Results')(resultsError);
+  }, [isResultsError, resultsError]);
 
   function handleError(msg) {
     return function (error) {

@@ -57,6 +57,7 @@ type HandlerInterface interface {
 	CollectStaticMetrics(config *SubmitMetricsConfig) error
 	FetchResultsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	FetchAllResultsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetPerformanceProfileResultHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetResultHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetSMPServiceMeshes(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetSystemDatabase(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -269,8 +270,8 @@ type HandlerConfig struct {
 
 	// GraphQLHandler           http.Handler
 	// GraphQLPlaygroundHandler http.Handler
-	PlaygroundBuild        bool
-	Providers              map[string]Provider
+	PlaygroundBuild bool
+	Providers       map[string]Provider
 	// ProviderTracker is the authoritative availability state for
 	// Providers. /api/providers reads its snapshot and
 	// /api/providers/stream subscribes to its updates so the provider
