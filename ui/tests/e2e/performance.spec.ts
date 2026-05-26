@@ -1,5 +1,5 @@
 import { expect, test, Page } from '@playwright/test';
-import { NAVIGATION_TIMEOUT } from './pages/DashboardPage';
+import { DashboardPage } from './pages/DashboardPage';
 
 const SETTINGS_TABS: string[] = [
   'settings-tab-adapters',
@@ -24,14 +24,11 @@ const COMMON_UI_ELEMENTS: string[] = [
 ];
 
 test.describe('Performance Section Tests', () => {
-  test.describe.configure({ timeout: 120000 });
-
   test.beforeEach(async ({ page }: { page: Page }) => {
-    await page.goto('/performance', { waitUntil: 'domcontentloaded' });
-    await expect(page).toHaveURL(/\/performance/i, { timeout: NAVIGATION_TIMEOUT });
-    await expect(page.getByTestId('meshery-metrics')).toBeVisible({
-      timeout: NAVIGATION_TIMEOUT,
-    });
+    const dashboardPage = new DashboardPage(page);
+    await dashboardPage.navigateToDashboard();
+    await dashboardPage.navigateToPerformance();
+    await expect(page.getByTestId('meshery-metrics')).toBeVisible();
   });
 
   test('Common UI elements', async ({ page }: { page: Page }) => {

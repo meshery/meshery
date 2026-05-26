@@ -47,7 +47,6 @@ const transitionTests: TransitionTest[] = [
 ];
 
 test.describe.serial('Connection Management Tests', () => {
-  test.describe.configure({ timeout: 120000 });
   test.skip(!!process.env.CI, 'Connections management E2E is unstable in local-provider CI.');
 
   test.beforeEach(async ({ page }) => {
@@ -55,9 +54,9 @@ test.describe.serial('Connection Management Tests', () => {
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToConnections();
-    await page.waitForURL(/\/management\/connections/, { timeout: 120000 });
+    await page.waitForURL(/\/management\/connections/);
     await initialConnectionsRes;
-    await expect(page.getByTestId('ConnectionTable-search')).toBeVisible({ timeout: 120000 });
+    await expect(page.getByTestId('ConnectionTable-search')).toBeVisible();
   });
 
   test('Verify that UI components are displayed', async ({ page }) => {

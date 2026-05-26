@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
-import { DashboardPage, NAVIGATION_TIMEOUT } from './pages/DashboardPage';
+import { DashboardPage } from './pages/DashboardPage';
 
 // Strongly typed inline to avoid JS linter false positives
 const model: {
@@ -44,10 +44,7 @@ test.describe.serial('Model Workflow Tests', () => {
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToSettings();
-    await expect(page).toHaveURL(/\/settings/i, { timeout: NAVIGATION_TIMEOUT });
-    await expect(page.getByTestId('settings-tab-registry')).toBeVisible({
-      timeout: NAVIGATION_TIMEOUT,
-    });
+    await expect(page.getByTestId('settings-tab-registry')).toBeVisible();
     await page.getByTestId('settings-tab-registry').click();
   });
 
