@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 
-const NAVIGATION_TIMEOUT = 120000;
+const NAVIGATION_TIMEOUT = 60000;
 const LEFT_NAV = {
   DASHBOARD: {
     name: 'Dashboard',
