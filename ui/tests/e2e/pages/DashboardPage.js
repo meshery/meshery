@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 
+const NAVIGATION_TIMEOUT = 120000;
 const LEFT_NAV = {
   DASHBOARD: {
     name: 'Dashboard',
@@ -54,21 +55,21 @@ export class DashboardPage {
 
   async navigateToMenu(navItem) {
     const menuItem = this.page.getByTestId(navItem);
-    await expect(menuItem).toBeVisible({ timeout: 120000 });
+    await expect(menuItem).toBeVisible({ timeout: NAVIGATION_TIMEOUT });
     await menuItem.click();
   }
 
   async navigateToSubMenuItem(parentItem, childItem) {
     await this.navigateToMenu(parentItem);
     const submenuItem = this.page.getByTestId(childItem);
-    await expect(submenuItem).toBeVisible({ timeout: 120000 });
+    await expect(submenuItem).toBeVisible({ timeout: NAVIGATION_TIMEOUT });
     await submenuItem.click();
   }
 
   async navigateToDashboard() {
     await this.page.goto(LEFT_NAV.DASHBOARD.path, { waitUntil: 'domcontentloaded' });
-    await expect(this.navigationPanel).toBeVisible({ timeout: 120000 });
-    await expect(this.headerMenu).toBeVisible({ timeout: 120000 });
+    await expect(this.navigationPanel).toBeVisible({ timeout: NAVIGATION_TIMEOUT });
+    await expect(this.headerMenu).toBeVisible({ timeout: NAVIGATION_TIMEOUT });
   }
 
   async navigateToPerformance() {
@@ -123,10 +124,10 @@ export class DashboardPage {
   }
 
   async navigateToHeaderItem(navItem) {
-    await expect(this.headerMenu).toBeVisible({ timeout: 120000 });
+    await expect(this.headerMenu).toBeVisible({ timeout: NAVIGATION_TIMEOUT });
     await this.headerMenu.click();
     const headerItem = this.page.getByTestId(navItem);
-    await expect(headerItem).toBeVisible({ timeout: 120000 });
+    await expect(headerItem).toBeVisible({ timeout: NAVIGATION_TIMEOUT });
     await headerItem.click();
   }
 
