@@ -21,8 +21,7 @@ ignoreFiles = ["^meetings/.*", "^notes/.*", "^integrations/.*" ]
 # Will give values to .Lastmod etc.
 enableGitInfo = true
 
-# Comment out to enable taxonomies in Docsy
-# disableKinds = ["taxonomy", "term"]
+# Keep taxonomy metadata available to templates, but do not publish taxonomy listing pages.
 
 # You can add your own taxonomies
 [taxonomies]
@@ -99,8 +98,8 @@ As a self-service engineering platform, Meshery enables collaborative design and
 [outputs]
   home = ["HTML", "RSS", "SITEMAP"]
   section = ["HTML", "RSS"]
-  taxonomy = ["HTML", "RSS"]
-  term = ["HTML", "RSS"]
+  taxonomy = []
+  term = []
 
 [sitemap]
   changefreq = "daily"
