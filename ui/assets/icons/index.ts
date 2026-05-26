@@ -43,7 +43,6 @@ export { SettingsIcon } from './SettingsIcon';
 // is out of scope for this purely-additive issue.
 export { default as DeleteIcon } from './DeleteIcon';
 export { default as ExpandMoreIcon } from './ExpandMoreIcon';
-export { default as InfoOutlinedIcon } from './InfoOutlined';
 
 // ---------------------------------------------------------------------------
 // Centralized design-system icon re-exports (Phase 2 #18736, relocated here in
@@ -78,7 +77,7 @@ export {
   HandymanIcon as Handyman,
   HelpOutlinedIcon as HelpOutlined,
   InfoIcon as Info,
-  InfoOutlined,
+  InfoOutlinedIcon,
   InsertDriveFileIcon as InsertDriveFile,
   LaunchIcon as Launch,
   Link,

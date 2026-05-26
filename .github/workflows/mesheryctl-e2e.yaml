@@ -190,13 +190,13 @@ jobs:
               components: []
               channel: stable
               version: latest
-              provider: Layer5
+              provider: Meshery
           current-context: local
           tokens:
             - location: auth.json
               name: default
           EOF
-          echo '{ "meshery-provider": "Layer5", "token": null }' | jq -c '.token = env.PROVIDER_TOKEN' > "$HOME/.meshery/auth.json"
+          echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = env.PROVIDER_TOKEN' > "$HOME/.meshery/auth.json"
           cp "$HOME/.meshery/auth.json" "$RUNNER_TEMP/auth.json"
           chmod 600 "$RUNNER_TEMP/auth.json"
           make build
@@ -284,13 +284,13 @@ jobs:
               components: []
               channel: stable
               version: latest
-              provider: Layer5
+              provider: Meshery
           current-context: local
           tokens:
             - location: auth.json
               name: default
           EOF
-          echo '{ "meshery-provider": "Layer5", "token": null }' | jq -c '.token = env.PROVIDER_TOKEN' > "$HOME/.meshery/auth.json"
+          echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = env.PROVIDER_TOKEN' > "$HOME/.meshery/auth.json"
           cp "$HOME/.meshery/auth.json" "$RUNNER_TEMP/auth.json"
           chmod 600 "$RUNNER_TEMP/auth.json"
           make build
