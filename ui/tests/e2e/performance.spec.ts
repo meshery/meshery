@@ -28,7 +28,7 @@ test.describe('Performance Section Tests', () => {
   test.beforeEach(async ({ page }: { page: Page }) => {
     await page.goto('/performance', { waitUntil: 'domcontentloaded' });
     await expect(page).toHaveURL(/\/performance/i, { timeout: 120000 });
-    await expect(page.getByTestId('configure-metrics-button')).toBeVisible({ timeout: 120000 });
+    await expect(page.getByTestId('meshery-metrics')).toBeVisible({ timeout: 120000 });
   });
 
   test('Common UI elements', async ({ page }: { page: Page }) => {
