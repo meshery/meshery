@@ -28,7 +28,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -124,7 +123,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				return ErrFailUnmarshalFile(err)
 			}
 
-			if testConfig.Config == nil || testConfig.ServiceMesh == nil {
+			if testConfig.Config == nil || len(testConfig.Config.Clients) == 0 {
 				return ErrInvalidTestConfigFile()
 			}
 
@@ -140,15 +139,15 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			}
 
 			if testMesh == "" {
-				testMesh = SMP.ServiceMesh_Type_name[int32(testConfig.ServiceMesh.Type)]
+				testMesh = testConfig.ServiceMesh
 			}
 
 			if qps == "" {
-				qps = strconv.FormatInt(testClient.Rps, 10)
+				qps = strconv.Itoa(testClient.Rps)
 			}
 
 			if concurrentRequests == "" {
-				concurrentRequests = strconv.Itoa(int(testClient.Connections))
+				concurrentRequests = strconv.Itoa(testClient.Connections)
 			}
 
 			if testDuration == "" {

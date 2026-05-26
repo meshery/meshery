@@ -4,8 +4,7 @@ import (
 	"github.com/lib/pq"
 	"github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/schemas/models/core"
-
-	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 )
 
 // PerformanceProfile represents the performance profile that needs
@@ -34,7 +33,11 @@ type PerformanceProfile struct {
 	CreatedAt *sql.Time `json:"createdAt,omitempty"`
 }
 
+// PerformanceTestConfigFile is the uploadable envelope that wraps a runtime
+// PerformanceTestConfig together with the technology under test. It replaces
+// the legacy SMP {test, mesh} file format; "mesh" is now a free-form Meshery
+// Registry model name rather than the constraining SMP ServiceMesh enum.
 type PerformanceTestConfigFile struct {
-	Config      *SMP.PerformanceTestConfig `json:"test,omitempty"`
-	ServiceMesh *SMP.ServiceMesh           `json:"mesh,omitempty"`
+	Config      *perfprofile.PerformanceTestConfig `json:"test,omitempty"`
+	ServiceMesh string                             `json:"mesh,omitempty"`
 }
