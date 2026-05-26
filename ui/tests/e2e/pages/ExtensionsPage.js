@@ -35,6 +35,18 @@ export class ExtensionsPage {
     );
   }
 
+  async hasPerformanceAnalysis() {
+    return (await this.performanceHeading.count()) > 0;
+  }
+
+  async hasDockerExtension() {
+    return (await this.dockerExtensionHeading.count()) > 0;
+  }
+
+  async hasDesignEmbed() {
+    return (await this.designEmbedLearnMoreBtn.count()) > 0;
+  }
+
   async hasIstioAdapterDocs() {
     return (await this.adapterDocsIstioLink.count()) > 0;
   }

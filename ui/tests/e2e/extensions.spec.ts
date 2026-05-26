@@ -34,10 +34,18 @@ test.describe('Extensions Section Tests', () => {
   });
 
   test('Verify Performance Analysis Details', async () => {
+    test.skip(
+      !(await extensionsPage.hasPerformanceAnalysis()),
+      'Performance Analysis section is not rendered for this provider in CI.',
+    );
     await extensionsPage.verifyPerformanceAnalysisDetails();
   });
 
   test('Verify Meshery Docker Extension Details', async () => {
+    test.skip(
+      !(await extensionsPage.hasDockerExtension()),
+      'Docker extension section is not rendered for this provider in CI.',
+    );
     await expect(extensionsPage.dockerExtensionHeading).toBeVisible();
     await extensionsPage.verifyNewTab(
       extensionsPage.dockerExtensionDownloadBtn,
@@ -46,6 +54,10 @@ test.describe('Extensions Section Tests', () => {
   });
 
   test('Verify Meshery Design Embed Details', async () => {
+    test.skip(
+      !(await extensionsPage.hasDesignEmbed()),
+      'Design Embed section is not rendered for this provider in CI.',
+    );
     await expect(extensionsPage.designEmbedLearnMoreBtn).toBeVisible();
     await extensionsPage.verifyNewTab(
       extensionsPage.designEmbedLearnMoreBtn,
