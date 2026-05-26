@@ -1,4 +1,55 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 22 May 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.26</title><link>/project/releases/v1.0.26/</link><pubDate>Fri, 22 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.26/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Tue, 26 May 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.30</title><link>/project/releases/v1.0.30/</link><pubDate>Tue, 26 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.30/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Update provider capabilities for new version @marblom007 (#19685)&lt;/li&gt;
+&lt;li&gt;Roadmap: v1.2 and v1.3 clarifications @hamza-mohd (#19679)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[mesheryctl] Remove unused manifest URL fixtures @miacycle (#19687)&lt;/li&gt;
+&lt;li&gt;[Chore] Server: Update perf profile package location @miacycle (#19686)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[ui][docs] decouple meshmap extension test from name and refresh extension imagery @miacycle (#19689)&lt;/li&gt;
+&lt;li&gt;[UI] Harden E2E dashboard navigation @arjunmehta-git (#19688)&lt;/li&gt;
+&lt;li&gt;[Chore] Server: Update perf profile package location @miacycle (#19686)&lt;/li&gt;
+&lt;li&gt;[Docs] More cleanup @yi-nuo426 (#19684)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;chore: remove direct references from workflows @miacycle (#19693)&lt;/li&gt;
+&lt;li&gt;[ci skip] Update golangci-lint configuration to enable staticcheck checks @hortison (#19692)&lt;/li&gt;
+&lt;li&gt;[UI] Harden E2E dashboard navigation @arjunmehta-git (#19688)&lt;/li&gt;
+&lt;li&gt;[Chore] Server: Update perf profile package location @miacycle (#19686)&lt;/li&gt;
+&lt;li&gt;[Docs] Cleanup tutorials @hortison (#19680)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Docs] fix: REST API references page to use Qanelas Soft font @Utkarsh-0304 (#19639)&lt;/li&gt;
+&lt;li&gt;[ui][docs] decouple meshmap extension test from name and refresh extension imagery @miacycle (#19689)&lt;/li&gt;
+&lt;li&gt;[Docs] Add creating-a-meshery-design guide; replace vendor refs with Design Configurator @yi-nuo426 (#19181)&lt;/li&gt;
+&lt;li&gt;[Docs] More cleanup @yi-nuo426 (#19684)&lt;/li&gt;
+&lt;li&gt;[Docs] cleanup v0.8 and v0.9 static list @arjunmehta-git (#19681)&lt;/li&gt;
+&lt;li&gt;[Docs] Cleanup tutorials @hortison (#19680)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Utkarsh-0304, @arjunmehta-git, @carlosriosilva, @fitzergerald, @hamza-mohd, @hortison, @leecalcote, @marblom007, @meshery-ci, @miacycle and @yi-nuo426&lt;/p&gt;</description></item><item><title>v1.0.26</title><link>/project/releases/v1.0.26/</link><pubDate>Fri, 22 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.26/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -32996,7 +33047,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.28&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.30&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
