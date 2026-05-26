@@ -46,7 +46,7 @@ mesheryctl system check --adapters
 &lt;p&gt;Run checks on a specific Meshery adapter&lt;/p&gt;</description></item><item><title>mesheryctl-system-dashboard</title><link>/reference/mesheryctl/system/dashboard/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/dashboard/</guid><description>&lt;h1 id="mesheryctl-system-dashboard"&gt;
 	mesheryctl system dashboard
 &lt;/h1&gt;
-&lt;p&gt;Open Meshery UI in browser.&lt;/p&gt;
+&lt;p&gt;Open the Meshery dashboard in browser.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl system dashboard [flags]
@@ -56,28 +56,28 @@ mesheryctl system dashboard [flags]
 &lt;h2 id="examples"&gt;
 	Examples
 &lt;/h2&gt;
-&lt;p&gt;Open Meshery UI in browser&lt;/p&gt;
+&lt;p&gt;Open the Meshery dashboard in browser&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl system dashboard
 
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;Open Meshery UI in browser and use port-forwarding (if default port is taken already)&lt;/p&gt;
+&lt;p&gt;Open the Meshery dashboard in browser and use port-forwarding (if default port is taken already)&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl system dashboard --port-forward
 
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;Open Meshery UI in browser and use port-forwarding, listen on port 9081 locally, forwarding traffic to meshery server in the pod&lt;/p&gt;
+&lt;p&gt;Open the Meshery dashboard in browser and use port-forwarding, listen on port 9081 locally, forwarding traffic to meshery server in the pod&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl system dashboard --port-forward -p 9081
 
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;(optional) skip opening of MesheryUI in browser.&lt;/p&gt;</description></item><item><title>mesheryctl-system-delete</title><link>/reference/mesheryctl/system/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/delete/</guid><description>&lt;h1 id="mesheryctl-system-delete"&gt;
+&lt;p&gt;(optional) skip opening of the Meshery dashboard in browser.&lt;/p&gt;</description></item><item><title>mesheryctl-system-delete</title><link>/reference/mesheryctl/system/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/delete/</guid><description>&lt;h1 id="mesheryctl-system-delete"&gt;
 	mesheryctl system delete
 &lt;/h1&gt;
 &lt;p&gt;Delete Meshery containers&lt;/p&gt;
