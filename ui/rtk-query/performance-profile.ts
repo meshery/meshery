@@ -17,7 +17,7 @@ const performanceProfileResults = api
     endpoints: (builder) => ({
       getProfileResults: builder.query({
         query: (queryArg) => ({
-          url: `/api/performance/profiles/results`,
+          url: `/api/user/performance/profiles/results`,
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,
@@ -32,7 +32,7 @@ const performanceProfileResults = api
       }),
       getProfileResultsById: builder.query({
         query: (queryArg) => ({
-          url: `/api/performance/profiles/${queryArg.id}/results`,
+          url: `/api/user/performance/profiles/${queryArg.id}/results`,
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,

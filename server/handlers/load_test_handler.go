@@ -18,6 +18,7 @@ import (
 	"fortio.org/fortio/periodic"
 	yaml "github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
@@ -177,7 +178,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	loadTestOptions := &models.LoadTestOptions{}
 
-	profileID := performanceProfileIDFromRequest(req)
+	profileID := mux.Vars(req)["id"]
 
 	performanceProfileData, err := provider.GetPerformanceProfile(req, profileID)
 	if err != nil {

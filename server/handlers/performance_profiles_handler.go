@@ -13,11 +13,7 @@ import (
 )
 
 func performanceProfileIDFromRequest(r *http.Request) string {
-	vars := mux.Vars(r)
-	if id := vars["performanceProfileId"]; id != "" {
-		return id
-	}
-	return vars["id"]
+	return mux.Vars(r)["performanceProfileId"]
 }
 
 // SavePerformanceProfileHandler will save performance profile using the current provider's persistence mechanism

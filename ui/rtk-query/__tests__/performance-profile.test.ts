@@ -163,7 +163,7 @@ describe('performance-profile endpoints', () => {
     );
     const { url, method } = getFetchCall(fetchMock);
     expect(method).toBe('GET');
-    expect(url).toContain('/api/performance/profiles/results');
+    expect(url).toContain('/api/user/performance/profiles/results');
     expect(url).toContain('from=2024-01-01');
     expect(url).toContain('to=2024-02-01');
   });
@@ -205,7 +205,7 @@ describe('performance-profile endpoints', () => {
     );
     const { url, method } = getFetchCall(fetchMock);
     expect(method).toBe('GET');
-    expect(url).toContain('/api/performance/profiles/pp-2/results');
+    expect(url).toContain('/api/user/performance/profiles/pp-2/results');
     expect(url).toContain('page=1');
     expect(url).toContain('pagesize=5');
   });

@@ -48,8 +48,8 @@
 // 	fixturesDir := filepath.Join(currDir, "fixtures", "apply")
 // 	testToken := filepath.Join(currDir, "fixtures", "auth.json")
 // 	profileURL := testContext.BaseURL + "/api/performance/profiles"
-// 	existingProfileRunTest := testContext.BaseURL + "/api/performance/profiles/" + existingProfileID + "/run"
-// 	newProfileRunTest := testContext.BaseURL + "/api/performance/profiles/" + newProfileID + "/run"
+// 	existingProfileRunTest := testContext.BaseURL + "/api/user/performance/profiles/" + existingProfileID + "/run"
+// 	newProfileRunTest := testContext.BaseURL + "/api/user/performance/profiles/" + newProfileID + "/run"
 // 	testdataDir := filepath.Join(currDir, "testdata", "apply")
 
 // 	// test scenrios for fetching data

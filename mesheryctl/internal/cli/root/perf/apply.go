@@ -273,7 +273,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			return ErrNotValidURL()
 		}
 
-		req, err = utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/performance/profiles/"+profileID+"/run", nil)
+		req, err = utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/run", nil)
 		if err != nil {
 			return utils.ErrCreatingRequest(err)
 		}
