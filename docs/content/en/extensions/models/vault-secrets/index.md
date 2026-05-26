@@ -67,5 +67,4 @@ featureList: [
 ]
 howItWorks: "Manages Vault secrets"
 howItWorksDetails: "Improved secret management and security within Kubernetes"
-categories: [integrations]
 ---

@@ -39,5 +39,4 @@ featureList: [
 ]
 howItWorks: "Manages etcd clusters"
 howItWorksDetails: "Simplified etcd cluster management within Kubernetes"
-categories: [integrations]
 ---

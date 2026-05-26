@@ -1,7 +1,6 @@
 ---
 title: Contributing to Meshery Policies
 description: How to contribute to Meshery Policies
-categories: [contributing]
 ---
 
 ## Background

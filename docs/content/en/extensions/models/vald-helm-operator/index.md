@@ -27,5 +27,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Vald"
 howItWorksDetails: "Simplified Vald management within Kubernetes"
-categories: [integrations]
 ---

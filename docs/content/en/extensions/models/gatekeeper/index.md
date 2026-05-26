@@ -91,5 +91,4 @@ featureList: [
 ]
 howItWorks: "Unifies policy enforcement across the stack"
 howItWorksDetails: "Supports various policy languages"
-categories: [integrations]
 ---

@@ -39,5 +39,4 @@ featureList: [
 ]
 howItWorks: "Integrates with Aerokube tests"
 howItWorksDetails: "Streamlined web application testing within Kubernetes environments"
-categories: [integrations]
 ---

@@ -1,6 +1,5 @@
 ---
 title: Using Meshery CLI
-categories: [mesheryctl]
 description: Guides for common tasks while using Meshery's CLI, mesheryctl.
 ---
 

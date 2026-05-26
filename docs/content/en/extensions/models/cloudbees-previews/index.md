@@ -39,5 +39,4 @@ featureList: [
 ]
 howItWorks: "Integrates CloudBees Previews"
 howItWorksDetails: "Streamlined preview environment management for Kubernetes applications"
-categories: [integrations]
 ---

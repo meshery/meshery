@@ -19,5 +19,4 @@ featureList: [
 ]
 howItWorks: "Integrates Hexa platforms"
 howItWorksDetails: "Faster and easier development and deployment of applications in Kubernetes"
-categories: [integrations]
 ---

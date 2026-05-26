@@ -1,6 +1,5 @@
 ---
 title: Push or Pull a Model Image
-categories: [configuration]
 description: Push or pull a model image to or from an OCI-compatible image repository.
 ---
 

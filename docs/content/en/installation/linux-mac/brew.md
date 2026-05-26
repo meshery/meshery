@@ -1,6 +1,5 @@
 ---
 title: Brew
-categories: [mesheryctl]
 aliases:
 - /installation/platforms/brew
 display_title: false

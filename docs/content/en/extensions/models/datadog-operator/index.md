@@ -87,5 +87,4 @@ featureList: [
 ]
 howItWorks: "Integrates with Kubernetes resources"
 howItWorksDetails: "Deploys and manages Datadog agents"
-categories: [integrations]
 ---

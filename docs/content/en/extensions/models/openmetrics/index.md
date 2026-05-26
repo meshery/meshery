@@ -19,5 +19,4 @@ featureList: [
 ]
 howItWorks: "Integrates OpenMetrics"
 howItWorksDetails: "Standardized metrics collection and monitoring in Kubernetes"
-categories: [integrations]
 ---

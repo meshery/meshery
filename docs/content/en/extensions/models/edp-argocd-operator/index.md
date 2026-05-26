@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Manages ArgoCD in EDP"
 howItWorksDetails: "Streamlined ArgoCD setup and integration with EDP"
-categories: [integrations]
 ---

@@ -63,5 +63,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Jenkins"
 howItWorksDetails: "Streamlined Jenkins management within Kubernetes"
-categories: [integrations]
 ---

@@ -27,7 +27,6 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Code"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-categories: [integrations]
 aliases:
 - /extensibility/integrations/open-service-mesh
 ---

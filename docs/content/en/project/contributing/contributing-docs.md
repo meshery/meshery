@@ -1,7 +1,6 @@
 ---
 title: Contributing to Meshery Docs
 description: How to contribute to Meshery Docs.
-categories: [contributing]
 ---
 
 {{% alert color="info" title="Important" %}}

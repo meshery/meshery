@@ -3,7 +3,6 @@ title: Infrastructure Management
 aliases: 
 - /tasks/application-management
 - /tasks/infrastructure-management
-categories: [infrastructure]
 description: Meshery provides the ability to manage infrastructure for agility, maintainability, diversity, reliability and isolation, security, and speed.
 ---
 

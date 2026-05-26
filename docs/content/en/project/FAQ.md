@@ -1,7 +1,6 @@
 ---
 title: Frequently Asked Questions
 description: General commonly asked questions and answers about Meshery.
-categories: [project]
 ---
 
 ## General FAQs

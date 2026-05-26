@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Integrates Terraform configurations"
 howItWorksDetails: "Infrastructure as code management within Kubernetes"
-categories: [integrations]
 ---

@@ -15,7 +15,6 @@ featureList: [
 ]
 howItWorks: "Integrates with Cert Manager CRDs"
 howItWorksDetails: "Simplified certificate management within Kubernetes"
-categories: [integrations]
 aliases:
 - /extensibility/integrations/cert-manager-crds
 ---

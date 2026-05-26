@@ -44,5 +44,4 @@ featureList: [
 ]
 howItWorks: "Integrates with AWS MQ"
 howItWorksDetails: "Simplified message brokering for Kubernetes applications on AWS"
-categories: [integrations]
 ---

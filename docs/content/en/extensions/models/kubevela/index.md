@@ -67,5 +67,4 @@ featureList: [
 ]
 howItWorks: "Integrates Kubevela applications"
 howItWorksDetails: "Streamlined application delivery and management in Kubernetes"
-categories: [integrations]
 ---

@@ -19,5 +19,4 @@ featureList: [
 ]
 howItWorks: "Integrates Inclavare Containers"
 howItWorksDetails: "Confidential computing for sensitive applications in Kubernetes"
-categories: [integrations]
 ---

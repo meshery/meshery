@@ -1,7 +1,6 @@
 ---
 title: Using Metrics in Meshery
 description: How to connect and use Prometheus and Grafana metrics in Meshery
-categories: [performance]
 ---
 
 ## Connect and use metrics in Meshery

@@ -51,5 +51,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages MySQL"
 howItWorksDetails: "Streamlined MySQL management within Kubernetes"
-categories: [integrations]
 ---

@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages PXC"
 howItWorksDetails: "Streamlined PXC management within Kubernetes"
-categories: [integrations]
 ---

@@ -3,7 +3,6 @@ title: Create Models
 description: A comprehensive guide on creating models in Meshery, covering both CLI and UI methods.
 aliases: 
 - /guides/configuration-management/generating-models
-categories: [configuration]
 ---
 
 Meshery offers two primary ways to bring models into your system: **Create** and **[Import](/guides/configuration-management/importing-models)**.

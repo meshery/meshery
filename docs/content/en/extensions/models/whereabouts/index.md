@@ -39,5 +39,4 @@ featureList: [
 ]
 howItWorks: "Manages IP addresses with Whereabouts"
 howItWorksDetails: "Simplified IP address management in Kubernetes"
-categories: [integrations]
 ---

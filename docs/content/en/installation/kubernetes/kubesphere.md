@@ -1,6 +1,5 @@
 ---
 title: KubeSphere
-categories: [kubernetes]
 aliases:
 - /installation/platforms/kubesphere
 display_title: false

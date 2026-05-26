@@ -51,5 +51,4 @@ featureList: [
 ]
 howItWorks: "Provisions Kubernetes clusters on OpenStack"
 howItWorksDetails: "Streamlined Kubernetes cluster provisioning on OpenStack"
-categories: [integrations]
 ---

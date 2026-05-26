@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Integrates Slack notifications"
 howItWorksDetails: "Improved incident response and communication within Kubernetes"
-categories: [integrations]
 ---

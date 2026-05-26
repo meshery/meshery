@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Extends Meshery's capabilities to AWS"
 howItWorksDetails: "Cloud-native management of Kubernetes on AWS"
-categories: [integrations]
 ---

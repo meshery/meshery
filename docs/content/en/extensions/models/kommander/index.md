@@ -195,5 +195,4 @@ featureList: [
 ]
 howItWorks: "Integrates Kommander clusters"
 howItWorksDetails: "Streamlined multi-cluster management and governance"
-categories: [integrations]
 ---

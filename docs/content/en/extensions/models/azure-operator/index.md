@@ -18,7 +18,6 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-categories: [integrations]
 aliases:
 - /extensibility/integrations/azure-operator
 ---

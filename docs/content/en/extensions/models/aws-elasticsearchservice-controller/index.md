@@ -33,5 +33,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Elasticsearch"
 howItWorksDetails: "Simplified Elasticsearch management and integration with AWS"
-categories: [integrations]
 ---

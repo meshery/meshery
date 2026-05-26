@@ -15,7 +15,6 @@ featureList: [
 ]
 howItWorks: "Extends Meshery's capabilities"
 howItWorksDetails: "Facilitates the creation of custom operators for Meshery"
-categories: [integrations]
 aliases:
 - /extensibility/integrations/openfeature
 ---

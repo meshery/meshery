@@ -67,5 +67,4 @@ featureList: [
 ]
 howItWorks: "Configures NGINX Ingress Controller"
 howItWorksDetails: "Simplified ingress management and enhanced traffic routing in Kubernetes"
-categories: [integrations]
 ---

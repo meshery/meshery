@@ -12,6 +12,9 @@ enableMissingTranslationPlaceholders = true
 
 enableRobotsTXT = true
 
+disableKinds = ["taxonomy", "term"]
+taxonomies = {}
+
 [build]
 writeStats = true
 
@@ -20,24 +23,6 @@ ignoreFiles = ["^meetings/.*", "^notes/.*", "^integrations/.*" ]
 
 # Will give values to .Lastmod etc.
 enableGitInfo = true
-
-# Comment out to enable taxonomies in Docsy
-# disableKinds = ["taxonomy", "term"]
-
-# You can add your own taxonomies
-[taxonomies]
-tag = "tags"
-category = "categories"
-
-[params.taxonomy]
-# set taxonomyCloud = [] to hide taxonomy clouds
-taxonomyCloud = ["tags", "categories"]
-
-# If used, must have same length as taxonomyCloud
-taxonomyCloudTitle = ["Tags", "Categories"]
-
-# set taxonomyPageHeader = [] to hide taxonomies on the page headers
-taxonomyPageHeader = ["tags", "categories"]
 
 
 staticDir = ['static']
@@ -99,8 +84,8 @@ As a self-service engineering platform, Meshery enables collaborative design and
 [outputs]
   home = ["HTML", "RSS", "SITEMAP"]
   section = ["HTML", "RSS"]
-  taxonomy = ["HTML", "RSS"]
-  term = ["HTML", "RSS"]
+  taxonomy = []
+  term = []
 
 [sitemap]
   changefreq = "daily"

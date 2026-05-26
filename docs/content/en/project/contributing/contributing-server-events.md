@@ -1,7 +1,6 @@
 ---
 title: Contributing to Meshery Server Events
 description: Guide is to help backend contributors send server events using Golang.
-category: [contributing]
 ---
 
 Meshery incorporates an internal events publication mechanism that provides users with real-time updates on the processes occurring within the Meshery server when interacting with its endpoints. It ensures that users are kept in the loop regarding the ongoing activities within the API, and guides users towards future steps to resolve issues. This guide will provide step-by-step instructions on sending events from the server, including when to trigger events and what information to include.

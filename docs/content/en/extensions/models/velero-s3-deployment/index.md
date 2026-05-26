@@ -63,5 +63,4 @@ featureList: [
 ]
 howItWorks: "Integrates with Velero S3 backups"
 howItWorksDetails: "Reliable and secure backups of Kubernetes resources to Amazon S3"
-categories: [integrations]
 ---

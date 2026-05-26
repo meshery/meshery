@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Vault"
 howItWorksDetails: "Simplified Vault management within Kubernetes"
-categories: [integrations]
 ---

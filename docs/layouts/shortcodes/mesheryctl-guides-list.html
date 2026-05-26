@@ -1,6 +1,6 @@
 <ul>
-  {{ range where .Site.AllPages "Section" "guides" }}
-    {{ if and (in .Params.categories "mesheryctl") (not .IsSection) }}
+  {{ with .Site.GetPage "guides/mesheryctl" }}
+    {{ range .RegularPagesRecursive }}
       <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
     {{ end }}
   {{ end }}

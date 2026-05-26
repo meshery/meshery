@@ -35,5 +35,4 @@ featureList: [
 ]
 howItWorks: "Integrates Percona Server for MongoDB"
 howItWorksDetails: "Streamlined MongoDB management within Kubernetes"
-categories: [integrations]
 ---

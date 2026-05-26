@@ -83,5 +83,4 @@ featureList: [
 ]
 howItWorks: "Integrates Saferwall scans"
 howItWorksDetails: "Enhanced security of container images within Kubernetes"
-categories: [integrations]
 ---

@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Integrates backend services"
 howItWorksDetails: "Seamless integration of backend services with Kubernetes applications"
-categories: [integrations]
 ---

@@ -43,5 +43,4 @@ featureList: [
 ]
 howItWorks: "Integrates Flux configurations"
 howItWorksDetails: "Streamlined GitOps continuous delivery in Kubernetes"
-categories: [integrations]
 ---

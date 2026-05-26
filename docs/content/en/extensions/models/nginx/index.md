@@ -19,5 +19,4 @@ featureList: [
 ]
 howItWorks: "Integrates NGINX"
 howItWorksDetails: "Powerful and flexible web serving and load balancing in Kubernetes"
-categories: [integrations]
 ---

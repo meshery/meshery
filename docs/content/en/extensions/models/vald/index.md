@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Integrates with Vald"
 howItWorksDetails: "Enhanced search capabilities within Kubernetes"
-categories: [integrations]
 ---

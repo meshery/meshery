@@ -1,7 +1,6 @@
 ---
 title: Meshery Operator, MeshSync, Broker Troubleshooting Guide
 description: Comprehensive guidance for troubleshooting Meshery Operator, MeshSync and Broker deployments under various scenarios.
-categories: [troubleshooting]
 ---
 
 {{% alert color="info" title="What is Meshery Operator?" %}}

@@ -51,5 +51,4 @@ featureList: [
 ]
 howItWorks: "Integrates monitoring stack"
 howItWorksDetails: "Enhanced observability of Couchbase clusters in Kubernetes"
-categories: [integrations]
 ---

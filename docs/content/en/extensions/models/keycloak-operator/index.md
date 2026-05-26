@@ -83,5 +83,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Keycloak"
 howItWorksDetails: "Streamlined Keycloak management within Kubernetes"
-categories: [integrations]
 ---

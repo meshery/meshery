@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Integrates Dragonfly"
 howItWorksDetails: "Faster and more reliable image distribution in Kubernetes"
-categories: [integrations]
 ---

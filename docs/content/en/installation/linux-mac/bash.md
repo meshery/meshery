@@ -1,6 +1,5 @@
 ---
 title: Bash
-categories: [mesheryctl]
 aliases:
 - /installation/platforms/bash
 - /installation/bash

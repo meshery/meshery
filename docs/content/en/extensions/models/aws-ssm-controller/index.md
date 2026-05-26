@@ -63,5 +63,4 @@ featureList: [
 ]
 howItWorks: "Integrates with AWS SSM"
 howItWorksDetails: "Streamlined AWS resource management and automation within Kubernetes"
-categories: [integrations]
 ---

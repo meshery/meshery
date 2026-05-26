@@ -1,7 +1,6 @@
 ---
 title: Security Vulnerabilities
 description: How the Meshery team handles security vulnerabilities.
-categories: [project]
 ---
 
 ## List of Announced Vulnerabilities

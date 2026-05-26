@@ -1,6 +1,5 @@
 ---
 title: Helm
-categories: [kubernetes]
 aliases:
 - /installation/platforms/helm
 display_title: false

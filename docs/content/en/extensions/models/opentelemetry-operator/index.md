@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages OpenTelemetry"
 howItWorksDetails: "Streamlined observability setup and management in Kubernetes"
-categories: [integrations]
 ---

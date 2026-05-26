@@ -55,5 +55,4 @@ featureList: [
 ]
 howItWorks: "Integrates with Application Autoscaling"
 howItWorksDetails: "Automated scaling of resources for Kubernetes applications on AWS"
-categories: [integrations]
 ---

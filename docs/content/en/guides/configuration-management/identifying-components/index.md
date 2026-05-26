@@ -1,7 +1,6 @@
 ---
 title: Identifying Meshery Components
 description: A guide to help you identify and understand the various component icons, shapes, and visual styles used across the Meshery UI.
-categories: [configuration]
 aliases:
 - /extensions/component-shape-guide
 ---

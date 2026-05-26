@@ -1,7 +1,6 @@
 ---
 title: Contributing to Meshery UI - Dashboard Widgets
 description: Guide to extending Meshery dashboards with custom widgets.
-categories: [contributing]
 ---
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisite Reading</strong></p>

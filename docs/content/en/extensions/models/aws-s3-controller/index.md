@@ -53,5 +53,4 @@ featureList: [
 ]
 howItWorks: "Integrates S3 storage"
 howItWorksDetails: "Provides scalable and reliable storage for Kubernetes applications"
-categories: [integrations]
 ---

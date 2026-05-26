@@ -2,7 +2,6 @@
 title: Meshery CLI Guides
 aliases: 
 - /guides/mesheryctl/
-categories: [mesheryctl]
 description: Guides for common tasks while using Meshery's CLI, mesheryctl.
 ---
 

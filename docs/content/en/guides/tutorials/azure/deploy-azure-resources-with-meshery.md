@@ -4,7 +4,6 @@ description: Learn how to deploy and manage Azure resources through Kubernetes w
 model: azure
 params:
    kind: resources
-categories: [tutorials]
 aliases:
 - /guides/tutorials/deploy-azure-resources-with-meshery
 ---

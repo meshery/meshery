@@ -43,5 +43,4 @@ featureList: [
 ]
 howItWorks: "Integrates Fluid datasets"
 howItWorksDetails: "Improved performance and efficiency of data-intensive applications in Kubernetes"
-categories: [integrations]
 ---

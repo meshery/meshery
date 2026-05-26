@@ -75,5 +75,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages RabbitMQ clusters"
 howItWorksDetails: "Simplified RabbitMQ cluster management within Kubernetes"
-categories: [integrations]
 ---

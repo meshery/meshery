@@ -1,6 +1,5 @@
 ---
 title: Codespaces
-categories: [kubernetes]
 aliases:
 - /installation/platforms/codespaces
 # display_title: false

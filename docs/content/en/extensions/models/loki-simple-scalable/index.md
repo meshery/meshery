@@ -55,5 +55,4 @@ featureList: [
 ]
 howItWorks: "Deploys Loki Simple Scalable with Helm"
 howItWorksDetails: "Simplified Loki deployment and management in Kubernetes"
-categories: [integrations]
 ---

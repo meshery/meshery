@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Manages Helm releases"
 howItWorksDetails: "Streamlined Helm chart management and automation in Kubernetes"
-categories: [integrations]
 ---

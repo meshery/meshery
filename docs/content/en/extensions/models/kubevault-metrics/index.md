@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Integrates KubeVault metrics"
 howItWorksDetails: "Enhanced monitoring and observability of Vault in Kubernetes"
-categories: [integrations]
 ---

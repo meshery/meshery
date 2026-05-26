@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Manages Kusk Gateway configurations"
 howItWorksDetails: "Simplified API gateway management and enhanced customization in Kubernetes"
-categories: [integrations]
 ---

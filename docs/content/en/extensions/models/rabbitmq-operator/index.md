@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Simplifies RabbitMQ operations"
 howItWorksDetails: "Streamlined RabbitMQ management within Kubernetes"
-categories: [integrations]
 ---

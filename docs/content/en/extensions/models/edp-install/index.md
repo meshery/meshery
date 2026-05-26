@@ -151,5 +151,4 @@ featureList: [
 ]
 howItWorks: "Deploys EDP with Helm"
 howItWorksDetails: "Easy and standardized EDP installation"
-categories: [integrations]
 ---

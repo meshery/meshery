@@ -219,5 +219,4 @@ featureList: [
 ]
 howItWorks: "Manages Vault configurations"
 howItWorksDetails: "Streamlined Vault configuration management within Kubernetes"
-categories: [integrations]
 ---

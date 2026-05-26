@@ -27,5 +27,4 @@ featureList: [
 ]
 howItWorks: "Integrates with Flyte Sandbox"
 howItWorksDetails: "Facilitates learning and experimentation with Flyte"
-categories: [integrations]
 ---

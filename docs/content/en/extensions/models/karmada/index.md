@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Integrates Karmada clusters"
 howItWorksDetails: "Streamlined multi-cluster management and governance"
-categories: [integrations]
 ---

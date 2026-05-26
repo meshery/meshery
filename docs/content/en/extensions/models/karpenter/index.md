@@ -41,5 +41,4 @@ howItWorks: "Using Meshery and Karpenter, once your Kubernetes cluster and the K
 howItWorksDetails: "Set up provisioners: By applying a provisioner to Karpenter, you can configure constraints on node provisioning and set timeout values for node expiry or Kubelet configuration values. 
 
 Deploy workloads: When deploying workloads, you can request that scheduling constraints be met to direct which nodes Karpenter provisions for those workloads. "
-categories: [integrations]
 ---

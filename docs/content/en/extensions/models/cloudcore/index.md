@@ -51,5 +51,4 @@ featureList: [
 ]
 howItWorks: "Integrates CloudCore"
 howItWorksDetails: "Accelerated cloud-native application development"
-categories: [integrations]
 ---

@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Manages certificates within Meshery"
 howItWorksDetails: "Streamlined certificate management and improved security in Kubernetes"
-categories: [integrations]
 ---

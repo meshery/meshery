@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Integrates with KubeVault Catalog"
 howItWorksDetails: "Easier and faster Vault setup with pre-defined configurations"
-categories: [integrations]
 ---

@@ -111,5 +111,4 @@ featureList: [
 ]
 howItWorks: "Integrates chaos experiments"
 howItWorksDetails: "Enhanced resilience testing and validation of Kubernetes applications"
-categories: [integrations]
 ---

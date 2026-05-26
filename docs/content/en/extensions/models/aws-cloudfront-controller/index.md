@@ -96,5 +96,4 @@ featureList: [
 ]
 howItWorks: "Integrates with CloudFront"
 howItWorksDetails: "Improved content delivery and security for Kubernetes applications"
-categories: [integrations]
 ---

@@ -4,7 +4,6 @@ description: Learn how to deploy and manage AWS EC2 instances through Kubernetes
 model: aws
 params:
     kind: EC2
-categories: [tutorials]
 aliases:
 - /guides/tutorials/deploy-aws-ec2-instances-with-meshery
 ---

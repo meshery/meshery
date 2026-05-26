@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Integrates Porter bundles"
 howItWorksDetails: "Streamlined application packaging and deployment in Kubernetes"
-categories: [integrations]
 ---

@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Percona Server for MongoDB"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-categories: [integrations]
 ---

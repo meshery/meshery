@@ -1,7 +1,6 @@
 ---
 title: Contributing to Meshery using git
 description: How to contribute to Meshery using git
-categories: [contributing]
 ---
 
 # Working by Forking

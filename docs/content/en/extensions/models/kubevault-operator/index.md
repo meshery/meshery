@@ -27,5 +27,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages KubeVault Operator"
 howItWorksDetails: "Streamlined Vault operation and management in Kubernetes"
-categories: [integrations]
 ---

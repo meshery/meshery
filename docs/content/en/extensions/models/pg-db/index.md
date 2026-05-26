@@ -39,5 +39,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages PostgreSQL"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-categories: [integrations]
 ---

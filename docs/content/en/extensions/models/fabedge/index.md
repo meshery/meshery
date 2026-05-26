@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Integrates FabEdge configurations"
 howItWorksDetails: "Streamlined network management and improved performance for edge workloads"
-categories: [integrations]
 ---

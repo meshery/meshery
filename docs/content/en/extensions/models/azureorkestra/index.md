@@ -95,5 +95,4 @@ featureList: [
 ]
 howItWorks: "Integrates with Azure Orkestra"
 howItWorksDetails: "Streamlined hybrid and multi-cloud orchestration within Kubernetes"
-categories: [integrations]
 ---

@@ -1,7 +1,6 @@
 ---
 title: Contributing to Meshery Adapters
 description: How to contribute to Meshery Adapters
-categories: [contributing]
 ---
 
 

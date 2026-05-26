@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Manages KubeVirt virtual machines"
 howItWorksDetails: "Unified management of VMs and containers in Kubernetes"
-categories: [integrations]
 ---

@@ -59,5 +59,4 @@ featureList: [
 ]
 howItWorks: "Integrates Elastic Search"
 howItWorksDetails: "Powerful search and analytics capabilities for Kubernetes data"
-categories: [integrations]
 ---

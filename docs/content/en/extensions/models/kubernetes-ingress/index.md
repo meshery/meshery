@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Configures HAProxy Ingress"
 howItWorksDetails: "Scalable and reliable ingress management with HAProxy in Kubernetes"
-categories: [integrations]
 ---

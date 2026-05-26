@@ -1,7 +1,6 @@
 ---
 title: Releases
 description: List of released Meshery versions and their release notes.
-categories: [project]
 type: releases
 display_title: true
 toc_hide: false

@@ -1,7 +1,6 @@
 ---
 title: Meshery Playground
 description: Details about Meshery Playground
-categories: [project]
 ---
 
 _Try out Meshery Playground at [https://playground.meshery.io/](https://playground.meshery.io/)_

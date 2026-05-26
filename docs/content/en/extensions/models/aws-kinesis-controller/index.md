@@ -35,5 +35,4 @@ featureList: [
 ]
 howItWorks: "Integrates with Kinesis Data Streams"
 howItWorksDetails: "Real-time data processing and analytics in AWS"
-categories: [integrations]
 ---

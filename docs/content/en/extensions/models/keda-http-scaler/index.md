@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Scales deployments with KEDA HTTP Scaler"
 howItWorksDetails: "Automated scaling of Kubernetes applications based on HTTP traffic"
-categories: [integrations]
 ---

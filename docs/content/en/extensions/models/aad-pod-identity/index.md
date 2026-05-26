@@ -35,5 +35,4 @@ featureList: [
 ]
 howItWorks: "Federate with any external identity provider"
 howItWorksDetails: "Azure AD workload identity authentication method replaces pod-managed identity, which integrates with the Kubernetes native capabilities to federate with any external identity providers on behalf of the application."
-categories: [integrations]
 ---

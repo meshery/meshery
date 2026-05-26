@@ -1,7 +1,6 @@
 ---
 title: Contributing to Meshery Server
 description: How to contribute to Meshery Server
-categories: [contributing]
 ---
 
 As a new contributor, you’re going to want to familiarize with the project in order to resolve the issues in the best way. Installing and playing around with Meshery will give you context for any issues that you might work on.

@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Configure your signing framework"
 howItWorksDetails: "Simplify access from identified services to secret stores, databases, services meshes and cloud provider services."
-categories: [integrations]
 ---

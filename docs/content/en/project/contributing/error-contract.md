@@ -1,7 +1,6 @@
 ---
 title: HTTP Error Response Contract
 description: How Meshery Server responds to error conditions over HTTP, and how clients should parse those responses.
-categories: [contributing]
 ---
 
 # HTTP Error Response Contract

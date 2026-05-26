@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Manages inlets tunnels"
 howItWorksDetails: "Easy and secure remote access to Kubernetes services"
-categories: [integrations]
 ---

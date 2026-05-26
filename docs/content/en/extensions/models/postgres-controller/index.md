@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages PostgreSQL"
 howItWorksDetails: "Simplified PostgreSQL management within Kubernetes"
-categories: [integrations]
 ---

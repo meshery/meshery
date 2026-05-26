@@ -47,5 +47,4 @@ featureList: [
 ]
 howItWorks: "Integrates with Tenant Operator"
 howItWorksDetails: "Improved isolation and management of tenants within Kubernetes"
-categories: [integrations]
 ---

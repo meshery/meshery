@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Manages AMD GPU resources"
 howItWorksDetails: "Improved performance for GPU-accelerated workloads in Kubernetes"
-categories: [integrations]
 ---

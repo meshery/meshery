@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Integrates kube-rs client library"
 howItWorksDetails: "Streamlined development of Kubernetes tools in Rust"
-categories: [integrations]
 ---

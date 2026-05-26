@@ -1,7 +1,6 @@
 ---
 title: Exporting Models
 description: Exporting Meshery Model as an OCI or Compress file
-categories: [configuration]
 ---
 
 Export existing Meshery [Models](/concepts/logical/models) or your custom infrastructure crd imported as [Models](/concepts/logical/models) in Meshery. The platform supports a variety of application definition formats, and you can export designs using either the Meshery CLI or the Meshery UI.

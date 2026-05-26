@@ -1,6 +1,5 @@
 ---
 title: Configuring Autocompletion for `mesheryctl`
-categories: [mesheryctl]
 description: Bash, Zsh, Oh My Zsh, and fish autocompletion for `mesheryctl` commands.
 ---
 

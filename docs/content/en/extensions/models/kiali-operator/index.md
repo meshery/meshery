@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Simplifies Istio troubleshooting and monitoring"
 howItWorksDetails: "Integrates Kiali visualizations"
-categories: [integrations]
 ---

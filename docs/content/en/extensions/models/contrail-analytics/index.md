@@ -179,5 +179,4 @@ featureList: [
 ]
 howItWorks: "Manages network connections with Connect"
 howItWorksDetails: "Simplified network connectivity management in Kubernetes"
-categories: [integrations]
 ---

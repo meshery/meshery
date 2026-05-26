@@ -91,5 +91,4 @@ featureList: [
 ]
 howItWorks: "Integrates OpenKruise controllers"
 howItWorksDetails: "Enhanced workload management and deployment in Kubernetes"
-categories: [integrations]
 ---

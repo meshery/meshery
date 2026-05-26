@@ -1,7 +1,6 @@
 ---
 title: Build & Release (CI)
 description: Details of Meshery's build and release strategy.
-categories: [contributing]
 training-video: "https://www.youtube.com/watch?v=dlr_nzJV16Q"
 ---
 

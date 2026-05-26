@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Integrates Aperture Agent"
 howItWorksDetails: "Enhanced observability and security for Kubernetes applications"
-categories: [integrations]
 ---

@@ -1,7 +1,6 @@
 ---
 title: Schema-Driven UI Development in Meshery
 description: How to contribute to Meshery Schemas for UI
-categories: [contributing]
 ---
 
 Meshery aims to decouple the UI logic from hardcoded structures and become fully schema-driven. This allows the UI to dynamically adapt based on changes in the underlying schema without requiring constant manual updates. This document explains how to integrate schema definitions from the [`meshery/schemas`](https://github.com/meshery/schemas) repository into the Meshery UI using a code-generation approach.

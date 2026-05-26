@@ -1,6 +1,5 @@
 ---
 title: Install Meshery CLI on Linux or macOS
-categories: [mesheryctl]
 aliases:
 - /installation/platforms/linux-mac
 display_title: false

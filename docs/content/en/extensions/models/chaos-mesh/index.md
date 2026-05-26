@@ -111,5 +111,4 @@ featureList: [
 ]
 howItWorks: "Integrates ChaosBlade experiments"
 howItWorksDetails: "Improves system resilience and fault tolerance through chaos testing"
-categories: [integrations]
 ---

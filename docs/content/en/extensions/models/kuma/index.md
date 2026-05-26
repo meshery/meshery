@@ -231,5 +231,4 @@ featureList: [
 ]
 howItWorks: "Manages Kuma configurations"
 howItWorksDetails: "Simplified service mesh management and enhanced observability in Kubernetes"
-categories: [integrations]
 ---

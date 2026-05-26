@@ -1,6 +1,5 @@
 ---
 title: Authenticating Meshery via CLI
-categories: [mesheryctl]
 description: Get your authentication token from Meshery CLI.
 ---
 

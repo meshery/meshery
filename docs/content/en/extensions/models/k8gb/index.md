@@ -35,5 +35,4 @@ featureList: [
 ]
 howItWorks: "Integrates K8GB audits"
 howItWorksDetails: "Enhanced security and compliance for Kubernetes clusters"
-categories: [integrations]
 ---

@@ -27,5 +27,4 @@ featureList: [
 ]
 howItWorks: "Configure and customize Jira Projects and Issues"
 howItWorksDetails: "Automate the process of setting up the Jira Service Desk (JSD) operator configuration of alertmanager in a Kubernetes native way. "
-categories: [integrations]
 ---

@@ -19,5 +19,4 @@ featureList: [
 ]
 howItWorks: "Integrates OpenGitOps workflows"
 howItWorksDetails: "Streamlined and auditable infrastructure management in Kubernetes"
-categories: [integrations]
 ---

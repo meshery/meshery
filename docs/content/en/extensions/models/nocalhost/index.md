@@ -19,5 +19,4 @@ featureList: [
 ]
 howItWorks: "Integrates Nocalhost environments"
 howItWorksDetails: "Faster and more efficient development of Kubernetes applications"
-categories: [integrations]
 ---

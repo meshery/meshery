@@ -1,6 +1,5 @@
 ---
 title: Install Meshery CLI on Windows
-categories: [mesheryctl]
 aliases:
 - /installation/platforms/windows
 image: /installation/windows/images/wsl2.png

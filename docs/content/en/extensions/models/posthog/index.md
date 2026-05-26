@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Integrates PostHog analytics"
 howItWorksDetails: "Data-driven insights for improving Kubernetes applications and services"
-categories: [integrations]
 ---

@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Manages EDP components"
 howItWorksDetails: "Simplified management and orchestration of EDP components in Kubernetes"
-categories: [integrations]
 ---

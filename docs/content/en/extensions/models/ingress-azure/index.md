@@ -27,5 +27,4 @@ featureList: [
 ]
 howItWorks: "Manages Ingress Azure configuration"
 howItWorksDetails: "Simplified ingress management for Kubernetes on Azure"
-categories: [integrations]
 ---

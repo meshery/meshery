@@ -32,5 +32,4 @@ featureList: [
 howItWorks: "Connect Mattermost with any of your favorite cloud native apps in just a few clicks. Design, build, and automate anything for your work by integrating apps like Mattermost to create visual automated workflows. Choose from thousands of ready-made apps or use our no-code toolkit to connect to apps not yet in our library."
 howItWorksDetails: "Configuring your own Mattermost environment
 See the Mattermost documentation - https://docs.mattermost.com."
-categories: [integrations]
 ---

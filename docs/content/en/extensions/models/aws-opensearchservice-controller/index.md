@@ -44,5 +44,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages OpenSearch"
 howItWorksDetails: "Simplified OpenSearch management and integration with AWS"
-categories: [integrations]
 ---

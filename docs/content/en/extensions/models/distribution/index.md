@@ -19,5 +19,4 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Efficient network utilization by optimizing replication, dramatically reducing network load and release bundle synchronization time from source Artifactory to target instance or Edge node."
-categories: [integrations]
 ---

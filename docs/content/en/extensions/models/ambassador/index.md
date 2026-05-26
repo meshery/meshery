@@ -95,5 +95,4 @@ featureList: [
 ]
 howItWorks: "Manages Ambassador configurations"
 howItWorksDetails: "Simplified API gateway management and enhanced traffic routing in Kubernetes"
-categories: [integrations]
 ---

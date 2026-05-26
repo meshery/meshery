@@ -1,7 +1,6 @@
 ---
 title: Upgrading Meshery and all of its components
 display_title: false
-categories: [installation]
 description: How to upgrade Meshery and all of its components
 ---
 

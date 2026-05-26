@@ -1,7 +1,6 @@
 ---
 title: Deploying Sample Applications
 description: This guide is to help users get a better understanding of sample apps
-categories: [infrastructure]
 ---
 
 Meshery includes a few sample applications to help you explore cloud native infrastructure. Each is a collection of microservices for experimental purposes of learning about running workloads in Kubernetes clusters both on and off of cloud native infrastructure. When deploying a sample app onto your cloud native infrastructure, your sample application needs will need to be externaally exposed from the cluster, if you would like to access it externally. There are a myriad of ways to do this, specific to the infrastructure you are using.

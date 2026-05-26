@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Jaeger"
 howItWorksDetails: "Streamlined Jaeger management within Kubernetes"
-categories: [integrations]
 ---

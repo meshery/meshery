@@ -47,5 +47,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Redis clusters"
 howItWorksDetails: "Simplified Redis cluster management within Kubernetes"
-categories: [integrations]
 ---

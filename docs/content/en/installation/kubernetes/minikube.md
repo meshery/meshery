@@ -1,6 +1,5 @@
 ---
 title: Minikube
-categories: [kubernetes]
 aliases:
 - /installation/platforms/minikube
 display-title: false

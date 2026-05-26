@@ -19,5 +19,4 @@ featureList: [
 ]
 howItWorks: "Wrangle the Workload API"
 howItWorksDetails: "Expertly use the Workload API specification to issue and retrieve SVIDs."
-categories: [integrations]
 ---

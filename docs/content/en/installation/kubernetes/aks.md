@@ -1,6 +1,5 @@
 ---
 title: AKS
-categories: [kubernetes]
 aliases:
 - /installation/platforms/aks
 display_title: false

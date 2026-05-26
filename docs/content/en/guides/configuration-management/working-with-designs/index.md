@@ -1,7 +1,6 @@
 ---
 title: Configuring your Cloud Native Infrastructure and Applications
 description: Learn how to use Meshery Designs effectively
-categories: [configuration]
 suggested_reading: false
 ---
 

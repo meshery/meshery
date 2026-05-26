@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Integrates with scheduler plugins"
 howItWorksDetails: "Flexible and customizable scheduling within Kubernetes"
-categories: [integrations]
 ---

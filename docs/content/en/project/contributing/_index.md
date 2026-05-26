@@ -1,7 +1,6 @@
 ---
 title: Contributing
 display_title: false
-categories: [contributing]
 display-suggested-reading: false
 description: How to contribute to the Meshery project and any of its components.
 ---

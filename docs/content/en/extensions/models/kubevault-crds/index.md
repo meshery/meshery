@@ -127,5 +127,4 @@ featureList: [
 ]
 howItWorks: "Integrates with KubeVault CRDs"
 howItWorksDetails: "Simplified and Kubernetes-native Vault management"
-categories: [integrations]
 ---

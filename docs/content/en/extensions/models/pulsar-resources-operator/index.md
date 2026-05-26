@@ -115,5 +115,4 @@ featureList: [
 ]
 howItWorks: "Manages Pulsar resources"
 howItWorksDetails: "Streamlined Pulsar resource management within Kubernetes"
-categories: [integrations]
 ---

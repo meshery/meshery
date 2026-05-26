@@ -87,5 +87,4 @@ featureList: [
 ]
 howItWorks: "Integrates Knative components"
 howItWorksDetails: "Streamlined serverless development on Kubernetes"
-categories: [integrations]
 ---

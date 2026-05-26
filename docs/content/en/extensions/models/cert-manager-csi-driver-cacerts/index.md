@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Manages certificates with cert-manager"
 howItWorksDetails: "Streamlined certificate management and enhanced security in Kubernetes"
-categories: [integrations]
 ---

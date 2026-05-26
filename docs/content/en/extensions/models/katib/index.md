@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Integrates Katib experiments"
 howItWorksDetails: "Efficient hyperparameter optimization for machine learning in Kubernetes"
-categories: [integrations]
 ---

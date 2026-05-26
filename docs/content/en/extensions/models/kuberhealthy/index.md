@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Runs Kuberhealthy checks"
 howItWorksDetails: "Proactive health monitoring and alerting for Kubernetes clusters"
-categories: [integrations]
 ---

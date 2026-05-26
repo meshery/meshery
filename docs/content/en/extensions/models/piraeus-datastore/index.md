@@ -67,5 +67,4 @@ featureList: [
 ]
 howItWorks: "Piraeus can run on all kinds of storage medium: RAID, SAN, NAS or EBS"
 howItWorksDetails: "It deploys and scales out automatically within Kubernetes nodes. With Piraeus, Kubernetes workloads can now consume high performance local storage using the same volume APIs that app developers have become accustomed to."
-categories: [integrations]
 ---

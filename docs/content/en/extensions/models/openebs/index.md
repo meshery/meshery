@@ -163,5 +163,4 @@ featureList: [
 ]
 howItWorks: "Integrates OpenEBS storage"
 howItWorksDetails: "Simplified and scalable storage management in Kubernetes"
-categories: [integrations]
 ---

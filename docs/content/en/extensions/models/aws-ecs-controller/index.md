@@ -49,5 +49,4 @@ featureList: [
 ]
 howItWorks: "Deploys containers on ECS"
 howItWorksDetails: "Easy and scalable container management on AWS"
-categories: [integrations]
 ---

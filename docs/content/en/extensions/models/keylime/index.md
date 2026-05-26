@@ -19,5 +19,4 @@ featureList: [
 ]
 howItWorks: "Remote attestation of hardware and software"
 howItWorksDetails: "Integrates Keylime attestation"
-categories: [integrations]
 ---

@@ -75,5 +75,4 @@ featureList: [
 ]
 howItWorks: "Orchestrates Kubedl jobs"
 howItWorksDetails: "Streamlined deep learning job management and scaling on Kubernetes"
-categories: [integrations]
 ---

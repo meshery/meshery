@@ -91,5 +91,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Couchbase"
 howItWorksDetails: "Streamlined Couchbase management in Kubernetes"
-categories: [integrations]
 ---

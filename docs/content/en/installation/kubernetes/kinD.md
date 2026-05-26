@@ -1,6 +1,5 @@
 ---
 title: KinD
-categories: [kubernetes]
 aliases:
 - /installation/platforms/kind
 display_title: false

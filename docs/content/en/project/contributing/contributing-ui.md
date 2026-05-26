@@ -1,7 +1,6 @@
 ---
 title: Contributing to Meshery UI
 description: How to contribute to Meshery UI (web-based user interface).
-categories: [contributing]
 ---
 
 ## <a name="contributing-ui">UI Contribution Flow</a>

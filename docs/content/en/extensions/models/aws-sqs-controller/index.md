@@ -50,5 +50,4 @@ featureList: [
 ]
 howItWorks: "Integrates with AWS SQS"
 howItWorksDetails: "Simplified message queuing and decoupling of microservices on AWS"
-categories: [integrations]
 ---

@@ -27,5 +27,4 @@ featureList: [
 ]
 howItWorks: "Manages security roles and permissions"
 howItWorksDetails: "Simplified RBAC management and enhanced security in Kubernetes"
-categories: [integrations]
 ---

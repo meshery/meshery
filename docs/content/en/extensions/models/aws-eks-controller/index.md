@@ -76,5 +76,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages EKS clusters"
 howItWorksDetails: "Easy and scalable Kubernetes management on AWS"
-categories: [integrations]
 ---

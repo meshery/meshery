@@ -1,8 +1,8 @@
 <div class="section">
   {{ $tutorials := slice }}
-  
-  {{ range .Site.AllPages }}
-    {{ if and (eq .Section "guides") (not .IsSection) (in .Params.categories "tutorials") }}
+
+  {{ with .Site.GetPage "guides/tutorials" }}
+    {{ range .RegularPagesRecursive }}
       {{ $tutorials = $tutorials | append . }}
     {{ end }}
   {{ end }}

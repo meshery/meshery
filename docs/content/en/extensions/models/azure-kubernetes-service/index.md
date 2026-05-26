@@ -35,5 +35,4 @@ featureList: [
 ]
 howItWorks: "Manages AKS clusters"
 howItWorksDetails: "Easy and scalable Kubernetes management on Azure"
-categories: [integrations]
 ---

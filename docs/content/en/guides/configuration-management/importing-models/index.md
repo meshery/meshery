@@ -1,7 +1,6 @@
 ---
 title: Importing Models
 description: Importing Existing Model and CRD-based Infrastructure Configurations into Meshery as Model
-categories: [configuration]
 ---
 
 Import your existing Models and existing custom resource definition (CRD) into Meshery. The platform supports a variety of application definition formats, and you can import designs using either the Meshery CLI or the Meshery UI.

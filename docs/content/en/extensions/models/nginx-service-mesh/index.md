@@ -55,5 +55,4 @@ featureList: [
 ]
 howItWorks: "Manages NGINX Service Mesh"
 howItWorksDetails: "Streamlined service mesh management with enhanced features in Kubernetes"
-categories: [integrations]
 ---

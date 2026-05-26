@@ -90,7 +90,6 @@ featureList: [
 ]
 howItWorks: "Integrates OPA policies"
 howItWorksDetails: "Flexible and consistent policy enforcement in Kubernetes"
-categories: [integrations]
 aliases:
 - /extensibility/integrations/open-policy-agent-(opa)
 ---

@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Integrates with IAM Auth Controller"
 howItWorksDetails: "Streamlined IAM authentication and authorization management for EKS clusters"
-categories: [integrations]
 ---

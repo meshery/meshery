@@ -1,6 +1,5 @@
 ---
 title: Docker Extension
-categories: [docker]
 aliases:
 - /installation/platforms/docker-extension
 display_title: false

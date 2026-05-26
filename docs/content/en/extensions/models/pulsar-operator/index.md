@@ -35,5 +35,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Pulsar"
 howItWorksDetails: "Simplified Pulsar management within Kubernetes"
-categories: [integrations]
 ---

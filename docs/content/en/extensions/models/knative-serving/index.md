@@ -63,5 +63,4 @@ featureList: [
 ]
 howItWorks: "Manages Knative Serving"
 howItWorksDetails: "Simplified serverless application deployment and scaling in Kubernetes"
-categories: [integrations]
 ---

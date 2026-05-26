@@ -3,7 +3,6 @@ title: Troubleshooting Errors while running Meshery
 description: Troubleshooting Meshery errors when running make run-fast / meshery system start
 aliases: 
 - /guides/troubleshooting/running
-categories: [troubleshooting]
 ---
 
 ## mesheryctl system start

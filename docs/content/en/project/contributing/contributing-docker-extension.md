@@ -1,7 +1,6 @@
 ---
 title: Contributing to Meshery Docker Extension
 description: How to contribute to Meshery Docker Extension
-categories: [contributing]
 ---
 
 ## Prerequisites

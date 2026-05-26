@@ -83,5 +83,4 @@ featureList: [
 ]
 howItWorks: "Integrates Hybridnet configurations"
 howItWorksDetails: "Streamlined network management and flexibility in Kubernetes"
-categories: [integrations]
 ---

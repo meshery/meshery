@@ -1,7 +1,6 @@
 ---
 title: Contributing to Meshery Schemas
 description: How to contribute to Meshery Schemas
-categories: [contributing]
 ---
 
 This comprehensive guide covers everything you need to know to contribute to the Meshery Schemas repository. Meshery follows **Schema-Driven Development (SDD)**, where the structure of data is centrally defined using schemas that power consistency, validation, and code generation across the platform.

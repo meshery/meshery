@@ -1,6 +1,5 @@
 ---
 title: Running system checks using Meshery CLI
-categories: [mesheryctl]
 description: Run pre-flight and post-deployment system health checks using Meshery's CLI, mesheryctl.
 ---
 

@@ -39,5 +39,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Argo CD"
 howItWorksDetails: "Simplified Argo CD management within Kubernetes"
-categories: [integrations]
 ---

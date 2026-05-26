@@ -99,5 +99,4 @@ featureList: [
 ]
 howItWorks: "Integrates Jitsi"
 howItWorksDetails: "Secure and scalable video conferencing in Kubernetes"
-categories: [integrations]
 ---

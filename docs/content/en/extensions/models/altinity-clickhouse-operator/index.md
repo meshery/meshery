@@ -35,5 +35,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages ClickHouse"
 howItWorksDetails: "Managed ClickHouse service for Kubernetes with enhanced features"
-categories: [integrations]
 ---

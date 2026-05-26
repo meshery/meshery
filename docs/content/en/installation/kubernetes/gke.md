@@ -1,6 +1,5 @@
 ---
 title: GKE
-categories: [kubernetes]
 aliases:
 - /installation/platforms/gke
 display_title: false

@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Integrates with operator CRDs"
 howItWorksDetails: "Facilitates the use of custom resources within Meshery"
-categories: [integrations]
 ---

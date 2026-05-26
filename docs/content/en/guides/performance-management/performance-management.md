@@ -3,7 +3,6 @@ title: Performance Management with Meshery
 description: This guide is to help users get a better overview of running and managing performance tests in Meshery
 aliases: 
 - /functionality/performance-management
-categories: [performance]
 command: perf
 ---
 

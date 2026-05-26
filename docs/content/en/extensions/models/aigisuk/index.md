@@ -19,5 +19,4 @@ featureList: [
 ]
 howItWorks: "Integrates with AIGIS UK"
 howItWorksDetails: "Enhanced data security and compliance in Kubernetes"
-categories: [integrations]
 ---

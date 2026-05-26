@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Integrates with Identity Manager"
 howItWorksDetails: "Centralized identity and access management for Kubernetes clusters"
-categories: [integrations]
 ---

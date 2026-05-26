@@ -45,5 +45,4 @@ featureList: [
 ]
 howItWorks: "Runs containers on EMR"
 howItWorksDetails: "Easier big data processing on Kubernetes with EMR"
-categories: [integrations]
 ---

@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Integrates Scribe configurations"
 howItWorksDetails: "Streamlined log management and aggregation within Kubernetes"
-categories: [integrations]
 ---

@@ -43,5 +43,4 @@ featureList: [
 ]
 howItWorks: "Integrates with KMS"
 howItWorksDetails: "Enhanced security for Kubernetes applications and data on AWS"
-categories: [integrations]
 ---

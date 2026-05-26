@@ -47,5 +47,4 @@ featureList: [
 ]
 howItWorks: "Provides a distributed architecture, highly available and scalable load balancer in bare metal servers. Reduce fail over time with fast sync-up mechanism."
 howItWorksDetails: "Service load-balancer for Kubernetes to power Edge, 5G, IoT, XaaS Apps ​"
-categories: [integrations]
 ---

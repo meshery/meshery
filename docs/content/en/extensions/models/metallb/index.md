@@ -63,5 +63,4 @@ featureList: [
 ]
 howItWorks: "Configures MetalLB"
 howItWorksDetails: "Load balancing for bare-metal Kubernetes clusters"
-categories: [integrations]
 ---

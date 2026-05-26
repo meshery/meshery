@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Percona Operators eliminate the complexities of Day 1 and Day 2 database operations and seamlessly integrate with Meshery"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-categories: [integrations]
 ---

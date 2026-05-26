@@ -47,5 +47,4 @@ featureList: [
 ]
 howItWorks: "Integrates APISIX configurations"
 howItWorksDetails: "Streamlined API gateway management and enhanced traffic routing in Kubernetes"
-categories: [integrations]
 ---

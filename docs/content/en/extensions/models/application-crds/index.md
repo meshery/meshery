@@ -23,5 +23,4 @@ featureList: [
 ]
 howItWorks: "Integrates with AppsCode applications"
 howItWorksDetails: "Streamlined deployment and management of AppsCode applications in Kubernetes"
-categories: [integrations]
 ---

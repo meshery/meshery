@@ -4,7 +4,6 @@ description: Learn how to deploy and manage Azure Storage account through Kubern
 model: azure
 params:
    kind: StorageAccount
-categories: [tutorials]
 aliases:
 - /guides/tutorials/deploy-azure-storage-account-with-meshery
 ---

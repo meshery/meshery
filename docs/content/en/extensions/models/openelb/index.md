@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Integrates with OpenELB configurations"
 howItWorksDetails: "Simplified load balancing configuration and management within Kubernetes"
-categories: [integrations]
 ---

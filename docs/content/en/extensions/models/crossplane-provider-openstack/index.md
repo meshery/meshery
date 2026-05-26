@@ -387,5 +387,4 @@ featureList: [
 ]
 howItWorks: "Manages OpenStack resources with Crossplane"
 howItWorksDetails: "Unified management of OpenStack and Kubernetes resources"
-categories: [integrations]
 ---

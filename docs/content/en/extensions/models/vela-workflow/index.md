@@ -35,5 +35,4 @@ featureList: [
 ]
 howItWorks: "Integrates with Vela workflows"
 howItWorksDetails: "Flexible and customizable CI/CD workflows in Kubernetes"
-categories: [integrations]
 ---

@@ -1,6 +1,5 @@
 ---
 title: Docker
-categories: [docker]
 aliases:
 - /installation/platforms/docker
 display_title: false

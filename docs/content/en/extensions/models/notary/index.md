@@ -15,7 +15,6 @@ featureList: [
 ]
 howItWorks: "Integrates Notary signatures"
 howItWorksDetails: "Enhanced security and trust in container image distribution in Kubernetes"
-categories: [integrations]
 aliases:
 - /extensibility/integrations/notary
 ---

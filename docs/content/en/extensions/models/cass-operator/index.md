@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Simplified Cassandra management in Kubernetes"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-categories: [integrations]
 ---

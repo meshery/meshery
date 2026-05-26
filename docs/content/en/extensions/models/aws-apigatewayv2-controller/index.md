@@ -88,5 +88,4 @@ featureList: [
 ]
 howItWorks: "Integrates with API Gateway"
 howItWorksDetails: "Simplified API management and governance in AWS"
-categories: [integrations]
 ---

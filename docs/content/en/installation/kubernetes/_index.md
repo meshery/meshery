@@ -1,6 +1,5 @@
 ---
 title: Kubernetes
-categories: [kubernetes]
 aliases:
 - /installation/platforms/kubernetes
 display_title: false

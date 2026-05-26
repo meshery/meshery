@@ -1,7 +1,6 @@
 ---
 title: Contributing to Models Quick Start
 description: A no-fluff guide to creating your own Meshery Models quickly.
-categories: [contributing]
 ---
 
 **Models follow Meshery's schema-driven development approach.** Model, Component, and Relationship definitions are validated against schemas in [`Model schema`](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/model). See [Contributing to Schemas](/project/contributing/contributing-schemas) for details.

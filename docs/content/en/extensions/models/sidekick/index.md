@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Manages Sidekick configurations"
 howItWorksDetails: "Simplified sidecar container management within Kubernetes"
-categories: [integrations]
 ---

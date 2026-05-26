@@ -1,6 +1,5 @@
 ---
 title: Install mesheryctl
-categories: [mesheryctl]
 aliases:
 - /installation/mesheryctl/
 - /installation/platforms/mesheryctl

@@ -55,5 +55,4 @@ featureList: [
 ]
 howItWorks: "Integrates Open Cluster Management clusters"
 howItWorksDetails: "Streamlined multi-cluster management and governance"
-categories: [integrations]
 ---

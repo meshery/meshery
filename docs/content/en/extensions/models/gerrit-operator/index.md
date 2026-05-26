@@ -47,5 +47,4 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Gerrit"
 howItWorksDetails: "Streamlined code review management within Kubernetes"
-categories: [integrations]
 ---

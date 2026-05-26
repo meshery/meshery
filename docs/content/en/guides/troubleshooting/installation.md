@@ -1,7 +1,6 @@
 ---
 title: Troubleshooting Meshery Installations
 description: Troubleshoot Meshery installation and deployment
-categories: [troubleshooting]
 ---
 
 ## Meshery's Preflight Checks

@@ -61,5 +61,4 @@ featureList: [
 ]
 howItWorks: "Integrates EFS storage"
 howItWorksDetails: "Provides scalable and reliable file storage for Kubernetes applications"
-categories: [integrations]
 ---

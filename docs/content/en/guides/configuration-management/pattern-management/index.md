@@ -3,7 +3,6 @@ title: Cloud Native Design Patterns
 description: Meshery applies DRY principle when managing the configuration of cloud native infrastructure.
 aliases: 
 - /tasks/pattern-management/
-categories: [configuration]
 ---
 
 {{% alert color="warning" title="What are Cloud Native Patterns?" %}}

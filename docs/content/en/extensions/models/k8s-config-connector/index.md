@@ -1803,5 +1803,4 @@ featureList: [
 ]
 howItWorks: "Integrates GCP services"
 howItWorksDetails: "Seamless integration of Kubernetes with GCP services"
-categories: [integrations]
 ---

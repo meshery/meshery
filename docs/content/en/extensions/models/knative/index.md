@@ -94,7 +94,6 @@ featureList: [
 ]
 howItWorks: "Integrates Knative components"
 howItWorksDetails: "Streamlined serverless development on Kubernetes"
-categories: [integrations]
 aliases:
 - /extensibility/integrations/knative
 ---

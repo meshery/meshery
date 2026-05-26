@@ -19,5 +19,4 @@ featureList: [
 ]
 howItWorks: "Manages Emissary Ingress configurations"
 howItWorksDetails: "Simplified API gateway management and enhanced traffic routing in Kubernetes"
-categories: [integrations]
 ---

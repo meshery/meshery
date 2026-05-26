@@ -131,5 +131,4 @@ featureList: [
 ]
 howItWorks: "Deploys Kube Prometheus Stack with Helm"
 howItWorksDetails: "Comprehensive monitoring and observability for Kubernetes"
-categories: [integrations]
 ---

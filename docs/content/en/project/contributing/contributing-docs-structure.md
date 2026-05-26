@@ -1,7 +1,6 @@
 ---
 title: Meshery Documentation Structure and Organization
 description: Audience, high-Level outline & information architecture for Meshery Documentation
-categories: [contributing]
 ---
 
 Providing well-structured, easy-to-navigate documentation tailored for a diverse audience—from beginners to experts.

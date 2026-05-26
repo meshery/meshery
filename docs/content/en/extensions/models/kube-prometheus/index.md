@@ -59,5 +59,4 @@ featureList: [
 ]
 howItWorks: "Deploys Kube Prometheus with Helm"
 howItWorksDetails: "Streamlined Prometheus setup for monitoring Kubernetes"
-categories: [integrations]
 ---

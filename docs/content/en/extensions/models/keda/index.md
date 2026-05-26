@@ -47,5 +47,4 @@ featureList: [
 ]
 howItWorks: "Integrates with KEDA scalers"
 howItWorksDetails: "Event-driven autoscaling of Kubernetes applications"
-categories: [integrations]
 ---

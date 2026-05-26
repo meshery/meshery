@@ -19,5 +19,4 @@ featureList: [
 ]
 howItWorks: "N/A (not directly integrated)"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
-categories: [integrations]
 ---

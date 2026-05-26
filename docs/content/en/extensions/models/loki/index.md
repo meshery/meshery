@@ -59,5 +59,4 @@ featureList: [
 ]
 howItWorks: "Integrates Loki logs"
 howItWorksDetails: "Cost-effective and scalable log management for Kubernetes"
-categories: [integrations]
 ---

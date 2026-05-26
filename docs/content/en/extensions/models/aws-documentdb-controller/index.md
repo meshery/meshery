@@ -70,5 +70,4 @@ featureList: [
 ]
 howItWorks: "Integrates DocumentDB"
 howItWorksDetails: "Simplified NoSQL database management on AWS"
-categories: [integrations]
 ---

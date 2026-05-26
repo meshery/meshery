@@ -31,5 +31,4 @@ featureList: [
 ]
 howItWorks: "Manages external secrets"
 howItWorksDetails: "Secure and centralized secret management for Kubernetes applications"
-categories: [integrations]
 ---

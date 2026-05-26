@@ -1,7 +1,6 @@
 ---
 title: Contributing to Model Components
 description: How to contribute to Meshery Model Components
-categories: [contributing]
 ---
 **Components are defined by schemas.** Each component's structure, capabilities, and metadata follow the [Component schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/component) in `meshery/schemas`. When creating or modifying components, ensure they conform to the schema specification. See [Contributing to Schemas](/project/contributing/contributing-schemas) for details.
 

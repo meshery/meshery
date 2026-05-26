@@ -143,5 +143,4 @@ featureList: [
 ]
 howItWorks: "Integrates KubeVault deployments"
 howItWorksDetails: "Streamlined and secure Vault management within Kubernetes"
-categories: [integrations]
 ---

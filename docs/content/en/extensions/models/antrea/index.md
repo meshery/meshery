@@ -95,5 +95,4 @@ featureList: [
 ]
 howItWorks: "Integrates Antrea configurations"
 howItWorksDetails: "Simplified network policy management and enhanced networking in Kubernetes"
-categories: [integrations]
 ---

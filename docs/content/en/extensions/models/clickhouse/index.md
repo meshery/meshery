@@ -35,5 +35,4 @@ featureList: [
 ]
 howItWorks: "Integrates ClickHouse"
 howItWorksDetails: "High-performance analytics database for Kubernetes data"
-categories: [integrations]
 ---

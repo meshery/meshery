@@ -1,7 +1,6 @@
 ---
 title: Contributing to Meshery UI End-to-End Tests
 description: How to contribute to end-to-end testing in Meshery UI using Playwright.
-category: [contributing]
 ---
 
 To automate functional integration and end-to-end testing Meshery uses [Playwright](https://playwright.dev/) as one of the tools to automate browser testing. End-to-end tests run with each pull request to ensure that the changes do not break the existing functionality.

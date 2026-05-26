@@ -25,5 +25,4 @@ match resources using label selectors and wildcards.",
 ]
 howItWorks: "Block non-conformant resources"
 howItWorksDetails: "Using Meshery, apply best practice design templates for admission control over non-conformant resources."
-categories: [integrations]
 ---

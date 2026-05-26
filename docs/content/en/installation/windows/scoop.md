@@ -1,6 +1,5 @@
 ---
 title: Scoop
-categories: [mesheryctl]
 aliases:
 - /installation/platforms/scoop
 display_title: false

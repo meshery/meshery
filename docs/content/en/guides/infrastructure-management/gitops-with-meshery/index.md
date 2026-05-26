@@ -1,7 +1,6 @@
 ---
 title: GitOps with Meshery
 description: Integrating your CI/CD pipelines with Meshery's GitHub Actions
-categories: [infrastructure]
 ---
 
 ## Meshery Snapshot GitHub Action

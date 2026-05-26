@@ -1,7 +1,6 @@
 ---
 title: Creating a Meshery Design
 description: Learn how to create a Meshery Design using the built-in Design Configurator in Meshery UI or the mesheryctl CLI.
-categories: [configuration]
 aliases:
 - /guides/configuration-management/working-with-designs
 - /tasks/patterns
