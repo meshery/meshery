@@ -21,7 +21,6 @@ import (
 	"github.com/meshery/schemas/models/core"
 
 	"github.com/gofrs/uuid"
-	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
@@ -36,6 +35,7 @@ import (
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
+	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 	"gorm.io/gorm"
@@ -1890,8 +1890,8 @@ func getFiltersFromWasmFiltersRepo(downloadPath string) error {
 	// if err != nil {
 	// 	return err
 	// }
-	//Temporary hardcoding until https://github.com/layer5io/wasm-filters/issues/38 is resolved
-	downloadURL := "https://github.com/layer5io/wasm-filters/releases/download/v0.1.0/wasm-filters-v0.1.0.tar.gz"
+	//Temporary hardcoding until https://github.com/meshery-extensions/wasm-filters/issues/38 is resolved
+	downloadURL := "https://github.com/meshery-extensions/wasm-filters/releases/download/v0.1.0/wasm-filters-v0.1.0.tar.gz"
 	res, err := http.Get(downloadURL)
 	if err != nil {
 		return err
@@ -2073,27 +2073,3 @@ func (l *DefaultLocalProvider) BulkDeleteEvent(token string, eventIDs []*core.Uu
 	}
 	return nil
 }
-
-// // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
-// func getLatestStableReleaseTag() (string, error) {
-// 	url := "https://github.com/layer5io/wasm-filters/releases/latest"
-// 	resp, err := http.Get(url)
-// 	if err != nil {
-// 		return "", errors.New("failed to get latest stable release tag")
-// 	}
-// 	defer SafeClose(resp.Body)
-
-// 	if resp.StatusCode != http.StatusOK {
-// 		return "", errors.New("failed to get latest stable release tag")
-// 	}
-
-// 	body, err := io.ReadAll(resp.Body)
-// 	if err != nil {
-// 		return "", errors.New("failed to get latest stable release tag")
-// 	}
-// 	re := regexp.MustCompile("/releases/tag/(.*?)\"")
-// 	releases := re.FindAllString(string(body), -1)
-// 	latest := strings.ReplaceAll(releases[0], "/releases/tag/", "")
-// 	latest = strings.ReplaceAll(latest, "\"", "")
-// 	return latest, nil
-// }
