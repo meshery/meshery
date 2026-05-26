@@ -28,7 +28,7 @@ func getLatestVersionForMesheryctl(url string, client *http.Client) (string, err
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 
 	if err != nil {
-		return "", err
+		return "", ErrCreatingRequest(err)
 	}
 
 	resp, err := client.Do(req)
@@ -37,13 +37,13 @@ func getLatestVersionForMesheryctl(url string, client *http.Client) (string, err
 		if (errors.As(err, &nerr) && nerr.Timeout()) || errors.Is(err, context.DeadlineExceeded) {
 			return "", nil
 		}
-		return "", err
+		return "", ErrFailRequest(err)
 	}
 
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("unable to check for latest version of mesheryctl. unexpected status code: %d", resp.StatusCode)
+		return "", ErrFailReqStatus(resp.StatusCode, "unexpected response when checking mesheryctl version")
 	}
 
 	data, err := io.ReadAll(resp.Body)
@@ -52,7 +52,7 @@ func getLatestVersionForMesheryctl(url string, client *http.Client) (string, err
 		if (errors.As(err, &nerr) && nerr.Timeout()) || errors.Is(err, context.DeadlineExceeded) {
 			return "", nil
 		}
-		return "", err
+		return "", ErrReadResponseBody(err)
 	}
 
 	return strings.TrimSpace(string(data)), nil
