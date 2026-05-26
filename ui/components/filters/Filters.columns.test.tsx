@@ -27,7 +27,7 @@ vi.mock('@/assets/icons', () => ({
 }));
 
 vi.mock('@sistent/sistent', () => ({
-  InfoOutlinedIcon: ({ ...props }: any) => <svg data-testid="info-icon" {...props} />,
+  InfoOutlined: ({ ...props }: any) => <svg data-testid="info-icon" {...props} />,
 }));
 
 vi.mock('react-moment', () => ({
