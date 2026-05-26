@@ -273,7 +273,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			return ErrNotValidURL()
 		}
 
-		req, err = utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/run", nil)
+		req, err = utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/performance/profiles/"+profileID+"/run", nil)
 		if err != nil {
 			return utils.ErrCreatingRequest(err)
 		}
@@ -448,7 +448,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 	if err != nil {
 		return "", "", ErrFailMarshal(err)
 	}
-	req, err := utils.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles", bytes.NewBuffer(jsonValue))
+	req, err := utils.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/performance/profiles", bytes.NewBuffer(jsonValue))
 	if err != nil {
 		return "", "", err
 	}

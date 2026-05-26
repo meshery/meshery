@@ -1,39 +1,23 @@
+import {
+  useDeletePerformanceProfileMutation as useSchemasDeletePerformanceProfileMutation,
+  useGetPerformanceProfileQuery as useSchemasGetPerformanceProfileQuery,
+  useGetPerformanceProfilesQuery as useSchemasGetPerformanceProfilesQuery,
+  useUpsertPerformanceProfileMutation as useSchemasUpsertPerformanceProfileMutation,
+} from '@meshery/schemas/mesheryApi';
+
 import { api } from './index';
 
-const TAGS = {
-  PERFORMANCE_PROFILE: 'performance-profile',
-};
+const PERFORMANCE_PROFILE_RESULTS_TAG = 'performance-profile-results';
 
-const performanceProfile = api
+const performanceProfileResults = api
   .enhanceEndpoints({
-    addTagTypes: [TAGS.PERFORMANCE_PROFILE],
+    addTagTypes: [PERFORMANCE_PROFILE_RESULTS_TAG],
   })
   .injectEndpoints({
     endpoints: (builder) => ({
-      getPerformanceProfiles: builder.query({
-        query: (queryArg) => ({
-          url: `/api/user/performance/profiles`,
-          params: {
-            page: queryArg.page,
-            pagesize: queryArg.pagesize,
-            search: queryArg.search,
-            order: queryArg.order,
-          },
-          method: 'GET',
-        }),
-        providesTags: () => [{ type: TAGS.PERFORMANCE_PROFILE }],
-      }),
-      savePerformanceProfile: builder.mutation({
-        query: (queryArg) => ({
-          url: `/api/user/performance/profiles`,
-          method: 'POST',
-          body: queryArg.body,
-        }),
-        invalidatesTags: [{ type: TAGS.PERFORMANCE_PROFILE }],
-      }),
       getProfileResults: builder.query({
         query: (queryArg) => ({
-          url: `/api/user/performance/profiles/results`,
+          url: `/api/performance/profiles/results`,
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,
@@ -44,25 +28,11 @@ const performanceProfile = api
           },
           method: 'GET',
         }),
-        providesTags: () => [{ type: TAGS.PERFORMANCE_PROFILE }],
-      }),
-      getPerformanceProfileById: builder.query({
-        query: (queryArg) => ({
-          url: `/api/user/performance/profiles/${queryArg.id}`,
-          method: 'GET',
-        }),
-        providesTags: () => [{ type: TAGS.PERFORMANCE_PROFILE }],
-      }),
-      deletePerformanceProfile: builder.mutation({
-        query: (queryArg) => ({
-          url: `/api/user/performance/profiles/${queryArg.id}`,
-          method: 'DELETE',
-        }),
-        invalidatesTags: [{ type: TAGS.PERFORMANCE_PROFILE }],
+        providesTags: () => [{ type: PERFORMANCE_PROFILE_RESULTS_TAG }],
       }),
       getProfileResultsById: builder.query({
         query: (queryArg) => ({
-          url: `/api/user/performance/profiles/${queryArg.id}/results`,
+          url: `/api/performance/profiles/${queryArg.id}/results`,
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,
@@ -71,16 +41,46 @@ const performanceProfile = api
           },
           method: 'GET',
         }),
-        providesTags: () => [{ type: TAGS.PERFORMANCE_PROFILE }],
+        providesTags: () => [{ type: PERFORMANCE_PROFILE_RESULTS_TAG }],
       }),
     }),
   });
 
-export const {
-  useGetPerformanceProfilesQuery,
-  useSavePerformanceProfileMutation,
-  useGetProfileResultsQuery,
-  useGetPerformanceProfileByIdQuery,
-  useDeletePerformanceProfileMutation,
-  useGetProfileResultsByIdQuery,
-} = performanceProfile;
+export const { useGetProfileResultsQuery, useGetProfileResultsByIdQuery } =
+  performanceProfileResults;
+
+export const useGetPerformanceProfilesQuery = (queryArg, options) =>
+  useSchemasGetPerformanceProfilesQuery(
+    {
+      page: queryArg?.page?.toString(),
+      pagesize: queryArg?.pagesize?.toString(),
+      search: queryArg?.search,
+      order: queryArg?.order,
+    },
+    options,
+  );
+
+export const useSavePerformanceProfileMutation = () => {
+  const [trigger, result] = useSchemasUpsertPerformanceProfileMutation();
+  const wrappedTrigger = (queryArg) => trigger({ body: queryArg?.body });
+
+  return [wrappedTrigger, result] as const;
+};
+
+export const useGetPerformanceProfileByIdQuery = (queryArg, options) =>
+  useSchemasGetPerformanceProfileQuery(
+    {
+      performanceProfileId: queryArg?.id,
+    },
+    options,
+  );
+
+export const useDeletePerformanceProfileMutation = () => {
+  const [trigger, result] = useSchemasDeletePerformanceProfileMutation();
+  const wrappedTrigger = (queryArg) =>
+    trigger({
+      performanceProfileId: queryArg?.id,
+    });
+
+  return [wrappedTrigger, result] as const;
+};

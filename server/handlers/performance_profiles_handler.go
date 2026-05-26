@@ -12,6 +12,14 @@ import (
 	"github.com/meshery/meshery/server/models"
 )
 
+func performanceProfileIDFromRequest(r *http.Request) string {
+	vars := mux.Vars(r)
+	if id := vars["performanceProfileId"]; id != "" {
+		return id
+	}
+	return vars["id"]
+}
+
 // SavePerformanceProfileHandler will save performance profile using the current provider's persistence mechanism
 func (h *Handler) SavePerformanceProfileHandler(
 	rw http.ResponseWriter,
@@ -100,7 +108,7 @@ func (h *Handler) DeletePerformanceProfileHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	performanceProfileID := mux.Vars(r)["id"]
+	performanceProfileID := performanceProfileIDFromRequest(r)
 
 	resp, err := provider.DeletePerformanceProfile(r, performanceProfileID)
 	if err != nil {
@@ -124,7 +132,7 @@ func (h *Handler) GetPerformanceProfileHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	performanceProfileID := mux.Vars(r)["id"]
+	performanceProfileID := performanceProfileIDFromRequest(r)
 
 	resp, err := provider.GetPerformanceProfile(r, performanceProfileID)
 	if err != nil {

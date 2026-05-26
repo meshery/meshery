@@ -259,7 +259,7 @@ function PerformanceCard({
               // @ts-ignore
               CustomHeader={<Typography variant="h6">Test Results</Typography>}
               // @ts-ignore
-              endpoint={`/api/user/performance/profiles/${id}/results`}
+              endpoint={`/api/performance/profiles/${id}/results`}
               // @ts-ignore
               elevation={0}
             />

@@ -150,7 +150,7 @@ mesheryctl perf profile test --view
 func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber int) ([]models.PerformanceProfile, []byte, error) {
 	var response *models.PerformanceProfilesAPIResponse
 
-	url := baseURL + "/api/user/performance/profiles"
+	url := baseURL + "/api/performance/profiles"
 
 	// update the url
 	url = fmt.Sprintf("%s?pagesize=%d&page=%d", url, pageSize, pageNumber)
