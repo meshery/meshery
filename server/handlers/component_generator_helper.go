@@ -599,11 +599,7 @@ func normalizeSemVerToken(version string) (string, bool) {
 		return "", false
 	}
 	// Always return with a lowercase "v" prefix, normalised.
-	normalized := v.Original()
-	if strings.HasPrefix(strings.ToLower(normalized), "v") {
-		return "v" + normalized[1:], true
-	}
-	return "v" + normalized, true
+	return "v" + v.String(), true
 }
 
 var registrantURLParsers = map[string]func(string) string{

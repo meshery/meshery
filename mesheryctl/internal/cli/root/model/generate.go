@@ -13,9 +13,9 @@ import (
 )
 
 type cmdModelGenerateFlags struct {
-	File             string `json:"file" validate:"omitempty,dirpath|filepath|url"`
-	Template         string `json:"template" validate:"omitempty,filepath"`
-	SkipRegistration bool   `json:"skip-registration" validate:"boolean"`
+	File     string `json:"file" validate:"omitempty,dirpath|filepath|url"`
+	Template string `json:"template" validate:"omitempty,filepath"`
+	Register bool   `json:"register" validate:"boolean"`
 }
 
 type ModelGenerator interface {
@@ -44,28 +44,24 @@ var generateModelCmd = &cobra.Command{
 Find more information at: https://docs.meshery.io/reference/mesheryctl/model/generate`,
 	Example: ` 
 // Generate a model from a CSV directory
-mesheryctl model generate -f [path-to-csv-directory]
+mesheryctl model generate --f [path-to-csv-directory]
 
 // Generate a model from a URL based on a JSON template
-mesheryctl model generate -f [URL] -t [path-to-template.json]
+mesheryctl model generate --f [URL] -t [path-to-template.json]
 
 // Generate a model from a URL based on a JSON template skipping registration
-mesheryctl model generate --file [URL] --template [path-to-template.json] --skip-registration
+mesheryctl model generate --f [URL] -t [path-to-template.json] -r
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		err := mesheryctlflags.ValidateCmdFlags(cmd, &modelGenerateFlags)
-		if err != nil {
-			return fmt.Errorf("%s\nRun '%s --help' to see detailed help message", err.Error(), cmd.CommandPath())
-		}
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, &modelGenerateFlags)
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		if modelGenerateFlags.File == "" && len(args) == 0 {
-			return fmt.Errorf(errGenerateMissingArgsMsg, errGenerateUsageMsg)
+			return utils.ErrInvalidArgument(fmt.Errorf(errGenerateMissingArgsMsg, errGenerateUsageMsg))
 		}
 
 		if len(args) > 1 {
-			return fmt.Errorf("too many arguments\n\n%s", errGenerateUsageMsg)
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments\n\n%s", errGenerateUsageMsg))
 		}
 
 		return nil
@@ -87,7 +83,7 @@ mesheryctl model generate --file [URL] --template [path-to-template.json] --skip
 			urlModelGenerator := &UrlModelGenerator{
 				TemplateFile: modelGenerateFlags.Template,
 				Url:          path,
-				SkipRegister: modelGenerateFlags.SkipRegistration,
+				SkipRegister: modelGenerateFlags.Register,
 			}
 			return urlModelGenerator.Generate()
 		}
@@ -108,7 +104,7 @@ mesheryctl model generate --file [URL] --template [path-to-template.json] --skip
 			ModelFile:        modelcsvpath,
 			ComponentFile:    componentcsvpath,
 			RelationshipFile: relationshipcsvpath,
-			SkipRegister:     modelGenerateFlags.SkipRegistration,
+			SkipRegister:     modelGenerateFlags.Register,
 		}
 
 		return csvModelGenerator.Generate()
@@ -116,17 +112,13 @@ mesheryctl model generate --file [URL] --template [path-to-template.json] --skip
 }
 
 func init() {
-	generateModelCmd.SetFlagErrorFunc(func(cmd *cobra.Command, err error) error {
-		return fmt.Errorf("%s\nRun '%s --help' to see detailed help message", err.Error(), cmd.CommandPath())
-	})
-
 	generateModelCmd.Flags().SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
 		return pflag.NormalizedName(strings.ToLower(name))
 	})
 
 	generateModelCmd.Flags().StringVarP(&modelGenerateFlags.File, "file", "f", "", "Specify path to the file or directory")
 	generateModelCmd.Flags().StringVarP(&modelGenerateFlags.Template, "template", "t", "", "Specify path to the template JSON file")
-	generateModelCmd.Flags().BoolVarP(&modelGenerateFlags.SkipRegistration, "skip-registration", "", false, "Skip registration of the model (default is false)")
+	generateModelCmd.Flags().BoolVarP(&modelGenerateFlags.Register, "register", "r", false, "Skip registration of the model")
 
 }
 

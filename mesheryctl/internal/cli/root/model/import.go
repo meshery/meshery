@@ -241,7 +241,7 @@ func scaffoldToModel(data []byte) (schemav1beta1.Model, error) {
 	}
 
 	if err := encoding.Unmarshal(data, &result); err != nil {
-		return result, err
+		return result, utils.ErrUnmarshal(err)
 	}
 	// Resolve "displayName" → "modelDisplayName" alias; the json tags differ so direct unmarshal leaves it empty.
 	if result.ModelDisplayName == "" {
