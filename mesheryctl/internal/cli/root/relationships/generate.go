@@ -96,7 +96,7 @@ func init() {
 	generateCmd.Flags().StringVarP(&relationshipGenerateFlag.File, "file", "f", "", "path to the relationships CSV file")
 	generateCmd.Flags().StringVar(&relationshipGenerateFlag.SpreadsheetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
 	generateCmd.Flags().StringVar(&relationshipGenerateFlag.SpreadsheetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
-	generateCmd.Flags().StringVarP(&relationshipGenerateFlag.Output, "output", "o", "", "path to the output JSON file (default: docs/data/RelationshipsData.json)")
+	generateCmd.Flags().StringVarP(&relationshipGenerateFlag.Output, "output", "o", "", "path to the output JSON file")
 
 	generateCmd.MarkFlagsOneRequired("spreadsheet-id", "file")
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-id", "file")
@@ -121,7 +121,7 @@ func generateFromCSV(filePath, outputPath string) error {
 
 	// First two rows are headers, data starts at row 3
 	if len(records) <= 2 {
-		return ErrEmptyCSVData(fmt.Errorf("no relationship data found in CSV file: %s", filePath))
+		return ErrEmptyCSVData(fmt.Errorf("no relationship data found in CSV file: %s. CSV must contain two header rows followed by at least one data row with a minimum of 15 columns", filePath))
 	}
 
 	var customResp []CustomValueRange

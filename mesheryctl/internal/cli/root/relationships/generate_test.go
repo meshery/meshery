@@ -2,10 +2,10 @@ package relationships
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -15,18 +15,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/api/sheets/v4"
 )
-
-func resetGenerateFlags() {
-	relationshipGenerateFlag.SpreadsheetCred = ""
-	relationshipGenerateFlag.SpreadsheetID = ""
-	relationshipGenerateFlag.File = ""
-	relationshipGenerateFlag.Output = ""
-	// Reset Cobra's internal flag state to prevent bleed between tests
-	generateCmd.Flags().VisitAll(func(f *pflag.Flag) {
-		f.Changed = false
-		_ = f.Value.Set(f.DefValue)
-	})
-}
 
 func TestGenerateErrorOutput(t *testing.T) {
 	// setup current context
@@ -38,46 +26,55 @@ func TestGenerateErrorOutput(t *testing.T) {
 		Args           []string
 		ExpectError    bool
 		ErrorSubstring string
+		ExpectedError  error
 	}{
 		{
-			Name:           "Generate without any input source",
+			Name:           "Given no input flags, when generate runs, then it errors with missing required flag",
 			Args:           []string{"generate"},
 			ExpectError:    true,
 			ErrorSubstring: "at least one of the flags",
 		},
 		{
-			Name:           "Generate with spreadsheet-id but without spreadsheet-cred",
+			Name:           "Given only spreadsheet-id, when generate runs, then it errors with missing spreadsheet-cred",
 			Args:           []string{"generate", "--spreadsheet-id", "1"},
 			ExpectError:    true,
 			ErrorSubstring: "spreadsheet-cred",
 		},
 		{
-			Name:           "Generate with both file and spreadsheet-id",
-			Args:           []string{"generate", "--file", "test.csv", "--spreadsheet-id", "1", "--spreadsheet-cred", "cred"},
-			ExpectError:    true,
-			ErrorSubstring: "if any flags in the group",
-		},
-		{
-			Name:           "Generate with nonexistent CSV file",
+			Name:           "Given nonexistent CSV file path, when generate runs, then it errors with file read error",
 			Args:           []string{"generate", "--file", "/nonexistent/file.csv"},
 			ExpectError:    true,
 			ErrorSubstring: "File read error",
+			ExpectedError:  utils.ErrFileRead(fmt.Errorf("open /nonexistent/file.csv: no such file or directory")),
+		},
+		{
+			Name:           "Given both file and spreadsheet-id, when generate runs, then it errors with mutually exclusive flags",
+			Args:           []string{"generate", "--file", "test.csv", "--spreadsheet-id", "1", "--spreadsheet-cred", "cred"},
+			ExpectError:    true,
+			ErrorSubstring: "if any flags in the group",
 		},
 	}
 
 	// run tests
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.Name, func(t *testing.T) {
-			defer resetGenerateFlags()
+			defer utils.ResetCommandFlags(RelationshipCmd, t)
+			defer utils.ResetCommandFlags(generateCmd, t)
+			relationshipGenerateFlag = cmdRelationshipGenerateFlag{}
 
+			generateCmd.Flags().VisitAll(func(f *pflag.Flag) {
+				f.Changed = false
+			})
 			mesheryctlflags.InitValidators(RelationshipCmd)
 			RelationshipCmd.SetArgs(tt.Args)
 			err := RelationshipCmd.Execute()
 
 			if err != nil {
 				if tt.ExpectError {
-					assert.True(t, strings.Contains(err.Error(), tt.ErrorSubstring),
-						"expected error containing %q, got: %v", tt.ErrorSubstring, err)
+					if tt.ExpectedError != nil {
+						utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					}
 					return
 				}
 				t.Fatal(err)
@@ -125,7 +122,7 @@ func TestGenerateDataOutput(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 
-			defer resetGenerateFlags()
+			defer utils.ResetCommandFlags(RelationshipCmd, t)
 
 			fixturesDir := filepath.Join(currDir, "fixtures")
 
@@ -240,7 +237,7 @@ func TestGenerateCSVDataOutput(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			defer resetGenerateFlags()
+			defer utils.ResetCommandFlags(RelationshipCmd, t)
 
 			fixturesDir := filepath.Join(currDir, "fixtures")
 			csvPath := filepath.Join(fixturesDir, tt.CSVFixture)
