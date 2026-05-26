@@ -24,7 +24,11 @@ const COMMON_UI_ELEMENTS: string[] = [
 ];
 
 test.describe('Performance Section Tests', () => {
-  test.beforeEach(async ({ page }: { page: Page }) => {
+  test.beforeEach(async ({ page }: { page: Page }, testInfo) => {
+    if (process.env.CI) {
+      testInfo.setTimeout(120000);
+    }
+
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToPerformance();

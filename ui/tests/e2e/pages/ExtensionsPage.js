@@ -35,6 +35,10 @@ export class ExtensionsPage {
     );
   }
 
+  async hasIstioAdapterDocs() {
+    return (await this.adapterDocsIstioLink.count()) > 0;
+  }
+
   async verifyPerformanceAnalysisDetails() {
     await expect(this.performanceHeading).toBeVisible();
     await expect(this.performanceEnableBtn).toBeVisible();

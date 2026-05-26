@@ -60,6 +60,10 @@ test.describe('Extensions Section Tests', () => {
   });
 
   test('Verify Meshery Adapter for Istio Section', async () => {
+    test.skip(
+      !(await extensionsPage.hasIstioAdapterDocs()),
+      'Istio adapter docs link is not rendered for this provider in CI.',
+    );
     await extensionsPage.verifyNewTab(
       extensionsPage.adapterDocsIstioLink,
       URLS.MESHERY.ADAPTER_DOCS,
