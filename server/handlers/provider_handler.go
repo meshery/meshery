@@ -84,12 +84,12 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
 // the configured remotes.
 func (h *Handler) ProvidersStreamHandler(w http.ResponseWriter, r *http.Request) {
 	if h.config.ProviderTracker == nil {
-		http.Error(w, "provider tracker not initialized", http.StatusInternalServerError)
+		writeJSONError(w, "provider tracker not initialized", http.StatusInternalServerError)
 		return
 	}
 	flusher, ok := w.(http.Flusher)
 	if !ok {
-		http.Error(w, "streaming unsupported", http.StatusInternalServerError)
+		writeJSONError(w, "streaming unsupported", http.StatusInternalServerError)
 		return
 	}
 

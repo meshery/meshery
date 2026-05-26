@@ -26,7 +26,6 @@ import (
 	"github.com/meshery/schemas/models/core"
 
 	"github.com/gofrs/uuid"
-	SMP "github.com/layer5io/service-mesh-performance/spec"
 	servercore "github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/httputil"
@@ -37,6 +36,7 @@ import (
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
+	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"
 )
@@ -175,7 +175,7 @@ func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProper
 	l.propertiesMu.Lock()
 	defer l.propertiesMu.Unlock()
 	l.ProviderProperties = providerProperties
-	l.ProviderURL = l.ProviderProperties.ProviderURL
+	l.ProviderURL = providerProperties.ProviderURL
 }
 
 func (l *RemoteProvider) loadCapabilitiesFromLocalFile(filePath string) (ProviderProperties, error) {
@@ -248,7 +248,7 @@ func (l *RemoteProvider) loadCapabilitiesWithContext(ctx context.Context, token 
 
 	// Unauthenticated boot-time discovery: fall back to the unversioned
 	// /capabilities path so remotes that do not version their manifest
-	// (older Layer5 deployments, third-party providers) still report
+	// (older deployments, third-party providers) still report
 	// availability. The fallback is bounded by the same per-attempt
 	// timeout, so total runtime is at most ~2x the versioned attempt.
 	l.Log.Debugf("versioned capabilities lookup failed for %s: %v; falling back to unversioned /capabilities", l.RemoteProviderURL, err)
@@ -2344,7 +2344,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 
 	switch resp.StatusCode {
 	case http.StatusRequestEntityTooLarge:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	case http.StatusUnauthorized:
 		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your permissions", pattern.Name, l.ProviderName), "", resp.StatusCode)

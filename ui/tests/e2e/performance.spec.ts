@@ -1,5 +1,4 @@
 import { expect, test, Page } from '@playwright/test';
-import { DashboardPage } from './pages/DashboardPage';
 
 const SETTINGS_TABS: string[] = [
   'settings-tab-adapters',
@@ -25,9 +24,9 @@ const COMMON_UI_ELEMENTS: string[] = [
 
 test.describe('Performance Section Tests', () => {
   test.beforeEach(async ({ page }: { page: Page }) => {
-    const dashboardPage = new DashboardPage(page);
-    await dashboardPage.navigateToDashboard();
-    await dashboardPage.navigateToPerformance();
+    await page.goto('/performance', { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/\/performance/);
+    await page.waitForLoadState('networkidle');
   });
 
   test('Common UI elements', async ({ page }: { page: Page }) => {
@@ -41,6 +40,7 @@ test.describe('Performance Section Tests', () => {
 
   test.describe('Configure Metrics Navigation and Settings', () => {
     test.beforeEach(async ({ page }: { page: Page }) => {
+      await expect(page.getByTestId('configure-metrics-button')).toBeVisible();
       await page.getByTestId('configure-metrics-button').click();
       await expect(page).toHaveURL(/metrics/i);
     });

@@ -1,5 +1,4 @@
 import { expect } from '@playwright/test';
-import { DashboardPage } from './DashboardPage';
 
 export class ExtensionsPage {
   constructor(page) {
@@ -24,9 +23,9 @@ export class ExtensionsPage {
   }
 
   async goto() {
-    const dashboardPage = new DashboardPage(this.page);
-    await dashboardPage.navigateToDashboard();
-    await dashboardPage.navigateToExtensions();
+    await this.page.goto('/extensions', { waitUntil: 'domcontentloaded' });
+    await this.page.waitForURL(/\/extensions/);
+    await this.page.waitForLoadState('networkidle');
   }
 
   async verifyPerformanceAnalysisDetails() {
