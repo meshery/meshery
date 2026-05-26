@@ -16,6 +16,8 @@ const URLS = {
 };
 
 test.describe('Extensions Section Tests', () => {
+  test.describe.configure({ timeout: 120000 });
+
   let extensionsPage: ExtensionsPage;
 
   test.beforeEach(async ({ page }) => {

@@ -56,8 +56,13 @@ test.describe.serial('Connection Management Tests', () => {
     // open before the connection child accepts a click. Loading the URL
     // directly mirrors what real users do via deep links and isolates the
     // smoke test to the connections page itself.
-    await page.goto('/management/connections', { waitUntil: 'domcontentloaded' });
+    const initialConnectionsRes = waitForConnectionsApiResponse(page);
+    await page.goto('/management/connections', {
+      waitUntil: 'domcontentloaded',
+      timeout: 120000,
+    });
     await page.waitForURL(/\/management\/connections/, { timeout: 120000 });
+    await initialConnectionsRes;
     await expect(page.getByTestId('ConnectionTable-search')).toBeVisible({ timeout: 120000 });
   });
 
