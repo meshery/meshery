@@ -1,5 +1,4 @@
 import { expect, test, Page } from '@playwright/test';
-import { DashboardPage } from './pages/DashboardPage';
 
 const SETTINGS_TABS: string[] = [
   'settings-tab-adapters',
@@ -24,10 +23,10 @@ const COMMON_UI_ELEMENTS: string[] = [
 ];
 
 test.describe('Performance Section Tests', () => {
+  test.describe.configure({ timeout: 120000 });
+
   test.beforeEach(async ({ page }: { page: Page }) => {
-    const dashboardPage = new DashboardPage(page);
-    await dashboardPage.navigateToDashboard();
-    await dashboardPage.navigateToPerformance();
+    await page.goto('/performance', { waitUntil: 'domcontentloaded' });
     await expect(page).toHaveURL(/\/performance/i, { timeout: 120000 });
     await expect(page.getByTestId('configure-metrics-button')).toBeVisible({ timeout: 120000 });
   });

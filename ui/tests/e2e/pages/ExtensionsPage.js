@@ -1,6 +1,8 @@
 import { expect } from '@playwright/test';
 import { DashboardPage } from './DashboardPage';
 
+const NAVIGATION_TIMEOUT = 120000;
+
 export class ExtensionsPage {
   constructor(page) {
     this.page = page;
