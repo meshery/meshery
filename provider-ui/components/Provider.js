@@ -11,6 +11,10 @@ import {
   LearnMore,
   CustomTypography,
   StyledPopover,
+  ProviderInfoPopover,
+  ProviderInfoSectionRule,
+  ProviderInfoSectionHeading,
+  ProviderInfoDescriptionList,
 } from "./Provider.style";
 import {
   Button,
@@ -29,11 +33,19 @@ import {
   // "Element type is invalid". Alias on import to keep the rest of the
   // JSX untouched.
   InfoOutlined as InfoOutlinedIcon,
-  Popover,
+  Box,
+  Chip,
+  Link,
+  Stack,
+  Typography,
+  ExternalLinkIcon,
+  LockIcon,
   styled,
   charcoal,
   accentGrey,
+  CARIBBEAN_GREEN,
   KEPPEL,
+  SAFFRON,
 } from "@sistent/sistent";
 import { CloseIcon, ClickAwayListener, DropDownIcon } from "@sistent/sistent";
 function CustomDialogTitle(props) {
@@ -90,6 +102,81 @@ const PROVIDER_LOGO_SRC = "/provider/static/img/branding/meshery-logo-dark-text.
 const PROVIDER_LOGO_FALLBACK_SRC = "/static/img/branding/meshery-logo-dark-text.png";
 const EXTERNAL_LINK_ICON_SRC = "/provider/static/img/icons/external-link.svg";
 const EXTERNAL_LINK_ICON_FALLBACK_SRC = "/static/img/icons/external-link.svg";
+
+// Order matters: the first matching entry wins, so more specific prefixes
+// must come before broader ones (e.g. "persist-meshery-pattern" before
+// "persist-"). Returning a stable category label per feature lets the info
+// popover collapse 25+ raw capability names into a handful of meaningful
+// chips, which is what users actually want to see at a glance.
+const CAPABILITY_CATEGORY_RULES = [
+  { label: "Identity", match: (f) => f.startsWith("users-") || f === "organizations" },
+  { label: "Workspaces", match: (f) => f === "environments" || f === "workspaces" },
+  { label: "Catalog", match: (f) => f.endsWith("-catalog") },
+  {
+    label: "Content",
+    match: (f) =>
+      f.startsWith("persist-meshery-pattern") ||
+      f.startsWith("persist-meshery-filter") ||
+      f.startsWith("clone-meshery-") ||
+      f === "share-designs",
+  },
+  {
+    label: "Performance",
+    match: (f) =>
+      f === "persist-results" ||
+      f === "persist-result" ||
+      f === "persist-metrics" ||
+      f === "persist-schedules" ||
+      f === "persist-performance-profiles" ||
+      f === "persist-smp-test-profile",
+  },
+  { label: "Connections", match: (f) => f === "persist-connection" || f === "persist-credentials" },
+  { label: "Events", match: (f) => f === "persist-events" },
+  { label: "Sync", match: (f) => f === "sync-prefs" },
+];
+
+// Group a ProviderProperties.capabilities[] payload into category counts.
+// Returns a sorted array of { label, count } so the popover renders chips in
+// a deterministic order regardless of how the remote ordered its
+// /capabilities response. Anything that does not match a known prefix is
+// bucketed under "Other" so we surface the full count without losing it.
+function summarizeCapabilities(capabilities) {
+  if (!Array.isArray(capabilities) || capabilities.length === 0) return [];
+  const counts = new Map();
+  capabilities.forEach((c) => {
+    const feature = c?.feature || "";
+    if (!feature) return;
+    const rule = CAPABILITY_CATEGORY_RULES.find((r) => r.match(feature));
+    const label = rule ? rule.label : "Other";
+    counts.set(label, (counts.get(label) || 0) + 1);
+  });
+  const order = CAPABILITY_CATEGORY_RULES.map((r) => r.label).concat("Other");
+  return order
+    .filter((label) => counts.has(label))
+    .map((label) => ({ label, count: counts.get(label) }));
+}
+
+// Returns the label to render for a provider. Prefers the friendly
+// providerName the remote published in /capabilities; falls back to the
+// registration key lowercased - that key is the URL host when the remote
+// was unreachable at boot (so it is a URL fragment and should not carry
+// arbitrary uppercase the user typed into PROVIDER_BASE_URLS).
+function formatProviderLabel(key, provider) {
+  const name = provider?.providerName;
+  if (name) return name;
+  return (key || "").toLowerCase();
+}
+
+// Count navigator-extension components advertised by the provider. The
+// payload nests them as { extensions: { collaborator: [...], ... } }; a
+// total across known buckets gives the popover a single Extensions chip
+// without needing to enumerate every component path.
+function countExtensionComponents(extensions) {
+  if (!extensions || typeof extensions !== "object") return 0;
+  return Object.values(extensions).reduce((total, list) => {
+    return total + (Array.isArray(list) ? list.length : 0);
+  }, 0);
+}
 
 export default function Provider() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -251,27 +338,27 @@ export default function Provider() {
         onError={(e) => (e.target.src = PROVIDER_LOGO_FALLBACK_SRC)}
         alt="logo"
       />
+      {availableProviders !== "" && (
+        // LearnMore is a sibling of (not a child of) CustomDiv so the
+        // logo -> link -> dropdown layout stacks as three blocks with
+        // balanced vertical spacing; LearnMore's own marginTop/marginBottom
+        // centers it within the gap between the logo and the dropdown.
+        <LearnMore
+          href="#provider-guidance-dialog"
+          onClick={(e) => {
+            e.preventDefault();
+            handleModalOpen();
+          }}
+          aria-haspopup="dialog"
+          aria-controls="provider-guidance-dialog"
+          data-cy="providers-learn-more"
+        >
+          Learn more about providers
+        </LearnMore>
+      )}
       <CustomDiv>
         {availableProviders !== "" && (
           <Fragment>
-            <CustomTooltip
-              title="Learn more about Meshery remote providers"
-              placement="bottom"
-              data-cy="providers-tooltip"
-              arrow
-            >
-              <LearnMore
-                href="#provider-guidance-dialog"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleModalOpen();
-                }}
-                aria-haspopup="dialog"
-                aria-controls="provider-guidance-dialog"
-              >
-                Learn more about providers
-              </LearnMore>
-            </CustomTooltip>
             <StyledButtonGroup aria-label="split button">
               <Button
                 size="large"
@@ -281,17 +368,51 @@ export default function Provider() {
                 aria-label="Select Provider"
                 data-cy="select_provider"
                 disableElevation
+                sx={{
+                  // Push spinner to the left edge and the DropDownIcon to
+                  // the right edge with the label centered between them.
+                  // 16px (px:2 in MUI's 8px spacing) padding lives on the
+                  // button so the icons sit just inside the rounded ends.
+                  px: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  textTransform: "none",
+                  minWidth: 240,
+                }}
               >
-                {isLoading && (
+                {/* Leading slot: spinner when loading, otherwise an
+                    invisible spacer the same width so the centered
+                    label does not shift as loading toggles. */}
+                {isLoading ? (
                   <CircularProgress
                     size={20}
-                    sx={{ color: "white", marginRight: 8 }}
+                    sx={{ color: "white" }}
+                    aria-label="Loading"
+                  />
+                ) : (
+                  <span
+                    aria-hidden="true"
+                    style={{ width: 20, height: 20, display: "inline-block" }}
                   />
                 )}
-                {selectedProvider !== ""
-                  ? selectedProvider
-                  : "Select your provider"}
-
+                <span
+                  style={{
+                    flex: 1,
+                    textAlign: "center",
+                    padding: "0 8px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {selectedProvider !== ""
+                    ? formatProviderLabel(
+                      selectedProvider,
+                      availableProviders[selectedProvider]
+                    )
+                    : "Select your provider"}
+                </span>
                 <DropDownIcon />
               </Button>
             </StyledButtonGroup>
@@ -320,74 +441,97 @@ export default function Provider() {
                   id="split-button-menu"
                   autoFocusItem
                 >
-                  {Object.keys(availableProviders).map((key) => {
-                    // /api/providers and /api/providers/stream both
-                    // serialize ProviderProperties with camelCase JSON
-                    // tags; the stream also stitches in _status / _error
-                    // markers from the ProviderStatusEvent envelope.
-                    const provider = availableProviders[key];
-                    const isRemote = provider?.providerType === "remote";
-                    const status = provider?._status || "online";
-                    if (status === "offline") return null;
-                    // Prefer the explicit providerName so the chooser shows
-                    // the friendly name rather than the registration key
-                    // (which can fall back to the URL host for remotes that
-                    // were unreachable when the server booted).
-                    const label = provider?.providerName || key;
-                    const isChecking = status === "checking";
-                    return (
-                      <MenuItem
-                        key={key}
-                        onClick={(e) =>
-                          isChecking ? undefined : handleMenuItemClick(e, key)
-                        }
-                        disabled={isChecking}
-                        sx={{
-                          "&:hover": { backgroundColor: accentGrey[20] },
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          gap: 1,
-                          opacity: isChecking ? 0.7 : 1,
-                        }}
-                      >
-                        <span>{label}</span>
-                        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          {isChecking && (
-                            <CircularProgress
-                              size={14}
-                              sx={{ color: accentGrey[40] }}
-                              aria-label="Verifying availability"
-                            />
-                          )}
-                          {isRemote && (
-                            <CustomTooltip
-                              title="More information about this provider"
-                              placement="right"
-                              arrow
-                            >
-                              <IconButton
-                                size="small"
-                                aria-label="More information about the remote provider"
-                                data-testid="provider-learn-more-button"
-                                onClick={(e) => openProviderInfo(e, provider)}
-                                sx={{
-                                  ml: "auto",
-                                  p: 0.25,
-                                  flexShrink: 0,
-                                  color: KEPPEL,
-                                  opacity: 0.95,
-                                  "&:hover": { color: KEPPEL, opacity: 1 },
-                                }}
-                              >
-                                <InfoOutlinedIcon width={18} height={18} />
-                              </IconButton>
-                            </CustomTooltip>
-                          )}
-                        </span>
-                      </MenuItem>
+                  {(() => {
+                    // Local is pinned to the top of the chooser with a
+                    // divider immediately after, so the built-in option is
+                    // visually distinct from the remote providers below.
+                    // Remotes follow in registration order; Object.keys'
+                    // insertion order matches the server's registration map.
+                    const entries = Object.keys(availableProviders).map(
+                      (key) => ({ key, provider: availableProviders[key] })
                     );
-                  })}
+                    const localEntries = entries.filter(
+                      (e) => e.provider?.providerType !== "remote"
+                    );
+                    const remoteEntries = entries.filter(
+                      (e) => e.provider?.providerType === "remote"
+                    );
+                    const renderRow = ({ key, provider }) => {
+                      const status = provider?._status || "online";
+                      if (status === "offline") return null;
+                      const label = formatProviderLabel(key, provider);
+                      const isChecking = status === "checking";
+                      return (
+                        <MenuItem
+                          key={key}
+                          onClick={(e) =>
+                            isChecking
+                              ? undefined
+                              : handleMenuItemClick(e, key)
+                          }
+                          disabled={isChecking}
+                          sx={{
+                            "&:hover": { backgroundColor: accentGrey[20] },
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: 1,
+                            opacity: isChecking ? 0.7 : 1,
+                          }}
+                        >
+                          <span>{label}</span>
+                          <span
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 8,
+                            }}
+                          >
+                            {isChecking && (
+                              <CircularProgress
+                                size={14}
+                                sx={{ color: accentGrey[40] }}
+                                aria-label="Verifying availability"
+                              />
+                            )}
+                            <IconButton
+                              size="small"
+                              aria-label={`More information about ${label}`}
+                              data-testid="provider-learn-more-button"
+                              onClick={(e) => openProviderInfo(e, provider)}
+                              sx={{
+                                ml: "auto",
+                                p: 0.25,
+                                flexShrink: 0,
+                                color: KEPPEL,
+                                opacity: 0.95,
+                                "&:hover": { color: KEPPEL, opacity: 1 },
+                              }}
+                            >
+                              <InfoOutlinedIcon width={18} height={18} />
+                            </IconButton>
+                          </span>
+                        </MenuItem>
+                      );
+                    };
+                    return (
+                      <>
+                        {localEntries.map(renderRow)}
+                        {localEntries.length > 0 && remoteEntries.length > 0 && (
+                          <Divider
+                            sx={{
+                              my: 0.5,
+                              backgroundColor: accentGrey[40],
+                              width: "80%",
+                              margin: "auto",
+                              marginBottom: "0px",
+                            }}
+                          />
+                        )}
+                        {remoteEntries.map(renderRow)}
+                      </>
+                    );
+                  })()}
                   <Divider
                     sx={{
                       my: 0.5,
@@ -400,7 +544,7 @@ export default function Provider() {
                   {Object.keys(availableProviders).map((key) => {
                     const provider = availableProviders[key];
                     if (provider?._status !== "offline") return null;
-                    const label = provider?.providerName || key;
+                    const label = formatProviderLabel(key, provider);
                     return (
                       <MenuProviderDisabled disabled={true} key={key}>
                         {label}{"\u00A0"}
@@ -469,71 +613,294 @@ export default function Provider() {
 
             {/*
               Per-provider info popover. Anchored to the InfoOutlined icon
-              next to each remote entry. Renders the descriptive blurb the
-              remote returns from its own /capabilities (providerName +
-              providerDescription) so the chooser explains what each
-              specific provider offers instead of showing the legacy
-              one-size-fits-all "Choosing a Provider" dialog.
+              next to each remote entry. Renders a structured summary of
+              what the remote published from its own /capabilities -
+              identity (name, URL, status), package version, restricted-UI
+              badge, the categorized capability count, the human-readable
+              providerDescription bullets, and any navigator extensions -
+              so the chooser surfaces every worthwhile field the remote
+              advertises instead of just the name/URL/blurb triplet.
             */}
-            <Popover
+            <ProviderInfoPopover
               open={providerInfoOpen}
               anchorEl={providerInfo.anchor}
               onClose={closeProviderInfo}
               anchorOrigin={{ vertical: "center", horizontal: "right" }}
               transformOrigin={{ vertical: "center", horizontal: "left" }}
-              PaperProps={{
-                sx: {
-                  background: charcoal[20],
-                  color: (theme) => theme.palette.text.inverse,
-                  maxWidth: 360,
-                  p: 2,
-                  borderLeft: `3px solid ${KEPPEL}`,
-                },
-              }}
+              data-testid="provider-info-popover"
             >
-              {providerInfo.provider && (
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: "1rem" }}>
-                    {providerInfo.provider.providerName ||
-                      "Remote Provider"}
-                  </div>
-                  {providerInfo.provider.providerUrl && (
-                    <div
-                      style={{
-                        fontSize: "0.75rem",
-                        opacity: 0.7,
-                        marginTop: 2,
-                        marginBottom: 8,
-                        wordBreak: "break-all",
-                      }}
+              {providerInfo.provider && (() => {
+                const p = providerInfo.provider;
+                const status = p._status || "online";
+                const categories = summarizeCapabilities(p.capabilities);
+                const totalCaps = Array.isArray(p.capabilities)
+                  ? p.capabilities.length
+                  : 0;
+                const extensionCount = countExtensionComponents(p.extensions);
+                const restricted = Boolean(
+                  p.restrictedAccess?.isMesheryUIRestricted
+                );
+                const statusColor =
+                  status === "online"
+                    ? CARIBBEAN_GREEN
+                    : status === "checking"
+                      ? SAFFRON
+                      : accentGrey[40];
+                const statusLabel =
+                  status === "checking"
+                    ? "Checking"
+                    : status === "offline"
+                      ? "Offline"
+                      : "Online";
+                const hasDescription =
+                  Array.isArray(p.providerDescription) &&
+                  p.providerDescription.length > 0;
+                return (
+                  <Box>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      spacing={1}
                     >
-                      {providerInfo.provider.providerUrl}
-                    </div>
-                  )}
-                  {Array.isArray(providerInfo.provider.providerDescription) &&
-                  providerInfo.provider.providerDescription.length > 0 ? (
-                      <ul style={{ paddingLeft: "1.1rem", margin: 0 }}>
-                        {providerInfo.provider.providerDescription.map(
-                          (line, i) => (
-                            <li
-                              key={`${providerInfo.provider.providerName || "p"}-${i}`}
-                              style={{ marginBottom: 4 }}
+                      <Typography
+                        component="div"
+                        sx={{
+                          fontWeight: 700,
+                          fontSize: "1.05rem",
+                          lineHeight: 1.3,
+                        }}
+                      >
+                        {p.providerName || "Remote Provider"}
+                      </Typography>
+                      <Chip
+                        size="small"
+                        label={statusLabel}
+                        aria-label={`Provider status: ${statusLabel}`}
+                        icon={
+                          <span
+                            aria-hidden="true"
+                            style={{
+                              width: 8,
+                              height: 8,
+                              borderRadius: "50%",
+                              background: statusColor,
+                              marginLeft: 8,
+                            }}
+                          />
+                        }
+                        sx={{
+                          background: "rgba(255,255,255,0.08)",
+                          color: "inherit",
+                          fontWeight: 600,
+                          letterSpacing: "0.02em",
+                          ".MuiChip-icon": { ml: 1 },
+                        }}
+                      />
+                    </Stack>
+
+                    {p.providerUrl && (
+                      <Box
+                        sx={{
+                          mt: 0.25,
+                          display: "flex",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Link
+                          href={p.providerUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          underline="hover"
+                          sx={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                            fontSize: "0.75rem",
+                            color: "inherit",
+                            opacity: 0.75,
+                            wordBreak: "break-all",
+                            textAlign: "center",
+                            "&:hover": { opacity: 1, color: KEPPEL },
+                          }}
+                        >
+                          {p.providerUrl.toLowerCase()}
+                          <ExternalLinkIcon
+                            width={12}
+                            height={12}
+                            aria-hidden="true"
+                          />
+                        </Link>
+                      </Box>
+                    )}
+
+                    {(p.packageVersion || totalCaps > 0 || restricted) && (
+                      <>
+                        <ProviderInfoSectionRule />
+                        <Stack
+                          direction="row"
+                          spacing={0.75}
+                          useFlexGap
+                          flexWrap="wrap"
+                          alignItems="center"
+                        >
+                          {p.packageVersion && (
+                            <Chip
+                              size="small"
+                              label={p.packageVersion}
+                              aria-label={`Package version ${p.packageVersion}`}
+                              sx={{
+                                background: "rgba(255,255,255,0.08)",
+                                color: "inherit",
+                                fontFamily:
+                                  "ui-monospace, SFMono-Regular, Menlo, monospace",
+                                fontSize: "0.7rem",
+                              }}
+                            />
+                          )}
+                          {totalCaps > 0 && (
+                            <Chip
+                              size="small"
+                              label={`${totalCaps} capabilities`}
+                              aria-label={`${totalCaps} capabilities`}
+                              sx={{
+                                background: "rgba(255,255,255,0.08)",
+                                color: "inherit",
+                                fontSize: "0.7rem",
+                              }}
+                            />
+                          )}
+                          {restricted && (
+                            <CustomTooltip
+                              title="This provider restricts which Meshery UI components are available"
+                              placement="top"
+                              arrow
                             >
-                              {line}
-                            </li>
-                          )
-                        )}
-                      </ul>
+                              <Chip
+                                size="small"
+                                icon={
+                                  <LockIcon
+                                    width={12}
+                                    height={12}
+                                    aria-hidden="true"
+                                  />
+                                }
+                                label="Restricted UI"
+                                aria-label="Restricted UI"
+                                sx={{
+                                  background: "rgba(255,184,0,0.12)",
+                                  color: SAFFRON,
+                                  fontSize: "0.7rem",
+                                  ".MuiChip-icon": { color: SAFFRON },
+                                }}
+                              />
+                            </CustomTooltip>
+                          )}
+                        </Stack>
+                      </>
+                    )}
+
+                    {categories.length > 0 && (
+                      <>
+                        <ProviderInfoSectionRule />
+                        <ProviderInfoSectionHeading component="h4">
+                          Capabilities
+                        </ProviderInfoSectionHeading>
+                        <Stack
+                          direction="row"
+                          spacing={0.5}
+                          useFlexGap
+                          flexWrap="wrap"
+                        >
+                          {categories.map(({ label, count }) => (
+                            <Chip
+                              key={label}
+                              size="small"
+                              label={`${label} · ${count}`}
+                              aria-label={`${count} ${label} capabilities`}
+                              sx={{
+                                background: "rgba(0,179,159,0.12)",
+                                color: KEPPEL,
+                                border: `1px solid rgba(0,179,159,0.35)`,
+                                fontSize: "0.7rem",
+                                fontWeight: 600,
+                              }}
+                            />
+                          ))}
+                        </Stack>
+                      </>
+                    )}
+
+                    <ProviderInfoSectionRule />
+                    <ProviderInfoSectionHeading component="h4">
+                      What this provider offers
+                    </ProviderInfoSectionHeading>
+                    {hasDescription ? (
+                      <ProviderInfoDescriptionList>
+                        {p.providerDescription.map((line, i) => (
+                          <li
+                            key={`${p.providerName || "p"}-${i}`}
+                          >
+                            {line}
+                          </li>
+                        ))}
+                      </ProviderInfoDescriptionList>
                     ) : (
-                      <div style={{ fontSize: "0.85rem", opacity: 0.85 }}>
-                        {providerInfo.provider._status === "checking"
+                      <Typography
+                        component="div"
+                        sx={{
+                          fontSize: "0.85rem",
+                          opacity: 0.8,
+                          fontStyle: "italic",
+                        }}
+                      >
+                        {status === "checking"
                           ? "Verifying availability and loading capabilities..."
                           : "This provider has not published a description."}
-                      </div>
+                      </Typography>
                     )}
-                </div>
-              )}
-            </Popover>
+
+                    {extensionCount > 0 && (
+                      <>
+                        <ProviderInfoSectionRule />
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          spacing={0.75}
+                          flexWrap="wrap"
+                          useFlexGap
+                        >
+                          <ProviderInfoSectionHeading
+                            component="h4"
+                            sx={{ mb: 0 }}
+                          >
+                            Extensions
+                          </ProviderInfoSectionHeading>
+                          {Object.keys(p.extensions || {}).map((slot) => {
+                            const list = p.extensions[slot];
+                            const n = Array.isArray(list) ? list.length : 0;
+                            if (n === 0) return null;
+                            return (
+                              <Chip
+                                key={slot}
+                                size="small"
+                                label={n > 1 ? `${slot} · ${n}` : slot}
+                                aria-label={`${slot} extension`}
+                                sx={{
+                                  background: "rgba(255,255,255,0.08)",
+                                  color: "inherit",
+                                  fontSize: "0.7rem",
+                                }}
+                              />
+                            );
+                          })}
+                        </Stack>
+                      </>
+                    )}
+                  </Box>
+                );
+              })()}
+            </ProviderInfoPopover>
           </Fragment>
         )}
       </CustomDiv>
@@ -553,41 +920,27 @@ export default function Provider() {
         </StyledCustomDialogTitle>
 
         <StyledDialogBox id="customized-dialog-content">
-          Login to Meshery by choosing from the available providers. Providers
-          extend Meshery by offering various plugins and services, including
-          identity services, long-term persistence, advanced performance
-          analysis, multi-player user collaboration, and so on.
-          <h2>Available Providers</h2>
-          {Object.keys(availableProviders).map((key) => {
-            const provider = availableProviders[key] || {};
-            // /api/providers serializes ProviderProperties with camelCase
-            // JSON tags (server/models/providers.go). The previous
-            // snake_case lookup silently rendered nothing - producing an
-            // empty list under "Available Providers" - because no field
-            // by those names exists in the response.
-            const name = provider.providerName || key;
-            const description = Array.isArray(provider.providerDescription)
-              ? provider.providerDescription
-              : [];
-            return (
-              <React.Fragment key={key}>
-                <p style={{ fontWeight: 700 }}>{name}</p>
-                {description.length > 0 ? (
-                  <ul>
-                    {description.map((desc, i) => (
-                      <li key={`${key}-desc-${i}`}>{desc}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p style={{ fontStyle: "italic", opacity: 0.8 }}>
-                    {provider._status === "checking"
-                      ? "Loading description..."
-                      : "No description available."}
-                  </p>
-                )}
-              </React.Fragment>
-            );
-          })}
+          <p style={{ marginTop: 0 }}>
+            A <strong>Provider</strong> extends Meshery with services beyond
+            what the local install offers - identity and multi-tenancy,
+            long-term persistence, design and performance history, sharing,
+            and team collaboration. Meshery ships with a built-in{" "}
+            <strong>Local</strong> provider; remote providers (such as Meshery
+            Cloud) layer additional services on top.
+          </p>
+          <p>
+            Per-provider details are available from the info{" "}
+            <span aria-hidden="true">&#9432;</span> icon next to each entry in
+            the chooser, populated live from that provider&apos;s own{" "}
+            <code>/capabilities</code>.
+          </p>
+          <p>
+            <strong>Pre-selecting a provider.</strong> To skip this chooser on
+            launch, set the <code>PROVIDER</code> environment variable to the
+            provider&apos;s name (for example <code>PROVIDER=Local</code> or{" "}
+            <code>PROVIDER=Meshery</code>) before starting the server. An
+            invalid value is ignored and the chooser is shown as usual.
+          </p>
         </StyledDialogBox>
 
         <CustomDialogActions>
