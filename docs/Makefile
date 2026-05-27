@@ -18,16 +18,23 @@
 setup:
 	npm install
 
+## Verify required commands and local dependencies are present.
+check-deps:
+	@echo "Checking if 'npx' and local 'hugo' binary are present..."
+	@command -v npx > /dev/null || { echo "Error: 'npx' not found. Please install Node.js and npm."; exit 1; }
+	@test -x node_modules/.bin/hugo || { echo "Error: Hugo binary not found in node_modules. Please run 'make setup' first."; exit 1; }
+	@echo "Dependencies check passed."
+
 ## Run docs.meshery.io on your local machine with draft and future content enabled.
-site: check-go
+site: check-deps check-go
 	npx hugo server -D -F
 
 ## Build docs.meshery.io on your local machine.
-build:
+build: check-deps check-go
 	npx hugo
 
 ## Empty build cache and run docs.meshery.io on your local machine.
-clean: 
+clean: check-deps
 	npx hugo --cleanDestinationDir
 	make site
 
@@ -110,10 +117,10 @@ docker:
 
 .PHONY: \
 	setup \
+	check-deps \
 	build \
 	site \
 	clean \
-	site-fast \
 	check-go \
 	docker \
 	docker-install-base-deps \
