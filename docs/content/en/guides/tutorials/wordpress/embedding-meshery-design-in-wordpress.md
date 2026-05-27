@@ -11,18 +11,14 @@ aliases:
 
 ### Introduction
 
-In this tutorial, we will learn how to embed a **Meshery Design** in a WordPress post using the **Embed** option in **Kanvas**.
+In this tutorial, we will learn how to embed a **Meshery Design** in a WordPress post using the **Embed** option in **Meshery Design Configurator**.
 
-This tutorial assumes that you have created a design or have an existing one. If not, you can use one of the numerous public designs available in **Kanvas** for this tutorial.
+This tutorial assumes that you have created a design or have an existing one. If not, you can use one of the numerous public designs available in **Meshery Design Configurator** for this tutorial.
 
 1. Expand the **Designs** menu on the left.
-   
-   ![Expand Designs](/guides/tutorials/images/embedding-design-in-wordpress/expand-designs-kanvas.png)
 
 2. Click the **Quick actions** button to the left of the design (inverted ellipsis) and select **Export Design**.
    
-   ![Export Design](/guides/tutorials/images/embedding-design-in-wordpress/quickaction-exportdesign.png)
-
 3. Click the download icon next to **Embed Design** from the list.
    
    ![Embed Design](/guides/tutorials/images/embedding-design-in-wordpress/embeddesign.png)
@@ -43,7 +39,7 @@ This tutorial assumes that you have created a design or have an existing one. If
 
    ![Copy URL](/guides/tutorials/images/embedding-design-in-wordpress/add-custom-html.png)
 
-8. Paste the following CSS code as it is, followed by the **Embed Code** copied from **Kanvas**. Update the script source value to the URL copied from WordPress.  
+8. Paste the following CSS code as it is, followed by the **Embed Code** copied from **Meshery Design Configurator**. Update the script source value to the URL copied from WordPress.  
    ```
    <style>
      .embed-design-container {
@@ -74,7 +70,7 @@ This tutorial assumes that you have created a design or have an existing one. If
        background-color: gray;
     }
     </style>
-    <!-- Learn more at https://docs.layer5.io/meshmap/designer/export-designs/#exporting-as-embedding -->
+    <!-- Learn more at https://docs.meshery.io/guides/tutorials/wordpress/embedding-meshery-design-in-wordpress -->
     <div id="embedded-design-a1376b51-d2c4-4ef8-8337-6dc2c24fa939"></div>
     <script src="https://yourwordpressdomain/wp-content/uploads/2025/01/embedded-design-tutorial-exploring-kubernetes-pod.js" type="module" ></script>
     ```

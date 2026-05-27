@@ -11,6 +11,10 @@
   <meta name="robots" content="index, follow" />
   {{- end }}
 
+  {{- if eq .Kind "404" }}
+  <base href="{{ .Site.BaseURL }}" />
+  {{- end }}
+
   <link
     rel="alternate"
     type="application/rss+xml"

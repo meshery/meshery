@@ -4,8 +4,8 @@ import { LoginPage } from './pages/LoginPage';
 import { ENV } from './env';
 
 const PROVIDERS = {
-  LOCAL: 'None',
-  MESHERY: 'Layer5',
+  LOCAL: 'Local',
+  MESHERY: 'Meshery',
   // Extension Point: Add other providers as needed
 };
 

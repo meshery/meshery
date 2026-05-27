@@ -5,7 +5,7 @@ import (
 	"github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/schemas/models/core"
 
-	SMP "github.com/layer5io/service-mesh-performance/spec"
+	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 )
 
 // PerformanceProfile represents the performance profile that needs
