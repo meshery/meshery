@@ -84,10 +84,10 @@ const (
 func (l *DefaultLocalProvider) Initialize() {
 	l.ProviderName = LocalProviderName
 	l.ProviderDescription = []string{
-		"Ephemeral sessions",
-		"Environment setup not saved",
-		"No performance or conformance test result history",
-		"Free Use",
+		"Built-in - no external services required",
+		"On-disk persistence for designs, filters, and credentials",
+		"Anonymous, single-user session (no login)",
+		"Always free, always available",
 	}
 	l.ProviderType = LocalProviderType
 	l.PackageVersion = viper.GetString("BUILD")
