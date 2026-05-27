@@ -20,6 +20,10 @@ type cmdRelationshipGenerateFlag struct {
 	Output          string `json:"output" validate:"omitempty"`
 }
 
+// minRelationshipCSVColumns defines the minimum number of columns required in a CSV row
+// to be considered a valid relationship entry.
+// Refer to the Meshery relationship CSV template:
+// https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv
 const minRelationshipCSVColumns = 15
 
 var relationshipGenerateFlag cmdRelationshipGenerateFlag
@@ -76,7 +80,11 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 		}
 
 		if relationshipGenerateFlag.File != "" {
-			return generateFromCSV(relationshipGenerateFlag.File, outputPath)
+			data, err := generateRelationshipsFromCSV(relationshipGenerateFlag.File)
+			if err != nil {
+				return err
+			}
+			return saveRelationshipsJSON(data, outputPath)
 		}
 
 		resp, err := fetchSheetValues(relationshipGenerateFlag.SpreadsheetID, relationshipGenerateFlag.SpreadsheetCred)
@@ -103,10 +111,10 @@ func init() {
 	generateCmd.MarkFlagsRequiredTogether("spreadsheet-id", "spreadsheet-cred")
 }
 
-func generateFromCSV(filePath, outputPath string) error {
+func generateRelationshipsFromCSV(filePath string) ([]CustomValueRange, error) {
 	f, err := os.Open(filePath)
 	if err != nil {
-		return utils.ErrFileRead(err)
+		return nil, utils.ErrFileRead(err)
 	}
 	defer func() {
 		_ = f.Close()
@@ -116,12 +124,12 @@ func generateFromCSV(filePath, outputPath string) error {
 	reader.FieldsPerRecord = -1
 	records, err := reader.ReadAll()
 	if err != nil {
-		return utils.ErrFileRead(err)
+		return nil, utils.ErrFileRead(err)
 	}
 
 	// First two rows are headers, data starts at row 3
 	if len(records) <= 2 {
-		return ErrEmptyCSVData(fmt.Errorf("no relationship data found in CSV file: %s. CSV must contain two header rows followed by at least one data row with a minimum of 15 columns", filePath))
+		return nil, ErrEmptyCSVData(fmt.Errorf("no relationship data found in CSV file: %s. CSV must contain two header rows followed by at least one data row with a minimum of 15 columns", filePath))
 	}
 
 	var customResp []CustomValueRange
@@ -148,10 +156,10 @@ func generateFromCSV(filePath, outputPath string) error {
 	}
 
 	if len(customResp) == 0 {
-		return ErrEmptyCSVData(fmt.Errorf("no valid relationship rows found in CSV file: %s", filePath))
+		return nil, ErrEmptyCSVData(fmt.Errorf("no valid relationship rows found in CSV file: %s", filePath))
 	}
 
-	return saveRelationshipsJSON(customResp, outputPath)
+	return customResp, nil
 }
 
 func processSheetData(resp *sheets.ValueRange, jsonFilePath string) error {
