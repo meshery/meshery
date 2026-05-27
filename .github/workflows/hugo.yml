@@ -37,6 +37,12 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 1
+      - name: Checkout existing GitHub Pages content
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          path: gh-pages-existing
+          fetch-depth: 1
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
@@ -54,10 +60,12 @@ jobs:
           make docs-build-production BASE_URL="/"
           cp docs/CNAME docs/public/CNAME
           touch docs/public/.nojekyll
+          if [ -d gh-pages-existing/pr-preview ]; then
+            cp -a gh-pages-existing/pr-preview docs/public/pr-preview
+          fi
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/public
           publish_branch: gh-pages
-          keep_files: true
