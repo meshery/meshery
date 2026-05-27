@@ -24,13 +24,16 @@ const COMMON_UI_ELEMENTS: string[] = [
 ];
 
 test.describe('Performance Section Tests', () => {
-  test.skip(!!process.env.CI, 'Performance E2E is unstable in local-provider CI.');
+  // The shared beforeEach + the nested "Configure Metrics" beforeEach
+  // together call navigateToDashboard() (two 120s visibility waits),
+  // navigateToPerformance() (120s wait), and then wait on the
+  // configure-metrics-button. Under the default BASE_TIMEOUT=60s the hook
+  // dies before those inner waits resolve when CI is slow. 180s gives the
+  // chain enough wall-clock and supersedes the prior CI-only inline
+  // testInfo.setTimeout(120000), which only extended one hook layer.
+  test.describe.configure({ timeout: 180_000 });
 
-  test.beforeEach(async ({ page }: { page: Page }, testInfo) => {
-    if (process.env.CI) {
-      testInfo.setTimeout(120000);
-    }
-
+  test.beforeEach(async ({ page }: { page: Page }) => {
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToPerformance();
