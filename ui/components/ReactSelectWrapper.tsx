@@ -27,6 +27,8 @@ const StyledValueContainer = styled('div')({
 
 const StyledPlaceholder = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.disabled,
+  position: 'absolute',
+  left: 16,
   fontSize: 16,
 }));
 
@@ -45,7 +47,8 @@ const StyledChip = styled(Chip)(({ theme }) => ({
   },
 }));
 
-const StyledLabel = styled(Typography)(({ theme }) => ({
+const StyledLabel = styled('label')(({ theme }) => ({
+  display: 'block',
   marginBottom: theme.spacing(1),
   color: theme.palette.text.primary,
   fontSize: '1rem',
@@ -74,16 +77,7 @@ function Placeholder(props) {
 }
 
 function SingleValue(props) {
-  return (
-    <Typography
-      {...props.innerProps}
-      style={{
-        color: 'inherit',
-      }}
-    >
-      {props.children}
-    </Typography>
-  );
+  return <Typography {...props.innerProps}>{props.children}</Typography>;
 }
 
 function ValueContainer(props) {
@@ -119,60 +113,9 @@ const components = {
   ValueContainer,
 };
 
-const getSelectStyles = (theme, error) => ({
-  control: (base, state) => ({
-    ...base,
-    backgroundColor: theme.palette.background.paper,
-    borderColor: error
-      ? theme.palette.error.main
-      : state.isFocused
-        ? theme.palette.primary.main
-        : theme.palette.divider,
-    minHeight: 56,
-    borderRadius: theme.spacing(0.5),
-    paddingLeft: 4,
-    boxShadow: 'none',
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-  }),
-
-  input: (base) => ({
-    ...base,
-    color: theme.palette.text.primary,
-  }),
-
-  singleValue: (base) => ({
-    ...base,
-    color: theme.palette.text.primary,
-  }),
-
-  placeholder: (base) => ({
-    ...base,
-    color: theme.palette.text.secondary,
-  }),
-
-  menu: (base) => ({
-    ...base,
-    zIndex: 9999,
-    backgroundColor: theme.palette.background.paper,
-  }),
-
-  option: (base, state) => ({
-    ...base,
-    backgroundColor: state.isFocused ? theme.palette.action.hover : theme.palette.background.paper,
-    color: theme.palette.text.primary,
-    cursor: 'pointer',
-  }),
-
-  indicatorSeparator: () => ({
-    display: 'none',
-  }),
-});
-
 const ReactSelectWrapper = ({
   label,
-  placeholder = 'Select...',
+  placeholder,
   onChange,
   onInputChange,
   value,
@@ -183,14 +126,70 @@ const ReactSelectWrapper = ({
 }) => {
   const theme = useTheme();
 
-  const selectStyles = getSelectStyles(theme, error);
+  const inputId = `react-select-${label?.replace(/\s+/g, '-').toLowerCase()}`;
+
+  const selectStyles = {
+    control: (base, state) => ({
+      ...base,
+      backgroundColor: theme.palette.background.paper,
+      borderColor: error
+        ? theme.palette.error.main
+        : state.isFocused
+          ? theme.palette.primary.main
+          : theme.palette.divider,
+      minHeight: 56,
+      borderRadius: 4,
+      boxShadow: 'none',
+      '&:hover': {
+        borderColor: theme.palette.primary.main,
+      },
+    }),
+
+    input: (base) => ({
+      ...base,
+      color: theme.palette.text.primary,
+      '& input': { font: 'inherit' },
+    }),
+
+    singleValue: (base) => ({
+      ...base,
+      color: theme.palette.text.primary,
+    }),
+
+    placeholder: (base) => ({
+      ...base,
+      color: theme.palette.text.disabled,
+    }),
+
+    menu: (base) => ({
+      ...base,
+      zIndex: 9999,
+      backgroundColor: theme.palette.background.paper,
+    }),
+
+    option: (base, state) => ({
+      ...base,
+      backgroundColor: state.isFocused
+        ? theme.palette.action.hover
+        : theme.palette.background.paper,
+      color: theme.palette.text.primary,
+      cursor: 'pointer',
+    }),
+
+    indicatorSeparator: () => ({
+      display: 'none',
+    }),
+  };
 
   return (
     <NoSsr>
       <div>
-        {label && <StyledLabel>{label}</StyledLabel>}
+        {label && <StyledLabel htmlFor={inputId}>{label}</StyledLabel>}
 
         <CreateSelect
+          inputId={inputId}
+          aria-label={label}
+          aria-invalid={!!error}
           styles={selectStyles}
           options={options}
           components={components}
@@ -200,6 +199,7 @@ const ReactSelectWrapper = ({
           placeholder={placeholder}
           isClearable
           isMulti={isMulti}
+          backspaceRemovesValue={!isMulti}
           noOptionsMessage={() => noOptionsMessage}
         />
       </div>
