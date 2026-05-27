@@ -84,7 +84,7 @@ jobs:
           MESHERY_REMOTE_PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TOKEN }}
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
-            make ui-test-e2e-ci-full
+            make ui-test-e2e-full
           else
             make ui-test-e2e-local
           fi
