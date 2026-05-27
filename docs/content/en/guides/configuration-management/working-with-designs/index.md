@@ -3,26 +3,21 @@ title: Configuring your Cloud Native Infrastructure and Applications
 description: Learn how to use Meshery Designs effectively
 categories: [configuration]
 suggested_reading: false
-aliases:
-- /tasks/patterns
 ---
 
-As an cloud native management platform, Meshery has built-in support infastructure and application configuration management. Use Meshery to configure your multi-cluster Kubernetes environments on-premises or across clouds.
+As a cloud native management platform, Meshery has built-in support for infrastructure and application configuration management. Use Meshery to configure your multi-cluster Kubernetes environments on-premises or across clouds.
 
 ## What is a Meshery Design?
 
-Meshery's core construct of configuration management is that of a design. A design is ultimately a document – and a document in which you capture and describe your desired state of improv the environment.
+Meshery's core construct of configuration management is that of a design. A design is a declarative document in which you capture and describe the desired state of your infrastructure and applications.
 
-[![Context Aware Design](./images/context-aware-design.svg
-)](./images/context-aware-design.svg)
+[![Context Aware Design](./images/context-aware-design.svg)](./images/context-aware-design.svg)
 
 ## Creating a Meshery Design
 
-You have your choice of how are you would like to create an infrastructure design. You can use the design configurator inside of Meshery UI, or you can hand code your design, using the mesh model spec, if you like.
+You are free to choose how you would like to create an infrastructure design. You can use the **Design Configurator** built into Meshery UI, or you can hand-code your design using the Meshery schema spec.
 
-You are free to choose how you would like to create an infrastructure design. You can use the design configurator inside of Meshery UI, or you can hand code your design, using the mesh model spec, if you like.
-
-Use Meshery UI or mesheryctl to create designs.
+See [Creating a Meshery Design](/guides/configuration-management/creating-a-meshery-design) for a step-by-step walkthrough. Use Meshery UI or `mesheryctl` to create and manage designs.
 
 ## Pattern Management Through Meshery UI
 

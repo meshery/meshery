@@ -36,7 +36,7 @@ function MesheryMetrics({
 }) {
   if (boardConfigs?.length)
     return (
-      <>
+      <div data-testid="meshery-metrics">
         <MetricsTitle align="center" variant="h6">
           Performance Metrics
         </MetricsTitle>
@@ -46,11 +46,11 @@ function MesheryMetrics({
           grafanaURL={grafanaURL || ''}
           grafanaAPIKey={grafanaAPIKey || ''}
         />
-      </>
+      </div>
     );
 
   return (
-    <MetricsContainer>
+    <MetricsContainer data-testid="meshery-metrics">
       <NoMetricsText align="center">No Metrics Configurations Found</NoMetricsText>
       <MetricsConfigButton
         aria-label="Add Grafana Charts"

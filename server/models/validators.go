@@ -5,7 +5,7 @@ import (
 	"slices"
 	"time"
 
-	SMP "github.com/layer5io/service-mesh-performance/spec"
+	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 )
 
 // SMPPerformanceTestConfigValidator performs validations on the given PerformanceTestConfig object
