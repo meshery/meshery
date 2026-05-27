@@ -1,0 +1,44 @@
+name: Meshery Build And Test 
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - "master"
+    paths-ignore:
+      - "docs/**"
+      - "mesheryctl/**"
+      - "*.md"
+      - ".github/**"
+      - "Makefile"
+  push:
+    branches:
+      - "master"
+    paths-ignore:
+      - "docs/**"
+      - "mesheryctl/**"
+      - "*.md"
+      - ".github/**"
+
+permissions:
+  contents: read
+
+jobs:
+  build-meshery:
+    uses: ./.github/workflows/build-meshery-image.yml
+  tests-e2e:
+    needs: [build-meshery]
+    uses: ./.github/workflows/test-e2e.yml
+    with:
+      meshery-image: ${{ needs.build-meshery.outputs.meshery-image }}
+    secrets:
+      REMOTE_PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TOKEN }}
+  publish-allure-report:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}    
+    needs: [build-meshery, tests-e2e]
+    uses: ./.github/workflows/publish-allure-report.yml
+    with:
+      project: "meshery"
+      allure-path: "allure-results"
+      allure-results-artifact: ${{ needs.tests-ui-e2e.outputs.allure-results-artifact }}
+    secrets:
+      GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
