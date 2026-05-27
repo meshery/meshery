@@ -24,6 +24,9 @@ vi.mock('@/assets/icons', () => ({
   Edit: ({ ...props }: any) => <svg data-testid="edit-icon" {...props} />,
   GetApp: ({ ...props }: any) => <svg data-testid="download-icon" {...props} />,
   Public: ({ ...props }: any) => <svg data-testid="public-icon" {...props} />,
+}));
+
+vi.mock('@sistent/sistent', () => ({
   InfoOutlined: ({ ...props }: any) => <svg data-testid="info-icon" {...props} />,
 }));
 
