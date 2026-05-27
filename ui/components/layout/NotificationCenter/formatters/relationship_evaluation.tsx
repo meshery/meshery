@@ -177,7 +177,6 @@ const RelationshipAction = ({ action, relationshipMapping }) => {
             sx={{
               flex: 1,
               display: 'flex',
-              justifyItems: 'space-between',
               justifyContent: 'space-between',
               width: '100%',
               alignItems: 'center',
