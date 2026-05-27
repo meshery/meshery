@@ -163,14 +163,14 @@ mesheryctl model generate [flags]
 &lt;p&gt;Generate a model from a CSV directory&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
-mesheryctl model generate --f [path-to-csv-directory]
+mesheryctl model generate -f [path-to-csv-directory]
 
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Generate a model from a URL based on a JSON template&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
-mesheryctl model generate --f [URL] -t [path-to-template.json]
+mesheryctl model generate -f [URL] -t [path-to-template.json]
 
 &lt;/div&gt;
 &lt;/pre&gt; 
