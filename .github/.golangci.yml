@@ -10,6 +10,7 @@ linters:
       checks:
         - all
         - "-ST1005"
+        - "-ST1003"
     forbidigo:
       forbid:
         - pattern: '^http\.Error$'
