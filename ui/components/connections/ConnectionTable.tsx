@@ -89,6 +89,10 @@ const ConnectionTable = ({
   const open = Boolean(anchorEl);
   const deploymentModeOpen = Boolean(deploymentModeAnchorEl);
   const modalRef = useRef<{ show: (options: unknown) => Promise<string | null> } | null>(null);
+  const lastNotifiedErrorsRef = useRef<{ environments: string; connections: string }>({
+    environments: '',
+    connections: '',
+  });
 
   useEffect(() => {
     if (typeof router.query.searchText === 'string') {
@@ -174,18 +178,40 @@ const ConnectionTable = ({
   );
 
   useEffect(() => {
+    // RTK Query's `error` objects can change identity across renders while
+    // remaining semantically the same (e.g. a failed request that stays in
+    // error state). Emitting a snackbar on every such render can create a
+    // feedback loop (snackbar state update -> re-render -> effect re-fire).
+    // De-duplicate notifications by their rendered message.
+    //
+    // Note: this is intentionally local state (a ref) so it doesn't add
+    // another state update into the render cycle.
+    const last = lastNotifiedErrorsRef.current;
+
     if (isEnvironmentsError) {
-      notify({
-        message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${getErrorMessage(environmentsError)}`,
-        event_type: EVENT_TYPES.ERROR,
-      });
+      const message = `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${getErrorMessage(environmentsError)}`;
+      if (last.environments !== message) {
+        notify({
+          message,
+          event_type: EVENT_TYPES.ERROR,
+        });
+        last.environments = message;
+      }
+    } else {
+      last.environments = '';
     }
 
     if (isConnectionError) {
-      notify({
-        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${getErrorMessage(connectionError)}`,
-        event_type: EVENT_TYPES.ERROR,
-      });
+      const message = `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${getErrorMessage(connectionError)}`;
+      if (last.connections !== message) {
+        notify({
+          message,
+          event_type: EVENT_TYPES.ERROR,
+        });
+        last.connections = message;
+      }
+    } else {
+      last.connections = '';
     }
   }, [connectionError, environmentsError, isConnectionError, isEnvironmentsError, notify]);
 

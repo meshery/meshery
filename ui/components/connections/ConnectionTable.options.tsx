@@ -149,7 +149,11 @@ export const useConnectionTableOptions = ({
           ) {
             updateUrlWithConnectionId(connection.id);
           }
-        } else if (updateUrlWithConnectionId && !expansionFlags.current.isInitialLoad) {
+        } else if (
+          updateUrlWithConnectionId &&
+          !expansionFlags.current.isInitialLoad &&
+          selectedConnectionId
+        ) {
           updateUrlWithConnectionId('');
         }
 

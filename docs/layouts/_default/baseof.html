@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ .Site.Language.Lang }}" class="no-js">
   <head>
-    {{ partialCached "head.html" (dict "Title" .Title "Description" .Params.abstract "Site" .Site) .RelPermalink }}
+    {{ partial "head.html" (dict "Title" .Title "Description" .Params.abstract "Kind" .Kind "Permalink" .Permalink "Site" .Site) }}
     {{ partialCached "header.html" . .RelPermalink }}
     <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -81,6 +81,9 @@
             <h1>{{ .Title }}</h1>
           {{ end }}
           {{ block "main" . }}{{ end }}
+          <div class="related-reading">
+            {{ partial "related-reading.html" . -}}
+          </div>
         </div>
         {{ if or .IsPage .IsSection }}
           {{ partial "pagination.html" . }}
