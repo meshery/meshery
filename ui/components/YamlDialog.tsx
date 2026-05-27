@@ -22,8 +22,12 @@ const YAMLDialog = ({
   setYaml,
   deleteHandler,
   updateHandler,
+  type = 'filter',
   isReadOnly = false,
 }) => {
+  const resourceLabel = type === 'pattern' ? 'pattern' : 'filter';
+  const resourceTitle = type === 'pattern' ? 'Pattern' : 'Filter';
+
   return (
     <Dialog
       aria-labelledby="filter-dialog-title"
@@ -35,7 +39,11 @@ const YAMLDialog = ({
       <StyledDialog disableTypography id="filter-dialog-title">
         <YamlDialogTitleText variant="h6">{name}</YamlDialogTitleText>
         <Tooltip title="Exit Fullscreen" arrow placement="bottom">
-          <IconButton onClick={toggleFullScreen} size="large">
+          <IconButton
+            aria-label={fullScreen ? 'Exit fullscreen YAML editor' : 'Enter fullscreen YAML editor'}
+            onClick={toggleFullScreen}
+            size="large"
+          >
             {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
           </IconButton>
         </Tooltip>
@@ -61,13 +69,23 @@ const YAMLDialog = ({
       <Divider />
       {!isReadOnly && (
         <DialogActions>
-          <Tooltip title="Update Pattern">
-            <IconButton aria-label="Update" color="primary" onClick={updateHandler} size="large">
+          <Tooltip title={`Update ${resourceTitle}`}>
+            <IconButton
+              aria-label={`Update ${resourceLabel} YAML`}
+              color="primary"
+              onClick={updateHandler}
+              size="large"
+            >
               <SaveIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Delete Filter">
-            <IconButton aria-label="Delete" color="primary" onClick={deleteHandler} size="large">
+          <Tooltip title={`Delete ${resourceTitle}`}>
+            <IconButton
+              aria-label={`Delete ${resourceLabel} YAML`}
+              color="primary"
+              onClick={deleteHandler}
+              size="large"
+            >
               <DeleteIcon />
             </IconButton>
           </Tooltip>

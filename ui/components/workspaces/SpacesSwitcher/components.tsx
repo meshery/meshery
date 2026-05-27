@@ -446,7 +446,10 @@ export const MultiContentSelectToolbar = ({
           paddingInline={'1rem'}
         >
           <Box display={'flex'} alignItems={'center'} gap={'0.5rem'}>
-            <IconButton onClick={() => setMultiSelectedContent([])}>
+            <IconButton
+              aria-label={`Clear selected ${type}`}
+              onClick={() => setMultiSelectedContent([])}
+            >
               <CloseIcon />
             </IconButton>
             <Typography>
@@ -456,6 +459,7 @@ export const MultiContentSelectToolbar = ({
           <Box style={{ display: 'flex', gap: '0.5rem' }}>
             {handleContentMove && (
               <StyledResponsiveButton
+                aria-label={`Move selected ${type}`}
                 variant="contained"
                 startIcon={<MoveFileIcon style={iconMedium} fill={theme.palette.common.white} />}
                 onClick={() => {
@@ -467,6 +471,7 @@ export const MultiContentSelectToolbar = ({
               </StyledResponsiveButton>
             )}
             <StyledResponsiveButton
+              aria-label={`Download selected ${type}`}
               variant="contained"
               startIcon={<ExportIcon style={iconMedium} fill={theme.palette.common.white} />}
               onClick={() => {
@@ -481,6 +486,7 @@ export const MultiContentSelectToolbar = ({
             </StyledResponsiveButton>{' '}
             {handleShare && (
               <StyledResponsiveButton
+                aria-label={`Share selected ${type}`}
                 variant="contained"
                 startIcon={<ShareIcon style={iconMedium} fill={theme.palette.common.white} />}
                 onClick={() => {
@@ -493,6 +499,7 @@ export const MultiContentSelectToolbar = ({
               </StyledResponsiveButton>
             )}
             <StyledResponsiveButton
+              aria-label={`Delete selected ${type}`}
               color="error"
               variant="contained"
               onClick={() => {

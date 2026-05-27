@@ -37,9 +37,10 @@ export default function ActionButton({ defaultActionClick, options }) {
         variant="outlined"
         style={{ boxShadow: 'none' }}
         ref={anchorRef}
-        aria-label="Button group with a nested menu"
+        aria-label="Design actions"
       >
         <Button
+          aria-label="Run default design action"
           sx={{
             padding: '6px 9px',
             borderRadius: '8px',
@@ -50,6 +51,9 @@ export default function ActionButton({ defaultActionClick, options }) {
           Action
         </Button>
         <Button
+          aria-label="Open design actions menu"
+          aria-haspopup="menu"
+          aria-expanded={open ? 'true' : undefined}
           sx={{
             padding: '6px 9px',
             borderRadius: '8px',

@@ -101,7 +101,7 @@ function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
       <DialogActions>
         <CustomTooltip title="Update Filter">
           <IconButton
-            aria-label="Update"
+            aria-label="Update filter"
             disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
             onClick={() =>
               onSubmit({
@@ -118,7 +118,7 @@ function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
         </CustomTooltip>
         <CustomTooltip title="Delete Filter">
           <IconButton
-            aria-label="Delete"
+            aria-label="Delete filter"
             disabled={!CAN(keys.DELETE_WASM_FILTER.action, keys.DELETE_WASM_FILTER.subject)}
             onClick={() =>
               onSubmit({

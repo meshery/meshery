@@ -179,7 +179,11 @@ const WorkspaceDataTable = ({
                       title={`Meshery Environments allow you to logically group related Connections and their associated Credentials. [Learn more](https://docs.meshery.io/concepts/logical/environments)`}
                     >
                       <Typography style={{ display: 'flex', marginLeft: '5px' }} variant="span">
-                        <IconButton disableRipple={true} disableFocusRipple={true}>
+                        <IconButton
+                          aria-label="Learn about Meshery environments"
+                          disableRipple={true}
+                          disableFocusRipple={true}
+                        >
                           <InfoIcon
                             style={{
                               cursor: 'pointer',

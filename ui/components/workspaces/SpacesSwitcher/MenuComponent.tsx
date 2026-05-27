@@ -48,6 +48,7 @@ export const MenuComponent = ({ options = [] }) => {
         {options.map((option) => (
           <CustomTooltip key={option.title} title={option.title}>
             <IconButton
+              aria-label={option.title}
               sx={{
                 padding: '0.15rem',
               }}

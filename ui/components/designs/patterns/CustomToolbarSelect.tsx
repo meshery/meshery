@@ -32,6 +32,7 @@ const CustomToolbarSelect = ({
       <CustomTooltip title={'Delete'}>
         <div>
           <IconButton
+            aria-label="Delete selected designs"
             onClick={handleClickDelete}
             disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
           >

@@ -57,7 +57,7 @@ function MesheryPatternsToolbar({
                   <TooltipButton
                     title="Create Design"
                     data-testid="meshery-patterns-create-design-btn"
-                    aria-label="Add Pattern"
+                    aria-label="Create design"
                     variant="contained"
                     color="primary"
                     size="large"
@@ -72,7 +72,7 @@ function MesheryPatternsToolbar({
                   <TooltipButton
                     title="Import Design"
                     data-testid="meshery-patterns-import-design-btn"
-                    aria-label="Add Pattern"
+                    aria-label="Import design"
                     variant="contained"
                     color="primary"
                     size="large"

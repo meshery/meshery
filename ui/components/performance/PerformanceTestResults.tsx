@@ -29,7 +29,7 @@ const PerformanceTestResults: React.FC<PerformanceTestResultsProps> = ({
   return (
     <div>
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <IconButton onClick={onBack}>
+        <IconButton aria-label="Back to performance test" onClick={onBack}>
           <ArrowBack />
         </IconButton>
         <Typography variant="h6" gutterBottom sx={{ textAlign: 'center' }} id="timerAnchor">
@@ -37,7 +37,7 @@ const PerformanceTestResults: React.FC<PerformanceTestResultsProps> = ({
         </Typography>
         <IconButton
           key="download"
-          aria-label="download"
+          aria-label="Download performance test results"
           color="inherit"
           href={`/api/perf/profile/result/${encodeURIComponent(testResult.meshery_id)}`}
         >

@@ -113,6 +113,7 @@ function FiltersCard_({
           setYaml={setYaml}
           deleteHandler={deleteHandler}
           updateHandler={updateHandler}
+          type={'filter'}
         />
       )}
       <FlipCard
@@ -158,6 +159,7 @@ function FiltersCard_({
             <CatalogCardButtons>
               {canPublishFilter && visibility !== VISIBILITY.PUBLISHED ? (
                 <TooltipButton
+                  aria-label="Publish filter"
                   variant="outlined"
                   title="Publish"
                   style={{
@@ -172,6 +174,7 @@ function FiltersCard_({
                 </TooltipButton>
               ) : (
                 <TooltipButton
+                  aria-label="Unpublish filter"
                   variant="outlined"
                   title="Unpublish"
                   style={{
@@ -188,6 +191,7 @@ function FiltersCard_({
                 </TooltipButton>
               )}
               <TooltipButton
+                aria-label="Download filter"
                 title="Download"
                 variant="contained"
                 color="primary"
@@ -206,6 +210,7 @@ function FiltersCard_({
 
               {visibility === VISIBILITY.PUBLISHED ? (
                 <TooltipButton
+                  aria-label="Clone filter"
                   title="Clone"
                   variant="contained"
                   color="primary"
@@ -221,6 +226,7 @@ function FiltersCard_({
                 </TooltipButton>
               ) : null}
               <TooltipButton
+                aria-label="View filter information"
                 title="Filter Information"
                 variant="contained"
                 color="primary"
@@ -254,6 +260,9 @@ function FiltersCard_({
                 </Link>
                 <Tooltip title="Enter Fullscreen" arrow interactive placement="top">
                   <IconButton
+                    aria-label={
+                      fullScreen ? 'Exit fullscreen filter view' : 'Enter fullscreen filter view'
+                    }
                     onClick={(ev) =>
                       genericClickHandler(ev, () => {
                         {
@@ -313,6 +322,7 @@ function FiltersCard_({
                 {/* Save button */}
                 <Tooltip title="Save" arrow interactive placement="bottom">
                   <IconButton
+                    aria-label="Save filter changes"
                     disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
                     onClick={(ev) => genericClickHandler(ev, updateHandler)}
                   >
@@ -323,6 +333,7 @@ function FiltersCard_({
                 {/* Delete Button */}
                 <Tooltip title="Delete" arrow interactive placement="bottom">
                   <IconButton
+                    aria-label="Delete filter"
                     disabled={!CAN(keys.DELETE_WASM_FILTER.action, keys.DELETE_WASM_FILTER.subject)}
                     onClick={(ev) => genericClickHandler(ev, deleteHandler)}
                   >
