@@ -596,18 +596,6 @@ const ConnectionTable = ({
   });
 
   const [tableCols, setTableCols] = useState(columns);
-  const [prevColumns, setPrevColumns] = useState(columns);
-
-  // Sync `tableCols` to `columns` using the documented React "store
-  // information from previous renders" pattern (https://react.dev/reference/react/useState#storing-information-from-previous-renders).
-  // The previous shape — `useEffect(() => updateCols(columns), [columns])` —
-  // queued a setState commit on every memo invalidation, contributing to the
-  // render churn that surfaced as React error #185. Comparing identities in
-  // render bails out without scheduling a second commit when nothing changed.
-  if (columns !== prevColumns) {
-    setTableCols(columns);
-    setPrevColumns(columns);
-  }
 
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean | undefined>>(
     () => getResponsiveColumnVisibility(columnNames, colViews, width),
