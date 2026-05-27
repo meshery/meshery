@@ -142,8 +142,9 @@ export const useConnectionColumns = ({
                     placement="top"
                     title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
                   >
-                    <div style={{ display: 'inline-block' }}>
+                    <Box display="inline-block">
                       <IconButton
+                        aria-label="View Kubernetes connection troubleshooting help"
                         color="default"
                         onClick={(event) => {
                           event.stopPropagation();
@@ -152,7 +153,7 @@ export const useConnectionColumns = ({
                       >
                         <InfoOutlinedIcon height={20} width={20} />
                       </IconButton>
-                    </div>
+                    </Box>
                   </CustomTextTooltip>
                 )}
               </>
@@ -172,6 +173,7 @@ export const useConnectionColumns = ({
                 columnData={column}
                 icon={
                   <IconButton
+                    aria-label="View environment information"
                     disableRipple={true}
                     disableFocusRipple={true}
                     onClick={(event) => {
@@ -490,7 +492,7 @@ export const useConnectionColumns = ({
                 {getColumnValue(tableMeta.rowData, 'kind', nextColumns) ===
                 CONNECTION_KINDS.KUBERNETES ? (
                   <IconButton
-                    aria-label="more"
+                    aria-label="Open connection actions menu"
                     id="long-button"
                     aria-haspopup="true"
                     onClick={(event) => handleActionMenuOpen(event, tableMeta)}

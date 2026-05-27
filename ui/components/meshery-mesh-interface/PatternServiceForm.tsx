@@ -110,13 +110,14 @@ function PatternServiceForm({
                 {schemaSet?.workload?.description && (
                   <label htmlFor="help-button">
                     <Tooltip title={schemaSet?.workload?.description} interactive>
-                      <IconButton component="span">
+                      <IconButton aria-label="Show workload description" component="span">
                         <HelpOutline width="22px" style={{ color: '#fff' }} height="22px" />
                       </IconButton>
                     </Tooltip>
                   </label>
                 )}
                 <IconButton
+                  aria-label="Delete workload settings"
                   component="span"
                   onClick={() =>
                     // @ts-ignore

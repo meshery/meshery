@@ -294,6 +294,7 @@ function PerformanceCard({
             >
               <CustomTooltip title="Edit">
                 <IconButton
+                  aria-label="Edit performance profile"
                   onClick={(ev) => genericClickHandler(ev, handleEdit)}
                   data-testid={dataTestIDs('edit')}
                   disabled={
@@ -305,6 +306,7 @@ function PerformanceCard({
               </CustomTooltip>
               <CustomTooltip title="Delete">
                 <IconButton
+                  aria-label="Delete performance profile"
                   onClick={(ev) => genericClickHandler(ev, handleDelete)}
                   data-testid={dataTestIDs('delete')}
                   disabled={

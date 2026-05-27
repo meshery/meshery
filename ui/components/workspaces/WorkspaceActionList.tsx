@@ -81,7 +81,7 @@ const WorkspaceActionList = ({
       <IconWrapper>
         {isMobile ? (
           <>
-            <IconButton aria-label="more" onClick={handleClick}>
+            <IconButton aria-label="Open workspace actions menu" onClick={handleClick}>
               <MoreVertIcon />
             </IconButton>
             <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
@@ -104,7 +104,7 @@ const WorkspaceActionList = ({
           <>
             {actionItems.map(({ key, label, icon, onClick, disabled }) => (
               <CustomTooltip title={label} key={key}>
-                <IconButton aria-label={key} onClick={(e) => onClick(e)} disabled={disabled}>
+                <IconButton aria-label={label} onClick={(e) => onClick(e)} disabled={disabled}>
                   {icon}
                 </IconButton>
               </CustomTooltip>

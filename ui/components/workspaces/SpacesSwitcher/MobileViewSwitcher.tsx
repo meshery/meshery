@@ -67,7 +67,7 @@ function SwitcherMenu({ organization, router }) {
     <>
       <div>
         <Button
-          aria-label="contexts"
+          aria-label="Open Kubernetes contexts menu"
           className="switcher-icon-button"
           onClick={(e) => {
             e.preventDefault();

@@ -70,6 +70,7 @@ const DefaultArrayItem = (props) => {
           <Grid2>
             {(props.hasMoveUp || props.hasMoveDown) && (
               <IconButton
+                aria-label={`Move item ${props.index + 1} up`}
                 icon="arrow-up"
                 className="array-item-move-up"
                 tabIndex={-1}
@@ -82,6 +83,7 @@ const DefaultArrayItem = (props) => {
 
             {(props.hasMoveUp || props.hasMoveDown) && (
               <IconButton
+                aria-label={`Move item ${props.index + 1} down`}
                 icon="arrow-down"
                 tabIndex={-1}
                 style={btnStyle}
@@ -193,6 +195,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                 )}
               >
                 <IconButton
+                  aria-label={`Validation errors for item ${props.index + 1}`}
                   component="span"
                   size="small"
                   disableTouchRipple="true"
@@ -214,6 +217,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                 <Grid2 item={true}>
                   <Box mt={2}>
                     <IconButton
+                      aria-label="Add array item"
                       className="array-item-add"
                       onClick={
                         typeof props.onAddClick === 'function' ? props.onAddClick : undefined

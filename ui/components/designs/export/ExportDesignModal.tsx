@@ -95,7 +95,11 @@ const ExportDesignOptionRow: FC<ExportDesignOptionRowProps> = ({
         <OptionIconSlot>{Icon}</OptionIconSlot>
         <ListItemText primary={title} />
         <InfoTooltip placement="top" title={description} content={description} />
-        <OptionDownloadButton disabled={disabled} onClick={onClick}>
+        <OptionDownloadButton
+          aria-label={`Download ${title}`}
+          disabled={disabled}
+          onClick={onClick}
+        >
           <DownloadIcon fill={theme.palette.icon.default} />
         </OptionDownloadButton>
       </OptionRow>
