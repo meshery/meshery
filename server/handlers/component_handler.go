@@ -1076,17 +1076,19 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 
-		h.sendEventForImport(userID, provider, 0, "", true, token)
 		modelDirPaths, err := models.GetModelDirectoryPaths(tempDir)
 		if err != nil {
-			h.log.Error(models.ErrSeedingComponents(err))
+			h.handleError(rw, err, "Error reading generated model directories")
+			h.sendErrorEvent(userID, provider, "Error reading generated model directories", err, token)
+			return
 		}
 		if selectedModel != "" && len(modelDirPaths) == 0 {
 			err := fmt.Errorf("model %q not found in CSV input", selectedModel)
-			h.handleError(rw, err, err.Error())
+			writeMeshkitError(rw, err, http.StatusBadRequest)
 			h.sendErrorEvent(userID, provider, err.Error(), err, token)
 			return
 		}
+		h.sendEventForImport(userID, provider, 0, "", true, token)
 		if importRequest.Register {
 			for _, dirPath := range modelDirPaths {
 				dir := registration.NewDir(dirPath)
