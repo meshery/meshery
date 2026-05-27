@@ -24,8 +24,6 @@ export type { IconProps } from './types';
 // ---------------------------------------------------------------------------
 
 export { ArrowDropDownIcon } from './ArrowDropDownIcon';
-export { ChevronLeftIcon } from './ChevronLeftIcon';
-export { ChevronRightIcon } from './ChevronRightIcon';
 export { EditIcon } from './EditIcon';
 export { FullscreenExitIcon } from './FullscreenExitIcon';
 export { FullscreenIcon } from './FullscreenIcon';
@@ -102,6 +100,8 @@ export {
   WarningIcon as Warning,
   DownloadIcon as SaveAlt,
   CancelIcon as NotInterestedRounded,
+  ChevronRightIcon,
+  ChevronLeftIcon
 } from '@sistent/sistent';
 
 export { default as AddCircleOutlined } from './AddIconCircleBorder';
