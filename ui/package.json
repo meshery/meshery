@@ -23,7 +23,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "relay": "relay-compiler",
+    "relay": "relay-compiler && node scripts/relay-strip-ts-nocheck.js",
     "prepare": "cd .. && { [ -e .git ] && husky ui/.husky || true; }",
     "postinstall": "patch-package",
     "clean": "rm -rf .next,out",

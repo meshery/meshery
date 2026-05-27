@@ -6,7 +6,6 @@
 
 /* tslint:disable */
 /* eslint-disable */
-// @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
 export type Severity = "alert" | "critical" | "debug" | "emergency" | "error" | "informational" | "warning" | "%future added value";
