@@ -5,7 +5,9 @@ import {
   Switch,
   CircularProgress,
   Typography,
-  InfoOutlinedIcon,
+  // Sistent re-exports InfoOutlinedIcon as `InfoOutlined`; alias on
+  // import so call sites stay unchanged.
+  InfoOutlined as InfoOutlinedIcon,
 } from '@sistent/sistent';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '@/utils/custom-search';
