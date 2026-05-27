@@ -1,3 +1,4 @@
+import { arrayBufferToBase64 } from '@/utils/binary';
 /**
  * Schema + helpers for the registry's Import Model modal.
  *
@@ -141,17 +142,21 @@ export const findSelectedModelFile = (): File | undefined => {
   return undefined;
 };
 
+// ... existing code ...
+
 // Read a `File` synchronously-from-the-DOM-but-asynchronously-into-bytes,
-// matching the wire shape `getUnit8ArrayDecodedFile` produces from a
-// data URL. Used as the synchronous fallback when RJSF's form data
-// hasn't received the data URL yet (the FileReader chain inside
-// CustomFileWidget can lose the race against a quick Next-click).
-export const readFileAsBytes = (file: File): Promise<number[]> =>
+// matching the wire shape.
+export const readFileAsBytes = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       const buffer = reader.result as ArrayBuffer;
-      resolve(Array.from(new Uint8Array(buffer)));
+      try {
+        const base64 = await arrayBufferToBase64(buffer);
+        resolve(base64);
+      } catch (e) {
+        reject(e);
+      }
     };
     reader.onerror = () => reject(reader.error);
     reader.readAsArrayBuffer(file);

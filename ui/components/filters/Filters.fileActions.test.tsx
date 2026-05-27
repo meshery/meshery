@@ -137,7 +137,7 @@ describe('createHandleSubmit', () => {
     const body = JSON.parse(uploadFilterFile.mock.calls[0][0].uploadBody);
     expect(body).toEqual({
       save: true,
-      filterData: { filterFile: 'binary', name: 'foo' },
+      filterData: { filterFile: 'binary', name: 'foo', encoding: 'base64' },
       config: { x: 1 },
     });
   });
@@ -269,7 +269,7 @@ describe('createHandleImportFilter', () => {
     expect(body).toEqual({
       config: 'cfg',
       save: true,
-      filter_data: { name: 'n', filter_file: 'decoded:rawdata' },
+      filter_data: { name: 'n', filter_file: 'rawdata', encoding: 'base64' },
     });
     expect(notify).toHaveBeenCalledWith({
       message: '"n" filter uploaded',
