@@ -89,6 +89,10 @@ const ConnectionTable = ({
   const open = Boolean(anchorEl);
   const deploymentModeOpen = Boolean(deploymentModeAnchorEl);
   const modalRef = useRef<{ show: (options: unknown) => Promise<string | null> } | null>(null);
+  const lastNotifiedErrorsRef = useRef<{ environments: string; connections: string }>({
+    environments: '',
+    connections: '',
+  });
 
   useEffect(() => {
     if (typeof router.query.searchText === 'string') {
@@ -174,18 +178,40 @@ const ConnectionTable = ({
   );
 
   useEffect(() => {
+    // RTK Query's `error` objects can change identity across renders while
+    // remaining semantically the same (e.g. a failed request that stays in
+    // error state). Emitting a snackbar on every such render can create a
+    // feedback loop (snackbar state update -> re-render -> effect re-fire).
+    // De-duplicate notifications by their rendered message.
+    //
+    // Note: this is intentionally local state (a ref) so it doesn't add
+    // another state update into the render cycle.
+    const last = lastNotifiedErrorsRef.current;
+
     if (isEnvironmentsError) {
-      notify({
-        message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${getErrorMessage(environmentsError)}`,
-        event_type: EVENT_TYPES.ERROR,
-      });
+      const message = `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${getErrorMessage(environmentsError)}`;
+      if (last.environments !== message) {
+        notify({
+          message,
+          event_type: EVENT_TYPES.ERROR,
+        });
+        last.environments = message;
+      }
+    } else {
+      last.environments = '';
     }
 
     if (isConnectionError) {
-      notify({
-        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${getErrorMessage(connectionError)}`,
-        event_type: EVENT_TYPES.ERROR,
-      });
+      const message = `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${getErrorMessage(connectionError)}`;
+      if (last.connections !== message) {
+        notify({
+          message,
+          event_type: EVENT_TYPES.ERROR,
+        });
+        last.connections = message;
+      }
+    } else {
+      last.connections = '';
     }
   }, [connectionError, environmentsError, isConnectionError, isEnvironmentsError, notify]);
 
@@ -596,18 +622,6 @@ const ConnectionTable = ({
   });
 
   const [tableCols, setTableCols] = useState(columns);
-  const [prevColumns, setPrevColumns] = useState(columns);
-
-  // Sync `tableCols` to `columns` using the documented React "store
-  // information from previous renders" pattern (https://react.dev/reference/react/useState#storing-information-from-previous-renders).
-  // The previous shape — `useEffect(() => updateCols(columns), [columns])` —
-  // queued a setState commit on every memo invalidation, contributing to the
-  // render churn that surfaced as React error #185. Comparing identities in
-  // render bails out without scheduling a second commit when nothing changed.
-  if (columns !== prevColumns) {
-    setTableCols(columns);
-    setPrevColumns(columns);
-  }
 
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean | undefined>>(
     () => getResponsiveColumnVisibility(columnNames, colViews, width),
