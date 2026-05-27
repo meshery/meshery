@@ -224,8 +224,10 @@ func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete
 	return string(body), nil
 }
 
-func waitForSSEEvent(ctx context.Context, event <-chan utils.Event, query string, successLogFormat, errorLogFormat string) <-chan string {
+func waitForSSEEvent(ctx context.Context, event <-chan utils.Event, query string) <-chan string {
 	eventChan := make(chan string, 1)
+	successLogFormat := "%s\n%s\n"
+	errorLogFormat := "%s\n"
 
 	go func() {
 		for {
@@ -278,7 +280,7 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
 	defer timer.Stop()
-	eventChan := waitForSSEEvent(ctx, event, query, "%s\n%s\n", "%s\n")
+	eventChan := waitForSSEEvent(ctx, event, query)
 
 	select {
 	case <-timer.C:
@@ -318,7 +320,7 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
 	defer timer.Stop()
-	eventChan := waitForSSEEvent(ctx, event, query, "%s\n%s", "%s")
+	eventChan := waitForSSEEvent(ctx, event, query)
 
 	select {
 	case <-timer.C:
