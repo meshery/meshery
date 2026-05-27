@@ -57,7 +57,7 @@ func TestLoadCapabilities_RetriesOnConnectionErrors(t *testing.T) {
 			if err != nil {
 				t.Fatalf("hijack failed: %v", err)
 			}
-			conn.Close()
+			_ = conn.Close()
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
@@ -107,7 +107,7 @@ func TestLoadCapabilities_ExhaustsRetries(t *testing.T) {
 		if err != nil {
 			t.Fatalf("hijack failed: %v", err)
 		}
-		conn.Close()
+		_ = conn.Close()
 	}))
 	server.Start()
 	defer server.Close()
