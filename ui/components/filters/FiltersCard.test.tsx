@@ -65,7 +65,7 @@ vi.mock('@sistent/sistent', () => {
       },
     }),
     VisibilityChipMenu: ({ value }: any) => <div data-testid="visibility-chip">{value}</div>,
-    InfoOutlined: () => <svg data-testid="info-outlined-icon" />,
+    InfoOutlinedIcon: () => <svg data-testid="info-outlined-icon" />,
     styled,
   };
 });

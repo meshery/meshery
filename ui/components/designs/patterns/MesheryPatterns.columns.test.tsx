@@ -6,7 +6,7 @@ const canMock = vi.fn(() => true);
 
 vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: any) => <div>{children}</div>,
-  InfoOutlined: () => <svg data-testid="info-outlined" />,
+  InfoOutlinedIcon: () => <svg data-testid="info-outlined" />,
 }));
 
 vi.mock('react-moment', () => ({

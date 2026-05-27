@@ -27,8 +27,8 @@ vi.mock('@/utils/hooks/useNotification', () => ({
 }));
 
 vi.mock('@sistent/sistent', () => ({
-  ChevronLeft: () => <svg data-testid="chevron-left" />,
-  ChevronRight: () => <svg data-testid="chevron-right" />,
+  ChevronLeftIcon: () => <svg data-testid="chevron-left" />,
+  ChevronRightIcon: () => <svg data-testid="chevron-right" />,
   Grid2: ({ children }: any) => <div>{children}</div>,
   L5DeleteIcon: ({ onClick, disabled }: any) => (
     <button data-testid="bulk-delete-btn" onClick={onClick} disabled={disabled}>

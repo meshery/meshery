@@ -53,10 +53,10 @@ export { default as ExpandMoreIcon } from './ExpandMoreIcon';
 // ---------------------------------------------------------------------------
 
 export {
-  AccessTime,
+  AccessTimeIcon,
   AddCircleIcon as AddCircle,
   ArrowBackIcon as ArrowBack,
-  BarchartIcon as BarChart,
+  BarChartIcon as BarChart,
   BuildRoundedIcon as BuildRounded,
   CachedIcon as Cached,
   CheckCircleIcon as CheckCircle,
@@ -73,7 +73,7 @@ export {
   FileUploadIcon as FileUpload,
   FilterIcon as Filter,
   GetAppIcon as GetApp,
-  GroupAdd,
+  GroupAddIcon,
   HandymanIcon as Handyman,
   HelpOutlinedIcon as HelpOutlined,
   InfoIcon as Info,
