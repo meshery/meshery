@@ -339,7 +339,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
               Choose the Category and Subcategory that best describe your model.
             </Typography>
             <Typography variant="body2" gutterBottom>
-              This helps improve discoverability in Kanvas. If no suitable option fits, select{' '}
+              This helps improve discoverability. If no suitable option fits, select{' '}
               <em>Uncategorized</em>.
             </Typography>
             <Typography variant="body2" gutterBottom>

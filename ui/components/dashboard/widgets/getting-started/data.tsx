@@ -71,11 +71,11 @@ export const stepsData = [
       {
         id: 3,
         title: 'Design snapshots in your PRs',
-        image: `/static/img/getting-started/kanvas-snapshots.png`,
+        image: `/static/img/getting-started/snapshots.png`,
         content: (
           <p>
-            See your deployment before you merge. Connect Kanvas to your GitHub repo and see changes
-            pull request-to-pull request.
+            See your deployment before you merge. Connect the extension to your GitHub repo and see
+            changes pull request-to-pull request.
           </p>
         ),
         previousButton: false,

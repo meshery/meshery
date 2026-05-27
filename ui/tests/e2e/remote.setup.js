@@ -6,7 +6,6 @@ import { ENV } from './env';
 const PROVIDERS = {
   LOCAL: 'Local',
   MESHERY: 'Meshery',
-  LAYER5: 'Layer5',
   // Extension Point: Add other providers as needed
 };
 

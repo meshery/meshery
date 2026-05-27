@@ -6,6 +6,10 @@ linters:
   enable:
     - forbidigo
   settings:
+    staticcheck:
+      checks:
+        - all
+        - "-ST1005"
     forbidigo:
       forbid:
         - pattern: '^http\.Error$'
