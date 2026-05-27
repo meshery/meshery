@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mesheryctl-design on Documentation</title><link>/reference/mesheryctl/design/</link><description>Recent content in mesheryctl-design on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/reference/mesheryctl/design/index.xml" rel="self" type="application/rss+xml"/><item><title>mesheryctl-design-apply</title><link>/reference/mesheryctl/design/apply/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/apply/</guid><description>&lt;h1 id="mesheryctl-design-apply"&gt;
+	mesheryctl design apply
+&lt;/h1&gt;
+&lt;p&gt;Apply design file&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Apply design will trigger deploy of the design file&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design apply [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;apply a design file&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design apply -f [file | URL]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;deploy a saved design&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design apply [design-name]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -f, --file string Path to design file
+ -h, --help help for apply
+ --skip-save Skip saving a design
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -t, --token string Path to token file default from current context
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="screenshots"&gt;
+	Screenshots
+&lt;/h2&gt;
+&lt;p&gt;Usage of mesheryctl design apply
+&lt;img class="content-image" src="../../../reference/images/patternApply.png" alt="pattern-apply-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-design-delete</title><link>/reference/mesheryctl/design/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/delete/</guid><description>&lt;h1 id="mesheryctl-design-delete"&gt;
+	mesheryctl design delete
+&lt;/h1&gt;
+&lt;p&gt;Delete design file&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;delete design file will trigger deletion of the design file&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design delete [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;delete a design file&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design delete [file | URL]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -f, --file string Path to design file
+ -h, --help help for delete
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -t, --token string Path to token file default from current context
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-design-deploy</title><link>/reference/mesheryctl/design/deploy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/deploy/</guid><description>&lt;h1 id="mesheryctl-design-deploy"&gt;
+	mesheryctl design deploy
+&lt;/h1&gt;
+&lt;p&gt;Deploy design&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Command will trigger deploy of design&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design deploy [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Deploy design by providing file path&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design deploy -f [filepath] -s [source type]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -f, --file string Path to design file
+ -h, --help help for deploy
+ --skip-save Skip saving a design
+ -s, --source-type string Type of source file (ex. manifest / compose / helm)
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -t, --token string Path to token file default from current context
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="screenshots"&gt;
+	Screenshots
+&lt;/h2&gt;
+&lt;p&gt;Usage of mesheryctl design deploy
+&lt;img class="content-image" src="../../../reference/images/pattern-onboard.png" alt="pattern-onboard-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-design-export</title><link>/reference/mesheryctl/design/export/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/export/</guid><description>&lt;h1 id="mesheryctl-design-export"&gt;
+	mesheryctl design export
+&lt;/h1&gt;
+&lt;p&gt;Export a design from Meshery&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;The &amp;rsquo;export&amp;rsquo; command allows you to export a specific design from your Meshery server.
+You can specify the design by its name or ID and optionally define the type of design.
+The command also supports specifying an output directory where the exported design will be saved.
+By default, the exported design will be saved in the current directory. The different types of design
+type allowed are oci, original, and current. The default design type is current.&lt;/p&gt;</description></item><item><title>mesheryctl-design-import</title><link>/reference/mesheryctl/design/import/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/import/</guid><description>&lt;h1 id="mesheryctl-design-import"&gt;
+	mesheryctl design import
+&lt;/h1&gt;
+&lt;p&gt;Import a Meshery design&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;	Import Helm Charts, Kubernetes Manifest, Docker Compose or Meshery designs by passing
+	remote URL or local file system path to the file. Providing source type is optional.
+
+	YAML and TGZ (with helm only) format of file is accepted, if you are importing Meshery Design OCI file format is also supported
+
+	If you are providing remote URL, it should be a direct URL to a downloadable file.
+	For example, if the file is stored on GitHub, the URL should be 'https://raw.githubusercontent.com/path-to-file'.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design import [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Import design manifest&lt;/p&gt;</description></item><item><title>mesheryctl-design-list</title><link>/reference/mesheryctl/design/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/list/</guid><description>&lt;h1 id="mesheryctl-design-list"&gt;
+	mesheryctl design list
+&lt;/h1&gt;
+&lt;p&gt;List designs&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Display list of all available designs.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design list [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Display a list of all available designs&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design list
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Display a list of all available designs with verbose output&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design list --verbose
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Display a list of all available designs with specified page number (10 designs per page by default)&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design list --page [pange-number]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Display a list of all available designs with custom page size (10 designs per page by default)&lt;/p&gt;</description></item><item><title>mesheryctl-design-undeploy</title><link>/reference/mesheryctl/design/undeploy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/undeploy/</guid><description>&lt;h1 id="mesheryctl-design-undeploy"&gt;
+	mesheryctl design undeploy
+&lt;/h1&gt;
+&lt;p&gt;Undeploy design&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Undeploy design will trigger undeploy of design&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design undeploy [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Undeploy design by providing file path&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design undeploy -f [filepath]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -f, --file string Path to design file
+ -h, --help help for undeploy
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -t, --token string Path to token file default from current context
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-design-view</title><link>/reference/mesheryctl/design/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/view/</guid><description>&lt;h1 id="mesheryctl-design-view"&gt;
+	mesheryctl design view
+&lt;/h1&gt;
+&lt;p&gt;Display a design content&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Display the content of a specific design based on name or id&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design view design name [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;view a design&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design view [design-name | ID]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -a, --all (optional) view all designs available
+ -h, --help help for view
+ -o, --output-format string (optional) format to display in [json|yaml] (default "yaml")
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -t, --token string Path to token file default from current context
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="screenshots"&gt;
+	Screenshots
+&lt;/h2&gt;
+&lt;p&gt;Usage of mesheryctl design view
+&lt;img class="content-image" src="../../../reference/images/patternView.png" alt="pattern-view-usage" /&gt;&lt;/p&gt;</description></item></channel></rss>
