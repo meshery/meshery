@@ -38,7 +38,15 @@ const model_import: {
 };
 
 test.describe.serial('Model Workflow Tests', () => {
-  test.skip(!!process.env.CI, 'Model workflow E2E is unstable in local-provider CI.');
+  // "Create a Model" downloads a model from GitHub during the test body
+  // and extends its own timeout to 600s via test.setTimeout. The shared
+  // beforeEach calls navigateToDashboard() + navigateToSettings() + waits
+  // on settings-tab-registry, each with their own 120s inner timeouts.
+  // Default BASE_TIMEOUT=60s is too short for the hook on slow CI.
+  // Configure 240s as the describe default so the hook has enough room on
+  // every test in this group; Create a Model still extends further in its
+  // body for the GitHub fetch.
+  test.describe.configure({ timeout: 240_000 });
 
   test.beforeEach(async ({ page }) => {
     const dashboardPage = new DashboardPage(page);
