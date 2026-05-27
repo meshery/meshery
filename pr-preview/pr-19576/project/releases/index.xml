@@ -1,4 +1,87 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 22 May 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.26</title><link>/project/releases/v1.0.26/</link><pubDate>Fri, 22 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.26/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Wed, 27 May 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.31</title><link>/project/releases/v1.0.31/</link><pubDate>Wed, 27 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.31/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[UI] Wait for E2E route readiness @arjunmehta-git (#19690)&lt;/li&gt;
+&lt;li&gt;chore: consolidate CI workflows and enhance end-to-end testing setup @ianrwhitney (#19549)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[UI] Wait for E2E route readiness @arjunmehta-git (#19690)&lt;/li&gt;
+&lt;li&gt;chore: update end-to-end test command in CI workflow @ianrwhitney (#19717)&lt;/li&gt;
+&lt;li&gt;chore: consolidate CI workflows and enhance end-to-end testing setup @ianrwhitney (#19549)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[docs] Fix tab rendering in meshery-metrics.md @Sbragul26 (#19590)&lt;/li&gt;
+&lt;li&gt;[Docs] Remove Meshery UI references outside extensions docs @AnjaliMishra1st (#19710)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@AnjaliMishra1st, @CodexRaunak, @Sbragul26, @arjunmehta-git, @carlosriosilva, @fitzergerald, @ianrwhitney, @leecalcote, @miacycle, @winkletinkle and @yi-nuo426&lt;/p&gt;</description></item><item><title>v1.0.30</title><link>/project/releases/v1.0.30/</link><pubDate>Tue, 26 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.30/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Update provider capabilities for new version @marblom007 (#19685)&lt;/li&gt;
+&lt;li&gt;Roadmap: v1.2 and v1.3 clarifications @hamza-mohd (#19679)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[mesheryctl] Remove unused manifest URL fixtures @miacycle (#19687)&lt;/li&gt;
+&lt;li&gt;[Chore] Server: Update perf profile package location @miacycle (#19686)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[ui][docs] decouple meshmap extension test from name and refresh extension imagery @miacycle (#19689)&lt;/li&gt;
+&lt;li&gt;[UI] Harden E2E dashboard navigation @arjunmehta-git (#19688)&lt;/li&gt;
+&lt;li&gt;[Chore] Server: Update perf profile package location @miacycle (#19686)&lt;/li&gt;
+&lt;li&gt;[Docs] More cleanup @yi-nuo426 (#19684)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;chore: remove direct references from workflows @miacycle (#19693)&lt;/li&gt;
+&lt;li&gt;[ci skip] Update golangci-lint configuration to enable staticcheck checks @hortison (#19692)&lt;/li&gt;
+&lt;li&gt;[UI] Harden E2E dashboard navigation @arjunmehta-git (#19688)&lt;/li&gt;
+&lt;li&gt;[Chore] Server: Update perf profile package location @miacycle (#19686)&lt;/li&gt;
+&lt;li&gt;[Docs] Cleanup tutorials @hortison (#19680)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Docs] fix: REST API references page to use Qanelas Soft font @Utkarsh-0304 (#19639)&lt;/li&gt;
+&lt;li&gt;[ui][docs] decouple meshmap extension test from name and refresh extension imagery @miacycle (#19689)&lt;/li&gt;
+&lt;li&gt;[Docs] Add creating-a-meshery-design guide; replace vendor refs with Design Configurator @yi-nuo426 (#19181)&lt;/li&gt;
+&lt;li&gt;[Docs] More cleanup @yi-nuo426 (#19684)&lt;/li&gt;
+&lt;li&gt;[Docs] cleanup v0.8 and v0.9 static list @arjunmehta-git (#19681)&lt;/li&gt;
+&lt;li&gt;[Docs] Cleanup tutorials @hortison (#19680)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Utkarsh-0304, @arjunmehta-git, @carlosriosilva, @fitzergerald, @hamza-mohd, @hortison, @leecalcote, @marblom007, @meshery-ci, @miacycle and @yi-nuo426&lt;/p&gt;</description></item><item><title>v1.0.26</title><link>/project/releases/v1.0.26/</link><pubDate>Fri, 22 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.26/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -246,7 +329,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 &lt;ul&gt;
 &lt;li&gt;Remove wrk2 load-generator support completely @ritzorama (#19539)&lt;/li&gt;
 &lt;li&gt;chore/update org reference @ritzorama (#19537)&lt;/li&gt;
-&lt;li&gt;Delete .github/workflows/kanvas.yml @CodexRaunak (#19532)&lt;/li&gt;
+&lt;li&gt;Delete .github/workflows/.yml @CodexRaunak (#19532)&lt;/li&gt;
 &lt;li&gt;[UI] Fix failing Vitest test suite @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#19472)&lt;/li&gt;
 &lt;li&gt;chore(ui/e2e): migrate remaining E2E specs to TypeScript @UtkarshAnandd (#19454)&lt;/li&gt;
 &lt;li&gt;[CI] Cleanup: Delete workflow that pushes e2e results to Docs @leecalcote (#19415)&lt;/li&gt;
@@ -468,7 +551,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 	📖 Documentation
 &lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;Revert \Remove kanvas docs from extensions\ @ritzorama (#19182)&lt;/li&gt;
+&lt;li&gt;Revert \Remove docs from extensions\ @ritzorama (#19182)&lt;/li&gt;
 &lt;li&gt;[Docs] Update adapter contributor proto path and generation command @chaitanyamedidar (#19189)&lt;/li&gt;
 &lt;li&gt;Added Heby&amp;rsquo;s Introduction profile to meetings documentation @hebypaul (#19187)&lt;/li&gt;
 &lt;li&gt;Add Marryam Abid&amp;rsquo;s introduction to meetings doc @marryamabid (#19178)&lt;/li&gt;
@@ -514,7 +597,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 &lt;li&gt;chore(deps): Bump react-dom from 19.2.4 to 19.2.5 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19041)&lt;/li&gt;
 &lt;li&gt;chore(deps-dev): Bump eslint-config-next from 16.2.1 to 16.2.4 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19044)&lt;/li&gt;
 &lt;li&gt;chore(deps): Bump @sistent/sistent from 0.20.0 to 0.20.2 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19034)&lt;/li&gt;
-&lt;li&gt;[UI] Remove Kanvas pop-up @PragalvaXFREZ (#19032)&lt;/li&gt;
+&lt;li&gt;[UI] Remove pop-up @PragalvaXFREZ (#19032)&lt;/li&gt;
 &lt;li&gt;fix(style): fix #15202 help button hover @dipanshurdev (#17834)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="-maintenance"&gt;
@@ -812,7 +895,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 &lt;li&gt;[Chore]: Update to Sistent v0.18.8 @l5io (#18799)&lt;/li&gt;
 &lt;li&gt;[UI] Fix remote component eslint formatting @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#18800)&lt;/li&gt;
 &lt;li&gt;fix(extensions): forward upstream responses and return JSON errors @alexquincy (#18803)&lt;/li&gt;
-&lt;li&gt;[UI] expose Kanvas shared runtime deps via remote-component @yi-nuo426 (#18798)&lt;/li&gt;
+&lt;li&gt;[UI] expose shared runtime deps via remote-component @yi-nuo426 (#18798)&lt;/li&gt;
 &lt;li&gt;[UI] Migrate @mui icon/system imports to @sistent/sistent @alexquincy (#18796)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="-maintenance"&gt;
@@ -1322,8 +1405,8 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 &lt;li&gt;[UI] Remove underlines from dashboard card titles @Rajesh-Nagarajan-11 (#18481)&lt;/li&gt;
 &lt;li&gt;[UI] Restore absolute RTK Query API paths after schemas API re-export @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#18474)&lt;/li&gt;
 &lt;li&gt;fix: log actual autocomplete error in Meshery settings component @HsrRaza (#18444)&lt;/li&gt;
-&lt;li&gt;fix: export KeyboardArrowDownRounded for Kanvas @leecalcote (#18472)&lt;/li&gt;
-&lt;li&gt;chore: expose @mui/material, ajv, and @rjsf/* to Kanvas extension @leecalcote (#18465)&lt;/li&gt;
+&lt;li&gt;fix: export KeyboardArrowDownRounded for @leecalcote (#18472)&lt;/li&gt;
+&lt;li&gt;chore: expose @mui/material, ajv, and @rjsf/* to extension @leecalcote (#18465)&lt;/li&gt;
 &lt;li&gt;[UI] Replace eval() with static handler map in MeshSync Stepper @YASHMAHAKAL (#18430)&lt;/li&gt;
 &lt;li&gt;[UI] Remove redundant parseInt wrapping Math.ceil in Environments @boergeson (#18437)&lt;/li&gt;
 &lt;li&gt;UI code cleanse: GraphQL resilience, session handling, testing infra, Sistent migration @simihablo (#18393)&lt;/li&gt;
@@ -1336,7 +1419,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 &lt;li&gt;Bump yaml in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#18212)&lt;/li&gt;
 &lt;li&gt;fix: replace core warnings with console warnings in CI environment @ianrwhitney (#18202)&lt;/li&gt;
 &lt;li&gt;[UI] Fix Catalog Info modal two-column layout @Rajesh-Nagarajan-11 (#18352)&lt;/li&gt;
-&lt;li&gt;[UI] Add missing remote component dependencies for Kanvas extension @guan404ming (#18262)&lt;/li&gt;
+&lt;li&gt;[UI] Add missing remote component dependencies for extension @guan404ming (#18262)&lt;/li&gt;
 &lt;li&gt;fix: Next lint fix provider UI part 2 @ianrwhitney (#18250)&lt;/li&gt;
 &lt;li&gt;Next lint fix provider UI @ianrwhitney (#18248)&lt;/li&gt;
 &lt;li&gt;UI: adjust workspace imports @leecalcote (#18180)&lt;/li&gt;
@@ -1370,7 +1453,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 &lt;ul&gt;
 &lt;li&gt;fix: mesheryctl e2e system start @lekaf974 (#18477)&lt;/li&gt;
 &lt;li&gt;chore(ui/e2e): Migrate Core UI and User Settings tests to TypeScript @ashwanisingh011 (#17449)&lt;/li&gt;
-&lt;li&gt;chore: expose @mui/material, ajv, and @rjsf/* to Kanvas extension @leecalcote (#18465)&lt;/li&gt;
+&lt;li&gt;chore: expose @mui/material, ajv, and @rjsf/* to extension @leecalcote (#18465)&lt;/li&gt;
 &lt;li&gt;fix(docs): update file paths in tests to use temporary directories @lekaf974 (#18440)&lt;/li&gt;
 &lt;li&gt;Bump lodash-es from 4.17.23 to 4.18.1 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#18395)&lt;/li&gt;
 &lt;li&gt;Decompose build UI workflow @ianrwhitney (#17339)&lt;/li&gt;
@@ -3226,7 +3309,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 &lt;ul&gt;
 &lt;li&gt;Bump mdast-util-to-hast from 13.2.0 to 13.2.1 in /ui @dependabot (#16539)&lt;/li&gt;
 &lt;li&gt;fix(mesheryctl): remove extra space in model export usage text @Fireentity (#16622)&lt;/li&gt;
-&lt;li&gt;Update Kanvas-Snapshot action to v0.2.42 @jamieplu (#16635)&lt;/li&gt;
+&lt;li&gt;Update -Snapshot action to v0.2.42 @jamieplu (#16635)&lt;/li&gt;
 &lt;li&gt;test(mesheryctl): add e2e test for system dashboard @Ontiomacer (#16491)&lt;/li&gt;
 &lt;li&gt;Update ESLint GitHub Actions workflow @leecalcote (#16627)&lt;/li&gt;
 &lt;li&gt;Remove GITHUB_TOKEN from build workflow @aabidsofi19 (#16624)&lt;/li&gt;
@@ -3402,7 +3485,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 	🖥 Meshery UI
 &lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;[server] Get rid of hardcoded kanvas channel @aabidsofi19 (#16502)&lt;/li&gt;
+&lt;li&gt;[server] Get rid of hardcoded channel @aabidsofi19 (#16502)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="-contributors"&gt;
 	👨🏽‍💻 Contributors
@@ -4125,7 +4208,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 &lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;[k8s] Create Kubernetes Health Probles (Liveness and Readiness Probes) for Meshery Server&amp;rsquo;s containers. @Babbili (#15874)&lt;/li&gt;
-&lt;li&gt;Adding Traefik Proxy architecture design in kanvas @PreciousDipe (#16182)&lt;/li&gt;
+&lt;li&gt;Adding Traefik Proxy architecture design in @PreciousDipe (#16182)&lt;/li&gt;
 &lt;li&gt;Create Deployable AWS managed services with Kubernetes orchestration design @AR-2910 (#16117)&lt;/li&gt;
 &lt;li&gt;[design] Add Helm-based ms-roles-rest (chart v0.0.11) @KatalKavya96 (#16129)&lt;/li&gt;
 &lt;li&gt;[design] Add Helm-based ms-payments-grpc (chart v0.0.11) @KatalKavya96 (#16130)&lt;/li&gt;
@@ -4880,7 +4963,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 &lt;li&gt;Bump @sistent/sistent from 0.14.203 to 0.14.211 in /provider-ui @dependabot (#15507)&lt;/li&gt;
 &lt;li&gt;Bump next from 15.3.4 to 15.4.5 in /provider-ui @dependabot (#15504)&lt;/li&gt;
 &lt;li&gt;[Chore]: Update to Sistent v0.14.212 @l5io (#15511)&lt;/li&gt;
-&lt;li&gt;fix: registry icons depends on routing , causes trouble in fetching when used in kanvas @FaheemOnHub (#15473)&lt;/li&gt;
+&lt;li&gt;fix: registry icons depends on routing , causes trouble in fetching when used in @FaheemOnHub (#15473)&lt;/li&gt;
 &lt;li&gt;[Chore]: Update to Sistent v0.14.211 @l5io (#15469)&lt;/li&gt;
 &lt;li&gt;[CI] Stabilize go-testing-ci.yml Workflow by Fixing Flaky Tests @yash37158 (#15429)&lt;/li&gt;
 &lt;li&gt;[Chore]: Update to Sistent v0.14.210 @l5io (#15465)&lt;/li&gt;
@@ -5007,7 +5090,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 &lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;Bump form-data from 4.0.2 to 4.0.4 in /ui @dependabot (#15422)&lt;/li&gt;
-&lt;li&gt;fix: Workspace modal not rendering below 900px &amp;amp;&amp;amp; Not able to open workspace in kanvas below 900px @FaheemOnHub (#15318)&lt;/li&gt;
+&lt;li&gt;fix: Workspace modal not rendering below 900px &amp;amp;&amp;amp; Not able to open workspace in below 900px @FaheemOnHub (#15318)&lt;/li&gt;
 &lt;li&gt;[Chore]: Bump Sistent v0.14.208 @l5io (#15430)&lt;/li&gt;
 &lt;li&gt;[Chore]: Bump Sistent v0.14.207 @l5io (#15428)&lt;/li&gt;
 &lt;li&gt;[Chore]: Bump Sistent v0.14.206 @l5io (#15426)&lt;/li&gt;
@@ -5096,7 +5179,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 &lt;li&gt;Jul 10 attendance @preston176 (#15352)&lt;/li&gt;
 &lt;li&gt;Marking My Attendance for week-of-07-07-2025 @codingdud (#15353)&lt;/li&gt;
 &lt;li&gt;Updated Creating model Documentation. @Darshan174 (#15315)&lt;/li&gt;
-&lt;li&gt;Docs: Refactor Kanvas guide into general extension troubleshooting @zihanKuang (#15248)&lt;/li&gt;
+&lt;li&gt;Docs: Refactor guide into general extension troubleshooting @zihanKuang (#15248)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="-contributors"&gt;
 	👨🏽‍💻 Contributors
@@ -5737,7 +5820,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 	🧰 Maintenance
 &lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;Bump kanvas snapshot @CodeAhmedJamil (#14987)&lt;/li&gt;
+&lt;li&gt;Bump snapshot @CodeAhmedJamil (#14987)&lt;/li&gt;
 &lt;li&gt;fix: pr metadata save @ianrwhitney (#14928)&lt;/li&gt;
 &lt;li&gt;fix: remote provider flow @ianrwhitney (#14927)&lt;/li&gt;
 &lt;li&gt;fix: updated workflow @ianrwhitney (#14924)&lt;/li&gt;
@@ -6278,7 +6361,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 &lt;li&gt;9b9ace1558000c1a16108477d7c59e27a08d8fdb Models generated and updated&lt;/li&gt;
 &lt;li&gt;2d885534a9f291aa13d91edf2c3f153a4f5c30fe Moved some api calls to telemetry, removed redundant useEffect&lt;/li&gt;
 &lt;li&gt;f1f9da38a33abe58d7c6d622187d51ce32de875c Promethues components axios fetch migrated to rtk query&lt;/li&gt;
-&lt;li&gt;add38b5f6bdd0aaa4f135280cf7db76ab3e98393 Update kanvas.yml&lt;/li&gt;
+&lt;li&gt;add38b5f6bdd0aaa4f135280cf7db76ab3e98393 Update .yml&lt;/li&gt;
 &lt;li&gt;0cb00689ba21516fa6885c2353446127223502ec [Docs] Generated documentation for Integration&lt;/li&gt;
 &lt;li&gt;d3d77ca67185d149d28cdf82a01f2a8717bcbfce [Docs] Generated documentation for Integration&lt;/li&gt;
 &lt;li&gt;9b8afcb5b4051fe30dfd3f5b55756c2494762fd7 [Docs] Generated documentation for Integration&lt;/li&gt;
@@ -6509,7 +6592,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 	🖥 Meshery UI
 &lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;use view info component for kanvas @amitamrutiya (#14648)&lt;/li&gt;
+&lt;li&gt;use view info component for @amitamrutiya (#14648)&lt;/li&gt;
 &lt;li&gt;[Chore]: Bump Sistent v0.14.185 @l5io (#14646)&lt;/li&gt;
 &lt;li&gt;use both immutable and plain javascript for redux @amitamrutiya (#14645)&lt;/li&gt;
 &lt;/ul&gt;
@@ -6920,7 +7003,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 	🖥 Meshery UI
 &lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;Add Capabilities check for kanvas and support for proper navigation for designs @aabidsofi19 (#14500)&lt;/li&gt;
+&lt;li&gt;Add Capabilities check for and support for proper navigation for designs @aabidsofi19 (#14500)&lt;/li&gt;
 &lt;li&gt;fix filter crashes on non schema values @aabidsofi19 (#14505)&lt;/li&gt;
 &lt;li&gt;Chore: Rename Registry components. @ritzorama (#14497)&lt;/li&gt;
 &lt;li&gt;migrate _app component to functional based component @amitamrutiya (#14495)&lt;/li&gt;
@@ -7108,8 +7191,8 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 &lt;li&gt;77e71b96532bd552609118d067a9c2d670432984 Merge branch &amp;lsquo;master&amp;rsquo; into design-test&lt;/li&gt;
 &lt;li&gt;6ba7d5cef7f7dbbfe61324a64d9a186d78d543d6 Merge branch &amp;lsquo;master&amp;rsquo; into design-test&lt;/li&gt;
 &lt;li&gt;d144b6e086190986795560df5802c6c0446979e0 Merge branch &amp;lsquo;master&amp;rsquo; into fix-notification-count&lt;/li&gt;
-&lt;li&gt;336fb7ce0b1d5fbdee685e7958105c7f9ced4fe1 Merge branch &amp;lsquo;master&amp;rsquo; into fix/extension_verify_kanvas_snapshot&lt;/li&gt;
-&lt;li&gt;a0a60aacfb604792dc45896daa37a581e3aed34f Merge branch &amp;lsquo;master&amp;rsquo; into fix/extension_verify_kanvas_snapshot&lt;/li&gt;
+&lt;li&gt;336fb7ce0b1d5fbdee685e7958105c7f9ced4fe1 Merge branch &amp;lsquo;master&amp;rsquo; into fix/extension_verify__snapshot&lt;/li&gt;
+&lt;li&gt;a0a60aacfb604792dc45896daa37a581e3aed34f Merge branch &amp;lsquo;master&amp;rsquo; into fix/extension_verify__snapshot&lt;/li&gt;
 &lt;li&gt;b04def15759874f2d609bcff9bf3115bb5f9552a Merge branch &amp;lsquo;master&amp;rsquo; into helloshiv01-patch-1-1&lt;/li&gt;
 &lt;li&gt;c1f9926537db774e334a66876170fe8a6448bc2c Merge branch &amp;lsquo;master&amp;rsquo; into master&lt;/li&gt;
 &lt;li&gt;d41b4fe2d7080394754e4cbd33044895b6dc892f Merge branch &amp;lsquo;master&amp;rsquo; into patch-1&lt;/li&gt;
@@ -7147,7 +7230,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 &lt;li&gt;1fdacb8f8e72d162732bc06ce08b7c93b634de87 Merge pull request #14319 from amitamrutiya/update-typing-filter&lt;/li&gt;
 &lt;li&gt;32b76f9aed17dd92a15b58d62c42a68e68ebe5d5 Merge pull request #14331 from amitamrutiya/fix-notification-count&lt;/li&gt;
 &lt;li&gt;346a1988ab9a2d9a3c852df1ca1c0abb38dcf2ba Merge pull request #14332 from amitamrutiya/default-capabilites&lt;/li&gt;
-&lt;li&gt;d124bf069463025f70c0c13ebc1c7f6e87e4cf8a Merge pull request #14333 from vr-varad/fix/extension_verify_kanvas_snapshot&lt;/li&gt;
+&lt;li&gt;d124bf069463025f70c0c13ebc1c7f6e87e4cf8a Merge pull request #14333 from vr-varad/fix/extension_verify__snapshot&lt;/li&gt;
 &lt;li&gt;8596678bc3e065e0ba359debc2ff47c86123bcc2 Merge pull request #14335 from meshery/leecalcote/ci/send-mail-action&lt;/li&gt;
 &lt;li&gt;2b5d37fe7d470f6df4896e3740ed47d136107831 Merge pull request #14336 from Tanishq1604/ui-final-2&lt;/li&gt;
 &lt;li&gt;d27e7d6cf7b3958d95ab0efe6e2628fcdb6c8901 Merge pull request #14338 from meshery/revert-14217-dependabot/npm_and_yarn/provider-ui/eslint-9.23.0&lt;/li&gt;
@@ -7296,7 +7379,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 	🖥 Meshery UI
 &lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;feat: list Kanvas Snapshot Helm Plugin in extension page @Aijeyomah (#14224)&lt;/li&gt;
+&lt;li&gt;feat: list Snapshot Helm Plugin in extension page @Aijeyomah (#14224)&lt;/li&gt;
 &lt;li&gt;show permission based on org changes @amitamrutiya (#14314)&lt;/li&gt;
 &lt;li&gt;[UI][Docs] Improved design export details @leecalcote (#14303)&lt;/li&gt;
 &lt;li&gt;fix: fix logout test flakiness @ianrwhitney (#14301)&lt;/li&gt;
@@ -8069,7 +8152,7 @@ emove border radius from all of the buttons\ @amitamrutiya (#13874)&lt;/li&gt;
 	📖 Documentation
 &lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;[docs/ux] Helm Kanvas Snapshot @theBeginner86 (#13650)&lt;/li&gt;
+&lt;li&gt;[docs/ux] Helm Snapshot @theBeginner86 (#13650)&lt;/li&gt;
 &lt;li&gt;fix(docs): remove incorrect diagram from Credentials page @zihanKuang (#13633)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="-contributors"&gt;
@@ -8247,8 +8330,8 @@ emove border radius from all of the buttons\ @amitamrutiya (#13874)&lt;/li&gt;
 	🧰 Maintenance
 &lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;Update kanvas.yml @aabidsofi19 (#13526)&lt;/li&gt;
-&lt;li&gt;Update kanvas.yml @aabidsofi19 (#13525)&lt;/li&gt;
+&lt;li&gt;Update .yml @aabidsofi19 (#13526)&lt;/li&gt;
+&lt;li&gt;Update .yml @aabidsofi19 (#13525)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="-documentation"&gt;
 	📖 Documentation
@@ -8297,7 +8380,7 @@ emove border radius from all of the buttons\ @amitamrutiya (#13874)&lt;/li&gt;
 &lt;li&gt;Update vendor links @aabidsofi19 (#13475)&lt;/li&gt;
 &lt;li&gt;Fix: Corrected casing of &amp;lsquo;visibility&amp;rsquo; to maintain consistency @PR4NJ41 (#13471)&lt;/li&gt;
 &lt;li&gt;replace discuss link and rm Meshery yt links @vishalvivekm (#13459)&lt;/li&gt;
-&lt;li&gt;fix: onclick behaviour for the kanvas menu @amitamrutiya (#13458)&lt;/li&gt;
+&lt;li&gt;fix: onclick behaviour for the menu @amitamrutiya (#13458)&lt;/li&gt;
 &lt;li&gt;Migrating events endpoint to system endpoints @souvikinator (#13446)&lt;/li&gt;
 &lt;li&gt;[Chore]: Bump Sistent v0.14.150 @l5io (#13452)&lt;/li&gt;
 &lt;/ul&gt;
@@ -8324,7 +8407,7 @@ emove border radius from all of the buttons\ @amitamrutiya (#13874)&lt;/li&gt;
 &lt;li&gt;Ad gupta patch 2 @ad-gupta (#13499)&lt;/li&gt;
 &lt;li&gt;[Docs] fix a typo @weilirs (#13497)&lt;/li&gt;
 &lt;li&gt;Rename crds @aabidsofi19 (#13479)&lt;/li&gt;
-&lt;li&gt;chore: remove -n flag and update permalink file for helm kanvas snapshot @Aijeyomah (#13485)&lt;/li&gt;
+&lt;li&gt;chore: remove -n flag and update permalink file for helm snapshot @Aijeyomah (#13485)&lt;/li&gt;
 &lt;li&gt;marking-my-attendance-abhimanyu-27-jan @Abhimanyu004 (#13422)&lt;/li&gt;
 &lt;li&gt;Revert&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>v0.8.26</title><link>/project/releases/v0.8.26/</link><pubDate>Mon, 03 Feb 2025 00:00:00 +0000</pubDate><guid>/project/releases/v0.8.26/</guid><description>&lt;h2 id="whats-new"&gt;
@@ -9097,7 +9180,7 @@ emove border radius from all of the buttons\ @amitamrutiya (#13874)&lt;/li&gt;
 &lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;Remove redundant commit author from model generator workflow @devhindo (#12955)&lt;/li&gt;
-&lt;li&gt;bump kanvas snapshot @aabidsofi19 (#12954)&lt;/li&gt;
+&lt;li&gt;bump snapshot @aabidsofi19 (#12954)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="-documentation"&gt;
 	📖 Documentation
@@ -9108,7 +9191,7 @@ emove border radius from all of the buttons\ @amitamrutiya (#13874)&lt;/li&gt;
 &lt;li&gt;fixing typo in the meshync-crd-reference page @lhajouji (#12996)&lt;/li&gt;
 &lt;li&gt;fixing typo in the mesheryctl-registry-generate page @lhajouji (#12998)&lt;/li&gt;
 &lt;li&gt;[Docs] Semantic Components @leecalcote (#12937)&lt;/li&gt;
-&lt;li&gt;[Docs] Add documentation for kubectl and Helm Kanvas Snapshot extensions @leecalcote (#12936)&lt;/li&gt;
+&lt;li&gt;[Docs] Add documentation for kubectl and Helm Snapshot extensions @leecalcote (#12936)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="-contributors"&gt;
 	👨🏽‍💻 Contributors
@@ -9231,7 +9314,7 @@ emove border radius from all of the buttons\ @amitamrutiya (#13874)&lt;/li&gt;
 	🧰 Maintenance
 &lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;bump kanvas-snapshot action @aabidsofi19 (#12895)&lt;/li&gt;
+&lt;li&gt;bump -snapshot action @aabidsofi19 (#12895)&lt;/li&gt;
 &lt;li&gt;Bump golang.org/x/crypto from 0.27.0 to 0.31.0 @dependabot (#12872)&lt;/li&gt;
 &lt;li&gt;Bump node-polyfill-webpack-plugin from 2.0.1 to 4.0.0 in /ui @dependabot (#12812)&lt;/li&gt;
 &lt;li&gt;Bump nanoid from 3.3.7 to 3.3.8 in /ui @dependabot (#12875)&lt;/li&gt;
@@ -9797,7 +9880,7 @@ emove border radius from all of the buttons\ @amitamrutiya (#13874)&lt;/li&gt;
 	🧰 Maintenance
 &lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;chore: upgrade kanvas snapshot @jerensl (#12664)&lt;/li&gt;
+&lt;li&gt;chore: upgrade snapshot @jerensl (#12664)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="-documentation"&gt;
 	📖 Documentation
@@ -10391,7 +10474,7 @@ emove border radius from all of the buttons\ @amitamrutiya (#13874)&lt;/li&gt;
 	🧰 Maintenance
 &lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;Rename meshmap.yml to kanvas.yml @vishalvivekm (#12496)&lt;/li&gt;
+&lt;li&gt;Rename meshmap.yml to .yml @vishalvivekm (#12496)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="-documentation"&gt;
 	📖 Documentation
@@ -10755,7 +10838,7 @@ emove border radius from all of the buttons\ @amitamrutiya (#13874)&lt;/li&gt;
 &lt;li&gt;Bump eslint-config-next from 14.2.7 to 14.2.14 in /provider-ui @dependabot (#12202)&lt;/li&gt;
 &lt;li&gt;Bump @emotion/styled from 11.11.5 to 11.13.0 in /provider-ui @dependabot (#12203)&lt;/li&gt;
 &lt;li&gt;[Chore] E2E Tests: fix typo on test tag @jerensl (#12303)&lt;/li&gt;
-&lt;li&gt;upgrade kanvas snapshot action version @Aijeyomah (#12298)&lt;/li&gt;
+&lt;li&gt;upgrade snapshot action version @Aijeyomah (#12298)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="-documentation"&gt;
 	📖 Documentation
@@ -11059,7 +11142,7 @@ emove border radius from all of the buttons\ @amitamrutiya (#13874)&lt;/li&gt;
 &lt;li&gt;Fix showing empty state in filters page after changing pages @Yashsharma1911 (#12152)&lt;/li&gt;
 &lt;li&gt;add loading variant for notistack snackbar @aabidsofi19 (#12150)&lt;/li&gt;
 &lt;li&gt;Fix unnecessary state update in designs and filters page @Yashsharma1911 (#12149)&lt;/li&gt;
-&lt;li&gt;chore(kanvas-snapshot): inject id for removing element on snapshot @jerensl (#12127)&lt;/li&gt;
+&lt;li&gt;chore(snapshot): inject id for removing element on snapshot @jerensl (#12127)&lt;/li&gt;
 &lt;li&gt;Fix undefined issue in performance profile @Yashsharma1911 (#12140)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="-maintenance"&gt;
@@ -32996,7 +33079,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.28&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.31&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;

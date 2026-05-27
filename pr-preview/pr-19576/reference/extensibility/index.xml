@@ -6,12 +6,10 @@
 &lt;h3 id="api-reference"&gt;
 	API Reference
 &lt;/h3&gt;
-&lt;div class="tab-container"&gt;
- &lt;!-- Tab 1: REST API --&gt;
- &lt;input id="tab1" type="radio" name="tabs" checked&gt;
- &lt;label for="tab1" data-icon="&amp;#xf1cb;"&gt;REST API&lt;/label&gt;
- &lt;section class="tabbed" id="content1"&gt;
- &lt;p&gt;Meshery Server's REST API is available at &lt;code&gt;[hostname]:[port]/api/&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>Extensibility: Authorization</title><link>/reference/extensibility/authorization/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/extensibility/authorization/</guid><description>&lt;p&gt;Meshery features an extensible authorization system that offers the ability to deliver fine-grained access control across it&amp;rsquo;s web-based user interface, &lt;a href="../../concepts/architecture/"&gt;Meshery UI&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="tab-container tab-level-1"&gt;&lt;input id="api-reference-tabs-1-1" type="radio" name="api-reference-tabs-1" checked&gt;
+ &lt;label for="api-reference-tabs-1-1"&gt;&lt;i class="fa fa-cube" aria-hidden="true"&gt;&lt;/i&gt;REST API
+ &lt;/label&gt;
+ &lt;section class="tabbed" id="api-reference-tabs-1-content-1"&gt;&lt;p&gt;Meshery Server's REST API is available at &lt;code&gt;http://[hostname]:[port]/api/&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>Extensibility: Authorization</title><link>/reference/extensibility/authorization/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/extensibility/authorization/</guid><description>&lt;p&gt;Meshery features an extensible authorization system that offers the ability to deliver fine-grained access control across it&amp;rsquo;s web-based user interface, &lt;a href="../../concepts/architecture/"&gt;Meshery UI&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="authorization-keys"&gt;
 	Authorization Keys
 &lt;/h2&gt;
