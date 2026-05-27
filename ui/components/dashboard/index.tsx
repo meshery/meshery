@@ -386,8 +386,8 @@ const Dashboard = () => {
         </WrapperPaper>
 
         <TabPanel value={resourceCategory} index={'Overview'}>
-          <Box display="flex" flexDirection={'column'} gap="1rem">
-            <Box padding={0} width={'100%'}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <Box sx={{ padding: 0, width: '100%' }}>
               <Stack
                 direction="row"
                 useFlexGap
