@@ -103,10 +103,10 @@ Code coverage goal: 25%
 - [Server] Registry: Model import/export; OCI
 - [CLI] Support for commands: model, component, releationship, registry, environment, connection, credential
 
-**Extensibility**
+**Extensibility / Extensions**
 
 - [UI] Extensible Authorization
-- [CLI] Helm Kanvas Snapshot
+- [CLI] Helm Snapshot
 - [CLI] kubectl MeshSync Snapshot
 
 **General / Maintenance**
@@ -123,11 +123,10 @@ Code coverage goal: 25%
 - [Server] Advanced Environments and Workspaces
 - [Server] Initial Azure as Model and ASO Integration
 - [Server] Advanced GCP and AWS as Connections
-- [CLI] Mesheryctl Code coverage goal: 60%
 
-**Extensibility**
+**Extensibility / Extensions**
 
-- [CLI] kubectl Kanvas Snapshot
+- [CLI] kubectl Snapshot
 
 ### [v1.0.0](../../milestone/7)
 
@@ -139,17 +138,11 @@ Code coverage goal: 25%
 **General / Maintenance**
 
 - [System] hardening, release process, integration tests, user acceptance testing
-- [Server] Correlated Events
-- [UI] Operations Center (for Workflows)
-- [Server] Configuration Insights and Recommendations
-- [Server] Workflow Engine, policy (crud)
-- SQLite → Postgres (spec)
+- [System] Schema-driven development with meshery/schemas as canonical source of resource definition
 
 **Performance Management**
 
-- [Adapter] - Distributed Performance Testing
-- [Server/UI] Multiple Telemetry Providers and Custom Boards ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_5_21))
-- [Server/UI] User-defined Dashboards and Metrics ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.gcb74201a11_0_119))
+- [Server/UI] Consolidation of built-in load generators
 
 ### [v1.1.0](../../milestone/8)
 
@@ -158,22 +151,17 @@ Code coverage goal: 25%
 
 **Configuration Management**
 
-- [Server] Expand Policy Engine and support Policy (crud)
-- [Server] Generative AI Configuration Analysis
-- [Server] Notification Providers: Slack, CloudEvents, Teams
-- [Server] Code coverage goal: 70%
-- [CLI] Meshconfig: Support for multi-cluster (spec)
+- [Server] Support for OPA and Golang-based Policy Engines
 
-**Extensibility**
+**Extensibility / Extensions**
 
 - [Server] Remote provider: gitops
-- [Adapter] Adaptive load optimizer plugin
 
 **Performance Management**
 
-- [Adapter] Distributed performance management
-- [Adapter] Adaptive load optimizers
-
+- [Adapter] Distributed Performance Testing
+ - [Server/UI] Multiple Telemetry Providers and Custom Boards ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_5_21))
+- [Server/UI] User-defined Dashboards and Metrics ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.gcb74201a11_0_119))
 
 **CLI**
 - [CLI] Multi-cluster meshconfig support
@@ -181,11 +169,48 @@ Code coverage goal: 25%
 - [CLI] Refactoring `system config` for AKS, EKS
 - [CLI] gRPC (streaming of status and events)
 - [CLI] Colorizing output
-- [CLI] Mesheryctl Code coverage goal: 40%
 
 **Catalog**
 
 - [Catalog] Intellectual property protections for user-produced content
 - [UI/Server] Improved performance and stability in catalog interactions to facilitate payment processing
+
+### [v1.2.0](../../milestone/9)
+
+**CLI**
+
+- [CLI] Meshconfig: Support for multi-cluster (spec)
+
+**UI**
+
+- [UI] Operations Center (for Workflows)
+
+**Server**
+
+- [Server] Workflow Engine, policy (crud)
+- [Server] SQLite → Postgres (spec)
+
+**Performance Management**
+
+- [Adapter] Distributed performance management
+- [Adapter] Adaptive load optimizers
+
+**Extensibility / Extensions**
+
+- [Adapter] Adaptive load optimizer plugin
+
+### [v1.3.0](../../milestone/10)
+
+**Configuration Management**
+
+- [Server] Expand Policy Engine and support Policy (crud)
+- [Server] Generative AI Configuration Analysis
+- [Server] Notification Providers: Slack, CloudEvents, Teams
+
+**Server**
+
+- [Server] Configuration Insights and Recommendations
+- [Server] Correlated Events
+
 
 Refer to [Meshery Roadmap](https://docs.google.com/document/d/1kvcz8jdvFwXmYBBaY2-3fHHUUoy1GJLpZZXuoxZQoOk/edit#) document for detailed info.

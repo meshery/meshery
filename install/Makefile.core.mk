@@ -21,7 +21,7 @@ GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-coun
 
 # Extension Point for remote provider . Add your provider here.
 # Empty by default so installs do not enforce a specific provider; users see
-# the provider-selection UI on first launch. Set to e.g. "Meshery" or "Layer5"
+# the provider-selection UI on first launch. Set to e.g. "Meshery" 
 # to enforce a single provider via the PROVIDER env var.
 REMOTE_PROVIDER=""
 

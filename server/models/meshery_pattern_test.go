@@ -10,7 +10,7 @@ import (
 // MesheryPattern (viewCount / shareCount / downloadCount / cloneCount /
 // deploymentCount) must accept both the canonical camelCase and the
 // legacy snake_case spellings on inbound JSON, because remote providers
-// (meshery-cloud, Kanvas) may still emit snake_case during the
+// (meshery-cloud) may still emit snake_case during the
 // deprecation window.
 func TestMesheryPattern_UnmarshalAcceptsBothCountSpellings(t *testing.T) {
 	tests := []struct {

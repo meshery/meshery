@@ -1,0 +1,73 @@
+name: Publish Allure report 
+
+on:
+    workflow_call:
+      inputs:
+        project:
+          description: 'Name of the Allure report project to publish'
+          required: true
+          type: string
+        allure-path:
+          description: 'Path to the Allure results directory to publish'
+          required: true
+          type: string
+        allure-results-artifact:
+          description: 'Name of the Allure report image artifact to download'
+          required: true
+          type: string
+        
+      secrets: 
+        GH_ACCESS_TOKEN:
+          description: 'Token for publishing allure results'
+          required: true
+
+concurrency:
+  group: qa-allure-sync         
+  cancel-in-progress: false
+  queue: max
+
+jobs:
+  publish:
+    name: Publish Allure Results
+    runs-on: ubuntu-24.04
+    
+    steps:
+      - name: Download Allure Artifact 
+        uses: actions/download-artifact@v6
+        with: 
+            path: allure-results
+            name: ${{ inputs.allure-results-artifact }}  
+
+      - name: Checkout QA
+        uses: actions/checkout@v6
+        with: 
+            repository: meshery/qa
+            path: ./qa
+            token: ${{ secrets.GH_ACCESS_TOKEN }}
+
+      - name: Sync results with qa
+        working-directory: qa
+        run: |
+          make project-results-sync RESULTS_DIR=./${{ inputs.allure-path }} PROJECT=${{ inputs.project }}
+      ## after migrating to this wkflw may be able to remove as concurrency group can queue
+      - name: Pull latest qa changes
+        working-directory: qa
+        run: git pull --rebase --autostash origin master
+    
+      - name: Commit & push to qa
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+            commit_message: "[QA] Sync Allure results - ${{ inputs.project }} @ ${{ github.sha }}"
+            commit_options: "--signoff"
+            repository: qa
+            commit_user_name: meshery-ci
+            commit_user_email: ci@meshery.io
+        env:
+            GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+
+
+       
+
+
+
+
