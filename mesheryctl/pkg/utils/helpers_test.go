@@ -24,6 +24,25 @@ func (m mockCloser) Close() error {
 
 }
 
+func TestIsLocalProvider(t *testing.T) {
+	cases := []struct {
+		in   string
+		want bool
+	}{
+		{"Local", true},
+		{"local", true},
+		{"None", true}, // legacy alias
+		{"NONE", true},
+		{"Meshery", false},
+		{"", false},
+	}
+	for _, c := range cases {
+		if got := IsLocalProvider(c.in); got != c.want {
+			t.Errorf("IsLocalProvider(%q) = %v, want %v", c.in, got, c.want)
+		}
+	}
+}
+
 func TestSafeClose(t *testing.T) {
 
 	SetupMeshkitLoggerTesting(t, false)

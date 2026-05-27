@@ -2,8 +2,9 @@ package models
 
 import (
 	"net/http"
+	"strings"
 
-	SMP "github.com/layer5io/service-mesh-performance/spec"
+	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/database"
@@ -279,6 +280,36 @@ const (
 	PersistAnonymousUser Feature = "persist-anonymous-user"
 )
 
+// ProviderStatusKind reports the availability of a provider as observed by
+// the server-side availability checker. It is emitted as the `status` field of
+// ProviderStatusEvent on the /api/providers/stream SSE channel so the UI can
+// distinguish "probe in flight" from "remote is unreachable".
+type ProviderStatusKind string
+
+const (
+	// ProviderStatusChecking - availability probe is in flight; the UI should
+	// render the entry but defer interaction until a terminal status arrives.
+	ProviderStatusChecking ProviderStatusKind = "checking"
+	// ProviderStatusOnline - the provider responded successfully to its
+	// capability probe (or, for the local provider, is implicitly available).
+	ProviderStatusOnline ProviderStatusKind = "online"
+	// ProviderStatusOffline - the provider's capability probe failed after
+	// the bounded retries; the entry should render in the offline section.
+	ProviderStatusOffline ProviderStatusKind = "offline"
+)
+
+// ProviderStatusEvent is the per-provider availability snapshot broadcast by
+// ProviderTracker. It carries the same ProviderProperties shape the legacy
+// /api/providers endpoint returns so existing UI fields keep working, plus
+// the registration Key and the new Status / Error markers required for the
+// streaming chooser.
+type ProviderStatusEvent struct {
+	Key        string             `json:"key"`
+	Status     ProviderStatusKind `json:"status"`
+	Properties ProviderProperties `json:"properties"`
+	Error      string             `json:"error,omitempty"`
+}
+
 const (
 	// LocalProviderType - represents local providers
 	LocalProviderType ProviderType = "local"
@@ -341,7 +372,25 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 	return "", false
 }
 
+// NormalizeProviderName collapses casing variants of the built-in local
+// provider to its canonical name. Both the canonical name ("Local") and the
+// legacy alias ("None") are matched case-insensitively, so "local", "LOCAL",
+// "none", "NONE", and stale "None" cookies all resolve to "Local". Any other
+// input — including remote provider names like "Meshery" or "Digital Ocean", whose
+// canonical casing originates from the remote /capabilities response — is
+// returned unchanged. This is the single source of truth for the rename;
+// call it once at the request edge (resolveProviderName) rather than
+// scattering equivalent checks across handlers.
+func NormalizeProviderName(name string) string {
+	if strings.EqualFold(name, LocalProviderName) ||
+		strings.EqualFold(name, LocalProviderLegacyAlias) {
+		return LocalProviderName
+	}
+	return name
+}
+
 func VerifyMesheryProvider(provider string, supportedProviders map[string]Provider) bool {
+	provider = NormalizeProviderName(provider)
 	for prov := range supportedProviders {
 		if prov == provider {
 			return true

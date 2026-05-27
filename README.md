@@ -136,7 +136,7 @@ Workspaces let you organize your work and serve as the central point of collabor
 <details><summary><h4>Manage your connections with Environments</h4></summary>
 
 <img src=".github/assets/images/readme/environments.gif" width="50%" alt="Meshery environments interface for managing connections and credentials" loading="lazy" align="center" />
-<p><a href="https://docs.meshery.io/concepts/logical/environments">Environments</a>  make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.</p>
+<p><a href="https://docs.meshery.io/concepts/logical/environments" target="_blank" rel="noopener noreferrer">Environments</a>  make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.</p>
 </details>
 
 <details><summary><h4>See changes to your infra before you merge</h4></summary>
@@ -162,7 +162,7 @@ Extend Meshery as your self-service engineering platform by taking advantage of 
 
 <details><summary><h4>Access the Cloud Native Patterns for Kubernetes</h4></summary>
 
-<p>Design and manage all of your cloud native infrastructure using the design configurator in Meshery or start from a template using the patterns from the <a href="https://meshery.io/catalog">catalog</a>.
+<p>Design and manage all of your cloud native infrastructure using the design configurator in Meshery or start from a template using the patterns from the <a href="https://meshery.io/catalog" target="_blank" rel="noopener noreferrer">catalog</a>.
 </details>
 
 Meshery offers robust capabilities for managing multiple tenants within a shared Kubernetes infrastructure. Meshery provides the tools and integrations necessary to create a secure, isolated, and manageable multi-tenant environments, allowing multiple teams or organizations with granular control over their role-based access controls.
@@ -200,7 +200,7 @@ Baseline and track your cloud native performance from release to release.
 - **Comparison of Test Results:** Meshery enables you to compare the difference in request performance (latency and throughput) between independent performance tests. Save your load test configurations as Performance Profiles, making it easy to rerun tests with the same settings and track performance variations over time.
 - **Kubernetes Cluster and Workload Metrics:** - Meshery connects to one or more Prometheus servers to gather both cluster and application metrics. Meshery also integrates with Grafana, allowing you to import your existing dashboards and visualize performance data.
 
-<p>In an effort to produce infrastructure agnostic tooling, Meshery uses the <a href="https://smp-spec.io">Cloud Native Performance</a> specification as a common format to capture and measure your infrastructure's performance against a universal cloud native performance index. Meshery participates in advancing cloud native infrastructure adoption through the standardization of APIs. Meshery enables you to measure the value provided by Docker, Kubernetes, or other cloud native infrastructure in the context of the overhead incurred.</p>
+<p>In an effort to produce infrastructure agnostic tooling, Meshery uses the <a href="https://smp-spec.io" target="_blank" rel="noopener noreferrer">Cloud Native Performance</a> specification as a common format to capture and measure your infrastructure's performance against a universal cloud native performance index. Meshery participates in advancing cloud native infrastructure adoption through the standardization of APIs. Meshery enables you to measure the value provided by Docker, Kubernetes, or other cloud native infrastructure in the context of the overhead incurred.</p>
 
 <!-- 
 

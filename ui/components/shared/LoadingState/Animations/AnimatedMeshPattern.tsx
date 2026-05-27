@@ -15,15 +15,15 @@ const AnimatedMeshPattern = (props: React.SVGAttributes<SVGSVGElement>) => {
   const [isActive, setIsActive] = useState(true);
   const theme = useTheme();
   useEffect(() => {
-    setTimeout(() => {
-      setIsActive(false);
-    }, 100);
+    const id = window.setTimeout(() => setIsActive(false), 100);
+    return () => window.clearTimeout(id);
   }, []);
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsActive(!isActive);
+    const id = window.setTimeout(() => {
+      setIsActive((prev) => !prev);
     }, 2000);
+    return () => window.clearTimeout(id);
   }, [isActive]);
 
   return (

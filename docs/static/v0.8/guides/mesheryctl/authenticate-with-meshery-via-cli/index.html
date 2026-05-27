@@ -761,16 +761,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <h1>Authenticating Meshery via CLI</h1>
            <p>To authenticate Meshery through <code class="language-plaintext highlighter-rouge">mesheryctl</code>, the Meshery CLI, you will use the <code class="language-plaintext highlighter-rouge">mesheryctl system login</code> command. On executing this command, you will be provided with a list of providers to choose from. You can then select a Provider of your choice to complete the authentication and authorization process.</p>
 
-<p>As of this writing, you will be presented with two providers, <em>Layer5</em> and <em>None</em>.</p>
+<p>As of this writing, you will be presented with two providers, <em>Meshery</em> and <em>None</em>.</p>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Use the arrow keys to navigate: ↓ ↑ → ← 
 ? Select a Provider: 
-  ▸ Layer5
+  ▸ Meshery
     None
 </code></pre></div></div>
 
 <ul>
   <li>
-    <p>Selecting <em>Layer5</em> will open a browser to complete the login and authentication process with Meshery Cloud. On successful authentication, you can close the window and return to the command prompt.</p>
+    <p>Selecting <em>Meshery</em> will open a browser to complete the login and authentication process with Meshery Cloud. On successful authentication, you can close the window and return to the command prompt.</p>
 
     <p>Verify that an <code class="language-plaintext highlighter-rouge">auth.json</code> file was created in the <code class="language-plaintext highlighter-rouge">.meshery</code> folder in your home directory.</p>
 
@@ -782,7 +782,7 @@ total 12
 <span class="nt">-rw-rw-r--</span> 1 ubuntu ubuntu 988 Dec 21 06:04 meshery.yaml
 </code></pre></div>    </div>
 
-    <p><strong><em>The need for authentication to <code class="language-plaintext highlighter-rouge">Layer5</code> <a href="https://docs.meshery.io/extensibility/providers">provider</a> is to save your environment setup while also having persistent/steady sessions and to be able to retrieve performance test results.</em></strong></p>
+    <p><strong><em>The need for authentication to <code class="language-plaintext highlighter-rouge">Meshery</code> <a href="https://docs.meshery.io/extensibility/providers">provider</a> is to save your environment setup while also having persistent/steady sessions and to be able to retrieve performance test results.</em></strong></p>
   </li>
   <li>
     <p>Selecting <em>None</em> will create an empty <code class="language-plaintext highlighter-rouge">auth.json</code> file. All your work remains local and ephemeral.</p>
@@ -793,7 +793,7 @@ total 12
 
 <ol>
   <li>
-    <p>Navigate to <a href="https://cloud.layer5.io/security/tokens">https://cloud.layer5.io/security/tokens</a> and sign-in.
+    <p>Navigate to <a href="https://cloud.meshery.io/security/tokens">https://cloud.meshery.io/security/tokens</a> and sign-in.
 Ensure you are in the right organization and click <strong>Create</strong>.</p>
 
     <p><a href="/v0.8/assets/img/token/create-token.png"><img alt="Create Token" src="/assets/img/token/create-token.png" /></a></p>
