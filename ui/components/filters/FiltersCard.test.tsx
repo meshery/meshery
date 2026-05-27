@@ -65,6 +65,7 @@ vi.mock('@sistent/sistent', () => {
       },
     }),
     VisibilityChipMenu: ({ value }: any) => <div data-testid="visibility-chip">{value}</div>,
+    InfoOutlined: () => <svg data-testid="info-outlined-icon" />,
     styled,
   };
 });
@@ -76,7 +77,6 @@ vi.mock('@/assets/icons', () => ({
   FullscreenExit: () => <svg data-testid="fullscreen-exit-icon" />,
   Public: () => <svg data-testid="public-icon" />,
   GetApp: () => <svg data-testid="get-app-icon" />,
-  InfoOutlined: () => <svg data-testid="info-outlined-icon" />,
   Lock: () => <svg data-testid="lock-icon" />,
 }));
 
