@@ -35,7 +35,7 @@ jobs:
       - name: Download Allure Artifact 
         uses: actions/download-artifact@v6
         with: 
-            path: allure-results
+            path: ./qa/allure-results
             name: ${{ inputs.allure-results-artifact }}  
 
       - name: Checkout QA
