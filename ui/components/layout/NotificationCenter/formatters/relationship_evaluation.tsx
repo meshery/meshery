@@ -121,7 +121,6 @@ const ComponentAction = ({ action, componentMapping }) => {
         <Box
           sx={{
             display: 'flex',
-            justifyItems: 'space-between',
             justifyContent: 'space-between',
             width: '100%',
             alignItems: 'center',
