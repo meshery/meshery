@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package environments provides CLI commands and utilities for mesheryctl.
 package environments
 
 import (
@@ -46,7 +47,7 @@ mesheryctl environment delete [environmentId]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		_, err := api.Delete(fmt.Sprintf("%s/%s", environmentApiPath, args[0]))
+		_, err := api.Delete(fmt.Sprintf("%s/%s", environmentAPIPath, args[0]))
 		if err != nil {
 			return err
 		}

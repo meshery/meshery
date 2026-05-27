@@ -1,3 +1,4 @@
+// Package model provides CLI commands and utilities for mesheryctl.
 package model
 
 import (
@@ -70,7 +71,7 @@ mesheryctl model import --file [path-to-csv-directory]
 
 		}
 
-		if utils.IsValidUrl(path) {
+		if utils.IsValidURL(path) {
 			return registerModel(nil, nil, nil, "", "urlImport", path, true)
 		}
 

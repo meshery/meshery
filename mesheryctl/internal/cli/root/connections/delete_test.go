@@ -9,7 +9,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
-const connectionId = "11111111-1111-1111-1111-111111111111"
+const connectionID = "11111111-1111-1111-1111-111111111111"
 
 func TestConnectionDeleteCmd(t *testing.T) {
 	// create a test helper
@@ -38,11 +38,11 @@ func TestConnectionDeleteCmd(t *testing.T) {
 		},
 		{
 			Name: "given a non-existent connectionID provided when running mesheryctl connection delete then an error message is displayed",
-			Args: []string{"delete", connectionId},
+			Args: []string{"delete", connectionID},
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
-					URL:          testContext.BaseURL + "/api/integrations/connections/" + connectionId,
+					URL:          testContext.BaseURL + "/api/integrations/connections/" + connectionID,
 					Response:     "delete.connection.notfound.response.golden",
 					ResponseCode: 404,
 				},
@@ -52,11 +52,11 @@ func TestConnectionDeleteCmd(t *testing.T) {
 		},
 		{
 			Name: "given a valid connectionID provided when running mesheryctl connection delete then the connection is deleted",
-			Args: []string{"delete", connectionId},
+			Args: []string{"delete", connectionID},
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
-					URL:          testContext.BaseURL + "/api/integrations/connections/" + connectionId,
+					URL:          testContext.BaseURL + "/api/integrations/connections/" + connectionID,
 					Response:     "delete.connection.success.response.golden",
 					ResponseCode: 200,
 				},

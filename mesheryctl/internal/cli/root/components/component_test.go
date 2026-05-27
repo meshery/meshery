@@ -58,7 +58,7 @@ func TestComponent(t *testing.T) {
 		{
 			Name:             "display components count",
 			Args:             []string{"--count"},
-			URL:              fmt.Sprintf("/%s", componentApiPath),
+			URL:              fmt.Sprintf("/%s", componentAPIPath),
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "components.list.count.output.golden",
 			ExpectError:      false,

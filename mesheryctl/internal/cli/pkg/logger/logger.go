@@ -1,3 +1,4 @@
+// Package mesheryctllogger provides CLI commands and utilities for mesheryctl.
 package mesheryctllogger
 
 import (

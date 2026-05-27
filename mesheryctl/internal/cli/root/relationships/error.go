@@ -1,3 +1,4 @@
+// Package relationships provides CLI commands and utilities for mesheryctl.
 package relationships
 
 import (

@@ -1,3 +1,4 @@
+// Package environments provides CLI commands and utilities for mesheryctl.
 package environments
 
 import (
@@ -8,9 +9,9 @@ import (
 
 var ErrCreateEnvironmentCode = "mesheryctl-1195"
 
-func errCreateEnvironment(name, orgId string) error {
+func errCreateEnvironment(name, orgID string) error {
 	return errors.New(ErrCreateEnvironmentCode, errors.Alert,
-		[]string{fmt.Sprintf("Failed to create environment %s in organization %s", name, orgId)},
+		[]string{fmt.Sprintf("Failed to create environment %s in organization %s", name, orgID)},
 		[]string{"There was an error while creating the environment"},
 		[]string{"Ensure Meshery server is running and reachable", "Check if the organization ID is correct"},
 		[]string{"Start Meshery server and try again", "Provide a valid organization ID"},

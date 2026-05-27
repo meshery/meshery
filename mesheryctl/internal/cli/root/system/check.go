@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package system provides CLI commands and utilities for mesheryctl.
 package system
 
 import (
@@ -265,7 +266,7 @@ func (hc *HealthChecker) Run() error {
 	return nil
 }
 
-// Run preflight healthchecks to verify environment health
+// RunPreflightHealthChecks Run preflight healthchecks to verify environment health
 func (hc *HealthChecker) RunPreflightHealthChecks() error {
 	// Docker healthchecks are only invoked when it's not a PreRunExecution
 	// or it's a PreRunExecution and current platform is docker

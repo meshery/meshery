@@ -1,3 +1,4 @@
+// Package model provides CLI commands and utilities for mesheryctl.
 package model
 
 import (

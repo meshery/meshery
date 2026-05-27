@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package relationships provides CLI commands and utilities for mesheryctl.
 package relationships
 
 import (
@@ -66,7 +67,7 @@ mesheryctl relationship list --count
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dataToDisplay := display.DisplayDataAsync{
-			UrlPath:          relationshipApiPath,
+			URLPath:          relationshipAPIPath,
 			DataType:         "relationship",
 			Header:           []string{"ID", "Kind", "API Version", "Model Name", "Sub Type", "Type"},
 			Page:             relationshipListFlags.Page,

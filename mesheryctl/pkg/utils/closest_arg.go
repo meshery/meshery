@@ -1,3 +1,4 @@
+// Package utils provides CLI commands and utilities for mesheryctl.
 package utils
 
 func levenshtein(str1, str2 []rune) int {

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package filter provides CLI commands and utilities for mesheryctl.
 package filter
 
 import (
@@ -89,7 +90,7 @@ mesheryctl filter view "filter name"
 		filter := ""
 		isID := false
 		if len(args) > 0 {
-			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
+			filter, isID, err = utils.ValidID(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 			if err != nil {
 				return utils.ErrInvalidNameOrID(err)
 			}

@@ -1,14 +1,15 @@
+// Package format provides CLI commands and utilities for mesheryctl.
 package format
 
 import "github.com/meshery/meshkit/errors"
 
 var (
-	ErrOutputToJsonCode = "mesheryctl-1147"
+	ErrOutputToJSONCode = "mesheryctl-1147"
 	ErrOutputToYamlCode = "mesheryctl-1158"
 )
 
-func ErrOutputToJson() error {
-	return errors.New(ErrOutputToJsonCode, errors.Alert,
+func ErrOutputToJSON() error {
+	return errors.New(ErrOutputToJSONCode, errors.Alert,
 		[]string{"Failed to format output in JSON"},
 		[]string{"Error occurred while formatting to JSON"},
 		[]string{"The content provided for formatting failed."},

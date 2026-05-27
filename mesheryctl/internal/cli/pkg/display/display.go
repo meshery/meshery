@@ -1,3 +1,4 @@
+// Package display provides CLI commands and utilities for mesheryctl.
 package display
 
 import (
@@ -23,7 +24,7 @@ type DisplayedData struct {
 
 type DisplayDataAsync struct {
 	// Core fields
-	UrlPath  string
+	URLPath  string
 	PageSize int
 	Page     int
 	// List-only fields

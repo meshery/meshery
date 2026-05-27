@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package design provides CLI commands and utilities for mesheryctl.
 package design
 
 import (
@@ -37,7 +38,7 @@ const (
 	ErrDeleteDesignCode               = "mesheryctl-1164"
 	ErrInvalidCommandCode             = "mesheryctl-1191"
 	ErrDesignNameOrIDNotSpecifiedCode = "mesheryctl-1192"
-	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
+	ErrDesignInvalidAPIResponseCode   = "mesheryctl-1199"
 )
 
 const (
@@ -165,8 +166,8 @@ func ErrDesignNameOrIDNotSpecified() error {
 		[]string{"Provide a design name or ID, or use '-a' flag to view all designs.\nRun 'mesheryctl design view --help' for usage details"})
 }
 
-func ErrDesignInvalidApiResponse(message string) error {
-	return errors.New(ErrDesignInvalidApiResponseCode, errors.Alert,
+func ErrDesignInvalidAPIResponse(message string) error {
+	return errors.New(ErrDesignInvalidAPIResponseCode, errors.Alert,
 		[]string{"Invalid API response"},
 		[]string{message},
 		[]string{"The API response is missing expected fields or has an unexpected format"},

@@ -66,12 +66,12 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 		var urlPath string
 		var displayData display.DisplayDataAsync
 
-		viewUrlValue := url.Values{}
-		viewUrlValue.Add("orgId", workspaceViewFlagsProvided.OrgID)
+		viewURLValue := url.Values{}
+		viewURLValue.Add("orgId", workspaceViewFlagsProvided.OrgID)
 		if utils.IsUUID(workspaceNameOrID) {
 			query := url.Values{}
 			query.Set("orgId", workspaceViewFlagsProvided.OrgID)
-			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.PathEscape(workspaceNameOrID), query.Encode())
+			urlPath = fmt.Sprintf("%s/%s?%s", workspacesAPIPath, url.PathEscape(workspaceNameOrID), query.Encode())
 			fetchedWorkspace, err := api.Fetch[workspace.AvailableWorkspace](urlPath)
 			if err != nil {
 				return err
@@ -80,11 +80,11 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 			selectedWorkspace = *fetchedWorkspace
 		} else {
 			selectedAvailableWorkspace := new(workspace.AvailableWorkspace)
-			viewUrlValue.Add("search", workspaceNameOrID)
+			viewURLValue.Add("search", workspaceNameOrID)
 
-			urlPath = fmt.Sprintf("%s?%s", workspacesApiPath, viewUrlValue.Encode())
+			urlPath = fmt.Sprintf("%s?%s", workspacesAPIPath, viewURLValue.Encode())
 			displayData = display.DisplayDataAsync{
-				UrlPath:    urlPath,
+				URLPath:    urlPath,
 				SearchTerm: workspaceNameOrID,
 			}
 
@@ -102,7 +102,7 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 
 			query := url.Values{}
 			query.Set("orgId", workspaceViewFlagsProvided.OrgID)
-			urlPath = fmt.Sprintf("%s/%s?%s", workspacesApiPath, url.PathEscape(selectedAvailableWorkspace.ID.String()), query.Encode())
+			urlPath = fmt.Sprintf("%s/%s?%s", workspacesAPIPath, url.PathEscape(selectedAvailableWorkspace.ID.String()), query.Encode())
 			fetchedWorkspace, err := api.Fetch[workspace.AvailableWorkspace](urlPath)
 			if err != nil {
 				return err

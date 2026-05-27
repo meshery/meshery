@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package design provides CLI commands and utilities for mesheryctl.
 package design
 
 import (
@@ -121,7 +122,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		patternName = name
 	}
 
-	validURL := utils.IsValidUrl(file)
+	validURL := utils.IsValidURL(file)
 	// Check if the pattern is file or URL
 	if !validURL {
 		content, err := os.ReadFile(file)

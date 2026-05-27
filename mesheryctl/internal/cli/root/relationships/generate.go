@@ -1,3 +1,4 @@
+// Package relationships provides CLI commands and utilities for mesheryctl.
 package relationships
 
 import (
@@ -68,7 +69,7 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 		}
 
 		// If no error, fetch the data from the sheet
-		err = createJsonFile(resp, relationshipsOutputPath)
+		err = createJSONFile(resp, relationshipsOutputPath)
 		if err != nil {
 			return err
 		}
@@ -81,7 +82,7 @@ func init() {
 	generateCmd.PersistentFlags().StringVar(&relationshipGenerateFlag.SpreadsheetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 }
 
-func createJsonFile(resp *sheets.ValueRange, jsonFilePath string) error {
+func createJSONFile(resp *sheets.ValueRange, jsonFilePath string) error {
 
 	var customResp []CustomValueRange
 

@@ -1,3 +1,4 @@
+// Package utils provides CLI commands and utilities for mesheryctl.
 package utils
 
 import (
@@ -328,7 +329,7 @@ func pollForPodRunning(c *meshkitkube.Client, namespace, podName string, timeout
 	})
 }
 
-// Wait up to timeout seconds for pod in 'namespace' to enter running state.
+// WaitForPodRunning Wait up to timeout seconds for pod in 'namespace' to enter running state.
 // Returns an error if no pods are found or not all discovered pods enter running state.
 func WaitForPodRunning(c *meshkitkube.Client, desiredPod, namespace string, timeout int) error {
 	podList, err := GetPodList(c, namespace)
@@ -381,7 +382,7 @@ func pollForNamespaceDeleted(c *meshkitkube.Client, namespace string, timeout ti
 	})
 }
 
-// Wait up to timeout seconds for `namespace` to be deleted.
+// WaitForNamespaceDeleted Wait up to timeout seconds for `namespace` to be deleted.
 func WaitForNamespaceDeleted(c *meshkitkube.Client, namespace string, timeout int) error {
 	return pollForNamespaceDeleted(c, namespace, time.Duration(timeout)*time.Second)
 }

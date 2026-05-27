@@ -18,28 +18,28 @@ func TestDeleteEnvironment(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 
-	environmentId := "d56fb25b-f92c-4cd6-821b-2cfd6bb87259"
+	environmentID := "d56fb25b-f92c-4cd6-821b-2cfd6bb87259"
 
 	// Test scenarios for environment deletion
 	tests := []utils.MesheryCommandTest{
 		{
-			Name:             "Delete environment without arguments",
+			Name:             "Delete Environment without environmentId",
 			Args:             []string{"delete"},
-			HttpMethod:       "DELETE",
-			HttpStatusCode:   200,
+			HTTPMethod:       "DELETE",
+			HTTPStatusCode:   200,
 			URL:              "/api/environments",
 			Fixture:          "",
-			ExpectedResponse: "",
+			ExpectedResponse: "delete.environment.notfound.output.golden",
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrInvalidArgument(errors.New("[ Environment ID ] isn't specified\n\nUsage: mesheryctl environment delete [environmentId]\nRun 'mesheryctl environment delete --help' to see detailed help message")),
 		},
 		{
 			Name:             "Delete environment successfully",
-			Args:             []string{"delete", environmentId},
-			HttpMethod:       "DELETE",
-			HttpStatusCode:   200,
-			URL:              fmt.Sprintf("/api/environments/%s", environmentId),
+			Args:             []string{"delete", environmentID},
+			HTTPMethod:       "DELETE",
+			HTTPStatusCode:   200,
+			URL:              fmt.Sprintf("/api/environments/%s", environmentID),
 			Fixture:          "delete.environment.response.golden",
 			ExpectedResponse: "delete.environment.success.golden",
 			ExpectError:      false,

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package system provides CLI commands and utilities for mesheryctl.
 package system
 
 import (
@@ -59,7 +60,7 @@ type cmdSystemLogsFlags struct {
 
 var systemLogsFlags cmdSystemLogsFlags
 
-const BYTE_SIZE = 2000
+const byteSize = 2000
 
 // logsCmd represents the logs command
 var logsCmd = &cobra.Command{
@@ -241,7 +242,7 @@ mesheryctl system logs meshery-istio
 						go func() {
 							defer wg.Done()
 							for {
-								buf := make([]byte, BYTE_SIZE)
+								buf := make([]byte, byteSize)
 								numBytes, err := logs.Read(buf)
 								if numBytes == 0 {
 									continue

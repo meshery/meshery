@@ -1,3 +1,4 @@
+// Package mesheryctlflags provides CLI commands and utilities for mesheryctl.
 package mesheryctlflags
 
 import (

@@ -11,6 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+// Package workspaces provides CLI commands and utilities for mesheryctl.
 package workspaces
 
 import (
@@ -28,7 +30,7 @@ type cmdWorkspaceListFlags struct {
 	Page     int    `json:"page" validate:"min=1"`
 	PageSize int    `json:"pagesize" validate:"min=1,max=100"`
 	Count    bool   `json:"count" validate:"boolean"`
-	OrgId    string `json:"orgId" validate:"required,uuid"`
+	OrgID    string `json:"orgId" validate:"required,uuid"`
 }
 
 var workspaceListFlags cmdWorkspaceListFlags
@@ -53,7 +55,7 @@ mesheryctl workspace list --orgId [orgId] --count
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		urlQueryParams := url.Values{}
-		urlQueryParams.Add("orgId", workspaceListFlags.OrgId)
+		urlQueryParams.Add("orgId", workspaceListFlags.OrgID)
 		if cmd.Flags().Changed("page") {
 			// Adjusting page number to be zero-based index for API compatibility,
 			// while keeping the user-facing flag as one-based index for better UX
@@ -64,10 +66,10 @@ mesheryctl workspace list --orgId [orgId] --count
 		if cmd.Flags().Changed("pagesize") {
 			urlQueryParams.Add("pagesize", fmt.Sprint(workspaceListFlags.PageSize))
 		}
-		urlPath := fmt.Sprintf("%s?%s", workspacesApiPath, urlQueryParams.Encode())
+		urlPath := fmt.Sprintf("%s?%s", workspacesAPIPath, urlQueryParams.Encode())
 
 		modelData := display.DisplayDataAsync{
-			UrlPath:          urlPath,
+			URLPath:          urlPath,
 			DataType:         "workspace",
 			Header:           []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"},
 			Page:             workspaceListFlags.Page,
@@ -82,7 +84,7 @@ mesheryctl workspace list --orgId [orgId] --count
 
 func init() {
 	listWorkspaceCmd.Flags().BoolVarP(&workspaceListFlags.Count, "count", "", false, "total number of registered workspaces")
-	listWorkspaceCmd.Flags().StringVarP(&workspaceListFlags.OrgId, "orgId", "o", "", "Organization ID")
+	listWorkspaceCmd.Flags().StringVarP(&workspaceListFlags.OrgID, "orgId", "o", "", "Organization ID")
 	listWorkspaceCmd.Flags().IntVarP(&workspaceListFlags.Page, "page", "", 1, "page number for paginated results. (default: 1)")
 	listWorkspaceCmd.Flags().IntVarP(&workspaceListFlags.PageSize, "pagesize", "", 10, "number of items to be displayed per page for paginated results. (default: 10, max limit: 100)")
 }

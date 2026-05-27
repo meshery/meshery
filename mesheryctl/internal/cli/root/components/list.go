@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package components provides CLI commands and utilities for mesheryctl.
 package components
 
 import (
@@ -52,7 +53,7 @@ mesheryctl component list --count
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		componentData := display.DisplayDataAsync{
-			UrlPath:          componentApiPath,
+			URLPath:          componentAPIPath,
 			DataType:         "component",
 			Header:           []string{"ID", "Name", "Model", "Version"},
 			Page:             cmdComponentListFlag.Page,

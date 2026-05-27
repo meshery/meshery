@@ -1,3 +1,4 @@
+// Package constants provides CLI commands and utilities for mesheryctl.
 package constants
 
 const (

@@ -1,3 +1,4 @@
+// Package utils provides CLI commands and utilities for mesheryctl.
 package utils
 
 import (
@@ -87,7 +88,7 @@ const (
 	tokenUsageURL                  = docsBaseURL + "reference/mesheryctl/system/token"
 	modelUsageURL                  = docsBaseURL + "reference/mesheryctl/system/model"
 	modelListURL                   = docsBaseURL + "reference/mesheryctl/system/model/list"
-	modelImportURl                 = docsBaseURL + "reference/mesheryctl/system/model/import"
+	modelImportURL                 = docsBaseURL + "reference/mesheryctl/system/model/import"
 	modelViewURL                   = docsBaseURL + "reference/mesheryctl/system/model/view"
 	registryUsageURL               = docsBaseURL + "reference/mesheryctl/registry"
 	registryPublishURL             = docsBaseURL + "reference/mesheryctl/registry/publish"
@@ -454,7 +455,7 @@ func SetFileLocation() error {
 	return nil
 }
 
-// NavigateToBroswer naviagtes to the endpoint displaying Meshery UI in the broswer.
+// NavigateToBrowser navigates to the endpoint displaying Meshery UI in the browser.
 func NavigateToBrowser(endpoint string) error {
 	err := browser.OpenURL(endpoint)
 	return err
@@ -580,10 +581,10 @@ func CreateConfigFile() error {
 func ValidateURL(URL string) error {
 	ParsedURL, err := url.ParseRequestURI(URL)
 	if err != nil {
-		return ErrParsingUrl(err)
+		return ErrParsingURL(err)
 	}
 	if ParsedURL.Scheme != "http" && ParsedURL.Scheme != "https" {
-		return ErrParsingUrl(fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme))
+		return ErrParsingURL(fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme))
 	}
 	return nil
 }
@@ -634,8 +635,8 @@ func StringInSlice(str string, slice []string) bool {
 }
 
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
-func GetID(mesheryServerUrl, configuration string) ([]string, error) {
-	url := mesheryServerUrl + "/api/" + configuration + "?"
+func GetID(mesheryServerURL, configuration string) ([]string, error) {
+	url := mesheryServerURL + "/api/" + configuration + "?"
 	if configuration == "pattern" {
 		url += "populate=pattern_file&"
 	}
@@ -674,44 +675,44 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 }
 
 // GetName returns a of name:id from meshery server endpoint /api/{configurations}
-func GetName(mesheryServerUrl, configuration string) (map[string]string, error) {
-	url := mesheryServerUrl + "/api/" + configuration + "?page_size=10000"
+func GetName(mesheryServerURL, configuration string) (map[string]string, error) {
+	url := mesheryServerURL + "/api/" + configuration + "?page_size=10000"
 	configType := configuration + "s"
-	nameIdMap := make(map[string]string)
+	nameIDMap := make(map[string]string)
 	req, err := NewRequest("GET", url, nil)
 	if err != nil {
-		return nameIdMap, err
+		return nameIDMap, err
 	}
 
 	res, err := MakeRequest(req)
 	if err != nil {
-		return nameIdMap, err
+		return nameIDMap, err
 	}
 
 	defer func() { _ = res.Body.Close() }()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nameIdMap, ErrReadResponseBody(err)
+		return nameIDMap, ErrReadResponseBody(err)
 	}
 	var dat map[string]interface{}
 	if err = encoding.Unmarshal(body, &dat); err != nil {
-		return nameIdMap, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
+		return nameIDMap, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
 	}
 	if dat == nil {
-		return nameIdMap, ErrNotFound(errors.New("no data found"))
+		return nameIDMap, ErrNotFound(errors.New("no data found"))
 	}
 	if dat[configType] == nil {
-		return nameIdMap, ErrNotFound(errors.New("no results found"))
+		return nameIDMap, ErrNotFound(errors.New("no results found"))
 	}
 	for _, config := range dat[configType].([]interface{}) {
-		nameIdMap[config.(map[string]interface{})["name"].(string)] = config.(map[string]interface{})["id"].(string)
+		nameIDMap[config.(map[string]interface{})["name"].(string)] = config.(map[string]interface{})["id"].(string)
 	}
-	return nameIdMap, nil
+	return nameIDMap, nil
 }
 
-// Delete configuration from meshery server endpoint /api/{configurations}/{id}
-func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
-	url := mesheryServerUrl + "/api/" + configuration + "/" + id
+// DeleteConfiguration Delete configuration from meshery server endpoint /api/{configurations}/{id}
+func DeleteConfiguration(mesheryServerURL, id, configuration string) error {
+	url := mesheryServerURL + "/api/" + configuration + "/" + id
 	req, err := NewRequest("DELETE", url, nil)
 	if err != nil {
 		return err
@@ -724,10 +725,10 @@ func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
 	return nil
 }
 
-// ValidId - Check if args is a valid ID or a valid ID prefix and returns the full ID
-func ValidId(mesheryServerUrl, args string, configuration string) (string, bool, error) {
+// ValidID - Check if args is a valid ID or a valid ID prefix and returns the full ID
+func ValidID(mesheryServerURL, args string, configuration string) (string, bool, error) {
 	isID := false
-	configID, err := GetID(mesheryServerUrl, configuration)
+	configID, err := GetID(mesheryServerURL, configuration)
 	if err == nil {
 		for _, id := range configID {
 			if strings.HasPrefix(id, args) {
@@ -744,10 +745,10 @@ func ValidId(mesheryServerUrl, args string, configuration string) (string, bool,
 	return args, isID, nil
 }
 
-// ValidId - Check if args is a valid name or a valid name prefix and returns the full name and ID
-func ValidName(mesheryServerUrl, args string, configuration string) (string, string, bool, error) {
+// ValidName checks if args is a valid name or a valid name prefix and returns the full name and ID
+func ValidName(mesheryServerURL, args string, configuration string) (string, string, bool, error) {
 	isName := false
-	nameIdMap, err := GetName(mesheryServerUrl, configuration)
+	nameIDMap, err := GetName(mesheryServerURL, configuration)
 	if err != nil {
 		return "", "", false, err
 	}
@@ -755,10 +756,10 @@ func ValidName(mesheryServerUrl, args string, configuration string) (string, str
 	fullName := ""
 	ID := ""
 
-	for name := range nameIdMap {
+	for name := range nameIDMap {
 		if strings.HasPrefix(name, args) {
 			fullName = name
-			ID = nameIdMap[name]
+			ID = nameIDMap[name]
 			isName = true
 		}
 	}
@@ -807,7 +808,7 @@ func ParseURLGithub(URL string) (string, string, error) {
 	// - https://github.com/meshery/meshery/blob/master/.goreleaser.yml
 	parsedURL, err := url.Parse(URL)
 	if err != nil {
-		return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
+		return "", "", ErrParsingURL(fmt.Errorf("failed to retrieve file from URL: %s", URL))
 	}
 	host := parsedURL.Host
 	path := parsedURL.Path
@@ -816,21 +817,21 @@ func ParseURLGithub(URL string) (string, string, error) {
 	switch host {
 	case "github.com":
 		if len(paths) < 5 {
-			return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
+			return "", "", ErrParsingURL(fmt.Errorf("failed to retrieve file from URL: %s", URL))
 		}
 		resURL := "https://" + host + strings.Join(paths[:4], "/")
 		return resURL, strings.Join(paths[4:], "/"), nil
 	case "raw.githubusercontent.com":
 		if len(paths) < 5 {
-			return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
+			return "", "", ErrParsingURL(fmt.Errorf("failed to retrieve file from URL: %s", URL))
 		}
 		resURL := "https://" + "raw.githubusercontent.com" + path
 		return resURL, "", nil
 	}
-	return URL, "", ErrParsingUrl(errors.New("only github urls are supported"))
+	return URL, "", ErrParsingURL(errors.New("only github urls are supported"))
 }
 
-// Indicate an ongoing Process at a given time on CLI
+// CreateDefaultSpinner Indicate an ongoing Process at a given time on CLI
 func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
 
@@ -839,7 +840,7 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	return s
 }
 
-// Get Meshery Session Data/Details (Adapters)
+// GetSessionData Get Meshery Session Data/Details (Adapters)
 func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
 	method := "GET"
@@ -1330,7 +1331,7 @@ func GetPageQueryParameter(cmd *cobra.Command, page int) string {
 	return fmt.Sprintf("page=%d", page-1)
 }
 
-func IsValidUrl(path string) bool {
+func IsValidURL(path string) bool {
 	u, err := url.Parse(path)
 	if err != nil {
 		return false
@@ -1338,7 +1339,7 @@ func IsValidUrl(path string) bool {
 	return u.Scheme != "" && u.Host != ""
 }
 
-// get current k8s context
+// GetCurrentK8sContext get current k8s context
 func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 	if client == nil {
 		return "", fmt.Errorf("kubernetes client is nil")

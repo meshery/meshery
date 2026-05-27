@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package components provides CLI commands and utilities for mesheryctl.
 package components
 
 import (
@@ -61,7 +62,7 @@ mesheryctl component search [query-text] [--page 1]
 		searchValue.Add("search", args[0])
 
 		modelData := display.DisplayDataAsync{
-			UrlPath:  fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()),
+			URLPath:  fmt.Sprintf("%s?%s", componentAPIPath, searchValue.Encode()),
 			DataType: "component",
 			Header:   []string{"ID", "Name", "Model", "Version"},
 			Page:     componentSearchFlags.Page,

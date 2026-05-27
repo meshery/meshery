@@ -1,3 +1,4 @@
+// Package perf provides CLI commands and utilities for mesheryctl.
 package perf
 
 import (

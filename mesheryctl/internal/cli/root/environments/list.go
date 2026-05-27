@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package environments provides CLI commands and utilities for mesheryctl.
 package environments
 
 import (
@@ -27,7 +28,7 @@ import (
 
 type environmentListFlags struct {
 	count    bool
-	orgId    string
+	orgID    string
 	page     int
 	pagesize int
 }
@@ -54,13 +55,13 @@ mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 `,
 
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if environmentListFlagsProvided.orgId == "" {
+		if environmentListFlagsProvided.orgID == "" {
 			const errMsg = "[ orgId ] isn't specified\n\nUsage: mesheryctl environment list --orgId [orgId]\nRun 'mesheryctl environment list --help' to see detailed help message"
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 
-		if !utils.IsUUID(environmentListFlagsProvided.orgId) {
-			return utils.ErrInvalidUUID(fmt.Errorf("invalid orgId: %s", environmentListFlagsProvided.orgId))
+		if !utils.IsUUID(environmentListFlagsProvided.orgID) {
+			return utils.ErrInvalidUUID(fmt.Errorf("invalid orgId: %s", environmentListFlagsProvided.orgID))
 		}
 
 		return nil
@@ -68,7 +69,7 @@ mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		data := display.DisplayDataAsync{
-			UrlPath:          fmt.Sprintf("%s?orgId=%s", environmentApiPath, environmentListFlagsProvided.orgId),
+			URLPath:          fmt.Sprintf("%s?orgId=%s", environmentAPIPath, environmentListFlagsProvided.orgID),
 			DataType:         "environments",
 			Header:           []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"},
 			Page:             environmentListFlagsProvided.page,
@@ -92,7 +93,7 @@ func processEnvironmentData(environmentResponse *environment.EnvironmentPage) ([
 
 func init() {
 	listEnvironmentCmd.Flags().BoolVarP(&environmentListFlagsProvided.count, "count", "c", false, "(optional) Display count only")
-	listEnvironmentCmd.Flags().StringVarP(&environmentListFlagsProvided.orgId, "orgId", "", "", "Organization ID")
+	listEnvironmentCmd.Flags().StringVarP(&environmentListFlagsProvided.orgID, "orgId", "", "", "Organization ID")
 	listEnvironmentCmd.Flags().IntVarP(&environmentListFlagsProvided.page, "page", "", 1, "(optional) Page number of paginated results")
 	listEnvironmentCmd.Flags().IntVarP(&environmentListFlagsProvided.pagesize, "pagesize", "", 10, "(optional) Number of results per page")
 }

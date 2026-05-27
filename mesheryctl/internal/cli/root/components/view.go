@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package components provides CLI commands and utilities for mesheryctl.
 package components
 
 import (
@@ -62,15 +63,15 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		componentDefinition := args[0]
-		urlPath := componentApiPath
+		urlPath := componentAPIPath
 		searchTerm := ""
 
 		// build url for uuid
 		if utils.IsUUID(componentDefinition) {
-			viewUrlValue := url.Values{}
-			viewUrlValue.Add("id", componentDefinition)
+			viewURLValue := url.Values{}
+			viewURLValue.Add("id", componentDefinition)
 
-			urlPath = fmt.Sprintf("%s?%s", urlPath, viewUrlValue.Encode())
+			urlPath = fmt.Sprintf("%s?%s", urlPath, viewURLValue.Encode())
 		} else {
 			searchTerm = componentDefinition
 		}
@@ -79,7 +80,7 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 
 		err := display.PromptAsyncPagination(
 			display.DisplayDataAsync{
-				UrlPath:        urlPath,
+				URLPath:        urlPath,
 				ErrNotFoundMsg: fmt.Sprintf("%s%s", errNoComponentFound, componentDefinition),
 				SearchTerm:     searchTerm,
 			},

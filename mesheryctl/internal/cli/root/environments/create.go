@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package environments provides CLI commands and utilities for mesheryctl.
 package environments
 
 import (
@@ -62,7 +63,7 @@ mesheryctl environment create --orgId [orgId] --name [name] --description [descr
 			return utils.ErrUnmarshal(err)
 		}
 
-		_, err = api.Add(environmentApiPath, bytes.NewBuffer(payloadBytes), nil)
+		_, err = api.Add(environmentAPIPath, bytes.NewBuffer(payloadBytes), nil)
 		if err != nil {
 			if mErrors.GetCode(err) == utils.ErrFailReqStatusCode {
 				return errCreateEnvironment(createEnvironmentFlags.Name, createEnvironmentFlags.OrganizationID)

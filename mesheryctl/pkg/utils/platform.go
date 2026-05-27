@@ -1,3 +1,4 @@
+// Package utils provides CLI commands and utilities for mesheryctl.
 package utils
 
 import (
@@ -204,7 +205,7 @@ func DownloadOperatorManifest() error {
 	return nil
 }
 
-// returns the Channel and Version given a context
+// GetChannelAndVersion returns the Channel and Version given a context
 func GetChannelAndVersion(currCtx *(config.Context)) (string, string, error) {
 	var version, channel string
 	version = currCtx.GetVersion()
@@ -658,7 +659,7 @@ func CreateManifestsFolder() error {
 	return nil
 }
 
-// GetPods lists all the available pods in the MesheryNamespace
+// GetPodList GetPods lists all the available pods in the MesheryNamespace
 func GetPodList(client *meshkitkube.Client, namespace string) (*v1core.PodList, error) {
 	// Create a pod interface for the given namespace
 	podInterface := client.KubeClient.CoreV1().Pods(namespace)
@@ -672,7 +673,7 @@ func GetPodList(client *meshkitkube.Client, namespace string) (*v1core.PodList, 
 	return podList, nil
 }
 
-// GetRequiredPodsMap checks if the pods specified by the user is valid returns a map of the required pods
+// GetRequiredPods checks if the pods specified by the user is valid returns a map of the required pods
 func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) (map[string]string, error) {
 	requiredPodsMap := make(map[string]string)
 	var availablePodsName []string
@@ -782,7 +783,7 @@ func InstallprereqDocker() error {
 	return nil
 }
 
-// Sets the path to user's kubeconfig file into global variables
+// SetKubeConfig Sets the path to user's kubeconfig file into global variables
 func SetKubeConfig() {
 	// Define the path where the kubeconfig.yaml will be written to
 	usr, err := user.Current()

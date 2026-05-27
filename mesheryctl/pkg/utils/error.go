@@ -1,3 +1,4 @@
+// Package utils provides CLI commands and utilities for mesheryctl.
 package utils
 
 import (
@@ -20,7 +21,7 @@ var (
 	ErrCreatingRequestCode            = "mesheryctl-1096"
 	ErrMarshalCode                    = "mesheryctl-1097"
 	ErrReadResponseBodyCode           = "mesheryctl-1098"
-	ErrParsingUrlCode                 = "mesheryctl-1099"
+	ErrParsingURLCode                 = "mesheryctl-1099"
 	ErrNotFoundCode                   = "mesheryctl-1100"
 	ErrUnauthenticatedCode            = "mesheryctl-1101"
 	ErrInvalidFileCode                = "mesheryctl-1102"
@@ -173,7 +174,7 @@ func SystemProviderSubError(msg string, cmd string) string {
 	}
 }
 
-// SystemProviderSubError returns a formatted error message with a link to `provider` command usage page
+// SystemModelSubError returns a formatted error message with a link to `model` command usage page
 // in addition to the error message
 func SystemModelSubError(msg string, cmd string) string {
 	switch cmd {
@@ -336,7 +337,7 @@ var cmdUsageURLs = map[cmdType]string{
 	cmdToken:                    tokenUsageURL,
 	cmdModel:                    modelUsageURL,
 	cmdModelList:                modelListURL,
-	cmdModelImport:              modelImportURl,
+	cmdModelImport:              modelImportURL,
 	cmdModelView:                modelViewURL,
 	cmdRegistry:                 registryUsageURL,
 	cmdRegistryPublish:          registryPublishURL,
@@ -442,8 +443,8 @@ func ErrReadResponseBody(err error) error {
 		[]string{"Check the status via `mesheryctl system status`"})
 }
 
-func ErrParsingUrl(err error) error {
-	return errors.New(ErrParsingUrlCode, errors.Fatal,
+func ErrParsingURL(err error) error {
+	return errors.New(ErrParsingURLCode, errors.Fatal,
 		[]string{"Error parsing the URL"},
 		[]string{err.Error()},
 		[]string{"The provided URL does not exist or the relative path is incorrect."},

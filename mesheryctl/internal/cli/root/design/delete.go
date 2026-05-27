@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package design provides CLI commands and utilities for mesheryctl.
 package design
 
 import (
@@ -51,7 +52,7 @@ mesheryctl design delete [file | URL]
 		pattern := ""
 		isID := false
 		if len(args) > 0 {
-			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
+			pattern, isID, err = utils.ValidID(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
 				if errors.GetCode(err) == utils.ErrNotFoundCode {
 					return ErrDesignNotFound(args[0])

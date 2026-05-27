@@ -1,3 +1,4 @@
+// Package api provides CLI commands and utilities for mesheryctl.
 package api
 
 import "github.com/meshery/meshkit/errors"

@@ -20,11 +20,11 @@ func TestListEnvironment(t *testing.T) {
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommandTest{
 		{
-			Name:             "List environments organization ID not provided",
+			Name:             "List Environments without orgId flag",
 			Args:             []string{"list"},
 			URL:              "/api/environments",
 			Fixture:          "list.environment.without.orgId.golden",
-			ExpectedResponse: "",
+			ExpectedResponse: "list.environment.without.orgId.golden",
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrInvalidArgument(errors.New("[ orgId ] isn't specified\n\nUsage: mesheryctl environment list --orgId [orgId]\nRun 'mesheryctl environment list --help' to see detailed help message")),

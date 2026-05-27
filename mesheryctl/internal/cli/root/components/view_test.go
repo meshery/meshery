@@ -37,7 +37,7 @@ func TestComponentView(t *testing.T) {
 		{
 			Name:             "given non-existent component provided when component view then display no component found",
 			Args:             []string{"view", "foo"},
-			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=foo", componentApiPath),
+			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=foo", componentAPIPath),
 			Fixture:          "components.empty.api.response.golden",
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
@@ -47,7 +47,7 @@ func TestComponentView(t *testing.T) {
 		{
 			Name:           "given multiple component name is provided when running component view then throw error",
 			Args:           []string{"view", "Test", "ACL"},
-			URL:            fmt.Sprintf("/%s?pagesize=all&search=Test&search=ACL", componentApiPath),
+			URL:            fmt.Sprintf("/%s?pagesize=all&search=Test&search=ACL", componentAPIPath),
 			Fixture:        "components.empty.api.response.golden",
 			IsOutputGolden: false,
 			ExpectError:    true,
@@ -56,7 +56,7 @@ func TestComponentView(t *testing.T) {
 		{
 			Name:             "given valid component provided when component view then display detailed information",
 			Args:             []string{"view", "Test"},
-			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=Test", componentApiPath),
+			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=Test", componentAPIPath),
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "components.view.output.golden",
 			IsOutputGolden:   true,
@@ -65,7 +65,7 @@ func TestComponentView(t *testing.T) {
 		{
 			Name:           "given invalid argument value provided for --output-format flag when component view then throw error",
 			Args:           []string{"view", "Test", "--output-format", "invalid"},
-			URL:            fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
+			URL:            fmt.Sprintf("/%s?pagesize=all&search=Test", componentAPIPath),
 			Fixture:        "components.api.response.golden",
 			IsOutputGolden: false,
 			ExpectError:    true,
@@ -74,7 +74,7 @@ func TestComponentView(t *testing.T) {
 		{
 			Name:             "given valid component provided and --output-format flag when component view then display detail information in the specified output format",
 			Args:             []string{"view", "Test", "--output-format", "json"},
-			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=Test", componentApiPath),
+			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=Test", componentAPIPath),
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "components.view.json.output.golden",
 			IsOutputGolden:   true,
@@ -83,7 +83,7 @@ func TestComponentView(t *testing.T) {
 		{
 			Name:             "given a valid UUID provided when component view then display detailed information of the component",
 			Args:             []string{"view", "fda1c4e7-14ae-4435-8236-adfb9cea0395"},
-			URL:              fmt.Sprintf("/%s?id=fda1c4e7-14ae-4435-8236-adfb9cea0395&page=0&pagesize=10", componentApiPath),
+			URL:              fmt.Sprintf("/%s?id=fda1c4e7-14ae-4435-8236-adfb9cea0395&page=0&pagesize=10", componentAPIPath),
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "components.view.output.golden",
 			IsOutputGolden:   true,
@@ -92,7 +92,7 @@ func TestComponentView(t *testing.T) {
 		{
 			Name:          "given a non-existent UUID is provided when running mesheryctl component view non-existent-uuid then an error message is displayed",
 			Args:          []string{"view", "a12b3c4d-5e6f-4890-abcd-ef1234567890"},
-			URL:           fmt.Sprintf("/%s?id=a12b3c4d-5e6f-4890-abcd-ef1234567890&page=0&pagesize=10", componentApiPath),
+			URL:           fmt.Sprintf("/%s?id=a12b3c4d-5e6f-4890-abcd-ef1234567890&page=0&pagesize=10", componentAPIPath),
 			Fixture:       "components.empty.api.response.golden",
 			ExpectError:   true,
 			ExpectedError: utils.ErrNotFound(fmt.Errorf("%s%s", errNoComponentFound, "a12b3c4d-5e6f-4890-abcd-ef1234567890")),

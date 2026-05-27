@@ -1,3 +1,4 @@
+// Package utils provides CLI commands and utilities for mesheryctl.
 package utils
 
 import (
@@ -78,7 +79,7 @@ func InitTestEnvironment(t *testing.T) *TestHelper {
 	return testContext
 }
 
-// equals fails the test if exp is not equal to act.
+// Equals equals fails the test if exp is not equal to act.
 func Equals(tb testing.TB, exp, act interface{}) {
 	if !reflect.DeepEqual(exp, act) {
 		_, file, line, _ := runtime.Caller(1)
@@ -87,7 +88,7 @@ func Equals(tb testing.TB, exp, act interface{}) {
 	}
 }
 
-// Path to the current file
+// GetBasePath Path to the current file
 func GetBasePath(t *testing.T) string {
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -110,7 +111,7 @@ func (tf *GoldenFile) Load() string {
 	return normalizedContent
 }
 
-// Load a Golden file
+// LoadByte Load a Golden file
 func (tf *GoldenFile) LoadByte() []byte {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
@@ -122,7 +123,7 @@ func (tf *GoldenFile) LoadByte() []byte {
 	return content
 }
 
-// write a Golden file
+// Write write a Golden file
 func (tf *GoldenFile) Write(content string) {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
@@ -145,7 +146,7 @@ func (tf *GoldenFile) Write(content string) {
 	}
 }
 
-// write a Golden file
+// WriteInByte write a Golden file
 func (tf *GoldenFile) WriteInByte(content []byte) {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
@@ -155,7 +156,7 @@ func (tf *GoldenFile) WriteInByte(content []byte) {
 	}
 }
 
-// use default context /pkg/utils/TestConfig.yaml
+// SetupContextEnv use default context /pkg/utils/TestConfig.yaml
 func SetupContextEnv(t *testing.T) {
 	path, err := os.Getwd()
 	if err != nil {
@@ -175,7 +176,7 @@ func SetupContextEnv(t *testing.T) {
 	}
 }
 
-// setup logrus formatter and return the buffer in which commands output is to be set.
+// SetupLogrusGrabTesting setup logrus formatter and return the buffer in which commands output is to be set.
 func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
 	logrus.SetOutput(b)
@@ -183,7 +184,7 @@ func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
 	return b
 }
 
-// setup meshkit logger for testing and return the buffer in which commands output is to be set.
+// SetupMeshkitLoggerTesting setup meshkit logger for testing and return the buffer in which commands output is to be set.
 func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
 	logLevel := logrus.InfoLevel
@@ -197,7 +198,7 @@ func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	return b
 }
 
-// setup custom context with SetupCustomContextEnv
+// SetupCustomContextEnv setup custom context with SetupCustomContextEnv
 func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 	viper.Reset()
 	ViperCompose = viper.New()
@@ -217,18 +218,18 @@ func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 	}
 }
 
-// Start mock HTTP client to mock requests
+// StartMockery Start mock HTTP client to mock requests
 func StartMockery(t *testing.T) {
 	// activate http mocking
 	httpmock.Activate()
 }
 
-// stop HTTP mock client
+// StopMockery stop HTTP mock client
 func StopMockery(_ *testing.T) {
 	httpmock.DeactivateAndReset()
 }
 
-// Set file location for testing stuff
+// SetFileLocationTesting Set file location for testing stuff
 func SetFileLocationTesting(dir string) {
 	MesheryFolder = filepath.Join(dir, "fixtures", MesheryFolder)
 	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
@@ -288,7 +289,7 @@ func StartMockMesheryServer(t *testing.T) error {
 	return nil
 }
 
-// The HandlePagination function add special characters that is not
+// CleanStringFromHandlePagination The HandlePagination function add special characters that is not
 // handle properly in test. This function will remove undesired characters
 // and spaces to ensure excepted versus actual result match when using http.MockURL
 func CleanStringFromHandlePagination(data string) string {
@@ -297,7 +298,7 @@ func CleanStringFromHandlePagination(data string) string {
 	return cleaned
 }
 
-// removeANSICodes removes ANSI escape codes from a string.
+// StripAnsiEscapeCodes removeANSICodes removes ANSI escape codes from a string.
 //
 // Parameters:
 //
@@ -448,8 +449,8 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 type MesheryCommandTest struct {
 	Name             string
 	Args             []string
-	HttpMethod       string
-	HttpStatusCode   int
+	HTTPMethod       string
+	HTTPStatusCode   int
 	URL              string
 	Fixture          string
 	ExpectedResponse string
@@ -474,16 +475,16 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 				TokenFlag = GetToken(t)
 
 				url := testContext.BaseURL + tt.URL
-				httpMethod := tt.HttpMethod
+				httpMethod := tt.HTTPMethod
 
-				if tt.HttpStatusCode < 0 {
+				if tt.HTTPStatusCode < 0 {
 					httpmock.RegisterResponder(httpMethod, url,
 						func(req *http.Request) (*http.Response, error) {
 							return nil, &net.OpError{Op: "dial", Net: "tcp", Addr: nil, Err: net.ErrClosed}
 						})
 				} else {
 					httpmock.RegisterResponder(httpMethod, url,
-						httpmock.NewStringResponder(tt.HttpStatusCode, apiResponse))
+						httpmock.NewStringResponder(tt.HTTPStatusCode, apiResponse))
 				}
 
 			}

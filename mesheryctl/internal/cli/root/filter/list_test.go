@@ -25,8 +25,8 @@ func TestListCmd(t *testing.T) {
 			Fixture:          "list.filter.api.response.golden",
 			URL:              "/api/filter",
 			ExpectError:      false,
-			HttpMethod:       "GET",
-			HttpStatusCode:   200,
+			HTTPMethod:       "GET",
+			HTTPStatusCode:   200,
 		},
 	}
 	// Run tests

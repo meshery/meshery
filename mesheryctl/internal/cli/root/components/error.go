@@ -1,3 +1,4 @@
+// Package components provides CLI commands and utilities for mesheryctl.
 package components
 
 const (

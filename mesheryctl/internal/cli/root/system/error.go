@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package system provides CLI commands and utilities for mesheryctl.
 package system
 
 import (
@@ -85,7 +86,7 @@ var (
 	contextDir            = "See that you have a correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."
 )
 
-// A Format reference that returns Mesheryctl's URL docs for system command and sub commands
+// FormatErrorReference A Format reference that returns Mesheryctl's URL docs for system command and sub commands
 func FormatErrorReference() string {
 	baseURL := "https://docs.meshery.io/reference/mesheryctl/system"
 	switch cmdType {

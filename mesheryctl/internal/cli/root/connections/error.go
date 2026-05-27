@@ -1,3 +1,4 @@
+// Package connections provides CLI commands and utilities for mesheryctl.
 package connections
 
 import (

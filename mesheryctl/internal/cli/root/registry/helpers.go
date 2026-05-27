@@ -1,3 +1,4 @@
+// Package registry provides CLI commands and utilities for mesheryctl.
 package registry
 
 import (

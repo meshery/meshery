@@ -1,3 +1,4 @@
+// Package api provides CLI commands and utilities for mesheryctl.
 package api
 
 import (
@@ -13,7 +14,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Generic function to fetch data from Mesehry server needs to be type of meshery data ApiResponse
+// Fetch Generic function to fetch data from Mesehry server needs to be type of meshery data ApiResponse
 func Fetch[T any](url string) (*T, error) {
 	resp, err := makeRequest(url, http.MethodGet, nil, nil)
 	if err != nil {
@@ -76,11 +77,11 @@ func makeRequest(urlPath string, httpMethod string, body io.Reader, headers map[
 		return nil, utils.ErrLoadConfig(err)
 	}
 
-	baseUrl := mctlCfg.GetBaseMesheryURL()
+	baseURL := mctlCfg.GetBaseMesheryURL()
 
-	utils.Log.Debugf("%s %s/%s\n", httpMethod, baseUrl, urlPath)
+	utils.Log.Debugf("%s %s/%s\n", httpMethod, baseURL, urlPath)
 
-	req, err := utils.NewRequest(httpMethod, fmt.Sprintf("%s/%s", baseUrl, urlPath), body)
+	req, err := utils.NewRequest(httpMethod, fmt.Sprintf("%s/%s", baseURL, urlPath), body)
 	if err != nil {
 		return nil, err
 	}

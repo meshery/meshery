@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package organizations provides CLI commands and utilities for mesheryctl.
 package organizations
 
 import (
@@ -41,7 +42,7 @@ mesheryctl organization list --count
 		pagesize, _ := cmd.Flags().GetInt("pagesize")
 		count, _ := cmd.Flags().GetBool("count")
 		data := display.DisplayDataAsync{
-			UrlPath:          organizationsApiPath,
+			URLPath:          organizationsAPIPath,
 			Page:             page,
 			PageSize:         pagesize,
 			DataType:         "organizations",

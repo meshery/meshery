@@ -1,3 +1,4 @@
+// Package connections provides CLI commands and utilities for mesheryctl.
 package connections
 
 import (
@@ -53,7 +54,7 @@ mesheryctl connection list --count
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		urlPath := connectionApiPath
+		urlPath := connectionAPIPath
 		querySearch := url.Values{}
 
 		kindQuery, err := json.Marshal(connectionListFlagsProvided.kind)
@@ -83,7 +84,7 @@ mesheryctl connection list --count
 		header := []string{"id", "Name", "Type", "Kind", "Status"}
 
 		data := display.DisplayDataAsync{
-			UrlPath:          urlPath,
+			URLPath:          urlPath,
 			DataType:         "connection",
 			Header:           header,
 			Page:             connectionListFlagsProvided.page,

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package design provides CLI commands and utilities for mesheryctl.
 package design
 
 import (
@@ -70,13 +71,13 @@ mesheryctl design view [design-name | ID]
 		isID := false
 
 		if len(args) > 0 { // if design name or ID is provided
-			design, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
+			design, isID, err = utils.ValidID(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
 				return utils.ErrInvalidNameOrID(err)
 			}
 		}
 
-		urlPath := getDesignViewUrlPath(design, isID, designViewFlagsProvided.All)
+		urlPath := getDesignViewURLPath(design, isID, designViewFlagsProvided.All)
 
 		apiResponse, err := api.Fetch[map[string]interface{}](urlPath)
 		if err != nil {
@@ -96,11 +97,11 @@ mesheryctl design view [design-name | ID]
 		if !isID && !designViewFlagsProvided.All { // only the first match will be returned when searching by name
 			patterns, ok := (*apiResponse)["patterns"]
 			if !ok {
-				return ErrDesignInvalidApiResponse("'patterns' field missing")
+				return ErrDesignInvalidAPIResponse("'patterns' field missing")
 			}
 			arr, ok := patterns.([]interface{})
 			if !ok {
-				return ErrDesignInvalidApiResponse("'patterns' field is not of expected type")
+				return ErrDesignInvalidAPIResponse("'patterns' field is not of expected type")
 			}
 			if len(arr) == 0 {
 				return ErrDesignNotFound(design)
@@ -119,10 +120,10 @@ mesheryctl design view [design-name | ID]
 	},
 }
 
-func getDesignViewUrlPath(design string, isID bool, viewAll bool) string {
-	baseApiPath := "api/pattern"
+func getDesignViewURLPath(design string, isID bool, viewAll bool) string {
+	baseAPIPath := "api/pattern"
 	if isID {
-		return fmt.Sprintf("%s/%s", baseApiPath, url.PathEscape(design))
+		return fmt.Sprintf("%s/%s", baseAPIPath, url.PathEscape(design))
 	}
 
 	queryParams := url.Values{}
@@ -136,7 +137,7 @@ func getDesignViewUrlPath(design string, isID bool, viewAll bool) string {
 		queryParams.Add("search", design)
 	}
 
-	return fmt.Sprintf("%s?%s", baseApiPath, queryParams.Encode())
+	return fmt.Sprintf("%s?%s", baseAPIPath, queryParams.Encode())
 }
 
 func init() {

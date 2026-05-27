@@ -1,3 +1,4 @@
+// Package organizations provides CLI commands and utilities for mesheryctl.
 package organizations
 
 import (
@@ -12,7 +13,7 @@ import (
 
 var (
 	availableSubcommands = []*cobra.Command{listOrgCmd}
-	organizationsApiPath = "api/identity/orgs"
+	organizationsAPIPath = "api/identity/orgs"
 	count                bool
 )
 
@@ -41,7 +42,7 @@ mesheryctl organization list
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if count {
-			orgs, err := api.Fetch[models.OrganizationsPage](fmt.Sprintf("%s?pagesize=all", organizationsApiPath))
+			orgs, err := api.Fetch[models.OrganizationsPage](fmt.Sprintf("%s?pagesize=all", organizationsAPIPath))
 			if err != nil {
 				return err
 			}

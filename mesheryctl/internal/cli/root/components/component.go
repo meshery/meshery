@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package components provides CLI commands and utilities for mesheryctl.
 package components
 
 import (
@@ -33,7 +34,7 @@ type componentFlags struct {
 var (
 	availableSubcommands = []*cobra.Command{listComponentCmd, viewComponentCmd, searchComponentsCmd}
 
-	componentApiPath       = "api/meshmodels/components"
+	componentAPIPath       = "api/meshmodels/components"
 	componentFlagsProvided = &componentFlags{}
 )
 
@@ -70,7 +71,7 @@ mesheryctl component view [component-name | component-id]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if componentFlagsProvided.Count {
 			componentData := display.DisplayDataAsync{
-				UrlPath:          componentApiPath,
+				URLPath:          componentAPIPath,
 				DataType:         "component",
 				Header:           []string{},
 				Page:             cmdComponentListFlag.Page,

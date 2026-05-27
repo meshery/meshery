@@ -1,3 +1,4 @@
+// Package display provides CLI commands and utilities for mesheryctl.
 package display
 
 import (
@@ -45,11 +46,11 @@ func HandlePaginationAsync[T any](
 		urlPath := ""
 
 		pagesQuerySearch := url.Values{}
-		if !strings.Contains(displayData.UrlPath, "page=") {
+		if !strings.Contains(displayData.URLPath, "page=") {
 			pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
 		}
 
-		if !strings.Contains(displayData.UrlPath, "pagesize=") {
+		if !strings.Contains(displayData.URLPath, "pagesize=") {
 			pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", effectivePageSize))
 		}
 
@@ -57,10 +58,10 @@ func HandlePaginationAsync[T any](
 			pagesQuerySearch.Set("search", displayData.SearchTerm)
 		}
 
-		if strings.Contains(displayData.UrlPath, "?") {
-			urlPath = fmt.Sprintf("%s&%s", displayData.UrlPath, pagesQuerySearch.Encode())
+		if strings.Contains(displayData.URLPath, "?") {
+			urlPath = fmt.Sprintf("%s&%s", displayData.URLPath, pagesQuerySearch.Encode())
 		} else {
-			urlPath = fmt.Sprintf("%s?%s", displayData.UrlPath, pagesQuerySearch.Encode())
+			urlPath = fmt.Sprintf("%s?%s", displayData.URLPath, pagesQuerySearch.Encode())
 		}
 
 		data, err := api.Fetch[T](urlPath)

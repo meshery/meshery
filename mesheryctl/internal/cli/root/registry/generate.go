@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package registry provides CLI commands and utilities for mesheryctl.
 package registry
 
 import (
@@ -88,7 +89,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
 		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory | Individual CSV files ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nmesheryctl registry generate --model-csv [path] --component-csv [path] --relationship-csv [path]\nRun 'mesheryctl registry generate --help' to see detailed help message"
 
-		spreadsheetIdFlag, _ := cmd.Flags().GetString("spreadsheet-id")
+		spreadsheetIDFlag, _ := cmd.Flags().GetString("spreadsheet-id")
 		registrantDefFlag, _ := cmd.Flags().GetString("registrant-def")
 		directory, _ := cmd.Flags().GetString("directory")
 		modelCSV, _ := cmd.Flags().GetString("model-csv")
@@ -97,14 +98,14 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		// Check if individual CSV flags are provided
 		hasIndividualCSVs := modelCSV != "" && componentCSV != ""
 
-		if spreadsheetIdFlag == "" && registrantDefFlag == "" && directory == "" && !hasIndividualCSVs {
+		if spreadsheetIDFlag == "" && registrantDefFlag == "" && directory == "" && !hasIndividualCSVs {
 			return errors.New(utils.RegistryError(errorMsg, "generate"))
 		}
 
 		spreadsheetCredFlag, _ := cmd.Flags().GetString("spreadsheet-cred")
 		registrantCredFlag, _ := cmd.Flags().GetString("registrant-cred")
 
-		if spreadsheetIdFlag != "" && spreadsheetCredFlag == "" {
+		if spreadsheetIDFlag != "" && spreadsheetCredFlag == "" {
 			return errors.New(utils.RegistryError("Spreadsheet Credentials is required\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help'", "generate"))
 		}
 

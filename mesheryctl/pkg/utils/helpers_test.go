@@ -250,12 +250,12 @@ func TestValidateURL(t *testing.T) {
 		{
 			name:    "Unsupported scheme",
 			url:     "mqtt://www.meshery.io",
-			wantErr: ErrParsingUrl(fmt.Errorf("mqtt is not a supported protocol")),
+			wantErr: ErrParsingURL(fmt.Errorf("mqtt is not a supported protocol")),
 		},
 		{
 			name:    "invalid URL",
 			url:     "meshery.io",
-			wantErr: ErrParsingUrl(fmt.Errorf("parse \"meshery.io\": invalid URI for request")),
+			wantErr: ErrParsingURL(fmt.Errorf("parse \"meshery.io\": invalid URI for request")),
 		},
 	}
 	for _, tt := range tests {

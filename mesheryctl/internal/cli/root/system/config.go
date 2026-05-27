@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package system provides CLI commands and utilities for mesheryctl.
 package system
 
 import (

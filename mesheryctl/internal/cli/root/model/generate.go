@@ -1,3 +1,4 @@
+// Package model provides CLI commands and utilities for mesheryctl.
 package model
 
 import (
@@ -22,9 +23,9 @@ type ModelGenerator interface {
 	Generate() error
 }
 
-type UrlModelGenerator struct {
+type URLModelGenerator struct {
 	TemplateFile string
-	Url          string
+	URL          string
 	SkipRegister bool
 }
 
@@ -74,15 +75,15 @@ mesheryctl model generate --f [URL] -t [path-to-template.json] -r
 
 		}
 
-		isUrl := utils.IsValidUrl(path)
-		if isUrl {
+		isURL := utils.IsValidURL(path)
+		if isURL {
 			if modelGenerateFlags.Template == "" {
 				return ErrTemplateFileNotPresent()
 			}
 
-			urlModelGenerator := &UrlModelGenerator{
+			urlModelGenerator := &URLModelGenerator{
 				TemplateFile: modelGenerateFlags.Template,
-				Url:          path,
+				URL:          path,
 				SkipRegister: modelGenerateFlags.Register,
 			}
 			return urlModelGenerator.Generate()
@@ -122,15 +123,15 @@ func init() {
 
 }
 
-func (u *UrlModelGenerator) Generate() error {
-	utils.Log.Info("Generating model from URL: ", u.Url)
+func (u *URLModelGenerator) Generate() error {
+	utils.Log.Info("Generating model from URL: ", u.URL)
 
 	fileData, err := os.ReadFile(u.TemplateFile)
 	if err != nil {
 		return utils.ErrFileRead(err)
 	}
 
-	err = registerModel(fileData, nil, nil, "", "url", u.Url, !u.SkipRegister)
+	err = registerModel(fileData, nil, nil, "", "url", u.URL, !u.SkipRegister)
 	if err != nil {
 		return err
 	}

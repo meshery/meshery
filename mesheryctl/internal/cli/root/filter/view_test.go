@@ -46,8 +46,8 @@ func TestViewCmd(t *testing.T) {
 			ExpectedResponse: "view.nonexisting.filter.output.golden",
 			Fixture:          "view.nonexisting.filter.api.response.golden",
 			URL:              "/api/filter",
-			HttpMethod:       "GET",
-			HttpStatusCode:   200,
+			HTTPMethod:       "GET",
+			HTTPStatusCode:   200,
 			ExpectError:      false,
 		},
 	}

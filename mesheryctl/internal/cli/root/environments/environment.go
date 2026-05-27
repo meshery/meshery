@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package environments provides CLI commands and utilities for mesheryctl.
 package environments
 
 import (
@@ -27,7 +28,7 @@ import (
 
 var (
 	availableSubcommands = []*cobra.Command{listEnvironmentCmd, createEnvironmentCmd, deleteEnvironmentCmd, viewEnvironmentCmd}
-	environmentApiPath   = "api/environments"
+	environmentAPIPath   = "api/environments"
 )
 
 var EnvironmentCmd = &cobra.Command{

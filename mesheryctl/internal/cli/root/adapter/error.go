@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package adapter provides CLI commands and utilities for mesheryctl.
 package adapter
 
 import "github.com/meshery/meshkit/errors"
@@ -68,7 +69,7 @@ var (
 	ErrSMIConformanceTestsFailed = errors.New(ErrSMIConformanceTestsFailedCode, errors.Fatal, []string{"SMI conformance tests failed"}, []string{"SMI conformance tests failed"}, []string{}, []string{"Join https://mesheryio.slack.com/archives/C010H0HE2E6"})
 )
 
-// When unable to get release data
+// ErrGettingSessionData When unable to get release data
 func ErrGettingSessionData(err error) error {
 	return errors.New(ErrGettingSessionDataCode, errors.Fatal,
 		[]string{"Unable to fetch session data"},

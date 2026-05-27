@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package registry provides CLI commands and utilities for mesheryctl.
 package registry
 
 import (
@@ -36,7 +37,7 @@ var (
 	csvDirectory            string
 )
 
-// PublishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
+// RegistryCmd PublishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
 var RegistryCmd = &cobra.Command{
 	Use:   "registry",
 	Short: "Manage the capability registry",

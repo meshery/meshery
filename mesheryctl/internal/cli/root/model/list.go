@@ -1,3 +1,4 @@
+// Package model provides CLI commands and utilities for mesheryctl.
 package model
 
 import (
@@ -50,7 +51,7 @@ mesheryctl model list --count
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		modelData := display.DisplayDataAsync{
-			UrlPath:          modelsApiPath,
+			URLPath:          modelsAPIPath,
 			DataType:         "model",
 			Header:           []string{"ID", "Model", "Category", "Version"},
 			Page:             modelListFlags.Page,

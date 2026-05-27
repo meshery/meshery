@@ -1,3 +1,4 @@
+// Package config provides CLI commands and utilities for mesheryctl.
 package config
 
 import (
@@ -139,7 +140,7 @@ func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
 	return currentContext, err
 }
 
-// Get any context
+// GetContext Get any context
 func (mc *MesheryCtlConfig) GetContext(name string) (*Context, error) {
 	context, err := mc.CheckIfGivenContextIsValid(name)
 	if err != nil {

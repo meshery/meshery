@@ -1,3 +1,4 @@
+// Package display provides CLI commands and utilities for mesheryctl.
 package display
 
 import (

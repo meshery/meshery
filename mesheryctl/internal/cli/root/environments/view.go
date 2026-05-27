@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package environments provides CLI commands and utilities for mesheryctl.
 package environments
 
 import (
@@ -29,7 +30,7 @@ import (
 )
 
 type environmentViewFlags struct {
-	orgId        string
+	orgID        string
 	outputFormat string
 	save         bool
 }
@@ -46,20 +47,20 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/environme
 mesheryctl environment view --orgId [orgId]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if environmentViewFlagsProvided.orgId == "" {
+		if environmentViewFlagsProvided.orgID == "" {
 			const errMsg = "[ orgId ] isn't specified\n\nUsage: mesheryctl environment view --orgId [orgId]\nRun 'mesheryctl environment view --help' to see detailed help message"
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 
-		if !utils.IsUUID(environmentViewFlagsProvided.orgId) {
-			return utils.ErrInvalidUUID(fmt.Errorf("invalid orgId: %s", environmentViewFlagsProvided.orgId))
+		if !utils.IsUUID(environmentViewFlagsProvided.orgID) {
+			return utils.ErrInvalidUUID(fmt.Errorf("invalid orgId: %s", environmentViewFlagsProvided.orgID))
 		}
 
 		return display.ValidateOutputFormat(environmentViewFlagsProvided.outputFormat)
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		environmentResponse, err := api.Fetch[environment.EnvironmentPage](fmt.Sprintf("%s?orgId=%s", environmentApiPath, environmentViewFlagsProvided.orgId))
+		environmentResponse, err := api.Fetch[environment.EnvironmentPage](fmt.Sprintf("%s?orgId=%s", environmentAPIPath, environmentViewFlagsProvided.orgID))
 		if err != nil {
 			return err
 		}
@@ -68,7 +69,7 @@ mesheryctl environment view --orgId [orgId]
 
 		switch environmentResponse.TotalCount {
 		case 0:
-			utils.Log.Info("No environment(s) found for the given ID: ", environmentViewFlagsProvided.orgId)
+			utils.Log.Info("No environment(s) found for the given ID: ", environmentViewFlagsProvided.orgID)
 			return nil
 		case 1:
 			selectedEnvironment = environmentResponse.Environments[0] // Update the type of selectedModel
@@ -122,5 +123,5 @@ mesheryctl environment view --orgId [orgId]
 func init() {
 	viewEnvironmentCmd.Flags().StringVarP(&environmentViewFlagsProvided.outputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 	viewEnvironmentCmd.Flags().BoolVarP(&environmentViewFlagsProvided.save, "save", "s", false, "(optional) save output as a JSON/YAML file")
-	viewEnvironmentCmd.Flags().StringVarP(&environmentViewFlagsProvided.orgId, "orgId", "", "", "Organization ID")
+	viewEnvironmentCmd.Flags().StringVarP(&environmentViewFlagsProvided.orgID, "orgId", "", "", "Organization ID")
 }

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package config provides CLI commands and utilities for mesheryctl.
 package config
 
 import "github.com/meshery/meshkit/errors"

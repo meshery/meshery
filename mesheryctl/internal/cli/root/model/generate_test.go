@@ -40,7 +40,7 @@ func TestModelGenerate(t *testing.T) {
 		ExpectHelp       bool
 		ExpectErr        bool
 		RaisedError      error
-		HttpCode         int
+		HTTPCode         int
 	}
 
 	tests := []tc{
@@ -58,7 +58,7 @@ func TestModelGenerate(t *testing.T) {
 			ExpectedResponse: "generate.dir.skip-register.output.golden",
 			URL:              apiURL,
 			Fixture:          "generate.api.ok.response.golden",
-			HttpCode:         200,
+			HTTPCode:         200,
 		},
 		{
 			Name:             "model generate: from URL with template",
@@ -66,7 +66,7 @@ func TestModelGenerate(t *testing.T) {
 			URL:              apiURL,
 			Fixture:          "generate.api.ok.response.golden",
 			ExpectedResponse: "generate.dir.register.output.golden",
-			HttpCode:         200,
+			HTTPCode:         200,
 		},
 	}
 
@@ -92,7 +92,7 @@ func TestModelGenerate(t *testing.T) {
 
 				httpmock.RegisterResponder("POST", testContext.BaseURL+tt.URL, func(req *http.Request) (*http.Response, error) {
 
-					return httpmock.NewBytesResponse(tt.HttpCode, apiResponse), nil
+					return httpmock.NewBytesResponse(tt.HTTPCode, apiResponse), nil
 				})
 			}
 

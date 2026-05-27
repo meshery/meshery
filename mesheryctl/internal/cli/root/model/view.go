@@ -1,3 +1,4 @@
+// Package model provides CLI commands and utilities for mesheryctl.
 package model
 
 import (
@@ -46,18 +47,18 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		modelNameOrId := args[0]
+		modelNameOrID := args[0]
 
 		var selectedModel *model.ModelDefinition
 		var err error
 
-		if !utils.IsUUID(modelNameOrId) {
-			selectedModel, err = promptModelSelection(modelNameOrId, modelsApiPath)
+		if !utils.IsUUID(modelNameOrID) {
+			selectedModel, err = promptModelSelection(modelNameOrID, modelsAPIPath)
 		} else {
 			queryParams := url.Values{}
-			queryParams.Add("id", modelNameOrId)
-			modelViewApiPath := fmt.Sprintf("%s?%s", modelsApiPath, queryParams.Encode())
-			selectedModel, err = promptModelSelection("", modelViewApiPath)
+			queryParams.Add("id", modelNameOrID)
+			modelViewAPIPath := fmt.Sprintf("%s?%s", modelsAPIPath, queryParams.Encode())
+			selectedModel, err = promptModelSelection("", modelViewAPIPath)
 		}
 
 		if err != nil {
@@ -65,7 +66,7 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 		}
 
 		if selectedModel == nil {
-			utils.Log.Infof("No model found with name or ID: %s", modelNameOrId)
+			utils.Log.Infof("No model found with name or ID: %s", modelNameOrID)
 			return nil
 		}
 
@@ -101,16 +102,16 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 	},
 }
 
-func getModelViewUrlPath(modelNameOrId string) string {
+func getModelViewURLPath(modelNameOrID string) string {
 	queryParams := url.Values{}
 
-	if !utils.IsUUID(modelNameOrId) {
-		queryParams.Add("search", modelNameOrId)
+	if !utils.IsUUID(modelNameOrID) {
+		queryParams.Add("search", modelNameOrID)
 	} else {
-		queryParams.Add("id", modelNameOrId)
+		queryParams.Add("id", modelNameOrID)
 	}
 
-	return fmt.Sprintf("%s?%s", modelsApiPath, queryParams.Encode())
+	return fmt.Sprintf("%s?%s", modelsAPIPath, queryParams.Encode())
 }
 
 func init() {

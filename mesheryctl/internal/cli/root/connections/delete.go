@@ -1,3 +1,4 @@
+// Package connections provides CLI commands and utilities for mesheryctl.
 package connections
 
 import (
@@ -32,7 +33,7 @@ mesheryctl connection delete [connection_id]
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		_, err := api.Delete(fmt.Sprintf("%s/%s", connectionApiPath, args[0]))
+		_, err := api.Delete(fmt.Sprintf("%s/%s", connectionAPIPath, args[0]))
 		if err != nil {
 			if errors.GetCode(err) == utils.ErrNotFoundCode {
 				utils.Log.Warnf("No connection with ID \"%s\" found", args[0])
