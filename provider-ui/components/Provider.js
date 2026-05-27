@@ -36,7 +36,6 @@ import {
   Box,
   Chip,
   Link,
-  Stack,
   Typography,
   ExternalLinkIcon,
   LockIcon,
@@ -197,6 +196,8 @@ function CapabilityChip({ label, count }) {
         // horizontal room - which is the desired behavior.
         display: "inline-flex",
         flexShrink: 0,
+        maxWidth: "100%",
+        minWidth: 0,
         alignItems: "stretch",
         borderRadius: "12px",
         overflow: "hidden",
@@ -270,16 +271,18 @@ function ProviderInfoContent({ provider }) {
 
   return (
     <Box sx={{ width: "100%" }}>
-      {/* Three-column header: name (left), URL (center, flex-1 truncate),
-          status chip (right). All three share one vertical row using
-          space-between so the header reads as a single dense identity
-          band rather than a stacked title/url/status sequence. */}
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        spacing={1}
-        sx={{ width: "100%" }}
+      {/* Use an explicit three-column grid so the name, URL, and status chip
+          stay on a single visual row. Flexbox let the centered URL fall onto
+          a second line in constrained widths, which is what the review
+          screenshot called out. */}
+      <Box
+        sx={{
+          width: "100%",
+          display: "grid",
+          gridTemplateColumns: "auto minmax(0, 1fr) auto",
+          alignItems: "center",
+          columnGap: 1,
+        }}
       >
         <Typography
           component="div"
@@ -288,6 +291,7 @@ function ProviderInfoContent({ provider }) {
             fontSize: "1.05rem",
             lineHeight: 1.3,
             flexShrink: 0,
+            minWidth: 0,
           }}
         >
           {provider.providerName || "Remote Provider"}
@@ -299,12 +303,14 @@ function ProviderInfoContent({ provider }) {
             rel="noopener noreferrer"
             underline="hover"
             sx={{
-              display: "inline-flex",
+              display: "flex",
               alignItems: "center",
               gap: 0.5,
               minWidth: 0,
-              flex: 1,
               justifyContent: "center",
+              justifySelf: "center",
+              width: "100%",
+              maxWidth: "100%",
               fontSize: "0.75rem",
               color: "inherit",
               opacity: 0.75,
@@ -314,15 +320,18 @@ function ProviderInfoContent({ provider }) {
               "&:hover": { opacity: 1, color: KEPPEL },
             }}
           >
-            <span
-              style={{
+            <Box
+              component="span"
+              sx={{
+                display: "block",
+                minWidth: 0,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
               }}
             >
               {provider.providerUrl.toLowerCase()}
-            </span>
+            </Box>
             <ExternalLinkIcon
               width={12}
               height={12}
@@ -331,9 +340,9 @@ function ProviderInfoContent({ provider }) {
             />
           </Link>
         ) : (
-          // Keep the flex skeleton consistent so the status chip stays
+          // Keep the grid skeleton consistent so the status chip stays
           // anchored on the right whether or not a URL is present.
-          <span style={{ flex: 1 }} aria-hidden="true" />
+          <Box aria-hidden="true" sx={{ minWidth: 0 }} />
         )}
         <Chip
           size="small"
@@ -353,6 +362,7 @@ function ProviderInfoContent({ provider }) {
           }
           sx={{
             flexShrink: 0,
+            justifySelf: "end",
             background: "rgba(255,255,255,0.08)",
             color: "inherit",
             fontWeight: 600,
@@ -360,17 +370,20 @@ function ProviderInfoContent({ provider }) {
             ".MuiChip-icon": { ml: 1 },
           }}
         />
-      </Stack>
+      </Box>
 
       {hasMetaChips && (
         <>
           <ProviderInfoSectionRule />
-          <Stack
-            direction="row"
-            spacing={0.75}
-            useFlexGap
-            flexWrap="wrap"
-            alignItems="center"
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 0.75,
+              alignItems: "center",
+              width: "100%",
+              minWidth: 0,
+            }}
           >
             {provider.packageVersion && (
               <Chip
@@ -420,7 +433,7 @@ function ProviderInfoContent({ provider }) {
                 />
               </CustomTooltip>
             )}
-          </Stack>
+          </Box>
         </>
       )}
 
@@ -434,17 +447,19 @@ function ProviderInfoContent({ provider }) {
               the chips' intrinsic content width - otherwise a long row
               of chips overflows past the Paper's right edge instead of
               wrapping. */}
-          <Stack
-            direction="row"
-            spacing={0.5}
-            useFlexGap
-            flexWrap="wrap"
-            sx={{ width: "100%" }}
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 0.5,
+              width: "100%",
+              minWidth: 0,
+            }}
           >
             {categories.map(({ label, count }) => (
               <CapabilityChip key={label} label={label} count={count} />
             ))}
-          </Stack>
+          </Box>
         </>
       )}
 
@@ -478,12 +493,15 @@ function ProviderInfoContent({ provider }) {
           {/* Chips sit on their own row below the section heading, matching
               the Capabilities section pattern (heading on its own line,
               then chips beneath). */}
-          <Stack
-            direction="row"
-            spacing={0.75}
-            flexWrap="wrap"
-            useFlexGap
-            sx={{ width: "100%" }}
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 0.75,
+              width: "100%",
+              minWidth: 0,
+              mt: 0.25,
+            }}
           >
             {Object.keys(provider.extensions || {}).map((slot) => {
               const list = provider.extensions[slot];
@@ -503,7 +521,7 @@ function ProviderInfoContent({ provider }) {
                 />
               );
             })}
-          </Stack>
+          </Box>
         </>
       )}
     </Box>
@@ -859,44 +877,88 @@ export default function Provider() {
                         </MenuItem>
                       );
                     };
+                    const renderSectionLabel = (label) => (
+                      <Typography
+                        component="div"
+                        sx={{
+                          px: 2,
+                          pt: 1,
+                          pb: 0.5,
+                          fontSize: "0.68rem",
+                          fontWeight: 700,
+                          letterSpacing: "0.06em",
+                          textTransform: "uppercase",
+                          color: "inherit",
+                          opacity: 0.65,
+                        }}
+                      >
+                        {label}
+                      </Typography>
+                    );
                     return (
                       <>
+                        {localEntries.length > 0 && renderSectionLabel("Local")}
                         {localEntries.map(renderRow)}
                         {localEntries.length > 0 && remoteEntries.length > 0 && (
                           <Divider
                             sx={{
-                              mt: 0.5,
+                              mt: 0.75,
                               mb: 0,
-                              mx: "auto",
+                              mx: 0,
                               backgroundColor: accentGrey[40],
-                              width: "80%",
+                              opacity: 0.45,
+                              width: "100%",
                             }}
                           />
                         )}
+                        {remoteEntries.length > 0 && renderSectionLabel("Remote")}
                         {remoteEntries.map(renderRow)}
                       </>
                     );
                   })()}
-                  <Divider
-                    sx={{
-                      mt: 0.5,
-                      mb: 0,
-                      mx: "auto",
-                      backgroundColor: accentGrey[40],
-                      width: "80%",
-                    }}
-                  />
-                  {Object.keys(availableProviders).map((key) => {
-                    const provider = availableProviders[key];
-                    if (provider?._status !== "offline") return null;
-                    const label = formatProviderLabel(key, provider);
-                    return (
-                      <MenuProviderDisabled disabled={true} key={key}>
-                        {label}{"\u00A0"}
-                        <span>Offline</span>
-                      </MenuProviderDisabled>
-                    );
-                  })}
+                  {Object.values(availableProviders).some(
+                    (provider) => provider?._status === "offline"
+                  ) && (
+                    <>
+                      <Divider
+                        sx={{
+                          mt: 0.75,
+                          mb: 0,
+                          mx: 0,
+                          backgroundColor: accentGrey[40],
+                          opacity: 0.45,
+                          width: "100%",
+                        }}
+                      />
+                      <Typography
+                        component="div"
+                        sx={{
+                          px: 2,
+                          pt: 1,
+                          pb: 0.5,
+                          fontSize: "0.68rem",
+                          fontWeight: 700,
+                          letterSpacing: "0.06em",
+                          textTransform: "uppercase",
+                          color: (theme) => theme.palette.text.inverse,
+                          opacity: 0.65,
+                        }}
+                      >
+                        Offline
+                      </Typography>
+                      {Object.keys(availableProviders).map((key) => {
+                        const provider = availableProviders[key];
+                        if (provider?._status !== "offline") return null;
+                        const label = formatProviderLabel(key, provider);
+                        return (
+                          <MenuProviderDisabled disabled={true} key={key}>
+                            {label}{"\u00A0"}
+                            <span>Offline</span>
+                          </MenuProviderDisabled>
+                        );
+                      })}
+                    </>
+                  )}
                   {/*
                     The chooser is now strictly driven by the server's
                     /api/providers/stream feed (see useEffect above);

@@ -99,6 +99,9 @@ export const StyledPopover = styled(Popover)(({ theme }) => ({
   },
   "& .MuiList-root": {
     backgroundColor: "transparent",
+    borderRadius: "inherit",
+    overflow: "hidden",
+    padding: 0,
   },
 }));
 // Per-provider info popover. Anchored to the InfoOutlined icon next to each
