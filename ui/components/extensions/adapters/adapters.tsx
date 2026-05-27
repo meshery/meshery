@@ -74,24 +74,28 @@ const Adapters: React.FC = () => {
   ): void => {
     updateProgress({ showProgress: true });
 
-    changeAdapterState((response: unknown, errors: unknown) => {
-      updateProgress({ showProgress: false });
+    changeAdapterState(
+      (response: unknown, errors: unknown) => {
+        updateProgress({ showProgress: false });
 
-      if (!isNil(errors)) {
-        // Toggle the switch to its previous state if the request fails.
-        setAvailableAdapters({
-          ...availableAdapters,
-          [adapterId]: { ...selectedAdapter, enabled: !selectedAdapter.enabled },
-        });
-        handleError(msg);
-      } else {
-        const actionText = payload.status.toLowerCase();
-        notify({
-          message: `${selectedAdapter.name} adapter ${actionText}`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      }
-    }, payload);
+        if (!isNil(errors)) {
+          // Toggle the switch to its previous state if the request fails.
+          setAvailableAdapters({
+            ...availableAdapters,
+            [adapterId]: { ...selectedAdapter, enabled: !selectedAdapter.enabled },
+          });
+          handleError(msg);
+        } else {
+          const actionText = payload.status.toLowerCase();
+          notify({
+            message: `${selectedAdapter.name} adapter ${actionText}`,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+        }
+      },
+      payload,
+      (error) => handleError(msg)(error),
+    );
   };
 
   const handleError =

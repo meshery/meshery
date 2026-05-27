@@ -48,15 +48,15 @@ const StyledChip = styled(Chip)(({ theme }) => ({
   },
 }));
 
-function NoOptionsMessage(props) {
+function NoOptionsMessage(props: { innerProps: unknown; children: React.ReactNode }) {
   return <StyledNoOptionsMessage {...props.innerProps}>{props.children}</StyledNoOptionsMessage>;
 }
 
-function inputComponent({ inputRef, ...props }) {
+function inputComponent({ inputRef, ...props }: any) {
   return <div ref={inputRef} {...props} />;
 }
 
-function Control(props) {
+function Control(props: any) {
   return (
     <TextField
       fullWidth
@@ -77,7 +77,7 @@ function Control(props) {
   );
 }
 
-function Option(props) {
+function Option(props: any) {
   return (
     <ListItemButton
       ref={props.innerRef}
@@ -91,19 +91,19 @@ function Option(props) {
   );
 }
 
-function Placeholder(props) {
+function Placeholder(props: any) {
   return <StyledPlaceholder {...props.innerProps}>{props.children}</StyledPlaceholder>;
 }
 
-function SingleValue(props) {
+function SingleValue(props: any) {
   return <Typography {...props.innerProps}>{props.children}</Typography>;
 }
 
-function ValueContainer(props) {
+function ValueContainer(props: any) {
   return <StyledValueContainer>{props.children}</StyledValueContainer>;
 }
 
-function MultiValue(props) {
+function MultiValue(props: any) {
   return (
     <StyledChip
       tabIndex={-1}
@@ -114,7 +114,7 @@ function MultiValue(props) {
   );
 }
 
-function Menu(props) {
+function Menu(props: any) {
   return (
     <StyledPaper square {...props.innerProps}>
       {props.children}
@@ -133,20 +133,36 @@ const components = {
   ValueContainer,
 };
 
+type ReactSelectWrapperProps = {
+  label: string;
+  placeholder?: string;
+  onChange: (_value: any) => void;
+  onInputChange?: (_value: string) => void;
+  value?: any;
+  options: any[];
+  error?: boolean;
+  helperText?: string;
+  isMulti?: boolean;
+  noOptionsMessage?: string;
+};
+
+const CreatableSelect = CreateSelect as unknown as React.ComponentType<any>;
+
 const ReactSelectWrapper = ({
   label,
-  placeholder,
+  placeholder = '',
   onChange,
   onInputChange,
   value,
   options,
   error,
+  helperText,
   isMulti = false,
-  noOptionsMessage = 'Type to create a new Environment',
-}) => {
+  noOptionsMessage = 'Type to create a new option',
+}: ReactSelectWrapperProps) => {
   const theme = useTheme();
   const selectStyles = {
-    input: (base) => ({
+    input: (base: Record<string, unknown>) => ({
       ...base,
       color: theme.palette.text.primary,
       '& input': { font: 'inherit' },
@@ -158,12 +174,13 @@ const ReactSelectWrapper = ({
 
   return (
     <NoSsr>
-      <CreateSelect
+      <CreatableSelect
         styles={selectStyles}
         textFieldProps={{
           label,
           InputLabelProps: { shrink: true },
           error,
+          helperText,
         }}
         options={options}
         components={components}
@@ -183,9 +200,15 @@ ReactSelectWrapper.propTypes = {
   label: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   onInputChange: PropTypes.func,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
-  options: PropTypes.array.isRequired,
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string,
+      label: PropTypes.string,
+    }),
+  ).isRequired,
   error: PropTypes.bool,
+  helperText: PropTypes.string,
   isMulti: PropTypes.bool,
   noOptionsMessage: PropTypes.string,
 };

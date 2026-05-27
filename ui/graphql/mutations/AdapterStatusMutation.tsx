@@ -3,19 +3,20 @@ import { createRelayEnvironment } from 'lib/relayEnvironment';
 
 interface AdapterStatusVariables {
   status: string;
-  targetPort: string;
+  targetPort: string | number;
   adapter: string;
 }
 
 export default function changeAdapterState(
-  onComplete: (_response: unknown) => void,
+  onComplete: (_response: unknown, _errors: ReadonlyArray<unknown> | null) => void,
   variables: AdapterStatusVariables,
+  onError?: (_error: Error) => void,
 ) {
   const environment = createRelayEnvironment({});
   const vars = {
     input: {
       targetStatus: variables.status,
-      targetPort: variables.targetPort,
+      targetPort: String(variables.targetPort),
       adapter: variables.adapter,
     },
   };
@@ -29,7 +30,15 @@ export default function changeAdapterState(
   commitMutation(environment, {
     mutation: adapterStatusMutation,
     variables: vars,
-    onCompleted: onComplete,
-    onError: (error) => console.log(`An error occured:`, error),
+    onCompleted: (response, errors) => onComplete(response, errors ?? null),
+    onError: (error) => {
+      if (onError) {
+        onError(error);
+        return;
+      }
+
+      // Fall back to console.error so failures aren't silent.
+      console.error('Error in AdapterStatusMutation:', error);
+    },
   });
 }
