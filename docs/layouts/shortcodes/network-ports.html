@@ -1,8 +1,10 @@
 {{- /* Load all adapter pages from extensions/adapters section */ -}}
 {{- $adapters := slice -}}
-{{- range site.AllPages -}}
-  {{- if and (strings.Contains .Path "extensions/adapters") (ne .Kind "section") .Params.port -}}
-    {{- $adapters = $adapters | append . -}}
+{{- range hugo.Sites -}}
+  {{- range .Pages -}}
+    {{- if and (strings.Contains .Path "extensions/adapters") (ne .Kind "section") .Params.port -}}
+      {{- $adapters = $adapters | append . -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 

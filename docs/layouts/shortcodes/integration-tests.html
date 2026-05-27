@@ -1,8 +1,10 @@
 {{- /* Load all test results from project/compatibility section */ -}}
 {{- $test_results := slice -}}
-{{- range site.AllPages -}}
-  {{- if and (strings.Contains .Path "project/compatibility") (ne .Kind "section") -}}
-    {{- $test_results = $test_results | append . -}}
+{{- range hugo.Sites -}}
+  {{- range .Pages -}}
+    {{- if and (strings.Contains .Path "project/compatibility") (ne .Kind "section") -}}
+      {{- $test_results = $test_results | append . -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 

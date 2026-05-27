@@ -25,7 +25,7 @@
 </style>
 
 {{ $count := 0 }}
-{{ range $fileName, $fileData := site.Data.errorref }}
+{{ range $fileName, $fileData := hugo.Data.errorref }}
   {{ $count = add $count 1 }}
   {{ $component := $fileData.errors_export }}
   {{ $heading := "" }}

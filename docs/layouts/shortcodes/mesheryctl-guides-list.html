@@ -1,7 +1,9 @@
 <ul>
-  {{ range where .Site.AllPages "Section" "guides" }}
-    {{ if and (in .Params.categories "mesheryctl") (not .IsSection) }}
-      <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+  {{ range hugo.Sites }}
+    {{ range where .Pages "Section" "guides" }}
+      {{ if and (in .Params.categories "mesheryctl") (not .IsSection) }}
+        <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{ end }}
     {{ end }}
   {{ end }}
   <li><a href="/installation/upgrades#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>

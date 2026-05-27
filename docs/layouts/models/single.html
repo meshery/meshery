@@ -35,7 +35,7 @@
 
     <!-- model custom data -->
     {{ $modelKey := lower (replace .Title " " "-") }}
-    {{ with index site.Data.modelscustominfo $modelKey }}
+    {{ with index hugo.Data.modelscustominfo $modelKey }}
     <div>
         {{ .content | safeHTML }}
     </div>

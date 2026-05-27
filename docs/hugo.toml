@@ -69,7 +69,7 @@ id = "G-HX135VWX9B"
 
 [languages]
 [languages.en]
-languageName = "English"
+label = "English"
 # Weight used for sorting.
 weight = 1
 [languages.en.params]

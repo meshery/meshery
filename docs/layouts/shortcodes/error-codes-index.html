@@ -6,7 +6,7 @@
   </tr>
 </thead>
 <tbody>
-  {{ range $fileName, $fileData := site.Data.errorref }}
+  {{ range $fileName, $fileData := hugo.Data.errorref }}
     {{ $component := $fileData.errors_export }}
     {{ $link := "" }}
     {{ if eq $component.component_type "adapter" }}

@@ -1,9 +1,11 @@
 <div class="section">
   {{ $tutorials := slice }}
   
-  {{ range .Site.AllPages }}
-    {{ if and (eq .Section "guides") (not .IsSection) (in .Params.categories "tutorials") }}
-      {{ $tutorials = $tutorials | append . }}
+  {{ range hugo.Sites }}
+    {{ range .Pages }}
+      {{ if and (eq .Section "guides") (not .IsSection) (in .Params.categories "tutorials") }}
+        {{ $tutorials = $tutorials | append . }}
+      {{ end }}
     {{ end }}
   {{ end }}
   
