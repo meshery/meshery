@@ -7,9 +7,7 @@ import {
   Grid2,
   FormControl,
   TableCell,
-  // Sistent re-exports InfoOutlinedIcon as `InfoOutlined`; alias on
-  // import so call sites stay unchanged.
-  InfoOutlined as InfoOutlinedIcon,
+  InfoOutlinedIcon,
 } from '@sistent/sistent';
 import { ConnectionStyledSelect } from './styles';
 import { FormatId } from '../data-formatter';

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  ChevronLeft,
-  ChevronRight,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   DeleteIcon,
   NoSsr,
   Pagination,
@@ -536,7 +536,7 @@ const Environments = () => {
                   boundaryCount={3}
                   renderItem={(item) => (
                     <PaginationItem
-                      slots={{ previous: ChevronLeft, next: ChevronRight }}
+                      slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
                       {...item}
                     />
                   )}

@@ -24,8 +24,6 @@ export type { IconProps } from './types';
 // ---------------------------------------------------------------------------
 
 export { ArrowDropDownIcon } from './ArrowDropDownIcon';
-export { ChevronLeftIcon } from './ChevronLeftIcon';
-export { ChevronRightIcon } from './ChevronRightIcon';
 export { EditIcon } from './EditIcon';
 export { FullscreenExitIcon } from './FullscreenExitIcon';
 export { FullscreenIcon } from './FullscreenIcon';
@@ -53,10 +51,10 @@ export { default as ExpandMoreIcon } from './ExpandMoreIcon';
 // ---------------------------------------------------------------------------
 
 export {
-  AccessTime,
+  AccessTimeIcon,
   AddCircleIcon as AddCircle,
   ArrowBackIcon as ArrowBack,
-  BarchartIcon as BarChart,
+  BarChartIcon as BarChart,
   BuildRoundedIcon as BuildRounded,
   CachedIcon as Cached,
   CheckCircleIcon as CheckCircle,
@@ -73,7 +71,7 @@ export {
   FileUploadIcon as FileUpload,
   FilterIcon as Filter,
   GetAppIcon as GetApp,
-  GroupAdd,
+  GroupAddIcon,
   HandymanIcon as Handyman,
   HelpOutlinedIcon as HelpOutlined,
   InfoIcon as Info,
@@ -102,6 +100,8 @@ export {
   WarningIcon as Warning,
   DownloadIcon as SaveAlt,
   CancelIcon as NotInterestedRounded,
+  ChevronRightIcon,
+  ChevronLeftIcon
 } from '@sistent/sistent';
 
 export { default as AddCircleOutlined } from './AddIconCircleBorder';
