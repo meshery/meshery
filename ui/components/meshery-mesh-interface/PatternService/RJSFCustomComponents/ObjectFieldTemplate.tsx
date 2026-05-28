@@ -62,9 +62,9 @@ const ObjectFieldTemplate = ({
   const CustomTitleField = ({ title: titleProp, id, description: descProp, properties }) => {
     const titleStr = safeStringTitle(titleProp ?? safeTitleStr);
     return (
-      <Box mb={1} mt={1} id={id}>
+      <Box sx={{ mb: 1, mt: 1 }} id={id}>
         <CssBaseline />
-        <Grid2 container justify="flex-start" alignItems="center" size="grow">
+        <Grid2 container size="grow" sx={{ justifyContent: 'flex-start', alignItems: 'center' }}>
           {canExpand(schema, uiSchema, formData) ? (
             <Grid2
               onClick={() => {

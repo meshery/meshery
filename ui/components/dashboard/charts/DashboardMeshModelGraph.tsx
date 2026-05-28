@@ -16,9 +16,7 @@ import { DashboardSection } from '../style';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
-// Sistent re-exports InfoOutlinedIcon as `InfoOutlined`; alias on
-// import so call sites stay unchanged.
-import { Grid2, InfoOutlined as InfoOutlinedIcon, Typography, useTheme } from '@sistent/sistent';
+import { Grid2, InfoOutlinedIcon, Typography, useTheme } from '@sistent/sistent';
 
 function MeshModelContructs() {
   const params = {

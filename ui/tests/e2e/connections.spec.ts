@@ -47,10 +47,18 @@ const transitionTests: TransitionTest[] = [
 ];
 
 test.describe.serial('Connection Management Tests', () => {
+  // The shared beforeEach calls dashboardPage.navigateToDashboard() and
+  // navigateToConnections(), each of which internally awaits two visibility
+  // checks with a 120s timeout. Under the default BASE_TIMEOUT=60s the hook
+  // itself dies before those waits can resolve when CI is under load.
+  // Three minutes is enough headroom for a slow dashboard render plus the
+  // connections page mount and its initial API response.
+  test.describe.configure({ timeout: 180_000 });
+
   test.beforeEach(async ({ page }) => {
+    const initialConnectionsRes = waitForConnectionsApiResponse(page);
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
-    const initialConnectionsRes = waitForConnectionsApiResponse(page);
     await dashboardPage.navigateToConnections();
     await page.waitForURL(/\/management\/connections/);
     await initialConnectionsRes;
