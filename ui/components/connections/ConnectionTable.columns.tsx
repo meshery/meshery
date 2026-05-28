@@ -484,7 +484,7 @@ export const useConnectionColumns = ({
           },
           customBodyRender: function CustomBody(_, tableMeta) {
             return (
-              <Box display={'flex'} justifyContent={'center'}>
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 {getColumnValue(tableMeta.rowData, 'kind', nextColumns) ===
                 CONNECTION_KINDS.KUBERNETES ? (
                   <IconButton
