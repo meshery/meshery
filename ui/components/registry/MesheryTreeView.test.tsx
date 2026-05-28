@@ -32,7 +32,7 @@ vi.mock('@sistent/sistent', () => ({
   ),
   CircularProgress: () => <div data-testid="loading-spinner" />,
   Typography: ({ children }: any) => <span>{children}</span>,
-  InfoOutlined: () => <svg data-testid="info-icon" />,
+  InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
 }));
 
 vi.mock('../../constants/navigator', () => ({
