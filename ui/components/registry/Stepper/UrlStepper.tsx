@@ -191,7 +191,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
     const svgDataUrl = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgContent)))}`;
 
     return (
-      <Box mt={1}>
+      <Box sx={{ mt: 1 }}>
         <img src={svgDataUrl} alt="Logo" height="40" style={{ maxWidth: '100%' }} />
       </Box>
     );
@@ -202,7 +202,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
       {
         component: (
           <div>
-            <Box display="flex" alignItems="center" mb={2}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <Typography>
                 Please enter the appropriate <strong>Model Name</strong> (a unique name with
                 hyphens, not whitespaces) and <strong>Model Display Name</strong> for your model.
@@ -273,7 +273,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
       {
         component: (
           <div>
-            <Box display="flex" alignItems="center" mb={2}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <Typography>
                 {' '}
                 Please select the appropriate <strong>Category</strong> and{' '}
@@ -339,7 +339,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
               Choose the Category and Subcategory that best describe your model.
             </Typography>
             <Typography variant="body2" gutterBottom>
-              This helps improve discoverability in Kanvas. If no suitable option fits, select{' '}
+              This helps improve discoverability. If no suitable option fits, select{' '}
               <em>Uncategorized</em>.
             </Typography>
             <Typography variant="body2" gutterBottom>
@@ -363,7 +363,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
       {
         component: (
           <div>
-            <Box display="flex" alignItems="center" mb="2rem">
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: '2rem' }}>
               <Typography>
                 Configure icons, colors, and a default shape for your model and its components.
                 <br />
@@ -482,7 +482,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
       {
         component: (
           <div>
-            <Box display="flex" alignItems="center" mb={2}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <Typography>
                 Please identify the location from which to source your model&apos;s components.
               </Typography>
@@ -594,7 +594,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
       {
         component: (
           <Box sx={{ maxHeight: '40vh' }}>
-            <Box display="flex" alignItems="center" mb={1}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
               <Typography variant="h6" sx={{ fontWeight: 500 }}>
                 Model Generation Summary
               </Typography>
@@ -624,7 +624,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                     <Typography variant="textB2SemiBold" color="textSecondary">
                       Primary Color
                     </Typography>
-                    <Box mt={1} display="flex" alignItems="center">
+                    <Box sx={{ mt: 1, display: 'flex', alignItems: 'center' }}>
                       <StyledColorBox color={primaryColor} />
                       <Typography>{primaryColor}</Typography>
                     </Box>
@@ -635,7 +635,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                     <Typography variant="textB2SemiBold" color="textSecondary">
                       Secondary Color
                     </Typography>
-                    <Box mt={1} display="flex" alignItems="center">
+                    <Box sx={{ mt: 1, display: 'flex', alignItems: 'center' }}>
                       <StyledColorBox color={secondaryColor} />
                       <Typography>{secondaryColor}</Typography>
                     </Box>

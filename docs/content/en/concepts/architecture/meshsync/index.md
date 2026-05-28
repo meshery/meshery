@@ -86,7 +86,7 @@ One Meshery Operator and one MeshSync are deployed to each Kubernetes cluster un
 
 ## Tiered Discovery
 
-Kubernetes clusters may grow very large with thousands of objects within them. The process of positively identifying and classifying resources by type, aligning them with Meshery's object model can be intense. Discovery tiers (for speed and scalability of MeshSync) successively refine the process of infrastructure identification (see [Composite Fingerprints](#composite-fingerprints)).
+Kubernetes clusters may grow very large with numerous objects within them. The process of positively identifying and classifying resources by type and aligning them with Meshery's object model can be intense, and discovery tiers (for speed and scalability of MeshSync) successively refine the process of infrastructure identification (see [Composite Fingerprints](#composite-fingerprints)).
 
 For efficient management of large Kubernetes clusters, MeshSync uses tiered discovery. This approach progressively refines the identification of relevant infrastructure, optimizing the speed and scalability of MeshSync. You have control over the depth of object discovery, enabling you to strike the right balance between granularity and performance for efficient cluster management.
 
