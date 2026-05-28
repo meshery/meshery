@@ -12,7 +12,7 @@ replace github.com/compose-spec/compose-go/v2 => github.com/compose-spec/compose
 
 // replace github.com/meshery/schemas => ../schemas
 
-// replace github.com/meshery/meshkit => ../meshkit
+replace github.com/meshery/meshkit => ../meshkit
 
 // replace github.com/meshery/meshsync v0.8.26 => ../meshsync
 

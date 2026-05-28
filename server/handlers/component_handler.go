@@ -34,7 +34,8 @@ import (
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
-	_model "github.com/meshery/schemas/models/v1beta1/model"
+	_model "github.com/meshery/schemas/models/v1beta2/model"
+	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 
 	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
@@ -1397,7 +1398,15 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 	}
 	for _, rel := range relationships {
-		rel.Model = model.ToReference()
+		v2ref := model.ToReference()
+		rel.Model = modelv1beta1.ModelReference{
+			DisplayName: v2ref.DisplayName,
+			ID:          v2ref.ID,
+			Model:       modelv1beta1.Model{Version: v2ref.Model.Version},
+			Name:        v2ref.Name,
+			Registrant:  modelv1beta1.RegistrantReference{Kind: v2ref.Registrant.Kind},
+			Version:     v2ref.Version,
+		}
 		err := rel.WriteRelationshipDefinition(relationshipsDir, outputFormat)
 		if err != nil {
 			h.log.Error(err)

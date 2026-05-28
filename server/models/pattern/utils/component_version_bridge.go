@@ -14,17 +14,19 @@
 //
 // The two struct types are nominally distinct in Go, so a pattern
 // iteration (v1beta2) that wants to call a meshkit helper (v1beta3) must
-// convert. The shared inner types (*v1beta1/model.ModelDefinition,
+// convert. The shared inner types (*v1beta2/model.ModelDefinition,
 // *core.ComponentStyles, capabilities slice, configuration map, Metadata
-// AdditionalProperties map) are pointer-identical across both
-// representations, so the conversion is a shallow field copy rather than
-// a deep clone. Mutations through the aliased pointer targets on the
-// returned value therefore remain visible on the source.
+// AdditionalProperties map) are pointer-identical across v1beta2 and
+// v1beta3. The v1beta1↔v1beta2 boundary requires field-copy conversion
+// because v1beta1 components still carry *v1beta1/model.ModelDefinition
+// while v1beta2 components now carry *v1beta2/model.ModelDefinition.
 package utils
 
 import (
 	componentv1beta1 "github.com/meshery/schemas/models/v1beta1/component"
+	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	componentv1beta2 "github.com/meshery/schemas/models/v1beta2/component"
+	modelv1beta2 "github.com/meshery/schemas/models/v1beta2/model"
 	componentv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
 )
 
@@ -45,8 +47,8 @@ func ComponentV1beta1ToV1beta2(src *componentv1beta1.ComponentDefinition) *compo
 		DisplayName:    src.DisplayName,
 		Description:    src.Description,
 		Format:         componentv1beta2.ComponentDefinitionFormat(src.Format),
-		Model:          src.Model,
-		ModelReference: src.ModelReference,
+		Model:          ModelDefV1beta1ToV1beta2(src.Model),
+		ModelReference: ModelRefV1beta1ToV1beta2(src.ModelReference),
 		Styles:         src.Styles,
 		Capabilities:   src.Capabilities,
 		Metadata: componentv1beta2.ComponentDefinition_Metadata{
@@ -90,8 +92,8 @@ func ComponentV1beta2ToV1beta1(src *componentv1beta2.ComponentDefinition) *compo
 		DisplayName:    src.DisplayName,
 		Description:    src.Description,
 		Format:         componentv1beta1.ComponentDefinitionFormat(src.Format),
-		Model:          src.Model,
-		ModelReference: src.ModelReference,
+		Model:          ModelDefV1beta2ToV1beta1(src.Model),
+		ModelReference: ModelRefV1beta2ToV1beta1(src.ModelReference),
 		Styles:         src.Styles,
 		Capabilities:   src.Capabilities,
 		Metadata: componentv1beta1.ComponentDefinition_Metadata{
@@ -241,4 +243,124 @@ func ApplyV1beta3MetadataChanges(
 	// out of sync between the registry-hydrated v1beta3 and the pattern-
 	// level v1beta2 components.
 	dst.Metadata = componentv1beta2.ComponentDefinition_Metadata(src.Metadata)
+}
+
+// --------------------------------------------------------------------------
+// Private model-version conversion helpers
+// --------------------------------------------------------------------------
+//
+// v1beta1 and v1beta2 ModelDefinition / ModelReference carry identical fields
+// (same names, same field types for all but Status and the nested Model/
+// Registrant sub-structs, which are simple string/semver wrappers).
+// Registrant, Category, and SubCategory are the SAME imported types in both
+// versions, so they can be copied directly.
+
+// ModelDefV1beta1ToV1beta2 converts a *v1beta1.ModelDefinition to *v1beta2.ModelDefinition.
+// Registrant, Category, and SubCategory are the SAME imported types in both
+// versions, so they are copied directly. Exported for use by handlers that
+// bridge the v1beta1↔v1beta2 component boundary.
+func ModelDefV1beta1ToV1beta2(src *modelv1beta1.ModelDefinition) *modelv1beta2.ModelDefinition {
+	if src == nil {
+		return nil
+	}
+	dst := &modelv1beta2.ModelDefinition{
+		ID:                 src.ID,
+		SchemaVersion:      src.SchemaVersion,
+		Version:            src.Version,
+		Name:               src.Name,
+		DisplayName:        src.DisplayName,
+		Description:        src.Description,
+		Status:             modelv1beta2.ModelDefinitionStatus(src.Status),
+		CategoryId:         src.CategoryId,
+		Registrant:         src.Registrant,
+		RegistrantId:       src.RegistrantId,
+		Category:           src.Category,
+		SubCategory:        src.SubCategory,
+		Model:              modelv1beta2.Model{Version: src.Model.Version},
+		ComponentsCount:    src.ComponentsCount,
+		RelationshipsCount: src.RelationshipsCount,
+		CreatedAt:          src.CreatedAt,
+		UpdatedAt:          src.UpdatedAt,
+	}
+	if src.Metadata != nil {
+		dst.Metadata = &modelv1beta2.ModelDefinition_Metadata{
+			Capabilities:         src.Metadata.Capabilities,
+			IsAnnotation:         src.Metadata.IsAnnotation,
+			PrimaryColor:         src.Metadata.PrimaryColor,
+			SecondaryColor:       src.Metadata.SecondaryColor,
+			SvgWhite:             src.Metadata.SvgWhite,
+			SvgColor:             src.Metadata.SvgColor,
+			SvgComplete:          src.Metadata.SvgComplete,
+			Shape:                src.Metadata.Shape,
+			AdditionalProperties: src.Metadata.AdditionalProperties,
+		}
+	}
+	return dst
+}
+
+// ModelDefV1beta2ToV1beta1 is the inverse of ModelDefV1beta1ToV1beta2.
+// Exported for use by handlers that bridge the v1beta2↔v1beta1 component boundary.
+func ModelDefV1beta2ToV1beta1(src *modelv1beta2.ModelDefinition) *modelv1beta1.ModelDefinition {
+	if src == nil {
+		return nil
+	}
+	dst := &modelv1beta1.ModelDefinition{
+		ID:                 src.ID,
+		SchemaVersion:      src.SchemaVersion,
+		Version:            src.Version,
+		Name:               src.Name,
+		DisplayName:        src.DisplayName,
+		Description:        src.Description,
+		Status:             modelv1beta1.ModelDefinitionStatus(src.Status),
+		CategoryId:         src.CategoryId,
+		Registrant:         src.Registrant,
+		RegistrantId:       src.RegistrantId,
+		Category:           src.Category,
+		SubCategory:        src.SubCategory,
+		Model:              modelv1beta1.Model{Version: src.Model.Version},
+		ComponentsCount:    src.ComponentsCount,
+		RelationshipsCount: src.RelationshipsCount,
+		CreatedAt:          src.CreatedAt,
+		UpdatedAt:          src.UpdatedAt,
+	}
+	if src.Metadata != nil {
+		dst.Metadata = &modelv1beta1.ModelDefinition_Metadata{
+			Capabilities:         src.Metadata.Capabilities,
+			IsAnnotation:         src.Metadata.IsAnnotation,
+			PrimaryColor:         src.Metadata.PrimaryColor,
+			SecondaryColor:       src.Metadata.SecondaryColor,
+			SvgWhite:             src.Metadata.SvgWhite,
+			SvgColor:             src.Metadata.SvgColor,
+			SvgComplete:          src.Metadata.SvgComplete,
+			Shape:                src.Metadata.Shape,
+			AdditionalProperties: src.Metadata.AdditionalProperties,
+		}
+	}
+	return dst
+}
+
+// ModelRefV1beta1ToV1beta2 converts a v1beta1.ModelReference to v1beta2.ModelReference.
+// Exported for use by handlers that bridge the v1beta1↔v1beta2 boundary.
+func ModelRefV1beta1ToV1beta2(src modelv1beta1.ModelReference) modelv1beta2.ModelReference {
+	return modelv1beta2.ModelReference{
+		DisplayName: src.DisplayName,
+		ID:          src.ID,
+		Model:       modelv1beta2.Model{Version: src.Model.Version},
+		Name:        src.Name,
+		Registrant:  modelv1beta2.RegistrantReference{Kind: src.Registrant.Kind},
+		Version:     src.Version,
+	}
+}
+
+// ModelRefV1beta2ToV1beta1 is the inverse of ModelRefV1beta1ToV1beta2.
+// Exported for use by handlers that bridge the v1beta2↔v1beta1 boundary.
+func ModelRefV1beta2ToV1beta1(src modelv1beta2.ModelReference) modelv1beta1.ModelReference {
+	return modelv1beta1.ModelReference{
+		DisplayName: src.DisplayName,
+		ID:          src.ID,
+		Model:       modelv1beta1.Model{Version: src.Model.Version},
+		Name:        src.Name,
+		Registrant:  modelv1beta1.RegistrantReference{Kind: src.Registrant.Kind},
+		Version:     src.Version,
+	}
 }

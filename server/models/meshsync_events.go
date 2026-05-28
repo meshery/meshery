@@ -11,7 +11,7 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/core"
-	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
+	modelv1beta2 "github.com/meshery/schemas/models/v1beta2/model"
 
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/v1beta3/component"
@@ -349,13 +349,13 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 	}
 
 	if componentDef.ModelID != nil {
-		modelDef := modelv1beta1.ModelDefinition{}
-		result = mh.dbHandler.Session(&gorm.Session{NewDB: true}).Model(&modelv1beta1.ModelDefinition{}).
+		modelDef := modelv1beta2.ModelDefinition{}
+		result = mh.dbHandler.Session(&gorm.Session{NewDB: true}).Model(&modelv1beta2.ModelDefinition{}).
 			Where("id = ?", componentDef.ModelID).
 			First(&modelDef)
 		if result.Error == nil {
 			componentDef.Model = &modelDef
-		} else if result.Error != gorm.ErrRecordNotFound && !isMissingTableError(result.Error, modelv1beta1.ModelDefinition{}.TableName()) {
+		} else if result.Error != gorm.ErrRecordNotFound && !isMissingTableError(result.Error, modelv1beta2.ModelDefinition{}.TableName()) {
 			mh.log.Error(ErrDBRead(result.Error))
 		}
 	}

@@ -649,8 +649,8 @@ func registryComponentDefinitionToV1beta1(entity interface{}) (*component.Compon
 		DisplayName:    src.DisplayName,
 		Description:    src.Description,
 		Format:         component.ComponentDefinitionFormat(src.Format),
-		Model:          src.Model,
-		ModelReference: src.ModelReference,
+		Model:          utils.ModelDefV1beta2ToV1beta1(src.Model),
+		ModelReference: utils.ModelRefV1beta2ToV1beta1(src.ModelReference),
 		Styles:         src.Styles,
 		Capabilities:   src.Capabilities,
 		Metadata: component.ComponentDefinition_Metadata{
