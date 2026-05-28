@@ -24,10 +24,12 @@ package utils
 
 import (
 	componentv1beta1 "github.com/meshery/schemas/models/v1beta1/component"
+	connectionv1beta1 "github.com/meshery/schemas/models/v1beta1/connection"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	componentv1beta2 "github.com/meshery/schemas/models/v1beta2/component"
 	modelv1beta2 "github.com/meshery/schemas/models/v1beta2/model"
 	componentv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
+	connectionv1beta3 "github.com/meshery/schemas/models/v1beta3/connection"
 )
 
 // ComponentV1beta1ToV1beta2 returns a v1beta2/component.ComponentDefinition
@@ -272,7 +274,14 @@ func ModelDefV1beta1ToV1beta2(src *modelv1beta1.ModelDefinition) *modelv1beta2.M
 		Description:        src.Description,
 		Status:             modelv1beta2.ModelDefinitionStatus(src.Status),
 		CategoryId:         src.CategoryId,
-		Registrant:         src.Registrant,
+		Registrant: connectionv1beta3.Connection{
+			ID:      src.Registrant.ID,
+			Name:    src.Registrant.Name,
+			Kind:    src.Registrant.Kind,
+			Type:    src.Registrant.Type,
+			SubType: src.Registrant.SubType,
+			Status:  connectionv1beta3.ConnectionStatus(src.Registrant.Status),
+		},
 		RegistrantId:       src.RegistrantId,
 		Category:           src.Category,
 		SubCategory:        src.SubCategory,
@@ -313,7 +322,14 @@ func ModelDefV1beta2ToV1beta1(src *modelv1beta2.ModelDefinition) *modelv1beta1.M
 		Description:        src.Description,
 		Status:             modelv1beta1.ModelDefinitionStatus(src.Status),
 		CategoryId:         src.CategoryId,
-		Registrant:         src.Registrant,
+		Registrant: connectionv1beta1.Connection{
+			ID:      src.Registrant.ID,
+			Name:    src.Registrant.Name,
+			Kind:    src.Registrant.Kind,
+			Type:    src.Registrant.Type,
+			SubType: src.Registrant.SubType,
+			Status:  connectionv1beta1.ConnectionStatus(src.Registrant.Status),
+		},
 		RegistrantId:       src.RegistrantId,
 		Category:           src.Category,
 		SubCategory:        src.SubCategory,

@@ -39,7 +39,7 @@ import (
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1alpha2"
-	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/meshery/schemas/models/v1beta2/component"
 	design "github.com/meshery/schemas/models/v1beta3/design"
 	"gopkg.in/yaml.v3"
