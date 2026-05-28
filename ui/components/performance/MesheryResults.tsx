@@ -392,11 +392,7 @@ const MesheryResults = () => {
         <MesheryResultDialog rowData={selectedRowData} close={resetSelectedRowData} />
       )}
       <MUIDataTable
-        title={
-          <Box fontWeight="bolder" fontSize="18">
-            Performance Test Results
-          </Box>
-        }
+        title={<Box sx={{ fontWeight: 'bolder', fontSize: '18' }}>Performance Test Results</Box>}
         data={resultsForDisplay}
         columns={columns}
         options={options}
