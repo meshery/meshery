@@ -19,7 +19,7 @@ Meshery has lifecycle adapters for managing the following cloud native infrastru
 
 ## Meshery Adapters for Performance Management
 
-Meshery Server allows users to generate traffic load tests using fortio and wrk2.
+Meshery Server allows users to generate traffic load tests using fortio.
 
 ## Adapter Deployment and Registration
 

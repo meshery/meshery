@@ -152,10 +152,10 @@ function Dashboard() {
             container
             spacing={2}
             style={{ padding: '0.5rem' }}
-            alignContent="space-around"
             size="grow"
+            sx={{ alignContent: 'space-around' }}
           >
-            <Grid2 cspacing={1} direction="column" size={{ xs: 12, lg: 6 }}>
+            <Grid2 spacing={1} size={{ xs: 12, lg: 6 }} sx={{ flexDirection: 'column' }}>
               <Grid2>
                 <StyledPaper>
                   <ResultContainer>

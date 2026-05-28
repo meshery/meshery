@@ -35,21 +35,29 @@ const localizer = momentLocalizer(moment);
  * }[]}
  */
 function generateCalendarEventsFromResults(results) {
-  return results.map(({ test_start_time, name, runner_results }, index) => {
-    // Remove incorrect timezone info
-    const ntzStartTime = new Date(
-      moment(test_start_time).utcOffset(test_start_time).format('MM/DD/YYYY HH:mm'),
-    );
-    const ntzEndTime = ntzStartTime;
-    ntzEndTime.setSeconds(ntzEndTime.getSeconds() + runner_results.ActualDuration / 1e9);
+  // Map-then-filter (rather than filter-then-map) so `resource: index` keeps
+  // pointing into the original results array for the click-to-detail lookup.
+  return results
+    .map(({ test_start_time, name, runner_results }, index) => {
+      // parseZone preserves the offset embedded in the timestamp instead of
+      // converting to local time. Guard against missing/unparseable values:
+      // parseZone(undefined) silently returns "now" and parseZone(null)
+      // returns an invalid moment, both of which would surface bogus events.
+      const startMoment = moment.parseZone(test_start_time);
+      if (!test_start_time || !startMoment.isValid()) return null;
 
-    return {
-      title: name,
-      start: ntzStartTime,
-      end: ntzEndTime,
-      resource: index,
-    };
-  });
+      const ntzStartTime = new Date(startMoment.format('MM/DD/YYYY HH:mm'));
+      const ntzEndTime = new Date(ntzStartTime);
+      ntzEndTime.setSeconds(ntzEndTime.getSeconds() + runner_results.ActualDuration / 1e9);
+
+      return {
+        title: name,
+        start: ntzStartTime,
+        end: ntzEndTime,
+        resource: index,
+      };
+    })
+    .filter(Boolean);
 }
 
 /**

@@ -70,14 +70,6 @@ mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml [flags]
 </div>
 </pre> 
 
-Choice of load generator - fortio or wrk2 (default: fortio)
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl perf apply meshery-profile --load-generator wrk2
-
-</div>
-</pre> 
-
 Execute a Performance test with specified queries per second
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -97,7 +89,6 @@ mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --m
 Execute a Performance test creating a new performance profile and pass options to the load generator used
 If any options are already present in the profile or passed through flags, the --options flag will take precedence over the profile and flag options
 Options for fortio - https://github.com/fortio/fortio/blob/v1.57.0/fhttp/httprunner.go#L77-L84
-Options for wrk2 - https://github.com/layer5io/gowrk2/blob/v0.6.1/api/gowrk2.go#L47-L53
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --options [filepath|json-string]
@@ -119,13 +110,6 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 </div>
 </pre> 
 
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator wrk2 --options '{"DurationInSeconds": 15, "Thread": 3}'
-
-</div>
-</pre> 
-
 ## Options
 
 <pre class='codeblock-pre'>
@@ -135,9 +119,9 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
       --concurrent-requests string   (optional) Number of Parallel Requests
       --disable-cert                 (optional) Do not use certificate present in the profile
       --duration string              (optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration
-  -f, --file string                  (optional) File containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification
+  -f, --file string                  (optional) File containing SMP-compatible test configuration. For more, see https://smp-spec.io
   -h, --help                         help for apply
-      --load-generator string        (optional) Load-Generator to be used (fortio/wrk2)
+      --load-generator string        (optional) Load-Generator to be used (fortio)
       --mesh string                  (optional) Name of the infrastructure
       --name string                  (optional) Name of the Test
       --options string               (optional) Additional options to be passed to the load generator. Can be a json string or a filepath containing json

@@ -17,13 +17,13 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY ui/package.json ui/package-lock.json ./
 ENV HUSKY=0
-RUN npm ci --omit=dev --legacy-peer-deps --ignore-scripts
+RUN npm ci --legacy-peer-deps --ignore-scripts
 
 FROM base-node AS meshery-ui-provider-deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY provider-ui/package.json provider-ui/package-lock.json ./
-RUN npm ci --omit=dev --legacy-peer-deps
+RUN npm ci --legacy-peer-deps
 
 # Build NextJS Application
 FROM base-node AS meshery-ui-builder
@@ -42,23 +42,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY provider-ui .
 RUN npm run build
 
-# FROM ubuntu AS wrk2
-# RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
-# RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
-# RUN git config --global user.email "meshery@meshery.io"
-# RUN git config --global user.name "meshery"
-# RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
-
-FROM alpine:3.23.2 AS seed_content
-RUN apk add --no-cache curl
-WORKDIR /
-RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url.*wasm" | cut -d : -f 2,3 | sed 's/"//g') \
-    && mkdir -p seed_content/filters/binaries \
-    && cd seed_content/filters/binaries  \
-    for line in $lines \
-    do \
-    curl -LO $line \
-    done
+# FROM alpine:3.23.2 AS seed_content
+# RUN apk add --no-cache curl
+# WORKDIR /
 # Antiquated patterns; no longer compatible with the current version of Meshery
 # RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/tarball/master -o service-mesh-patterns.tgz \
 #     && mkdir service-mesh-patterns \
@@ -107,9 +93,7 @@ COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=meshery-ui-builder /app/out /app/ui/out
 COPY --from=meshery-ui-builder /app/public /app/ui/public
 COPY --from=meshery-ui-provider-builder /app/out /app/provider-ui/out
-# COPY --from=wrk2 /wrk2 /app/server/cmd/wrk2
-# COPY --from=wrk2 /wrk2/wrk /usr/local/bin
-COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
+# COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
 
 # Permission keys are authorization keys which server will
 # seed on initial boot for local provider, if there is update on this path

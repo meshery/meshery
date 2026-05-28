@@ -130,7 +130,7 @@ describe('ConnectionChip', () => {
       <ConnectionChip
         title="cluster-a"
         handlePing={handlePing}
-        iconSrc="/static/img/kubernetes.svg"
+        iconSrc="/static/img/integrations/kubernetes.svg"
         status="connected"
         width="12rem"
       />,
@@ -139,8 +139,13 @@ describe('ConnectionChip', () => {
     await user.click(screen.getByRole('button', { name: 'cluster-a' }));
 
     expect(handlePing).toHaveBeenCalledTimes(1);
-    expect(normalizeStaticImagePath).toHaveBeenCalledWith('/static/img/kubernetes.svg');
-    expect(screen.getByTestId('avatar')).toHaveAttribute('data-src', '/static/img/kubernetes.svg');
+    expect(normalizeStaticImagePath).toHaveBeenCalledWith(
+      '/static/img/integrations/kubernetes.svg',
+    );
+    expect(screen.getByTestId('avatar')).toHaveAttribute(
+      'data-src',
+      '/static/img/integrations/kubernetes.svg',
+    );
     expect(screen.getByTestId('chip-wrapper')).toHaveAttribute('data-width', '12rem');
     expect(screen.getByTestId('badge-avatar')).toHaveAttribute('data-color', 'brand');
   });
