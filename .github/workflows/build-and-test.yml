@@ -39,6 +39,6 @@ jobs:
     with:
       project: "meshery"
       allure-path: "allure-results"
-      allure-results-artifact: ${{ needs.tests-ui-e2e.outputs.allure-results-artifact }}
+      allure-results-artifact: ${{ needs.tests-e2e.outputs.allure-results-artifact }}
     secrets:
       GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}

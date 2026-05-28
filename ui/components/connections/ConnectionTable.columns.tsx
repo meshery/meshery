@@ -7,9 +7,7 @@ import {
   Grid2,
   FormControl,
   TableCell,
-  // Sistent re-exports InfoOutlinedIcon as `InfoOutlined`; alias on
-  // import so call sites stay unchanged.
-  InfoOutlined as InfoOutlinedIcon,
+  InfoOutlinedIcon,
 } from '@sistent/sistent';
 import { ConnectionStyledSelect } from './styles';
 import { FormatId } from '../data-formatter';
@@ -486,7 +484,7 @@ export const useConnectionColumns = ({
           },
           customBodyRender: function CustomBody(_, tableMeta) {
             return (
-              <Box display={'flex'} justifyContent={'center'}>
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 {getColumnValue(tableMeta.rowData, 'kind', nextColumns) ===
                 CONNECTION_KINDS.KUBERNETES ? (
                   <IconButton

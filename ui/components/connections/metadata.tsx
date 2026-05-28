@@ -301,7 +301,7 @@ export const MeshSyncDataFormatter = ({ metadata }) => {
   );
 
   return (
-    <Box backgroundColor={theme.palette.background.card} width="100%" padding={'1rem'}>
+    <Box sx={{ backgroundColor: theme.palette.background.card, width: '100%', padding: '1rem' }}>
       <FormatStructuredData
         data={metadata}
         uiSchema={uiSchema}
@@ -339,9 +339,7 @@ const FormatConnectionMetadata = (props) => {
   }
 
   return (
-    <Box backgroundColor={theme.palette.background.card} padding={'1rem'}>
-      {formatter}
-    </Box>
+    <Box sx={{ backgroundColor: theme.palette.background.card, padding: '1rem' }}>{formatter}</Box>
   );
 };
 
