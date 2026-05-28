@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "inventory",
+  "metadata": {
+    "description": "A Karpenter NodeClaim that references a NodePool as its source."
+  },
+  "model": {
+    "name": "karpenter"
+  },
+  "id": "00000000-0000-0000-0000-000000000000",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "NodeClaim",
+            "model": "karpenter",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["configuration", "spec", "nodePoolName"]],
+              "description": "NodeClaim references the NodePool as its source."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "NodePool",
+            "model": "karpenter",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["displayName"]],
+              "description": "NodePool is the source for the NodeClaim."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "inventory",
+  "metadata": {
+    "description": "A Karpenter NodePool that references an OCINodeClass for node configuration."
+  },
+  "model": {
+    "name": "karpenter"
+  },
+  "id": "00000000-0000-0000-0000-000000000000",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "NodePool",
+            "model": "karpenter",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["configuration", "spec", "template", "spec", "nodeClassRef", "name"]],
+              "description": "NodePool references the OCINodeClass for node configuration."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "OCINodeClass",
+            "model": "karpenter",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["displayName"]],
+              "description": "OCINodeClass provides node configuration for the NodePool."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ]
+}
