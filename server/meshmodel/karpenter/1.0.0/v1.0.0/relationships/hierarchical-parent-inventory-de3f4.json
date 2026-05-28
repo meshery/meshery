@@ -1,43 +1,102 @@
 {
-  "schemaVersion": "core.meshery.io/v1beta1",
-  "version": "v1.0.0",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
   "kind": "hierarchical",
-  "type": "parent",
-  "subType": "inventory",
   "metadata": {
-    "description": "A Karpenter NodePool that references an OCINodeClass for node configuration."
+    "description": "",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
   },
   "model": {
-    "name": "karpenter"
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "1.0.0"
+    },
+    "name": "karpenter",
+    "registrant": {
+      "kind": ""
+    },
+    "version": ""
   },
-  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "kind": "NodePool",
-            "model": "karpenter",
+            "id": null,
+            "kind": "OCINodeClass",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "karpenter",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [["configuration", "spec", "template", "spec", "nodeClassRef", "name"]],
-              "description": "NodePool references the OCINodeClass for node configuration."
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
         "to": [
           {
-            "kind": "OCINodeClass",
-            "model": "karpenter",
+            "id": null,
+            "kind": "NodePool",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "karpenter",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [["displayName"]],
-              "description": "OCINodeClass provides node configuration for the NodePool."
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "template",
+                  "spec",
+                  "nodeClassRef",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]
       },
-      "deny": {}
+      "deny": {
+        "from": [],
+        "to": []
+      }
     }
-  ]
+  ],
+  "subType": "inventory",
+  "status": "enabled",
+  "type": "parent",
+  "version": "v1.0.0"
 }
