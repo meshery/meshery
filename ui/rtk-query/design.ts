@@ -13,6 +13,7 @@ export const designsApi = api
     addTagTypes: [TAGS.DESIGNS],
   })
   .injectEndpoints({
+    overrideExisting: true,
     endpoints: (builder) => ({
       getPatterns: builder.query({
         query: (queryArg) => {

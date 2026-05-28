@@ -22,14 +22,10 @@ beforeAll(() => {
 
 // ---------------------------------------------------------------------------
 // workspace.ts re-`injectEndpoints` into the shared `api` defined by
-// @meshery/schemas. Because the file does NOT pass `overrideExisting: true`,
-// any endpoint with a name already defined in the schemas package is ignored
-// (with a console warning). The endpoint definitions in workspace.ts that
-// share names with the schemas — e.g. getWorkspaces, getDesignsOfWorkspace —
-// never take effect at runtime; the schemas' simpler `query` definitions
-// run instead. The tests below assert the URLs/methods that REALLY run.
-// `getEventsOfWorkspace` is unique to workspace.ts, so its definition does
-// take effect — that one is asserted in full.
+// @meshery/schemas with `overrideExisting: true`. This means workspace.ts's
+// local endpoint definitions take precedence over any same-named endpoints
+// already registered by the schemas package. The tests below assert the
+// URLs/methods produced by workspace.ts's definitions.
 // ---------------------------------------------------------------------------
 
 const okResponse = (body: unknown = {}) => ({
@@ -291,13 +287,13 @@ describe('workspace endpoints', () => {
     expect(req.url).toContain('/api/workspaces');
   });
 
-  it('updateWorkspace PUTs against /api/workspaces/:workspaceId', async () => {
+  it('updateWorkspace PUTs against /api/workspaces/:id', async () => {
     fetchMock.mockResolvedValue(okResponse({}));
     const { api, store } = await setupStore();
     await store.dispatch(
       api.endpoints.updateWorkspace.initiate({
-        workspaceId: 'w-1',
-        body: { name: 'updated' },
+        id: 'w-1',
+        name: 'updated',
       }),
     );
     const req = fetchMock.mock.calls[0][0] as Request;
@@ -305,10 +301,10 @@ describe('workspace endpoints', () => {
     expect(req.url).toContain('/api/workspaces/w-1');
   });
 
-  it('deleteWorkspace DELETEs /api/workspaces/:workspaceId', async () => {
+  it('deleteWorkspace DELETEs /api/workspaces/:id', async () => {
     fetchMock.mockResolvedValue(okResponse({}));
     const { api, store } = await setupStore();
-    await store.dispatch(api.endpoints.deleteWorkspace.initiate({ workspaceId: 'w-2' }));
+    await store.dispatch(api.endpoints.deleteWorkspace.initiate({ id: 'w-2' }));
     const req = fetchMock.mock.calls[0][0] as Request;
     expect(req.method).toBe('DELETE');
     expect(req.url).toContain('/api/workspaces/w-2');

@@ -5,6 +5,7 @@ const TAGS = {
 };
 
 const telemetryApi = api.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
     getGrafanaBoards: builder.query({
       query: ({ connectionID, grafanaBoardSearch }) => ({

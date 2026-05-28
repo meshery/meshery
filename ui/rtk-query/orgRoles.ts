@@ -1,6 +1,7 @@
 import { api, mesheryApiPath } from './index';
 
 const userOrgRolesApi = api.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
     getUserOrgRoles: builder.query({
       query: (queryArgs) => ({

@@ -17,6 +17,7 @@ const workspacesApi = api
     addTagTypes: [TAGS.WORKSPACES, TAGS.DESIGNS, TAGS.ENVIRONMENTS, TAGS.VIEWS, TAGS.TEAMS],
   })
   .injectEndpoints({
+    overrideExisting: true,
     endpoints: (builder) => ({
       getWorkspaces: builder.query({
         keepUnusedDataFor: 0,

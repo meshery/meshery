@@ -1,6 +1,7 @@
 import { api, mesheryApiPath } from '.';
 
 const resourceApi = api.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
     getAccessActorsInfoOfResource: builder.query({
       query: (queryArg) => ({

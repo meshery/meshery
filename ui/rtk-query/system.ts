@@ -8,6 +8,7 @@ const TAGS = {
 };
 
 const systemApi = api.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
     getDatabaseSummary: builder.query({
       query: (queryArg) => ({

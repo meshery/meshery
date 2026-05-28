@@ -229,7 +229,7 @@ export const notificationCenterApi = api
         invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),
     }),
-    overrideExisting: false,
+    overrideExisting: true,
   });
 
 export const {
