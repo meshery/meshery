@@ -13,7 +13,7 @@ replace github.com/service-mesh-performance/service-mesh-performance => github.c
 
 // replace github.com/meshery/schemas => ../schemas
 
-replace github.com/meshery/meshkit => ../meshkit
+replace github.com/meshery/meshkit => github.com/Pranav-d33/meshkit v0.0.0-20260519074557-1718c390a274
 
 // replace github.com/meshery/meshsync v0.8.26 => ../meshsync
 
