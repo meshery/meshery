@@ -22,6 +22,7 @@ jobs:
         workflow: Build and Release Extensions
         repo: meshery-extensions/meshery-extensions-packages
         token: ${{ secrets.GH_ACCESS_TOKEN }}
+        ref: master
         inputs: '{"version": "master"}'
     - name: Set release tag
       if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
@@ -34,4 +35,5 @@ jobs:
         workflow: Build and Release Extensions
         repo: meshery-extensions/meshery-extensions-packages
         token: ${{ secrets.GH_ACCESS_TOKEN }}
+        ref: master
         inputs: '{"version": "${{ steps.vars.outputs.tag }}"}'
