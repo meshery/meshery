@@ -483,21 +483,21 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	kindsQuery = filterByNamespaces(kindsQuery, namespaceScope)
 	kindsQuery = filterByPatternIds(kindsQuery, patternIds)
 
-	err1 := kindsQuery.Scan(&kindCounts).Error
+	kindsErr := kindsQuery.Scan(&kindCounts).Error
 
-	if err1 != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err1))
+	if kindsErr != nil {
+		h.log.Error(ErrFetchMeshSyncResources(kindsErr))
 	}
 
-	err2 := provider.GetGenericPersister().
+	namespacesErr := provider.GetGenericPersister().
 		Model(&model.KubernetesResource{}).
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
 		Select("distinct namespace").
 		Where("kubernetes_resources.cluster_id IN (?)", clusterIds).
 		Scan(&namespaces).Error
 
-	if err2 != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err2))
+	if namespacesErr != nil {
+		h.log.Error(ErrFetchMeshSyncResources(namespacesErr))
 	}
 
 	var labels []model.KubernetesKeyValue
@@ -507,15 +507,15 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	labelsQuery = filterByNamespaces(labelsQuery, namespaceScope)
 	labelsQuery = filterByPatternIds(labelsQuery, patternIds)
 
-	err := labelsQuery.Scan(&labels).Error
+	labelsErr := labelsQuery.Scan(&labels).Error
 
-	if err != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err))
+	if labelsErr != nil {
+		h.log.Error(ErrFetchMeshSyncResources(labelsErr))
 	}
 
 	// return error if any query failed
-	if err1 != nil || err2 != nil || err != nil {
-		combinedErr := fmt.Errorf("error fetching meshsync resources summary: kinds_err=%v, namespaces_err=%v, labels_err=%v", err1, err2, err)
+	if kindsErr != nil || namespacesErr != nil || labelsErr != nil {
+		combinedErr := fmt.Errorf("error fetching meshsync resources summary: kinds_err=%v, namespaces_err=%v, labels_err=%v", kindsErr, namespacesErr, labelsErr)
 		h.log.Error(ErrFetchMeshSyncResources(combinedErr))
 		writeMeshkitError(rw, ErrFetchMeshSyncResources(combinedErr), http.StatusInternalServerError)
 		return
@@ -527,11 +527,11 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 		Labels:     labels,
 	}
 
-	if err := enc.Encode(response); err != nil {
-		if isClientDisconnect(err) {
-			h.log.Debug(ErrEncodeResponse(err))
+	if encErr := enc.Encode(response); encErr != nil {
+		if isClientDisconnect(encErr) {
+			h.log.Debug(ErrEncodeResponse(encErr))
 		} else {
-			h.log.Error(ErrEncodeResponse(err))
+			h.log.Error(ErrEncodeResponse(encErr))
 		}
 	}
 }
