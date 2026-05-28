@@ -16,7 +16,12 @@ const URLS = {
 };
 
 test.describe('Extensions Section Tests', () => {
-  test.describe.configure({ timeout: 120000 });
+  // The shared beforeEach calls extensionsPage.goto(), which in turn calls
+  // dashboardPage.navigateToDashboard() (two 120s visibility waits) and
+  // navigateToExtensions() (another 120s wait). Under the default
+  // BASE_TIMEOUT=60s the hook itself dies before those inner waits can
+  // resolve when CI is under load.
+  test.describe.configure({ timeout: 180_000 });
 
   let extensionsPage: ExtensionsPage;
 

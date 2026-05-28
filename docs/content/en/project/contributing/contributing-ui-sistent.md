@@ -1,7 +1,7 @@
 ---
 title: Contributing to Meshery UI - Sistent
 description: How to contribute to the Meshery's web-based UI using sistent design system.
-category: [contributing]
+categories: [contributing]
 ---
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisite Reading</strong></p>

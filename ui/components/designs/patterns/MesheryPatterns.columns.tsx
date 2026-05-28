@@ -1,7 +1,5 @@
 import React from 'react';
-// Sistent re-exports InfoOutlinedIcon as `InfoOutlined`; alias on
-// import so call sites stay unchanged.
-import { Box, InfoOutlined as InfoOutlinedIcon } from '@sistent/sistent';
+import { Box, InfoOutlinedIcon } from '@sistent/sistent';
 import Moment from 'react-moment';
 import { GetApp as GetAppIcon } from '@/assets/icons';
 import { DoneAll as DoneAllIcon, Public as PublicIcon } from '@/assets/icons';
