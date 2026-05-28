@@ -218,8 +218,8 @@ func (l *RemoteProvider) loadCapabilitiesFromLocalFile(filePath string) (Provide
 // remotes that do not serve a versioned manifest still report capabilities.
 // When "token" is non-empty, only the version-scoped path is attempted,
 // matching the existing authenticated capability fetch contract.
-func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, error) {
-	return l.loadCapabilitiesWithContext(context.Background(), token)
+func (l *RemoteProvider) loadCapabilities(ctx context.Context, token string) (ProviderProperties, error) {
+	return l.loadCapabilitiesWithContext(ctx, token)
 }
 
 // loadCapabilitiesWithContext is the context-aware form of loadCapabilities.
