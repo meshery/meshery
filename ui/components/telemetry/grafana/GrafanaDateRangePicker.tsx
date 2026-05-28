@@ -14,9 +14,10 @@ import {
   Switch,
   IconButton,
   styled,
+  AccessTimeIcon,
 } from '@sistent/sistent';
 import Moment from 'react-moment';
-import { AccessTime as AccessTimeIcon, Close } from '@/assets/icons';
+import { Close } from '@/assets/icons';
 import PropTypes from 'prop-types';
 import { MesheryDateTimePicker } from '../../shared/DatePicker';
 

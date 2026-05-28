@@ -91,7 +91,7 @@ export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
       getOptionLabel={(option) => option.email || ''}
       renderOption={(props, option) => (
         <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
-          <Grid2 container alignItems="center" size="grow">
+          <Grid2 container size="grow" sx={{ alignItems: 'center' }}>
             <Grid2>
               <Box sx={{ color: 'text.secondary', mr: 2 }}>
                 <Avatar alt={option.firstName} src={option.avatarUrl}>
@@ -214,12 +214,14 @@ export const TableListHeader = ({
   return (
     <Grid2
       container
-      width="100%"
       size="grow"
-      paddingInline="1rem"
       spacing={2}
-      alignItems="center"
-      wrap="nowrap"
+      sx={{
+        width: '100%',
+        paddingInline: '1rem',
+        alignItems: 'center',
+        flexWrap: 'nowrap',
+      }}
     >
       {isMultiSelectMode && (
         <Grid2 size={{ xs: 1, md: 0.5, lg: 0.25 }}>
@@ -436,16 +438,18 @@ export const MultiContentSelectToolbar = ({
     <>
       {multiSelectedContent.length > 0 && (
         <Box
-          width={'100%'}
-          sx={{ backgroundColor: theme.palette.background.default }}
-          height={'4rem'}
-          borderRadius={'0.5rem'}
-          display={'flex'}
-          justifyContent={'space-between'}
-          alignItems={'center'}
-          paddingInline={'1rem'}
+          sx={{
+            width: '100%',
+            backgroundColor: theme.palette.background.default,
+            height: '4rem',
+            borderRadius: '0.5rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingInline: '1rem',
+          }}
         >
-          <Box display={'flex'} alignItems={'center'} gap={'0.5rem'}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <IconButton onClick={() => setMultiSelectedContent([])}>
               <CloseIcon />
             </IconButton>
