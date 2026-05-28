@@ -19,7 +19,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta2/model"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
