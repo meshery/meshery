@@ -98,17 +98,17 @@ func loop(ctx context.Context, reader *bufio.Reader, events chan Event) {
 
 				err := json.Unmarshal(b, &data)
 
-					if err == nil {
-						ev.Data = data
-						buf.Reset()
-						select {
-						case events <- ev:
-						case <-ctx.Done():
-							closeEvents()
-							return
-						}
-						ev = Event{}
+				if err == nil {
+					ev.Data = data
+					buf.Reset()
+					select {
+					case events <- ev:
+					case <-ctx.Done():
+						closeEvents()
+						return
 					}
+					ev = Event{}
+				}
 			}
 
 		default:
