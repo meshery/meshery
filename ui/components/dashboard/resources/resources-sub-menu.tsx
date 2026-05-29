@@ -152,10 +152,17 @@ export const CRDsResourcesSubMenu = (props: CRDsResourcesSubMenuProps) => {
     'CRDS',
     selectedK8sContexts,
   );
-  const CRDsKeys = Object.values(crdsConfig).map((item) => ({
-    name: item.name,
-    model: item.model,
-  }));
+  // The hook rebuilds `crdsConfig` (a fresh object) on every render, so derive a
+  // stable signature and memoize CRDsKeys on it. Otherwise CRDsKeys would get a
+  // new identity each render and invalidate the memos that consume it downstream
+  // in ResourcesSubMenu (crdsKind, tabs, ...).
+  const crdsSignature = Object.values(crdsConfig)
+    .map((item) => `${item.name}:${item.model ?? ''}`)
+    .join(',');
+  const CRDsKeys = useMemo(
+    () => Object.values(crdsConfig).map((item) => ({ name: item.name, model: item.model })),
+    [crdsSignature],
+  );
   return <ResourcesSubMenu {...props} CRDsKeys={CRDsKeys} isCRDS />;
 };
 
