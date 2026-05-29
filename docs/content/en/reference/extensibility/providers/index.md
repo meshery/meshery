@@ -62,7 +62,7 @@ For production deployments, consider the following security best practices regar
 - **Use `mesheryctl system provider reset`** to clear an enforced provider and return to the provider selection UI.
 
 
-#### AI provider usage in production
+#### AI Provider Usage in Production
 
 When integrating AI providers with Meshery, apply the following additional controls:
 
