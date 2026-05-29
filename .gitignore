@@ -89,6 +89,9 @@ install/docker-extension/vm/vm
 ui/.env
 *.env
 */.env
+# install/providers.env is the canonical, version-controlled remote-provider list,
+# not a secrets file - keep it tracked despite the *.env rules above.
+!install/providers.env
 docs/hugo_stats.json
 
 LLMs

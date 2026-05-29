@@ -45,6 +45,7 @@ vi.mock('@sistent/sistent', () => ({
   Box: ({ children }) => <div>{children}</div>,
   SyncAltIcon: () => <svg data-testid="sync-alt-icon" />,
   MoreVertIcon: () => <svg data-testid="more-vert-icon" />,
+  InfoOutlinedIcon: () => <svg data-testid="info-outlined-icon" />,
   IconButton: ({ children, onClick, ...props }) => (
     <button onClick={onClick} type="button" {...props}>
       {children}
@@ -184,10 +185,6 @@ vi.mock('@/utils/permission_constants', () => ({
 vi.mock('@/rtk-query/connection', () => ({
   useGetConnectionsQuery: (...args) => getConnectionsQuery(...args),
   useUpdateConnectionByIdMutation: () => [updateConnectionByIdMutator],
-}));
-
-vi.mock('../../assets/icons/InfoOutlined', () => ({
-  default: () => <svg />,
 }));
 
 vi.mock('../../assets/icons/disconnect', () => ({
