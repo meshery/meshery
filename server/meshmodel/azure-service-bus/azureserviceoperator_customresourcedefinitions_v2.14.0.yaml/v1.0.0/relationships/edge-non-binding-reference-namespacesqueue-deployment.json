@@ -23,7 +23,7 @@
       "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
     }
   },
-  "schemaVersion": "relationships.meshery.io/v1beta3",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
@@ -42,7 +42,7 @@
                 "kind": "github"
               },
               "model": {
-                "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
+                "version": ""
               }
             },
             "patch": {
