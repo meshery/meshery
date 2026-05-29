@@ -46,11 +46,7 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
-                [
-                  "displayName"
-                ]
-              ],
+              "mutatorRef": [["displayName"]],
               "patchStrategy": "replace"
             }
           }
@@ -74,7 +70,7 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
