@@ -129,6 +129,19 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 **Answer**: _Configure Meshery to use on your Kubernetes cluster, then upload the kubeconfig file via Meshery UI to notify Meshery to use that cluster. If that didn't work, feel free to [open up an issue](https://github.com/meshery/meshery/issues) in GitHub._
 
+
+## AI Adapter Production Checklist (optional)
+
+If you have enabled AI features in Meshery, complete the following checklist before moving to production:
+
+- **Decide local vs remote LLM provider based on data sensitivity** — use a locally hosted model when prompts or responses may contain sensitive workload data; use a remote provider only when data classification permits it.
+- **Store provider keys as secrets** — avoid placing API keys in plain environment variables or unencrypted config files; use a secrets manager or Kubernetes Secrets with appropriate RBAC where possible.
+- **Confirm egress controls and allow-list for external LLM APIs** — verify that your network policy or firewall permits outbound traffic only to the specific provider endpoints your deployment requires.
+- **Validate provider endpoint reachability from Meshery server** — use `mesheryctl system check` or a direct connectivity test to verify reachability of your configured AI provider endpoint.
+- **Confirm logging does not expose secrets in AI requests or responses** — review log verbosity settings and ensure that prompt content and API keys are redacted or excluded from log output.
+- **Document a data retention policy for prompts and outputs** — define how long prompt and response data is stored, who can access it, and how it is purged in accordance with your organization's data governance requirements.
+
+
 ### Suggested Reading
 
 For an exhaustive list of `mesheryctl` commands and syntax:
@@ -139,15 +152,4 @@ Guides to using Meshery's various features and components.
 
 {{< related-discussions tag="mesheryctl" >}}
 
-
-## AI Adapter production checklist (optional)
-
-If you have enabled AI features in Meshery, complete the following checklist before moving to production:
-
-- **Decide local vs remote LLM provider based on data sensitivity** — use a locally hosted model when prompts or responses may contain sensitive workload data; use a remote provider only when data classification permits it.
-- **Store provider keys as secrets** — never place API keys in plain environment variables or unencrypted config files; use a secrets manager or Kubernetes Secrets with appropriate RBAC.
-- **Confirm egress controls and allow-list for external LLM APIs** — verify that your network policy or firewall permits outbound traffic only to the specific provider endpoints your deployment requires.
-- **Validate provider endpoint reachability from Meshery server** — run `mesheryctl system check` after configuring the AI provider to confirm connectivity before go-live.
-- **Confirm logging does not expose secrets in AI requests or responses** — review log verbosity settings and ensure that prompt content and API keys are redacted or excluded from log output.
-- **Document a data retention policy for prompts and outputs** — define how long prompt and response data is stored, who can access it, and how it is purged in accordance with your organization's data governance requirements.
 
