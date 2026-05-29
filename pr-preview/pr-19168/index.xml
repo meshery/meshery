@@ -35763,14 +35763,14 @@ mesheryctl model generate -f [path-to-csv-directory]
 
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;Generate a specific model from a CSV directory&lt;/p&gt;
+&lt;p&gt;Generate a model from a URL based on a JSON template&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
-mesheryctl model generate -f [path-to-csv-directory] -m [model-name]
+mesheryctl model generate -f [URL] -t [path-to-template.json]
 
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;Generate a model from a URL based on a JSON template&lt;/p&gt;</description></item><item><title>mesheryctl-model-import</title><link>/reference/mesheryctl/model/import/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/model/import/</guid><description>&lt;h1 id="mesheryctl-model-import"&gt;
+&lt;p&gt;Generate a model from a URL based on a JSON template skipping registration&lt;/p&gt;</description></item><item><title>mesheryctl-model-import</title><link>/reference/mesheryctl/model/import/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/model/import/</guid><description>&lt;h1 id="mesheryctl-model-import"&gt;
 	mesheryctl model import
 &lt;/h1&gt;
 &lt;p&gt;Import models&lt;/p&gt;
