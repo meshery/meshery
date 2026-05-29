@@ -149,5 +149,5 @@ If you have enabled AI features in Meshery, complete the following checklist bef
 - **Confirm egress controls and allow-list for external LLM APIs** — verify that your network policy or firewall permits outbound traffic only to the specific provider endpoints your deployment requires.
 - **Validate provider endpoint reachability from Meshery server** — run `mesheryctl system check` after configuring the AI provider to confirm connectivity before go-live.
 - **Confirm logging does not expose secrets in AI requests or responses** — review log verbosity settings and ensure that prompt content and API keys are redacted or excluded from log output.
-- **Document a data retention policy for prompts and outputs** — define how long prompt and response data is stored, who can access it, and how it is purged in accordance with your organisation's data governance requirements.
+- **Document a data retention policy for prompts and outputs** — define how long prompt and response data is stored, who can access it, and how it is purged in accordance with your organization's data governance requirements.
 
