@@ -12,7 +12,14 @@
   {{- end }}
 
   {{- if eq .Kind "404" }}
-  <base href="{{ .Site.BaseURL }}" />
+  <script>
+    (function () {
+      var path = window.location.pathname;
+      var previewPath = path.match(/^((?:\/[^/]+)?\/pr-preview\/pr-[^/]+\/)/);
+      var basePath = previewPath ? previewPath[1] : "/";
+      document.write('<base href="' + window.location.origin + basePath + '">');
+    })();
+  </script>
   {{- end }}
 
   <link
