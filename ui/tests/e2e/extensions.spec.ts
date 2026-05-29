@@ -24,6 +24,10 @@ test.describe('Extensions Section Tests', () => {
   });
 
   test('Verify extension nav items use top-level layout', async () => {
+    test.skip(
+      !(await extensionsPage.hasExtensionNavRegion()),
+      'No extension navigation region present (no extensions installed in this environment)',
+    );
     await extensionsPage.verifyExtensionNavItemsUseTopLevelLayout();
   });
 

@@ -275,6 +275,12 @@ test.describe('Relationship Evaluation Properties', { tag: '@relationship' }, ()
         expect(resp.ok()).toBeTruthy();
         const secondResponse = await resp.json();
 
+        // The engine re-asserts existing state on every evaluation: it emits
+        // `update_relationship` (status reconciliation) and `delete_relationship`
+        // (cleanup of relationships marked deleted) regardless of whether anything
+        // actually changed. Only `add_relationship` is idempotent - it is skipped
+        // when the relationship already exists (policy.AlreadyExists). So for an
+        // idempotency check, only non-reconciliation actions count as "meaningful".
         const meaningfulActions = (secondResponse.actions ?? []).filter(
           (a) => a.op !== 'update_relationship' && a.op !== 'delete_relationship',
         );

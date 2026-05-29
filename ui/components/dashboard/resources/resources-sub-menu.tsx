@@ -51,7 +51,13 @@ const ResourcesSubMenu = ({
     [CRDsKeys, isCRDS],
   );
 
-  const tableConfigResult = resource?.tableConfig ? resource.tableConfig() : {};
+  // `tableConfig` is a custom hook (it calls useKubernetesHook internally), so it
+  // must be invoked unconditionally on every render to keep hook order stable.
+  // `resource` is a required prop, so no defensive guard is needed - and a guard
+  // here would reintroduce a conditional hook call (the original crash).
+  const tableConfigResult = resource.tableConfig();
+  // Derive a stable string key so the `tabs` memo below isn't invalidated by the
+  // fresh object identity returned on every render.
   const configKeysStr = Object.keys(tableConfigResult).join(',');
   const tabs = useMemo(
     () => (isCRDS ? crdsKind : configKeysStr ? configKeysStr.split(',') : []),

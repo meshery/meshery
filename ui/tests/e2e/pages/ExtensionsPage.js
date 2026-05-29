@@ -39,13 +39,17 @@ export class ExtensionsPage {
     await this.catalogToggleSwitch.click();
   }
 
+  // The extension navigation region only renders when extension-provided nav
+  // items are present. Callers use this to explicitly skip (not silently pass)
+  // the layout assertion in environments without extensions installed.
+  async hasExtensionNavRegion() {
+    return (await this.extensionNavRegion.count()) > 0;
+  }
+
   async verifyExtensionNavItemsUseTopLevelLayout() {
-    const regionCount = await this.extensionNavRegion.count();
-    if (regionCount > 0) {
-      await expect(this.extensionNavRegion).toBeVisible();
-      await expect(this.extensionRootNavItems.first()).toBeVisible();
-      await expect(this.extensionRegionTopLevelLists).toHaveCount(0);
-    }
+    await expect(this.extensionNavRegion).toBeVisible();
+    await expect(this.extensionRootNavItems.first()).toBeVisible();
+    await expect(this.extensionRegionTopLevelLists).toHaveCount(0);
   }
 
   normalizeUrl(url) {
