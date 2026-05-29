@@ -12,15 +12,18 @@
     "isAnnotation": false
   },
   "model": {
-    "version": "v1.2.3",
+    "version": "",
     "name": "aws-eventbridge-controller",
     "displayName": "AWS EventBridge",
     "id": "00000000-0000-0000-0000-000000000000",
     "registrant": {
       "kind": "github"
+    },
+    "model": {
+      "version": "v1.2.3"
     }
   },
-  "schemaVersion": "relationships.meshery.io/v1beta3",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
@@ -31,12 +34,15 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "v1.2.3",
+              "version": "",
               "name": "aws-eventbridge-controller",
               "displayName": "AWS EventBridge",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
                 "kind": "github"
+              },
+              "model": {
+                "version": ""
               }
             },
             "patch": {
@@ -64,6 +70,9 @@
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
                 "kind": "github"
+              },
+              "model": {
+                "version": ""
               }
             },
             "patch": {
