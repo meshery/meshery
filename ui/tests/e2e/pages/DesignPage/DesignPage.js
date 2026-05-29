@@ -1,9 +1,11 @@
+import { DashboardPage } from '../DashboardPage';
 import { ImportModal } from './components/ImportModal';
 import { DeployModal } from './components/DeployModal';
 
 export class DesignPage {
   constructor(page) {
     this.page = page;
+    this.DashboardPage = new DashboardPage(page);
 
     this.DeployModal = new DeployModal(page);
     this.ImportModal = new ImportModal(page);
@@ -24,12 +26,11 @@ export class DesignPage {
     this.visibilityFilter = page.getByTestId('meshery-patterns-universal-filter-select-visibility');
     this.filterApplyBtn = page.getByTestId('meshery-patterns-universal-filter-apply-btn');
   }
-
   async navigateTo() {
-    await this.page.goto('/configuration/designs', { waitUntil: 'domcontentloaded' });
+    await this.DashboardPage.navigateToDashboard();
+    await this.DashboardPage.navigateToDesigns();
     await this.pageLoader.waitFor({ state: 'detached' });
   }
-
   async navigateToDesignConfigurator() {
     await this.applyVisibilityFilter('published');
     const firstCard = await this.getFirstCardByVisibilityBadge('published');
