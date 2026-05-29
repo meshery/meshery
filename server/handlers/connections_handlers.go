@@ -467,7 +467,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, userID core.Uuid, provider models.Provider, token string, connection *connections.ConnectionPayload) (events.Event, error) {
+func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID core.Uuid, provider models.Provider, token string, connection *connections.ConnectionPayload) (events.Event, error) {
 	connectionID := connection.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
@@ -503,7 +503,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 
 		inst, err := helpers.InitializeMachineWithContext(
 			machineCtx,
-			context,
+			ctx,
 			connectionID,
 			userID,
 			smInstanceTracker,
@@ -520,9 +520,11 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 			})
 			return *eventBuilder.Build(), err
 		}
-
+		// detach from the http request lifecycle so that the goroutine isn't cancelled when
+		// the handler returns, while preserving context values (e.g. TokenCtxKey) that downstream calls depend on.
+		detachedCtx := context.WithoutCancel(ctx)
 		go func(inst *machines.StateMachine, status connections.ConnectionStatus) {
-			event, err := inst.SendEvent(context, machines.EventType(helpers.StatusToEvent(status)), nil)
+			event, err := inst.SendEvent(detachedCtx, machines.EventType(helpers.StatusToEvent(status)), nil)
 			if err != nil {
 				h.log.Error(err)
 				_ = provider.PersistEvent(*event, token)
