@@ -135,6 +135,43 @@ describe('ResourcesSubMenu', () => {
     expect(handleChange).toHaveBeenCalledWith('Deployment');
   });
 
+  // Regression guard for the "Undefined reading length" navigation crash.
+  // The real *TableConfig functions are custom hooks (they call useKubernetesHook
+  // internally). The original bug wrapped that call in useMemo, so on cached
+  // renders the inner hooks were skipped, changing hook order and crashing React.
+  // This invokes a hook-bearing tableConfig and forces a re-render with a stable
+  // `resource` reference - if the call were re-memoized, React would throw
+  // "rendered fewer hooks than expected" (or the config would stop being called).
+  it('invokes a hook-bearing tableConfig on every render (Rules of Hooks)', () => {
+    let configCalls = 0;
+    const hookBearingResource = {
+      submenu: true,
+      tableConfig: () => {
+        // A real hook call inside the config, mirroring useKubernetesHook.
+        React.useState(null);
+        configCalls += 1;
+        return {
+          Pod: { name: 'Pod' },
+          Deployment: { name: 'Deployment' },
+        };
+      },
+    };
+    const props = {
+      k8sConfig: null,
+      resource: hookBearingResource,
+      selectedK8sContexts: null,
+      selectedResource: 'Pod',
+      handleChangeSelectedResource: vi.fn(),
+    };
+    const { rerender } = render(<ResourcesSubMenu {...props} />);
+    const callsAfterMount = configCalls;
+    // Same prop references: a useMemo([resource]) wrapper would reuse the cache
+    // and skip the inner hook, regressing the bug.
+    rerender(<ResourcesSubMenu {...props} />);
+    expect(configCalls).toBeGreaterThan(callsAfterMount);
+    expect(screen.getByTestId('tab-0')).toHaveTextContent('Pod');
+  });
+
   it('renders the CRDs path when isCRDS is true', () => {
     const handleChange = vi.fn();
     render(
