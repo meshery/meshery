@@ -236,13 +236,7 @@ server/meshmodel/aws-iam-controller/v1.0.0/v1.0.0/relationships/edge-binding-rol
 # From Meshery repo root
 make server
 ```
-
-Then in the Meshery UI:
-1. Go to **Settings** → **Models**
-2. Click **Import Custom Model**
-3. Point to your model folder containing the relationships
-4. Verify relationships appear without errors
-
+Once Meshery is running, verify that your relationship changes are loaded correctly and do not produce any errors.
 ### Step 3: Verify in Kanvas
 
 1. Open **Kanvas** (visual designer)
@@ -441,7 +435,7 @@ Once validated and tested:
 
 2. **Commit with descriptive message:**
    ```bash
-   git commit -m "Add {from} to {to} relationship (#ISSUE_NUMBER)"
+   git commit -s -m "Add {from} to {to} relationship (#ISSUE_NUMBER)"
    ```
 
 3. **Include in PR description:**
