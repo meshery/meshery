@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Troubleshooting Guide on Documentation</title><link>/guides/troubleshooting/</link><description>Recent content in Troubleshooting Guide on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/guides/troubleshooting/index.xml" rel="self" type="application/rss+xml"/><item><title>Meshery Operator, MeshSync, Broker Troubleshooting Guide</title><link>/guides/troubleshooting/meshery-operator-meshsync/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/troubleshooting/meshery-operator-meshsync/</guid><description>&lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;What is Meshery Operator?&lt;/div&gt;
+&lt;p&gt;&lt;a href='../../concepts/architecture/operator'&gt;Meshery Operator&lt;/a&gt; controls and monitors the lifecycle of components deployed inside Meshery-managed Kubernetes clusters. Learn more about &lt;a href='../../concepts'&gt;Meshery&amp;rsquo;s architecture&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;This guide offers comprehensive for troubleshooting instructions for &lt;a href="../../concepts/architecture/operator/"&gt;Meshery Operator&lt;/a&gt; and its custom controllers, &lt;a href="../../concepts/architecture/meshsync/"&gt;MeshSync&lt;/a&gt; and &lt;a href="../../concepts/architecture/broker/"&gt;Broker&lt;/a&gt;. Follow the steps outlined in this document to ensure a smooth Meshery deployment.&lt;/p&gt;
+&lt;p&gt;First, understand the &lt;a href="../../guides/troubleshooting/meshery-operator-meshsync/#meshery-operator-deployment-scenarios"&gt;Meshery Operator Deployment Scenarios&lt;/a&gt; and the &lt;a href="../../guides/troubleshooting/meshery-operator-meshsync/#understanding-the-status-of-meshery-operator-meshsync-and-meshery-broker"&gt;Status of Meshery Operator, MeshSync, and Meshery Broker&lt;/a&gt; to identify the deployment model fitting of your environment. Then, follow the guidance under the respective scenario to troubleshoot accordingly.&lt;/p&gt;</description></item><item><title>Troubleshooting Errors while running Meshery</title><link>/guides/troubleshooting/meshery-server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/troubleshooting/meshery-server/</guid><description>&lt;h2 id="mesheryctl-system-start"&gt;
+	mesheryctl system start
+&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Error:&lt;/strong&gt;&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;mesheryctl system start : : cannot start Meshery: rendered manifests contain a resource that already exists.
+Unable to continue with install: ServiceAccount &amp;#34;meshery-operator&amp;#34; in namespace &amp;#34;meshery&amp;#34; exists and cannot
+be imported into the current release: invalid ownership metadata; label validation error: missing key
+&amp;#34;app.kubernetes.io/managed-by&amp;#34;: must be set to &amp;#34;Helm&amp;#34;; annotation validation error: missing key
+&amp;#34;meta.helm.sh/release-name&amp;#34;: must be set to &amp;#34;meshery&amp;#34;; annotation validation error: missing key
+&amp;#34;meta.helm.sh/release-namespace&amp;#34;: must be set to &amp;#34;meshery&amp;#34;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;(Fix) Clean the cluster using :&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>Troubleshooting Extensions for Local Development</title><link>/guides/troubleshooting/enabling-extensions-locally/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/troubleshooting/enabling-extensions-locally/</guid><description>&lt;p&gt;If you&amp;rsquo;ve set up your local Meshery development environment and an extension isn&amp;rsquo;t showing up, this guide is here to help. Before you start debugging, the most important first step is to understand the &lt;strong&gt;type&lt;/strong&gt; of the component you are troubleshooting.&lt;/p&gt;
+&lt;p&gt;Meshery has different types of extensions that integrate in different ways. This means their failure modes and troubleshooting methods are also very different.&lt;/p&gt;
+&lt;h2 id="step-1-locate-the-extensions-repository"&gt;
+	Step 1: Locate the Extension&amp;rsquo;s Repository
+&lt;/h2&gt;
+&lt;p&gt;Most Meshery extensions are open source and their repositories can be found in the &lt;a href="https://github.com/orgs/meshery-extensions/repositories?type=all"&gt;meshery-extensions GitHub organization&lt;/a&gt;. Your first step is to find the specific repository for the extension you are troubleshooting.&lt;/p&gt;</description></item><item><title>Troubleshooting Meshery Installations</title><link>/guides/troubleshooting/installation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/troubleshooting/installation/</guid><description>&lt;h2 id="mesherys-preflight-checks"&gt;
+	Meshery&amp;rsquo;s Preflight Checks
+&lt;/h2&gt;
+&lt;p&gt;Anytime a &lt;code&gt;mesheryctl system&lt;/code&gt; command is executed, a series of preflight checks are run. An attempt will be made to connect to the Kubernetes cluster configured in the user&amp;rsquo;s kubeconfig as their current-context .&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Check whether &lt;code&gt;mesheryctl&lt;/code&gt; can initialize a Kubernetes client.&lt;/p&gt;
+&lt;p&gt;Situation: &lt;code&gt;mesheryctl&lt;/code&gt; fails to query for pods in the default namespace of the user&amp;rsquo;s current Kubernetes context.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Remove &lt;code&gt;~/.meshery&lt;/code&gt; to reinitialize Meshery&lt;/p&gt;
+&lt;p&gt;Situation: Unable to start Meshery Server with &lt;code&gt;make run-local&lt;/code&gt; due to error of &lt;code&gt;key/value size is invalid&lt;/code&gt;&lt;/p&gt;</description></item></channel></rss>
