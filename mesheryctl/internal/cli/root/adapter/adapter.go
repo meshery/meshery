@@ -23,10 +23,10 @@ import (
 	"strings"
 	"time"
 
-	smp "github.com/service-mesh-performance/service-mesh-performance/spec"
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	smp "github.com/service-mesh-performance/service-mesh-performance/spec"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
