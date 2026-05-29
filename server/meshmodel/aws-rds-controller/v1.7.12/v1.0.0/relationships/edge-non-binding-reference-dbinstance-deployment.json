@@ -4,23 +4,26 @@
   "kind": "edge",
   "metadata": {
     "description": "An edge relationship between an RDS DBInstance and a Kubernetes Deployment, representing a Deployment whose containers connect to the RDS database instance.",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
-  },
-  "model": {
-    "version": "v1.7.12",
-    "name": "aws-rds-controller",
-    "displayName": "AWS RDS",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "registrant": {
-      "kind": "github"
     }
   },
-  "schemaVersion": "relationships.meshery.io/v1beta3",
+  "model": {
+    "displayName": "AWS RDS",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.7.12"
+    },
+    "name": "aws-rds-controller",
+    "registrant": {
+      "kind": "github"
+    },
+    "version": ""
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
@@ -31,13 +34,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "v1.7.12",
-              "name": "aws-rds-controller",
               "displayName": "AWS RDS",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-rds-controller",
               "registrant": {
                 "kind": "github"
-              }
+              },
+              "version": ""
             },
             "patch": {
               "patchStrategy": "replace",
@@ -58,13 +64,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "*",
-              "name": "kubernetes",
               "displayName": "Kubernetes",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
-              }
+              },
+              "version": "*"
             },
             "patch": {
               "patchStrategy": "replace",
