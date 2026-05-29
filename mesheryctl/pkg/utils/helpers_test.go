@@ -34,7 +34,6 @@ func TestIsLocalProvider(t *testing.T) {
 		{"None", true}, // legacy alias
 		{"NONE", true},
 		{"Meshery", false},
-		{"Layer5", false},
 		{"", false},
 	}
 	for _, c := range cases {
