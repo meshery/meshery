@@ -105,7 +105,6 @@ Now that Meshery is running, here are a few suggested next steps:
 If you run into any issues, see the **[Troubleshooting Guides](/guides/troubleshooting/installation)** or ask for help in the Meshery community.
 {{% /alert %}}
 
-
 ## Explore Tutorials
 
 🧑‍🔬 Explore these tutorials to learn how to use Meshery for collaboratively managing infrastructure.
