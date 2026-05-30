@@ -25,7 +25,7 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-          <a href="/installation/" class="text-black">Installation</a>
+          <a href="/installation/">Installation</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -42,7 +42,7 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-          <a href="/concepts/logical" class="text-black">Logical</a>
+          <a href="/concepts/logical">Logical</a>
         </p>
       </summary>
       <ul>
@@ -52,7 +52,7 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-          <a href="/concepts/architecture" class="text-black section-title">Architectural</a>
+          <a href="/concepts/architecture" class="section-title">Architectural</a>
         </p>
       </summary>
       <ul>
@@ -72,7 +72,7 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-          <a href="/guides/mesheryctl/" class="text-black">Using Meshery CLI Guides</a>
+          <a href="/guides/mesheryctl/">Using Meshery CLI Guides</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -82,7 +82,7 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-          <a href="/guides/tutorials/" class="text-black">🧑‍🔬 Tutorials</a>
+          <a href="/guides/tutorials/">🧑‍🔬 Tutorials</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -92,7 +92,7 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-          <a href="/guides/infrastructure-management" class="text-black">Infrastructure Management</a>
+          <a href="/guides/infrastructure-management">Infrastructure Management</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -102,7 +102,7 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-          <a href="/guides/performance-management" class="text-black">Performance Management</a>
+          <a href="/guides/performance-management">Performance Management</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -112,7 +112,7 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-          <a href="/guides/configuration-management" class="text-black">Configuration Management</a>
+          <a href="/guides/configuration-management">Configuration Management</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -122,7 +122,7 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-          <a href="/guides/troubleshooting" class="text-black">Troubleshooting Guides</a>
+          <a href="/guides/troubleshooting">Troubleshooting Guides</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -139,7 +139,7 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-          <a href="/extensions" class="text-black">Extensions</a>
+          <a href="/extensions">Extensions</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -149,7 +149,7 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-<a href="/extensions/models" class="text-black">Models</a>
+<a href="/extensions/models">Models</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -170,7 +170,7 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-          <a href="/project" class="text-black">Community</a>
+          <a href="/project">Community</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -181,7 +181,7 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-          <a href="/project/contributing" class="text-black">Contributing</a>
+          <a href="/project/contributing">Contributing</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -199,7 +199,7 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-          <a href="/reference" class="text-black">Reference</a>
+          <a href="/reference">Reference</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -210,7 +210,7 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-          <a href="/extensibility" class="text-black">Extensibility</a>
+          <a href="/extensibility">Extensibility</a>
         </p>
       </summary>
       <ul class="section-title">
