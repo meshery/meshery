@@ -173,6 +173,7 @@ Representative subprojects include, but are not limited to:
 - **Schemas** - the [schema definitions](https://github.com/meshery/schemas) shared
   across the ecosystem.
 - **MeshSync and Operator** - cluster discovery, synchronization, and lifecycle.
+- **CI/CD** - [project quality](https://qa.meshery.io), build workflows, release process, deployment and operation of project playground.
 - **Documentation** - the documentation site, guides, and references.
 - **Community and Governance** - community programs, events, onboarding, recognition,
   and the maintenance of this document and related governance artifacts.
