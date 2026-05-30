@@ -116,7 +116,6 @@ export const StyledSelect = styled(Select)({
     paddingInline: '10px',
   },
   width: '100%',
-  maxWidth: '100%',
 });
 
 export const StyledBox = styled(Box)(({ theme }) => ({

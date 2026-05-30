@@ -58,7 +58,7 @@ const DefaultError = (props) => {
           component="h4"
           align="center"
           className="errormsg"
-          style={{ color: theme.palette.text.default, fontSize: 'inherit' }}
+          style={{ color: theme.palette.text.default, fontSize: '1.75rem' }}
         >
           {errorTitle
             ? errorTitle
