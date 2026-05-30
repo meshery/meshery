@@ -10,7 +10,7 @@ const TAGS = {
 };
 
 const connectionsApi = api.injectEndpoints({
-  overrideExisting: true,
+  overrideExisting: module.hot?.status() === 'apply',
   endpoints: (builder) => ({
     getCredentials: builder.query({
       query: () => ({

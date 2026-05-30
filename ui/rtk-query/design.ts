@@ -13,7 +13,7 @@ export const designsApi = api
     addTagTypes: [TAGS.DESIGNS],
   })
   .injectEndpoints({
-    overrideExisting: true,
+    overrideExisting: module.hot?.status() === 'apply',
     endpoints: (builder) => ({
       getPatterns: builder.query({
         query: (queryArg) => {

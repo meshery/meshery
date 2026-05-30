@@ -8,7 +8,7 @@ const filters = api
     addTagTypes: [TAGS.FILTERS],
   })
   .injectEndpoints({
-    overrideExisting: true,
+    overrideExisting: module.hot?.status() === 'apply',
     endpoints: (builder) => ({
       getFilters: builder.query({
         query: (queryArg) => ({

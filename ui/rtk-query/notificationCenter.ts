@@ -229,7 +229,7 @@ export const notificationCenterApi = api
         invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),
     }),
-    overrideExisting: true,
+    overrideExisting: module.hot?.status() === 'apply',
   });
 
 export const {

@@ -12,7 +12,7 @@ export const viewsApi = api
     addTagTypes: [TAGS.VIEWS],
   })
   .injectEndpoints({
-    overrideExisting: true,
+    overrideExisting: module.hot?.status() === 'apply',
     endpoints: (builder) => ({
       getView: builder.query({
         query: ({ viewId }) => ({

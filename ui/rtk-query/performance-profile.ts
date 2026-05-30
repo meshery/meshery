@@ -9,7 +9,7 @@ const performanceProfile = api
     addTagTypes: [TAGS.PERFORMANCE_PROFILE],
   })
   .injectEndpoints({
-    overrideExisting: true,
+    overrideExisting: module.hot?.status() === 'apply',
     endpoints: (builder) => ({
       getPerformanceProfiles: builder.query({
         query: (queryArg) => ({

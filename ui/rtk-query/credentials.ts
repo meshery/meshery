@@ -40,7 +40,7 @@ const credentialsApi = api.injectEndpoints({
       invalidatesTags: [TAGS.CREDENTIALS],
     }),
   }),
-  overrideExisting: true,
+  overrideExisting: module.hot?.status() === 'apply',
 });
 
 export const {

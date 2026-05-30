@@ -20,14 +20,6 @@ beforeAll(() => {
   process.env.RTK_MESHERY_ENDPOINT_PREFIX = 'http://localhost';
 });
 
-// ---------------------------------------------------------------------------
-// workspace.ts re-`injectEndpoints` into the shared `api` defined by
-// @meshery/schemas with `overrideExisting: true`. This means workspace.ts's
-// local endpoint definitions take precedence over any same-named endpoints
-// already registered by the schemas package. The tests below assert the
-// URLs/methods produced by workspace.ts's definitions.
-// ---------------------------------------------------------------------------
-
 const okResponse = (body: unknown = {}) => ({
   ok: true,
   status: 200,

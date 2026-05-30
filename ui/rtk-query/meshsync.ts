@@ -11,7 +11,7 @@ const meshSyncApi = api
     addTagTypes: [TAGS.MESH_SYNC],
   })
   .injectEndpoints({
-    overrideExisting: true,
+    overrideExisting: module.hot?.status() === 'apply',
     endpoints: (builder) => ({
       getMeshSyncResources: builder.query({
         query: (queryArg) => ({

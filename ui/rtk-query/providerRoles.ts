@@ -1,7 +1,7 @@
 import { api } from './index';
 
 const userProviderRolesApi = api.injectEndpoints({
-  overrideExisting: true,
+  overrideExisting: module.hot?.status() === 'apply',
   endpoints: (builder) => ({
     getUserProviderRoles: builder.query({
       query: () => ({

@@ -5,7 +5,7 @@ const TAGS = {
 };
 
 const resultsApi = api.injectEndpoints({
-  overrideExisting: true,
+  overrideExisting: module.hot?.status() === 'apply',
   endpoints: (builder) => ({
     getResults: builder.query({
       query: ({ endpoint, ...queryArg }) => ({

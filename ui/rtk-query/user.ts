@@ -240,7 +240,7 @@ export const userApi = api
         },
       }),
     }),
-    overrideExisting: true,
+    overrideExisting: module.hot?.status() === 'apply',
   });
 
 export const {

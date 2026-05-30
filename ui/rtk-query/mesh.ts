@@ -1,7 +1,7 @@
 import { api, mesheryApiPath } from './index';
 
 export const meshApi = api.injectEndpoints({
-  overrideExisting: true,
+  overrideExisting: module.hot?.status() === 'apply',
   endpoints: (builder) => ({
     getMesh: builder.query({
       query: () => mesheryApiPath('mesh'),
