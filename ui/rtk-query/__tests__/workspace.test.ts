@@ -284,8 +284,8 @@ describe('workspace endpoints', () => {
     const { api, store } = await setupStore();
     await store.dispatch(
       api.endpoints.updateWorkspace.initiate({
-        id: 'w-1',
-        name: 'updated',
+        workspaceId: 'w-1',
+        body: { name: 'updated' },
       }),
     );
     const req = fetchMock.mock.calls[0][0] as Request;
@@ -296,7 +296,7 @@ describe('workspace endpoints', () => {
   it('deleteWorkspace DELETEs /api/workspaces/:id', async () => {
     fetchMock.mockResolvedValue(okResponse({}));
     const { api, store } = await setupStore();
-    await store.dispatch(api.endpoints.deleteWorkspace.initiate({ id: 'w-2' }));
+    await store.dispatch(api.endpoints.deleteWorkspace.initiate({ workspaceId: 'w-2' }));
     const req = fetchMock.mock.calls[0][0] as Request;
     expect(req.method).toBe('DELETE');
     expect(req.url).toContain('/api/workspaces/w-2');
