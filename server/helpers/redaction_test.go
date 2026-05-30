@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestRedactSensitiveValueRedactsSecretsAndPromptContent(t *testing.T) {
@@ -103,4 +104,64 @@ func TestRedactSensitiveValueRedactsErrors(t *testing.T) {
 	if got != "provider failed with token="+RedactedValue {
 		t.Fatalf("RedactSensitiveValue(error) = %v", got)
 	}
+}
+
+func TestRedactSensitiveValuePreservesNilCollections(t *testing.T) {
+	input := map[string]any{
+		"nilMap":   map[string]any(nil),
+		"nilSlice": []any(nil),
+	}
+
+	got := RedactSensitiveValue(input).(map[string]any)
+	if got["nilMap"] != nil {
+		t.Fatalf("nilMap = %#v, want nil", got["nilMap"])
+	}
+	if got["nilSlice"] != nil {
+		t.Fatalf("nilSlice = %#v, want nil", got["nilSlice"])
+	}
+}
+
+func TestRedactSensitiveValueRedactsByteSlices(t *testing.T) {
+	got := RedactSensitiveValue([]byte("token=raw-token"))
+	if got != RedactedValue {
+		t.Fatalf("RedactSensitiveValue([]byte) = %#v, want %q", got, RedactedValue)
+	}
+}
+
+func TestRedactSensitiveValueHandlesTypedNilErrors(t *testing.T) {
+	var typedNil *typedNilRedactionError
+	var err error = typedNil
+
+	if got := RedactSensitiveValue(err); got != nil {
+		t.Fatalf("RedactSensitiveValue(typed nil error) = %#v, want nil", got)
+	}
+}
+
+func TestRedactSensitiveStructFallbackDoesNotLeakSecrets(t *testing.T) {
+	input := struct {
+		Token string
+		Fn    func()
+	}{
+		Token: "raw-token",
+		Fn:    func() {},
+	}
+
+	got := RedactSensitiveValue(input)
+	if got != RedactedValue {
+		t.Fatalf("RedactSensitiveValue(unmarshalable struct) = %#v, want %q", got, RedactedValue)
+	}
+}
+
+func TestRedactSensitiveValuePreservesTimeValues(t *testing.T) {
+	now := time.Date(2026, 5, 30, 12, 0, 0, 0, time.UTC)
+	got := RedactSensitiveValue(now)
+	if !reflect.DeepEqual(got, now) {
+		t.Fatalf("RedactSensitiveValue(time.Time) = %#v, want %#v", got, now)
+	}
+}
+
+type typedNilRedactionError struct{}
+
+func (*typedNilRedactionError) Error() string {
+	panic("typed nil error should not be evaluated")
 }

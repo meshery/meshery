@@ -14,6 +14,7 @@ var (
 	bearerTokenPattern = regexp.MustCompile(`(?i)(authorization\s*[:=]\s*bearer\s+)[^\s,;]+`)
 	apiKeyPattern      = regexp.MustCompile(`(?i)((?:api[-_ ]?key|token|secret|password)\s*[:=]\s*)[^\s,;]+`)
 	privateKeyPattern  = regexp.MustCompile(`(?is)-----BEGIN [^-]*PRIVATE KEY-----.*?-----END [^-]*PRIVATE KEY-----`)
+	keyNormalizer      = strings.NewReplacer("_", "", "-", "", " ", "", ".", "")
 )
 
 var sensitiveFieldNames = map[string]struct{}{
@@ -61,21 +62,21 @@ func redactSensitiveValue(value reflect.Value, key string) any {
 		return nil
 	}
 
-	if value.CanInterface() {
-		if err, ok := value.Interface().(error); ok {
-			return RedactSensitiveString(err.Error())
-		}
-	}
-
 	for value.Kind() == reflect.Pointer || value.Kind() == reflect.Interface {
 		if value.IsNil() {
 			return nil
 		}
-		value = value.Elem()
 		if value.CanInterface() {
 			if err, ok := value.Interface().(error); ok {
 				return RedactSensitiveString(err.Error())
 			}
+		}
+		value = value.Elem()
+	}
+
+	if value.CanInterface() {
+		if err, ok := value.Interface().(error); ok {
+			return RedactSensitiveString(err.Error())
 		}
 	}
 
@@ -87,8 +88,17 @@ func redactSensitiveValue(value reflect.Value, key string) any {
 	case reflect.String:
 		return RedactSensitiveString(value.String())
 	case reflect.Map:
+		if value.IsNil() {
+			return nil
+		}
 		return redactSensitiveMap(value)
 	case reflect.Slice, reflect.Array:
+		if value.Kind() == reflect.Slice && value.IsNil() {
+			return nil
+		}
+		if value.Type().Elem().Kind() == reflect.Uint8 {
+			return RedactedValue
+		}
 		items := make([]any, 0, value.Len())
 		for i := 0; i < value.Len(); i++ {
 			items = append(items, redactSensitiveValue(value.Index(i), key))
@@ -130,14 +140,18 @@ func redactSensitiveStruct(value reflect.Value) any {
 		return nil
 	}
 
+	if value.Type().PkgPath() == "time" && value.Type().Name() == "Time" {
+		return value.Interface()
+	}
+
 	encoded, err := json.Marshal(value.Interface())
 	if err != nil {
-		return fmt.Sprint(value.Interface())
+		return RedactedValue
 	}
 
 	var decoded any
 	if err := json.Unmarshal(encoded, &decoded); err != nil {
-		return fmt.Sprint(value.Interface())
+		return RedactedValue
 	}
 
 	return RedactSensitiveValue(decoded)
@@ -153,6 +167,5 @@ func shouldRedactField(key string) bool {
 }
 
 func normalizeRedactionKey(key string) string {
-	replacer := strings.NewReplacer("_", "", "-", "", " ", "", ".", "")
-	return strings.ToLower(replacer.Replace(key))
+	return strings.ToLower(keyNormalizer.Replace(key))
 }
