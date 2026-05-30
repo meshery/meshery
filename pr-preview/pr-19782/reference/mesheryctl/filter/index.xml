@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mesheryctl-filter on Documentation</title><link>/reference/mesheryctl/filter/</link><description>Recent content in mesheryctl-filter on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/reference/mesheryctl/filter/index.xml" rel="self" type="application/rss+xml"/><item><title>mesheryctl-filter-delete</title><link>/reference/mesheryctl/filter/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/filter/delete/</guid><description>&lt;h1 id="mesheryctl-filter-delete"&gt;
+	mesheryctl filter delete
+&lt;/h1&gt;
+&lt;p&gt;Delete a filter file&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Delete a filter file using the name or ID of a filter&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl filter delete [filter-name | ID] [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Delete the specified WASM filter file using name or ID
+A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be deleted.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl filter delete [filter-name | ID]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for delete
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -t, --token string Path to token file default from current context
+ -v, --verbose verbose output
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-filter-import</title><link>/reference/mesheryctl/filter/import/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/filter/import/</guid><description>&lt;h1 id="mesheryctl-filter-import"&gt;
+	mesheryctl filter import
+&lt;/h1&gt;
+&lt;p&gt;Import a WASM filter&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Import a WASM filter from a URI (http/s) or local filesystem path&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl filter import [URI] [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Import a filter file from local filesystem&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl filter import /path/to/filter.wasm
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Import a filter file from a remote URI&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl filter import https://example.com/myfilter.wasm
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Add WASM configuration
+If the string is a valid file in the filesystem, the file is read and passed as a string. Otherwise, the string is passed as is.
+Use quotes if the string contains spaces&lt;/p&gt;</description></item><item><title>mesheryctl-filter-list</title><link>/reference/mesheryctl/filter/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/filter/list/</guid><description>&lt;h1 id="mesheryctl-filter-list"&gt;
+	mesheryctl filter list
+&lt;/h1&gt;
+&lt;p&gt;List filters&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Display list of all available filter files.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl filter list [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;List all WASM filter files present&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl filter list	(maximum 25 filters)
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Search for filter&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl filter list Test (maximum 25 filters)
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Search for filter with space&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl filter list 'Test Filter' (maximum 25 filters)
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="options"&gt;
+	Options
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ -h, --help help for list
+ -p, --page int (optional) List next set of filters with --page (default = 1) (default 1)
+ -v, --verbose Display full length user and filter file identifiers
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="options-inherited-from-parent-commands"&gt;
+	Options inherited from parent commands
+&lt;/h2&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+ --config string path to config file (default "/home/runner/.meshery/config.yaml")
+ -t, --token string Path to token file default from current context
+
+&lt;/div&gt;
+&lt;/pre&gt;
+&lt;h2 id="see-also"&gt;
+	See Also
+&lt;/h2&gt;
+&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-filter-view</title><link>/reference/mesheryctl/filter/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/filter/view/</guid><description>&lt;h1 id="mesheryctl-filter-view"&gt;
+	mesheryctl filter view
+&lt;/h1&gt;
+&lt;p&gt;View filter(s)&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Displays the contents of a specific filter based on name or id&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl filter view [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;View the specified WASM filter
+A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl filter view "[filter-name | ID]"
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;View all filter files&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl filter view --all
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;View all filter files in json&lt;/p&gt;</description></item></channel></rss>
