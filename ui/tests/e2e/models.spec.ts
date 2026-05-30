@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
-import { ENV } from './env';
+import { ENV } from './env.js';
 
 // Strongly typed inline to avoid JS linter false positives
 const model: {
