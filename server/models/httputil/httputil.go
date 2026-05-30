@@ -32,10 +32,32 @@ import (
 
 const redactedErrorValue = "[REDACTED]"
 
-var errorSecretPatterns = []*regexp.Regexp{
-	regexp.MustCompile(`(?i)(authorization\s*[:=]\s*bearer\s+)[^\s,;]+`),
-	regexp.MustCompile(`(?i)((?:api[-_ ]?key|token|secret|password)\s*[:=]\s*)[^\s,;]+`),
-	regexp.MustCompile(`(?is)-----BEGIN [^-]*PRIVATE KEY-----.*?-----END [^-]*PRIVATE KEY-----`),
+type errorRedactionPattern struct {
+	pattern     *regexp.Regexp
+	replacement string
+}
+
+var errorSecretPatterns = []errorRedactionPattern{
+	{
+		pattern:     regexp.MustCompile(`(?i)(["']?authorization["']?\s*[:=]\s*["']?bearer\s+)[^"'\s,;&}]+`),
+		replacement: "${1}" + redactedErrorValue,
+	},
+	{
+		pattern:     regexp.MustCompile(`(?i)(["']?(?:api[-_ ]?key|access[-_ ]?token|refresh[-_ ]?token|id[-_ ]?token|token|secret|password)["']?\s*[:=]\s*["']?)[^"'\s,;&}]+`),
+		replacement: "${1}" + redactedErrorValue,
+	},
+	{
+		pattern:     regexp.MustCompile(`(?i)(set-cookie\s*:\s*[^=;\s]+=["']?)[^"'\s;]+`),
+		replacement: "${1}" + redactedErrorValue,
+	},
+	{
+		pattern:     regexp.MustCompile(`\beyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\b`),
+		replacement: redactedErrorValue,
+	},
+	{
+		pattern:     regexp.MustCompile(`(?is)-----BEGIN [^-]*PRIVATE KEY-----.*?-----END [^-]*PRIVATE KEY-----`),
+		replacement: redactedErrorValue,
+	},
 }
 
 // WriteJSONError writes a JSON-encoded {"error": message} body with the given
@@ -83,8 +105,6 @@ func WriteMeshkitError(w http.ResponseWriter, err error, status int) {
 		return
 	}
 
-	resp.Error = redactErrorResponseString(err.Error())
-
 	// Populate MeshKit fields only when the error carries them. GetCode etc.
 	// return the "None" sentinel for non-MeshKit errors; treat that as absent.
 	if code := meshkiterrors.GetCode(err); code != "" && code != "None" {
@@ -104,6 +124,11 @@ func WriteMeshkitError(w http.ResponseWriter, err error, status int) {
 		if remedy := meshkiterrors.GetRemedy(err); remedy != "" && remedy != "None" {
 			resp.SuggestedRemediation = []string{redactErrorResponseString(remedy)}
 		}
+		if resp.Error == "" {
+			resp.Error = redactErrorResponseString(err.Error())
+		}
+	} else {
+		resp.Error = redactErrorResponseString(err.Error())
 	}
 
 	_ = json.NewEncoder(w).Encode(resp)
@@ -111,7 +136,7 @@ func WriteMeshkitError(w http.ResponseWriter, err error, status int) {
 
 func redactErrorResponseString(value string) string {
 	for _, pattern := range errorSecretPatterns {
-		value = pattern.ReplaceAllString(value, "${1}"+redactedErrorValue)
+		value = pattern.pattern.ReplaceAllString(value, pattern.replacement)
 	}
 	return value
 }

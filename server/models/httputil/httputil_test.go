@@ -53,7 +53,7 @@ func TestWriteJSONError_ShapeIsParseableJSON(t *testing.T) {
 
 func TestWriteJSONError_RedactsSensitiveValues(t *testing.T) {
 	rec := httptest.NewRecorder()
-	WriteJSONError(rec, "provider failed: Authorization: Bearer raw-token api_key=sk-live-secret", http.StatusBadRequest)
+	WriteJSONError(rec, `provider failed: "Authorization": "Bearer raw-token" "api_key":"sk-live-secret"`, http.StatusBadRequest)
 
 	var decoded map[string]string
 	if err := json.NewDecoder(rec.Body).Decode(&decoded); err != nil {
@@ -66,6 +66,24 @@ func TestWriteJSONError_RedactsSensitiveValues(t *testing.T) {
 	}
 	if !strings.Contains(decoded["error"], redactedErrorValue) {
 		t.Fatalf("error response = %q, want redacted placeholder", decoded["error"])
+	}
+}
+
+func TestWriteJSONError_RedactsQueryCookieAndJWTValues(t *testing.T) {
+	rec := httptest.NewRecorder()
+	WriteJSONError(rec, "request failed: /callback?access_token=query-secret&next=/ Set-Cookie: session=cookie-secret; bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMifQ.signature", http.StatusBadRequest)
+
+	var decoded map[string]string
+	if err := json.NewDecoder(rec.Body).Decode(&decoded); err != nil {
+		t.Fatalf("body did not parse as JSON: %v", err)
+	}
+	for _, leaked := range []string{"query-secret", "cookie-secret", "eyJhbGciOiJIUzI1NiJ9"} {
+		if strings.Contains(decoded["error"], leaked) {
+			t.Fatalf("error response leaked %q in %q", leaked, decoded["error"])
+		}
+	}
+	if strings.Count(decoded["error"], redactedErrorValue) < 3 {
+		t.Fatalf("error response = %q, want at least 3 redactions", decoded["error"])
 	}
 }
 
