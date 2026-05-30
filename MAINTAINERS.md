@@ -14,7 +14,7 @@
 | ----------------------  | -----------  | -------------- | ---------------------------- |
 | [Hussaina Begum](https://meshery.io/community/members/hussaina-begum)          | @hexxdump          | VMware      | meshery/meshery/mesheryctl |
 | [Aadhitya Amarendiran](https://meshery.io/community/members/aadhitya-amarendiran)    | @alphaX86          | Citi        | meshery/meshery/mesheryctl |
-| [Jerod Culpepper](https://meshery.io/community/members/jerod-culpepper)         | @cpepper96         | SAIC        | meshery/meshery/mesheryctl, core<sup>1</sup>
+| [Jerod Culpepper](https://meshery.io/community/members/jerod-culpepper)         | @cpepper96         | SAIC        | meshery/meshery/mesheryctl, core<sup>1</sup> |
 | [Antonette Caldwell](https://meshery.io/community/members/antonette-caldwell)      | @acald-creator     | Acquia      | meshery/meshery |
 | [Matthieu Evrin](https://meshery.io/community/members/matthieu-evrin)          | @lekaf974          | Moneris     | meshery/meshery/mesheryctl, core<sup>1</sup> | 
 
@@ -36,7 +36,7 @@
 | Name                    | GitHub       | Affiliation    | Repositories                 |
 | ----------------------  | -----------  | -------------- | ---------------------------- |
 | [Aisuko Li](https://meshery.io/community/members/aisuko)           | @aisuko        | RMIT        | meshery-extensions/meshery-linkerd |
-| [Dheeraj Gedam](https://meshery.io/community/members/dheeraj-gedam)        | @dheerajng     | Citrix      |  meshery-extensions/meshery-cpx |
+| [Dheeraj Gedam](https://meshery.io/community/members/dheeraj-gedam)        | @dheerajng     | Citrix      | meshery-extensions/meshery-cpx |
 | [Haim Helman](https://meshery.io/community/members/haim-helman)         | @thehh1974     | VMware      | meshery-extensions/meshery-octarine |
 | [Hussaina Begum](https://meshery.io/community/members/hussaina-begum)      | @hexxdump      | VMware      | meshery-extensions/meshery-tanzu-sm |
 | [Ashish Tiwari](https://meshery.io/community/members/ashish-tiwari)       | @revolyssup    | API7        | meshery-extensions/meshery-istio |
@@ -49,7 +49,7 @@
 | ----------------------  | -----------  | -------------- | ---------------------------- |
 | [Sangram Rath](https://meshery.io/community/members/sangram-rath)          | @sangramrath        | OD10        | meshery/meshery, meshery/meshery.io, meshery/qa, core<sup>1</sup> |
 | [Ian Whitney](https://meshery.io/community/members/ian-whitney) | @ianrwhitney | Intuit | meshery/meshery, meshery/meshery.io, meshery/qa, meshery-extensions/meshery-extensions-packages, meshery-extensions/integrations-workflow, core<sup>1</sup> |
-| James Horton | @hortison | meshery/meshery, meshery/meshkit, meshery/schemas | 
+| James Horton | @hortison | | meshery/meshery, meshery/meshkit, meshery/schemas |
 
 ### Docs Maintainers
 
