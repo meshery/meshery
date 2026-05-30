@@ -5,7 +5,7 @@ import CustomToolbarSelect from '../CustomToolbarSelect';
 import MesheryChart from '../MesheryChart';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import GenericModal from '../shared/Modal/GenericModal';
-import { BarChart as BarChartIcon, Info as InfoIcon, Reply as ReplyIcon } from '@/assets/icons';
+import { Info as InfoIcon, Reply as ReplyIcon } from '@/assets/icons';
 import fetchPerformanceResults from '@/graphql/queries/PerformanceResultQuery';
 import NodeDetails from './NodeDetails';
 import FacebookIcon from './assets/facebookIcon';
@@ -26,6 +26,7 @@ import {
   useTheme,
   NoSsr,
   Fade,
+  BarChartIcon,
 } from '@sistent/sistent';
 
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
