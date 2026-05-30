@@ -20,10 +20,15 @@ const DashboardIconText = styled('div')({
   },
 });
 
+// The *TableConfig functions are custom hooks (they call useKubernetesHook
+// internally), so the field is `use`-prefixed to make that explicit and to let
+// eslint-plugin-react-hooks enforce correct usage at every call site.
+type ResourceTableConfigHook = (...args: any[]) => Record<string, { name: string; model?: string }>;
+
 type ResourcesSubMenuProps = {
   k8sConfig: unknown;
   resource: {
-    tableConfig: (...args: any[]) => Record<string, { name: string }>;
+    useTableConfig: ResourceTableConfigHook;
     submenu: boolean;
   };
   selectedK8sContexts: unknown;
@@ -51,10 +56,9 @@ const ResourcesSubMenu = ({
     [CRDsKeys, isCRDS],
   );
 
-  // Call tableConfig() unconditionally to keep hook count stable across renders.
-  // Config functions (e.g. WorkloadTableConfig) contain React hooks internally,
-  // so they must always be called regardless of whether the result is used.
-  const tableConfigResult = resource.tableConfig();
+  // useTableConfig is a custom hook, so it is called unconditionally at the top
+  // level to keep hook order stable across renders.
+  const tableConfigResult = resource.useTableConfig();
   const tabs = useMemo(
     () => (isCRDS ? crdsKind : Object.keys(tableConfigResult)),
     [crdsKind, isCRDS, tableConfigResult],
@@ -122,7 +126,7 @@ const ResourcesSubMenu = ({
             key={index}
             workloadType={key}
             k8sConfig={k8sConfig}
-            resourceConfig={resource.tableConfig}
+            useResourceConfig={resource.useTableConfig}
             submenu={resource.submenu}
             selectedK8sContexts={selectedK8sContexts}
           />
@@ -130,6 +134,36 @@ const ResourcesSubMenu = ({
       ))}
     </>
   );
+};
+
+type CRDsResourcesSubMenuProps = Omit<ResourcesSubMenuProps, 'CRDsKeys' | 'isCRDS'>;
+
+// Resolves the available CRD kinds by invoking the CRDs table-config hook at the
+// top level of its own component. The parent renders this for the CRDs tab so
+// the hook is never called from inside the parent's render loop/condition (which
+// would violate the Rules of Hooks).
+export const CRDsResourcesSubMenu = (props: CRDsResourcesSubMenuProps) => {
+  const { resource, k8sConfig, selectedK8sContexts } = props;
+  const crdsConfig = resource.useTableConfig(
+    null,
+    null,
+    k8sConfig,
+    null,
+    'CRDS',
+    selectedK8sContexts,
+  );
+  // The hook rebuilds `crdsConfig` (a fresh object) on every render, so derive a
+  // stable signature and memoize CRDsKeys on it. Otherwise CRDsKeys would get a
+  // new identity each render and invalidate the memos that consume it downstream
+  // in ResourcesSubMenu (crdsKind, tabs, ...).
+  const crdsSignature = Object.values(crdsConfig)
+    .map((item) => `${item.name}:${item.model ?? ''}`)
+    .join(',');
+  const CRDsKeys = useMemo(
+    () => Object.values(crdsConfig).map((item) => ({ name: item.name, model: item.model })),
+    [crdsSignature],
+  );
+  return <ResourcesSubMenu {...props} CRDsKeys={CRDsKeys} isCRDS />;
 };
 
 export default ResourcesSubMenu;
