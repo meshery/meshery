@@ -153,6 +153,5 @@ Repositories:
 | Kate Suttons           | @suttonskate      | Layer5       | meshery-extensions/meshery-academy             |
 | Rian Cteulp            | @ritzorama        | Independent  | meshery-extensions/kanvas-site                 |
 
-**core<sup>1</sup>**: Designates that this individual maintainers all repositories under the Meshery and Meshery Extensions organizations.
 
 See also: [GOVERNANCE.md](./GOVERNANCE.md).
