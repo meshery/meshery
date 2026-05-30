@@ -12,6 +12,18 @@ Getting Meshery up and running locally on a Docker-enabled system or in Kubernet
 This quick start guide enables you to download, install, and run Meshery in a single command. See all <a href='{{< ref "installation/_index.md" >}}'>supported platforms</a> for more specific (and less presumptuous) instructions.
 {{% /alert %}}
 
+## Prerequisites
+ 
+Before running the Quick Start command, ensure you have the following:
+ 
+- **macOS or Linux** (Windows users: see [Windows installation](/installation/windows)).
+- **Docker** installed and running — [Get Docker](https://docs.docker.com/get-docker/)  
+  _or_ a **Kubernetes cluster** with a valid kubeconfig (local options: [kind](/installation/kubernetes/kind), [minikube](/installation/kubernetes/minikube))
+- **curl** and **bash** available in your terminal
+{{% alert color="info" title="Docker vs Kubernetes" %}}
+The Quick Start command below defaults to a <strong>Docker</strong> deployment. This is the simplest way to get started on a local machine without needing a Kubernetes cluster. If you want to deploy into an existing Kubernetes cluster instead, see the variant command in Step 1.
+{{% /alert %}}
+
 ## 1. Download, install, and run Meshery
 
 If you are on a macOS or Linux system, you can download, install, and run both `mesheryctl` and Meshery Server by executing the following command.
@@ -29,6 +41,16 @@ If you are on a macOS or Linux system, you can download, install, and run both `
 </pre>-->
 <!-- <script src="../../assets/js/terminal.js" data-termynal-container="#termynal0"></script> -->
 
+**Docker (recommended for first-time users):**
+ 
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  <div class="clipboardjs">curl -L https://meshery.io/install | PLATFORM=docker bash -</div>
+  </div>
+</pre>
+ 
+**Kubernetes (if you have an existing cluster):**
+ 
 <pre class="codeblock-pre">
   <div class="codeblock">
   <div class="clipboardjs">curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</div>
