@@ -2,7 +2,7 @@
 
 This document defines governance policies for the Meshery project.
 
-Anyone can become a Meshery contributor simply by contributing to the project, with code, documentation or other means. As with all Meshery community members, contributors are expected to follow the [Code of Conduct](./CODE_OF_CONDUCT.md).
+Anyone can become a Meshery contributor by contributing to the project. As with all Meshery community members, contributors are expected to follow the [Code of Conduct](./CODE_OF_CONDUCT.md).
 
 Meshery is a vendor-neutral project. Project blogs and announcements do not favor or advertise any specific vendor, and vendor participation rules across Slack and social media are applied equally to all. Community meetings, code, and documentation are hosted on neutral platforms such as CNCF Zoom and GitHub.
 
@@ -10,7 +10,9 @@ No single vendor controls the project's features or roadmap. Architectural decis
 
 ## Contributors
 
-GitHub organization members are people who have `triage` access to all repos in the organization. Community members who wish to become members of the organization should meet the following requirements, which are open to the discretion of the steering committee:
+Contributors are community members who participate in Meshery's development and support. You become a contributor by making at least one substantive contribution (for example, a pull request, documentation update, issue report, design feedback, or community support). Start by following the [Contributing Guide](./CONTRIBUTING.md).
+
+GitHub organization membership (with triage access to all repos) is separate from contributor status. Community members who wish to become members of the organization may do so at the discretion of the steering committee.
 
 ## GitHub Project Administration
 
@@ -82,4 +84,4 @@ Any maintainer who is unresponsive or non-participatory (across the various form
 
 ## Reviewers
 
-Everyone is welcome to offer review on open pull requests. Maintainer approval or change requests count toward the requirement of approvals prior to pull request merge.
+Everyone is welcome to offer review on open pull requests. Repositories may also designate reviewers as trusted contributors who provide timely, constructive review feedback. Maintainer approvals or change requests count toward the requirement of approvals prior to pull request merge; reviewer approvals count when a repository has configured them in branch protection. Reviewers do not merge unless they are also maintainers.
