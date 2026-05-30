@@ -7,10 +7,7 @@ import {
   ErrorMain,
   ErrorSectionContent,
   StyledButton,
-  ImageContainer,
   IconWrapper,
-  Logo,
-  LogoText,
   StyledDivider,
   ErrorLink,
 } from './styles';
@@ -56,23 +53,12 @@ const DefaultError = (props) => {
           alignItems: 'center',
         }}
       >
-        <ImageContainer>
-          <Logo src="/static/img/meshery-logo/meshery-logo.svg" alt="Meshery logo" />
-          <LogoText
-            src={
-              theme.palette.mode === 'dark'
-                ? '/static/img/meshery-logo/meshery-white.svg'
-                : '/static/img/meshery-logo/meshery-black.svg'
-            }
-            alt="Meshery logo text"
-          />
-        </ImageContainer>
         <Typography
           variant="h4"
           component="h4"
           align="center"
           className="errormsg"
-          style={{ color: theme.palette.text.default }}
+          style={{ color: theme.palette.text.default, fontSize: 'inherit' }}
         >
           {errorTitle
             ? errorTitle
@@ -86,14 +72,26 @@ const DefaultError = (props) => {
       <ErrorContainer>
         <ErrorSectionContainer>
           <ErrorSection>
-            <Typography variant="h5" component="h5" align="center" fontWeight={600}>
+            <Typography
+              variant="h5"
+              component="h5"
+              align="center"
+              style={{ color: theme.palette.text.secondary, fontSize: '1.25rem' }}
+              fontWeight={500}
+            >
               YOUR CURRENT SESSION
             </Typography>
             <CurrentSessionInfo />
           </ErrorSection>
           <StyledDivider orientation="vertical" flexItem />
           <ErrorSection>
-            <Typography variant="h5" component="h5" align="center" fontWeight={600}>
+            <Typography
+              variant="h5"
+              component="h5"
+              align="center"
+              style={{ color: theme.palette.text.secondary, fontSize: '1.25rem' }}
+              fontWeight={500}
+            >
               YOUR OPTIONS
             </Typography>
             {/* this is left intentionally inline for now since this is a one off till we implement

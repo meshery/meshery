@@ -58,7 +58,6 @@ export const ErrorSection = styled('div')(() => ({
   paddingInline: '2rem',
   gap: '2rem',
   marginBlock: '2rem',
-  minWidth: 'max-content',
 }));
 
 export const ErrorSectionContent = styled('div')(() => ({
@@ -116,13 +115,13 @@ export const StyledSelect = styled(Select)({
     paddingBlock: '5px',
     paddingInline: '10px',
   },
-  '@media (max-width: 368px)': {
-    width: '180px',
-  },
+  width: '100%',
+  maxWidth: '100%',
 });
 
 export const StyledBox = styled(Box)(({ theme }) => ({
   display: 'flex',
+  flexWrap: 'wrap',
   gap: '10px',
   alignItems: 'center',
   borderRadius: '10px',
