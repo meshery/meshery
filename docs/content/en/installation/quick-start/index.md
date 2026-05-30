@@ -17,11 +17,11 @@ This quick start guide enables you to download, install, and run Meshery in a si
 Before running the Quick Start command, ensure you have the following:
  
 - **macOS or Linux** (Windows users: see [Windows installation](/installation/windows)).
-- **Docker** installed and running — [Get Docker](https://docs.docker.com/get-docker/)  
-  _or_ a **Kubernetes cluster** with a valid kubeconfig (local options: [kind](/installation/kubernetes/kind), [minikube](/installation/kubernetes/minikube))
+- **Docker** installed and running. If you need it, see [Get Docker](https://docs.docker.com/get-docker/) for installation instructions.
+**Or**, if you plan to use the Kubernetes deployment option, a **Kubernetes cluster** with a valid kubeconfig (local options: [kind](/installation/kubernetes/kind) or [minikube](/installation/kubernetes/minikube)).
 - **curl** and **bash** available in your terminal
 {{% alert color="info" title="Docker vs Kubernetes" %}}
-The Quick Start command below defaults to a <strong>Docker</strong> deployment. This is the simplest way to get started on a local machine without needing a Kubernetes cluster. If you want to deploy into an existing Kubernetes cluster instead, see the variant command in Step 1.
+The Quick Start command below deploys Meshery using <strong>Docker</strong> by default. This is the simplest way to get started on a local machine and does not require a Kubernetes cluster. If you want to deploy Meshery to an existing Kubernetes cluster instead, use the Kubernetes variant command shown in Step 1.
 {{% /alert %}}
 
 ## 1. Download, install, and run Meshery
