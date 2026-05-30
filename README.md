@@ -131,7 +131,7 @@ Using a GitOps-centric approach, visually and collaboratively design and manage 
 
 <img src=".github/assets/images/readme/workspace.gif" width="50%" alt="Meshery workspace interface showing team collaboration features" loading="lazy" />
 
-Workspaces let you organize your work and serve as the central point of collaboration for you and your teams and point of access control to Environments and their resources.
+Workspaces let you organize your work and serve as the central point of collaboration for you and your teams and a point of access control to Environments and their resources.
 
 <details><summary><h4>Manage your connections with Environments</h4></summary>
 
@@ -180,7 +180,7 @@ Meshery offers load generation and performance characterization to help you asse
 <details>
 <summary><h4> Manage the performance of your infrastructure and its workloads</h4></summary>
 
-<img src = ".github/assets/images/readme/meshery-performance.gif">
+<img src =".github/assets/images/readme/meshery-performance.gif" alt="Meshery performance dashboard animation">
 
 Baseline and track your cloud native performance from release to release.
 
@@ -198,7 +198,7 @@ Baseline and track your cloud native performance from release to release.
 - **Configurable Performance Profiles:** Meshery provides a highly configurable set of load profiles with tunable facets, enabling users to generate TCP, gRPC, and HTTP load. You can customize parameters such as duration, concurrent threads, concurrent generators, and load generator type. 
 - **Statistical Analysis:** Meshery performs statistical analysis on the results of performance tests, presenting data in the form of histograms with latency buckets. Understand the distribution of response times and identify potential bottlenecks.
 - **Comparison of Test Results:** Meshery enables you to compare the difference in request performance (latency and throughput) between independent performance tests. Save your load test configurations as Performance Profiles, making it easy to rerun tests with the same settings and track performance variations over time.
-- **Kubernetes Cluster and Workload Metrics:** - Meshery connects to one or more Prometheus servers to gather both cluster and application metrics. Meshery also integrates with Grafana, allowing you to import your existing dashboards and visualize performance data.
+- **Kubernetes Cluster and Workload Metrics:** Meshery connects to one or more Prometheus servers to gather both cluster and application metrics. Meshery also integrates with Grafana, allowing you to import your existing dashboards and visualize performance data.
 
 <p>In an effort to produce infrastructure agnostic tooling, Meshery uses the <a href="https://smp-spec.io" target="_blank" rel="noopener noreferrer">Cloud Native Performance</a> specification as a common format to capture and measure your infrastructure's performance against a universal cloud native performance index. Meshery participates in advancing cloud native infrastructure adoption through the standardization of APIs. Meshery enables you to measure the value provided by Docker, Kubernetes, or other cloud native infrastructure in the context of the overhead incurred.</p>
 

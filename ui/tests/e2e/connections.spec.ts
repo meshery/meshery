@@ -1,6 +1,7 @@
 import { expect, Page, Response } from '@playwright/test';
 import { test } from './fixtures/project';
 import { ENV } from './env';
+import { DashboardPage } from './pages/DashboardPage';
 import { waitForSnackBar } from './utils/waitForSnackBar';
 
 // Define the shape of the transition test objects
@@ -46,16 +47,21 @@ const transitionTests: TransitionTest[] = [
 ];
 
 test.describe.serial('Connection Management Tests', () => {
+  // The shared beforeEach calls dashboardPage.navigateToDashboard() and
+  // navigateToConnections(), each of which internally awaits two visibility
+  // checks with a 120s timeout. Under the default BASE_TIMEOUT=60s the hook
+  // itself dies before those waits can resolve when CI is under load.
+  // Three minutes is enough headroom for a slow dashboard render plus the
+  // connections page mount and its initial API response.
+  test.describe.configure({ timeout: 180_000 });
+
   test.beforeEach(async ({ page }) => {
-    // Navigate directly to the page under test rather than clicking through
-    // the dashboard's left nav. The nav path was a known flake source: it
-    // depends on `lifecycle` and `connection` data-testids being present
-    // before either is clickable, and on the lifecycle sub-menu animating
-    // open before the connection child accepts a click. Loading the URL
-    // directly mirrors what real users do via deep links and isolates the
-    // smoke test to the connections page itself.
-    await page.goto('/management/connections', { waitUntil: 'domcontentloaded' });
+    const initialConnectionsRes = waitForConnectionsApiResponse(page);
+    const dashboardPage = new DashboardPage(page);
+    await dashboardPage.navigateToDashboard();
+    await dashboardPage.navigateToConnections();
     await page.waitForURL(/\/management\/connections/);
+    await initialConnectionsRes;
     await expect(page.getByTestId('ConnectionTable-search')).toBeVisible();
   });
 

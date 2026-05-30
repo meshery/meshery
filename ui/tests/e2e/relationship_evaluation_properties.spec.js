@@ -100,6 +100,10 @@ function deepClone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
+function isIdempotentCleanupAction(action) {
+  return action?.op === 'delete_relationship' && action?.value?.relationship?.status === 'deleted';
+}
+
 // Delete the value at the given path in an object.
 // Returns true if something was deleted.
 function deleteAtPath(obj, pathSegments) {
@@ -276,7 +280,7 @@ test.describe('Relationship Evaluation Properties', { tag: '@relationship' }, ()
         const secondResponse = await resp.json();
 
         const meaningfulActions = (secondResponse.actions ?? []).filter(
-          (a) => a.op !== 'update_relationship' && a.op !== 'delete_relationship',
+          (action) => action.op !== 'update_relationship' && !isIdempotentCleanupAction(action),
         );
         expect(
           meaningfulActions,
