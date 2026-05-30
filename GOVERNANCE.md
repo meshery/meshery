@@ -707,11 +707,11 @@ maintainers.
   directories within them), their subproject and Lead status, and their affiliation.
   It also lists Emeritus Maintainers. This list is kept in sync with the
   [CNCF Project Maintainers list](https://github.com/cncf/foundation/blob/main/project-maintainers.csv).
-- **CODEOWNERS.** Each repository uses a `CODEOWNERS` file to map directories to the
+- **CODEOWNERS.** Repositories may use a `CODEOWNERS` file to map directories to the
   GitHub teams or maintainers that own them, so that the right approvals are
   automatically required before a change to a given path can merge. `CODEOWNERS` is
-  the operational expression of the ownership recorded in `MAINTAINERS.md`. See
-  [Appendix B](#appendix-b-maintainersmd-and-codeowners-structure).
+  the operational expression of the ownership recorded in `MAINTAINERS.md` where it
+  is present. See [Appendix B](#appendix-b-maintainersmd-and-codeowners-structure).
 
 Branch protection on the default branch requires approval from the relevant code
 owners before merge, which is how the project ensures that ownership in GitHub
