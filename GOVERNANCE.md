@@ -404,7 +404,7 @@ with intermediate proficiency in Go, React, and OpenAPI schemas and hands-on
 experience in the codebase, and it is open to developers, technical writers, and
 community members. The exam is a free, online, multiple-choice assessment, two hours
 in duration, with a 70% passing score and a two-year validity. No minimum number of
-contributions is required to sit for it.See the [recognition program](https://meshery.io/community/recognition).
+contributions is required to sit for it. See the [recognition program](https://meshery.io/community/recognition).
 
 ## The Maintainer Council
 
