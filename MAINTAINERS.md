@@ -1,77 +1,158 @@
-### Core Maintainers
+## Core Maintainers ([github.com/meshery](https://github.com/meshery))
 
-| Name                    | GitHub       | Affiliation    | Repositories                 |
-| ----------------------  | -----------  | -------------- | ---------------------------- |
-| [Matthieu Evrin](https://meshery.io/community/members/matthieu-evrin)          | @lekaf974          | Moneris     | core<sup>1</sup> | 
-| [Ian Whitney](https://meshery.io/community/members/ian-whitney) | @ianrwhitney | Intuit | core<sup>1</sup> |
-| [Mia Grenell](https://meshery.io/community/members/mia-grenell)       | @miacycle        | USyd        | meshery/meshery, meshery/meshery.io, core<sup>1</sup> |
-| [Aabid Sofi](https://meshery.io/community/members/aabid-sofi)          | @aabidsofi19            | Independent        | core<sup>1</sup> |
-| [Lee Calcote](https://meshery.io/community/members/lee-calcote)       | @leecalcote      | Layer5      | core<sup>1</sup> |
+| Name           | GitHub       | Affiliation |
+| -------------- | ------------ | ----------- |
+| Matthieu Evrin | @lekaf974    | Moneris     |
+| Ian Whitney    | @ianrwhitney | Intuit      |
+| Mia Grenell    | @miacycle    | USyd        |
+| Aabid Sofi     | @aabidsofi19 | Independent |
+| Lee Calcote    | @leecalcote  | Layer5      |
+
+Repositories:
+
+- `meshery/*` (all repositories under the Meshery organization)
+- `meshery-extensions/*` (all repositories under the Meshery Extensions organization)
 
 ### CLI Maintainers
 
-| Name                    | GitHub       | Affiliation    | Repositories                 |
-| ----------------------  | -----------  | -------------- | ---------------------------- |
-| [Hussaina Begum](https://meshery.io/community/members/hussaina-begum)          | @hexxdump          | VMware      | meshery/meshery/mesheryctl |
-| [Aadhitya Amarendiran](https://meshery.io/community/members/aadhitya-amarendiran)    | @alphaX86          | Citi        | meshery/meshery/mesheryctl |
-| [Jerod Culpepper](https://meshery.io/community/members/jerod-culpepper)         | @cpepper96         | SAIC        | meshery/meshery/mesheryctl, core<sup>1</sup> |
-| [Antonette Caldwell](https://meshery.io/community/members/antonette-caldwell)      | @acald-creator     | Acquia      | meshery/meshery |
-| [Matthieu Evrin](https://meshery.io/community/members/matthieu-evrin)          | @lekaf974          | Moneris     | meshery/meshery/mesheryctl, core<sup>1</sup> | 
+`mesheryctl` command-line interface (CLI) maintainers are responsible for the development and maintenance of Meshery's CLI tools, including `mesheryctl`. They ensure that the CLI remains user-friendly (consistent UX is paramount), functional, and up-to-date with the latest features and improvements. CLI maintainers collaborate closely with core maintainers and other contributors to integrate new functionalities and address any issues related to the CLI.
 
+| Name                 | GitHub         | Affiliation |
+| -------------------- | -------------- | ----------- |
+| Hussaina Begum       | @hexxdump      | VMware      |
+| Aadhitya Amarendiran | @alphaX86      | Citi        |
+| Jerod Culpepper      | @cpepper96     | SAIC        |
+| Antonette Caldwell   | @acald-creator | Acquia      |
+| Matthieu Evrin       | @lekaf974      | Moneris     |
+
+Repositories:
+
+- `meshery/meshery/mesheryctl`
+- `meshery/homebrew-tap`
+- `meshery/scoop-bucket`
+- `meshery/meshkit`
+- `meshery/schemas`
 
 ### UI Maintainers
 
-| Name                    | GitHub       | Affiliation    | Repositories                 |
-| ----------------------  | -----------  | -------------- | ---------------------------- |
-| [Nikhil Ladha](https://meshery.io/community/members/nikhil-ladha)        | @Nikhil-Ladha           | Red Hat       | meshery/meshery.io |
-| [Antonette Caldwell](https://meshery.io/community/members/antonette-caldwell)  | @acald-creator          | Acquia        | meshery/meshery |
-| [Aabid Sofi](https://meshery.io/community/members/aabid-sofi)          | @aabidsofi19            | Independent        | core<sup>1</sup> |
-| [Yash Sharma](https://meshery.io/community/members/yash-sharma)         | @Yashsharma1911         | Digital Ocean | meshery/meshery, meshery/meshery.io |
-| [Sudhanshu Dasgupta](https://meshery.io/community/members/sudhanshu-dasgupta)  | @sudhanshutech          | SafeDep       | meshery/meshery |
-| [Ian Whitney](https://meshery.io/community/members/ian-whitney) | @ianrwhitney | Intuit | meshery/meshery, meshery/meshery.io, meshery/qa, core<sup>1</sup> |
+UI maintainers are responsible for the development and maintenance of Meshery's user interface, ensuring it is user-friendly, visually appealing, and consistent with the overall design guidelines. They collaborate closely with core maintainers and other contributors to integrate new features and address any issues related to the UI.
 
+| Name               | GitHub          | Affiliation   |
+| ------------------ | --------------- | ------------- |
+| Nikhil Ladha       | @Nikhil-Ladha   | Red Hat       |
+| Antonette Caldwell | @acald-creator  | Acquia        |
+| Aabid Sofi         | @aabidsofi19    | Independent   |
+| Yash Sharma        | @Yashsharma1911 | Digital Ocean |
+| Sudhanshu Dasgupta | @sudhanshutech  | SafeDep       |
+| Ian Whitney        | @ianrwhitney    | Intuit        |
 
-### Adapter Maintainers
+Repositories:
 
-| Name                    | GitHub       | Affiliation    | Repositories                 |
-| ----------------------  | -----------  | -------------- | ---------------------------- |
-| [Aisuko Li](https://meshery.io/community/members/aisuko)           | @aisuko        | RMIT        | meshery-extensions/meshery-linkerd |
-| [Dheeraj Gedam](https://meshery.io/community/members/dheeraj-gedam)        | @dheerajng     | Citrix      | meshery-extensions/meshery-cpx |
-| [Haim Helman](https://meshery.io/community/members/haim-helman)         | @thehh1974     | VMware      | meshery-extensions/meshery-octarine |
-| [Hussaina Begum](https://meshery.io/community/members/hussaina-begum)      | @hexxdump      | VMware      | meshery-extensions/meshery-tanzu-sm |
-| [Ashish Tiwari](https://meshery.io/community/members/ashish-tiwari)       | @revolyssup    | API7        | meshery-extensions/meshery-istio |
-| [Michael Gfeller](https://meshery.io/community/members/michael-gfeller)     | @mgfeller      | Computas AS | meshery/meshery, meshery/meshkit, meshery/meshery-adapter-library |
-| [Antonette Caldwell](https://meshery.io/community/members/antonette-caldwell)  | @acald-creator | Acquia      | meshery/meshery |
+- `meshery/meshery/ui`
+- `meshery/meshery/provider-ui`
+- `meshery/schemas`
 
-### CI / Build & Release Maintainers
+### Build & Release Maintainers
 
-| Name                    | GitHub       | Affiliation    | Repositories                 |
-| ----------------------  | -----------  | -------------- | ---------------------------- |
-| [Sangram Rath](https://meshery.io/community/members/sangram-rath)          | @sangramrath        | OD10        | meshery/meshery, meshery/meshery.io, meshery/qa, core<sup>1</sup> |
-| [Ian Whitney](https://meshery.io/community/members/ian-whitney) | @ianrwhitney | Intuit | meshery/meshery, meshery/meshery.io, meshery/qa, meshery-extensions/meshery-extensions-packages, meshery-extensions/integrations-workflow, core<sup>1</sup> |
-| James Horton | @hortison | | meshery/meshery, meshery/meshkit, meshery/schemas |
+| Name         | GitHub       | Affiliation |
+| ------------ | ------------ | ----------- |
+| Sangram Rath | @sangramrath | OD10        |
+| Ian Whitney  | @ianrwhitney | Intuit      |
+| James Horton | @hortison    | Layer5      |
+
+Repositories:
+
+- `meshery/meshery`
+- `meshery/qa`
+- `meshery/meshkit`
+- `meshery/schemas`
+- `meshery-extensions/meshery-extensions-packages`
+- `meshery-extensions/integrations-workflow`
+- `meshery/meshery.io`
 
 ### Docs Maintainers
 
-| Name                    | GitHub       | Affiliation    | Repositories                 |
-| ----------------------  | -----------  | -------------- | ---------------------------- |
-| [Adithya Krishna](https://meshery.io/community/members/adithya-krishna)   | @adithyaakrishna | Red Hat     | meshery/meshery, meshery/meshery.io |
-| [Lee Calcote](https://meshery.io/community/members/lee-calcote)       | @leecalcote      | Layer5      | core<sup>1</sup> |
-| [Mia Grenell](https://meshery.io/community/members/mia-grenell)       | @miacycle        | USyd        | meshery/meshery, meshery/meshery.io, core<sup>1</sup> |
+| Name             | GitHub           | Affiliation |
+| ---------------- | ---------------- | ----------- |
+| Adithya Krishna  | @adithyaakrishna | Red Hat     |
+| Lee Calcote      | @leecalcote      | Layer5      |
+| Raunak Madan     | @codexraunak     | Layer5      |
+| Mia Grenell      | @miacycle        | USyd        |
+| Carlos Rio Silva | @carlosriosilva  | IesBrazil   |
 
+Repositories:
+
+- `meshery/meshery/docs`
 
 ### Site Maintainers
 
-| Name                    | GitHub       | Affiliation    | Repositories                 |
-| ----------------------  | -----------  | -------------- | ---------------------------- |
-| [Nikhil Ladha](https://meshery.io/community/members/nikhil-ladha)            | @Nikhil-Ladha | Red Hat        | meshery/meshery.io |
-| [Aaditya Narayan Subedy](https://meshery.io/community/members/aaditya-narayan-subedy)  | @asubedy      | Fast Retailing | meshery/meshery.io |
+| Name                   | GitHub        | Affiliation    |
+| ---------------------- | ------------- | -------------- |
+| Nikhil Ladha           | @Nikhil-Ladha | Red Hat        |
+| Mericio                | @simihablo    | Independent    |
+| Aaditya Narayan Subedy | @asubedy      | Fast Retailing |
+| Jamie Plu              | @jamieplu     | Independent    |
 
-### Meshery Extensions Maintainers
+Repositories:
 
-| Name                    | GitHub       | Affiliation    | Repositories                 |
-| ----------------------  | -----------  | -------------- | ---------------------------- |
-| [Ijeoma Eti](https://meshery.io/community/members/eti-ijeoma)              | @Aijeyomah      | Manufactured   | meshery-extensions/helm-kanvas-snapshot |
-| [Pranav Singh](https://meshery.io/community/members/pranav-singh)            | @theBeginner86  | Intel          | meshery-extensions/kanvas-site |
+- `meshery/meshery.io`
+- `meshery/play`
 
-**core<sup>1</sup>**: Designates core maintainer (all repositories)
+### Community Maintainers
+
+| Name                | GitHub          | Affiliation   |
+| ------------------- | --------------- | ------------- |
+| Raunak Madan        | @codexraunak    | Layer5        |
+| Kavitha Karunakaran | @matrixkavi     | Upsun         |
+| Alex Quinn          | @alexquincy     | Netflix       |
+| Marcus Blom         | @marblom007     | AWS           |
+| Kate Suttons        | @suttonskate    | Layer5        |
+| Yash Sharma         | @Yashsharma1911 | Digital Ocean |
+
+Repositories:
+
+- `meshery/.github`
+- `meshery/meet`
+- `meshery/meshery.io`
+- `meshery/slack`
+- `meshery/play`
+
+## Extensions Maintainers ([meshery-extensions](https://github.com/meshery-extensions))
+
+### Adapter Maintainers
+
+Adapter maintainers are responsible for the development and maintenance of Meshery's adapters, which enable integration with various service meshes and other technologies. They ensure that the adapters are functional, up-to-date, and compatible with the latest versions of the respective technologies. Adapter maintainers collaborate closely with core maintainers and other contributors to integrate new features and address any issues related to the adapters.
+
+Repositories:
+
+- `meshery/meshery-adapter-library`
+- `meshery/meshery-<adapter-name>` (e.g., `meshery/meshery-istio`, `meshery/meshery-linkerd`, etc.)
+- `meshery/meshkit`
+
+| Name            | GitHub          | Affiliation | Repositories                                     |
+| --------------- | --------------- | ----------- | ------------------------------------------------ |
+| Aisuko Li       | @aisuko         | RMIT        | meshery-extensions/meshery-linkerd               |
+| Pontus Ringblom | @pontusringblom | Infor       | meshery-extensions/shape-builder                 |
+| Dheeraj Gedam   | @dheerajng      | Citrix      | meshery-extensions/meshery-cpx                   |
+| Haim Helman     | @thehh1974      | VMware      | meshery-extensions/meshery-octarine              |
+| Hussaina Begum  | @hexxdump       | VMware      | meshery-extensions/meshery-tanzu-sm              |
+| Ashish Tiwari   | @revolyssup     | API7        | meshery-extensions/meshery-istio                 |
+| Michael Gfeller | @mgfeller       | Computas AS | meshery/meshkit, meshery/meshery-adapter-library |
+| Marcus Blom     | @marblom007     | Independent | meshery-extensions/shape-builder                 |
+
+### Other Extensions Maintainers
+
+| Name                   | GitHub            | Affiliation  | Repositories                                   |
+| ---------------------- | ----------------- | ------------ | ---------------------------------------------- |
+| Ijeoma Eti             | @Aijeyomah        | Manufactured | meshery-extensions/helm-kanvas-snapshot        |
+| Pranav Singh           | @theBeginner86    | Intel        | meshery-extensions/helm-kanvas-snapshot        |
+| Mia Grenell            | @miacycle         | USyd         | meshery-extensions/meshery-academy             |
+| Yi Nuo                 | @yi-nuo426        | HKUDS        | meshery-extensions/kubectl-meshsync-snapshot   |
+| Cooper Fitzgerald      | @cooperfitzgerald | Independent  | meshery-extensions/mcp-server                  |
+| Arjun                  | @arjunmehta-git   | TCS          | meshery-extensions/meshery-extensions-packages, meshery-extensions/integrations-workflow |
+| Kate Suttons           | @suttonskate      | Layer5       | meshery-extensions/meshery-academy             |
+| Rian Cteulp            | @ritzorama        | Independent  | meshery-extensions/kanvas-site                 |
+
+**core<sup>1</sup>**: Designates that this individual maintainers all repositories under the Meshery and Meshery Extensions organizations.
+
+See also: [GOVERNANCE.md](./GOVERNANCE.md).
