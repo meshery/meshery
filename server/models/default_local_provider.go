@@ -37,7 +37,7 @@ import (
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 	"gorm.io/gorm"
-	"github.com/meshery/meshery/server/helpers"
+	"github.com/meshery/meshery/server/helpers/utils"
 )
 
 // DefaultLocalProvider - represents a local provider
