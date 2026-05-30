@@ -28,7 +28,7 @@ import (
 )
 
 var (
-	availableSubcommands = []*cobra.Command{viewCmd, generateCmd, listCmd, searchCmd}
+	availableSubcommands = []*cobra.Command{viewCmd, generateCmd, listCmd, searchCmd, validateCmd}
 	relationshipApiPath  = "api/meshmodels/relationships"
 )
 
@@ -60,6 +60,9 @@ mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subty
 
 // View a specific relationship
 mesheryctl relationship view [model-name]
+
+// Validate relationship definition(s)
+mesheryctl relationship validate -f [file|dir|URL]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ := cmd.Flags().GetBool("count")
