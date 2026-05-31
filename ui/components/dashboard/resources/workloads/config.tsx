@@ -8,7 +8,7 @@ import { buildReplicationControllerColumns } from './replication-controller-colu
 import { buildJobColumns } from './job-columns';
 import { buildCronJobColumns } from './cronjob-columns';
 
-export const WorkloadTableConfig = (
+export const useWorkloadTableConfig = (
   switchView,
   meshSyncResources,
   k8sConfig,

@@ -61,11 +61,11 @@ export const AcademyEventsFormatter = ({ event }: { event: AcademyEvent }) => {
         {quizDetails.map(({ label, value }) => (
           <ListItem key={label} sx={{ py: 0.5 }}>
             <Typography variant="body1">
-              <Box component="span" fontWeight="bold">
+              <Box component="span" sx={{ fontWeight: 'bold' }}>
                 {label}:
               </Box>{' '}
               {value || (
-                <Box component="span" fontStyle="italic">
+                <Box component="span" sx={{ fontStyle: 'italic' }}>
                   none
                 </Box>
               )}

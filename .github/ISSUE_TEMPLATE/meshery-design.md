@@ -17,7 +17,7 @@ assignees: ''
 
 ### Implementation
 <!-- Add your design instructions -->
-- Open [Kanvas](https://kanvas.new/extension/meshmap) in your browser.
+- Open [Meshery](https://play.meshery.io) in your browser.
 - Navigate to components in the panel, where you can browse for components and define your design.
 
 

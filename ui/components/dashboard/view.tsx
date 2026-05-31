@@ -99,7 +99,7 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
   return (
     <Container>
       <Paper>
-        <Box padding={'1rem 1.5rem'}>
+        <Box sx={{ padding: '1rem 1.5rem' }}>
           <Header>
             <HeaderLeft>
               <TooltipIconButton
@@ -127,7 +127,7 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
               width="100%"
               handlePing={() => ping(context.name, context.server, context.connectionId)}
               status={connectionStatus}
-              iconSrc={'/static/img/kubernetes.svg'}
+              iconSrc={'/static/img/integrations/kubernetes.svg'}
             />
           </Header>
           <ErrorBoundary>

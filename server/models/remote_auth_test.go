@@ -375,7 +375,7 @@ func TestRemoteProviderDoRequest_RetriesWithFreshBodyAfterRefresh(t *testing.T) 
 // passphrase contract: X-API-Key MUST only be set when the outbound request
 // is being made with the global anonymous token, never with a real user JWT.
 // Setting X-API-Key with a user JWT pollutes the cloud's static-token
-// fallback path and broke anonymous flows in kanvas.new. The test also
+// fallback path and broke anonymous flows. The test also
 // covers the defensive Del path: a caller-supplied X-API-Key on a
 // non-anonymous outbound request must be stripped before reaching cloud.
 func TestRemoteProviderDoRequest_XAPIKeyAnonymousOnly(t *testing.T) {
