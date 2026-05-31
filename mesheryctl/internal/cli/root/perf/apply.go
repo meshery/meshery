@@ -25,10 +25,10 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/ghodss/yaml"
-	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -83,9 +83,6 @@ mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml
 // Run performance test using SMP compatible test configuration and override values with flags
 mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml [flags]
 
-// Choice of load generator - fortio or wrk2 (default: fortio)
-mesheryctl perf apply meshery-profile --load-generator wrk2
-
 // Execute a Performance test with specified queries per second
 mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --qps 30
 
@@ -95,11 +92,9 @@ mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --m
 // Execute a Performance test creating a new performance profile and pass options to the load generator used
 // If any options are already present in the profile or passed through flags, the --options flag will take precedence over the profile and flag options
 // Options for fortio - https://github.com/fortio/fortio/blob/v1.57.0/fhttp/httprunner.go#L77-L84
-// Options for wrk2 - https://github.com/layer5io/gowrk2/blob/v0.6.1/api/gowrk2.go#L47-L53
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --options [filepath|json-string]
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --options path/to/options.json
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator fortio --options '{"MethodOverride": "POST"}'
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator wrk2 --options '{"DurationInSeconds": 15, "Thread": 3}'
 	`,
 	Annotations: linkDocPerfApply,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -332,8 +327,8 @@ func init() {
 	applyCmd.Flags().StringVar(&qps, "qps", "", "(optional) Queries per second")
 	applyCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "", "(optional) Number of Parallel Requests")
 	applyCmd.Flags().StringVar(&testDuration, "duration", "", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
-	applyCmd.Flags().StringVar(&loadGenerator, "load-generator", "", "(optional) Load-Generator to be used (fortio/wrk2)")
-	applyCmd.Flags().StringVarP(&filePath, "file", "f", "", "(optional) File containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
+	applyCmd.Flags().StringVar(&loadGenerator, "load-generator", "", "(optional) Load-Generator to be used (fortio)")
+	applyCmd.Flags().StringVarP(&filePath, "file", "f", "", "(optional) File containing SMP-compatible test configuration. For more, see https://smp-spec.io")
 	applyCmd.Flags().StringVarP(&loadTestBody, "body", "b", "", "(optional) Load test body. Can be a filepath/string")
 	applyCmd.Flags().StringVar(&additionalOptions, "options", "", "(optional) Additional options to be passed to the load generator. Can be a json string or a filepath containing json")
 	applyCmd.Flags().StringVar(&certPath, "cert-path", "", "(optional) Path to the certificate to be used for the load test")
@@ -461,7 +456,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return "", "", err
+		return "", "", ErrPerfProfileServer(errors.New("failed to save performance profile on server"))
 	}
 
 	var response *models.PerformanceProfile

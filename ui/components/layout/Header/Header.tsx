@@ -120,7 +120,7 @@ const K8sContextConnectionChip_ = ({
             iconSrc={
               connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                : '/static/img/kubernetes.svg'
+                : '/static/img/integrations/kubernetes.svg'
             }
             status={connectionStatus}
           />
@@ -282,10 +282,10 @@ function K8sContextMenu({
                   connectionMetadataState &&
                   connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                     ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                    : '/static/img/kubernetes.svg'
+                    : '/static/img/integrations/kubernetes.svg'
                 }
                 onError={(e) => {
-                  e.target.src = '/static/img/kubernetes.svg';
+                  e.target.src = '/static/img/integrations/kubernetes.svg';
                 }}
                 width="24px"
                 height="24px"
@@ -456,7 +456,7 @@ const Header = ({
       <>
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
           <StyledToolbar disableGutters isDrawerCollapsed={onDrawerCollapse}>
-            <Grid2 container alignItems="center" size="grow">
+            <Grid2 container size="grow" sx={{ alignItems: 'center' }}>
               <Hidden smUp>
                 <Grid2 style={{ display: 'none' }}>
                   <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
@@ -464,7 +464,12 @@ const Header = ({
                   </MenuIconButton>
                 </Grid2>
               </Hidden>
-              <Grid2 container alignItems="center" component={PageTitleWrapper} size="grow">
+              <Grid2
+                container
+                component={PageTitleWrapper}
+                size="grow"
+                sx={{ alignItems: 'center' }}
+              >
                 {/* Extension Point for   Logo */}
                 <div
                   id="nav-header-logo"

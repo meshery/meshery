@@ -116,7 +116,13 @@ export default function CustomizedSteppers({
       ...prevState,
       onClose: onClose,
     }));
-  }, [sharedData]);
+    // Depend on `onClose` (the actual input we mirror into shared state) and
+    // `setSharedData` (a stable functional setter). Previously this effect
+    // listed `sharedData` in its deps and called `setSharedData(prev => ...)`
+    // — a guaranteed self-feeding loop: every commit replaced `sharedData`
+    // with a new object reference, which retriggered the effect, which
+    // produced another new reference, etc.
+  }, [onClose, setSharedData]);
 
   const ActiveStepContent = stepContent[String(activeStep + 1)].component;
 

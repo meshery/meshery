@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { Avatar, Divider, Grid2, IconButton, Typography, Link, useTheme } from '@sistent/sistent';
+import {
+  Avatar,
+  Divider,
+  Grid2,
+  IconButton,
+  Typography,
+  Link,
+  useTheme,
+  InfoOutlinedIcon,
+} from '@sistent/sistent';
 import { CustomTooltip, VisibilityChipMenu } from '@sistent/sistent';
 import {
   Delete as DeleteIcon,
@@ -25,13 +34,7 @@ import {
   StyledCodeMirrorWrapper,
 } from './Cards.styles';
 import YAMLDialog from '../../YamlDialog';
-import {
-  Public as PublicIcon,
-  Edit,
-  Lock,
-  Public,
-  InfoOutlined as InfoOutlinedIcon,
-} from '@/assets/icons';
+import { Public as PublicIcon, Edit, Lock, Public } from '@/assets/icons';
 import TooltipButton from '@/utils/TooltipButton';
 import CloneIcon from '../../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
@@ -270,7 +273,7 @@ function MesheryPatternCard_({
                   data-testid="pattern-btn-design"
                 >
                   <img
-                    src="/static/img/pattern_trans.svg"
+                    src="/static/img/designs/pattern_trans.svg"
                     style={{ borderRadius: '50%', ...iconMedium }}
                     // imgProps={{ height: '16px', width: '16px' }}
                   />

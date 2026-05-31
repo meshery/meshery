@@ -50,7 +50,7 @@ export function generatePerformanceProfile(data) {
   };
 }
 
-export const loadGenerators = ['fortio', 'wrk2'];
+export const loadGenerators = ['fortio'];
 
 export const infoFlags = <>Only .json files are supported.</>;
 
@@ -65,7 +65,6 @@ export const infoloadGenerators = (
         go (golang). Allows to specify a set query-per-second load and record latency histograms and
         other useful stats.{' '}
       </li>
-      <li> wrk2 - A constant throughput, correct latency recording variant of wrk.</li>
     </ul>
     <Link
       style={{ textDecoration: 'underline' }}

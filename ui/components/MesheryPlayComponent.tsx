@@ -98,7 +98,7 @@ const MesheryPlayComponent = () => {
   };
 
   const pickImage = (adapter) => {
-    let image = '/static/img/meshery-logo.png';
+    let image = '/static/img/meshery-logo/meshery-logo.png';
     let imageIcon = <img src={image} style={{ width: '24px' }} alt="Meshery Logo" />;
     if (adapter && adapter.name) {
       image = `/static/img/${adapter.name.toLowerCase()}.svg`;

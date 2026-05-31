@@ -363,7 +363,7 @@ const MeshAdapterConfigComponent = () => {
       showAdapters = (
         <AlignRight>
           {meshAdapters.map((adapter) => {
-            let image = '/static/img/meshery-logo.png';
+            let image = '/static/img/meshery-logo/meshery-logo.png';
             if (adapter.name) {
               image = '/static/img/' + adapter.name.toLowerCase() + '.svg';
             }

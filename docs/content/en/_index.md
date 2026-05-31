@@ -16,11 +16,11 @@ linkTitle: Documentation
 <div class="flex container">
   <!-- OVERVIEW -->
   <div class="section">
-    <a href="/installation">
+    <a href="/project/overview/">
         <div class="btn-primary">Overview & Installation</div>
     </a>
     <ul>
-        <li>🚀 <a href="/installation/quick-start">Quick Start</a> and <a href="/project/faq">FAQs</a></li>
+        <li>🚀 <a href="/installation/quick-start">Quick Start</a> , <a href="/project/overview/">Overview</a>, and <a href="/project/faq">FAQs</a></li>
     </ul>
     <details>
       <summary>

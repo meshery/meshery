@@ -126,7 +126,7 @@ type MesheryPattern struct {
 // stale counts when the next payload omits both spellings.
 //
 // Remove once every known upstream producer (meshery-cloud remote
-// provider, Kanvas catalog API) has migrated off the snake_case
+// provider, catalog API) has migrated off the snake_case
 // spellings.
 func (m *MesheryPattern) UnmarshalJSON(data []byte) error {
 	type alias MesheryPattern
