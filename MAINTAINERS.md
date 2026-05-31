@@ -104,7 +104,7 @@ Repositories:
 | Name                | GitHub          | Affiliation   |
 | ------------------- | --------------- | ------------- |
 | Raunak Madan        | @codexraunak    | Layer5        |
-| Kavitha Karunakaran | @matrixkavi     | Upsun         |
+| Kavitha Karunakaran | @matrixkavi     | Independent         |
 | Alex Quinn          | @alexquincy     | Netflix       |
 | Marcus Blom         | @marblom007     | AWS           |
 | Kate Suttons        | @suttonskate    | Layer5        |
