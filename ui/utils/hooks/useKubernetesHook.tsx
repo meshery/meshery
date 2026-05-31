@@ -1,5 +1,5 @@
 import { useNotification } from '../../utils/hooks/useNotification';
-import { formatApiError } from '../../utils/helpers/meshkitError';
+import { getErrorMessage } from '../../components/connections/ConnectionTable.constants';
 import { pingMesheryOperator } from '../../utils/helpers/mesheryOperator';
 import { useLazyPingKubernetesQuery } from '@/rtk-query/connection';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -27,8 +27,8 @@ export default function useKubernetesHook() {
 
         const serverVersion = result?.server_version ?? result?.serverVersion ?? null;
         const message = serverVersion
-          ? `Connected successfully - Kubernetes ${serverVersion}`
-          : 'Connected successfully - Kubernetes';
+          ? `Connected successfully to ${name} (${server}) - Kubernetes ${serverVersion}`
+          : `Connected successfully to ${name} (${server})`;
 
         notify({
           message,
@@ -36,8 +36,8 @@ export default function useKubernetesHook() {
         });
       } catch (err) {
         notify({
-          message: 'Connection failed - unable to reach cluster',
-          details: formatApiError(err).message,
+          message: `Connection failed for ${name} (${server}) - unable to reach cluster`,
+          details: getErrorMessage(err, 'Unable to reach cluster'),
           event_type: EVENT_TYPES.ERROR,
         });
       } finally {
