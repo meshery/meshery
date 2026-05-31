@@ -17,6 +17,7 @@ package design
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -129,8 +130,11 @@ func readDesignFromFile(filePath string) (pattern.PatternFile, error) {
 	// evaluation engine (EvaluationRequest/EvaluationResponse) is a documented
 	// v1beta1/pattern carve-out, so bridge it back to v1beta1.
 	bridged, err := patternutils.PatternV1beta3ToV1beta1(&pf)
-	if err != nil || bridged == nil {
+	if err != nil {
 		return pattern.PatternFile{}, ErrParseDesignFile(err)
+	}
+	if bridged == nil {
+		return pattern.PatternFile{}, ErrParseDesignFile(errors.New("bridged pattern file is nil"))
 	}
 	return *bridged, nil
 }
