@@ -31,7 +31,9 @@ export const ACTION_TYPES = {
 type ResourcesTableProps = {
   updateProgress?: (value: { showProgress: boolean }) => void;
   k8sConfig: unknown;
-  resourceConfig: (...args: any[]) => any;
+  // Custom hook (e.g. useWorkloadTableConfig); `use`-prefixed so its hook nature
+  // is explicit and lint-enforced. Must be called at the top level of a render.
+  useResourceConfig: (...args: any[]) => any;
   submenu?: boolean;
   workloadType: string;
   selectedK8sContexts: unknown;
@@ -50,8 +52,14 @@ const ResourcesTable = (props: ResourcesTableProps) => {
 };
 
 const ResourcesTableInner = (props: ResourcesTableProps) => {
-  const { updateProgress, k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } =
-    props;
+  const {
+    updateProgress,
+    k8sConfig,
+    useResourceConfig,
+    submenu,
+    workloadType,
+    selectedK8sContexts,
+  } = props;
   const router = useRouter();
   const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [page, setPage] = useState(0);
@@ -100,7 +108,7 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
     setView(view);
   };
 
-  const resolvedConfig = resourceConfig(
+  const resolvedConfig = useResourceConfig(
     switchView,
     meshSyncResources,
     k8sConfig,
