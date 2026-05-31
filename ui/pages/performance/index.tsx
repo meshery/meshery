@@ -1,26 +1,12 @@
 import React from 'react';
-import { NoSsr } from '@sistent/sistent';
-import MesheryPerformanceComponent from '../../components/Performance/Dashboard';
-import Head from 'next/head';
-import { getPath } from '../../lib/path';
-import { useDispatch } from 'react-redux';
-import { updatePage } from '@/store/slices/mesheryUi';
-import { useEffect } from 'react';
+import MesheryPerformanceComponent from '@/components/performance/Dashboard';
+import { MesheryPage } from '../../components/MesheryPage';
 
 function Performance() {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(updatePage({ path: getPath(), title: 'Performance' }));
-  }, []);
-
   return (
-    <NoSsr>
-      <Head>
-        <title>Performance Dashboard | Meshery</title>
-      </Head>
+    <MesheryPage title="Performance" headTitle="Performance Dashboard">
       <MesheryPerformanceComponent />
-    </NoSsr>
+    </MesheryPage>
   );
 }
 

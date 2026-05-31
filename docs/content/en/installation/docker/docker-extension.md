@@ -21,11 +21,15 @@ The Docker Extension for Meshery extends Docker Desktop's position as the develo
 
 Select one of the following three options to install the Docker Meshery Extension:
 
+- [Prerequisites](#prerequisites)
 - [Install the Docker Meshery Extension](#install-the-docker-meshery-extension)
   - [Using Docker Desktop](#using-docker-desktop)
   - [Using Docker Hub](#using-docker-hub)
   - [Using Docker CLI](#using-docker-cli)
 - [Remove Meshery as a Docker Extension](#remove-meshery-as-a-docker-extension)
+  - [Removing from Docker Desktop](#removing-from-docker-desktop)
+  - [Removing using Docker CLI](#removing-using-docker-cli)
+  - [Additional Cleanup](#additional-cleanup)
 
 ### Using Docker Desktop
 
@@ -37,7 +41,7 @@ Click **Open** when installation is done or click **Meshery** on the left under 
 
 [![Docker Meshery Extension Open](/installation/docker/images/docker-desktop-meshery-extension-open.png)](/installation/docker/images/docker-desktop-meshery-extension-open.png)
 
-Click **Login** to open the _Layer5 Cloud_ login page. Log in or sign up and you will be redirected back to Docker Desktop.
+Click **Login** to open the _Meshery Cloud_ login page. Log in or sign up and you will be redirected back to Docker Desktop.
 
 [![Docker Meshery Extension Login](/installation/docker/images/docker-desktop-meshery-extension-login.png)](/installation/docker/images/docker-desktop-meshery-extension-login.png)
 
@@ -45,7 +49,7 @@ Finally, click **Launch Meshery** to load Meshery Dashboard in a browser window.
 
 [![Docker Meshery Extension Launch](/installation/docker/images/docker-desktop-meshery-extension-launch.png)](/installation/docker/images/docker-desktop-meshery-extension-launch.png)
 
-You can also open http://localhost:9081/ directly on a browser on the local machine after installing the Docker extension and complete the _Layer5 Cloud_ login process to achieve the same result.
+You can also open http://localhost:9081/ directly on a browser on the local machine after installing the Docker extension and complete the _Meshery Cloud_ login process to achieve the same result.
 
 ### Using Docker Hub
 
@@ -103,7 +107,7 @@ There could be residual images and networks to remove after removing/uninstallin
 
 **Remove Meshery Images (if necessary)**
 
-Meshery pulls Docker images for deploying the extension and there could be additional Meshery/Layer5 images based on how it was configured. You can remove these images using the `docker rmi` command. Start by listing all the images and then running the command for each image you want to remove. For example:
+Meshery pulls Docker images for deploying the extension and there could be additional Meshery images based on how it was configured. You can remove these images using the `docker rmi` command. Start by listing all the images and then running the command for each image you want to remove. For example:
 
 {{< code code="docker rmi meshery/meshery:stable-latest" >}}
 

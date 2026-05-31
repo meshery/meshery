@@ -16,15 +16,14 @@ import (
 	mcore "github.com/meshery/meshery/server/models/meshmodel/core"
 
 	// for GKE kube API authentication
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/schemas/models/core"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
 	"github.com/meshery/meshkit/models/events"
 
 	"github.com/meshery/meshkit/utils"
-	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
@@ -34,15 +33,15 @@ const ContextsFormKey = "contexts"
 
 // ContextOptions represents the configuration options for a specific context
 type ContextOptions struct {
-	MeshsyncDeploymentMode string `json:"meshsync_deployment_mode"`
+	MeshsyncDeploymentMode string `json:"meshsyncDeploymentMode"`
 }
 
 // SaveK8sContextResponse - struct used as (json marshaled) response to requests for saving k8s contexts
 type SaveK8sContextResponse struct {
-	RegisteredContexts []models.K8sContext `json:"registered_contexts"`
-	ConnectedContexts  []models.K8sContext `json:"connected_contexts"`
-	IgnoredContexts    []models.K8sContext `json:"ignored_contexts"`
-	ErroredContexts    []models.K8sContext `json:"errored_contexts"`
+	RegisteredContexts []models.K8sContext `json:"registeredContexts"`
+	ConnectedContexts  []models.K8sContext `json:"connectedContexts"`
+	IgnoredContexts    []models.K8sContext `json:"ignoredContexts"`
+	ErroredContexts    []models.K8sContext `json:"erroredContexts"`
 }
 
 // K8SConfigHandler is used for persisting kubernetes config and context info
@@ -61,13 +60,6 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 	}
 }
 
-// swagger:route POST /api/system/kubernetes SystemAPI idPostK8SConfig
-// Handle POST request for Kubernetes Config
-//
-// Used to add kubernetes config to System
-// responses:
-// 	200: k8sConfigRespWrapper
-
 // The function is called only when user uploads a kube config.
 // Connections which have state as "registered" are the only new ones, hence the GraphQL K8sContext subscription only sends an update to UI if any connection has registered state.
 // A registered connection might have been regsitered previously and is not required for K8sContext Subscription to notify, but this case is not considered here.
@@ -78,14 +70,14 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	if !ok {
 		err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
 		h.log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
 		h.log.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		writeMeshkitError(w, err, http.StatusBadRequest)
 		return
 	}
 
@@ -112,8 +104,8 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	var contextsConfig map[string]ContextOptions
 	if contextsJSON := req.FormValue(ContextsFormKey); contextsJSON != "" {
 		if err := json.Unmarshal([]byte(contextsJSON), &contextsConfig); err != nil {
-			h.log.Error(fmt.Errorf("failed to parse contexts configuration: %w", err))
-			http.Error(w, fmt.Sprintf("Invalid contexts configuration: %v", err), http.StatusBadRequest)
+			h.log.Error(ErrInvalidContextsConfig(err))
+			writeMeshkitError(w, ErrInvalidContextsConfig(err), http.StatusBadRequest)
 			return
 		}
 	}
@@ -147,9 +139,9 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		// Create context-specific metadata with appropriate meshsync deployment mode
 		k8sContextsMetadata := make(map[string]any, 1)
 		meshsyncMode := getMeshsyncModeForContext(ctx)
-		schemasConnection.SetMeshsyncDeploymentModeToMetadata(
+		connections.SetMeshsyncDeploymentModeToMetadata(
 			k8sContextsMetadata,
-			schemasConnection.MeshsyncDeploymentModeFromString(meshsyncMode),
+			connections.MeshsyncDeploymentModeFromString(meshsyncMode),
 		)
 
 		connection, err := provider.SaveK8sContext(token, *ctx, k8sContextsMetadata)
@@ -204,7 +196,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			go func(inst *machines.StateMachine) {
 				event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
 				if err != nil {
-					_ = provider.PersistEvent(*event, nil)
+					_ = provider.PersistEvent(*event, token)
 					go h.config.EventBroadcaster.Publish(userID, event)
 				}
 			}(inst)
@@ -218,22 +210,17 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	}
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
+		// Response body has already started streaming via json.Encoder —
+		// a partial JSON envelope is on the wire and a fresh error
+		// response would corrupt it, so log only.
 		h.log.Error(models.ErrMarshal(err, "kubeconfig"))
-		http.Error(w, models.ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
 		return
 	}
 }
-
-// swagger:route DELETE /api/system/kubernetes SystemAPI idDeleteK8SConfig
-// Handle DELETE request for Kubernetes Config
-//
-// Used to delete kubernetes config to System
-// responses:
-// 	200:
 
 func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, _ *http.Request, _ models.Provider) {
 	// prefObj.K8SConfig = nil
@@ -244,23 +231,22 @@ func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.R
 	// 	return
 	// }
 
-	_, _ = w.Write([]byte("{}"))
+	writeJSONEmptyObject(w, http.StatusOK)
 }
-
-// swagger:route POST /api/system/kubernetes/contexts SystemAPI idPostK8SContexts
-// Handle POST requests for Kubernetes Context list
-//
-// Returns the context list for a given k8s config
-// responses:
-// 	200: k8sContextsRespWrapper
 
 // GetContextsFromK8SConfig returns the context list for a given k8s config
 func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	token, err := provider.GetProviderToken(req)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
+		return
+	}
 
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
 		h.log.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		writeMeshkitError(w, err, http.StatusBadRequest)
 		return
 	}
 	userUUID := user.ID
@@ -272,97 +258,82 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	contexts := models.K8sContextsFromKubeconfig(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
-	_ = provider.PersistEvent(*event, nil)
+	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userUUID, event)
 
 	err = json.NewEncoder(w).Encode(contexts)
 	if err != nil {
+		// Response body has already started streaming via json.Encoder —
+		// a partial JSON envelope is on the wire and a fresh error
+		// response would corrupt it, so log only.
 		h.log.Error(models.ErrMarshal(err, "kube-context"))
-		http.Error(w, models.ErrMarshal(err, "kube-context").Error(), http.StatusInternalServerError)
 		return
 	}
 }
-
-// swagger:route GET /api/system/kubernetes/ping?connection_id={id} SystemAPI idGetKubernetesPing
-// Handle GET request for Kubernetes ping
-//
-// Fetches server version to simulate ping
-// responses:
-// 	200:
 
 // KubernetesPingHandler - fetches server version to simulate ping
 func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
-		w.WriteHeader(http.StatusInternalServerError)
-		if _, err := fmt.Fprintf(w, "failed to get the token for the user"); err != nil {
-			h.log.Error(err)
-		}
+		writeMeshkitError(w, ErrRetrieveUserToken(fmt.Errorf("no token for user")), http.StatusUnauthorized)
 		return
 	}
 
-	connectionID := req.URL.Query().Get("connection_id")
+	// Canonical query param is `connectionId`; `connection_id` is
+	// dual-accepted during the Phase 2 deprecation window so any legacy
+	// client (mesheryctl, older UI bundles) keeps working. Retire the
+	// fallback once Phase 3 consumer migration completes.
+	q := req.URL.Query()
+	connectionID := q.Get("connectionId")
+	if connectionID == "" {
+		connectionID = q.Get("connection_id")
+	}
 	if connectionID != "" {
 		// Get the context associated with this ID
 		k8sContext, err := provider.GetK8sContext(token, connectionID)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			if _, err := fmt.Fprintf(w, "failed to get kubernetes context for the given ID"); err != nil {
-				h.log.Error(err)
-			}
+			writeMeshkitError(w, ErrInvalidKubeContext(err, connectionID), http.StatusNotFound)
 			return
 		}
 
 		// Create handler for the context
 		kubeclient, err := k8sContext.GenerateKubeHandler()
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			if _, err := fmt.Fprintf(w, "failed to get kubernetes config for the user"); err != nil {
-				h.log.Error(err)
-			}
+			writeMeshkitError(w, ErrInvalidKubeConfig(err, ""), http.StatusBadRequest)
 			return
 		}
 		version, err := kubeclient.KubeClient.ServerVersion()
 		if err != nil {
 			h.log.Error(ErrKubeVersion(err))
-			http.Error(w, ErrKubeVersion(err).Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, ErrKubeVersion(err), http.StatusInternalServerError)
 			return
 		}
 		if err = json.NewEncoder(w).Encode(map[string]string{
 			"server_version": version.String(),
 		}); err != nil {
+			// Response body has already started streaming via json.Encoder —
+			// a partial JSON envelope is on the wire and a fresh error
+			// response would corrupt it, so log only.
 			err = errors.Wrap(err, "unable to marshal the payload")
 			h.log.Error(models.ErrMarshal(err, "kube-server-version"))
-			http.Error(w, models.ErrMarshal(err, "kube-server-version").Error(), http.StatusInternalServerError)
 		}
 		return
 	}
-	http.Error(w, "Empty contextID. Pass the context ID(in query parameter \"context\") of the kuberenetes to be pinged", http.StatusBadRequest)
+	h.log.Error(ErrEmptyConnectionID())
+	writeMeshkitError(w, ErrEmptyConnectionID(), http.StatusBadRequest)
 }
 
-// swagger:route POST /api/system/kubernetes/register SystemAPI idPostK8SRegistration
-// Handle registration request for Kubernetes components
-//
-// Used to register Kubernetes components to Meshery from a kubeconfig file
-// responses:
-//
-//		202:
-//	 400:
-//	 500:
 func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
 		h.log.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		writeMeshkitError(w, err, http.StatusBadRequest)
 		return
 	}
 
 	contexts := models.K8sContextsFromKubeconfig(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, map[string]interface{}{}, h.log) // here we are not concerned for the events becuase inside the middleware the contexts would have been verified.
 	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{mcore.RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventBroadcaster, provider, user.ID.String(), false)
-	if _, err = w.Write([]byte(http.StatusText(http.StatusAccepted))); err != nil {
-		h.log.Error(ErrWriteResponse(err))
-		http.Error(w, ErrWriteResponse(err).Error(), http.StatusInternalServerError)
-	}
+	writeJSONMessage(w, map[string]string{"status": "accepted"}, http.StatusAccepted)
 }
 
 func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, prov models.Provider) ([]*models.K8sContext, error) {
@@ -370,7 +341,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 	// userUUID := uuid.FromStringOrNil(userID)
 
 	// Get meshery instance ID
-	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
+	mid, ok := viper.Get("INSTANCE_ID").(*core.Uuid)
 	if !ok {
 		return contexts, models.ErrMesheryInstanceID
 	}

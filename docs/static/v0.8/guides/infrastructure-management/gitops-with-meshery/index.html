@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <meta name="generator" content="Hugo 0.55.6" />
 
-  <meta name="ROBOTS" content="INDEX, FOLLOW" />
+  <meta name="robots" content="noindex, follow" />
 
   <link rel="alternate" type="application/rss&#43;xml" href="/index.xml" />
 
@@ -782,18 +782,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="td-content">
           
           <h1>GitOps with Meshery</h1>
-           <h2 id="-kanvas-snapshot-github-action"><img style="height: 4rem; width: 4rem;" src="/v0.8/assets/img/kanvas-icon-color.svg" /> Kanvas Snapshot GitHub Action</h2>
+           <h2 id="--snapshot-github-action"><img style="height: 4rem; width: 4rem;" src="/v0.8/assets/img/-icon-color.svg" />  Snapshot GitHub Action</h2>
 
 <ul>
   <li>See your deployment before you merge</li>
-  <li>Connect Kanvas to your GitHub repo and see changes pull request-to-pull request</li>
+  <li>Connect  to your GitHub repo and see changes pull request-to-pull request</li>
   <li>Get snapshots of your infrastructure directly in your PRs</li>
 </ul>
 
 <h3>Using Meshery's SnapShot GitHub Action</h3>
-<p>See your deployment before you merge. Connect Kanvas to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.</p>
+<p>See your deployment before you merge. Connect  to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.</p>
 
-<p>See <a href="/v0.8/extensions/snapshot">Extension: Kanvas Snapshot</a> for more details.</p>
+<p>See <a href="/v0.8/extensions/snapshot">Extension:  Snapshot</a> for more details.</p>
 
 <h2 id="-meshery-performance-analysis-github-action"><img src="/v0.8/assets/img/smp-dark-text-side.svg" classname="image-left-no-shadow" alt="Infrastructure fperformance logo" style="width: 60%; max-width: 200px;vertical-align:middle" /> Meshery Performance Analysis GitHub Action</h2>
 
@@ -841,7 +841,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span class="na">driver</span><span class="pi">:</span> <span class="s">docker</span>
 
       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run Performance Test</span>
-        <span class="na">uses</span><span class="pi">:</span> <span class="s">layer5io/meshery-smp-action@master</span>
         <span class="na">with</span><span class="pi">:</span>
           <span class="na">provider_token</span><span class="pi">:</span> <span class="s">$</span>
           <span class="na">platform</span><span class="pi">:</span> <span class="s">docker</span>
@@ -869,7 +868,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <span class="na">duration</span><span class="pi">:</span> <span class="s2">"</span><span class="s">30m"</span>
 </code></pre></div></div>
 
-<p>See this sample GitHub workflow (<a href="https://github.com/layer5io/meshery-smp-action/blob/master/action.yml">action.yml</a>) for more configuration details.</p>
+<p>See this sample GitHub workflow (<a href="https://github.com/meshery-extensions/meshery-smp-action/blob/master/action.yml">action.yml</a>) for more configuration details.</p>
 
 <p><a href="/v0.8/assets/img/service-mesh-performance-profile-test-results.png"><img src="/assets/img/service-mesh-performance-profile-test-results.png" classname="image-center" alt="performance management dashboard" /></a></p>
 

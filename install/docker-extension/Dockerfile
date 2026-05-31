@@ -12,7 +12,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
   --mount=type=cache,target=/root/.cache/go-build \
   make bin
 
-FROM node:20-alpine3.23 AS client-builder
+FROM --platform=$BUILDPLATFORM node:20-alpine3.23 AS client-builder
 WORKDIR /ui
 # cache packages in layer
 COPY ui/package.json ui/package-lock.json ./
@@ -29,7 +29,7 @@ ARG GIT_VERSION
 ARG RELEASE_CHANNEL
 LABEL org.opencontainers.image.title="Meshery" \
   org.opencontainers.image.description="Meshery, the collaborative Kubernetes manager. Go multi-player as you design and operate your cloud native infrastructure with teammates." \
-  org.opencontainers.image.vendor="Layer5, Inc." \
+  org.opencontainers.image.vendor="Meshery Authors" \
   com.docker.desktop.extension.api.version=">= 0.2.0" \
    com.docker.extension.screenshots="[ \
       { \
@@ -52,7 +52,7 @@ LABEL org.opencontainers.image.title="Meshery" \
   </ul>" \
   com.docker.desktop.extension.icon="https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/meshery-logo-light.svg" \
   com.docker.extension.publisher-url="https://meshery.io" \
-  com.docker.extension.additional-urls="[{\"title\":\"Documentation\",\"url\":\"https://docs.meshery.io\"},{\"title\":\"Project\",\"url\":\"https://layer5.io/meshery\"},{\"title\":\"Slack\",\"url\":\"https://slack.meshery.io\"},{\"title\":\"Discussion Forum\",\"url\":\"https://meshery.io/community#community-forums\"}]"
+  com.docker.extension.additional-urls="[{\"title\":\"Documentation\",\"url\":\"https://docs.meshery.io\"},{\"title\":\"Project\",\"url\":\"https://meshery.io\"},{\"title\":\"Slack\",\"url\":\"https://slack.meshery.io\"},{\"title\":\"Discussion Forum\",\"url\":\"https://meshery.io/community#community-forums\"}]"
 COPY --from=builder /backend/bin/service /
 COPY docker-compose.yaml .
 COPY metadata.json .

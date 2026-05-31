@@ -12,6 +12,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/internal/sql"
@@ -30,15 +32,15 @@ type K8sContext struct {
 	Auth               sql.Map    `json:"auth,omitempty" yaml:"auth,omitempty"`
 	Cluster            sql.Map    `json:"cluster,omitempty" yaml:"cluster,omitempty"`
 	Server             string     `json:"server,omitempty" yaml:"server,omitempty"`
-	Owner              *uuid.UUID `json:"owner,omitempty" gorm:"-" yaml:"owner,omitempty"`
-	CreatedBy          *uuid.UUID `json:"created_by,omitempty" gorm:"-" yaml:"created_by,omitempty"`
-	MesheryInstanceID  *uuid.UUID `json:"meshery_instance_id,omitempty" yaml:"meshery_instance_id,omitempty"`
-	KubernetesServerID *uuid.UUID `json:"kubernetes_server_id,omitempty" yaml:"kubernetes_server_id,omitempty"`
-	DeploymentType     string     `json:"deployment_type,omitempty" yaml:"deployment_type,omitempty" default:"out_cluster"`
+	Owner              *core.Uuid `json:"owner,omitempty" gorm:"-" yaml:"owner,omitempty"`
+	CreatedBy          *core.Uuid `json:"createdBy,omitempty" gorm:"-" yaml:"createdBy,omitempty"`
+	MesheryInstanceID  *core.Uuid `json:"mesheryInstanceId,omitempty" yaml:"mesheryInstanceId,omitempty"`
+	KubernetesServerID *core.Uuid `json:"kubernetesServerId,omitempty" yaml:"kubernetesServerId,omitempty"`
+	DeploymentType     string     `json:"deploymentType,omitempty" yaml:"deploymentType,omitempty" default:"out_cluster"`
 	Version            string     `json:"version,omitempty" yaml:"version,omitempty"`
-	UpdatedAt          *time.Time `json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
-	CreatedAt          *time.Time `json:"created_at,omitempty" yaml:"created_at,omitempty"`
-	ConnectionID       string     `json:"connection_id,omitempty" yaml:"connection_id,omitempty"`
+	UpdatedAt          *time.Time `json:"updatedAt,omitempty" yaml:"updatedAt,omitempty"`
+	CreatedAt          *time.Time `json:"createdAt,omitempty" yaml:"createdAt,omitempty"`
+	ConnectionID       string     `json:"connectionId,omitempty" yaml:"connectionId,omitempty"`
 }
 
 // K8sContextFromConnection converts a kubernetes connection into a K8sContext.
@@ -86,7 +88,7 @@ type InternalKubeConfig struct {
 	Users          []map[string]interface{} `json:"users,omitempty" yaml:"users,omitempty"`
 }
 
-func (kcfg InternalKubeConfig) K8sContext(name string, instanceID *uuid.UUID, log logger.Handler) (K8sContext, string) {
+func (kcfg InternalKubeConfig) K8sContext(name string, instanceID *core.Uuid, log logger.Handler) (K8sContext, string) {
 	cluster := map[string]interface{}{}
 	user := map[string]interface{}{}
 	context := map[string]interface{}{}
@@ -140,7 +142,7 @@ func NewK8sContextWithServerID(
 	clusters map[string]interface{},
 	users map[string]interface{},
 	server string,
-	instanceID *uuid.UUID,
+	instanceID *core.Uuid,
 	log logger.Handler,
 ) (*K8sContext, error) {
 	ctx, _ := NewK8sContext(contextName, clusters, users, server, instanceID, log)
@@ -176,7 +178,7 @@ func NewK8sContextWithServerID(
 
 // K8sContextsFromKubeconfig takes in a kubeconfig and meshery instance ID and generates
 // kubernetes contexts from it
-func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *uuid.UUID, eventMetadata map[string]interface{}, log logger.Handler) []*K8sContext {
+func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler) []*K8sContext {
 	kcs := []*K8sContext{}
 
 	parsed, _, err := kubernetes.ProcessConfig(kubeconfig, "")
@@ -279,7 +281,7 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, k
 	return kcs
 }
 
-func NewK8sContextFromInClusterConfig(contextName string, instanceID *uuid.UUID, log logger.Handler) (*K8sContext, error) {
+func NewK8sContextFromInClusterConfig(contextName string, instanceID *core.Uuid, log logger.Handler) (*K8sContext, error) {
 	const (
 		tokenFile  = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 		rootCAFile = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
@@ -333,7 +335,7 @@ func NewK8sContext(
 	cluster map[string]interface{},
 	user map[string]interface{},
 	server string,
-	instanceID *uuid.UUID,
+	instanceID *core.Uuid,
 	log logger.Handler,
 ) (K8sContext, string) {
 	ctx := K8sContext{
@@ -461,7 +463,7 @@ func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 }
 
 // FlushMeshSyncData will flush the meshsync data for the passed kubernetes contextID
-func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Provider, eventsChan *Broadcast, userID string, mesheryInstanceID *uuid.UUID, log logger.Handler) {
+func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Provider, eventsChan *Broadcast, userID string, mesheryInstanceID *core.Uuid, log logger.Handler) {
 	ctxID := k8sContext.ID
 	ctxUUID, _ := uuid.FromString(ctxID)
 	userUUID, _ := uuid.FromString(userID)
@@ -472,7 +474,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]*K8sContext)
 	if !ok || len(k8sctxs) == 0 {
 		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription("No Kubernetes context specified, please choose a context from context switcher").FromUser(userUUID).Build()
-		err := provider.PersistEvent(*event, nil)
+		err := provider.PersistSystemEvent(*event)
 		if err != nil {
 			err = ErrPersistEvent(err)
 			log.Error(err)
@@ -499,7 +501,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 		if k8ctx == nil {
 			continue
 		}
-		if k8ctx.KubernetesServerID.String() == sid {
+		if k8ctx.KubernetesServerID != nil && k8ctx.KubernetesServerID.String() == sid {
 			refCount++
 		}
 	}
@@ -511,7 +513,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(errors.New("meshery Database handler is not accessible to perform operations"), ctxName, serverURL),
 			}).Build()
-			err := provider.PersistEvent(*event, nil)
+			err := provider.PersistSystemEvent(*event)
 			if err != nil {
 				err = ErrPersistEvent(err)
 				log.Error(err)
@@ -526,7 +528,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			}).Build()
-			err := provider.PersistEvent(*event, nil)
+			err := provider.PersistSystemEvent(*event)
 			if err != nil {
 				err = ErrPersistEvent(err)
 				log.Error(err)
@@ -542,7 +544,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			}).Build()
-			err := provider.PersistEvent(*event, nil)
+			err := provider.PersistSystemEvent(*event)
 			if err != nil {
 				err = ErrPersistEvent(err)
 				log.Error(err)
@@ -559,7 +561,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			}).Build()
 
-			err := provider.PersistEvent(*event, nil)
+			err := provider.PersistSystemEvent(*event)
 			if err != nil {
 				err = ErrPersistEvent(err)
 				log.Error(err)
@@ -575,7 +577,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			}).Build()
-			err := provider.PersistEvent(*event, nil)
+			err := provider.PersistSystemEvent(*event)
 			if err != nil {
 				err = ErrPersistEvent(err)
 				log.Error(err)
@@ -591,7 +593,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			}).Build()
-			err := provider.PersistEvent(*event, nil)
+			err := provider.PersistSystemEvent(*event)
 			if err != nil {
 				err = ErrPersistEvent(err)
 				log.Error(err)
@@ -603,7 +605,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 
 		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Informational).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("MeshSync data flushed for context %s", ctxName)).FromUser(userUUID).Build()
 		// Also add context name, as id is not helpful
-		err = provider.PersistEvent(*event, nil)
+		err = provider.PersistSystemEvent(*event)
 		if err != nil {
 			err = ErrPersistEvent(err)
 			log.Error(err)

@@ -8,9 +8,9 @@ import yaml from 'js-yaml';
 export const test = base.extend({
   // Define an option and provide a default value.
   // We can later override it in the config.
-  provider: ['None', { option: true }],
+  provider: ['Local', { option: true }],
 
-  clusterMetaData: async (_, use) => {
+  clusterMetaData: async ({}, use) => {
     const kubeConfigPath = `${os.homedir()}/.kube/config`;
     const kubeConfigRaw = fs.readFileSync(kubeConfigPath, 'utf8');
     const kubeConfig = yaml.load(kubeConfigRaw);
