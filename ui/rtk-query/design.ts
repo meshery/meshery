@@ -1,7 +1,7 @@
 import { urlEncodeParams } from '@/utils/utils';
 import { api, mesheryApiPath } from './index';
 import { ctxUrl } from '@/utils/multi-ctx';
-import { initiateQuery } from './utils';
+import { initiateQuery, shouldOverrideExisting } from './utils';
 import _ from 'lodash';
 
 const TAGS = {
@@ -13,7 +13,7 @@ export const designsApi = api
     addTagTypes: [TAGS.DESIGNS],
   })
   .injectEndpoints({
-    overrideExisting: module.hot?.status() === 'apply',
+    overrideExisting: shouldOverrideExisting,
     endpoints: (builder) => ({
       getPatterns: builder.query({
         query: (queryArg) => {

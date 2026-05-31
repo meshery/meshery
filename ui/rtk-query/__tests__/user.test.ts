@@ -24,6 +24,7 @@ vi.mock('@/utils/utils', () => ({
 // Mock the rtk-query helper `initiateQuery` so we don't transitively pull
 // `../store` into the test environment.
 vi.mock('../utils', () => ({
+  shouldOverrideExisting: false,
   initiateQuery: vi.fn(
     async (
       query: { initiate: (variables: unknown, options?: unknown) => unknown },

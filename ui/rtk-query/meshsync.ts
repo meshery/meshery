@@ -1,6 +1,7 @@
 import { urlEncodeParams } from '@/utils/utils';
 import { api, mesheryApiPath } from './index';
 import { normalizePaginatedCollectionResponse } from './transforms';
+import { shouldOverrideExisting } from './utils';
 
 const TAGS = {
   MESH_SYNC: 'meshsync',
@@ -11,7 +12,7 @@ const meshSyncApi = api
     addTagTypes: [TAGS.MESH_SYNC],
   })
   .injectEndpoints({
-    overrideExisting: module.hot?.status() === 'apply',
+    overrideExisting: shouldOverrideExisting,
     endpoints: (builder) => ({
       getMeshSyncResources: builder.query({
         query: (queryArg) => ({

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api, mesheryApiPath } from './index';
 import _ from 'lodash';
-import { initiateQuery } from './utils';
+import { initiateQuery, shouldOverrideExisting } from './utils';
 
 const TAGS = {
   MESH_MODELS: 'mesh-models',
@@ -20,7 +20,7 @@ const meshModelApi = api
     addTagTypes: [TAGS.MESH_MODELS],
   })
   .injectEndpoints({
-    overrideExisting: module.hot?.status() === 'apply',
+    overrideExisting: shouldOverrideExisting,
     endpoints: (builder) => ({
       getMeshModels: builder.query({
         query: (queryArgs) => ({

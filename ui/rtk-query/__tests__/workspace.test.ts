@@ -16,6 +16,19 @@ vi.mock('@/utils/utils', () => ({
   },
 }));
 
+vi.mock('../utils', () => ({
+  shouldOverrideExisting: false,
+  initiateQuery: vi.fn(
+    async (
+      query: { initiate: (variables: unknown, options?: unknown) => unknown },
+      variables?: unknown,
+      options?: unknown,
+    ) => ({
+      data: { stubbed: true, variables, options },
+    }),
+  ),
+}));
+
 beforeAll(() => {
   process.env.RTK_MESHERY_ENDPOINT_PREFIX = 'http://localhost';
 });

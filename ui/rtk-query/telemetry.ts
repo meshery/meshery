@@ -1,11 +1,12 @@
 import { api, mesheryApiPath } from './index';
+import { shouldOverrideExisting } from './utils';
 
 const TAGS = {
   GRAFANA: 'grafana',
 };
 
 const telemetryApi = api.injectEndpoints({
-  overrideExisting: module.hot?.status() === 'apply',
+  overrideExisting: shouldOverrideExisting,
   endpoints: (builder) => ({
     getGrafanaBoards: builder.query({
       query: ({ connectionID, grafanaBoardSearch }) => ({

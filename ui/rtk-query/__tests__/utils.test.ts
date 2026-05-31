@@ -1,5 +1,8 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 
+vi.unmock('../utils');
+vi.unmock('@/rtk-query/utils');
+
 // initiateQuery dispatches an RTK-Query initiate action via the application
 // store. We mock the store module so the helper can be exercised in isolation
 // without instantiating the real RTK-Query middleware (which would require

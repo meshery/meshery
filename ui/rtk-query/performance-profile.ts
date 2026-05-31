@@ -1,4 +1,5 @@
 import { api } from './index';
+import { shouldOverrideExisting } from './utils';
 
 const TAGS = {
   PERFORMANCE_PROFILE: 'performance-profile',
@@ -9,7 +10,7 @@ const performanceProfile = api
     addTagTypes: [TAGS.PERFORMANCE_PROFILE],
   })
   .injectEndpoints({
-    overrideExisting: module.hot?.status() === 'apply',
+    overrideExisting: shouldOverrideExisting,
     endpoints: (builder) => ({
       getPerformanceProfiles: builder.query({
         query: (queryArg) => ({

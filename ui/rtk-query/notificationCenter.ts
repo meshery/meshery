@@ -1,5 +1,6 @@
 import { deleteEvent, deleteEvents, updateEventStatus, updateEvents } from '../store/slices/events';
 import { api } from './index';
+import { shouldOverrideExisting } from './utils';
 
 /**
  * Converts an object with filters into a parsed object.
@@ -229,7 +230,7 @@ export const notificationCenterApi = api
         invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),
     }),
-    overrideExisting: module.hot?.status() === 'apply',
+    overrideExisting: shouldOverrideExisting,
   });
 
 export const {

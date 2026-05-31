@@ -3,6 +3,7 @@ import {
   useGetConnectionsQuery as useSchemasGetConnectionsQuery,
 } from '@meshery/schemas/mesheryApi';
 import { api, mesheryApiPath } from './index';
+import { shouldOverrideExisting } from './utils';
 
 const TAGS = {
   CONNECTIONS: 'connections',
@@ -10,7 +11,7 @@ const TAGS = {
 };
 
 const connectionsApi = api.injectEndpoints({
-  overrideExisting: module.hot?.status() === 'apply',
+  overrideExisting: shouldOverrideExisting,
   endpoints: (builder) => ({
     getCredentials: builder.query({
       query: () => ({

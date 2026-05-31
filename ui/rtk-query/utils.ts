@@ -21,3 +21,5 @@ export const initiateQuery = async (query, variables) => {
     };
   }
 };
+
+export const shouldOverrideExisting = module.hot?.status() === 'apply';

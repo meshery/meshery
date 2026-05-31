@@ -1,11 +1,12 @@
 import { api } from './index';
+import { shouldOverrideExisting } from './utils';
 
 const TAGS = {
   MESHERY_RESULTS: 'meshery-results',
 };
 
 const resultsApi = api.injectEndpoints({
-  overrideExisting: module.hot?.status() === 'apply',
+  overrideExisting: shouldOverrideExisting,
   endpoints: (builder) => ({
     getResults: builder.query({
       query: ({ endpoint, ...queryArg }) => ({

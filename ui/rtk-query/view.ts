@@ -1,6 +1,6 @@
 import { urlEncodeArrayParam, urlEncodeParams } from '@/utils/utils';
 import { api, mesheryApiPath } from './index';
-import { initiateQuery } from './utils';
+import { initiateQuery, shouldOverrideExisting } from './utils';
 import _ from 'lodash';
 
 const TAGS = {
@@ -12,7 +12,7 @@ export const viewsApi = api
     addTagTypes: [TAGS.VIEWS],
   })
   .injectEndpoints({
-    overrideExisting: module.hot?.status() === 'apply',
+    overrideExisting: shouldOverrideExisting,
     endpoints: (builder) => ({
       getView: builder.query({
         query: ({ viewId }) => ({

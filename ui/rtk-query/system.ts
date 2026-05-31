@@ -1,4 +1,5 @@
 import { api, mesheryApiPath } from './index';
+import { shouldOverrideExisting } from './utils';
 import { normalizeKubernetesContextsResponse } from './transforms';
 
 const TAGS = {
@@ -8,7 +9,7 @@ const TAGS = {
 };
 
 const systemApi = api.injectEndpoints({
-  overrideExisting: module.hot?.status() === 'apply',
+  overrideExisting: shouldOverrideExisting,
   endpoints: (builder) => ({
     getDatabaseSummary: builder.query({
       query: (queryArg) => ({
