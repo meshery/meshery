@@ -8,6 +8,7 @@ import {
   Link,
   useTheme,
   InfoOutlinedIcon,
+  AccountTreeIcon,
 } from '@sistent/sistent';
 import { CustomTooltip, VisibilityChipMenu } from '@sistent/sistent';
 import {
@@ -73,6 +74,7 @@ function MesheryPatternCard_({
   user,
   pattern,
   handleInfoModal,
+  handleEvaluate,
   hideVisibility = false,
   isReadOnly = false,
 }) {
@@ -238,6 +240,16 @@ function MesheryPatternCard_({
                     onClick: (e) => genericClickHandler(e, handleUnDeploy),
                     disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
                     'data-testid': 'pattern-btn-undeploy',
+                  },
+                  {
+                    label: 'Evaluate',
+                    icon: <AccountTreeIcon fill={'currentColor'} style={iconMedium} />,
+                    onClick: (e) => genericClickHandler(e, handleEvaluate),
+                    disabled: !CAN(
+                      keys.EVALUATE_RELATIONSHIPS.action,
+                      keys.EVALUATE_RELATIONSHIPS.subject,
+                    ),
+                    'data-testid': 'pattern-btn-evaluate',
                   },
                 ]}
                 data-testid="pattern-btn-action-dropdown"
