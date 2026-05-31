@@ -71,8 +71,8 @@ See: [Designs]({{< ref "/concepts/logical/designs" >}})
 ## Environment
 
 An Environment is a named grouping of Connections and Credentials. Environments make
-it easier to manage and share sets of infrastructure resources (e.g., "production",
-"staging") across teams and Workspaces.
+it easier to manage and share sets of infrastructure resources (e.g., `production` or
+`staging`) across teams and Workspaces.
 
 See: [Environments]({{< ref "/concepts/logical/environments" >}})
 
