@@ -162,6 +162,90 @@ func writeLogsToFiles(regLog *RegistrationFailureLog) error {
 	return nil
 }
 
+type registrantImportSummary struct {
+	host        v1beta1.MeshModelHostsWithEntitySummary
+	summary     v1beta1.EntitySummary
+	displayName string
+}
+
+func registrantImportSummaries(hosts []v1beta1.MeshModelHostsWithEntitySummary) []registrantImportSummary {
+	summaries := make([]registrantImportSummary, 0, len(hosts))
+	summaryIndexByConnection := make(map[string]int, len(hosts))
+
+	for index, host := range hosts {
+		// Registrant Kind is only a label. Use the stable registrant fields that
+		// define the Connection's source so generated IDs from schema variants do
+		// not split one logical registrant into multiple startup log lines.
+		registrantKey := registrantIdentityKey(index, host)
+		if summaryIdx, ok := summaryIndexByConnection[registrantKey]; ok {
+			summaries[summaryIdx].summary = addEntitySummary(summaries[summaryIdx].summary, host.Summary)
+			continue
+		}
+
+		summaryIndexByConnection[registrantKey] = len(summaries)
+		summaries = append(summaries, registrantImportSummary{
+			host:    host,
+			summary: host.Summary,
+		})
+	}
+
+	kindCounts := make(map[string]int, len(summaries))
+	for _, summary := range summaries {
+		kindCounts[summary.host.Kind]++
+	}
+	for i := range summaries {
+		summaries[i].displayName = registrantDisplayName(summaries[i].host, kindCounts[summaries[i].host.Kind] > 1)
+	}
+
+	return summaries
+}
+
+func registrantIdentityKey(index int, host v1beta1.MeshModelHostsWithEntitySummary) string {
+	if host.Kind != "" || host.Name != "" || host.Type != "" || host.SubType != "" {
+		return strings.Join([]string{host.Kind, host.Name, host.Type, host.SubType}, "\x00")
+	}
+	if host.ID != gofrs.Nil {
+		return host.ID.String()
+	}
+	return fmt.Sprintf("registrant-%d", index)
+}
+
+func registrantDisplayName(host v1beta1.MeshModelHostsWithEntitySummary, kindIsAmbiguous bool) string {
+	if !kindIsAmbiguous {
+		return host.Kind
+	}
+	if host.Name != "" && host.Name != host.Kind {
+		return fmt.Sprintf("%s (%s)", host.Name, host.Kind)
+	}
+	if host.ID != gofrs.Nil {
+		return fmt.Sprintf("%s (%s)", host.Kind, host.ID.String())
+	}
+	return host.Kind
+}
+
+func addEntitySummary(current, next v1beta1.EntitySummary) v1beta1.EntitySummary {
+	current.Models += next.Models
+	current.Components += next.Components
+	current.Relationships += next.Relationships
+	current.Policies += next.Policies
+	return current
+}
+
+func registrySuccessMessage(registrantName string, summary v1beta1.EntitySummary) string {
+	successMessage := fmt.Sprintf("For registrant %s imported", registrantName)
+	appendIfNonZero := func(value int64, label string) {
+		if value != 0 {
+			successMessage += fmt.Sprintf(" %d %s,", value, label)
+		}
+	}
+	appendIfNonZero(summary.Models, "models")
+	appendIfNonZero(summary.Components, "components")
+	appendIfNonZero(summary.Relationships, "relationships")
+	appendIfNonZero(summary.Policies, "policies")
+
+	return strings.TrimSuffix(successMessage, ",") + "."
+}
+
 func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *meshmodel.RegistryManager, regErrorStore *RegistrationFailureLog) {
 	provider := handlerConfig.Providers[LocalProviderName]
 
@@ -173,20 +257,10 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		log.Error(err)
 	}
 
-	for _, host := range hosts {
+	for _, registrant := range registrantImportSummaries(hosts) {
+		host := registrant.host
 		eventBuilder := events.NewEvent().FromSystem(sysID).FromUser(sysID).WithCategory("entity").WithAction("get_summary")
-		successMessage := fmt.Sprintf("For registrant %s imported", host.Kind)
-		appendIfNonZero := func(value int64, label string) {
-			if value != 0 {
-				successMessage += fmt.Sprintf(" %d %s,", value, label)
-			}
-		}
-		appendIfNonZero(host.Summary.Models, "models")
-		appendIfNonZero(host.Summary.Components, "components")
-		appendIfNonZero(host.Summary.Relationships, "relationships")
-		appendIfNonZero(host.Summary.Policies, "policies")
-
-		successMessage = strings.TrimSuffix(successMessage, ",") + "."
+		successMessage := registrySuccessMessage(registrant.displayName, registrant.summary)
 
 		log.Info(successMessage)
 		eventBuilder.WithMetadata(map[string]interface{}{
