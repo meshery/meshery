@@ -12,31 +12,17 @@ This guide complements the [Contributing to Model Relationships](/project/contri
 
 Make sure you've read the [Contributing to Model Relationships](/project/contributing/contributing-relationships) guide to understand relationship structure, schema, and components.
 
-## 1. Validate Your Relationship JSON Schema
+## 1. Validate JSON Syntax
 
-Before testing in Meshery, validate your relationship definition against the schema.
-
-### Using JSON Schema Validator Online
-
-1. Go to [jsonschemavalidator.io](https://www.jsonschemavalidator.io/)
-2. In the **JSON Schema** section, paste the schema from [Meshery schemas repository](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1alpha3/relationship)
-3. In the **JSON Input** section, paste your relationship definition
-4. Click **Validate** - errors will appear if your JSON doesn't match the schema
-
-### Using `jsonschema` (CLI)
-
-If you have Python installed:
+Before opening a PR, validate that your relationship JSON is well-formed.
 
 ```bash
-pip install jsonschema
-jsonschema -i your-relationship.json schema.json
+python -m json.tool relationship.json > /dev/null
 ```
 
-**Common validation errors:**
-- Missing required fields: `kind`, `type`, `selectors`
-- Incorrect data types: `selectors` must be an array
-- Missing or malformed `from`/`to` in selector entries
-- Typos in enum values (e.g., `kind: "edge"` vs `kind: "Edge"`)
+If the command completes without errors, the JSON syntax is valid.
+
+This simple check catches malformed JSON and is sufficient for most relationship contributions.
 
 ## 2. Check for Common Relationship Mistakes
 
@@ -108,71 +94,7 @@ jsonschema -i your-relationship.json schema.json
 
 ---
 
-### ❌ Mistake 3: Not specifying version for model-specific relationships
-
-**Problem:** Your relationship only applies to specific API versions, but you use `*`.
-
-**Wrong:**
-```json
-{
-  "model": "kubernetes",
-  "version": "*",
-  "selectors": [{
-    "allow": {
-      "from": [{"kind": "Pod", "apiVersion": "v1"}],
-      "to": [{"kind": "PersistentVolume", "apiVersion": "v1"}]
-    }
-  }]
-}
-```
-
-**Correct (if only v1):**
-```json
-{
-  "model": "kubernetes",
-  "version": "1.28.0",
-  "selectors": [{
-    "allow": {
-      "from": [{"kind": "Pod"}],
-      "to": [{"kind": "PersistentVolume"}]
-    }
-  }]
-}
-```
-
-**Why:** Specifying exact versions prevents unexpected behavior when older API versions are used.
-
----
-
-### ❌ Mistake 4: Missing `evaluationQuery` for custom relationship types
-
-**Problem:** Your relationship won't evaluate correctly without the right OPA policy.
-
-**Wrong:**
-```json
-{
-  "kind": "edge",
-  "type": "custom-type",
-  "subType": "custom-subtype"
-  // No evaluationQuery!
-}
-```
-
-**Correct:**
-```json
-{
-  "kind": "edge",
-  "type": "network",
-  "subType": "custom-subtype",
-  "evaluationQuery": "edge_network_relationship"
-}
-```
-
-**Why:** The `evaluationQuery` tells Meshery's policy engine which OPA rules to use. If it doesn't match an existing policy, your relationship won't be evaluated.
-
----
-
-### ❌ Mistake 5: Overlapping allow and deny selectors
+### ❌ Mistake 3: Overlapping allow and deny selectors
 
 **Problem:** Your `allow` and `deny` selectors contradict each other.
 
@@ -212,48 +134,48 @@ jsonschema -i your-relationship.json schema.json
 }
 ```
 
-**Why:** Conflicting selectors in the same object cause undefined behavior.
+**Why:** Conflicting selectors can make relationship behavior difficult to reason about and should generally be avoided.
 
 ---
 
-## 3. Test Locally Before Submitting
+## 3. Validate the Relationship Definition
 
-### Step 1: Create your relationship JSON file
+Before submitting a relationship:
 
-Place it in the correct model directory:
-```
-server/meshmodel/{model}/{version}/v1.0.0/relationships/{relationship-name}.json
+### Step 1: Verify the referenced field exists
+
+Inspect the source component schema and confirm that the field referenced in the relationship actually exists.
+
+For example:
+
+```json
+"delegatedSubnetResourceReference"
 ```
 
-Example:
-```
-server/meshmodel/aws-iam-controller/v1.0.0/v1.0.0/relationships/edge-binding-role-to-serviceaccount.json
-```
+should exist in the source component schema before being used in a relationship definition.
 
-### Step 2: Run Meshery locally and import the model
+### Step 2: Check for existing relationships
+
+Search the repository for similar relationships before creating a new one.
+
+This helps avoid duplicate contributions and ensures consistency with existing relationship patterns.
+
+### Step 3: Compare with an existing relationship
+
+Find a similar accepted relationship and follow the same structure whenever possible.
+
+Using an existing relationship as a reference is often the fastest way to create a correct relationship definition.
+
+### Step 4: Validate JSON syntax
+
+Run:
 
 ```bash
-# From Meshery repo root
-make server
+python -m json.tool relationship.json > /dev/null
 ```
-Once Meshery is running, verify that your relationship changes are loaded correctly and do not produce any errors.
-### Step 3: Verify in Kanvas
 
-1. Open **Kanvas** (visual designer)
-2. Search for and add both components (e.g., IAM Role + ServiceAccount)
-3. Try to draw a relationship edge between them
-4. If your relationship is valid, the edge should:
-   - Allow connection
-   - Show correct visual style (color, line type)
-   - Not produce error messages in browser console
+to ensure the JSON is valid.
 
-### Step 4: Check browser console for errors
-
-Open DevTools (**F12** → **Console**):
-- Look for any `relationship` or `schema` validation errors
-- Errors like `"kind not recognized"` indicate your relationship definition has issues
-
----
 
 ## 4. Capture and Share Relationship Screenshots
 
@@ -349,78 +271,48 @@ When submitting multiple relationships, organize your PR description like:
 
 Before opening a PR, verify:
 
-- [ ] Relationship JSON passes schema validation (section 1)
-- [ ] No common mistakes from section 2
-- [ ] File placed in correct directory (`server/meshmodel/{model}/*/v1.0.0/relationships/`)
-- [ ] File name follows pattern: `{type}-{subtype}-{from}-to-{to}.json`
-- [ ] Tested locally in Meshery (section 3)
-- [ ] No browser console errors when viewing in Kanvas
-- [ ] Screenshots captured showing relationship working in Kanvas
-- [ ] Screenshots included in PR description
-- [ ] `from` and `to` components exist in their respective models
-- [ ] `evaluationQuery` matches an existing OPA policy for your `kind`/`type`/`subType`
-- [ ] For cross-model relationships: both `model` values are correct
-- [ ] Selectors have meaningful conditions (not too broad, not contradictory)
-- [ ] Relationship has descriptive `description` field
-- [ ] Components can actually be related in real-world scenario
+* [ ] Relationship JSON is valid
+* [ ] Referenced fields exist in the source component schema
+* [ ] Similar relationships were reviewed for consistency
+* [ ] Existing relationships were checked to avoid duplicates
+* [ ] Relationship file is placed in the correct model directory
+* [ ] Components referenced by the relationship exist
+* [ ] Screenshot captured showing the relationship in Kanvas
+* [ ] Screenshot included in the PR description
 
 ---
 
 ## 6. Debugging Tips
 
-### Issue: Relationship appears but won't connect
+### Issue: Relationship does not appear as expected
 
-**Possible causes:**
-1. Selectors too restrictive (component doesn't match all conditions)
-2. Wrong `model` name for a component
-3. `evaluationQuery` invalid or missing
+Possible causes:
 
-**Debug:**
-- Add more logging to your selector conditions
-- Verify component names match exactly (case-sensitive)
-- Check that both components have `status: enabled` in their model
+1. The referenced field does not exist in the source component schema.
+2. The source or target component kind is incorrect.
+3. The relationship already exists and conflicts with your definition.
+4. The model name does not match the component's model.
 
-### Issue: Relationship connects but doesn't evaluate
+### Debug Checklist
 
-**Possible causes:**
-1. OPA policy (`evaluationQuery`) doesn't exist
-2. Policy name has typo
-
-**Debug:**
-- Verify `evaluationQuery` matches a policy in `server/meshmodel/meshery-core/*/policies/`
-- Check policy file names: `{kind}_{type}_{subtype}_relationship.rego`
-
-### Issue: Relationship appears in wrong place visually
-
-**Possible causes:**
-1. Incorrect `type` or `subType` for visual representation
-2. Missing OPA policy for your relationship kind
-
-**Debug:**
-- Cross-reference your `type`/`subType` against the [Relationship Visualizations](contributing-relationships#relationship-visualizations)
-- Ensure a corresponding OPA policy exists
+* Verify the referenced field exists in the component schema.
+* Compare your relationship against a similar accepted relationship.
+* Confirm component kinds and model names match existing definitions.
+* Check for duplicate relationships before creating a new one.
 
 ---
 
-## 7. Relationship Naming Convention
+## 7. Relationship File Naming
 
-Follow this pattern for filenames and metadata:
+Relationship filenames vary across models and providers.
 
-```text
-{kind}-{type}-{from-component}-to-{to-component}.json
-```
+Before creating a new relationship file:
 
-### Examples
+1. Look at existing relationship files in the same model directory.
+2. Follow the naming pattern already used there.
+3. Keep the filename consistent with nearby relationship definitions.
 
-✅ Good names:
-- `edge-binding-role-to-serviceaccount.json` (clear, descriptive)
-- `hierarchical-parent-namespace-to-pod.json` (direction is clear)
-- `edge-network-service-to-pod.json` (specific and brief)
-
-❌ Avoid:
-- `relationship-1.json` (too generic)
-- `aws-k8s-relationship.json` (ambiguous)
-- `k8s_Service_Pod_Network.json` (inconsistent formatting)
+Using the existing naming style helps maintain consistency across models and avoids unnecessary review comments.
 
 ---
 
@@ -438,33 +330,13 @@ Once validated and tested:
    git commit -s -m "Add {from} to {to} relationship (#ISSUE_NUMBER)"
    ```
 
-3. **Include in PR description:**
-   - Which components relate
-   - Real-world use case (e.g., "IRSA pattern for EKS pods")
-   - Screenshots from Kanvas showing relationship working
-   - Reference relevant issue (e.g., #17096)
+3. **Include in your PR description:**
 
-4. **PR description example:**
-   ```
-   ## Description
-   Adds relationship between AWS IAM Role and Kubernetes ServiceAccount for IRSA pattern support.
-   
-   ## Changes
-   - Added edge-binding-role-to-serviceaccount.json
-   - Supports cross-model relationships between aws-iam-controller and kubernetes
-   - Uses annotation-based selector for pod authentication
-   
-   ## Relationship Visualization
-   ![IRSA Relationship](image-url)
-   
-   ## Testing
-   - Validated against schema ✓
-   - Tested in Kanvas ✓
-   - Screenshots included ✓
-   - No console errors ✓
-   
-   Fixes #17096
-   ```
+   - What relationship was added
+   - Which models and components are involved
+   - Why the relationship is useful
+   - Screenshot showing the relationship in Kanvas
+   - Link to any related issue or discussion
 
 ---
 
