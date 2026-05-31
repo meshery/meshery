@@ -2,7 +2,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -60,40 +59,6 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 	}
 	w.Header().Set("content-type", "application/json")
 	_, _ = w.Write(bdr)
-}
-
-// GetPerformanceProfileResultHandler gets an individual result from provider as JSON.
-func (h *Handler) GetPerformanceProfileResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
-	id := mux.Vars(req)["resultId"]
-	if id == "" {
-		id = mux.Vars(req)["id"]
-	}
-	if id == "" {
-		h.log.Error(ErrQueryGet("resultId"))
-		writeMeshkitError(w, ErrMissingResultID(), http.StatusBadRequest)
-		return
-	}
-	key := uuid.FromStringOrNil(id)
-	if key == uuid.Nil {
-		h.log.Error(ErrQueryGet("key"))
-		writeMeshkitError(w, ErrInvalidUUID(fmt.Errorf("invalid result id: %q", id)), http.StatusBadRequest)
-		return
-	}
-
-	tokenString := req.Context().Value(models.TokenCtxKey).(string)
-
-	bdr, err := p.GetResult(tokenString, key)
-	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		writeMeshkitError(w, ErrGetResult(err), http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("content-type", "application/json")
-	if err := json.NewEncoder(w).Encode(bdr); err != nil {
-		h.log.Error(models.ErrMarshal(err, "test result"))
-		writeMeshkitError(w, models.ErrMarshal(err, "test result"), http.StatusInternalServerError)
-		return
-	}
 }
 
 // GetResultHandler gets an individual result from provider
