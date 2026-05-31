@@ -28,6 +28,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models/pattern/core"
+	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 	encoding "github.com/meshery/meshkit/encoding"
 	meshkitutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -124,7 +125,14 @@ func readDesignFromFile(filePath string) (pattern.PatternFile, error) {
 	if err != nil {
 		return pattern.PatternFile{}, ErrParseDesignFile(err)
 	}
-	return pf, nil
+	// core.NewPatternFile returns a v1beta3/design.PatternFile, but the
+	// evaluation engine (EvaluationRequest/EvaluationResponse) is a documented
+	// v1beta1/pattern carve-out, so bridge it back to v1beta1.
+	bridged, err := patternutils.PatternV1beta3ToV1beta1(&pf)
+	if err != nil || bridged == nil {
+		return pattern.PatternFile{}, ErrParseDesignFile(err)
+	}
+	return *bridged, nil
 }
 
 func sendEvaluationRequest(designPayload pattern.PatternFile) (*pattern.EvaluationResponse, error) {
