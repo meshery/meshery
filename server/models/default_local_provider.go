@@ -1025,16 +1025,16 @@ func (l *DefaultLocalProvider) ShareFilter(_ *http.Request) (int, error) {
 
 // SavePerformanceProfile saves given performance profile with the provider
 func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfile *PerformanceProfile) ([]byte, error) {
-	var uid core.Uuid
-	if performanceProfile.ID != nil {
-		uid = *performanceProfile.ID
-	} else {
-		var err error
-		uid, err = uuid.NewV4()
+	if performanceProfile.ID == uuid.Nil {
+		uid, err := uuid.NewV4()
 		if err != nil {
 			return nil, ErrGenerateUUID(err)
 		}
-		performanceProfile.ID = &uid
+		performanceProfile.ID = uid
+	}
+
+	if performanceProfile.Metadata == nil {
+		performanceProfile.Metadata = core.Map{}
 	}
 
 	data, err := json.Marshal(performanceProfile)
@@ -1042,7 +1042,7 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfi
 		return nil, ErrMarshal(err, "Perf Profile for persisting")
 	}
 
-	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(uid, performanceProfile)
+	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile.ID, performanceProfile)
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
