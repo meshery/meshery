@@ -32,7 +32,7 @@ project. Where this document does not address a matter, the project defers to th
 - [Changes to This Governance](#changes-to-this-governance)
 - [Governance Lineage](#governance-lineage)
 - [Appendix A: Mapping to CNCF Incubation Governance Review Criteria](#appendix-a-mapping-to-cncf-incubation-governance-review-criteria)
-- [Appendix B: MAINTAINERS.md and CODEOWNERS Structure](#appendix-b-maintainersmd-and-codeowners-structure)
+- [Appendix B: MAINTAINERS.md Structure](#appendix-b-maintainersmd-structure)
 
 ## Values
 
@@ -181,8 +181,8 @@ Representative subprojects include, but are not limited to:
 Each subproject is governed by its maintainers as a maintainer team. The
 authoritative, current list of subprojects, the repositories and directories each
 owns, and the maintainers responsible for each is recorded in
-[MAINTAINERS.md](./MAINTAINERS.md) and enforced through `CODEOWNERS` files (see
-[Appendix B](#appendix-b-maintainersmd-and-codeowners-structure)). Each subproject
+[MAINTAINERS.md](./MAINTAINERS.md) (see
+[Appendix B](#appendix-b-maintainersmd-structure)). Each subproject
 designates one of its maintainers as a [Subproject Lead](#subproject--domain-lead).
 
 To ensure global coordination and a coherent vision for the project as a whole, each
@@ -242,7 +242,7 @@ and celebrated through [meshery.io/community/members](https://meshery.io/communi
 pull requests and issues. The project does not maintain a separate, gated "Reviewer"
 role: review and feedback are open to all. The authority to approve a change for
 merge is held by the maintainers responsible for the affected code or documentation,
-as expressed through `CODEOWNERS` (see
+as recorded in [MAINTAINERS.md](./MAINTAINERS.md) (see
 [Systems Access and Repository Permissions](#systems-access-and-repository-permissions)).
 
 ### Organization Member
@@ -323,8 +323,8 @@ directories each is responsible for, and each maintainer's contact information a
 affiliation, is maintained in [MAINTAINERS.md](./MAINTAINERS.md). See the
 [Maintainer Lifecycle](#maintainer-lifecycle) for how these roles are earned,
 exercised, and relinquished, and
-[Appendix B](#appendix-b-maintainersmd-and-codeowners-structure) for the structure of
-`MAINTAINERS.md` and `CODEOWNERS`.
+[Appendix B](#appendix-b-maintainersmd-structure) for the structure of
+`MAINTAINERS.md`.
 
 ### Subproject / Domain Lead
 
@@ -494,7 +494,7 @@ Council.
   are selected by their subproject's Maintainers.
 - **Acceptance of contributions.** A change is accepted when it meets the project's
   quality standards and receives approval from the maintainers responsible for the
-  affected code or documentation, as expressed through `CODEOWNERS`. Anyone may
+  affected code or documentation, as recorded in `MAINTAINERS.md`. Anyone may
   review and comment; approval authority rests with those maintainers.
 - **Requests to the CNCF.** Handled per
   [Requesting CNCF Resources](#requesting-cncf-resources).
@@ -552,8 +552,6 @@ When a person becomes a core maintainer:
 - They are added to the
   [CNCF Project Maintainers list](https://github.com/cncf/foundation/blob/main/project-maintainers.csv)
   so that the CNCF's records match the project's records.
-- They are added to the relevant `CODEOWNERS` entries so that their approval counts
-  toward merge for the code and documentation they own.
 - They are added to the private Maintainer communication channel and, where relevant,
   given access to other project systems for their role.
 
@@ -614,9 +612,8 @@ become inactive.
 - A Maintainer may also be removed for cause by a **2/3 vote** of the relevant
   subproject's maintainers, or of the core maintainers for a project-wide concern.
 - When a Maintainer is removed, the change is recorded in
-  [MAINTAINERS.md](./MAINTAINERS.md), their access is revoked, the relevant
-  `CODEOWNERS` entries are updated, and they are removed from the CNCF Project
-  Maintainers list.
+  [MAINTAINERS.md](./MAINTAINERS.md), their access is revoked, and they are removed
+  from the CNCF Project Maintainers list.
 
 Removal is not a judgment of a person's past contributions. A removed Maintainer is
 welcome to re-earn the role later through the normal process.
@@ -686,8 +683,8 @@ that access follows role rather than individual. The mapping is:
 | Community Participant | Read (public) | Default for public repositories |
 | Contributor | Read; contributes via forks and pull requests | No grant required |
 | Organization Member | Triage across org repositories | Added to the org members team after meeting requirements |
-| Core maintainer | Write (and Maintain where required) on the core repositories and directories they own in `github.com/meshery` | Added to the subproject's GitHub team and to `CODEOWNERS` |
-| Extensions maintainer | Write (and Maintain where required) on the extension repositories they maintain in `github.com/meshery-extensions` | Added to the extension's GitHub team and to its `CODEOWNERS` |
+| Core maintainer | Write (and Maintain where required) on the core repositories and directories they own in `github.com/meshery` | Added to the subproject's GitHub team |
+| Extensions maintainer | Write (and Maintain where required) on the extension repositories they maintain in `github.com/meshery-extensions` | Added to the extension's GitHub team |
 | Subproject Lead | Maintain on the subproject's repositories | Added to the subproject's lead team |
 | Organization administration | Admin | Held by a small number of core maintainers, designated by the Maintainer Council |
 
@@ -695,7 +692,7 @@ that access follows role rather than individual. The mapping is:
 administer each organization. Granting or revoking `Admin` is a decision of the core
 maintainers.
 
-### GitHub teams, MAINTAINERS.md, and CODEOWNERS
+### GitHub teams and MAINTAINERS.md
 
 - **GitHub teams.** Permissions are assigned through teams such as
   `@meshery/maintainers` and per-subproject teams (for example, a server team, a UI
@@ -708,15 +705,10 @@ maintainers.
   directories within them), their subproject and Lead status, and their affiliation.
   It also lists Emeritus Maintainers. This list is kept in sync with the
   [CNCF Project Maintainers list](https://github.com/cncf/foundation/blob/main/project-maintainers.csv).
-- **CODEOWNERS.** Repositories may use a `CODEOWNERS` file to map directories to the
-  GitHub teams or maintainers that own them, so that the right approvals are
-  automatically required before a change to a given path can merge. `CODEOWNERS` is
-  the operational expression of the ownership recorded in `MAINTAINERS.md` where it
-  is present. See [Appendix B](#appendix-b-maintainersmd-and-codeowners-structure).
 
-Branch protection on the default branch requires approval from the relevant code
-owners before merge, which is how the project ensures that ownership in GitHub
-matches the governance roles in this document.
+Branch protection on the default branch requires review and approval from the
+maintainers responsible for the affected area before merge, which is how the project
+ensures that ownership in GitHub matches the governance roles in this document.
 
 ### Non-GitHub systems
 
@@ -884,10 +876,10 @@ Incubation, **S** = Suggested at Incubation (and typically Required at Graduatio
 | 6 | How role/function-based members or sub-teams are assigned, onboarded, and removed (e.g., Security Response) | S | [Security Response](#security-response), [Subproject Lifecycle](#subproject-lifecycle), [Systems Access](#systems-access-and-repository-permissions) |
 | 7 | Complete maintainer lifecycle (roles, onboarding, offboarding, emeritus) | S | [Maintainer Lifecycle](#maintainer-lifecycle) |
 | 8 | Demonstrated use of the maintainer lifecycle (additions/replacements) | S | Record outcomes in [MAINTAINERS.md](./MAINTAINERS.md) history (active and emeritus changes) |
-| 9 | Complete list of current maintainers with names, contact, domain of responsibility, and affiliation | R | [MAINTAINERS.md](./MAINTAINERS.md); structure in [Appendix B](#appendix-b-maintainersmd-and-codeowners-structure) |
+| 9 | Complete list of current maintainers with names, contact, domain of responsibility, and affiliation | R | [MAINTAINERS.md](./MAINTAINERS.md); structure in [Appendix B](#appendix-b-maintainersmd-structure) |
 | 10 | A number of active maintainers appropriate to size and scope | R | [MAINTAINERS.md](./MAINTAINERS.md) (maintain active count across subprojects) |
 | 11 | Maintainers from at least 2 organizations (survivability) | N/A at Incubation | Affiliation column in [MAINTAINERS.md](./MAINTAINERS.md) |
-| 12 | Code and doc ownership in GitHub matches documented governance roles | R | [Systems Access and Repository Permissions](#systems-access-and-repository-permissions); `CODEOWNERS` |
+| 12 | Code and doc ownership in GitHub matches documented governance roles | R | [Systems Access and Repository Permissions](#systems-access-and-repository-permissions) |
 | 13 | Adoption and adherence to CNCF CoC, or a project CoC based on it | R | [Code of Conduct](#code-of-conduct), [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) |
 | 14 | CNCF CoC cross-linked from other governance documents | R | [Code of Conduct](#code-of-conduct) links the CNCF CoC |
 | 15 | All subprojects listed | R | [Subprojects and domains](#subprojects-and-domains); [MAINTAINERS.md](./MAINTAINERS.md) for the authoritative list |
@@ -906,10 +898,10 @@ open governance issues that prompted this work:
 - **[#19447](https://github.com/meshery/meshery/issues/19447) (describe maintainer
   assignments explicitly).** Addressed by
   [Systems Access and Repository Permissions](#systems-access-and-repository-permissions)
-  and [Appendix B](#appendix-b-maintainersmd-and-codeowners-structure): maintainers
-  are mapped to specific repositories and directories in `MAINTAINERS.md` and
-  enforced through `CODEOWNERS`; the document states how maintainer rights are
-  granted (GitHub teams) and revoked, including the two-month inactivity rule.
+  and [Appendix B](#appendix-b-maintainersmd-structure): maintainers
+  are mapped to specific repositories and directories in `MAINTAINERS.md`; the
+  document states how maintainer rights are granted (GitHub teams) and revoked,
+  including the two-month inactivity rule.
 - **[#19460](https://github.com/meshery/meshery/issues/19460) (describe the process
   for becoming a Contributor).** Addressed by the
   [Contributor](#contributor) section: it describes the benefits and permissions of
@@ -917,11 +909,10 @@ open governance issues that prompted this work:
   replaces the former standalone "Reviewer" role with a clear statement that anyone
   is welcome to review and comment on work in progress.
 
-## Appendix B: MAINTAINERS.md and CODEOWNERS Structure
+## Appendix B: MAINTAINERS.md Structure
 
 This appendix specifies the structure that satisfies criterion 9 and issue #19447. It
-is a template, not a list of people; the live data lives in `MAINTAINERS.md` and the
-`CODEOWNERS` files.
+is a template, not a list of people; the live data lives in `MAINTAINERS.md`.
 
 ### MAINTAINERS.md
 
@@ -931,7 +922,7 @@ subproject:
 | Column | Description |
 | :--- | :--- |
 | Name | The maintainer's name |
-| GitHub handle | Used to map to GitHub teams and `CODEOWNERS` |
+| GitHub handle | Used to map to GitHub teams |
 | Class | Whether the person is a **core maintainer** or an **extensions maintainer** |
 | Contact | A reachable contact, such as email or Slack handle |
 | Subproject | The subproject, domain, or extension, and whether the person is its Lead |
@@ -945,29 +936,3 @@ list is kept in sync with the
 If a repository in either organization lacks its own `MAINTAINERS.md`, the
 authoritative mapping for it is the entry in
 [meshery/meshery/MAINTAINERS.md](./MAINTAINERS.md).
-
-### CODEOWNERS
-
-Each repository carries a `CODEOWNERS` file that maps paths to the GitHub team or
-maintainers that own them, so that the correct approvals are automatically required
-before a change to a path can merge. For example:
-
-```text
-# Default owners for everything in the repo
-*                       @meshery/maintainers
-
-# Subproject ownership
-/server/                @meshery/server-maintainers
-/ui/                    @meshery/ui-maintainers
-/mesheryctl/            @meshery/cli-maintainers
-/docs/                  @meshery/docs-maintainers
-
-# Governance and community files require core maintainer review
-/GOVERNANCE.md          @meshery/maintainers
-/MAINTAINERS.md         @meshery/maintainers
-/CODE_OF_CONDUCT.md     @meshery/maintainers
-```
-
-The `CODEOWNERS` teams correspond one-to-one with the subproject teams used to grant
-GitHub permissions, which is what keeps code and documentation ownership in GitHub
-consistent with the governance roles defined in this document.
