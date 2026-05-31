@@ -14,7 +14,7 @@ import (
 
 // PerformanceProfilesAPIResponse is a local struct for testing unmarshal errors.
 //
-// The JSON tag mirrors the real models.PerformanceProfilesAPIResponse.PageSize
+// The JSON tag mirrors the real perfprofile.PerformanceProfilePage.PageSize
 // tag (`pageSize`) so the error message produced by json.Unmarshal references
 // the same field name the production code would surface.
 type PerformanceProfilesAPIResponse struct {

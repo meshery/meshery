@@ -27,7 +27,8 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
+	servermodels "github.com/meshery/meshery/server/models"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -116,7 +117,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				return ErrReadFilepath(errors.Wrap(err, "Unable to read test configuration file. \n"))
 			}
 
-			testConfig := models.PerformanceTestConfigFile{}
+			testConfig := servermodels.PerformanceTestConfigFile{}
 
 			err = yaml.Unmarshal(smpConfig, &testConfig)
 			if err != nil {
@@ -392,17 +393,17 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		return "", "", ErrConvertQPS()
 	}
 	values := map[string]interface{}{
-		"concurrent_request": convReq,
-		"duration":           testDuration,
-		"endpoints":          []string{testURL},
-		"load_generators":    []string{loadGenerator},
-		"name":               profileName,
-		"qps":                convQPS,
-		"service_mesh":       testMesh,
-		"request_body":       loadTestBody,
-		"request_cookies":    "",
-		"request_headers":    "",
-		"content_type":       "",
+		"concurrentRequest": convReq,
+		"duration":          testDuration,
+		"endpoints":         []string{testURL},
+		"loadGenerators":    []string{loadGenerator},
+		"name":              profileName,
+		"qps":               convQPS,
+		"serviceMesh":       testMesh,
+		"requestBody":       loadTestBody,
+		"requestCookies":    "",
+		"requestHeaders":    "",
+		"contentType":       "",
 	}
 
 	if additionalOptions != "" {
@@ -458,7 +459,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		return "", "", ErrPerfProfileServer(errors.New("failed to save performance profile on server"))
 	}
 
-	var response *models.PerformanceProfile
+	var response *perfprofile.PerformanceProfile
 
 	defer func() { _ = resp.Body.Close() }()
 	body, err := io.ReadAll(resp.Body)
