@@ -121,10 +121,7 @@ focused on a component or an area of concern. See
 
 ### Extensions (`github.com/meshery-extensions`)
 
-Extensions are generally initiated, developed, and maintained by members of the
-community rather than by the core maintainers. They allow the ecosystem to scale
-beyond what the core maintainers can directly support, and they act as an incubator for new
-ideas that may later migrate toward the core.
+Extensions allow the ecosystem to scale beyond what the core maintainers can directly support, and they act as an incubator for new ideas that may or may not later migrate toward the core. Extensions can be initiated, developed, and maintained by members of the community rather than by the core maintainers.
 
 Extensions operate under a lighter governance structure to encourage innovation:
 
