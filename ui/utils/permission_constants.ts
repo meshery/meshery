@@ -248,6 +248,10 @@ export const keys = {
     subject: 'Export Design',
     action: '9a783f51-3b4a-47a6-a02e-b0db9e78cd85',
   },
+  EVALUATE_RELATIONSHIPS: {
+    subject: 'Evaluate Relationships',
+    action: 'c7752be7-5c0f-465d-a8ba-5594acd08b93',
+  },
   DOWNLOAD_A_DESIGN: {
     subject: 'Download a design',
     action: '64de96b7-60db-4aab-b311-afc64066b2c4',
