@@ -150,7 +150,7 @@ Repositories:
 | Mia Grenell            | @miacycle         | USyd         | meshery-extensions/meshery-academy             |
 | Yi Nuo                 | @yi-nuo426        | HKUDS        | meshery-extensions/kubectl-meshsync-snapshot   |
 | Cooper Fitzgerald      | @cooperfitzgerald | Independent  | meshery-extensions/mcp-server                  |
-| Arjun                  | @arjunmehta-git   | TCS          | meshery-extensions/meshery-extensions-packages, meshery-extensions/integrations-workflow |
+| Arjun Mehta                  | @arjunmehta-git   | TCS          | meshery-extensions/meshery-extensions-packages, meshery-extensions/integrations-workflow |
 | Kate Suttons           | @suttonskate      | Layer5       | meshery-extensions/meshery-academy             |
 | Rian Cteulp            | @ritzorama        | Independent  | meshery-extensions/kanvas-site                 |
 
