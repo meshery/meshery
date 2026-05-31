@@ -29,7 +29,7 @@ const DiscardButton = styled(ModalButtonPrimary)(({ theme }) => ({
   '&&': {
     backgroundColor: theme.palette.background.error.default,
     '&:hover': {
-      backgroundColor: theme.palette.background.error.default,
+      backgroundColor: theme.palette.background.error.hover,
     },
   },
 }));
