@@ -96,7 +96,7 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
     },
     {
       label: 'Deploy',
-      icon: <DoneAllIcon data-cy="deploy-button" />,
+      icon: <DoneAllIcon fill="currentColor" data-cy="deploy-button" />,
       onClick: (e) => {
         openDeployModal(e, rowData.patternFile, rowData.name, rowData.id);
       },
