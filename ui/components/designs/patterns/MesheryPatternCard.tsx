@@ -227,7 +227,7 @@ function MesheryPatternCard_({
                   },
                   {
                     label: 'Deploy',
-                    icon: <DoneAllIcon style={iconMedium} />,
+                    icon: <DoneAllIcon fill="currentColor" style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleDeploy),
                     disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
                     'data-testid': 'pattern-btn-deploy',
