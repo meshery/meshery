@@ -1,4 +1,5 @@
 import { useNotification } from '../../utils/hooks/useNotification';
+import { formatApiError } from '../../utils/helpers/meshkitError';
 import { pingMesheryOperator } from '../../utils/helpers/mesheryOperator';
 import { useLazyPingKubernetesQuery } from '@/rtk-query/connection';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -23,27 +24,24 @@ export default function useKubernetesHook() {
       dispatch(updateProgressAction({ showProgress: true }));
       try {
         const result = await triggerPing(connectionID).unwrap();
-        dispatch(updateProgressAction({ showProgress: false }));
 
         const serverVersion = result?.server_version ?? result?.serverVersion ?? null;
-        if (serverVersion) {
-          notify({
-            message: `Connected successfully - Kubernetes ${serverVersion}`,
-            event_type: EVENT_TYPES.SUCCESS,
-          });
-        } else {
-          notify({
-            message: `Connected successfully - Kubernetes`,
-            event_type: EVENT_TYPES.SUCCESS,
-          });
-        }
+        const message = serverVersion
+          ? `Connected successfully - Kubernetes ${serverVersion}`
+          : 'Connected successfully - Kubernetes';
+
+        notify({
+          message,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
       } catch (err) {
-        dispatch(updateProgressAction({ showProgress: false }));
         notify({
           message: 'Connection failed - unable to reach cluster',
-          details: err?.toString?.() ?? err,
+          details: formatApiError(err).message,
           event_type: EVENT_TYPES.ERROR,
         });
+      } finally {
+        dispatch(updateProgressAction({ showProgress: false }));
       }
     },
     [dispatch, notify, triggerPing],
