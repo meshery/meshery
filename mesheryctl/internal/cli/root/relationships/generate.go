@@ -36,7 +36,7 @@ var fetchSheetValues = func(id, cred string) (*sheets.ValueRange, error) {
 	return srv.Spreadsheets.Values.Get(id, "Relationships").Do()
 }
 
-var relationshipsOutputPath = "docs/data/RelationshipsData.json"
+var relationshipsOutputPath = "../docs/data/RelationshipsData.json"
 
 type CustomValueRange struct {
 	Model                string `json:"Model"`
