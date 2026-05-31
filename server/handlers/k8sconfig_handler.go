@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
@@ -272,7 +273,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 }
 
 // KubernetesPingHandler - fetches server version to simulate ping
-func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		writeMeshkitError(w, ErrRetrieveUserToken(fmt.Errorf("no token for user")), http.StatusUnauthorized)
@@ -308,6 +309,20 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 			writeMeshkitError(w, ErrKubeVersion(err), http.StatusInternalServerError)
 			return
 		}
+
+		userUUID := user.ID
+		event := events.NewEvent().
+			ActedUpon(uuid.FromStringOrNil(connectionID)).
+			WithCategory("connection").
+			WithAction("ping").
+			FromSystem(*h.SystemID).
+			FromUser(userUUID).
+			WithDescription(fmt.Sprintf("Kubernetes ping connection test to context \"%s\" succeeded.", k8sContext.Name)).
+			WithSeverity(events.Informational).
+			Build()
+		_ = provider.PersistEvent(*event, token)
+		go h.config.EventBroadcaster.Publish(userUUID, event)
+
 		if err = json.NewEncoder(w).Encode(map[string]string{
 			"server_version": version.String(),
 		}); err != nil {
