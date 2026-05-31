@@ -87,7 +87,7 @@
 &lt;h2 id="1-widget-architecture"&gt;
 	1. Widget Architecture
 &lt;/h2&gt;
-&lt;p&gt;Widgets are React components located &lt;a href="https://github.com/meshery/meshery/tree/master/ui/components/Dashboard/widgets"&gt;here&lt;/a&gt;:&lt;/p&gt;</description></item><item><title>Contributing to Meshery UI - Notification Center</title><link>/project/contributing/contributing-ui-notification-center/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-ui-notification-center/</guid><description>&lt;div class="prereqs"&gt;&lt;p&gt;&lt;strong style="font-size: 20px;"&gt;Prerequisite Reading&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Widgets are React components located &lt;a href="https://github.com/meshery/meshery/tree/master/ui/components/dashboard/widgets"&gt;here&lt;/a&gt;:&lt;/p&gt;</description></item><item><title>Contributing to Meshery UI - Notification Center</title><link>/project/contributing/contributing-ui-notification-center/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-ui-notification-center/</guid><description>&lt;div class="prereqs"&gt;&lt;p&gt;&lt;strong style="font-size: 20px;"&gt;Prerequisite Reading&lt;/strong&gt;&lt;/p&gt;
  &lt;ol&gt;&lt;li&gt;&lt;a href="../../project/contributing/contributing-ui"&gt;Contributing to Meshery UI&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;
 &lt;/div&gt;
 &lt;h2 id="table-of-contents"&gt;
