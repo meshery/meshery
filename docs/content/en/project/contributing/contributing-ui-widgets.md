@@ -5,7 +5,7 @@ categories: [contributing]
 ---
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisite Reading</strong></p>
-  <ol><li><a href="contributing-ui">Contributing to Meshery UI</a></li></ol>
+  <ol><li><a href="/project/contributing/contributing-ui">Contributing to Meshery UI</a></li></ol>
 </div>
 
 Meshery's dashboard is a composable and extensible interface made up of individual widgets. These widgets allow contributors to surface specific Meshery data or capabilities within a modular layout system.
