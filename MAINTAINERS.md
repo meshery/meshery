@@ -3,10 +3,11 @@
 | Name           | GitHub       | Affiliation |
 | -------------- | ------------ | ----------- |
 | Matthieu Evrin | @lekaf974    | Moneris     |
-| Ian Whitney    | @ianrwhitney | Intuit      |
-| Mia Grenell    | @miacycle    | USyd        |
-| Aabid Sofi     | @aabidsofi19 | Independent |
-| Lee Calcote    | @leecalcote  | Layer5      |
+| Ian Whitney     | @ianrwhitney | Intuit      |
+| Mia Grenell      | @miacycle    | USyd        |
+| Aabid Sofi        | @aabidsofi19 | Independent |
+| Lee Calcote     | @leecalcote  | Layer5     |
+| Sangram Rath | @sangramrath | OD10    |
 
 Repositories:
 
