@@ -20,7 +20,7 @@ Repositories:
 
 | Name                 | GitHub         | Affiliation |
 | -------------------- | -------------- | ----------- |
-| Hussaina Begum       | @hexxdump      | VMware      |
+| Hussaina Begum       | @hexxdump      | Netskope      |
 | Aadhitya Amarendiran | @alphaX86      | Citi        |
 | Jerod Culpepper      | @cpepper96     | SAIC        |
 | Antonette Caldwell   | @acald-creator | Acquia      |
