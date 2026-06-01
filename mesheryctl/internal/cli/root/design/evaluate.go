@@ -28,6 +28,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models/pattern/core"
+	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 	encoding "github.com/meshery/meshkit/encoding"
 	meshkitutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -124,7 +125,16 @@ func readDesignFromFile(filePath string) (pattern.PatternFile, error) {
 	if err != nil {
 		return pattern.PatternFile{}, ErrParseDesignFile(err)
 	}
-	return pf, nil
+	// core.NewPatternFile returns a v1beta3/design.PatternFile; bridge it back
+	// to the v1beta1/pattern.PatternFile the evaluation request still consumes.
+	bridged, err := patternutils.PatternV1beta3ToV1beta1(&pf)
+	if err != nil {
+		return pattern.PatternFile{}, ErrParseDesignFile(err)
+	}
+	if bridged == nil {
+		return pattern.PatternFile{}, ErrParseDesignFile(fmt.Errorf("bridged design is nil"))
+	}
+	return *bridged, nil
 }
 
 func sendEvaluationRequest(designPayload pattern.PatternFile) (*pattern.EvaluationResponse, error) {

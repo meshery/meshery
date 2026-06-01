@@ -23,6 +23,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/core"
+	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/spf13/cobra"
 )
@@ -112,5 +113,14 @@ func fetchDesignByID(baseUrl, designID string) (pattern.PatternFile, error) {
 	if err != nil {
 		return pattern.PatternFile{}, ErrParseDesignFile(err)
 	}
-	return pf, nil
+	// core.NewPatternFile returns a v1beta3/design.PatternFile; bridge it back
+	// to the v1beta1/pattern.PatternFile the evaluation request still consumes.
+	bridged, err := patternutils.PatternV1beta3ToV1beta1(&pf)
+	if err != nil {
+		return pattern.PatternFile{}, ErrParseDesignFile(err)
+	}
+	if bridged == nil {
+		return pattern.PatternFile{}, ErrParseDesignFile(fmt.Errorf("bridged design is nil"))
+	}
+	return *bridged, nil
 }
