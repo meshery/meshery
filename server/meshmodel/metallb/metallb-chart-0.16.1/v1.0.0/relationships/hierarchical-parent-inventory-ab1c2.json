@@ -1,96 +1,108 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "",
-  "kind": "hierarchical",
-  "metadata": {
-    "description": "",
-    "isAnnotation": false,
-    "styles": {
-      "primaryColor": "",
-      "svgColor": "",
-      "svgWhite": ""
-    }
-  },
-  "model": {
-    "displayName": "",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "model": {
-      "version": "metallb-chart-0.16.1"
-    },
-    "name": "metallb",
-    "registrant": {
-      "kind": ""
-    },
-    "version": ""
-  },
-  "schemaVersion": "relationships.meshery.io/v1beta2",
-  "selectors": [
-    {
-      "allow": {
-        "from": [
-          {
-            "id": null,
-            "kind": "IPAddressPool",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
+    "id":  "00000000-0000-0000-0000-000000000000",
+    "evaluationQuery":  "",
+    "kind":  "hierarchical",
+    "metadata":  {
+                     "description":  "",
+                     "isAnnotation":  false,
+                     "styles":  {
+                                    "primaryColor":  "",
+                                    "svgColor":  "",
+                                    "svgWhite":  ""
+                                }
+                 },
+    "model":  {
+                  "displayName":  "",
+                  "id":  "00000000-0000-0000-0000-000000000000",
+                  "model":  {
+                                "version":  "metallb-chart-0.16.1"
+                            },
+                  "name":  "metallb",
+                  "registrant":  {
+                                     "kind":  ""
+                                 },
+                  "version":  ""
               },
-              "name": "metallb",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
-            },
-            "patch": {
-              "mutatorRef": [["displayName"]],
-              "patchStrategy": "replace"
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "BGPAdvertisement",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "metallb",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
-            },
-            "patch": {
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "ipAddressPools",
-                  "0"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
-          }
-        ]
-      },
-      "deny": {
-        "from": [],
-        "to": []
-      }
-    }
-  ],
-  "subType": "inventory",
-  "status": "enabled",
-  "type": "parent",
-  "version": "v1.0.0"
+    "schemaVersion":  "relationships.meshery.io/v1beta2",
+    "selectors":  [
+                      {
+                          "allow":  {
+                                        "from":  [
+                                                     {
+                                                         "id":  null,
+                                                         "kind":  "BGPAdvertisement",
+                                                         "match":  {
+
+                                                                   },
+                                                         "match_strategy_matrix":  null,
+                                                         "model":  {
+                                                                       "displayName":  "",
+                                                                       "id":  "00000000-0000-0000-0000-000000000000",
+                                                                       "model":  {
+                                                                                     "version":  ""
+                                                                                 },
+                                                                       "name":  "metallb",
+                                                                       "registrant":  {
+                                                                                          "kind":  "github"
+                                                                                      },
+                                                                       "version":  ""
+                                                                   },
+                                                         "patch":  {
+                                                                       "mutatedRef":  [
+                                                                                          [
+                                                                                              "configuration",
+                                                                                              "spec",
+                                                                                              "ipAddressPools",
+                                                                                              "0"
+                                                                                          ]
+                                                                                      ],
+                                                                       "patchStrategy":  "replace"
+                                                                   }
+                                                     }
+                                                 ],
+                                        "to":  [
+                                                   {
+                                                       "id":  null,
+                                                       "kind":  "IPAddressPool",
+                                                       "match":  {
+
+                                                                 },
+                                                       "match_strategy_matrix":  null,
+                                                       "model":  {
+                                                                     "displayName":  "",
+                                                                     "id":  "00000000-0000-0000-0000-000000000000",
+                                                                     "model":  {
+                                                                                   "version":  ""
+                                                                               },
+                                                                     "name":  "metallb",
+                                                                     "registrant":  {
+                                                                                        "kind":  "github"
+                                                                                    },
+                                                                     "version":  ""
+                                                                 },
+                                                       "patch":  {
+                                                                     "mutatorRef":  [
+                                                                                        [
+                                                                                            "displayName"
+                                                                                        ]
+                                                                                    ],
+                                                                     "patchStrategy":  "replace"
+                                                                 }
+                                                   }
+                                               ]
+                                    },
+                          "deny":  {
+                                       "from":  [
+
+                                                ],
+                                       "to":  [
+
+                                              ]
+                                   }
+                      }
+                  ],
+    "subType":  "inventory",
+    "status":  "enabled",
+    "type":  "parent",
+    "version":  "v1.0.0"
 }
