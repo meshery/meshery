@@ -5,7 +5,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
-	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkit "github.com/meshery/meshkit/utils"
 	meshkitcsv "github.com/meshery/meshkit/utils/csv"
 	"github.com/spf13/cobra"
@@ -125,11 +124,31 @@ func generateRelationshipsFromCSV(filePath string) ([]CustomValueRange, error) {
 
 	for {
 		select {
-		case data := <-ch:
+		case data, ok := <-ch:
+			if !ok {
+				ch = nil
+				break
+			}
 			customResp = append(customResp, data)
-		case err := <-errorChan:
-			utils.Log.Error(err)
+		case err, ok := <-errorChan:
+			if ok && err != nil {
+				return nil, err
+			}
 		case <-csvParser.Context.Done():
+			if ch != nil {
+			drain:
+				for {
+					select {
+					case data, ok := <-ch:
+						if !ok {
+							break drain
+						}
+						customResp = append(customResp, data)
+					default:
+						break drain
+					}
+				}
+			}
 			if len(customResp) == 0 {
 				return nil, ErrEmptyCSVData(fmt.Errorf("no valid relationship rows found in CSV file: %s", filePath))
 			}
