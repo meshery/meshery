@@ -493,8 +493,9 @@ policy-test:
 
 ## Build the Go relationship engine as a wasm binary for browser/extension use
 .PHONY: wasm-engine
-wasm-engine:
+wasm-engine: dep-check-go
 	@echo "Building Go relationship engine wasm..."
+	@cd server/policies/wasm && go clean && go mod tidy
 	@cd server/policies/wasm && \
 		GOOS=js GOARCH=wasm go build -trimpath -ldflags="-s -w" -o policy_engine.wasm .
 	@cp -f "$$(go env GOROOT)/lib/wasm/wasm_exec.js" server/policies/wasm/wasm_exec.js
