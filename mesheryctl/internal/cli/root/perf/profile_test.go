@@ -10,16 +10,8 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 )
-
-// PerformanceProfilesAPIResponse is a local struct for testing unmarshal errors.
-//
-// The JSON tag mirrors the real perfprofile.PerformanceProfilePage.PageSize
-// tag (`pageSize`) so the error message produced by json.Unmarshal references
-// the same field name the production code would surface.
-type PerformanceProfilesAPIResponse struct {
-	PageSize uint `json:"pageSize"`
-}
 
 var update = flag.Bool("update", false, "update golden files")
 
@@ -116,11 +108,11 @@ func TestProfileCmd(t *testing.T) {
 			ExpectedError: func() error {
 				cmdUsed = "profile"
 
-				// Replicate the exact JSON unmarshal error using local struct.
+				// Replicate the exact JSON unmarshal error using the schema type.
 				// Body matches the canonical camelCase wire form in the
 				// `profile.invalidJSON.response.golden` fixture so the inner
 				// json.Unmarshal error references `pageSize`, not `page_size`.
-				var response PerformanceProfilesAPIResponse
+				var response perfprofile.PerformanceProfilePage
 				innerErr := json.Unmarshal([]byte(`{"pageSize": "25"}`), &response)
 
 				return utils.ErrLoadConfig(ErrFailUnmarshal(innerErr))
