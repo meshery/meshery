@@ -6,6 +6,7 @@ const canMock = vi.fn(() => true);
 
 vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: any) => <div>{children}</div>,
+  crimson: { 40: '#F91313' },
   InfoOutlinedIcon: () => <svg data-testid="info-outlined" />,
   AccountTreeIcon: () => <svg data-testid="account-tree" />,
 }));
