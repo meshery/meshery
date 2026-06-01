@@ -76,13 +76,23 @@ const User = (props) => {
     <div>
       <NoSsr>
         <div data-testid="profile-button">
-          <Link
-            href={profileUrl || '#'}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="profile link"
-            style={{ textDecoration: 'none' }}
-          >
+          {profileUrl ? (
+            <IconButtonAvatar
+              color={color}
+              aria-haspopup="true"
+              component={Link}
+              href={profileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open user profile"
+            >
+              <Avatar
+                sx={{ height: 36, width: 36 }}
+                src={isGetUserSuccess ? userData?.avatarUrl : null}
+                imgProps={{ referrerPolicy: 'no-referrer' }}
+              />
+            </IconButtonAvatar>
+          ) : (
             <IconButtonAvatar color={color} aria-haspopup="true">
               <Avatar
                 sx={{ height: 36, width: 36 }}
@@ -90,7 +100,7 @@ const User = (props) => {
                 imgProps={{ referrerPolicy: 'no-referrer' }}
               />
             </IconButtonAvatar>
-          </Link>
+          )}
         </div>
       </NoSsr>
     </div>

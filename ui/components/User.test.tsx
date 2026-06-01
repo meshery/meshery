@@ -43,8 +43,8 @@ vi.mock('../utils/ExtensionPointSchemaValidator', () => ({
 }));
 
 vi.mock('next/link', () => ({
-  default: ({ href, target, rel, 'aria-label': ariaLabel, children }: any) => (
-    <a data-testid="next-link" href={href} target={target} rel={rel} aria-label={ariaLabel}>
+  default: ({ href, children }: any) => (
+    <a data-testid="next-link" href={href}>
       {children}
     </a>
   ),
@@ -68,16 +68,42 @@ vi.mock('@sistent/sistent', () => ({
 }));
 
 vi.mock('./layout/Header/Header.styles', () => ({
-  IconButtonAvatar: ({ children, onClick, color, 'aria-haspopup': hasPopup }: any) => (
-    <button
-      data-testid="icon-button-avatar"
-      data-color={color}
-      aria-haspopup={hasPopup}
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  ),
+  IconButtonAvatar: ({
+    children,
+    onClick,
+    color,
+    'aria-haspopup': hasPopup,
+    'aria-label': ariaLabel,
+    component: Component,
+    href,
+    target,
+    rel,
+  }: any) => {
+    if (Component) {
+      return (
+        <a
+          data-testid="icon-button-avatar"
+          href={href}
+          target={target}
+          rel={rel}
+          aria-label={ariaLabel}
+        >
+          {children}
+        </a>
+      );
+    }
+    return (
+      <button
+        data-testid="icon-button-avatar"
+        data-color={color}
+        aria-haspopup={hasPopup}
+        aria-label={ariaLabel}
+        onClick={onClick}
+      >
+        {children}
+      </button>
+    );
+  },
 }));
 
 import UserProvider from './User';
@@ -226,10 +252,11 @@ describe('User component', () => {
     // Trigger a re-render of the providerCapabilities effect.
     await waitFor(() => expect(ExtensionPointSchemaValidator).toHaveBeenCalledWith('account'));
 
-    const profileLink = screen.getByRole('link', { name: 'profile link' });
+    const profileLink = screen.getByRole('link', { name: 'Open user profile' });
     expect(profileLink).toHaveAttribute('href', 'https://cloud.test/profile');
     expect(profileLink).toHaveAttribute('target', '_blank');
     expect(profileLink).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(profileLink.querySelector('[data-testid="avatar"]')).toBeInTheDocument();
   });
 
   it('does not redirect when no profile URL is present', async () => {
