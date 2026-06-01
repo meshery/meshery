@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshery/server/models"
 )
 
@@ -29,7 +28,6 @@ func (h *Handler) SavePerformanceProfileHandler(
 	}()
 
 	parsedBody := &models.PerformanceProfile{}
-	parsedBody.Metadata = make(sql.Map, 0)
 	err := json.NewDecoder(r.Body).Decode(&parsedBody)
 	if err != nil {
 		//failed to read request body
