@@ -406,7 +406,7 @@ export function createPatternsActions(deps) {
         .then(() => {
           updateProgress({ showProgress: false });
           notify({
-            message: `"${pattern.name}" Design evaluated`,
+            message: `"${pattern.name}" design evaluated`,
             event_type: EVENT_TYPES.SUCCESS,
           });
         })
