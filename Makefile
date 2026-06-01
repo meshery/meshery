@@ -503,7 +503,7 @@ wasm-engine: dep-check-go
 	@tmp=server/policies/wasm/wasm_exec.js.tmp && \
 		awk '{ \
 			print; \
-			if ($$0 ~ /chdir\(\) \{ throw enosys\(\); \},/) { \
+			if (index($$0, "chdir() { throw enosys(); },") > 0) { \
 				print "\t\t\tenv: {},"; \
 				found = 1; \
 			} \
