@@ -1,4 +1,55 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 29 May 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.34</title><link>/project/releases/v1.0.34/</link><pubDate>Fri, 29 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.34/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Mon, 01 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.35</title><link>/project/releases/v1.0.35/</link><pubDate>Mon, 01 Jun 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.35/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[CI] Makefile: wasm-engine target compatibility with macOS @jamieplu (#19821)&lt;/li&gt;
+&lt;li&gt;fix wasm build @aabidsofi19 (#19817)&lt;/li&gt;
+&lt;li&gt;Add repository details for each maintainer @miacycle (#19773)&lt;/li&gt;
+&lt;li&gt;Governance scaled out @miacycle (#19772)&lt;/li&gt;
+&lt;li&gt;fix(make): run go mod tidy before wasm-engine build @ShubhamSoni09 (#19814)&lt;/li&gt;
+&lt;li&gt;[Server] Add doc.go for native Go policy engine @guan404ming (#19271)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix(mesheryctl): bridge v1beta3 design parse output to v1beta1 for evaluation @PragalvaXFREZ (#19804)&lt;/li&gt;
+&lt;li&gt;Compile Golang Policy Engine to WASM @guan404ming (#18939)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] add csv support on relationship generate @Omkar-Ugal (#19640)&lt;/li&gt;
+&lt;li&gt;add design evaluate subcommand @aabidsofi19 (#17897)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[UI] Fix deploy icon color in design action menu @Rajesh-Nagarajan-11 (#19789)&lt;/li&gt;
+&lt;li&gt;Compile Golang Policy Engine to WASM @guan404ming (#18939)&lt;/li&gt;
+&lt;li&gt;[CI] Update .nvmrc files from Node 18 to Node 22 to match engines field @Pranav-d33 (#19511)&lt;/li&gt;
+&lt;li&gt;Fix discard button error background @Rajesh-Nagarajan-11 (#19788)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;feat: add hardened runner step to GitHub workflows for enhanced security @ianrwhitney (#19818)&lt;/li&gt;
+&lt;li&gt;Compile Golang Policy Engine to WASM @guan404ming (#18939)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Compile Golang Policy Engine to WASM @guan404ming (#18939)&lt;/li&gt;
+&lt;li&gt;docs: Fix broken Contributing to Meshery UI links @aprv10 (#19803)&lt;/li&gt;
+&lt;li&gt;[Docs] Add high-level overview of native Go policy engine @guan404ming (#19150)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Omkar-Ugal, @PragalvaXFREZ, @Pranav-d33, @Rajesh-Nagarajan-11, @ShubhamSoni09, @aabidsofi19, @aprv10, @arjunmehta-git, @banana-three-join, @fitzergerald, @guan404ming, @hortison, @ianrwhitney, @jamieplu, @leecalcote, @marblom007, @meshery-ci, @miacycle, @pontusringblom, @suttonskate, @yi-nuo426 and ShubhamSoni09&lt;/p&gt;</description></item><item><title>v1.0.34</title><link>/project/releases/v1.0.34/</link><pubDate>Fri, 29 May 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.34/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -33194,7 +33245,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.34&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.35&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
