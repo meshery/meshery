@@ -9,12 +9,11 @@ go 1.25.5
 // packages that no longer exist, breaking `make wasm-engine`.
 replace github.com/meshery/meshery => ../../../
 
-replace github.com/service-mesh-performance/service-mesh-performance => github.com/layer5io/service-mesh-performance v0.6.2
+//replace github.com/service-mesh-performance/service-mesh-performance => ../../../../service-mesh-performance/
 
 require (
 	github.com/meshery/meshery v0.0.0-00010101000000-000000000000
 	github.com/meshery/schemas v1.3.1
-	github.com/service-mesh-performance/service-mesh-performance v0.6.2 // indirect
 )
 
 require (
@@ -237,6 +236,7 @@ require (
 	github.com/sagikazarmark/locafero v0.12.0 // indirect
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2 // indirect
 	github.com/sergi/go-diff v1.4.0 // indirect
+	github.com/service-mesh-performance/service-mesh-performance v0.7.1 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/sirupsen/logrus v1.9.4 // indirect
 	github.com/skeema/knownhosts v1.3.2 // indirect
