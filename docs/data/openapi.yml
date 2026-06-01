@@ -84,8 +84,9 @@ tags:
   - name: Workspace_designs
     description: APIs for Meshery Cloud designs associated with workspaces.
 paths:
-  /evaluate:
+  /api/meshmodels/relationships/evaluate:
     post:
+      operationId: evaluateRelationships
       x-internal:
         - meshery
       tags:
