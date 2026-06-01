@@ -1,7 +1,7 @@
 import React from 'react';
 import HandleError from '../../ErrorHandling';
 import { buildUiSchema } from '../helpers';
-import { getRefinedJsonSchema } from './helper';
+import { getRefinedJsonSchema, hideRootObjectTitle } from './helper';
 // import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 // import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import _ from 'lodash';
@@ -37,9 +37,15 @@ function RJSFWrapper(props) {
   }, [data]);
 
   React.useEffect(() => {
-    const rjsfSchema = getRefinedJsonSchema(jsonSchema, hideTitle, errorHandler);
+    const rjsfSchema = getRefinedJsonSchema(jsonSchema, errorHandler);
     // UI schema builds responsible for customizations in the RJSF fields shown to user
-    const uiSchema = buildUiSchema(rjsfSchema);
+    let uiSchema = buildUiSchema(rjsfSchema);
+    // Hide the duplicative top-level object title via the UI schema (the
+    // shared Sistent standard) rather than by mutating the JSON schema.
+    // Defaults to hidden (`hideTitle` unset) to preserve historical behavior.
+    if (hideTitle ?? true) {
+      uiSchema = hideRootObjectTitle(uiSchema);
+    }
     setSchema({ rjsfSchema, uiSchema });
   }, [jsonSchema]); // to reduce heavy lifting on every react render
 

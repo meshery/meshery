@@ -25,26 +25,50 @@ export function safeStringTitle(value) {
   return String(value);
 }
 
-function deleteTitleFromJSONSchema(jsonSchema) {
-  return { ...jsonSchema, title: '' };
-}
-
 function deleteDescriptionFromJSONSchema(jsonSchema) {
   return { ...jsonSchema, description: '' };
 }
 
 /**
- * remove top-level title, top-level description and
- * handle non-RJSF compliant fields
+ * Hide the form's ROOT object title/description without mutating the JSON
+ * schema, by setting `ui:options.label = false` on the root of the UI schema.
+ * RJSF's ObjectField then hands an empty title (and no description) to the
+ * ObjectFieldTemplate, so the collapsible object "header" is skipped and the
+ * child fields render directly — the desired experience when the form is shown
+ * inside a surface (e.g. a modal) that already names it.
+ *
+ * Mirrors Sistent's `hideRootObjectTitle` (the shared standard); inlined here
+ * until this app consumes a release of `@sistent/sistent` that exports it.
+ * Preferred over deleting `schema.title`, which forks the canonical
+ * `@meshery/schemas` schema in memory.
+ *
+ * @param {Object.<String, Object>} uiSchema
+ * @returns {Object.<String, Object>}
+ */
+export function hideRootObjectTitle(uiSchema) {
+  const existing = uiSchema?.['ui:options'];
+  const existingOptions = existing && typeof existing === 'object' ? existing : {};
+  return {
+    ...(uiSchema ?? {}),
+    'ui:options': { ...existingOptions, label: false },
+  };
+}
+
+/**
+ * Strip the top-level description and normalize non-RJSF-compliant fields.
+ *
+ * The top-level *title* is intentionally NOT stripped here: hiding the root
+ * object title is done via the UI schema (`hideRootObjectTitle`) so the
+ * canonical `@meshery/schemas` JSON schema is consumed unmodified. See
+ * `RJSF_wrapper`.
  *
  * @param {Object.<String, Object>} jsonSchema
  * @returns
  */
-export function getRefinedJsonSchema(jsonSchema, hideTitle = true, handleError) {
+export function getRefinedJsonSchema(jsonSchema, handleError) {
   let refinedSchema;
   try {
-    refinedSchema = hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema;
-    refinedSchema = deleteDescriptionFromJSONSchema(refinedSchema);
+    refinedSchema = deleteDescriptionFromJSONSchema(jsonSchema);
     refinedSchema.properties =
       refinedSchema?.properties && sortProperties(refinedSchema.properties); // temporarily commented
     recursivelyParseJsonAndCheckForNonRJSFCompliantFields(refinedSchema);

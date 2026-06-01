@@ -15,6 +15,7 @@ vi.mock('../helpers', () => ({
 
 vi.mock('./helper', () => ({
   getRefinedJsonSchema: (schema: any) => ({ ...schema, _refined: true }),
+  hideRootObjectTitle: (ui: any) => ({ ...ui, 'ui:options': { label: false } }),
 }));
 
 vi.mock('./RJSF', () => ({
