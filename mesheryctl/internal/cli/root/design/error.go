@@ -38,8 +38,8 @@ const (
 	ErrInvalidCommandCode             = "mesheryctl-1191"
 	ErrDesignNameOrIDNotSpecifiedCode = "mesheryctl-1192"
 	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
-	ErrEvaluateDesignCode             = "mesheryctl-1200"
-	ErrEvaluateDesignResponseCode     = "mesheryctl-1202"
+	ErrEvaluateDesignCode             = "mesheryctl-1247"
+	ErrEvaluateDesignResponseCode     = "mesheryctl-1248"
 )
 
 const (
