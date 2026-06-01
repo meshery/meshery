@@ -6,10 +6,9 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 replace github.com/compose-spec/compose-go/v2 => github.com/compose-spec/compose-go/v2 v2.9.1
 
-// Upstream v0.6.2 still declares the legacy module path in its go.mod.
-replace github.com/service-mesh-performance/service-mesh-performance => github.com/layer5io/service-mesh-performance v0.6.2
-
 // The following replaces are used for local development
+
+// replace github.com/service-mesh-performance/service-mesh-performance => ../service-mesh-performance
 
 // replace github.com/meshery/schemas => ../schemas
 
@@ -60,7 +59,7 @@ require (
 	github.com/prometheus/client_golang v1.23.2
 	github.com/prometheus/common v0.67.5
 	github.com/qri-io/jsonschema v0.2.1
-	github.com/service-mesh-performance/service-mesh-performance v0.6.2
+	github.com/service-mesh-performance/service-mesh-performance v0.7.1
 	github.com/sirupsen/logrus v1.9.4
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
