@@ -6,10 +6,9 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 replace github.com/compose-spec/compose-go/v2 => github.com/compose-spec/compose-go/v2 v2.9.1
 
-// Upstream v0.6.2 still declares the legacy module path in its go.mod.
-replace github.com/service-mesh-performance/service-mesh-performance => github.com/layer5io/service-mesh-performance v0.6.2
-
 // The following replaces are used for local development
+
+// replace github.com/service-mesh-performance/service-mesh-performance => ../service-mesh-performance
 
 // replace github.com/meshery/schemas => ../schemas
 
