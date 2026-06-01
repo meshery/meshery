@@ -4,7 +4,6 @@ package handlers
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -29,7 +28,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 
 	tokenString := req.Context().Value(models.TokenCtxKey).(string)
 
-	bdr, err := p.FetchResults(tokenString, q.Get("page"), getPageSize(q), q.Get("search"), q.Get("order"), profileID)
+	bdr, err := p.FetchResults(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), profileID)
 	if err != nil {
 		h.log.Error(ErrFetchResults(err))
 		writeMeshkitError(w, ErrFetchResults(err), http.StatusInternalServerError)
@@ -51,7 +50,7 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 
 	tokenString := req.Context().Value(models.TokenCtxKey).(string)
 
-	bdr, err := p.FetchAllResults(tokenString, q.Get("page"), getPageSize(q), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
+	bdr, err := p.FetchAllResults(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
 	if err != nil {
 		h.log.Error(ErrFetchResults(err))
 		writeMeshkitError(w, ErrFetchResults(err), http.StatusInternalServerError)
@@ -107,13 +106,6 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 		return
 	}
 	_, _ = w.Write(b)
-}
-
-func getPageSize(q url.Values) string {
-	if pageSize := q.Get("pageSize"); pageSize != "" {
-		return pageSize
-	}
-	return q.Get("pagesize")
 }
 
 func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {

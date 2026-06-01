@@ -82,7 +82,7 @@ function Dashboard() {
     error: resultsError,
   } = useGetPerformanceResultsQuery({
     page: '0',
-    pageSize: '10',
+    pagesize: '10',
     search: '',
     order: '',
     from: '',

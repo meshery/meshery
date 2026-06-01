@@ -103,7 +103,7 @@ function PerformanceCalendar({ style }) {
     error,
   } = useGetPerformanceResultsQuery({
     page: '0',
-    pageSize: '10',
+    pagesize: '10',
     search: '',
     order: '',
     from: time.start,

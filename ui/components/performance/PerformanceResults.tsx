@@ -518,7 +518,7 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
     {
       performanceProfileId: profileID,
       page: `${page}`,
-      pageSize: `${pageSize}`,
+      pagesize: `${pageSize}`,
       search: encodeURIComponent(search || ''),
       order: encodeURIComponent(sortOrder || ''),
     },
