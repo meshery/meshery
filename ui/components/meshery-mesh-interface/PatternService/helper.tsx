@@ -30,12 +30,13 @@ function deleteDescriptionFromJSONSchema(jsonSchema) {
 }
 
 /**
- * Hide the form's ROOT object title/description without mutating the JSON
+ * Hide the form's ROOT object title and description without mutating the JSON
  * schema, by setting `ui:options.label = false` on the root of the UI schema.
- * RJSF's ObjectField then hands an empty title (and no description) to the
- * ObjectFieldTemplate, so the collapsible object "header" is skipped and the
- * child fields render directly — the desired experience when the form is shown
- * inside a surface (e.g. a modal) that already names it.
+ * Per @rjsf/core's ObjectField, when `label === false` the title handed to the
+ * ObjectFieldTemplate is forced to `''` and the description to `undefined`, so
+ * the collapsible object "header" is skipped and the child fields render
+ * directly — the desired experience when the form is shown inside a surface
+ * (e.g. a modal) that already names it.
  *
  * Mirrors Sistent's `hideRootObjectTitle` (the shared standard); inlined here
  * until this app consumes a release of `@sistent/sistent` that exports it.
@@ -47,7 +48,8 @@ function deleteDescriptionFromJSONSchema(jsonSchema) {
  */
 export function hideRootObjectTitle(uiSchema) {
   const existing = uiSchema?.['ui:options'];
-  const existingOptions = existing && typeof existing === 'object' ? existing : {};
+  const existingOptions =
+    existing && typeof existing === 'object' && !Array.isArray(existing) ? existing : {};
   return {
     ...(uiSchema ?? {}),
     'ui:options': { ...existingOptions, label: false },
@@ -68,7 +70,12 @@ export function hideRootObjectTitle(uiSchema) {
 export function getRefinedJsonSchema(jsonSchema, handleError) {
   let refinedSchema;
   try {
-    refinedSchema = deleteDescriptionFromJSONSchema(jsonSchema);
+    // Deep clone first so the canonical @meshery/schemas object is never
+    // mutated: deleteDescriptionFromJSONSchema only shallow-copies the root,
+    // while sortProperties and recursivelyParseJsonAndCheckForNonRJSFCompliantFields
+    // edit nested properties in place (and would otherwise reach through the
+    // shared references into the original schema graph).
+    refinedSchema = deleteDescriptionFromJSONSchema(_.cloneDeep(jsonSchema));
     refinedSchema.properties =
       refinedSchema?.properties && sortProperties(refinedSchema.properties); // temporarily commented
     recursivelyParseJsonAndCheckForNonRJSFCompliantFields(refinedSchema);

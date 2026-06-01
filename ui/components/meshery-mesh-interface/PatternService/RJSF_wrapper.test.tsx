@@ -13,6 +13,11 @@ vi.mock('../helpers', () => ({
   buildUiSchema: () => ({ 'ui:order': [] }),
 }));
 
+// Helper mock is intentionally simplified — these wrapper tests assert
+// loading/prop/debounce wiring, not the refinement or title-suppression logic
+// (those are covered directly in helper.test.tsx). The hideRootObjectTitle
+// mock still spreads the passed `ui` so an "ignored return value" regression
+// would surface as a missing `ui:options` on the schema handed to RJSFForm.
 vi.mock('./helper', () => ({
   getRefinedJsonSchema: (schema: any) => ({ ...schema, _refined: true }),
   hideRootObjectTitle: (ui: any) => ({ ...ui, 'ui:options': { label: false } }),

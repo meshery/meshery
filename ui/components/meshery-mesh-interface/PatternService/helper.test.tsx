@@ -101,6 +101,27 @@ describe('getRefinedJsonSchema', () => {
     expect(refined.title).toBe('keep me');
     expect(refined.description).toBe('');
   });
+
+  it('does not mutate the input — refining works on a deep clone', () => {
+    const schema: any = {
+      title: 'Import Design',
+      description: 'desc',
+      type: 'object',
+      properties: {
+        // an x-kubernetes field that refinement would coerce/strip in place
+        intOrString: { 'x-kubernetes-int-or-string': true },
+        name: { type: 'string' },
+      },
+    };
+    const before = JSON.parse(JSON.stringify(schema));
+
+    const refined: any = getRefinedJsonSchema(schema, vi.fn());
+    // Simulate a downstream in-place edit on the refined output (e.g. buildUiSchema
+    // adding min/max bounds) — it must not reach back into the canonical schema.
+    refined.properties.name.maximum = 10;
+
+    expect(schema).toEqual(before);
+  });
 });
 
 describe('hideRootObjectTitle', () => {
