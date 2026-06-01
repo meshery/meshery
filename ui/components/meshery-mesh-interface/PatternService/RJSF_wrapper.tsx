@@ -1,7 +1,8 @@
 import React from 'react';
 import HandleError from '../../ErrorHandling';
 import { buildUiSchema } from '../helpers';
-import { getRefinedJsonSchema, hideRootObjectTitle } from './helper';
+import { getRefinedJsonSchema } from './helper';
+import { hideRootObjectTitle } from '@sistent/sistent';
 // import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 // import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import _ from 'lodash';

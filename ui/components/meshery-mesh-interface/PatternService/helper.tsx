@@ -30,33 +30,6 @@ function deleteDescriptionFromJSONSchema(jsonSchema) {
 }
 
 /**
- * Hide the form's ROOT object title and description without mutating the JSON
- * schema, by setting `ui:options.label = false` on the root of the UI schema.
- * Per @rjsf/core's ObjectField, when `label === false` the title handed to the
- * ObjectFieldTemplate is forced to `''` and the description to `undefined`, so
- * the collapsible object "header" is skipped and the child fields render
- * directly — the desired experience when the form is shown inside a surface
- * (e.g. a modal) that already names it.
- *
- * Mirrors Sistent's `hideRootObjectTitle` (the shared standard); inlined here
- * until this app consumes a release of `@sistent/sistent` that exports it.
- * Preferred over deleting `schema.title`, which forks the canonical
- * `@meshery/schemas` schema in memory.
- *
- * @param {Object.<String, Object>} uiSchema
- * @returns {Object.<String, Object>}
- */
-export function hideRootObjectTitle(uiSchema) {
-  const existing = uiSchema?.['ui:options'];
-  const existingOptions =
-    existing && typeof existing === 'object' && !Array.isArray(existing) ? existing : {};
-  return {
-    ...(uiSchema ?? {}),
-    'ui:options': { ...existingOptions, label: false },
-  };
-}
-
-/**
  * Strip the top-level description and normalize non-RJSF-compliant fields.
  *
  * The top-level *title* is intentionally NOT stripped here: hiding the root

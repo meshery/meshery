@@ -14,7 +14,6 @@ import {
   getHyperLinkDiv,
   getRefinedJsonSchema,
   getSchema,
-  hideRootObjectTitle,
   safeDisplayValue,
   safeStringTitle,
   userPromptKeys,
@@ -121,33 +120,6 @@ describe('getRefinedJsonSchema', () => {
     refined.properties.name.maximum = 10;
 
     expect(schema).toEqual(before);
-  });
-});
-
-describe('hideRootObjectTitle', () => {
-  it('sets ui:options.label=false to suppress the root object title', () => {
-    expect(hideRootObjectTitle({})).toEqual({ 'ui:options': { label: false } });
-    expect(hideRootObjectTitle()).toEqual({ 'ui:options': { label: false } });
-  });
-
-  it('preserves existing UI-schema directives and merges ui:options', () => {
-    const ui = {
-      'ui:order': ['name', 'uploadType'],
-      uploadType: { 'ui:widget': 'radio' },
-      'ui:options': { classNames: 'root' },
-    };
-    expect(hideRootObjectTitle(ui)).toEqual({
-      'ui:order': ['name', 'uploadType'],
-      uploadType: { 'ui:widget': 'radio' },
-      'ui:options': { classNames: 'root', label: false },
-    });
-  });
-
-  it('does not mutate the input', () => {
-    const ui = { 'ui:options': { classNames: 'root' } };
-    const snapshot = JSON.parse(JSON.stringify(ui));
-    hideRootObjectTitle(ui);
-    expect(ui).toEqual(snapshot);
   });
 });
 
