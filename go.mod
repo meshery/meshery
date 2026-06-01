@@ -13,7 +13,13 @@ replace github.com/service-mesh-performance/service-mesh-performance => github.c
 
 // replace github.com/meshery/schemas => ../schemas
 
-replace github.com/meshery/meshkit => github.com/Pranav-d33/meshkit v0.0.0-20260519074557-1718c390a274
+// TODO: replace github.com/meshery/meshkit => ../meshkit
+// Once meshery/meshkit#1007 merges, switch the import in
+// server/models/remote_provider.go back to github.com/meshery/meshkit/retry
+// and delete server/models/retryutil/.
+//
+// Until then, server/models/retryutil/ provides the same retry API by
+// wrapping github.com/cenkalti/backoff/v5 directly.
 
 // replace github.com/meshery/meshsync v0.8.26 => ../meshsync
 
@@ -24,6 +30,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.4.0
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/briandowns/spinner v1.23.2
+	github.com/cenkalti/backoff/v5 v5.0.3
 	github.com/compose-spec/compose-go/v2 v2.10.0
 	github.com/docker/cli v28.5.2+incompatible
 	github.com/docker/compose/v2 v2.40.3
@@ -148,7 +155,6 @@ require (
 	github.com/buger/jsonparser v1.1.2 // indirect
 	github.com/capnm/sysinfo v0.0.0-20130621111458-5909a53897f3 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
-	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chai2010/gettext-go v1.0.3 // indirect
 	github.com/chzyer/readline v1.5.1 // indirect

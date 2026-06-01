@@ -33,7 +33,9 @@ import (
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
-	"github.com/meshery/meshkit/retry"
+	// TEMPORARY: aliased to retry so call sites (retry.Do, retry.WithMaxAttempts, etc.)
+	// stay unchanged. Replace with github.com/meshery/meshkit/retry once meshkit#1007 merges.
+	retry "github.com/meshery/meshery/server/models/retryutil"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
@@ -294,7 +296,7 @@ func (l *RemoteProvider) fetchCapabilities(ctx context.Context, token string, ve
 			resp, doErr = c.Do(req)
 			if doErr != nil {
 				if resp != nil {
-					resp.Body.Close()
+					_ = resp.Body.Close()
 				}
 				return doErr
 			}

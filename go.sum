@@ -76,8 +76,6 @@ github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERo
 github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
 github.com/Microsoft/hcsshim v0.14.1 h1:CMuB3fqQVfPdhyXhUqYdUmPUIOhJkmghCx3dJet8Cqs=
 github.com/Microsoft/hcsshim v0.14.1/go.mod h1:VnzvPLyWUhxiPVsJ31P6XadxCcTogTguBFDy/1GR/OM=
-github.com/Pranav-d33/meshkit v0.0.0-20260519074557-1718c390a274 h1:Y+kj5DCOO7hG+0qyEeqFSqDufC4ZJdrCU/NvN7/Alms=
-github.com/Pranav-d33/meshkit v0.0.0-20260519074557-1718c390a274/go.mod h1:HL5ZT/BGcoV/I9X40wgPb4SkeSFiFCY7nvfJgoK7pqk=
 github.com/ProtonMail/go-crypto v1.3.0 h1:ILq8+Sf5If5DCpHQp4PbZdS1J7HDFRXz/+xKBiRGFrw=
 github.com/ProtonMail/go-crypto v1.3.0/go.mod h1:9whxjD8Rbs29b4XWbB8irEcE8KHMqaR2e7GWU1R+/PE=
 github.com/PuerkitoBio/goquery v1.11.0 h1:jZ7pwMQXIITcUXNH83LLk+txlaEy6NVOfTuP43xxfqw=
@@ -702,6 +700,8 @@ github.com/maxatome/go-testdeep v1.14.0 h1:rRlLv1+kI8eOI3OaBXZwb3O7xY3exRzdW5QyX
 github.com/maxatome/go-testdeep v1.14.0/go.mod h1:lPZc/HAcJMP92l7yI6TRz1aZN5URwUBUAfUNvrclaNM=
 github.com/meshery/meshery-operator v0.8.11 h1:eDo2Sw0jjVrXsvvhF8LenADM58pK+7Z68ROPVIejTPc=
 github.com/meshery/meshery-operator v0.8.11/go.mod h1:hQEtFKKa5Fr/Mskk6bV5ip3bQ0+3F0u1voYS3XisBp4=
+github.com/meshery/meshkit v1.0.8 h1:cdpSSdwZKV5n4Uh/T1yBbPfJVf0EZClqIn9S8CzDdv8=
+github.com/meshery/meshkit v1.0.8/go.mod h1:YQbXQtWnsvv2kt8nlCU6eJPjj5qWDf3heiLgbtZjKF0=
 github.com/meshery/meshsync v1.0.0 h1:BIHEVG4BDjqOnSd3vBt9B4IfWJNTfMRAgdwLroBcCfY=
 github.com/meshery/meshsync v1.0.0/go.mod h1:mFsPXkZRiCSuk5DhxBTrkWdlo6peItRBUoIEEQCovIg=
 github.com/meshery/schemas v1.2.23 h1:MlgkYSMbhUKPrCeAPkDCY0SvJCRX12t6lnsPVeEnQbQ=
