@@ -40,7 +40,7 @@ UI maintainers are responsible for the development and maintenance of Meshery's 
 
 | Name               | GitHub          | Affiliation   |
 | ------------------ | --------------- | ------------- |
-| Nikhil Ladha       | @Nikhil-Ladha   | Red Hat       |
+| Nikhil Ladha       | @Nikhil-Ladha   | IBM       |
 | Antonette Caldwell | @acald-creator  | Acquia        |
 | Aabid Sofi         | @aabidsofi19    | Independent   |
 | Yash Sharma        | @Yashsharma1911 | Digital Ocean |
