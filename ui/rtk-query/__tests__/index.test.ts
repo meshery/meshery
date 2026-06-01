@@ -76,13 +76,11 @@ describe('mesheryApiPath – /api prefixed paths', () => {
   });
 });
 
-describe('mesheryApiPath – /evaluate path', () => {
-  it('returns /evaluate path unchanged (used by cloud RTK)', () => {
-    expect(mesheryApiPath('/evaluate')).toBe('/evaluate');
-  });
-
-  it('returns /evaluate/foo path unchanged', () => {
-    expect(mesheryApiPath('/evaluate/foo')).toBe('/evaluate/foo');
+describe('mesheryApiPath – /api/meshmodels/relationships/evaluate', () => {
+  it('passes the evaluate endpoint through unchanged as an /api/* path (meshery/schemas#916)', () => {
+    expect(mesheryApiPath('/api/meshmodels/relationships/evaluate')).toBe(
+      '/api/meshmodels/relationships/evaluate',
+    );
   });
 });
 
