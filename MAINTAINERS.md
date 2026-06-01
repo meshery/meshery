@@ -137,7 +137,7 @@ Repositories:
 | Pontus Ringblom | @pontusringblom | Infor       | meshery-extensions/shape-builder                 |
 | Dheeraj Gedam   | @dheerajng      | Citrix      | meshery-extensions/meshery-cpx                   |
 | Haim Helman     | @thehh1974      | VMware      | meshery-extensions/meshery-octarine              |
-| Hussaina Begum  | @hexxdump       | VMware      | meshery-extensions/meshery-tanzu-sm              |
+| Hussaina Begum  | @hexxdump       | NetSkope      | meshery-extensions/meshery-tanzu-sm              |
 | Ashish Tiwari   | @revolyssup     | API7        | meshery-extensions/meshery-istio                 |
 | Michael Gfeller | @mgfeller       | Computas AS | meshery/meshkit, meshery/meshery-adapter-library |
 | Marcus Blom     | @marblom007     | Independent | meshery-extensions/shape-builder                 |
