@@ -125,7 +125,7 @@ async function evaluateDesign(request, design) {
     {
       data: {
         design: { ...design, relationships: [] },
-        options: { returnDiffOnly: false, trace: false },
+        options: { returnDiffOnly: false, enableTrace: false },
       },
     },
   );
@@ -241,7 +241,7 @@ test.describe('Relationship Evaluation Properties', { tag: '@relationship' }, ()
           {
             data: {
               design: tampered,
-              options: { returnDiffOnly: false, trace: false },
+              options: { returnDiffOnly: false, enableTrace: false },
             },
           },
         );
@@ -272,7 +272,7 @@ test.describe('Relationship Evaluation Properties', { tag: '@relationship' }, ()
           {
             data: {
               design,
-              options: { returnDiffOnly: false, trace: false },
+              options: { returnDiffOnly: false, enableTrace: false },
             },
           },
         );

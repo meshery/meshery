@@ -121,7 +121,7 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
             design: designToTest,
             options: {
               returnDiffOnly: false,
-              trace: false,
+              enableTrace: false,
             },
           },
         },
