@@ -22,7 +22,6 @@ Repositories:
 | -------------------- | -------------- | ----------- |
 | Hussaina Begum       | @hexxdump      | Netskope      |
 | Aadhitya Amarendiran | @alphaX86      | Citi        |
-| Jerod Culpepper      | @cpepper96     | SAIC        |
 | Antonette Caldwell   | @acald-creator | Acquia      |
 | Matthieu Evrin       | @lekaf974      | Moneris     |
 
