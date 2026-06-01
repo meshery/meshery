@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 import PropTypes from 'prop-types';
 import CreateSelect from 'react-select/creatable';
 import {
@@ -126,7 +126,7 @@ const ReactSelectWrapper = ({
 }) => {
   const theme = useTheme();
 
-  const inputId = `react-select-${label?.replace(/\s+/g, '-').toLowerCase()}`;
+  const inputId = useId();
 
   const selectStyles = {
     control: (base, state) => ({
