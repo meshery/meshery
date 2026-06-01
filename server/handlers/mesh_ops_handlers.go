@@ -336,6 +336,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		writeMeshkitError(w, ErrGenerateUUID(err), http.StatusInternalServerError)
 		return
 	}
+	h.log.Infof("adapter operation started operationId=%s adapter=%s operation=%s namespace=%s", operationID.String(), adapterLoc, opName, namespace)
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
 		OperationId: operationID.String(),
 		OpName:      opName,
@@ -347,6 +348,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		Version:     version,
 	})
 	if err != nil {
+		h.log.Errorf("adapter operation failed operationId=%s adapter=%s operation=%s namespace=%s: %v", operationID.String(), adapterLoc, opName, namespace, err)
 		h.log.Error(ErrApplyChange(err))
 		writeMeshkitError(w, ErrApplyChange(err), http.StatusInternalServerError)
 		return
