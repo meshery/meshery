@@ -29,6 +29,10 @@ check-deps:
 site: check-deps check-go
 	npx hugo server -D -F
 
+## Run docs.meshery.io on your local machine in serve mode (without file watching).
+serve: check-deps check-go
+	npx hugo server -D -F --watch=false
+
 ## Build docs.meshery.io on your local machine.
 build: check-deps check-go
 	npx hugo
@@ -120,6 +124,7 @@ docker:
 	check-deps \
 	build \
 	site \
+	serve \
 	clean \
 	check-go \
 	docker \

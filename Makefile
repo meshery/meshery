@@ -375,21 +375,21 @@ site-serve: docs-serve
 docs-setup:
 	cd docs; npm install
 
-## Run Meshery Docs. Listen for changes.
-docs: check-go
+## Run Meshery Docs in watch mode.
+docs:
 	@$(MAKE) -C docs site
 
-## Run Meshery Docs. Do not listen for changes.
-docs-serve: check-go
-	cd docs; npx hugo server -D -F --watch=false
+## Run Meshery Docs once without file watching.
+docs-serve:
+	@$(MAKE) -C docs serve
 
-## Run Meshery Docs. Do not listen for changes.
-docs-clean: check-go
+## Clean build cache and run Meshery Docs in watch mode.
+docs-clean:
 	@$(MAKE) -C docs clean
 
 
 ## Build Meshery Docs on your local machine.
-docs-build: check-go
+docs-build:
 	@$(MAKE) -C docs build
 
 ## Build Meshery Docs for production. BASE_URL is optional.
