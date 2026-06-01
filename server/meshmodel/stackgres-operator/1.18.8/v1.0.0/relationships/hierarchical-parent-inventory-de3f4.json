@@ -1,89 +1,107 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "",
-  "kind": "hierarchical",
-  "metadata": {
-    "description": "",
-    "isAnnotation": false,
-    "styles": {
-      "primaryColor": "",
-      "svgColor": "",
-      "svgWhite": ""
-    }
-  },
-  "model": {
-    "displayName": "",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "model": {
-      "version": "1.18.8"
-    },
-    "name": "stackgres-operator",
-    "registrant": {
-      "kind": ""
-    },
-    "version": ""
-  },
-  "schemaVersion": "relationships.meshery.io/v1beta2",
-  "selectors": [
-    {
-      "allow": {
-        "from": [
-          {
-            "id": null,
-            "kind": "SGCluster",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
+    "id":  "00000000-0000-0000-0000-000000000000",
+    "evaluationQuery":  "",
+    "kind":  "hierarchical",
+    "metadata":  {
+                     "description":  "",
+                     "isAnnotation":  false,
+                     "styles":  {
+                                    "primaryColor":  "",
+                                    "svgColor":  "",
+                                    "svgWhite":  ""
+                                }
+                 },
+    "model":  {
+                  "displayName":  "",
+                  "id":  "00000000-0000-0000-0000-000000000000",
+                  "model":  {
+                                "version":  "1.18.8"
+                            },
+                  "name":  "stackgres-operator",
+                  "registrant":  {
+                                     "kind":  ""
+                                 },
+                  "version":  ""
               },
-              "name": "stackgres-operator",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
-            },
-            "patch": {
-              "mutatorRef": [["displayName"]],
-              "patchStrategy": "replace"
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "SGDbOps",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "stackgres-operator",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
-            },
-            "patch": {
-              "mutatedRef": [["configuration", "spec", "sgCluster"]],
-              "patchStrategy": "replace"
-            }
-          }
-        ]
-      },
-      "deny": {
-        "from": [],
-        "to": []
-      }
-    }
-  ],
-  "subType": "inventory",
-  "status": "enabled",
-  "type": "parent",
-  "version": "v1.0.0"
+    "schemaVersion":  "relationships.meshery.io/v1beta2",
+    "selectors":  [
+                      {
+                          "allow":  {
+                                        "from":  [
+                                                     {
+                                                         "id":  null,
+                                                         "kind":  "SGDbOps",
+                                                         "match":  {
+
+                                                                   },
+                                                         "match_strategy_matrix":  null,
+                                                         "model":  {
+                                                                       "displayName":  "",
+                                                                       "id":  "00000000-0000-0000-0000-000000000000",
+                                                                       "model":  {
+                                                                                     "version":  ""
+                                                                                 },
+                                                                       "name":  "stackgres-operator",
+                                                                       "registrant":  {
+                                                                                          "kind":  "github"
+                                                                                      },
+                                                                       "version":  ""
+                                                                   },
+                                                         "patch":  {
+                                                                       "mutatedRef":  [
+                                                                                          [
+                                                                                              "configuration",
+                                                                                              "spec",
+                                                                                              "sgCluster"
+                                                                                          ]
+                                                                                      ],
+                                                                       "patchStrategy":  "replace"
+                                                                   }
+                                                     }
+                                                 ],
+                                        "to":  [
+                                                   {
+                                                       "id":  null,
+                                                       "kind":  "SGCluster",
+                                                       "match":  {
+
+                                                                 },
+                                                       "match_strategy_matrix":  null,
+                                                       "model":  {
+                                                                     "displayName":  "",
+                                                                     "id":  "00000000-0000-0000-0000-000000000000",
+                                                                     "model":  {
+                                                                                   "version":  ""
+                                                                               },
+                                                                     "name":  "stackgres-operator",
+                                                                     "registrant":  {
+                                                                                        "kind":  "github"
+                                                                                    },
+                                                                     "version":  ""
+                                                                 },
+                                                       "patch":  {
+                                                                     "mutatorRef":  [
+                                                                                        [
+                                                                                            "displayName"
+                                                                                        ]
+                                                                                    ],
+                                                                     "patchStrategy":  "replace"
+                                                                 }
+                                                   }
+                                               ]
+                                    },
+                          "deny":  {
+                                       "from":  [
+
+                                                ],
+                                       "to":  [
+
+                                              ]
+                                   }
+                      }
+                  ],
+    "subType":  "inventory",
+    "status":  "enabled",
+    "type":  "parent",
+    "version":  "v1.0.0"
 }
