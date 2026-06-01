@@ -109,6 +109,7 @@ Repositories:
 | Marcus Blom         | @marblom007     | AWS           |
 | Kate Suttons        | @suttonskate    | Layer5        |
 | Yash Sharma         | @Yashsharma1911 | Digital Ocean |
+| Shivay Lambda      | @shivaylamba       | Qualcomm |
 
 Repositories:
 
