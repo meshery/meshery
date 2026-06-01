@@ -33488,15 +33488,15 @@ mesheryctl completion bash &gt; $(brew --prefix)/etc/bash_completion.d/mesheryct
 	Architecture
 &lt;/h2&gt;
 &lt;p&gt;The following is a list of top-level frameworks, libraries, design system used in Meshery UI.&lt;/p&gt;</description></item><item><title>Contributing to Meshery UI - Dashboard Widgets</title><link>/project/contributing/contributing-ui-widgets/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-ui-widgets/</guid><description>&lt;div class="prereqs"&gt;&lt;p&gt;&lt;strong style="font-size: 20px;"&gt;Prerequisite Reading&lt;/strong&gt;&lt;/p&gt;
- &lt;ol&gt;&lt;li&gt;&lt;a href="contributing-ui"&gt;Contributing to Meshery UI&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;
+ &lt;ol&gt;&lt;li&gt;&lt;a href="./project/contributing/contributing-ui"&gt;Contributing to Meshery UI&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;
 &lt;/div&gt;
 &lt;p&gt;Meshery&amp;rsquo;s dashboard is a composable and extensible interface made up of individual widgets. These widgets allow contributors to surface specific Meshery data or capabilities within a modular layout system.&lt;/p&gt;
 &lt;p&gt;This guide walks through the process of creating and integrating a custom widget into the &lt;a href="https://playground.meshery.io/"&gt;Meshery dashboard&lt;/a&gt;. You’ll learn about layout configuration, design best practices, and how to register new widgets.&lt;/p&gt;
 &lt;h2 id="1-widget-architecture"&gt;
 	1. Widget Architecture
 &lt;/h2&gt;
-&lt;p&gt;Widgets are React components located &lt;a href="https://github.com/meshery/meshery/tree/master/ui/components/Dashboard/widgets"&gt;here&lt;/a&gt;:&lt;/p&gt;</description></item><item><title>Contributing to Meshery UI - Notification Center</title><link>/project/contributing/contributing-ui-notification-center/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-ui-notification-center/</guid><description>&lt;div class="prereqs"&gt;&lt;p&gt;&lt;strong style="font-size: 20px;"&gt;Prerequisite Reading&lt;/strong&gt;&lt;/p&gt;
- &lt;ol&gt;&lt;li&gt;&lt;a href="contributing-ui"&gt;Contributing to Meshery UI&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;
+&lt;p&gt;Widgets are React components located &lt;a href="https://github.com/meshery/meshery/tree/master/ui/components/dashboard/widgets"&gt;here&lt;/a&gt;:&lt;/p&gt;</description></item><item><title>Contributing to Meshery UI - Notification Center</title><link>/project/contributing/contributing-ui-notification-center/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-ui-notification-center/</guid><description>&lt;div class="prereqs"&gt;&lt;p&gt;&lt;strong style="font-size: 20px;"&gt;Prerequisite Reading&lt;/strong&gt;&lt;/p&gt;
+ &lt;ol&gt;&lt;li&gt;&lt;a href="./project/contributing/contributing-ui"&gt;Contributing to Meshery UI&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;
 &lt;/div&gt;
 &lt;h2 id="table-of-contents"&gt;
 	Table of Contents
@@ -33525,7 +33525,7 @@ mesheryctl completion bash &gt; $(brew --prefix)/etc/bash_completion.d/mesheryct
 	What is the Notification Center?
 &lt;/h2&gt;
 &lt;p&gt;The Notification Center is a dedicated panel in Meshery’s UI that helps you monitor, understand, and respond to events across your system. It acts as a central place where you can see important updates related to your infrastructure, workloads, and Meshery’s internal operations.&lt;/p&gt;</description></item><item><title>Contributing to Meshery UI - Sistent</title><link>/project/contributing/contributing-ui-sistent/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-ui-sistent/</guid><description>&lt;div class="prereqs"&gt;&lt;p&gt;&lt;strong style="font-size: 20px;"&gt;Prerequisite Reading&lt;/strong&gt;&lt;/p&gt;
- &lt;ol&gt;&lt;li&gt;&lt;a href="contributing-ui"&gt;Contributing to Meshery UI&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;
+ &lt;ol&gt;&lt;li&gt;&lt;a href="./project/contributing/contributing-ui"&gt;Contributing to Meshery UI&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;
 &lt;/div&gt;
 &lt;h2 id="contributing-to-meshery-ui---sistent"&gt;
 	&lt;a name="contributing-ui-sistent"&gt;Contributing to Meshery UI - Sistent&lt;/a&gt;
