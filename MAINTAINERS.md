@@ -89,7 +89,7 @@ Repositories:
 
 | Name                   | GitHub        | Affiliation    |
 | ---------------------- | ------------- | -------------- |
-| Nikhil Ladha           | @Nikhil-Ladha | Red Hat        |
+| Nikhil Ladha           | @Nikhil-Ladha | IBM        |
 | Mericio                | @simihablo    | Independent    |
 | Aaditya Narayan Subedy | @asubedy      | Fast Retailing |
 | Jamie Plu              | @jamieplu     | Independent    |
