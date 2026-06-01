@@ -15,15 +15,14 @@ const AnimatedFilter = (props: React.SVGAttributes<SVGSVGElement>) => {
     const timeout = setTimeout(() => {
       setIsActive(false);
     }, 100);
-    return () => clearTimeout(timeout);
-  }, []);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
+    const interval = setInterval(() => {
       setIsActive((prev) => !prev);
     }, 2000);
-    return () => clearTimeout(timeout);
-  }, [isActive]);
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <div>
