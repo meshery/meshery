@@ -5,11 +5,11 @@ import (
 	"slices"
 	"time"
 
-	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
+	"github.com/meshery/meshery/server/models/performance"
 )
 
 // SMPPerformanceTestConfigValidator performs validations on the given PerformanceTestConfig object
-func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) error {
+func SMPPerformanceTestConfigValidator(perfTest *performance.PerformanceTestConfig) error {
 	if perfTest.Name == "" {
 		return ErrField
 	}
@@ -17,7 +17,11 @@ func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) erro
 		return ErrParsingTest
 	}
 
-	if len(perfTest.Clients) < 1 {
+	// Support both Clients and ClientsNested for backward compatibility
+	clients := len(perfTest.Clients)
+	nestedClients := len(perfTest.ClientsNested)
+	
+	if clients < 1 && nestedClients < 1 {
 		return ErrTestClient
 	}
 
@@ -27,8 +31,30 @@ func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) erro
 	// transparently run on fortio (see executeLoadTest). An empty value is
 	// treated as the default (fortio). Any other value is rejected.
 	validGenerators := []string{FortioLG.Name(), "wrk2", ""}
+	
+	// Validate Clients (new format)
 	for _, testClient := range perfTest.Clients {
 		if testClient.Protocol.String() == "" {
+			return ErrProtocol
+		}
+		isValidGenerator := slices.Contains(validGenerators, testClient.LoadGenerator)
+		if !isValidGenerator {
+			return ErrLoadgenerator
+		}
+		if len(testClient.EndpointUrls) < 1 {
+			return ErrTestEndpoint
+		}
+		for _, rawURL := range testClient.EndpointUrls {
+			parsedURL, err := url.ParseRequestURI(rawURL)
+			if err != nil || parsedURL.Scheme == "" || parsedURL.Host == "" {
+				return ErrValidURL
+			}
+		}
+	}
+	
+	// Validate ClientsNested (old format for tests)
+	for _, testClient := range perfTest.ClientsNested {
+		if testClient.Protocol == 0 {
 			return ErrProtocol
 		}
 		isValidGenerator := slices.Contains(validGenerators, testClient.LoadGenerator)

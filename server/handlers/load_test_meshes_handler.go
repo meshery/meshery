@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/meshery/meshery/server/models/performance"
 	"encoding/json"
 	"net/http"
 	"strings"
@@ -8,7 +9,7 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
-	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
+	
 	"github.com/meshery/meshery/server/models"
 )
 
@@ -20,11 +21,11 @@ type SMPMeshes struct {
 // GetSMPServiceMeshes handles the available meshes request
 func (h *Handler) GetSMPServiceMeshes(w http.ResponseWriter, _ *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
 	meshes := SMPMeshes{
-		AvailableMeshes: make([]string, 0, len(SMP.ServiceMesh_Type_name)),
+		AvailableMeshes: make([]string, 0, len(performance.ServiceMesh_Type_name)),
 	}
 
-	for _, v := range SMP.ServiceMesh_Type_name {
-		if v != SMP.ServiceMesh_INVALID_MESH.String() {
+	for _, v := range performance.ServiceMesh_Type_name {
+		if v != performance.ServiceMesh_INVALID_MESH && v != "UNSET" {
 			meshes.AvailableMeshes = append(meshes.AvailableMeshes, cases.Title(language.Und).String(strings.ToLower(strings.ReplaceAll(v, "_", " "))))
 		}
 	}

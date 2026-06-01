@@ -26,7 +26,7 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	smp "github.com/service-mesh-performance/service-mesh-performance/spec"
+	"github.com/meshery/meshery/server/models/performance"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -119,7 +119,7 @@ func validateAdapter(mctlCfg *config.MesheryCtlConfig, meshName string) error {
 func validateMesh(mctlCfg *config.MesheryCtlConfig, meshName string) (string, error) {
 	// if a mesh name is provided, verify it is valid
 	if meshName != "" {
-		if _, ok := smp.ServiceMesh_Type_value[meshName]; ok {
+		if _, ok := performance.ServiceMesh_Type_value[meshName]; ok {
 			return meshName, nil
 		}
 		// return an error if the provided mesh name is invalid

@@ -1,10 +1,11 @@
 package handlers
 
 import (
+	"github.com/meshery/meshery/server/models/performance"
 	"bytes"
 
 	"github.com/go-openapi/strfmt"
-	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
+	
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/environments"
@@ -151,12 +152,12 @@ type anonymousStatsParamsWrapper struct {
 
 type loadTestPreferencesRespWrapper struct {
 	// in: body
-	Body SMP.PerformanceTestConfig
+	Body performance.PerformanceTestConfig
 }
 
 type loadTestPreferencesParamsWrapper struct {
 	// in: body
-	Body SMP.PerformanceTestConfig
+	Body performance.PerformanceTestConfig
 }
 
 type UUIDParamsWrapper struct {
@@ -168,7 +169,7 @@ type perfTestParamsWrapper struct {
 	// in: query
 	Query *models.PerformanceTestParameters
 	// in: body
-	Body *SMP.PerformanceTestConfig
+	Body *performance.PerformanceTestConfig
 }
 
 type perfSingleResultRespWrapper struct {
