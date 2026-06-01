@@ -500,8 +500,19 @@ wasm-engine: dep-check-go
 		GOOS=js GOARCH=wasm go build -trimpath -ldflags="-s -w" -o policy_engine.wasm .
 	@cp -f "$$(go env GOROOT)/lib/wasm/wasm_exec.js" server/policies/wasm/wasm_exec.js
 	@echo "Patching wasm_exec.js to add process.env polyfill..."
-	@sed -i.bak '/chdir() { throw enosys(); },/a\		env: {},' server/policies/wasm/wasm_exec.js
-	@rm -f server/policies/wasm/wasm_exec.js.bak
+	@tmp=server/policies/wasm/wasm_exec.js.tmp && \
+		awk '{ \
+			print; \
+			if ($$0 ~ /chdir\(\) \{ throw enosys\(\); \},/) { \
+				print "\t\t\tenv: {},"; \
+				found = 1; \
+			} \
+		} END { exit(found ? 0 : 1) }' server/policies/wasm/wasm_exec.js > "$$tmp" && \
+		mv "$$tmp" server/policies/wasm/wasm_exec.js || { \
+			rm -f "$$tmp"; \
+			echo "Failed to patch server/policies/wasm/wasm_exec.js"; \
+			exit 1; \
+		}
 	@mkdir -p ui/public/static/wasm
 	@cp -f server/policies/wasm/policy_engine.wasm ui/public/static/wasm/policy_engine.wasm
 	@cp -f server/policies/wasm/wasm_exec.js ui/public/static/wasm/wasm_exec.js
