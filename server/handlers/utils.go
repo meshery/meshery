@@ -46,6 +46,11 @@ func writeJSONMessage(w http.ResponseWriter, payload any, status int) {
 	httputil.WriteJSONMessage(w, payload, status)
 }
 
+func writeJSONOperationResponse(w http.ResponseWriter, operationID string, status int) {
+	w.Header().Set("X-Meshery-Operation-Id", operationID)
+	writeJSONMessage(w, map[string]string{"operationId": operationID}, status)
+}
+
 func writeJSONEmptyObject(w http.ResponseWriter, status int) {
 	httputil.WriteJSONEmptyObject(w, status)
 }

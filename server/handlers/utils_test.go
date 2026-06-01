@@ -63,6 +63,26 @@ func TestHandlerWrappers_ForwardToHttputil(t *testing.T) {
 		}
 	})
 
+	t.Run("writeJSONOperationResponse", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		writeJSONOperationResponse(rec, "op-123", http.StatusAccepted)
+
+		if rec.Code != http.StatusAccepted {
+			t.Fatalf("expected 202, got %d", rec.Code)
+		}
+		if got := rec.Header().Get("X-Meshery-Operation-Id"); got != "op-123" {
+			t.Errorf("expected operation ID header, got %q", got)
+		}
+
+		var decoded map[string]string
+		if err := json.NewDecoder(rec.Body).Decode(&decoded); err != nil {
+			t.Fatalf("body did not parse as JSON: %v", err)
+		}
+		if decoded["operationId"] != "op-123" {
+			t.Errorf("expected camelCase operationId body field, got %q", decoded["operationId"])
+		}
+	})
+
 	t.Run("writeJSONEmptyObject", func(t *testing.T) {
 		rec := httptest.NewRecorder()
 		writeJSONEmptyObject(rec, http.StatusOK)
