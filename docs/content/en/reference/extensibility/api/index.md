@@ -79,6 +79,15 @@ The request will be sent to the Meshery API using the configured cookies for aut
 
 Each of the API endpoints are exposed through [server.go](https://github.com/meshery/meshery/blob/master/server/router/server.go). Endpoints are grouped by function (e.g. `/api/mesh` or `/api/perf`).
 
+### Operation IDs
+
+Long-running operation endpoints can return a server-generated `operationId` for correlation across
+client responses, Meshery events, and server logs. REST endpoints that expose an operation ID return
+it in the `operationId` response body field and the `X-Meshery-Operation-Id` response header.
+
+Clients should treat operation IDs as opaque correlation values. Operation IDs must not contain
+prompt content, credentials, kubeconfigs, API tokens, or other secret material.
+
 Alternatively, [Remote Providers](./providers) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
 
 ## Authorization
