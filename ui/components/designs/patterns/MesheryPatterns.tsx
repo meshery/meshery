@@ -39,7 +39,7 @@ import {
   useUnpublishPatternMutation,
   useUpdatePatternFileMutation,
   useUploadPatternFileMutation,
-  useEvaluateDesignRelationshipMutation,
+  useEvaluateRelationshipsMutation,
 } from '@/rtk-query/design';
 // import { useGetUserPrefQuery } from '@/rtk-query/user';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
@@ -112,7 +112,7 @@ function MesheryPatterns({
   const [updatePattern] = useUpdatePatternFileMutation();
   const [uploadPatternFile] = useUploadPatternFileMutation();
   const [deletePatternFile] = useDeletePatternFileMutation();
-  const [evaluateDesignRelationship] = useEvaluateDesignRelationshipMutation();
+  const [evaluateRelationships] = useEvaluateRelationshipsMutation();
 
   useEffect(() => {
     if (patternsData) {
@@ -199,7 +199,7 @@ function MesheryPatterns({
     uploadPatternFile,
     deployPatternMutation,
     undeployPatternMutation,
-    evaluateDesignRelationship,
+    evaluateRelationships,
     modalRef,
     meshModels,
     infoModal,

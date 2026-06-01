@@ -183,13 +183,6 @@ export const designsApi = api
       downloadPatternFile: builder.query({
         query: (queryArg) => mesheryApiPath(`pattern/${queryArg.id}`),
       }),
-      evaluateDesignRelationship: builder.mutation({
-        query: (queryArg) => ({
-          url: mesheryApiPath(`meshmodels/relationships/evaluate`),
-          method: 'POST',
-          body: queryArg.evaluateBody,
-        }),
-      }),
     }),
   });
 
@@ -219,5 +212,5 @@ export const {
   useUploadPatternFileMutation,
   useDeletePatternFileMutation,
   useDownloadPatternFileQuery,
-  useEvaluateDesignRelationshipMutation,
+  useEvaluateRelationshipsMutation,
 } = designsApi;

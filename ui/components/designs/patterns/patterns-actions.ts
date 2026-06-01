@@ -28,7 +28,7 @@ export function createPatternsActions(deps) {
     uploadPatternFile,
     deployPatternMutation,
     undeployPatternMutation,
-    evaluateDesignRelationship,
+    evaluateRelationships,
     // refs / state
     modalRef,
     meshModels,
@@ -396,11 +396,11 @@ export function createPatternsActions(deps) {
           ? yaml.load(pattern.patternFile)
           : pattern.patternFile;
 
-      evaluateDesignRelationship({
-        evaluateBody: JSON.stringify({
+      evaluateRelationships({
+        body: {
           design: { ...design, relationships: [] },
-          options: { returnDiffOnly: false, trace: false },
-        }),
+          options: { returnDiffOnly: false, enableTrace: false },
+        },
       })
         .unwrap()
         .then(() => {
