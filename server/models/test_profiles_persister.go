@@ -1,10 +1,11 @@
 package models
 
 import (
+	"github.com/meshery/meshery/server/models/performance"
 	"encoding/json"
 	"time"
 
-	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
+	
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/core"
 )
@@ -25,7 +26,7 @@ type UserTestProfiles struct {
 	Page        uint64                       `json:"page"`
 	PageSize    uint64                       `json:"pageSize"`
 	TotalCount  int                          `json:"totalCount"`
-	TestConfigs []*SMP.PerformanceTestConfig `json:"testConfigs"`
+	TestConfigs []*performance.PerformanceTestConfig `json:"testConfigs"`
 }
 
 // GetTestConfigs - gets result for the page and pageSize
@@ -37,11 +38,11 @@ func (s *TestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]byte, e
 	query := s.DB.Order(order)
 	total := int64(0)
 	s.DB.Model(&PerformanceTestConfig{}).Count(&total)
-	testConfigs := []*SMP.PerformanceTestConfig{}
+	testConfigs := []*performance.PerformanceTestConfig{}
 	var p []*PerformanceTestConfig
 	Paginate(uint(page), uint(pageSize))(query).Find(&p)
 	for _, config := range p {
-		var testConfig SMP.PerformanceTestConfig
+		var testConfig performance.PerformanceTestConfig
 		err := json.Unmarshal(config.PerformanceTestConfigBytes, &testConfig)
 		if err == nil {
 			testConfigs = append(testConfigs, &testConfig)
@@ -61,11 +62,11 @@ func (s *TestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]byte, e
 }
 
 // GetTestConfig - gets result for a specific key
-func (s *TestProfilesPersister) GetTestConfig(key core.Uuid) (*SMP.PerformanceTestConfig, error) {
+func (s *TestProfilesPersister) GetTestConfig(key core.Uuid) (*performance.PerformanceTestConfig, error) {
 	if s.DB == nil {
 		return nil, ErrDBConnection
 	}
-	testConfig := &SMP.PerformanceTestConfig{}
+	testConfig := &performance.PerformanceTestConfig{}
 	var u PerformanceTestConfig
 	err := s.DB.Model(&PerformanceTestConfig{}).Where("id = ?", key).First(&u).Error
 	if err != nil {

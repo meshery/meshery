@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/meshery/meshery/server/models/performance"
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
@@ -35,7 +36,7 @@ import (
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
-	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
+	
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 	"gorm.io/gorm"
@@ -642,7 +643,7 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, _ *http.Reque
 }
 
 // SMPTestConfigStore Stores the given PerformanceTestConfig into local datastore
-func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error) {
+func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *performance.PerformanceTestConfig) (string, error) {
 	uid, err := uuid.NewV4()
 	if err != nil {
 		return "", ErrGenerateUUID(err)
@@ -656,7 +657,7 @@ func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *S
 }
 
 // SMPTestConfigGet gets the given PerformanceTestConfig from the local datastore
-func (l *DefaultLocalProvider) SMPTestConfigGet(_ *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
+func (l *DefaultLocalProvider) SMPTestConfigGet(_ *http.Request, testUUID string) (*performance.PerformanceTestConfig, error) {
 	uid, err := uuid.FromString(testUUID)
 	if err != nil {
 		return nil, ErrGenerateUUID(err)

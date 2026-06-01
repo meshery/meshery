@@ -3,9 +3,8 @@ package models
 import (
 	"github.com/lib/pq"
 	"github.com/meshery/meshery/server/internal/sql"
+	"github.com/meshery/meshery/server/models/performance"
 	"github.com/meshery/schemas/models/core"
-
-	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 )
 
 // PerformanceProfile represents the performance profile that needs
@@ -35,6 +34,6 @@ type PerformanceProfile struct {
 }
 
 type PerformanceTestConfigFile struct {
-	Config      *SMP.PerformanceTestConfig `json:"test,omitempty"`
-	ServiceMesh *SMP.ServiceMesh           `json:"mesh,omitempty"`
+	Config      *performance.PerformanceTestConfig `json:"test,omitempty"`
+	ServiceMesh *performance.ServiceMesh           `json:"mesh,omitempty"`
 }

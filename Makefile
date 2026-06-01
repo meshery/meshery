@@ -496,11 +496,10 @@ policy-test:
 wasm-engine: dep-check-go
 	@echo "Building Go relationship engine wasm..."
 	@cd server/policies/wasm && \
-		go mod tidy && \
 		GOOS=js GOARCH=wasm go build -trimpath -ldflags="-s -w" -o policy_engine.wasm .
 	@cp -f "$$(go env GOROOT)/lib/wasm/wasm_exec.js" server/policies/wasm/wasm_exec.js
 	@echo "Patching wasm_exec.js to add process.env polyfill..."
-	@sed -i.bak '/chdir() { throw enosys(); },/a\		env: {},' server/policies/wasm/wasm_exec.js
+	@perl -0777 -i.bak -pe 's/chdir\(\) \{ throw enosys\(\); \},/chdir() { throw enosys(); },\n\t\tenv: {},/g' server/policies/wasm/wasm_exec.js
 	@rm -f server/policies/wasm/wasm_exec.js.bak
 	@mkdir -p ui/public/static/wasm
 	@cp -f server/policies/wasm/policy_engine.wasm ui/public/static/wasm/policy_engine.wasm

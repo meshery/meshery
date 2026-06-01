@@ -2,14 +2,13 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 
-	"google.golang.org/protobuf/encoding/protojson"
-
-	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/performance"
 )
 
 // UserTestPreferenceHandler is used for persisting load test preferences
@@ -41,8 +40,8 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
-	perfTest := &SMP.PerformanceTestConfig{}
-	if err = protojson.Unmarshal(body, perfTest); err != nil {
+	perfTest := &performance.PerformanceTestConfig{}
+	if err = json.Unmarshal(body, perfTest); err != nil {
 		obj := "the provided input"
 		h.log.Error(models.ErrUnmarshal(err, obj))
 		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
@@ -93,7 +92,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 			return
 		}
 		fmt.Printf("%v", testObj)
-		data, err := protojson.Marshal(testObj)
+		data, err := json.Marshal(testObj)
 		if err != nil {
 			h.log.Error(ErrReadConfig(err))
 			writeMeshkitError(w, ErrReadConfig(err), http.StatusInternalServerError)

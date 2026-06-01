@@ -1,10 +1,11 @@
 package models
 
 import (
+	"github.com/meshery/meshery/server/models/performance"
 	"net/http"
 	"strings"
 
-	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
+	
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/database"
@@ -462,8 +463,8 @@ type Provider interface {
 	// SetCurrentContext(token, id string) (K8sContext, error)
 	// GetCurrentContext(token string) (K8sContext, error)
 
-	SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error)
-	SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error)
+	SMPTestConfigStore(req *http.Request, perfConfig *performance.PerformanceTestConfig) (string, error)
+	SMPTestConfigGet(req *http.Request, testUUID string) (*performance.PerformanceTestConfig, error)
 	SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	SMPTestConfigDelete(req *http.Request, testUUID string) error
 
