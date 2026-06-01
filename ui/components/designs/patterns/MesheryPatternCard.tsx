@@ -8,6 +8,7 @@ import {
   Link,
   useTheme,
   InfoOutlinedIcon,
+  crimson,
 } from '@sistent/sistent';
 import { CustomTooltip, VisibilityChipMenu } from '@sistent/sistent';
 import {
@@ -204,7 +205,7 @@ function MesheryPatternCard_({
                   disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
                   data-testid="pattern-btn-unpublish"
                 >
-                  <PublicIcon style={iconMedium} />
+                  <PublicIcon fill={crimson[40]} style={iconMedium} />
                   <GridBtnText> Unpublish </GridBtnText>
                 </TooltipButton>
               )}
@@ -227,14 +228,14 @@ function MesheryPatternCard_({
                   },
                   {
                     label: 'Deploy',
-                    icon: <DoneAllIcon style={iconMedium} />,
+                    icon: <DoneAllIcon fill="currentColor" style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleDeploy),
                     disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
                     'data-testid': 'pattern-btn-deploy',
                   },
                   {
                     label: 'Undeploy',
-                    icon: <UndeployIcon fill={'currentColor'} style={iconMedium} />,
+                    icon: <UndeployIcon fill={crimson[40]} style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleUnDeploy),
                     disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
                     'data-testid': 'pattern-btn-undeploy',

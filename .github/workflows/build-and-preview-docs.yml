@@ -32,6 +32,11 @@ jobs:
       PREVIEW_RETENTION_LIMIT: 6
 
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        with:
+          egress-policy: audit
+          
       - name: Checkout PR code
         if: github.event.action != 'closed'
         uses: actions/checkout@v6
