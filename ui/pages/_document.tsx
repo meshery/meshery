@@ -132,6 +132,8 @@ class MesheryDocument extends Document<MyDocumentProps> {
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
           <script src="/loadingMessages.js"></script>
 
+          <script async src="/static/wasm/wasm_exec.js"></script>
+
           <PureHtmlLoadingScreen id={'PRE_REACT_LOADER'} message="" />
           <Main />
           <NextScript />
