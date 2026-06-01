@@ -292,7 +292,7 @@ describe('workspace endpoints', () => {
     expect(req.url).toContain('/api/workspaces');
   });
 
-  it('updateWorkspace PUTs against /api/workspaces/:id', async () => {
+  it('updateWorkspace PUTs against /api/workspaces/:workspaceId', async () => {
     fetchMock.mockResolvedValue(okResponse({}));
     const { api, store } = await setupStore();
     await store.dispatch(
@@ -306,7 +306,7 @@ describe('workspace endpoints', () => {
     expect(req.url).toContain('/api/workspaces/w-1');
   });
 
-  it('deleteWorkspace DELETEs /api/workspaces/:id', async () => {
+  it('deleteWorkspace DELETEs /api/workspaces/:workspaceId', async () => {
     fetchMock.mockResolvedValue(okResponse({}));
     const { api, store } = await setupStore();
     await store.dispatch(api.endpoints.deleteWorkspace.initiate({ workspaceId: 'w-2' }));
