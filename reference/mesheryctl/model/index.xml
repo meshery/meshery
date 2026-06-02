@@ -257,7 +257,7 @@ mesheryctl model init [model-name] --path [path-to-location] (default is current
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;List all registered models by pagingation (10 models per page)&lt;/p&gt;
+&lt;p&gt;List all registered models by pagination (10 models per page)&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl model list [flags]
@@ -405,7 +405,7 @@ mesheryctl model view [model-name]
 
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;View a specific model in specifed format&lt;/p&gt;
+&lt;p&gt;View a specific model in specified format&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl model view [model-name] --output-format [json|yaml]
