@@ -343,13 +343,13 @@ ui-provider-lint: dep-check-node
 ui-provider-test: dep-check-node
 	cd provider-ui; npm run test; cd ..
 
-## Buils all Meshery UIs  on your local machine.
-ui-build: ui-setup
+## Builds all Meshery UIs  on your local machine.
+ui-build: ui-setup wasm-engine
 	cd ui; npm run lint:fix || echo "Warning: Lint issues detected in ui but continuing build"; npm run build; cd ..
 	cd provider-ui; npm run lint:fix || echo "Warning: Lint issues detected in provider-ui but continuing build"; npm run build; cd ..
 
 ## Build only Meshery UI on your local machine.
-ui-meshery-build: dep-check-node
+ui-meshery-build: dep-check-node wasm-engine
 	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
@@ -491,6 +491,45 @@ policy-test:
 	@echo "Running OPA Rego policy tests..."
 	@cd server/policies && go test -v ./...
 
+## Build the Go relationship engine as a wasm binary for browser/extension use
+.PHONY: wasm-engine
+wasm-engine: dep-check-go
+	@echo "Building Go relationship engine wasm..."
+	@cd server/policies/wasm && \
+		go mod tidy && \
+		GOOS=js GOARCH=wasm go build -trimpath -ldflags="-s -w" -o policy_engine.wasm .
+	@cp -f "$$(go env GOROOT)/lib/wasm/wasm_exec.js" server/policies/wasm/wasm_exec.js
+	@echo "Patching wasm_exec.js to add process.env polyfill..."
+	@tmp=server/policies/wasm/wasm_exec.js.tmp && \
+		awk '{ \
+			print; \
+			if (index($$0, "chdir() { throw enosys(); },") > 0) { \
+				print "\t\t\tenv: {},"; \
+				found = 1; \
+			} \
+		} END { exit(found ? 0 : 1) }' server/policies/wasm/wasm_exec.js > "$$tmp" && \
+		mv "$$tmp" server/policies/wasm/wasm_exec.js || { \
+			rm -f "$$tmp"; \
+			echo "Failed to patch server/policies/wasm/wasm_exec.js"; \
+			exit 1; \
+		}
+	@mkdir -p ui/public/static/wasm
+	@cp -f server/policies/wasm/policy_engine.wasm ui/public/static/wasm/policy_engine.wasm
+	@cp -f server/policies/wasm/wasm_exec.js ui/public/static/wasm/wasm_exec.js
+	@if command -v wasm-opt >/dev/null 2>&1; then \
+		raw=$$(wc -c < server/policies/wasm/policy_engine.wasm); \
+		wasm-opt -Oz --enable-bulk-memory \
+			server/policies/wasm/policy_engine.wasm \
+			-o server/policies/wasm/policy_engine.wasm; \
+		opt=$$(wc -c < server/policies/wasm/policy_engine.wasm); \
+		gz=$$(gzip -9 -c server/policies/wasm/policy_engine.wasm | wc -c); \
+		printf "wasm-opt: %d -> %d bytes (gzip -9: %d)\n" $$raw $$opt $$gz; \
+	else \
+		echo "wasm-opt not found (brew install binaryen) — skipping size optimization"; \
+	fi
+	@echo "Wrote server/policies/wasm/{policy_engine.wasm,wasm_exec.js}"
+	@echo "Copied ui/public/static/wasm/{policy_engine.wasm,wasm_exec.js}"
+
 
 #-----------------------------------------------------------------------------
 # Testing - MeshSync Integration Tests (Go)
@@ -531,7 +570,7 @@ server-integration-tests-meshsync: docker-build server-integration-tests-meshsyn
 #-----------------------------------------------------------------------------
 # Testing - UI
 #-----------------------------------------------------------------------------
-.PHONY: ui-test-setup ui-test ui-test-e2e-ci
+.PHONY: ui-test-setup ui-test ui-test-e2e-full ui-test-e2e-local
 ## Install Playwright dependencies for UI tests
 ui-test-setup: dep-check-node
 	cd ui; npx playwright install chromium --with-deps; cd ..
@@ -541,10 +580,15 @@ ui-test: dep-check-node
 	 touch .env
 	 @set -a; source .env; set +a; cd ui; npm run test:e2e ; cd ..
 
-## Run Meshery UI End-to-End Tests in CI environment
-ui-test-e2e-ci: dep-check-node
+## Run Meshery UI End-to-End Tests in CI environment (Local and Remote Providers)
+ui-test-e2e-full: dep-check-node
 	 touch .env
-	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci ; cd ..
+	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci:full ; cd ..
+
+## Run Meshery UI End-to-End Tests in CI environment (Local Provider)
+ui-test-e2e-local: dep-check-node
+	 touch .env
+	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci:local ; cd ..
 
 #-----------------------------------------------------------------------------
 # Testing - Meshery CLI

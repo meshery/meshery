@@ -7,6 +7,7 @@ import {
   Grid2,
   FormControl,
   TableCell,
+  InfoOutlinedIcon,
 } from '@sistent/sistent';
 import { ConnectionStyledSelect } from './styles';
 import { FormatId } from '../data-formatter';
@@ -20,7 +21,6 @@ import MultiSelectWrapper from '../multi-select-wrapper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
-import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { formatDate } from '../data-formatter';
 import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
 import { CONNECTION_STATE_TRANSITIONS } from './ConnectionTable.constants';
@@ -484,7 +484,7 @@ export const useConnectionColumns = ({
           },
           customBodyRender: function CustomBody(_, tableMeta) {
             return (
-              <Box display={'flex'} justifyContent={'center'}>
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 {getColumnValue(tableMeta.rowData, 'kind', nextColumns) ===
                 CONNECTION_KINDS.KUBERNETES ? (
                   <IconButton

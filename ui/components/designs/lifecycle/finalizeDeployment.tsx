@@ -27,7 +27,9 @@ export const FinalizeDeployment = ({ design }) => {
   return (
     <Box>
       <StepHeading>Finalize Deployment</StepHeading>
-      <Box mt={2} display="flex" justifyContent="space-between" flexWrap={'wrap'} gap={2}>
+      <Box
+        sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}
+      >
         <StyledSummaryItem>
           <Typography color={palette.text.disabled} variant="textB2SemiBold">
             Environments
@@ -42,12 +44,14 @@ export const FinalizeDeployment = ({ design }) => {
           </Stack>
         </StyledSummaryItem>
         <StyledSummaryItem
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent={'center'}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
-          <Box display="flex" alignItems="baseline">
+          <Box sx={{ display: 'flex', alignItems: 'baseline' }}>
             <Typography
               sx={{
                 fontSize: '3.2rem',

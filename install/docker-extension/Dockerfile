@@ -12,7 +12,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
   --mount=type=cache,target=/root/.cache/go-build \
   make bin
 
-FROM node:20-alpine3.23 AS client-builder
+FROM --platform=$BUILDPLATFORM node:22-alpine3.23 AS client-builder
 WORKDIR /ui
 # cache packages in layer
 COPY ui/package.json ui/package-lock.json ./

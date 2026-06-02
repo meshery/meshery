@@ -24,6 +24,25 @@
     color: var(--color-grey-medium);                 
   }  
 
+  .related-reading {
+    margin-top: 1.2rem;
+
+    h2 {
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      gap: 0;
+      padding-inline-start: 1.6rem;
+    }
+
+    li {
+      line-height: 1.35rem !important;
+      margin: 0 0 0.35rem;
+      padding: 0.1rem 0.25rem !important;
+    }
+  }
+
   @media (max-width: 320px) {
     & > h1 {
       font-size: 1.5rem;
