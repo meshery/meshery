@@ -1,4 +1,4 @@
-import React, { useId } from 'react';
+import React, { useId, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import CreateSelect from 'react-select/creatable';
 import {
@@ -128,58 +128,61 @@ const ReactSelectWrapper = ({
 
   const inputId = useId();
 
-  const selectStyles = {
-    control: (base, state) => ({
-      ...base,
-      backgroundColor: theme.palette.background.paper,
-      borderColor: error
-        ? theme.palette.error.main
-        : state.isFocused
-          ? theme.palette.primary.main
-          : theme.palette.divider,
-      minHeight: 56,
-      borderRadius: 4,
-      boxShadow: 'none',
-      '&:hover': {
-        borderColor: theme.palette.primary.main,
-      },
-    }),
+  const selectStyles = useMemo(
+    () => ({
+      control: (base, state) => ({
+        ...base,
+        backgroundColor: theme.palette.background.paper,
+        borderColor: error
+          ? theme.palette.error.main
+          : state.isFocused
+            ? theme.palette.primary.main
+            : theme.palette.divider,
+        minHeight: 56,
+        borderRadius: 4,
+        boxShadow: 'none',
+        '&:hover': {
+          borderColor: theme.palette.primary.main,
+        },
+      }),
 
-    input: (base) => ({
-      ...base,
-      color: theme.palette.text.primary,
-      '& input': { font: 'inherit' },
-    }),
+      input: (base) => ({
+        ...base,
+        color: theme.palette.text.primary,
+        '& input': { font: 'inherit' },
+      }),
 
-    singleValue: (base) => ({
-      ...base,
-      color: theme.palette.text.primary,
-    }),
+      singleValue: (base) => ({
+        ...base,
+        color: theme.palette.text.primary,
+      }),
 
-    placeholder: (base) => ({
-      ...base,
-      color: theme.palette.text.disabled,
-    }),
+      placeholder: (base) => ({
+        ...base,
+        color: theme.palette.text.disabled,
+      }),
 
-    menu: (base) => ({
-      ...base,
-      zIndex: 9999,
-      backgroundColor: theme.palette.background.paper,
-    }),
+      menu: (base) => ({
+        ...base,
+        zIndex: 9999,
+        backgroundColor: theme.palette.background.paper,
+      }),
 
-    option: (base, state) => ({
-      ...base,
-      backgroundColor: state.isFocused
-        ? theme.palette.action.hover
-        : theme.palette.background.paper,
-      color: theme.palette.text.primary,
-      cursor: 'pointer',
-    }),
+      option: (base, state) => ({
+        ...base,
+        backgroundColor: state.isFocused
+          ? theme.palette.action.hover
+          : theme.palette.background.paper,
+        color: theme.palette.text.primary,
+        cursor: 'pointer',
+      }),
 
-    indicatorSeparator: () => ({
-      display: 'none',
+      indicatorSeparator: () => ({
+        display: 'none',
+      }),
     }),
-  };
+    [theme, error],
+  );
 
   return (
     <NoSsr>
