@@ -227,7 +227,7 @@ const ImportModelModal = React.memo(
           maxWidth="sm"
           title="Import Model"
           style={{
-            zIndex: 1500,
+            zIndex: 1600,
           }}
         >
           {activeStep === 0 ? (
@@ -264,7 +264,7 @@ const ImportModelModal = React.memo(
           maxWidth="sm"
           title="Import CSV"
           style={{
-            zIndex: 1500,
+            zIndex: 1600,
           }}
         >
           <CsvStepper handleClose={handleClose} />
