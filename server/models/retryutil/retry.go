@@ -1,127 +1,110 @@
 // Package retryutil provides exponential-backoff retry with a
 // context-aware API, wrapping github.com/cenkalti/backoff/v5.
 //
-// REVIEWERS: This is a TEMPORARY local shim until meshery/meshkit#1007
-// merges and github.com/meshery/meshkit/retry becomes available on the
-// upstream module. The fork-replace approach (../meshkit or a personal
-// fork pseudo-version) would break CI or can't be pushed upstream, so
-// we inline the same API here instead.
-//
-// Once meshkit#1007 merges:
-//   1. rm -rf server/models/retryutil/
-//   2. In server/models/remote_provider.go, flip the import back to
-//      github.com/meshery/meshkit/retry (remove the alias).
-//   3. Uncomment the replace in go.mod (or bump the require version).
-//
-// See CLEANUP.md in this directory for the exact commands.
+// This is a TEMPORARY local shim until meshery/meshkit#1007 merges and
+// github.com/meshery/meshkit/retry becomes available on the upstream
+// module. Once meshkit#1007 merges:
+//  1. rm -rf server/models/retryutil/
+//  2. In server/models/remote_provider.go, flip the import to
+//     github.com/meshery/meshkit/retry (remove the alias).
+//  3. Bump github.com/meshery/meshkit in go.mod.
 package retryutil
 
 import (
 	"context"
-	"time"
+	"errors"
+	"fmt"
+	"math"
 
 	"github.com/cenkalti/backoff/v5"
-	"github.com/meshery/meshkit/logger"
 )
 
 // Operation is a retryable closure.
 type Operation func(ctx context.Context) error
 
-// Config controls the retry budget and backoff parameters.
-type Config struct {
-	MaxAttempts     uint
-	InitialInterval time.Duration
-	MaxInterval     time.Duration
-	MaxElapsedTime  time.Duration
-	Multiplier      float64
-	Notifier        func(err error, wait time.Duration)
-}
-
-func defaultConfig() Config {
-	return Config{
-		InitialInterval: 500 * time.Millisecond,
-		MaxInterval:     30 * time.Second,
-		MaxElapsedTime:  2 * time.Minute,
-		Multiplier:      1.5,
-	}
-}
-
-// Option applies a configuration change.
-type Option func(*Config)
-
-// WithMaxAttempts sets a hard cap on total calls (includes first attempt).
-func WithMaxAttempts(n uint) Option {
-	return func(c *Config) { c.MaxAttempts = n }
-}
-
-// WithInitialInterval sets the base sleep between retries.
-func WithInitialInterval(d time.Duration) Option {
-	return func(c *Config) { c.InitialInterval = d }
-}
-
-// WithMaxInterval sets the upper bound on each sleep.
-func WithMaxInterval(d time.Duration) Option {
-	return func(c *Config) { c.MaxInterval = d }
-}
-
-// WithMaxElapsedTime sets the wall-clock deadline. Pass 0 to disable.
-func WithMaxElapsedTime(d time.Duration) Option {
-	return func(c *Config) { c.MaxElapsedTime = d }
-}
-
-// WithMultiplier sets the exponential growth factor.
-func WithMultiplier(m float64) Option {
-	return func(c *Config) {
-		if m <= 0 {
-			c.Multiplier = 1.5
-			return
-		}
-		c.Multiplier = m
-	}
-}
-
-// WithLogNotifier emits a warning log entry on each retry.
-func WithLogNotifier(log logger.Handler) Option {
-	return func(c *Config) {
-		c.Notifier = func(err error, wait time.Duration) {
-			log.Infof("retry: transient error; retrying in %s", wait.Round(time.Millisecond))
-			log.Warn(err)
-		}
-	}
-}
-
-// Do executes op with exponential backoff until success, context
-// cancellation, or budget exhaustion.
+// Do executes op with exponential backoff until success, permanent error,
+// context cancellation, or budget exhaustion. Config via opts (default:
+// 500ms initial, 1.5x growth, 30% jitter, 2min cap).
+//
+// When a ErrorClassifier is configured via WithErrorClassifier, every non-nil
+// error from op (except those explicitly wrapped with Permanent) is passed to
+// the classifier before the retry decision is made.
 func Do(ctx context.Context, op Operation, opts ...Option) error {
 	if err := ctx.Err(); err != nil {
-		return err
+		return ErrContext(err)
 	}
 	cfg := defaultConfig()
 	for _, o := range opts {
 		o(&cfg)
 	}
 
-	retryOpts := []backoff.RetryOption{
-		backoff.WithBackOff(newBackOff(cfg)),
-		backoff.WithMaxElapsedTime(cfg.MaxElapsedTime),
+	if err := validateConfig(cfg); err != nil {
+		return ErrConfig(err)
 	}
-	if cfg.Notifier != nil {
-		retryOpts = append(retryOpts, backoff.WithNotify(cfg.Notifier))
+
+	apply := op
+	if cfg.ErrorClassifier != nil {
+		apply = func(ctx context.Context) error {
+			err := op(ctx)
+			if err == nil {
+				return nil
+			}
+			var pErr *backoff.PermanentError
+			if errors.As(err, &pErr) {
+				return err
+			}
+			if cfg.ErrorClassifier(err) == DecisionStop {
+				return backoff.Permanent(err)
+			}
+			return err
+		}
+	}
+
+	retryOpts := []backoff.RetryOption{
+		backoff.WithBackOff(buildBackOff(cfg)),
+		backoff.WithMaxElapsedTime(cfg.MaxElapsedTime),
+		backoff.WithNotify(cfg.Notifier),
 	}
 	if cfg.MaxAttempts > 0 {
 		retryOpts = append(retryOpts, backoff.WithMaxTries(cfg.MaxAttempts))
 	}
 
 	_, err := backoff.Retry(ctx, func() (struct{}, error) {
-		return struct{}{}, op(ctx)
+		return struct{}{}, apply(ctx)
 	}, retryOpts...)
-	return err
+	if err != nil {
+		return ErrRetry(err)
+	}
+	return nil
 }
 
-func newBackOff(cfg Config) backoff.BackOff {
+func validateConfig(cfg Config) error {
+	if cfg.InitialInterval <= 0 {
+		return fmt.Errorf("%w: InitialInterval must be > 0, got %v", ErrInvalidConfig, cfg.InitialInterval)
+	}
+	if cfg.MaxInterval <= 0 {
+		return fmt.Errorf("%w: MaxInterval must be > 0, got %v", ErrInvalidConfig, cfg.MaxInterval)
+	}
+	if cfg.MaxInterval < cfg.InitialInterval {
+		return fmt.Errorf("%w: MaxInterval (%v) must be >= InitialInterval (%v)", ErrInvalidConfig, cfg.MaxInterval, cfg.InitialInterval)
+	}
+	if cfg.MaxElapsedTime < 0 {
+		return fmt.Errorf("%w: MaxElapsedTime must be >= 0, got %v", ErrInvalidConfig, cfg.MaxElapsedTime)
+	}
+	if math.IsNaN(cfg.Multiplier) || math.IsInf(cfg.Multiplier, 0) || cfg.Multiplier < 1 {
+		return fmt.Errorf("%w: Multiplier must be finite and >= 1, got %v", ErrInvalidConfig, cfg.Multiplier)
+	}
+	if math.IsNaN(cfg.RandomizationFactor) || cfg.RandomizationFactor < 0 || cfg.RandomizationFactor > 1 {
+		return fmt.Errorf("%w: RandomizationFactor must be finite and in [0,1], got %v", ErrInvalidConfig, cfg.RandomizationFactor)
+	}
+	return nil
+}
+
+func buildBackOff(cfg Config) backoff.BackOff {
 	b := backoff.NewExponentialBackOff()
 	b.InitialInterval = cfg.InitialInterval
 	b.MaxInterval = cfg.MaxInterval
 	b.Multiplier = cfg.Multiplier
+	b.RandomizationFactor = cfg.RandomizationFactor
 	return b
 }
