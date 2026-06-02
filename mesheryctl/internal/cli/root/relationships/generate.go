@@ -1,14 +1,17 @@
 package relationships
 
 import (
+	"encoding/csv"
 	"fmt"
-
+	"github.com/gocarina/gocsv"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkit "github.com/meshery/meshkit/utils"
-	meshkitcsv "github.com/meshery/meshkit/utils/csv"
+
 	"github.com/spf13/cobra"
 	"google.golang.org/api/sheets/v4"
+	"os"
 )
 
 type cmdRelationshipGenerateFlag struct {
@@ -104,57 +107,41 @@ func init() {
 }
 
 func generateRelationshipsFromCSV(filePath string) ([]CustomValueRange, error) {
-	ch := make(chan CustomValueRange, 1)
-	errorChan := make(chan error, 1)
-
-	csvParser, err := meshkitcsv.NewCSVParser[CustomValueRange](filePath, 1, nil, func(_ []string, row []string) bool {
-		return len(row) > 0 && row[0] != ""
-	})
+	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, err
+		return nil, utils.ErrFileRead(err)
+	}
+	defer file.Close()
+
+	var relationships []CustomValueRange
+
+	reader := csv.NewReader(file)
+
+	_, err = reader.Read()
+	if err != nil {
+		return nil, utils.ErrFileRead(err)
 	}
 
-	var customResp []CustomValueRange
-
-	go func() {
-		if err := csvParser.Parse(ch, errorChan); err != nil {
-			errorChan <- err
-		}
-	}()
-
-	for {
-		select {
-		case data, ok := <-ch:
-			if !ok {
-				ch = nil
-				break
-			}
-			customResp = append(customResp, data)
-		case err, ok := <-errorChan:
-			if ok && err != nil {
-				return nil, err
-			}
-		case <-csvParser.Context.Done():
-			if ch != nil {
-			drain:
-				for {
-					select {
-					case data, ok := <-ch:
-						if !ok {
-							break drain
-						}
-						customResp = append(customResp, data)
-					default:
-						break drain
-					}
-				}
-			}
-			if len(customResp) == 0 {
-				return nil, ErrEmptyCSVData(fmt.Errorf("no valid relationship rows found in CSV file: %s", filePath))
-			}
-			return customResp, nil
-		}
+	if err := gocsv.UnmarshalCSV(reader, &relationships); err != nil {
+		return nil, utils.ErrFileRead(err)
 	}
+
+	filtered := make([]CustomValueRange, 0)
+
+	for _, r := range relationships {
+		if r.Model == "" {
+			continue
+		}
+		filtered = append(filtered, r)
+	}
+
+	if len(filtered) == 0 {
+		return nil, ErrEmptyCSVData(
+			fmt.Errorf("no valid relationship rows found in CSV file: %s", filePath),
+		)
+	}
+
+	return filtered, nil
 }
 
 func processSheetData(resp *sheets.ValueRange, jsonFilePath string) error {
@@ -196,7 +183,7 @@ func processSheetData(resp *sheets.ValueRange, jsonFilePath string) error {
 			CompleteDefinition:   getCol(row, "CompleteDefinition"),
 			VisualizationExample: getCol(row, "VisualizationExample"),
 		})
-	}
+	}	
 
 	return saveRelationshipsJSON(customResp, jsonFilePath)
 }
