@@ -10,7 +10,7 @@ import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
 
-export const StorageTableConfig = (
+export const useStorageTableConfig = (
   switchView,
   meshSyncResources,
   k8sConfig,
