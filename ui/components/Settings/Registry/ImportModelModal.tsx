@@ -99,6 +99,7 @@ type ImportModelModalProps = {
 
 const ImportModelModal = React.memo(
   ({ isImportModalOpen, setIsImportModalOpen }: ImportModelModalProps) => {
+    const theme = useTheme();
     const [importModalDescription, setImportModalDescription] = useState('');
     const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
     const [importModelReq] = useImportMeshModelMutation();
@@ -227,7 +228,7 @@ const ImportModelModal = React.memo(
           maxWidth="sm"
           title="Import Model"
           style={{
-            zIndex: 1600,
+            zIndex: theme.zIndex.modal + 100,
           }}
         >
           {activeStep === 0 ? (
@@ -264,7 +265,7 @@ const ImportModelModal = React.memo(
           maxWidth="sm"
           title="Import CSV"
           style={{
-            zIndex: 1600,
+            zIndex: theme.zIndex.modal + 100,
           }}
         >
           <CsvStepper handleClose={handleClose} />

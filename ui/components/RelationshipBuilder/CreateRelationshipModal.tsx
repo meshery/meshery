@@ -1,8 +1,9 @@
 import React from 'react';
-import { Modal } from '@sistent/sistent';
+import { Modal, useTheme } from '@sistent/sistent';
 import RelationshipFormStepper from './RelationshipFormStepper';
 
 const CreateRelationshipModal = ({ isRelationshipModalOpen, setIsRelationshipModalOpen }) => {
+  const theme = useTheme();
   return (
     <Modal
       maxWidth="md"
@@ -10,7 +11,7 @@ const CreateRelationshipModal = ({ isRelationshipModalOpen, setIsRelationshipMod
       closeModal={() => setIsRelationshipModalOpen(false)}
       title="Create Relationship"
       style={{
-        zIndex: 1600,
+        zIndex: theme.zIndex.modal + 100,
       }}
       disableBackdropClick={false}
       disableEscapeKeyDown={false}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal } from '@sistent/sistent';
+import { Modal, useTheme } from '@sistent/sistent';
 import UrlStepper from './Stepper/UrlStepper';
 
 type CreateModelModalProps = {
@@ -8,6 +8,7 @@ type CreateModelModalProps = {
 };
 
 const CreateModelModal = ({ isCreateModalOpen, setIsCreateModalOpen }: CreateModelModalProps) => {
+  const theme = useTheme();
   return (
     <Modal
       maxWidth="sm"
@@ -15,7 +16,7 @@ const CreateModelModal = ({ isCreateModalOpen, setIsCreateModalOpen }: CreateMod
       closeModal={() => setIsCreateModalOpen(false)}
       title="Create Model"
       style={{
-        zIndex: 1600,
+        zIndex: theme.zIndex.modal + 100,
       }}
     >
       <UrlStepper handleClose={() => setIsCreateModalOpen(false)} />
