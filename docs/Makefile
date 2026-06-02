@@ -37,6 +37,17 @@ serve: check-deps check-go
 build: check-deps check-go
 	npm run dev:build
 
+## Build docs.meshery.io for production with optional base URL.
+build-production: check-deps
+	set -e; \
+	if [ -n "$(BASE_URL)" ]; then \
+		base_url="$(BASE_URL)"; \
+		base_url="$${base_url%/}/"; \
+		npm run build:production -- --gc --baseURL "$$base_url"; \
+	else \
+		npm run build:production -- --gc; \
+	fi
+
 ## Empty build cache and run docs.meshery.io on your local machine.
 clean: check-deps
 	npm run dev:clean
@@ -123,6 +134,7 @@ docker:
 	setup \
 	check-deps \
 	build \
+	build-production \
 	site \
 	serve \
 	clean \

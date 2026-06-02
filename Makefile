@@ -395,15 +395,7 @@ docs-build:
 ## Build Meshery Docs for production. BASE_URL is optional.
 ## Example: make docs-build-production BASE_URL=https://example.com
 docs-build-production:
-	cd docs; \
-	hugo_args="--gc --minify"; \
-	if [ -n "$(BASE_URL)" ]; then \
-		base_url="$(BASE_URL)"; \
-		base_url="$${base_url%/}/"; \
-		hugo_args="$$hugo_args --baseURL $$base_url"; \
-	fi; \
-	echo "Running: hugo $$hugo_args"; \
-	hugo $$hugo_args
+	@$(MAKE) -C docs build-production BASE_URL="$(BASE_URL)"
 
 ## Run Meshery Docs in a Docker container. Listen for changes.
 docs-docker:
