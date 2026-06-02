@@ -133,11 +133,7 @@ components:
   colorIcon: content/en/extensions/models/gitlab/components/security-policy/icons/color/security-policy-color.svg
   whiteIcon: content/en/extensions/models/gitlab/components/security-policy/icons/white/security-policy-white.svg
   description: 
-- name: listener-set
-  colorIcon: content/en/extensions/models/gitlab/components/listener-set/icons/color/listener-set-color.svg
-  whiteIcon: content/en/extensions/models/gitlab/components/listener-set/icons/white/listener-set-white.svg
-  description: 
-components-count: 32
+components-count: 31
 relationships: 
 relationship-count: 0
 featureList: [
