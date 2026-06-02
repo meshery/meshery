@@ -10,6 +10,7 @@
     "lint:fix": "eslint --cache --fix --ext .js,.jsx,.ts,.tsx .",
     "format": "npx prettier --write \"**/*.{ts,tsx,js,jsx,md,json}\"",
     "build": "npm run clean && cross-env next build",
+    "build-fast": "cross-env NODE_OPTIONS='--max-old-space-size=12288' next build",
     "start": "NODE_ENV=production node ui_dev_server.js",
     "export": "node scripts/export-shim.js",
     "export-playground": "npm run clean && cross-env PLAYGROUND=true next build && rm -rf playground && mv out playground",

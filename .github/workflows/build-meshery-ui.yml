@@ -25,7 +25,20 @@ jobs:
           check-latest: true
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
-          
+
+      - name: Setup Go
+        uses: actions/setup-go@master
+        with:
+          go-version: "1.25"
+          cache-dependency-path: "**/*.sum"
+          cache: true
+
+      - name: Install binaryen (wasm-opt)
+        run: sudo apt-get update && sudo apt-get install -y binaryen
+
+      - name: Build client-side relationship policy engine (WASM)
+        run: make wasm-engine
+
       - name: Build UIs
         run: make ui-build
           
