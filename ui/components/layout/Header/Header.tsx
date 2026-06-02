@@ -35,9 +35,8 @@ import {
   useMediaQuery,
   SearchIcon,
   SettingsIcon,
+  FilterAllIcon,
 } from '@sistent/sistent';
-// eslint-disable-next-line no-restricted-imports
-import FilterNoneIcon from '@mui/icons-material/FilterNone';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import OrganizationAndWorkSpaceSwitcher from '../../workspaces/SpacesSwitcher/SpaceSwitcher';
@@ -340,7 +339,7 @@ function K8sContextMenu({
                           marginTop: '1rem',
                         }}
                       >
-                        <div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
                           <>
                             <Checkbox
                               checked={activeContexts.includes('all')}
@@ -349,13 +348,13 @@ function K8sContextMenu({
                                   ? setActiveContexts([])
                                   : setActiveContexts('all')
                               }
-                              icon={<FilterNoneIcon style={{ opacity: 0.4 }} />}
-                              checkedIcon={<FilterNoneIcon />}
-                              indeterminateIcon={<FilterNoneIcon style={{ opacity: 0.7 }} />}
+                              icon={<FilterAllIcon style={{ opacity: 0.4 }} />}
                               inputProps={{ 'aria-label': 'select all contexts' }}
                             />
                           </>
-                          <span style={{ fontWeight: 'bolder' }}>select all</span>
+                          <span style={{ fontWeight: 'bolder', whiteSpace: 'nowrap' }}>
+                            select all
+                          </span>
                         </div>
                         <CustomTooltip title="Configure Connections">
                           <div>
