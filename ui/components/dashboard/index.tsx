@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useNotificationHandlers } from '../../utils/hooks/useNotification';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
-import ResourcesSubMenu from './resources/resources-sub-menu';
+import ResourcesSubMenu, { CRDsResourcesSubMenu } from './resources/resources-sub-menu';
 import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 import MesheryIcon from './images/meshery-icon';
 import { TabPanel } from './tabpanel';
@@ -442,43 +442,42 @@ const Dashboard = () => {
         </TabPanel>
 
         {Object.keys(ResourcesConfig).map((resource, idx) => {
-          let CRDsKeys = [];
           const isCRDS = resource === 'CRDS';
-          if (isCRDS) {
-            const TableValue = Object.values(
-              ResourcesConfig[resource].tableConfig(
-                null,
-                null,
-                k8sConfig,
-                null,
-                resource,
-                selectedK8sContexts,
-              ),
-            );
-            CRDsKeys = TableValue.map((item) => _.pick(item, ['name', 'model']));
-          }
+          const config = ResourcesConfig[resource];
 
           return (
             <TabPanel value={resourceCategory} index={resource} key={`${resource}-${idx}`}>
-              {ResourcesConfig[resource].submenu ? (
-                <ResourcesSubMenu
-                  key={idx}
-                  resource={ResourcesConfig[resource]}
-                  selectedResource={selectedResource}
-                  handleChangeSelectedResource={handleChangeSelectedResource}
-                  k8sConfig={k8sConfig}
-                  selectedK8sContexts={selectedK8sContexts}
-                  CRDsKeys={CRDsKeys}
-                  isCRDS={isCRDS}
-                />
+              {config.submenu ? (
+                // CRDs resolve their kinds via a hook, so they render through a
+                // dedicated component that invokes that hook at its own top level
+                // rather than the parent calling it inside this render loop.
+                isCRDS ? (
+                  <CRDsResourcesSubMenu
+                    key={idx}
+                    resource={config}
+                    selectedResource={selectedResource}
+                    handleChangeSelectedResource={handleChangeSelectedResource}
+                    k8sConfig={k8sConfig}
+                    selectedK8sContexts={selectedK8sContexts}
+                  />
+                ) : (
+                  <ResourcesSubMenu
+                    key={idx}
+                    resource={config}
+                    selectedResource={selectedResource}
+                    handleChangeSelectedResource={handleChangeSelectedResource}
+                    k8sConfig={k8sConfig}
+                    selectedK8sContexts={selectedK8sContexts}
+                  />
+                )
               ) : (
                 <ResourcesTable
                   key={idx}
                   workloadType={resource}
                   k8sConfig={k8sConfig}
                   selectedK8sContexts={selectedK8sContexts}
-                  resourceConfig={ResourcesConfig[resource].tableConfig}
-                  menu={ResourcesConfig[resource].submenu}
+                  useResourceConfig={config.useTableConfig}
+                  submenu={config.submenu}
                 />
               )}
             </TabPanel>
