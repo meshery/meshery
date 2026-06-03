@@ -288,7 +288,10 @@ const MesheryPerformanceComponent_ = (props) => {
 
   function handleSuccess() {
     return (result) => {
-      if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined') {
+      if (
+        typeof result !== 'undefined' &&
+        typeof (result.runnerResults ?? result.runner_results) !== 'undefined'
+      ) {
         notify({
           message: 'fetched the data.',
           event_type: EVENT_TYPES.SUCCESS,
