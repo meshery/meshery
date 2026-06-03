@@ -26,12 +26,12 @@ import {
   CustomTooltip,
   Drawer,
   DatabaseIcon,
-  SyncAltIcon,
   DARK_BLUE_GRAY,
   useMediaQuery,
 } from '@sistent/sistent';
 import { styled, useTheme } from '@/theme';
 import { Modal } from '@/components/shared/Modal';
+import ConnectionIcon from '@/assets/icons/Connection';
 import ComponentIcon from '@/assets/icons/Component';
 import MeshModelComponent from './MeshModelComponent';
 import { iconMedium, iconSmall } from 'css/icons.styles';
@@ -181,7 +181,14 @@ const getNavItems = (theme: ReturnType<typeof useTheme>, counts: CountSummary): 
   {
     id: RELATIONSHIPS,
     label: `Relationships (${counts.relationships})`,
-    icon: <SyncAltIcon {...iconSmall} fill={theme.palette.icon.default} />,
+    icon: (
+      <ConnectionIcon
+        {...iconSmall}
+        fill={theme.palette.icon.default}
+        primaryFill={theme.palette.icon.default}
+        secondaryFill={theme.palette.icon.default}
+      />
+    ),
   },
   {
     id: REGISTRANTS,
