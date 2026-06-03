@@ -35122,7 +35122,33 @@ mesheryctl design deploy -f [filepath] -s [source type]
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl design deploy
-&lt;img class="content-image" src="./reference/images/pattern-onboard.png" alt="pattern-onboard-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-design-export</title><link>/reference/mesheryctl/design/export/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/export/</guid><description>&lt;h1 id="mesheryctl-design-export"&gt;
+&lt;img class="content-image" src="./reference/images/pattern-onboard.png" alt="pattern-onboard-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-design-evaluate</title><link>/reference/mesheryctl/design/evaluate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/evaluate/</guid><description>&lt;h1 id="mesheryctl-design-evaluate"&gt;
+	mesheryctl design evaluate
+&lt;/h1&gt;
+&lt;p&gt;Evaluate a design&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Evaluate a design by running relationship evaluation policies.
+The evaluated design is saved to the specified output file while an overview
+of evaluation actions is printed to the terminal.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design evaluate [ID] [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Evaluate a design from a file and save the result&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design evaluate -f design.yaml -o evaluated-design.yaml
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Evaluate a design by ID&lt;/p&gt;</description></item><item><title>mesheryctl-design-export</title><link>/reference/mesheryctl/design/export/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/export/</guid><description>&lt;h1 id="mesheryctl-design-export"&gt;
 	mesheryctl design export
 &lt;/h1&gt;
 &lt;p&gt;Export a design from Meshery&lt;/p&gt;
@@ -35945,7 +35971,7 @@ mesheryctl model init [model-name] --path [path-to-location] (default is current
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;List all registered models by pagingation (10 models per page)&lt;/p&gt;
+&lt;p&gt;List all registered models by pagination (10 models per page)&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl model list [flags]
@@ -36093,7 +36119,7 @@ mesheryctl model view [model-name]
 
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;View a specific model in specifed format&lt;/p&gt;
+&lt;p&gt;View a specific model in specified format&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl model view [model-name] --output-format [json|yaml]
@@ -36404,7 +36430,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;Generate relationships documents from the google spreadsheets&lt;/p&gt;
+&lt;p&gt;Generate relationships documents from a CSV file or Google Spreadsheet&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl relationship generate [flags]
@@ -36414,7 +36440,21 @@ mesheryctl relationship generate [flags]
 &lt;h2 id="examples"&gt;
 	Examples
 &lt;/h2&gt;
-&lt;p&gt;Generate relationships documentss&lt;/p&gt;
+&lt;p&gt;Generate relationships documents from a CSV file&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship generate --file &lt;path-to-relationships.csv&gt;
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Generate relationships documents with a custom output path&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship generate --file &lt;path-to-relationships.csv&gt; --output &lt;path-to-output.json&gt;
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Generate relationships documents from a Google Spreadsheet&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
@@ -36426,7 +36466,9 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+ -f, --file string path to the relationships CSV file
  -h, --help help for generate
+ -o, --output string path to the output JSON file
  --spreadsheet-cred string base64 encoded credential to download the spreadsheet
  --spreadsheet-id string spreadsheet ID for the integration spreadsheet
 
@@ -37039,7 +37081,7 @@ mesheryctl system context view
 &lt;p&gt;View a specified context&lt;/p&gt;</description></item><item><title>mesheryctl-system-dashboard</title><link>/reference/mesheryctl/system/dashboard/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/dashboard/</guid><description>&lt;h1 id="mesheryctl-system-dashboard"&gt;
 	mesheryctl system dashboard
 &lt;/h1&gt;
-&lt;p&gt;Open the Meshery dashboard in browser.&lt;/p&gt;
+&lt;p&gt;Open Meshery UI in browser.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl system dashboard [flags]
@@ -37049,28 +37091,28 @@ mesheryctl system dashboard [flags]
 &lt;h2 id="examples"&gt;
 	Examples
 &lt;/h2&gt;
-&lt;p&gt;Open the Meshery dashboard in browser&lt;/p&gt;
+&lt;p&gt;Open Meshery UI in browser&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl system dashboard
 
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;Open the Meshery dashboard in browser and use port-forwarding (if default port is taken already)&lt;/p&gt;
+&lt;p&gt;Open Meshery UI in browser and use port-forwarding (if default port is taken already)&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl system dashboard --port-forward
 
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;Open the Meshery dashboard in browser and use port-forwarding, listen on port 9081 locally, forwarding traffic to meshery server in the pod&lt;/p&gt;
+&lt;p&gt;Open Meshery UI in browser and use port-forwarding, listen on port 9081 locally, forwarding traffic to meshery server in the pod&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl system dashboard --port-forward -p 9081
 
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;(optional) skip opening of the Meshery dashboard in browser.&lt;/p&gt;</description></item><item><title>mesheryctl-system-delete</title><link>/reference/mesheryctl/system/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/delete/</guid><description>&lt;h1 id="mesheryctl-system-delete"&gt;
+&lt;p&gt;(optional) skip opening of MesheryUI in browser.&lt;/p&gt;</description></item><item><title>mesheryctl-system-delete</title><link>/reference/mesheryctl/system/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/system/delete/</guid><description>&lt;h1 id="mesheryctl-system-delete"&gt;
 	mesheryctl system delete
 &lt;/h1&gt;
 &lt;p&gt;Delete Meshery containers&lt;/p&gt;

@@ -5,7 +5,7 @@
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;Generate relationships documents from the google spreadsheets&lt;/p&gt;
+&lt;p&gt;Generate relationships documents from a CSV file or Google Spreadsheet&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl relationship generate [flags]
@@ -15,7 +15,21 @@ mesheryctl relationship generate [flags]
 &lt;h2 id="examples"&gt;
 	Examples
 &lt;/h2&gt;
-&lt;p&gt;Generate relationships documentss&lt;/p&gt;
+&lt;p&gt;Generate relationships documents from a CSV file&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship generate --file &lt;path-to-relationships.csv&gt;
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Generate relationships documents with a custom output path&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl relationship generate --file &lt;path-to-relationships.csv&gt; --output &lt;path-to-output.json&gt;
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Generate relationships documents from a Google Spreadsheet&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
@@ -27,7 +41,9 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+ -f, --file string path to the relationships CSV file
  -h, --help help for generate
+ -o, --output string path to the output JSON file
  --spreadsheet-cred string base64 encoded credential to download the spreadsheet
  --spreadsheet-id string spreadsheet ID for the integration spreadsheet
 

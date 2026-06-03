@@ -154,7 +154,33 @@ mesheryctl design deploy -f [filepath] -s [source type]
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl design deploy
-&lt;img class="content-image" src="../../../reference/images/pattern-onboard.png" alt="pattern-onboard-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-design-export</title><link>/reference/mesheryctl/design/export/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/export/</guid><description>&lt;h1 id="mesheryctl-design-export"&gt;
+&lt;img class="content-image" src="../../../reference/images/pattern-onboard.png" alt="pattern-onboard-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-design-evaluate</title><link>/reference/mesheryctl/design/evaluate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/evaluate/</guid><description>&lt;h1 id="mesheryctl-design-evaluate"&gt;
+	mesheryctl design evaluate
+&lt;/h1&gt;
+&lt;p&gt;Evaluate a design&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Evaluate a design by running relationship evaluation policies.
+The evaluated design is saved to the specified output file while an overview
+of evaluation actions is printed to the terminal.&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design evaluate [ID] [flags]
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;h2 id="examples"&gt;
+	Examples
+&lt;/h2&gt;
+&lt;p&gt;Evaluate a design from a file and save the result&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+mesheryctl design evaluate -f design.yaml -o evaluated-design.yaml
+
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;p&gt;Evaluate a design by ID&lt;/p&gt;</description></item><item><title>mesheryctl-design-export</title><link>/reference/mesheryctl/design/export/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/mesheryctl/design/export/</guid><description>&lt;h1 id="mesheryctl-design-export"&gt;
 	mesheryctl design export
 &lt;/h1&gt;
 &lt;p&gt;Export a design from Meshery&lt;/p&gt;
