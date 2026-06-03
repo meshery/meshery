@@ -4,11 +4,12 @@ import (
 	"bytes"
 
 	"github.com/go-openapi/strfmt"
-	SMP "github.com/layer5io/service-mesh-performance/spec"
+	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/models/events"
+	system "github.com/meshery/schemas/models/v1beta1/system"
 	workspace "github.com/meshery/schemas/models/v1beta1/workspace"
 	v1 "k8s.io/api/core/v1"
 )
@@ -229,7 +230,7 @@ type providerPropertiesRespWrapper struct {
 
 type mesheryVersionRespWrapper struct {
 	// in: body
-	Body Version
+	Body system.SystemVersion
 }
 
 type applicationFilesResponseWrapper struct {
@@ -331,7 +332,7 @@ type meshmodelRegistrantsResponseWrapper struct {
 
 type systemDatabaseResponseWrapper struct {
 	// in: body
-	Body *models.DatabaseSummary
+	Body *system.SystemDatabaseSummary
 }
 
 type systemK8sContextsResponseWrapper struct {

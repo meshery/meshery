@@ -1,8 +1,8 @@
 import { expect, Page, Response } from '@playwright/test';
 import { test } from './fixtures/project';
 import { ENV } from './env';
-import { waitForSnackBar } from './utils/waitForSnackBar';
 import { DashboardPage } from './pages/DashboardPage';
+import { waitForSnackBar } from './utils/waitForSnackBar';
 
 // Define the shape of the transition test objects
 interface TransitionTest {
@@ -47,11 +47,22 @@ const transitionTests: TransitionTest[] = [
 ];
 
 test.describe.serial('Connection Management Tests', () => {
+  // The shared beforeEach calls dashboardPage.navigateToDashboard() and
+  // navigateToConnections(), each of which internally awaits two visibility
+  // checks with a 120s timeout. Under the default BASE_TIMEOUT=60s the hook
+  // itself dies before those waits can resolve when CI is under load.
+  // Three minutes is enough headroom for a slow dashboard render plus the
+  // connections page mount and its initial API response.
+  test.describe.configure({ timeout: 180_000 });
+
   test.beforeEach(async ({ page }) => {
+    const initialConnectionsRes = waitForConnectionsApiResponse(page);
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToConnections();
-    await page.getByTestId('connection-addCluster').waitFor();
+    await page.waitForURL(/\/management\/connections/);
+    await initialConnectionsRes;
+    await expect(page.getByTestId('ConnectionTable-search')).toBeVisible();
   });
 
   test('Verify that UI components are displayed', async ({ page }) => {

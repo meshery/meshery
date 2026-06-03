@@ -280,7 +280,7 @@
         "long_description": "SMI conformance tests failed",
         "short_description": "SMI conformance tests failed",
         "probable_cause": "",
-        "suggested_remediation": "Join https://layer5io.slack.com/archives/C010H0HE2E6"
+        "suggested_remediation": "Join https://mesheryio.slack.com/archives/C010H0HE2E6"
       },
       "1033": {
         "name": "ErrValidateAdapterCode",
@@ -1973,6 +1973,87 @@
         "short_description": "[System] Minikube kubeconfig error",
         "probable_cause": "",
         "suggested_remediation": "Ensure minikube is running and that your local kubeconfig file is accessible at the default location"
+      },
+      "1240": {
+        "name": "ErrValidateVersionCode",
+        "code": "1240",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error validating Meshery version",
+        "probable_cause": "The version in the context is invalid or unsupported",
+        "suggested_remediation": ""
+      },
+      "1241": {
+        "name": "ErrUpdateContainersCode",
+        "code": "1241",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error updating Meshery containers",
+        "probable_cause": "Failed to update Meshery container images",
+        "suggested_remediation": "Ensure Docker is running and you have a stable network connection"
+      },
+      "1242": {
+        "name": "ErrFetchContainersCode",
+        "code": "1242",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error fetching container status",
+        "probable_cause": "Failed to fetch the list of running containers",
+        "suggested_remediation": "Ensure Docker is running and docker-compose is available"
+      },
+      "1243": {
+        "name": "ErrInvalidComponentCode",
+        "code": "1243",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid component specified",
+        "probable_cause": "An invalid or unsupported component name was provided in the context",
+        "suggested_remediation": "Verify the component name in your meshconfig context. Run `mesheryctl system context view` to check configured components."
+      },
+      "1244": {
+        "name": "ErrMesheryEndpointNotAccessibleCode",
+        "code": "1244",
+        "severity": "Alert",
+        "long_description": "Meshery endpoint did not become accessible within the expected time",
+        "short_description": "Meshery endpoint is not yet accessible",
+        "probable_cause": "Meshery server may still be initializing or failed to start",
+        "suggested_remediation": "Check the status later with `mesheryctl system status`"
+      },
+      "1245": {
+        "name": "ErrPerfProfileServerCode",
+        "code": "1245",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Server error while saving performance profile",
+        "probable_cause": "Provider Database could be down or not reachable",
+        "suggested_remediation": "Make sure provider is up and reachable"
+      },
+      "1246": {
+        "name": "ErrEmptyCSVDataCode",
+        "code": "1246",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid or empty CSV file provided",
+        "probable_cause": "The CSV file must contain valid relationship entries with the required headers.",
+        "suggested_remediation": "Ensure the CSV file contains two header rows and at least one data row with a minimum of 15 columns. Refer to the Meshery relationship CSV template: \\\"https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv\\"
+      },
+      "1247": {
+        "name": "ErrEvaluateDesignCode",
+        "code": "1247",
+        "severity": "Alert",
+        "long_description": "Exactly one of a design file path (-f) or a design ID must be provided, not both",
+        "short_description": "Design not specified for evaluation",
+        "probable_cause": "A design must be specified either by file path (-f) or by ID as an argument, but not both simultaneously",
+        "suggested_remediation": "Provide a design file using '-f' flag or pass a design ID as an argument (not both).\\n\\nUsage: mesheryctl design evaluate [ID] -o [output-file]\\n       mesheryctl design evaluate -f [file] -o [output-file]"
+      },
+      "1248": {
+        "name": "ErrEvaluateDesignResponseCode",
+        "code": "1248",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to evaluate design",
+        "probable_cause": "The Meshery server returned an error while evaluating the design\nThe design file may be invalid or the server may be experiencing issues",
+        "suggested_remediation": "Ensure the design file is valid\nCheck that the Meshery server is running and accessible\nVerify that the server has the required policies loaded"
       }
     }
   }

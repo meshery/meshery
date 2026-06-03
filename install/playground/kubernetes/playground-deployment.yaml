@@ -1,0 +1,95 @@
+# Canonical spec for the production Meshery Playground Deployment on the CNCF cluster
+# (namespace: meshery, kube-context: prod).
+#
+# Source of truth for the playground pod's environment. Apply with:
+#   kubectl -n meshery apply -f playground-deployment.yaml
+#
+# Note: the `meshery` container image is overridden on each release by
+# .github/workflows/cncf-playground-deploy-meshery.yaml via `kubectl set image`,
+# so the tag pinned below is only the bootstrap/default. Re-applying this file
+# resets the image to that default - run the deploy workflow afterwards, or bump
+# the tag here, if you need a specific release.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: playground
+  namespace: meshery
+  labels:
+    app: playground
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: playground
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: playground
+    spec:
+      restartPolicy: Always
+      volumes:
+        - name: playground
+          configMap:
+            name: playground
+            defaultMode: 420
+      containers:
+        # Meshery server - the only container that consumes provider configuration.
+        - name: meshery
+          image: meshery/meshery:playground-latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            # Playground offers only the Meshery provider, pre-selected on load.
+            - name: PROVIDER_BASE_URLS
+              value: https://cloud.meshery.io
+            - name: PROVIDER
+              value: Meshery
+            - name: DISABLE_OPERATOR
+              value: "false"
+            - name: MESHSYNC_DEFAULT_DEPLOYMENT_MODE
+              value: operator
+            - name: EVENT
+              value: mesheryLocal
+            - name: KUBECONFIG_FOLDER
+              value: /home/appuser/.kube
+            - name: MESHERY_SERVER_CALLBACK_URL
+              value: https://playground.meshery.io/api/user/token
+            - name: ADAPTER_URLS
+              value: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012
+          livenessProbe:
+            httpGet:
+              path: /healthz/live
+              port: 8080
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 8080
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 8080
+            periodSeconds: 10
+            failureThreshold: 20
+          volumeMounts:
+            - name: playground
+              mountPath: /home/appuser/.kube
+              readOnly: true
+        - name: meshery-istio
+          image: meshery/meshery-istio:stable-latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 10000
+        - name: meshery-linkerd
+          image: meshery/meshery-linkerd:stable-latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 10001
