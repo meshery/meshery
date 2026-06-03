@@ -28,8 +28,16 @@ export const REMOTE_PROVIDERS = [
         url: "https://cloud.layer5.io",
     },
     {
-        name: "TCS Labs",
-        url: "https://meshery.tcs-labs.in",
+        name: "TATA Labs",
+        url: "https://platform.tata-consulting.co.uk",
+    },
+    {
+        name: "Cisco ET&I",
+        url: "https://collab.eti.cisco.com",
+    },
+    {
+        name: "Metabit Trading",
+        url: "https://kickstart.metabit.com",
     },
     // END AUTO-GENERATED
 ];
