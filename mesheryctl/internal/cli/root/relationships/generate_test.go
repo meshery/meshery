@@ -153,7 +153,7 @@ func TestGenerateDataOutput(t *testing.T) {
 					Range:          "Relationships!A1:O1000",
 					Values: [][]interface{}{
 						{},
-						{},
+						{"Model", "Version", "Kind", "Type", "SubType", "MetadataDescription", "Docs", "MetadataStyles", "EvalPolicy", "SelectorsDenyFrom", "SelectorsDenyTo", "SelectorsAllowFrom", "SelectorsAllowTo", "CompleteDefinition", "VisualizationExample"},
 						sheetDataParsed["ROW3"].([]interface{}),
 					},
 				}, nil

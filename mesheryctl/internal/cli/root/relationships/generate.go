@@ -1,7 +1,6 @@
 package relationships
 
 import (
-	"encoding/csv"
 	"fmt"
 	"github.com/gocarina/gocsv"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
@@ -111,23 +110,18 @@ func generateRelationshipsFromCSV(filePath string) ([]CustomValueRange, error) {
 	if err != nil {
 		return nil, utils.ErrFileRead(err)
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			utils.Log.Warn(err)
+		}
+	}()
 
 	var relationships []CustomValueRange
-
-	reader := csv.NewReader(file)
-
-	_, err = reader.Read()
-	if err != nil {
-		return nil, utils.ErrFileRead(err)
-	}
-
-	if err := gocsv.UnmarshalCSV(reader, &relationships); err != nil {
+	if err := gocsv.UnmarshalFile(file, &relationships); err != nil {
 		return nil, utils.ErrFileRead(err)
 	}
 
 	filtered := make([]CustomValueRange, 0)
-
 	for _, r := range relationships {
 		if r.Model == "" {
 			continue
@@ -136,9 +130,7 @@ func generateRelationshipsFromCSV(filePath string) ([]CustomValueRange, error) {
 	}
 
 	if len(filtered) == 0 {
-		return nil, ErrEmptyCSVData(
-			fmt.Errorf("no valid relationship rows found in CSV file: %s", filePath),
-		)
+		return nil, ErrEmptyCSVData(fmt.Errorf("no valid relationship rows found in CSV file: %s", filePath))
 	}
 
 	return filtered, nil
@@ -183,7 +175,7 @@ func processSheetData(resp *sheets.ValueRange, jsonFilePath string) error {
 			CompleteDefinition:   getCol(row, "CompleteDefinition"),
 			VisualizationExample: getCol(row, "VisualizationExample"),
 		})
-	}	
+	}
 
 	return saveRelationshipsJSON(customResp, jsonFilePath)
 }
