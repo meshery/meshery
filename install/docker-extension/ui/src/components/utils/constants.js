@@ -31,6 +31,10 @@ export const REMOTE_PROVIDERS = [
         name: "TCS Labs",
         url: "https://meshery.tcs-labs.in",
     },
+    {
+        name: "OD10 Ventures",
+        url: "https://provider.od10.in",
+    },
     // END AUTO-GENERATED
 ];
 
