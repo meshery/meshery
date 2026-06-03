@@ -375,36 +375,27 @@ site-serve: docs-serve
 docs-setup:
 	cd docs; npm install
 
-## Run Meshery Docs. Listen for changes.
-docs: check-go
-	cd docs; hugo server -D -F
+## Run Meshery Docs in watch mode.
+docs:
+	@$(MAKE) -C docs site
 
-## Run Meshery Docs. Do not listen for changes.
-docs-serve: check-go
-	cd docs; hugo server -D -F --watch=false
+## Run Meshery Docs once without file watching.
+docs-serve:
+	@$(MAKE) -C docs serve
 
-## Run Meshery Docs. Do not listen for changes.
-docs-clean: check-go
-	cd docs; hugo --cleanDestinationDir
-	make docs
+## Clean build cache and run Meshery Docs in watch mode.
+docs-clean:
+	@$(MAKE) -C docs clean
 
 
 ## Build Meshery Docs on your local machine.
-docs-build: check-go
-	cd docs; hugo
+docs-build:
+	@$(MAKE) -C docs build
 
 ## Build Meshery Docs for production. BASE_URL is optional.
 ## Example: make docs-build-production BASE_URL=https://example.com
 docs-build-production:
-	cd docs; \
-	hugo_args="--gc --minify"; \
-	if [ -n "$(BASE_URL)" ]; then \
-		base_url="$(BASE_URL)"; \
-		base_url="$${base_url%/}/"; \
-		hugo_args="$$hugo_args --baseURL $$base_url"; \
-	fi; \
-	echo "Running: hugo $$hugo_args"; \
-	hugo $$hugo_args
+	@$(MAKE) -C docs build-production BASE_URL="$(BASE_URL)"
 
 ## Run Meshery Docs in a Docker container. Listen for changes.
 docs-docker:
