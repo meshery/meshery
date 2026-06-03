@@ -21,7 +21,11 @@ components:
   colorIcon: content/en/extensions/models/kuberhealthy/components/kuberhealthy-state/icons/color/kuberhealthy-state-color.svg
   whiteIcon: content/en/extensions/models/kuberhealthy/components/kuberhealthy-state/icons/white/kuberhealthy-state-white.svg
   description: 
-components-count: 3
+- name: health-check
+  colorIcon: content/en/extensions/models/kuberhealthy/components/health-check/icons/color/health-check-color.svg
+  whiteIcon: content/en/extensions/models/kuberhealthy/components/health-check/icons/white/health-check-white.svg
+  description: 
+components-count: 4
 relationships: 
 relationship-count: 0
 featureList: [
