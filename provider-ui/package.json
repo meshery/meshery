@@ -28,7 +28,7 @@
     "@rjsf/mui": "^6.5.3",
     "@rjsf/utils": "^6.5.3",
     "@rjsf/validator-ajv8": "^6.5.3",
-    "@sistent/sistent": "^0.21.14",
+    "@sistent/sistent": "^0.21.18",
     "@xstate/react": "^6.1.0",
     "http-proxy": "^1.18.1",
     "next": "^16.2.7",
