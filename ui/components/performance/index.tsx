@@ -11,6 +11,7 @@ import { generateTestName, generateUUID } from './helper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/general/error-404/index';
+import { api } from '../../rtk-query';
 import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
 import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 import { useGetMeshQuery } from '@/rtk-query/mesh';
@@ -34,6 +35,8 @@ import { createPerformanceFormChangeHandler } from './performance-handlers';
 export { generatePerformanceProfile } from './performance-helpers';
 
 let eventStream = null;
+const PERFORMANCE_RTK_TAG = 'Performance_Profile_performance';
+
 const MesheryPerformanceComponent_ = (props) => {
   const {
     testName = '',
@@ -307,6 +310,7 @@ const MesheryPerformanceComponent_ = (props) => {
         );
         setTestUUID(generateUUID());
 
+        dispatch(api.util.invalidateTags([PERFORMANCE_RTK_TAG]));
         setTestResultsOpen(true);
         setTestResult(result);
       }
