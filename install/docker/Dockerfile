@@ -20,7 +20,7 @@ RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSU
 FROM golang:1.25.5 AS meshery-wasm
 WORKDIR /github.com/meshery/meshery
 ADD . .
-RUN cd server/policies/wasm && \
+RUN mkdir -p /wasm-dist && cd server/policies/wasm && \
     GOOS=js GOARCH=wasm GOPROXY=https://proxy.golang.org GOSUMDB=off \
         go build -trimpath -ldflags="-w -s" -o /wasm-dist/policy_engine.wasm . && \
     cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" /wasm-dist/wasm_exec.js && \
