@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-
-	// "io"
+	"io"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -27,8 +27,22 @@ func (h *Handler) SavePerformanceProfileHandler(
 		_ = r.Body.Close()
 	}()
 
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+	body = bytes.TrimSpace(body)
+	if len(body) == 0 || bytes.Equal(body, []byte("null")) {
+		err := fmt.Errorf("performance profile request body is empty or null")
+		h.log.Error(ErrRequestBody(err))
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
 	parsedBody := &models.PerformanceProfile{}
-	err := json.NewDecoder(r.Body).Decode(&parsedBody)
+	err = json.Unmarshal(body, parsedBody)
 	if err != nil {
 		//failed to read request body
 		h.log.Error(ErrRequestBody(err))

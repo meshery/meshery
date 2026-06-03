@@ -149,7 +149,7 @@ function PerformanceCalendar({ style }) {
     const boardConfig = result.serverBoardConfig;
     const serverMetrics = result.serverMetrics;
     const startTime = new Date(row.StartTime || result.testStartTime);
-    const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
+    const endTime = new Date(startTime.getTime() + (row.ActualDuration ?? 0) / 1000000);
     return (
       <Paper
         style={{

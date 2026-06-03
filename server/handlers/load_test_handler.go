@@ -97,6 +97,12 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 
 	// TODO: check multiple clients in case of distributed perf test
 	testClient := perfTest.Config.Clients[0]
+	if len(testClient.EndpointUrls) == 0 {
+		err := fmt.Errorf("request body is missing load-test endpoint URLs")
+		h.log.Error(models.ErrUnmarshal(err, "performance test config"))
+		writeMeshkitError(w, models.ErrUnmarshal(err, "performance test config"), http.StatusBadRequest)
+		return
+	}
 
 	// TODO: consider the multiple endpoints
 	loadTestOptions.URL = testClient.EndpointUrls[0]

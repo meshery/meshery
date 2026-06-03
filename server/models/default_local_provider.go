@@ -1025,6 +1025,10 @@ func (l *DefaultLocalProvider) ShareFilter(_ *http.Request) (int, error) {
 
 // SavePerformanceProfile saves given performance profile with the provider
 func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfile *PerformanceProfile) ([]byte, error) {
+	if performanceProfile == nil {
+		return nil, fmt.Errorf("performance profile is nil")
+	}
+
 	if performanceProfile.ID == uuid.Nil {
 		uid, err := uuid.NewV4()
 		if err != nil {

@@ -33,7 +33,7 @@ func (h *Handler) GetSMPServiceMeshes(w http.ResponseWriter, _ *http.Request, _ 
 	}
 	for _, entity := range entities {
 		model, ok := entity.(*_model.ModelDefinition)
-		if !ok {
+		if !ok || model == nil {
 			continue
 		}
 		name := model.DisplayName

@@ -362,7 +362,7 @@ function ResultChart({ result, handleTabChange, tabValue }) {
   const boardConfig = result.serverBoardConfig;
   const serverMetrics = result.serverMetrics;
   const startTime = new Date(row.StartTime || result.testStartTime);
-  const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
+  const endTime = new Date(startTime.getTime() + (row.ActualDuration ?? 0) / 1000000);
 
   return (
     <Paper
@@ -421,7 +421,7 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }) {
   const boardConfig = result.serverBoardConfig;
   const serverMetrics = result.serverMetrics;
   const startTime = new Date(row.StartTime || result.testStartTime);
-  const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
+  const endTime = new Date(startTime.getTime() + (row.ActualDuration ?? 0) / 1000000);
   return (
     <Paper
       style={{
@@ -519,8 +519,8 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
       performanceProfileId: profileID,
       page: `${page}`,
       pagesize: `${pageSize}`,
-      search: encodeURIComponent(search || ''),
-      order: encodeURIComponent(sortOrder || ''),
+      search: search || '',
+      order: sortOrder || '',
     },
     {
       skip: !profileID,

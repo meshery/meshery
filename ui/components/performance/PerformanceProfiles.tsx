@@ -84,7 +84,7 @@ function PerformanceProfile({ handleDelete }) {
   } = useGetPerformanceProfilesQuery({
     page,
     pagesize: pageSize,
-    search: encodeURIComponent(search),
+    search,
     order: sortOrder,
   });
 
