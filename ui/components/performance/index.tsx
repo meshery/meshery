@@ -191,7 +191,7 @@ const MesheryPerformanceComponent_ = (props) => {
       additional_options: additionalOptionsState,
       endpoint: urlState,
       serviceMesh: meshNameState,
-      concurrentRequest: +cState || 0,
+      concurrentRequest: +cState || 1,
       qps: +qpsState || 0,
       duration: tState,
       requestHeaders: headersState,

@@ -61,7 +61,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 
 	// Guard against a missing/empty "test" config before dereferencing it
 	// below (name, id, duration, clients[0]); a malformed body must not panic.
-	if perfTest.Config == nil || len(perfTest.Config.Clients) == 0 {
+	if perfTest == nil || perfTest.Config == nil || len(perfTest.Config.Clients) == 0 {
 		err := fmt.Errorf("request body is missing the required \"test\" performance configuration or load-test clients")
 		h.log.Error(models.ErrUnmarshal(err, "performance test config"))
 		writeMeshkitError(w, models.ErrUnmarshal(err, "performance test config"), http.StatusBadRequest)

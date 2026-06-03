@@ -58,6 +58,16 @@ var linkDocPerfApply = map[string]string{
 	"caption": "Usage of mesheryctl perf apply",
 }
 
+func splitTestDuration(duration string) (string, string) {
+	duration = strings.TrimSpace(duration)
+	if duration == "" {
+		duration = "30s"
+	}
+
+	durLen := len(duration)
+	return duration[:durLen-1], strings.ToLower(duration[durLen-1:])
+}
+
 var applyCmd = &cobra.Command{
 	Use:   "apply [profile-name]",
 	Short: "Run a Performance test",
@@ -291,10 +301,9 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		q.Add("qps", qps)
 		q.Add("reqBody", loadTestBody)
 
-		durLen := len(testDuration)
-
-		q.Add("dur", string(testDuration[durLen-1]))
-		q.Add("t", string(testDuration[:durLen-1]))
+		testDurationValue, testDurationUnit := splitTestDuration(testDuration)
+		q.Add("dur", testDurationUnit)
+		q.Add("t", testDurationValue)
 
 		if testMesh != "" {
 			q.Add("mesh", testMesh)

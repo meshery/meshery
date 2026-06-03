@@ -153,6 +153,24 @@
 //	}
 package perf
 
+import "testing"
+
+func TestSplitTestDurationDefaultsEmptyDuration(t *testing.T) {
+	value, unit := splitTestDuration("")
+
+	if value != "30" || unit != "s" {
+		t.Fatalf("expected empty duration to default to 30s, got value=%q unit=%q", value, unit)
+	}
+}
+
+func TestSplitTestDurationTrimsDuration(t *testing.T) {
+	value, unit := splitTestDuration(" 5m ")
+
+	if value != "5" || unit != "m" {
+		t.Fatalf("expected trimmed duration to split into 5 and m, got value=%q unit=%q", value, unit)
+	}
+}
+
 func resetVariables() {
 	// reset the variables after each test
 	profileName = ""
