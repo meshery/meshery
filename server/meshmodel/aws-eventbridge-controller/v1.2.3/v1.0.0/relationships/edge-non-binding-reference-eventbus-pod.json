@@ -30,36 +30,6 @@
         "from": [
           {
             "id": null,
-            "kind": "EventBus",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "version": "",
-              "name": "aws-eventbridge-controller",
-              "displayName": "AWS EventBridge",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "registrant": {
-                "kind": "github"
-              },
-              "model": {
-                "version": ""
-              }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "metadata",
-                  "name"
-                ]
-              ]
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
             "kind": "Pod",
             "match": {},
             "match_strategy_matrix": null,
@@ -84,6 +54,36 @@
                   "containers",
                   "_",
                   "env"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "EventBus",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-eventbridge-controller",
+              "displayName": "AWS EventBridge",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "name"
                 ]
               ]
             }
