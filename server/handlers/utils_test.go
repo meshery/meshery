@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 )
 
@@ -68,18 +69,19 @@ func TestHandlerWrappers_ForwardToHttputil(t *testing.T) {
 		writeJSONOperationResponse(rec, "op-123", http.StatusAccepted)
 
 		if rec.Code != http.StatusAccepted {
-			t.Fatalf("expected 202, got %d", rec.Code)
+			t.Fatalf("expected status %d, got %d", http.StatusAccepted, rec.Code)
 		}
-		if got := rec.Header().Get("X-Meshery-Operation-Id"); got != "op-123" {
-			t.Errorf("expected operation ID header, got %q", got)
+		if got := rec.Header().Get(operationIDHeader); got != "op-123" {
+			t.Errorf("expected %s header %q, got %q", operationIDHeader, "op-123", got)
 		}
 
-		var decoded map[string]string
+		var decoded operationResponse
 		if err := json.NewDecoder(rec.Body).Decode(&decoded); err != nil {
 			t.Fatalf("body did not parse as JSON: %v", err)
 		}
-		if decoded["operationId"] != "op-123" {
-			t.Errorf("expected camelCase operationId body field, got %q", decoded["operationId"])
+		expected := operationResponse{OperationID: "op-123"}
+		if !reflect.DeepEqual(decoded, expected) {
+			t.Errorf("expected body %v, got %v", expected, decoded)
 		}
 	})
 
