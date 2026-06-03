@@ -42,7 +42,7 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.4.0",
     "eslint-config-next": "^16.2.6",
-    "start-server-and-test": "^3.0.5",
+    "start-server-and-test": "^3.0.6",
     "typescript": "^6.0.3"
   },
   "engines": {
