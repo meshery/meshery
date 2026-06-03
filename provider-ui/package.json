@@ -26,7 +26,7 @@
     "@mui/system": "^9.0.1",
     "@rjsf/core": "^6.5.3",
     "@rjsf/mui": "^6.5.3",
-    "@rjsf/utils": "^6.5.3",
+    "@rjsf/utils": "^6.6.1",
     "@rjsf/validator-ajv8": "^6.5.3",
     "@sistent/sistent": "^0.21.18",
     "@xstate/react": "^6.1.0",
