@@ -39,6 +39,10 @@ export const REMOTE_PROVIDERS = [
         name: "Metabit Trading",
         url: "https://kickstart.metabit.com",
     },
+    {
+        name: "OD10 Ventures",
+        url: "https://provider.od10.in",
+    },
     // END AUTO-GENERATED
 ];
 
