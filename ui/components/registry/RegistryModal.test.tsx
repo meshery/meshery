@@ -53,6 +53,8 @@ vi.mock('@sistent/sistent', () => ({
   FileIcon: () => <svg data-testid="file-icon" />,
   InfoIcon: () => <svg data-testid="info-icon" />,
   DatabaseIcon: () => <svg data-testid="database-icon" />,
+  SyncAltIcon: () => <svg data-testid="relationship-icon" />,
+  MergeOutlinedIcon: () => <svg data-testid="relationship-icon" />,
   CustomTooltip: ({ children }: any) => <>{children}</>,
   useMediaQuery: () => mediaQueryReturn,
   useTheme: () => stableTheme,
@@ -90,9 +92,6 @@ vi.mock('@sistent/sistent', () => ({
 }));
 
 vi.mock('@/assets/icons/Component', () => ({ default: () => <svg /> }));
-vi.mock('@/assets/icons/Connection', () => ({
-  default: () => <svg data-testid="relationship-icon" />,
-}));
 vi.mock('@/components/shared/Modal', () => ({
   Modal: ({ children, isOpen, title }: any) =>
     isOpen ? (

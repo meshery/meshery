@@ -1,29 +1,15 @@
-import React, { useId } from "react";
+import React from "react";
 
-const ConnectionIcon = ({
-  width = 24,
-  height = 24,
-  fill = "currentColor",
-  primaryFill = undefined,
-  secondaryFill = undefined,
-  style = {},
-  className = undefined,
-}) => {
-  const clipPathId = useId().replace(/:/g, "");
-  const primary = primaryFill ?? fill;
-  const secondary = secondaryFill ?? fill;
-
-  return (
-    <svg
-      className={className}
-      style={style}
-      xmlns="http://www.w3.org/2000/svg"
-      height={height}
-      viewBox="0 0 18 19"
-      width={width}
-      fill={fill}
-    >
-      <g clipPath={`url(#${clipPathId})`}>
+const ConnectionIcon = ({ width, height, fill="#ccc", primaryFill="#00B39F", secondaryFill="#00D3A9", style = {} }) => (
+  <svg
+    style={style}
+    xmlns="http://www.w3.org/2000/svg"
+    height={height}
+    viewBox="0 0 18 19"
+    width={width}
+    fill={fill}
+  >
+    <g clipPath="url(#clip0_11326_34264)">
       <path
         d="M14.6169 9.82553C14.7759 10.5484 15.4121 11.0978 16.1928 11.0978C17.0747 11.0978 17.7976 10.3749 17.7976 9.493C17.7976 8.61108 17.0747 7.88818 16.1928 7.88818C15.4121 7.88818 14.7759 8.43758 14.6169 9.16047H13.1494C13.1581 9.27324 13.1639 9.38602 13.1639 9.50023C13.1639 9.61445 13.1581 9.71855 13.1494 9.82553H14.6169Z"
         fill={fill}
@@ -56,83 +42,82 @@ const ConnectionIcon = ({
         d="M6.26313 12.6996C6.09976 12.5608 5.94651 12.409 5.80482 12.2471L2.48675 15.5507C2.22651 15.3772 1.92289 15.2904 1.60482 15.2904C1.17108 15.2904 0.766265 15.4639 0.462651 15.7676C0.159036 16.0133 0 16.4182 0 16.8519C0 17.2856 0.173494 17.6904 0.477108 17.9941C0.780723 18.2977 1.18554 18.4712 1.61928 18.4712C2.05301 18.4712 2.45783 18.2977 2.76145 17.9941C3.06506 17.6904 3.23855 17.2856 3.23855 16.8519C3.23855 16.5338 3.15181 16.2302 2.97831 15.97L6.26313 12.6996ZM2.26988 17.5314C2.08193 17.7194 1.8506 17.8061 1.59036 17.8061C1.33012 17.8061 1.0988 17.7049 0.910843 17.5314C0.53494 17.1555 0.53494 16.5627 0.910843 16.1868C1.0988 15.9989 1.33012 15.9121 1.59036 15.9121C1.8506 15.9121 2.08193 16.0133 2.26988 16.1868C2.64578 16.5483 2.64578 17.1555 2.26988 17.5314Z"
         fill={fill}
       />
-      <path d="M9.12207 7.32129V9.29045L10.8281 8.30298L9.12207 7.32129Z" fill={primary} />
-      <path d="M9.12207 9.70068V11.68L10.844 10.6954L9.12207 9.70068Z" fill={primary} />
+      <path d="M9.12207 7.32129V9.29045L10.8281 8.30298L9.12207 7.32129Z" fill={primaryFill} />
+      <path d="M9.12207 9.70068V11.68L10.844 10.6954L9.12207 9.70068Z" fill={primaryFill} />
       <path
         d="M8.87574 9.27571V7.33691L7.19141 8.30414L8.87574 9.27571Z"
-        fill={secondary}
+        fill={secondaryFill}
       />
       <path
         d="M5.49609 11.6726C5.82718 12.2047 6.27393 12.6543 6.80308 12.9883V10.9165L5.49609 11.6726Z"
-        fill={secondary}
+        fill={secondaryFill}
       />
-      <path d="M8.87617 11.67V9.71533L7.1875 10.6941L8.87617 11.67Z" fill={secondary} />
-      <path d="M7.0498 12.8642L8.76017 11.8869L7.0498 10.8979V12.8642Z" fill={primary} />
+      <path d="M8.87617 11.67V9.71533L7.1875 10.6941L8.87617 11.67Z" fill={secondaryFill} />
+      <path d="M7.0498 12.8642L8.76017 11.8869L7.0498 10.8979V12.8642Z" fill={primaryFill} />
       <path
         d="M10.9609 12.8745V10.9111L9.25195 11.8885L10.9609 12.8745Z"
-        fill={secondary}
+        fill={secondaryFill}
       />
       <path
         d="M12.6323 11.4445C12.9244 10.8994 13.0892 10.2951 13.1152 9.67773L11.3369 10.6956L12.6323 11.4445Z"
-        fill={secondary}
+        fill={secondaryFill}
       />
-      <path d="M11.207 10.4872L12.9232 9.50556L11.207 8.51953V10.4872Z" fill={primary} />
-      <path d="M10.961 8.09439V6.14258L9.26074 7.11704L10.961 8.09439Z" fill={secondary} />
-      <path d="M10.9604 10.4784V8.50928L9.25586 9.4953L10.9604 10.4784Z" fill={secondary} />
-      <path d="M7.0498 8.50537V10.4904L8.76595 9.49573L7.0498 8.50537Z" fill={primary} />
+      <path d="M11.207 10.4872L12.9232 9.50556L11.207 8.51953V10.4872Z" fill={primaryFill} />
+      <path d="M10.961 8.09439V6.14258L9.26074 7.11704L10.961 8.09439Z" fill={secondaryFill} />
+      <path d="M10.9604 10.4784V8.50928L9.25586 9.4953L10.9604 10.4784Z" fill={secondaryFill} />
+      <path d="M7.0498 8.50537V10.4904L8.76595 9.49573L7.0498 8.50537Z" fill={primaryFill} />
       <path
         d="M8.87606 5.37939C8.24425 5.39674 7.62546 5.56012 7.06738 5.85795L8.87606 6.89602V5.38084V5.37939Z"
-        fill={secondary}
+        fill={secondaryFill}
       />
-      <path d="M7.0498 6.12988V8.10338L8.7674 7.11735L7.0498 6.12988Z" fill={primary} />
+      <path d="M7.0498 6.12988V8.10338L8.7674 7.11735L7.0498 6.12988Z" fill={primaryFill} />
       <path
         d="M6.80308 6.00977C6.27393 6.34374 5.82718 6.79338 5.49609 7.32543L6.80308 8.08013V6.00977Z"
-        fill={secondary}
+        fill={secondaryFill}
       />
       <path
         d="M10.9495 5.8666C10.3871 5.56299 9.76111 5.39672 9.12207 5.37793V6.91335L10.9495 5.8666Z"
-        fill={primary}
+        fill={primaryFill}
       />
       <path
         d="M4.87988 9.64453C4.90157 10.2807 5.06928 10.9024 5.37289 11.4619L6.69723 10.6956L4.87988 9.64598V9.64453Z"
-        fill={primary}
+        fill={primaryFill}
       />
       <path
         d="M5.37289 7.53809C5.07073 8.09471 4.90302 8.71351 4.87988 9.34676L6.69868 8.30291L5.37289 7.53809Z"
-        fill={primary}
+        fill={primaryFill}
       />
       <path
         d="M7.06445 13.1387C7.62397 13.4365 8.24421 13.6013 8.87747 13.6187V12.1021L7.06445 13.1387Z"
-        fill={secondary}
+        fill={secondaryFill}
       />
       <path
         d="M12.5053 7.33277C12.1772 6.80217 11.7333 6.35398 11.207 6.01855V8.08313L12.5053 7.33277Z"
-        fill={primary}
+        fill={primaryFill}
       />
       <path
         d="M11.207 12.9814C11.7362 12.6446 12.1815 12.192 12.5111 11.6585L11.207 10.9053V12.9814Z"
-        fill={primary}
+        fill={primaryFill}
       />
       <path
         d="M13.1208 9.33527C13.0976 8.70925 12.9299 8.09623 12.6321 7.54395L11.3193 8.30154L13.1208 9.33527Z"
-        fill={secondary}
+        fill={secondaryFill}
       />
       <path
         d="M9.12207 13.6205C9.75388 13.6031 10.3727 13.4398 10.9307 13.1419L9.12207 12.0938V13.6205Z"
-        fill={primary}
+        fill={primaryFill}
       />
       <path
         d="M6.80293 10.4729V8.52686L5.11426 9.49553L6.80293 10.4729Z"
-        fill={secondary}
+        fill={secondaryFill}
       />
-      </g>
-      <defs>
-        <clipPath id={clipPathId}>
-          <rect width="18" height="18" fill="white" transform="translate(0 0.5)" />
-        </clipPath>
-      </defs>
-    </svg>
-  );
-};
+    </g>
+    <defs>
+      <clipPath id="clip0_11326_34264">
+        <rect width="18" height="18" fill="white" transform="translate(0 0.5)" />
+      </clipPath>
+    </defs>
+  </svg>
+);
 
 export default ConnectionIcon;
