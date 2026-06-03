@@ -111,7 +111,7 @@
     "react-dom": "^19.2.6",
     "react-grid-layout": "^2.2.3",
     "react-mentions": "^4.4.10",
-    "react-moment": "^1.2.2",
+    "react-moment": "^2.0.2",
     "react-redux": "9.3.0",
     "react-relay": "^21.0.0",
     "react-select": "^5.10.2",
