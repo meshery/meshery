@@ -1,6 +1,6 @@
 ---
 title: EKS
-category: [kubernetes]
+categories: [kubernetes]
 aliases:
 - /installation/platforms/eks
 display_title: false

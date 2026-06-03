@@ -16,6 +16,12 @@ import { toggleCatalogContent } from '@/store/slices/mesheryUi';
 type ChildrenProps = {
   children: React.ReactNode;
 };
+// Meshery Extension Point
+// ---
+// Purpose: Notify Remote Providers of changes in Golang dependencies
+// Learn more: See https://docs.meshery.io/extensibility
+// Add your repository to the list: https://github.com/meshery/meshery/issues/new/choose
+// ---
 
 const UnifiedCardContainer = ({ children, sx = {} }: ChildrenProps & { sx?: object }) => (
   <CardContainer
@@ -237,7 +243,7 @@ const MesheryHelmExtension = () => (
           variant="contained"
           color="primary"
           data-testid="helm-learn-more-btn"
-          onClick={openExternal('https://docs.meshery.io/extensions/helm-kanvas-snapshot')}
+          onClick={openExternal('https://docs.meshery.io/extensions/helm-snapshot')}
         >
           Learn More
         </Button>
@@ -271,7 +277,7 @@ const MesheryDesignEmbedExtension = () => (
           variant="contained"
           color="primary"
           data-testid="design-embed-learn-more-btn"
-          onClick={openExternal('https://meshery.io/extensions/meshery-design-embed/')}
+          onClick={openExternal('https://meshery.io/extensions/meshery-design-embed')}
         >
           Learn More
         </Button>
@@ -339,7 +345,7 @@ const KubectlPluginExtension = () => (
           variant="contained"
           color="primary"
           data-testid="kubectl-plugin-learn-more-btn"
-          onClick={openExternal('https://docs.meshery.io/extensions/kubectl-kanvas-snapshot')}
+          onClick={openExternal('https://docs.meshery.io/extensions/kubectl-snapshot')}
         >
           Learn More
         </Button>
@@ -474,7 +480,7 @@ const Extensions = () => {
   const hasAccessToMeshMap = useMemo(
     () =>
       !!providerCapabilities?.extensions?.navigator?.some(
-        (val: { title: string }) => val.title.toLowerCase() === EXTENSION_NAMES.KANVAS,
+        (val: { title: string }) => val.title.toLowerCase() === EXTENSION_NAMES.EXTENSION,
       ),
     [providerCapabilities],
   );

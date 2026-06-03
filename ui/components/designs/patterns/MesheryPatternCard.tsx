@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { Avatar, Divider, Grid2, IconButton, Typography, Link, useTheme } from '@sistent/sistent';
+import {
+  Avatar,
+  Divider,
+  Grid2,
+  IconButton,
+  Typography,
+  Link,
+  useTheme,
+  InfoOutlinedIcon,
+  crimson,
+} from '@sistent/sistent';
 import { CustomTooltip, VisibilityChipMenu } from '@sistent/sistent';
 import {
   Delete as DeleteIcon,
@@ -25,13 +35,7 @@ import {
   StyledCodeMirrorWrapper,
 } from './Cards.styles';
 import YAMLDialog from '../../YamlDialog';
-import {
-  Public as PublicIcon,
-  Edit,
-  Lock,
-  Public,
-  InfoOutlined as InfoOutlinedIcon,
-} from '@/assets/icons';
+import { Public as PublicIcon, Edit, Lock, Public } from '@/assets/icons';
 import TooltipButton from '@/utils/TooltipButton';
 import CloneIcon from '../../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
@@ -201,7 +205,7 @@ function MesheryPatternCard_({
                   disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
                   data-testid="pattern-btn-unpublish"
                 >
-                  <PublicIcon style={iconMedium} />
+                  <PublicIcon fill={crimson[40]} style={iconMedium} />
                   <GridBtnText> Unpublish </GridBtnText>
                 </TooltipButton>
               )}
@@ -224,14 +228,14 @@ function MesheryPatternCard_({
                   },
                   {
                     label: 'Deploy',
-                    icon: <DoneAllIcon style={iconMedium} />,
+                    icon: <DoneAllIcon fill="currentColor" style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleDeploy),
                     disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
                     'data-testid': 'pattern-btn-deploy',
                   },
                   {
                     label: 'Undeploy',
-                    icon: <UndeployIcon fill={'currentColor'} style={iconMedium} />,
+                    icon: <UndeployIcon fill={crimson[40]} style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleUnDeploy),
                     disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
                     'data-testid': 'pattern-btn-undeploy',

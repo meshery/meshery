@@ -1,39 +1,57 @@
 .left-container {
   position: sticky;
   z-index: 9;
+  flex-shrink: 0;
+
+  width: var(--sidebar-width);
   height: calc(100vh - var(--navbar-height));
-  transition: all 0.5s ease-in-out;
-  margin-top: calc(var(--navbar-height));
+
   top: calc(var(--navbar-height));
+  margin-top: calc(var(--navbar-height));
+  margin-right: calc(-1 * (var(--sidebar-width)));
+  
+  transform: translateX(calc(-1 * var(--sidebar-wrapper-width)));
+  transition: 0.5s ease-in-out, margin-right 0.5s ease-in-out;
+
+  @media (max-width: 75em) {
+    position: fixed;
+
+    margin-top: 0;
+    margin-right: 0;
+  }
+
+  @media (max-width: 37.5em) {
+    top: calc(var(--navbar-height) - 10);
+    height: 100vh;
+  }
+
+  &--active {
+      transform: translateX(0);
+      margin-right: 0;
+    
+    & .nav-toggle-btn--document svg {
+      transform: rotate(180deg);
+    }
+  }
+
   & .sidebar-container-wrapper {
     height: 100%;
     padding: 0.5rem;
+
+    width: var(--sidebar-wrapper-width);
     background: var(--background-grey);
     box-shadow: var(--box-shadow-primary);
   }
   & .icon-container {
     height: fit-content;
     z-index: 9;
-    display: none;
-    @media (max-width: 75em) {
-      margin-top: 3rem;
-      position: absolute;
-      right: -3rem;
-      display: block;
-    }
-  }
-  @media (max-width: 75em) {
-    margin-top: 0;
-    transform: translateX(-100%);
-    position: fixed;
-    display: flex;
-    width: 320px;
-    left: -1rem;
-  }
-  &--active {
-    transform: translateX(0%);
-    & .nav-toggle-btn--document svg {
-      transform: rotate(180deg);
+    display: block;
+    position: absolute;
+    right: -3rem;
+    bottom: 3rem;
+    
+    @media (max-width: 37.5em) {
+      bottom: 7rem;
     }
   }
 
@@ -61,44 +79,34 @@
 }
 
 .sidebar-container {
-  overscroll-behavior: contain;
   padding: .25rem min(2vh, 2vw);
+  overscroll-behavior: contain;
   overflow-y: scroll;
-  height: calc(100vh - var(--navbar-height));
+  scrollbar-gutter: stable;
+  height: calc(100vh - var(--navbar-height) - 3vh);
   transition: all 0.5s ease-in-out;
   font-size: 1.5rem;
-  width: 320px;
-  max-width: 320px;
-  min-width: 320px;
-  height: 100%;
+  width: var(--sidebar-width);
+  max-width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
 
   &::-webkit-scrollbar {
-    overscroll-behavior: contain;
     width: 5px;
-    padding: 6px;
   }
 
-  &::-webkit-scrollbar-track {
-    width: 0.5rem;
-    border-radius: 11px;
-    overflow: hidden;
-    padding: 6px;
-  }
   &::-webkit-scrollbar-thumb {
     background: #868e96;
-    width: 0.2rem;
     border-radius: 11px;
-    margin: 5px;
   }
 
+ 
   @media (max-width: 75em) {
     // position: fixed;
     top: var(--navbar-height);
     left: 0;
     width: 100%;
-    height: calc(100vh - var(--navbar-height));
     z-index: 9;
-    transition: all 0.5s ease-in-out;
+    transition: 0.5s ease-in-out;
     padding: 1rem 2rem;
   }
 
