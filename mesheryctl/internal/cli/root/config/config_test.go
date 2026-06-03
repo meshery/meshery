@@ -152,14 +152,30 @@ func TestGetCurrentContextName(t *testing.T) {
 	}
 }
 func TestSetContext(t *testing.T) {
-	for _, test := range tests {
-		mesheryctlconfig := MesheryCtlConfig{nil, test, nil}
-		got := mesheryctlconfig.GetCurrentContextName()
-		want := test
+	// SetCurrentContext sets CurrentContext and validates it against known contexts.
+	// We test only the setting behavior here using a context name that exists in the map.
+	contextName := "local"
+	ctx := Context{
+		Endpoint: "http://localhost:9081",
+		Platform: "docker",
+		Token:    "Default",
+		Channel:  "stable",
+		Version:  "latest",
+	}
+	mesheryctlconfig := MesheryCtlConfig{
+		Contexts:       map[string]Context{contextName: ctx},
+		CurrentContext: "",
+		Tokens:         nil,
+	}
 
-		if got != want {
-			t.Errorf("got %q want %q", got, want)
-		}
+	err := mesheryctlconfig.SetCurrentContext(contextName)
+	if err != nil {
+		t.Fatalf("SetCurrentContext(%q) returned unexpected error: %v", contextName, err)
+	}
+
+	got := mesheryctlconfig.GetCurrentContextName()
+	if got != contextName {
+		t.Errorf("GetCurrentContextName() = %q, want %q", got, contextName)
 	}
 }
 func TestSetEndpoint(t *testing.T) {
