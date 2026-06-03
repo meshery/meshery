@@ -42,6 +42,7 @@ jobs:
         with:
           version: v2.7
           args: --config=../.github/.golangci.yml --timeout=10m
+          only-new-issues: ${{ github.event_name == 'pull_request' }}
           working-directory: ./server
   unit-tests-server:
     name: server Unit tests
@@ -115,6 +116,7 @@ jobs:
         with:
           version: v2.7
           args: --config=../.github/.golangci.yml --timeout=10m
+          only-new-issues: ${{ github.event_name == 'pull_request' }}
           working-directory: ./mesheryctl
   unit-tests-cli:
     name: mesheryctl Unit tests
@@ -237,4 +239,3 @@ jobs:
           ./mesheryctl system stop -y;
           echo "Running Mesheryctl with ${{ matrix.platform }} completed."
         working-directory: ./mesheryctl
-

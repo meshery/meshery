@@ -28,7 +28,7 @@ export default function SimpleAccordion(props) {
   const accordionDetailsRef = React.useRef(null);
   const theme = useTheme();
   return (
-    <Box width={'100%'} marginBottom={'0rem'}>
+    <Box sx={{ width: '100%', marginBottom: '0rem' }}>
       <MuiAccordion defaultExpanded elevation={0}>
         <MuiAccordionSummary
           expandIcon={<ExpandMoreIcon style={iconSmall} fill="gray" />}

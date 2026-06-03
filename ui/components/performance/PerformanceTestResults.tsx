@@ -28,7 +28,7 @@ const PerformanceTestResults: React.FC<PerformanceTestResultsProps> = ({
 
   return (
     <div>
-      <Box display="flex" justifyContent="space-between" alignItems="center">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <IconButton onClick={onBack}>
           <ArrowBack />
         </IconButton>

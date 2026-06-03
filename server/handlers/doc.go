@@ -4,7 +4,7 @@ import (
 	"bytes"
 
 	"github.com/go-openapi/strfmt"
-	SMP "github.com/layer5io/service-mesh-performance/spec"
+	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/environments"

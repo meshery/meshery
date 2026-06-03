@@ -88,7 +88,7 @@ vi.mock('@sistent/sistent', () => ({
   ),
   NoSsr: ({ children }: any) => <>{children}</>,
   Radio: () => <input type="radio" />,
-  SaveOutlinedIcon: () => <svg data-testid="save-icon" />,
+  SaveIcon: () => <svg data-testid="save-icon" />,
 }));
 
 vi.mock('@/rtk-query/user', () => ({
