@@ -25,26 +25,30 @@ export function safeStringTitle(value) {
   return String(value);
 }
 
-function deleteTitleFromJSONSchema(jsonSchema) {
-  return { ...jsonSchema, title: '' };
-}
-
 function deleteDescriptionFromJSONSchema(jsonSchema) {
   return { ...jsonSchema, description: '' };
 }
 
 /**
- * remove top-level title, top-level description and
- * handle non-RJSF compliant fields
+ * Strip the top-level description and normalize non-RJSF-compliant fields.
+ *
+ * The top-level *title* is intentionally NOT stripped here: hiding the root
+ * object title is done via the UI schema (`hideRootObjectTitle`) so the
+ * canonical `@meshery/schemas` JSON schema is consumed unmodified. See
+ * `RJSF_wrapper`.
  *
  * @param {Object.<String, Object>} jsonSchema
  * @returns
  */
-export function getRefinedJsonSchema(jsonSchema, hideTitle = true, handleError) {
+export function getRefinedJsonSchema(jsonSchema, handleError) {
   let refinedSchema;
   try {
-    refinedSchema = hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema;
-    refinedSchema = deleteDescriptionFromJSONSchema(refinedSchema);
+    // Deep clone first so the canonical @meshery/schemas object is never
+    // mutated: deleteDescriptionFromJSONSchema only shallow-copies the root,
+    // while sortProperties and recursivelyParseJsonAndCheckForNonRJSFCompliantFields
+    // edit nested properties in place (and would otherwise reach through the
+    // shared references into the original schema graph).
+    refinedSchema = deleteDescriptionFromJSONSchema(_.cloneDeep(jsonSchema));
     refinedSchema.properties =
       refinedSchema?.properties && sortProperties(refinedSchema.properties); // temporarily commented
     recursivelyParseJsonAndCheckForNonRJSFCompliantFields(refinedSchema);

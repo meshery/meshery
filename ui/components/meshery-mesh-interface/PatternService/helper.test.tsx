@@ -57,7 +57,7 @@ describe('userPromptKeys', () => {
 });
 
 describe('getRefinedJsonSchema', () => {
-  it('strips top-level title/description and sorts properties by type', () => {
+  it('strips top-level description and sorts properties by type, leaving the title intact', () => {
     const schema = {
       title: 'My schema',
       description: 'desc',
@@ -68,8 +68,10 @@ describe('getRefinedJsonSchema', () => {
         age: { type: 'integer' },
       },
     };
-    const refined = getRefinedJsonSchema(schema, true, vi.fn());
-    expect(refined.title).toBe('');
+    const refined = getRefinedJsonSchema(schema, vi.fn());
+    // The root title is now left to the UI schema (hideRootObjectTitle), so
+    // the canonical JSON schema title is preserved here.
+    expect(refined.title).toBe('My schema');
     expect(refined.description).toBe('');
     const keys = Object.keys(refined.properties);
     expect(keys.indexOf('name')).toBeLessThan(keys.indexOf('nested'));
@@ -83,20 +85,41 @@ describe('getRefinedJsonSchema', () => {
         preserveUnknown: { 'x-kubernetes-preserve-unknown-fields': true },
       },
     };
-    const refined: any = getRefinedJsonSchema(schema, false, vi.fn());
+    const refined: any = getRefinedJsonSchema(schema, vi.fn());
     expect(refined.properties.intOrString.type).toBe('string');
     expect(refined.properties.preserveUnknown.type).toBe('object');
   });
 
-  it('passes schemas through unchanged when hideTitle is false', () => {
+  it('keeps the top-level title (root-title hiding now lives in the UI schema)', () => {
     const schema = {
       title: 'keep me',
       type: 'object',
       properties: { name: { type: 'string' } },
     };
-    const refined = getRefinedJsonSchema(schema, false, vi.fn());
+    const refined = getRefinedJsonSchema(schema, vi.fn());
     expect(refined.title).toBe('keep me');
     expect(refined.description).toBe('');
+  });
+
+  it('does not mutate the input — refining works on a deep clone', () => {
+    const schema: any = {
+      title: 'Import Design',
+      description: 'desc',
+      type: 'object',
+      properties: {
+        // an x-kubernetes field that refinement would coerce/strip in place
+        intOrString: { 'x-kubernetes-int-or-string': true },
+        name: { type: 'string' },
+      },
+    };
+    const before = JSON.parse(JSON.stringify(schema));
+
+    const refined: any = getRefinedJsonSchema(schema, vi.fn());
+    // Simulate a downstream in-place edit on the refined output (e.g. buildUiSchema
+    // adding min/max bounds) — it must not reach back into the canonical schema.
+    refined.properties.name.maximum = 10;
+
+    expect(schema).toEqual(before);
   });
 });
 

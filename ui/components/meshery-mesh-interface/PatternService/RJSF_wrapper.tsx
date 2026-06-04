@@ -2,6 +2,7 @@ import React from 'react';
 import HandleError from '../../ErrorHandling';
 import { buildUiSchema } from '../helpers';
 import { getRefinedJsonSchema } from './helper';
+import { hideRootObjectTitle } from '@sistent/sistent';
 // import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 // import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import _ from 'lodash';
@@ -12,6 +13,8 @@ function RJSFWrapper(props) {
     formData,
     jsonSchema,
     onChange,
+    // When set (default true), the root object's title is suppressed via the
+    // UI schema in the effect below — not by mutating the JSON schema.
     hideTitle,
     uiSchema = {},
     formRef = null,
@@ -37,11 +40,17 @@ function RJSFWrapper(props) {
   }, [data]);
 
   React.useEffect(() => {
-    const rjsfSchema = getRefinedJsonSchema(jsonSchema, hideTitle, errorHandler);
+    const rjsfSchema = getRefinedJsonSchema(jsonSchema, errorHandler);
     // UI schema builds responsible for customizations in the RJSF fields shown to user
-    const uiSchema = buildUiSchema(rjsfSchema);
-    setSchema({ rjsfSchema, uiSchema });
-  }, [jsonSchema]); // to reduce heavy lifting on every react render
+    const baseUiSchema = buildUiSchema(rjsfSchema);
+    // Hide the duplicative top-level object title via the UI schema (the shared
+    // Sistent standard: `ui:options.label = false`) rather than by mutating the
+    // JSON schema. Defaults to hidden (`hideTitle` unset) to preserve behavior.
+    const rootUiSchema = (hideTitle ?? true) ? hideRootObjectTitle(baseUiSchema) : baseUiSchema;
+    setSchema({ rjsfSchema, uiSchema: rootUiSchema });
+    // Recompute when the schema or its title visibility changes. (errorHandler
+    // is only used on the parse-error path and is intentionally excluded.)
+  }, [jsonSchema, hideTitle]);
 
   React.useEffect(() => {
     if (!_.isEqual(schema, { rjsfSchema: {}, uiSchema: {} })) {
