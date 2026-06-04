@@ -1504,13 +1504,13 @@ func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload
 func (l *DefaultLocalProvider) AddEnvironmentToWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
 	workspaceId, _ := uuid.FromString(workspaceID)
 	envID, _ := uuid.FromString(environmentID)
-	return l.WorkspacePersister.AddEnvironmentToWorkspace(workspaceId, envId)
+	return l.WorkspacePersister.AddEnvironmentToWorkspace(workspaceId, envID)
 }
 
 func (l *DefaultLocalProvider) RemoveEnvironmentFromWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
 	workspaceId, _ := uuid.FromString(workspaceID)
 	envID, _ := uuid.FromString(environmentID)
-	return l.WorkspacePersister.DeleteEnvironmentFromWorkspace(workspaceId, envId)
+	return l.WorkspacePersister.DeleteEnvironmentFromWorkspace(workspaceId, envID)
 }
 
 func (l *DefaultLocalProvider) GetEnvironmentsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
