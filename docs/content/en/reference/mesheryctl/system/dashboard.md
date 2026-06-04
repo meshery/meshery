@@ -7,7 +7,7 @@ subcommand: dashboard
 
 # mesheryctl system dashboard
 
-Open the Meshery dashboard in browser.
+Open Meshery UI in browser.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -18,7 +18,7 @@ mesheryctl system dashboard [flags]
 
 ## Examples
 
-Open the Meshery dashboard in browser
+Open Meshery UI in browser
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system dashboard
@@ -26,7 +26,7 @@ mesheryctl system dashboard
 </div>
 </pre> 
 
-Open the Meshery dashboard in browser and use port-forwarding (if default port is taken already)
+Open Meshery UI in browser and use port-forwarding (if default port is taken already)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system dashboard --port-forward
@@ -34,7 +34,7 @@ mesheryctl system dashboard --port-forward
 </div>
 </pre> 
 
-Open the Meshery dashboard in browser and use port-forwarding, listen on port 9081 locally, forwarding traffic to meshery server in the pod
+Open Meshery UI in browser and use port-forwarding, listen on port 9081 locally, forwarding traffic to meshery server in the pod
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system dashboard --port-forward -p 9081
@@ -42,7 +42,7 @@ mesheryctl system dashboard --port-forward -p 9081
 </div>
 </pre> 
 
-(optional) skip opening of the Meshery dashboard in browser.
+(optional) skip opening of MesheryUI in browser.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system dashboard --skip-browser
@@ -52,7 +52,7 @@ mesheryctl system dashboard --skip-browser
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-Note: Meshery's web-based user interface is embedded in Meshery Server and is available as soon as Meshery starts. The location and port where the Meshery dashboard is exposed varies depending upon your mode of deployment. See accessing the Meshery dashboard for additional deployment-specific options: https://docs.meshery.io/installation/accessing-meshery-ui.
+Note: Meshery's web-based user interface is embedded in Meshery Server and is available as soon as Meshery starts. The location and port that Meshery UI is exposed varies depending upon your mode of deployment. See accessing \"Meshery UI\" for additional deployment-specific options: https://docs.meshery.io/installation/accessing-meshery-ui.
 
 </div>
 </pre> 
@@ -63,8 +63,9 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 <div class='codeblock'>
   -h, --help           help for dashboard
   -p, --port int       (optional) Local port that is not in use from which traffic is to be forwarded to the server running inside the Pod. (default 9081)
-      --port-forward   (optional) Use port forwarding to access the Meshery dashboard
-      --skip-browser   (optional) skip opening of the Meshery dashboard in browser.
+      --port-forward   (optional) Use port forwarding to access Meshery UI
+      --skip-browser   (optional) skip opening of MesheryUI in browser.
+
 </div>
 </pre>
 
