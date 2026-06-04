@@ -18,14 +18,14 @@ include install/Makefile.show-help.mk
 #-----------------------------------------------------------------------------
 # Install artifact generation
 #-----------------------------------------------------------------------------
-.PHONY: generate-install check-install
+.PHONY: providers-propagate providers-check
 
-## Propagate install/providers.env to every generated install artifact.
-generate-install:
+## Propagate remote providers defined in install/providers.env to every generated install artifact.
+providers-propagate:
 	python3 install/scripts/sync-provider-urls.py
 
-## Verify generated install artifacts are in sync with install/providers.env (CI gate).
-check-install:
+## Verify that the install artifacts are in sync with the list of remote providers in  install/providers.env.
+providers-check:
 	python3 install/scripts/sync-provider-urls.py --check
 
 #-----------------------------------------------------------------------------
