@@ -140,10 +140,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 					return ErrSystemSetInvalidEdgeRelease(channelNameSeparated[1])
 				}
 			case "stable":
-				if channelNameSeparated[1] != "latest" {
-					currCtx := mctlCfg.Contexts[focusedContext]
-					currCtx.Version = channelNameSeparated[1]
-				}
+				// version is set after the switch block
 			}
 			version = channelNameSeparated[1]
 		}
