@@ -27,8 +27,8 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	servermodels "github.com/meshery/meshery/server/models"
-	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
+	"github.com/meshery/meshery/server/models"
+	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -56,16 +56,6 @@ var (
 var linkDocPerfApply = map[string]string{
 	"link":    "![perf-apply-usage](/reference/images/perf-apply.png)",
 	"caption": "Usage of mesheryctl perf apply",
-}
-
-func splitTestDuration(duration string) (string, string) {
-	duration = strings.TrimSpace(duration)
-	if duration == "" {
-		duration = "30s"
-	}
-
-	durLen := len(duration)
-	return duration[:durLen-1], strings.ToLower(duration[durLen-1:])
 }
 
 var applyCmd = &cobra.Command{
@@ -127,14 +117,14 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				return ErrReadFilepath(errors.Wrap(err, "Unable to read test configuration file. \n"))
 			}
 
-			testConfig := servermodels.PerformanceTestConfigFile{}
+			testConfig := models.PerformanceTestConfigFile{}
 
 			err = yaml.Unmarshal(smpConfig, &testConfig)
 			if err != nil {
 				return ErrFailUnmarshalFile(err)
 			}
 
-			if testConfig.Config == nil || len(testConfig.Config.Clients) == 0 {
+			if testConfig.Config == nil || testConfig.ServiceMesh == nil {
 				return ErrInvalidTestConfigFile()
 			}
 
@@ -150,15 +140,15 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			}
 
 			if testMesh == "" {
-				testMesh = testConfig.ServiceMesh
+				testMesh = SMP.ServiceMesh_Type_name[int32(testConfig.ServiceMesh.Type)]
 			}
 
 			if qps == "" {
-				qps = strconv.Itoa(testClient.Rps)
+				qps = strconv.FormatInt(testClient.Rps, 10)
 			}
 
 			if concurrentRequests == "" {
-				concurrentRequests = strconv.Itoa(testClient.Connections)
+				concurrentRequests = strconv.Itoa(int(testClient.Connections))
 			}
 
 			if testDuration == "" {
@@ -301,9 +291,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		q.Add("qps", qps)
 		q.Add("reqBody", loadTestBody)
 
-		testDurationValue, testDurationUnit := splitTestDuration(testDuration)
-		q.Add("dur", testDurationUnit)
-		q.Add("t", testDurationValue)
+		durLen := len(testDuration)
+
+		q.Add("dur", string(testDuration[durLen-1]))
+		q.Add("t", string(testDuration[:durLen-1]))
 
 		if testMesh != "" {
 			q.Add("mesh", testMesh)
@@ -402,17 +393,17 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		return "", "", ErrConvertQPS()
 	}
 	values := map[string]interface{}{
-		"concurrentRequest": convReq,
-		"duration":          testDuration,
-		"endpoints":         []string{testURL},
-		"loadGenerators":    []string{loadGenerator},
-		"name":              profileName,
-		"qps":               convQPS,
-		"serviceMesh":       testMesh,
-		"requestBody":       loadTestBody,
-		"requestCookies":    "",
-		"requestHeaders":    "",
-		"contentType":       "",
+		"concurrent_request": convReq,
+		"duration":           testDuration,
+		"endpoints":          []string{testURL},
+		"load_generators":    []string{loadGenerator},
+		"name":               profileName,
+		"qps":                convQPS,
+		"service_mesh":       testMesh,
+		"request_body":       loadTestBody,
+		"request_cookies":    "",
+		"request_headers":    "",
+		"content_type":       "",
 	}
 
 	if additionalOptions != "" {
@@ -458,7 +449,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 	if err != nil {
 		return "", "", ErrFailMarshal(err)
 	}
-	req, err := utils.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/performance/profiles", bytes.NewBuffer(jsonValue))
+	req, err := utils.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles", bytes.NewBuffer(jsonValue))
 	if err != nil {
 		return "", "", err
 	}
@@ -468,7 +459,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		return "", "", ErrPerfProfileServer(errors.New("failed to save performance profile on server"))
 	}
 
-	var response *perfprofile.PerformanceProfile
+	var response *models.PerformanceProfile
 
 	defer func() { _ = resp.Body.Close() }()
 	body, err := io.ReadAll(resp.Body)

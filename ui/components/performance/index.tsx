@@ -11,7 +11,6 @@ import { generateTestName, generateUUID } from './helper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/general/error-404/index';
-import { api } from '../../rtk-query';
 import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
 import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 import { useGetMeshQuery } from '@/rtk-query/mesh';
@@ -35,8 +34,6 @@ import { createPerformanceFormChangeHandler } from './performance-handlers';
 export { generatePerformanceProfile } from './performance-helpers';
 
 let eventStream = null;
-const PERFORMANCE_RTK_TAG = 'Performance_Profile_performance';
-
 const MesheryPerformanceComponent_ = (props) => {
   const {
     testName = '',
@@ -69,8 +66,6 @@ const MesheryPerformanceComponent_ = (props) => {
   const [additionalOptionsState, setAdditionalOptions] = useState(additional_options || '');
   const [testResult, setTestResult] = useState();
   const [testResultsOpen, setTestResultsOpen] = useState(false);
-  const { selectedK8sContexts, k8sConfig } = useSelector((state) => state.ui);
-  const { prometheus, staticPrometheusBoardConfig } = useSelector((state) => state.telemetry);
 
   const [headersState, setHeaders] = useState(headers || '');
   const [cookiesState, setCookies] = useState(cookies || '');
@@ -95,6 +90,8 @@ const MesheryPerformanceComponent_ = (props) => {
   const [staticPrometheusBoardConfigState, setStaticPrometheusBoardConfig] = useState(
     staticPrometheusBoardConfig,
   );
+  const { selectedK8sContexts, k8sConfig } = useSelector((state) => state.ui);
+  const { prometheus, staticPrometheusBoardConfig } = useSelector((state) => state.telemetry);
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const { data: userData, isSuccess: isUserDataFetched } =
@@ -191,7 +188,7 @@ const MesheryPerformanceComponent_ = (props) => {
       additional_options: additionalOptionsState,
       endpoint: urlState,
       serviceMesh: meshNameState,
-      concurrentRequest: +cState || 1,
+      concurrentRequest: +cState || 0,
       qps: +qpsState || 0,
       duration: tState,
       requestHeaders: headersState,
@@ -288,10 +285,7 @@ const MesheryPerformanceComponent_ = (props) => {
 
   function handleSuccess() {
     return (result) => {
-      if (
-        typeof result !== 'undefined' &&
-        typeof (result.runnerResults ?? result.runner_results) !== 'undefined'
-      ) {
+      if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined') {
         notify({
           message: 'fetched the data.',
           event_type: EVENT_TYPES.SUCCESS,
@@ -313,7 +307,6 @@ const MesheryPerformanceComponent_ = (props) => {
         );
         setTestUUID(generateUUID());
 
-        dispatch(api.util.invalidateTags([PERFORMANCE_RTK_TAG]));
         setTestResultsOpen(true);
         setTestResult(result);
       }
@@ -480,9 +473,7 @@ const MesheryPerformanceComponent_ = (props) => {
 
   const getSMPMeshes = () => {
     if (isSMPMeshesFetched && smpMeshes) {
-      setAvailableSMPMeshes(
-        [...(smpMeshes.availableMeshes || [])].sort((m1, m2) => m1.localeCompare(m2)),
-      );
+      setAvailableSMPMeshes([...smpMeshes.available_meshes].sort((m1, m2) => m1.localeCompare(m2))); // shallow copy of the array to sort it
     } else if (isSMPMeshError) {
       handleError('unable to fetch SMP meshes');
     }
