@@ -1,9 +1,9 @@
 import { NOTIFICATIONCOLORS } from '../../../themes';
 import AlertIcon from '../../../assets/icons/AlertIcon';
 import ErrorIcon from '../../../assets/icons/ErrorIcon';
-import { Colors } from '../../../themes/app';
 import ReadIcon from '../../../assets/icons/ReadIcon';
 import { InfoIcon } from '@sistent/sistent';
+import type { Theme } from '@sistent/sistent';
 
 export const SEVERITY = {
   INFO: 'informational',
@@ -28,13 +28,15 @@ export const STATUS = {
   UNREAD: 'unread',
 };
 
-export const STATUS_STYLE = {
+// Theme-aware status styles. Resolves to live palette tokens so dark/light
+// mode picks the correct value at render time instead of using hard-coded hex.
+export const getStatusStyle = (theme: Theme) => ({
   [STATUS.READ]: {
     icon: ReadIcon,
-    color: Colors.charcoal,
-    darkColor: '#BCC7CC',
+    color: theme.palette.text.primary,
+    darkColor: theme.palette.text.primary,
   },
-};
+});
 
 export const SEVERITY_STYLE = {
   [SEVERITY.INFO]: {

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<618276d0b05863710731d7859b7864cb>>
+ * @generated SignedSource<<5f3c62494eae6987fff43cb5441f66a4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -40,7 +40,7 @@ export type K8sContextSubscription$data = {
       readonly updatedAt: string;
       readonly version: string;
     } | null | undefined>;
-    readonly total_count: number;
+    readonly totalCount: number;
   };
 };
 export type K8sContextSubscription = {
@@ -72,7 +72,7 @@ v1 = [
     "plural": false,
     "selections": [
       {
-        "alias": null,
+        "alias": "totalCount",
         "args": null,
         "kind": "ScalarField",
         "name": "total_count",
@@ -195,16 +195,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "1e512bbef451c100458530583edd6f05",
+    "cacheID": "21e06ecbe7a8788897700273f61d677c",
     "id": null,
     "metadata": {},
     "name": "K8sContextSubscription",
     "operationKind": "subscription",
-    "text": "subscription K8sContextSubscription(\n  $selector: PageFilter!\n) {\n  k8sContext: subscribeK8sContext(selector: $selector) {\n    total_count\n    contexts {\n      id\n      name\n      server\n      owner\n      createdBy\n      mesheryInstanceId\n      kubernetesServerId\n      deploymentType\n      updatedAt\n      createdAt\n      version\n      connectionId\n    }\n  }\n}\n"
+    "text": "subscription K8sContextSubscription(\n  $selector: PageFilter!\n) {\n  k8sContext: subscribeK8sContext(selector: $selector) {\n    totalCount: total_count\n    contexts {\n      id\n      name\n      server\n      owner\n      createdBy\n      mesheryInstanceId\n      kubernetesServerId\n      deploymentType\n      updatedAt\n      createdAt\n      version\n      connectionId\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "dd6309365102dfa11d8873daf998b343";
+(node as any).hash = "77758342e08fc786e2cc7a7af4bf7492";
 
 export default node;

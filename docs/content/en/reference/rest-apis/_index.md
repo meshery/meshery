@@ -20,7 +20,7 @@ Each of Meshery's APIs is subject to Meshery's authentication and authorization 
   <summary>Authentication</summary>
   Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. The type of authentication is determined by the selected <a href='/extensibility/providers'>Providers</a>. Use of the Local Provider, "None", puts Meshery into single-user mode and uses minimal, intentionally insecure authentication.
 
-  {{% alert color="dark" title="What are authentication tokens?" %}}Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery CLI</a> and <a href='/extensibility/api#how-to-get-your-token'>Meshery UI</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provides secure access to Meshery's management features.</p>{{% /alert %}}
+  {{% alert color="dark" title="What are authentication tokens?" %}}Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery CLI</a> and <a href='/extensibility/api#how-to-get-your-token'>Meshery dashboard</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provides secure access to Meshery's management features.</p>{{% /alert %}}
 </details>
 
 ### How to get your token
@@ -28,9 +28,9 @@ Each of Meshery's APIs is subject to Meshery's authentication and authorization 
 There are two ways to get your authentication token:
 
 <details>
-  <summary>Meshery UI</summary>
+  <summary>Meshery dashboard</summary>
 
-Using Meshery UI, you can get a copy of your authentication token by following these steps:
+Using the Meshery dashboard, you can get a copy of your authentication token by following these steps:
 <br/>
 
 1. Log into Meshery by selecting your identity provider of choice (typically found at <code style="
@@ -76,8 +76,8 @@ Using curl, you can access Meshery's REST API by executing this command:
   <br/>
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">curl --location 'localhost:9081/api/&lt;endpoint&gt;' \
---header 'meshery-token: &lt;yourToken&gt;\
---header 'Cookie: meshery-provider=Layer5; cloud.meshery.io_ref=/;token=&lt;yourToken&gt;
+--header 'token: &lt;your-token&gt;\
+--header 'Cookie: provider=Meshery; cloud.meshery.io_ref=/;token=&lt;your-token&gt;
 </div>
 </div>
   </pre>

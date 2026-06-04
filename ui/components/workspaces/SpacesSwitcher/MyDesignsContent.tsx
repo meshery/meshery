@@ -13,8 +13,8 @@ import {
   VisibilitySelect,
 } from './components';
 import { useContentDelete, useContentDownload } from './hooks';
-import ExportModal from '../../shared/Modal/ExportModal';
-import ShareModal from './ShareModal';
+import ExportDesignModal from '../../designs/export/ExportDesignModal';
+import ShareModal from '../ShareWorkspaceModal';
 import { useSelector } from 'react-redux';
 
 const MyDesignsContent = () => {
@@ -109,8 +109,8 @@ const MyDesignsContent = () => {
     else refetchDesigns();
   }, [filters.page, refetchDesigns, setPage]);
   return (
-    <Box display={'flex'} flexDirection="column" gap="1rem">
-      <Grid2 container spacing={2} alignItems="center" marginBottom="1rem" size="grow">
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <Grid2 container spacing={2} size="grow" sx={{ alignItems: 'center', marginBottom: '1rem' }}>
         {/* Search Bar */}
         <Grid2 size={{ xs: 12, md: 6.5 }}>
           <StyledSearchBar
@@ -168,7 +168,7 @@ const MyDesignsContent = () => {
         totalCount={totalCount}
       />
       <PromptComponent ref={modalRef} />
-      <ExportModal
+      <ExportDesignModal
         downloadModal={downloadModal}
         handleDownloadDialogClose={handleDownloadModalClose}
         handleDesignDownload={handleDesignDownload}

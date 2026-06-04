@@ -1,5 +1,6 @@
-import React, { useState, useEffect, type ReactNode } from 'react';
+import React, { useState, type ReactNode } from 'react';
 import { FlipCardWrapper, InnerCard } from './designs/patterns/style';
+import { useTimeout } from '@/utils/hooks';
 
 interface FlipCardProps {
   duration?: number;
@@ -18,16 +19,9 @@ function FlipCard({ duration = 500, onClick, onShow, children }: FlipCardProps) 
   }
   const [Front, Back] = childArray;
 
-  useEffect(() => {
-    // Delay the back-face swap until ~30° of rotation has passed so the user
-    // never sees a blank card mid-flip. JS and CSS run on separate threads in
-    // modern browsers, and setTimeout defers past the current call stack.
-    const timer = setTimeout(() => {
-      setActiveBack(flipped);
-    }, duration / 6);
-
-    return () => clearTimeout(timer);
-  }, [flipped, duration]);
+  // Delay the back-face swap until ~30° of rotation has passed so the user
+  // never sees a blank card mid-flip.
+  useTimeout(() => setActiveBack(flipped), duration / 6, [flipped, duration]);
 
   return (
     <FlipCardWrapper

@@ -16,7 +16,7 @@ import { DashboardSection } from '../style';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
-import { Grid2, InfoOutlined, Typography, useTheme } from '@sistent/sistent';
+import { Grid2, InfoOutlinedIcon, Typography, useTheme } from '@sistent/sistent';
 
 function MeshModelContructs() {
   const params = {
@@ -42,7 +42,7 @@ function MeshModelContructs() {
       data: {
         columns: data,
         type: donut(),
-        colors: dataToColors(data),
+        colors: dataToColors(data, theme),
         onclick: function (d: { name: string }) {
           router.push(`/settings?settingsCategory=Registry&tab=${d.name}`);
         },
@@ -64,7 +64,7 @@ function MeshModelContructs() {
         },
       },
     }),
-    [data],
+    [data, theme],
   );
 
   return (
@@ -90,7 +90,7 @@ function MeshModelContructs() {
               title={`The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. [Learn More](https://docs.meshery.io/concepts/logical/registry)`}
             >
               <div>
-                <InfoOutlined
+                <InfoOutlinedIcon
                   color={theme.palette.icon.default}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
                 />
@@ -120,7 +120,7 @@ function MeshModelCategories() {
     () => ({
       data: {
         columns: cleanedData,
-        colors: dataToColors(cleanedData),
+        colors: dataToColors(cleanedData, theme),
         type: donut(),
         onclick: function () {
           router.push('/settings?settingsCategory=Registry&tab=Models');
@@ -151,7 +151,7 @@ function MeshModelCategories() {
         show: false,
       },
     }),
-    [cleanedData],
+    [cleanedData, theme],
   );
 
   return (
@@ -168,7 +168,7 @@ function MeshModelCategories() {
               placement="left"
             >
               <div>
-                <InfoOutlined
+                <InfoOutlinedIcon
                   color={theme.palette.icon.default}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
                 />

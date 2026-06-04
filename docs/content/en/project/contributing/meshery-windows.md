@@ -1,7 +1,7 @@
 ---
 title: Setting up Meshery Development Environment on Windows
 description: How to set up Meshery Development Environment on Windows
-category: [contributing]
+categories: [contributing]
 --- 
 
 You can use one of the following three approaches to setup a Meshery development environment in Windows:

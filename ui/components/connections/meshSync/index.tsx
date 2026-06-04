@@ -20,7 +20,7 @@ import {
   getColumnValue,
   getVisibilityColums,
 } from '../../../utils/utils';
-import RegisterConnectionModal from './RegisterConnectionModal';
+import RegisterConnectionModal from '../RegisterConnectionModal';
 import { CONNECTION_STATES, MESHSYNC_STATES } from '../../../utils/Enum';
 import { getResponsiveColumnVisibility } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
@@ -491,7 +491,16 @@ export default function MeshSyncTable(props) {
 
       expansionFlags.current.isHandlingExpansion = true;
       const expandedRows = allRowsExpanded.slice(-1);
-      setRowsExpanded(expandedRows.map((item) => item.index));
+      // Bail out on a value-equal write — see ConnectionTable.options.tsx
+      // for the rationale.
+      const nextExpandedRows = expandedRows.map((item) => item.index);
+      const hasExpandedRowsChanged =
+        nextExpandedRows.length !== rowsExpanded.length ||
+        nextExpandedRows.some((rowIndex, index) => rowIndex !== rowsExpanded[index]);
+
+      if (hasExpandedRowsChanged) {
+        setRowsExpanded(nextExpandedRows);
+      }
 
       if (expandedRows.length > 0 && meshSyncResources) {
         const index = expandedRows[0].index;
@@ -571,25 +580,48 @@ export default function MeshSyncTable(props) {
     lastProcessedId: null,
   });
 
-  // Find and expand the selected resource when it becomes available
+  // Mirror of the ConnectionTable fix: `meshSyncResources` is accessed via a
+  // ref so RTK Query's identity churn on cache hits doesn't re-fire this
+  // effect, while `meshSyncResourcesKey` (a primitive snapshot of the visible
+  // id set) keys the effect to actual content changes — which is exactly the
+  // condition under which a previously-missing deep link could now succeed
+  // (data finished loading, user paginated, filter changed). Same-data
+  // refetches produce the same key string and bail out via `Object.is`.
+  const meshSyncResourcesRef = useRef(meshSyncResources);
+  meshSyncResourcesRef.current = meshSyncResources;
+
+  const meshSyncResourcesKey = useMemo(
+    () => (meshSyncResources ?? []).map((resource) => resource.id).join('|'),
+    [meshSyncResources],
+  );
+
   useEffect(() => {
     if (!selectedResourceId || expansionFlags.current.isHandlingExpansion) return;
     if (expansionFlags.current.lastProcessedId === selectedResourceId) return;
-    if (meshSyncResources && meshSyncResources.length > 0) {
-      expansionFlags.current.isUrlExpansion = true;
-      expansionFlags.current.lastProcessedId = selectedResourceId;
 
-      const index = meshSyncResources.findIndex((resource) => resource.id === selectedResourceId);
-      if (index !== -1) {
-        setRowsExpanded([index]);
-      } else {
-        updateUrlWithResourceId('');
-      }
-
-      expansionFlags.current.isUrlExpansion = false;
-      expansionFlags.current.isInitialLoad = false;
+    const resources = meshSyncResourcesRef.current;
+    if (!resources || resources.length === 0) {
+      // Data not loaded yet. Re-fires once `meshSyncResourcesKey` flips.
+      return;
     }
-  }, [selectedResourceId, meshSyncResources]);
+
+    const index = resources.findIndex((resource) => resource.id === selectedResourceId);
+    if (index === -1) {
+      // Resource not on this page — do not lock out the effect by marking
+      // `lastProcessedId` here. If the user paginates or filters into a page
+      // that does include this id, `meshSyncResourcesKey` will change and the
+      // effect re-runs. Intentionally do NOT clear the URL: pushing
+      // `connectionId=""` started a URL-push → re-render → effect-re-fire
+      // loop that surfaced as React error #185.
+      return;
+    }
+
+    expansionFlags.current.isUrlExpansion = true;
+    expansionFlags.current.lastProcessedId = selectedResourceId;
+    setRowsExpanded([index]);
+    expansionFlags.current.isUrlExpansion = false;
+    expansionFlags.current.isInitialLoad = false;
+  }, [selectedResourceId, meshSyncResourcesKey]);
 
   const filters = {
     kind: {
@@ -638,7 +670,21 @@ export default function MeshSyncTable(props) {
   );
 
   useEffect(() => {
-    setColumnVisibility(getResponsiveColumnVisibility(columnNames, colViews, width));
+    setColumnVisibility((previous) => {
+      const next = getResponsiveColumnVisibility(columnNames, colViews, width);
+
+      // Bail out on a value-equal recomputation. Without this guard
+      // `getResponsiveColumnVisibility` (which always allocates a new object)
+      // enqueued a commit on every parent re-render even when no responsive
+      // breakpoint had crossed.
+      const keys = new Set([...Object.keys(previous), ...Object.keys(next)]);
+      for (const key of keys) {
+        if (previous[key] !== next[key]) {
+          return next;
+        }
+      }
+      return previous;
+    });
   }, [colViews, columnNames, width]);
 
   return (

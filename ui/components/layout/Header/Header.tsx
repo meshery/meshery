@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { NotificationDrawerButton } from '../NotificationCenter/index';
 import User from '../../User';
@@ -39,7 +39,7 @@ import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import OrganizationAndWorkSpaceSwitcher from '../../workspaces/SpacesSwitcher/SpaceSwitcher';
 import HeaderMenu from './HeaderMenu';
-import ConnectionModal from '../../shared/Modal/ConnectionModal';
+import ConnectionModal from '../../connections/ConnectionFormModal';
 import MesherySettingsEnvButtons from '../../MesherySettingsEnvButtons';
 import {
   HeaderAppBar,
@@ -120,7 +120,7 @@ const K8sContextConnectionChip_ = ({
             iconSrc={
               connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                : '/static/img/kubernetes.svg'
+                : '/static/img/integrations/kubernetes.svg'
             }
             status={connectionStatus}
           />
@@ -140,7 +140,9 @@ function K8sContextMenu({
 }) {
   const [anchorEl, setAnchorEl] = useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
-  const [transformProperty, setTransformProperty] = useState(100);
+  // The dropdown slides up from below; its translate distance scales with the
+  // number of context rows it will render so it ends up flush against the badge.
+  const transformProperty = 100 + (contexts?.contexts?.length || 0) * 3.125;
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
@@ -246,9 +248,6 @@ function K8sContextMenu({
     open = showFullContextMenu;
   }
 
-  useEffect(() => {
-    setTransformProperty((prev) => prev + (contexts.totalCount ? contexts.totalCount * 3.125 : 0));
-  }, []);
   const [isConnectionOpenModal, setIsConnectionOpenModal] = useState(false);
 
   return (
@@ -283,10 +282,10 @@ function K8sContextMenu({
                   connectionMetadataState &&
                   connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                     ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                    : '/static/img/kubernetes.svg'
+                    : '/static/img/integrations/kubernetes.svg'
                 }
                 onError={(e) => {
-                  e.target.src = '/static/img/kubernetes.svg';
+                  e.target.src = '/static/img/integrations/kubernetes.svg';
                 }}
                 width="24px"
                 height="24px"
@@ -457,7 +456,7 @@ const Header = ({
       <>
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
           <StyledToolbar disableGutters isDrawerCollapsed={onDrawerCollapse}>
-            <Grid2 container alignItems="center" size="grow">
+            <Grid2 container size="grow" sx={{ alignItems: 'center' }}>
               <Hidden smUp>
                 <Grid2 style={{ display: 'none' }}>
                   <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
@@ -465,7 +464,12 @@ const Header = ({
                   </MenuIconButton>
                 </Grid2>
               </Hidden>
-              <Grid2 container alignItems="center" component={PageTitleWrapper} size="grow">
+              <Grid2
+                container
+                component={PageTitleWrapper}
+                size="grow"
+                sx={{ alignItems: 'center' }}
+              >
                 {/* Extension Point for   Logo */}
                 <div
                   id="nav-header-logo"

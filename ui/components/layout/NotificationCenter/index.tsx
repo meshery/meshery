@@ -21,7 +21,7 @@ import {
   SEVERITY,
   SEVERITY_STYLE,
   STATUS,
-  STATUS_STYLE,
+  getStatusStyle,
 } from './constants';
 import Notification from './notification';
 import {
@@ -193,6 +193,8 @@ const NotificationCountChip = ({ notificationStyle, count, type, handleClick, se
 
 const Header = ({ handleFilter, handleClose }) => {
   const uiConfig = useSelector((state) => state.events.ui);
+  const theme = useTheme();
+  const statusStyle = getStatusStyle(theme);
   const { data } = useGetEventsSummaryQuery({
     status: STATUS.UNREAD,
   });
@@ -236,7 +238,7 @@ const Header = ({ handleFilter, handleClose }) => {
           />
         ))}
         <NotificationCountChip
-          notificationStyle={STATUS_STYLE[STATUS.READ]}
+          notificationStyle={statusStyle[STATUS.READ]}
           handleClick={() => onClickStatus(STATUS.READ)}
           type={STATUS.READ}
           severity={STATUS.READ}

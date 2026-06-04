@@ -64,18 +64,18 @@ export const stepsData = [
   {
     id: 2,
     isVisit: false,
-    title: 'GitOps your infra with Kanvas Snapshots',
-    subTitle: 'Connect your GitHub repository to receive Kanvas snapshots in your pull requests.',
+    title: 'GitOps your infra with snapshots',
+    subTitle: 'Connect your GitHub repository to receive snapshots in your pull requests.',
     isDisabled: false,
     journey: [
       {
         id: 3,
         title: 'Design snapshots in your PRs',
-        image: `/static/img/getting-started/kanvas-snapshots.png`,
+        image: `/static/img/getting-started/snapshots.png`,
         content: (
           <p>
-            See your deployment before you merge. Connect Kanvas to your GitHub repo and see changes
-            pull request-to-pull request.
+            See your deployment before you merge. Connect the extension to your GitHub repo and see
+            changes pull request-to-pull request.
           </p>
         ),
         previousButton: false,

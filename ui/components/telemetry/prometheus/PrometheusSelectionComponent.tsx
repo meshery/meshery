@@ -6,6 +6,7 @@ import { trueRandom } from '../../../lib/trueRandom';
 import { usePostBoardImportMutation, useLazyQueryTemplateVarsQuery } from '@/rtk-query/telemetry';
 import { Code as CodeIcon } from '@/assets/icons';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { isValidJSON } from '@/utils/validators';
 
 const PrometheusContainer = styled('div')(({ theme }) => ({
   padding: theme.spacing(5),
@@ -235,19 +236,6 @@ const PrometheusSelectionComponent = (props) => {
 
   const genRandomNumberForKey = () => Math.floor(trueRandom() * 1000 + 1);
 
-  const isValidJson = (value) => {
-    if (!value) {
-      return false;
-    }
-
-    try {
-      JSON.parse(value);
-      return true;
-    } catch (error) {
-      return false;
-    }
-  };
-
   const handleCodeChange = (editor, data, value) => {
     setGrafanaBoard(value);
     setGrafanaBoardObject({});
@@ -262,7 +250,7 @@ const PrometheusSelectionComponent = (props) => {
     }
 
     boardTimeoutRef.current = setTimeout(() => {
-      if (isValidJson(value)) {
+      if (isValidJSON(value)) {
         boardChange(value);
       }
     }, 1000);
@@ -277,7 +265,10 @@ const PrometheusSelectionComponent = (props) => {
             onDelete={handlePrometheusChipDelete}
             onClick={handlePrometheusClick}
             icon={
-              <StyledIcon src="/static/img/prometheus_logo_orange_circle.svg" alt="Prometheus" />
+              <StyledIcon
+                src="/static/img/integrations/prometheus_logo_orange_circle.svg"
+                alt="Prometheus"
+              />
             }
             variant="outlined"
           />

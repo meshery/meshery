@@ -240,12 +240,10 @@ const ShowDiscoveredContexts = ({
 
   return (
     <Grid2
-      direction="column"
-      justifyContent="center"
-      alignItems="center"
       spacing={2}
       columns={1}
       data-testid={dataTestid}
+      sx={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}
     >
       {registeredContexts.length > 0 && (
         <K8sConnectionItems
@@ -280,17 +278,15 @@ const K8sConnectionItems = ({ status, contexts, ping }) => {
     <Grid2 container spacing={2} size={'grow'}>
       {contexts.map((context) => (
         <Grid2
-          direction="column"
-          alignContent="center"
-          alignItems="center"
           container
           size="grow"
           spacing={1}
           id={context.connectionId}
           key={context.connectionId}
           className={classes.chip}
+          sx={{ flexDirection: 'column', alignContent: 'center', alignItems: 'center' }}
         >
-          <Box minWidth="25%" maxWidth="50%">
+          <Box sx={{ minWidth: '25%', maxWidth: '50%' }}>
             <Tooltip title={`Server: ${context.server}`}>
               <div
                 style={{
@@ -306,12 +302,12 @@ const K8sConnectionItems = ({ status, contexts, ping }) => {
                   handlePing={() => {
                     ping(context.name, context.server, context.connectionId);
                   }}
-                  iconSrc={'/static/img/kubernetes.svg'}
+                  iconSrc={'/static/img/integrations/kubernetes.svg'}
                 />
               </div>
             </Tooltip>
           </Box>
-          <Box minWidth="25%" maxWidth="50%">
+          <Box sx={{ minWidth: '25%', maxWidth: '50%' }}>
             <ConnectionStateChip status={status} />
           </Box>
         </Grid2>

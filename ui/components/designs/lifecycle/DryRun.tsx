@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@sistent/sistent';
+import { List, ListItemText, ListItemIcon, Typography, Collapse } from '@sistent/sistent';
 import { ExpandLess, ExpandMore } from '@/assets/icons';
 import { useState } from 'react';
 import { ComponentIcon, DEPLOYMENT_TYPE, Loading, processDesign } from './common';
@@ -10,7 +10,7 @@ import {
   useIsValidatingDryRun,
 } from '../../../machines/validator/designValidator';
 import { ErrorIcon } from '@sistent/sistent';
-import { NOTIFICATIONCOLORS } from '@/themes/index';
+import { useTheme } from '@/theme';
 import { FormatStructuredData } from '../../data-formatter';
 import {
   DryRunComponentLabel,
@@ -123,7 +123,7 @@ const ExpandableComponentErrors = ({
                     height="24px"
                     width="24px"
                     bangFill="#fff"
-                    fill={NOTIFICATIONCOLORS.ERROR_DARK}
+                    fill={theme.palette.error.dark}
                   />{' '}
                 </ListItemIcon>
 
@@ -189,20 +189,18 @@ export const FormatDryRunResponse = ({
       subheader={
         <ValidationSubHeader disableSticky="true" component="div" id="nested-list-subheader">
           {canShowComponentCount && (
-            <Typography varaint="h6" disablePadding style={{ color: theme.palette.text.default }}>
+            <Typography variant="h6" disablePadding style={{ color: theme.palette.text.default }}>
               {configurableComponentsCount} component{configurableComponentsCount > 1 ? 's' : ''}{' '}
               and {annotationComponentsCount} annotations
             </Typography>
           )}
           <Typography
             data-testid="dry-run-summary-errors"
-            varaint="h6"
+            variant="h6"
             disablePadding
             style={{
               color: `${
-                totalDryRunErrors > 0
-                  ? NOTIFICATIONCOLORS.ERROR_DARK
-                  : NOTIFICATIONCOLORS.SUCCESS_V2
+                totalDryRunErrors > 0 ? theme.palette.error.dark : theme.palette.success.main
               }`,
             }}
           >
@@ -230,7 +228,7 @@ export const FormatDryRunResponse = ({
       ) : (
         <Typography
           data-testid="dry-run-summary-success"
-          varaint="h6"
+          variant="h6"
           align="center"
           disablePadding
         >

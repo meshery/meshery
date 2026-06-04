@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"time"
 
-	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/core"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 )
 
 // TestProfilesPersister assists with persisting session in store
@@ -22,10 +22,10 @@ type PerformanceTestConfig struct {
 
 // UserTestProfiles - represents a page of user test configs
 type UserTestProfiles struct {
-	Page        uint64                       `json:"page"`
-	PageSize    uint64                       `json:"pageSize"`
-	TotalCount  int                          `json:"totalCount"`
-	TestConfigs []*SMP.PerformanceTestConfig `json:"testConfigs"`
+	Page        uint64                               `json:"page"`
+	PageSize    uint64                               `json:"pageSize"`
+	TotalCount  int                                  `json:"totalCount"`
+	TestConfigs []*perfprofile.PerformanceTestConfig `json:"testConfigs"`
 }
 
 // GetTestConfigs - gets result for the page and pageSize
@@ -37,11 +37,11 @@ func (s *TestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]byte, e
 	query := s.DB.Order(order)
 	total := int64(0)
 	s.DB.Model(&PerformanceTestConfig{}).Count(&total)
-	testConfigs := []*SMP.PerformanceTestConfig{}
+	testConfigs := []*perfprofile.PerformanceTestConfig{}
 	var p []*PerformanceTestConfig
 	Paginate(uint(page), uint(pageSize))(query).Find(&p)
 	for _, config := range p {
-		var testConfig SMP.PerformanceTestConfig
+		var testConfig perfprofile.PerformanceTestConfig
 		err := json.Unmarshal(config.PerformanceTestConfigBytes, &testConfig)
 		if err == nil {
 			testConfigs = append(testConfigs, &testConfig)
@@ -61,11 +61,11 @@ func (s *TestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]byte, e
 }
 
 // GetTestConfig - gets result for a specific key
-func (s *TestProfilesPersister) GetTestConfig(key core.Uuid) (*SMP.PerformanceTestConfig, error) {
+func (s *TestProfilesPersister) GetTestConfig(key core.Uuid) (*perfprofile.PerformanceTestConfig, error) {
 	if s.DB == nil {
 		return nil, ErrDBConnection
 	}
-	testConfig := &SMP.PerformanceTestConfig{}
+	testConfig := &perfprofile.PerformanceTestConfig{}
 	var u PerformanceTestConfig
 	err := s.DB.Model(&PerformanceTestConfig{}).Where("id = ?", key).First(&u).Error
 	if err != nil {

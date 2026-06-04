@@ -1,9 +1,9 @@
 // @ts-check
 import { AppBar, Box, IconButton, Toolbar, Tooltip, useTheme } from '@sistent/sistent';
+import { darken } from '@/theme';
 import { Delete, HelpOutlined as HelpOutline, Settings as SettingsIcon } from '@/assets/icons';
 import React, { useEffect } from 'react';
 import { iconSmall } from '../../css/icons.styles';
-import { pSBCr } from '../../utils/lightenOrDarkenColor';
 import PatternServiceFormCore from './PatternServiceFormCore';
 
 /**
@@ -78,7 +78,7 @@ function PatternServiceForm({
     >
       {(SettingsForm) => {
         return (
-          <Box width={'100%'}>
+          <Box sx={{ width: '100%' }}>
             <AppBar
               style={{
                 boxShadow: `0px 2px 4px -1px "#677E88"`,
@@ -92,7 +92,7 @@ function PatternServiceForm({
                 style={{
                   padding: '0 5px',
                   paddingLeft: 16,
-                  background: `linear-gradient(115deg, ${pSBCr(color, -20)} 0%, ${color} 100%)`,
+                  background: `linear-gradient(115deg, ${darken(color || '#607d8b', 0.2)} 0%, ${color || '#607d8b'} 100%)`,
                   height: '0.7rem !important',
                 }}
               >

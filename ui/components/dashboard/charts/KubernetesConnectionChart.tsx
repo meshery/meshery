@@ -11,7 +11,7 @@ import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
-import { Box, InfoOutlined, KubernetesIcon, Typography, useTheme } from '@sistent/sistent';
+import { Box, InfoOutlinedIcon, KubernetesIcon, Typography, useTheme } from '@sistent/sistent';
 
 export default function KubernetesConnectionStatsChart() {
   const { data: connectionData } = useGetConnectionsQuery({
@@ -48,7 +48,7 @@ export default function KubernetesConnectionStatsChart() {
       data: {
         columns: chartData,
         type: donut(),
-        colors: dataToColors(chartData),
+        colors: dataToColors(chartData, theme),
         onclick: function () {
           router.push('/management/connections');
         },
@@ -75,7 +75,7 @@ export default function KubernetesConnectionStatsChart() {
         },
       },
     }),
-    [chartData, router],
+    [chartData, router, theme],
   );
 
   const canViewConnections = CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject);
@@ -97,7 +97,7 @@ export default function KubernetesConnectionStatsChart() {
       <div onClick={(e) => e.stopPropagation()}>
         <CustomTextTooltip title="This chart shows the status of connections to your Kubernetes clusters.">
           <div>
-            <InfoOutlined
+            <InfoOutlinedIcon
               color={theme.palette.icon.default}
               style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
             />

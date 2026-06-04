@@ -30,7 +30,7 @@ import {
   useUpdateSelectedOrganizationMutation,
 } from '@/rtk-query/user';
 import { MobileOrgWksSwither } from './MobileViewSwitcher';
-import WorkspaceModal from './WorkspaceModal';
+import WorkspaceFormModal from '../WorkspaceFormModal';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 
 export const SlideInMenu = styled('div')(() => ({
@@ -321,7 +321,10 @@ function OrganizationAndWorkSpaceSwitcher() {
         )}
         <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '0' : '' }} />
         {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
-        <WorkspaceModal workspaceModal={workspaceModal} closeWorkspaceModal={closeWorkspaceModal} />
+        <WorkspaceFormModal
+          workspaceModal={workspaceModal}
+          closeWorkspaceModal={closeWorkspaceModal}
+        />
       </StyledSwitcher>
     </NoSsr>
   );

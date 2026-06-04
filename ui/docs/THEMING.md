@@ -38,6 +38,14 @@ From `@sistent/sistent`:
   `SistentThemeProviderWithoutBaseLine`, `CssBaseline`, `NoSsr`
 - **Types** — `Theme`
 
+Bridged from MUI (until Sistent re-exports them) so callers can still go
+through the project-local front door:
+
+- **Color helpers** — `darken`
+- **Global primitives** — `GlobalStyles` (used for one-off escape hatches
+  like cross-portal z-index overrides; routed through `@/theme` so app code
+  stays off `@mui/material` directly)
+
 ### What it adds locally
 
 A `palette` object with named accessors for the palette paths the app reaches
@@ -273,15 +281,15 @@ In practice, 90%+ of components in this codebase should be `styled()`.
 A migration table for the legacy modules that the lint rules and the
 restructure plan call out for deletion:
 
-| Legacy import                                                          | Replace with                                                  |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `import { Colors } from '@/themes/app'`                                | `theme.palette.*` (e.g. `theme.palette.error.main`)           |
-| `import { notificationColors, darkNotificationColors } from '@/themes/app'` | `theme.palette.*` (the theme handles the dark variant)   |
-| `import { NOTIFICATIONCOLORS } from '@/themes'`                        | `theme.palette.*`                                             |
-| `import { PRIMARY_COLOR } from '@/constants/colors'`                   | `theme.palette.primary.main`                                  |
-| `import { lightenOrDarkenColor } from '@/utils/lightenOrDarkenColor'`  | `import { lighten } from '@/theme'`. `darken` is not yet re-exported by `@/theme`; needed `darken` callers should add it to `ui/theme/index.ts` per the front-door policy. |
-| `import { styled } from '@/theme/index'`                               | `import { styled } from '@/theme'`                            |
-| `import { ... } from '@mui/material'`                                  | `import { ... } from '@sistent/sistent'`                      |
+| Legacy import                                                               | Replace with                                                                                                                                                                                                                              |
+| --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `import { Colors } from '@/themes/app'`                                     | `theme.palette.*` (e.g. `theme.palette.error.main`)                                                                                                                                                                                       |
+| `import { notificationColors, darkNotificationColors } from '@/themes/app'` | `theme.palette.*` (the theme handles the dark variant)                                                                                                                                                                                    |
+| `import { NOTIFICATIONCOLORS } from '@/themes'`                             | `theme.palette.*`                                                                                                                                                                                                                         |
+| `import { PRIMARY_COLOR } from '@/constants/colors'`                        | `theme.palette.primary.main`                                                                                                                                                                                                              |
+| `import { lightenOrDarkenColor } from '@/utils/lightenOrDarkenColor'`       | `import { lighten, darken } from '@/theme'`. The legacy helper accepts percent (`-100..100`); the MUI utilities take a coefficient (`0..1`). Convert by dividing by 100 and using `darken` for negative percents, `lighten` for positive. |
+| `import { styled } from '@/theme/index'`                                    | `import { styled } from '@/theme'`                                                                                                                                                                                                        |
+| `import { ... } from '@mui/material'`                                       | `import { ... } from '@sistent/sistent'`                                                                                                                                                                                                  |
 
 For the underlying ESLint configuration that enforces these mappings, see
 the `no-restricted-imports` block in
@@ -296,7 +304,7 @@ the `legacyRestrictedImportOffenders` allowlist in the same file.
 
 If a color, spacing scale, typography setting, or other token you need is
 missing from Sistent's palette, **open an upstream PR to
-[Sistent](https://github.com/layer5io/sistent) rather than overriding
+[Sistent](https://npmjs.com/package/@sistent/sistent) rather than overriding
 locally.**
 
 Local overrides are how the sprawl regrew last time. The whole point of
@@ -348,7 +356,7 @@ Until then:
   describing target file layout, component conventions, and the broader
   Sistent migration. Created alongside this doc in Phase 1.
 - Parent epic — [meshery/meshery#18656](https://github.com/meshery/meshery/issues/18656).
-- Sistent design system — [layer5io/sistent](https://github.com/layer5io/sistent).
+- Sistent design system — [@sistent/sistent](https://npmjs.com/package/@sistent/sistent) on npm.
 - Lint rules that enforce the conventions in this document live in
   [`ui/eslint.config.js`](../eslint.config.js)
   (`no-restricted-imports`, `no-restricted-syntax`, and the

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useTimeout } from '@/utils/hooks';
 
 function getClassName(className: string, isActive: boolean): string {
   if (!isActive) {
@@ -14,19 +15,8 @@ const AnimatedMeshery = (props: AnimatedMesheryProps) => {
   const [isActive, setIsActive] = useState(true);
   const textfill = props.textFill || '#000000';
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setIsActive(false);
-    }, 100);
-    return () => clearTimeout(timeout);
-  }, []);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setIsActive((prev) => !prev);
-    }, 4000);
-    return () => clearTimeout(timeout);
-  }, [isActive]);
+  useTimeout(() => setIsActive(false), 100);
+  useTimeout(() => setIsActive((prev) => !prev), 4000, [isActive]);
 
   return (
     <div>

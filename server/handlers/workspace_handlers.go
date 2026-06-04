@@ -17,7 +17,7 @@ import (
 // workspace.WorkspacePayload (now v1beta3, canonical-camelCase). The
 // canonical wire form emits `organizationId`; the legacy `organization_id`
 // spelling is still accepted for the Phase 5 deprecation window so any
-// unmigrated client (mesheryctl, older Kanvas releases) keeps working.
+// unmigrated client (e.g. mesheryctl, Meshery UI) keeps working.
 // Go's encoding/json case-insensitive tag fallback does NOT match across
 // an underscore boundary, so the legacy spelling cannot simply piggy-back
 // on the canonical tag. Canonical wins when both are present. Retire once
@@ -97,7 +97,7 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 	if orgID == "" {
 		missingInput := models.ErrWorkspaceMissingInput()
 		h.log.Error(missingInput)
-		writeJSONError(w, missingInput.Error(), http.StatusBadRequest)
+		writeMeshkitError(w, missingInput, http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetWorkspaces(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
@@ -125,7 +125,7 @@ func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request
 	if orgID == "" {
 		missingInput := models.ErrWorkspaceMissingInput()
 		h.log.Error(missingInput)
-		writeJSONError(w, missingInput.Error(), http.StatusBadRequest)
+		writeMeshkitError(w, missingInput, http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetWorkspaceByID(r, workspaceID, orgID)

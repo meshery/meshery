@@ -1,57 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Button,
-  Typography,
-  MenuItem,
-  IconButton,
-  CircularProgress,
-  FormControlLabel,
-  Link,
-  Grid2,
-  CustomTooltip,
-  ModalBody,
-  ModalFooter,
-  Box,
-  AccordionDetails,
-  TextField,
-  NoSsr,
-  FormLabel,
-  Autocomplete,
-  RadioGroup,
-  AccordionSummary,
-} from '@sistent/sistent';
+import { ModalBody, ModalFooter, NoSsr } from '@sistent/sistent';
 import { URLValidator } from '../../utils/URLValidator';
-import {
-  ArrowBack,
-  ExpandMore as ExpandMoreIcon,
-  GetApp as GetAppIcon,
-  HelpOutlineOutlined as HelpOutlineOutlinedIcon,
-  SaveOutlined as SaveOutlinedIcon,
-} from '@/assets/icons';
-import MesheryChart from '../MesheryChart';
+import { isValidJSON } from '../../utils/validators';
 import LoadTestTimerDialog from '../load-test-timer-dialog';
-import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
-import { durationOptions } from '../../lib/prePopulatedOptions';
 import fetchControlPlanes from '@/graphql/queries/ControlPlanesQuery';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
-import { iconMedium } from '../../css/icons.styles';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { generateTestName, generateUUID } from './helper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/general/error-404/index';
-import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
+import { api } from '../../rtk-query';
 import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
 import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 import { useGetMeshQuery } from '@/rtk-query/mesh';
-import {
-  CenterTimer,
-  ExpansionPanelComponent,
-  FormContainer,
-  HelpIcon,
-  RadioButton,
-} from './style';
+import { CenterTimer } from './style';
 import { getMeshModels } from '@/api/meshmodel';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
@@ -59,92 +23,20 @@ import { updateLoadTest } from '@/store/slices/prefTest';
 import { updateStaticPrometheusBoardConfig } from '@/store/slices/telemetry';
 import { useGetStaticPrometheusBoardConfigQuery } from '@/rtk-query/telemetry';
 import { normalizeLoadTestPrefs } from '../../lib/load-test-prefs';
+import PerformanceCharts from './PerformanceCharts';
+import PerformanceForm from './PerformanceForm';
+import PerformanceFormActions from './PerformanceFormActions';
+import PerformanceTestResults from './PerformanceTestResults';
+import { generatePerformanceProfile } from './performance-helpers';
+import { createPerformanceFormChangeHandler } from './performance-handlers';
 
-// =============================== HELPER FUNCTIONS ===========================
-
-/**
- * generatePerformanceProfile takes in data and generate a performance
- * profile object from it
- * @param {*} data
- */
-export function generatePerformanceProfile(data) {
-  const {
-    id,
-    name,
-    loadGenerator,
-    additional_options,
-    endpoint,
-    serviceMesh,
-    concurrentRequest,
-    qps,
-    duration,
-    requestHeaders,
-    requestCookies,
-    requestBody,
-    contentType,
-    caCertificate,
-  } = data;
-
-  const performanceProfileName = generateTestName(name, serviceMesh);
-
-  return {
-    ...(id && { id }),
-    name: performanceProfileName,
-    load_generators: [loadGenerator],
-    endpoints: [endpoint],
-    service_mesh: serviceMesh,
-    concurrent_request: concurrentRequest,
-    qps,
-    duration,
-    request_headers: requestHeaders,
-    request_body: requestBody,
-    request_cookies: requestCookies,
-    content_type: contentType,
-    metadata: {
-      additional_options: [additional_options],
-      ca_certificate: {
-        file: caCertificate.file,
-        name: caCertificate.name,
-      },
-    },
-  };
-}
-
-// =============================== PERFORMANCE COMPONENT =======================
-const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
-
-const infoFlags = <>Only .json files are supported.</>;
-
-const infoCRTCertificates = <>Only .crt files are supported.</>;
-
-const infoloadGenerators = (
-  <>
-    Which load generators does Meshery support?
-    <ul>
-      <li>
-        fortio - Fortio load testing library, command line tool, advanced echo server and web UI in
-        go (golang). Allows to specify a set query-per-second load and record latency histograms and
-        other useful stats.{' '}
-      </li>
-      <li> wrk2 - A constant throughput, correct latency recording variant of wrk.</li>
-      <li>
-        {' '}
-        nighthawk - Enables users to run distributed performance tests to better mimic real-world,
-        distributed systems scenarios.
-      </li>
-    </ul>
-    <Link
-      style={{ textDecoration: 'underline' }}
-      color="inherit"
-      href="https://docs.meshery.io/functionality/performance-management"
-    >
-      {' '}
-      Performance Management
-    </Link>
-  </>
-);
+// Re-export the helper so external/legacy callers that imported it from the
+// entry point keep working after the Phase 5.a split.
+export { generatePerformanceProfile } from './performance-helpers';
 
 let eventStream = null;
+const PERFORMANCE_RTK_TAG = 'Performance_Profile_performance';
+
 const MesheryPerformanceComponent_ = (props) => {
   const {
     testName = '',
@@ -164,14 +56,6 @@ const MesheryPerformanceComponent_ = (props) => {
     metadata,
     closeModal,
   } = props;
-  const isJsonString = (str) => {
-    try {
-      JSON.parse(str);
-    } catch {
-      return false;
-    }
-    return true;
-  };
   // Create individual state variables for each property
   const [testNameState, setTestName] = useState(testName);
   const [meshNameState, setMeshName] = useState(meshName);
@@ -185,6 +69,8 @@ const MesheryPerformanceComponent_ = (props) => {
   const [additionalOptionsState, setAdditionalOptions] = useState(additional_options || '');
   const [testResult, setTestResult] = useState();
   const [testResultsOpen, setTestResultsOpen] = useState(false);
+  const { selectedK8sContexts, k8sConfig } = useSelector((state) => state.ui);
+  const { prometheus, staticPrometheusBoardConfig } = useSelector((state) => state.telemetry);
 
   const [headersState, setHeaders] = useState(headers || '');
   const [cookiesState, setCookies] = useState(cookies || '');
@@ -199,7 +85,7 @@ const MesheryPerformanceComponent_ = (props) => {
   const [tErrorState, setTError] = useState('');
   const [jsonErrorState, setJsonError] = useState(false);
   const [disableTestState, setDisableTest] = useState(
-    !(URLValidator(urlState) || isJsonString(additionalOptionsState)),
+    !(URLValidator(urlState) || isValidJSON(additionalOptionsState)),
   );
   const [testUUIDState, setTestUUID] = useState(generateUUID());
   const [selectedMeshState, setSelectedMesh] = useState('');
@@ -209,8 +95,6 @@ const MesheryPerformanceComponent_ = (props) => {
   const [staticPrometheusBoardConfigState, setStaticPrometheusBoardConfig] = useState(
     staticPrometheusBoardConfig,
   );
-  const { selectedK8sContexts, k8sConfig } = useSelector((state) => state.ui);
-  const { prometheus, staticPrometheusBoardConfig } = useSelector((state) => state.telemetry);
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const { data: userData, isSuccess: isUserDataFetched } =
@@ -232,107 +116,23 @@ const MesheryPerformanceComponent_ = (props) => {
     fetchMeshModels();
   }, []);
 
-  const handleChange = (name) => (event) => {
-    const { value } = event.target;
-    if (name === 'caCertificate') {
-      if (!event.target.files?.length) return;
-
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.addEventListener('load', (evt) => {
-        setCaCertificate({
-          name: file.name,
-          file: evt.target.result,
-        });
-      });
-      reader.readAsText(file);
-    }
-
-    if (name === 'url' && value !== '') {
-      let urlPattern = value;
-
-      let val = URLValidator(urlPattern);
-      if (!val) {
-        setDisableTest(true);
-        setUrlError(true);
-      } else {
-        setDisableTest(false);
-        setUrlError(false);
-      }
-    } else setUrlError(false);
-
-    if (name === 'additional_options') {
-      // Check if the target event is an input element (typing) or a file input (upload)
-      const isFileUpload = event.target.getAttribute('type') === 'file';
-
-      if (isFileUpload) {
-        // Handle file upload
-        const file = event.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            try {
-              const fileContent = event.target.result;
-              // Validate JSON
-              JSON.parse(fileContent);
-              setAdditionalOptions(fileContent);
-              setJsonError(false);
-            } catch {
-              setAdditionalOptions(event.target.result);
-              setJsonError(true);
-            }
-          };
-          reader.readAsText(file);
-        }
-      } else {
-        // Handle text input
-        try {
-          // empty text input exception
-          if (value !== '') JSON.parse(value);
-          setAdditionalOptions(value);
-          setJsonError(false);
-        } catch {
-          setAdditionalOptions(value);
-          setJsonError(true);
-        }
-      }
-    }
-    switch (name) {
-      case 'profileName':
-        setProfileName(value);
-        break;
-      case 'meshName':
-        setMeshName(value);
-        break;
-      case 'c':
-        setC(value);
-        break;
-      case 'qps':
-        setQps(value);
-        break;
-      case 'headers':
-        setHeaders(value);
-        break;
-      case 'cookies':
-        setCookies(value);
-        break;
-      case 'contentType':
-        setContentType(value);
-        break;
-      case 'reqBody':
-        setReqBody(value);
-        break;
-      case 'loadGenerator':
-        setLoadGenerator(value);
-        break;
-      case 'url':
-        setUrl(value);
-        break;
-      default:
-        // Handle any other cases or do nothing if not matched
-        break;
-    }
-  };
+  const handleChange = createPerformanceFormChangeHandler({
+    setProfileName,
+    setMeshName,
+    setC,
+    setQps,
+    setHeaders,
+    setCookies,
+    setContentType,
+    setReqBody,
+    setLoadGenerator,
+    setUrl,
+    setCaCertificate,
+    setAdditionalOptions,
+    setJsonError,
+    setDisableTest,
+    setUrlError,
+  });
 
   const handleDurationChange = (event, newValue) => {
     setTValue(newValue);
@@ -391,7 +191,7 @@ const MesheryPerformanceComponent_ = (props) => {
       additional_options: additionalOptionsState,
       endpoint: urlState,
       serviceMesh: meshNameState,
-      concurrentRequest: +cState || 0,
+      concurrentRequest: +cState || 1,
       qps: +qpsState || 0,
       duration: tState,
       requestHeaders: headersState,
@@ -488,7 +288,10 @@ const MesheryPerformanceComponent_ = (props) => {
 
   function handleSuccess() {
     return (result) => {
-      if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined') {
+      if (
+        typeof result !== 'undefined' &&
+        typeof (result.runnerResults ?? result.runner_results) !== 'undefined'
+      ) {
         notify({
           message: 'fetched the data.',
           event_type: EVENT_TYPES.SUCCESS,
@@ -510,6 +313,7 @@ const MesheryPerformanceComponent_ = (props) => {
         );
         setTestUUID(generateUUID());
 
+        dispatch(api.util.invalidateTags([PERFORMANCE_RTK_TAG]));
         setTestResultsOpen(true);
         setTestResult(result);
       }
@@ -676,7 +480,9 @@ const MesheryPerformanceComponent_ = (props) => {
 
   const getSMPMeshes = () => {
     if (isSMPMeshesFetched && smpMeshes) {
-      setAvailableSMPMeshes([...smpMeshes.available_meshes].sort((m1, m2) => m1.localeCompare(m2))); // shallow copy of the array to sort it
+      setAvailableSMPMeshes(
+        [...(smpMeshes.availableMeshes || [])].sort((m1, m2) => m1.localeCompare(m2)),
+      );
     } else if (isSMPMeshError) {
       handleError('unable to fetch SMP meshes');
     }
@@ -749,104 +555,20 @@ const MesheryPerformanceComponent_ = (props) => {
   if (timerDialogOpenState) {
     chartStyle = { opacity: 0.3 };
   }
-  let displayStaticCharts = null;
-  let displayGCharts = null;
-  let displayPromCharts = null;
 
   availableAdaptersState.forEach((item) => {
     const index = availableSMPMeshesState.indexOf(item);
     if (index !== -1) availableSMPMeshesState.splice(index, 1);
   });
 
-  if (
-    localStaticPrometheusBoardConfig &&
-    localStaticPrometheusBoardConfig !== null &&
-    Object.keys(localStaticPrometheusBoardConfig).length > 0 &&
-    prometheus.prometheusURL !== ''
-  ) {
-    // only add testUUID to the board that should be persisted
-    if (localStaticPrometheusBoardConfig.cluster) {
-      localStaticPrometheusBoardConfig.cluster.testUUID = testUUIDState;
-    }
-    displayStaticCharts = (
-      <React.Fragment>
-        <Typography variant="h6" gutterBottom sx={{ textAlign: 'center' }}>
-          Node Metrics
-        </Typography>
-        <GrafanaCustomCharts
-          boardPanelConfigs={[
-            localStaticPrometheusBoardConfig.cluster,
-            localStaticPrometheusBoardConfig.node,
-          ]}
-          prometheusURL={prometheus.prometheusURL}
-        />
-      </React.Fragment>
-    );
-  }
-  if (prometheus.selectedPrometheusBoardsConfigs.length > 0) {
-    displayPromCharts = (
-      <React.Fragment>
-        <Typography variant="h6" gutterBottom sx={{ textAlign: 'center' }}>
-          Prometheus charts
-        </Typography>
-        <GrafanaCustomCharts
-          boardPanelConfigs={prometheus.selectedPrometheusBoardsConfigs}
-          prometheusURL={prometheus.prometheusURL}
-        />
-      </React.Fragment>
-    );
-  }
-  if (grafana.selectedBoardsConfigs.length > 0) {
-    displayGCharts = (
-      <React.Fragment>
-        <Typography variant="h6" gutterBottom sx={{ textAlign: 'center' }}>
-          Grafana charts
-        </Typography>
-        <GrafanaCustomCharts
-          boardPanelConfigs={grafana.selectedBoardsConfigs}
-          grafanaURL={grafana.grafanaURL}
-          grafanaAPIKey={grafana.grafanaAPIKey}
-        />
-      </React.Fragment>
-    );
-  }
-
-  const Results = () => {
-    if (!testResult || !testResult.runner_results) {
-      return null;
-    }
-
-    return (
-      <div>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <IconButton onClick={() => setTestResultsOpen(false)}>
-            <ArrowBack />
-          </IconButton>
-          <Typography variant="h6" gutterBottom sx={{ textAlign: 'center' }} id="timerAnchor">
-            Test Results
-          </Typography>
-          <IconButton
-            key="download"
-            aria-label="download"
-            color="inherit"
-            // onClick={() => self.props.closeSnackbar(key) }
-            href={`/api/perf/profile/result/${encodeURIComponent(testResult.meshery_id)}`}
-          >
-            <GetAppIcon style={iconMedium} />
-          </IconButton>
-        </Box>
-        <div style={chartStyle}>
-          <MesheryChart
-            rawdata={[testResult && testResult.runner_results ? testResult : {}]}
-            data={[testResult && testResult.runner_results ? testResult.runner_results : {}]}
-          />
-        </div>
-      </div>
-    );
-  };
-
   if (testResultsOpen) {
-    return <Results />;
+    return (
+      <PerformanceTestResults
+        testResult={testResult}
+        chartStyle={chartStyle}
+        onBack={() => setTestResultsOpen(false)}
+      />
+    );
   }
 
   return (
@@ -854,413 +576,45 @@ const MesheryPerformanceComponent_ = (props) => {
       {CAN(keys.VIEW_PERFORMANCE_PROFILES.action, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
         <>
           <React.Fragment>
-            {/* <div className={classes.wrapperClss} style={props.style || {}}> */}
             <ModalBody>
-              <Grid2 container spacing={1} size="grow">
-                <Grid2 size={{ xs: 12, md: 6 }}>
-                  <TextField
-                    id="profileName"
-                    name="profileName"
-                    label="Profile Name"
-                    fullWidth
-                    value={profileNameState}
-                    margin="normal"
-                    variant="outlined"
-                    onChange={handleChange('profileName')}
-                    inputProps={{
-                      maxLength: 300,
-                    }}
-                    InputProps={{
-                      endAdornment: (
-                        <CustomTooltip title="Create a profile providing a name, if a profile name is not provided, a random one will be generated for you.">
-                          <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
-                        </CustomTooltip>
-                      ),
-                    }}
-                  />
-                </Grid2>
-
-                <Grid2 size={{ xs: 12, md: 6 }}>
-                  <TextField
-                    select
-                    id="meshName"
-                    name="meshName"
-                    label="Technology"
-                    fullWidth
-                    value={
-                      meshNameState === '' && selectedMeshState !== ''
-                        ? selectedMeshState
-                        : meshNameState
-                    }
-                    margin="normal"
-                    variant="outlined"
-                    onChange={handleChange('meshName')}
-                  >
-                    <MenuItem key="mh_-_none" value="None">
-                      None
-                    </MenuItem>
-                    {meshModels &&
-                      meshModels.map((mesh) => (
-                        <MenuItem key={`mh_-_${mesh}`} value={mesh.toLowerCase()}>
-                          {mesh}
-                        </MenuItem>
-                      ))}
-                  </TextField>
-                </Grid2>
-                <Grid2 size={{ xs: 12 }}>
-                  <TextField
-                    required
-                    id="url"
-                    name="url"
-                    label="URL to test"
-                    type="url"
-                    fullWidth
-                    value={urlState}
-                    error={urlErrorState}
-                    helperText={urlErrorState ? 'Please enter a valid URL along with protocol' : ''}
-                    margin="normal"
-                    variant="outlined"
-                    onChange={handleChange('url')}
-                    InputProps={{
-                      endAdornment: (
-                        <CustomTooltip title="The Endpoint where the load will be generated and the performance test will run against.">
-                          <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
-                        </CustomTooltip>
-                      ),
-                    }}
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, md: 4 }}>
-                  <TextField
-                    required
-                    id="c"
-                    name="c"
-                    label="Concurrent requests"
-                    type="number"
-                    fullWidth
-                    value={cState}
-                    inputProps={{ min: '0', step: '1' }}
-                    margin="normal"
-                    variant="outlined"
-                    onChange={handleChange('c')}
-                    InputLabelProps={{ shrink: true }}
-                    InputProps={{
-                      endAdornment: (
-                        <CustomTooltip title="Load Testing tool will create this many concurrent request against the endpoint.">
-                          <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
-                        </CustomTooltip>
-                      ),
-                    }}
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, md: 4 }}>
-                  <TextField
-                    required
-                    id="qps"
-                    name="qps"
-                    label="Queries per second"
-                    type="number"
-                    fullWidth
-                    value={qpsState}
-                    inputProps={{ min: '0', step: '1' }}
-                    margin="normal"
-                    variant="outlined"
-                    onChange={handleChange('qps')}
-                    InputLabelProps={{ shrink: true }}
-                    InputProps={{
-                      endAdornment: (
-                        <CustomTooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be requested">
-                          <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
-                        </CustomTooltip>
-                      ),
-                    }}
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, md: 4 }}>
-                  <CustomTooltip
-                    title={
-                      "Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."
-                    }
-                  >
-                    <Autocomplete
-                      required
-                      id="t"
-                      name="t"
-                      freeSolo
-                      label="Duration*"
-                      fullWidth
-                      variant="outlined"
-                      // className={classes.errorValue}
-                      classes={{ root: tErrorState }}
-                      value={tValueState}
-                      inputValue={tState}
-                      onChange={handleDurationChange}
-                      onInputChange={handleInputDurationChange}
-                      options={durationOptions}
-                      style={{ marginTop: '16px', marginBottom: '8px' }}
-                      renderInput={(params) => (
-                        <TextField {...params} label="Duration*" variant="outlined" />
-                      )}
-                      InputProps={{
-                        endAdornment: (
-                          <CustomTooltip title="Default duration is 30 seconds">
-                            <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
-                          </CustomTooltip>
-                        ),
-                      }}
-                    />
-                  </CustomTooltip>
-                </Grid2>
-                <Grid2 size={{ xs: 12, md: 12 }}>
-                  <ExpansionPanelComponent>
-                    <AccordionSummary expanded={true} expandIcon={<ExpandMoreIcon />}>
-                      <Typography align="center" color="textSecondary" variant="h6">
-                        Advanced Options
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Grid2 container spacing={1} size="grow">
-                        <Grid2 size={{ xs: 12 }}>
-                          <TextField
-                            id="headers"
-                            name="headers"
-                            label='Request Headers e.g. {"host":"bookinfo.meshery.io"}'
-                            fullWidth
-                            value={headersState}
-                            multiline
-                            margin="normal"
-                            variant="outlined"
-                            onChange={handleChange('headers')}
-                          ></TextField>
-                        </Grid2>
-                        <Grid2 size={{ xs: 12 }}>
-                          <TextField
-                            id="cookies"
-                            name="cookies"
-                            label='Request Cookies e.g. {"yummy_cookie":"choco_chip"}'
-                            fullWidth
-                            value={cookiesState}
-                            multiline
-                            margin="normal"
-                            variant="outlined"
-                            onChange={handleChange('cookies')}
-                          ></TextField>
-                        </Grid2>
-                        <Grid2 size={{ xs: 12 }}>
-                          <TextField
-                            id="contentType"
-                            name="contentType"
-                            label="Content Type e.g. application/json"
-                            fullWidth
-                            value={contentTypeState}
-                            multiline
-                            margin="normal"
-                            variant="outlined"
-                            onChange={handleChange('contentType')}
-                          ></TextField>
-                        </Grid2>
-                        <Grid2 size={{ xs: 12 }}>
-                          <TextField
-                            id="cookies"
-                            name="cookies"
-                            label='Request Body e.g. {"method":"post","url":"http://bookinfo.meshery.io/test"}'
-                            fullWidth
-                            value={reqBodyState}
-                            multiline
-                            margin="normal"
-                            variant="outlined"
-                            onChange={handleChange('reqBody')}
-                          ></TextField>
-                        </Grid2>
-                        <Grid2 container size="grow">
-                          <Grid2 size={{ xs: 6 }}>
-                            <TextField
-                              id="additional_options"
-                              name="additional_options"
-                              label="Additional Options e.g. { `requestPerSecond`: 20 }"
-                              fullWidth
-                              error={jsonErrorState}
-                              helperText={jsonErrorState ? 'Please enter a valid JSON string' : ''}
-                              value={
-                                additionalOptionsState.length > 150
-                                  ? `${additionalOptionsState.slice(0, 150)} .....`
-                                  : additionalOptionsState
-                              }
-                              multiline
-                              margin="normal"
-                              variant="outlined"
-                              size="small"
-                              onChange={handleChange('additional_options')}
-                            />
-                          </Grid2>
-                          <Grid2 size={{ xs: 6 }}>
-                            <label
-                              htmlFor="upload-additional-options"
-                              style={{ paddingLeft: '0.7rem', paddingTop: '8px' }}
-                              fullWidth
-                            >
-                              <Button
-                                variant="outlined"
-                                onChange={handleChange('additional_options')}
-                                aria-label="Upload Button"
-                                component="span"
-                                style={{ margin: '0.5rem', marginTop: '1.15rem' }}
-                              >
-                                <input
-                                  id="upload-additional-options"
-                                  type="file"
-                                  accept={'.json'}
-                                  name="upload-button"
-                                  hidden
-                                  data-cy="additional-options-upload-button"
-                                />
-                                Browse
-                              </Button>
-                              <CustomTooltip title={infoFlags} interactive>
-                                <HelpIcon />
-                              </CustomTooltip>
-                            </label>
-                          </Grid2>
-                        </Grid2>
-                        <Grid2 container size="grow">
-                          <Grid2 size={{ xs: 6 }}>
-                            <TextField
-                              size="small"
-                              variant="outlined"
-                              margin="mormal"
-                              fullWidth
-                              label={
-                                caCertificateState?.name || 'Upload SSL Certificate e.g. .crt file'
-                              }
-                              style={{ width: '100%', margin: '0.5rem 0' }}
-                              value={metadataState?.ca_certificate.name}
-                            />
-                          </Grid2>
-                          <Grid2 size={{ xs: 6 }}>
-                            <label
-                              htmlFor="upload-cacertificate"
-                              style={{ paddingLeft: '0.7rem', paddingTop: '8px' }}
-                            >
-                              <Button
-                                variant="outlined"
-                                aria-label="Upload Button"
-                                onChange={handleChange('caCertificate')}
-                                component="span"
-                                style={{ margin: '0.5rem' }}
-                              >
-                                <input
-                                  id="upload-cacertificate"
-                                  type="file"
-                                  accept={'.crt'}
-                                  name="upload-button"
-                                  hidden
-                                  data-cy="cacertificate-upload-button"
-                                  onChange={handleCertificateUpload}
-                                />
-                                Browse
-                              </Button>
-                              <CustomTooltip title={infoCRTCertificates} interactive>
-                                <HelpIcon />
-                              </CustomTooltip>
-                            </label>
-                          </Grid2>
-                        </Grid2>
-                      </Grid2>
-                    </AccordionDetails>
-                  </ExpansionPanelComponent>
-                </Grid2>
-                <Grid2 size={{ xs: 12, md: 4 }}>
-                  <FormContainer component="loadGenerator">
-                    <FormLabel
-                      component="loadGenerator"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        flexWrap: 'wrap',
-                      }}
-                    >
-                      Load generator
-                      <CustomTextTooltip title={infoloadGenerators} interactive>
-                        <HelpIcon />
-                      </CustomTextTooltip>
-                    </FormLabel>
-                    <RadioGroup
-                      aria-label="loadGenerator"
-                      name="loadGenerator"
-                      value={loadGeneratorState}
-                      onChange={handleChange('loadGenerator')}
-                      row
-                    >
-                      {loadGenerators.map((lg, index) => (
-                        <FormControlLabel
-                          key={index}
-                          value={lg}
-                          disabled={lg === 'wrk2'}
-                          control={<RadioButton color="primary" />}
-                          label={lg}
-                        />
-                      ))}
-                    </RadioGroup>
-                  </FormContainer>
-                </Grid2>
-              </Grid2>
+              <PerformanceForm
+                profileName={profileNameState}
+                meshName={meshNameState}
+                selectedMesh={selectedMeshState}
+                meshModels={meshModels}
+                url={urlState}
+                urlError={urlErrorState}
+                c={cState}
+                qps={qpsState}
+                t={tState}
+                tValue={tValueState}
+                tError={tErrorState}
+                headers={headersState}
+                cookies={cookiesState}
+                contentType={contentTypeState}
+                reqBody={reqBodyState}
+                additionalOptions={additionalOptionsState}
+                jsonError={jsonErrorState}
+                caCertificate={caCertificateState}
+                metadata={metadataState}
+                loadGenerator={loadGeneratorState}
+                handleChange={handleChange}
+                handleDurationChange={handleDurationChange}
+                handleInputDurationChange={handleInputDurationChange}
+                handleCertificateUpload={handleCertificateUpload}
+              />
             </ModalBody>
             <ModalFooter variant="filled">
               <React.Fragment>
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    sx={{ marginLeft: '1rem' }}
-                    disabled={disableTestState}
-                    onClick={() => handleAbort()}
-                  >
-                    Clear
-                  </Button>
-                  {testResult && (
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      size="large"
-                      csx={{ marginLeft: '1rem' }}
-                      disabled={disableTestState}
-                      onClick={() => setTestResultsOpen(true)}
-                    >
-                      Results
-                    </Button>
-                  )}
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={() => submitProfile()}
-                    sx={{ marginLeft: '1rem' }}
-                    disabled={disableTestState}
-                    startIcon={<SaveOutlinedIcon />}
-                  >
-                    Save Profile
-                  </Button>
-                  <Button
-                    type="submit"
-                    data-testid="run-performance-test"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={handleSubmit}
-                    sx={{ marginLeft: '1rem' }}
-                    disabled={
-                      blockRunTestState ||
-                      disableTestState ||
-                      !CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)
-                    }
-                  >
-                    {blockRunTestState ? <CircularProgress size={30} /> : 'Run Test'}
-                  </Button>
-                </div>
+                <PerformanceFormActions
+                  disableTest={disableTestState}
+                  blockRunTest={blockRunTestState}
+                  hasTestResult={!!testResult}
+                  onAbort={handleAbort}
+                  onShowResults={() => setTestResultsOpen(true)}
+                  onSaveProfile={() => submitProfile()}
+                  onRunTest={handleSubmit}
+                />
               </React.Fragment>
             </ModalFooter>
 
@@ -1276,11 +630,12 @@ const MesheryPerformanceComponent_ = (props) => {
             ) : null}
           </React.Fragment>
 
-          {displayStaticCharts}
-
-          {displayPromCharts}
-
-          {displayGCharts}
+          <PerformanceCharts
+            localStaticPrometheusBoardConfig={localStaticPrometheusBoardConfig}
+            prometheus={prometheus}
+            grafana={grafana}
+            testUUID={testUUIDState}
+          />
         </>
       ) : (
         <DefaultError />
