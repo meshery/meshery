@@ -143,6 +143,31 @@ describe('performance-profile endpoints', () => {
     expect(schemaMocks.useGetPerformanceResultsQuery).toHaveBeenCalledTimes(1);
   });
 
+  it('omits nullish query params before delegating to schema hooks', async () => {
+    const { useGetProfileResultsQuery } = await loadModule();
+    const result = useGetProfileResultsQuery(
+      {
+        page: 0,
+        pagesize: undefined,
+        search: '',
+        order: null,
+        from: null,
+        to: '2024-02-01',
+      },
+      { skip: true },
+    );
+
+    expect(result).toEqual({
+      hook: 'getPerformanceResults',
+      queryArg: {
+        page: '0',
+        search: '',
+        to: '2024-02-01',
+      },
+      options: { skip: true },
+    });
+  });
+
   it('getPerformanceProfileById delegates to schema-generated getPerformanceProfile', async () => {
     const { useGetPerformanceProfileByIdQuery } = await loadModule();
     const result = useGetPerformanceProfileByIdQuery({ id: 'abc' }, { skip: true });

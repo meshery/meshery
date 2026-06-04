@@ -7,12 +7,18 @@ import {
   useUpsertPerformanceProfileMutation as useSchemasUpsertPerformanceProfileMutation,
 } from '@meshery/schemas/mesheryApi';
 
-const normalizePaginationParams = (queryArg) => ({
-  page: queryArg?.page?.toString(),
-  pagesize: queryArg?.pagesize?.toString(),
-  search: queryArg?.search,
-  order: queryArg?.order,
-});
+const stripNullishParams = (params) =>
+  Object.fromEntries(
+    Object.entries(params).filter(([, value]) => value !== undefined && value !== null),
+  );
+
+const normalizePaginationParams = (queryArg) =>
+  stripNullishParams({
+    page: queryArg?.page?.toString(),
+    pagesize: queryArg?.pagesize?.toString(),
+    search: queryArg?.search,
+    order: queryArg?.order,
+  });
 
 export const useGetPerformanceProfilesQuery = (queryArg, options) =>
   useSchemasGetPerformanceProfilesQuery(normalizePaginationParams(queryArg), options);
@@ -26,11 +32,11 @@ export const useSavePerformanceProfileMutation = () => {
 
 export const useGetProfileResultsQuery = (queryArg, options) =>
   useSchemasGetPerformanceResultsQuery(
-    {
+    stripNullishParams({
       ...normalizePaginationParams(queryArg),
       from: queryArg?.from,
       to: queryArg?.to,
-    },
+    }),
     options,
   );
 
@@ -54,9 +60,9 @@ export const useDeletePerformanceProfileMutation = () => {
 
 export const useGetProfileResultsByIdQuery = (queryArg, options) =>
   useSchemasGetPerformanceProfileResultsQuery(
-    {
+    stripNullishParams({
       performanceProfileId: queryArg?.id,
       ...normalizePaginationParams(queryArg),
-    },
+    }),
     options,
   );
