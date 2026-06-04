@@ -125,7 +125,7 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 	return DefaultState, ErrInvalidTransitionEvent(sm.CurrentState, event)
 }
 
-// Returns events.Event and error. The func invoking the SendEvent should handle the error and publish the event.
+// SendEvent returns events.Event and error. The caller should handle the error and publish the event.
 // wherever possible use the userID and systemID from context as the events can be created from other comps or actors and not only user actors.
 // In cases when the event is received as part of some other event and not explicitly created by an actor, use the useID and systemID of the actor who initially invoked the machine.
 func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) (*events.Event, error) {
@@ -217,7 +217,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			connectionPayload.MetaData = map[string]interface{}{}
 		}
 
-		connection, err = sm.Provider.UpdateConnectionById(token, connectionPayload, sm.ID.String())
+		connection, err = sm.Provider.UpdateConnectionByID(token, connectionPayload, sm.ID.String())
 
 		if err != nil {
 			// In this case should the current state be again set to previous state i.e. should we rollback. But not only state should be rollback but other actions as well, rn we don't rollback state.

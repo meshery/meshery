@@ -10,11 +10,11 @@ import (
 )
 
 // as defined in infrastructure/setup.sh
-const CUSTOM_K8S_NAMESPACE = "calm-koala"
+const CustomK8sNamespace = "calm-koala"
 
 // as defined in infrastructure/test-deployment.yaml
-const CUSTOM_APP_NAME = "nginx-deployment"
-const CUSTOM_APP_REPLICAS_NUM = 3
+const CustomAppName = "nginx-deployment"
+const CustomAppReplicasNum = 3
 
 type testCaseBasedOnDatabaseContentStruct struct {
 	name         string
@@ -129,7 +129,7 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 					dbresult := handler.
 						Model(&meshsyncmodel.KubernetesResourceObjectMeta{}).
 						Joins("JOIN kubernetes_resources ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
-						Where("namespace = ?", CUSTOM_K8S_NAMESPACE).
+						Where("namespace = ?", CustomK8sNamespace).
 						Where("lower(kubernetes_resources.kind) = ?", "deployment").
 						Find(&k8sResources)
 
@@ -142,7 +142,7 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 
 					assert.GreaterOrEqual(t, len(k8sResources), 1, "must contains at least one Deployment")
 					for _, resource := range k8sResources {
-						assert.Equal(t, CUSTOM_APP_NAME, resource.Name, "deployment must have correct name")
+						assert.Equal(t, CustomAppName, resource.Name, "deployment must have correct name")
 					}
 				})
 				t0.Run("at least one replica set", func(t *testing.T) {
@@ -154,7 +154,7 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 					dbresult := handler.
 						Model(&meshsyncmodel.KubernetesResourceObjectMeta{}).
 						Joins("JOIN kubernetes_resources ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
-						Where("namespace = ?", CUSTOM_K8S_NAMESPACE).
+						Where("namespace = ?", CustomK8sNamespace).
 						Where("lower(kubernetes_resources.kind) = ?", "replicaset").
 						Find(&k8sResources)
 
@@ -167,10 +167,10 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 
 					assert.GreaterOrEqual(t, len(k8sResources), 1, "must contains at least one replica set")
 					for _, resource := range k8sResources {
-						assert.Contains(t, resource.Name, CUSTOM_APP_NAME, "replica set must have correct name")
+						assert.Contains(t, resource.Name, CustomAppName, "replica set must have correct name")
 					}
 				})
-				t0.Run(fmt.Sprintf("at least %d pods", CUSTOM_APP_REPLICAS_NUM), func(t *testing.T) {
+				t0.Run(fmt.Sprintf("at least %d pods", CustomAppReplicasNum), func(t *testing.T) {
 					handler.Lock()
 					defer handler.Unlock()
 
@@ -179,7 +179,7 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 					dbresult := handler.
 						Model(&meshsyncmodel.KubernetesResourceObjectMeta{}).
 						Joins("JOIN kubernetes_resources ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
-						Where("namespace = ?", CUSTOM_K8S_NAMESPACE).
+						Where("namespace = ?", CustomK8sNamespace).
 						Where("lower(kubernetes_resources.kind) = ?", "pod").
 						Find(&k8sResources)
 
@@ -190,9 +190,9 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 						t.Fatalf("db result ended with an error %v", dbresult.Error)
 					}
 
-					assert.GreaterOrEqual(t, len(k8sResources), CUSTOM_APP_REPLICAS_NUM, "must contains pods")
+					assert.GreaterOrEqual(t, len(k8sResources), CustomAppReplicasNum, "must contains pods")
 					for _, resource := range k8sResources {
-						assert.Contains(t, resource.Name, CUSTOM_APP_NAME, "pod must have correct name")
+						assert.Contains(t, resource.Name, CustomAppName, "pod must have correct name")
 					}
 				})
 			}

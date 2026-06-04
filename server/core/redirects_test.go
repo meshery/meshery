@@ -6,29 +6,29 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEncodeRefUrl(t *testing.T) {
+func TestEncodeRefURL(t *testing.T) {
 	testCases := []struct {
 		name     string
 		input    url.URL
 		expected string
 	}{
 		{
-			name:     "given empty url when EncodeRefUrl then return empty string",
+			name:     "given empty url when EncodeRefURL then return empty string",
 			input:    url.URL{},
 			expected: "",
 		},
 		{
-			name:     "given root path url when EncodeRefUrl then return empty string",
+			name:     "given root path url when EncodeRefURL then return empty string",
 			input:    url.URL{Path: "/"},
 			expected: "",
 		},
 		{
-			name:     "given relative url when EncodeRefUrl then return encoded string",
+			name:     "given relative url when EncodeRefURL then return encoded string",
 			input:    url.URL{Path: "/dashboard"},
 			expected: "L2Rhc2hib2FyZA",
 		},
 		{
-			name: "given absolute url with query params when EncodeRefUrl then return encoded string",
+			name: "given absolute url with query params when EncodeRefURL then return encoded string",
 			input: url.URL{
 				Scheme:   "http",
 				Host:     "localhost:9081",
@@ -41,7 +41,7 @@ func TestEncodeRefUrl(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			actual := EncodeRefUrl(tc.input)
+			actual := EncodeRefURL(tc.input)
 			assert.Equal(t, tc.expected, actual, tc.name)
 		})
 	}
@@ -94,11 +94,11 @@ func TestEncodeDecodeRoundtrip(t *testing.T) {
 		input url.URL
 	}{
 		{
-			name:  "given relative url when EncodeRefUrl and DecodeRefURL then return original url",
+			name:  "given relative url when EncodeRefURL and DecodeRefURL then return original url",
 			input: url.URL{Path: "/settings/system"},
 		},
 		{
-			name: "given absolute url when EncodeRefUrl and DecodeRefURL then return original url",
+			name: "given absolute url when EncodeRefURL and DecodeRefURL then return original url",
 			input: url.URL{
 				Scheme:   "https",
 				Host:     "meshery.io",
@@ -110,7 +110,7 @@ func TestEncodeDecodeRoundtrip(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			encoded := EncodeRefUrl(tc.input)
+			encoded := EncodeRefURL(tc.input)
 			decoded, err := DecodeRefURL(encoded)
 			
 			assert.NoError(t, err, tc.name)

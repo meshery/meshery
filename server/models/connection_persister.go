@@ -146,7 +146,7 @@ func (cp *ConnectionPersister) SaveConnection(connection *connections.Connection
 	return connection, err
 }
 
-func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*connections.Connection, error) {
+func (cp *ConnectionPersister) DeleteConnectionByID(connectionID core.Uuid) (*connections.Connection, error) {
 	connection := connections.Connection{}
 	err := cp.DB.Where("id = ?", connectionID).First(&connection).Error
 	if err != nil {

@@ -80,7 +80,7 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 		ctx = context.WithValue(ctx, models.MesheryServerCallbackURL, callbackURL)
 		_url, err := url.Parse(callbackURL)
 		if err != nil {
-			h.log.Error(ErrParsingCallBackUrl(err))
+			h.log.Error(ErrParsingCallBackURL(err))
 		} else {
 			ctx = context.WithValue(ctx, models.MesheryServerURL, fmt.Sprintf("%s://%s", _url.Scheme, _url.Host))
 		}
