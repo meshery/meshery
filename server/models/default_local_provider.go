@@ -1129,7 +1129,7 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 	connection := &connections.Connection{
 		ID:           id,
 		Name:         conn.Name,
-		CredentialID: &uuid.Nil, // compatibilitiy
+		CredentialID: connectionCredentialID(conn.CredentialID),
 		Type:         conn.Type,
 		SubType:      conn.SubType,
 		Kind:         conn.Kind,
@@ -1144,6 +1144,13 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 		return nil, err
 	}
 	return connectionCreated, nil
+}
+
+func connectionCredentialID(credentialID *core.Uuid) *core.Uuid {
+	if credentialID != nil {
+		return credentialID
+	}
+	return &uuid.Nil // compatibility
 }
 
 func (l *DefaultLocalProvider) GetConnections(_ *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
