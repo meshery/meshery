@@ -12,6 +12,7 @@ const (
 	ErrInititalizeK8sMachineCode  = "meshery-server-1216"
 	ErrAssetMachineCtxCode        = "meshery-server-1217"
 	ErrInvalidTypeCode            = "meshery-server-1218"
+	ErrInitLoggerCode             = "meshery-server-1432"
 )
 
 func ErrInvalidTransition(from, to StateType) error {
@@ -32,4 +33,8 @@ func ErrAssertMachineCtx(err error) error {
 
 func ErrInvalidType(err error) error {
 	return errors.New(ErrInvalidTypeCode, errors.Alert, []string{"Provided connection id is invalid"}, []string{err.Error()}, []string{"Provided ID is not a valid uuid."}, []string{"Hard delete and reinitialise the connection process."})
+}
+
+func ErrInitLogger(err error) error {
+	return errors.New(ErrInitLoggerCode, errors.Alert, []string{"Failed to initialize Prometheus logger"}, []string{err.Error()}, []string{"Invalid logger configuration or system resources failure"}, []string{"Verify the logger formatting options and system resources"})
 }

@@ -2,7 +2,6 @@ package prometheus
 
 import (
 	"context"
-	"os"
 
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
@@ -31,8 +30,7 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		LogLevel: logLevel,
 	})
 	if err != nil {
-		logrus.Error(err)
-		os.Exit(1)
+		return machines.NoOp, nil, machines.ErrInitLogger(err)
 	}
 
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
