@@ -1,3 +1,4 @@
+Meshery Relationship Definitions,,,,,,,,,,,,,,
 Model,Version,Kind,Type,SubType,MetadataDescription,Docs,MetadataStyles,EvalPolicy,SelectorsDenyFrom,SelectorsDenyTo,SelectorsAllowFrom,SelectorsAllowTo,CompleteDefinition,VisualizationExample
 kubernetes,v1.25.2,Hierarchical,,Inventory,A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.,,,hierarchical_inventory_relationship,,,"{""kind"": ""PersistentVolume"",
             ""model"": ""kubernetes"",
