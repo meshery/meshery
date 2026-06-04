@@ -97,7 +97,7 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 	if orgID == "" {
 		missingInput := models.ErrWorkspaceMissingInput()
 		h.log.Error(missingInput)
-		writeJSONError(w, missingInput.Error(), http.StatusBadRequest)
+		writeMeshkitError(w, missingInput, http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetWorkspaces(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
@@ -125,7 +125,7 @@ func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request
 	if orgID == "" {
 		missingInput := models.ErrWorkspaceMissingInput()
 		h.log.Error(missingInput)
-		writeJSONError(w, missingInput.Error(), http.StatusBadRequest)
+		writeMeshkitError(w, missingInput, http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetWorkspaceByID(r, workspaceID, orgID)
