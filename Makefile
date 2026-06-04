@@ -18,7 +18,7 @@ include install/Makefile.show-help.mk
 #-----------------------------------------------------------------------------
 # Install artifact generation
 #-----------------------------------------------------------------------------
-.PHONY: generate-install check-install
+.PHONY: providers-propagate providers-check
 
 ## Propagate remote providers defined in install/providers.env to every generated install artifact.
 providers-propagate:
