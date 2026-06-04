@@ -177,6 +177,8 @@ def desired_contents() -> "dict[str, str]":
          lambda t, p: replace_kv(t, "PROVIDER_BASE_URLS", full, p)),
         ("install/mesheryapp.dockerapp/docker-compose.yml",
          lambda t, p: replace_kv(t, "PROVIDER_BASE_URLS", full, p)),
+         ("install/deployment_yamls/k8s/meshery-deployment.yaml",
+         lambda t, p: replace_k8s(t, "PROVIDER_BASE_URLS", full, p)),
         ("install/kubernetes/helm/meshery/values.yaml",
          lambda t, p: replace_helm(t, "PROVIDER_BASE_URLS", full, p)),
         ("install/docker-extension/docker-compose.yaml",
