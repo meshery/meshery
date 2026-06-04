@@ -20,6 +20,7 @@ import {
   FileIcon,
   GithubIcon,
   DiscussForumIcon,
+  ArrowDropDownIcon,
 } from '@sistent/sistent';
 import ExtensionPointSchemaValidator from '../../../utils/ExtensionPointSchemaValidator';
 import { cursorNotAllowed, disabledStyle } from '../../../css/disableComponent.styles';
@@ -711,9 +712,11 @@ const NavigatorContent = () => {
                   isActive={currentPath === href}
                   isShow={!show}
                   onClick={() => toggleItemCollapse(childId)}
-                  onMouseOver={() => (isDrawerCollapsed ? setHoveredId(childId) : null)}
+                  onMouseOver={() => setHoveredId(childId)}
                   onMouseLeave={() =>
-                    !submenu || !openItems.includes(childId) ? setHoveredId(null) : null
+                    !isDrawerCollapsed || !submenu || !openItems.includes(childId)
+                      ? setHoveredId(null)
+                      : null
                   }
                   disabled={permission ? !CAN(permission.action, permission.subject) : false}
                 >
@@ -737,14 +740,32 @@ const NavigatorContent = () => {
                             >
                               <ListItemIcon
                                 onClick={() => toggleItemCollapse(childId)}
-                                style={{ marginLeft: '20%', marginBottom: '0.4rem' }}
+                                style={{
+                                  marginLeft: '20%',
+                                  marginBottom: '0.4rem',
+                                  position: 'relative',
+                                }}
                               >
-                                {hovericon}
+                                {icon}
+                                {children && (
+                                  <ArrowDropDownIcon
+                                    style={{
+                                      fontSize: '1rem',
+                                      position: 'absolute',
+                                      bottom: 0,
+                                      right: 0,
+                                    }}
+                                  />
+                                )}
                               </ListItemIcon>
                             </CustomTooltip>
                           </div>
                         ) : (
-                          <MainListIcon>{icon}</MainListIcon>
+                          <MainListIcon>
+                            {!isDrawerCollapsed && hoveredId === childId && hovericon
+                              ? hovericon
+                              : icon}
+                          </MainListIcon>
                         )}
                       </CustomTooltip>
                       <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>

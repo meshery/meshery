@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const dispatchMock = vi.fn();
@@ -63,12 +63,14 @@ vi.mock('@sistent/sistent', () => ({
         brand: { default: '#brand-default' },
       },
       common: { white: '#fff' },
+      navigation: { secondary: '#sec', active: '#act', hover: '#hov' },
     },
   }),
   SlackIcon: () => <svg data-testid="slack-icon" />,
   FileIcon: () => <svg data-testid="file-icon" />,
   GithubIcon: () => <svg data-testid="github-icon" />,
   DiscussForumIcon: () => <svg data-testid="discuss-forum-icon" />,
+  ArrowDropDownIcon: () => <svg data-testid="arrow-drop-down" />,
   useMediaQuery: () => useMediaQueryMock(),
 }));
 
@@ -299,5 +301,13 @@ describe('Navigator', () => {
     render(<Navigator />);
     expect(screen.getByTestId('sidebar-footer')).toBeInTheDocument();
     expect(screen.getByTestId('chevron-wrapper')).toBeInTheDocument();
+  });
+
+  it('renders ArrowDropDownIcon when hovering over a collapsed menu item with submenus', async () => {
+    stateContainer.isDrawerCollapsed = true;
+    render(<Navigator />);
+    const item = await screen.findByTestId('CONFIGURATION');
+    fireEvent.mouseOver(item);
+    expect(screen.getByTestId('arrow-drop-down')).toBeInTheDocument();
   });
 });

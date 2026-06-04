@@ -4,16 +4,15 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('@sistent/sistent', () => ({
   CatalogIcon: (props: any) => <svg data-testid="catalog-icon" {...props} />,
   TachographDigitalIcon: (props: any) => <svg data-testid="tachograph-icon" {...props} />,
+  DashboardIcon: (props: any) => <svg data-testid="dashboard-icon" {...props} />,
+  LifeCycleIcon: (props: any) => <svg data-testid="lifecycle-icon" {...props} />,
+  ConfigurationIcon: (props: any) => <svg data-testid="configuration-icon" {...props} />,
+  PerformanceIcon: (props: any) => <svg data-testid="performance-icon" {...props} />,
+  ExtensionIcon: (props: any) => <svg data-testid="extension-icon" {...props} />,
 }));
 
-vi.mock('../../../assets/icons/ConfigurationIcon', () => ({
-  default: () => <svg data-testid="configuration-icon" />,
-}));
 vi.mock('../../../assets/icons/Connection', () => ({
   default: () => <svg data-testid="connection-icon" />,
-}));
-vi.mock('@/assets/icons/DashboardIcon', () => ({
-  default: () => <svg data-testid="dashboard-icon" />,
 }));
 vi.mock('../../../assets/icons/Environment', () => ({
   default: () => <svg data-testid="environment-icon" />,
@@ -24,26 +23,8 @@ vi.mock('../../../assets/icons/ServiceMeshIcon', () => ({
 vi.mock('../../../assets/icons/WorkspaceOutlined', () => ({
   default: () => <svg data-testid="workspace-outlined-icon" />,
 }));
-vi.mock('../../../public/static/img/drawer-icons/lifecycle_mgmt_svg', () => ({
-  default: () => <svg data-testid="lifecycle-icon" />,
-}));
-vi.mock('../../../public/static/img/drawer-icons/performance_svg', () => ({
-  default: () => <svg data-testid="performance-icon" />,
-}));
-vi.mock('../../../public/static/img/drawer-icons/extensions_svg', () => ({
-  default: () => <svg data-testid="extension-icon" />,
-}));
 vi.mock('../../../public/static/img/drawer-icons/pattern_svg', () => ({
   default: () => <svg data-testid="pattern-icon" />,
-}));
-vi.mock('../../../public/static/img/drawer-icons/lifecycle_hover_svg', () => ({
-  default: () => <svg data-testid="lifecycle-hover" />,
-}));
-vi.mock('../../../public/static/img/drawer-icons/performance_hover_svg', () => ({
-  default: () => <svg data-testid="performance-hover" />,
-}));
-vi.mock('../../../public/static/img/drawer-icons/configuration_hover_svg', () => ({
-  default: () => <svg data-testid="configuration-hover" />,
 }));
 
 vi.mock('../../../constants/navigator', () => ({

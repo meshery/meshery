@@ -1,18 +1,18 @@
 import React from 'react';
-import { CatalogIcon, TachographDigitalIcon } from '@sistent/sistent';
-import ConfigurationIcon from '../../../assets/icons/ConfigurationIcon';
+import {
+  CatalogIcon,
+  TachographDigitalIcon,
+  DashboardIcon,
+  LifeCycleIcon,
+  ConfigurationIcon,
+  PerformanceIcon,
+  ExtensionIcon,
+} from '@sistent/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
-import DashboardIcon from '@/assets/icons/DashboardIcon';
 import EnvironmentIcon from '../../../assets/icons/Environment';
 import ServiceMeshIcon from '../../../assets/icons/ServiceMeshIcon';
 import WorkspaceOutlinedIcon from '../../../assets/icons/WorkspaceOutlined';
-import LifecycleIcon from '../../../public/static/img/drawer-icons/lifecycle_mgmt_svg';
-import PerformanceIcon from '../../../public/static/img/drawer-icons/performance_svg';
-import ExtensionIcon from '../../../public/static/img/drawer-icons/extensions_svg';
 import PatternIcon from '../../../public/static/img/drawer-icons/pattern_svg';
-import LifecycleHover from '../../../public/static/img/drawer-icons/lifecycle_hover_svg';
-import PerformanceHover from '../../../public/static/img/drawer-icons/performance_hover_svg';
-import ConfigurationHover from '../../../public/static/img/drawer-icons/configuration_hover_svg';
 import {
   CATALOG,
   CONFIGURATION,
@@ -44,7 +44,7 @@ export const getNavigatorComponents = (
   {
     id: DASHBOARD,
     icon: <DashboardIcon style={drawerIconsStyle} />,
-    hovericon: <DashboardIcon style={drawerIconsStyle} />,
+    hovericon: <DashboardIcon isHoverEffect={true} style={drawerIconsStyle} />,
     href: '/',
     title: 'Dashboard',
     show: providerUiAccessControl.isNavigatorComponentEnabled([DASHBOARD]),
@@ -53,8 +53,8 @@ export const getNavigatorComponents = (
   },
   {
     id: LIFECYCLE,
-    icon: <LifecycleIcon style={drawerIconsStyle} />,
-    hovericon: <LifecycleHover style={drawerIconsStyle} />,
+    icon: <LifeCycleIcon style={drawerIconsStyle} />,
+    hovericon: <LifeCycleIcon isHoverEffect={true} style={drawerIconsStyle} />,
     title: 'Lifecycle',
     link: true,
     href: '/management/connections',
@@ -114,7 +114,7 @@ export const getNavigatorComponents = (
   {
     id: CONFIGURATION,
     icon: <ConfigurationIcon {...drawerIconsStyle} />,
-    hovericon: <ConfigurationHover style={drawerIconsStyle} />,
+    hovericon: <ConfigurationIcon isHoverEffect={true} style={drawerIconsStyle} />,
     href: '/configuration/designs',
     title: 'Configuration',
     show: providerUiAccessControl.isNavigatorComponentEnabled([CONFIGURATION]),
@@ -167,7 +167,12 @@ export const getNavigatorComponents = (
   {
     id: PERFORMANCE,
     icon: <PerformanceIcon style={{ transform: 'scale(1.3)', ...drawerIconsStyle }} />,
-    hovericon: <PerformanceHover style={drawerIconsStyle} />,
+    hovericon: (
+      <PerformanceIcon
+        isHoverEffect={true}
+        style={{ transform: 'scale(1.3)', ...drawerIconsStyle }}
+      />
+    ),
     href: '/performance',
     title: 'Performance',
     show: providerUiAccessControl.isNavigatorComponentEnabled([PERFORMANCE]),
@@ -191,7 +196,7 @@ export const getNavigatorComponents = (
   {
     id: EXTENSIONS,
     icon: <ExtensionIcon style={drawerIconsStyle} />,
-    hovericon: <ExtensionIcon style={drawerIconsStyle} />,
+    hovericon: <ExtensionIcon isHoverEffect={true} style={drawerIconsStyle} />,
     title: 'Extensions',
     show: providerUiAccessControl.isNavigatorComponentEnabled([EXTENSIONS]),
     width: 12,
