@@ -14,6 +14,14 @@ type PerformanceProfilePersister struct {
 	DB *database.Handler
 }
 
+// PerformanceProfilePage represents a page of performance profiles
+type PerformanceProfilePage struct {
+	Page       uint64                `json:"page"`
+	PageSize   uint64                `json:"pageSize"`
+	TotalCount int                   `json:"totalCount"`
+	Profiles   []*PerformanceProfile `json:"profiles"`
+}
+
 // GetPerformanceProfiles returns all of the performance profiles
 func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order string, page, pageSize uint64) ([]byte, error) {
 	// Sort-input whitelist dual-accepts the canonical camelCase key
@@ -34,7 +42,7 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 	}
 
 	count := int64(0)
-	profiles := []PerformanceProfile{}
+	profiles := []*PerformanceProfile{}
 
 	query := ppp.DB.
 		Select(`
@@ -58,8 +66,8 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 	Paginate(uint(page), uint(pageSize))(query).Find(&profiles)
 
 	performanceProfilePage := &PerformanceProfilePage{
-		Page:       int(page),
-		PageSize:   int(pageSize),
+		Page:       page,
+		PageSize:   pageSize,
 		TotalCount: int(count),
 		Profiles:   profiles,
 	}
@@ -69,8 +77,8 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 
 // DeletePerformanceProfile takes in a profile id and delete it if it already exists
 func (ppp *PerformanceProfilePersister) DeletePerformanceProfile(id core.Uuid) ([]byte, error) {
-	profile := PerformanceProfile{ID: id}
-	ppp.DB.Delete(&profile)
+	profile := PerformanceProfile{ID: &id}
+	ppp.DB.Delete(profile)
 
 	return marshalPerformanceProfile(&profile), nil
 }

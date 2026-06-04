@@ -24,7 +24,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PROVIDERS_ENV = ROOT / "install" / "providers.env"
-MARKER = "// AUTO-GENERATED from install/providers.env - run `make generate-install`"
+MARKER = "// AUTO-GENERATED from install/providers.env - run `make providers-propagate`"
 
 
 def die(msg: str) -> "None":
@@ -127,7 +127,7 @@ def replace_chooser(text: str, active: "list[tuple[str, str]]", path: Path) -> s
     )
     block = (
         "export const REMOTE_PROVIDERS = [\n"
-        "    // BEGIN AUTO-GENERATED from install/providers.env - run `make generate-install`\n"
+        "    // BEGIN AUTO-GENERATED from install/providers.env - run `make providers-propagate`\n"
         f"{entries}"
         "    // END AUTO-GENERATED\n"
         "];"
@@ -238,7 +238,7 @@ def main() -> int:
     if args.check and drifted:
         sys.stderr.write(
             f"\n{len(drifted)} artifact(s) out of sync with install/providers.env. "
-            "Run `make generate-install`.\n")
+            "Run `make providers-propagate`.\n")
         return 1
     if not args.check and not drifted:
         print("all artifacts already in sync")

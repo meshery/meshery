@@ -4,24 +4,24 @@ import (
 	"errors"
 	"testing"
 
-	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
+	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 )
 
-func TestPerformanceTestConfigValidator(t *testing.T) {
+func TestSMPPerformanceTestConfigValidator(t *testing.T) {
 	cases := []struct {
 		name      string
-		config    *perfprofile.PerformanceTestConfig
+		config    *SMP.PerformanceTestConfig
 		wantError error
 	}{
 		{
 			name: "given relative or invalid endpoints, when validating config, then error is returned",
-			config: &perfprofile.PerformanceTestConfig{
+			config: &SMP.PerformanceTestConfig{
 				Name:     "invalid endpoints",
 				Duration: "30s",
-				Clients: []perfprofile.PerformanceTestClient{
+				Clients: []*SMP.PerformanceTestConfig_Client{
 					{
 						LoadGenerator: FortioLG.Name(),
-						Protocol:      "http",
+						Protocol:      SMP.PerformanceTestConfig_Client_PROTOCOL_HTTP,
 						EndpointUrls:  []string{"not-a-url", "/health", "health"},
 					},
 				},
@@ -30,13 +30,13 @@ func TestPerformanceTestConfigValidator(t *testing.T) {
 		},
 		{
 			name: "given a legacy wrk2 generator, when validating config, then it is tolerated and no error is returned",
-			config: &perfprofile.PerformanceTestConfig{
+			config: &SMP.PerformanceTestConfig{
 				Name:     "valid endpoints",
 				Duration: "30s",
-				Clients: []perfprofile.PerformanceTestClient{
+				Clients: []*SMP.PerformanceTestConfig_Client{
 					{
 						LoadGenerator: FortioLG.Name(),
-						Protocol:      "http",
+						Protocol:      SMP.PerformanceTestConfig_Client_PROTOCOL_HTTP,
 						EndpointUrls:  []string{"https://meshery.io/api/health"},
 					},
 					{
@@ -44,7 +44,7 @@ func TestPerformanceTestConfigValidator(t *testing.T) {
 						// profiles carrying it must still validate (they run
 						// on fortio). Regression guard for graceful fallback.
 						LoadGenerator: "wrk2",
-						Protocol:      "tcp",
+						Protocol:      SMP.PerformanceTestConfig_Client_PROTOCOL_TCP,
 						EndpointUrls:  []string{"tcp://127.0.0.1:8080"},
 					},
 				},
@@ -53,13 +53,13 @@ func TestPerformanceTestConfigValidator(t *testing.T) {
 		},
 		{
 			name: "given an unrecognized generator, when validating config, then ErrLoadgenerator is returned",
-			config: &perfprofile.PerformanceTestConfig{
+			config: &SMP.PerformanceTestConfig{
 				Name:     "bogus generator",
 				Duration: "30s",
-				Clients: []perfprofile.PerformanceTestClient{
+				Clients: []*SMP.PerformanceTestConfig_Client{
 					{
 						LoadGenerator: "bogus",
-						Protocol:      "http",
+						Protocol:      SMP.PerformanceTestConfig_Client_PROTOCOL_HTTP,
 						EndpointUrls:  []string{"https://meshery.io/api/health"},
 					},
 				},
@@ -70,7 +70,7 @@ func TestPerformanceTestConfigValidator(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := PerformanceTestConfigValidator(tc.config)
+			err := SMPPerformanceTestConfigValidator(tc.config)
 			if tc.wantError != nil {
 				if !errors.Is(err, tc.wantError) {
 					t.Errorf("expected error %v, got %v", tc.wantError, err)
