@@ -141,7 +141,7 @@
       }
 
       event.preventDefault();
-      if ((window.matchMedia("(max-width: 37.5em)").matches || window.innerWidth <= 600) &&
+      if (window.matchMedia("(max-width: 37.5em)").matches &&
           document.querySelector(".left-container.left-container--active")) {
         const toggle = document.getElementById("toggleBtnSidebarNav");
         if (toggle) toggle.click();
