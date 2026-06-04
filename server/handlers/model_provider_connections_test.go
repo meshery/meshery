@@ -109,6 +109,13 @@ func TestSaveConnectionAcceptsCloudModelProviderWithCredential(t *testing.T) {
 	if saved.CredentialID == nil || *saved.CredentialID != credentialID {
 		t.Fatalf("credentialId was not preserved: got %v, want %s", saved.CredentialID, credentialID)
 	}
+	wantMetadata := map[string]interface{}{
+		"baseUrl":      "https://api.openai.com/v1",
+		"defaultModel": "gpt-4o",
+	}
+	if !reflect.DeepEqual(saved.MetaData, wantMetadata) {
+		t.Fatalf("got metadata %#v, want %#v", saved.MetaData, wantMetadata)
+	}
 }
 
 func TestSaveConnectionAcceptsLocalModelProviderWithoutCredential(t *testing.T) {
