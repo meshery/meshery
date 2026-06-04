@@ -167,8 +167,12 @@ func TestUpdateUserCredentialAcceptsModelProviderSecretShape(t *testing.T) {
 	if updated.ID != credentialID || updated.Type != connections.ModelProviderKindAWSBedrock {
 		t.Fatalf("unexpected updated credential: id=%s type=%q", updated.ID.String(), updated.Type)
 	}
-	if _, exists := updated.Secret["secretAccessKey"]; !exists {
-		t.Fatalf("updated credential secret missing secretAccessKey: %#v", updated.Secret)
+	wantSecret := map[string]interface{}{
+		"accessKeyId":     "AKIA_TEST",
+		"secretAccessKey": "secret",
+	}
+	if !reflect.DeepEqual(map[string]interface{}(updated.Secret), wantSecret) {
+		t.Fatalf("got secret %#v, want %#v", updated.Secret, wantSecret)
 	}
 }
 

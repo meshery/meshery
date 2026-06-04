@@ -151,8 +151,12 @@ func TestSaveConnectionAcceptsLocalModelProviderWithoutCredential(t *testing.T) 
 	if saved.CredentialID != nil {
 		t.Fatalf("expected no credentialId for local no-auth provider, got %s", saved.CredentialID.String())
 	}
-	if saved.MetaData[connections.ModelProviderMetadataBaseURL] != "http://localhost:11434" {
-		t.Fatalf("baseUrl metadata was not preserved: %#v", saved.MetaData)
+	wantMetadata := map[string]interface{}{
+		connections.ModelProviderMetadataBaseURL:      "http://localhost:11434",
+		connections.ModelProviderMetadataDefaultModel: "llama3.1",
+	}
+	if !reflect.DeepEqual(saved.MetaData, wantMetadata) {
+		t.Fatalf("got metadata %#v, want %#v", saved.MetaData, wantMetadata)
 	}
 }
 
@@ -218,5 +222,12 @@ func TestUpdateConnectionAcceptsModelProviderCredentialLink(t *testing.T) {
 	}
 	if updated.CredentialID == nil || *updated.CredentialID != credentialID {
 		t.Fatalf("credentialId was not preserved on update: got %v, want %s", updated.CredentialID, credentialID)
+	}
+	wantMetadata := map[string]interface{}{
+		connections.ModelProviderMetadataRegion:       "us-east-1",
+		connections.ModelProviderMetadataDefaultModel: "anthropic.claude-3-5-sonnet-20240620-v1:0",
+	}
+	if !reflect.DeepEqual(updated.MetaData, wantMetadata) {
+		t.Fatalf("got metadata %#v, want %#v", updated.MetaData, wantMetadata)
 	}
 }
