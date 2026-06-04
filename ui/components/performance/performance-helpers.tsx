@@ -30,16 +30,16 @@ export function generatePerformanceProfile(data) {
   return {
     ...(id && { id }),
     name: performanceProfileName,
-    loadGenerators: [loadGenerator],
+    load_generators: [loadGenerator],
     endpoints: [endpoint],
-    serviceMesh,
-    concurrentRequest,
+    service_mesh: serviceMesh,
+    concurrent_request: concurrentRequest,
     qps,
     duration,
-    requestHeaders,
-    requestBody,
-    requestCookies,
-    contentType,
+    request_headers: requestHeaders,
+    request_body: requestBody,
+    request_cookies: requestCookies,
+    content_type: contentType,
     metadata: {
       additional_options: [additional_options],
       ca_certificate: {
