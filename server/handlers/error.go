@@ -354,7 +354,7 @@ func ErrParseForm(err error) error {
 }
 
 func ErrQueryGet(obj string) error {
-	return errors.New(ErrQueryGetCode, errors.Alert, []string{"unable to get: ", obj}, []string{}, []string{"Query parameter is not a part of the request"}, []string{"Make sure to pass the query paramater in the request"})
+	return errors.New(ErrQueryGetCode, errors.Alert, []string{"unable to get: ", obj}, []string{}, []string{"Query parameter is not a part of the request"}, []string{"Make sure to pass the query parameter in the request"})
 }
 
 func ErrGetResult(err error) error {
@@ -509,7 +509,7 @@ func ErrGetFilter(err error) error {
 }
 
 func ErrSaveFilter(err error) error {
-	return errors.New(ErrSaveFilterCode, errors.Alert, []string{"Error failed to save filter"}, []string{err.Error()}, []string{"Cannot save the Filter due to wrong path or URL", "Filter is corrupted."}, []string{"Check if the given path or URL of the filter is correct", "Try uplaoding a different filter"})
+	return errors.New(ErrSaveFilterCode, errors.Alert, []string{"Error failed to save filter"}, []string{err.Error()}, []string{"Cannot save the Filter due to wrong path or URL", "Filter is corrupted."}, []string{"Check if the given path or URL of the filter is correct", "Try uploading a different filter"})
 }
 
 func ErrDecodeFilter(err error) error {
@@ -724,7 +724,7 @@ func ErrGetConnections(err error) error {
 }
 
 func ErrWritingIntoFile(err error, obj string) error {
-	return errors.New(ErrWritingIntoFileCode, errors.Alert, []string{fmt.Sprintf("failed to write into file %s", obj)}, []string{err.Error()}, []string{"Insufficient permissions to write into file", "file might be corrupted"}, []string{"check if sufficient permissions are givent to the file", "check if the file is corrupted"})
+	return errors.New(ErrWritingIntoFileCode, errors.Alert, []string{fmt.Sprintf("failed to write into file %s", obj)}, []string{err.Error()}, []string{"Insufficient permissions to write into file", "file might be corrupted"}, []string{"check if sufficient permissions are given to the file", "check if the file is corrupted"})
 }
 
 func ErrBuildOCIImg(err error) error {
