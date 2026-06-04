@@ -20,7 +20,7 @@ spec:
       labels:
         io.kompose.service: meshery-linkerd
     spec:
-      serviceAccount: meshery-server
+      serviceAccountName: meshery-server
       containers:
       - image: meshery/meshery-linkerd:stable-latest
         imagePullPolicy: Always

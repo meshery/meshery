@@ -20,7 +20,7 @@ spec:
       labels:
         io.kompose.service: meshery-cilium
     spec:
-      serviceAccount: meshery-server
+      serviceAccountName: meshery-server
       containers:
       - image: meshery/meshery-cilium:stable-latest
         imagePullPolicy: Always

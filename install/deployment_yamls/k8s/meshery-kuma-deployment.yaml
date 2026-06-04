@@ -20,7 +20,7 @@ spec:
       labels:
         io.kompose.service: meshery-kuma
     spec:
-      serviceAccount: meshery-server
+      serviceAccountName: meshery-server
       containers:
       - image: meshery/meshery-kuma:stable-latest
         imagePullPolicy: Always

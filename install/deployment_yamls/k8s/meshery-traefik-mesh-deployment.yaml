@@ -20,7 +20,7 @@ spec:
       labels:
         io.kompose.service: meshery-traefik-mesh
     spec:
-      serviceAccount: meshery-server
+      serviceAccountName: meshery-server
       containers:
       - image: meshery/meshery-traefik-mesh:stable-latest
         imagePullPolicy: Always

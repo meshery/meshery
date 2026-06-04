@@ -10,7 +10,7 @@ metadata:
   name: meshery-traefik-mesh
 spec:
   ports:
-  - name: "10000"
+  - name: "10006"
     port: 10006
     targetPort: 10006
   selector:

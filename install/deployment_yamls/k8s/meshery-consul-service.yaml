@@ -4,7 +4,7 @@ metadata:
   annotations:
     kompose.cmd: kompose convert -f ../docker-compose.yaml
     kompose.version: 1.32.0 ()
-  # creationTimestamp: null
+  creationTimestamp: null
   labels:
     io.kompose.service: meshery-consul
   name: meshery-consul

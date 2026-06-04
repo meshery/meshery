@@ -20,7 +20,7 @@ spec:
       labels:
         io.kompose.service: meshery-nginx-sm
     spec:
-      serviceAccount: meshery-server
+      serviceAccountName: meshery-server
       containers:
       - image: meshery/meshery-nginx-sm:stable-latest
         imagePullPolicy: Always
