@@ -1150,7 +1150,7 @@ func connectionCredentialID(credentialID *core.Uuid) *core.Uuid {
 	if credentialID != nil {
 		return credentialID
 	}
-	return &uuid.Nil // compatibility
+	return new(core.Uuid) // compatibility
 }
 
 func (l *DefaultLocalProvider) GetConnections(_ *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
