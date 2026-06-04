@@ -29,6 +29,7 @@ type HandlerInterface interface {
 	ProviderHandler(w http.ResponseWriter, r *http.Request)
 	HandleErrorHandler(w http.ResponseWriter, r *http.Request)
 	ProvidersHandler(w http.ResponseWriter, r *http.Request)
+	ProvidersStreamHandler(w http.ResponseWriter, r *http.Request)
 	ProviderUIHandler(w http.ResponseWriter, r *http.Request)
 	ProviderCapabilityHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProviderComponentsHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -236,6 +237,13 @@ type HandlerInterface interface {
 	RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetViewsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	AddViewToWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	RemoveViewFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetTeamsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	AddTeamToWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	RemoveTeamFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	K8sHealthzHandler(w http.ResponseWriter, r *http.Request)
 
 	ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath string)
@@ -263,6 +271,13 @@ type HandlerConfig struct {
 	// GraphQLPlaygroundHandler http.Handler
 	PlaygroundBuild        bool
 	Providers              map[string]Provider
+	// ProviderTracker is the authoritative availability state for
+	// Providers. /api/providers reads its snapshot and
+	// /api/providers/stream subscribes to its updates so the provider
+	// chooser can render every entry immediately and update them
+	// independently as each remote's probe completes. Always non-nil
+	// after main.go finishes registering providers.
+	ProviderTracker        *ProviderTracker
 	ProviderCookieName     string
 	ProviderCookieDuration time.Duration
 

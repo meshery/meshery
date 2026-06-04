@@ -23,7 +23,7 @@
     },
     "version": ""
   },
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
@@ -47,6 +47,7 @@
             "patch": {
               "mutatedRef": [
                 [
+                  "configuration",
                   "metadata",
                   "labels"
                 ]
@@ -75,6 +76,7 @@
             "patch": {
               "mutatedRef": [
                 [
+                  "configuration",
                   "metadata",
                   "labels"
                 ]

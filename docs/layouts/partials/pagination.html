@@ -1,42 +1,9 @@
-{{ $nav := site.Data.toc }}
-{{ $pages := slice }}
+{{- $pageTree := newScratch -}}
+{{- $pageTree.Set "pages" slice -}}
 
-{{ range $nav }}
+{{- template "pagination-sidebar-pages" (dict "node" .Site.Home "scratch" $pageTree) -}}
 
-  {{/* ADD TOP LEVEL PAGE */}}
-  {{ if .url }}
-    {{ $pages = $pages | append (dict "title" .title "url" .url) }}
-  {{ end }}
-
-  {{ with .links }}
-    {{ range . }}
-
-      {{ if .url }}
-        {{ $pages = $pages | append (dict "title" .title "url" .url) }}
-      {{ end }}
-
-      {{ with .children }}
-        {{ range . }}
-
-          {{ if .url }}
-            {{ $pages = $pages | append (dict "title" .title "url" .url) }}
-          {{ end }}
-
-          {{ with .grandchildren }}
-            {{ range . }}
-              {{ if .url }}
-                {{ $pages = $pages | append (dict "title" .title "url" .url) }}
-              {{ end }}
-            {{ end }}
-          {{ end }}
-
-        {{ end }}
-      {{ end }}
-
-    {{ end }}
-  {{ end }}
-
-{{ end }}
+{{- $pages := $pageTree.Get "pages" -}}
 
 {{ $index := -1 }}
 {{ $current := trim .RelPermalink "/" }} {{/* Get current page path */}}
@@ -77,3 +44,21 @@
 </div>
 
 {{ end }}
+
+{{- define "pagination-sidebar-pages" -}}
+  {{- $node := .node -}}
+  {{- $scratch := .scratch -}}
+
+  {{- $pages_tmp := where (union $node.Pages $node.Sections) ".Params.toc_hide" "!=" true -}}
+  {{- $pages_tmp = sort $pages_tmp "Title" "asc" -}}
+  {{- $pages_tmp = sort $pages_tmp "Weight" "asc" -}}
+
+  {{- range $pages_tmp -}}
+    {{- if ne .Params.hide_summary true -}}
+      {{- $scratch.Add "pages" (slice (dict "title" (or .LinkTitle .Title) "url" .RelPermalink)) -}}
+    {{- end -}}
+    {{- if .IsSection -}}
+      {{- template "pagination-sidebar-pages" (dict "node" . "scratch" $scratch) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

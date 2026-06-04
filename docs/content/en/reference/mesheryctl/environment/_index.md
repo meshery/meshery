@@ -25,7 +25,7 @@ mesheryctl environment [flags]
 Create an environment in an organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment create --orgID [orgID] --name [name] --description [description]
+mesheryctl environment create --orgId [orgId] --name [name] --description [description]
 
 </div>
 </pre> 
@@ -41,7 +41,7 @@ mesheryctl environment delete environment-id
 List of registered environments in an organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment list --orgID [orgID]
+mesheryctl environment list --orgId [orgId]
 
 </div>
 </pre> 
@@ -49,7 +49,7 @@ mesheryctl environment list --orgID [orgID]
 View a particular environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment view --orgID [orgID]
+mesheryctl environment view --orgId [orgId]
 
 </div>
 </pre> 

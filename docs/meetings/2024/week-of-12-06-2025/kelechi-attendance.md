@@ -1,1 +1,0 @@
-Attendance: Kelechi Oliver A.

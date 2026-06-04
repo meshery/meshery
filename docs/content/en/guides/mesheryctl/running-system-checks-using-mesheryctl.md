@@ -119,7 +119,7 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 ##### Question: What is the minimum version of k8s cluster and kubectl required to run Meshery?
 
-**Answer**: _For Kubernetes, version >=1.12.0 is recommended. For kubectl version >=1.12 is recommended._
+**Answer**: _For current Meshery deployments, prefer one of the Kubernetes upstream-supported minor releases and keep `kubectl` aligned with your cluster under the Kubernetes version skew policy. See the [Kubernetes release history](https://kubernetes.io/releases/) for actively maintained minors._
 
 ##### Question: In the "Meshery Adapter" section of check, I could see only some Meshery adapters up and running and not all. Is this fine?
 

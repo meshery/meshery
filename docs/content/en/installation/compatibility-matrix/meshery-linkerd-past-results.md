@@ -5,4 +5,5 @@ display_title: false
 hide_summary: true
 service-mesh: linkerd
 subheading: meshery-linkerd
+toc_hide: true
 ---

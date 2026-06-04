@@ -27,13 +27,14 @@ Another way to test your local changes is to run the adapter as a process. To do
 Meshery uses adapters to manage and interact with different cloud native infrastructure. Meshery adapters are written in Go. Whether you are creating a new adapter or modifying an existing adapter, be sure to read the [Meshery Adapters](https://docs.google.com/document/d/1b8JAMzr3Rntu7CudRaYv6r6ccACJONAB5t7ISCaPNuA/edit#) design specification. For new adapters, start with the Repository Template(https://github.com/meshery/meshery). 
 
 1. Get the proto buf spec file from Meshery repo:
-   `wget https://raw.githubusercontent.com/meshery/meshery/master/meshes/meshops.proto`
+wget -P meshes https://raw.githubusercontent.com/meshery/meshery/master/server/meshes/meshops.proto
 1. Generate code
    1. Using Go as an example, do the following:
       - adding GOPATH to PATH: `export PATH=$PATH:$GOPATH/bin`
       - install grpc: `go get -u google.golang.org/grpc`
-      - install protoc plugin for go: `go get -u github.com/golang/protobuf/protoc-gen-go`
-      - Generate Go code: `protoc -I meshes/ meshes/meshops.proto --go_out=plugins=grpc:./meshes/`
+      - install protoc plugin for go: `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`
+      - install protoc plugin for Go gRPC: `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest`
+      - Generate Go code: `protoc --proto_path=meshes --go_out=meshes --go_opt=paths=source_relative --go-grpc_out=meshes --go-grpc_opt=paths=source_relative meshops.proto`
    1. For other languages, please refer to gRPC.io for language-specific guides.
 1. Implement the service methods and expose the gRPC server on a port of your choice (e.g. 10000).
 

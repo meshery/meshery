@@ -5,4 +5,5 @@ display_title: false
 hide_summary: true
 service-mesh: traefik-mesh
 subheading: meshery-traefik-mesh
+toc_hide: true
 ---

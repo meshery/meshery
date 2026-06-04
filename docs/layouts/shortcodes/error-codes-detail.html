@@ -57,7 +57,7 @@
           {{ else if eq (lower $err_code.severity) "alert" }}
             {{ $severityClass = "tbl-severity-alert" }}
           {{ end }}
-          <tr id="{{ $err_code.name }}-{{ $err_code.code }}" class="tbl-body-row hover-effect" onclick="toggle_visibility('{{ $component.component_name }}-{{ $err_code.name }}-more-info');">
+          <tr id="{{ $err_code.name }}-{{ $err_code.code }}" class="tbl-body-row hover-effect" data-details-id="{{ $component.component_name }}-{{ $err_code.name }}-more-info" onclick="toggle_visibility('{{ $component.component_name }}-{{ $err_code.name }}-more-info');">
             <td class="{{ $severityClass }}">{{ $err_code.severity }}</td>
             <td id="{{ $heading | lower | replace " " "-" }}-{{ $err_code.code }}" class="error-name-code">
               <code>{{ $err_code.name }}-{{ $err_code.code }}</code>

@@ -1,6 +1,7 @@
 ---
 title: Meshery Documentation
 display_title: false
+toc_hide: true
 display_toc: false
 linkTitle: Documentation
 ---
@@ -15,11 +16,11 @@ linkTitle: Documentation
 <div class="flex container">
   <!-- OVERVIEW -->
   <div class="section">
-    <a href="/installation">
+    <a href="/project/overview/">
         <div class="btn-primary">Overview & Installation</div>
     </a>
     <ul>
-        <li>🚀 <a href="/installation/quick-start">Quick Start</a> and <a href="/project/faq">FAQs</a></li>
+        <li>🚀 <a href="/installation/quick-start">Quick Start</a> , <a href="/project/overview/">Overview</a>, and <a href="/project/faq">FAQs</a></li>
     </ul>
     <details>
       <summary>
@@ -148,11 +149,11 @@ linkTitle: Documentation
     <details>
       <summary>
         <p style="display:inline">
-          <a href="/extensibility/integrations" class="text-black">Integrations</a>
+<a href="/extensions/models" class="text-black">Models</a>
         </p>
       </summary>
       <ul class="section-title">
-        <li>See all <a href="/extensions/models">{{< model-count >}} integrations</a></li>
+        <li>See all <a href="/extensions/models">{{< model-count >}} models</a></li>
       </ul>
     </details>
   </div>

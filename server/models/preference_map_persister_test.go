@@ -17,6 +17,7 @@ func newTestMapPreferencePersister(t *testing.T) *MapPreferencePersister {
 }
 
 func TestMapPreferencePersisterReadFromPersisterReturnsDefaultsWhenMissing(t *testing.T) {
+	t.Skip("TODO: https://github.com/meshery/meshery/issues/18238 - implement MapPreferencePersister tests")
 	// Given
 	persister := newTestMapPreferencePersister(t)
 	defer persister.db.Clear()

@@ -19,7 +19,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
-	"github.com/meshery/schemas/models/v1beta1/workspace"
+	"github.com/meshery/schemas/models/v1beta3/workspace"
 
 	"github.com/spf13/cobra"
 )
@@ -53,7 +53,7 @@ mesheryctl workspace list --orgId [orgId] --count
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		urlQueryParams := url.Values{}
-		urlQueryParams.Add("orgID", workspaceListFlags.OrgId)
+		urlQueryParams.Add("orgId", workspaceListFlags.OrgId)
 		if cmd.Flags().Changed("page") {
 			// Adjusting page number to be zero-based index for API compatibility,
 			// while keeping the user-facing flag as one-based index for better UX
@@ -95,7 +95,7 @@ func processDataToDisplay(workspaceResponse *workspace.WorkspacePage) ([][]strin
 		if workspace.Description != "" {
 			description = workspace.Description
 		}
-		rows = append(rows, []string{workspace.ID.String(), workspace.Name, workspace.OrganizationID.String(), description, workspace.CreatedAt.String(), workspace.UpdatedAt.String()})
+		rows = append(rows, []string{workspace.ID.String(), workspace.Name, workspace.OrganizationId.String(), description, workspace.CreatedAt.String(), workspace.UpdatedAt.String()})
 	}
 
 	return rows, int64(workspaceResponse.TotalCount)

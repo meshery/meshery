@@ -10,10 +10,8 @@ cascade:
     type: models
 ---
 
-Meshery provides {{< model-count >}} built-in integrations which refer to the supported connections and interactions between Meshery and various cloud native platforms, tools, and technologies. Meshery's approach is Kubernetes-native which means you can easily incorporate Meshery into your existing workflow without additional setup or integration effort.
+Meshery provides {{< model-count >}} built-in models that define the components, relationships, and capabilities Meshery understands across cloud native platforms, tools, and technologies. The index below is grouped alphabetically so you can jump directly to a letter and quickly locate a specific model.
 
+## All Models by Name
 
-### All Integrations by Name ({{< model-count >}})
-
-Optionally, you can [navigate all integrations visually](https://meshery.io/integrations).
-
+Explore all {{< model-count >}} models by letter, or [navigate them visually](https://meshery.io/integrations).
