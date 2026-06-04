@@ -18,7 +18,8 @@ In this tutorial, we'll see how to export a design from Meshery, which we will u
 
 ## Steps
 
-1. Navigate to the Designs page. You can access it from the left-hand menu in Meshery. The URL will be:
+### 1. Navigate to the Designs page 
+You can access it from the left-hand menu in Meshery. The URL will be:
    - Locally: [http://localhost:9081/configuration/designs?view=grid](http://localhost:9081/configuration/designs?view=grid)
    - Playground: [https://playground.meshery.io/configuration/designs?view=grid](https://playground.meshery.io/configuration/designs?view=grid)
 
@@ -30,21 +31,28 @@ If you don't see your design, check your Organization and Workspace selections. 
 If you don't have any designs, you can create one by following the [Create a Design tutorial](/guides/tutorials/create-design).
 {{% /alert %}}
 
-2. Click to download your design. You can find the download button in the design's card in the grid view, or in the design's details page. This will download a `tar` archive containing your design and the metadata files to publish it to Artifact Hub.
+### 2. Click to download your design
+You can find the download button in the design's card in the grid view, or in the design's details page. This will download a `tar` archive containing your design and the metadata files to publish it to Artifact Hub.
 
 ![](/guides/tutorials/artifacthub/images/publish-to-artifacthub/design-download.png)
 
-3. Prepare your Artifact Hub repository. You will need to have an Artifact Hub repository already created with Kind as Meshery Designs. See [Artifact Hub documentation](https://artifacthub.io/docs/topics/repositories/meshery-designs/) for more information on managing repositories.
+### 3. Prepare your Artifact Hub repository
+ You will need to have an Artifact Hub repository already created with Kind as Meshery Designs. See [Artifact Hub documentation](https://artifacthub.io/docs/topics/repositories/meshery-designs/) for more information on managing repositories.
 
 ![](/guides/tutorials/artifacthub/images/publish-to-artifacthub/add_repo.png)
 
-### Push Design to Artifact Hub repository
+### 4. Push Design to Artifact Hub repository
 
-At this point, you should have downloaded your design as a `tar` archive. This archive contains a second archive which holds the metadata files to publish to your Artifact Hub repository. Expand the first `tar` archive and locate the resulting files. Expand the second archive you find there and you will have a folder containing two files: `artifacthub-pkg.yml` and `design.yml`. Move these files to your prepared Artifact Hub repository and push it upstream.
+After exporting your design as a Meshery Design (OCI image) from Kanvas, a `.tar` archive will be downloaded.
+1. Extract the downloaded .tar archive.
+2. Inside the extracted contents, locate the `.tar.gz` archive and extract it.
+3. After extraction, you should find the following files: `artifacthub-pkg.yml` and `design.yml`.
+4. Move these files into your prepared Artifact Hub repository.
+5. Commit and push the changes to your repository.
 
 ![](/guides/tutorials/artifacthub/images/publish-to-artifacthub/artifacthub_control_panel.png)
 
-### Verify repository in Artifact Hub
+### 5. Verify repository in Artifact Hub
 
 Once the files are pushed to the Artifact Hub repo you will need to wait until Artifact Hub indexes it. You can verify the status of the repository in the Artifact Hub control panel.
  
