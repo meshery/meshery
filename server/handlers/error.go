@@ -210,6 +210,7 @@ const (
 	ErrExtensionProxyCode                  = "meshery-server-1427"
 	ErrInitializeMachineCode               = "meshery-server-1428"
 	ErrSendMachineEventCode                = "meshery-server-1429"
+	ErrRegistryLookUpCode                  = "meshery-server-1433"
 )
 
 var (
@@ -1047,4 +1048,20 @@ func ErrInitializeMachine(err error) error {
 // caller input.
 func ErrSendMachineEvent(err error) error {
 	return errors.New(ErrSendMachineEventCode, errors.Alert, []string{"Failed to advance connection state machine"}, []string{err.Error()}, []string{"The requested event is not valid from the connection's current state.", "A side-effect action attached to the transition (e.g. provisioning, discovery) returned an error."}, []string{"Inspect the connection's current status before retrying. If the failure originates from a side-effect action, address the underlying cause (e.g. cluster reachability, credential validity) and retry."})
+}
+
+// ErrRegistryLookUp wraps failures to find a registry entry for a given
+// model, component, relationship, or policy name. Emitted with HTTP 500
+// because the failure is internal to the registry lookup process, not
+// caller input — input validation runs upstream of this site.
+func ErrRegistryLookUp(err error, kind string) *errors.Error {
+	return errors.New(
+		ErrRegistryLookUpCode,
+		errors.Alert,
+		[]string{"Failed to lookup connection registry"},
+		// 2. Pass the 'kind' and the underlying error message into the details/prob arrays
+		[]string{fmt.Sprintf("Registry lookup failed for connection kind: %s", kind)},
+		[]string{err.Error()},
+		[]string{"Check the registry backend service or connection configuration"},
+	)
 }
