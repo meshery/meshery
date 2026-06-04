@@ -318,10 +318,12 @@ ui-setup: dep-check-node
 	cd provider-ui; npm i; cd ..
 
 ## Clean Install dependencies for building Meshery UI.
-ui-setup-ci: dep-check-node
+ui-setup-ci: dep-check-node ui-provider-setup
 	cd ui; npm ci; cd ..
-	cd provider-ui; npm ci; cd ..
 
+## Clean Install dependencies for building Meshery UI.
+ui-provider-setup: dep-check-node
+	cd provider-ui; npm ci; cd ..
 
 ## Run Meshery UI on your local machine. Listen for changes.
 ui: dep-check-node
@@ -353,7 +355,7 @@ ui-meshery-build: dep-check-node wasm-engine
 	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
-ui-provider-build: dep-check-node
+ui-provider-build: ui-provider-setup
 	cd provider-ui; npm run build; cd ..
 
 ## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
