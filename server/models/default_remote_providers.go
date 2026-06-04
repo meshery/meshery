@@ -5,7 +5,7 @@ package models
 // DefaultRemoteProviderURLs is the comma-joined list of active default remote
 // provider URLs. The server seeds it via SetDefault("PROVIDER_BASE_URLS", ...) so
 // operators who do not set the env var still register the canonical providers.
-const DefaultRemoteProviderURLs = "https://cloud.meshery.io,https://perf.smp-spec.io,https://cloud.layer5.io,https://meshery.tcs-labs.in,https://provider.od10.in"
+const DefaultRemoteProviderURLs = "https://cloud.meshery.io,https://perf.smp-spec.io,https://cloud.layer5.io,https://platform.tata-consulting.co.uk,https://collab.eti.cisco.com,https://kickstart.metabit.com,https://provider.od10.in"
 
 // PrimaryProviderURL is the single canonical provider host used by single-URL
 // consumers (the built-in local provider's capability paths, SaaS deep links,
