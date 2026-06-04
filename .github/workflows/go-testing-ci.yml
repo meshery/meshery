@@ -27,7 +27,7 @@ jobs:
   golangci-server:
     strategy:
       matrix:
-        go: [1.25]
+        go: [1.26.4]
         os: [ubuntu-24.04]
     name: golangci-lint-server
     if: github.repository == 'meshery/meshery'
@@ -40,7 +40,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.7
+          version: v2.12.2
           args: --config=../.github/.golangci.yml --timeout=10m
           only-new-issues: ${{ github.event_name == 'pull_request' }}
           working-directory: ./server
@@ -55,7 +55,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.25"
+          go-version-file: go.mod
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
@@ -101,7 +101,7 @@ jobs:
   golangci-cli:
     strategy:
       matrix:
-        go: [1.25]
+        go: [1.26.4]
         os: [ubuntu-24.04]
     name: golangci-lint-cli
     if: github.repository == 'meshery/meshery'
@@ -114,7 +114,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.7
+          version: v2.12.2
           args: --config=../.github/.golangci.yml --timeout=10m
           only-new-issues: ${{ github.event_name == 'pull_request' }}
           working-directory: ./mesheryctl
@@ -131,7 +131,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.25"
+          go-version-file: go.mod
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
@@ -189,7 +189,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.25"
+          go-version-file: go.mod
       - name: Build Mesheryctl Binaries
         run: make
         working-directory: ./mesheryctl
