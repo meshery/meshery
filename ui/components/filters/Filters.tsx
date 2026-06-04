@@ -216,7 +216,7 @@ function MesheryFilters() {
       subtitle:
         count > 1
           ? `Are you sure you want to delete these ${count} filters?`
-          : `Are you sure you want to delete "${name}"?`,
+          : `Are you sure you want to delete ${name ? `"${name}"` : 'this filter'}?`,
       primaryOption: 'Delete',
       variant: PROMPT_VARIANTS.DANGER,
     });
