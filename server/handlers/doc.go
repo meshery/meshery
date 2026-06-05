@@ -4,13 +4,13 @@ import (
 	"bytes"
 
 	"github.com/go-openapi/strfmt"
-	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/models/events"
 	system "github.com/meshery/schemas/models/v1beta1/system"
 	workspace "github.com/meshery/schemas/models/v1beta1/workspace"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	v1 "k8s.io/api/core/v1"
 )
 
@@ -151,12 +151,12 @@ type anonymousStatsParamsWrapper struct {
 
 type loadTestPreferencesRespWrapper struct {
 	// in: body
-	Body SMP.PerformanceTestConfig
+	Body perfprofile.PerformanceTestConfig
 }
 
 type loadTestPreferencesParamsWrapper struct {
 	// in: body
-	Body SMP.PerformanceTestConfig
+	Body perfprofile.PerformanceTestConfig
 }
 
 type UUIDParamsWrapper struct {
@@ -168,7 +168,7 @@ type perfTestParamsWrapper struct {
 	// in: query
 	Query *models.PerformanceTestParameters
 	// in: body
-	Body *SMP.PerformanceTestConfig
+	Body *perfprofile.PerformanceTestConfig
 }
 
 type perfSingleResultRespWrapper struct {
