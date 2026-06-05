@@ -60,6 +60,8 @@ func TestExportModelToFile(t *testing.T) {
 	defer utils.ResetCommandFlags(ModelCmd, t)
 	testContext := utils.InitTestEnvironment(t)
 	defer utils.StopMockery(t)
+	oldToken := utils.TokenFlag
+	defer func() { utils.TokenFlag = oldToken }()
 	utils.TokenFlag = utils.GetToken(t)
 	mesheryctlflags.InitValidators(ModelCmd)
 
