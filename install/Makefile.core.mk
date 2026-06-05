@@ -26,7 +26,7 @@ GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-coun
 REMOTE_PROVIDER=""
 
 LOCAL_PROVIDER="Local"
-GOVERSION = 1.25
+GOVERSION = 1.26
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
 KEYS_PATH="../../server/permissions/keys.csv"

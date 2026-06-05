@@ -1,6 +1,6 @@
 module github.com/meshery/meshery
 
-go 1.25.5
+go 1.26.4
 
 replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api v0.0.0-20230704153349-abb98ff04d03
 
