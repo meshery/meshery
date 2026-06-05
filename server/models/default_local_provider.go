@@ -32,10 +32,10 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta2/organization"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
-	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
+	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 	"gorm.io/gorm"
@@ -642,12 +642,12 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, _ *http.Reque
 }
 
 // SMPTestConfigStore Stores the given PerformanceTestConfig into local datastore
-func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *perfprofile.PerformanceTestConfig) (string, error) {
+func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error) {
 	uid, err := uuid.NewV4()
 	if err != nil {
 		return "", ErrGenerateUUID(err)
 	}
-	perfConfig.ID = uid.String()
+	perfConfig.Id = uid.String()
 	data, err := json.Marshal(perfConfig)
 	if err != nil {
 		return "", ErrMarshal(err, "test config for persisting")
@@ -656,7 +656,7 @@ func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *p
 }
 
 // SMPTestConfigGet gets the given PerformanceTestConfig from the local datastore
-func (l *DefaultLocalProvider) SMPTestConfigGet(_ *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error) {
+func (l *DefaultLocalProvider) SMPTestConfigGet(_ *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
 	uid, err := uuid.FromString(testUUID)
 	if err != nil {
 		return nil, ErrGenerateUUID(err)
@@ -1025,20 +1025,16 @@ func (l *DefaultLocalProvider) ShareFilter(_ *http.Request) (int, error) {
 
 // SavePerformanceProfile saves given performance profile with the provider
 func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfile *PerformanceProfile) ([]byte, error) {
-	if performanceProfile == nil {
-		return nil, fmt.Errorf("performance profile is nil")
-	}
-
-	if performanceProfile.ID == uuid.Nil {
-		uid, err := uuid.NewV4()
+	var uid core.Uuid
+	if performanceProfile.ID != nil {
+		uid = *performanceProfile.ID
+	} else {
+		var err error
+		uid, err = uuid.NewV4()
 		if err != nil {
 			return nil, ErrGenerateUUID(err)
 		}
-		performanceProfile.ID = uid
-	}
-
-	if performanceProfile.Metadata == nil {
-		performanceProfile.Metadata = core.Map{}
+		performanceProfile.ID = &uid
 	}
 
 	data, err := json.Marshal(performanceProfile)
@@ -1046,7 +1042,7 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfi
 		return nil, ErrMarshal(err, "Perf Profile for persisting")
 	}
 
-	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile.ID, performanceProfile)
+	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(uid, performanceProfile)
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider

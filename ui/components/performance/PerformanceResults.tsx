@@ -6,12 +6,14 @@ import MesheryChart from '../MesheryChart';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import GenericModal from '../shared/Modal/GenericModal';
 import { Info as InfoIcon, Reply as ReplyIcon } from '@/assets/icons';
+import fetchPerformanceResults from '@/graphql/queries/PerformanceResultQuery';
 import NodeDetails from './NodeDetails';
 import FacebookIcon from './assets/facebookIcon';
 import LinkedinIcon from './assets/linkedinIcon';
 import TwitterIcon from './assets/twitterIcon';
 import { iconMedium, iconLarge } from '../../css/icons.styles';
 import { TwitterShareButton, LinkedinShareButton, FacebookShareButton } from 'react-share';
+import subscribePerformanceResults from '@/graphql/subscriptions/PerformanceResultSubscription';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import {
@@ -31,7 +33,6 @@ import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateResultsSelection } from '@/store/slices/prefTest';
-import { useGetPerformanceProfileResultsQuery } from '@meshery/schemas/mesheryApi';
 
 const COL_MAPPING = {
   QPS: 3,
@@ -41,20 +42,17 @@ const COL_MAPPING = {
 function generateResultsForDisplay(results) {
   if (Array.isArray(results)) {
     return results.map((record) => {
-      const runnerResults = record.runnerResults || {};
       const data = {
         name: record.name,
         mesh: record.mesh,
-        testStartTime: runnerResults.StartTime || record.testStartTime,
-        qps: runnerResults.ActualQPS?.toFixed(1) || 'unavailable',
-        duration: runnerResults.ActualDuration
-          ? (runnerResults.ActualDuration / 1000000000).toFixed(1)
-          : 'unavailable',
-        threads: runnerResults.NumThreads,
+        test_start_time: record.runner_results.StartTime,
+        qps: record.runner_results.ActualQPS?.toFixed(1) || 'unavailable',
+        duration: (record.runner_results.ActualDuration / 1000000000).toFixed(1),
+        threads: record.runner_results.NumThreads,
       };
 
-      if (runnerResults?.DurationHistogram?.Percentiles) {
-        runnerResults.DurationHistogram.Percentiles.forEach(({ Percentile, Value }) => {
+      if (record.runner_results?.DurationHistogram?.Percentiles) {
+        record.runner_results.DurationHistogram.Percentiles.forEach(({ Percentile, Value }) => {
           data[`p${Percentile}`.replace('.', '_')] = Value.toFixed(3);
         });
       } else {
@@ -123,7 +121,7 @@ function generateColumnsForDisplay(
       },
     },
     {
-      name: 'testStartTime',
+      name: 'test_start_time',
       label: 'Start Time',
       options: {
         filter: false,
@@ -356,13 +354,11 @@ function ResultChart({ result, handleTabChange, tabValue }) {
   //     }
   //   }
   // })
-  const row = result.runnerResults;
-  if (!row) return <div />;
-
-  const boardConfig = result.serverBoardConfig;
-  const serverMetrics = result.serverMetrics;
-  const startTime = new Date(row.StartTime || result.testStartTime);
-  const endTime = new Date(startTime.getTime() + (row.ActualDuration ?? 0) / 1000000);
+  const row = result.runner_results;
+  const boardConfig = result.server_board_config;
+  const serverMetrics = result.server_metrics;
+  const startTime = new Date(row.StartTime);
+  const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
 
   return (
     <Paper
@@ -381,8 +377,8 @@ function ResultChart({ result, handleTabChange, tabValue }) {
         <div>
           <div>
             <MesheryChart
-              rawdata={[result && result.runnerResults ? result : {}]}
-              data={[result && result.runnerResults ? result.runnerResults : {}]}
+              rawdata={[result && result.runner_results ? result : {}]}
+              data={[result && result.runner_results ? result.runner_results : {}]}
             />
           </div>
           {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
@@ -413,15 +409,13 @@ function ResultChart({ result, handleTabChange, tabValue }) {
 
 function ResultNodeDetails({ result, handleTabChange, tabValue }) {
   if (!result) return <div />;
-  const chartData = result.runnerResults;
+  const chartData = result.runner_results;
 
-  const row = result.runnerResults;
-  if (!row) return <div />;
-
-  const boardConfig = result.serverBoardConfig;
-  const serverMetrics = result.serverMetrics;
-  const startTime = new Date(row.StartTime || result.testStartTime);
-  const endTime = new Date(startTime.getTime() + (row.ActualDuration ?? 0) / 1000000);
+  const row = result.runner_results;
+  const boardConfig = result.server_board_config;
+  const serverMetrics = result.server_metrics;
+  const startTime = new Date(row.StartTime);
+  const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
   return (
     <Paper
       style={{
@@ -450,8 +444,8 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }) {
         <div>
           <div>
             <MesheryChart
-              rawdata={[result && result.runnerResults ? result : {}]}
-              data={[result && result.runnerResults ? result.runnerResults : {}]}
+              rawdata={[result && result.runner_results ? result : {}]}
+              data={[result && result.runner_results ? result.runner_results : {}]}
             />
           </div>
           {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
@@ -507,41 +501,42 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
   const { results_selection } = useSelector((state) => state.prefTest);
   const searchTimeout = useRef();
   const { notify } = useNotification();
-  const endpointParts = endpoint.split('/');
-  const profileID = endpointParts[endpointParts.length - 2];
-  const {
-    data: performanceResultsData,
-    isFetching,
-    isError,
-    error,
-  } = useGetPerformanceProfileResultsQuery(
-    {
-      performanceProfileId: profileID,
-      page: `${page}`,
-      pagesize: `${pageSize}`,
-      search: search || '',
-      order: sortOrder || '',
-    },
-    {
-      skip: !profileID,
-    },
-  );
 
   useEffect(() => {
-    updateProgress({ showProgress: isFetching });
-  }, [isFetching]);
+    fetchResults(page, pageSize, search, sortOrder);
 
-  useEffect(() => {
-    if (!performanceResultsData) return;
+    //TODO: remove this
+    const subscription = subscribePerformanceResults(
+      (res) => {
+        // @ts-ignore
+        let result = res?.subscribePerfResults;
+        if (typeof result !== 'undefined') {
+          updateProgress({ showProgress: false });
 
-    setCount(performanceResultsData.totalCount);
-    setPageSize(performanceResultsData.pageSize);
-    setResults(performanceResultsData.results || []);
-  }, [performanceResultsData]);
-
-  useEffect(() => {
-    if (isError) handleError(error);
-  }, [isError, error]);
+          if (result) {
+            setCount(result.total_count);
+            setPageSize(result.page_size);
+            setSortOrder(sortOrder);
+            setSearch(search);
+            setResults(result.results);
+            setPageSize(result.page_size);
+          }
+        }
+      },
+      {
+        selector: {
+          pageSize: `${pageSize}`,
+          page: `${page}`,
+          search: `${encodeURIComponent(search)}`,
+          order: `${encodeURIComponent(sortOrder)}`,
+        },
+        profileID: endpoint.split('/')[endpoint.split('/').length - 2],
+      },
+    );
+    return () => {
+      subscription.dispose();
+    };
+  }, [page, pageSize, search, sortOrder]);
 
   const handleSocialExpandClick = (e, tableMeta) => {
     let socialExpandUpdate = [...socialExpand];
@@ -564,6 +559,41 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
     socialExpandUpdate[index] = !socialExpand[index];
     setSocialExpand(socialExpandUpdate);
   };
+
+  function fetchResults(page, pageSize, search, sortOrder) {
+    if (!search) search = '';
+    if (!sortOrder) sortOrder = '';
+
+    updateProgress({ showProgress: true });
+
+    fetchPerformanceResults({
+      selector: {
+        pageSize: `${pageSize}`,
+        page: `${page}`,
+        search: `${encodeURIComponent(search)}`,
+        order: `${encodeURIComponent(sortOrder)}`,
+      },
+      profileID: endpoint.split('/')[endpoint.split('/').length - 2],
+    }).subscribe({
+      next: (res) => {
+        // @ts-ignore
+        let result = res?.fetchResults;
+        if (typeof result !== 'undefined') {
+          updateProgress({ showProgress: false });
+
+          if (result) {
+            setCount(result.total_count);
+            setPageSize(result.page_size);
+            setSortOrder(sortOrder);
+            setSearch(search);
+            setResults(result.results);
+            setPageSize(result.page_size);
+          }
+        }
+      },
+      error: handleError,
+    });
+  }
 
   function handleError(error) {
     updateProgress({ showProgress: false });

@@ -29,12 +29,12 @@ function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal, t
  * @param {{
  *  profiles: Array<{
  *    id: string,
- *    createdAt: string,
- *    updatedAt: string,
+ *    created_at: string,
+ *    updated_at: string,
  *    endpoints: Array<string>,
- *    loadGenerators: Array<string>,
+ *    load_generators: Array<string>,
  *    name: string,
- *    userId: string,
+ *    user_id: string,
  *    duration: string,
  *  }>,
  *  deleteHandler: (id: string) => void,
