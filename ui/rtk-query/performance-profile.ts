@@ -1,27 +1,20 @@
 import {
   useDeletePerformanceProfileMutation as useSchemasDeletePerformanceProfileMutation,
   useGetPerformanceProfileQuery as useSchemasGetPerformanceProfileQuery,
-  useGetPerformanceProfileResultsQuery as useSchemasGetPerformanceProfileResultsQuery,
   useGetPerformanceProfilesQuery as useSchemasGetPerformanceProfilesQuery,
-  useGetPerformanceResultsQuery as useSchemasGetPerformanceResultsQuery,
   useUpsertPerformanceProfileMutation as useSchemasUpsertPerformanceProfileMutation,
 } from '@meshery/schemas/mesheryApi';
 
-const stripNullishParams = (params) =>
-  Object.fromEntries(
-    Object.entries(params).filter(([, value]) => value !== undefined && value !== null),
-  );
-
-const normalizePaginationParams = (queryArg) =>
-  stripNullishParams({
-    page: queryArg?.page?.toString(),
-    pagesize: queryArg?.pagesize?.toString(),
-    search: queryArg?.search,
-    order: queryArg?.order,
-  });
-
 export const useGetPerformanceProfilesQuery = (queryArg, options) =>
-  useSchemasGetPerformanceProfilesQuery(normalizePaginationParams(queryArg), options);
+  useSchemasGetPerformanceProfilesQuery(
+    {
+      page: queryArg?.page?.toString(),
+      pagesize: queryArg?.pagesize?.toString(),
+      search: queryArg?.search,
+      order: queryArg?.order,
+    },
+    options,
+  );
 
 export const useSavePerformanceProfileMutation = () => {
   const [trigger, result] = useSchemasUpsertPerformanceProfileMutation();
@@ -29,16 +22,6 @@ export const useSavePerformanceProfileMutation = () => {
 
   return [wrappedTrigger, result] as const;
 };
-
-export const useGetProfileResultsQuery = (queryArg, options) =>
-  useSchemasGetPerformanceResultsQuery(
-    stripNullishParams({
-      ...normalizePaginationParams(queryArg),
-      from: queryArg?.from,
-      to: queryArg?.to,
-    }),
-    options,
-  );
 
 export const useGetPerformanceProfileByIdQuery = (queryArg, options) =>
   useSchemasGetPerformanceProfileQuery(
@@ -57,12 +40,3 @@ export const useDeletePerformanceProfileMutation = () => {
 
   return [wrappedTrigger, result] as const;
 };
-
-export const useGetProfileResultsByIdQuery = (queryArg, options) =>
-  useSchemasGetPerformanceProfileResultsQuery(
-    stripNullishParams({
-      performanceProfileId: queryArg?.id,
-      ...normalizePaginationParams(queryArg),
-    }),
-    options,
-  );
