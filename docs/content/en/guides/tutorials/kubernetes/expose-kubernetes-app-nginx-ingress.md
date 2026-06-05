@@ -54,10 +54,12 @@ By using Kanvas, Meshery's collaborative visual designer, you will create a reus
 
 ---
 
-### 3. Add the Service Component
+### 3. Add and Configure the Service Component
 
 1. In the search box, type service.
 2. Find the Service component with the network hierarchy icon and drag it onto the canvas.
+3. Click on the Service component to open the details panel.
+4. Configure the Service ports (e.g., port 80 and targetPort 80) to route traffic to the Deployment's container port.
 
 ---
 
