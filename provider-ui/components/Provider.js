@@ -27,12 +27,11 @@ import {
   CustomTooltip,
   IconButton,
   CircularProgress,
-  // Sistent re-exports the underlying InfoOutlinedIcon as InfoOutlined;
-  // the bundle does NOT export the original name, so importing it
-  // directly resolves to undefined and crashes at render with
-  // "Element type is invalid". Alias on import to keep the rest of the
-  // JSX untouched.
-  InfoOutlined as InfoOutlinedIcon,
+  // Sistent exports this icon as InfoOutlinedIcon. There is no
+  // `InfoOutlined` export, so importing that name bound to undefined and
+  // crashed the provider dropdown at render with "Element type is
+  // invalid" once a row tried to render the icon.
+  InfoOutlinedIcon,
   Box,
   Chip,
   Link,
