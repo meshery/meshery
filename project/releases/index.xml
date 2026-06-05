@@ -1,4 +1,93 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Mon, 01 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.35</title><link>/project/releases/v1.0.35/</link><pubDate>Mon, 01 Jun 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.35/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 05 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.36</title><link>/project/releases/v1.0.36/</link><pubDate>Fri, 05 Jun 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.36/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Revert deletion of install/deployment_yamls (970902f19de) @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#19864)&lt;/li&gt;
+&lt;li&gt;docs: reverse ROADMAP.MD version order @Annonnymmousss (#19816)&lt;/li&gt;
+&lt;li&gt;server: return structured MeshKit errors for workspace input validation @YASHvardhanVashistha (#19842)&lt;/li&gt;
+&lt;li&gt;fix(docker): ship policy-engine wasm and wasm_exec.js in server image @marblom007 (#19851)&lt;/li&gt;
+&lt;li&gt;Update adopters list with F5 and Mario Arriaga @hamza-mohd (#19832)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Chore] Bump Go version to 1.26.4 @PragalvaXFREZ (#19876)&lt;/li&gt;
+&lt;li&gt;[Chore] Upgrade to go 1.26 @CodeAhmedJamil (#19906)&lt;/li&gt;
+&lt;li&gt;[CI] Makefile: Enhance names of remote provider targets @arjunmehta-git (#19879)&lt;/li&gt;
+&lt;li&gt;Revert &amp;ldquo;refactor(performance): drop service-mesh-performance for schemas-native types&amp;rdquo; @PragalvaXFREZ (#19878)&lt;/li&gt;
+&lt;li&gt;refactor(performance): drop service-mesh-performance for schemas-native types @leecalcote (#19605)&lt;/li&gt;
+&lt;li&gt;Stop updating k8s deployment in provider sync script @NSTKrishna (#19861)&lt;/li&gt;
+&lt;li&gt;[Server] Add OD10 Ventures remote provider @chaitanyamedidar (#19858)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] model: fix typos, misspelled function names, and corrupted license header @somaz94 (#19835)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[UI] Align performance profile hooks with schemas @PragalvaXFREZ (#19889)&lt;/li&gt;
+&lt;li&gt;[Provider UI] Fix InfoOutlinedIcon import from Sistent @rishiraj38 (#19890)&lt;/li&gt;
+&lt;li&gt;[CI] Makefile: provider ui setup @miacycle (#19882)&lt;/li&gt;
+&lt;li&gt;[CI] Makefile: Enhance names of remote provider targets @arjunmehta-git (#19879)&lt;/li&gt;
+&lt;li&gt;Revert &amp;ldquo;refactor(performance): drop service-mesh-performance for schemas-native types&amp;rdquo; @PragalvaXFREZ (#19878)&lt;/li&gt;
+&lt;li&gt;refactor(performance): drop service-mesh-performance for schemas-native types @leecalcote (#19605)&lt;/li&gt;
+&lt;li&gt;Bump @rjsf/utils from 6.5.3 to 6.6.1 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19850)&lt;/li&gt;
+&lt;li&gt;Bump start-server-and-test from 3.0.5 to 3.0.6 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19849)&lt;/li&gt;
+&lt;li&gt;Bump @sistent/sistent from 0.21.14 to 0.21.18 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19844)&lt;/li&gt;
+&lt;li&gt;Bump start-server-and-test from 3.0.5 to 3.0.6 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19845)&lt;/li&gt;
+&lt;li&gt;Bump next from 16.2.6 to 16.2.7 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19848)&lt;/li&gt;
+&lt;li&gt;Bump react-moment from 1.2.2 to 2.0.2 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19843)&lt;/li&gt;
+&lt;li&gt;Bump @sistent/sistent from 0.21.15 to 0.21.18 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19847)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Chore] Bump Go version to 1.26.4 @PragalvaXFREZ (#19876)&lt;/li&gt;
+&lt;li&gt;[Chore] Upgrade to go 1.26 @CodeAhmedJamil (#19906)&lt;/li&gt;
+&lt;li&gt;[CI] Makefile: Enhance names of remote provider targets @arjunmehta-git (#19879)&lt;/li&gt;
+&lt;li&gt;Revert &amp;ldquo;refactor(performance): drop service-mesh-performance for schemas-native types&amp;rdquo; @PragalvaXFREZ (#19878)&lt;/li&gt;
+&lt;li&gt;refactor(performance): drop service-mesh-performance for schemas-native types @leecalcote (#19605)&lt;/li&gt;
+&lt;li&gt;Bump @rjsf/utils from 6.5.3 to 6.6.1 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19850)&lt;/li&gt;
+&lt;li&gt;Bump start-server-and-test from 3.0.5 to 3.0.6 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19849)&lt;/li&gt;
+&lt;li&gt;Bump @sistent/sistent from 0.21.14 to 0.21.18 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19844)&lt;/li&gt;
+&lt;li&gt;Bump start-server-and-test from 3.0.5 to 3.0.6 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19845)&lt;/li&gt;
+&lt;li&gt;Bump next from 16.2.6 to 16.2.7 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19848)&lt;/li&gt;
+&lt;li&gt;Bump react-moment from 1.2.2 to 2.0.2 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19843)&lt;/li&gt;
+&lt;li&gt;Bump @sistent/sistent from 0.21.15 to 0.21.18 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19847)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Bump Go version to 1.26.4 @Junnygram (#19907)&lt;/li&gt;
+&lt;li&gt;[Chore] Bump Go version to 1.26.4 @PragalvaXFREZ (#19876)&lt;/li&gt;
+&lt;li&gt;[Chore] Upgrade to go 1.26 @CodeAhmedJamil (#19906)&lt;/li&gt;
+&lt;li&gt;Add newcomer introduction for Abhishek Maurya @AbhishekMauryaGEEK (#19905)&lt;/li&gt;
+&lt;li&gt;Add Chaitanya-Medidar.md with introduction @chaitanyamedidar (#19904)&lt;/li&gt;
+&lt;li&gt;Add Akash Sah&amp;rsquo;s introduction in meeting notes @SuperNeom (#19903)&lt;/li&gt;
+&lt;li&gt;Add attendance and introduction @areychana (#19902)&lt;/li&gt;
+&lt;li&gt;Added Yashi Agrawal&amp;rsquo;s attendance @11yashiagrawal (#19901)&lt;/li&gt;
+&lt;li&gt;Create Karthik Rajan&amp;rsquo;s introduction in markdown @karthik120710 (#19900)&lt;/li&gt;
+&lt;li&gt;first PR @PARTH-TUSSLE (#19899)&lt;/li&gt;
+&lt;li&gt;Add introduction for Harsh Kumar Sharma @harshhsharmaa57 (#19898)&lt;/li&gt;
+&lt;li&gt;Add Bakul Bansal&amp;rsquo;s introduction to meetings documentation @Bakul2006 (#19896)&lt;/li&gt;
+&lt;li&gt;Create yash-mahakal.md @YASHMAHAKAL (#19895)&lt;/li&gt;
+&lt;li&gt;Add introduction for Vedant Kowdiki @Vex-15 (#19897)&lt;/li&gt;
+&lt;li&gt;docs: Improve Artifact Hub publishing tutorial @Bhumikagarggg (#19886)&lt;/li&gt;
+&lt;li&gt;Add attendance instructions to meeting notes @YASHMAHAKAL (#19885)&lt;/li&gt;
+&lt;li&gt;Remove unsupported versions from version select dropdown (v0.8) @Katotodan (#19839)&lt;/li&gt;
+&lt;li&gt;Remove unsupported versions from version select dropdown (v0.9) @Katotodan (#19838)&lt;/li&gt;
+&lt;li&gt;[Docs] Incomplete migration to npm-managed Hugo in docs/Makefile @hebypaul (#19576)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@11yashiagrawal, @AbhishekMauryaGEEK, @Annonnymmousss, @Bakul2006, @Bhumikagarggg, @CodeAhmedJamil, @CodexRaunak, @Copilot, @Junnygram, @Katotodan, @NSTKrishna, @PARTH-TUSSLE, @PragalvaXFREZ, @SuperNeom, @Vex-15, @YASHMAHAKAL, @YASHvardhanVashistha, @alexquincy, @areychana, @arjunmehta-git, @banana-three-join, @chaitanyamedidar, @dependabot[bot], @fitzergerald, @hamza-mohd, @harshhsharmaa57, @hebypaul, @hortison, @jamieplu, @karthik120710, @leecalcote, @marblom007, @meshery-ci, @miacycle, @pontusringblom, @rishiraj38, @ritzorama, @simihablo, @somaz94, @suttonskate, @winkletinkle, @yi-nuo426, [copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.35</title><link>/project/releases/v1.0.35/</link><pubDate>Mon, 01 Jun 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.35/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -33245,7 +33334,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.35&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.36&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
