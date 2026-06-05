@@ -10,6 +10,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"gopkg.in/yaml.v2"
+	"gorm.io/gorm"
 
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/patterns"
@@ -156,22 +157,43 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, cloneP
 // DeleteMesheryPattern takes in a profile id and delete it if it already exists
 func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id core.Uuid) ([]byte, error) {
 	pattern := MesheryPattern{ID: &id}
-	mpp.DB.Delete(&pattern)
+	if err := mpp.DB.Delete(&pattern).Error; err != nil {
+		return nil, ErrDBDelete(err, "")
+	}
 
 	return marshalMesheryPattern(&pattern), nil
 }
 
 // DeleteMesheryPatterns takes in a meshery-patterns and delete those if exist
 func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
-	var deletedMaptterns []MesheryPattern
-	for _, pObj := range patterns.Patterns {
-		id := uuid.FromStringOrNil(pObj.ID)
-		pattern := MesheryPattern{ID: &id}
-		mpp.DB.Delete(&pattern)
-		deletedMaptterns = append(deletedMaptterns, pattern)
+	var deletedPatterns []MesheryPattern
+	var meshkitErr error
+
+	err := mpp.DB.Transaction(func(tx *gorm.DB) error {
+		for _, pObj := range patterns.Patterns {
+			id, err := uuid.FromString(pObj.ID)
+			if err != nil {
+				meshkitErr = ErrGenerateUUID(err)
+				return meshkitErr
+			}
+			pattern := MesheryPattern{ID: &id}
+			if err := tx.Delete(&pattern).Error; err != nil {
+				meshkitErr = ErrDBDelete(err, "")
+				return meshkitErr
+			}
+			deletedPatterns = append(deletedPatterns, pattern)
+		}
+		return nil
+	})
+
+	if err != nil {
+		if meshkitErr != nil {
+			return nil, meshkitErr
+		}
+		return nil, ErrDBDelete(err, "")
 	}
 
-	return marshalMesheryPatterns(deletedMaptterns), nil
+	return marshalMesheryPatterns(deletedPatterns), nil
 }
 
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
