@@ -64,14 +64,22 @@ func CreateK8sResource(
 		Resource: resource,
 	}
 
-	// Create namespace
-	if err := CreateNamespace(client, obj.GetNamespace()); err != nil {
-		return err
+	ns := obj.GetNamespace()
+	if ns != "" {
+		// Create namespace only for namespaced resources.
+		if err := CreateNamespace(client, ns); err != nil {
+			return err
+		}
 	}
 
-	if _, err := client.
-		Resource(gvr).
-		Namespace(obj.GetNamespace()).
+	var resourceInterface dynamic.ResourceInterface
+	if ns != "" {
+		resourceInterface = client.Resource(gvr).Namespace(ns)
+	} else {
+		resourceInterface = client.Resource(gvr)
+	}
+
+	if _, err := resourceInterface.
 		Create(context.TODO(), obj, metav1.CreateOptions{
 			FieldManager: "meshery",
 		}); err != nil {
@@ -84,9 +92,7 @@ func CreateK8sResource(
 		// If the resource already exists then check if it maintained by meshery
 		// If the resource is maintained by meshery then update the resource
 		// else replace the existing resource with new iff "force" is set to true
-		prevObj, err := client.
-			Resource(gvr).
-			Namespace(obj.GetNamespace()).
+		prevObj, err := resourceInterface.
 			Get(context.TODO(), obj.GetName(), metav1.GetOptions{})
 		if err != nil {
 			err = models.ErrGetResource(err, obj.GetName(), obj.GetNamespace())
@@ -98,18 +104,14 @@ func CreateK8sResource(
 		if prevObjLables["controller"] != "meshery" {
 			if force {
 				log.Info("resource not maintained by \"meshery\" - force recreating")
-				if err := client.
-					Resource(gvr).
-					Namespace(obj.GetNamespace()).
+				if err := resourceInterface.
 					Delete(context.TODO(), obj.GetName(), metav1.DeleteOptions{}); err != nil {
 					err = models.ErrDeleteResource(err, obj.GetName(), obj.GetNamespace())
 					log.Error(err)
 					return err
 				}
 
-				if _, err := client.
-					Resource(gvr).
-					Namespace(obj.GetNamespace()).
+				if _, err := resourceInterface.
 					Create(context.TODO(), obj, metav1.CreateOptions{
 						FieldManager: "meshery",
 					}); err != nil {
@@ -117,6 +119,8 @@ func CreateK8sResource(
 					log.Error(err)
 					return err
 				}
+
+				return nil
 			}
 
 			err = models.ErrCreateResourceEntry(fmt.Errorf("failed to create resource: %s - resource already exists and is not maintained by \"meshery\"", obj.GetName()))
@@ -124,9 +128,14 @@ func CreateK8sResource(
 			return err
 		}
 
-		if _, err := client.
-			Resource(gvr).
-			Namespace(obj.GetNamespace()).
+		resourceByt, err = json.Marshal(obj.Object)
+		if err != nil {
+			err = models.ErrUpdateResource(obj.GetName(), obj.GetNamespace())
+			log.Error(err)
+			return err
+		}
+
+		if _, err := resourceInterface.
 			Patch(context.TODO(), obj.GetName(), types.MergePatchType, resourceByt, metav1.PatchOptions{
 				FieldManager: "meshery",
 			}); err != nil {
