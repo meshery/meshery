@@ -351,7 +351,7 @@ ui-meshery-build: dep-check-node wasm-engine
 	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
-ui-provider-build: ui-provider-setup
+ui-provider-build: 
 	cd provider-ui; npm i; npm run build; cd ..
 
 ## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
