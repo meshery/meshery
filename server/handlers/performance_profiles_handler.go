@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 )
@@ -20,7 +21,7 @@ func (h *Handler) SavePerformanceProfileHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
+	user *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
@@ -48,6 +49,9 @@ func (h *Handler) SavePerformanceProfileHandler(
 		h.log.Error(ErrRequestBody(err))
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
+	}
+	if user != nil && user.ID != uuid.Nil {
+		parsedBody.UserID = user.ID
 	}
 
 	j, _ := json.Marshal(parsedBody)
