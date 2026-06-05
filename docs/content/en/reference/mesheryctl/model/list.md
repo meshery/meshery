@@ -11,7 +11,7 @@ List registered models
 
 ## Synopsis
 
-List all registered models by pagingation (10 models per page)
+List all registered models by pagination (10 models per page)
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
