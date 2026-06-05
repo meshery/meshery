@@ -103,7 +103,7 @@ func TestSaveConnectionAcceptsCloudModelProviderWithCredential(t *testing.T) {
 	if saved == nil {
 		t.Fatal("provider SaveConnection was not invoked")
 	}
-	if saved.Kind != connections.ModelProviderKindOpenAI || saved.Type != connections.ModelProviderConnectionType || saved.SubType != connections.ModelProviderConnectionSubType {
+	if saved.Kind != "openai" || saved.Type != "model-provider" || saved.SubType != "inference" {
 		t.Fatalf("unexpected connection classification: kind=%q type=%q subType=%q", saved.Kind, saved.Type, saved.SubType)
 	}
 	if saved.CredentialID == nil || *saved.CredentialID != credentialID {
@@ -152,8 +152,8 @@ func TestSaveConnectionAcceptsLocalModelProviderWithoutCredential(t *testing.T) 
 		t.Fatalf("expected no credentialId for local no-auth provider, got %s", saved.CredentialID.String())
 	}
 	wantMetadata := map[string]interface{}{
-		connections.ModelProviderMetadataBaseURL:      "http://localhost:11434",
-		connections.ModelProviderMetadataDefaultModel: "llama3.1",
+		"baseUrl":      "http://localhost:11434",
+		"defaultModel": "llama3.1",
 	}
 	if !reflect.DeepEqual(saved.MetaData, wantMetadata) {
 		t.Fatalf("got metadata %#v, want %#v", saved.MetaData, wantMetadata)
@@ -163,8 +163,8 @@ func TestSaveConnectionAcceptsLocalModelProviderWithoutCredential(t *testing.T) 
 func TestGetConnectionsSupportsModelProviderTypeFilter(t *testing.T) {
 	provider := newModelProviderConnectionSpyProvider(&connections.Connection{
 		Name: "Anthropic Production",
-		Kind: connections.ModelProviderKindAnthropic,
-		Type: connections.ModelProviderConnectionType,
+		Kind: "anthropic",
+		Type: "model-provider",
 	})
 	h := newModelProviderConnectionTestHandler(t)
 	authUser := &models.User{ID: uuid.Must(uuid.FromString("11111111-1111-1111-1111-111111111111"))}
@@ -178,11 +178,11 @@ func TestGetConnectionsSupportsModelProviderTypeFilter(t *testing.T) {
 		t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
 	}
 	gotTypes, _ := provider.observedListTypes.Load().([]string)
-	if !reflect.DeepEqual(gotTypes, []string{connections.ModelProviderConnectionType}) {
+	if !reflect.DeepEqual(gotTypes, []string{"model-provider"}) {
 		t.Fatalf("got connection type filters %v, want [model-provider]", gotTypes)
 	}
 	gotKinds, _ := provider.observedListKinds.Load().([]string)
-	if !reflect.DeepEqual(gotKinds, []string{connections.ModelProviderKindAnthropic}) {
+	if !reflect.DeepEqual(gotKinds, []string{"anthropic"}) {
 		t.Fatalf("got connection kind filters %v, want [anthropic]", gotKinds)
 	}
 }
@@ -224,8 +224,8 @@ func TestUpdateConnectionAcceptsModelProviderCredentialLink(t *testing.T) {
 		t.Fatalf("credentialId was not preserved on update: got %v, want %s", updated.CredentialID, credentialID)
 	}
 	wantMetadata := map[string]interface{}{
-		connections.ModelProviderMetadataRegion:       "us-east-1",
-		connections.ModelProviderMetadataDefaultModel: "anthropic.claude-3-5-sonnet-20240620-v1:0",
+		"region":       "us-east-1",
+		"defaultModel": "anthropic.claude-3-5-sonnet-20240620-v1:0",
 	}
 	if !reflect.DeepEqual(updated.MetaData, wantMetadata) {
 		t.Fatalf("got metadata %#v, want %#v", updated.MetaData, wantMetadata)

@@ -12,7 +12,6 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/meshery/server/models/connections"
 )
 
 // credentialSpyProvider captures the Credential passed to SaveUserCredential
@@ -88,7 +87,7 @@ func TestSaveUserCredentialAcceptsModelProviderSecretShapes(t *testing.T) {
 		{
 			name:     "api key provider",
 			body:     `{"name":"OpenAI API Key","type":"openai","secret":{"apiKey":"test-key"}}`,
-			wantType: connections.ModelProviderKindOpenAI,
+			wantType: "openai",
 			wantSecret: map[string]interface{}{
 				"apiKey": "test-key",
 			},
@@ -96,7 +95,7 @@ func TestSaveUserCredentialAcceptsModelProviderSecretShapes(t *testing.T) {
 		{
 			name:     "aws bedrock multi field credentials",
 			body:     `{"name":"AWS Bedrock","type":"aws-bedrock","secret":{"accessKeyId":"AKIA_TEST","secretAccessKey":"secret","sessionToken":"optional"}}`,
-			wantType: connections.ModelProviderKindAWSBedrock,
+			wantType: "aws-bedrock",
 			wantSecret: map[string]interface{}{
 				"accessKeyId":     "AKIA_TEST",
 				"secretAccessKey": "secret",
@@ -106,7 +105,7 @@ func TestSaveUserCredentialAcceptsModelProviderSecretShapes(t *testing.T) {
 		{
 			name:     "vertex service account json",
 			body:     `{"name":"Vertex AI","type":"vertex-ai","secret":{"serviceAccountJson":{"project_id":"meshery-test","client_email":"svc@example.com"}}}`,
-			wantType: connections.ModelProviderKindVertexAI,
+			wantType: "vertex-ai",
 			wantSecret: map[string]interface{}{
 				"serviceAccountJson": map[string]interface{}{
 					"project_id":   "meshery-test",
@@ -164,7 +163,7 @@ func TestUpdateUserCredentialAcceptsModelProviderSecretShape(t *testing.T) {
 	if updated == nil {
 		t.Fatal("provider UpdateUserCredential was not invoked")
 	}
-	if updated.ID != credentialID || updated.Type != connections.ModelProviderKindAWSBedrock {
+	if updated.ID != credentialID || updated.Type != "aws-bedrock" {
 		t.Fatalf("unexpected updated credential: id=%s type=%q", updated.ID.String(), updated.Type)
 	}
 	wantSecret := map[string]interface{}{
