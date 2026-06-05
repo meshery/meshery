@@ -522,6 +522,26 @@ directly with Meshery Server APIs and can manage local Docker containers or Kube
 - **Remote Providers**: Implement authentication, preferences, and sync logic externally.
 - **Example**: Meshery Cloud provider integrates via HTTPS/gRPC.
 
+#### Auth-cookie lifecycle (CDA-aware)
+
+When Meshery Server bridges a login through Meshery Cloud's Custom Domain
+Authentication (CDA), the browser may end up with auth cookies on several
+host scopes: the Meshery Server's own host, the cloud canonical scope
+(e.g. `.layer5.io`), and the BYOC custom-domain scope (e.g. `.meshery.io`
+or an off-eTLD apex). A one-scope logout would leave the other scopes'
+cookies in place and a subsequent navigation could silently
+re-authenticate the browser.
+
+`LogoutHandler` in `server/handlers/common_handlers.go` calls the helpers
+in `server/handlers/auth_cookie_clear.go` to emit a Set-Cookie clearance
+on every host scope the server knows about — the current request's host,
+its PSL-derived eTLD+1, and every configured remote provider's host plus
+eTLD+1. Any code that derives an eTLD+1 (for setting or clearing a
+Domain-scoped cookie, for redirect-target validation, etc.) MUST use
+`golang.org/x/net/publicsuffix.EffectiveTLDPlusOne`; a naive
+`strings.SplitN(host, ".", 2)[1]` resolves `example.co.uk` to `co.uk`,
+which is a public suffix and yields a cookie that the browser rejects.
+
 ### Adapters (gRPC)
 
 - **Protocol**: Defined in `server/meshes/meshops.proto`.
