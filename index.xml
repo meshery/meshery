@@ -38752,14 +38752,14 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json
 &lt;h2 id="steps"&gt;
 	Steps
 &lt;/h2&gt;
-&lt;ol&gt;
-&lt;li&gt;Navigate to the Designs page. You can access it from the left-hand menu in Meshery. The URL will be:
+&lt;h3 id="1-navigate-to-the-designs-page"&gt;
+	1. Navigate to the Designs page
+&lt;/h3&gt;
+&lt;p&gt;You can access it from the left-hand menu in Meshery. The URL will be:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Locally: &lt;a href="http://localhost:9081/configuration/designs?view=grid"&gt;http://localhost:9081/configuration/designs?view=grid&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Playground: &lt;a href="https://playground.meshery.io/configuration/designs?view=grid"&gt;https://playground.meshery.io/configuration/designs?view=grid&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
 &lt;p&gt;&lt;img class="content-image" src="./guides/tutorials/artifacthub/images/publish-to-artifacthub/designs.png" alt="" /&gt;&lt;/p&gt;
 &lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Can't find your design?&lt;/div&gt;
 &lt;p&gt;If you don&amp;rsquo;t see your design, check your Organization and Workspace selections. Designs are scoped to a Workspace, so make sure you have the correct Workspace selected in the dropdown at the top of the page. If you don&amp;rsquo;t have any designs in that Workspace, you can switch to another Workspace or create a new design in the current one.&lt;/p&gt;</description></item><item><title>Pulsar Operator</title><link>/extensions/models/pulsar-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/pulsar-operator/</guid><description/></item><item><title>Pulsar Resources Operator</title><link>/extensions/models/pulsar-resources-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/pulsar-resources-operator/</guid><description/></item><item><title>Push or Pull a Model Image</title><link>/guides/configuration-management/push-pull-model-image/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/configuration-management/push-pull-model-image/</guid><description>&lt;h2 id="use-mesheryctl-to-push-or-pull-a-model-image"&gt;
