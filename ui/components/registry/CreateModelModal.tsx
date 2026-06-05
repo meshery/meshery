@@ -30,6 +30,7 @@ const CreateModelModal: FC<CreateModelModalProps> = ({
       title="Create Model"
       size="sm"
       disableBodyWrap
+      sx={{ zIndex: (theme) => theme.zIndex.modal + 10 }}
     >
       <UrlStepper handleClose={handleClose} />
     </Modal>

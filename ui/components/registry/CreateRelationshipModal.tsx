@@ -31,6 +31,7 @@ const CreateRelationshipModal: FC<CreateRelationshipModalProps> = ({
       title="Create Relationship"
       size="md"
       disableBodyWrap
+      sx={{ zIndex: (theme) => theme.zIndex.modal + 10 }}
     >
       <RelationshipFormStepper handleClose={handleClose} />
     </Modal>
