@@ -1,60 +1,66 @@
-import { describe, expect, it, vi, beforeAll, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// ---------------------------------------------------------------------------
-// Tests for the performance-profile RTK-query endpoints.
-//
-// Strategy: spin up a real Redux store containing the api reducer/middleware,
-// mock global.fetch, and dispatch each endpoint's initiate(). This verifies
-// the URL, HTTP method, params and request body that the endpoint produces.
-// ---------------------------------------------------------------------------
+const schemaMocks = vi.hoisted(() => {
+  const result = { isLoading: false };
 
-beforeAll(() => {
-  // Make URLs absolute so fetchBaseQuery's `new Request` doesn't reject.
-  process.env.RTK_MESHERY_ENDPOINT_PREFIX = 'http://localhost';
-});
-
-type FetchMock = ReturnType<typeof vi.fn>;
-
-const okResponse = (body: unknown = {}) => ({
-  ok: true,
-  status: 200,
-  redirected: false,
-  headers: new Headers({ 'content-type': 'application/json' }),
-  url: '',
-  text: () => Promise.resolve(JSON.stringify(body)),
-  json: () => Promise.resolve(body),
-  clone() {
-    return this;
-  },
-});
-
-const setupStore = async () => {
-  vi.resetModules();
-  const apiMod = await import('../index');
-  await import('../performance-profile');
-  const { configureStore } = await import('@reduxjs/toolkit');
-  const store = configureStore({
-    reducer: { [apiMod.api.reducerPath]: apiMod.api.reducer },
-    middleware: (g) => g().concat(apiMod.api.middleware),
-  });
-  return { api: apiMod.api, store };
-};
-
-const getFetchCall = (fetchMock: FetchMock, index = 0) => {
-  const req = fetchMock.mock.calls[index][0] as Request;
   return {
-    url: req.url,
-    method: req.method,
-    request: req,
+    result,
+    upsertProfileTrigger: vi.fn(),
+    deleteProfileTrigger: vi.fn(),
+    useGetPerformanceProfilesQuery: vi.fn((queryArg, options) => ({
+      hook: 'getPerformanceProfiles',
+      queryArg,
+      options,
+    })),
+    useUpsertPerformanceProfileMutation: vi.fn(() => [vi.fn(), result] as const),
+    useGetPerformanceResultsQuery: vi.fn((queryArg, options) => ({
+      hook: 'getPerformanceResults',
+      queryArg,
+      options,
+    })),
+    useGetPerformanceProfileQuery: vi.fn((queryArg, options) => ({
+      hook: 'getPerformanceProfile',
+      queryArg,
+      options,
+    })),
+    useDeletePerformanceProfileMutation: vi.fn(() => [vi.fn(), result] as const),
+    useGetPerformanceProfileResultsQuery: vi.fn((queryArg, options) => ({
+      hook: 'getPerformanceProfileResults',
+      queryArg,
+      options,
+    })),
   };
-};
+});
+
+vi.mock('@meshery/schemas/mesheryApi', () => ({
+  useDeletePerformanceProfileMutation: schemaMocks.useDeletePerformanceProfileMutation,
+  useGetPerformanceProfileQuery: schemaMocks.useGetPerformanceProfileQuery,
+  useGetPerformanceProfileResultsQuery: schemaMocks.useGetPerformanceProfileResultsQuery,
+  useGetPerformanceProfilesQuery: schemaMocks.useGetPerformanceProfilesQuery,
+  useGetPerformanceResultsQuery: schemaMocks.useGetPerformanceResultsQuery,
+  useUpsertPerformanceProfileMutation: schemaMocks.useUpsertPerformanceProfileMutation,
+}));
+
+const loadModule = async () => import('../performance-profile');
 
 describe('performance-profile endpoints', () => {
-  let fetchMock: FetchMock;
-
   beforeEach(() => {
-    fetchMock = vi.fn();
-    global.fetch = fetchMock as unknown as typeof fetch;
+    schemaMocks.useGetPerformanceProfilesQuery.mockClear();
+    schemaMocks.useUpsertPerformanceProfileMutation.mockClear();
+    schemaMocks.useGetPerformanceResultsQuery.mockClear();
+    schemaMocks.useGetPerformanceProfileQuery.mockClear();
+    schemaMocks.useDeletePerformanceProfileMutation.mockClear();
+    schemaMocks.useGetPerformanceProfileResultsQuery.mockClear();
+    schemaMocks.upsertProfileTrigger = vi.fn();
+    schemaMocks.deleteProfileTrigger = vi.fn();
+    schemaMocks.useUpsertPerformanceProfileMutation.mockReturnValue([
+      schemaMocks.upsertProfileTrigger,
+      schemaMocks.result,
+    ] as const);
+    schemaMocks.useDeletePerformanceProfileMutation.mockReturnValue([
+      schemaMocks.deleteProfileTrigger,
+      schemaMocks.result,
+    ] as const);
   });
 
   afterEach(() => {
@@ -62,7 +68,7 @@ describe('performance-profile endpoints', () => {
   });
 
   it('exports all expected hooks', async () => {
-    const mod = await import('../performance-profile');
+    const mod = await loadModule();
     expect(mod.useGetPerformanceProfilesQuery).toBeTypeOf('function');
     expect(mod.useSavePerformanceProfileMutation).toBeTypeOf('function');
     expect(mod.useGetProfileResultsQuery).toBeTypeOf('function');
@@ -71,92 +77,144 @@ describe('performance-profile endpoints', () => {
     expect(mod.useGetProfileResultsByIdQuery).toBeTypeOf('function');
   });
 
-  it('getPerformanceProfiles issues GET with pagination params', async () => {
-    fetchMock.mockResolvedValue(okResponse({ profiles: [] }));
-    const { api, store } = await setupStore();
-    await store.dispatch(
-      api.endpoints.getPerformanceProfiles.initiate({
+  it('getPerformanceProfiles delegates to the schema-generated hook with normalized params', async () => {
+    const { useGetPerformanceProfilesQuery } = await loadModule();
+    const result = useGetPerformanceProfilesQuery(
+      {
         page: 2,
         pagesize: 25,
         search: 'foo',
         order: 'name desc',
-      }),
+      },
+      { skip: true },
     );
-    const { url, method } = getFetchCall(fetchMock);
-    expect(method).toBe('GET');
-    expect(url).toContain('/api/user/performance/profiles');
-    expect(url).toContain('page=2');
-    expect(url).toContain('pagesize=25');
-    expect(url).toContain('search=foo');
-    expect(url).toContain('order=name+desc');
+
+    expect(result).toEqual({
+      hook: 'getPerformanceProfiles',
+      queryArg: {
+        page: '2',
+        pagesize: '25',
+        search: 'foo',
+        order: 'name desc',
+      },
+      options: { skip: true },
+    });
+    expect(schemaMocks.useGetPerformanceProfilesQuery).toHaveBeenCalledTimes(1);
   });
 
-  it('savePerformanceProfile issues POST with the body', async () => {
-    fetchMock.mockResolvedValue(okResponse({ id: 'pp-1' }));
-    const { api, store } = await setupStore();
+  it('savePerformanceProfile delegates to schema-generated upsertPerformanceProfile', async () => {
+    const { useSavePerformanceProfileMutation } = await loadModule();
     const body = { name: 'profile-a', endpoints: ['/x'] };
-    await store.dispatch(api.endpoints.savePerformanceProfile.initiate({ body }));
-    const { url, method, request } = getFetchCall(fetchMock);
-    expect(method).toBe('POST');
-    expect(url).toContain('/api/user/performance/profiles');
-    const sent = await request.text();
-    expect(JSON.parse(sent)).toEqual(body);
+    const [trigger, result] = useSavePerformanceProfileMutation();
+
+    trigger({ body });
+
+    expect(result).toBe(schemaMocks.result);
+    expect(schemaMocks.useUpsertPerformanceProfileMutation).toHaveBeenCalledTimes(1);
+    expect(schemaMocks.upsertProfileTrigger).toHaveBeenCalledWith({ body });
   });
 
-  it('getProfileResults issues GET with date range params', async () => {
-    fetchMock.mockResolvedValue(okResponse({ results: [] }));
-    const { api, store } = await setupStore();
-    await store.dispatch(
-      api.endpoints.getProfileResults.initiate({
+  it('getProfileResults delegates to schema-generated getPerformanceResults', async () => {
+    const { useGetProfileResultsQuery } = await loadModule();
+    const result = useGetProfileResultsQuery(
+      {
         page: 0,
         pagesize: 10,
         search: '',
         order: '',
         from: '2024-01-01',
         to: '2024-02-01',
-      }),
+      },
+      { skip: true },
     );
-    const { url, method } = getFetchCall(fetchMock);
-    expect(method).toBe('GET');
-    expect(url).toContain('/api/user/performance/profiles/results');
-    expect(url).toContain('from=2024-01-01');
-    expect(url).toContain('to=2024-02-01');
+
+    expect(result).toEqual({
+      hook: 'getPerformanceResults',
+      queryArg: {
+        page: '0',
+        pagesize: '10',
+        search: '',
+        order: '',
+        from: '2024-01-01',
+        to: '2024-02-01',
+      },
+      options: { skip: true },
+    });
+    expect(schemaMocks.useGetPerformanceResultsQuery).toHaveBeenCalledTimes(1);
   });
 
-  it('getPerformanceProfileById issues GET with profile id in path', async () => {
-    fetchMock.mockResolvedValue(okResponse({ id: 'abc' }));
-    const { api, store } = await setupStore();
-    await store.dispatch(api.endpoints.getPerformanceProfileById.initiate({ id: 'abc' }));
-    const { url, method } = getFetchCall(fetchMock);
-    expect(method).toBe('GET');
-    expect(url).toContain('/api/user/performance/profiles/abc');
+  it('omits nullish query params before delegating to schema hooks', async () => {
+    const { useGetProfileResultsQuery } = await loadModule();
+    const result = useGetProfileResultsQuery(
+      {
+        page: 0,
+        pagesize: undefined,
+        search: '',
+        order: null,
+        from: null,
+        to: '2024-02-01',
+      },
+      { skip: true },
+    );
+
+    expect(result).toEqual({
+      hook: 'getPerformanceResults',
+      queryArg: {
+        page: '0',
+        search: '',
+        to: '2024-02-01',
+      },
+      options: { skip: true },
+    });
   });
 
-  it('deletePerformanceProfile issues DELETE', async () => {
-    fetchMock.mockResolvedValue(okResponse({ ok: true }));
-    const { api, store } = await setupStore();
-    await store.dispatch(api.endpoints.deletePerformanceProfile.initiate({ id: 'xyz' }));
-    const { url, method } = getFetchCall(fetchMock);
-    expect(method).toBe('DELETE');
-    expect(url).toContain('/api/user/performance/profiles/xyz');
+  it('getPerformanceProfileById delegates to schema-generated getPerformanceProfile', async () => {
+    const { useGetPerformanceProfileByIdQuery } = await loadModule();
+    const result = useGetPerformanceProfileByIdQuery({ id: 'abc' }, { skip: true });
+
+    expect(result).toEqual({
+      hook: 'getPerformanceProfile',
+      queryArg: { performanceProfileId: 'abc' },
+      options: { skip: true },
+    });
+    expect(schemaMocks.useGetPerformanceProfileQuery).toHaveBeenCalledTimes(1);
   });
 
-  it('getProfileResultsById issues GET for a given profile id with params', async () => {
-    fetchMock.mockResolvedValue(okResponse({ results: [] }));
-    const { api, store } = await setupStore();
-    await store.dispatch(
-      api.endpoints.getProfileResultsById.initiate({
+  it('deletePerformanceProfile delegates to schema-generated deletePerformanceProfile', async () => {
+    const { useDeletePerformanceProfileMutation } = await loadModule();
+    const [trigger, result] = useDeletePerformanceProfileMutation();
+
+    trigger({ id: 'xyz' });
+
+    expect(result).toBe(schemaMocks.result);
+    expect(schemaMocks.useDeletePerformanceProfileMutation).toHaveBeenCalledTimes(1);
+    expect(schemaMocks.deleteProfileTrigger).toHaveBeenCalledWith({ performanceProfileId: 'xyz' });
+  });
+
+  it('getProfileResultsById delegates to schema-generated getPerformanceProfileResults', async () => {
+    const { useGetProfileResultsByIdQuery } = await loadModule();
+    const result = useGetProfileResultsByIdQuery(
+      {
         id: 'pp-2',
         page: 1,
         pagesize: 5,
         search: 'q',
         order: 'created_at',
-      }),
+      },
+      { skip: true },
     );
-    const { url, method } = getFetchCall(fetchMock);
-    expect(method).toBe('GET');
-    expect(url).toContain('/api/user/performance/profiles/pp-2/results');
-    expect(url).toContain('page=1');
-    expect(url).toContain('pagesize=5');
+
+    expect(result).toEqual({
+      hook: 'getPerformanceProfileResults',
+      queryArg: {
+        performanceProfileId: 'pp-2',
+        page: '1',
+        pagesize: '5',
+        search: 'q',
+        order: 'created_at',
+      },
+      options: { skip: true },
+    });
+    expect(schemaMocks.useGetPerformanceProfileResultsQuery).toHaveBeenCalledTimes(1);
   });
 });
