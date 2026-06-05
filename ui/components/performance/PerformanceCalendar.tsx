@@ -9,8 +9,9 @@ import { Typography, Paper } from '@sistent/sistent';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { CalendarComponent } from './style';
-import { updateProgress } from '@/store/slices/mesheryUi';
+import { updateProgressAction } from '@/store/slices/mesheryUi';
 import { useGetPerformanceResultsQuery } from '@meshery/schemas/mesheryApi';
+import { useDispatch } from 'react-redux';
 
 const localizer = momentLocalizer(moment);
 
@@ -96,6 +97,7 @@ function PerformanceCalendar({ style }) {
   const [time, setTime] = useState(generateDateRange());
   const [results, setResults] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState();
+  const dispatch = useDispatch();
   const {
     data: performanceResultsData,
     isFetching,
@@ -114,8 +116,8 @@ function PerformanceCalendar({ style }) {
   const { notify } = useNotification();
 
   useEffect(() => {
-    updateProgress({ showProgress: isFetching });
-  }, [isFetching]);
+    dispatch(updateProgressAction({ showProgress: isFetching }));
+  }, [dispatch, isFetching]);
 
   useEffect(() => {
     setResults(performanceResultsData?.results || []);
@@ -127,7 +129,7 @@ function PerformanceCalendar({ style }) {
 
   function handleError(msg) {
     return function (error) {
-      updateProgress({ showProgress: false });
+      dispatch(updateProgressAction({ showProgress: false }));
       notify({
         message: `${msg}: ${error}`,
         event_type: EVENT_TYPES.ERROR,

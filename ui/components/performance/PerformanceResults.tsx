@@ -29,7 +29,7 @@ import {
 
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateProgress } from '@/store/slices/mesheryUi';
+import { updateProgressAction } from '@/store/slices/mesheryUi';
 import { updateResultsSelection } from '@/store/slices/prefTest';
 import { useGetPerformanceProfileResultsQuery } from '@meshery/schemas/mesheryApi';
 
@@ -528,8 +528,8 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
   );
 
   useEffect(() => {
-    updateProgress({ showProgress: isFetching });
-  }, [isFetching]);
+    dispatch(updateProgressAction({ showProgress: isFetching }));
+  }, [dispatch, isFetching]);
 
   useEffect(() => {
     if (!performanceResultsData) return;
@@ -566,7 +566,7 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
   };
 
   function handleError(error) {
-    updateProgress({ showProgress: false });
+    dispatch(updateProgressAction({ showProgress: false }));
     notify({
       message: `There was an error fetching results: ${error}`,
       event_type: EVENT_TYPES.ERROR,

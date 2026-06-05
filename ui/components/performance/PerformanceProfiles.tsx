@@ -38,8 +38,8 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { ButtonTextWrapper, ProfileContainer, ViewSwitchBUtton } from './style';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
-import { useSelector } from 'react-redux';
-import { updateProgress } from '@/store/slices/mesheryUi';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateProgressAction } from '@/store/slices/mesheryUi';
 import type { GetPerformanceProfilesApiResponse } from '@meshery/schemas/mesheryApi';
 
 /**
@@ -73,6 +73,7 @@ function PerformanceProfile({ handleDelete }) {
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const { user } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
 
   const [deletePerformanceProfile] = useDeletePerformanceProfileMutation();
   const {
@@ -89,8 +90,8 @@ function PerformanceProfile({ handleDelete }) {
   });
 
   useEffect(() => {
-    updateProgress({ showProgress: isFetchingProfiles });
-  }, [isFetchingProfiles]);
+    dispatch(updateProgressAction({ showProgress: isFetchingProfiles }));
+  }, [dispatch, isFetchingProfiles]);
 
   useEffect(() => {
     if (!performanceProfilesData) return;
@@ -122,7 +123,7 @@ function PerformanceProfile({ handleDelete }) {
     deletePerformanceProfile({ id: id })
       .unwrap()
       .then(() => {
-        updateProgress({ showProgress: false });
+        dispatch(updateProgressAction({ showProgress: false }));
         notify({ message: 'Performance Profile Deleted!', event_type: EVENT_TYPES.SUCCESS });
         refetchProfiles();
       })
@@ -131,7 +132,7 @@ function PerformanceProfile({ handleDelete }) {
 
   function handleError(msg) {
     return function (error) {
-      updateProgress({ showProgress: false });
+      dispatch(updateProgressAction({ showProgress: false }));
       notify({
         message: `${msg}: ${error}`,
         event_type: EVENT_TYPES.ERROR,

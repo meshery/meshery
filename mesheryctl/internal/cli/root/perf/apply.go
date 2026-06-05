@@ -61,11 +61,20 @@ var linkDocPerfApply = map[string]string{
 func splitTestDuration(duration string) (string, string) {
 	duration = strings.TrimSpace(duration)
 	if duration == "" {
-		duration = "30s"
+		return "30", "s"
 	}
 
-	durLen := len(duration)
-	return duration[:durLen-1], strings.ToLower(duration[durLen-1:])
+	unitStart := strings.IndexFunc(duration, func(r rune) bool {
+		return (r < '0' || r > '9') && r != '.'
+	})
+	if unitStart == -1 {
+		return duration, "s"
+	}
+	if unitStart == 0 {
+		return "30", strings.ToLower(strings.TrimSpace(duration))
+	}
+
+	return strings.TrimSpace(duration[:unitStart]), strings.ToLower(strings.TrimSpace(duration[unitStart:]))
 }
 
 var applyCmd = &cobra.Command{

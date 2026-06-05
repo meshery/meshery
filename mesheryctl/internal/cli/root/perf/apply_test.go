@@ -171,6 +171,22 @@ func TestSplitTestDurationTrimsDuration(t *testing.T) {
 	}
 }
 
+func TestSplitTestDurationDefaultsUnitlessDuration(t *testing.T) {
+	value, unit := splitTestDuration("30")
+
+	if value != "30" || unit != "s" {
+		t.Fatalf("expected unitless duration to default to seconds, got value=%q unit=%q", value, unit)
+	}
+}
+
+func TestSplitTestDurationSupportsMultiCharacterUnit(t *testing.T) {
+	value, unit := splitTestDuration("500ms")
+
+	if value != "500" || unit != "ms" {
+		t.Fatalf("expected multi-character unit to be preserved, got value=%q unit=%q", value, unit)
+	}
+}
+
 func resetVariables() {
 	// reset the variables after each test
 	profileName = ""

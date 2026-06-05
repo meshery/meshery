@@ -9,8 +9,8 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/general/error-404/index';
 import { Modal, Button, Grid2, Paper, Typography, useTheme, styled } from '@sistent/sistent';
-import { updateProgress } from '@/store/slices/mesheryUi';
-import { useSelector } from 'react-redux';
+import { updateProgressAction } from '@/store/slices/mesheryUi';
+import { useDispatch, useSelector } from 'react-redux';
 import { useGetPerformanceProfilesQuery } from '@/rtk-query/performance-profile';
 import { useGetPerformanceResultsQuery } from '@meshery/schemas/mesheryApi';
 
@@ -63,6 +63,7 @@ function Dashboard() {
   const { notify } = useNotification();
   const router = useRouter();
   const { grafana } = useSelector((state) => state.telemetry);
+  const dispatch = useDispatch();
   const theme = useTheme();
   const {
     data: performanceProfilesData,
@@ -90,8 +91,8 @@ function Dashboard() {
   });
 
   useEffect(() => {
-    updateProgress({ showProgress: isFetchingProfiles || isFetchingResults });
-  }, [isFetchingProfiles, isFetchingResults]);
+    dispatch(updateProgressAction({ showProgress: isFetchingProfiles || isFetchingResults }));
+  }, [dispatch, isFetchingProfiles, isFetchingResults]);
 
   useEffect(() => {
     if (!performanceProfilesData) return;
@@ -121,7 +122,7 @@ function Dashboard() {
 
   function handleError(msg) {
     return function (error) {
-      updateProgress({ showProgress: false });
+      dispatch(updateProgressAction({ showProgress: false }));
       notify({
         message: `${msg}: ${error}`,
         event_type: EVENT_TYPES.ERROR,

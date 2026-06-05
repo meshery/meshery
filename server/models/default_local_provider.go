@@ -1029,7 +1029,7 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfi
 		return nil, fmt.Errorf("performance profile is nil")
 	}
 
-	if performanceProfile.ID == uuid.Nil {
+	if performanceProfile.ID == (core.Uuid{}) {
 		uid, err := uuid.NewV4()
 		if err != nil {
 			return nil, ErrGenerateUUID(err)
