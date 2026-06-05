@@ -1,2 +1,1 @@
-Hi all i am karthik rajan i have completed my graduation in 2024 , i just started my journey in devops and currently i am learning about kubernetes and how it works
-and currenly i am going to meshery ctl documentation and starting my contributing from there .
+Hi all, I am Karthik Rajan. I completed my graduation in 2024, and I just started my journey in DevOps. Currently, I am learning about Kubernetes and how it works, and I am going through the mesheryctl documentation to start contributing from there.
