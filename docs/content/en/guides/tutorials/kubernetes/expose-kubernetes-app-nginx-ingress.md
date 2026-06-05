@@ -25,9 +25,9 @@ By using Kanvas, Meshery's collaborative visual designer, you will create a reus
 ### Table of Contents
 
 1. [Create a New Design in Kanvas](#1-create-a-new-design-in-kanvas)
-2. [Add the Deployment Component](#2-add-the-deployment-component)
-3. [Add the Service Component](#3-add-the-service-component)
-4. [Add the Ingress Component](#4-add-the-ingress-component)
+2. [Add and Configure the Deployment Component](#2-add-and-configure-the-deployment-component)
+3. [Add and Configure the Service Component](#3-add-and-configure-the-service-component)
+4. [Add and Configure the Ingress Component](#4-add-and-configure-the-ingress-component)
 5. [Connect the Components Visually](#5-connect-the-components-visually)
 6. [Validate the Design](#6-validate-the-design)
 7. [Dry Run the Design](#7-dry-run-the-design)
