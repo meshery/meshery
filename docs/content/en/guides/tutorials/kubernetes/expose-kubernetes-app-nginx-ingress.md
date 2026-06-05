@@ -44,11 +44,13 @@ By using Kanvas, Meshery's collaborative visual designer, you will create a reus
 
 ---
 
-### 2. Add the Deployment Component
+### 2. Add and Configure the Deployment Component
 
 1. Click the Components icon in the bottom toolbar to open the search panel.
 2. Search for Deployment and scroll to find the Deployment component with the Kubernetes icon.
 3. Drag it onto the canvas.
+4. Click on the Deployment component to open the details panel on the right.
+5. Configure the container name, image (e.g., nginx:alpine), and container port (e.g., 80) under the component settings.
 
 ---
 
