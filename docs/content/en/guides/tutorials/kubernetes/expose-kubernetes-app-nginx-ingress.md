@@ -63,10 +63,12 @@ By using Kanvas, Meshery's collaborative visual designer, you will create a reus
 
 ---
 
-### 4. Add the Ingress Component
+### 4. Add and Configure the Ingress Component
 
 1. In the search box, type ingress.
 2. Find the Ingress component and drag it onto the canvas.
+3. Click on the Ingress component to open the details panel.
+4. Configure the Ingress rules, specifying the host (e.g., app.local), path (e.g., /), and backend service name and port pointing to the Service component.
 
 ---
 
