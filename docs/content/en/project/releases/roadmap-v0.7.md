@@ -80,4 +80,4 @@ See the [Meshery Architecture deck](https://docs.google.com/presentation/d/1SQMf
 ----
 See the [Meshery Architecture deck](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164) for additional visual designs and functional specifications like this one -
 
-![Meshery v0.6.5 - Data Persistence|690x387](upload://mkFFy7ERkWPzUI2OOhsGLfNW2Sh.jpeg)
+![Meshery v0.6.5 - Data Persistence|690x387](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/export/png?id=1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY&pageid=g1044af767ce_0_164)

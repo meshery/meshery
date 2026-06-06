@@ -8,8 +8,8 @@ port: 10004/gRPC
 project_status: stable
 lab: nsm-meshery-adapter
 github_link: https://github.com/meshery/meshery-nsm
-image: /extensions/adapters/nsm/images/nsm.svg
-white_image: /extensions/adapters/nsm/images/nsm.svg
+image: extensions/adapters/nsm/images/nsm.svg
+white_image: extensions/adapters/nsm/images/nsm.svg
 aliases: 
 - /service-meshes/adapters/nsm
 - /extensibility/adapters/nsm
@@ -125,5 +125,5 @@ Verification
 ### Suggested Topics
 
 - Examine [Meshery's architecture]({{< ref "concepts/architecture/_index.md" >}}) and how adapters fit in as a component.
-- Learn more about [Meshery Adapters]({{< ref "concepts/architecture/adapters/index.md" >}}).
+- Learn more about [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}}).
 

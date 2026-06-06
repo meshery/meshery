@@ -23,7 +23,7 @@ _See [Meshery Catalog](https://meshery.io/catalog)_.
 You may bring your own patterns or find them available through your chosen provider. Each cloud native pattern carries a unique identifier for reference. The patterns in this repository serve in an educational capacity, facilitating learning, and also serve in an operational capacity, facilitating implementation and validation of your cloud native deployment’s adherence to a pattern.
 
 {{% alert color="info" title="Repository of Cloud Native Patterns" %}}
-A central set of design patterns is available in Meshery Catalog (<a href='/concepts/catalog'>concept</a>, <a href='https://meshery.io/catalog'>site</a>).
+A central set of design patterns is available in Meshery Catalog (<a href='{{< ref "concepts/architecture/catalog/index.md" >}}'>concept</a>, <a href='https://meshery.io/catalog'>site</a>).
 {{% /alert %}}
 
 
@@ -78,4 +78,4 @@ Deployed. Endpoint(s) available at: http://localhost:8000/catalog
 
 ## Related Reading
 
-- [`mesheryctl design`]({{< ref "reference/mesheryctl/design/_index.md" >}})
+- [`mesheryctl design`]({{< ref "reference/reference/mesheryctl/design/_index.md" >}})

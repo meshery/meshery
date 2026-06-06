@@ -16,11 +16,11 @@ Meshery and its components are written using the following languages and technol
 | Meshery UI                                                           | ReactJS, NextJS, BillboardJS                                                      |
 | Meshery Provider UI                                                  | ReactJS, NextJS                                                                   |
 | [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}})                  | Golang                                                                            |
-|   [MeshSync]({{< ref "concepts/architecture/meshsync/index.md" >}})                        | Golang                                                                            |
+|   [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}})                        | Golang                                                                            |
 |   [Broker]({{< ref "concepts/architecture/broker/index.md" >}})                            | Golang, NATS                                                                      |
 | [Meshery CLI](#meshery-cli)                                          | Golang                                                                            |
 | --- [Extensions]({{< ref "extensions/_index.md" >}}) ---                                    |                                                                                   |
-| [Meshery Adapters]({{< ref "concepts/architecture/adapters/index.md" >}})                  | Golang, gRPC, [CloudEvents](https://cloudevents.io/)                              |
+| [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}})                  | Golang, gRPC, [CloudEvents](https://cloudevents.io/)                              |
 | [Meshery Remote Providers]({{< ref "reference/extensibility/providers/index.md" >}})                 | _any_ - must adhere to Meshery [Extension Points]({{< ref "reference/extensibility/_index.md" >}}) |
 | [Envoy WASM Filters](https://github.com/meshery-extensions/wasm-filters)     | Rust and C++                                                                      |
 
@@ -53,7 +53,7 @@ Meshery's REST API may be consumed by any number of clients. Clients need to pre
 <a href="images/Meshery-client-architecture.webp" class="lightbox-image">
 <img src="images/Meshery-client-architecture.webp" width="50%" /></a>
 
-_Figure: Clients use Meshery's [REST API]({{< ref "reference/extensibility/api/index.md#rest" >}}), [GraphQL API]({{< ref "reference/extensibility/api/index.md#graphql" >}}), or a combination of both._
+_Figure: Clients use Meshery's [REST API]({{< ref "reference/extensibility/api.md#rest" >}}), [GraphQL API]({{< ref "reference/extensibility/api.md#graphql" >}}), or a combination of both._
 
 ### Providers
 
@@ -85,7 +85,7 @@ Meshery Operator is the multi-cluster Kubernetes operator that manages MeshSync 
   <figcaption>Figure: Meshery Operator and MeshSync</figcaption>
 </figure>
 
-See the [**Operator**]({{< ref "concepts/architecture/operator/index.md" >}}) section for more information on the function of an operator and [**MeshSync**]({{< ref "concepts/architecture/meshsync/index.md" >}}) section for more information on the function of meshsync.
+See the [**Operator**]({{< ref "concepts/architecture/operator/index.md" >}}) section for more information on the function of an operator and [**MeshSync**]({{< ref "concepts/architecture/meshsync.md" >}}) section for more information on the function of meshsync.
 
 ## Database
 
@@ -121,11 +121,11 @@ concerned with a long-lived configuration, while others have no state at all.
 | Components        | Persistence  | Description                                                           |
 | :---------------- | :----------- | :-------------------------------------------------------------------- |
 | [mesheryctl]({{< ref "guides/mesheryctl/working-with-mesheryctl.md" >}})        | stateless    | command line interface that has a configuration file                  |
-| [Meshery Adapters]({{< ref "concepts/architecture/adapters/index.md" >}})  | stateless    | interface with cloud native infrastructure on a transactional basis                |
+| [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}})  | stateless    | interface with cloud native infrastructure on a transactional basis                |
 | Meshery Server    | caches state | application cache is stored in `$HOME/.meshery/` folder               |
 | [Meshery Providers]({{< ref "reference/extensibility/providers/index.md" >}}) | stateful     | location of persistent user preferences, environment, tests and so on |
 | [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}})  | stateless    | operator of Meshery custom controllers, notably MeshSync              |
-| [MeshSync]({{< ref "concepts/architecture/meshsync/index.md" >}})          | stateless    | Kubernetes custom controller, continuously running discovery          |
+| [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}})          | stateless    | Kubernetes custom controller, continuously running discovery          |
 
 ### **Network Ports**
 
@@ -133,7 +133,7 @@ Meshery uses the following list of network ports to interface with its various c
 
 {{< network-ports >}}
 
-See the [**Adapters**]({{< ref "concepts/architecture/adapters/index.md" >}}) section for more information on the function of an adapter.
+See the [**Adapters**]({{< ref "concepts/architecture/adapters.md" >}}) section for more information on the function of an adapter.
 
 ### **Meshery Connections and their Actions**
 
@@ -142,9 +142,9 @@ See the [**Adapters**]({{< ref "concepts/architecture/adapters/index.md" >}}) se
 | Kubernetes clusters | `system start` | Upload kubeconfig | Click "X" on chip | On click of connection chip | Yes, via MeshSync | No | No | No | No | No |
 | Grafana Servers | No | Enter IP/hostname into Meshery UI | Click "X" on chip | On click of connection chip | No | No | No | No | No | No |
 | Prometheus Servers | No | Enter IP/hostname into Meshery UI | Click "X" on chip | On click of connection chip | Yes, when metrics are configured in a dashboard | Yes | No | No | No | No |
-| [Meshery Adapters]({{< ref "concepts/architecture/adapters/index.md" >}}) | `system check` | Server to Adapter on every UI refresh | Click "X on" chip | Server to Adapter every click on adapter chip in UI | Server to Adapter every 10 seconds | - | Yes, as listed in meshconfig contexts | Yes, as listed in meshconfig contexts | Toggle switch needed | Toggle switch needed |
+| [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}}) | `system check` | Server to Adapter on every UI refresh | Click "X on" chip | Server to Adapter every click on adapter chip in UI | Server to Adapter every 10 seconds | - | Yes, as listed in meshconfig contexts | Yes, as listed in meshconfig contexts | Toggle switch needed | Toggle switch needed |
 | [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}) | `system check` | Upon upload of kubeconfig | No | On click of connection chip in UI to Server to Kubernetes to Meshery Operator | No | - | `system start` | `system stop` | Upon upload of kubeconfig & Toggle of switch | Toggle of switch |
-| [MeshSync]({{< ref "concepts/architecture/meshsync/index.md" >}}) | `system check` | follows the lifecycle of Meshery Operator | No | On click of connection chip in UI to Server to Kubernetes to Meshery Operator to MeshSync | Managed by Meshery Operator | On click of connection chip | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator |
+| [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) | `system check` | follows the lifecycle of Meshery Operator | No | On click of connection chip in UI to Server to Kubernetes to Meshery Operator to MeshSync | Managed by Meshery Operator | On click of connection chip | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator |
 | [Broker]({{< ref "concepts/architecture/broker/index.md" >}}) | `system check` | follows the lifecycle of Meshery Operator | No | On click of connection chip in UI to Server to Brokers exposed service port | NATS Topic Subscription | On click of connection chip | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator |
 
 <br>

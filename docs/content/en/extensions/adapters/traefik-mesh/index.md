@@ -8,8 +8,8 @@ port: 10006/gRPC
 project_status: stable
 lab: traefik-meshery-adapter
 github_link: https://github.com/meshery/meshery-traefik-mesh
-image: /extensions/adapters/traefik-mesh/images/traefik-mesh.svg
-white_image: /extensions/adapters/traefik-mesh/images/traefik-mesh.svg
+image: extensions/adapters/traefik-mesh/images/traefik-mesh.svg
+white_image: extensions/adapters/traefik-mesh/images/traefik-mesh.svg
 aliases: 
 - /service-meshes/adapters/traefik-mesh
 - /extensibility/adapters/traefik-mesh
@@ -26,4 +26,4 @@ The Meshery Adapter for Traefik Mesh includes some sample applications operation
 ## Suggested Topics
 
 - Examine [Meshery's architecture]({{< ref "concepts/architecture/_index.md" >}}) and how adapters fit in as a component.
-- Learn more about [Meshery Adapters]({{< ref "concepts/architecture/adapters/index.md" >}}).
+- Learn more about [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}}).

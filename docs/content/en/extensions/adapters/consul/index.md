@@ -8,8 +8,8 @@ port: 10002/gRPC
 project_status: stable
 lab: consul-meshery-adapter
 github_link: https://github.com/meshery/meshery-consul
-image: /extensions/adapters/consul/images/consul.svg
-white_image: /extensions/adapters/consul/images/consul-white.svg
+image: extensions/adapters/consul/images/consul.svg
+white_image: extensions/adapters/consul/images/consul-white.svg
 aliases: 
 - /service-meshes/adapters/consul
 - /extensibility/adapters/consul
@@ -48,4 +48,4 @@ The Meshery Adapter for Consul will connect to Meshery Adapter for Consul's Prom
 ### Suggested Topics
 
 - Examine [Meshery's architecture]({{< ref "concepts/architecture/_index.md" >}}) and how adapters fit in as a component.
-- Learn more about [Meshery Adapters]({{< ref "concepts/architecture/adapters/index.md" >}}).
+- Learn more about [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}}).

@@ -7,8 +7,8 @@ adapter_version: v0.8.1
 port: 10010/gRPC
 project_status: stable
 github_link: https://github.com/meshery/meshery-nginx-sm
-image: /extensions/adapters/nginx-sm/images/nginx-sm.svg
-white_image: /extensions/adapters/nginx-sm/images/nginx-sm-white.svg
+image: extensions/adapters/nginx-sm/images/nginx-sm.svg
+white_image: extensions/adapters/nginx-sm/images/nginx-sm-white.svg
 aliases: 
 - /service-meshes/adapters/nginx-sm
 - /extensibility/adapters/nginx-sm

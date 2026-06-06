@@ -68,7 +68,7 @@ Once configured, execute the following command to start Meshery.
 
 {{< code code="mesheryctl system start" >}}
 
-If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli.md" >}}) to learn more.
+If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}) to learn more.
 
 ## Installation: Using Helm
 
@@ -113,7 +113,7 @@ Meshery should now be connected with your managed Kubernetes instance. Take a lo
 
 # Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
+Optionally, you can verify the health of your Meshery deployment using <a href='{{< ref "reference/reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 

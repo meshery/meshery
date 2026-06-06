@@ -9,8 +9,8 @@ The logical concepts included in Meshery establish a set of foundational constru
 
 1. Versioned (see [Schemas](https://github.com/meshery/schemas))
 2. Extensible (see [Extension Points]({{< ref "reference/extensibility/_index.md" >}}))
-3. Composable (see [Patterns]({{< ref "concepts/logical/patterns/index.md" >}}))
-4. Portable (see Export/Import of [Designs]({{< ref "concepts/logical/designs/index.md" >}}) and [Models]({{< ref "concepts/logical/models/index.md" >}}))
+3. Composable (see [Patterns]({{< ref "concepts/logical/patterns.md" >}}))
+4. Portable (see Export/Import of [Designs]({{< ref "concepts/logical/designs.md" >}}) and [Models]({{< ref "concepts/logical/models/index.md" >}}))
 5. Interoperable (see [Compatibility Matrix]({{< ref "installation/compatibility-matrix/_index.md" >}}))
 6. Configurable (see [Lifecycle Management]({{< ref "guides/infrastructure-management/lifecycle-management/index.md" >}}))
 7. Documented (_you are here_)

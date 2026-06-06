@@ -77,9 +77,9 @@
       {{- if .Params.port -}}
     <tr style="border-bottom: 1px solid #eee;">
       <td style="padding: 10px;">
-        <img src="{{ .Params.image }}" style="width:24px; height:24px; vertical-align: middle; margin-right: 8px;" 
-             data-logo-for-dark="{{ .Params.white_image }}" 
-             data-logo-for-light="{{ .Params.image }}" 
+        <img src="{{ .Params.image | relURL }}" style="width:24px; height:24px; vertical-align: middle; margin-right: 8px;" 
+             data-logo-for-dark="{{ .Params.white_image | relURL }}" 
+             data-logo-for-light="{{ .Params.image | relURL }}" 
              loading="lazy"/>
         <a href="{{ .RelPermalink }}" style="text-decoration: none;">{{ .Params.name }}</a>
       </td>

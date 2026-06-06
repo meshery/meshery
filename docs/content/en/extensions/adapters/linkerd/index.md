@@ -8,8 +8,8 @@ port: 10001/gRPC
 project_status: stable
 lab: linkerd-meshery-adapter
 github_link: https://github.com/meshery/meshery-linkerd
-image: /extensions/adapters/linkerd/images/linkerd.svg
-white_image: /extensions/adapters/linkerd/images/linkerd-white.svg
+image: extensions/adapters/linkerd/images/linkerd.svg
+white_image: extensions/adapters/linkerd/images/linkerd-white.svg
 aliases: 
 - /service-meshes/adapters/linkerd
 - /extensibility/adapters/linkerd

@@ -8,8 +8,8 @@ port: 10012/gRPC
 project_status: stable
 lab: cilium-meshery-adapter
 github_link: https://github.com/meshery/meshery-cilium
-image: /extensions/adapters/cilium/images/cilium.svg
-white_image: /extensions/adapters/cilium/images/cilium-white.svg
+image: extensions/adapters/cilium/images/cilium.svg
+white_image: extensions/adapters/cilium/images/cilium-white.svg
 aliases: 
 - /service-meshes/adapters/cilium
 - /extensibility/adapters/cilium

@@ -163,7 +163,10 @@ func TestDoc(t *testing.T) {
 		assert.Contains(t, output, "test_caption")
 		assert.Contains(t, output, "test_example")
 		assert.Contains(t, output, "See Also")
-		assert.Contains(t, output, "preserving-manually-added-documentation")
+		assert.Contains(t, output, `{{< ref "reference/reference/mesheryctl/_index.md" >}}`)
+		assert.Contains(t, output, `{{< ref "project/contributing/contributing-cli/index.md#preserving-manually-added-documentation" >}}`)
+		assert.NotContains(t, output, "](/reference/mesheryctl/)")
+		assert.NotContains(t, output, "](/project/contributing/contributing-cli#preserving-manually-added-documentation)")
 	})
 	t.Run("Test getManuallyAddedContentMap function", func(t *testing.T) {
 		_, err := getManuallyAddedContentMap("test.md")

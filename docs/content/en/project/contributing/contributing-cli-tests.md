@@ -4,13 +4,13 @@ description: How to contribute to Meshery Command Line Interface end-to-end test
 categories: [contributing]
 ---
 
-Meshery CLI is the command line interface for Meshery. Meshery CLI, otherwise known as `mesheryctl`, is a client of Meshery Server's [REST API]({{< ref "reference/extensibility/api/index.md" >}}). It provides a way to interact with Meshery and perform various operations such as installing, configuring, and managing cloud native infrastructure.
+Meshery CLI is the command line interface for Meshery. Meshery CLI, otherwise known as `mesheryctl`, is a client of Meshery Server's [REST API]({{< ref "reference/extensibility/api.md" >}}). It provides a way to interact with Meshery and perform various operations such as installing, configuring, and managing cloud native infrastructure.
 
 This document is intended to help you contribute to the end-to-end tests for `mesheryctl`, the Meshery CLI. It is designed to be a guide for developers who are new to the project and want to contribute to the testing of `mesheryctl`.
 
 The end-to-end tests for `mesheryctl` are designed to ensure that the CLI is working as expected and that it is compatible with the various cloud native infrastructure and public cloud services that Meshery supports. These tests are run automatically on every pull request to ensure that any changes made to the code do not break the existing functionality of the CLI.
 
-{{% alert color="info" title="Meshery CLI Reference Documents" %}}<ul><li><a href="{{< ref "project/contributing/contributing-cli.md" >}}">Contributing to Meshery CLI</a></li><li><a href="https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0">Meshery Command Tracker</a>: Status of mesheryctl command implementation and platform compatibility.</li>
+{{% alert color="info" title="Meshery CLI Reference Documents" %}}<ul><li><a href="{{< ref "project/contributing/contributing-cli/index.md" >}}">Contributing to Meshery CLI</a></li><li><a href="https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0">Meshery Command Tracker</a>: Status of mesheryctl command implementation and platform compatibility.</li>
     <li><a href="https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#">Meshery CLI Commands and Documentation</a>: Detailed documentation of the `mesheryctl` commands.</li>
 	<li><a href="https://github.com/meshery/meshery/labels/component%2Fmesheryctl">mesheryctl open issues and pull requests</a>: Matching the "component/mesheryctl" label.</li></ul>{{% /alert %}}
 
@@ -73,7 +73,7 @@ There are a few ways to set up the Meshery server, but for end-to-end testing, w
 make server
 ```
 
-Be aware that some test cases require the availability of a Kubernetes cluster and one or more  Meshery Adapters. In those cases, please refer to the [installation guides]({{< ref "installation/_index.md" >}})) (like that of [installing Meshery on Minikube]({{< ref "installation/kubernetes/minikube.md" >}})). 
+Be aware that some test cases require the availability of a Kubernetes cluster and one or more  Meshery Adapters. In those cases, please refer to the [installation guides]({{< ref "installation/_index.md" >}})) (like that of [installing Meshery on Minikube]({{< ref "installation/kubernetes/minikube/index.md" >}})).
 
 ### Authentication
 
@@ -215,7 +215,7 @@ To filter and view only CLI-related test cases using the Sheet Views feature:
 1. In the top menu bar, click Data → Change view
 2. Choose the pre-defined view labeled "CLI"
 
-![Meshery Test Plan Screenshot]({{< relurl "project/contributing/images/meshery-test-plan-v0.8.0-ui.png" >}})
+![Meshery Test Plan Screenshot](../images/meshery-test-plan-v0.8.0-ui.png)
 
 ## Development
 

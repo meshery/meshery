@@ -34,7 +34,7 @@ See [Meshery Broker]({{< ref "concepts/architecture/broker/index.md" >}}) for mo
 
 MeshSync Controller manages the lifecycle of MeshSync that is deployed for resource synchronization for the cluster.
 
-See [MeshSync]({{< ref "concepts/architecture/meshsync/index.md" >}}) for more information.
+See [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) for more information.
 
 ## Operator FAQs
 

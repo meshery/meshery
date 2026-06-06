@@ -61,7 +61,7 @@ mesheryctl system status --verbose
 ## Screenshots
 
 Usage of mesheryctl system status
-![status-usage]({{< relurl "reference/reference/images/status.png" >}})
+![status-usage](../../../images/status.png)
 
 ## See Also
 

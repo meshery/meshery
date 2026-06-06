@@ -107,7 +107,7 @@ mesheryctl system check --operator
 ## Screenshots
 
 Usage of mesheryctl system check
-![check-usage]({{< relurl "reference/reference/images/check.png" >}})
+![check-usage](../../../images/check.png)
 
 ## See Also
 

@@ -30,15 +30,15 @@ Meshery UI uses a schema-driven approach where components and forms are generate
 
 ## Meshery Server APIs
 
-The [API overview]({{< ref "reference/extensibility/api/index.md" >}}) in the Extensibility guide offers high-level insight, while each API reference (below) offers details pertaining to each API endpoints' behavior and use.
+The [API overview]({{< ref "reference/extensibility/api.md" >}}) in the Extensibility guide offers high-level insight, while each API reference (below) offers details pertaining to each API endpoints' behavior and use.
 
 ### REST API
 
-Meshery provides a REST API available through the default port of `9081/tcp` at `<hostname>:<port>/api/`. See the [REST API Reference]({{< ref "reference/rest-apis/_index.md" >}}) for a complete list of endpoints available with short description of their purpose and example code.
+Meshery provides a REST API available through the default port of `9081/tcp` at `<hostname>:<port>/api/`. See the [REST API Reference]({{< ref "reference/reference/rest-apis/_index.md" >}}) for a complete list of endpoints available with short description of their purpose and example code.
 
 ### GraphQL API
 
-Meshery provides a GraphQl API available through the default port of `9081/tcp` at `<hostname>:<port>/api/graphql/query`. See the [GraphQL API Reference]({{< ref "reference/graphql-apis.md" >}}) [Relay](https://relay.dev) is the client used.
+Meshery provides a GraphQl API available through the default port of `9081/tcp` at `<hostname>:<port>/api/graphql/query`. See the [GraphQL API Reference]({{< ref "reference/reference/graphql-apis.md" >}}) [Relay](https://relay.dev) is the client used.
 
 ## Design
 
@@ -61,7 +61,7 @@ The designs in this specification should result in enabling:
 ## Setup
 
 {{% alert color="info" title="Windows User?" %}}
-See <a href='/project/contributing/meshery-windows'>Setting up Meshery Development Environment on Windows</a>.
+See <a href='{{< ref "project/contributing/meshery-windows/index.md" >}}'>Setting up Meshery Development Environment on Windows</a>.
 {{% /alert %}}
 
 ### Required Node Version
@@ -104,8 +104,8 @@ Now, Meshery will run on the default port `http://localhost:9081`.
 
 **Please note**: If you see "Meshery Development Incompatible" while trying to sign into Meshery Server, then follow these steps:
 
-<a href="{{< relurl "project/contributing/images/meshery-development-incompatible-error.png" >}}">
-  <img style= "width: 600px;" src="{{< relurl "project/contributing/images/meshery-development-incompatible-error.png" >}}" />
+<a href="../images/meshery-development-incompatible-error.png">
+  <img style= "width: 600px;" src="../images/meshery-development-incompatible-error.png" />
 </a>
 
 Potential Solution:
@@ -124,7 +124,7 @@ If you want to work on the UI, it will be a good idea to use the included UI dev
 
 {{< code code=`make ui` >}}
 
-Refer to [Contributing to Meshery Server](contributing-server), if needed.
+Refer to [Contributing to Meshery Server]({{< ref "project/contributing/contributing-server.md" >}}), if needed.
 
 > Make sure to have Meshery Server configured, up and running on the default port `http://localhost:9081` and choose a provider to login with (visit `http://localhost:9081`) before proceeding to access and work on the UI server at `http://localhost:3000`.
 
@@ -132,7 +132,7 @@ Any UI changes made now will _automatically_ be rebuilt and served in your brows
 
 ### Running end-to-end integration tests
 
-Refer to [Meshery UI Testing](contributing-ui-tests) for details of how to contribute and benefit from Meshery UI testing.
+Refer to [Meshery UI Testing]({{< ref "project/contributing/contributing-ui-tests.md" >}}) for details of how to contribute and benefit from Meshery UI testing.
 
 ### Static Files, Icons and Images
 

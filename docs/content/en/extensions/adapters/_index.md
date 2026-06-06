@@ -12,7 +12,7 @@ aliases:
 
 ## Guiding Principles of Adapter Design
 
-Adapters allow Meshery to interface with the different cloud native infrastructure. Review the list of all available [Meshery Adapters]({{< ref "concepts/architecture/adapters/index.md" >}}). See the [Meshery Architecture]({{< ref "concepts/architecture/_index.md" >}}) diagrams for visuals on how adapters relate to other Meshery components.
+Adapters allow Meshery to interface with the different cloud native infrastructure. Review the list of all available [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}}). See the [Meshery Architecture]({{< ref "concepts/architecture/_index.md" >}}) diagrams for visuals on how adapters relate to other Meshery components.
 Meshery upholds the following guiding principles for adapter design:
 
 1. **Adapters allow Meshery to interface with the different cloud native infrastructure, exposing their differentiated value to users.**

@@ -14,7 +14,7 @@ Before you can use the Meshery CLI to export a [Model]({{< ref "concepts/logical
 
 **Step 2: Export the Model**
 
-Model can be exported in 2 format and OCI or Compress file. These files contain different [components]({{< ref "concepts/logical/components/index.md" >}}), [relationships]({{< ref "concepts/logical/relationships/index.md" >}}) files and a model file. The files can be exported in either yaml or json by default it is exported as yaml.
+Model can be exported in 2 format and OCI or Compress file. These files contain different [components]({{< ref "concepts/logical/components.md" >}}), [relationships]({{< ref "concepts/logical/relationships/index.md" >}}) files and a model file. The files can be exported in either yaml or json by default it is exported as yaml.
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">mesheryctl model export [model-name] </div></div>
@@ -32,7 +32,7 @@ Different file type and output type can be set using flags `-o` for oci and tar 
 <div class="codeblock"><div class="clipboardjs">mesheryctl model export istio-base -o oci -t json</div></div>
 </pre>
 
-**Note:** A `--discard-components --discard-relationships` flag is present to skip [component]({{< ref "concepts/logical/components/index.md" >}}) and [relationships]({{< ref "concepts/logical/relationships/index.md" >}}) generation in the export only the model is exported without any components and relationships.
+**Note:** A `--discard-components --discard-relationships` flag is present to skip [component]({{< ref "concepts/logical/components.md" >}}) and [relationships]({{< ref "concepts/logical/relationships/index.md" >}}) generation in the export only the model is exported without any components and relationships.
 
 ## Export Models Using Meshery UI
 

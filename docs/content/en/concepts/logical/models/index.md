@@ -19,10 +19,10 @@ Models serve as the foundational packaging units for Meshery's logical object re
 * **Extensibility:** Models are highly extensible, allowing you to define custom components, relationships, and policies. 
 
 {{% alert title="Creating your own models" color="light" %}}
-If you would like to create your own, augment existing models, or contribute new models, please refer to the [Contributing to Models]({{< ref "project/contributing/contributing-models.md" >}}) guide.
+If you would like to create your own, augment existing models, or contribute new models, please refer to the [Contributing to Models]({{< ref "project/contributing/contributing-models/index.md" >}}) guide.
 {{% /alert %}}
 
-See [Contributing to Models]({{< ref "project/contributing/contributing-models.md" >}}).
+See [Contributing to Models]({{< ref "project/contributing/contributing-models/index.md" >}}).
 
 As a cloud native manager that provides a comprehensive set of tools for managing multi-cloud and cloud native applications and infrastructure, Meshery needs object models that can granularly characterize a wide range of systems under management from simple applications to complex microservices architectures and their infrastructure. This document describes the Meshery Model and its constituent set of entities  used to represent and manage cloud and cloud native systems.
 
@@ -32,7 +32,7 @@ Using Meshery Models, users can define and manage cloud-native systems, includin
 
 Each model (package) can be imported and exported from Meshery Server as OCI-compatible images. This makes models portable, abstracts their complexity, and encapsulates intellectual property that you might have created while designing your own models. Model packages are versioned and bundle any number of components, relationships, policies, connections, and credentials.
 
-Models are stored in Meshery's [registry]({{< ref "concepts/logical/registry/index.md" >}}) where they can be:
+Models are stored in Meshery's [registry]({{< ref "concepts/logical/registry.md" >}}) where they can be:
 
 * Discovered and reused by teams
 * Versioned and tagged
@@ -41,7 +41,7 @@ Models are stored in Meshery's [registry]({{< ref "concepts/logical/registry/ind
 
 The registry provides a central location for managing and distributing your infrastructure models.
 
-Every entity type is implemented by a [registrant]({{< ref "concepts/logical/registry/index.md" >}}). Without registrants and models, Meshery can't manage any kind of infrastructure.
+Every entity type is implemented by a [registrant]({{< ref "concepts/logical/registry.md" >}}). Without registrants and models, Meshery can't manage any kind of infrastructure.
 
 Most registrants configure a specific infrastructure platform (either cloud or self-hosted). Registrants vary in their capabilities. Capabilities come in the form of components, some of which represent infrastructure to be managed others of which represent functional additional functionality to augment Meshery's behavior and deepen its feature set. Some registrants offer infrastructure-specific orchestration. For example the Meshery Adapter for Istio offers integration with each of Istio's addons.
 
@@ -78,7 +78,7 @@ Models introduce various core constructs that form the foundation of the model. 
 
 ### Component
 
-[Component]({{< ref "concepts/logical/components/index.md" >}}) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates.
+[Component]({{< ref "concepts/logical/components.md" >}}) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates.
 
 ### Policy
 
@@ -90,7 +90,7 @@ Models introduce various core constructs that form the foundation of the model. 
 
 #### Evaluation of Relationships
 
-Meshery provides a relationship evaluation algorithm to ensure desired behavior enforcement. [Policies](policies) can be applied to components and relationships, defining rules and actions based on predefined conditions.
+Meshery provides a relationship evaluation algorithm to ensure desired behavior enforcement. [Policies]({{< ref "concepts/logical/policies/index.md" >}}) can be applied to components and relationships, defining rules and actions based on predefined conditions.
 
 {{% alert title="Model Schema" color="info" %}}
 Model constructs are defined using a schema language called Cue. Cue is a powerful and expressive language that is well-suited for defining cloud-native constructs.
@@ -98,11 +98,11 @@ Model constructs are defined using a schema language called Cue. Cue is a powerf
 
 ### Designs
 
-[Designs]({{< ref "concepts/logical/designs/index.md" >}}) are deployable units in Meshery that describe the desired infrastructure. They consist of components and patterns, allowing users to define and configure the behavior of their cloud-native applications. A design is a collection of components and patterns that represent a desired state of infrastructure. Designs are used to deploy and manage cloud-native systems.
+[Designs]({{< ref "concepts/logical/designs.md" >}}) are deployable units in Meshery that describe the desired infrastructure. They consist of components and patterns, allowing users to define and configure the behavior of their cloud-native applications. A design is a collection of components and patterns that represent a desired state of infrastructure. Designs are used to deploy and manage cloud-native systems.
 
 ### Patterns
 
-[Patterns](patterns) are reusable configuration that can be applied to components or designs. They define best practices for configuring and operating cloud-native application functionality. Patterns can be applied to components or designs, and they are read-only.
+[Patterns]({{< ref "concepts/logical/patterns.md" >}}) are reusable configuration that can be applied to components or designs. They define best practices for configuring and operating cloud-native application functionality. Patterns can be applied to components or designs, and they are read-only.
 
 {{% alert title="Metadata" color="info" %}}
 Metadata provide additional details about a component in Meshery. They offer specific functionality or characteristics associated with a component, enhancing its capabilities. Metadata can be attached to components to customize their behavior.

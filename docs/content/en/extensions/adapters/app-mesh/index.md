@@ -7,8 +7,8 @@ adapter_version: v0.6.4
 port: 10005/gRPC
 project_status: beta
 github_link: https://github.com/meshery/meshery-app-mesh
-image: /extensions/adapters/app-mesh/images/app-mesh.svg   
-white_image: /extensions/adapters/app-mesh/images/app-mesh-white.svg
+image: extensions/adapters/app-mesh/images/app-mesh.svg   
+white_image: extensions/adapters/app-mesh/images/app-mesh-white.svg
 aliases: 
 - /service-meshes/adapters/app-mesh
 - /extensibility/adapters/app-mesh

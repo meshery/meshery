@@ -240,7 +240,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 				}
 			})
 		}
-		buf.WriteString("Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.")
+		buf.WriteString("Go back to [command reference index]({{< ref \"reference/reference/mesheryctl/_index.md\" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref \"project/contributing/contributing-cli/index.md#preserving-manually-added-documentation\" >}}) for guidance.")
 		buf.WriteString("\n")
 	}
 
@@ -356,10 +356,20 @@ func getManuallyAddedContentMap(filename string) (map[int]string, error) {
 	shortcodePattern := regexp.MustCompile(`\{\{<\s*([^>]+)\s*>\}\}`)
 	shortcodeMatches := shortcodePattern.FindAllStringSubmatch(content, -1)
 	for i, match := range shortcodeMatches {
+		shortcodeContent := strings.TrimSpace(match[1])
+		if isGeneratedShortcode(shortcodeContent) {
+			continue
+		}
+
 		// Store the shortcode content in the map with order as the key
-		manuallyAddedContentMap[i] = strings.TrimSpace(match[1])
+		manuallyAddedContentMap[i] = shortcodeContent
 	}
 	return manuallyAddedContentMap, nil
+}
+
+func isGeneratedShortcode(shortcodeContent string) bool {
+	return shortcodeContent == `ref "reference/reference/mesheryctl/_index.md"` ||
+		shortcodeContent == `ref "project/contributing/contributing-cli/index.md#preserving-manually-added-documentation"`
 }
 
 func main() {

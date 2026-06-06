@@ -73,7 +73,7 @@ spec:
 ```
 ## MeshSync CRD
 
-The MeshSync CRD is used as a configuration tool the [MeshSync]({{< ref "concepts/architecture/meshsync/index.md" >}}). The CRD is used to control the replica count for MeshSync instances, [Broker]({{< ref "concepts/architecture/broker/index.md" >}}) configuration and the resources that MeshSync watches and listens to in a cluster.
+The MeshSync CRD is used as a configuration tool the [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}). The CRD is used to control the replica count for MeshSync instances, [Broker]({{< ref "concepts/architecture/broker/index.md" >}}) configuration and the resources that MeshSync watches and listens to in a cluster.
 
 ### YAML Synopsis
 
@@ -163,7 +163,7 @@ The following section outlines the fields and their descriptions
 
 The following section defines the usage for this Custom Resource
 
-The Custom Resource is used to configure the [Broker]({{< ref "concepts/architecture/broker/index.md" >}}) and Events to be tracked by [MeshSync]({{< ref "concepts/architecture/meshsync/index.md" >}})
+The Custom Resource is used to configure the [Broker]({{< ref "concepts/architecture/broker/index.md" >}}) and Events to be tracked by [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}})
 
 #### Example Use
 

@@ -90,7 +90,7 @@ Name: **"Meshery"** (default), URL: `https://cloud.meshery.io`
 - Long-term term persistence.
 - Save environment setup.
 - Retrieve performance test results.
-- Events are stored locally and can be published to remote provider. [Read more about server events]({{< ref "project/contributing/contributing-server-events.md" >}})
+- Events are stored locally and can be published to remote provider. [Read more about server events]({{< ref "project/contributing/contributing-server-events/index.md" >}})
 
 Name: **"Digital Ocean"**, URL: `https://meshery.digitalocean.com`
 
@@ -105,7 +105,7 @@ Name: **"Acme"**
 - Long-term term persistence.
 - Save environment setup.
 - Retrieve performance test results.
-- Events are stored locally and can be published to remote provider. [Read more about server events]({{< ref "project/contributing/contributing-server-events.md" >}})
+- Events are stored locally and can be published to remote provider. [Read more about server events]({{< ref "project/contributing/contributing-server-events/index.md" >}})
 - Free to use.
 
 ### Local Provider
@@ -119,7 +119,7 @@ Name: **"Local"** (legacy alias: **"None"**)
 - Container-local storage of test results. Ephemeral.
 - Environment setup not saved.
 - No performance test result history.
-- Server events are stored locally in database. [Read more about server events]({{< ref "project/contributing/contributing-server-events.md" >}})
+- Server events are stored locally in database. [Read more about server events]({{< ref "project/contributing/contributing-server-events/index.md" >}})
 - Free to use.
 
 #### Login Behavior
@@ -242,7 +242,7 @@ Meshery keeps the implementation of Remote Providers separate so that they are b
 
 ### Verifying Compatibility With Golang Version Update
 
-When Meshery is updated to a newer version of Golang, extension providers need to ensure their integrations remain compatible with the updated version. Changes in the Golang version can lead to compatibility issues, so it’s important to update your extension to align with Meshery’s new environment. For a detailed guide on how to verify and address any compatibility issues, refer to this [guide on verifying compatibility](./verify-compatibility).
+When Meshery is updated to a newer version of Golang, extension providers need to ensure their integrations remain compatible with the updated version. Changes in the Golang version can lead to compatibility issues, so it’s important to update your extension to align with Meshery’s new environment. For a detailed guide on how to verify and address any compatibility issues, refer to this [guide on verifying compatibility]({{< ref "reference/extensibility/verify-compatibility.md" >}}).
 
 ### Remote Provider Extension Points
 

@@ -21,7 +21,7 @@ If you cannot find the repository or it is private, the issue is likely related 
 ### Loosely-Coupled Extensions
 
 These extensions communicate with Meshery Server through standard APIs. Issues are typically easier to diagnose.
-- Example: [Meshery Adapters]({{< ref "concepts/architecture/adapters/index.md" >}}) like the [meshery-istio](https://github.com/meshery-extensions/meshery-istio) adapter.
+- Example: [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}}) like the [meshery-istio](https://github.com/meshery-extensions/meshery-istio) adapter.
 - Common Issues: Networking problems, port conflicts, or component-specific errors.
 - Debugging Steps: Use standard tools like `docker ps` to check if the container is running and `docker logs <container-id>` to inspect its logs for errors.
 

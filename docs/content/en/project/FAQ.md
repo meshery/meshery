@@ -67,9 +67,9 @@ weight: 100
 <p><strong>Answer:</strong> Meshery runs on a <a href="{{< ref "installation/_index.md" >}}">number of platforms</a>. You are encouraged to use <code>mesheryctl</code> to configure and control Meshery deployments. Install `mesheryctl` using any of these options:</p>
 
 <ul>
-<li><a href="{{< ref "installation/linux-mac/bash.md" >}}">Bash user</a></li>
-<li><a href="{{< ref "installation/linux-mac/brew.md" >}}">Brew user</a></li>
-<li><a href="{{< ref "installation/windows/scoop.md" >}}">Scoop user</a></li>
+<li><a href="{{< ref "installation/linux-mac/bash/index.md" >}}">Bash user</a></li>
+<li><a href="{{< ref "installation/linux-mac/brew/index.md" >}}">Brew user</a></li>
+<li><a href="{{< ref "installation/windows/scoop/index.md" >}}">Scoop user</a></li>
 <li><a href="https://github.com/meshery/meshery/releases/latest">Direct download</a></li>
 </ul>
 </details>
@@ -146,7 +146,7 @@ weight: 100
 <li>If you don't see the specific entities in Meshery UI, you may choose to reset Meshery's database. This option is in the <code>Reset System</code> Tab in <code>Settings</code> page.</li>
 </ul>
 
-<p>Note: You can also verify the health of your system using <a href="{{< ref "reference/mesheryctl/system/check.md" >}}">mesheryctl system check</a></p>
+<p>Note: You can also verify the health of your system using <a href="{{< ref "reference/reference/mesheryctl/system/check.md" >}}">mesheryctl system check</a></p>
 
 </details>
 
@@ -155,7 +155,7 @@ weight: 100
 <details>
 <summary>
 <strong>Question: Getting an error while running <code>make server</code> on Windows?</strong>
-</summary><strong>Answer:</strong> <p>On Windows, set up the project on Ubuntu WSL2 and you will be able to run the Meshery UI and the server. For more information please visit <a href="{{< ref "project/contributing/meshery-windows.md" >}}">Setting up Meshery Development Environment on Windows</a>.</p>
+</summary><strong>Answer:</strong> <p>On Windows, set up the project on Ubuntu WSL2 and you will be able to run the Meshery UI and the server. For more information please visit <a href="{{< ref "project/contributing/meshery-windows/index.md" >}}">Setting up Meshery Development Environment on Windows</a>.</p>
 </details>
 
 {{< discuss >}}

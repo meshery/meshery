@@ -72,7 +72,7 @@ The following table outlines a set of design artifacts produced in the process o
 
 | **Document** | **Purpose** |
 | --- | --- |
-| [mesheryctl Command Reference]({{< ref "reference/mesheryctl/_index.md" >}}) | Overarching index in the form of succinct, categorized, and tabularly displayed reference of all commands and their syntax with simple example usage. |
+| [mesheryctl Command Reference]({{< ref "reference/reference/mesheryctl/_index.md" >}}) | Overarching index in the form of succinct, categorized, and tabularly displayed reference of all commands and their syntax with simple example usage. |
 | `mesheryctl <name of command>` | Breakout of individual command purpose, syntax, flags, and behavior. Links to these separate, breakout documents should be available from the mesheryctl Command Reference. |
 
 ## Designing Commands

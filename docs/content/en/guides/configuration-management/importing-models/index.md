@@ -6,7 +6,7 @@ categories: [configuration]
 
 Import your existing Models and existing custom resource definition (CRD) into Meshery. The platform supports a variety of application definition formats, and you can import designs using either the Meshery CLI or the Meshery UI.
 
-**Note:** A [Model]({{< ref "concepts/logical/models/index.md" >}}) can be only imported if it contains atleast a valid [Component]({{< ref "concepts/logical/components/index.md" >}}) or [Relationship]({{< ref "concepts/logical/relationships/index.md" >}}).
+**Note:** A [Model]({{< ref "concepts/logical/models/index.md" >}}) can be only imported if it contains atleast a valid [Component]({{< ref "concepts/logical/components.md" >}}) or [Relationship]({{< ref "concepts/logical/relationships/index.md" >}}).
 
 ## Import Models Using Meshery CLI
 

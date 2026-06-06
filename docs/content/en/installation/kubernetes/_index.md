@@ -4,7 +4,7 @@ categories: [kubernetes]
 aliases:
 - /installation/platforms/kubernetes
 display_title: false
-image: /installation/kubernetes/images/kubernetes.svg
+image: installation/kubernetes/images/kubernetes.svg
 description: Install Meshery on Kubernetes. Deploy Meshery in Kubernetes in-cluster or outside of Kubernetes out-of-cluster.
 weight: 15
 ---
@@ -63,7 +63,7 @@ For detailed instructions on installing Meshery using Helm V3, please refer to t
 
 ## Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
+Optionally, you can verify the health of your Meshery deployment using <a href='{{< ref "reference/reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 

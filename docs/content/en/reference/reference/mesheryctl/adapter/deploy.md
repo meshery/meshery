@@ -85,7 +85,7 @@ mesheryctl adapter deploy linkerd --watch
 ## Screenshots
 
 Usage of mesheryctl adapter deploy
-![mesh-deploy-usage]({{< relurl "reference/reference/images/deploy-mesh.png" >}})
+![mesh-deploy-usage](../../../images/deploy-mesh.png)
 
 ## See Also
 

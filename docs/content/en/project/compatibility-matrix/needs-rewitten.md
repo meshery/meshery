@@ -26,7 +26,7 @@ Docker is enough to run Meshery locally and use many of its features. A Kubernet
 | [Docker deployment]({{< ref "installation/docker/_index.md" >}}) (`mesheryctl system start -p docker`) | macOS, Linux, Windows | `mesheryctl`, Docker Engine or Docker Desktop, Docker Compose | No, to start Meshery. Yes, to manage Kubernetes infrastructure through Meshery. | Local evaluation and single-host deployments |
 | [Kubernetes deployment]({{< ref "installation/kubernetes/_index.md" >}}) (`mesheryctl system start`) | Any environment that can reach a cluster | `mesheryctl`, `kubectl`, access to an active Kubernetes cluster | Yes | Full Meshery management workflows on Kubernetes |
 | [Helm deployment]({{< ref "installation/kubernetes/helm.md" >}}) | Any environment that can reach a cluster | Helm v3, `kubectl`, access to an active Kubernetes cluster | Yes | Teams standardizing on Helm-based installation |
-| [Docker Extension]({{< ref "installation/docker/docker-extension.md" >}}) | Docker Desktop | Docker Desktop, Kubernetes enabled in Docker Desktop, Docker Extension support | Yes | Docker Desktop users who want the shortest local setup |
+| [Docker Extension]({{< ref "installation/docker/docker-extension/index.md" >}}) | Docker Desktop | Docker Desktop, Kubernetes enabled in Docker Desktop, Docker Extension support | Yes | Docker Desktop users who want the shortest local setup |
 | [GitHub Codespaces]({{< ref "installation/codespaces/index.md" >}}) | GitHub Codespaces | `mesheryctl`, Minikube, `kubectl`, enough Codespaces CPU and memory to run Minikube | Yes | Browser-based evaluation and contributor environments |
 
 ## Environment Matrix
@@ -35,7 +35,7 @@ Docker is enough to run Meshery locally and use many of its features. A Kubernet
 | --- | --- | --- | --- | --- |
 | [Linux or macOS]({{< ref "installation/linux-mac/_index.md" >}}) | `mesheryctl`, Docker, Kubernetes, Helm | `mesheryctl` for standard installs | Docker Desktop or Docker Engine, `kubectl`, Helm | This is the most direct path for local Docker and Kubernetes workflows. |
 | [Windows]({{< ref "installation/windows/_index.md" >}}) | `mesheryctl`, Docker, Docker Extension, Kubernetes | `mesheryctl`; Docker Desktop for container-based installs | WSL2, Kubernetes enabled in Docker Desktop, `kubectl` | Meshery supports Windows workflows, but Docker-backed paths are generally the smoothest option. |
-| [Docker Desktop]({{< ref "installation/docker/docker-extension.md" >}}) | Docker deployment, Docker Extension | Docker Desktop with Compose support | Kubernetes enabled when you want cluster-backed features | Best fit for local development and evaluation on laptops. |
+| [Docker Desktop]({{< ref "installation/docker/docker-extension/index.md" >}}) | Docker deployment, Docker Extension | Docker Desktop with Compose support | Kubernetes enabled when you want cluster-backed features | Best fit for local development and evaluation on laptops. |
 | Remote or managed Kubernetes cluster | Kubernetes deployment, Helm | Reachable cluster, valid kubeconfig, `kubectl` | LoadBalancer, Ingress, or port-forward access to Meshery | Good fit for shared team environments and production-style installs. See also [Upgrading Meshery]({{< ref "installation/upgrades/index.md" >}}). |
 | [GitHub Codespaces]({{< ref "installation/codespaces/index.md" >}}) | Kubernetes deployment in Minikube | Codespace with enough resources, Minikube, `kubectl`, `mesheryctl` | VS Code desktop or browser-based Codespaces access | Useful when you do not want to manage a local cluster. |
 
@@ -56,9 +56,9 @@ Docker is enough to run Meshery locally and use many of its features. A Kubernet
 - For Kubernetes-based installs, use a Kubernetes release that is still within the Kubernetes project's supported maintenance window and follow the operational guidance in [Install Meshery on Kubernetes]({{< ref "installation/kubernetes/_index.md" >}}).
 - Match `kubectl` to the lifecycle of the cluster you target and keep it within the Kubernetes version skew policy.
 - For Docker-based installs, use a current Docker Engine or Docker Desktop release that includes Compose support and can run the Meshery container set reliably. See [Install Meshery on Docker]({{< ref "installation/docker/_index.md" >}}).
-- The Docker Extension path applies when Docker Desktop supports extensions and Kubernetes is enabled in Docker Desktop. See [Install Docker Extension for Meshery]({{< ref "installation/docker/docker-extension.md" >}}).
+- The Docker Extension path applies when Docker Desktop supports extensions and Kubernetes is enabled in Docker Desktop. See [Install Docker Extension for Meshery]({{< ref "installation/docker/docker-extension/index.md" >}}).
 - Standard Meshery installation does not require local Go or Node.js runtimes. Those are contributor dependencies for [building Meshery from source]({{< ref "project/contributing/_index.md" >}}).
-- If you plan to run Meshery out-of-cluster against Kubernetes, ensure the host running Meshery can reach the Kubernetes API and any broker endpoints exposed by your cluster. If connectivity fails, start with [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation.md" >}}).
+- If you plan to run Meshery out-of-cluster against Kubernetes, ensure the host running Meshery can reach the Kubernetes API and any broker endpoints exposed by your cluster. If connectivity fails, start with [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation/index.md" >}}).
 
 ## Release Channel Guidance
 
@@ -77,7 +77,7 @@ Validate your environment before installing Meshery:
 
 {{< code code="mesheryctl system check --preflight" >}}
 
-For a deeper walkthrough of what these checks validate, see [Running system checks using Meshery CLI]({{< ref "guides/mesheryctl/running-system-checks-using-mesheryctl.md" >}}) and the [`mesheryctl system check` reference]({{< ref "reference/mesheryctl/system/check.md" >}}).
+For a deeper walkthrough of what these checks validate, see [Running system checks using Meshery CLI]({{< ref "guides/mesheryctl/running-system-checks-using-mesheryctl.md" >}}) and the [`mesheryctl system check` reference]({{< ref "reference/reference/mesheryctl/system/check.md" >}}).
 
 If you plan to use Docker, verify that the Docker Engine and Compose plugin are available:
 
@@ -101,8 +101,8 @@ For rollout planning after initial installation, continue with [Upgrading Mesher
 - [Install mesheryctl]({{< ref "installation/mesheryctl.md" >}})
 - [Install Meshery on Docker]({{< ref "installation/docker/_index.md" >}})
 - [Install Meshery on Kubernetes]({{< ref "installation/kubernetes/_index.md" >}})
-- [Install Docker Extension for Meshery]({{< ref "installation/docker/docker-extension.md" >}})
+- [Install Docker Extension for Meshery]({{< ref "installation/docker/docker-extension/index.md" >}})
 - [Build & Release (CI)]({{< ref "project/contributing/build-and-release.md" >}})
 - [Upgrading Meshery]({{< ref "installation/upgrades/index.md" >}})
 - [Running system checks using Meshery CLI]({{< ref "guides/mesheryctl/running-system-checks-using-mesheryctl.md" >}})
-- [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation.md" >}})
+- [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation/index.md" >}})

@@ -91,7 +91,7 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 ##### Question: Do I need a Kubernetes cluster or will a Docker host suffice for Meshery deployments?
 
-**Answer**: _Meshery's [performance management]({{< ref "guides/performance-management/managing-performance.md" >}}) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
+**Answer**: _Meshery's [performance management]({{< ref "guides/performance-management/managing-performance/index.md" >}}) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
 
 ##### Question: What are Meshery's production deployment requirements?
 
@@ -133,7 +133,7 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 For an exhaustive list of `mesheryctl` commands and syntax:
 
-- See [`mesheryctl` Command Reference]({{< ref "reference/mesheryctl/_index.md" >}}).
+- See [`mesheryctl` Command Reference]({{< ref "reference/reference/mesheryctl/_index.md" >}}).
 
 Guides to using Meshery's various features and components.
 

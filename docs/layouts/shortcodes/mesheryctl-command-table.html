@@ -16,7 +16,9 @@
     {{- if $command.name }}
       <!-- Standard command structure (global, system, perf, adapter, etc.) -->
       <tr>
-        <td rowspan="100"><a href="{{ printf "reference/mesheryctl/%s" (cond (eq $command_name "global") "main" $command_name) | relURL }}">{{ $command.name }}</a></td>
+        {{- $commandPath := cond (eq $command_name "global") "reference/mesheryctl" (printf "reference/mesheryctl/%s" $command_name) -}}
+        {{- $commandContentPath := cond (eq $command_name "global") "content/en/reference/mesheryctl/_index.md" (printf "content/en/reference/mesheryctl/%s/_index.md" $command_name) -}}
+        <td rowspan="100">{{ if os.FileExists $commandContentPath }}<a href="{{ $commandPath | relURL }}">{{ $command.name }}</a>{{ else }}{{ $command.name }}{{ end }}</td>
         <td></td>
         <td></td>
         <td>{{ $command.description }}</td>
@@ -37,7 +39,10 @@
       {{- if $command.subcommands }}
         {{- range $subkey, $subcommand := $command.subcommands }}
       <tr>
-        <td><a href="{{ printf "reference/mesheryctl/%s/%s" (cond (eq $command_name "global") "main" $command_name) $subkey | relURL }}">{{ $subcommand.name }}</a></td>
+        {{- $subcommandPath := cond (eq $command_name "global") (printf "reference/mesheryctl/%s" $subkey) (printf "reference/mesheryctl/%s/%s" $command_name $subkey) -}}
+        {{- $subcommandFile := cond (eq $command_name "global") (printf "content/en/reference/mesheryctl/%s.md" $subkey) (printf "content/en/reference/mesheryctl/%s/%s.md" $command_name $subkey) -}}
+        {{- $subcommandIndex := cond (eq $command_name "global") (printf "content/en/reference/mesheryctl/%s/_index.md" $subkey) (printf "content/en/reference/mesheryctl/%s/%s/_index.md" $command_name $subkey) -}}
+        <td>{{ if or (os.FileExists $subcommandFile) (os.FileExists $subcommandIndex) }}<a href="{{ $subcommandPath | relURL }}">{{ $subcommand.name }}</a>{{ else }}{{ $subcommand.name }}{{ end }}</td>
         <td></td>
         <td>{{ $subcommand.description }}</td>
       </tr>
@@ -62,7 +67,10 @@
         {{- range $flagkey, $flag := $subcommand.flags }}
       <tr>
         {{- if $first }}
-        <td><a href="{{ printf "reference/mesheryctl/%s/%s" $command_name $subkey | relURL }}">{{ $subcommand.name }}</a></td>
+        {{- $subcommandPath := printf "reference/mesheryctl/%s/%s" $command_name $subkey -}}
+        {{- $subcommandFile := printf "content/en/reference/mesheryctl/%s/%s.md" $command_name $subkey -}}
+        {{- $subcommandIndex := printf "content/en/reference/mesheryctl/%s/%s/_index.md" $command_name $subkey -}}
+        <td>{{ if or (os.FileExists $subcommandFile) (os.FileExists $subcommandIndex) }}<a href="{{ $subcommandPath | relURL }}">{{ $subcommand.name }}</a>{{ else }}{{ $subcommand.name }}{{ end }}</td>
         {{- $first = false }}
         {{- else }}
         <td></td>
@@ -79,12 +87,18 @@
         {{- range $subsubkey, $subsubcommand := $subcommand.subcommands }}
       <tr>
         {{- if $first }}
-        <td><a href="{{ printf "reference/mesheryctl/%s/%s" $command_name $subkey | relURL }}">{{ $subcommand.name }}</a></td>
+        {{- $subcommandPath := printf "reference/mesheryctl/%s/%s" $command_name $subkey -}}
+        {{- $subcommandFile := printf "content/en/reference/mesheryctl/%s/%s.md" $command_name $subkey -}}
+        {{- $subcommandIndex := printf "content/en/reference/mesheryctl/%s/%s/_index.md" $command_name $subkey -}}
+        <td>{{ if or (os.FileExists $subcommandFile) (os.FileExists $subcommandIndex) }}<a href="{{ $subcommandPath | relURL }}">{{ $subcommand.name }}</a>{{ else }}{{ $subcommand.name }}{{ end }}</td>
         {{- $first = false }}
         {{- else }}
         <td></td>
         {{- end }}
-        <td><a href="{{ printf "reference/mesheryctl/%s/%s/%s" $command_name $subkey $subsubkey | relURL }}">{{ $subsubcommand.name }}</a></td>
+        {{- $subsubcommandPath := printf "reference/mesheryctl/%s/%s/%s" $command_name $subkey $subsubkey -}}
+        {{- $subsubcommandFile := printf "content/en/reference/mesheryctl/%s/%s/%s.md" $command_name $subkey $subsubkey -}}
+        {{- $subsubcommandIndex := printf "content/en/reference/mesheryctl/%s/%s/%s/_index.md" $command_name $subkey $subsubkey -}}
+        <td>{{ if or (os.FileExists $subsubcommandFile) (os.FileExists $subsubcommandIndex) }}<a href="{{ $subsubcommandPath | relURL }}">{{ $subsubcommand.name }}</a>{{ else }}{{ $subsubcommand.name }}{{ end }}</td>
         <td></td>
         <td>{{ $subsubcommand.description }}</td>
       </tr>

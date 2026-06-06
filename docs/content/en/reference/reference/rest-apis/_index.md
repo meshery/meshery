@@ -19,9 +19,9 @@ Each of Meshery's APIs is subject to Meshery's authentication and authorization 
 
 <details>
   <summary>Authentication</summary>
-  Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. The type of authentication is determined by the selected <a href='/extensibility/providers'>Providers</a>. Use of the Local Provider, "None", puts Meshery into single-user mode and uses minimal, intentionally insecure authentication.
+  Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. The type of authentication is determined by the selected <a href='{{< ref "reference/extensibility/providers/index.md" >}}'>Providers</a>. Use of the Local Provider, "None", puts Meshery into single-user mode and uses minimal, intentionally insecure authentication.
 
-  {{% alert color="dark" title="What are authentication tokens?" %}}Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery CLI</a> and <a href='/extensibility/api#how-to-get-your-token'>Meshery dashboard</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provides secure access to Meshery's management features.</p>{{% /alert %}}
+  {{% alert color="dark" title="What are authentication tokens?" %}}Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='{{< ref "reference/reference/mesheryctl/_index.md" >}}'>Meshery CLI</a> and <a href='{{< ref "reference/extensibility/api.md#how-to-get-your-token" >}}'>Meshery dashboard</a>, or its two APIs: <a href='{{< ref "reference/reference/rest-apis/_index.md" >}}'>REST</a> or <a href='{{< ref "reference/reference/graphql-apis.md" >}}'>GraphQL</a>. <p>Meshery's authentication token system provides secure access to Meshery's management features.</p>{{% /alert %}}
 </details>
 
 ### How to get your token
@@ -47,7 +47,7 @@ Using the Meshery dashboard, you can get a copy of your authentication token by 
 
 2. Navigate to your user's avatar in the upper righthand corner and select "Get Token" from the dropdown of profile section:
 
-<a href="{{< relurl "reference/images/MesheryTokenUI.png" >}}"><img alt="Meshery Dashboard" src="{{< relurl "reference/images/MesheryTokenUI.png" >}}" width="680" height="400"/></a>
+<a href="images/MesheryTokenUI.png"><img alt="Meshery Dashboard" src="images/MesheryTokenUI.png" width="680" height="400"/></a>
 <br/>
 
 </details>
@@ -55,7 +55,7 @@ Using the Meshery dashboard, you can get a copy of your authentication token by 
 <details>
   <summary>Meshery CLI</summary>
   <br />
-Using <a href='/reference/mesheryctl'>Meshery CLI</a>, you can get a copy of your authentication token by executing the following command:
+Using <a href='{{< ref "reference/reference/mesheryctl/_index.md" >}}'>Meshery CLI</a>, you can get a copy of your authentication token by executing the following command:
   <br/>
   <br/>
   <pre class="codeblock-pre">

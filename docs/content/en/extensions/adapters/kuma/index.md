@@ -8,8 +8,8 @@ port: 10007/gRPC
 project_status: stable
 lab: kuma-meshery-adapter
 github_link: https://github.com/meshery/meshery-kuma
-image: /extensions/adapters/kuma/images/kuma.svg
-white_image: /extensions/adapters/kuma/images/kuma-white.svg
+image: extensions/adapters/kuma/images/kuma.svg
+white_image: extensions/adapters/kuma/images/kuma-white.svg
 aliases: 
 - /service-meshes/adapters/kuma
 - /extensibility/adapters/kuma

@@ -88,7 +88,7 @@ mesheryctl design list --count
 ## Screenshots
 
 Usage of mesheryctl design list
-![pattern-list-usage]({{< relurl "reference/reference/images/patternList.png" >}})
+![pattern-list-usage](../../../images/patternList.png)
 
 ## See Also
 

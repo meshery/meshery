@@ -1,15 +1,6 @@
-{{ $linkUrlSelected := "/" }}
-{{ $current := .RelPermalink }}
-{{ range .Site.Data.versions }}
-  {{ $linkUrl := cond (ne .url "") (printf "/%s/" .url) "/" }}
-  {{ if or (eq $current $linkUrl) (strings.HasPrefix $current $linkUrl) }}
-    {{ $linkUrlSelected = $linkUrl }}
-  {{ end }}
-{{ end }}
-
 <header>
   <nav class="js-navbar-scroll navbar">
-    <a class="navbar-brand" href="{{ $linkUrlSelected | relURL }}">
+    <a class="navbar-brand" href="{{ .Site.Home.RelPermalink }}">
       <div class="navbar-logo">
         {{ partial "svg/meshery-docs.html" . }}
       </div>
@@ -46,8 +37,8 @@
 
           {{ $current := .RelPermalink }}
           {{ range .Site.Data.versions }}
-            {{ $linkUrl := cond (ne .url "") (printf "/%s/" .url) "/" }}
-            {{ $optionUrl := cond (ne .url "") (.url | relURL) ("/" | relURL) }}
+            {{ $linkUrl := cond (ne .url "") (printf "%s/" .url | relURL) $.Site.Home.RelPermalink }}
+            {{ $optionUrl := $linkUrl }}
 
             {{ if or (eq $current $linkUrl) (strings.HasPrefix $current $linkUrl) }}
             <option

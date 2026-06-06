@@ -8,7 +8,7 @@ categories: [contributing]
 
 [Meshery Models]({{< ref "concepts/logical/models/index.md" >}}) are a way to represent the architecture of a system or application. Models are defined in JSON and can be used to visualize the components and relationships between them. This guide will walk you through the process of creating a new model.
 
-[Meshery Components]({{< ref "concepts/logical/components/index.md" >}}) are the building blocks of a model. Each component represents a different part of the system or application. Components can be anything from a database to a microservice to a server. Relationships define how components interact with each other. For example, a database component might have a relationship with a microservice component that represents the microservice's dependency on the database.
+[Meshery Components]({{< ref "concepts/logical/components.md" >}}) are the building blocks of a model. Each component represents a different part of the system or application. Components can be anything from a database to a microservice to a server. Relationships define how components interact with each other. For example, a database component might have a relationship with a microservice component that represents the microservice's dependency on the database.
 
 ### Creating your first Meshery Model
 
@@ -24,7 +24,7 @@ To get started quickly, check out the [Creating Models]({{< ref "guides/configur
 
 ### Next Steps
 
-To learn more about how to contribute and customize your models, check out the full [Contributing to Models]({{< ref "project/contributing/contributing-models.md" >}}) documentation. We encourage you to get involved in the development of Meshery Models and to share your feedback!
+To learn more about how to contribute and customize your models, check out the full [Contributing to Models]({{< ref "project/contributing/contributing-models/index.md" >}}) documentation. We encourage you to get involved in the development of Meshery Models and to share your feedback!
 
 {{% alert color="info" title="Meshery Models are Extensible" %}}
 Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community.

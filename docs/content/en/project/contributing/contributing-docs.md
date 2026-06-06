@@ -230,13 +230,13 @@ Whenever the code tags are detected, the clipboard javascript file is automatica
 ## Documentation Contribution Flow Summary
 
 {{% alert color="light" title="Note" %}}
-For contributing `mesheryctl` reference section, refer [Contributing CLI]({{< ref "project/contributing/contributing-cli.md" >}})
+For contributing `mesheryctl` reference section, refer [Contributing CLI]({{< ref "project/contributing/contributing-cli/index.md" >}})
 {{% /alert %}}
 
 
 The following is a concise summary of the steps to contribute to Meshery documentation.
 
-1. Create a fork, if you have not already, by following the steps described [here](CONTRIBUTING-gitflow.md)
+1. Create a fork, if you have not already, by following the steps described [here]({{< ref "project/contributing/contributing-gitflow.md" >}})
 2. In the local copy of your fork, navigate to the docs folder.
    `cd docs`
 3. Create and checkout a new branch to make changes within

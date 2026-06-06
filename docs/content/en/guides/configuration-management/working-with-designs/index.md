@@ -17,17 +17,17 @@ Meshery's core construct of configuration management is that of a design. A desi
 
 You are free to choose how you would like to create an infrastructure design. You can use the **Design Configurator** built into Meshery UI, or you can hand-code your design using the Meshery schema spec.
 
-See [Creating a Meshery Design]({{< ref "guides/configuration-management/creating-a-meshery-design/index.md" >}}) for a step-by-step walkthrough. Use Meshery UI or `mesheryctl` to create and manage designs.
+See [Creating a Meshery Design]({{< ref "guides/configuration-management/creating-a-meshery-design.md" >}}) for a step-by-step walkthrough. Use Meshery UI or `mesheryctl` to create and manage designs.
 
 ## Pattern Management Through Meshery UI
 
 Meshery also comes with seed patterns when users start Meshery for the first time. These patterns cover common use cases and examples for you as you explore Meshery.
 
-<img src="./images/meshery-patterns.png" width="50%" />
+<img src="../images/meshery-patterns.png" width="50%" />
 
 Users can also import these patterns to their remote provider from this [sample repository](https://github.com/service-mesh-patterns/service-mesh-patterns/tree/master/samples).
 
-<img src="./images/pattern-import.png" width="50%" />
+<img src="../images/pattern-import.png" width="50%" />
 
 Once these patterns are imported, you can then edit these patterns or use the pattern configurator to configure them according to your requirements.
 
@@ -55,7 +55,7 @@ mesheryctl design apply BookInfoApp
 
 This will apply the pattern BookInfoApp, which has already been imported into Meshery.
 
-See [mesheryctl design subcommand section]({{< ref "reference/mesheryctl/_index.md#cloud-native-pattern-configuration-and-management" >}}) for more details on the `design` subcommand.
+See [mesheryctl design subcommand section]({{< ref "reference/reference/mesheryctl/_index.md#cloud-native-pattern-configuration-and-management" >}}) for more details on the `design` subcommand.
 
 ## WASM Filters
 

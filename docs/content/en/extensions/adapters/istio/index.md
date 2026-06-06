@@ -8,8 +8,8 @@ port: 10000/gRPC
 project_status: stable
 lab: istio-meshery-adapter
 github_link: https://github.com/meshery/meshery-istio
-image: /extensions/adapters/istio/images/istio.svg
-white_image: /extensions/adapters/istio/images/istio-white.svg
+image: extensions/adapters/istio/images/istio.svg
+white_image: extensions/adapters/istio/images/istio-white.svg
 aliases: 
 - /service-meshes/adapters/istio
 - /extensibility/adapters/istio
@@ -69,5 +69,5 @@ Add-on resources can be applied **or** deleted using this custom configuration o
 ### Suggested Topics
 
 - Examine [Meshery's architecture]({{< ref "concepts/architecture/_index.md" >}}) and how adapters fit in as a component.
-- Learn more about [Meshery Adapters]({{< ref "concepts/architecture/adapters/index.md" >}}).
+- Learn more about [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}}).
 
