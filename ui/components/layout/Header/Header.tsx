@@ -139,6 +139,7 @@ function K8sContextMenu({
   setActiveContexts = () => {},
   searchContexts = () => {},
 }) {
+  const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
   // The dropdown slides up from below; its translate distance scales with the
@@ -372,7 +373,12 @@ function K8sContextMenu({
                                   ? setActiveContexts([])
                                   : setActiveContexts('all')
                               }
-                              icon={<FilterAllIcon style={{ opacity: 0.4 }} />}
+                              icon={
+                                <FilterAllIcon
+                                  fill={theme.palette.background.brand.default}
+                                  style={{ opacity: 0.4 }}
+                                />
+                              }
                               inputProps={{ 'aria-label': 'select all contexts' }}
                             />
                           </>
