@@ -65,7 +65,6 @@
     "@rjsf/utils": "^6.6.1",
     "@rjsf/validator-ajv8": "^6.6.1",
     "@sistent/mui-datatables": "^7.1.1",
-    "@sistent/sistent": "file:../../sistent/sistent-sistent-0.22.0.tgz",
     "@sistent/sistent": "^0.21.19",
     "@tippyjs/react": "^4.2.6",
     "@uiw/codemirror-theme-material": "^4.25.10",
