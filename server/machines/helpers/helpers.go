@@ -7,6 +7,7 @@ import (
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/machines/grafana"
 	"github.com/meshery/meshery/server/machines/kubernetes"
+	model_provider "github.com/meshery/meshery/server/machines/model_provider"
 	"github.com/meshery/meshery/server/machines/prometheus"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
@@ -56,6 +57,18 @@ func getMachine(initialState machines.StateType, mtype, id string, userID core.U
 		}
 		register := mch.States[machines.REGISTERED]
 		mch.States[machines.REGISTERED] = *register.RegisterAction(&prometheus.RegisterAction{})
+
+		connect := mch.States[machines.CONNECTED]
+		mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
+
+		return mch, nil
+	case connections.KindOpenAI, connections.KindAnthropic, connections.KindAWSBedrock, connections.KindOllama:
+		mch, err := machines.New(initialState, id, userID, log, mtype)
+		if err != nil {
+			return mch, err
+		}
+		register := mch.States[machines.REGISTERED]
+		mch.States[machines.REGISTERED] = *register.RegisterAction(&model_provider.RegisterAction{})
 
 		connect := mch.States[machines.CONNECTED]
 		mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
