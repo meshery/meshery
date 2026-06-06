@@ -21,8 +21,7 @@ ignoreFiles = ["^meetings/.*", "^notes/.*", "^integrations/.*" ]
 # Will give values to .Lastmod etc.
 enableGitInfo = true
 
-# Comment out to enable taxonomies in Docsy
-# disableKinds = ["taxonomy", "term"]
+# Keep taxonomy metadata available to templates, but do not publish taxonomy listing pages.
 
 # You can add your own taxonomies
 [taxonomies]
@@ -99,8 +98,8 @@ As a self-service engineering platform, Meshery enables collaborative design and
 [outputs]
   home = ["HTML", "RSS", "SITEMAP"]
   section = ["HTML", "RSS"]
-  taxonomy = ["HTML", "RSS"]
-  term = ["HTML", "RSS"]
+  taxonomy = []
+  term = []
 
 [sitemap]
   changefreq = "daily"
@@ -148,7 +147,7 @@ github_branch = "master"
 
 # Google Custom Search Engine ID. Remove or comment out to disable search.
 # gcs_engine_id = "f475448a7bc1d43a4"
-# Layer5 search engine link https://cse.google.com/cse?cx=f475448a7bc1d43a4
+# search engine link https://cse.google.com/cse?cx=f475448a7bc1d43a4
 # Customization link https://programmablesearchengine.google.com/controlpanel/lookandfeel?cx=f475448a7bc1d43a4
 
 # Enable Lunr.js offline search
@@ -208,6 +207,13 @@ enable = false
   [[module.imports]]
     path = "github.com/google/docsy/dependencies"
     disable = false
+  [[module.imports]]
+    path = "github.com/layer5io/docs"
+    disable = false
+    ignoreConfig = true
+    [[module.imports.mounts]]
+      source = "layouts/partials/related-reading.html"
+      target = "layouts/partials/related-reading.html"
   [[module.mounts]]
     source = "static"
     target = "static"

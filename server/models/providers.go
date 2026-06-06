@@ -2,8 +2,8 @@ package models
 
 import (
 	"net/http"
+	"strings"
 
-	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/database"
@@ -12,6 +12,7 @@ import (
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/environment"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 )
 
@@ -96,7 +97,7 @@ type MesheryUICapabilities struct {
 }
 
 type RestrictedAccess struct {
-	IsMesheryUIRestricted bool                  `json:"isMesheryUiRestricted"`
+	IsMesheryUIRestricted bool                  `json:"isMesheryUIRestricted"`
 	AllowedComponents     MesheryUICapabilities `json:"allowedComponents,omitempty"`
 }
 
@@ -279,6 +280,36 @@ const (
 	PersistAnonymousUser Feature = "persist-anonymous-user"
 )
 
+// ProviderStatusKind reports the availability of a provider as observed by
+// the server-side availability checker. It is emitted as the `status` field of
+// ProviderStatusEvent on the /api/providers/stream SSE channel so the UI can
+// distinguish "probe in flight" from "remote is unreachable".
+type ProviderStatusKind string
+
+const (
+	// ProviderStatusChecking - availability probe is in flight; the UI should
+	// render the entry but defer interaction until a terminal status arrives.
+	ProviderStatusChecking ProviderStatusKind = "checking"
+	// ProviderStatusOnline - the provider responded successfully to its
+	// capability probe (or, for the local provider, is implicitly available).
+	ProviderStatusOnline ProviderStatusKind = "online"
+	// ProviderStatusOffline - the provider's capability probe failed after
+	// the bounded retries; the entry should render in the offline section.
+	ProviderStatusOffline ProviderStatusKind = "offline"
+)
+
+// ProviderStatusEvent is the per-provider availability snapshot broadcast by
+// ProviderTracker. It carries the same ProviderProperties shape the legacy
+// /api/providers endpoint returns so existing UI fields keep working, plus
+// the registration Key and the new Status / Error markers required for the
+// streaming chooser.
+type ProviderStatusEvent struct {
+	Key        string             `json:"key"`
+	Status     ProviderStatusKind `json:"status"`
+	Properties ProviderProperties `json:"properties"`
+	Error      string             `json:"error,omitempty"`
+}
+
 const (
 	// LocalProviderType - represents local providers
 	LocalProviderType ProviderType = "local"
@@ -341,7 +372,25 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 	return "", false
 }
 
+// NormalizeProviderName collapses casing variants of the built-in local
+// provider to its canonical name. Both the canonical name ("Local") and the
+// legacy alias ("None") are matched case-insensitively, so "local", "LOCAL",
+// "none", "NONE", and stale "None" cookies all resolve to "Local". Any other
+// input — including remote provider names like "Meshery" or "Digital Ocean", whose
+// canonical casing originates from the remote /capabilities response — is
+// returned unchanged. This is the single source of truth for the rename;
+// call it once at the request edge (resolveProviderName) rather than
+// scattering equivalent checks across handlers.
+func NormalizeProviderName(name string) string {
+	if strings.EqualFold(name, LocalProviderName) ||
+		strings.EqualFold(name, LocalProviderLegacyAlias) {
+		return LocalProviderName
+	}
+	return name
+}
+
 func VerifyMesheryProvider(provider string, supportedProviders map[string]Provider) bool {
+	provider = NormalizeProviderName(provider)
 	for prov := range supportedProviders {
 		if prov == provider {
 			return true
@@ -413,8 +462,8 @@ type Provider interface {
 	// SetCurrentContext(token, id string) (K8sContext, error)
 	// GetCurrentContext(token string) (K8sContext, error)
 
-	SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error)
-	SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error)
+	SMPTestConfigStore(req *http.Request, perfConfig *perfprofile.PerformanceTestConfig) (string, error)
+	SMPTestConfigGet(req *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error)
 	SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	SMPTestConfigDelete(req *http.Request, testUUID string) error
 
@@ -478,6 +527,10 @@ type Provider interface {
 	UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error)
 	DeleteConnection(req *http.Request, connID core.Uuid) (*connections.Connection, error)
 	DeleteMesheryConnection() error
+	// LogoutMesheryServer revokes the server-cached user session against the
+	// provider. Called at shutdown after DeleteMesheryConnection so that
+	// logout occurs post-deregistration.
+	LogoutMesheryServer() error
 
 	SaveUserCredential(token string, credential *Credential) (*Credential, error)
 	GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)

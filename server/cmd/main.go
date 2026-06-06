@@ -54,8 +54,12 @@ var (
 )
 
 const (
-	// DefaultProviderURL is the provider url for the "none" provider
-	DefaultProviderURL = "https://cloud.meshery.io"
+	// DefaultProviderURL is the ProviderBaseURL stamped on the built-in local
+	// provider. It is used for capability/package paths only; the local
+	// provider does not authenticate against this URL. Sourced from the canonical
+	// primary provider host (install/providers.env) so it cannot drift from the
+	// PROVIDER_BASE_URLS default seeded into viper below.
+	DefaultProviderURL = models.PrimaryProviderURL
 	RelationshipsPath  = "../meshmodel/kubernetes/"
 )
 
@@ -120,6 +124,9 @@ func main() {
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
 	viper.SetDefault("INSTANCE_ID", &instanceID)
 	viper.SetDefault(constants.ProviderENV, "")
+	// Seed the canonical active remote-provider list (install/providers.env) so a
+	// server started without PROVIDER_BASE_URLS still registers the default providers.
+	viper.SetDefault(constants.ProviderURLsENV, models.DefaultRemoteProviderURLs)
 	viper.SetDefault("REGISTER_STATIC_K8S", true)
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
 	viper.SetDefault("SKIP_DOWNLOAD_EXTENSIONS", false)
@@ -205,7 +212,7 @@ func main() {
 	log.Info("Using kubeconfig at: ", viper.GetString("KUBECONFIG_FOLDER"))
 	log.Info("Log level: ", log.GetLevel())
 
-	adapterURLs := viper.GetStringSlice("ADAPTER_URLS")
+	adapterURLs := utils.SplitAndTrim(viper.GetString("ADAPTER_URLS"), ", \t\n\r")
 
 	adapterTracker := helpers.NewAdaptersTracker(adapterURLs)
 	queryTracker := helpers.NewUUIDQueryTracker()
@@ -306,6 +313,10 @@ func main() {
 		Providers:              provs,
 		ProviderCookieName:     "meshery-provider",
 		ProviderCookieDuration: 30 * 24 * time.Hour,
+		// ProviderTracker is set below, once provider registration is
+		// complete and the tracker has been built around the final
+		// `provs` map. The handlers must not access it before that
+		// assignment, but every route is registered after.
 		PlaygroundBuild:        viper.GetBool("PLAYGROUND"),
 		AdapterTracker:         adapterTracker,
 		QueryTracker:           queryTracker,
@@ -353,7 +364,7 @@ func main() {
 	provs[lProv.Name()] = lProv
 
 	providerEnvVar := viper.GetString(constants.ProviderENV)
-	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
+	RemoteProviderURLs := utils.SplitAndTrim(viper.GetString("PROVIDER_BASE_URLS"), ", \t\n\r")
 	for _, providerurl := range RemoteProviderURLs {
 		parsedURL, err := url.Parse(providerurl)
 		if err != nil {
@@ -377,11 +388,86 @@ func main() {
 			MeshsyncDefaultDeploymentMode: meshsyncDefaultDeploymentMode,
 		}
 
+		// Initialize stamps the minimum addressable metadata
+		// (ProviderType, ProviderURL, fallback ProviderName=host) so the
+		// provider is renderable in /api/providers immediately. The
+		// capabilities HTTP probe runs later, concurrently, via
+		// ProviderTracker.VerifyAll - a single unreachable remote can no
+		// longer block server startup or the provider chooser.
 		cp.Initialize()
 
-		cp.SyncPreferences()
-		defer cp.StopSyncPreferences()
-		provs[cp.Name()] = cp
+		// Pick a registration key that survives two failure modes:
+		//   1. /capabilities has not been probed yet (or will fail at
+		//      probe time), so cp.Name() is the URL host fallback that
+		//      Initialize stamps. Two remotes sharing the same host
+		//      would collide - the parsed URL keeps each addressable.
+		//   2. Two configured URLs report the SAME canonical name from
+		//      /capabilities once the probe lands (for example, both
+		//      cloud.meshery.io and cloud.acme.io currently return
+		//      "Meshery"). Since we now key by the host-fallback name
+		//      before the probe, the name collision shows up later, in
+		//      VerifyAll; but at registration time we already disambiguate
+		//      by URL host so both entries reach the tracker.
+		// On collision (same host or same fallback name) we re-key the
+		// earlier entry by its URL host and let the new entry claim the
+		// canonical name. This preserves the historical "last URL wins
+		// the canonical name" routing that integrations rely on (e.g.
+		// tokens minted against cloud.acme.io expect the cookie value
+		// "Meshery" to resolve to cloud.acme.io regardless of the
+		// iteration order of PROVIDER_BASE_URLS), while still giving the
+		// re-keyed provider an addressable home in /api/providers.
+		key := cp.Name()
+		if key == "" {
+			key = parsedURL.Host
+			log.Warnf("remote provider at %q produced an empty Name() after Initialize; registering it under host %q so it remains addressable.", providerurl, key)
+		}
+		if existing, ok := provs[key]; ok {
+			existingHost := existing.GetProviderURL()
+			if u, err := url.Parse(existingHost); err == nil && u.Host != "" {
+				existingHost = u.Host
+			}
+			log.Warnf("provider name collision: %q is already registered for %q; re-keying the earlier entry as %q so both remain addressable, and giving the canonical name %q to %q. Ensure each remote provider's /capabilities returns a unique providerName.", key, existing.GetProviderURL(), existingHost, key, providerurl)
+			provs[existingHost] = existing
+			delete(provs, key)
+		}
+		provs[key] = cp
+	}
+
+	// All providers are registered. Build the tracker now and kick off
+	// the boot-time availability probe + post-probe SyncPreferences
+	// activation in a background goroutine, so a slow remote cannot
+	// delay server startup. The probe publishes status events as each
+	// remote settles, so the chooser shows the local provider (and any
+	// already-reachable remotes) immediately and updates each remote
+	// entry independently as its probe completes.
+	providerTracker := models.NewProviderTracker(provs, log)
+	hc.ProviderTracker = providerTracker
+	go func() {
+		providerTracker.VerifyAll(ctx)
+		// SyncPreferences requires capabilities to have been loaded
+		// (the SyncPrefs entry is what tells the goroutine the remote
+		// accepts preference sync). Activate it AFTER the boot probe
+		// so the in-loop call doesn't no-op on still-empty caps.
+		for _, p := range provs {
+			rp, ok := p.(*models.RemoteProvider)
+			if !ok {
+				continue
+			}
+			rp.SyncPreferences()
+		}
+	}()
+
+	// Defer StopSyncPreferences for every remote, regardless of whether
+	// SyncPreferences ever started. The Stop call is internally guarded
+	// so it is a safe no-op when sync was never activated (probe failed,
+	// shutdown ran before activation, or the remote does not advertise
+	// SyncPrefs).
+	for _, p := range provs {
+		rp, ok := p.(*models.RemoteProvider)
+		if !ok {
+			continue
+		}
+		defer rp.StopSyncPreferences()
 	}
 
 	// verifies if the provider specified in the "PROVIDER" environment variable is from one of the supported providers.
@@ -449,12 +535,18 @@ func main() {
 	log.Info("Doing seeded content cleanup...")
 
 	for _, p := range hc.Providers {
-		// skipping none provider for now
-		// so it doesn't throw error each server is stopped. Reason: support for none provider is not yet implemented
-		if p.Name() != "None" {
+		// Skip the local provider: it does not register a remote session, so
+		// there is nothing to de-register or log out on shutdown.
+		if p.Name() != models.LocalProviderName {
 			log.Info("De-registering Meshery server.")
-			err = p.DeleteMesheryConnection()
-			if err != nil {
+			if err = p.DeleteMesheryConnection(); err != nil {
+				log.Error(err)
+				continue
+			}
+			// Logout follows deregistration so the session that authorized
+			// the delete is revoked only after the connection is removed.
+			log.Info("Logging out Meshery server session.")
+			if err = p.LogoutMesheryServer(); err != nil {
 				log.Error(err)
 			}
 		}

@@ -25,10 +25,10 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/ghodss/yaml"
-	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
+	servermodels "github.com/meshery/meshery/server/models"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -58,6 +58,25 @@ var linkDocPerfApply = map[string]string{
 	"caption": "Usage of mesheryctl perf apply",
 }
 
+func splitTestDuration(duration string) (string, string) {
+	duration = strings.TrimSpace(duration)
+	if duration == "" {
+		return "30", "s"
+	}
+
+	unitStart := strings.IndexFunc(duration, func(r rune) bool {
+		return (r < '0' || r > '9') && r != '.'
+	})
+	if unitStart == -1 {
+		return duration, "s"
+	}
+	if unitStart == 0 {
+		return "30", strings.ToLower(strings.TrimSpace(duration))
+	}
+
+	return strings.TrimSpace(duration[:unitStart]), strings.ToLower(strings.TrimSpace(duration[unitStart:]))
+}
+
 var applyCmd = &cobra.Command{
 	Use:   "apply [profile-name]",
 	Short: "Run a Performance test",
@@ -83,9 +102,6 @@ mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml
 // Run performance test using SMP compatible test configuration and override values with flags
 mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml [flags]
 
-// Choice of load generator - fortio, wrk2 or nighthawk (default: fortio)
-mesheryctl perf apply meshery-profile --load-generator wrk2
-
 // Execute a Performance test with specified queries per second
 mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --qps 30
 
@@ -94,14 +110,10 @@ mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --m
 
 // Execute a Performance test creating a new performance profile and pass options to the load generator used
 // If any options are already present in the profile or passed through flags, the --options flag will take precedence over the profile and flag options
-// Options for nighthawk - https://github.com/layer5io/getnighthawk/blob/v1.0.5/pkg/proto/options.pb.go#L882-L1018
 // Options for fortio - https://github.com/fortio/fortio/blob/v1.57.0/fhttp/httprunner.go#L77-L84
-// Options for wrk2 - https://github.com/layer5io/gowrk2/blob/v0.6.1/api/gowrk2.go#L47-L53
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --options [filepath|json-string]
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --options path/to/options.json
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator nighthawk --options '{"requests_per_second": 10, "max_pending_requests": 5}'
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator fortio --options '{"MethodOverride": "POST"}'
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator wrk2 --options '{"DurationInSeconds": 15, "Thread": 3}'
 	`,
 	Annotations: linkDocPerfApply,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -124,14 +136,14 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				return ErrReadFilepath(errors.Wrap(err, "Unable to read test configuration file. \n"))
 			}
 
-			testConfig := models.PerformanceTestConfigFile{}
+			testConfig := servermodels.PerformanceTestConfigFile{}
 
 			err = yaml.Unmarshal(smpConfig, &testConfig)
 			if err != nil {
 				return ErrFailUnmarshalFile(err)
 			}
 
-			if testConfig.Config == nil || testConfig.ServiceMesh == nil {
+			if testConfig.Config == nil || len(testConfig.Config.Clients) == 0 {
 				return ErrInvalidTestConfigFile()
 			}
 
@@ -143,19 +155,19 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			}
 
 			if testURL == "" {
-				testURL = testClient.EndpointUrls[0]
+				testURL = firstString(testClient.EndpointUrls)
 			}
 
 			if testMesh == "" {
-				testMesh = SMP.ServiceMesh_Type_name[int32(testConfig.ServiceMesh.Type)]
+				testMesh = testConfig.ServiceMesh
 			}
 
 			if qps == "" {
-				qps = strconv.FormatInt(testClient.Rps, 10)
+				qps = strconv.Itoa(testClient.Rps)
 			}
 
 			if concurrentRequests == "" {
-				concurrentRequests = strconv.Itoa(int(testClient.Connections))
+				concurrentRequests = strconv.Itoa(testClient.Connections)
 			}
 
 			if testDuration == "" {
@@ -235,7 +247,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			// what if user passed profile-name but didn't passed the url
 			// we use url from performance profile
 			if testURL == "" {
-				testURL = profiles[index].Endpoints[0]
+				testURL = firstString(profiles[index].Endpoints)
 			}
 
 			// reset profile name without %20
@@ -244,7 +256,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				profileName = profiles[index].Name
 
 				if loadGenerator == "" {
-					loadGenerator = profiles[index].LoadGenerators[0]
+					loadGenerator = firstString(profiles[index].LoadGenerators)
 				}
 
 				if concurrentRequests == "" {
@@ -298,10 +310,9 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		q.Add("qps", qps)
 		q.Add("reqBody", loadTestBody)
 
-		durLen := len(testDuration)
-
-		q.Add("dur", string(testDuration[durLen-1]))
-		q.Add("t", string(testDuration[:durLen-1]))
+		testDurationValue, testDurationUnit := splitTestDuration(testDuration)
+		q.Add("dur", testDurationUnit)
+		q.Add("t", testDurationValue)
 
 		if testMesh != "" {
 			q.Add("mesh", testMesh)
@@ -334,8 +345,8 @@ func init() {
 	applyCmd.Flags().StringVar(&qps, "qps", "", "(optional) Queries per second")
 	applyCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "", "(optional) Number of Parallel Requests")
 	applyCmd.Flags().StringVar(&testDuration, "duration", "", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
-	applyCmd.Flags().StringVar(&loadGenerator, "load-generator", "", "(optional) Load-Generator to be used (fortio/wrk2/nighthawk)")
-	applyCmd.Flags().StringVarP(&filePath, "file", "f", "", "(optional) File containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
+	applyCmd.Flags().StringVar(&loadGenerator, "load-generator", "", "(optional) Load-Generator to be used (fortio)")
+	applyCmd.Flags().StringVarP(&filePath, "file", "f", "", "(optional) File containing SMP-compatible test configuration. For more, see https://smp-spec.io")
 	applyCmd.Flags().StringVarP(&loadTestBody, "body", "b", "", "(optional) Load test body. Can be a filepath/string")
 	applyCmd.Flags().StringVar(&additionalOptions, "options", "", "(optional) Additional options to be passed to the load generator. Can be a json string or a filepath containing json")
 	applyCmd.Flags().StringVar(&certPath, "cert-path", "", "(optional) Path to the certificate to be used for the load test")
@@ -400,17 +411,17 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		return "", "", ErrConvertQPS()
 	}
 	values := map[string]interface{}{
-		"concurrent_request": convReq,
-		"duration":           testDuration,
-		"endpoints":          []string{testURL},
-		"load_generators":    []string{loadGenerator},
-		"name":               profileName,
-		"qps":                convQPS,
-		"service_mesh":       testMesh,
-		"request_body":       loadTestBody,
-		"request_cookies":    "",
-		"request_headers":    "",
-		"content_type":       "",
+		"concurrentRequest": convReq,
+		"duration":          testDuration,
+		"endpoints":         []string{testURL},
+		"loadGenerators":    []string{loadGenerator},
+		"name":              profileName,
+		"qps":               convQPS,
+		"serviceMesh":       testMesh,
+		"requestBody":       loadTestBody,
+		"requestCookies":    "",
+		"requestHeaders":    "",
+		"contentType":       "",
 	}
 
 	if additionalOptions != "" {
@@ -456,17 +467,17 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 	if err != nil {
 		return "", "", ErrFailMarshal(err)
 	}
-	req, err := utils.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles", bytes.NewBuffer(jsonValue))
+	req, err := utils.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/performance/profiles", bytes.NewBuffer(jsonValue))
 	if err != nil {
 		return "", "", err
 	}
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return "", "", err
+		return "", "", ErrPerfProfileServer(errors.New("failed to save performance profile on server"))
 	}
 
-	var response *models.PerformanceProfile
+	var response *perfprofile.PerformanceProfile
 
 	defer func() { _ = resp.Body.Close() }()
 	body, err := io.ReadAll(resp.Body)

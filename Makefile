@@ -16,6 +16,19 @@ include install/Makefile.core.mk
 include install/Makefile.show-help.mk
 
 #-----------------------------------------------------------------------------
+# Install artifact generation
+#-----------------------------------------------------------------------------
+.PHONY: providers-propagate providers-check
+
+## Propagate remote providers defined in install/providers.env to every generated install artifact.
+providers-propagate:
+	python3 install/scripts/sync-provider-urls.py
+
+## Verify that the install artifacts are in sync with the list of remote providers in  install/providers.env.
+providers-check:
+	python3 install/scripts/sync-provider-urls.py --check
+
+#-----------------------------------------------------------------------------
 # Docker-based Builds
 #-----------------------------------------------------------------------------
 .PHONY: docker-build docker-local-cloud docker-cloud docker-playground-build docker-testing-env-build docker-testing-env
@@ -30,7 +43,7 @@ docker-build:
 docker-playground-build:
 	# `make docker-playground-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t meshery/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) --build-arg PLAYGROUND=true .
+	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t meshery/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) --build-arg PLAYGROUND=true .
 
 ## Build Meshery Server and UI container for e2e testing.
 docker-testing-env-build:
@@ -56,7 +69,7 @@ docker-local-cloud:
 docker-cloud:
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
-	-e PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	-e PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
 	-e KEYS_PATH=$(KEYS_PATH) \
@@ -69,7 +82,7 @@ docker-cloud:
 ## Remote Provider for user authentication.
 docker-testing-env:
 	docker run --rm --name mesherytesting  -d \
-	-e PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	-e PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
 	-e KEYS_PATH=$(KEYS_PATH) \
@@ -81,15 +94,7 @@ docker-testing-env:
 #-----------------------------------------------------------------------------
 # Meshery Server Native Builds
 #-----------------------------------------------------------------------------
-.PHONY: server wrk2-setup nighthawk-setup server-local server-skip-compgen server-no-content golangci proto-build error build-server server-binary server-binary-local
-## Setup wrk2 for local development.
-wrk2-setup:
-	echo "setup-wrk does not work on Mac Catalina at the moment"
-	cd server; cd cmd; git clone https://github.com/layer5io/wrk2.git; cd wrk2; make; cd ..
-
-## Setup nighthawk for local development.
-nighthawk-setup: dep-check
-	cd server; cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd nighthawk-go; make setup; cd ..
+.PHONY: server server-local server-skip-compgen server-no-content golangci proto-build error build-server server-binary server-binary-local
 
 run-local: server-local error
 
@@ -108,27 +113,11 @@ server-local: dep-check
 	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go
 
-server-kanvas: dep-check
-	cd server; cd cmd; go clean; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PROVIDER=Layer5 \
-	RELEASE_CHANNEL=kanvas \
-	PLAYGROUND=true \
-	OTEL_CONFIG=$(OTEL_CONFIG) \
-	PROVIDER_CAPABILITIES_FILEPATH=../../install/samples/provider_capabilities.json \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go
-
 ## Build Meshery Server on your local machine.
 build-server: dep-check
 	cd server; cd cmd; go mod tidy; cd "../.."
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -141,7 +130,7 @@ build-server: dep-check
 server-binary:
 	cd server/cmd; \
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -178,7 +167,7 @@ server-stg: dep-check
 server: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=$(PORT) \
 	DEBUG=true \
 	USE_GO_POLICY_ENGINE=$(USE_GO_POLICY_ENGINE) \
@@ -192,7 +181,7 @@ server: dep-check
 server-with-adapters: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -205,7 +194,7 @@ server-with-adapters: dep-check
 server-without-operator: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DISABLE_OPERATOR=true \
 	DEBUG=true \
@@ -218,7 +207,7 @@ server-without-operator: dep-check
 server-skip-compgen:
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -233,7 +222,7 @@ server-without-k8s: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	REGISTER_STATIC_K8S=false \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -245,7 +234,7 @@ server-remote-provider: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER=$(REMOTE_PROVIDER) \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -269,7 +258,7 @@ server-local-provider: dep-check
 server-no-content:
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -282,7 +271,7 @@ server-playground: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER=$(REMOTE_PROVIDER) \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -315,71 +304,55 @@ error-util:
 ## Build Meshery UI; Build and run Meshery Server on your local machine.
 ui-server: ui-meshery-build ui-provider-build server
 
+## Build Meshery UI, Server, and point to locally hosted Remote Provider
+ui-server-local: ui-meshery-build ui-provider-build server-local
+
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds.
 #-----------------------------------------------------------------------------
 .PHONY: ui-setup ui ui-meshery-build ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
 
-UI_BUILD_SCRIPT = build16
-UI_DEV_SCRIPT = dev16
-
-ifeq ($(findstring v20, $(shell node --version)), v20)
-    UI_BUILD_SCRIPT = build
-    UI_DEV_SCRIPT = dev
-else ifeq ($(findstring v19, $(shell node --version)), v19)
-    UI_BUILD_SCRIPT = build
-    UI_DEV_SCRIPT = dev
-else ifeq ($(findstring v18, $(shell node --version)), v18)
-    UI_BUILD_SCRIPT = build
-    UI_DEV_SCRIPT = dev
-else ifeq ($(findstring v17, $(shell node --version)), v17)
-    UI_BUILD_SCRIPT = build
-    UI_DEV_SCRIPT = dev
-
-endif
 ## Install dependencies for building Meshery UI.
-ui-setup:
+ui-setup: dep-check-node
 	cd ui; npm i; cd ..
 	cd provider-ui; npm i; cd ..
 
 ## Clean Install dependencies for building Meshery UI.
-ui-setup-ci:
+ui-setup-ci: dep-check-node 
 	cd ui; npm ci; cd ..
-	cd provider-ui; npm ci; cd ..
-
 
 ## Run Meshery UI on your local machine. Listen for changes.
-ui:
+ui: dep-check-node
 	cd ui; npm run dev; cd ..;
 
 ## Run Meshery Provider UI  on your local machine. Listen for changes.
-ui-provider:
-	cd provider-ui; npm run dev; cd ..
+ui-provider: dep-check-node
+	cd provider-ui; npm i; npm run dev; cd ..
 
 ## Lint check Meshery UI and Provider UI on your local machine.
-ui-lint:
+ui-lint: dep-check-node
 	cd ui; npm i eslint; npx eslint . --fix; cd ..
 
 ## Lint check Meshery Provider UI on your local machine.
-ui-provider-lint:
+ui-provider-lint: dep-check-node
 	cd provider-ui && npm i eslint && npx eslint .
 
 ## Test Meshery Provider UI on your local machine.
-ui-provider-test:
+ui-provider-test: dep-check-node
 	cd provider-ui; npm run test; cd ..
 
-## Buils all Meshery UIs  on your local machine.
-ui-build: ui-setup
+## Builds all Meshery UIs  on your local machine.
+ui-build: ui-setup wasm-engine
 	cd ui; npm run lint:fix || echo "Warning: Lint issues detected in ui but continuing build"; npm run build; cd ..
 	cd provider-ui; npm run lint:fix || echo "Warning: Lint issues detected in provider-ui but continuing build"; npm run build; cd ..
 
 ## Build only Meshery UI on your local machine.
-ui-meshery-build:
+ui-meshery-build: dep-check-node wasm-engine
 	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
-ui-provider-build:
-	cd provider-ui; npm run build; cd ..
+ui-provider-build: 
+	cd provider-ui; npm i; npm run build; cd ..
 
 ## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
 ui-integration-tests: ui-setup
@@ -400,36 +373,27 @@ site-serve: docs-serve
 docs-setup:
 	cd docs; npm install
 
-## Run Meshery Docs. Listen for changes.
-docs: check-go
-	cd docs; hugo server -D -F
+## Run Meshery Docs in watch mode.
+docs:
+	@$(MAKE) -C docs site
 
-## Run Meshery Docs. Do not listen for changes.
-docs-serve: check-go
-	cd docs; hugo server -D -F --watch=false
+## Run Meshery Docs once without file watching.
+docs-serve:
+	@$(MAKE) -C docs serve
 
-## Run Meshery Docs. Do not listen for changes.
-docs-clean: check-go
-	cd docs; hugo --cleanDestinationDir
-	make docs
+## Clean build cache and run Meshery Docs in watch mode.
+docs-clean:
+	@$(MAKE) -C docs clean
 
 
 ## Build Meshery Docs on your local machine.
-docs-build: check-go
-	cd docs; hugo
+docs-build:
+	@$(MAKE) -C docs build
 
 ## Build Meshery Docs for production. BASE_URL is optional.
 ## Example: make docs-build-production BASE_URL=https://example.com
 docs-build-production:
-	cd docs; \
-	hugo_args="--gc --minify"; \
-	if [ -n "$(BASE_URL)" ]; then \
-		base_url="$(BASE_URL)"; \
-		base_url="$${base_url%/}/"; \
-		hugo_args="$$hugo_args --baseURL $$base_url"; \
-	fi; \
-	echo "Running: hugo $$hugo_args"; \
-	hugo $$hugo_args
+	@$(MAKE) -C docs build-production BASE_URL="$(BASE_URL)"
 
 ## Run Meshery Docs in a Docker container. Listen for changes.
 docs-docker:
@@ -516,6 +480,45 @@ policy-test:
 	@echo "Running OPA Rego policy tests..."
 	@cd server/policies && go test -v ./...
 
+## Build the Go relationship engine as a wasm binary for browser/extension use
+.PHONY: wasm-engine
+wasm-engine: dep-check-go
+	@echo "Building Go relationship engine wasm..."
+	@cd server/policies/wasm && \
+		go mod tidy && \
+		GOOS=js GOARCH=wasm go build -trimpath -ldflags="-s -w" -o policy_engine.wasm .
+	@cp -f "$$(go env GOROOT)/lib/wasm/wasm_exec.js" server/policies/wasm/wasm_exec.js
+	@echo "Patching wasm_exec.js to add process.env polyfill..."
+	@tmp=server/policies/wasm/wasm_exec.js.tmp && \
+		awk '{ \
+			print; \
+			if (index($$0, "chdir() { throw enosys(); },") > 0) { \
+				print "\t\t\tenv: {},"; \
+				found = 1; \
+			} \
+		} END { exit(found ? 0 : 1) }' server/policies/wasm/wasm_exec.js > "$$tmp" && \
+		mv "$$tmp" server/policies/wasm/wasm_exec.js || { \
+			rm -f "$$tmp"; \
+			echo "Failed to patch server/policies/wasm/wasm_exec.js"; \
+			exit 1; \
+		}
+	@mkdir -p ui/public/static/wasm
+	@cp -f server/policies/wasm/policy_engine.wasm ui/public/static/wasm/policy_engine.wasm
+	@cp -f server/policies/wasm/wasm_exec.js ui/public/static/wasm/wasm_exec.js
+	@if command -v wasm-opt >/dev/null 2>&1; then \
+		raw=$$(wc -c < server/policies/wasm/policy_engine.wasm); \
+		wasm-opt -Oz --enable-bulk-memory \
+			server/policies/wasm/policy_engine.wasm \
+			-o server/policies/wasm/policy_engine.wasm; \
+		opt=$$(wc -c < server/policies/wasm/policy_engine.wasm); \
+		gz=$$(gzip -9 -c server/policies/wasm/policy_engine.wasm | wc -c); \
+		printf "wasm-opt: %d -> %d bytes (gzip -9: %d)\n" $$raw $$opt $$gz; \
+	else \
+		echo "wasm-opt not found (brew install binaryen) — skipping size optimization"; \
+	fi
+	@echo "Wrote server/policies/wasm/{policy_engine.wasm,wasm_exec.js}"
+	@echo "Copied ui/public/static/wasm/{policy_engine.wasm,wasm_exec.js}"
+
 
 #-----------------------------------------------------------------------------
 # Testing - MeshSync Integration Tests (Go)
@@ -556,20 +559,25 @@ server-integration-tests-meshsync: docker-build server-integration-tests-meshsyn
 #-----------------------------------------------------------------------------
 # Testing - UI
 #-----------------------------------------------------------------------------
-.PHONY: ui-test-setup ui-test ui-test-e2e-ci
+.PHONY: ui-test-setup ui-test ui-test-e2e-full ui-test-e2e-local
 ## Install Playwright dependencies for UI tests
-ui-test-setup:
+ui-test-setup: dep-check-node
 	cd ui; npx playwright install chromium --with-deps; cd ..
 
 ## Run Meshery UI End-to-End Tests
-ui-test:
+ui-test: dep-check-node
 	 touch .env
 	 @set -a; source .env; set +a; cd ui; npm run test:e2e ; cd ..
 
-## Run Meshery UI End-to-End Tests in CI environment
-ui-test-e2e-ci:
+## Run Meshery UI End-to-End Tests in CI environment (Local and Remote Providers)
+ui-test-e2e-full: dep-check-node
 	 touch .env
-	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci ; cd ..
+	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci:full ; cd ..
+
+## Run Meshery UI End-to-End Tests in CI environment (Local Provider)
+ui-test-e2e-local: dep-check-node
+	 touch .env
+	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci:local ; cd ..
 
 #-----------------------------------------------------------------------------
 # Testing - Meshery CLI
@@ -581,12 +589,18 @@ mesheryctl-tests-int:
 #-----------------------------------------------------------------------------
 # Dependencies
 #-----------------------------------------------------------------------------
-.PHONY: dep-check
+.PHONY: dep-check dep-check-go dep-check-node
 #.SILENT: dep-check
 
 INSTALLED_GO_VERSION=$(shell go version)
+NODE_PRIMARY_MAJOR=22
+NODE_PRIMARY_MINOR=13
+NODE_FALLBACK_MAJOR=24
+REQUIRED_NODE_VERSION=^$(NODE_PRIMARY_MAJOR).$(NODE_PRIMARY_MINOR).0 || >=$(NODE_FALLBACK_MAJOR)
 
-dep-check:
+dep-check: dep-check-go
+
+dep-check-go:
 
 ifeq (,$(findstring $(GOVERSION), $(INSTALLED_GO_VERSION)))
 # Only send a warning.
@@ -598,3 +612,18 @@ ifeq (,$(findstring $(GOVERSION), $(INSTALLED_GO_VERSION)))
 #	 Required golang version is: 'go$(GOVERSION).x'. \
 #	 Ensure go '$(GOVERSION).x' is installed and available in your 'PATH'.)
 endif
+
+dep-check-node:
+	@node_version="$$(node --version 2>/dev/null || true)"; \
+	if [ -z "$$node_version" ]; then \
+		echo "Dependency missing: node. Ensure Node.js '$(REQUIRED_NODE_VERSION)' is installed and available in your 'PATH'"; \
+		exit 1; \
+	fi; \
+	node_version="$${node_version#v}"; \
+	node_major="$${node_version%%.*}"; \
+	node_minor="$${node_version#*.}"; \
+	node_minor="$${node_minor%%.*}"; \
+	if ! { [ "$$node_major" -eq "$(NODE_PRIMARY_MAJOR)" ] && [ "$$node_minor" -ge "$(NODE_PRIMARY_MINOR)" ]; } && [ "$$node_major" -lt "$(NODE_FALLBACK_MAJOR)" ]; then \
+		echo "Dependency mismatch: Found node v$$node_version. Required Node.js version is '$(REQUIRED_NODE_VERSION)'."; \
+		exit 1; \
+	fi

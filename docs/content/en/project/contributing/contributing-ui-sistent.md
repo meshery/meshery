@@ -1,11 +1,11 @@
 ---
 title: Contributing to Meshery UI - Sistent
 description: How to contribute to the Meshery's web-based UI using sistent design system.
-category: [contributing]
+categories: [contributing]
 ---
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisite Reading</strong></p>
-  <ol><li><a href="contributing-ui">Contributing to Meshery UI</a></li></ol>
+  <ol><li><a href="/project/contributing/contributing-ui">Contributing to Meshery UI</a></li></ol>
 </div>
 
 ## <a name="contributing-ui-sistent">Contributing to Meshery UI - Sistent</a>
@@ -30,8 +30,7 @@ Sistent leverages Material UI libraries and provides a custom theme on top of it
 - [How to use Sistent tokens/theme colors](#how-to-use-tokenscolors-from-sistent-theme)
 - [Examples](#examples)
 
-The Sistent design system includes a variety of base components such as `Button`, `Textfield`, `Checkbox`, and more, which can be found [here](https://github.com/layer5io/sistent/tree/master/src/base)
-Additionally, it provides custom components like `Modal`, `TransferList`, and others, which are available [here](https://github.com/layer5io/sistent/tree/master/src/custom)
+The Sistent design system includes a variety of base components such as `Button`, `Textfield`, `Checkbox`, and more. These components are designed to be flexible and customizable, allowing developers to easily adapt them to their specific needs while maintaining a consistent design language across the application.
 
 ### Usage
 
@@ -67,7 +66,7 @@ A theme provides a cohesive and consistent look and feel for a product, achieved
 A value is a unique visual attribute assigned to a token via themes, such as hex codes or RGBA values, used to highlight specific colors. Avoid referencing exact values directly to ensure consistency; instead, use tokens to manage and implement reusable values.
 
 - **Tokens:**
-Tokens serve as a shared language between design and development, detailing how to build user interfaces. Tokens represent context (background, text, component), role (success, warning, brand, inverse), and modifiers (secondary, tertiary, hover) derived from the [color palette](https://github.com/layer5io/sistent/blob/master/src/theme/palette.ts).
+Tokens serve as a shared language between design and development, detailing how to build user interfaces. Tokens represent context (background, text, component), role (success, warning, brand, inverse), and modifiers (secondary, tertiary, hover) derived from the color palette.
 
 - **Role:**
 Roles specify the context for applying colors. Different roles can share the same value but will have different use cases due to the token structure. These values can vary depending on the current theme.
@@ -103,5 +102,5 @@ export default MyComponent;
 ```
 
 {{% alert color="info" title="NOTE" %}}
-The <a href='https://github.com/layer5io/sistent/blob/master/src/theme/palette.ts'>tokens</a> and their roles are specific to their use. For example, use the background palette for background styles and the text palette for text styles.
+The tokens and their roles are specific to their use. For example, use the background palette for background styles and the text palette for text styles.
 {{% /alert %}}

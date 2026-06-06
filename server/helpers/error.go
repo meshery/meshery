@@ -24,9 +24,7 @@ const (
 	ErrRunningTestCode                     = "meshery-server-1151"
 	ErrConvertingResultToMapCode           = "meshery-server-1152"
 	ErrGrpcSupportCode                     = "meshery-server-1153"
-	ErrStartingNighthawkServerCode         = "meshery-server-1154"
 	ErrTransformingDataCode                = "meshery-server-1155"
-	ErrRunningNighthawkServerCode          = "meshery-server-1156"
 	ErrAddAndValidateExtraHeaderCode       = "meshery-server-1157"
 	ErrInClusterConfigCode                 = "meshery-server-1158"
 	ErrNewKubeClientGeneratorCode          = "meshery-server-1159"
@@ -110,10 +108,6 @@ func ErrTransformingData(err error) error {
 	return errors.New(ErrTransformingDataCode, errors.Alert, []string{"Error while transforming data"}, []string{err.Error()}, []string{}, []string{})
 }
 
-func ErrRunningNighthawkServer(err error) error {
-	return errors.New(ErrRunningNighthawkServerCode, errors.Alert, []string{"Error while running nighthawk server"}, []string{err.Error()}, []string{}, []string{})
-}
-
 func ErrAddAndValidateExtraHeader(err error) error {
 	return errors.New(ErrAddAndValidateExtraHeaderCode, errors.Alert, []string{"Unable to add and validate extra header"}, []string{err.Error()}, []string{}, []string{})
 }
@@ -132,10 +126,6 @@ func ErrRestConfigFromKubeConfig(err error) error {
 
 func ErrClientSet(err error) error {
 	return errors.New(ErrClientSetCode, errors.Alert, []string{"Unable to create client set"}, []string{err.Error()}, []string{}, []string{})
-}
-
-func ErrStartingNighthawkServer(err error) error {
-	return errors.New(ErrStartingNighthawkServerCode, errors.Alert, []string{"Unable to start the nighthawk server"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrNewKubeClient(err error) error {

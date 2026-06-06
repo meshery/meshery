@@ -21,7 +21,6 @@ import (
 	"github.com/meshery/schemas/models/core"
 
 	"github.com/gofrs/uuid"
-	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
@@ -33,6 +32,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta2/organization"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
@@ -70,14 +70,24 @@ type DefaultLocalProvider struct {
 	MeshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode
 }
 
+// LocalProviderName is the canonical name of the built-in local provider.
+// LocalProviderLegacyAlias is the prior name ("None"). It is still accepted on
+// inbound cookies/headers/env so existing sessions and ~/.meshery/config.yaml
+// entries continue to work after the rename. Normalization happens in
+// NormalizeProviderName (see models/providers.go).
+const (
+	LocalProviderName        = "Local"
+	LocalProviderLegacyAlias = "None"
+)
+
 // Initialize will initialize the local provider
 func (l *DefaultLocalProvider) Initialize() {
-	l.ProviderName = "None"
+	l.ProviderName = LocalProviderName
 	l.ProviderDescription = []string{
-		"Ephemeral sessions",
-		"Environment setup not saved",
-		"No performance or conformance test result history",
-		"Free Use",
+		"Built-in - no external services required",
+		"On-disk persistence for designs, filters, and credentials",
+		"Anonymous, single-user session (no login)",
+		"Always free, always available",
 	}
 	l.ProviderType = LocalProviderType
 	l.PackageVersion = viper.GetString("BUILD")
@@ -632,12 +642,12 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, _ *http.Reque
 }
 
 // SMPTestConfigStore Stores the given PerformanceTestConfig into local datastore
-func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error) {
+func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *perfprofile.PerformanceTestConfig) (string, error) {
 	uid, err := uuid.NewV4()
 	if err != nil {
 		return "", ErrGenerateUUID(err)
 	}
-	perfConfig.Id = uid.String()
+	perfConfig.ID = uid.String()
 	data, err := json.Marshal(perfConfig)
 	if err != nil {
 		return "", ErrMarshal(err, "test config for persisting")
@@ -646,7 +656,7 @@ func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *S
 }
 
 // SMPTestConfigGet gets the given PerformanceTestConfig from the local datastore
-func (l *DefaultLocalProvider) SMPTestConfigGet(_ *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
+func (l *DefaultLocalProvider) SMPTestConfigGet(_ *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error) {
 	uid, err := uuid.FromString(testUUID)
 	if err != nil {
 		return nil, ErrGenerateUUID(err)
@@ -1015,16 +1025,20 @@ func (l *DefaultLocalProvider) ShareFilter(_ *http.Request) (int, error) {
 
 // SavePerformanceProfile saves given performance profile with the provider
 func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfile *PerformanceProfile) ([]byte, error) {
-	var uid core.Uuid
-	if performanceProfile.ID != nil {
-		uid = *performanceProfile.ID
-	} else {
-		var err error
-		uid, err = uuid.NewV4()
+	if performanceProfile == nil {
+		return nil, fmt.Errorf("performance profile is nil")
+	}
+
+	if performanceProfile.ID == (core.Uuid{}) {
+		uid, err := uuid.NewV4()
 		if err != nil {
 			return nil, ErrGenerateUUID(err)
 		}
-		performanceProfile.ID = &uid
+		performanceProfile.ID = uid
+	}
+
+	if performanceProfile.Metadata == nil {
+		performanceProfile.Metadata = core.Map{}
 	}
 
 	data, err := json.Marshal(performanceProfile)
@@ -1032,7 +1046,7 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfi
 		return nil, ErrMarshal(err, "Perf Profile for persisting")
 	}
 
-	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(uid, performanceProfile)
+	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile.ID, performanceProfile)
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
@@ -1193,6 +1207,12 @@ func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
 	return err
 }
 
+// LogoutMesheryServer is a no-op for the local provider: there is no
+// remote session to revoke.
+func (l *DefaultLocalProvider) LogoutMesheryServer() error {
+	return nil
+}
+
 // GetGenericPersister - to return persister
 func (l *DefaultLocalProvider) GetGenericPersister() *database.Handler {
 	return l.GenericPersister
@@ -1217,7 +1237,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	nilUserID := ""
 
 	// Use the relative directory for patterns
-	catalogDir := filepath.Join("..", "..", "docs", "catalog")
+	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
 
 	for _, seedContent := range seedContents {
 		go func(comp string, log logger.Handler) {
@@ -1874,8 +1894,8 @@ func getFiltersFromWasmFiltersRepo(downloadPath string) error {
 	// if err != nil {
 	// 	return err
 	// }
-	//Temporary hardcoding until https://github.com/layer5io/wasm-filters/issues/38 is resolved
-	downloadURL := "https://github.com/layer5io/wasm-filters/releases/download/v0.1.0/wasm-filters-v0.1.0.tar.gz"
+	//Temporary hardcoding until https://github.com/meshery-extensions/wasm-filters/issues/38 is resolved
+	downloadURL := "https://github.com/meshery-extensions/wasm-filters/releases/download/v0.1.0/wasm-filters-v0.1.0.tar.gz"
 	res, err := http.Get(downloadURL)
 	if err != nil {
 		return err
@@ -1924,7 +1944,12 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 // Events
 
 func (e *EventsPersister) PersistEvent(event events.Event, token string) error {
-	err := e.DB.Save(event).Error
+	// GORM's Save requires a pointer (it reflects on the struct to read/update
+	// the primary key and timestamps). Passing the value directly produced
+	// "invalid value, should be pointer to struct or slice" and dropped every
+	// system event silently — including the controller-emitted events that
+	// flow through PersistSystemEvent.
+	err := e.DB.Save(&event).Error
 	if err != nil {
 		return ErrPersistEvent(err)
 	}
@@ -2052,27 +2077,3 @@ func (l *DefaultLocalProvider) BulkDeleteEvent(token string, eventIDs []*core.Uu
 	}
 	return nil
 }
-
-// // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
-// func getLatestStableReleaseTag() (string, error) {
-// 	url := "https://github.com/layer5io/wasm-filters/releases/latest"
-// 	resp, err := http.Get(url)
-// 	if err != nil {
-// 		return "", errors.New("failed to get latest stable release tag")
-// 	}
-// 	defer SafeClose(resp.Body)
-
-// 	if resp.StatusCode != http.StatusOK {
-// 		return "", errors.New("failed to get latest stable release tag")
-// 	}
-
-// 	body, err := io.ReadAll(resp.Body)
-// 	if err != nil {
-// 		return "", errors.New("failed to get latest stable release tag")
-// 	}
-// 	re := regexp.MustCompile("/releases/tag/(.*?)\"")
-// 	releases := re.FindAllString(string(body), -1)
-// 	latest := strings.ReplaceAll(releases[0], "/releases/tag/", "")
-// 	latest = strings.ReplaceAll(latest, "\"", "")
-// 	return latest, nil
-// }

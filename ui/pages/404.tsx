@@ -1,25 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import CustomErrorMessage from '../components/ErrorPage';
-import { NoSsr } from '@sistent/sistent';
-import { getPath } from '../lib/path';
-import Head from 'next/head';
-import { useDispatch } from 'react-redux';
-import { updatePage } from '@/store/slices/mesheryUi';
+import { MesheryPage } from '../components/MesheryPage';
 
-const Error = () => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(updatePage({ path: getPath(), title: 'Error' }));
-  }, []);
-
-  return (
-    <NoSsr>
-      <Head>
-        <title>404 - Page Not Found </title>
-      </Head>
-      <CustomErrorMessage />
-    </NoSsr>
-  );
-};
+const Error = () => (
+  <MesheryPage title="Error" headTitle="404 - Page Not Found" noSuffix>
+    <CustomErrorMessage />
+  </MesheryPage>
+);
 
 export default Error;

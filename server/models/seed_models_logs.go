@@ -135,20 +135,20 @@ func writeLogsToFiles(regLog *RegistrationFailureLog) error {
 	}
 	logMessage.WriteString("---------------------------------------- \n")
 	for host, modelNamespacedData := range regLog.failureData {
-		logMessage.WriteString(fmt.Sprintf("%s failed to register:\n", host))
+		fmt.Fprintf(&logMessage, "%s failed to register:\n", host)
 		for modelName, entityTypeNamespacedData := range modelNamespacedData {
 			if modelName == "" {
-				logMessage.WriteString(fmt.Sprintf("%sModels:\n", TAB))
+				fmt.Fprintf(&logMessage, "%sModels:\n", TAB)
 				for name, modelData := range entityTypeNamespacedData[string(entity.Model)] {
 					logMessage.WriteString(TAB + TAB + name + ": " + modelData.Error() + "\n")
 				}
 				continue
 			}
-			logMessage.WriteString(fmt.Sprintf("%sFor Model %s:\n", TAB, modelName))
+			fmt.Fprintf(&logMessage, "%sFor Model %s:\n", TAB, modelName)
 			for entityType, entityNameNamespacedData := range entityTypeNamespacedData {
-				logMessage.WriteString(fmt.Sprintf("%s%s%s:\n", TAB, TAB, entityType))
+				fmt.Fprintf(&logMessage, "%s%s%s:\n", TAB, TAB, entityType)
 				for name, err := range entityNameNamespacedData {
-					logMessage.WriteString(fmt.Sprintf("%s%s%s%s: %s\n", TAB, TAB, TAB, name, err.Error()))
+					fmt.Fprintf(&logMessage, "%s%s%s%s: %s\n", TAB, TAB, TAB, name, err.Error())
 				}
 
 			}
@@ -163,7 +163,7 @@ func writeLogsToFiles(regLog *RegistrationFailureLog) error {
 }
 
 func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *meshmodel.RegistryManager, regErrorStore *RegistrationFailureLog) {
-	provider := handlerConfig.Providers["None"]
+	provider := handlerConfig.Providers[LocalProviderName]
 
 	systemID := viper.GetString("INSTANCE_ID")
 

@@ -22,7 +22,7 @@ Meshery and its components are written using the following languages and technol
 | --- [Extensions](/extensions) ---                                    |                                                                                   |
 | [Meshery Adapters](/concepts/architecture/adapters)                  | Golang, gRPC, [CloudEvents](https://cloudevents.io/)                              |
 | [Meshery Remote Providers](/extensibility/providers)                 | _any_ - must adhere to Meshery [Extension Points](/extensibility) |
-| [Envoy WASM Filters](https://github.com/layer5io/wasm-filters)     | Rust and C++                                                                      |
+| [Envoy WASM Filters](https://github.com/meshery-extensions/wasm-filters)     | Rust and C++                                                                      |
 
 ## Deployments
 

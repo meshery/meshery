@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -25,7 +26,6 @@ import (
 	"github.com/meshery/schemas/models/core"
 
 	"github.com/gofrs/uuid"
-	SMP "github.com/layer5io/service-mesh-performance/spec"
 	servercore "github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/httputil"
@@ -35,6 +35,7 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/v1beta1/environment"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"
@@ -44,6 +45,17 @@ const (
 	PROVIDER_CAPABILITIES_FILEPATH_ENV = "PROVIDER_CAPABILITIES_FILEPATH"
 	SKIP_DOWNLOAD_EXTENSIONS_ENV       = "SKIP_DOWNLOAD_EXTENSIONS"
 )
+
+func shouldPropagateProviderVersion(version string) bool {
+	normalized := strings.TrimSpace(version)
+	if normalized == "" {
+		return false
+	}
+	if strings.EqualFold(normalized, "not set") || strings.EqualFold(normalized, "not_set") || normalized == "edge-latest" {
+		return false
+	}
+	return true
+}
 
 // RemoteProvider - represents a local provider
 type RemoteProvider struct {
@@ -61,6 +73,21 @@ type RemoteProvider struct {
 	TokenStore    map[string]string
 	TokenStoreMut sync.Mutex
 	Keys          []map[string]string
+
+	// mostRecentToken caches the last valid user token observed during the
+	// session so it can be reused at server shutdown to authenticate the
+	// deregistration call (DeleteMesheryConnection) and the subsequent token
+	// revocation. The anonymous global token is rejected by the remote
+	// provider for these privileged operations.
+	mostRecentToken    string
+	mostRecentTokenMut sync.RWMutex
+
+	// propertiesMu guards full-struct writes to the embedded
+	// ProviderProperties (Initialize / SetProviderProperties /
+	// VerifyAvailability) so the boot-time concurrent verification path and
+	// later refreshes (triggered by SSE subscribers) cannot tear with
+	// readers in GetProviderProperties.
+	propertiesMu sync.RWMutex
 
 	LoginCookieDuration time.Duration
 
@@ -100,23 +127,55 @@ const (
 	refURLCookie      = "meshery_ref"
 )
 
-// Initialize function will initialize the RemoteProvider instance with the metadata
-// fetched from the remote providers capabilities endpoint
+// Initialize stamps the minimum addressable metadata onto the
+// RemoteProvider so it can be inserted into the registration map and
+// rendered in /api/providers immediately, WITHOUT issuing the (potentially
+// slow) capabilities HTTP probe. The probe runs concurrently in
+// VerifyAvailability via ProviderTracker, so a single unreachable remote
+// can no longer freeze server startup or the provider chooser.
+//
+// The fallback ProviderName is set to the URL host so the chooser has a
+// recognizable label to show while the probe is in flight or if it
+// permanently fails. A successful VerifyAvailability later replaces the
+// fallback with the canonical providerName returned by /capabilities.
 func (l *RemoteProvider) Initialize() {
-	// Get the capabilities with no token
-	// assuming that this will help get basic info
-	// of the provider
-	providerProperties, err := l.loadCapabilities("")
-	if err != nil {
-		l.Log.Error(fmt.Errorf("[RemoteProvider.Initialize] failed to load capabilities from remote provider: %v", err))
-	} else {
-		l.ProviderProperties = providerProperties
+	props := ProviderProperties{
+		ProviderType: RemoteProviderType,
+		ProviderURL:  l.RemoteProviderURL,
 	}
+	if u, err := url.Parse(l.RemoteProviderURL); err == nil && u.Host != "" {
+		props.ProviderName = u.Host
+	}
+
+	l.propertiesMu.Lock()
+	l.ProviderProperties = props
+	l.propertiesMu.Unlock()
+}
+
+// VerifyAvailability is the non-blocking-friendly availability probe.
+// It performs the unauthenticated /capabilities request (with version
+// fallback) and, on success, atomically replaces the cached
+// ProviderProperties so subsequent reads see the canonical
+// providerName/capabilities. On failure it returns the underlying error so
+// ProviderTracker can broadcast ProviderStatusOffline; the cached fallback
+// fields stamped by Initialize remain in place.
+//
+// The context bounds the total probe runtime; ProviderTracker passes one
+// per probe so a stalled remote cannot extend a refresh indefinitely.
+func (l *RemoteProvider) VerifyAvailability(ctx context.Context) (ProviderProperties, error) {
+	props, err := l.loadCapabilitiesWithContext(ctx, "")
+	if err != nil {
+		return ProviderProperties{}, err
+	}
+	l.SetProviderProperties(props)
+	return props, nil
 }
 
 func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProperties) {
+	l.propertiesMu.Lock()
+	defer l.propertiesMu.Unlock()
 	l.ProviderProperties = providerProperties
-	l.ProviderURL = l.GetProviderURL()
+	l.ProviderURL = providerProperties.ProviderURL
 }
 
 func (l *RemoteProvider) loadCapabilitiesFromLocalFile(filePath string) (ProviderProperties, error) {
@@ -148,29 +207,75 @@ func (l *RemoteProvider) loadCapabilitiesFromLocalFile(filePath string) (Provide
 	return providerProperties, nil
 }
 
-// loadCapabilities loads the capabilities of the remote provider
+// loadCapabilities loads the capabilities of the remote provider using a
+// background context. Callers that need to bound runtime (e.g. the tracker's
+// availability probe) should call loadCapabilitiesWithContext directly.
 //
-// It takes in "token" string of the user for loading the capbilities
-// if an empty string is provided then it will try to make a request
-// with no token, however a remote provider is free to refuse to
-// serve requests with no token
+// When "token" is empty, the request is unauthenticated (boot-time
+// discovery); the version-scoped /<version>/capabilities path is tried
+// first and falls back to the unversioned /capabilities path so legacy
+// remotes that do not serve a versioned manifest still report capabilities.
+// When "token" is non-empty, only the version-scoped path is attempted,
+// matching the existing authenticated capability fetch contract.
 func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, error) {
+	return l.loadCapabilitiesWithContext(context.Background(), token)
+}
 
+// loadCapabilitiesWithContext is the context-aware form of loadCapabilities.
+// Bounded callers pass a context with a deadline so a stalled remote cannot
+// hold a tracker refresh open indefinitely.
+func (l *RemoteProvider) loadCapabilitiesWithContext(ctx context.Context, token string) (ProviderProperties, error) {
 	if viper.GetString(PROVIDER_CAPABILITIES_FILEPATH_ENV) != "" {
 		return l.loadCapabilitiesFromLocalFile(viper.GetString(PROVIDER_CAPABILITIES_FILEPATH_ENV))
 	}
 
-	var resp *http.Response
-	var err error
+	// First attempt: capabilities scoped to the running Meshery Server
+	// version. This is what a multi-tenant remote uses to return a
+	// capability set tuned to this server's build.
+	props, err := l.fetchCapabilities(ctx, token, true)
+	if err == nil {
+		return props, nil
+	}
 
+	// Token-authenticated requests do not fall back: the authenticated
+	// capability fetch (GetProviderCapabilities) is called after login
+	// against a remote that is already known to be reachable, and an
+	// authenticated 4xx is a real authorization error rather than a
+	// signal to retry against a different path.
+	if token != "" {
+		return props, err
+	}
+
+	// Unauthenticated boot-time discovery: fall back to the unversioned
+	// /capabilities path so remotes that do not version their manifest
+	// (older deployments, third-party providers) still report
+	// availability. The fallback is bounded by the same per-attempt
+	// timeout, so total runtime is at most ~2x the versioned attempt.
+	l.Log.Debugf("versioned capabilities lookup failed for %s: %v; falling back to unversioned /capabilities", l.RemoteProviderURL, err)
+	return l.fetchCapabilities(ctx, "", false)
+}
+
+// fetchCapabilities performs a single capability lookup against the remote.
+// When versioned is true, the request goes to /<BUILD>/capabilities;
+// otherwise it goes to the unversioned /capabilities. The unauthenticated
+// path applies a 3-attempt retry with a 3-second per-request timeout (and
+// a 1-second backoff between attempts); the authenticated path uses
+// l.DoRequest's default client and timeout, matching prior behavior.
+func (l *RemoteProvider) fetchCapabilities(ctx context.Context, token string, versioned bool) (ProviderProperties, error) {
 	providerProperties := ProviderProperties{
 		ProviderURL: l.RemoteProviderURL,
 	}
 
-	version := viper.GetString("BUILD")
-	os := viper.GetString("OS")
+	osName := viper.GetString("OS")
 	playground := viper.GetString("PLAYGROUND")
-	finalURL := fmt.Sprintf("%s/%s/capabilities?os=%s&playground=%s", l.RemoteProviderURL, version, os, playground)
+
+	var finalURL string
+	if versioned {
+		version := viper.GetString("BUILD")
+		finalURL = fmt.Sprintf("%s/%s/capabilities?os=%s&playground=%s", l.RemoteProviderURL, version, osName, playground)
+	} else {
+		finalURL = fmt.Sprintf("%s/capabilities?os=%s&playground=%s", l.RemoteProviderURL, osName, playground)
+	}
 	finalURL = strings.TrimSuffix(finalURL, "\n")
 	remoteProviderURL, err := url.Parse(finalURL)
 	if err != nil {
@@ -178,57 +283,53 @@ func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, err
 		return providerProperties, err
 	}
 
-	req, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, remoteProviderURL.String(), nil)
 
-	// If not token is provided then make a simple GET request
+	var resp *http.Response
 	if token == "" {
-		c := &http.Client{}
-
-		const maxRetries = 10
+		c := &http.Client{Timeout: 3 * time.Second}
+		const maxRetries = 3
 		for i := 0; i < maxRetries; i++ {
 			resp, err = c.Do(req)
 			if err == nil && resp != nil {
-				break // Successfully fetched response
+				break
 			}
-			if i == 0 {
-				l.Log.Warnf("Failed to fetch capabilities from remote provider (URL: %s). Retrying (%d)... ", remoteProviderURL.String(), i)
+			l.Log.Debugf("Attempt %d/%d: failed to fetch capabilities from %s: %v", i+1, maxRetries, finalURL, err)
+			if i < maxRetries-1 {
+				select {
+				case <-ctx.Done():
+					return providerProperties, ctx.Err()
+				case <-time.After(1 * time.Second):
+				}
 			}
-			l.Log.Debugf("Attempt %d/%d: Failed to fetch capabilities: %v. Retrying in 3 seconds...", i+1, maxRetries, err)
-			time.Sleep(3 * time.Second)
 		}
-		if err != nil || resp == nil {
-			l.Log.Warnf("Failed to fetch capabilities after %d attempts", maxRetries)
-		}
-
 	} else {
-		// Proceed to make a request with the token
 		resp, err = l.DoRequest(req, token)
 	}
 	if err != nil && resp == nil {
-		l.Log.Error(ErrUnreachableRemoteProvider(err))
+		l.Log.Warn(ErrUnreachableRemoteProvider(err))
 		return providerProperties, ErrUnreachableRemoteProvider(err)
 	}
 	if err != nil || resp.StatusCode != http.StatusOK {
 		if err == nil {
 			err = ErrStatusCode(resp.StatusCode)
 		}
-		l.Log.Error(ErrFetch(err, "Capabilities", http.StatusInternalServerError))
+		l.Log.Warn(ErrFetch(err, "Capabilities", http.StatusInternalServerError))
 		return providerProperties, ErrFetch(err, "Capabilities", http.StatusInternalServerError)
 	}
 	defer func() {
-		err := resp.Body.Close()
-		if err != nil {
-			err := ErrCloseIoReader(err)
-			l.Log.Error(err)
+		if cerr := resp.Body.Close(); cerr != nil {
+			l.Log.Error(ErrCloseIoReader(cerr))
 		}
 	}()
 
 	decoder := json.NewDecoder(resp.Body)
-	if err := decoder.Decode(&providerProperties); err != nil {
-		err = ErrUnmarshal(err, "provider properties")
+	if derr := decoder.Decode(&providerProperties); derr != nil {
+		err = ErrUnmarshal(derr, "provider properties")
 		l.Log.Error(err)
+		return providerProperties, err
 	}
-	return providerProperties, err
+	return providerProperties, nil
 }
 
 // downloadProviderExtensionPackage will download the remote provider extensions
@@ -283,20 +384,15 @@ func (l *RemoteProvider) GetProviderType() ProviderType {
 	return l.ProviderType
 }
 
-// GetProviderProperties - Returns all the provider properties required
+// GetProviderProperties returns the cached provider properties. It never
+// issues a network call: refresh is the responsibility of ProviderTracker,
+// which probes remotes concurrently and publishes results via SSE. This
+// keeps /api/providers and every other reader (login flow, anonymous user
+// intercept, /api/provider/capabilities cache hit) bounded and non-blocking
+// even when a configured remote is unreachable.
 func (l *RemoteProvider) GetProviderProperties() ProviderProperties {
-
-	// If the provider properties are not loaded yet, load them
-	if (l.PackageVersion == "" || l.PackageURL == "" || len(l.Capabilities) == 0) && l.RemoteProviderURL != "" {
-		providerProperties, err := l.loadCapabilities("")
-		if err != nil {
-			l.Log.Error(fmt.Errorf("[RemoteProvider.GetProviderProperties] failed to load capabilities from remote provider: %v", err))
-			return l.ProviderProperties
-		}
-		l.SetProviderProperties(providerProperties)
-		return l.ProviderProperties
-	}
-
+	l.propertiesMu.RLock()
+	defer l.propertiesMu.RUnlock()
 	return l.ProviderProperties
 }
 
@@ -352,11 +448,21 @@ func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *htt
 }
 
 // StopSyncPreferences - used to stop sync preferences
+//
+// Safe to call even when SyncPreferences was never activated: with the
+// concurrent-availability refactor, capabilities may load after the boot
+// loop has already returned, so the post-probe SyncPreferences activation
+// runs asynchronously. The nil-channel guard prevents a shutdown defer
+// from blocking forever sending to an uninitialized syncStopChan in
+// the race where SyncPrefs became supported but SyncPreferences never
+// ran (e.g. shutdown raced with VerifyAll).
 func (l *RemoteProvider) StopSyncPreferences() {
 	if !l.Capabilities.IsSupported(SyncPrefs) {
 		return
 	}
-
+	if l.syncStopChan == nil {
+		return
+	}
 	l.syncStopChan <- struct{}{}
 }
 
@@ -459,7 +565,7 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 
 	l.Log.Infof("Redirecting after intercept base redirect url: %s , interceptedRequestURI %s ", redirectURL, req.URL.String())
 
-	// if request was directly intercepted from the kanvas page ( /extension ) , then the ref might not be present
+	// if request was directly intercepted from the extension page ( /extension ) , then the ref might not be present
 	// so we can directly redirect back to intercepted page
 	if strings.HasPrefix(req.URL.Path, "/extension") {
 		// redirect to the intercepted page with all original query params
@@ -483,7 +589,7 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 		l.Log.Info("No navigator extension found, redirecting to /error")
 		redirectURL = errorUI
 	}
-	l.Log.Infof("No source refs resolved , Redirecting to base kanvas page  %s", redirectURL)
+	l.Log.Infof("No source refs resolved , Redirecting to base extension page  %s", redirectURL)
 	http.Redirect(res, req, redirectURL, http.StatusFound)
 }
 
@@ -507,27 +613,30 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 
 	ck, err := r.Cookie(TokenCookieName)
 	if err != nil || ck.Value == "" {
+		// Capture the originally-requested in-app path as the post-login
+		// redirect target. Meshery owns this state in a cookie on its own
+		// domain rather than round-tripping it through the remote provider's
+		// auth chain, where intermediate hops (e.g. custom-domain bounces)
+		// could drop or rewrite the value and land the user on a non-existent
+		// route after authentication. TokenHandler reads the cookie back when
+		// the provider redirects to /api/user/token.
 		http.SetCookie(w, &http.Cookie{
 			Name:     l.RefCookieName,
-			Value:    "/",
+			Value:    refURLqueryParam,
 			Expires:  time.Now().Add(l.LoginCookieDuration),
 			Path:     "/",
 			HttpOnly: true,
+			SameSite: http.SameSiteLaxMode, // sent on top-level cross-site GET back from the provider
 		})
 
-		var refURL []string
-		// If refURL is empty, generate the refURL based on the current request path and query param.
-		if refURLqueryParam == "" {
-			refURL = []string{base64.RawURLEncoding.EncodeToString([]byte(strings.TrimPrefix(callbackURL.String(), baseCallbackURL)))}
-		} else {
-			refURL = append(refURL, refURLqueryParam)
-		}
-
 		queryParams := url.Values{
-			"source":           []string{base64.RawURLEncoding.EncodeToString([]byte(baseCallbackURL))},
-			"provider_version": []string{l.ProviderVersion},
-			"meshery_version":  []string{mesheryVersion},
-			"ref":              refURL,
+			"source": []string{base64.RawURLEncoding.EncodeToString([]byte(baseCallbackURL))},
+		}
+		if shouldPropagateProviderVersion(l.ProviderVersion) {
+			queryParams.Set("provider_version", l.ProviderVersion)
+		}
+		if shouldPropagateProviderVersion(mesheryVersion) {
+			queryParams.Set("meshery_version", mesheryVersion)
 		}
 
 		if supportsAnonymousUserSessions {
@@ -2235,7 +2344,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 
 	switch resp.StatusCode {
 	case http.StatusRequestEntityTooLarge:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again. See https://docs.layer5.io/kanvas/advanced/performance/ for performance limitations and performance tuning tips", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	case http.StatusUnauthorized:
 		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your permissions", pattern.Name, l.ProviderName), "", resp.StatusCode)
@@ -3630,7 +3739,7 @@ func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *Performa
 		return nil, ErrDataRead(err, "Perf Profile")
 	}
 
-	if resp.StatusCode == http.StatusCreated {
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
 		l.Log.Info("performance profile sent to remote provider: ", string(bdr))
 		return bdr, nil
 	}
@@ -3993,6 +4102,11 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	// Clear the auth retry counter on successful token receipt
 	ClearAuthRetryCookie(w)
 
+	// Cache this token so DeleteMesheryConnection / shutdown logout can
+	// authenticate against the remote provider. Without this, shutdown
+	// uses the anonymous global token and the remote provider returns 401.
+	l.setMostRecentToken(tokenString)
+
 	// Get new capabilities
 	// Doing this here is important so that the latest capabilities are always fetched when a user logs in
 	providerProperties, err := l.loadCapabilities(tokenString)
@@ -4019,7 +4133,19 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		redirectURL = GetRedirectURLForNavigatorExtension(&providerProperties, l.Log)
 	}
 
-	redirectURL = resolvePostLoginRedirect(r.URL.Query().Get("ref"), redirectURL)
+	// Post-login redirect target: read from the cookie set by InitiateLogin.
+	// resolvePostLoginRedirect's "/" fallback handles the missing-cookie case
+	// without us needing to trust any provider-side state. See
+	// selectPostLoginRefValue for the rationale.
+	redirectURL = resolvePostLoginRedirect(selectPostLoginRefValue(r, l.RefCookieName), redirectURL)
+	// One-shot cookie: clear it now that we've resolved the destination so a
+	// stale value can't override the next login flow.
+	http.SetCookie(w, &http.Cookie{
+		Name:     l.RefCookieName,
+		Path:     "/",
+		HttpOnly: true,
+		MaxAge:   -1,
+	})
 
 	go func() {
 		credential := make(map[string]interface{}, 0)
@@ -4118,7 +4244,7 @@ func (l *RemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Request) {
 }
 
 // SMPTestConfigStore - persist test profile details to provider
-func (l *RemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error) {
+func (l *RemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *perfprofile.PerformanceTestConfig) (string, error) {
 	if !l.Capabilities.IsSupported(PersistSMPTestProfile) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return "", ErrInvalidCapability("PersistSMPTestProfile", l.ProviderName)
@@ -4161,7 +4287,7 @@ func (l *RemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.P
 }
 
 // SMPTestConfigGet - retrieve a single test profile details
-func (l *RemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
+func (l *RemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error) {
 	if !l.Capabilities.IsSupported(PersistSMPTestProfile) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, ErrInvalidCapability("PersistSMPTestProfile", l.ProviderName)
@@ -4196,7 +4322,7 @@ func (l *RemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*
 	}
 	l.Log.Debug(string(bdr))
 	if resp.StatusCode == http.StatusOK {
-		testConfig := SMP.PerformanceTestConfig{}
+		testConfig := perfprofile.PerformanceTestConfig{}
 		err := json.Unmarshal(bdr, &testConfig)
 		if err != nil {
 			return nil, err
@@ -4472,7 +4598,7 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID core.Uuid)
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionID))
-	fmt.Println("\n\n url :", remoteProviderURL.String())
+	l.Log.Debugf("fetching connection %s from remote provider at %s", connectionID, remoteProviderURL.String())
 
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
@@ -4701,10 +4827,16 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/meshery/%s", l.RemoteProviderURL, ep, mesheryServerID))
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
-	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
-	cReq.Header.Set("SystemID", viper.GetString("INSTANCE_ID")) // Adds the system id to the header for event tracking
-	c := &http.Client{}
-	resp, err := c.Do(cReq)
+
+	// Prefer the cached user token captured at login over the anonymous
+	// global token; the remote provider rejects the latter (401) for
+	// privileged delete operations. DoRequest sets Authorization, X-API-Key,
+	// and SystemID headers, and transparently refreshes the token on 401.
+	token := l.getMostRecentToken()
+	if token == "" {
+		token = GlobalTokenForAnonymousResults
+	}
+	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		if resp == nil {
 			return ErrUnreachableRemoteProvider(err)
@@ -4720,6 +4852,49 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 	}
 
 	return ErrDelete(fmt.Errorf("could not delete meshery connection"), " Meshery Connection", resp.StatusCode)
+}
+
+// setMostRecentToken records the most recent valid user token. Used so that
+// shutdown-time operations (deregistration, logout) can authenticate against
+// the remote provider without an active HTTP request in scope.
+func (l *RemoteProvider) setMostRecentToken(token string) {
+	if strings.TrimSpace(token) == "" {
+		return
+	}
+	l.mostRecentTokenMut.Lock()
+	defer l.mostRecentTokenMut.Unlock()
+	l.mostRecentToken = token
+}
+
+func (l *RemoteProvider) getMostRecentToken() string {
+	l.mostRecentTokenMut.RLock()
+	defer l.mostRecentTokenMut.RUnlock()
+	return l.mostRecentToken
+}
+
+func (l *RemoteProvider) clearMostRecentToken() {
+	l.mostRecentTokenMut.Lock()
+	defer l.mostRecentTokenMut.Unlock()
+	l.mostRecentToken = ""
+}
+
+// LogoutMesheryServer performs a server-side logout against the remote
+// provider using the cached user token. Intended to be invoked at server
+// shutdown, *after* DeleteMesheryConnection, so that the session that
+// authorized the deregistration is then revoked. Unlike Logout, this does
+// not require an http.Request/ResponseWriter pair.
+func (l *RemoteProvider) LogoutMesheryServer() error {
+	token := l.getMostRecentToken()
+	if token == "" {
+		// nothing to revoke — user never logged in during this run
+		return nil
+	}
+	defer l.clearMostRecentToken()
+
+	if err := l.revokeToken(token); err != nil {
+		return ErrLogout(err)
+	}
+	return nil
 }
 
 // TarXZF takes in a source url downloads the tar.gz file

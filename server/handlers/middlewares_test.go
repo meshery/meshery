@@ -9,6 +9,180 @@ import (
 	"testing"
 )
 
+// TestResolveProviderName covers the precedence rules for picking the
+// provider name from a request, plus the enforced-default fallback that
+// breaks the /user/login ⇄ /provider redirect loop on enforced-provider
+// deployments where the cookie isn't propagating back (SameSite/popup/CDN).
+func TestResolveProviderName(t *testing.T) {
+	const cookieName = "meshery-provider"
+
+	mkReq := func(setup func(*http.Request)) *http.Request {
+		req := httptest.NewRequest(http.MethodGet, "/user/login", nil)
+		if setup != nil {
+			setup(req)
+		}
+		return req
+	}
+
+	tests := []struct {
+		name             string
+		setup            func(*http.Request)
+		enforcedProvider string
+		want             string
+	}{
+		{
+			name:             "no signals, no enforced default → empty",
+			setup:            nil,
+			enforcedProvider: "",
+			want:             "",
+		},
+		{
+			name:             "no signals, enforced default returned",
+			setup:            nil,
+			enforcedProvider: "Enforced",
+			want:             "Enforced",
+		},
+		{
+			name: "cookie wins over enforced default",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: cookieName, Value: "Meshery"})
+			},
+			enforcedProvider: "Enforced",
+			want:             "Meshery",
+		},
+		{
+			name: "empty cookie falls through to header",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: cookieName, Value: ""})
+				r.Header.Set(cookieName, "Meshery")
+			},
+			enforcedProvider: "Enforced",
+			want:             "Meshery",
+		},
+		{
+			name: "header wins over query and enforced",
+			setup: func(r *http.Request) {
+				r.Header.Set(cookieName, "Meshery")
+				r.URL.RawQuery = "provider=None"
+			},
+			enforcedProvider: "Enforced",
+			want:             "Meshery",
+		},
+		{
+			name: "query wins over enforced when no cookie/header (None alias normalized to Local)",
+			setup: func(r *http.Request) {
+				r.URL.RawQuery = "provider=None"
+			},
+			enforcedProvider: "Enforced",
+			want:             "Local",
+		},
+		{
+			name: "cookie with whitespace value is honored verbatim",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: cookieName, Value: "  Meshery  "})
+			},
+			enforcedProvider: "",
+			want:             "  Meshery  ",
+		},
+		// Backward-compat guard for the "None" -> "Local" rename. Stale
+		// browser cookies, hand-written scripts, and older mesheryctl all
+		// keep sending "None" — the request edge must accept it.
+		{
+			name: "legacy None cookie normalizes to Local",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: cookieName, Value: "None"})
+			},
+			enforcedProvider: "",
+			want:             "Local",
+		},
+		{
+			name:             "legacy None enforced default normalizes to Local",
+			setup:            nil,
+			enforcedProvider: "None",
+			want:             "Local",
+		},
+		{
+			name: "alias matching is case-insensitive",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: cookieName, Value: "none"})
+			},
+			enforcedProvider: "",
+			want:             "Local",
+		},
+		{
+			name: "lowercase canonical name normalizes to canonical Local",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: cookieName, Value: "local"})
+			},
+			enforcedProvider: "",
+			want:             "Local",
+		},
+		{
+			name:             "uppercase canonical name normalizes to canonical Local",
+			setup:            nil,
+			enforcedProvider: "LOCAL",
+			want:             "Local",
+		},
+		{
+			name: "non-local provider name is returned verbatim (remote names not normalized)",
+			setup: func(r *http.Request) {
+				r.AddCookie(&http.Cookie{Name: cookieName, Value: "Meshery"})
+			},
+			enforcedProvider: "",
+			want:             "Meshery",
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			got, _ := resolveProviderName(mkReq(tc.setup), cookieName, tc.enforcedProvider)
+			if got != tc.want {
+				t.Fatalf("resolveProviderName: want %q, got %q", tc.want, got)
+			}
+		})
+	}
+}
+
+// TestResolveProviderName_ReturnsLegacyAliasFlag locks in the second return
+// value used by ProviderMiddleware to drive the one-shot deprecation warning.
+// The boolean must be true for any casing of the legacy alias and false for
+// canonical names (including the canonical local provider name).
+func TestResolveProviderName_ReturnsLegacyAliasFlag(t *testing.T) {
+	const cookieName = "meshery-provider"
+	mkReq := func(cookieValue string) *http.Request {
+		req := httptest.NewRequest(http.MethodGet, "/user/login", nil)
+		if cookieValue != "" {
+			req.AddCookie(&http.Cookie{Name: cookieName, Value: cookieValue})
+		}
+		return req
+	}
+
+	cases := []struct {
+		name     string
+		cookie   string
+		wantFlag bool
+	}{
+		{"canonical Local does not flag legacy", "Local", false},
+		{"lowercase local does not flag legacy", "local", false},
+		{"legacy None flags legacy", "None", true},
+		{"lowercase none flags legacy", "none", true},
+		{"uppercase NONE flags legacy", "NONE", true},
+		{"remote Meshery does not flag legacy", "Meshery", false},
+		{"empty does not flag legacy", "", false},
+	}
+	for _, c := range cases {
+		c := c
+		t.Run(c.name, func(t *testing.T) {
+			_, got := resolveProviderName(mkReq(c.cookie), cookieName, "")
+			if got != c.wantFlag {
+				t.Errorf("usedLegacyAlias = %v, want %v", got, c.wantFlag)
+			}
+		})
+	}
+}
+
 func TestAuthMiddleWare(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping test in short mode.")

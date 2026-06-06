@@ -25,7 +25,7 @@ mesheryctl model generate [flags]
 Generate a model from a CSV directory
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model generate --f [path-to-csv-directory]
+mesheryctl model generate -f [path-to-csv-directory]
 
 </div>
 </pre> 
@@ -33,7 +33,7 @@ mesheryctl model generate --f [path-to-csv-directory]
 Generate a model from a URL based on a JSON template
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model generate --f [URL] -t [path-to-template.json]
+mesheryctl model generate -f [URL] -t [path-to-template.json]
 
 </div>
 </pre> 
@@ -41,7 +41,7 @@ mesheryctl model generate --f [URL] -t [path-to-template.json]
 Generate a model from a URL based on a JSON template skipping registration
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model generate --f [URL] -t [path-to-template.json] -r
+mesheryctl model generate --file [URL] --template [path-to-template.json] --skip-registration
 
 </div>
 </pre> 
@@ -50,10 +50,10 @@ mesheryctl model generate --f [URL] -t [path-to-template.json] -r
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -f, --file string       Specify path to the file or directory
-  -h, --help              help for generate
-  -r, --register          Skip registration of the model
-  -t, --template string   Specify path to the template JSON file
+  -f, --file string         Specify path to the file or directory
+  -h, --help                help for generate
+      --skip-registration   Skip registration of the model (default is false)
+  -t, --template string     Specify path to the template JSON file
 
 </div>
 </pre>
