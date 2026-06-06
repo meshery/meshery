@@ -197,9 +197,9 @@ const MeshModelComponent_ = ({
           const incoming = response.data[view.toLowerCase()];
           const combined =
             searchText || view === RELATIONSHIPS ? [...incoming] : [...prev, ...incoming];
-          // _.uniqBy with 'id' is O(n) and recursion-free. Runtime API responses
-          // always carry real UUIDs (null-UUID only exists in static seed files).
-          return _.uniqBy(combined, 'id');
+          // Use _.uniqWith for safe deep equality deduplication, as
+          // not all objects (e.g. static seed files) carry unique UUIDs.
+          return _.uniqWith(combined, _.isEqual);
         });
 
         // Deeplink may contain higher rowsPerPage val for first time fetch
