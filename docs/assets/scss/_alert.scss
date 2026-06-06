@@ -83,13 +83,14 @@
 }
 .alert-secondary {
   border-style: solid;
-  border-color: #9FA6B2;
-  background-color: #d8dbe0;
+  border-color: #6b7280;
+  background-color: #e5e7eb;
   border-width: 0 0 0 4px;
   font-size: 1rem;
+  color: #1f2937;
   & .alert-heading > *,
   & .alert-heading {
-    color: #9FA6B2;
+    color: #111827;
     margin: 0;
     margin-bottom: 1rem;
   }
