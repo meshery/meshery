@@ -125,6 +125,6 @@ In this tutorial, you used Meshery Kanvas to visually design a Kubernetes traffi
 
 ### Related Resources
 
-- [Exploring Kubernetes Services with Meshery](/guides/tutorials/kubernetes/kubernetes-services/)
-- [Exploring Kubernetes Deployments with Meshery](/guides/tutorials/kubernetes/kubernetes-deployments/)
+- [Exploring Kubernetes Services with Meshery](/guides/tutorials/kubernetes-services/)
+- [Exploring Kubernetes Deployments with Meshery](/guides/tutorials/kubernetes-deployments/)
 - [Meshery Kanvas Documentation](https://docs.meshery.io/extensions/kanvas/)
