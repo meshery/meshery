@@ -198,8 +198,8 @@ func TestValidateOllama(t *testing.T) {
 	}
 }
 
-func TestValidateModelProviderPayload_UnsupportedKind(t *testing.T) {
-	err := validateModelProviderPayload("unknown-provider", connections.ConnectionPayload{})
+func TestValidateStructure_UnsupportedKind(t *testing.T) {
+	err := validateStructure("unknown-provider", connections.ConnectionPayload{})
 	if err == nil {
 		t.Error("expected error for unsupported provider kind, got nil")
 	}

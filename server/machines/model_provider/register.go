@@ -42,11 +42,17 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": err}).Build(), err
 	}
 
+	// Structural validation (required fields, key format) always runs regardless
+	// of SkipCredentialVerification. The flag only bypasses network/liveness checks.
+	kind := strings.ToLower(connPayload.Kind)
+	if err := validateStructure(kind, connPayload); err != nil {
+		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": err}).Build(), err
+	}
+
 	if connPayload.SkipCredentialVerification {
 		return machines.Exit, nil, nil
 	}
 
-	kind := strings.ToLower(connPayload.Kind)
 	if err := validateModelProviderPayload(kind, connPayload); err != nil {
 		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": err}).Build(), err
 	}
@@ -58,8 +64,9 @@ func (ra *RegisterAction) ExecuteOnExit(ctx context.Context, machineCtx interfac
 	return machines.NoOp, nil, nil
 }
 
-// validateModelProviderPayload dispatches provider-specific structural validation.
-func validateModelProviderPayload(kind string, payload connections.ConnectionPayload) error {
+// validateStructure checks required fields and key formats without any network I/O.
+// It runs unconditionally, even when SkipCredentialVerification is set.
+func validateStructure(kind string, payload connections.ConnectionPayload) error {
 	switch kind {
 	case connections.KindOpenAI:
 		return validateOpenAI(payload)
@@ -72,6 +79,14 @@ func validateModelProviderPayload(kind string, payload connections.ConnectionPay
 	default:
 		return ErrUnsupportedProviderKind(kind)
 	}
+}
+
+// validateModelProviderPayload performs network/liveness verification for the
+// provider (e.g. a test API call). It is skipped when SkipCredentialVerification
+// is set. Structural validation via validateStructure always runs first.
+func validateModelProviderPayload(kind string, payload connections.ConnectionPayload) error {
+	// Network-level verification will be added per provider in a follow-up.
+	return nil
 }
 
 func validateOpenAI(payload connections.ConnectionPayload) error {
