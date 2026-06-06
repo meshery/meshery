@@ -16,7 +16,7 @@
     {{- if $command.name }}
       <!-- Standard command structure (global, system, perf, adapter, etc.) -->
       <tr>
-        <td rowspan="100"><a href="/reference/mesheryctl/{{ if eq $command_name "global" }}main{{ else }}{{ $command_name }}{{ end }}">{{ $command.name }}</a></td>
+        <td rowspan="100"><a href="{{ printf "reference/mesheryctl/%s" (cond (eq $command_name "global") "main" $command_name) | relURL }}">{{ $command.name }}</a></td>
         <td></td>
         <td></td>
         <td>{{ $command.description }}</td>
@@ -37,7 +37,7 @@
       {{- if $command.subcommands }}
         {{- range $subkey, $subcommand := $command.subcommands }}
       <tr>
-        <td><a href="/reference/mesheryctl/{{ if eq $command_name "global" }}main{{ else }}{{ $command_name }}{{ end }}/{{ $subkey }}">{{ $subcommand.name }}</a></td>
+        <td><a href="{{ printf "reference/mesheryctl/%s/%s" (cond (eq $command_name "global") "main" $command_name) $subkey | relURL }}">{{ $subcommand.name }}</a></td>
         <td></td>
         <td>{{ $subcommand.description }}</td>
       </tr>
@@ -62,7 +62,7 @@
         {{- range $flagkey, $flag := $subcommand.flags }}
       <tr>
         {{- if $first }}
-        <td><a href="/reference/mesheryctl/{{ $command_name }}/{{ $subkey }}">{{ $subcommand.name }}</a></td>
+        <td><a href="{{ printf "reference/mesheryctl/%s/%s" $command_name $subkey | relURL }}">{{ $subcommand.name }}</a></td>
         {{- $first = false }}
         {{- else }}
         <td></td>
@@ -79,12 +79,12 @@
         {{- range $subsubkey, $subsubcommand := $subcommand.subcommands }}
       <tr>
         {{- if $first }}
-        <td><a href="/reference/mesheryctl/{{ $command_name }}/{{ $subkey }}">{{ $subcommand.name }}</a></td>
+        <td><a href="{{ printf "reference/mesheryctl/%s/%s" $command_name $subkey | relURL }}">{{ $subcommand.name }}</a></td>
         {{- $first = false }}
         {{- else }}
         <td></td>
         {{- end }}
-        <td><a href="/reference/mesheryctl/{{ $command_name }}/{{ $subkey }}/{{ $subsubkey }}">{{ $subsubcommand.name }}</a></td>
+        <td><a href="{{ printf "reference/mesheryctl/%s/%s/%s" $command_name $subkey $subsubkey | relURL }}">{{ $subsubcommand.name }}</a></td>
         <td></td>
         <td>{{ $subsubcommand.description }}</td>
       </tr>

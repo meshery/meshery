@@ -43,11 +43,11 @@
 <div id="tablesContainer"></div>
 
 <script type="module">
-  import { keys } from '/js/permission_constants.js';
+  import { keys } from '{{ "js/permission_constants.js" | relURL }}';
 
   window.onload = function () {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', '/excel/keys.csv', true);
+    xhr.open('GET', '{{ "excel/keys.csv" | relURL }}', true);
     xhr.responseType = 'arraybuffer';
 
     xhr.onload = function () {

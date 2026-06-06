@@ -19,11 +19,11 @@
             <div class="maincontainer">
                 <div class="componentimg">
                     <img id="logo-dark-light"
-                        src="/{{ .colorIcon }}"
+                        src="{{ .colorIcon | relURL }}"
                         alt="{{ .name }}"
                         onerror="handleImageError(this)"
-                        data-logo-for-dark="/{{ .whiteIcon }}"
-                        data-logo-for-light="/{{ .colorIcon }}" />
+                        data-logo-for-dark="{{ .whiteIcon | relURL }}"
+                        data-logo-for-light="{{ .colorIcon | relURL }}" />
                 </div>
                 <p class="Compitems">{{ .name }}</p>
             </div>

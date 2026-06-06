@@ -124,14 +124,14 @@
               <td style="white-space:nowrap;"><a href="https://github.com/meshery/meshery-{{ index .Params "service-mesh" | lower }}">{{ $comp }}</a></td>
               <td><a href="https://github.com/meshery/meshery-{{ index .Params "service-mesh" | lower }}/releases">{{ $version }}</a></td>
               <td><a href="https://github.com/meshery/meshery/releases/tag/{{ index .Params "meshery-server-version" }}">{{ index .Params "meshery-server-version" }}</a></td>
-              <td style="white-space: nowrap;"><img style="height: 2rem; vertical-align: text-bottom; margin-right: 8px;" src="/installation/compatibility-matrix/images/service-meshes/{{ index .Params "service-mesh" | lower }}.svg" /><a href="/extensions/adapters/{{ index .Params "service-mesh" | lower }}">{{ index .Params "service-mesh" }}</a></td>
+              <td style="white-space: nowrap;"><img style="height: 2rem; vertical-align: text-bottom; margin-right: 8px;" src="{{ printf "installation/compatibility-matrix/images/service-meshes/%s.svg" (index .Params "service-mesh" | lower) | relURL }}" /><a href="{{ printf "extensions/adapters/%s" (index .Params "service-mesh" | lower) | relURL }}">{{ index .Params "service-mesh" }}</a></td>
               <td>{{ index .Params "service-mesh-version" }}</td>
             </tr>
             <tr class="hidden-details" id="{{ $comp }}-edge" style="visibility:hidden; display:none;">
               <td colspan="2" class="details">
                 <i>Platform:</i>
                 <ul style="margin: 5px 0;">
-                  <li><img style="height: 1rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/kubernetes-icon-color.svg" /> {{ index .Params "k8s-distro" | default "Unknown" }} {{ index .Params "k8s-version" | default "" }}</li>
+                  <li><img style="height: 1rem; vertical-align: text-bottom;" src="{{ "installation/compatibility-matrix/images/service-meshes/kubernetes-icon-color.svg" | relURL }}" /> {{ index .Params "k8s-distro" | default "Unknown" }} {{ index .Params "k8s-version" | default "" }}</li>
                 </ul>
               </td>
               <td colspan="4" class="details">
@@ -186,14 +186,14 @@
             <td style="white-space:nowrap;"><a href="https://github.com/meshery/meshery-{{ index .Params "service-mesh" | lower }}">{{ $comp }}</a></td>
             <td><a href="https://github.com/meshery/meshery-{{ index .Params "service-mesh" | lower }}/releases/tag/{{ index .Params "meshery-component-version" }}">{{ index .Params "meshery-component-version" }}</a></td>
             <td><a href="https://github.com/meshery/meshery/releases/tag/{{ index .Params "meshery-server-version" }}">{{ index .Params "meshery-server-version" }}</a></td>
-            <td style="white-space:nowrap;"><img style="height: 2rem; vertical-align: text-bottom; margin-right: 8px;" src="/installation/compatibility-matrix/images/service-meshes/{{ index .Params "service-mesh" | lower }}.svg" /><a href="/extensions/adapters/{{ index .Params "service-mesh" | lower }}">{{ index .Params "service-mesh" }}</a></td>
+            <td style="white-space:nowrap;"><img style="height: 2rem; vertical-align: text-bottom; margin-right: 8px;" src="{{ printf "installation/compatibility-matrix/images/service-meshes/%s.svg" (index .Params "service-mesh" | lower) | relURL }}" /><a href="{{ printf "extensions/adapters/%s" (index .Params "service-mesh" | lower) | relURL }}">{{ index .Params "service-mesh" }}</a></td>
             <td>{{ index .Params "service-mesh-version" }}</td>
           </tr>
           <tr class="hidden-details" id="{{ $comp }}-stable" style="visibility:hidden; display:none;">
             <td colspan="2" class="details">
               <i>Platform:</i>
               <ul style="margin: 5px 0;">
-                <li><img style="height: 1rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/kubernetes-icon-color.svg" /> {{ index .Params "k8s-distro" | default "Unknown" }} {{ index .Params "k8s-version" | default "" }}</li>
+                <li><img style="height: 1rem; vertical-align: text-bottom;" src="{{ "installation/compatibility-matrix/images/service-meshes/kubernetes-icon-color.svg" | relURL }}" /> {{ index .Params "k8s-distro" | default "Unknown" }} {{ index .Params "k8s-version" | default "" }}</li>
               </ul>
             </td>
             <td colspan="4" class="details">
