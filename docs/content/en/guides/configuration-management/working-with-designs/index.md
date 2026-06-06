@@ -17,7 +17,7 @@ Meshery's core construct of configuration management is that of a design. A desi
 
 You are free to choose how you would like to create an infrastructure design. You can use the **Design Configurator** built into Meshery UI, or you can hand-code your design using the Meshery schema spec.
 
-See [Creating a Meshery Design](/guides/configuration-management/creating-a-meshery-design) for a step-by-step walkthrough. Use Meshery UI or `mesheryctl` to create and manage designs.
+See [Creating a Meshery Design]({{< ref "guides/configuration-management/creating-a-meshery-design/index.md" >}}) for a step-by-step walkthrough. Use Meshery UI or `mesheryctl` to create and manage designs.
 
 ## Pattern Management Through Meshery UI
 
@@ -55,7 +55,7 @@ mesheryctl design apply BookInfoApp
 
 This will apply the pattern BookInfoApp, which has already been imported into Meshery.
 
-See [mesheryctl design subcommand section](/reference/mesheryctl/#cloud-native-pattern-configuration-and-management) for more details on the `design` subcommand.
+See [mesheryctl design subcommand section]({{< ref "reference/mesheryctl/_index.md#cloud-native-pattern-configuration-and-management" >}}) for more details on the `design` subcommand.
 
 ## WASM Filters
 
@@ -69,7 +69,7 @@ Like patterns, Meshery also comes with some sample WebAssembly Filters for you t
 
 You can also import these filters manually to your provider from the [wasm-filters](https://github.com/meshery-extensions/wasm-filters) repo.
 
-Meshery's sample application [ImageHub](/guides/infrastructure-management/sample-apps) will let you test out configuring these filters out-of-the-box.
+Meshery's sample application [ImageHub]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}}) will let you test out configuring these filters out-of-the-box.
 
 You can onboard ImageHub to an installed service mesh as shown below.
 

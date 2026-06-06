@@ -8,20 +8,20 @@ image: /installation/kubernetes/images/aks.svg
 description: Manage your AKS clusters with Meshery. Deploy Meshery in AKS in-cluster or out-of-cluster.
 ---
 
-<h1>Quick Start with AKS <img src="/installation/kubernetes/images/aks.svg" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with AKS <img src="{{< relurl "installation/kubernetes/images/aks.svg" >}}" style="width:35px;height:35px;" /></h1>
 
 Manage your AKS clusters with Meshery. Deploy Meshery in AKS [in-cluster](#in-cluster-installation) or outside of AKS [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to install Meshery in your AKS clusters_**
 
 <div class="prereqs"><h4>Prerequisites</h4>
 <ol>
-<li>Install the Meshery command line client, <a href="/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
+<li>Install the Meshery command line client, <a href="{{< ref "installation/mesheryctl.md" >}}" class="meshery-light">mesheryctl</a>.</li>
 <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
 <li>Install <a href="https://learn.microsoft.com/en-us/cli/azure/install-azure-cli">Azure CLI</a>, configured for your environment.</li>
 <li>Access to an active AKS cluster in one of your resource groups.</li>
 </ol>
 </div>
 
-Also see: [Install Meshery on Kubernetes](/installation/kubernetes)
+Also see: [Install Meshery on Kubernetes]({{< ref "installation/kubernetes/_index.md" >}})
 
 ## Available Deployment Methods
 
@@ -62,11 +62,11 @@ Once configured, execute the following command to start Meshery.
 
 {{< code code="mesheryctl system start" >}}
 
-If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here](/guides/mesheryctl/authenticate-with-meshery-via-cli) to learn more.
+If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli.md" >}}) to learn more.
 
 ### Installation: Using Helm
 
-For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
+For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide.
 
 ## Post-Installation Steps
 

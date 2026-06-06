@@ -14,7 +14,7 @@ Patterns are essentially atomic designs with one or more components made in comp
 
 ## Use Meshery to Deploy a Cloud Native Pattern
 
-Use Meshery to deploy a cloud native pattern. Cloud native patterns are detailed as a YAML file. See the [Configuration Management](/guides/configuration-management) guide.
+Use Meshery to deploy a cloud native pattern. Cloud native patterns are detailed as a YAML file. See the [Configuration Management]({{< ref "guides/configuration-management/_index.md" >}}) guide.
 
 ### Pattern Repository
 
@@ -78,4 +78,4 @@ Deployed. Endpoint(s) available at: http://localhost:8000/catalog
 
 ## Related Reading
 
-- [`mesheryctl design`](/reference/mesheryctl/design)
+- [`mesheryctl design`]({{< ref "reference/mesheryctl/design/_index.md" >}})

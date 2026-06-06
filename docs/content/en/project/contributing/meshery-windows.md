@@ -169,11 +169,11 @@ Launch Git Bash, PowerShell or VS Code Terminal and run the following commands t
 </pre>
 
 If any of these result in command not found error, check if the PATH in environment variables has been set properly. To launch the environment variables window Here's an example:
-<a href="/project/contributing/images/win-environment-variables.png">
-  <img style= "max-width: 450px;" src="/project/contributing/images/win-environment-variables.png" />
+<a href="{{< relurl "project/contributing/images/win-environment-variables.png" >}}">
+  <img style= "max-width: 450px;" src="{{< relurl "project/contributing/images/win-environment-variables.png" >}}" />
 </a>
 
-You are now ready to [contribute](/project/contributing/) to Meshery.
+You are now ready to [contribute]({{< ref "project/contributing/_index.md" >}}) to Meshery.
 
 
 ## Using Hyper-V to install a linux VM

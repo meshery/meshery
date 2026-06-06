@@ -28,13 +28,13 @@ It is recommended to deploy one Meshery Operator per cluster.
 
 Meshery broker is one of the core components of the meshery architecture. This controller manages the lifecycle of broker that meshery uses for data streaming across the cluster and the outside world.
 
-See [Meshery Broker](/concepts/architecture/broker) for more information.
+See [Meshery Broker]({{< ref "concepts/architecture/broker/index.md" >}}) for more information.
 
 ### MeshSync Controller
 
 MeshSync Controller manages the lifecycle of MeshSync that is deployed for resource synchronization for the cluster.
 
-See [MeshSync](/concepts/architecture/meshsync) for more information.
+See [MeshSync]({{< ref "concepts/architecture/meshsync/index.md" >}}) for more information.
 
 ## Operator FAQs
 
@@ -94,6 +94,6 @@ To verify that your Meshery Operator and related components are functioning prop
 - Confirm that your cluster has appropriate RBAC permissions set.
 - Validate that Meshery Server is able to communicate with Meshery Operator.
 
-If you're seeing issues with **Meshery Operator**, **MeshSync**, or the **Broker**, refer to the [Meshery Troubleshooting Guide](/guides/troubleshooting/meshery-operator-meshsync).
+If you're seeing issues with **Meshery Operator**, **MeshSync**, or the **Broker**, refer to the [Meshery Troubleshooting Guide]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}}).
 
 Whether you're facing installation issues, resource syncing failures, or Broker communication problems, the guide walks you through how to identify and fix them effectively.

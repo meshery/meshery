@@ -56,7 +56,7 @@ Using Meshery extensions you can freely collaborate across projects and team wit
 
 **Design patterns and Meshery Catalog**
 
-Through [Models](/concepts/logical/models), Meshery describes infrastructure under management, enabling you to define cloud native designs and patterns and then to export those designs and share within the <a href="https://meshery.io/catalog" target="_self_">Meshery Catalog</a>.
+Through [Models]({{< ref "concepts/logical/models/index.md" >}}), Meshery describes infrastructure under management, enabling you to define cloud native designs and patterns and then to export those designs and share within the <a href="https://meshery.io/catalog" target="_self_">Meshery Catalog</a>.
 
 
 <!-- 

@@ -37,8 +37,8 @@ There are a few ways to set up the Meshery UI and server, but for end-to-end tes
 
 {{% alert color="warning" title="Several Test may break" %}}
 Some test cases required you to have kubernetes cluster and build meshery adapter as well, be aware of that. Which is out of scope for this documentation
-<ul><li><a href="/installation/kubernetes/minikube">Kubernetes Cluster</a>: Installation of kubernetes cluster with Minikube.</li>
-<li><a href="/installation/multiple-adapters">Meshery Adapters</a>: Using Multiple Adapters</li></ul>
+<ul><li><a href="{{< ref "installation/kubernetes/minikube.md" >}}">Kubernetes Cluster</a>: Installation of kubernetes cluster with Minikube.</li>
+<li><a href="{{< ref "installation/multiple-adapters.md" >}}">Meshery Adapters</a>: Using Multiple Adapters</li></ul>
 {{% /alert %}}
 
 ### Native OS Build (Recommended)
@@ -190,4 +190,4 @@ To filter and view only UI-related tests using the Sheet Views feature:
 1. In the top menu bar, click Data → Change view
 2. Choose the pre-defined view labeled "UI"
 
-![Meshery Test Plan Screenshot](/project/contributing/images/meshery-test-plan-v0.8.0-ui.png)
+![Meshery Test Plan Screenshot]({{< relurl "project/contributing/images/meshery-test-plan-v0.8.0-ui.png" >}})

@@ -27,7 +27,7 @@ Use the arrow keys to navigate: ↓ ↑ → ←
   -rw-rw-r-- 1 ubuntu ubuntu 988 Dec 21 06:04 meshery.yaml
   ```
 
-  **_The need for authentication to `Meshery` [provider](/extensibility/providers) is to save your environment setup while also having persistent/steady sessions and to be able to retrieve performance test results._**
+  **_The need for authentication to `Meshery` [provider]({{< ref "reference/extensibility/providers/index.md" >}}) is to save your environment setup while also having persistent/steady sessions and to be able to retrieve performance test results._**
 
 - Selecting _None_ will create an empty `auth.json` file. All your work remains local and ephemeral. 
 
@@ -36,19 +36,19 @@ If `mesheryctl` is running in a system that does not have a browser, you can dow
 1. Navigate to [https://cloud.meshery.io/security/tokens](https://cloud.meshery.io/security/tokens) and sign-in.
 Ensure you are in the right organization and click **Create**.
 
-<a href="/guides/mesheryctl/images/create-token.png"><img alt="Create Token" src="/guides/mesheryctl/images/create-token.png" /></a>
+<a href="{{< relurl "guides/mesheryctl/images/create-token.png" >}}"><img alt="Create Token" src="{{< relurl "guides/mesheryctl/images/create-token.png" >}}" /></a>
 
 2. Provide a token name and purpose. Click **Create** to generate.
 
-    <a href="/guides/mesheryctl/images/generate-token.png"><img alt="Generate Token" src="/guides/mesheryctl/images/generate-token.png" /></a>
+    <a href="{{< relurl "guides/mesheryctl/images/generate-token.png" >}}"><img alt="Generate Token" src="{{< relurl "guides/mesheryctl/images/generate-token.png" >}}" /></a>
 
 3. Click the **Download** icon to download the `auth.json` file.
 
-    <a href="/guides/mesheryctl/images/download-token.png"><img alt="Download Token" src="/guides/mesheryctl/images/download-token.png" /></a>
+    <a href="{{< relurl "guides/mesheryctl/images/download-token.png" >}}"><img alt="Download Token" src="{{< relurl "guides/mesheryctl/images/download-token.png" >}}" /></a>
 
 Then run `mesheryctl system check` to ensure you do not see an authentication error.   
 
-For an exhaustive list of `mesheryctl` commands and syntax, visit [`mesheryctl` Command Reference](/reference/mesheryctl).
+For an exhaustive list of `mesheryctl` commands and syntax, visit [`mesheryctl` Command Reference]({{< ref "reference/mesheryctl/_index.md" >}}).
 
 {{< related-discussions tag="mesheryctl" >}}
 

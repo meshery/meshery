@@ -26,19 +26,19 @@ Meshery UI and Provider UI use [Next.js](https://nextjs.org/) with [SWC](https:/
 
 Meshery UI uses a schema-driven approach where components and forms are generated from JSON schemas. This enables dynamic UI adaptation, consistent validation, and type-safety across the application.
 
-**⚠️ Required Reading:** Before contributing, you must read the [Schema-Driven UI Development Guide](/project/contributing/contributing-ui-schemas) to understand how Meshery's UI components are generated and maintained using schemas.
+**⚠️ Required Reading:** Before contributing, you must read the [Schema-Driven UI Development Guide]({{< ref "project/contributing/contributing-ui-schemas.md" >}}) to understand how Meshery's UI components are generated and maintained using schemas.
 
 ## Meshery Server APIs
 
-The [API overview](/extensibility/api) in the Extensibility guide offers high-level insight, while each API reference (below) offers details pertaining to each API endpoints' behavior and use.
+The [API overview]({{< ref "reference/extensibility/api/index.md" >}}) in the Extensibility guide offers high-level insight, while each API reference (below) offers details pertaining to each API endpoints' behavior and use.
 
 ### REST API
 
-Meshery provides a REST API available through the default port of `9081/tcp` at `<hostname>:<port>/api/`. See the [REST API Reference](/reference/rest-apis) for a complete list of endpoints available with short description of their purpose and example code.
+Meshery provides a REST API available through the default port of `9081/tcp` at `<hostname>:<port>/api/`. See the [REST API Reference]({{< ref "reference/rest-apis/_index.md" >}}) for a complete list of endpoints available with short description of their purpose and example code.
 
 ### GraphQL API
 
-Meshery provides a GraphQl API available through the default port of `9081/tcp` at `<hostname>:<port>/api/graphql/query`. See the [GraphQL API Reference](/reference/graphql-apis) [Relay](https://relay.dev) is the client used.
+Meshery provides a GraphQl API available through the default port of `9081/tcp` at `<hostname>:<port>/api/graphql/query`. See the [GraphQL API Reference]({{< ref "reference/graphql-apis.md" >}}) [Relay](https://relay.dev) is the client used.
 
 ## Design
 
@@ -104,8 +104,8 @@ Now, Meshery will run on the default port `http://localhost:9081`.
 
 **Please note**: If you see "Meshery Development Incompatible" while trying to sign into Meshery Server, then follow these steps:
 
-<a href="/project/contributing/images/meshery-development-incompatible-error.png">
-  <img style= "width: 600px;" src="/project/contributing/images/meshery-development-incompatible-error.png" />
+<a href="{{< relurl "project/contributing/images/meshery-development-incompatible-error.png" >}}">
+  <img style= "width: 600px;" src="{{< relurl "project/contributing/images/meshery-development-incompatible-error.png" >}}" />
 </a>
 
 Potential Solution:

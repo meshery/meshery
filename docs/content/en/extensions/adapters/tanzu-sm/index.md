@@ -16,5 +16,5 @@ aliases:
 
 ### Suggested Reading
 
-- Examine [Meshery's architecture](/concepts/architecture) and how adapters fit in as a component.
-- Learn more about [Meshery Adapters](/concepts/architecture/adapters).
+- Examine [Meshery's architecture]({{< ref "concepts/architecture/_index.md" >}}) and how adapters fit in as a component.
+- Learn more about [Meshery Adapters]({{< ref "concepts/architecture/adapters/index.md" >}}).

@@ -83,7 +83,7 @@ docker-desktop</div></div>
 
 Once Meshery is installed, the remote provider "Meshery" can be chosen from UI or by using the command `mesheryctl system login`:
 
-![Providers](/guides/troubleshooting/images/provider_screenshot.png)
+![Providers]({{< relurl "guides/troubleshooting/images/provider_screenshot.png" >}})
 
 ```bash
 ➜  ~ mesheryctl system login
@@ -101,9 +101,9 @@ time="2021-11-10T11:05:30Z" level=error msg="[Initialize Provider]: Failed to ge
 
 For more details about Meshery Providers:
 
-- [Extensibility: Providers](/extensibility/providers)
+- [Extensibility: Providers]({{< ref "reference/extensibility/providers/index.md" >}})
 
 ## See Also
 
-- [Meshery Error Code Reference](/reference/error-codes)
+- [Meshery Error Code Reference]({{< ref "reference/error-codes.md" >}})
 

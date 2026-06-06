@@ -47,7 +47,7 @@ Using the Meshery dashboard, you can get a copy of your authentication token by 
 
 2. Navigate to your user's avatar in the upper righthand corner and select "Get Token" from the dropdown of profile section:
 
-<a href="/reference/images/MesheryTokenUI.png"><img alt="Meshery Dashboard" src="/reference/images/MesheryTokenUI.png" width="680" height="400"/></a>
+<a href="{{< relurl "reference/images/MesheryTokenUI.png" >}}"><img alt="Meshery Dashboard" src="{{< relurl "reference/images/MesheryTokenUI.png" >}}" width="680" height="400"/></a>
 <br/>
 
 </details>

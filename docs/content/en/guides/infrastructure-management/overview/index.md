@@ -14,7 +14,7 @@ Meshery is a versatile platform designed to streamline the lifecycle, configurat
 
 ### Designs in Meshery
 
-Meshery employs the concept of [Designs](/concepts/logical/designs) as a fundamental construct for managing infrastructure. Designs provide a structured way to organize and deploy various components of your infrastructure. To do so, Meshery utilizes a declarative approach to infrastructure management, similar to Kubernetes manifests. Meshery Designs are written in YAML and are validated against a schema.
+Meshery employs the concept of [Designs]({{< ref "concepts/logical/designs/index.md" >}}) as a fundamental construct for managing infrastructure. Designs provide a structured way to organize and deploy various components of your infrastructure. To do so, Meshery utilizes a declarative approach to infrastructure management, similar to Kubernetes manifests. Meshery Designs are written in YAML and are validated against a schema.
 
 #### Importing Existing Infrastructure and Applications
 
@@ -26,7 +26,7 @@ Meshery facilitates the import of infrastructure in multiple formats, including 
 - Docker Compose
 
 
-See [Importing Designs](/extensions/import-export-designs) for more information.
+See [Importing Designs]({{< ref "guides/configuration-management/import-export-a-design/import-export-designs.md" >}}) for more information.
 
 
 <details>

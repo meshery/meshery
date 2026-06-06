@@ -90,7 +90,7 @@ Name: **"Meshery"** (default), URL: `https://cloud.meshery.io`
 - Long-term term persistence.
 - Save environment setup.
 - Retrieve performance test results.
-- Events are stored locally and can be published to remote provider. [Read more about server events](/project/contributing/contributing-server-events)
+- Events are stored locally and can be published to remote provider. [Read more about server events]({{< ref "project/contributing/contributing-server-events.md" >}})
 
 Name: **"Digital Ocean"**, URL: `https://meshery.digitalocean.com`
 
@@ -105,7 +105,7 @@ Name: **"Acme"**
 - Long-term term persistence.
 - Save environment setup.
 - Retrieve performance test results.
-- Events are stored locally and can be published to remote provider. [Read more about server events](/project/contributing/contributing-server-events)
+- Events are stored locally and can be published to remote provider. [Read more about server events]({{< ref "project/contributing/contributing-server-events.md" >}})
 - Free to use.
 
 ### Local Provider
@@ -119,7 +119,7 @@ Name: **"Local"** (legacy alias: **"None"**)
 - Container-local storage of test results. Ephemeral.
 - Environment setup not saved.
 - No performance test result history.
-- Server events are stored locally in database. [Read more about server events](/project/contributing/contributing-server-events)
+- Server events are stored locally in database. [Read more about server events]({{< ref "project/contributing/contributing-server-events.md" >}})
 - Free to use.
 
 #### Login Behavior

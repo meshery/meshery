@@ -7,7 +7,7 @@ aliases:
 - /extensions/edges-shape-guide/
 ---
 
-In Meshery, the line that connects [components](/concepts/logical/components) is called an **edge**. Each edge visually represents a [relationship](/concepts/logical/relationships) and uses a specific style to communicate its nature.
+In Meshery, the line that connects [components]({{< ref "concepts/logical/components/index.md" >}}) is called an **edge**. Each edge visually represents a [relationship]({{< ref "concepts/logical/relationships/index.md" >}}) and uses a specific style to communicate its nature.
 
 This guide helps you interpret the most common edge styles you will encounter.
 

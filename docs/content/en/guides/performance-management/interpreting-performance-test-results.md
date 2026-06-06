@@ -8,9 +8,9 @@ Once a performance tests and run, it's disco analysis is performed and test resu
 
 ## Graphical View
 
-<img src="/guides/performance-management/images/performance-dashboard.png" />
+<img src="{{< relurl "guides/performance-management/images/performance-dashboard.png" >}}" />
 
-<img src="/guides/performance-management/images/chart.png" />
+<img src="{{< relurl "guides/performance-management/images/chart.png" >}}" />
 
 ## Tests
 

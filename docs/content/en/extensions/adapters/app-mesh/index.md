@@ -22,13 +22,13 @@ aliases:
 
 ### Sample Applications
 
-- [Emojivoto](/guides/infrastructure-management/sample-apps#emojivoto)
+- [Emojivoto]({{< ref "guides/infrastructure-management/sample-apps/index.md#emojivoto" >}})
 
   - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
 
-- [Bookinfo](/guides/infrastructure-management/sample-apps#bookinfo)
+- [Bookinfo]({{< ref "guides/infrastructure-management/sample-apps/index.md#bookinfo" >}})
 
-- [Httpbin](/guides/infrastructure-management/sample-apps#httpbin)
+- [Httpbin]({{< ref "guides/infrastructure-management/sample-apps/index.md#httpbin" >}})
 
   - Httpbin is a simple HTTP request and response service.
 

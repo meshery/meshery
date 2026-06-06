@@ -8,7 +8,7 @@ aliases:
 
 Ever wondered what the different icons and shapes in Meshery represent? Whether you're looking at a dashboard, a settings page, or a design, you'll encounter a rich library of visual elements. This guide is here to help you understand what they mean.
 
-The [components](/concepts/logical/components) in Meshery fall into two fundamental categories, distinguished by whether they can be orchestrated (managed) by Meshery during deployment:
+The [components]({{< ref "concepts/logical/components/index.md" >}}) in Meshery fall into two fundamental categories, distinguished by whether they can be orchestrated (managed) by Meshery during deployment:
 
 - **Semantic Components (Orchestratable):** These represent actual infrastructure resources that Meshery can understand and manage during deployment. Examples include Kubernetes resources (like Pods and Services), databases, and other infrastructure components. Meshery will actively manage their lifecycle during deployment.
 
@@ -20,7 +20,7 @@ All components, whether semantic or non-semantic, support rich visual customizat
 
 ## Semantic Components
 
-These components represent real infrastructure that Meshery can manage. They can be either built-in (like Kubernetes components) or custom components that you [create](/guides/configuration-management/creating-models).
+These components represent real infrastructure that Meshery can manage. They can be either built-in (like Kubernetes components) or custom components that you [create]({{< ref "guides/configuration-management/creating-models/index.md" >}}).
 
 ### Kubernetes Components
 

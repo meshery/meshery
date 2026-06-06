@@ -8,20 +8,20 @@ image: /installation/kubernetes/images/eks.png
 description: Install Meshery on Elastic Kubernetes Service. Deploy Meshery in EKS in-cluster or outside of EKS out-of-cluster.
 ---
 
-<h1>Quick Start with EKS <img src="/installation/kubernetes/images/eks.png" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with EKS <img src="{{< relurl "installation/kubernetes/images/eks.png" >}}" style="width:35px;height:35px;" /></h1>
 
 Manage your EKS clusters with Meshery. Deploy Meshery in EKS [in-cluster](#in-cluster-installation) or outside of EKS [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to install Meshery in your EKS clusters_**
 
 <div class="prereqs"><h4>Prerequisites</h4>
   <ol>
-    <li>Install the Meshery command line client, <a href="/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
+    <li>Install the Meshery command line client, <a href="{{< ref "installation/mesheryctl.md" >}}" class="meshery-light">mesheryctl</a>.</li>
     <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
     <li>Install <a href="https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html">AWS CLI</a>, configured for your environment.</li>
     <li>Access to an active EKS cluster in an AWS account.</li>
   </ol>
 </div>
 
-Also see: [Install Meshery on Kubernetes](/installation/kubernetes)
+Also see: [Install Meshery on Kubernetes]({{< ref "installation/kubernetes/_index.md" >}})
 
 ### Available Deployment Methods
 
@@ -56,7 +56,7 @@ Execute <a href='/reference/mesheryctl/system/start'>mesheryctl system start</a>
 
 ## Installation: Using Helm
 
-For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
+For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide.
 
 ## Post-Installation Steps
 

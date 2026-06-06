@@ -11,15 +11,15 @@ This guide walks through running performance benchmarks using Meshery. Users can
 
 ## Installing Meshery
 
-Install and login to Meshery to start running performance benchmarks. See [Installation](/installation) documentation for detailed steps on how to install Meshery.
+Install and login to Meshery to start running performance benchmarks. See [Installation]({{< ref "installation/_index.md" >}}) documentation for detailed steps on how to install Meshery.
 
 _Meshery dashboard_
 
-<a href="/guides/performance-management/images/smi-dashboard.png"><img alt="Meshery Dashboard" src="/guides/performance-management/images/smi-dashboard.png" /></a>
+<a href="{{< relurl "guides/performance-management/images/smi-dashboard.png" >}}"><img alt="Meshery Dashboard" src="{{< relurl "guides/performance-management/images/smi-dashboard.png" >}}" /></a>
 
 If you are looking to run performance benchmarks on cloud native infrastructur, you can use Meshery's cloud native infrastructurelifecycle management capabilities to deploy all kinds of cloud native infrastructure on Kubernets. With Meshery's performance benchmarking feature, you can also deploy you application off the mesh and compare the performance and determine the overhead when the app runs on the mesh.
 
-Next, we navigate to the main Performance Testing dashboard. See [Performance Management](/guides/performance-management/managing-performance) to learn more about performance profiles, load generators, Kubernetes cluster, and all kinds of cloud native infrastructure metrics.
+Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{< ref "guides/performance-management/managing-performance.md" >}}) to learn more about performance profiles, load generators, Kubernetes cluster, and all kinds of cloud native infrastructure metrics.
 
 ## Running Performance Benchmarks Through Meshery UI
 
@@ -29,29 +29,29 @@ On the navigation menu, click on performance.
 
 This will open the performance management dashboard as shown below.
 
-<a href="/guides/performance-management/images/performance-management-dashboard.png"><img alt="Performance Management Dashboard" src="/guides/performance-management/images/performance-management-dashboard.png" /></a>
+<a href="{{< relurl "guides/performance-management/images/performance-management-dashboard.png" >}}"><img alt="Performance Management Dashboard" src="{{< relurl "guides/performance-management/images/performance-management-dashboard.png" >}}" /></a>
 
 _Performance Management Dashboard_
 
 To create a performance profile, click on "Manage Profiles" and then select "+ Add Performance Profile".
 
-<a href="/guides/performance-management/images/performance-profiles.png"><img alt="Performance Profiles" src="/guides/performance-management/images/performance-profiles.png" /></a>
+<a href="{{< relurl "guides/performance-management/images/performance-profiles.png" >}}"><img alt="Performance Profiles" src="{{< relurl "guides/performance-management/images/performance-profiles.png" >}}" /></a>
 
 _Performance Profiles_
 
 This will open up a popup window where you can fill out the test configuration for running your benchmarks.
 
-<a href="/guides/performance-management/images/running-tests.png"><img alt="Performance Test Configuration" src="/guides/performance-management/images/running-tests.png" /></a>
+<a href="{{< relurl "guides/performance-management/images/running-tests.png" >}}"><img alt="Performance Test Configuration" src="{{< relurl "guides/performance-management/images/running-tests.png" >}}" /></a>
 
 _Configuring a Performance Test_
 
 You can now save the profile and run the test. The test will continue to run in the background even if you close the popup.
 
-<a href="/guides/performance-management/images/running-tests-spinner.png"><img alt="Running a performance test" src="/guides/performance-management/images/running-tests-spinner.png" /></a>
+<a href="{{< relurl "guides/performance-management/images/running-tests-spinner.png" >}}"><img alt="Running a performance test" src="{{< relurl "guides/performance-management/images/running-tests-spinner.png" >}}" /></a>
 
 Once the test is done, you would be able to see the results of the test below.
 
-<a href="/guides/performance-management/images/result-chart.png"><img alt="Running a performance test" src="/guides/performance-management/images/result-chart.png" /></a>
+<a href="{{< relurl "guides/performance-management/images/result-chart.png" >}}"><img alt="Running a performance test" src="{{< relurl "guides/performance-management/images/result-chart.png" >}}" /></a>
 
 _Performance Test Results_
 
@@ -59,11 +59,11 @@ You can then go back to your performance profile and get these results anytime.
 
 You can also compare different test results in Meshery and draw insights. For example, you can run this test with your application running on different cloud native infrastructure and check which performs better.
 
-<a href="/guides/performance-management/images/comparison-table.png"><img alt="Comparing Test Results" src="/guides/performance-management/images/comparison-table.png" /></a>
+<a href="{{< relurl "guides/performance-management/images/comparison-table.png" >}}"><img alt="Comparing Test Results" src="{{< relurl "guides/performance-management/images/comparison-table.png" >}}" /></a>
 
 _Selecting multiple test results_
 
-<a href="/guides/performance-management/images/comparison.png"><img alt="Comparing Test Results" src="/guides/performance-management/images/comparison.png" /></a>
+<a href="{{< relurl "guides/performance-management/images/comparison.png" >}}"><img alt="Comparing Test Results" src="{{< relurl "guides/performance-management/images/comparison.png" >}}" /></a>
 
 _Comparing multiple test results_
 
@@ -127,7 +127,7 @@ Download the token from the Meshery Dashboard by clicking on the profile icon on
 
 _Downloading the token_
 
-<a href="/guides/performance-management/images/download-token.png"><img alt="SMI Conformance Test Results" src="/guides/performance-management/images/download-token.png" /></a>
+<a href="{{< relurl "guides/performance-management/images/download-token.png" >}}"><img alt="SMI Conformance Test Results" src="{{< relurl "guides/performance-management/images/download-token.png" >}}" /></a>
 
 You can use this token to authenticate the instance of Meshery running in your CI/CD workflow.
 

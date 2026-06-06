@@ -47,8 +47,8 @@ Once registered with Meshery Server (in the [Registry](./registry)), components 
 
 Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates.
 
-<!-- [![Meshery Components](/assets/img/architecture/meshery-components.svg
-)](/assets/img/architecture/meshery-components.svg) -->
+<!-- [![Meshery Components]({{< relurl "assets/img/architecture/meshery-components.svg" >}}
+)]({{< relurl "assets/img/architecture/meshery-components.svg" >}}) -->
 <!-- 
  @leecalcote - This is mumbo jumbo to users and needs to be re-written.
 
@@ -58,5 +58,5 @@ Components have a status that is represented as a `Connection` object. Both the 
 
 Normalizing and extracting the status of a component as a direct property of the component and putting it into a connection allows multiple systems to share the same component with different states. For example, different Meshery Servers can access the same Kubernetes cluster, but each Meshery Server has its own connection to the cluster with its own status.
 
-Learn more about [Connections](/concepts/logical/connections).
+Learn more about [Connections]({{< ref "concepts/logical/connections/index.md" >}}).
 -->

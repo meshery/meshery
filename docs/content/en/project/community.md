@@ -10,7 +10,7 @@ Meshery is a CNCF project maintained by engineers from Layer5, VMware, Red Hat, 
 
 Get involved with Meshery and supporting projects. Start by reading through the [Newcomers Guide](https://meshery.io/community), which provides details on how to participate. Seek out other community members, who will make sure you are not left out. We always have a role for everyone whether to be a code-writer, a community manager, user, advocate, or just to listen in. The Meshery community is always open and warmly welcomes you.  If this is your first time making open source contribution, you are in the right place!
 
-Please see our [contributing guide](/project/contributing) for specific details about setting up your development environment and to start learning the innerworkings of a specific Meshery component.
+Please see our [contributing guide]({{< ref "project/contributing/_index.md" >}}) for specific details about setting up your development environment and to start learning the innerworkings of a specific Meshery component.
 
 #### Community First
 

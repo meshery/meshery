@@ -42,7 +42,7 @@ This is useful when:
 
 ## Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment using [mesheryctl system check](/reference/mesheryctl/system/check).
+Optionally, you can verify the health of your Meshery deployment using [mesheryctl system check]({{< ref "reference/mesheryctl/system/check.md" >}}).
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 

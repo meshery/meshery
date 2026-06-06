@@ -11,9 +11,9 @@ display_title: false
 # Importing and Exporting Designs
 
 Meshery supports two primary operations for working with designs: **Import** and **Export**.
-A **[design](/concepts/logical/designs)** in Meshery is a structured model describing how various components (e.g., Kubernetes manifests, Helm charts, or Docker Compose objects) should be managed and deployed. This document details the core concepts, the import/export processes, and the available methods to perform them.
+A **[design]({{< ref "concepts/logical/designs/index.md" >}})** in Meshery is a structured model describing how various components (e.g., Kubernetes manifests, Helm charts, or Docker Compose objects) should be managed and deployed. This document details the core concepts, the import/export processes, and the available methods to perform them.
 
-As a refresher, [designs](/concepts/logical/designs) consist of:
+As a refresher, [designs]({{< ref "concepts/logical/designs/index.md" >}}) consist of:
 
 - **Components**: Defined resources or services (e.g., Deployments, Services).
 - **Relationships**: Possible connections or dependencies among components (e.g., hierarchical, sibling, edge).
@@ -35,7 +35,7 @@ When **exporting** a design, Meshery:
 
 ## Import Methods
 
-You can import designs into Meshery through either **[Meshery CLI](/reference/mesheryctl)** or **Meshery UI**.
+You can import designs into Meshery through either **[Meshery CLI]({{< ref "reference/mesheryctl/_index.md" >}})** or **Meshery UI**.
 
 ### 1. Using Meshery CLI
 

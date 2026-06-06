@@ -19,11 +19,11 @@ aliases:
 
 The Meshery Adapter for Traefik Mesh includes some sample applications operations. Meshery can be used to deploy any of these sample applications.
 
-- [Bookinfo](/guides/infrastructure-management/sample-apps)
-- [Httpbin](/guides/infrastructure-management/sample-apps)
+- [Bookinfo]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
+- [Httpbin]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
   - Httpbin is a simple HTTP request and response service.
 
 ## Suggested Topics
 
-- Examine [Meshery's architecture](/concepts/architecture) and how adapters fit in as a component.
-- Learn more about [Meshery Adapters](/concepts/architecture/adapters).
+- Examine [Meshery's architecture]({{< ref "concepts/architecture/_index.md" >}}) and how adapters fit in as a component.
+- Learn more about [Meshery Adapters]({{< ref "concepts/architecture/adapters/index.md" >}}).

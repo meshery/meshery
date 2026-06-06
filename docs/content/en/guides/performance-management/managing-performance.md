@@ -23,7 +23,7 @@ Performance Profile is a new and improved way to save performance test configura
 
 Meshery provides users with a choice about the kind of load generator they prefer to use for a given performance test. Users may set their configure based on their own preference of load generator different from that of the default load generator.
 
-Meshery supports the following load generators and is [extendible](/extensibility) to support others:
+Meshery supports the following load generators and is [extendible]({{< ref "reference/extensibility/_index.md" >}}) to support others:
 
 - [fortio](#fortio)
 
@@ -62,8 +62,8 @@ Meshery provides performance test results alongside environment metrics, includi
 
 Connect Meshery to your existing Grafana instance. Meshery will auto-import the boards of your choosing:
 
-<a href="/guides/performance-management/images/meshery-and-grafana.png">
-    <img src="/guides/performance-management/images/meshery-and-grafana.png" style="width: 52%" />
+<a href="{{< relurl "guides/performance-management/images/meshery-and-grafana.png" >}}">
+    <img src="{{< relurl "guides/performance-management/images/meshery-and-grafana.png" >}}" style="width: 52%" />
 </a>
 
 ### Connecting to Grafana

@@ -10,7 +10,7 @@ aliases:
     <div style="flex: 4;">
         <h1>MeshSync</h1>
         <p>
-        MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of managed multi-cloud and cloud native infrastructure. It operates in one of two modes: operator or embedded. When it runs in operator mode, it is managed by the <a href="/concepts/architecture/operator">Meshery Operator</a>.
+        MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of managed multi-cloud and cloud native infrastructure. It operates in one of two modes: operator or embedded. When it runs in operator mode, it is managed by the <a href="{{< ref "concepts/architecture/operator/index.md" >}}">Meshery Operator</a>.
         </p>
     </div>
 </div>
@@ -92,7 +92,7 @@ For efficient management of large Kubernetes clusters, MeshSync uses tiered disc
 
 ## Event-Driven Implementation
 
-Meshery's event-driven approach ensures high-speed operations, making it suitable for managing both small and large clusters. [Meshery Broker](/concepts/architecture/broker) uses NATS as the messaging bus to ensure continuous communication between MeshSync and Meshery Server. In case of connectivity interruptions, MeshSync data is persisted in NATS topics.
+Meshery's event-driven approach ensures high-speed operations, making it suitable for managing both small and large clusters. [Meshery Broker]({{< ref "concepts/architecture/broker/index.md" >}}) uses NATS as the messaging bus to ensure continuous communication between MeshSync and Meshery Server. In case of connectivity interruptions, MeshSync data is persisted in NATS topics.
 
 # MeshSync deployment mode
 
@@ -100,7 +100,7 @@ MeshSync operates in one of two modes: operator or embedded.
 
 ## Operator mode (default)
 
-When it runs in operator mode, it is managed by the <a href="/concepts/architecture/operator">Meshery Operator</a>.
+When it runs in operator mode, it is managed by the <a href="{{< ref "concepts/architecture/operator/index.md" >}}">Meshery Operator</a>.
 
 ## Embedded mode
 
@@ -120,7 +120,7 @@ When the deployment mode is switched from embedded to operator: the MeshSync lib
 
 ## How to configure MeshSync's resource discovery behavior: Can specific, "uninteresting" resources be blacklisted?
 
-MeshSync is managed by [Meshery Operator](/concepts/architecture/operator), which watches for changes on the meshsync CRD for changes and updates the deployed MeshSync instance accordingly. You can blacklist specific Kubernetes resources from being discovered and watched by MeshSync. In order to identify the list of one or more resources for MeshSync to ignore, update the meshsync CRD using kubectl:
+MeshSync is managed by [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}), which watches for changes on the meshsync CRD for changes and updates the deployed MeshSync instance accordingly. You can blacklist specific Kubernetes resources from being discovered and watched by MeshSync. In order to identify the list of one or more resources for MeshSync to ignore, update the meshsync CRD using kubectl:
 
 - Download the CRD with kubectl get crd meshsyncs.meshery.io -o yaml > meshsync.yaml
 - Open the downloaded file and edit the field informer_config to blacklist all the types of resources that you don't want updates from.
@@ -128,7 +128,7 @@ MeshSync is managed by [Meshery Operator](/concepts/architecture/operator), whic
 
 
 {{% alert color="info" title="Still seeing issues?" %}}
-Check the [**Meshery Troubleshooting Guide**](/guides/troubleshooting/meshery-operator-meshsync) for help with common issues.
+Check the [**Meshery Troubleshooting Guide**]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}}) for help with common issues.
 {{% /alert %}}
 
 

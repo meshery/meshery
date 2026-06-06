@@ -230,7 +230,7 @@ Whenever the code tags are detected, the clipboard javascript file is automatica
 ## Documentation Contribution Flow Summary
 
 {{% alert color="light" title="Note" %}}
-For contributing `mesheryctl` reference section, refer [Contributing CLI](/project/contributing/contributing-cli)
+For contributing `mesheryctl` reference section, refer [Contributing CLI]({{< ref "project/contributing/contributing-cli.md" >}})
 {{% /alert %}}
 
 
@@ -372,11 +372,17 @@ Other supported alert colors include `warning`, `danger`,`success`,`primary`, `s
 
 Control image display in documentation pages using the following methods.
 
+Use the following URL handling rules when linking documentation resources:
+
+- Content page: use `ref`.
+- Page-bundle asset adjacent to `index.md` or `_index.md`: use a relative path, such as `images/foo.webp`.
+- Global shared asset under `static/`: use the `static` shortcode, such as `{{</* static "images/logo.png" */>}}`.
+
 #### Default Image Size in Markdown Format
 
 Using the Markdown image syntax:
 
-{{< code code="[![Image Title](/assets/img/your-image.png)](/assets/img/your-image.png)" >}}
+{{< code code=`[![Image Title]({{</* static "assets/img/your-image.png" */>}})]({{</* static "assets/img/your-image.png" */>}})` >}}
 
 This renders as:
 
@@ -412,7 +418,7 @@ You can include block quotes to emphasize text.
 
 ### Adding Integration Specific Information to Individual Integration Pages
 
-Integration pages ([example](/extensibility/integrations/aws)) are automatically generated, however, integration specific documentation is often needed.
+Integration pages ([example]({{< ref "extensions/models/aws/index.md" >}})) are automatically generated, however, integration specific documentation is often needed.
 
 [modelscustominfo](https://github.com/meshery/meshery/tree/master/docs/data/modelscustominfo) collection holds custom markdown files. Follow these steps:
 
@@ -434,7 +440,7 @@ title: Azure Active Directory (AAD)
 ```
 
 In this example, the heading "<b>Azure Active Directory</b>" will be displayed on the integration page:
-[Azure Active Directory Integration Page](/extensibility/integrations/aad-pod-identity)
+[Azure Active Directory Integration Page]({{< ref "extensions/models/aad-pod-identity/index.md" >}})
 
 ### Suggested Reading
 

@@ -9,7 +9,7 @@ aliases:
 
 A Meshery Design is the primary unit of configuration management in Meshery. It is a declarative document that describes the desired state of your infrastructure and applications — the components you want, their configuration, and their relationships. Designs can be deployed, shared, versioned, exported, and imported.
 
-See [Meshery Designs](/concepts/logical/designs) for a full description of design capabilities.
+See [Meshery Designs]({{< ref "concepts/logical/designs/index.md" >}}) for a full description of design capabilities.
 
 ## Ways to Create a Design
 
@@ -103,7 +103,7 @@ mesheryctl design apply MyDesignName
 mesheryctl design list
 ```
 
-See the [`mesheryctl design` reference](/reference/mesheryctl/design) for the full subcommand reference.
+See the [`mesheryctl design` reference]({{< ref "reference/mesheryctl/design/_index.md" >}}) for the full subcommand reference.
 
 ---
 
@@ -121,8 +121,8 @@ You can also import community designs from the [Meshery Catalog](https://meshery
 
 ## Related
 
-- [Meshery Designs concept](/concepts/logical/designs)
-- [Importing Designs](/guides/configuration-management/importing-models)
-- [Deploying a Design](/guides/configuration-management/working-with-designs)
-- [`mesheryctl design` reference](/reference/mesheryctl/design)
+- [Meshery Designs concept]({{< ref "concepts/logical/designs/index.md" >}})
+- [Importing Designs]({{< ref "guides/configuration-management/importing-models/index.md" >}})
+- [Deploying a Design]({{< ref "guides/configuration-management/working-with-designs/index.md" >}})
+- [`mesheryctl design` reference]({{< ref "reference/mesheryctl/design/_index.md" >}})
 - [Meshery Catalog](https://meshery.io/catalog)

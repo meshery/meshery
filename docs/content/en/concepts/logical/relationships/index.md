@@ -17,7 +17,7 @@ Meshery recognizes that relationships exist in various forms and that the existe
 - **Increased Flexibility:** The use of selectors, actions, and operators provides flexibility in defining and managing relationships.
 
 {{% alert color="dark" title="Contributor Guide to Meshery Relationships" %}}
-If you want to create a new relationship definition or modify existing relationship definitions, see the [Contributing to Meshery Relationships](/project/contributing/contributing-relationships) guide.
+If you want to create a new relationship definition or modify existing relationship definitions, see the [Contributing to Meshery Relationships]({{< ref "project/contributing/contributing-relationships.md" >}}) guide.
 {{% /alert %}}
 
 ## Types of Relationships
@@ -29,7 +29,7 @@ Meshery supports different types of relationships to cater to various use cases:
 - **Edge Relationships:** These represent relationships that are visually depicted as edges connecting components in Meshery. Edge relationships are used to define how components interact with each other, such as network connections, bindings, or permissions. They are also used to identify interdependencies between components.
 - **TagSets Relationships:** These represent relationships between components of same Labels or Annotations key/value pairs. Labels and Annotations are two different types of Tags. Labels are often used to identify components and are visible on the design canvas. Annotations are often used to provide additional information about components.
  
-Relationships are categorized into different kinds, types, and subtypes, so that they can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpreted by Meshery UI (or other [extensions](/extensibility/extensions)) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of ways in which relationships are represented in Meshery.
+Relationships are categorized into different kinds, types, and subtypes, so that they can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpreted by Meshery UI (or other [extensions]({{< ref "extensions/_index.md" >}})) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of ways in which relationships are represented in Meshery.
 
 
 <!-- Broadly, here is a list of the different types of relationships that Meshery supports:
@@ -341,7 +341,7 @@ To explore an example of this behavior, see the [Example Edge-Permission Relatio
 
 When the relationships are created by the user, almost in all cases the config of the involved components are patched. To see the specifics of patching refer [Patch Strategies](#patch-strategies).
 
-Designs are evaluated by the [Policy Engine](/concepts/logical/policies) for potential relationships.
+Designs are evaluated by the [Policy Engine]({{< ref "concepts/logical/policies/index.md" >}}) for potential relationships.
 
 <!-- Explain how and what configs get patched when relationships are created -->
 <!-- Explain real time evaluation of relationships on -->

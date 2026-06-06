@@ -62,8 +62,8 @@ mesheryctl system update --skip-reset
 ## Screenshots
 
 Usage of mesheryctl system update
-![update-usage](/reference/reference/images/update.png)
+![update-usage]({{< relurl "reference/reference/images/update.png" >}})
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/contributing-cli/index.md#preserving-manually-added-documentation" >}}) for guidance.

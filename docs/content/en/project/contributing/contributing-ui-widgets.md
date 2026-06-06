@@ -157,8 +157,8 @@ Meshery stores user layout preferences either in local storage or via the provid
 
 This is how your default widget would appear in the dashboard:
 
-<a href="/project/contributing/images/dashboard-widgets.png">
-<img style= "width: 600px;" src="/project/contributing/images/dashboard-widgets.png" />
+<a href="{{< relurl "project/contributing/images/dashboard-widgets.png" >}}">
+<img style= "width: 600px;" src="{{< relurl "project/contributing/images/dashboard-widgets.png" >}}" />
 </a>
 
 ---

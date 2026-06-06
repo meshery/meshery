@@ -115,13 +115,13 @@ When using build-time extensions:
 
 ### Comparison with Runtime Extension Points
 
-Meshery supports multiple [extension points](/extensibility) at different stages:
+Meshery supports multiple [extension points]({{< ref "reference/extensibility/_index.md" >}}) at different stages:
 
 | Extension Point | When | Use Case |
 |----------------|------|----------|
-| **[Build-time](/extensibility/build-time)** | During `docker build` | Pre-package custom configurations, offline packages, proprietary plugins |
-| **[Boot-time](/extensibility)** | Container startup | Dynamic configuration that can change between deployments |
-| **[Runtime](/extensibility)** | While Meshery is running | User-installed plugins, dynamically loaded extensions |
+| **[Build-time]({{< ref "reference/extensibility/build-time/index.md" >}})** | During `docker build` | Pre-package custom configurations, offline packages, proprietary plugins |
+| **[Boot-time]({{< ref "reference/extensibility/_index.md" >}})** | Container startup | Dynamic configuration that can change between deployments |
+| **[Runtime]({{< ref "reference/extensibility/_index.md" >}})** | While Meshery is running | User-installed plugins, dynamically loaded extensions |
 
 Choose the build-time extension point when you need to:
 - Bundle organization-specific customizations in a custom container image

@@ -63,8 +63,8 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 ## Screenshots
 
 Usage of mesheryctl adapter validate
-![mesh-validate-usage](/reference/reference/images/mesh-validate.png)
+![mesh-validate-usage]({{< relurl "reference/reference/images/mesh-validate.png" >}})
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/contributing-cli/index.md#preserving-manually-added-documentation" >}}) for guidance.

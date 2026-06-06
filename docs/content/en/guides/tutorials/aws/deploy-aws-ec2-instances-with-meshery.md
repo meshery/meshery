@@ -19,7 +19,7 @@ In this guide, you'll explore how to deploy AWS resources, including setup and a
 
 ### Prerequisites
 
-1. [Self Hosted Meshery Installation](/installation).
+1. [Self Hosted Meshery Installation]({{< ref "installation/_index.md" >}}).
 1. **AWS Account**: An active AWS account is required for accessing AWS resources.
 1. **Kubernetes Cluster**: A running Kubernetes cluster, such as Minikube or EKS.
 
@@ -59,9 +59,9 @@ To begin, connect your Kubernetes cluster to Meshery. This guide uses `minikube`
 - **In-Cluster Deployment**: Deploys Meshery within the Kubernetes cluster using Helm inside the meshery namespace.
 - **Out-of-Cluster Deployment**: Runs Meshery in Docker containers, allowing external connectivity to the Minikube cluster.
 
-For this guide, the `in-cluster deployment` method is used.  Follow this [setup guide for Meshery on Minikube](/installation/kubernetes/minikube) to deploy Meshery in-cluster. After the deployment, open the Meshery UI at `localhost:9081` to verify that the cluster is listed. Click on the cluster name to ping and confirm connectivity.
+For this guide, the `in-cluster deployment` method is used.  Follow this [setup guide for Meshery on Minikube]({{< ref "installation/kubernetes/minikube.md" >}}) to deploy Meshery in-cluster. After the deployment, open the Meshery UI at `localhost:9081` to verify that the cluster is listed. Click on the cluster name to ping and confirm connectivity.
 
-![Connect Minikube Cluster](/guides/tutorials/aws/images/aws-controllers/aws-connection.png)
+![Connect Minikube Cluster]({{< relurl "guides/tutorials/aws/images/aws-controllers/aws-connection.png" >}})
 
 ### 2. Configure and Deploy the EC2 Controller
 

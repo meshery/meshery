@@ -12,7 +12,7 @@ Use Minikube in GitHub Codespaces to setup your development environment for Mesh
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisites</strong> </p> 
   <ol>
-    <li>Install the Meshery command line client, <a href="/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
+    <li>Install the Meshery command line client, <a href="{{< ref "installation/mesheryctl.md" >}}" class="meshery-light">mesheryctl</a>.</li>
   </ol>
 </div>
 
@@ -68,11 +68,11 @@ Once configured, execute the following command to start Meshery.
 
 {{< code code="mesheryctl system start" >}}
 
-If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here](/guides/mesheryctl/authenticate-with-meshery-via-cli) to learn more.
+If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli.md" >}}) to learn more.
 
 ## Installation: Using Helm
 
-For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
+For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide.
 
 ## Installation: Manual Steps
 
@@ -109,7 +109,7 @@ _Note_: Make sure _current-context_ is set to _minikube_.
 {{< code code="kubectl config view --minify --flatten > config_minikube.yaml" >}}
 
 <br />
-Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides](/guides) for advanced usage tips.
+Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{< ref "guides/_index.md" >}}) for advanced usage tips.
 
 # Post-Installation Steps
 

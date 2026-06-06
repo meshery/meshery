@@ -9,13 +9,13 @@ description: Install Meshery on Kubernetes. Deploy Meshery in Kubernetes in-clus
 weight: 15
 ---
 
-<h1>Quick Start with Kubernetes <img src="/installation/kubernetes/images/kubernetes.svg" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with Kubernetes <img src="images/kubernetes.svg" style="width:35px;height:35px;" /></h1>
 
 Manage your Kubernetes clusters with Meshery. Deploy Meshery in Kubernetes [in-cluster](#in-cluster-installation) or outside of Kubernetes [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to install Meshery in your Kubernetes clusters_**
 
 <div class="prereqs"><h4>Prerequisites</h4>
   <ol>
-    <li>Install the Meshery command line client, <a href="/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
+    <li>Install the Meshery command line client, <a href="{{< ref "installation/mesheryctl.md" >}}" class="meshery-light">mesheryctl</a>.</li>
     <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
     <li>Access to an active Kubernetes cluster.</li>
   </ol>
@@ -59,7 +59,7 @@ Before executing the below command, go to ~/.meshery/config.yaml and ensure that
 
 ## Installation: Using Helm
 
-For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
+For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide.
 
 ## Post-Installation Steps
 

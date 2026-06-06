@@ -3,9 +3,9 @@ title: Contributing to Model Components
 description: How to contribute to Meshery Model Components
 categories: [contributing]
 ---
-**Components are defined by schemas.** Each component's structure, capabilities, and metadata follow the [Component schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/component) in `meshery/schemas`. When creating or modifying components, ensure they conform to the schema specification. See [Contributing to Schemas](/project/contributing/contributing-schemas) for details.
+**Components are defined by schemas.** Each component's structure, capabilities, and metadata follow the [Component schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/component) in `meshery/schemas`. When creating or modifying components, ensure they conform to the schema specification. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.
 
-In Meshery, a [Components](/concepts/logical/components) is a fundamental building block used to represent and define the infrastructure under management. Each component provides granular and specific support for your infrastructure and applications. Once registered with Meshery Server (in the [Registry](/concepts/logical/registry)), components are available for inclusion in [Designs](/concepts/logical/designs) that you create. Components can be created and published by anyone, allowing you to share you custom extensions with the community.
+In Meshery, a [Components]({{< ref "concepts/logical/components/index.md" >}}) is a fundamental building block used to represent and define the infrastructure under management. Each component provides granular and specific support for your infrastructure and applications. Once registered with Meshery Server (in the [Registry]({{< ref "concepts/logical/registry/index.md" >}})), components are available for inclusion in [Designs]({{< ref "concepts/logical/designs/index.md" >}}) that you create. Components can be created and published by anyone, allowing you to share you custom extensions with the community.
 
 ## Overview of Steps to Create Components
 
@@ -57,7 +57,7 @@ Meshery contributors who want to customize the visual representation of a Mesher
 * **Primary Color**: The primary color used for the component in hex format.
 * **Secondary Color**: The secondary color used for the component in hex format.
 * **Shape**: The basic shape of the component, such as a circle or square.
-* **isAnnotation**: A boolean value that indicates whether the component is an annotation or is [semantically meaningful](/concepts/logical/components).
+* **isAnnotation**: A boolean value that indicates whether the component is an annotation or is [semantically meaningful]({{< ref "concepts/logical/components/index.md" >}}).
 
 <details>
 <summary>Example Component Metadata</summary>
@@ -98,7 +98,7 @@ Component icons will be written to the `/meshmodel/components/<model-name>/icon/
 
 ### 3. Create a Component Definition as a JSON file
 
-Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models](/project/contributing/contributing-models)). Relationship definition files are commonly named  `relationships.yaml` as a convention, however, this name is not required. A model may include any number of relationship definitions. Include the following attributes in your relationship definition:
+Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models]({{< ref "project/contributing/contributing-models.md" >}})). Relationship definition files are commonly named  `relationships.yaml` as a convention, however, this name is not required. A model may include any number of relationship definitions. Include the following attributes in your relationship definition:
 
 - `kind`: The genre of component (e.g., `Pod`).
 - `model`: The model to which the component belongs (e.g., `kubernetes`).

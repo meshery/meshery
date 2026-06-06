@@ -8,7 +8,7 @@ image: /installation/kubernetes/images/minikube.png
 description: Install Meshery on Minikube. Deploy Meshery in Minikube in-cluster or outside of Minikube out-of-cluster.
 ---
 
-<h1>Quick Start with Minikube <img src="/installation/kubernetes/images/minikube.png" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with Minikube <img src="{{< relurl "installation/kubernetes/images/minikube.png" >}}" style="width:35px;height:35px;" /></h1>
 
 Meshery can manage your minikube clusters and is particularly useful for multi-cluster management and deployments.
 
@@ -25,14 +25,14 @@ After your cluster has been added as a connection, you can use Meshery to make i
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisites</strong> </p> 
   <ol>
-    <li>Install the Meshery command-line client, <a href="/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
+    <li>Install the Meshery command-line client, <a href="{{< ref "installation/mesheryctl.md" >}}" class="meshery-light">mesheryctl</a>.</li>
     <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
     <li>Install <a href="https://minikube.sigs.k8s.io/docs/start/?arch=%2Fmacos%2Fx86-64%2Fstable%2Fbinary+download"> Minikube</a> on your local machine.</li>
     <li>Install <a href="https://helm.sh/docs/intro/install/">Helm</a>.</li>
   </ol>
 </div>
 
-Also see: [Install Meshery on Kubernetes](/installation/kubernetes)
+Also see: [Install Meshery on Kubernetes]({{< ref "installation/kubernetes/_index.md" >}})
 
 ## Available Deployment Methods
 
@@ -87,7 +87,7 @@ To verify your deployment, run:
 After deployment, access the Meshery UI using port forwarding, with the command:
 
 {{< code code="mesheryctl system dashboard --port-forward" >}}
-For detailed instructions on port forwarding, refer to the [port-forwarding](/reference/mesheryctl/system/dashboard) guide.
+For detailed instructions on port forwarding, refer to the [port-forwarding]({{< ref "reference/mesheryctl/system/dashboard.md" >}}) guide.
 
 By default, Meshery auto-detects your Minikube cluster and establishes a connection. However, if this doesn’t happen, you can connect by running the following command:
 
@@ -95,12 +95,12 @@ By default, Meshery auto-detects your Minikube cluster and establishes a connect
 
 The `mesheryctl system config minikube` command properly configures and uploads your kubeconfig file to the Meshery UI.
 
-<a href="/installation/kubernetes/images/minikube-upload.png"><img alt="Minikube KubeConfig Upload" style="width:500px;height:auto;" src="/installation/kubernetes/images/minikube-upload.png" /></a>
+<a href="{{< relurl "installation/kubernetes/images/minikube-upload.png" >}}"><img alt="Minikube KubeConfig Upload" style="width:500px;height:auto;" src="{{< relurl "installation/kubernetes/images/minikube-upload.png" >}}" /></a>
 
 ## Installation: Using Helm
 
 You can deploy Meshery directly using the Helm CLI.
-For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
+For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide.
 
 # Out-of-cluster Installation
 

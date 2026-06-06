@@ -8,20 +8,20 @@ image: /installation/kubernetes/images/gke.png
 description: Install Meshery on Google Kubernetes Engine. Deploy Meshery in GKE in-cluster or outside of GKE out-of-cluster.
 ---
 
-<h1>Quick Start with GKE <img src="/installation/kubernetes/images/gke.png" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with GKE <img src="{{< relurl "installation/kubernetes/images/gke.png" >}}" style="width:35px;height:35px;" /></h1>
 
 Manage your GKE clusters with Meshery. Deploy Meshery in GKE [in-cluster](#in-cluster-installation) or outside of GKE [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to install Meshery in your GKE clusters_**
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisites</strong> </p> 
   <ol>
-    <li>Install the Meshery command line client, <a href="/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
+    <li>Install the Meshery command line client, <a href="{{< ref "installation/mesheryctl.md" >}}" class="meshery-light">mesheryctl</a>.</li>
     <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
     <li>Install <a href="https://cloud.google.com/sdk/docs/install">gcloud CLI</a>, configured for your environment.</li>
     <li>Access to an active GKE cluster in your Google Cloud project.</li>
   </ol>
 </div>
 
-Also see: [Install Meshery on Kubernetes](/installation/kubernetes)
+Also see: [Install Meshery on Kubernetes]({{< ref "installation/kubernetes/_index.md" >}})
 
 ## Available Deployment Methods
 
@@ -57,8 +57,8 @@ Read through the following considerations prior to deploying Meshery on GKE.
 
 ### Preflight: Plan your access to Meshery UI
 
-1. If you are using port-forwarding, please refer to the [port-forwarding](/reference/mesheryctl/system/dashboard) guide for detailed instructions.
-2. If you are using a LoadBalancer, please refer to the [LoadBalancer](/installation/kubernetes#exposing-meshery-serviceloadbalancer) guide for detailed instructions.
+1. If you are using port-forwarding, please refer to the [port-forwarding]({{< ref "reference/mesheryctl/system/dashboard.md" >}}) guide for detailed instructions.
+2. If you are using a LoadBalancer, please refer to the [LoadBalancer]({{< ref "installation/kubernetes/_index.md#exposing-meshery-serviceloadbalancer" >}}) guide for detailed instructions.
 3. Customize your Meshery Provider Callback URL. Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way:
 
 {{< code code="MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start" >}}
@@ -75,11 +75,11 @@ Once configured, execute the following command to start Meshery.
 
 {{< code code="mesheryctl system start" >}}
 
-If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here](/guides/mesheryctl/authenticate-with-meshery-via-cli) to learn more.
+If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli.md" >}}) to learn more.
 
 ## Installation: Using Helm
 
-For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
+For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide.
 
 ## Post-Installation Steps
 

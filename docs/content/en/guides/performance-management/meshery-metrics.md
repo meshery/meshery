@@ -17,14 +17,14 @@ Prometheus Metrics
 
 <p>User needs to set the Prometheus URL and API key to create and query boards.</p>
 
-<img src="/guides/performance-management/images/PrometheusCharts.svg" alt="Prometheus Metrics in Meshery" />
+<img src="{{< relurl "guides/performance-management/images/PrometheusCharts.svg" >}}" alt="Prometheus Metrics in Meshery" />
 
 <!-- tab -->
 Grafana Charts
 
 <p>User needs to set the Grafana URL and API key to create and query boards.</p>
 
-<img src="/guides/performance-management/images/GrafanaBoards.svg" alt="Grafana Charts in Meshery" />
+<img src="{{< relurl "guides/performance-management/images/GrafanaBoards.svg" >}}" alt="Grafana Charts in Meshery" />
 
 <!-- tab -->
 Static Boards

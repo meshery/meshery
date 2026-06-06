@@ -25,7 +25,7 @@ See this [RJSF Component](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80
 
 ### Extensibility: User Accounts
 
-Meshery Server uses [Providers](/extensibility/providers) for identity management. Providers can implement the `user_account` extension to handle custom user management scenarios. The user avatar behavior, which changes based on the user's status, can be customized by extending the [User Component](https://github.com/meshery/meshery/blob/7de49ef4928f114080f923f2ad261f4433ca91d6/ui/components/User.js#L46).
+Meshery Server uses [Providers]({{< ref "reference/extensibility/providers/index.md" >}}) for identity management. Providers can implement the `user_account` extension to handle custom user management scenarios. The user avatar behavior, which changes based on the user's status, can be customized by extending the [User Component](https://github.com/meshery/meshery/blob/7de49ef4928f114080f923f2ad261f4433ca91d6/ui/components/User.js#L46).
 
 
 ###  Build-Time UI Extensibility

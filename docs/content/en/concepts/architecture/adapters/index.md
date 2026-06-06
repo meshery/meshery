@@ -29,11 +29,11 @@ Like every Meshery component, Meshery Adapters use MeshKit.
 
 #### Is each Meshery adapter made equal?
 
-No, different Meshery adapters are written to expose the unique value of each cloud native infrastructure. Consequently, they are not equally capable just as each cloud native infrastructure is not equally capable as the other. Each Adapter has a set of operations which are grouped based on predefined operation types. See the [extensibility](/extensibility) page for more details on adapter operations.
+No, different Meshery adapters are written to expose the unique value of each cloud native infrastructure. Consequently, they are not equally capable just as each cloud native infrastructure is not equally capable as the other. Each Adapter has a set of operations which are grouped based on predefined operation types. See the [extensibility]({{< ref "reference/extensibility/_index.md" >}}) page for more details on adapter operations.
 
 #### How can I create a new adapter?
 
-Yes, see the [extensibility](/extensibility) documentation for details how to create a new Meshery Adapter. See the Meshery Adapter Template repository as boilerplate for your new adapter.
+Yes, see the [extensibility]({{< ref "reference/extensibility/_index.md" >}}) documentation for details how to create a new Meshery Adapter. See the Meshery Adapter Template repository as boilerplate for your new adapter.
 
 #### Do adapters have to be written in Golang?
 
@@ -43,4 +43,4 @@ No. Adapters much interface with Meshery Server via gRPC. What language is used 
 
 Yes. The default configuration of a Meshery deployment includes one instance of each of the Meshery adapters (that have reached a stable version status). You may choose to run multiple instances of the same type of Meshery adapter; e.g. two instances of the `meshery-istio` adapter. To do so, modify ~/.meshery/meshery.yaml to include multiple copies of the given adapter.
 
-See the "[Multiple Adapters](/installation/multiple-adapters)" guide for more information.
+See the "[Multiple Adapters]({{< ref "installation/multiple-adapters.md" >}})" guide for more information.

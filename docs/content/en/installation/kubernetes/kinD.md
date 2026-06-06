@@ -8,19 +8,19 @@ image: /installation/kubernetes/images/kind.png
 description: Install Meshery on KinD. Deploy Meshery in KinD in-cluster or outside of KinD out-of-cluster.
 ---
 
-<h1>Quick Start with KinD <img src="/installation/kubernetes/images/kind.png" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with KinD <img src="{{< relurl "installation/kubernetes/images/kind.png" >}}" style="width:35px;height:35px;" /></h1>
 
 Manage your KinD clusters with Meshery. Deploy Meshery in your [KinD cluster](#in-cluster-installation).
 
 <div class="prereqs"><h4>Prerequisites</h4>
 <ol>
-<li>Install the Meshery command line client, <a href="/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
+<li>Install the Meshery command line client, <a href="{{< ref "installation/mesheryctl.md" >}}" class="meshery-light">mesheryctl</a>.</li>
 <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
 <li>Install <a href="https://kind.sigs.k8s.io/docs/user/quick-start/#installation">KinD</a> on your local machine.</li>
 </ol>
 </div>
 
-Also see: [Install Meshery on Kubernetes](/installation/kubernetes)
+Also see: [Install Meshery on Kubernetes]({{< ref "installation/kubernetes/_index.md" >}})
 
 ## Available Deployment Methods
 
@@ -78,7 +78,7 @@ With your KIND cluster configured as your `current-context`, start Meshery.
 
 ### Alternative Installation: Using Helm
 
-See [Helm Installation](/installation/kubernetes/helm) guide.
+See [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide.
 
 ### Post-Installation Steps
 

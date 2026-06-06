@@ -7,7 +7,7 @@ aliases:
 
 ## Meshery's APIs
 
-Each of Meshery's APIs are subject to the following authentication and authorization system. The REST and GraphQL APIs are available on the same network port you use to connect to Meshery UI, which is `9081/tcp` by default. Each of the API endpoints are exposed through [server.go](https://github.com/meshery/meshery/blob/master/server/router/server.go). Endpoints are grouped by function (e.g. `/api/system/version`). Additionally, [Remote Providers](/extensibility/providers) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
+Each of Meshery's APIs are subject to the following authentication and authorization system. The REST and GraphQL APIs are available on the same network port you use to connect to Meshery UI, which is `9081/tcp` by default. Each of the API endpoints are exposed through [server.go](https://github.com/meshery/meshery/blob/master/server/router/server.go). Endpoints are grouped by function (e.g. `/api/system/version`). Additionally, [Remote Providers]({{< ref "reference/extensibility/providers/index.md" >}}) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
 
 ### API Reference
 
@@ -17,7 +17,7 @@ REST API | fa fa-cube
 <p>Meshery Server's REST API is available at <code>http://[hostname]:[port]/api/</code>.</p>
 
 {{% alert color="dark" title="Meshery's REST API Reference" %}}
-See [REST API Reference](/reference/rest-apis) Self-generated API documentation for Meshery's REST API. Documentation is generated from Meshery's Open API schema.
+See [REST API Reference]({{< ref "reference/rest-apis/_index.md" >}}) Self-generated API documentation for Meshery's REST API. Documentation is generated from Meshery's Open API schema.
 {{% /alert %}}
 
 <!-- tab -->
@@ -32,7 +32,7 @@ GraphQL API | fa fa-globe
 <p>Explore the Meshery GraphQL API using the interactive Playground provided with Meshery instance at http://localhost:9081/api/system/graphql/playground.</p>
 
 {{% alert color="dark" title="Meshery's GraphQL API Reference" %}}
-See [GraphQL API Reference](/reference/graphql-apis) Self-generated API documentation for Meshery's GraphQL API. The API can be explored interactively using the GraphQL Playground. Documentation is generated from Meshery's GraphQL schema. Each table below documents a GraphQL type.
+See [GraphQL API Reference]({{< ref "reference/graphql-apis.md" >}}) Self-generated API documentation for Meshery's GraphQL API. The API can be explored interactively using the GraphQL Playground. Documentation is generated from Meshery's GraphQL schema. Each table below documents a GraphQL type.
 {{% /alert %}}
 {{< /tabs >}}
 
@@ -41,7 +41,7 @@ See [GraphQL API Reference](/reference/graphql-apis) Self-generated API document
 Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. Type of authentication is determined by the selected [Provider](#providers). Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication.
 
 {{% alert color="dark" title="What are authentication tokens?" %}}
-Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, [Meshery CLI](/reference/mesheryctl) and [UI](/extensibility/api#how-to-get-your-token), or its two APIs: [REST](/reference/rest-apis) or [GraphQL](/reference/graphql-apis). 
+Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, [Meshery CLI]({{< ref "reference/mesheryctl/_index.md" >}}) and [UI]({{< ref "reference/extensibility/api/index.md#how-to-get-your-token" >}}), or its two APIs: [REST]({{< ref "reference/rest-apis/_index.md" >}}) or [GraphQL]({{< ref "reference/graphql-apis.md" >}}). 
 
 Meshery's authentication token system provide secure access to Meshery's powerful management features.
 {{% /alert %}}

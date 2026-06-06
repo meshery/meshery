@@ -21,23 +21,23 @@ This tutorial assumes that you have created a design or have an existing one. If
    
 3. Click the download icon next to **Embed Design** from the list.
    
-   ![Embed Design](/guides/tutorials/images/embedding-design-in-wordpress/embeddesign.png)
+   ![Embed Design]({{< relurl "guides/tutorials/images/embedding-design-in-wordpress/embeddesign.png" >}})
 
 4. This will show the `js` file to download and the HTML code snipped to copy.
    
-   ![Embed Design](/guides/tutorials/images/embedding-design-in-wordpress/embeddesign-HTML.png)
+   ![Embed Design]({{< relurl "guides/tutorials/images/embedding-design-in-wordpress/embeddesign-HTML.png" >}})
 
 5. Now, head over to WordPress and begin by uploading the `js` file to it. Ideally you will upload it to Media.
    
-   ![Upload to WordPress](/guides/tutorials/images/embedding-design-in-wordpress/upload-js-wordpress.png)
+   ![Upload to WordPress]({{< relurl "guides/tutorials/images/embedding-design-in-wordpress/upload-js-wordpress.png" >}})
 
 6. Next, click on the uploaded file in WordPress and copy the File URL. You will need this later.
    
-   ![Copy URL](/guides/tutorials/images/embedding-design-in-wordpress/copy-url.png)
+   ![Copy URL]({{< relurl "guides/tutorials/images/embedding-design-in-wordpress/copy-url.png" >}})
 
 7. Open the WordPress post where you want to embed the design in edit mode and add a _Custom HTML_ block.
 
-   ![Copy URL](/guides/tutorials/images/embedding-design-in-wordpress/add-custom-html.png)
+   ![Copy URL]({{< relurl "guides/tutorials/images/embedding-design-in-wordpress/add-custom-html.png" >}})
 
 8. Paste the following CSS code as it is, followed by the **Embed Code** copied from **Meshery Design Configurator**. Update the script source value to the URL copied from WordPress.  
    ```
@@ -74,11 +74,11 @@ This tutorial assumes that you have created a design or have an existing one. If
     <div id="embedded-design-a1376b51-d2c4-4ef8-8337-6dc2c24fa939"></div>
     <script src="https://yourwordpressdomain/wp-content/uploads/2025/01/embedded-design-tutorial-exploring-kubernetes-pod.js" type="module" ></script>
     ```
-   ![Copy URL](/guides/tutorials/images/embedding-design-in-wordpress/meshery-design-custom-html.png)
+   ![Copy URL]({{< relurl "guides/tutorials/images/embedding-design-in-wordpress/meshery-design-custom-html.png" >}})
 
 9. Click **Preview** to validate that the design is rendered.
    
-   ![Copy URL](/guides/tutorials/images/embedding-design-in-wordpress/embedded-design-preview.png)
+   ![Copy URL]({{< relurl "guides/tutorials/images/embedding-design-in-wordpress/embedded-design-preview.png" >}})
 
 10. Publish the WordPress post and share.
 
