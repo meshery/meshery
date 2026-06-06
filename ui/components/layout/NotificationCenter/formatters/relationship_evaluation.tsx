@@ -335,13 +335,15 @@ export const RelationshipEvaluationTraceFormatter = ({ actions, design }) => {
 };
 
 export const RelationshipEvaluationEventFormatter = ({ event }) => {
+  const evaluationResponse =
+    event?.metadata?.evaluationResponse || event?.metadata?.evaluation_response;
   return (
     <ErrorBoundary>
       <Box sx={{ mt: 2 }}>
         <Typography variant="body1">{event.description}</Typography>
         <RelationshipEvaluationTraceFormatter
-          actions={event?.metadata?.evaluation_response?.actions || []}
-          design={event?.metadata?.evaluation_response?.design || {}}
+          actions={evaluationResponse?.actions || []}
+          design={evaluationResponse?.design || {}}
         />
       </Box>
     </ErrorBoundary>
