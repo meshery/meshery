@@ -137,10 +137,9 @@ jobs:
           HUGO_ENV: production
           HUGO_PREVIEW: "true"
         run: |
-          cd docs
-          npm run build:production -- --gc --baseURL "/"
-          find public -maxdepth 1 -type d -name 'v0.*' -exec rm -rf {} +
-          cat > public/robots.txt <<'ROBOTS'
+          make docs-build-production BASE_URL="/${{ github.event.repository.name }}/pr-preview/pr-${{ github.event.pull_request.number }}/"
+          find docs/public -maxdepth 1 -type d -name 'v0.*' -exec rm -rf {} +
+          cat > docs/public/robots.txt <<'EOF'
           User-agent: *
           Disallow: /
           ROBOTS
