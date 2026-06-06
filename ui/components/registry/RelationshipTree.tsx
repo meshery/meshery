@@ -55,9 +55,9 @@ const RelationshipTree = ({
               });
             }}
           >
-            {relationshipByKind.relationships.map((relationship, relIndex) => (
+            {relationshipByKind.relationships.map((relationship) => (
               <StyledTreeItem
-                key={relIndex}
+                key={relationship.id}
                 itemId={`${idForKind}.${relationship.id}`}
                 data-id={`${idForKind}.${relationship.id}`}
                 labelText={`${relationship.subType} (${relationship.model.name})`}

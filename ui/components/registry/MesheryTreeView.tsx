@@ -71,10 +71,7 @@ const MesheryTreeView = React.memo(
     const [selected, setSelected] = React.useState<string[]>([]);
     const { width } = useWindowDimensions();
     const [isSearchExpanded, setIsSearchExpanded] = useState(searchText ? true : false);
-    const [prevState, setPrevState] = useState<{ data: any[]; uuid: string }>({
-      data: [],
-      uuid: '',
-    });
+
     const scrollRef = useRef<number | null>(null);
     // Stable ref so the deep-link useEffect can read showDetailsData without
     // subscribing to it as a dependency (which would cause an infinite loop).
@@ -157,17 +154,6 @@ const MesheryTreeView = React.memo(
     };
 
     useEffect(() => {
-      // Use referential equality for the data guard — O(1), no recursive traversal.
-      // JSON.stringify on 300+ deeply nested model objects overflows the call stack.
-      // This is safe because the parent memoizes modifyData() via useMemo, so the
-      // reference only changes when resourcesDetail / view / checked actually change.
-      if (prevState.data === data && prevState.uuid === selectedItemUUID) {
-        return;
-      }
-
-      // Update the state with the current data and uuid
-      setPrevState({ data, uuid: selectedItemUUID });
-
       // No data present then return
       if (data.length === 0) {
         return;
