@@ -19,16 +19,21 @@ func (ra *RegisterAction) ExecuteOnEntry(ctx context.Context, machineCtx interfa
 }
 
 func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	userUUID := user.ID
+	user, ok := ctx.Value(models.UserCtxKey).(*models.User)
+	if !ok || user == nil {
+		return machines.NoOp, nil, ErrInvalidModelProviderPayload("unknown", "missing user context")
+	}
+	sysID, ok := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	if !ok || sysID == nil {
+		return machines.NoOp, nil, ErrInvalidModelProviderPayload("unknown", "missing system ID context")
+	}
 
 	eventBuilder := events.NewEvent().
-		ActedUpon(userUUID).
+		ActedUpon(user.ID).
 		WithCategory("connection").
 		WithAction("update").
 		FromSystem(*sysID).
-		FromUser(userUUID).
+		FromUser(user.ID).
 		WithDescription("Failed to validate model-provider connection.").
 		WithSeverity(events.Error)
 
@@ -120,7 +125,7 @@ func validateOllama(payload connections.ConnectionPayload) error {
 		return ErrInvalidModelProviderPayload(connections.KindOllama, "connection metadata could not be parsed")
 	}
 	if conn.BaseURL == "" {
-		return ErrMissingCredentialField(connections.KindOllama, "baseURL")
+		return ErrInvalidModelProviderPayload(connections.KindOllama, "missing required metadata field \"baseURL\"")
 	}
 	return nil
 }
