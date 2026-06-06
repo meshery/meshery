@@ -11,7 +11,7 @@ Generate relationships documents
 
 ## Synopsis
 
-Generate relationships documents from the google spreadsheets
+Generate relationships documents from a CSV file or Google Spreadsheet
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl relationship generate [flags]
@@ -21,7 +21,23 @@ mesheryctl relationship generate [flags]
 
 ## Examples
 
-Generate relationships documentss
+Generate relationships documents from a CSV file
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl relationship generate --file <path-to-relationships.csv>
+
+</div>
+</pre> 
+
+Generate relationships documents with a custom output path
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl relationship generate --file <path-to-relationships.csv> --output <path-to-output.json>
+
+</div>
+</pre> 
+
+Generate relationships documents from a Google Spreadsheet
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
@@ -33,7 +49,9 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+  -f, --file string               path to the relationships CSV file
   -h, --help                      help for generate
+  -o, --output string             path to the output JSON file
       --spreadsheet-cred string   base64 encoded credential to download the spreadsheet
       --spreadsheet-id string     spreadsheet ID for the integration spreadsheet
 
