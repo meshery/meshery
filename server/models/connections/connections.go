@@ -64,6 +64,44 @@ type GrafanaCred struct {
 	APIKeyOrBasicAuth string `json:"secret,omitempty"`
 }
 
+// ModelProviderConn holds non-secret configuration for a model-provider connection.
+// BaseURL is optional and used to override the default provider endpoint.
+type ModelProviderConn struct {
+	Name    string `json:"name,omitempty"`
+	BaseURL string `json:"baseURL,omitempty"`
+}
+
+// OpenAICred holds the secret credential for an OpenAI connection.
+type OpenAICred struct {
+	APIKey string `json:"apiKey,omitempty"`
+}
+
+// AnthropicCred holds the secret credential for an Anthropic connection.
+type AnthropicCred struct {
+	APIKey string `json:"apiKey,omitempty"`
+}
+
+// AWSBedrockCred holds the secret credential for an AWS Bedrock connection.
+type AWSBedrockCred struct {
+	AccessKeyID     string `json:"accessKeyId,omitempty"`
+	SecretAccessKey string `json:"secretAccessKey,omitempty"`
+	Region          string `json:"region,omitempty"`
+}
+
+// OllamaCred is intentionally empty — Ollama runs locally with no auth.
+type OllamaCred struct{}
+
+// Model-provider connection type and kind constants.
+const (
+	ModelProviderType    = "model-provider"
+	ModelProviderSubType = "inference"
+
+	KindOpenAI     = "openai"
+	KindAnthropic  = "anthropic"
+	KindAWSBedrock = "aws-bedrock"
+	KindOllama     = "ollama"
+)
+
 type Connection = schemasConnection.Connection
 
 var validConnectionStatusToManage = []ConnectionStatus{
