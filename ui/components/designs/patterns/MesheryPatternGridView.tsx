@@ -30,6 +30,7 @@ function PatternCardGridItem({
   setSelectedPatterns,
   user,
   handleInfoModal,
+  handleEvaluate,
   hideVisibility = false,
   isReadOnly = false,
 }) {
@@ -56,6 +57,7 @@ function PatternCardGridItem({
         handleUnpublishModal={handleUnpublishModal}
         handleClone={handleClone}
         handleInfoModal={handleInfoModal}
+        handleEvaluate={handleEvaluate}
         handleDownload={handleDownload}
         deleteHandler={() =>
           handleSubmit({
@@ -135,6 +137,7 @@ function MesheryPatternGrid({
   publishSchema,
   user,
   handleInfoModal,
+  handleEvaluateRelationship,
   openDeployModal,
   openValidationModal,
   openUndeployModal,
@@ -225,6 +228,7 @@ function MesheryPatternGrid({
               handlePublishModal={() => handlePublishModal(pattern)}
               handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
               handleInfoModal={() => handleInfoModal(pattern)}
+              handleEvaluate={() => handleEvaluateRelationship(pattern)}
               handleSubmit={handleSubmit}
               handleDownload={(e) => handleDesignDownloadModal(e, pattern)}
               setSelectedPatterns={setSelectedPattern}
