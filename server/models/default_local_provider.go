@@ -1,17 +1,13 @@
 package models
 
 import (
-	"archive/tar"
 	"bytes"
-	"compress/gzip"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"maps"
 	"net/http"
 	"net/url"
-	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -1225,100 +1221,56 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 }
 
 func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
-	var (
-		seededUUIDs   []core.Uuid
-		seededUUIDsMu sync.Mutex
-	)
-	seedContents := []string{"Pattern", "Filter"}
 	nilUserID := ""
 
 	// Use the relative directory for patterns
 	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
 
-	for _, seedContent := range seedContents {
-		go func(comp string, log logger.Handler) {
-			switch comp {
-			case "Pattern":
-				files, err := walker.WalkLocalDirectory(catalogDir)
-				if err != nil {
-					log.Error(err)
-					return
-				}
+	go func() {
+		files, err := walker.WalkLocalDirectory(catalogDir)
+		if err != nil {
+			log.Error(err)
+			return
+		}
 
-				var wg sync.WaitGroup
+		var wg sync.WaitGroup
 
-				for i, file := range files {
-					// Ensure only design.yml is imported
-					if file.Name == "design.yml" || file.Name == "design.yaml" {
-						wg.Add(1)
-						go func(file *walker.File, index int) {
-							defer wg.Done()
-							id, _ := uuid.NewV4()
+		for _, file := range files {
+			// Ensure only design.yml is imported
+			if file.Name == "design.yml" || file.Name == "design.yaml" {
+				wg.Add(1)
+				go func(file *walker.File) {
+					defer wg.Done()
+					id, _ := uuid.NewV4()
 
-							patternName, err := GetPatternName(file.Content)
-							if err != nil {
-								log.Error(err)
-								return
-							}
-
-							var pattern = &MesheryPattern{
-								PatternFile: file.Content,
-								Name:        patternName,
-								ID:          &id,
-								UserID:      &nilUserID,
-								Visibility:  Published,
-								Location: map[string]interface{}{
-									"host":   "",
-									"path":   "",
-									"type":   "local",
-									"branch": "",
-								},
-							}
-							if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
-								log.Error(ErrGettingSeededComponents(err, comp+"s"))
-							}
-							seededUUIDsMu.Lock()
-							seededUUIDs = append(seededUUIDs, id)
-							seededUUIDsMu.Unlock()
-						}(file, i)
+					patternName, err := GetPatternName(file.Content)
+					if err != nil {
+						log.Error(err)
+						return
 					}
-				}
 
-				wg.Wait()
-
-			case "Filter":
-				// Keep the existing behavior for filters
-				names, content, err := getSeededComponents(comp, log)
-				if err != nil {
-					log.Error(ErrGettingSeededComponents(err, comp))
-				} else {
-					for i, name := range names {
-						id, _ := uuid.NewV4()
-						var filter = &MesheryFilter{
-							FilterFile: []byte(content[i]),
-							Name:       name,
-							ID:         &id,
-							UserID:     &nilUserID,
-							Visibility: Published,
-							Location: map[string]interface{}{
-								"host":   "",
-								"path":   "",
-								"type":   "local",
-								"branch": "",
-							},
-						}
-						_, err := l.MesheryFilterPersister.SaveMesheryFilter(filter)
-						if err != nil {
-							log.Error(ErrGettingSeededComponents(err, comp+"s"))
-						}
-						seededUUIDsMu.Lock()
-						seededUUIDs = append(seededUUIDs, id)
-						seededUUIDsMu.Unlock()
+					var pattern = &MesheryPattern{
+						PatternFile: file.Content,
+						Name:        patternName,
+						ID:          &id,
+						UserID:      &nilUserID,
+						Visibility:  Published,
+						Location: map[string]interface{}{
+							"host":   "",
+							"path":   "",
+							"type":   "local",
+							"branch": "",
+						},
 					}
-				}
+					if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
+						log.Error(ErrGettingSeededComponents(err, "Patterns"))
+					}
+				}(file)
 			}
-		}(seedContent, log)
-	}
+		}
+
+		wg.Wait()
+	}()
 
 	// Seed default organization before the UI requests organizations.
 	id, _ := uuid.NewV4()
@@ -1793,149 +1745,7 @@ func genericHTTPFilterFile(fileURL string, log logger.Handler) ([]MesheryFilter,
 	return []MesheryFilter{ff}, nil
 }
 
-// getSeededComponents reads the directory recursively looking for seed content
-// Note- This function does not throw meshkit errors because the only method that calls it,"SeedContent" wraps the errors in meshkit errors.
-// If this function is reused somewhere else, make sure to wrap its errors in appropriate meshkit errors, otherwise it can cause can a panic.
-func getSeededComponents(comp string, log logger.Handler) ([]string, []string, error) {
-	wd := utils.GetHome()
-	switch comp {
-	case "Pattern":
-		wd = filepath.Join(wd, ".meshery", "content", "patterns")
-	case "Filter":
-		wd = filepath.Join(wd, ".meshery", "content", "filters", "binaries")
 
-	}
-	_, err := os.Stat(wd)
-	if err != nil && !os.IsNotExist(err) {
-		return nil, nil, err
-	} else if os.IsNotExist(err) {
-		log.Info("creating directories for seeding... ", wd)
-		er := os.MkdirAll(wd, 0777)
-		if er != nil {
-			return nil, nil, er
-		}
-	}
-	if !viper.GetBool("SKIP_DOWNLOAD_CONTENT") {
-		err = downloadContent(comp, wd)
-		if err != nil {
-			log.Error(ErrDownloadingSeededComponents(err, comp))
-		}
-	}
-	log.Info("extracting "+comp+"s from ", wd)
-	var names []string
-	var contents []string
-	err = filepath.WalkDir(wd,
-		func(path string, d os.DirEntry, err error) error {
-			if err != nil {
-				return err
-			}
-			if !d.IsDir() {
-				file, err := os.OpenFile(path, os.O_RDONLY, 0444)
-				if err != nil {
-					return err
-				}
-				content, err := io.ReadAll(file)
-				if err != nil {
-					return err
-				}
-				names = append(names, d.Name())
-				contents = append(contents, string(content))
-			}
-			return nil
-		})
-	if err != nil {
-		return nil, nil, err
-	}
-	return names, contents, nil
-}
-
-// Below helper functions are for downloading seed content and can be re used in future as the way of extracting them changes, like endpoint changes or so. That is why, they are encapsulated into general functions
-func downloadContent(comp string, downloadpath string) error {
-	switch comp {
-	case "Pattern":
-		walk := walker.NewGithub()
-		return walk.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/").Branch("master").RegisterFileInterceptor(func(gca walker.GithubContentAPI) error {
-			path := filepath.Join(downloadpath, gca.Name)
-			file, err := os.Create(path)
-			if err != nil {
-				return err
-			}
-			content, err := base64.StdEncoding.DecodeString(gca.Content)
-			if err != nil {
-				if closeErr := file.Close(); closeErr != nil {
-					return fmt.Errorf("%w (close error: %v)", err, closeErr)
-				}
-				return err
-			}
-			if _, err := fmt.Fprintf(file, "%s", content); err != nil {
-				if closeErr := file.Close(); closeErr != nil {
-					return fmt.Errorf("%w (close error: %v)", err, closeErr)
-				}
-				return err
-			}
-			if err := file.Close(); err != nil {
-				return err
-			}
-			return nil
-		}).Walk()
-	case "Filter":
-		return getFiltersFromWasmFiltersRepo(downloadpath)
-
-	}
-	return nil
-}
-
-func getFiltersFromWasmFiltersRepo(downloadPath string) error {
-	// releaseName, err := getLatestStableReleaseTag()
-	// if err != nil {
-	// 	return err
-	// }
-	//Temporary hardcoding until https://github.com/meshery-extensions/wasm-filters/issues/38 is resolved
-	downloadURL := "https://github.com/meshery-extensions/wasm-filters/releases/download/v0.1.0/wasm-filters-v0.1.0.tar.gz"
-	res, err := http.Get(downloadURL)
-	if err != nil {
-		return err
-	}
-	gzipStream := res.Body
-	return extractTarGz(gzipStream, downloadPath)
-}
-func extractTarGz(gzipStream io.Reader, downloadPath string) error {
-	uncompressedStream, err := gzip.NewReader(gzipStream)
-	if err != nil {
-		return err
-	}
-
-	tarReader := tar.NewReader(uncompressedStream)
-
-	for {
-		header, err := tarReader.Next()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return err
-		}
-		switch header.Typeflag {
-		case tar.TypeReg:
-			if strings.HasSuffix(header.Name, ".wasm") {
-				outFile, err := os.Create(filepath.Join(downloadPath, header.Name))
-				if err != nil {
-					return err
-				}
-				if _, err := io.Copy(outFile, tarReader); err != nil {
-					if closeErr := outFile.Close(); closeErr != nil {
-						return fmt.Errorf("%w (close error: %v)", err, closeErr)
-					}
-					return err
-				}
-				if err := outFile.Close(); err != nil {
-					return err
-				}
-			}
-		}
-	}
-	return nil
-}
 
 // Events
 
