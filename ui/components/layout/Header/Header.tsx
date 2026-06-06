@@ -348,7 +348,12 @@ function K8sContextMenu({
                                   ? setActiveContexts([])
                                   : setActiveContexts('all')
                               }
-                              icon={<FilterAllIcon style={{ opacity: 0.4 }} />}
+                              icon={
+                                <FilterAllIcon
+                                  fill={theme.palette.background.brand.default}
+                                  style={{ opacity: 0.4 }}
+                                />
+                              }
                               inputProps={{ 'aria-label': 'select all contexts' }}
                             />
                           </>
