@@ -37,3 +37,34 @@ See on YouTube: [Designer Walkthrough](https://www.youtube.com/watch?v=qaoYRP3oL
 <h4 class="alert-heading">Discussion Forum</h4>
 Not finding what you're looking for? Ask on the <a href="https://meshery.io/community#discussion-forums">Discussion Forum</a>.
 </div>
+
+## Working with Shape Builder Output
+
+Kanvas enables users to visually design cloud native infrastructure and generate reusable configurations and component definitions. After creating or exporting shapes and designs, users can package and import them into Meshery for additional customization, deployment, and collaboration workflows.
+
+### Importing Generated Designs
+
+Users can:
+- Import generated designs locally into Meshery.
+- Publish designs to catalogs for reuse.
+- Share exported configurations with team members.
+- Reuse generated components across environments.
+
+### Customization and Model Management
+
+Generated shapes and components can be further customized using Meshery Models and configuration management capabilities.
+
+Helpful resources:
+- [Importing a Design](https://docs.layer5.io/kanvas/getting-started/import-designs/)
+- [Publishing a Design](https://docs.kanvas.new)
+- [Meshery Documentation](https://docs.meshery.io)
+
+### Limitations
+
+- Manual validation.
+- Environment-specific configuration.
+- Additional customization before production deployment.
+
+### Feedback and Roadmap
+
+Users are encouraged to share feedback, feature requests, and roadmap suggestions through the Meshery community discussion forums and GitHub repositories.
