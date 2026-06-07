@@ -568,10 +568,11 @@ func AskForConfirmation(s string) bool {
 // CreateConfigFile creates config file in Meshery Folder
 func CreateConfigFile() error {
 	if _, err := os.Stat(DefaultConfigPath); os.IsNotExist(err) {
-		_, err := os.Create(DefaultConfigPath)
+		f, err := os.Create(DefaultConfigPath)
 		if err != nil {
 			return err
 		}
+		f.Close()
 	}
 	return nil
 }
