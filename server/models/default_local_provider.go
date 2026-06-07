@@ -1943,7 +1943,7 @@ func githubRepoFilterScan(
 }
 
 func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPattern, error) {
-	if err := helpers.ValidateURL(fileURL); err != nil {
+	if err := utils.ValidateURL(fileURL); err != nil {
     	return nil, err
 	}
 	resp, err := http.Get(fileURL)

@@ -1199,7 +1199,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 	case "urlImport":
 		downloadFile := func(url string) ([]byte, error) {
-			if err := helpers.ValidateURL(url); err != nil {
+			if err := utils.ValidateURL(url); err != nil {
     			return nil, fmt.Errorf("unsafe URL: %w", err)
 			}
 			resp, err := http.Get(url)
