@@ -15,7 +15,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/meshery/schemas/models/core"
@@ -1229,10 +1228,6 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 }
 
 func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
-	var (
-		seededUUIDs   []core.Uuid
-		seededUUIDsMu sync.Mutex
-	)
 	seedContents := []string{"Pattern", "Filter"}
 	nilUserID := ""
 
@@ -1283,9 +1278,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
         log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
     }
 
-    seededUUIDsMu.Lock()
-    seededUUIDs = append(seededUUIDs, id)
-    seededUUIDsMu.Unlock()
 }				
 
 			case "Filter":
@@ -1313,9 +1305,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 						if err != nil {
 							log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
 						}
-						seededUUIDsMu.Lock()
-						seededUUIDs = append(seededUUIDs, id)
-						seededUUIDsMu.Unlock()
 					}
 				}
 			}
