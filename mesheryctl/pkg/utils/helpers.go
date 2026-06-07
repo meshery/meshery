@@ -567,14 +567,20 @@ func AskForConfirmation(s string) bool {
 
 // CreateConfigFile creates config file in Meshery Folder
 func CreateConfigFile() error {
-	if _, err := os.Stat(DefaultConfigPath); os.IsNotExist(err) {
-		f, err := os.Create(DefaultConfigPath)
-		if err != nil {
-			return err
-		}
-		f.Close()
+	_, err := os.Stat(DefaultConfigPath)
+	if err == nil {
+		// file already exists
+		return nil
 	}
-	return nil
+	if !os.IsNotExist(err) {
+		// unexpected error (e.g. permission denied on the path itself)
+		return err
+	}
+	f, err := os.Create(DefaultConfigPath)
+	if err != nil {
+		return err
+	}
+	return f.Close()
 }
 
 // ValidateURL validates url provided for meshery backend to mesheryctl context
