@@ -1236,8 +1236,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
 
 	for _, seedContent := range seedContents {
-		go func(comp string, log logger.Handler) {
-			switch comp {
+			switch seedContent {
 			case "Pattern":
 				files, err := walker.WalkLocalDirectory(catalogDir)
 				if err != nil {
@@ -1245,52 +1244,51 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 					return
 				}
 
-				var wg sync.WaitGroup
+				for _, file := range files {
+    if file.Name != "design.yml" && file.Name != "design.yaml" {
+        continue
+    }
 
-				for i, file := range files {
-					// Ensure only design.yml is imported
-					if file.Name == "design.yml" || file.Name == "design.yaml" {
-						wg.Add(1)
-						go func(file *walker.File, index int) {
-							defer wg.Done()
-							id, _ := uuid.NewV4()
+    id, err := uuid.NewV4()
+    if err != nil {
+        log.Error(err)
+        continue
+    }
 
-							patternName, err := GetPatternName(file.Content)
-							if err != nil {
-								log.Error(err)
-								return
-							}
+    patternName, err := GetPatternName(file.Content)
+    if err != nil {
+        log.Error(err)
+        continue
+    }
 
-							var pattern = &MesheryPattern{
-								PatternFile: file.Content,
-								Name:        patternName,
-								ID:          &id,
-								UserID:      &nilUserID,
-								Visibility:  Published,
-								Location: map[string]interface{}{
-									"host":   "",
-									"path":   "",
-									"type":   "local",
-									"branch": "",
-								},
-							}
-							if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
-								log.Error(ErrGettingSeededComponents(err, comp+"s"))
-							}
-							seededUUIDsMu.Lock()
-							seededUUIDs = append(seededUUIDs, id)
-							seededUUIDsMu.Unlock()
-						}(file, i)
-					}
-				}
+    pattern := &MesheryPattern{
+        PatternFile: file.Content,
+        Name:        patternName,
+        ID:          &id,
+        UserID:      &nilUserID,
+        Visibility:  Published,
+        Location: map[string]interface{}{
+            "host":   "",
+            "path":   "",
+            "type":   "local",
+            "branch": "",
+        },
+    }
 
-				wg.Wait()
+    if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
+        log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
+    }
+
+    seededUUIDsMu.Lock()
+    seededUUIDs = append(seededUUIDs, id)
+    seededUUIDsMu.Unlock()
+}				
 
 			case "Filter":
 				// Keep the existing behavior for filters
-				names, content, err := getSeededComponents(comp, log)
+				names, content, err := getSeededComponents(seedContent, log)
 				if err != nil {
-					log.Error(ErrGettingSeededComponents(err, comp))
+					log.Error(ErrGettingSeededComponents(err, seedContent))
 				} else {
 					for i, name := range names {
 						id, _ := uuid.NewV4()
@@ -1309,7 +1307,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 						}
 						_, err := l.MesheryFilterPersister.SaveMesheryFilter(filter)
 						if err != nil {
-							log.Error(ErrGettingSeededComponents(err, comp+"s"))
+							log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
 						}
 						seededUUIDsMu.Lock()
 						seededUUIDs = append(seededUUIDs, id)
@@ -1317,7 +1315,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 					}
 				}
 			}
-		}(seedContent, log)
 	}
 
 	// Seed default organization before the UI requests organizations.
