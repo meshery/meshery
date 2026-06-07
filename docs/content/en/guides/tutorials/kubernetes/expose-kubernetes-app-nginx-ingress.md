@@ -80,6 +80,8 @@ By using Kanvas, Meshery's collaborative visual designer, you will create a reus
 
 You should now see the traffic flow: Ingress to Service to Deployment.
 
+![Connected Components - Ingress, Service, and Deployment](./images/connected-components.png)
+
 ---
 
 ### 6. Validate the Design
@@ -88,6 +90,8 @@ You should now see the traffic flow: Ingress to Service to Deployment.
 2. Click Validate from the dropdown.
 3. A dialog will appear showing validation results. A successful design shows: No validation errors.
 
+![Validate Result](./images/validate-result.png)
+
 ---
 
 ### 7. Dry Run the Design
@@ -95,6 +99,8 @@ You should now see the traffic flow: Ingress to Service to Deployment.
 1. Click Actions and select Dry Run.
 2. This simulates a deployment without applying any changes to a cluster.
 3. A successful dry run shows: No deployment errors.
+
+![Dry Run Result](./images/dryrun-result.png)
 
 ---
 
