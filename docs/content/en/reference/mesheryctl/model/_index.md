@@ -7,7 +7,7 @@ subcommand: nil
 
 # mesheryctl model
 
-Manage models in the registery
+Manage models in the registry
 
 ## Synopsis
 
