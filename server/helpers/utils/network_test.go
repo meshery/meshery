@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestValidateURL(t *testing.T) {
+func TestValidateURLForOutboundRequest(t *testing.T) {
 	tests := []struct {
 		name    string
 		url     string
@@ -24,9 +24,9 @@ func TestValidateURL(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := ValidateURL(tt.url)
+			err := ValidateURLForOutboundRequest(tt.url)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ValidateURL(%q) error = %v, wantErr = %v", tt.url, err, tt.wantErr)
+				t.Errorf("ValidateURLForOutboundRequest(%q) error = %v, wantErr = %v", tt.url, err, tt.wantErr)
 			}
 		})
 	}

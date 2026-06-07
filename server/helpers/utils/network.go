@@ -3,7 +3,10 @@ package utils
 import (
 	"fmt"
 	"net"
+	"net/http"
 	"net/url"
+	"syscall"
+	"time"
 
 	"github.com/meshery/meshkit/errors"
 )
@@ -41,9 +44,40 @@ func ErrURLResolution(err error) error {
 	)
 }
 
-// ValidateURL checks that a URL is safe to use in outbound HTTP requests.
+// NewSafeHTTPClient returns an *http.Client that validates the resolved IP
+// at dial time, preventing SSRF and DNS rebinding attacks by blocking
+// loopback, private, and link-local addresses.
+func NewSafeHTTPClient(timeout time.Duration) *http.Client {
+    return &http.Client{
+        Timeout: timeout,
+        Transport: &http.Transport{
+            DialContext: (&net.Dialer{
+                Timeout:   timeout,
+                KeepAlive: 30 * time.Second,
+                Control: func(network, address string, c syscall.RawConn) error {
+                    host, _, err := net.SplitHostPort(address)
+                    if err != nil {
+                        return err
+                    }
+                    ip := net.ParseIP(host)
+                    if ip == nil {
+                        return fmt.Errorf("invalid IP address: %s", host)
+                    }
+                    if ip.IsLoopback() || ip.IsPrivate() || ip.IsLinkLocalUnicast() || ip.IsLinkLocalMulticast() {
+                        return fmt.Errorf("connection to private/internal IP %s is blocked", ip)
+                    }
+                    return nil
+                },
+            }).DialContext,
+        },
+    }
+}
+
+
+
+// ValidateURLForOutboundRequest checks that a URL is safe to use in outbound HTTP requests.
 // It rejects loopback, private, and link-local addresses to prevent SSRF.
-func ValidateURL(rawURL string) error {
+func ValidateURLForOutboundRequest(rawURL string) error {
 	parsed, err := url.Parse(rawURL)
 	if err != nil {
 		return ErrInvalidURL(err)

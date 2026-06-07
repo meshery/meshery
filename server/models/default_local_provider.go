@@ -37,7 +37,7 @@ import (
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 	"gorm.io/gorm"
-	"github.com/meshery/meshery/server/helpers/utils"
+	helperutils "github.com/meshery/meshery/server/helpers/utils"
 )
 
 // DefaultLocalProvider - represents a local provider
@@ -1943,10 +1943,10 @@ func githubRepoFilterScan(
 }
 
 func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPattern, error) {
-	if err := utils.ValidateURL(fileURL); err != nil {
+	if err := helperutils.ValidateURLForOutboundRequest(fileURL); err != nil {
     	return nil, err
 	}
-	resp, err := http.Get(fileURL)
+	resp, err := helperutils.NewSafeHTTPClient(30*time.Second).Get(fileURL)
 	if err != nil {
 		return nil, err
 	}

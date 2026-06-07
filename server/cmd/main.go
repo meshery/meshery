@@ -321,7 +321,8 @@ func main() {
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
 
-		PatternChannel:            models.NewBroadcaster("Patterns"),
+KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
+                PatternChannel:            models.NewBroadcaster("Patterns"),
 		FilterChannel:             models.NewBroadcaster("Filters"),
 		EventBroadcaster:          models.NewBroadcaster("Events"),
 		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
