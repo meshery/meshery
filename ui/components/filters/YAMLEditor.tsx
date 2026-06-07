@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Close as CloseIcon,
-  Delete as DeleteIcon,
-  Fullscreen as FullscreenIcon,
-  FullscreenExit as FullscreenExitIcon,
-  Save as SaveIcon,
-} from '@/assets/icons';
+import { Close as CloseIcon, Delete as DeleteIcon, Save as SaveIcon } from '@/assets/icons';
 import {
   CustomTooltip,
   Dialog,
@@ -14,6 +8,8 @@ import {
   Divider,
   IconButton,
   styled,
+  FullScreenIcon as FullscreenIcon,
+  FullScreenExitIcon as FullscreenExitIcon,
 } from '@sistent/sistent';
 import { UnControlled as CodeMirror } from '../CodeMirror';
 import { FILE_OPS } from '../../utils/Enum';
