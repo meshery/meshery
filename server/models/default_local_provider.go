@@ -1,6 +1,7 @@
 package models
 
 import (
+	"sync"
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
