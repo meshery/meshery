@@ -141,7 +141,7 @@
 <script>
     function handleImageError(image) {
         image.onerror = null;
-        image.src = '{{ .Params.image }}';
+        image.src = '{{ .Params.image | relURL }}';
     }
     const designLinks = document.querySelectorAll('.design-link');
     if (designLinks.length === 0) {
