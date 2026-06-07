@@ -80,7 +80,7 @@ By using Kanvas, Meshery's collaborative visual designer, you will create a reus
 
 You should now see the traffic flow: Ingress to Service to Deployment.
 
-![Connected Components - Ingress, Service, and Deployment](./images/connected-components.png)
+![Connected Components - Ingress, Service, and Deployment](/guides/tutorials/kubernetes/images/connected-components.png)
 
 ---
 
@@ -90,7 +90,7 @@ You should now see the traffic flow: Ingress to Service to Deployment.
 2. Click Validate from the dropdown.
 3. A dialog will appear showing validation results. A successful design shows: No validation errors.
 
-![Validate Result](./images/validate-result.png)
+![Validate Result](/guides/tutorials/kubernetes/images/validate-result.png)
 
 ---
 
@@ -100,7 +100,7 @@ You should now see the traffic flow: Ingress to Service to Deployment.
 2. This simulates a deployment without applying any changes to a cluster.
 3. A successful dry run shows: No deployment errors.
 
-![Dry Run Result](./images/dryrun-result.png)
+![Dry Run Result](/guides/tutorials/kubernetes/images/dryrun-result.png)
 
 ---
 
