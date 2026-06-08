@@ -217,12 +217,26 @@ describe('RelationshipEvaluationTraceFormatter', () => {
 });
 
 describe('RelationshipEvaluationEventFormatter', () => {
-  it('wraps content in ErrorBoundary and shows the event description', () => {
+  it('wraps content in ErrorBoundary and shows the event description with legacy evaluation_response', () => {
     render(
       <RelationshipEvaluationEventFormatter
         event={{
           description: 'Evaluation finished',
           metadata: { evaluation_response: { actions: [], design: {} } },
+        }}
+      />,
+    );
+
+    expect(screen.getByTestId('error-boundary')).toBeInTheDocument();
+    expect(screen.getByText('Evaluation finished')).toBeInTheDocument();
+  });
+
+  it('wraps content in ErrorBoundary and shows the event description with camelCase evaluationResponse', () => {
+    render(
+      <RelationshipEvaluationEventFormatter
+        event={{
+          description: 'Evaluation finished',
+          metadata: { evaluationResponse: { actions: [], design: {} } },
         }}
       />,
     );
