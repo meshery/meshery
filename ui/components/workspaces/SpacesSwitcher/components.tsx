@@ -30,8 +30,8 @@ import React, { useContext, useState } from 'react';
 import { capitalize } from 'lodash/fp';
 import { getAllUsers } from '@/rtk-query/user';
 import { ImportDesignModal } from '@/components/designs/ImportDesignModal';
+import { resolveImportedDesignFile } from '@/components/designs/import-design-file';
 import { useNotification } from '@/utils/hooks/useNotification';
-import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useImportPatternMutation } from '@/rtk-query/design';
 import { updateProgress } from '@/store/slices/mesheryUi';
@@ -326,19 +326,36 @@ export const ImportButton = ({ workspaceId, disabled = false, refetch }) => {
   const [importPattern] = useImportPatternMutation();
   const { notify } = useNotification();
   const theme = useTheme();
-  function handleImportDesign(data) {
+  async function handleImportDesign(data) {
     updateProgress({ showProgress: true });
     const { uploadType, name, url, file } = data;
 
     let requestBody = null;
     switch (uploadType) {
       case 'File Upload': {
-        const fileElement = document.getElementById('root_file');
-        const fileName = fileElement.files[0].name;
+        let importedFile = null;
+        try {
+          importedFile = await resolveImportedDesignFile(file);
+        } catch {
+          updateProgress({ showProgress: false });
+          notify({
+            message: 'Unable to read the selected design file. Please try again.',
+            event_type: EVENT_TYPES.ERROR,
+          });
+          return;
+        }
+        if (!importedFile) {
+          updateProgress({ showProgress: false });
+          notify({
+            message: 'Please choose a design file before continuing.',
+            event_type: EVENT_TYPES.ERROR,
+          });
+          return;
+        }
         requestBody = JSON.stringify({
           name,
-          file_name: fileName,
-          file: getUnit8ArrayDecodedFile(file),
+          file_name: importedFile.fileName,
+          file: importedFile.fileData,
         });
         break;
       }

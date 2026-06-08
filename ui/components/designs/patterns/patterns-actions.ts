@@ -6,6 +6,7 @@ import { FILE_OPS } from '../../../utils/Enum';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import downloadContent from '../../../utils/fileDownloader';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { resolveImportedDesignFile } from '../import-design-file';
 import { ACTION_TYPES } from './MesheryPatterns.constants';
 
 /**
@@ -306,19 +307,36 @@ export function createPatternsActions(deps) {
     }
   }
 
-  function handleImportDesign(data) {
+  async function handleImportDesign(data) {
     updateProgress({ showProgress: true });
     const { uploadType, name, url, file } = data;
 
     let requestBody = null;
     switch (uploadType) {
       case 'File Upload': {
-        const fileElement = document.getElementById('root_file');
-        const fileName = fileElement.files[0].name;
+        let importedFile = null;
+        try {
+          importedFile = await resolveImportedDesignFile(file);
+        } catch {
+          updateProgress({ showProgress: false });
+          notify({
+            message: 'Unable to read the selected design file. Please try again.',
+            event_type: EVENT_TYPES.ERROR,
+          });
+          return;
+        }
+        if (!importedFile) {
+          updateProgress({ showProgress: false });
+          notify({
+            message: 'Please choose a design file before continuing.',
+            event_type: EVENT_TYPES.ERROR,
+          });
+          return;
+        }
         requestBody = JSON.stringify({
           name,
-          file_name: fileName,
-          file: getUnit8ArrayDecodedFile(file),
+          file_name: importedFile.fileName,
+          file: importedFile.fileData,
         });
         break;
       }
