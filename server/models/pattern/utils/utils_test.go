@@ -49,6 +49,18 @@ func TestIsDesignInAlpha2Format(t *testing.T) {
 			patternFile: `{"name":"old","services":{"svc":{"type":"Deployment"}}}`,
 			wantAlpha2:  true,
 		},
+		{
+			// Defensive edge cases: a missing or empty schemaVersion has no
+			// canonical prefix, so it is classified legacy (migrate).
+			name:        "missing schemaVersion key is alpha2",
+			patternFile: `{"name":"no-version","components":[]}`,
+			wantAlpha2:  true,
+		},
+		{
+			name:        "empty schemaVersion is alpha2",
+			patternFile: `{"schemaVersion":"","name":"empty-ver"}`,
+			wantAlpha2:  true,
+		},
 	}
 
 	for _, tt := range tests {
