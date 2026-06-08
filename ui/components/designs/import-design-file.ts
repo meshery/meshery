@@ -18,13 +18,13 @@ export const findSelectedDesignImportFile = (): File | undefined =>
 export const resolveImportedDesignFile = async (dataUrl?: string) => {
   let fileData = decodeDesignDataUrlToBytes(dataUrl);
   const selectedFile = findSelectedDesignImportFile();
-  const fileName = filenameFromDataUrl(dataUrl) ?? selectedFile?.name;
+  const fileName = filenameFromDataUrl(dataUrl) ?? selectedFile?.name ?? 'design.yaml';
 
   if (!fileData && selectedFile) {
     fileData = await readFileAsBytes(selectedFile);
   }
 
-  if (!fileData || !fileName) {
+  if (!fileData) {
     return null;
   }
 

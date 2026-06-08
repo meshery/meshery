@@ -2,9 +2,16 @@ export const findSelectedFileInDialog = (selector = 'input[type="file"]'): File 
   if (typeof document === 'undefined') return undefined;
 
   const dialog = document.querySelector<HTMLElement>('[role="dialog"]');
-  const root = dialog ?? document;
-  const inputs = root.querySelectorAll<HTMLInputElement>(selector);
 
+  if (dialog) {
+    const inputs = dialog.querySelectorAll<HTMLInputElement>(selector);
+    for (const input of Array.from(inputs)) {
+      const file = input.files?.[0];
+      if (file) return file;
+    }
+  }
+
+  const inputs = document.querySelectorAll<HTMLInputElement>(selector);
   for (const input of Array.from(inputs)) {
     const file = input.files?.[0];
     if (file) return file;
