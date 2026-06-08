@@ -71,11 +71,14 @@ const MesheryTreeView = React.memo(
     const [selected, setSelected] = React.useState<string[]>([]);
     const { width } = useWindowDimensions();
     const [isSearchExpanded, setIsSearchExpanded] = useState(searchText ? true : false);
-    const [prevState, setPrevState] = useState<{ data: any[]; uuid: string }>({
-      data: [],
-      uuid: '',
-    });
+
     const scrollRef = useRef<number | null>(null);
+    // Stable ref so the deep-link useEffect can read showDetailsData without
+    // subscribing to it as a dependency (which would cause an infinite loop).
+    const showDetailsDataRef = useRef(showDetailsData);
+    useEffect(() => {
+      showDetailsDataRef.current = showDetailsData;
+    }, [showDetailsData]);
 
     const handleScroll = (scrollingView: string) => (event: React.UIEvent<HTMLDivElement>) => {
       const div = event.target;
@@ -151,18 +154,6 @@ const MesheryTreeView = React.memo(
     };
 
     useEffect(() => {
-      // Compare previous data with current data and uuid
-      if (
-        prevState.data &&
-        JSON.stringify(prevState.data) === JSON.stringify(data) &&
-        prevState.uuid === selectedItemUUID
-      ) {
-        return;
-      }
-
-      // Update the state with the current data and uuid
-      setPrevState({ data, uuid: selectedItemUUID });
-
       // No data present then return
       if (data.length === 0) {
         return;
@@ -170,9 +161,10 @@ const MesheryTreeView = React.memo(
 
       const selectedIdArr = selectedItemUUID.split('.');
       if (selectedIdArr.length >= 0) {
-        // Check if showDetailsData data matches with item from route
-        // This will prevent unnecessary state update
-        if (showDetailsData.data.id !== selectedIdArr[selectedIdArr.length - 1]) {
+        // Read showDetailsData via ref — avoids listing it as a dep, which would
+        // create an infinite loop (effect writes showDetailsData → dep triggers
+        // effect → writes again → ∞).
+        if (showDetailsDataRef.current.data.id !== selectedIdArr[selectedIdArr.length - 1]) {
           const newExpanded = selectedIdArr.reduce(
             (acc, id, index) => [...acc, index > 0 ? `${acc[index - 1]}.${id}` : id],
             [],
@@ -184,7 +176,8 @@ const MesheryTreeView = React.memo(
             setSelected([selectedItemUUID]);
           }
           const showData = getFilteredDataForDetailsComponent(data, selectedItemUUID);
-          if (JSON.stringify(showData) !== JSON.stringify(showDetailsData)) {
+          // O(1) ID comparison instead of deep JSON.stringify on large objects.
+          if (showData?.data?.id !== showDetailsDataRef.current?.data?.id) {
             setShowDetailsData(showData);
           }
         }
@@ -196,7 +189,9 @@ const MesheryTreeView = React.memo(
           data: {},
         });
       }
-    }, [selectedItemUUID, data, showDetailsData]);
+      // showDetailsData intentionally omitted — read via showDetailsDataRef to
+      // prevent the infinite loop described above.
+    }, [selectedItemUUID, data]);
 
     useEffect(() => {
       const selectedIdArr = selectedItemUUID.split('.');
