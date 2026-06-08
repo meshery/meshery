@@ -18,6 +18,7 @@ Designs,Undeploy Design,Retract all resources used in a Meshery design from the 
 Designs,Details of design,Set design information or details of a design,X,X,,,X,,X,X,Catalog Management,10a03036-53a0-40b3-9f69-6daab852e434,X,TRUE
 Designs,Edit design,Edit a design,X*,X*,,,X,,X,X,Catalog Management,7f2b7084-4533-4824-b688-50cf35de7ef8,X,TRUE
 Designs,Delete a design,Delete a design,X*,X*,,,X,,X,X,Catalog Management,f024fcf7-3c3d-4521-b83e-6d659353ca0e,X,TRUE
+Designs,Evaluate Relationships,Evaluate relationships inside a design,X,X,,,X,,X,X,Catalog Management,c7752be7-5c0f-465d-a8ba-5594acd08b93,X,TRUE
 Designs,Download a design,Download a Meshery design in OCI or YAML format,X,X,,,X,,X,X,Catalog Management,64de96b7-60db-4aab-b311-afc64066b2c4,X,TRUE
 Filters,Import Filter,Import a filter,X,X,,,X,,X,X,Catalog Management,cb79d7fb-19de-45fa-aaf5-0a0afc832bf8,X,TRUE
 Filters,Download a WASM filter,Download a WASM filter,X,X,,,X,,X,X,Catalog Management,24325b2c-5e08-4ba8-809f-8a4a1bf91084,X,TRUE

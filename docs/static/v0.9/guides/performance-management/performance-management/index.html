@@ -298,48 +298,28 @@
 
             
 
-            <option
-              ZgotmplZ
-              value="/v0.7/"
-              class="nav-item mr-4 mb-2 text-black">
-              v0.7
-            </option>
+            
           
             
             
 
             
 
-            <option
-              ZgotmplZ
-              value="/v0.6/"
-              class="nav-item mr-4 mb-2 text-black">
-              v0.6
-            </option>
+            
           
             
             
 
             
 
-            <option
-              ZgotmplZ
-              value="/v0.5/"
-              class="nav-item mr-4 mb-2 text-black">
-              v0.5
-            </option>
+            
           
             
             
 
             
 
-            <option
-              ZgotmplZ
-              value="/v0.4/"
-              class="nav-item mr-4 mb-2 text-black">
-              v0.4
-            </option>
+            
           
         </select>
       </ul>
@@ -1020,7 +1000,7 @@ jobs:
           driver: docker
 
       - name: Run Performance Test
-        uses: layer5io/meshery-smp-action@master
+        uses: meshery/meshery-smp-action@master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: docker

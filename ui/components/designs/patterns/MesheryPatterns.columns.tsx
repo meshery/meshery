@@ -1,12 +1,12 @@
 import React from 'react';
-import { Box } from '@sistent/sistent';
+import { Box, crimson, InfoOutlinedIcon, AccountTreeIcon } from '@sistent/sistent';
 import Moment from 'react-moment';
 import { GetApp as GetAppIcon } from '@/assets/icons';
 import { DoneAll as DoneAllIcon, Public as PublicIcon } from '@/assets/icons';
 import UndeployIcon from '../../../public/static/img/UndeployIcon';
 import CloneIcon from '../../../public/static/img/CloneIcon';
 import { Edit as EditIcon } from '@/assets/icons';
-import { InfoOutlined as InfoOutlinedIcon } from '@/assets/icons';
+
 import { DefaultTableCell, SortableTableCell } from '../../connections/common';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -36,6 +36,7 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
     handleDesignDownloadModal,
     handleInfoModal,
     handleUnpublishModal,
+    handleEvaluateRelationship,
     userCanEdit,
   } = handlers;
 
@@ -87,8 +88,17 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
       disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
     },
     {
+      label: 'Evaluate',
+      icon: <AccountTreeIcon fill={'currentColor'} data-cy="evaluate-button" />,
+      onClick: (e) => {
+        e.stopPropagation();
+        handleEvaluateRelationship(rowData);
+      },
+      disabled: !CAN(keys.EVALUATE_RELATIONSHIPS.action, keys.EVALUATE_RELATIONSHIPS.subject),
+    },
+    {
       label: 'Undeploy',
-      icon: <UndeployIcon fill="#F91313" data-cy="undeploy-button" />,
+      icon: <UndeployIcon fill={crimson[40]} data-cy="undeploy-button" />,
       onClick: (e) => {
         openUndeployModal(e, rowData.patternFile, rowData.name, rowData.id);
       },
@@ -96,7 +106,7 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
     },
     {
       label: 'Deploy',
-      icon: <DoneAllIcon data-cy="deploy-button" />,
+      icon: <DoneAllIcon fill="currentColor" data-cy="deploy-button" />,
       onClick: (e) => {
         openDeployModal(e, rowData.patternFile, rowData.name, rowData.id);
       },
@@ -130,7 +140,7 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
 
     {
       label: 'Unpublish',
-      icon: <PublicIcon fill="#F91313" data-cy="unpublish-button" />,
+      icon: <PublicIcon fill={crimson[40]} data-cy="unpublish-button" />,
       onClick: (e) => {
         handleUnpublishModal(e, rowData)();
       },

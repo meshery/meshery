@@ -1,10 +1,6 @@
 import React from 'react';
-import {
-  Edit as EditIcon,
-  GetApp as GetAppIcon,
-  Public as PublicIcon,
-  InfoOutlined as InfoOutlinedIcon,
-} from '@/assets/icons';
+import { Edit as EditIcon, GetApp as GetAppIcon, Public as PublicIcon } from '@/assets/icons';
+import { InfoOutlinedIcon } from '@sistent/sistent';
 import Moment from 'react-moment';
 import CloneIcon from '../../public/static/img/CloneIcon';
 import { iconMedium } from '../../css/icons.styles';

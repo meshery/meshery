@@ -6,11 +6,12 @@ import GenericModal from '../shared/Modal/GenericModal';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import MesheryChart from '../MesheryChart';
 import { Typography, Paper } from '@sistent/sistent';
-import fetchAllResults from '@/graphql/queries/FetchAllResultsQuery';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { CalendarComponent } from './style';
-import { updateProgress } from '@/store/slices/mesheryUi';
+import { updateProgressAction } from '@/store/slices/mesheryUi';
+import { useGetPerformanceResultsQuery } from '@meshery/schemas/mesheryApi';
+import { useDispatch } from 'react-redux';
 
 const localizer = momentLocalizer(moment);
 
@@ -19,10 +20,10 @@ const localizer = momentLocalizer(moment);
  * and generate calendar events from them
  *
  * @param {{
- *  meshery_id: string,
+ *  mesheryId: string,
  *  name: string,
- *  test_start_time: string,
- *  runner_results: {
+ *  testStartTime: string,
+ *  runnerResults: {
  *    ActualDuration: number
  *  }
  * }[]} results performance results
@@ -38,17 +39,17 @@ function generateCalendarEventsFromResults(results) {
   // Map-then-filter (rather than filter-then-map) so `resource: index` keeps
   // pointing into the original results array for the click-to-detail lookup.
   return results
-    .map(({ test_start_time, name, runner_results }, index) => {
+    .map(({ testStartTime, name, runnerResults }, index) => {
       // parseZone preserves the offset embedded in the timestamp instead of
       // converting to local time. Guard against missing/unparseable values:
       // parseZone(undefined) silently returns "now" and parseZone(null)
       // returns an invalid moment, both of which would surface bogus events.
-      const startMoment = moment.parseZone(test_start_time);
-      if (!test_start_time || !startMoment.isValid()) return null;
+      const startMoment = moment.parseZone(testStartTime);
+      if (!testStartTime || !startMoment.isValid() || !runnerResults?.ActualDuration) return null;
 
       const ntzStartTime = new Date(startMoment.format('MM/DD/YYYY HH:mm'));
       const ntzEndTime = new Date(ntzStartTime);
-      ntzEndTime.setSeconds(ntzEndTime.getSeconds() + runner_results.ActualDuration / 1e9);
+      ntzEndTime.setSeconds(ntzEndTime.getSeconds() + runnerResults.ActualDuration / 1e9);
 
       return {
         title: name,
@@ -96,46 +97,39 @@ function PerformanceCalendar({ style }) {
   const [time, setTime] = useState(generateDateRange());
   const [results, setResults] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState();
+  const dispatch = useDispatch();
+  const {
+    data: performanceResultsData,
+    isFetching,
+    isError,
+    error,
+  } = useGetPerformanceResultsQuery({
+    page: '0',
+    pagesize: '10',
+    search: '',
+    order: '',
+    from: time.start,
+    to: time.end,
+  });
 
   //hooks
   const { notify } = useNotification();
 
   useEffect(() => {
-    fetchResults(time.start, time.end);
-  }, [time]);
+    dispatch(updateProgressAction({ showProgress: isFetching }));
+  }, [dispatch, isFetching]);
 
-  async function fetchResults(start, end) {
-    updateProgress({ showProgress: true });
+  useEffect(() => {
+    setResults(performanceResultsData?.results || []);
+  }, [performanceResultsData]);
 
-    fetchAllResults({
-      selector: {
-        // default
-        pageSize: `10`,
-        page: `0`,
-        search: ``,
-        order: ``,
-        from: start,
-        to: end,
-      },
-    }).subscribe({
-      next: (res) => {
-        // @ts-ignore
-        let result = res?.fetchAllResults;
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          if (result) {
-            // @ts-ignore
-            setResults(result.results || []);
-          }
-        }
-      },
-      error: handleError('Failed to Fetch Profiles'),
-    });
-  }
+  useEffect(() => {
+    if (isError) handleError('Failed to Fetch Results')(error);
+  }, [isError, error]);
 
   function handleError(msg) {
     return function (error) {
-      updateProgress({ showProgress: false });
+      dispatch(updateProgressAction({ showProgress: false }));
       notify({
         message: `${msg}: ${error}`,
         event_type: EVENT_TYPES.ERROR,
@@ -151,11 +145,13 @@ function PerformanceCalendar({ style }) {
   function ResultChart({ result }) {
     if (!result) return <div />;
 
-    const row = result.runner_results;
-    const boardConfig = result.server_board_config;
-    const serverMetrics = result.server_metrics;
-    const startTime = new Date(row.StartTime);
-    const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
+    const row = result.runnerResults;
+    if (!row) return <div />;
+
+    const boardConfig = result.serverBoardConfig;
+    const serverMetrics = result.serverMetrics;
+    const startTime = new Date(row.StartTime || result.testStartTime);
+    const endTime = new Date(startTime.getTime() + (row.ActualDuration ?? 0) / 1000000);
     return (
       <Paper
         style={{
@@ -169,8 +165,8 @@ function PerformanceCalendar({ style }) {
             Performance Graph
           </Typography>
           <MesheryChart
-            rawdata={[result && result.runner_results ? result : {}]}
-            data={[result && result.runner_results ? result.runner_results : {}]}
+            rawdata={[result && result.runnerResults ? result : {}]}
+            data={[result && result.runnerResults ? result.runnerResults : {}]}
           />
         </div>
         {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (

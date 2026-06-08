@@ -55,8 +55,13 @@ func hydrateComponentWithOriginalType(compType string, spec interface{}) error {
 
 func formatValue(path string, val map[string]interface{}) error {
 	updatedValue := make(map[string]interface{})
-	byt, _ := val[path].(string)
-	_ = yaml.Unmarshal([]byte(byt), &updatedValue)
+	byt, ok := val[path].(string)
+	if !ok {
+		return nil
+	}
+	if err := yaml.Unmarshal([]byte(byt), &updatedValue); err != nil {
+		return ErrYAMLUnmarshal(err)
+	}
 	val[path] = updatedValue
 	return nil
 }

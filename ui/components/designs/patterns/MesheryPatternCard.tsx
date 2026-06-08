@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import { Avatar, Divider, Grid2, IconButton, Typography, Link, useTheme } from '@sistent/sistent';
+import {
+  Avatar,
+  AccountTreeIcon,
+  Divider,
+  Grid2,
+  IconButton,
+  Typography,
+  Link,
+  useTheme,
+  InfoOutlinedIcon,
+  crimson,
+} from '@sistent/sistent';
 import { CustomTooltip, VisibilityChipMenu } from '@sistent/sistent';
 import {
   Delete as DeleteIcon,
@@ -25,13 +36,7 @@ import {
   StyledCodeMirrorWrapper,
 } from './Cards.styles';
 import YAMLDialog from '../../YamlDialog';
-import {
-  Public as PublicIcon,
-  Edit,
-  Lock,
-  Public,
-  InfoOutlined as InfoOutlinedIcon,
-} from '@/assets/icons';
+import { Public as PublicIcon, Edit, Lock, Public } from '@/assets/icons';
 import TooltipButton from '@/utils/TooltipButton';
 import CloneIcon from '../../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
@@ -70,6 +75,7 @@ function MesheryPatternCard_({
   user,
   pattern,
   handleInfoModal,
+  handleEvaluate,
   hideVisibility = false,
   isReadOnly = false,
 }) {
@@ -201,7 +207,7 @@ function MesheryPatternCard_({
                   disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
                   data-testid="pattern-btn-unpublish"
                 >
-                  <PublicIcon style={iconMedium} />
+                  <PublicIcon fill={crimson[40]} style={iconMedium} />
                   <GridBtnText> Unpublish </GridBtnText>
                 </TooltipButton>
               )}
@@ -224,17 +230,27 @@ function MesheryPatternCard_({
                   },
                   {
                     label: 'Deploy',
-                    icon: <DoneAllIcon style={iconMedium} />,
+                    icon: <DoneAllIcon fill="currentColor" style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleDeploy),
                     disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
                     'data-testid': 'pattern-btn-deploy',
                   },
                   {
                     label: 'Undeploy',
-                    icon: <UndeployIcon fill={'currentColor'} style={iconMedium} />,
+                    icon: <UndeployIcon fill={crimson[40]} style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleUnDeploy),
                     disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
                     'data-testid': 'pattern-btn-undeploy',
+                  },
+                  {
+                    label: 'Evaluate',
+                    icon: <AccountTreeIcon fill={'currentColor'} style={iconMedium} />,
+                    onClick: (e) => genericClickHandler(e, handleEvaluate),
+                    disabled: !CAN(
+                      keys.EVALUATE_RELATIONSHIPS.action,
+                      keys.EVALUATE_RELATIONSHIPS.subject,
+                    ),
+                    'data-testid': 'pattern-btn-evaluate',
                   },
                 ]}
                 data-testid="pattern-btn-action-dropdown"

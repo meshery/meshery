@@ -88,7 +88,8 @@ section[class*="tabbed"] section[class*="tabbed"] {
 /* Mobile responsiveness */
 @media screen and (max-width: 650px) {
   label {
-    font-size: 0;
+    font-size: 0.75rem;
+    padding: 10px 8px;
   }
   
   label i {

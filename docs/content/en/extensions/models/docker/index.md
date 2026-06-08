@@ -18,6 +18,6 @@ featureList: [
   "Meshery Docker Extension extends Docker Desktop’s position as the cloud native developer’s go-to Kubernetes environment with easy access to the next layer of cloud native infrastructure: service meshes."
 ]
 howItWorks: "Collaborative Infrastructure as Design"
-howItWorksDetails: "From the convenience of your Docker Desktop interface, connect Meshery with your Kubernetes cluster. Watch as MeshSync discovers all of your Kubernetes clusters. Visually design your Docker-based infrastructure. Choose from hundreds of ready-made design patterns using Meshery Catalog. Use Meshery to collaboratively design and operate your infra."
+howItWorksDetails: "From the convenience of your Docker Desktop interface, connect Meshery with your Kubernetes cluster. Watch as MeshSync discovers all of your Kubernetes clusters. Visually design your Docker-based infrastructure. Choose from hundreds of ready-made design patterns using Meshery Catalog."
 categories: [integrations]
 ---

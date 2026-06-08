@@ -1,7 +1,7 @@
 {{ $linkUrlSelected := "/" }}
 {{ $current := .RelPermalink }}
 {{ range .Site.Data.versions }}
-  {{ $linkUrl := printf "/%s/" .url }}
+  {{ $linkUrl := cond (ne .url "") (printf "/%s/" .url) "/" }}
   {{ if or (eq $current $linkUrl) (strings.HasPrefix $current $linkUrl) }}
     {{ $linkUrlSelected = $linkUrl }}
   {{ end }}
@@ -46,19 +46,23 @@
 
           {{ $current := .RelPermalink }}
           {{ range .Site.Data.versions }}
-            {{ $linkUrl := printf "/%s/" .url }}
-            {{ $selected := "" }}
+            {{ $linkUrl := cond (ne .url "") (printf "/%s/" .url) "/" }}
+            {{ $optionUrl := cond (ne .url "") (printf "%s%s/" $.Site.BaseURL (strings.TrimPrefix "/" .url)) $.Site.BaseURL }}
 
             {{ if or (eq $current $linkUrl) (strings.HasPrefix $current $linkUrl) }}
-              {{ $selected = "selected" }}
-            {{ end }}
-
             <option
-              {{ $selected }}
-              value="{{ if .url }}{{ $.Site.BaseURL }}{{ strings.TrimPrefix "/" .url }}/{{ else }}{{ $.Site.BaseURL }}{{ end }}"
+              selected
+              value="{{ $optionUrl }}"
               class="nav-item mr-4 mb-2 text-black">
               {{ .version }}
             </option>
+            {{ else }}
+            <option
+              value="{{ $optionUrl }}"
+              class="nav-item mr-4 mb-2 text-black">
+              {{ .version }}
+            </option>
+            {{ end }}
           {{ end }}
         </select>
       </ul>

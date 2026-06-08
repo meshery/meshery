@@ -85,7 +85,7 @@ describe('resources-table module', () => {
       <ResourcesTable
         updateProgress={vi.fn()}
         k8sConfig={{}}
-        resourceConfig={() => ({ columns: [], options: {} })}
+        useResourceConfig={() => ({ columns: [], options: {} })}
         submenu={false}
         workloadType="pods"
         selectedK8sContexts={[]}
@@ -100,7 +100,7 @@ describe('resources-table module', () => {
       <ResourcesTable
         updateProgress={vi.fn()}
         k8sConfig={{}}
-        resourceConfig={() => ({ columns: [], options: {} })}
+        useResourceConfig={() => ({ columns: [], options: {} })}
         submenu={false}
         workloadType="pods"
         selectedK8sContexts={[]}

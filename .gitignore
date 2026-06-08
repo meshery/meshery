@@ -58,7 +58,7 @@ docs/resources/
 docs/.hugo_build.lock
 docs/hugo_stats.json
 
-docs/static/v0.*/
+#docs/static/v0.*/
 
 dist/
 
@@ -79,6 +79,10 @@ default.profraw
 .ruby-version
 
 wasm/policies/temp-bundle-extract-dir/**
+server/policies/wasm/policy_engine.wasm
+server/policies/wasm/wasm_exec.js
+ui/public/static/wasm/policy_engine.wasm
+ui/public/static/wasm/wasm_exec.js
 .nvim.lua
 
 allure-results/
@@ -89,8 +93,11 @@ install/docker-extension/vm/vm
 ui/.env
 *.env
 */.env
+# install/providers.env is the canonical, version-controlled remote-provider list,
+# not a secrets file - keep it tracked despite the *.env rules above.
+!install/providers.env
 docs/hugo_stats.json
-
 
 LLMs
 .copilot-tmp/*
+.claude/worktrees/*

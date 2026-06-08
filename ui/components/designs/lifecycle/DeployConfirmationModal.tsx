@@ -332,7 +332,7 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
                   }}
                 />
                 {context.length > 0 ? (
-                  <Box display={'table'}>
+                  <Box sx={{ display: 'table' }}>
                     <Checkbox
                       checked={selectedK8sContexts?.includes('all')}
                       onChange={() => setContextViewer('all')}
