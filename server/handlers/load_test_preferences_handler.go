@@ -2,14 +2,12 @@
 package handlers
 
 import (
-	"fmt"
+	"encoding/json"
 	"io"
 	"net/http"
 
-	"google.golang.org/protobuf/encoding/protojson"
-
-	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 )
 
 // UserTestPreferenceHandler is used for persisting load test preferences
@@ -41,14 +39,14 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
-	perfTest := &SMP.PerformanceTestConfig{}
-	if err = protojson.Unmarshal(body, perfTest); err != nil {
+	perfTest := &perfprofile.PerformanceTestConfig{}
+	if err = json.Unmarshal(body, perfTest); err != nil {
 		obj := "the provided input"
 		h.log.Error(models.ErrUnmarshal(err, obj))
 		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
 		return
 	}
-	if err = models.SMPPerformanceTestConfigValidator(perfTest); err != nil {
+	if err = models.PerformanceTestConfigValidator(perfTest); err != nil {
 		h.log.Error(ErrRecordPreferences(err))
 		writeMeshkitError(w, ErrRecordPreferences(err), http.StatusBadRequest)
 		return
@@ -92,8 +90,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		fmt.Printf("%v", testObj)
-		data, err := protojson.Marshal(testObj)
+		data, err := json.Marshal(testObj)
 		if err != nil {
 			h.log.Error(ErrReadConfig(err))
 			writeMeshkitError(w, ErrReadConfig(err), http.StatusInternalServerError)
@@ -101,7 +98,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 		}
 		_, err = w.Write(data)
 		if err != nil {
-			// Response body has already been written (protojson.Marshal
+			// Response body has already been written (json.Marshal
 			// succeeded and w.Write is partway through) — a fresh error
 			// response would corrupt the in-flight body, so log only.
 			h.log.Error(ErrWriteResponse(err))
