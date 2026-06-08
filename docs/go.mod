@@ -1,6 +1,6 @@
 module github.com/meshery/meshery/docs
 
-go 1.25.5
+go 1.26.4
 
 require (
 	github.com/google/docsy v0.15.0 // indirect

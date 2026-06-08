@@ -269,8 +269,8 @@ type HandlerConfig struct {
 
 	// GraphQLHandler           http.Handler
 	// GraphQLPlaygroundHandler http.Handler
-	PlaygroundBuild        bool
-	Providers              map[string]Provider
+	PlaygroundBuild bool
+	Providers       map[string]Provider
 	// ProviderTracker is the authoritative availability state for
 	// Providers. /api/providers reads its snapshot and
 	// /api/providers/stream subscribes to its updates so the provider
