@@ -176,26 +176,78 @@ python -m json.tool relationship.json > /dev/null
 
 to ensure the JSON is valid.
 
+## 4. Test Relationships Locally
 
-## 4. Capture and Share Relationship Screenshots
+Before capturing screenshots or opening a PR, test your relationship locally to confirm that it renders correctly in Kanvas.
+
+### Local Testing Workflow
+
+1. Start Meshery from your feature branch:
+
+   ```bash
+   make ui-server
+   ```
+
+2. Open Meshery at:
+
+   ```text
+   http://localhost:9081
+   ```
+
+3. Sign in using your preferred provider.
+
+4. Open **Kanvas**.
+
+5. Drag the components involved in your relationship onto the canvas.
+
+6. Hover over the component icon and verify that the expected relationship arrow is available.
+
+7. Extend the relationship arrow to the target component.
+
+8. Verify that the relationship edge renders correctly between the components.
+
+9. If the relationship renders correctly, capture a screenshot for your PR.
+
+### Troubleshooting
+
+If relationship edges do not appear:
+
+* Verify that the relationship JSON is valid.
+* Confirm that the source and target component kinds match the relationship definition.
+* Verify that referenced fields exist in the component schema.
+* Check for errors in selector definitions.
+* Compare your relationship with a similar accepted relationship.
+
+### Notes
+
+* When testing locally, you do **not** need to import your model again through the Meshery UI. Relationships defined in your feature branch are loaded automatically.
+* If Kanvas fails to load after pulling recent changes, fetching the latest tags and restarting Meshery may help:
+
+  ```bash
+  git fetch --tags upstream
+  make ui-server
+  ```
+
+## 5. Capture and Share Relationship Screenshots
 
 Relationship screenshots provide visual proof that your definition works correctly and helps maintainers quickly validate the functionality.
 
 ### How to Take a Kanvas Screenshot
 
-1. **Open Kanvas in Meshery Playground**
-   - Visit [playground.meshery.io](https://playground.meshery.io/)
-   - Import your custom model (or use existing models if testing standard relationships)
+1. **Open Kanvas**
+   - Use your local Meshery instance or [playground.meshery.io](https://playground.meshery.io/)
+   - Ensure the components involved in the relationship are available on the canvas
 
 2. **Prepare the canvas view**
    - Drag both components involved in the relationship onto the canvas
    - Position them clearly with space between them
    - Zoom to ~75-100% so components are clearly visible
 
-3. **Draw the relationship**
-   - Hover over the first component (the "from" component)
-   - Click and drag to the second component (the "to" component)
-   - If your relationship is valid, the edge will appear with the correct visual style
+3. **Create the relationship**
+   - Hover over the source component icon
+   - Select the appropriate relationship arrow
+   - Extend it to the target component
+   - Verify that the edge renders correctly
 
 4. **Take the screenshot**
    - Include:
@@ -267,7 +319,7 @@ When submitting multiple relationships, organize your PR description like:
 
 ---
 
-## 5. Pre-submission Checklist
+## 6. Pre-submission Checklist
 
 Before opening a PR, verify:
 
@@ -282,7 +334,7 @@ Before opening a PR, verify:
 
 ---
 
-## 6. Debugging Tips
+## 7. Debugging Tips
 
 ### Issue: Relationship does not appear as expected
 
@@ -302,7 +354,7 @@ Possible causes:
 
 ---
 
-## 7. Relationship File Naming
+## 8. Relationship File Naming
 
 Relationship filenames vary across models and providers.
 
@@ -316,7 +368,7 @@ Using the existing naming style helps maintain consistency across models and avo
 
 ---
 
-## 8. Contributing Your Relationship
+## 9. Contributing Your Relationship
 
 Once validated and tested:
 
