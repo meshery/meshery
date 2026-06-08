@@ -172,7 +172,7 @@ export function OrgMenu(props) {
   const handleOrgSelect = async (e) => {
     const id = e.target.value;
     try {
-      await updateSelectedOrg(id);
+      await updateSelectedOrg(id).unwrap();
       window.location.reload();
     } catch (err) {
       notify({
