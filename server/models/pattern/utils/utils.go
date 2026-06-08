@@ -129,12 +129,20 @@ func GetRandomAlphabetsOfDigit(length int) (s string) {
 // Matching the prefix keeps current and future design schema versions out of
 // the lossy migration path.
 func IsDesignInAlpha2Format(patternFile string) (bool, error) {
-	design := map[string]interface{}{}
+	// Decode only schemaVersion into a targeted struct instead of the whole
+	// file into a map[string]interface{}, which would allocate the entire
+	// nested design tree just to read one field. Both the json and yaml tags
+	// are required: encoding.Unmarshal tries encoding/json first and falls back
+	// to gopkg.in/yaml.v3, so a json-only tag would miss the camelCase
+	// schemaVersion key in a YAML-encoded pattern file and misclassify it.
+	var design struct {
+		SchemaVersion string `json:"schemaVersion" yaml:"schemaVersion"`
+	}
 	if err := encoding.Unmarshal([]byte(patternFile), &design); err != nil {
 		return true, err
 	}
 
-	if sv, ok := design["schemaVersion"].(string); ok && strings.HasPrefix(sv, "designs.meshery.io/") {
+	if strings.HasPrefix(design.SchemaVersion, "designs.meshery.io/") {
 		return false, nil
 	}
 	return true, nil

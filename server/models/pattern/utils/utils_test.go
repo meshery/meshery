@@ -34,6 +34,15 @@ func TestIsDesignInAlpha2Format(t *testing.T) {
 			wantAlpha2:  false,
 		},
 		{
+			// YAML-encoded pattern file: guards the json+yaml tag pair on the
+			// decode struct. With a json-only tag the yaml.v3 fallback in
+			// encoding.Unmarshal would miss the camelCase key and misclassify
+			// this current design as alpha2.
+			name:        "v1beta3 design encoded as YAML is current (not alpha2)",
+			patternFile: "schemaVersion: designs.meshery.io/v1beta3\nname: yaml-nginx\ncomponents: []\n",
+			wantAlpha2:  false,
+		},
+		{
 			// Genuine legacy format: carries `services`, no versioned
 			// schemaVersion. This is the only case that should migrate.
 			name:        "v1alpha2 design (services, no schemaVersion) is alpha2",
