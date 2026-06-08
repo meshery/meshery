@@ -125,7 +125,18 @@ export const useConnectionTableOptions = ({
 
         expansionFlags.current.isHandlingExpansion = true;
         const expandedRows = allRowsExpanded.slice(-1);
-        setRowsExpanded(expandedRows.map((item) => item.index));
+        // mui-datatables fires `onRowExpansionChange` for every internal
+        // re-render where the expanded set is unchanged. Bailing out on a
+        // value-equal write avoids enqueuing redundant setState commits which
+        // can cascade into the React #185 update-depth limit on slow renders.
+        const nextExpandedRows = expandedRows.map((item) => item.index);
+        const hasExpandedRowsChanged =
+          nextExpandedRows.length !== rowsExpanded.length ||
+          nextExpandedRows.some((rowIndex, index) => rowIndex !== rowsExpanded[index]);
+
+        if (hasExpandedRowsChanged) {
+          setRowsExpanded(nextExpandedRows);
+        }
 
         if (expandedRows.length > 0) {
           const index = expandedRows[0].index;
@@ -138,7 +149,11 @@ export const useConnectionTableOptions = ({
           ) {
             updateUrlWithConnectionId(connection.id);
           }
-        } else if (updateUrlWithConnectionId && !expansionFlags.current.isInitialLoad) {
+        } else if (
+          updateUrlWithConnectionId &&
+          !expansionFlags.current.isInitialLoad &&
+          selectedConnectionId
+        ) {
           updateUrlWithConnectionId('');
         }
 

@@ -30,7 +30,7 @@ mesheryctl model view [model-name]
 </div>
 </pre> 
 
-View a specific model in specifed format
+View a specific model in specified format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model view [model-name] --output-format [json|yaml]

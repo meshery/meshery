@@ -28,6 +28,7 @@ export function createPatternsActions(deps) {
     uploadPatternFile,
     deployPatternMutation,
     undeployPatternMutation,
+    evaluateRelationships,
     // refs / state
     modalRef,
     meshModels,
@@ -387,6 +388,38 @@ export function createPatternsActions(deps) {
     }
   };
 
+  function handleEvaluateRelationship(pattern) {
+    updateProgress({ showProgress: true });
+    try {
+      const design =
+        typeof pattern.patternFile === 'string'
+          ? yaml.load(pattern.patternFile)
+          : pattern.patternFile;
+
+      evaluateRelationships({
+        body: {
+          design: { ...design, relationships: [] },
+          options: { returnDiffOnly: false, enableTrace: false },
+        },
+      })
+        .unwrap()
+        .then(() => {
+          updateProgress({ showProgress: false });
+          notify({
+            message: `"${pattern.name}" design evaluated`,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+        })
+        .catch((error) => {
+          updateProgress({ showProgress: false });
+          handleError(ACTION_TYPES.EVALUATE_RELATIONSHIP)(error);
+        });
+    } catch (error) {
+      updateProgress({ showProgress: false });
+      handleError(ACTION_TYPES.EVALUATE_RELATIONSHIP)(error);
+    }
+  }
+
   return {
     handleError,
     resetSelectedRowData,
@@ -404,6 +437,7 @@ export function createPatternsActions(deps) {
     handleImportDesign,
     deletePatterns,
     handleDownload,
+    handleEvaluateRelationship,
     showModal,
   };
 }

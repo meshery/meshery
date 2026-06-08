@@ -31,7 +31,9 @@ export const ACTION_TYPES = {
 type ResourcesTableProps = {
   updateProgress?: (value: { showProgress: boolean }) => void;
   k8sConfig: unknown;
-  resourceConfig: (...args: any[]) => any;
+  // Custom hook (e.g. useWorkloadTableConfig); `use`-prefixed so its hook nature
+  // is explicit and lint-enforced. Must be called at the top level of a render.
+  useResourceConfig: (...args: any[]) => any;
   submenu?: boolean;
   workloadType: string;
   selectedK8sContexts: unknown;
@@ -50,11 +52,16 @@ const ResourcesTable = (props: ResourcesTableProps) => {
 };
 
 const ResourcesTableInner = (props: ResourcesTableProps) => {
-  const { updateProgress, k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } =
-    props;
+  const {
+    updateProgress,
+    k8sConfig,
+    useResourceConfig,
+    submenu,
+    workloadType,
+    selectedK8sContexts,
+  } = props;
   const router = useRouter();
   const [meshSyncResources, setMeshSyncResources] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState();
@@ -101,82 +108,91 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
     setView(view);
   };
 
-  const tableConfig = useMemo(() => {
-    const resolvedConfig = resourceConfig(
-      switchView,
-      meshSyncResources,
-      k8sConfig,
-      connectionMetadataState,
-      workloadType,
-      selectedK8sContexts,
-    );
-
-    return submenu ? resolvedConfig[workloadType] : resolvedConfig;
-  }, [
-    connectionMetadataState,
-    k8sConfig,
+  const resolvedConfig = useResourceConfig(
+    switchView,
     meshSyncResources,
-    resourceConfig,
-    selectedK8sContexts,
-    submenu,
+    k8sConfig,
+    connectionMetadataState,
     workloadType,
-  ]);
+    selectedK8sContexts,
+  );
+  const tableConfig = submenu ? resolvedConfig[workloadType] : resolvedConfig;
 
   const encodedClusterIds = useMemo(() => JSON.stringify(clusterIds), [clusterIds]);
 
   const { notify } = useNotification();
   const [fetchMeshSyncResources] = useLazyGetMeshSyncResourcesQuery();
 
-  const getMeshsyncResources = async (page, pageSize, search, sortOrder) => {
-    setLoading(true);
+  const [tableCols, updateCols] = useState(tableConfig.columns);
+
+  // Inlined so the deps below cover every value the fetch reads; cleanup flag drops responses from superseded requests.
+  useEffect(() => {
+    const decodedClusterIds = JSON.parse(encodedClusterIds);
+    if (decodedClusterIds.length === 0) {
+      return;
+    }
+
     const { query } = router;
     const resourceName =
       query.resourceName ||
       (['Node', 'Namespace'].includes(query.resource) ? query.resource : search);
     const resourceCategory = query.resource || tableConfig.name;
-    const decodedClusterIds = JSON.parse(encodedClusterIds);
-    if (decodedClusterIds.length === 0) {
-      setLoading(false);
-      return;
-    }
-    if (!resourceName) search = '';
-    if (!sortOrder) sortOrder = '';
 
-    try {
-      const res = await fetchMeshSyncResources({
-        kind: resourceCategory,
-        status: true,
-        spec: true,
-        annotations: true,
-        labels: true,
-        clusterIds: encodedClusterIds,
-        page,
-        pagesize: pageSize,
-        search: resourceName,
-        order: sortOrder,
-        ...(namespaceFilter ? { namespace: namespaceFilter } : {}),
-      }).unwrap();
+    let cancelled = false;
 
-      setMeshSyncResources(res?.resources || []);
-      setPage(res?.page || 0);
-      setCount(res?.totalCount || 0);
-      setPageSize(res?.pageSize || 0);
-      setLoading(false);
-      if (query.resourceCategory && query.resourceName && res?.resources.length === 1) {
-        switchView(SINGLE_VIEW, res?.resources[0]);
-      }
-    } catch (err) {
-      handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES)(err);
-    }
-  };
+    fetchMeshSyncResources({
+      kind: resourceCategory,
+      status: true,
+      spec: true,
+      annotations: true,
+      labels: true,
+      clusterIds: encodedClusterIds,
+      page,
+      pagesize: pageSize,
+      search: resourceName,
+      order: sortOrder || '',
+      ...(namespaceFilter ? { namespace: namespaceFilter } : {}),
+    })
+      .unwrap()
+      .then((res) => {
+        if (cancelled) return;
+        setMeshSyncResources(res?.resources || []);
+        setPage(res?.page || 0);
+        setCount(res?.totalCount || 0);
+        setPageSize(res?.pageSize || 0);
+        if (query.resourceCategory && query.resourceName && res?.resources.length === 1) {
+          setSelectedResource(res.resources[0]);
+          setView(SINGLE_VIEW);
+        }
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        updateProgress?.({ showProgress: false });
+        notify({
+          message: `${ACTION_TYPES.FETCH_MESHSYNC_RESOURCES.error_msg}: ${err}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: err.toString(),
+        });
+      });
 
-  const [tableCols, updateCols] = useState(tableConfig.columns);
-
-  useEffect(() => {
-    if (!loading) {
-      getMeshsyncResources(page, pageSize, search, sortOrder);
-    }
-  }, [page, pageSize, search, sortOrder, encodedClusterIds, namespaceFilter]);
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    page,
+    pageSize,
+    search,
+    sortOrder,
+    encodedClusterIds,
+    namespaceFilter,
+    router.query.resource,
+    router.query.resourceName,
+    router.query.resourceCategory,
+    tableConfig.name,
+    fetchMeshSyncResources,
+    notify,
+    updateProgress,
+  ]);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
     let showCols = updateVisibleColumns(tableConfig.colViews, width);
@@ -260,15 +276,6 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
     }),
     [page, pageSize, meshSyncResources],
   );
-
-  const handleError = (action) => (error) => {
-    updateProgress({ showProgress: false });
-    notify({
-      message: `${action.error_msg}: ${error}`,
-      event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
-    });
-  };
 
   return (
     <>

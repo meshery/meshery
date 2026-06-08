@@ -29,6 +29,7 @@ type HandlerInterface interface {
 	ProviderHandler(w http.ResponseWriter, r *http.Request)
 	HandleErrorHandler(w http.ResponseWriter, r *http.Request)
 	ProvidersHandler(w http.ResponseWriter, r *http.Request)
+	ProvidersStreamHandler(w http.ResponseWriter, r *http.Request)
 	ProviderUIHandler(w http.ResponseWriter, r *http.Request)
 	ProviderCapabilityHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProviderComponentsHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -268,8 +269,15 @@ type HandlerConfig struct {
 
 	// GraphQLHandler           http.Handler
 	// GraphQLPlaygroundHandler http.Handler
-	PlaygroundBuild        bool
-	Providers              map[string]Provider
+	PlaygroundBuild bool
+	Providers       map[string]Provider
+	// ProviderTracker is the authoritative availability state for
+	// Providers. /api/providers reads its snapshot and
+	// /api/providers/stream subscribes to its updates so the provider
+	// chooser can render every entry immediately and update them
+	// independently as each remote's probe completes. Always non-nil
+	// after main.go finishes registering providers.
+	ProviderTracker        *ProviderTracker
 	ProviderCookieName     string
 	ProviderCookieDuration time.Duration
 

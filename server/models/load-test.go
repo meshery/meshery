@@ -16,11 +16,10 @@ import (
 type LoadGenerator string
 
 const (
-	// FortioLG - represents the Fortio load generator
+	// FortioLG - represents the Fortio load generator. fortio is the only
+	// supported load generator; legacy/unknown generator identifiers run
+	// on fortio.
 	FortioLG LoadGenerator = "fortio"
-
-	// Wrk2LG - represents the wrk2 load generator
-	Wrk2LG LoadGenerator = "wrk2"
 )
 
 // Name - retrieves a string value for the generator
@@ -112,7 +111,7 @@ type MesheryResult struct {
 	ServerBoardConfig interface{} `json:"serverBoardConfig,omitempty" gorm:"type:JSONB"`
 
 	TestStartTime          *time.Time         `json:"testStartTime,omitempty"`
-	PerformanceProfileInfo PerformanceProfile `json:"-,omitempty" gorm:"constraint:OnDelete:SET NULL;foreignKey:PerformanceProfile"`
+	PerformanceProfileInfo PerformanceProfile `json:"-" gorm:"constraint:OnDelete:SET NULL;foreignKey:PerformanceProfile"`
 
 	UpdatedAt string `json:"updatedAt,omitempty"`
 	CreatedAt string `json:"createdAt,omitempty"`

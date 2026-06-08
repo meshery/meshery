@@ -16,13 +16,9 @@ In this tutorial, we will learn how to embed a **Meshery Design** in a WordPress
 This tutorial assumes that you have created a design or have an existing one. If not, you can use one of the numerous public designs available in **Meshery Design Configurator** for this tutorial.
 
 1. Expand the **Designs** menu on the left.
-   
-   ![Expand Designs](/guides/tutorials/images/embedding-design-in-wordpress/expand-designs-kanvas.png)
 
 2. Click the **Quick actions** button to the left of the design (inverted ellipsis) and select **Export Design**.
    
-   ![Export Design](/guides/tutorials/images/embedding-design-in-wordpress/quickaction-exportdesign.png)
-
 3. Click the download icon next to **Embed Design** from the list.
    
    ![Embed Design](/guides/tutorials/images/embedding-design-in-wordpress/embeddesign.png)

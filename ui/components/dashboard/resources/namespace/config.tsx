@@ -11,7 +11,7 @@ import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { FormatId } from '@/components/data-formatter';
 
-export const NamespaceTableConfig = (
+export const useNamespaceTableConfig = (
   switchView,
   meshSyncResources,
   k8sConfig,

@@ -137,7 +137,15 @@ components:
   colorIcon: content/en/extensions/models/consul/components/rate-limit/icons/color/rate-limit-color.svg
   whiteIcon: content/en/extensions/models/consul/components/rate-limit/icons/white/rate-limit-white.svg
   description: 
-components-count: 32
+- name: route-tlssds-filter
+  colorIcon: content/en/extensions/models/consul/components/route-tlssds-filter/icons/color/route-tlssds-filter-color.svg
+  whiteIcon: content/en/extensions/models/consul/components/route-tlssds-filter/icons/white/route-tlssds-filter-white.svg
+  description: 
+- name: route-tlssds-filter
+  colorIcon: content/en/extensions/models/consul/components/route-tlssds-filter/icons/color/route-tlssds-filter-color.svg
+  whiteIcon: content/en/extensions/models/consul/components/route-tlssds-filter/icons/white/route-tlssds-filter-white.svg
+  description: 
+components-count: 34
 relationships: 
 relationship-count: 0
 featureList: [

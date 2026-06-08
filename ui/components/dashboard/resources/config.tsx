@@ -1,44 +1,44 @@
-import { ConfigurationTableConfig } from './configuration/config';
-import { NetWorkTableConfig } from './network/config';
-import { SecurityTypesConfig } from './security/config';
-import { StorageTableConfig } from './storage/config';
-import { WorkloadTableConfig } from './workloads/config';
-import { NamespaceTableConfig } from './namespace/config';
-import { NodeTableConfig } from './nodes/config';
-import { CustomResourceConfig } from './crds/config';
+import { useConfigurationTableConfig } from './configuration/config';
+import { useNetWorkTableConfig } from './network/config';
+import { useSecurityTypesConfig } from './security/config';
+import { useStorageTableConfig } from './storage/config';
+import { useWorkloadTableConfig } from './workloads/config';
+import { useNamespaceTableConfig } from './namespace/config';
+import { useNodeTableConfig } from './nodes/config';
+import { useCustomResourceConfig } from './crds/config';
 import _ from 'lodash';
 
 export const ResourcesConfig = {
   Node: {
-    tableConfig: NodeTableConfig,
+    useTableConfig: useNodeTableConfig,
     submenu: false,
   },
   Namespace: {
-    tableConfig: NamespaceTableConfig,
+    useTableConfig: useNamespaceTableConfig,
     submenu: false,
   },
   Workload: {
-    tableConfig: WorkloadTableConfig,
+    useTableConfig: useWorkloadTableConfig,
     submenu: true,
   },
   Configuration: {
-    tableConfig: ConfigurationTableConfig,
+    useTableConfig: useConfigurationTableConfig,
     submenu: true,
   },
   Network: {
-    tableConfig: NetWorkTableConfig,
+    useTableConfig: useNetWorkTableConfig,
     submenu: true,
   },
   Security: {
-    tableConfig: SecurityTypesConfig,
+    useTableConfig: useSecurityTypesConfig,
     submenu: true,
   },
   Storage: {
-    tableConfig: StorageTableConfig,
+    useTableConfig: useStorageTableConfig,
     submenu: true,
   },
   CRDS: {
-    tableConfig: CustomResourceConfig,
+    useTableConfig: useCustomResourceConfig,
     submenu: true,
   },
 };
