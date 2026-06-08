@@ -317,9 +317,9 @@ func main() {
 		// complete and the tracker has been built around the final
 		// `provs` map. The handlers must not access it before that
 		// assignment, but every route is registered after.
-		PlaygroundBuild:        viper.GetBool("PLAYGROUND"),
-		AdapterTracker:         adapterTracker,
-		QueryTracker:           queryTracker,
+		PlaygroundBuild: viper.GetBool("PLAYGROUND"),
+		AdapterTracker:  adapterTracker,
+		QueryTracker:    queryTracker,
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
 
@@ -470,11 +470,14 @@ func main() {
 		defer rp.StopSyncPreferences()
 	}
 
-	// verifies if the provider specified in the "PROVIDER" environment variable is from one of the supported providers.
-	// If it is one of the supported providers, the server gets configured to auto select the specified provider,
-	// else the provider specified in the environment variable is ignored and  each time user logs in they need to select a provider.
-	isProviderEnvVarValid := models.VerifyMesheryProvider(providerEnvVar, provs)
-	if !isProviderEnvVarValid {
+	// Resolve the configured PROVIDER to Meshery's internal registration key.
+	// Remote providers are registered under a stable key (typically URL host)
+	// before their async /capabilities probe reveals the canonical
+	// providerName, so a pre-selected remote such as PROVIDER=Meshery may need
+	// one bounded probe here to avoid falling back to the chooser.
+	if resolvedProviderKey, ok := models.ResolveProviderKeyWithProbe(ctx, providerEnvVar, provs); ok {
+		providerEnvVar = resolvedProviderKey
+	} else {
 		providerEnvVar = ""
 	}
 
