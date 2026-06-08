@@ -1,0 +1,11 @@
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="#ddd"
+    viewBox="0 0 18 14"
+  >
+    <g id="Layer_2" data-name="Layer 2">
+      <g id="Layer_1-2" data-name="Layer 1">
+        <path d="M18,12a2,2,0,1,1-2.48-1.94h0V7H2.5v3.07a2,2,0,1,1-1,0h0V6h7V3.93a2,2,0,1,1,1,0L9.5,6h7v4.07A2,2,0,0,1,18,12Z" />
+      </g>
+    </g>
+</svg>
