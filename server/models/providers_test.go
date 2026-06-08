@@ -85,7 +85,10 @@ func TestResolveProviderKeyWithProbe_ResolvesCanonicalRemoteName(t *testing.T) {
 	if key != parsed.Host {
 		t.Fatalf("resolved key = %q, want %q", key, parsed.Host)
 	}
-	if cachedKey, ok := ResolveProviderKey("Meshery", providers); !ok || cachedKey != parsed.Host {
-		t.Fatalf("ResolveProviderKey after probe = (%q, %v), want (%q, true)", cachedKey, ok, parsed.Host)
+	// Succeeds because VerifyAvailability updated the provider's stored
+	// ProviderProperties as a side effect of the probe above, so the plain
+	// (probe-less) resolver can now map "Meshery" to the remote's host key.
+	if resolvedKey, ok := ResolveProviderKey("Meshery", providers); !ok || resolvedKey != parsed.Host {
+		t.Fatalf("ResolveProviderKey after probe = (%q, %v), want (%q, true)", resolvedKey, ok, parsed.Host)
 	}
 }

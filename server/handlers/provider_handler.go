@@ -13,6 +13,12 @@ import (
 func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 	providerKey, ok := models.ResolveProviderKey(r.URL.Query().Get("provider"), h.config.Providers)
 	if !ok {
+		// An unknown or unregistered provider (e.g. a stale UI sending a
+		// name that no longer maps to a registered provider) would
+		// otherwise fall through to a silent 200 with an empty body,
+		// leaving the browser with no actionable signal. Send the user
+		// back to the provider chooser so they can pick a valid one.
+		http.Redirect(w, r, "/provider", http.StatusFound)
 		return
 	}
 

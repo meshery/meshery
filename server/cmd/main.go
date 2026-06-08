@@ -478,6 +478,13 @@ func main() {
 	if resolvedProviderKey, ok := models.ResolveProviderKeyWithProbe(ctx, providerEnvVar, provs); ok {
 		providerEnvVar = resolvedProviderKey
 	} else {
+		if providerEnvVar != "" {
+			// Informational, not an error: a configured PROVIDER that
+			// matches no registered provider is a valid fallback to the
+			// chooser, but operators should be able to see why auto-select
+			// did not engage.
+			log.Infof("configured PROVIDER %q could not be resolved to any registered provider; falling back to the provider chooser", providerEnvVar)
+		}
 		providerEnvVar = ""
 	}
 

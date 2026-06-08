@@ -394,7 +394,15 @@ func NormalizeProviderName(name string) string {
 }
 
 func matchesProviderAddress(candidate string, addresses ...string) bool {
+	// Normalize away surrounding whitespace and a trailing slash so a
+	// configured "https://cloud.meshery.io/" still matches a stored
+	// ProviderURL of "https://cloud.meshery.io" (and vice versa).
+	candidate = strings.TrimRight(strings.TrimSpace(candidate), "/")
+	if candidate == "" {
+		return false
+	}
 	for _, address := range addresses {
+		address = strings.TrimRight(strings.TrimSpace(address), "/")
 		if address == "" {
 			continue
 		}
@@ -464,8 +472,10 @@ func ResolveProviderKeyWithProbe(ctx context.Context, provider string, supported
 	launched := 0
 
 	for key, p := range supportedProviders {
+		// A non-nil interface can still wrap a typed nil pointer; guard
+		// against it so the probe goroutine cannot panic on rp.VerifyAvailability.
 		rp, ok := p.(*RemoteProvider)
-		if !ok {
+		if !ok || rp == nil {
 			continue
 		}
 		launched++
