@@ -115,7 +115,7 @@ const ThemeToggler: React.FC<ThemeTogglerProps> = ({ handleUpdateUserPref }) => 
             handleUpdateUserPref(mode === 'dark' ? 'light' : 'dark');
           }}
         />
-        Dark Mode
+        {mode === 'dark' ? 'Dark Mode' : 'Light Mode'}
       </div>
     );
   };
