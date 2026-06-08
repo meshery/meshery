@@ -62,7 +62,7 @@ const OrgSwitcher = () => {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
     try {
-      await updateSelectedOrg(id);
+      await updateSelectedOrg(id).unwrap();
       dispatchSetOrganization({ organization: selected });
       window.location.reload();
     } catch (err) {
