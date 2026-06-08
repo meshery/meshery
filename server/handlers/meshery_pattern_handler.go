@@ -891,7 +891,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		return
 	}
 
-	// v1beta1
+	// Detect and migrate legacy v1alpha2 designs to the current schema.
 	isOldFormat, err := patternutils.IsDesignInAlpha2Format(pattern.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)
