@@ -112,7 +112,6 @@ const ThemeToggler: React.FC<ThemeTogglerProps> = ({ handleUpdateUserPref }) => 
           checked={mode === 'dark'}
           onChange={() => {
             toggleTheme();
-            handleUpdateUserPref(mode === 'dark' ? 'light' : 'dark');
           }}
         />
         {mode === 'dark' ? 'Dark Mode' : 'Light Mode'}
