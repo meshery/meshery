@@ -1,4 +1,4 @@
-import React, { useId } from "react";
+import React from "react";
 
 const ConnectionIcon = ({
   width = 24,
@@ -9,7 +9,6 @@ const ConnectionIcon = ({
   style = {},
   className = undefined,
 }) => {
-  const clipPathId = useId().replace(/:/g, "");
   const primary = primaryFill ?? fill;
   const secondary = secondaryFill ?? fill;
 
@@ -23,7 +22,7 @@ const ConnectionIcon = ({
       width={width}
       fill={fill}
     >
-      <g clipPath={`url(#${clipPathId})`}>
+      <g>
       <path
         d="M14.6169 9.82553C14.7759 10.5484 15.4121 11.0978 16.1928 11.0978C17.0747 11.0978 17.7976 10.3749 17.7976 9.493C17.7976 8.61108 17.0747 7.88818 16.1928 7.88818C15.4121 7.88818 14.7759 8.43758 14.6169 9.16047H13.1494C13.1581 9.27324 13.1639 9.38602 13.1639 9.50023C13.1639 9.61445 13.1581 9.71855 13.1494 9.82553H14.6169Z"
         fill={fill}
@@ -126,11 +125,6 @@ const ConnectionIcon = ({
         fill={secondary}
       />
       </g>
-      <defs>
-        <clipPath id={clipPathId}>
-          <rect width="18" height="18" fill="white" transform="translate(0 0.5)" />
-        </clipPath>
-      </defs>
     </svg>
   );
 };
