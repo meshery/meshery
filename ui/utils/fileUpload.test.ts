@@ -28,22 +28,32 @@ describe('findSelectedFileInDialog', () => {
     expect(findSelectedFileInDialog()).toBe(pageFile);
   });
 
-  it('prefers the selected file inside the active dialog when present', () => {
+  it('prefers the selected file inside the top-most dialog when multiple dialogs are open', () => {
     document.body.innerHTML = `
       <div role="dialog">
-        <input type="file" id="dialog-input" />
+        <input type="file" id="background-dialog-input" />
+      </div>
+      <div role="dialog">
+        <input type="file" id="active-dialog-input" />
       </div>
       <input type="file" id="page-input" />
     `;
 
-    const dialogInput = document.getElementById('dialog-input') as HTMLInputElement;
+    const backgroundDialogInput = document.getElementById(
+      'background-dialog-input',
+    ) as HTMLInputElement;
+    const activeDialogInput = document.getElementById('active-dialog-input') as HTMLInputElement;
     const pageInput = document.getElementById('page-input') as HTMLInputElement;
-    const dialogFile = new File(['dialog'], 'dialog.yaml', { type: 'application/yaml' });
+    const backgroundDialogFile = new File(['background'], 'background.yaml', {
+      type: 'application/yaml',
+    });
+    const activeDialogFile = new File(['dialog'], 'dialog.yaml', { type: 'application/yaml' });
     const pageFile = new File(['page'], 'page.yaml', { type: 'application/yaml' });
 
-    selectFile(dialogInput, dialogFile);
+    selectFile(backgroundDialogInput, backgroundDialogFile);
+    selectFile(activeDialogInput, activeDialogFile);
     selectFile(pageInput, pageFile);
 
-    expect(findSelectedFileInDialog()).toBe(dialogFile);
+    expect(findSelectedFileInDialog()).toBe(activeDialogFile);
   });
 });
