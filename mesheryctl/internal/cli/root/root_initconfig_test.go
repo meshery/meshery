@@ -10,10 +10,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-func isWindows() bool {
-	return runtime.GOOS == "windows"
-}
-
 func TestInitConfigUseCases(t *testing.T) {
 	tests := []struct {
 		name      string
@@ -125,7 +121,7 @@ func TestInitConfigUseCases(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.skipOnWin && isWindows() {
+			if tt.skipOnWin && runtime.GOOS == "windows" {
 				t.Skip("skipping permission test on Windows: chmod 0o000 has no effect")
 			}
 
