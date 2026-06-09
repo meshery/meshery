@@ -6,7 +6,7 @@
  * shape and the rationale behind each consumer-specific override.
  */
 import { ModelImportRjsfSchemaV1Beta2, ModelImportRjsfUiSchemaV1Beta2 } from '@meshery/schemas';
-import { findSelectedFileInDialog, readFileAsBytes } from '@/utils/fileUpload';
+import { findSelectedFileInDialog } from '@/utils/fileUpload';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 
 // Canonical RJSF form schemas authored in `meshery/schemas` and validated
@@ -133,5 +133,3 @@ export const decodeDataUrlToBytes = (dataUrl: string | undefined): number[] | nu
 export const findSelectedModelFile = (): File | undefined => {
   return findSelectedFileInDialog('input[type="file"][id$="_modelFile"]');
 };
-
-export { readFileAsBytes };

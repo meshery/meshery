@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const encodeDesignFile = vi.fn((d: any) => `encoded:${JSON.stringify(d)}`);
 const getUnit8ArrayDecodedFile = vi.fn((f: any) => `decoded:${f}`);
 const downloadContent = vi.fn();
-const resolveImportedDesignFile = vi.fn();
+const buildImportDesignRequestBody = vi.fn();
 
 vi.mock('@sistent/sistent', () => ({
   PROMPT_VARIANTS: { DANGER: 'danger' },
@@ -40,8 +40,8 @@ vi.mock('@/store/slices/mesheryUi', () => ({
   updateProgress: vi.fn(),
 }));
 
-vi.mock('../import-design-file', () => ({
-  resolveImportedDesignFile: (f: any) => resolveImportedDesignFile(f),
+vi.mock('../import-design-request', () => ({
+  buildImportDesignRequestBody: (data: any) => buildImportDesignRequestBody(data),
 }));
 
 import { createPatternsActions } from './patterns-actions';
@@ -85,7 +85,7 @@ const baseDeps = () => {
 
 describe('createPatternsActions', () => {
   beforeEach(() => {
-    resolveImportedDesignFile.mockReset();
+    buildImportDesignRequestBody.mockReset();
   });
 
   it('returns the canonical set of action methods', () => {
@@ -223,9 +223,12 @@ describe('createPatternsActions', () => {
   it('handleImportDesign uploads file imports using the resolved file metadata', async () => {
     const deps = baseDeps();
     deps.importPattern.mockReturnValue({ unwrap: () => Promise.resolve({}) });
-    resolveImportedDesignFile.mockResolvedValue({
-      fileData: [1, 2, 3],
-      fileName: 'imported-design.yaml',
+    buildImportDesignRequestBody.mockResolvedValue({
+      requestBody: JSON.stringify({
+        name: 'Imported design',
+        file_name: 'imported-design.yaml',
+        file: [1, 2, 3],
+      }),
     });
 
     const actions = createPatternsActions(deps);
@@ -235,7 +238,11 @@ describe('createPatternsActions', () => {
       file: 'data:text/plain;base64,QQ==',
     });
 
-    expect(resolveImportedDesignFile).toHaveBeenCalledWith('data:text/plain;base64,QQ==');
+    expect(buildImportDesignRequestBody).toHaveBeenCalledWith({
+      uploadType: 'File Upload',
+      name: 'Imported design',
+      file: 'data:text/plain;base64,QQ==',
+    });
     expect(deps.importPattern).toHaveBeenCalledWith({
       importBody: JSON.stringify({
         name: 'Imported design',
@@ -247,7 +254,9 @@ describe('createPatternsActions', () => {
 
   it('handleImportDesign surfaces a missing file instead of dereferencing a null input', async () => {
     const deps = baseDeps();
-    resolveImportedDesignFile.mockResolvedValue(null);
+    buildImportDesignRequestBody.mockResolvedValue({
+      errorMessage: 'Please choose a design file before continuing.',
+    });
 
     const actions = createPatternsActions(deps);
     await actions.handleImportDesign({
