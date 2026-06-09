@@ -181,14 +181,7 @@ const getNavItems = (theme: ReturnType<typeof useTheme>, counts: CountSummary): 
   {
     id: RELATIONSHIPS,
     label: `Relationships (${counts.relationships})`,
-    icon: (
-      <ConnectionIcon
-        {...iconSmall}
-        fill={theme.palette.icon.default}
-        primaryFill={theme.palette.icon.default}
-        secondaryFill={theme.palette.icon.default}
-      />
-    ),
+    icon: <ConnectionIcon {...iconSmall} fill={theme.palette.icon.default} />,
   },
   {
     id: REGISTRANTS,
@@ -297,9 +290,27 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
   const updateHeaderInfo = (id: string) => {
     const item = navConfig.find((nav) => nav.id === id);
     if (item) {
+      let headerIcon = <FileIcon {...iconMedium} fill={theme.palette.common.white} />;
+
+      switch (id) {
+        case COMPONENTS:
+          headerIcon = <ComponentIcon {...iconMedium} fill={theme.palette.common.white} />;
+          break;
+        case RELATIONSHIPS:
+          headerIcon = <ConnectionIcon {...iconMedium} fill={theme.palette.common.white} />;
+          break;
+        case REGISTRANTS:
+          headerIcon = <DatabaseIcon {...iconMedium} fill={theme.palette.common.white} />;
+          break;
+        case MODELS:
+        default:
+          headerIcon = <FileIcon {...iconMedium} fill={theme.palette.common.white} />;
+          break;
+      }
+
       setHeaderInfo({
         title: `Registry - ${id}`,
-        icon: <FileIcon {...iconMedium} fill={theme.palette.common.white} />,
+        icon: headerIcon,
       });
     }
   };
