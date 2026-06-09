@@ -143,7 +143,7 @@ You will need Nodejs. Download it from [https://nodejs.org/en/download](https://
 
 #### - go
 
-Visit [https://go.dev/doc/install](https://go.dev/doc/install) to download and install Go. Please use the version specified in the project's `go.mod` file. As of this writing, Meshery uses **1.25.5**. The path is usually automatically added.
+Visit [https://go.dev/doc/install](https://go.dev/doc/install) to download and install Go. Please use the version specified in the project's `go.mod` file. As of this writing, Meshery uses **1.26.4**. The path is usually automatically added.
 
 #### - Git Bash
 

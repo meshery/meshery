@@ -289,7 +289,7 @@
         "long_description": "",
         "short_description": "unable to get: ",
         "probable_cause": "Query parameter is not a part of the request",
-        "suggested_remediation": "Make sure to pass the query paramater in the request"
+        "suggested_remediation": "Make sure to pass the query parameter in the request"
       },
       "1033": {
         "name": "ErrGetResultCode",
@@ -712,7 +712,7 @@
         "long_description": "",
         "short_description": "Error failed to save filter",
         "probable_cause": "Cannot save the Filter due to wrong path or URL\nFilter is corrupted.",
-        "suggested_remediation": "Check if the given path or URL of the filter is correct\nTry uplaoding a different filter"
+        "suggested_remediation": "Check if the given path or URL of the filter is correct\nTry uploading a different filter"
       },
       "1080": {
         "name": "ErrDecodeFilterCode",
@@ -953,7 +953,7 @@
         "code": "1106",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "could not get meshmodel entitities",
+        "short_description": "could not get meshmodel entities",
         "probable_cause": "Meshmodel entity could not be converted into valid json\ndata in the registry was inconsistent",
         "suggested_remediation": "make sure correct and consistent data is present inside the registry\ndrop the Meshmodel tables and restart Meshery server"
       },
@@ -973,7 +973,7 @@
         "long_description": "",
         "short_description": "could not resolve rego relationship",
         "probable_cause": "The rego evaluation engine failed to resolve policies\nDesign-File/Application-File is in incorrect format\nThe policy query is invalid\nThe evaluation engine response is unexpected for the code written",
-        "suggested_remediation": "Make sure the design-file/application-file is a valid yaml\nMake sure you're proving correct rego query\nMake sure the server is evaluating the query correctly, add some logs"
+        "suggested_remediation": "Make sure the design-file/application-file is a valid yaml\nMake sure you're providing correct rego query\nMake sure the server is evaluating the query correctly, add some logs"
       },
       "1109": {
         "name": "ErrGetLatestVersionCode",
@@ -1144,7 +1144,7 @@
         "long_description": "",
         "short_description": "",
         "probable_cause": "Insufficient permissions to write into file\nfile might be corrupted",
-        "suggested_remediation": "check if sufficient permissions are givent to the file\ncheck if the file is corrupted"
+        "suggested_remediation": "check if sufficient permissions are given to the file\ncheck if the file is corrupted"
       },
       "1128": {
         "name": "ErrBuildOCIImgCode",
@@ -3258,8 +3258,8 @@
         "severity": "Alert",
         "long_description": "Unable to locate the compressed file(.tar.gz) inside the OCI image.",
         "short_description": "No tar file found inside OCI image",
-        "probable_cause": "The OCI image does not contain a ziped file.",
-        "suggested_remediation": "Verify that the OCI image contains a ziped file."
+        "probable_cause": "The OCI image does not contain a zipped file.",
+        "suggested_remediation": "Verify that the OCI image contains a zipped file."
       },
       "1366": {
         "name": "ErrFileTypeCode",
