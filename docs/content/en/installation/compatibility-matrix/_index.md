@@ -6,6 +6,7 @@ description: Understand which environments, dependencies, and installation paths
 display_title: false
 cascade:
   type: compatibility-matrix
+weight: 100
 ---
 
 ## Dependency and Platform Compatibility for Installation
