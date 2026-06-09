@@ -448,6 +448,14 @@ func ResolveProviderKey(provider string, supportedProviders map[string]Provider)
 // internal key (usually URL host) before their /capabilities probe lands, so
 // a configured PROVIDER may need one bounded probe round to discover which key
 // currently publishes the requested providerName.
+//
+// It first tries the probe-less ResolveProviderKey and only fans out when that
+// misses, so the common case (the tracker has already published properties)
+// returns immediately and never probes. When a probe is required, every
+// registered remote is probed in parallel with a per-remote 15s timeout, so
+// this adds at most ~15s of startup latency before the server starts serving
+// — e.g. when a configured remote is unreachable in an air-gapped deployment.
+// The boot caller (main) logs when this probe meaningfully delays startup.
 func ResolveProviderKeyWithProbe(ctx context.Context, provider string, supportedProviders map[string]Provider) (string, bool) {
 	if key, ok := ResolveProviderKey(provider, supportedProviders); ok {
 		return key, true

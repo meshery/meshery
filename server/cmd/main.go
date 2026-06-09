@@ -475,7 +475,15 @@ func main() {
 	// before their async /capabilities probe reveals the canonical
 	// providerName, so a pre-selected remote such as PROVIDER=Meshery may need
 	// one bounded probe here to avoid falling back to the chooser.
-	if resolvedProviderKey, ok := models.ResolveProviderKeyWithProbe(ctx, providerEnvVar, provs); ok {
+	resolveStart := time.Now()
+	resolvedProviderKey, providerResolved := models.ResolveProviderKeyWithProbe(ctx, providerEnvVar, provs)
+	if probeElapsed := time.Since(resolveStart); providerEnvVar != "" && probeElapsed > time.Second {
+		// Surface the boot-time remote /capabilities probe so operators can
+		// see why startup paused (each parallel probe waits up to 15s on an
+		// unreachable configured remote before timing out).
+		log.Infof("resolving configured PROVIDER %q required a remote capability probe that took %s", providerEnvVar, probeElapsed.Round(time.Millisecond))
+	}
+	if providerResolved {
 		providerEnvVar = resolvedProviderKey
 	} else {
 		if providerEnvVar != "" {
