@@ -1,0 +1,47 @@
+{
+  "kind": "edge",
+  "type": "binding",
+  "subType": "permission",
+  "evaluationQuery": "edge_binding_permission_relationship",
+  "model": {
+    "name": "aws-lambda-controller",
+    "version": "v1.13.0"
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-lambda-controller",
+            "kind": "Function",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "role"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-iam-controller",
+            "kind": "Role",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "arn"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

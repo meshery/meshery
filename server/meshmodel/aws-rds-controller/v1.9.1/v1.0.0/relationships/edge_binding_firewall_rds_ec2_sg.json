@@ -1,0 +1,47 @@
+{
+  "kind": "edge",
+  "type": "binding",
+  "subType": "firewall",
+  "evaluationQuery": "edge_binding_firewall_relationship",
+  "model": {
+    "name": "aws-rds-controller",
+    "version": "v1.9.1"
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-rds-controller",
+            "kind": "DBInstance",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "vpcSecurityGroupIds"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-ec2-controller",
+            "kind": "SecurityGroup",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "id"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

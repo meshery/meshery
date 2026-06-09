@@ -1,0 +1,48 @@
+{
+  "kind": "edge",
+  "type": "binding",
+  "subType": "network",
+  "evaluationQuery": "edge_binding_network_relationship",
+  "model": {
+    "name": "aws-eks-controller",
+    "version": "v1.14.1"
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-eks-controller",
+            "kind": "Cluster",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "vpcConfig",
+                  "subnetIds"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-ec2-controller",
+            "kind": "Subnet",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "id"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

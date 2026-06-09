@@ -1,0 +1,48 @@
+{
+  "kind": "edge",
+  "type": "binding",
+  "subType": "permission",
+  "evaluationQuery": "edge_binding_permission_relationship",
+  "model": {
+    "name": "aws-eks-controller",
+    "version": "v1.14.1"
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-eks-controller",
+            "kind": "ServiceAccount",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "annotations",
+                  "eks.amazonaws.com/role-arn"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-iam-controller",
+            "kind": "Role",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "arn"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
