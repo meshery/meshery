@@ -4608,13 +4608,15 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID core.Uuid)
 		statusCode := http.StatusInternalServerError
 		return nil, statusCode, ErrFetch(err, "connection", statusCode)
 	}
+	// Close the body on every path once DoRequest has handed us a response.
+	// This defer previously lived inside the 200 branch, leaking the
+	// connection whenever the provider returned a non-2xx status.
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	bdr, err := io.ReadAll(resp.Body)
 	if resp.StatusCode == http.StatusOK {
-		defer func() {
-			_ = resp.Body.Close()
-		}()
-
 		if err != nil {
 			l.Log.Errorf("unable to read response body for connection with id %s: %v, resp body: %s", connectionID, err, string(bdr))
 			return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s, err body %s", connectionID, string(bdr)), "connection", resp.StatusCode)
