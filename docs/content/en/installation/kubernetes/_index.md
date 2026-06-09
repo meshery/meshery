@@ -28,7 +28,7 @@ Manage your Kubernetes clusters with Meshery. Deploy Meshery in Kubernetes [in-c
   - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
   - [Installation: Using Helm](#installation-using-helm)
   - [Post-Installation Steps](#post-installation-steps)
-  - [Exposing Meshery service(LoadBalancer)](#exposing-meshery-serviceloadbalancer)
+  - [Exposing Meshery Service (LoadBalancer)](#exposing-meshery-serviceloadbalancer)
 - [Out-of-cluster Installation](#out-of-cluster-installation)
   - [Set up Ingress on Minikube with the NGINX Ingress Controller](#set-up-ingress-on-minikube-with-the-nginx-ingress-controller)
   - [Installing cert-manager with kubectl](#installing-cert-manager-with-kubectl)
@@ -67,7 +67,7 @@ You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
 {{< installation/accessing-meshery-ui >}}
 
-## Exposing Meshery service(LoadBalancer)
+## Exposing Meshery Service (LoadBalancer) {#exposing-meshery-serviceloadbalancer}
 
 When Meshery is installed in-cluster, Meshery UI is served by a Kubernetes `Service` named `meshery` in the `meshery` namespace. This `Service` is created as type `LoadBalancer` by default, forwarding port `9081` (Meshery UI) to the Meshery Server container on port `8080`.
 
