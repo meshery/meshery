@@ -4627,7 +4627,11 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID core.Uuid)
 		return &conn, resp.StatusCode, nil
 	}
 
-	l.Log.Errorf("unable to read response body for connection with id %s: %v, resp body: %s", connectionID, err, string(bdr))
+	if err != nil {
+		l.Log.Errorf("unable to read response body for connection with id %s: %v", connectionID, err)
+	} else {
+		l.Log.Errorf("failed to retrieve connection with id %s: unexpected status %d, resp body: %s", connectionID, resp.StatusCode, string(bdr))
+	}
 	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
 }
 
