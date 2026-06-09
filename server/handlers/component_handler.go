@@ -32,9 +32,9 @@ import (
 	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
-	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta3/component"
 
 	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
@@ -84,10 +84,10 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		TotalCount:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -140,10 +140,10 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		TotalCount:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -200,10 +200,10 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		TotalCount:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -257,10 +257,10 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		TotalCount:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -300,7 +300,7 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 	res := models.MeshmodelCategoriesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Categories: categories,
 	}
 
@@ -342,7 +342,7 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	res := models.MeshmodelCategoriesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Categories: categories,
 	}
 
@@ -396,7 +396,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -448,7 +448,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -501,7 +501,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -552,7 +552,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -603,7 +603,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -654,7 +654,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -703,7 +703,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -752,7 +752,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	res := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -838,7 +838,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	res := models.MeshmodelRegistrantsAPIResponse{
 		Page:        page,
 		PageSize:    int(pgSize),
-		TotalCount:       count,
+		TotalCount:  count,
 		Registrants: hosts,
 	}
 
@@ -1068,18 +1068,27 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			}
 		}()
 
-		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0, nil)
+		selectedModel := strings.TrimSpace(importRequest.ImportBody.Model.Model)
+		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", selectedModel, modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0, nil)
 		if err != nil {
 			h.handleError(rw, err, "Error invoking generation from sheet")
 			h.sendErrorEvent(userID, provider, "Error invoking generation from sheet", err, token)
 			return
 		}
 
-		h.sendEventForImport(userID, provider, 0, "", true, token)
 		modelDirPaths, err := models.GetModelDirectoryPaths(tempDir)
 		if err != nil {
-			h.log.Error(models.ErrSeedingComponents(err))
+			h.handleError(rw, err, "Error reading generated model directories")
+			h.sendErrorEvent(userID, provider, "Error reading generated model directories", err, token)
+			return
 		}
+		if selectedModel != "" && len(modelDirPaths) == 0 {
+			err := fmt.Errorf("model %q not found in CSV input", selectedModel)
+			writeMeshkitError(rw, err, http.StatusBadRequest)
+			h.sendErrorEvent(userID, provider, err.Error(), err, token)
+			return
+		}
+		h.sendEventForImport(userID, provider, 0, "", true, token)
 		if importRequest.Register {
 			for _, dirPath := range modelDirPaths {
 				dir := registration.NewDir(dirPath)

@@ -909,6 +909,9 @@ model:
         template:
           name: --template, -t
           description: Specify the path to the template JSON file (only required for URLs).
+        model:
+          name: --model, -m
+          description: Generate only the specified model from CSV input.
         skip-registration:
           name: --skip-registration
           description: Skip registration of the model (default is false).    
