@@ -75,37 +75,9 @@ The default setting for the `LOG_LEVEL` is `4` (Info). However, if the `DEBUG` e
 
 ### Runtime Configuration Environment Variables
 
-Meshery Server supports several runtime configuration environment variables that control various aspects of server behavior:
+Meshery Server supports a broader set of runtime, provider, tracing, policy, and metadata environment variables than the contributor-specific subset that used to be documented here.
 
-#### Provider and Extension Configuration
-
-- **`PROVIDER_CAPABILITIES_FILEPATH`**: Specifies a local file path to load provider capabilities from a static JSON file instead of fetching from the remote provider's endpoint. Useful for offline development and testing.
-  - Default: Not set (capabilities fetched from remote provider)
-  - Example: `PROVIDER_CAPABILITIES_FILEPATH=/path/to/capabilities.json`
-
-- **`SKIP_DOWNLOAD_EXTENSIONS`**: Controls whether Meshery downloads and refreshes provider extension packages during login and capability refresh operations.
-  - Default: `false` (extensions are downloaded/refreshed)
-  - Example: `SKIP_DOWNLOAD_EXTENSIONS=true`
-  - Use cases: Development environments, pre-packaged deployments, reducing startup time
-
-#### Kubernetes Configuration
-
-- **`KUBECONFIG_FOLDER`**: Specifies the folder path where Meshery should look for Kubernetes configuration files. This allows you to provide a Meshery deployment with a predefined Kubernetes context.
-  - Default: `$HOME/.kube` (or `/home/appuser/.kube` in containerized deployments)
-  - Example: `KUBECONFIG_FOLDER=/home/appuser/.kube`
-  - Use cases: Custom kubeconfig locations, pre-configured Kubernetes contexts, containerized deployments
-  - Note: Meshery looks for a `config` file within this folder (e.g., `/home/appuser/.kube/config`)
-
-#### Other Configuration Variables
-
-- **`SKIP_DOWNLOAD_CONTENT`**: Skips downloading seed content for patterns, filters, and applications.
-  - Default: `false`
-
-- **`SKIP_COMP_GEN`**: Skips component generation during startup.
-  - Default: `false`
-
-- **`PLAYGROUND`**: Enables playground mode for Meshery.
-  - Default: `false`
+Use the canonical reference instead: [Meshery Server Environment Variables](/installation/advanced/environment-variables).
 
 ### Using custom Meshkit code for Meshery server development
 
@@ -121,4 +93,3 @@ Meshery Server supports several runtime configuration environment variables that
     <p>Remember to remove this go.mod change when creating pull requests.</p>
   </li>
 </ol>
-
