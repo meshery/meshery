@@ -34,8 +34,8 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{github.event_name == 'pull_request'}}
     steps:
-    - uses: actions/checkout@master
-    - uses: azure/setup-helm@v3.5
+    - uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # master
+    - uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78 # v3.5
       with:
         version: 'v3.6.0' # default is latest stable
       id: install
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ github.event_name != 'pull_request' }}
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # master
       - name: set env
         id: vars
         # https://github.community/t/how-to-get-just-the-tag-name/16241/7
@@ -80,7 +80,7 @@ jobs:
       #    chart_version: stable-latest
       - name: Publish Helm chart for release version
         if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
-        uses: stefanprodan/helm-gh-pages@master
+        uses: stefanprodan/helm-gh-pages@89c6698c192e70ed0e495bee7d3d1ca5b477fe82 # master
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           charts_dir: install/kubernetes/helm
@@ -95,7 +95,7 @@ jobs:
   
       - name: Manually publish Helm chart with release version
         if:  github.event_name == 'workflow_dispatch'
-        uses: stefanprodan/helm-gh-pages@master
+        uses: stefanprodan/helm-gh-pages@89c6698c192e70ed0e495bee7d3d1ca5b477fe82 # master
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           charts_dir: install/kubernetes/helm

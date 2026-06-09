@@ -41,11 +41,11 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@master
+      uses: actions/checkout@900f2210b1d28bbbd0bd22d17926b9e224e8f231 # master
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
+      uses: github/codeql-action/init@7fd177fa680c9881b53cdab4d346d32574c9f7f4 # v3
       with:
         languages: ${{ matrix.language }}
         config-file: ./.github/codeql-config.yml
@@ -57,7 +57,7 @@ jobs:
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
     - name: Autobuild
-      uses: github/codeql-action/autobuild@v3
+      uses: github/codeql-action/autobuild@7fd177fa680c9881b53cdab4d346d32574c9f7f4 # v3
 
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 https://git.io/JvXDl
@@ -71,4 +71,4 @@ jobs:
     #   make release
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      uses: github/codeql-action/analyze@7fd177fa680c9881b53cdab4d346d32574c9f7f4 # v3

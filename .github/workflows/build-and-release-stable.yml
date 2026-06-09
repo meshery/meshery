@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 1
       - name: Free up disk space
@@ -26,7 +26,7 @@ jobs:
           sudo rm -rf /var/lib/apt/lists/*
           docker system prune -af
       - name: Login to DockerHub
-        uses: docker/login-action@v4
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -59,15 +59,15 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
       - name: Set up Go
-        uses: actions/setup-go@master
+        uses: actions/setup-go@78961f6f84d799cd858575bb931c3e51d3b13290 # master
         with:
           go-version-file: go.mod
       - name: goreleaser with tag
-        uses: goreleaser/goreleaser-action@v6
+        uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a # v6
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
           RELEASE_CHANNEL: "stable"
@@ -75,7 +75,7 @@ jobs:
           version: 2
           args: release --clean --skip=validate -f .github/.goreleaser.yml
       - name: bump homebrew-core formula
-        uses: mislav/bump-homebrew-formula-action@v3
+        uses: mislav/bump-homebrew-formula-action@56a283fa15557e9abaa4bdb63b8212abc68e655c # v3
         with:
           formula-name: mesheryctl
           download-url: https://github.com/meshery/meshery.git
@@ -86,13 +86,13 @@ jobs:
       - build
       - ctlrelease
     name: Build and Release Docker Extension
-    uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
+    uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@c5cd622ed33af00332e30630e90ab07037618bd9 # master
     secrets: inherit
   call-helm-chart-releaser:
     needs:
       - build
     name: Release Helm Charts
-    uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
+    uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@c5cd622ed33af00332e30630e90ab07037618bd9 # master
     secrets: inherit
   # call-aks-playground-deploy-workflow:
   #   needs: build
@@ -114,7 +114,7 @@ jobs:
       - call-helm-chart-releaser
       - call-dde-release-workflow
     name: Email Meshery Release Notes
-    uses: meshery/meshery/.github/workflows/release-notes-notification-email.yml@master
+    uses: meshery/meshery/.github/workflows/release-notes-notification-email.yml@c5cd622ed33af00332e30630e90ab07037618bd9 # master
     secrets:
       token: ${{ secrets.GH_ACCESS_TOKEN }}
       MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
@@ -125,7 +125,7 @@ jobs:
   call-cncf-playground-rollout:
     needs: [build, deploy-delay]
     name: Deploy CNCF Playground
-    uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
+    uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@c5cd622ed33af00332e30630e90ab07037618bd9 # master
     with:
       image: "meshery/meshery:playground-${{ github.ref_name }}"
     secrets: inherit
@@ -146,7 +146,7 @@ jobs:
           echo "${{ env.EMAIL_BODY }}"
       - name: Send Email Notification
         if: env.EMAIL_BODY != ''
-        uses: dawidd6/action-send-mail@v7
+        uses: dawidd6/action-send-mail@v7 # Skipped
         with:
           server_address: smtp.gmail.com
           server_port: 465
