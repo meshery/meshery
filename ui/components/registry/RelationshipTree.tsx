@@ -32,16 +32,9 @@ const RelationshipTree = ({
   lastRegistrantRef,
   isRelationshipFetching,
 }: RelationshipTreeProps) => {
-  return (
-    <SimpleTreeView
-      aria-label="controlled"
-      slots={{ collapseIcon: MinusSquare, expandIcon: PlusSquare, endIcon: DotSquare }}
-      onExpandedItemsChange={handleToggle}
-      onSelectedItemsChange={handleSelect}
-      multiSelect
-      expandedItems={expanded}
-      selectedItems={selected}
-    >
+  // Build the tree items — shared between both rendering modes below.
+  const treeItems = (
+    <>
       {data.map((relationshipByKind, index) => {
         const idForKind =
           view === RELATIONSHIPS
@@ -49,7 +42,7 @@ const RelationshipTree = ({
             : `${idForKindAsProp}.${relationshipByKind.relationships[0].id}`;
         return (
           <StyledTreeItem
-            key={index}
+            key={idForKind}
             itemId={idForKind}
             data-id={idForKind}
             labelText={`${relationshipByKind.kind} (${relationshipByKind.relationships.length})`}
@@ -64,7 +57,7 @@ const RelationshipTree = ({
           >
             {relationshipByKind.relationships.map((relationship) => (
               <StyledTreeItem
-                key={index}
+                key={relationship.id}
                 itemId={`${idForKind}.${relationship.id}`}
                 data-id={`${idForKind}.${relationship.id}`}
                 labelText={`${relationship.subType} (${relationship.model.name})`}
@@ -81,6 +74,31 @@ const RelationshipTree = ({
       })}
       <div ref={lastRegistrantRef} style={{ height: '48px' }}></div>
       {isRelationshipFetching ? <CircularProgress color="inherit" /> : null}
+    </>
+  );
+
+  // When RelationshipTree is nested inside a Models tree item (view !== RELATIONSHIPS),
+  // do NOT create a new SimpleTreeView. A SimpleTreeView rendered inside a StyledTreeItem
+  // of an outer SimpleTreeView causes MUI's traverseDescendants plugin to produce circular
+  // itemId references in its internal item map → RangeError: Maximum call stack size exceeded.
+  // Instead, render items directly so they register with the outer SimpleTreeView context,
+  // exactly as VersionedModelComponentTree does.
+  if (view !== RELATIONSHIPS) {
+    return treeItems;
+  }
+
+  // Top-level Relationships view — needs its own SimpleTreeView root.
+  return (
+    <SimpleTreeView
+      aria-label="controlled"
+      slots={{ collapseIcon: MinusSquare, expandIcon: PlusSquare, endIcon: DotSquare }}
+      onExpandedItemsChange={handleToggle}
+      onSelectedItemsChange={handleSelect}
+      multiSelect
+      expandedItems={expanded}
+      selectedItems={selected}
+    >
+      {treeItems}
     </SimpleTreeView>
   );
 };

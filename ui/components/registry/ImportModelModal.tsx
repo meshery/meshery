@@ -45,6 +45,7 @@ import { StyledDocsRedirectLink } from './Stepper/style';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
+import { readFileAsBytes } from '@/utils/fileUpload';
 import {
   UPLOAD_TYPE_CSV,
   UPLOAD_TYPE_FILE,
@@ -54,7 +55,6 @@ import {
   findSelectedModelFile,
   importModelSchema,
   importModelUiSchema,
-  readFileAsBytes,
 } from './importModelSchema';
 
 const FinishDeploymentStep = ({ deploymentType }: { deploymentType: string }) => {

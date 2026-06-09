@@ -427,8 +427,8 @@ export const useGetSelectedWorkspace = () => {
 export const useUpdateSelectedOrganizationMutation = () => {
   const [updateUserPref, response] = useUpdateUserPrefMutation();
 
-  const updateSelectedOrganization = async (orgId) => {
-    await updateUserPref({ selectedOrganizationID: orgId });
+  const updateSelectedOrganization = (orgId) => {
+    return updateUserPref({ selectedOrganizationID: orgId });
   };
 
   return [updateSelectedOrganization, response];

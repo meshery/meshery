@@ -162,6 +162,8 @@ Deep-link targets are validated to prevent open redirect vulnerabilities. Only r
 
 Meshery provides runtime configuration options to control provider behavior:
 
+For the full server-wide reference, including provider-independent settings such as tracing, policy evaluation, and storage paths, see [Meshery Server Environment Variables](/installation/advanced/environment-variables).
+
 ### PROVIDER
 
 This environment variable enforces a specific provider, bypassing the provider selection UI. This is useful for:
