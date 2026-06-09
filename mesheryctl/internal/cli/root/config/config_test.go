@@ -44,7 +44,7 @@ func TestGetLocation(t *testing.T) {
 		path := filepath.Join(want, MesheryFolder, test)
 		want = path
 		if err != nil {
-			t.Errorf("os.UserHomeDir() returned unexpected error: %v", err)
+			t.Fatalf("os.UserHomeDir() returned unexpected error: %v", err)
 		}
 		if got != want {
 			t.Errorf("got %q want %q", got, want)
