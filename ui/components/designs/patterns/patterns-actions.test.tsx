@@ -1,8 +1,9 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const encodeDesignFile = vi.fn((d: any) => `encoded:${JSON.stringify(d)}`);
 const getUnit8ArrayDecodedFile = vi.fn((f: any) => `decoded:${f}`);
 const downloadContent = vi.fn();
+const buildImportDesignRequestBody = vi.fn();
 
 vi.mock('@sistent/sistent', () => ({
   PROMPT_VARIANTS: { DANGER: 'danger' },
@@ -37,6 +38,10 @@ vi.mock('../../../utils/fileDownloader', () => ({
 
 vi.mock('@/store/slices/mesheryUi', () => ({
   updateProgress: vi.fn(),
+}));
+
+vi.mock('../import-design-request', () => ({
+  buildImportDesignRequestBody: (data: any) => buildImportDesignRequestBody(data),
 }));
 
 import { createPatternsActions } from './patterns-actions';
@@ -79,6 +84,10 @@ const baseDeps = () => {
 };
 
 describe('createPatternsActions', () => {
+  beforeEach(() => {
+    buildImportDesignRequestBody.mockReset();
+  });
+
   it('returns the canonical set of action methods', () => {
     const actions = createPatternsActions(baseDeps());
     const keys = [
@@ -207,6 +216,58 @@ describe('createPatternsActions', () => {
     actions.handleError({ name: 'FAIL', error_msg: 'Something went wrong' })('boom');
     expect(deps.notify).toHaveBeenCalledWith({
       message: 'Something went wrong: boom',
+      event_type: 'error',
+    });
+  });
+
+  it('handleImportDesign uploads file imports using the resolved file metadata', async () => {
+    const deps = baseDeps();
+    deps.importPattern.mockReturnValue({ unwrap: () => Promise.resolve({}) });
+    buildImportDesignRequestBody.mockResolvedValue({
+      requestBody: JSON.stringify({
+        name: 'Imported design',
+        file_name: 'imported-design.yaml',
+        file: [1, 2, 3],
+      }),
+    });
+
+    const actions = createPatternsActions(deps);
+    await actions.handleImportDesign({
+      uploadType: 'File Upload',
+      name: 'Imported design',
+      file: 'data:text/plain;base64,QQ==',
+    });
+
+    expect(buildImportDesignRequestBody).toHaveBeenCalledWith({
+      uploadType: 'File Upload',
+      name: 'Imported design',
+      file: 'data:text/plain;base64,QQ==',
+    });
+    expect(deps.importPattern).toHaveBeenCalledWith({
+      importBody: JSON.stringify({
+        name: 'Imported design',
+        file_name: 'imported-design.yaml',
+        file: [1, 2, 3],
+      }),
+    });
+  });
+
+  it('handleImportDesign surfaces a missing file instead of dereferencing a null input', async () => {
+    const deps = baseDeps();
+    buildImportDesignRequestBody.mockResolvedValue({
+      errorMessage: 'Please choose a design file before continuing.',
+    });
+
+    const actions = createPatternsActions(deps);
+    await actions.handleImportDesign({
+      uploadType: 'File Upload',
+      name: 'Imported design',
+      file: undefined,
+    });
+
+    expect(deps.importPattern).not.toHaveBeenCalled();
+    expect(deps.notify).toHaveBeenCalledWith({
+      message: 'Please choose a design file before continuing.',
       event_type: 'error',
     });
   });

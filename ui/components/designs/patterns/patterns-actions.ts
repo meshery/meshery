@@ -6,6 +6,7 @@ import { FILE_OPS } from '../../../utils/Enum';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import downloadContent from '../../../utils/fileDownloader';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { buildImportDesignRequestBody } from '../import-design-request';
 import { ACTION_TYPES } from './MesheryPatterns.constants';
 
 /**
@@ -306,32 +307,22 @@ export function createPatternsActions(deps) {
     }
   }
 
-  function handleImportDesign(data) {
+  async function handleImportDesign(data) {
     updateProgress({ showProgress: true });
-    const { uploadType, name, url, file } = data;
+    const { name } = data;
 
-    let requestBody = null;
-    switch (uploadType) {
-      case 'File Upload': {
-        const fileElement = document.getElementById('root_file');
-        const fileName = fileElement.files[0].name;
-        requestBody = JSON.stringify({
-          name,
-          file_name: fileName,
-          file: getUnit8ArrayDecodedFile(file),
-        });
-        break;
-      }
-      case 'URL Import':
-        requestBody = JSON.stringify({
-          url,
-          name,
-        });
-        break;
+    const importRequest = await buildImportDesignRequestBody(data);
+    if ('errorMessage' in importRequest) {
+      updateProgress({ showProgress: false });
+      notify({
+        message: importRequest.errorMessage,
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
     }
 
     importPattern({
-      importBody: requestBody,
+      importBody: importRequest.requestBody,
     })
       .unwrap()
       .then(() => {

@@ -1,8 +1,12 @@
 package models
 
 import (
+	"context"
 	"net/http"
+	"net/url"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/broker"
@@ -389,14 +393,139 @@ func NormalizeProviderName(name string) string {
 	return name
 }
 
-func VerifyMesheryProvider(provider string, supportedProviders map[string]Provider) bool {
-	provider = NormalizeProviderName(provider)
-	for prov := range supportedProviders {
-		if prov == provider {
+func matchesProviderAddress(candidate string, addresses ...string) bool {
+	// Normalize away surrounding whitespace and a trailing slash so a
+	// configured "https://cloud.meshery.io/" still matches a stored
+	// ProviderURL of "https://cloud.meshery.io" (and vice versa).
+	candidate = strings.TrimRight(strings.TrimSpace(candidate), "/")
+	if candidate == "" {
+		return false
+	}
+	for _, address := range addresses {
+		address = strings.TrimRight(strings.TrimSpace(address), "/")
+		if address == "" {
+			continue
+		}
+		if strings.EqualFold(candidate, address) {
+			return true
+		}
+		parsed, err := url.Parse(address)
+		if err == nil && parsed.Host != "" && strings.EqualFold(candidate, parsed.Host) {
 			return true
 		}
 	}
 	return false
+}
+
+// ResolveProviderKey maps a caller-facing provider identifier to the
+// registration-map key Meshery uses internally for routing. It accepts the
+// canonical local name/legacy alias, an existing map key, a remote
+// providerName published from /capabilities, or the remote URL/host.
+func ResolveProviderKey(provider string, supportedProviders map[string]Provider) (string, bool) {
+	provider = NormalizeProviderName(strings.TrimSpace(provider))
+	if provider == "" {
+		return "", false
+	}
+	if _, ok := supportedProviders[provider]; ok {
+		return provider, true
+	}
+	for key, p := range supportedProviders {
+		if strings.EqualFold(provider, key) {
+			return key, true
+		}
+		props := p.GetProviderProperties()
+		if strings.EqualFold(provider, props.ProviderName) ||
+			strings.EqualFold(provider, p.Name()) ||
+			matchesProviderAddress(provider, props.ProviderURL, p.GetProviderURL()) {
+			return key, true
+		}
+	}
+	return "", false
+}
+
+// ResolveProviderKeyWithProbe is the boot-time recovery path for canonical
+// remote names such as "Meshery". Remotes are registered under a stable
+// internal key (usually URL host) before their /capabilities probe lands, so
+// a configured PROVIDER may need one bounded probe round to discover which key
+// currently publishes the requested providerName.
+//
+// It first tries the probe-less ResolveProviderKey and only fans out when that
+// misses, so the common case (the tracker has already published properties)
+// returns immediately and never probes. When a probe is required, every
+// registered remote is probed in parallel with a per-remote 15s timeout, so
+// this adds at most ~15s of startup latency before the server starts serving
+// — e.g. when a configured remote is unreachable in an air-gapped deployment.
+// The boot caller (main) logs when this probe meaningfully delays startup.
+func ResolveProviderKeyWithProbe(ctx context.Context, provider string, supportedProviders map[string]Provider) (string, bool) {
+	if key, ok := ResolveProviderKey(provider, supportedProviders); ok {
+		return key, true
+	}
+
+	provider = NormalizeProviderName(strings.TrimSpace(provider))
+	if provider == "" {
+		return "", false
+	}
+
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	type result struct {
+		key   string
+		props ProviderProperties
+		err   error
+	}
+
+	results := make(chan result, len(supportedProviders))
+	var wg sync.WaitGroup
+	launched := 0
+
+	for key, p := range supportedProviders {
+		// A non-nil interface can still wrap a typed nil pointer; guard
+		// against it so the probe goroutine cannot panic on rp.VerifyAvailability.
+		rp, ok := p.(*RemoteProvider)
+		if !ok || rp == nil {
+			continue
+		}
+		launched++
+		wg.Add(1)
+		go func(key string, rp *RemoteProvider) {
+			defer wg.Done()
+			probeCtx, probeCancel := context.WithTimeout(ctx, 15*time.Second)
+			defer probeCancel()
+			props, err := rp.VerifyAvailability(probeCtx)
+			select {
+			case results <- result{key: key, props: props, err: err}:
+			case <-ctx.Done():
+			}
+		}(key, rp)
+	}
+
+	if launched == 0 {
+		return "", false
+	}
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	for res := range results {
+		if res.err != nil {
+			continue
+		}
+		if strings.EqualFold(provider, res.props.ProviderName) ||
+			matchesProviderAddress(provider, res.props.ProviderURL) {
+			cancel()
+			return res.key, true
+		}
+	}
+
+	return "", false
+}
+
+func VerifyMesheryProvider(provider string, supportedProviders map[string]Provider) bool {
+	_, ok := ResolveProviderKey(provider, supportedProviders)
+	return ok
 }
 
 // Provider - interface for providers
