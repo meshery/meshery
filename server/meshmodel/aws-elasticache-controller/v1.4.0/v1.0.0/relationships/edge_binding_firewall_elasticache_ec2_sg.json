@@ -1,0 +1,47 @@
+{
+  "kind": "edge",
+  "type": "binding",
+  "subType": "network",
+  "evaluationQuery": "edge_binding_network_relationship",
+  "model": {
+    "name": "aws-elasticache-controller",
+    "version": "v1.4.0"
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-elasticache-controller",
+            "kind": "ReplicationGroup",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "securityGroupIds"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-ec2-controller",
+            "kind": "SecurityGroup",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "id"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

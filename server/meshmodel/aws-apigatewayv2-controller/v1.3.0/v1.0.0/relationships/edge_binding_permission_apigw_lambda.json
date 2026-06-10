@@ -1,0 +1,47 @@
+{
+  "kind": "edge",
+  "type": "binding",
+  "subType": "permission",
+  "evaluationQuery": "edge_binding_permission_relationship",
+  "model": {
+    "name": "aws-apigatewayv2-controller",
+    "version": "v1.3.0"
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-apigatewayv2-controller",
+            "kind": "Integration",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "integrationUri"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-lambda-controller",
+            "kind": "Function",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "arn"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

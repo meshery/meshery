@@ -1,0 +1,50 @@
+{
+  "kind": "edge",
+  "type": "binding",
+  "subType": "permission",
+  "evaluationQuery": "edge_binding_permission_relationship",
+  "model": {
+    "name": "aws-cloudfront-controller",
+    "version": "v1.5.0"
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-cloudfront-controller",
+            "kind": "Distribution",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "distributionConfig",
+                  "origins",
+                  "items",
+                  "domainName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-s3-controller",
+            "kind": "Bucket",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

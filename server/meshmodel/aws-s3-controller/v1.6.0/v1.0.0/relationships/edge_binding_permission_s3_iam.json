@@ -1,0 +1,47 @@
+{
+  "kind": "edge",
+  "type": "binding",
+  "subType": "permission",
+  "evaluationQuery": "edge_binding_permission_relationship",
+  "model": {
+    "name": "aws-s3-controller",
+    "version": "v1.6.0"
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-s3-controller",
+            "kind": "Bucket",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "policy"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-iam-controller",
+            "kind": "Role",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "arn"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
