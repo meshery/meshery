@@ -34,7 +34,7 @@ subcommand: nil
 ---
 
 `
-		filename := "docs/content/en/reference/mesheryctl/_index.md"
+		filename := "docs/content/en/reference/reference/mesheryctl/_index.md"
 		assert.Equal(t, expected, prepender(filename))
 	})
 
@@ -47,7 +47,7 @@ subcommand: nil
 ---
 
 `
-		filename := "docs/content/en/reference/mesheryctl/adapter/_index.md"
+		filename := "docs/content/en/reference/reference/mesheryctl/adapter/_index.md"
 		assert.Equal(t, expected, prepender(filename))
 	})
 
@@ -60,7 +60,7 @@ subcommand: deploy
 ---
 
 `
-		filename := "docs/content/en/reference/mesheryctl/adapter/deploy.md"
+		filename := "docs/content/en/reference/reference/mesheryctl/adapter/deploy.md"
 		assert.Equal(t, expected, prepender(filename))
 	})
 
@@ -73,7 +73,7 @@ subcommand: relationship
 ---
 
 `
-		filename := "docs/content/en/reference/mesheryctl/exp/relationship/generate.md"
+		filename := "docs/content/en/reference/reference/mesheryctl/exp/relationship/generate.md"
 		assert.Equal(t, expected, prepender(filename))
 	})
 }
@@ -86,22 +86,22 @@ func TestDoc(t *testing.T) {
 	t.Run("Test linkHandler function (directory structure)", func(t *testing.T) {
 		assert.Equal(t,
 			"/reference/mesheryctl",
-			linkHandler("docs/content/en/reference/mesheryctl/_index.md"),
+			linkHandler("docs/content/en/reference/reference/mesheryctl/_index.md"),
 		)
 
 		assert.Equal(t,
 			"/reference/mesheryctl/adapter",
-			linkHandler("docs/content/en/reference/mesheryctl/adapter/_index.md"),
+			linkHandler("docs/content/en/reference/reference/mesheryctl/adapter/_index.md"),
 		)
 
 		assert.Equal(t,
 			"/reference/mesheryctl/adapter/deploy",
-			linkHandler("docs/content/en/reference/mesheryctl/adapter/deploy.md"),
+			linkHandler("docs/content/en/reference/reference/mesheryctl/adapter/deploy.md"),
 		)
 
 		assert.Equal(t,
 			"/reference/mesheryctl/exp/relationship/generate",
-			linkHandler("docs/content/en/reference/mesheryctl/exp/relationship/generate.md"),
+			linkHandler("docs/content/en/reference/reference/mesheryctl/exp/relationship/generate.md"),
 		)
 	})
 

@@ -4,7 +4,7 @@ description: How to contribute to Meshery Command Line Interface.
 categories: [contributing]
 ---
 
-`mesheryctl` is written in Golang or the Go Programming Language. For development use [Go version 1.25+](https://go.dev/dl/). `mesheryctl` uses the [Cobra](https://github.com/spf13/cobra) framework. A good first-step towards contributing to `mesheryctl` would be to familiarize yourself with the [Cobra concepts](https://github.com/spf13/cobra#concepts). For manipulating config files, `mesheryctl` uses [Viper](https://github.com/spf13/viper).
+`mesheryctl` is written in Golang or the Go Programming Language. For development use [Go version 1.26+](https://go.dev/dl/). `mesheryctl` uses the [Cobra](https://github.com/spf13/cobra) framework. A good first-step towards contributing to `mesheryctl` would be to familiarize yourself with the [Cobra concepts](https://github.com/spf13/cobra#concepts). For manipulating config files, `mesheryctl` uses [Viper](https://github.com/spf13/viper).
 
 {{% alert color="info" title="Meshery CLI Reference Documents" %}}<ul><li><a href="https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0">Meshery Command Tracker</a>: Status of mesheryctl command implementation and platform compatibility.</li>
     <li><a href="https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#">Meshery CLI Commands and Documentation</a>: Detailed documentation of the `mesheryctl` commands.</li>
@@ -53,10 +53,10 @@ Annotations: linkScreenshot,
 
   The variables present in above sample will be used in creating the doc pages for the specific command
 
-Also, if the screenshot is present in the command, an `Annotation` macro variable (of `map[string]string` type) containing the `link` and the `caption` has to be added at the bottom of the `Examples` field in the command file. The image file has to be included in the `docs/content/en/reference/images` folder in **PNG** format. The screenshot field is given for reference below
+Also, if the screenshot is present in the command, an `Annotation` macro variable (of `map[string]string` type) containing the `link` and the `caption` has to be added at the bottom of the `Examples` field in the command file. The image file has to be included in the `docs/content/en/reference/reference/images` folder in **PNG** format. The screenshot field is given for reference below
 
 {{< code code=`var linkDocPatternApply = map[string]string{
-	"link":    "![pattern-apply-usage](/reference/images/patternApply.png)",
+	"link":    "![pattern-apply-usage](/reference/reference/images/patternApply.png)",
 	"caption": "Usage of mesheryctl design apply",
 }
 ...
@@ -76,7 +76,7 @@ Annotations: linkDocPatternApply,
 Though the command page is generated automatically by the Cobra CLI library, there are chances where the command does not appear in the [reference index page](/reference/mesheryctl). In such cases, the command details must be manually added to the reference index YAML file. This is generally done by editing the below two files:
 
 - [cmds.yml](https://github.com/meshery/meshery/blob/master/docs/data/mesheryctlcommands/cmds.yml) - The YAML file containing the data about the commands
-- [_index.md](https://github.com/meshery/meshery/blob/master/docs/content/en/reference/mesheryctl/_index.md) - The markdown page of the command reference documentation
+- [_index.md](https://github.com/meshery/meshery/blob/master/docs/content/en/reference/reference/mesheryctl/_index.md) - The markdown page of the command reference documentation
 
 ### Preserving Manually Added Documentation
 	

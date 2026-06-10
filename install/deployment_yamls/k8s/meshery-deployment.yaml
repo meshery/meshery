@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yaml
+    kompose.version: 1.32.0 ()
+  creationTimestamp: null
+  labels:
+    io.kompose.service: meshery
+  name: meshery
+spec:
+  selector:
+    matchLabels:
+      io.kompose.service: meshery
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: meshery
+    spec:
+      serviceAccountName: meshery-server
+      containers:
+      - env:
+        - name: EVENT
+          value: mesheryLocal
+        - name: PROVIDER_BASE_URLS
+          value: https://cloud.meshery.io,https://perf.smp-spec.io,https://cloud.layer5.io,https://meshery.tcs-labs.in
+        - name: ADAPTER_URLS
+          value: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-nginx-sm:10010
+        image: meshery/meshery:stable-latest
+        imagePullPolicy: Always
+        name: meshery
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /healthz/live
+            port: 8080
+          initialDelaySeconds: 80
+          periodSeconds: 12
+          failureThreshold: 4
+        readinessProbe:
+          httpGet:
+            path: /healthz/ready
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 4
+          failureThreshold: 4
+        resources: {}
+      restartPolicy: Always
+status: {}
