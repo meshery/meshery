@@ -70,9 +70,13 @@ type DefaultLocalProvider struct {
 
 	MeshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode
 
-	// mu guards in-place mutations of Extensions performed by InstallExtension
-	// and RemoveExtension, which may be invoked concurrently from HTTP handlers.
-	mu sync.Mutex
+	// mu guards concurrent access to Extensions: InstallExtension and
+	// RemoveExtension take the write lock to mutate it, while readers such as
+	// GetProviderCapabilities/GetProviderProperties take the read lock.
+	mu sync.RWMutex
+	// downloadMu serializes provider package downloads so concurrent installs
+	// don't race on the shared on-disk package location.
+	downloadMu sync.Mutex
 }
 
 // LocalProviderName is the canonical name of the built-in local provider.
@@ -277,6 +281,11 @@ func (l *DefaultLocalProvider) DownloadProviderExtensionPackageFromURL(packageUr
 		return nil
 	}
 
+	// Serialize the check-then-download so concurrent installs don't extract to
+	// the same shared location simultaneously and corrupt the package.
+	l.downloadMu.Lock()
+	defer l.downloadMu.Unlock()
+
 	// Location for the package to be stored
 	loc := l.PackageLocation()
 
@@ -309,6 +318,8 @@ func (l *DefaultLocalProvider) SetProviderProperties(providerProperties Provider
 
 // GetProviderProperties - Returns all the provider properties required
 func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
 	return l.ProviderProperties
 }
 
@@ -326,7 +337,12 @@ func (l *DefaultLocalProvider) UnSetJWTCookie(_ http.ResponseWriter) {
 
 func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request, _ string) {
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(l.ProviderProperties); err != nil {
+	// Read Extensions/ProviderProperties under the read lock so the encode does
+	// not race with concurrent InstallExtension/RemoveExtension mutations.
+	l.mu.RLock()
+	err := json.NewEncoder(&buf).Encode(l.ProviderProperties)
+	l.mu.RUnlock()
+	if err != nil {
 		errObj := ErrEncoding(err, "provider capabilities")
 		l.Log.Error(errObj)
 		httputil.WriteMeshkitError(w, errObj, http.StatusInternalServerError)
