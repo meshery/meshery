@@ -49,12 +49,15 @@ See "[Meshery Designs](/concepts/logical/designs)" section for more information.
 
 ### Organizations
 
-- Organizationa are the unit of tenancy in Meshery. Organizations group users together.
+- Organizations are the unit of tenancy in Meshery. Organizations group users together.
 - Organizations own all resources created by users, like Workspaces, Designs, Environments, and so on.
-- Remote Providers can extend Meshery to include additional identity and user management features like heirarchical organizations, or teams (as user groups), and so on.
+- Remote Providers can extend Meshery to include additional identity and user management features like hierarchical organizations, or teams (as user groups), and so on.
 - Remote Providers can extend Meshery to offer fine-grained permissions and access control to resources like Workspaces, Designs, Environments, and so on.
 
-Learn more about [extensible authorization](/extensibility/authorization).
+See "[Organizations](/concepts/logical/organizations)" section for more information.
+
+Related reading: Learn more about [extensible authorization](/extensibility/authorization).
+
  <!-- "[Organizations](/extensions/team-management)" section for more information. -->
 
 <!-- ### Teams
@@ -82,4 +85,3 @@ To make the most of Meshery Workspaces, here are some best practices:
 - Regularly review and update your Workspace's resources and configurations.
 
 Meshery Workspaces enhance collaboration within your teams, providing a structured environment for sharing and managing resources. By following best practices and understanding the core components of Workspaces, you can maximize the benefits of this feature in Meshery.
-
