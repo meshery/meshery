@@ -18,7 +18,7 @@ Whether you have Organizations at all depends on which [Provider](/reference/ext
 - With the **Local** provider, Meshery runs in single-user mode. There is no authentication and no multi-tenancy, so Organizations, teams, and shared ownership do not come into play.
 - With a **Remote Provider** (such as [Meshery Cloud](https://cloud.meshery.io)), Meshery runs in multi-user mode. The Remote Provider supplies identity, and **Organizations become the structure through which users, ownership, and access control are managed.**
 
-In other words, Organizations are a capability that a Remote Provider extends Meshery with. Different Remote Providers can offer richer or simpler organization models — hierarchical organizations, teams as user groups, fine-grained roles — through Meshery's [extensible authorization](/reference/extensibility/providers) framework.
+In other words, Organizations are a capability that a Remote Provider extends Meshery with. Different Remote Providers can offer richer or simpler organization models — hierarchical organizations, teams as user groups, fine-grained roles — through Meshery's [provider extensibility](/reference/extensibility/providers) framework.
 
 ## Key Features
 
@@ -63,6 +63,12 @@ See "[Environments](/concepts/logical/environments)" for more information.
 - Designs — reusable, declarative characterizations of your infrastructure — are owned by an Organization and deployed within the context of a Workspace.
 
 See "[Designs](/concepts/logical/designs)" for more information.
+
+### Connections
+
+- Connections are the managed or discovered infrastructure resources (Kubernetes clusters, Prometheus instances, and so on) that Meshery works with. They are grouped by Environments and owned by an Organization.
+
+See "[Connections](/concepts/logical/connections)" for more information.
 
 ## Organizations with a Remote Provider
 
