@@ -20,6 +20,8 @@ import {
 import { NoSsr } from '@sistent/sistent';
 import { useRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
 import { iconLarge, iconXLarge } from 'css/icons.styles';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 import _ from 'lodash';
@@ -150,6 +152,7 @@ export function OrgMenu(props) {
   const isSmallScreen = useMediaQuery('(max-width:400px)');
   const { selectedOrganization: selectedOrgFromPref } = useGetSelectedOrganization();
   const { currentLoadedResource } = useContext(WorkspaceModalContext);
+  const { notify } = useNotification();
 
   const selectedOrganization = currentLoadedResource?.org?.id
     ? currentLoadedResource.org
@@ -166,9 +169,17 @@ export function OrgMenu(props) {
   const organization = selectedOrganization;
   const { open, fromMobileView } = props;
 
-  const handleOrgSelect = (e) => {
+  const handleOrgSelect = async (e) => {
     const id = e.target.value;
-    updateSelectedOrg(id);
+    try {
+      await updateSelectedOrg(id).unwrap();
+      window.location.reload();
+    } catch (err) {
+      notify({
+        message: 'Failed to switch organization. Please try again.',
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
   };
 
   return (

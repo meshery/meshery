@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import DeleteIcon from '../../../../assets/icons/DeleteIcon';
 import {
   IconButton,
   Accordion as MuiAccordion,
@@ -9,6 +8,7 @@ import {
   Box,
   useTheme,
   ExpandMoreIcon,
+  DeleteIcon,
 } from '@sistent/sistent';
 import { iconSmall } from '../../../../css/icons.styles';
 import { safeStringTitle } from '../helper';

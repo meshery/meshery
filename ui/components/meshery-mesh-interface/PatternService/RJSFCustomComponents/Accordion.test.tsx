@@ -17,10 +17,7 @@ vi.mock('@sistent/sistent', () => ({
     typography: { pxToRem: (n: number) => `${n}px`, fontWeightRegular: 400 },
   }),
   ExpandMoreIcon: () => <svg data-testid="expand-icon" />,
-}));
-
-vi.mock('../../../../assets/icons/DeleteIcon', () => ({
-  default: () => <svg data-testid="delete-icon" />,
+  DeleteIcon: () => <svg data-testid="delete-icon" />,
 }));
 
 vi.mock('../../../../css/icons.styles', () => ({ iconSmall: {} }));

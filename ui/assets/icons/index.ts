@@ -23,7 +23,6 @@ export type { IconProps } from './types';
 // Typed SVG icons (Phase 2 #18730).
 // ---------------------------------------------------------------------------
 
-export { GetAppIcon } from './GetAppIcon';
 export { LockIcon } from './LockIcon';
 export { SaveIcon } from './SaveIcon';
 export { SettingsIcon } from './SettingsIcon';
@@ -57,6 +56,9 @@ export {
   CheckCircleIcon as CheckCircle,
   CloseIcon as Close,
   CodeIcon as Code,
+  DeleteIcon,
+  DeleteIcon as Delete,
+  DeleteForever,
   DirectionsCarIcon as DirectionsCar,
   DoneAllIcon as DoneAll,
   EditIcon as Edit,
@@ -70,6 +72,7 @@ export {
   FilterIcon as Filter,
   FullScreenExitIcon,
   FullScreenIcon,
+  GetAppIcon,
   GetAppIcon as GetApp,
   GroupAddIcon,
   HandymanIcon as Handyman,
@@ -80,6 +83,7 @@ export {
   LaunchIcon as Launch,
   Link,
   ListAltIcon as ListAlt,
+  LockIcon,
   LockIcon as Lock,
   MergeOutlinedIcon as MergeOutlined,
   MoreHorizIcon as MoreHoriz,
@@ -90,8 +94,11 @@ export {
   RemoveIcon as RemoveCircle,
   ReplyIcon as Reply,
   SaveAsIcon as SaveAs,
+  SaveIcon,
   SaveIcon as Save,
+  SaveIcon as SaveOutlined,
   SearchIcon as Search,
+  SettingsIcon,
   SettingsIcon as Settings,
   SimCardIcon as SimCard,
   SupervisedUserCircleIcon as SupervisedUserCircle,
@@ -111,4 +118,3 @@ export { default as DeleteForever } from './DeleteIcon';
 export { default as FilterAlt } from './ContentFilterIcon';
 export { default as HelpOutlineOutlined } from './HelpOutlineIcon';
 export { default as LanOutlined } from './Connection';
-export { default as SaveOutlined } from './SaveIcon';
