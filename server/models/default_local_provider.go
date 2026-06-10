@@ -162,25 +162,33 @@ func (l *DefaultLocalProvider) InstallExtension(extType string, packageUrl strin
 // installs of the same extension are idempotent rather than accumulating
 // duplicate entries.
 func upsertNavigatorExtension(existing NavigatorExtensions, ext NavigatorExtension) NavigatorExtensions {
-	for i, e := range existing {
+	// Copy-on-write: build a new backing array instead of mutating in place, so a
+	// reader holding a previously returned slice header always observes an
+	// immutable snapshot even after the write lock is released.
+	newExts := make(NavigatorExtensions, len(existing), len(existing)+1)
+	copy(newExts, existing)
+	for i, e := range newExts {
 		if strings.EqualFold(strings.TrimSpace(e.Title), strings.TrimSpace(ext.Title)) {
-			existing[i] = ext
-			return existing
+			newExts[i] = ext
+			return newExts
 		}
 	}
-	return append(existing, ext)
+	return append(newExts, ext)
 }
 
 // upsertAccountExtension replaces the account extension that has a matching
 // (case-insensitive) title or appends it when none matches.
 func upsertAccountExtension(existing AccountExtensions, ext AccountExtension) AccountExtensions {
-	for i, e := range existing {
+	// Copy-on-write (see upsertNavigatorExtension).
+	newExts := make(AccountExtensions, len(existing), len(existing)+1)
+	copy(newExts, existing)
+	for i, e := range newExts {
 		if strings.EqualFold(strings.TrimSpace(e.Title), strings.TrimSpace(ext.Title)) {
-			existing[i] = ext
-			return existing
+			newExts[i] = ext
+			return newExts
 		}
 	}
-	return append(existing, ext)
+	return append(newExts, ext)
 }
 
 func (l *DefaultLocalProvider) RemoveExtension(extType, title string) error {
