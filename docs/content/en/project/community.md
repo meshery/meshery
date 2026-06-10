@@ -1,5 +1,5 @@
 ---
-title: Meshery Community
+title: Community
 description: Meshery's open source, cloud native community
 categories: [community]
 ---
