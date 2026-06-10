@@ -1,11 +1,12 @@
 ---
-title: Docker
+title: Install on Docker
 categories: [docker]
 aliases:
 - /installation/platforms/docker
 display_title: false
 image: /installation/docker/images/docker.svg
 description: Install Meshery on Docker
+weighgt: 5
 ---
 
 {{< installation/installation_prerequisites >}}

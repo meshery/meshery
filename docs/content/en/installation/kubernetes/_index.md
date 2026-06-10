@@ -1,11 +1,12 @@
 ---
-title: Kubernetes
+title: Install on Kubernetes
 categories: [kubernetes]
 aliases:
 - /installation/platforms/kubernetes
 display_title: false
 image: /installation/kubernetes/images/kubernetes.svg
 description: Install Meshery on Kubernetes. Deploy Meshery in Kubernetes in-cluster or outside of Kubernetes out-of-cluster.
+weight: 10
 ---
 
 <h1>Quick Start with Kubernetes <img src="/installation/kubernetes/images/kubernetes.svg" style="width:35px;height:35px;" /></h1>
@@ -28,10 +29,11 @@ Manage your Kubernetes clusters with Meshery. Deploy Meshery in Kubernetes [in-c
   - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
   - [Installation: Using Helm](#installation-using-helm)
   - [Post-Installation Steps](#post-installation-steps)
-  - [Exposing Meshery Service (LoadBalancer)](#exposing-meshery-serviceloadbalancer)
+  - [Exposing Meshery Service (LoadBalancer) {#exposing-meshery-serviceloadbalancer}](#exposing-meshery-service-loadbalancer-exposing-meshery-serviceloadbalancer)
 - [Out-of-cluster Installation](#out-of-cluster-installation)
   - [Set up Ingress on Minikube with the NGINX Ingress Controller](#set-up-ingress-on-minikube-with-the-nginx-ingress-controller)
   - [Installing cert-manager with kubectl](#installing-cert-manager-with-kubectl)
+    - [See Also](#see-also)
 
 # In-cluster Installation
 

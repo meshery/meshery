@@ -1,11 +1,12 @@
 ---
-title: Install mesheryctl
+title: Install using mesheryctl
 categories: [mesheryctl]
 aliases:
 - /installation/mesheryctl/
 - /installation/platforms/mesheryctl
 suggested-reading: false
-description: Install Meshery CLI
+description: Use Meshery CLI to install Meshery on supported platforms.
+weight: 15
 ---
 
 Meshery's command line client is `mesheryctl` and is the recommended tool for configuring and deploying one or more Meshery deployments. To install `mesheryctl` on your system, you may choose from any of the following supported methods.
