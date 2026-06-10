@@ -274,7 +274,10 @@ jobs:
             Please review the [workflow logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for remediation details.
 
       - name: 🚨 Email Alert on Failure
-        if: failure() && secrets.DOCS_PREVIEW_SMTP_CONNECTION_URL != '' && secrets.DOCS_PREVIEW_ALERT_FROM != '' && secrets.DOCS_PREVIEW_ALERT_TO != ''
+        # Note: secrets context is not available in `if:` expressions; guard via `continue-on-error`
+        # and rely on the action itself to handle missing/empty secrets gracefully.
+        if: failure()
+        continue-on-error: true
         uses: dawidd6/action-send-mail@v7
         with:
           connection_url: ${{ secrets.DOCS_PREVIEW_SMTP_CONNECTION_URL }}
