@@ -67,20 +67,54 @@ areas for improvement. It is **not** an independent audit or attestation.
 
 ## Overview
 
-Meshery is an extensible, collaborative, cloud native management plane. As a
-self-service engineering platform, it enables the visual and collaborative
-**design** and **operation** of Kubernetes clusters, service meshes, and
-multi-cloud infrastructure. Meshery is a vendor-neutral project that unifies the
-configuration, lifecycle management, performance benchmarking, and visual
-collaboration of cloud native infrastructure behind a single management plane.
+Meshery is an extensible, self-service engineering platform that facilitates the
+management of the full lifecycle of infrastructure. It enables the visual and
+collaborative **design** and **operation** of Kubernetes clusters, service
+meshes, and multi-cloud infrastructure, and is **highly extensible by design**:
+much of its functionality is delivered through pluggable **extension points** —
+adapters, providers, and models/integrations — rather than a fixed feature set.
+Meshery is a vendor-neutral project that unifies the configuration, lifecycle
+management, performance benchmarking, and visual collaboration of cloud native
+infrastructure behind a single management plane.
+
+That breadth is itself a security-relevant property. The platform's trust
+boundaries and attack surface are defined less by a fixed feature set than by
+*which* capabilities are enabled in a given deployment — which extension points
+(adapters, remote providers, models/integrations) are active, and which
+multi-tenant collaboration features (organizations, teams, workspaces) are in
+use. This assessment scopes the **core platform** (`meshery/meshery` and its
+supporting repositories) while explicitly acknowledging that extensions can
+broaden that surface; see [Actors](#actors), [Non-goals](#non-goals), and
+[Ecosystem](#ecosystem).
 
 ### Background
 
 Meshery is a [CNCF Sandbox project, accepted on June 22,
 2021](https://www.cncf.io/projects/meshery/) (the public "CNCF adopts Meshery"
 announcement followed in October 2021). It originated as a service-mesh
-management plane and has since broadened into a general cloud native management
-plane spanning Kubernetes and 10+ service meshes.
+management plane and has since broadened into a general management plane that
+facilitates engineering teams with the collaboration, learning, planning, and
+operational management of their infrastructure — spanning Kubernetes and 10+
+service meshes and, increasingly, a broad set of other cloud native and non-mesh
+infrastructure.
+
+Much of that breadth is delivered through Meshery's **extension model**. Beyond
+its in-tree adapters and core components, functionality is extended through
+**adapters** (per-technology controllers), **providers** (pluggable identity,
+persistence, and infrastructure/API back-ends), and **models/integrations** (the
+registry of cloud native constructs Meshery can design and operate). Community
+extensions are developed and maintained in a dedicated
+[`meshery-extensions`](https://github.com/meshery-extensions) organization,
+separate from the core [`meshery`](https://github.com/meshery) organization, so
+that contributors can build and share providers and integrations without
+requiring endorsement from the core maintainers. CNCF has described Meshery as
+"a highly extensible, self-service management platform" able to manage "any
+infrastructure via Providers, Models, Adapters, and its other extension points"
+([Scaling Organizational Structure with Meshery's Expanding Ecosystem](https://www.cncf.io/blog/2026/03/04/scaling-organizational-structure-with-mesherys-expanding-ecosystem/),
+CNCF, 2026). For this assessment, that distinction matters: the security
+boundary separates the **core platform** (covered here) from **out-of-tree
+extensions**, whose security posture is the responsibility of their respective
+authors/maintainers (see [Non-goals](#non-goals)).
 
 Meshery supports both greenfield and brownfield management of infrastructure.
 Its discovery subsystem, **MeshSync**, continuously synchronizes Meshery's view
@@ -179,6 +213,9 @@ security checks, sensitive data, and inter-actor interactions involved.
    policies) on the service meshes Meshery manages.
 5. Support GitOps workflows and configuration **drift detection** against the
    live state discovered by MeshSync.
+6. Serve as an **extensible, self-service** platform whose capabilities —
+   adapters, providers, and models/integrations — can be extended by the
+   community to manage a broad set of cloud native (and non-mesh) infrastructure.
 
 **Security goals (guarantees the project aims to provide)**
 
@@ -224,6 +261,15 @@ project. Several correct earlier informal descriptions of Meshery's posture.
 - **Meshery does not constrain resource consumption of authorized callers.** An
   authorized user can issue operations (large discoveries, benchmarks,
   deployments) that consume cluster or server resources.
+- **The security of out-of-tree and community extensions is out of scope for the
+  core project.** Meshery is deliberately extensible via adapters, providers, and
+  models/integrations, and community extensions are maintained in a separate
+  [`meshery-extensions`](https://github.com/meshery-extensions) organization.
+  Enabling a third-party adapter, remote provider, or integration extends a
+  deployment's trust boundary to that extension; vetting and securing it is the
+  responsibility of its author/operator. This assessment covers the core
+  `meshery/meshery` platform and its supporting repositories, not arbitrary
+  third-party extensions.
 - **Formal compliance attestations are out of scope for the OSS artifact.** Any
   SOC 2 / ISO 27001 / PCI-DSS / GDPR obligations pertain to an organization that
   *operates* Meshery as a hosted service (e.g., Meshery Cloud), not to the
@@ -311,6 +357,13 @@ modeling.
 - **GraphQL WebSocket origin policy.** The subscription endpoint's origin check
   is currently permissive; restrict allowed origins at the proxy to mitigate
   cross-site WebSocket hijacking when Meshery is exposed.
+- **Extension surface (adapters, providers, models/integrations).** Because
+  Meshery is extensible by design, the set of enabled extension points is itself
+  a security-relevant lever: each enabled adapter, remote provider, or
+  third-party integration becomes part of the deployment's trust boundary and
+  attack surface. Prefer first-party/maintained extensions, review third-party
+  extensions before enabling them, and enable only those a deployment actually
+  needs.
 
 **Roadmap / hardening items** identified during this assessment (tracked for
 future work): in-process TLS option; mutual TLS for the server↔adapter channel;
@@ -421,25 +474,41 @@ resolution](#security-issue-resolution).
 
 ### Ecosystem
 
-Meshery occupies the **cloud native management plane** niche: a vendor-neutral
-platform for the collaborative design and operation of Kubernetes and service
-mesh infrastructure. Its position in the ecosystem is reinforced by:
+Meshery occupies the **cloud native management plane** niche: a vendor-neutral,
+**highly extensible, self-service** platform for the collaborative design and
+operation of Kubernetes, service mesh, and broader cloud native infrastructure.
+Its position in the ecosystem is reinforced by:
 
 - **Standards stewardship.** Meshery is the **canonical/reference
   implementation** of the CNCF [Service Mesh Performance
   (SMP)](https://smp-spec.io/) specification and has served as a Service Mesh
   Interface (SMI) conformance tool (SMI has since been largely succeeded within
   CNCF by the Gateway API GAMMA initiative).
-- **Breadth of integrations.** Meshery integrates with Kubernetes and 10+ service
-  meshes (Istio, Linkerd, Consul, Kuma, AWS App Mesh, Open Service Mesh, NGINX
-  Service Mesh, Traefik Mesh, Network Service Mesh, Cilium, and others) and a
-  large and growing catalog of cloud native integrations via the **Meshery
-  Models** registry (380+ integrations; see the live
-  [integrations page](https://meshery.io/integrations)).
+- **Breadth of integrations and extension points.** Meshery integrates with
+  Kubernetes and 10+ service meshes (Istio, Linkerd, Consul, Kuma, AWS App Mesh,
+  Open Service Mesh, NGINX Service Mesh, Traefik Mesh, Network Service Mesh,
+  Cilium, and others) and a large and growing catalog of cloud native
+  integrations via the **Meshery Models** registry (380+ integrations; see the
+  live [integrations page](https://meshery.io/integrations)). This breadth is
+  delivered through Meshery's extension points — **adapters**, **providers**, and
+  **models/integrations** — with community-contributed extensions maintained in a
+  separate [`meshery-extensions`](https://github.com/meshery-extensions)
+  organization so they can evolve independently of the core.
 - **Adoption pattern.** Because Meshery is frequently used as the management and
   benchmarking layer over widely-deployed meshes and Kubernetes, a relatively
   small number of Meshery operators can represent broad downstream usage across
   the meshes and clusters they manage.
+- **Contributor ecosystem.** By CNCF's accounting, Meshery is "the CNCF's sixth
+  highest-velocity project," supported by weekly newcomer meetings, self-paced
+  training, and the **Certified Meshery Contributor (CMC)** program — described
+  as CNCF's first contributor certification of its kind — whose curriculum spans
+  Meshery Server, CLI, UI, Models, and **Extensibility**
+  ([Announcing the Certified Meshery Contributor](https://www.cncf.io/blog/2025/10/27/announcing-the-certified-meshery-contributor-cmc/),
+  CNCF, 2025). From a security standpoint, a large, well-onboarded contributor
+  base is a positive supply-chain signal — more reviewers and structured
+  review — even as it widens the population interacting with the codebase, which
+  is why the development pipeline leans on the automated gates and mandatory
+  review described above.
 
 ### Communication channels
 
