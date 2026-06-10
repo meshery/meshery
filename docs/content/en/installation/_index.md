@@ -8,7 +8,7 @@ aliases:
 - /installation/platforms
 - /installation/platforms/
 - /installation/
-weight: 5 
+weight: 1
 ---
 
 ## Supported Platforms
