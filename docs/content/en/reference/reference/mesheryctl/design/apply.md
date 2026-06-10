@@ -1,30 +1,38 @@
 ---
-title: mesheryctl-design-deploy
+title: mesheryctl-design-apply
 display_title: false
 command: design
-subcommand: deploy
+subcommand: apply
 ---
 
-# mesheryctl design deploy
+# mesheryctl design apply
 
-Deploy design
+Apply design file
 
 ## Synopsis
 
-Command will trigger deploy of design
+Apply design will trigger deploy of the design file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design deploy [flags]
+mesheryctl design apply [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Deploy design by providing file path
+apply a design file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design deploy -f [filepath] -s [source type]
+mesheryctl design apply -f [file | URL]
+
+</div>
+</pre> 
+
+deploy a saved design
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl design apply [design-name]
 
 </div>
 </pre> 
@@ -33,10 +41,9 @@ mesheryctl design deploy -f [filepath] -s [source type]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -f, --file string          Path to design file
-  -h, --help                 help for deploy
-      --skip-save            Skip saving a design
-  -s, --source-type string   Type of source file (ex. manifest / compose / helm)
+  -f, --file string   Path to design file
+  -h, --help          help for apply
+      --skip-save     Skip saving a design
 
 </div>
 </pre>
@@ -54,8 +61,8 @@ mesheryctl design deploy -f [filepath] -s [source type]
 
 ## Screenshots
 
-Usage of mesheryctl design deploy
-![pattern-onboard-usage](/reference/images/pattern-onboard.png)
+Usage of mesheryctl design apply
+![pattern-apply-usage](/reference/reference/images/patternApply.png)
 
 ## See Also
 

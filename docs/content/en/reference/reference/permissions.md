@@ -1,6 +1,8 @@
 ---
 title: Permission Keys Reference 
 description: List of default permissions.
+aliases:
+- /reference/permissions/
 ---
 
 

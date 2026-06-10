@@ -1,31 +1,31 @@
 ---
-title: mesheryctl-system-context-switch
+title: mesheryctl-system-reset
 display_title: false
 command: system
-subcommand: context
+subcommand: reset
 ---
 
-# mesheryctl system context switch
+# mesheryctl system reset
 
-switch context
+Reset Meshery's configuration
 
 ## Synopsis
 
-Configure mesheryctl to actively use one one context vs. another context.
-
+Reset Meshery to it's default configuration.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system context switch context-name [flags]
+mesheryctl system reset [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Switch to context named "sample"
+Resets meshery.yaml file with a copy from Meshery repo
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system context switch sample
+mesheryctl system reset
 
 </div>
 </pre> 
@@ -34,7 +34,7 @@ mesheryctl system context switch sample
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for switch
+  -h, --help   help for reset
 
 </div>
 </pre>
@@ -53,8 +53,8 @@ mesheryctl system context switch sample
 
 ## Screenshots
 
-Usage of mesheryctl context switch
-![context-switch-usage](/reference/images/contextswitch.png)
+Usage of mesheryctl system reset
+![reset-usage](/reference/reference/images/reset.png)
 
 ## See Also
 

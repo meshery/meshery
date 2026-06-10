@@ -107,7 +107,7 @@ mesheryctl system check --operator
 ## Screenshots
 
 Usage of mesheryctl system check
-![check-usage](/reference/images/check.png)
+![check-usage](/reference/reference/images/check.png)
 
 ## See Also
 

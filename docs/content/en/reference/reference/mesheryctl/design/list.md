@@ -88,7 +88,7 @@ mesheryctl design list --count
 ## Screenshots
 
 Usage of mesheryctl design list
-![pattern-list-usage](/reference/images/patternList.png)
+![pattern-list-usage](/reference/reference/images/patternList.png)
 
 ## See Also
 

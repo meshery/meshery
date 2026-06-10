@@ -1,38 +1,30 @@
 ---
-title: mesheryctl-design-apply
+title: mesheryctl-design-view
 display_title: false
 command: design
-subcommand: apply
+subcommand: view
 ---
 
-# mesheryctl design apply
+# mesheryctl design view
 
-Apply design file
+Display a design content
 
 ## Synopsis
 
-Apply design will trigger deploy of the design file
+Display the content of a specific design based on name or id
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design apply [flags]
+mesheryctl design view design name [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-apply a design file
+view a design
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design apply -f [file | URL]
-
-</div>
-</pre> 
-
-deploy a saved design
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl design apply [design-name]
+mesheryctl design view [design-name | ID]
 
 </div>
 </pre> 
@@ -41,9 +33,9 @@ mesheryctl design apply [design-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -f, --file string   Path to design file
-  -h, --help          help for apply
-      --skip-save     Skip saving a design
+  -a, --all                    (optional) view all designs available
+  -h, --help                   help for view
+  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
 
 </div>
 </pre>
@@ -61,8 +53,8 @@ mesheryctl design apply [design-name]
 
 ## Screenshots
 
-Usage of mesheryctl design apply
-![pattern-apply-usage](/reference/images/patternApply.png)
+Usage of mesheryctl design view
+![pattern-view-usage](/reference/reference/images/patternView.png)
 
 ## See Also
 

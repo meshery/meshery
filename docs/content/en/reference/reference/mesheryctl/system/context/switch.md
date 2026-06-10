@@ -1,38 +1,31 @@
 ---
-title: mesheryctl-system-status
+title: mesheryctl-system-context-switch
 display_title: false
 command: system
-subcommand: status
+subcommand: context
 ---
 
-# mesheryctl system status
+# mesheryctl system context switch
 
-Check Meshery status
+switch context
 
 ## Synopsis
 
-Check status of Meshery and Meshery components.
+Configure mesheryctl to actively use one one context vs. another context.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system status [flags]
+mesheryctl system context switch context-name [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
+Switch to context named "sample"
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system status
-
-</div>
-</pre> 
-
-(optional) Extra data in status table
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl system status --verbose
+mesheryctl system context switch sample
 
 </div>
 </pre> 
@@ -41,8 +34,7 @@ mesheryctl system status --verbose
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help      help for status
-  -v, --verbose   (optional) Extra data in status table
+  -h, --help   help for switch
 
 </div>
 </pre>
@@ -53,6 +45,7 @@ mesheryctl system status --verbose
 <div class='codeblock'>
       --config string    path to config file (default "/home/runner/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
+  -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
 
 </div>
@@ -60,8 +53,8 @@ mesheryctl system status --verbose
 
 ## Screenshots
 
-Usage of mesheryctl system status
-![status-usage](/reference/images/status.png)
+Usage of mesheryctl context switch
+![context-switch-usage](/reference/reference/images/contextswitch.png)
 
 ## See Also
 

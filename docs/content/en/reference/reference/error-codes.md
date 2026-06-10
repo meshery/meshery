@@ -2,6 +2,8 @@
 title: Error Code Reference
 description: Meshery Error Code Reference for all Meshery components so that you can troubleshoot issues.
 display_title: false
+aliases:
+- /reference/error-codes/
 ---
 
 <style>

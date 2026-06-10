@@ -1,38 +1,38 @@
 ---
-title: mesheryctl-system-update
+title: mesheryctl-system-status
 display_title: false
 command: system
-subcommand: update
+subcommand: status
 ---
 
-# mesheryctl system update
+# mesheryctl system status
 
-Pull new Meshery images/manifest files.
+Check Meshery status
 
 ## Synopsis
 
-Pull new Meshery container images and manifests from artifact repository.
+Check status of Meshery and Meshery components.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system update [flags]
+mesheryctl system status [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Pull new Meshery images from Docker Hub. This does not update mesheryctl. This command may be executed while Meshery is running.
+Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system update
+mesheryctl system status
 
 </div>
 </pre> 
 
-Pull the latest manifest files alone
+(optional) Extra data in status table
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system update --skip-reset
+mesheryctl system status --verbose
 
 </div>
 </pre> 
@@ -41,8 +41,8 @@ mesheryctl system update --skip-reset
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help         help for update
-      --skip-reset   (optional) skip checking for new Meshery manifest files.
+  -h, --help      help for status
+  -v, --verbose   (optional) Extra data in status table
 
 </div>
 </pre>
@@ -53,7 +53,6 @@ mesheryctl system update --skip-reset
 <div class='codeblock'>
       --config string    path to config file (default "/home/runner/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
-  -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
 
 </div>
@@ -61,8 +60,8 @@ mesheryctl system update --skip-reset
 
 ## Screenshots
 
-Usage of mesheryctl system update
-![update-usage](/reference/images/update.png)
+Usage of mesheryctl system status
+![status-usage](/reference/reference/images/status.png)
 
 ## See Also
 

@@ -1,30 +1,30 @@
 ---
-title: mesheryctl-design-view
+title: mesheryctl-design-deploy
 display_title: false
 command: design
-subcommand: view
+subcommand: deploy
 ---
 
-# mesheryctl design view
+# mesheryctl design deploy
 
-Display a design content
+Deploy design
 
 ## Synopsis
 
-Display the content of a specific design based on name or id
+Command will trigger deploy of design
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design view design name [flags]
+mesheryctl design deploy [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-view a design
+Deploy design by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design view [design-name | ID]
+mesheryctl design deploy -f [filepath] -s [source type]
 
 </div>
 </pre> 
@@ -33,9 +33,10 @@ mesheryctl design view [design-name | ID]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -a, --all                    (optional) view all designs available
-  -h, --help                   help for view
-  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
+  -f, --file string          Path to design file
+  -h, --help                 help for deploy
+      --skip-save            Skip saving a design
+  -s, --source-type string   Type of source file (ex. manifest / compose / helm)
 
 </div>
 </pre>
@@ -53,8 +54,8 @@ mesheryctl design view [design-name | ID]
 
 ## Screenshots
 
-Usage of mesheryctl design view
-![pattern-view-usage](/reference/images/patternView.png)
+Usage of mesheryctl design deploy
+![pattern-onboard-usage](/reference/reference/images/pattern-onboard.png)
 
 ## See Also
 

@@ -1,31 +1,38 @@
 ---
-title: mesheryctl-system-reset
+title: mesheryctl-system-update
 display_title: false
 command: system
-subcommand: reset
+subcommand: update
 ---
 
-# mesheryctl system reset
+# mesheryctl system update
 
-Reset Meshery's configuration
+Pull new Meshery images/manifest files.
 
 ## Synopsis
 
-Reset Meshery to it's default configuration.
-	
+Pull new Meshery container images and manifests from artifact repository.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system reset [flags]
+mesheryctl system update [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Resets meshery.yaml file with a copy from Meshery repo
+Pull new Meshery images from Docker Hub. This does not update mesheryctl. This command may be executed while Meshery is running.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system reset
+mesheryctl system update
+
+</div>
+</pre> 
+
+Pull the latest manifest files alone
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system update --skip-reset
 
 </div>
 </pre> 
@@ -34,7 +41,8 @@ mesheryctl system reset
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for reset
+  -h, --help         help for update
+      --skip-reset   (optional) skip checking for new Meshery manifest files.
 
 </div>
 </pre>
@@ -53,8 +61,8 @@ mesheryctl system reset
 
 ## Screenshots
 
-Usage of mesheryctl system reset
-![reset-usage](/reference/images/reset.png)
+Usage of mesheryctl system update
+![update-usage](/reference/reference/images/update.png)
 
 ## See Also
 

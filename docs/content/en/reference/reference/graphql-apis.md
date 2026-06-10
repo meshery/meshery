@@ -1,6 +1,8 @@
 ---
 title: GraphQL API Reference
 description: Meshery GraphQL API Documentation and Reference
+aliases:
+- /reference/graphql-apis/
 ---
 
 <!---

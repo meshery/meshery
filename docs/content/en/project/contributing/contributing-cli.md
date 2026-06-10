@@ -53,10 +53,10 @@ Annotations: linkScreenshot,
 
   The variables present in above sample will be used in creating the doc pages for the specific command
 
-Also, if the screenshot is present in the command, an `Annotation` macro variable (of `map[string]string` type) containing the `link` and the `caption` has to be added at the bottom of the `Examples` field in the command file. The image file has to be included in the `docs/content/en/reference/images` folder in **PNG** format. The screenshot field is given for reference below
+Also, if the screenshot is present in the command, an `Annotation` macro variable (of `map[string]string` type) containing the `link` and the `caption` has to be added at the bottom of the `Examples` field in the command file. The image file has to be included in the `docs/content/en/reference/reference/images` folder in **PNG** format. The screenshot field is given for reference below
 
 {{< code code=`var linkDocPatternApply = map[string]string{
-	"link":    "![pattern-apply-usage](/reference/images/patternApply.png)",
+	"link":    "![pattern-apply-usage](/reference/reference/images/patternApply.png)",
 	"caption": "Usage of mesheryctl design apply",
 }
 ...
