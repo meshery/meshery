@@ -10,8 +10,10 @@ import {
   Avatar,
   useTheme,
   InfoOutlinedIcon,
+  FullScreenIcon,
+  FullScreenExitIcon,
 } from '@sistent/sistent';
-import { Delete as DeleteIcon, FullScreenIcon, Save, FullScreenExitIcon } from '@/assets/icons';
+import { Delete as DeleteIcon, Save } from '@/assets/icons';
 import Moment from 'react-moment';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from '../CodeMirror';

@@ -10,14 +10,14 @@ import {
   useTheme,
   InfoOutlinedIcon,
   crimson,
+  FullScreenIcon,
+  FullScreenExitIcon,
 } from '@sistent/sistent';
 import { CustomTooltip, VisibilityChipMenu } from '@sistent/sistent';
 import {
   Delete as DeleteIcon,
   Save,
-  FullScreenIcon,
   GetApp as GetAppIcon,
-  FullScreenExitIcon,
   DoneAll as DoneAllIcon,
 } from '@/assets/icons';
 import Moment from 'react-moment';
