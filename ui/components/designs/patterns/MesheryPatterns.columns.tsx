@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, crimson, InfoOutlinedIcon } from '@sistent/sistent';
+import { Box, crimson, InfoOutlinedIcon, AccountTreeIcon } from '@sistent/sistent';
 import Moment from 'react-moment';
 import { GetApp as GetAppIcon } from '@/assets/icons';
 import { DoneAll as DoneAllIcon, Public as PublicIcon } from '@/assets/icons';
@@ -36,6 +36,7 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
     handleDesignDownloadModal,
     handleInfoModal,
     handleUnpublishModal,
+    handleEvaluateRelationship,
     userCanEdit,
   } = handlers;
 
@@ -85,6 +86,15 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
         openDryRunModal(e, rowData.patternFile, rowData.name, rowData.id);
       },
       disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
+    },
+    {
+      label: 'Evaluate',
+      icon: <AccountTreeIcon fill={'currentColor'} data-cy="evaluate-button" />,
+      onClick: (e) => {
+        e.stopPropagation();
+        handleEvaluateRelationship(rowData);
+      },
+      disabled: !CAN(keys.EVALUATE_RELATIONSHIPS.action, keys.EVALUATE_RELATIONSHIPS.subject),
     },
     {
       label: 'Undeploy',
