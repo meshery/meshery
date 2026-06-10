@@ -55,7 +55,7 @@ There are two types of providers defined in Meshery, `local` and `remote`.
 The provider you choose determines whether Meshery is single-user or multi-tenant:
 
 - With the **Local** provider, Meshery is **single-user**: there is no authentication, no identity, and no multi-tenancy. There are no [Organizations](/concepts/logical/organizations), teams, or shared ownership — every resource belongs to the single local user.
-- With a **Remote Provider**, Meshery is **multi-user and multi-tenant**. The provider supplies identity, and [Organizations](/concepts/logical/organizations) become the unit of tenancy: they group users, own all of their Workspaces, Environments, Designs, and Connections, and carry the roles and permissions that govern access. A Remote Provider can extend an Organization further with its own identity provider, custom domain, and branding.
+- With a **Remote Provider**, Meshery is **multi-user and multi-tenant**. The provider supplies identity, and [Organizations](/concepts/logical/organizations) become the unit of tenancy: they group users, own all Workspaces, Environments, Designs, and Connections, and carry the roles and permissions that govern access. A Remote Provider can extend an Organization further with its own identity provider, custom domain, and branding.
 
 This is the central reason to use a Remote Provider for any shared, ongoing, or public-facing Meshery deployment — see [Recommended Production Deployment Settings](#recommended-production-deployment-settings) below. For the tenancy model itself, see [Organizations](/concepts/logical/organizations).
 

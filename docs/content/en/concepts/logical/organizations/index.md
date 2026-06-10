@@ -8,7 +8,7 @@ aliases:
 An **Organization** is the unit of tenancy in Meshery. Organizations group users together and **own all of the resources those users create** — Workspaces, Environments, Designs, Connections, and more. Where a [Workspace](/concepts/logical/workspaces) is your team's collaboration space, the Organization is the top-level container that everything else lives inside of, and the boundary that keeps one tenant's resources isolated from another's.
 
 {{% alert color="dark" title="The unit of tenancy" %}}
-Organizations are the outermost boundary of ownership and access in Meshery. Every Workspace, Environment, Design, and Connection belongs to exactly one Organization.
+Organizations are the outermost boundary of ownership and access in Meshery. When using a Remote Provider, every Workspace, Environment, Design, and Connection belongs to exactly one Organization.
 {{% /alert %}}
 
 ## Organizations and Providers
@@ -32,7 +32,7 @@ In other words, Organizations are a capability that a Remote Provider extends Me
 
 Organizations sit at the top of Meshery's logical hierarchy:
 
-- An **Organization** groups **users** (and, with a Remote Provider, **teams** as user groups).
+- An **Organization** groups **users** (and, with a Remote Provider, **teams**).
 - The Organization **owns** its **Workspaces**, **Environments**, **Designs**, and **Connections**.
 - **Teams** are granted access to **Workspaces**.
 - **Workspaces** bring together **Environments** (groupings of **Connections**) and the **Designs** deployed against them.
