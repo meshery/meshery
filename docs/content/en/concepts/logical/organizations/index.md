@@ -79,13 +79,13 @@ A Remote Provider can extend an Organization well beyond simple grouping. Using 
 - **Roles, teams, and fine-grained permissions** — extensible RBAC returned by the Remote Provider as part of the user's token.
 - **Controlled membership** — open self-service sign-up or invitation-only joining, optionally restricted to an email domain.
 
-How those choices combine — from a shared, hosted experience to a fully white-labeled deployment on the Organization's own domain — is described in the Remote Provider's documentation. For Meshery Cloud, see [Organization Configuration Scenarios](https://docs.layer5.io/cloud/guides/organizations/configuration-scenarios/) and the [Organizations concept](https://docs.layer5.io/cloud/concepts/identity-and-security/organizations/) in the Layer5 Cloud docs.
+How those choices combine differs based on your connected Remote Provider. Experiences vary from a shared, hosted experience to a fully white-labeled deployment on the Organization's own domain. See your respective Remote Provider's documentation.
 
 ## Best Practices
 
 - Use separate Organizations to isolate tenants — distinct customers, partners, or business units — so their resources and access never overlap.
 - Keep ownership at the Organization level (rather than relying on individual users) so work persists as team membership changes.
-- When using a Remote Provider, assign access through teams and roles rather than per-user, and choose the [organization configuration](https://docs.layer5.io/cloud/guides/organizations/configuration-scenarios/) that matches your branding and identity needs.
+- Depending upon your Remote Provider, you may assign access through teams and roles rather than per-user, and potentially customize your organization's branding and identity.
 - When graduating from the Local provider to a Remote Provider, create an Organization first so resource ownership is established from the start.
 
 Organizations give Meshery a clear, isolated home for every team's work. Paired with a Remote Provider, they become the foundation for identity, access control, and a branded, multi-tenant experience.
