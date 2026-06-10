@@ -6,7 +6,7 @@ aliases:
 display_title: false
 image: /installation/kubernetes/images/kubernetes.svg
 description: Install Meshery on Kubernetes. Deploy Meshery in Kubernetes in-cluster or outside of Kubernetes out-of-cluster.
-weight: 10
+weight: 15
 ---
 
 <h1>Quick Start with Kubernetes <img src="/installation/kubernetes/images/kubernetes.svg" style="width:35px;height:35px;" /></h1>

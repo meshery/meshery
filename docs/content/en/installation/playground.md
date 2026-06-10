@@ -2,7 +2,7 @@
 title: Using Meshery Playground
 description: An alternative to installing Meshery
 categories: [project]
-weight: 2
+weight: -5
 ---
 
 _Try out Meshery Playground at [https://playground.meshery.io/](https://playground.meshery.io/)_

@@ -6,7 +6,7 @@ aliases:
 display_title: false
 image: /installation/docker/images/docker.svg
 description: Install Meshery on Docker
-weighgt: 5
+weight: 10
 ---
 
 {{< installation/installation_prerequisites >}}
