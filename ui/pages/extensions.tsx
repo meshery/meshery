@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import Head from 'next/head';
 import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme, Box } from '@sistent/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
-import { Adapters } from '../components/extensions';
+import { Adapters, KanvasExtension } from '../components/extensions';
 import DefaultError from '@/components/general/error-404';
 import { EVENT_TYPES } from '../lib/event-types';
 import { EXTENSION_NAMES } from '../utils/Enum';
@@ -514,6 +514,7 @@ const Extensions = () => {
       </Head>
       {CAN(keys.VIEW_EXTENSIONS.action, keys.VIEW_EXTENSIONS.subject) ? (
         <Grid2 container spacing={2} size="grow">
+          <KanvasExtension />
           <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
           <WrappedMesheryPerformanceAction githubActionEnabled={false} />
           <WrappedMesheryHelmExtension />
