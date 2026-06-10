@@ -110,7 +110,7 @@ func linkHandler(name string) string {
 
 // docs is a function to generate the markdown docs for mesheryctl
 func doc() {
-	markDownPath := "../../docs/content/en/reference/mesheryctl/" // Path for docs
+	markDownPath := "../../docs/content/en/reference/reference/mesheryctl/" // Path for docs
 	//yamlPath := "./internal/cli/root/testDoc/"
 
 	fmt.Println("Scanning available commands...")
