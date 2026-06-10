@@ -171,7 +171,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		if state.Action != nil {
 			// Execute entry actions for the state entered.
 			eventType, event, err = state.Action.ExecuteOnEntry(ctx, sm.Context, nil)
-			sm.Log.Debugf("%s: entry action executed, event emitted ", sm.Name, eventType)
+			sm.Log.Debugf("%s: entry action executed, event emitted %v", sm.Name, eventType)
 
 			if err != nil {
 				sm.Log.Error(err)
@@ -182,7 +182,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			} else {
 				eventType, event, err = state.Action.Execute(ctx, sm.Context, payload)
 
-				sm.Log.Debugf("%s: inside action executed, event emitted ", sm.Name, eventType)
+				sm.Log.Debugf("%s: inside action executed, event emitted %v", sm.Name, eventType)
 				if err != nil {
 					sm.Log.Error(err)
 					sm.Log.Debug(event)

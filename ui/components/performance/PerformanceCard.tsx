@@ -54,16 +54,16 @@ function PerformanceCard({
     id,
     name,
     endpoints,
-    load_generators: loadGenerators,
-    total_results: results,
+    loadGenerators,
+    totalResults: results,
     duration: testRunDuration,
-    concurrent_request: concurrentRequest,
+    concurrentRequest,
     qps,
-    service_mesh: serviceMesh,
-    content_type: contentType,
-    request_body: requestBody,
-    request_cookies: requestCookies,
-    request_headers: requestHeaders,
+    serviceMesh,
+    contentType,
+    requestBody,
+    requestCookies,
+    requestHeaders,
     lastRun,
     metadata,
   } = profile;
@@ -158,11 +158,13 @@ function PerformanceCard({
           <Typography variant="h6" component="div">
             {name}
           </Typography>
-          <img
-            src={`/static/img/load-test/${loadGenerators[0]}.svg`}
-            alt="load-generator"
-            height="24px"
-          />
+          {loadGenerators?.[0] && (
+            <img
+              src={`/static/img/load-test/${loadGenerators[0]}.svg`}
+              alt="load-generator"
+              height="24px"
+            />
+          )}
         </div>
         <ResultContainer>
           <div>

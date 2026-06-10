@@ -248,7 +248,7 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
                 )}
               </div>
             }
-            disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.resource)}
+            disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject)}
           />
         )}
         <Tab
