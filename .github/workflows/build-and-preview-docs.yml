@@ -273,26 +273,26 @@ jobs:
             ❌ Docs preview build failed for `${{ github.workflow }}`.
             Please review the [workflow logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for remediation details.
 
-      - name: 🚨 Email Alert on Failure
-        # Note: secrets context is not available in `if:` expressions; guard via `continue-on-error`
-        # and rely on the action itself to handle missing/empty secrets gracefully.
-        if: failure()
-        continue-on-error: true
-        uses: dawidd6/action-send-mail@v7
-        with:
-          connection_url: ${{ secrets.DOCS_PREVIEW_SMTP_CONNECTION_URL }}
-          from: ${{ secrets.DOCS_PREVIEW_ALERT_FROM }}
-          to: ${{ secrets.DOCS_PREVIEW_ALERT_TO }}
-          subject: "Workflow Failed: ${{ github.workflow }}"
-          body: |
-            Repository: ${{ github.repository }}
-            Workflow: ${{ github.workflow }}
-            Run ID: ${{ github.run_id }}
-            Event: ${{ github.event_name }}
-            Action: ${{ github.event.action || 'n/a' }}
-            Ref: ${{ github.ref }}
-            Commit: ${{ github.sha }}
-            Logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      # - name: 🚨 Email Alert on Failure
+      #   # Note: secrets context is not available in `if:` expressions; guard via `continue-on-error`
+      #   # and rely on the action itself to handle missing/empty secrets gracefully.
+      #   if: failure()
+      #   continue-on-error: true
+      #   uses: dawidd6/action-send-mail@v7
+      #   with:
+      #     connection_url: ${{ secrets.DOCS_PREVIEW_SMTP_CONNECTION_URL }}
+      #     from: ${{ secrets.DOCS_PREVIEW_ALERT_FROM }}
+      #     to: ${{ secrets.DOCS_PREVIEW_ALERT_TO }}
+      #     subject: "Workflow Failed: ${{ github.workflow }}"
+      #     body: |
+      #       Repository: ${{ github.repository }}
+      #       Workflow: ${{ github.workflow }}
+      #       Run ID: ${{ github.run_id }}
+      #       Event: ${{ github.event_name }}
+      #       Action: ${{ github.event.action || 'n/a' }}
+      #       Ref: ${{ github.ref }}
+      #       Commit: ${{ github.sha }}
+      #       Logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
       - name: Cleanup PR preview on close
         if: github.event_name == 'pull_request_target' && github.event.action == 'closed'
