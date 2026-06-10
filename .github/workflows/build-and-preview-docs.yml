@@ -1,6 +1,13 @@
 name: Build and Preview Docs
 
 on:
+  workflow_dispatch:
+    inputs:
+      debug_mode:
+        description: 'Enable extra workflow context logging'
+        required: false
+        default: false
+        type: boolean
   pull_request_target:
     branches: [master]
     types: [opened, synchronize, reopened, closed]
@@ -32,30 +39,62 @@ jobs:
       PREVIEW_RETENTION_LIMIT: 6
 
     steps:
+      - name: 🔍 Introspect Inputs
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || 'false' }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Action: ${{ github.event.action || 'n/a' }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "SHA: ${{ github.sha }}"
+          echo "PR Number: ${{ github.event.pull_request.number || 'n/a' }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "::endgroup::"
+
       - name: Harden Runner
         uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
         with:
           egress-policy: audit
-          
-      - name: Checkout PR code
-        if: github.event.action != 'closed'
+
+      - name: Checkout PR docs source
+        if: github.event_name == 'pull_request_target' && github.event.action != 'closed'
         uses: actions/checkout@v6
         with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
-          submodules: recursive
-          fetch-depth: 0
+          fetch-depth: 1
+          # Sparse checkout keeps the preview build focused on the Hugo site input
+          # instead of cloning the full repository, which materially reduces IO for
+          # docs-only previews triggered from pull_request_target.
+          filter: blob:none
+          sparse-checkout: |
+            docs
+          sparse-checkout-cone-mode: true
+
+      - name: Checkout docs source for manual validation
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+          # Manual dispatch stays aligned with PR behavior so maintainers can test
+          # the docs preview build path without paying the cost of a full clone.
+          filter: blob:none
+          sparse-checkout: |
+            docs
+          sparse-checkout-cone-mode: true
 
       - name: Checkout for cleanup
-        if: github.event.action == 'closed'
+        if: github.event_name == 'pull_request_target' && github.event.action == 'closed'
         uses: actions/checkout@v6
         with:
           ref: gh-pages
           fetch-depth: 0
 
       - name: Install Hugo CLI
-        if: github.event.action != 'closed'
+        if: github.event_name != 'pull_request_target' || github.event.action != 'closed'
         run: |
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
@@ -67,7 +106,7 @@ jobs:
         # PRs, see #19574). Hugo Extended ships embedded Dart Sass as of
         # v0.114+ but having the standalone binary on PATH is the most
         # reliable path through `resources.toCSS` with transpiler "dartsass".
-        if: github.event.action != 'closed'
+        if: github.event_name != 'pull_request_target' || github.event.action != 'closed'
         env:
           DART_SASS_VERSION: 1.79.5
         run: |
@@ -80,33 +119,34 @@ jobs:
           dart-sass --version
 
       - name: Setup Node
-        if: github.event.action != 'closed'
+        if: github.event_name != 'pull_request_target' || github.event.action != 'closed'
         uses: actions/setup-node@v6
         with:
           node-version: "22"
 
       - name: Install dependencies
-        if: github.event.action != 'closed'
+        if: github.event_name != 'pull_request_target' || github.event.action != 'closed'
         run: |
           cd docs
           [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true
 
       - name: Build PR preview
-        if: github.event.action != 'closed'
+        if: github.event_name != 'pull_request_target' || github.event.action != 'closed'
         env:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
           HUGO_PREVIEW: "true"
         run: |
-          make docs-build-production BASE_URL="/"
-          find docs/public -maxdepth 1 -type d -name 'v0.*' -exec rm -rf {} +
-          cat > docs/public/robots.txt <<'EOF'
+          cd docs
+          npm run build:production -- --gc --baseURL "/"
+          find public -maxdepth 1 -type d -name 'v0.*' -exec rm -rf {} +
+          cat > public/robots.txt <<'ROBOTS'
           User-agent: *
           Disallow: /
-          EOF
+          ROBOTS
 
       - name: Deploy PR preview
-        if: github.event.action != 'closed'
+        if: github.event_name == 'pull_request_target' && github.event.action != 'closed'
         uses: rossjrw/pr-preview-action@v1.6.3
         with:
           source-dir: ./docs/public
@@ -116,7 +156,7 @@ jobs:
           comment: false
 
       - name: Checkout gh-pages for preview retention
-        if: github.event.action != 'closed'
+        if: github.event_name == 'pull_request_target' && github.event.action != 'closed'
         uses: actions/checkout@v6
         with:
           ref: gh-pages
@@ -125,7 +165,7 @@ jobs:
 
       - name: Prune old PR previews
         id: prune-previews
-        if: github.event.action != 'closed'
+        if: github.event_name == 'pull_request_target' && github.event.action != 'closed'
         run: |
           cd gh-pages-maintenance
           mkdir -p pr-preview
@@ -166,7 +206,7 @@ jobs:
           echo "removed_prs_json=$(printf '%s\n' "${removed_prs[@]}" | jq -R . | jq -sc .)" >> "$GITHUB_OUTPUT"
 
       - name: Comment PR with Preview URL
-        if: github.event.action != 'closed'
+        if: github.event_name == 'pull_request_target' && github.event.action != 'closed'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: pr-preview
@@ -175,8 +215,8 @@ jobs:
             > *Note: Preview may take a moment (GitHub Pages deployment in progress). Please wait and refresh. Track deployment [here](https://github.com/${{ github.repository }}/actions/workflows/pages/pages-build-deployment)*
 
       - name: Comment on pruned previews
-        if: github.event.action != 'closed' && steps.prune-previews.outputs.removed_prs_json != '[]'
-        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request_target' && github.event.action != 'closed' && steps.prune-previews.outputs.removed_prs_json != '[]'
+        uses: actions/github-script@v8
         env:
           REMOVED_PRS_JSON: ${{ steps.prune-previews.outputs.removed_prs_json }}
           PREVIEW_RETENTION_LIMIT: ${{ env.PREVIEW_RETENTION_LIMIT }}
@@ -224,8 +264,38 @@ jobs:
               });
             }
 
+      - name: Comment PR on preview failure
+        if: failure() && github.event_name == 'pull_request_target' && github.event.action != 'closed'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: pr-preview-status
+          message: |
+            ❌ Docs preview build failed for `${{ github.workflow }}`.
+            Please review the [workflow logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for remediation details.
+
+      # - name: 🚨 Email Alert on Failure
+      #   # Note: secrets context is not available in `if:` expressions; guard via `continue-on-error`
+      #   # and rely on the action itself to handle missing/empty secrets gracefully.
+      #   if: failure()
+      #   continue-on-error: true
+      #   uses: dawidd6/action-send-mail@v7
+      #   with:
+      #     connection_url: ${{ secrets.DOCS_PREVIEW_SMTP_CONNECTION_URL }}
+      #     from: ${{ secrets.DOCS_PREVIEW_ALERT_FROM }}
+      #     to: ${{ secrets.DOCS_PREVIEW_ALERT_TO }}
+      #     subject: "Workflow Failed: ${{ github.workflow }}"
+      #     body: |
+      #       Repository: ${{ github.repository }}
+      #       Workflow: ${{ github.workflow }}
+      #       Run ID: ${{ github.run_id }}
+      #       Event: ${{ github.event_name }}
+      #       Action: ${{ github.event.action || 'n/a' }}
+      #       Ref: ${{ github.ref }}
+      #       Commit: ${{ github.sha }}
+      #       Logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
       - name: Cleanup PR preview on close
-        if: github.event.action == 'closed'
+        if: github.event_name == 'pull_request_target' && github.event.action == 'closed'
         uses: rossjrw/pr-preview-action@v1.6.3
         with:
           preview-branch: gh-pages

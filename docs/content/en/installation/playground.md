@@ -1,7 +1,8 @@
 ---
-title: Meshery Playground
-description: Details about Meshery Playground
+title: Using Meshery Playground
+description: An alternative to installing Meshery
 categories: [project]
+weight: -5
 ---
 
 _Try out Meshery Playground at [https://playground.meshery.io/](https://playground.meshery.io/)_

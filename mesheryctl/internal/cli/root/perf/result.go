@@ -51,7 +51,7 @@ var (
 )
 
 var linkDocPerfResult = map[string]string{
-	"link":    "![perf-result-usage](/reference/images/perf-result.png)",
+	"link":    "![perf-result-usage](/reference/reference/images/perf-result.png)",
 	"caption": "Usage of mesheryctl perf result",
 }
 
