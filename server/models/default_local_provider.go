@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -19,6 +20,7 @@ import (
 	"time"
 
 	"github.com/meshery/schemas/models/core"
+	"k8s.io/client-go/util/homedir"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/connections"
@@ -62,10 +64,9 @@ type DefaultLocalProvider struct {
 	ConnectionPersister             *ConnectionPersister
 	EnvironmentPersister            *EnvironmentPersister
 	WorkspacePersister              *WorkspacePersister
-
-	GenericPersister *database.Handler
-	KubeClient       *mesherykube.Client
-	Log              logger.Handler
+	GenericPersister                *database.Handler
+	KubeClient                      *mesherykube.Client
+	Log                             logger.Handler
 
 	MeshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode
 }
@@ -80,6 +81,127 @@ const (
 	LocalProviderLegacyAlias = "None"
 )
 
+func (l *DefaultLocalProvider) InstallExtension(extType string, packageUrl string, extensionMetadata map[string]interface{}) error {
+	if extensionMetadata == nil {
+		return fmt.Errorf("InstallExtension called with nil extensionMetadata")
+	}
+	l.DownloadProviderExtensionPackage()
+
+	extType = strings.ToLower(strings.TrimSpace(extType))
+
+	// marshal incoming map to JSON then unmarshal into the concrete struct
+	metaBytes, err := json.Marshal(extensionMetadata)
+	if err != nil {
+		return ErrMarshal(err, "extension metadata")
+	}
+
+	switch extType {
+	case "navigator":
+		var parsed NavigatorExtension
+		if err := json.Unmarshal(metaBytes, &parsed); err != nil {
+			return ErrUnmarshal(err, "navigator extension metadata")
+		}
+
+		// ensure Title is present (fallback to map value if needed)
+		if parsed.Title == "" {
+			if t, ok := extensionMetadata["title"].(string); ok {
+				parsed.Title = t
+			}
+		}
+
+		// replace existing extension with same title or append
+		replaced := false
+		for i, e := range l.Extensions.Navigator {
+			if strings.EqualFold(strings.TrimSpace(e.Title), strings.TrimSpace(parsed.Title)) && parsed.Title != "" {
+				l.Extensions.Navigator[i] = parsed
+				replaced = true
+				break
+			}
+		}
+		if !replaced {
+			l.Extensions.Navigator = append(l.Extensions.Navigator, parsed)
+		}
+
+		// download/extract package if provided
+		l.DownloadProviderExtensionPackageFromUrl(packageUrl, l.Log)
+
+	case "userprefs":
+		var parsed UserPrefsExtension
+		if err := json.Unmarshal(metaBytes, &parsed); err != nil {
+			return ErrUnmarshal(err, "userprefs extension metadata")
+		}
+		l.Extensions.UserPrefs = append(l.Extensions.UserPrefs, parsed)
+
+	case "graphql":
+		var parsed GraphQLExtension
+		if err := json.Unmarshal(metaBytes, &parsed); err != nil {
+			return ErrUnmarshal(err, "graphql extension metadata")
+		}
+		l.Extensions.GraphQL = append(l.Extensions.GraphQL, parsed)
+
+	case "account":
+		var parsed AccountExtension
+		if err := json.Unmarshal(metaBytes, &parsed); err != nil {
+			return ErrUnmarshal(err, "account extension metadata")
+		}
+		l.Extensions.Acccount = append(l.Extensions.Acccount, parsed)
+
+	case "collaborator":
+		var parsed CollaboratorExtension
+		if err := json.Unmarshal(metaBytes, &parsed); err != nil {
+			return ErrUnmarshal(err, "collaborator extension metadata")
+		}
+		l.Extensions.Collaborator = append(l.Extensions.Collaborator, parsed)
+
+	default:
+		return fmt.Errorf("InstallExtension: unsupported extension type '%s'", extType)
+	}
+	return nil
+}
+
+func (l *DefaultLocalProvider) RemoveExtension(extType, title string) error {
+	extType = strings.ToLower(strings.TrimSpace(extType))
+	title = strings.TrimSpace(title)
+	if title == "" {
+		return fmt.Errorf("RemoveExtension called with empty title")
+	}
+
+	switch extType {
+	case "navigator":
+		filtered := make(NavigatorExtensions, 0, len(l.Extensions.Navigator))
+		removed := false
+		for _, extension := range l.Extensions.Navigator {
+			if strings.EqualFold(strings.TrimSpace(extension.Title), title) {
+				removed = true
+				continue
+			}
+			filtered = append(filtered, extension)
+		}
+		if !removed {
+			return fmt.Errorf("RemoveExtension: navigator extension %q not found", title)
+		}
+		l.Extensions.Navigator = filtered
+	case "account":
+		filtered := make(AccountExtensions, 0, len(l.Extensions.Acccount))
+		removed := false
+		for _, extension := range l.Extensions.Acccount {
+			if strings.EqualFold(strings.TrimSpace(extension.Title), title) {
+				removed = true
+				continue
+			}
+			filtered = append(filtered, extension)
+		}
+		if !removed {
+			return fmt.Errorf("RemoveExtension: account extension %q not found", title)
+		}
+		l.Extensions.Acccount = filtered
+	default:
+		return fmt.Errorf("RemoveExtension: unsupported extension type '%s'", extType)
+	}
+
+	return nil
+}
+
 // Initialize will initialize the local provider
 func (l *DefaultLocalProvider) Initialize() {
 	l.ProviderName = LocalProviderName
@@ -92,7 +214,25 @@ func (l *DefaultLocalProvider) Initialize() {
 	l.ProviderType = LocalProviderType
 	l.PackageVersion = viper.GetString("BUILD")
 	l.PackageURL = ""
-	l.Extensions = Extensions{}
+	// t := true
+	// f := false
+	l.Extensions = Extensions{Navigator: NavigatorExtensions{
+		// NavigatorExtension{
+		// 	Title:           "Kanvas",
+		// 	OnClickCallback: 1,
+		// 	Href: Href{
+		// 		URI:      "/meshmap",
+		// 		External: &f,
+		// 	},
+		// 	Component: "/provider/navigator/meshmap/index.js?packageVersion=v1.0.40-1",
+		// 	Icon:      "/provider/navigator/img/kanvas-icon.svg",
+
+		// 	Link:   &t,
+		// 	Show:   &t,
+		// 	Type:   "full_page",
+		// 	IsBeta: &t,
+		// },
+	}}
 	l.Capabilities = Capabilities{
 		{Feature: PersistMesheryPatterns},
 		{Feature: PersistMesheryApplications},
@@ -123,6 +263,33 @@ func (l *DefaultLocalProvider) GetProviderType() ProviderType {
 func (l *DefaultLocalProvider) DownloadProviderExtensionPackage() {
 }
 
+// downloadProviderExtensionPackage will download the remote provider extensions
+// package
+func (l *DefaultLocalProvider) DownloadProviderExtensionPackageFromUrl(packageUrl string, log logger.Handler) {
+	// Skip download if the SKIP_DOWNLOAD_EXTENSIONS flag is set
+	if viper.GetBool(SKIP_DOWNLOAD_EXTENSIONS_ENV) {
+		log.Info("[DownloadProviderExtensionPackage]: Skipping extension download due to SKIP_DOWNLOAD_EXTENSIONS flag")
+		return
+	}
+
+	// Location for the package to be stored
+	loc := l.PackageLocation()
+
+	log.Infof("Package location %s", loc)
+
+	// Skip download if the file is already present
+	if _, err := os.Stat(loc); err == nil {
+		log.Debug(fmt.Sprintf("[Initialize]: Package found at %s skipping download", loc))
+		return
+	}
+
+	log.Info(fmt.Sprintf("[Initialize]: Package not found at %s proceeding to download", loc))
+	// logrus the provider package
+	if err := TarXZF(packageUrl, loc, log); err != nil {
+		log.Error(ErrDownloadPackage(err, "provider package"))
+	}
+}
+
 func (l *DefaultLocalProvider) SetProviderProperties(providerProperties ProviderProperties) {
 	l.ProviderProperties = providerProperties
 }
@@ -132,10 +299,10 @@ func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
 	return l.ProviderProperties
 }
 
-// PackageLocation returns an empty string as there is no extension package for
-// the local provider
+// PackageLocation returns the location of where the package for the current
+// provider is located
 func (l *DefaultLocalProvider) PackageLocation() string {
-	return ""
+	return path.Join(homedir.HomeDir(), ".meshery", "provider", l.ProviderName, l.PackageVersion)
 }
 
 func (l *DefaultLocalProvider) SetJWTCookie(_ http.ResponseWriter, _ string) {

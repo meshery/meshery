@@ -209,3 +209,37 @@ func TestRemotePatternFileShortGitHubURLReturnsError(t *testing.T) {
 		})
 	}
 }
+
+func TestDefaultLocalProviderRemoveExtension_RemovesMatchingNavigatorExtension(t *testing.T) {
+	provider := &DefaultLocalProvider{}
+	provider.Initialize()
+	provider.Extensions.Navigator = NavigatorExtensions{
+		{Title: "Kanvas"},
+		{Title: "MeshMap Snapshot"},
+	}
+
+	if err := provider.RemoveExtension("navigator", "Kanvas"); err != nil {
+		t.Fatalf("RemoveExtension returned error: %v", err)
+	}
+
+	if len(provider.Extensions.Navigator) != 1 {
+		t.Fatalf("expected 1 navigator extension after removal, got %d", len(provider.Extensions.Navigator))
+	}
+	if provider.Extensions.Navigator[0].Title != "MeshMap Snapshot" {
+		t.Fatalf("unexpected extension retained: %+v", provider.Extensions.Navigator[0])
+	}
+}
+
+func TestDefaultLocalProviderRemoveExtension_ReturnsErrorForMissingExtension(t *testing.T) {
+	provider := &DefaultLocalProvider{}
+	provider.Initialize()
+	provider.Extensions.Navigator = NavigatorExtensions{{Title: "MeshMap Snapshot"}}
+
+	err := provider.RemoveExtension("navigator", "Kanvas")
+	if err == nil {
+		t.Fatal("expected error removing missing navigator extension, got nil")
+	}
+	if !strings.Contains(err.Error(), "not found") {
+		t.Fatalf("expected not found error, got %v", err)
+	}
+}
