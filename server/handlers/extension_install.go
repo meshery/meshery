@@ -25,7 +25,7 @@ func persistLocalProviderCapabilitiesForUser(user *models.User, provider *models
 	if user == nil {
 		return nil
 	}
-	if user.ID.String() == "" {
+	if user.ID.String() == "" || user.ID.String() == "00000000-0000-0000-0000-000000000000" {
 		return nil
 	}
 	return provider.WriteCapabilitiesForUser(user.ID.String(), &provider.ProviderProperties)
