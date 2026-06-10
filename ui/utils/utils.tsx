@@ -401,7 +401,7 @@ export const processDesign = (design = {}) => {
 
   const schemaVersion = normalizedDesign?.schemaVersion;
   const isSupportedDesignSchema =
-    typeof schemaVersion === 'string' && schemaVersion.startsWith('designs.meshery.io/v1beta');
+    typeof schemaVersion === 'string' && /^designs\.meshery\.io\/v1beta\d+$/.test(schemaVersion);
 
   if (!isSupportedDesignSchema) {
     console.error('Invalid design schema version', normalizedDesign);
