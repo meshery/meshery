@@ -39,6 +39,7 @@ import {
   useUnpublishPatternMutation,
   useUpdatePatternFileMutation,
   useUploadPatternFileMutation,
+  useEvaluateRelationshipsMutation,
 } from '@/rtk-query/design';
 // import { useGetUserPrefQuery } from '@/rtk-query/user';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
@@ -111,6 +112,7 @@ function MesheryPatterns({
   const [updatePattern] = useUpdatePatternFileMutation();
   const [uploadPatternFile] = useUploadPatternFileMutation();
   const [deletePatternFile] = useDeletePatternFileMutation();
+  const [evaluateRelationships] = useEvaluateRelationshipsMutation();
 
   useEffect(() => {
     if (patternsData) {
@@ -184,6 +186,7 @@ function MesheryPatterns({
     handleImportDesign,
     deletePatterns,
     handleDownload,
+    handleEvaluateRelationship,
     showModal,
   } = createPatternsActions({
     clonePattern,
@@ -196,6 +199,7 @@ function MesheryPatterns({
     uploadPatternFile,
     deployPatternMutation,
     undeployPatternMutation,
+    evaluateRelationships,
     modalRef,
     meshModels,
     infoModal,
@@ -412,6 +416,7 @@ function MesheryPatterns({
       handleDesignDownloadModal,
       handleInfoModal,
       handleUnpublishModal,
+      handleEvaluateRelationship,
       userCanEdit,
     },
   });
@@ -570,6 +575,7 @@ function MesheryPatterns({
                 user={user}
                 fetch={() => getPatterns()}
                 handleInfoModal={handleInfoModal}
+                handleEvaluateRelationship={handleEvaluateRelationship}
                 openUndeployModal={openUndeployModal}
                 openValidationModal={openValidateModal}
                 openDryRunModal={openDryRunModal}

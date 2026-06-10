@@ -1,5 +1,5 @@
 ---
-title: Meshery Models
+title: Models
 description: Meshery architecture is extensible. Meshery provides several extension points for working with different cloud native projects via adapters, load generators and providers
 aliases: 
 - /extensibility/integrations
@@ -10,9 +10,8 @@ cascade:
     type: models
 ---
 
-Meshery provides {{< model-count >}} built-in integrations which refer to the supported connections and interactions between Meshery and various cloud native platforms, tools, and technologies. Meshery's approach is Kubernetes-native which means you can easily incorporate Meshery into your existing workflow without additional setup or integration effort.
+The following list of [models](/concepts/logical/models) are packaged into each Meshery release, available in the [registry](/concepts/logical/registry) where you may optionally disable, export and customize, and import new models.
 
+## All Models by Name
 
-## All Integrations by Name
-
-Explore all {{< model-count >}} models, or [navigate them visually](https://meshery.io/integrations).
+Browse all {{< model-count >}} models by letter, or [explore them visually](https://meshery.io/integrations).
