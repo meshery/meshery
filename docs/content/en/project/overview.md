@@ -3,9 +3,10 @@ title: Meshery Overview
 display_title: false
 categories: [project]
 description: Meshery is the self-service engineering platform, enabling collaborative design and operation of cloud and cloud native infrastructure.
-toc_hide: true
 aliases:
+- /project/overview/
 - /getting-started/overview
+weight: -10
 ---
 
 ## Meshery is for all cloud and cloud native infrastructure
