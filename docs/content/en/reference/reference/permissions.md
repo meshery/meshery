@@ -1,8 +1,9 @@
 ---
-title: Permission Keys Reference 
+title: Permission Keys
 description: List of default permissions.
 aliases:
 - /reference/permissions/
+- /reference/permissions-keys-reference/
 ---
 
 

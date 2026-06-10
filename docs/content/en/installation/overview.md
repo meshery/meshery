@@ -1,10 +1,11 @@
 ---
-title: Meshery Overview
+title: Overview
 display_title: false
 categories: [project]
 description: Meshery is the self-service engineering platform, enabling collaborative design and operation of cloud and cloud native infrastructure.
 aliases:
 - /project/overview/
+- /project/meshery-overview/
 - /getting-started/overview
 weight: -10
 ---
@@ -70,7 +71,7 @@ Meshery helps users weigh the value of their cloud native deployments against th
 #### **Stable**
 
 | Adapter | Status |
-| :----------- | -----: |
+| :------ | -----: |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "stable" -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ adapter.url }}) | {{ adapter.project_status }} |
@@ -80,7 +81,7 @@ Meshery helps users weigh the value of their cloud native deployments against th
 ##### **Beta**
 
 | Adapter | Status |
-| :----------- | -----: |
+| :------ | -----: |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "beta" -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ adapter.url }}) | {{ adapter.project_status }} |
@@ -90,7 +91,7 @@ Meshery helps users weigh the value of their cloud native deployments against th
 ##### **Alpha** - Meshery adapters for which we are seeking community-contributed support.
 
 | Adapter | Status |
-| :----------- | -----: |
+| :------ | -----: |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "alpha" -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ adapter.url }}) | {{ adapter.project_status }} |
