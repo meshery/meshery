@@ -21,7 +21,14 @@ import * as iconBarrel from './index';
  */
 describe('icon barrel integrity', () => {
   it('exposes no undefined value exports (every re-export resolves)', () => {
-    const undefinedExports = Object.entries(iconBarrel)
+    const entries = Object.entries(iconBarrel);
+
+    // Guard against a vacuous pass: if the barrel ever fails to load or
+    // resolves to an empty namespace, the undefined-filter below would be
+    // trivially satisfied and hide a real breakage.
+    expect(entries.length).toBeGreaterThan(0);
+
+    const undefinedExports = entries
       .filter(([, value]) => value === undefined)
       .map(([name]) => name);
 
