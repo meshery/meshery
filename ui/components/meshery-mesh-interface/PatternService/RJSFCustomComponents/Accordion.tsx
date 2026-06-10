@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import DeleteIcon from '../../../../assets/icons/DeleteIcon';
+import { DeleteIcon } from '@sistent/sistent';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
 import {
   IconButton,

@@ -1,6 +1,7 @@
 ---
 title: Quick Start Guide
 description: Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes is easy. Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or a Kubernetes cluster.
+weight: -10
 ---
 
 <a name="getting-started"></a>
