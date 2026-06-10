@@ -273,6 +273,9 @@ func (l *DefaultLocalProvider) DownloadProviderExtensionPackageFromURL(packageUr
 	if strings.TrimSpace(packageUrl) == "" {
 		return fmt.Errorf("provider package URL is required to install local extension assets")
 	}
+	if !strings.HasPrefix(packageUrl, "https://github.com/meshery-extensions/") {
+		return fmt.Errorf("untrusted provider package URL: %s", packageUrl)
+	}
 
 	log.Info(fmt.Sprintf("[Initialize]: Package not found at %s proceeding to download", loc))
 	// logrus the provider package
