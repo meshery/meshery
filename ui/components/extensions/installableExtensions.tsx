@@ -6,8 +6,8 @@ import {
   useInstallProviderExtensionMutation,
   useRemoveProviderExtensionMutation,
 } from '@/rtk-query/user';
-import { CardContainer, FrontSideDescription } from '@/css/icons.styles';
-import { EVENT_TYPES } from '@/lib/event-types';
+import { CardContainer, FrontSideDescription } from 'css/icons.styles';
+import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '@/utils/hooks';
 import { formatApiError } from '@/utils/helpers/meshkitError';
 
@@ -103,6 +103,38 @@ const ResponsiveImage = ({ src, alt, testId }: { src: string; alt?: string; test
   <StyledResponsiveImage data-testid={testId} src={src} alt={alt || ''} />
 );
 
+const resolveExtensionHref = (href?: ExtensionMetadata['href']) => {
+  if (!href) {
+    return '';
+  }
+
+  if (typeof href === 'string') {
+    if (
+      href.startsWith('http://') ||
+      href.startsWith('https://') ||
+      href.startsWith('/extension')
+    ) {
+      return href;
+    }
+
+    return '/extension' + href;
+  }
+
+  if (!href.uri) {
+    return '';
+  }
+
+  if (href.external || href.uri.startsWith('http://') || href.uri.startsWith('https://')) {
+    return href.uri;
+  }
+
+  if (href.uri.startsWith('/extension')) {
+    return href.uri;
+  }
+
+  return '/extension' + href.uri;
+};
+
 const InstallableExtension: React.FC<InstallableExtensionProps> = ({ extension }) => {
   const { notify } = useNotification();
   const { data: providerCaps } = useGetProviderCapabilitiesQuery();
@@ -137,6 +169,7 @@ const InstallableExtension: React.FC<InstallableExtensionProps> = ({ extension }
   const [isRemoving, setIsRemoving] = useState<boolean>(false);
   const isLocalProvider = providerCaps?.providerType === 'local';
   const isMutating = isInstalling || isRemoving || isRemovingFromProvider;
+  const installReady = Boolean(extension.packagePath);
 
   const iconSrc =
     extension.icon || extension.metadata?.icon || '/static/img/extensions/default-extension.svg';
@@ -185,10 +218,7 @@ const InstallableExtension: React.FC<InstallableExtensionProps> = ({ extension }
 
   const openLink = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    const href = extension.metadata?.href;
-    let url = '';
-    if (typeof href === 'string') url = '/extension' + href;
-    else if (href?.uri) url = '/extension' + href.uri;
+    const url = resolveExtensionHref(extension.metadata?.href);
     if (url) window.open(url, '_blank', 'noopener,noreferrer');
   };
 
@@ -217,15 +247,15 @@ const InstallableExtension: React.FC<InstallableExtensionProps> = ({ extension }
         </UnifiedDescription>
 
         <UnifiedButtonContainer>
-          {!installed ? (
+          {!installed && isLocalProvider ? (
             <Button
-              variant="contained"
+              variant={isLocalProvider ? 'contained' : 'outlined'}
               color="primary"
               onClick={handleInstall}
               data-testid="install-btn"
-              disabled={isMutating}
+              disabled={!isLocalProvider || !installReady || isMutating}
             >
-              {isInstalling ? 'Installing...' : 'Install'}
+              {isInstalling ? 'Installing...' : installReady ? 'Install' : 'Preparing...'}
             </Button>
           ) : (
             <>

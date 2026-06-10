@@ -85,7 +85,6 @@ func (l *DefaultLocalProvider) InstallExtension(extType string, packageUrl strin
 	if extensionMetadata == nil {
 		return fmt.Errorf("InstallExtension called with nil extensionMetadata")
 	}
-	l.DownloadProviderExtensionPackage()
 
 	extType = strings.ToLower(strings.TrimSpace(extType))
 
@@ -108,6 +107,13 @@ func (l *DefaultLocalProvider) InstallExtension(extType string, packageUrl strin
 				parsed.Title = t
 			}
 		}
+		if strings.TrimSpace(parsed.Title) == "" {
+			return fmt.Errorf("InstallExtension: navigator extension title is required")
+		}
+
+		if err := l.DownloadProviderExtensionPackageFromURL(packageUrl, l.Log); err != nil {
+			return err
+		}
 
 		// replace existing extension with same title or append
 		replaced := false
@@ -121,9 +127,6 @@ func (l *DefaultLocalProvider) InstallExtension(extType string, packageUrl strin
 		if !replaced {
 			l.Extensions.Navigator = append(l.Extensions.Navigator, parsed)
 		}
-
-		// download/extract package if provided
-		l.DownloadProviderExtensionPackageFromUrl(packageUrl, l.Log)
 
 	case "userprefs":
 		var parsed UserPrefsExtension
@@ -265,11 +268,11 @@ func (l *DefaultLocalProvider) DownloadProviderExtensionPackage() {
 
 // downloadProviderExtensionPackage will download the remote provider extensions
 // package
-func (l *DefaultLocalProvider) DownloadProviderExtensionPackageFromUrl(packageUrl string, log logger.Handler) {
+func (l *DefaultLocalProvider) DownloadProviderExtensionPackageFromURL(packageUrl string, log logger.Handler) error {
 	// Skip download if the SKIP_DOWNLOAD_EXTENSIONS flag is set
 	if viper.GetBool(SKIP_DOWNLOAD_EXTENSIONS_ENV) {
 		log.Info("[DownloadProviderExtensionPackage]: Skipping extension download due to SKIP_DOWNLOAD_EXTENSIONS flag")
-		return
+		return nil
 	}
 
 	// Location for the package to be stored
@@ -280,14 +283,20 @@ func (l *DefaultLocalProvider) DownloadProviderExtensionPackageFromUrl(packageUr
 	// Skip download if the file is already present
 	if _, err := os.Stat(loc); err == nil {
 		log.Debug(fmt.Sprintf("[Initialize]: Package found at %s skipping download", loc))
-		return
+		return nil
+	}
+
+	if strings.TrimSpace(packageUrl) == "" {
+		return fmt.Errorf("provider package URL is required to install local extension assets")
 	}
 
 	log.Info(fmt.Sprintf("[Initialize]: Package not found at %s proceeding to download", loc))
 	// logrus the provider package
 	if err := TarXZF(packageUrl, loc, log); err != nil {
-		log.Error(ErrDownloadPackage(err, "provider package"))
+		return ErrDownloadPackage(err, "provider package")
 	}
+
+	return nil
 }
 
 func (l *DefaultLocalProvider) SetProviderProperties(providerProperties ProviderProperties) {

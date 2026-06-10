@@ -31,8 +31,13 @@ func persistLocalProviderCapabilitiesForUser(user *models.User, provider *models
 	return provider.WriteCapabilitiesForUser(user.ID.String(), &provider.ProviderProperties)
 }
 
-// InstallExtensionHandler installs an extension for local provider or proxies to remote
+// InstallExtensionHandler installs an extension for the local provider.
 func (h *Handler) InstallExtensionHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if provider.GetProviderType() != models.LocalProviderType {
+		writeMeshkitError(w, fmt.Errorf("install extension is currently supported only for the local provider"), http.StatusNotImplemented)
+		return
+	}
+
 	var req installRequest
 	bd, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -50,41 +55,24 @@ func (h *Handler) InstallExtensionHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	// Local provider - call InstallExtension directly
-	if provider.GetProviderType() == models.LocalProviderType {
-		// type assert to DefaultLocalProvider
-		if lp, ok := provider.(*models.DefaultLocalProvider); ok {
-			if err := lp.InstallExtension(req.ExtType, req.PackageURL, req.ExtensionMetadata); err != nil {
-				h.log.Error(err)
-				writeMeshkitError(w, fmt.Errorf("failed to install extension: %w", err), http.StatusInternalServerError)
-				return
-			}
-			if err := persistLocalProviderCapabilitiesForUser(user, lp); err != nil {
-				h.log.Error(err)
-				writeMeshkitError(w, fmt.Errorf("failed to persist updated local provider capabilities: %w", err), http.StatusInternalServerError)
-				return
-			}
-			writeJSONEmptyObject(w, http.StatusOK)
-			return
-		}
-		// If not the concrete type, attempt to call via reflection not supported
+	lp, ok := provider.(*models.DefaultLocalProvider)
+	if !ok {
 		writeMeshkitError(w, fmt.Errorf("local provider does not support InstallExtension"), http.StatusNotImplemented)
 		return
 	}
 
-	// Remote provider - proxy the request to the remote provider
-	// Reuse provider.ExtensionProxy which expects the original http.Request
-	resp, err := provider.ExtensionProxy(r)
-	if err != nil {
-		status := http.StatusBadGateway
-		writeMeshkitError(w, ErrExtensionProxy(err), status)
+	if err := lp.InstallExtension(req.ExtType, req.PackageURL, req.ExtensionMetadata); err != nil {
+		h.log.Error(err)
+		writeMeshkitError(w, fmt.Errorf("failed to install extension: %w", err), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(resp.StatusCode)
-	if _, err := fmt.Fprint(w, string(resp.Body)); err != nil {
+	if err := persistLocalProviderCapabilitiesForUser(user, lp); err != nil {
 		h.log.Error(err)
+		writeMeshkitError(w, fmt.Errorf("failed to persist updated local provider capabilities: %w", err), http.StatusInternalServerError)
+		return
 	}
+
+	writeJSONEmptyObject(w, http.StatusOK)
 }
 
 // RemoveExtensionHandler removes an installed extension from local provider capabilities.

@@ -8,7 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/database"
