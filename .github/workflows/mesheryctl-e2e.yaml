@@ -85,6 +85,17 @@ jobs:
           ./mesheryctl system start --platform ${{ matrix.platform }} --skip-browser --skip-update --verbose
         shell: bash
         working-directory: ./mesheryctl
+      - name: Wait for Meshery to be ready
+        run: |
+          for i in $(seq 1 30); do
+            if curl --silent --fail http://localhost:9081/api/system/version > /dev/null 2>&1; then
+              echo "Meshery is ready!"
+              break
+            fi
+              echo "Attempt $i/30, retrying in 10s..."
+              sleep 10
+          done
+        shell: bash
       - name: Run mesheryctl end2end tests
         run: |
           bash run_tests.bash | tee bats.tap
