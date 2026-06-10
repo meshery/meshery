@@ -13,7 +13,7 @@ categories: [infrastructure]
 <h3>Using Meshery's SnapShot GitHub Action</h3>
 See your deployment before you merge. Connect Meshery to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.
 
-See [Extension: Meshery Snapshot]({{< ref "extensions/helm-snapshot/index.md" >}}) for more details.
+See [Extension: Meshery Snapshot]({{< ref "extensions/extensions/helm-snapshot/index.md" >}}) for more details.
 
 ## <img src="images/smp-dark-text-side.svg" className="image-left-no-shadow" alt="Infrastructure fperformance logo" style="width: 60%; max-width: 200px;vertical-align:middle" /> Meshery Performance Analysis GitHub Action
 
