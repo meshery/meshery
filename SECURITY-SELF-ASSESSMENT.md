@@ -45,7 +45,7 @@ areas for improvement. It is **not** an independent audit or attestation.
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Assessment stage**  | Complete — 2026-06-10                                                                                                                                                                                                             |
 | **Software**          | [github.com/meshery/meshery](https://github.com/meshery/meshery). Supporting repositories: [meshery/meshkit](https://github.com/meshery/meshkit), [meshery/schemas](https://github.com/meshery/schemas), [meshery/meshery-operator](https://github.com/meshery/meshery-operator), [meshery/meshsync](https://github.com/meshery/meshsync) |
-| **Security provider** | No. Meshery's primary function is the design and operation (management) of cloud native infrastructure; it is not primarily a security product. It can, however, configure data-plane security features (e.g., mTLS policies) on the meshes it manages. |
+| **Security provider** | No. Meshery's primary function is the design and operation (management) of cloud native infrastructure; it is not primarily a security product. It can, however, configure data-plane security features (e.g., mTLS policies) on the technologies it manages. |
 | **Languages**         | Go (server, `meshkit`, `schemas`, `mesheryctl`, adapters, operator), TypeScript/JavaScript (React + Next.js UI and provider UI), Rego (OPA relationship/policy evaluation), plus Helm/YAML for packaging                                          |
 | **SBOM**              | A CycloneDX Software Bill of Materials is generated in CI ([`bom.yaml` workflow](https://github.com/meshery/meshery/blob/master/.github/workflows/bom.yaml)). Dependency manifests: [`go.mod`](https://github.com/meshery/meshery/blob/master/go.mod), [`ui/package.json`](https://github.com/meshery/meshery/blob/master/ui/package.json). The [`@meshery/schemas`](https://www.npmjs.com/package/@meshery/schemas) npm package is published with build provenance (`npm publish --provenance` via OIDC trusted publishing). A signed, release-attached SBOM is a tracked roadmap item (see [Security functions and features](#security-functions-and-features)). |
 
@@ -69,13 +69,13 @@ areas for improvement. It is **not** an independent audit or attestation.
 
 Meshery is an extensible, self-service engineering platform that facilitates the
 management of the full lifecycle of infrastructure. It enables the visual and
-collaborative **design** and **operation** of Kubernetes clusters, service
-meshes, and multi-cloud infrastructure, and is **highly extensible by design**:
-much of its functionality is delivered through pluggable **extension points** —
-adapters, providers, and models/integrations — rather than a fixed feature set.
-Meshery is a vendor-neutral project that unifies the configuration, lifecycle
-management, performance benchmarking, and visual collaboration of cloud native
-infrastructure behind a single management plane.
+collaborative **design** and **operation** of Kubernetes clusters, cloud native
+applications, and multi-cloud infrastructure, and is **highly extensible by
+design**: much of its functionality is delivered through pluggable **extension
+points** — adapters, providers, and models/integrations — rather than a fixed
+feature set. Meshery is a vendor-neutral project that unifies the configuration,
+lifecycle management, performance benchmarking, and visual collaboration of cloud
+native infrastructure behind a single management plane.
 
 That breadth is itself a security-relevant property. The platform's trust
 boundaries and attack surface are defined less by a fixed feature set than by
@@ -92,11 +92,20 @@ broaden that surface; see [Actors](#actors), [Non-goals](#non-goals), and
 Meshery is a [CNCF Sandbox project, accepted on June 22,
 2021](https://www.cncf.io/projects/meshery/) (the public "CNCF adopts Meshery"
 announcement followed in October 2021). It originated as a service-mesh
-management plane and has since broadened into a general management plane that
-facilitates engineering teams with the collaboration, learning, planning, and
-operational management of their infrastructure — spanning Kubernetes and 10+
-service meshes and, increasingly, a broad set of other cloud native and non-mesh
-infrastructure.
+management plane and has since broadened into a general cloud native management
+plane that facilitates engineering teams with the collaboration, learning,
+planning, and operational management of their infrastructure across Kubernetes
+clusters and a broad range of cloud native technologies.
+
+Despite that origin — and the "mesh" in its name — **Meshery is not a service
+mesh manager.** Managing a service mesh is just one capability among many:
+Meshery operates multiple Kubernetes clusters; benchmarks and optimizes
+performance across applications and infrastructure; assesses configuration
+against cloud native best practices; manages cloud native design patterns and
+policy (via an Open Policy Agent–based engine); and serves DevOps, platform, SRE,
+and application-delivery teams across the full infrastructure lifecycle
+([Meshery is not a service mesh manager](https://meshery.io/blog/2024/10/2024-10-01-meshery-is-not-a-service-mesh-manager/),
+2024).
 
 Much of that breadth is delivered through Meshery's **extension model**. Beyond
 its in-tree adapters and core components, functionality is extended through
@@ -139,7 +148,7 @@ does not enforce by default.
 | Actor                       | Function                                                                                         | Security / isolation measures                                                                                                                                                                                                                                            |
 | --------------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Meshery Server**          | Core control plane: serves the UI, REST API, and a GraphQL API; orchestrates adapters; consumes MeshSync data; manages provider sessions. | Every API route passes through provider → auth → session-injector middleware. With a remote provider, requests require a verified JWT session; with the local provider, the session is anonymous (single-user). Serves plaintext HTTP in-process — **TLS is expected to be terminated by an ingress/reverse proxy.** Runs with broad (cluster-admin-equivalent) Kubernetes RBAC by default. |
-| **Meshery Adapters**        | Per-mesh controllers (Istio, Linkerd, Consul, Kuma, App Mesh, NGINX SM, Cilium, etc.) exposing mesh lifecycle/config/performance operations over gRPC. | **Disabled by default** (opt-in via `ADAPTER_URLS`). The server↔adapter gRPC channel uses **insecure (plaintext) transport** today — there is no mutual TLS between server and adapters. Adapters reuse the `meshery-server` ServiceAccount by default.               |
+| **Meshery Adapters**        | Per-technology controllers exposing lifecycle, configuration, and performance operations over gRPC for the technologies they manage. | **Disabled by default** (opt-in via `ADAPTER_URLS`). The server↔adapter gRPC channel uses **insecure (plaintext) transport** today — there is no mutual TLS between server and adapters. Adapters reuse the `meshery-server` ServiceAccount by default.               |
 | **MeshSync**                | Kubernetes controller that discovers and continuously syncs cluster resource state to the server via the broker. | Discovery scope is governed by a configurable allow/deny **watch-list** on the `meshsyncs.meshery.io` CRD (defaults include Secrets, ConfigMaps, ClusterRoles, Pods, etc.). Holds no datastore of its own; publishes to NATS. Runs under an operator-provisioned ServiceAccount (cluster-admin-equivalent by default). |
 | **Meshery Operator**        | Kubernetes operator that manages the lifecycle of MeshSync and the Meshery Broker via two namespaced CRDs (`brokers.meshery.io`, `meshsyncs.meshery.io`). | Defines a least-privilege `operator-role` scoped to its own `meshery.io` CRDs and a `kube-rbac-proxy` (TokenReview/SubjectAccessReview) that gates the metrics endpoint. Also defines a broad `controller-role` (`*/*`) used to reconcile managed resources. |
 | **Meshery Broker (NATS)**   | Message bus that streams data between in-cluster components (MeshSync) and the server, which may run outside the cluster. | Supports username/password authentication and TLS, but both are **unset by default**. Typically exposed via `LoadBalancer`/`NodePort` so an out-of-cluster server can reach it — operators should enable broker auth + TLS when exposed. |
@@ -188,34 +197,33 @@ security checks, sensitive data, and inter-actor interactions involved.
    client. Because the server holds broad cluster RBAC, it can create/update/
    delete arbitrary resources on the user's behalf.
 
-5. **Service-mesh operations via adapters.** Mesh-specific actions (install a
-   mesh, apply a configuration, run a performance benchmark, apply an mTLS
-   policy on the managed mesh) are dispatched from the server to the relevant
-   adapter over gRPC. The adapter performs the operation against the cluster/mesh
-   and streams results back.
+5. **Operations via adapters.** Technology-specific actions (install or configure
+   a managed technology, run a performance benchmark, apply a data-plane security
+   policy such as mTLS) are dispatched from the server to the relevant adapter
+   over gRPC. The adapter performs the operation against the target
+   cluster/technology and streams results back.
 
-6. **Performance benchmarking.** Meshery runs load tests (the canonical
-   implementation of the CNCF **Service Mesh Performance** specification),
-   recording results for comparison and sharing. Benchmark results may be
+6. **Performance benchmarking.** Meshery runs standardized, repeatable load tests
+   and records results for comparison and sharing. Benchmark results may be
    persisted locally or to the configured remote provider.
 
 ### Goals
 
 **Product goals**
 
-1. Provide a unified, vendor-neutral management plane for Kubernetes and 10+
-   service meshes.
+1. Provide a unified, vendor-neutral management plane for Kubernetes and a broad
+   range of cloud native infrastructure.
 2. Enable visual, collaborative **infrastructure-as-design** (Meshery Designs
    and Models) shared across teams.
-3. Provide standardized **performance benchmarking** via the canonical Service
-   Mesh Performance (SMP) implementation.
+3. Provide standardized, repeatable **performance benchmarking** of managed
+   infrastructure and applications.
 4. Facilitate configuration of **data-plane security features** (such as mTLS
-   policies) on the service meshes Meshery manages.
+   policies) on the technologies Meshery manages.
 5. Support GitOps workflows and configuration **drift detection** against the
    live state discovered by MeshSync.
 6. Serve as an **extensible, self-service** platform whose capabilities —
    adapters, providers, and models/integrations — can be extended by the
-   community to manage a broad set of cloud native (and non-mesh) infrastructure.
+   community to manage a broad range of cloud native infrastructure.
 
 **Security goals (guarantees the project aims to provide)**
 
@@ -476,28 +484,28 @@ resolution](#security-issue-resolution).
 
 Meshery occupies the **cloud native management plane** niche: a vendor-neutral,
 **highly extensible, self-service** platform for the collaborative design and
-operation of Kubernetes, service mesh, and broader cloud native infrastructure.
-Its position in the ecosystem is reinforced by:
+operation of Kubernetes clusters and a broad range of cloud native
+infrastructure. Its position in the ecosystem is reinforced by:
 
 - **Standards stewardship.** Meshery is the **canonical/reference
   implementation** of the CNCF [Service Mesh Performance
   (SMP)](https://smp-spec.io/) specification and has served as a Service Mesh
   Interface (SMI) conformance tool (SMI has since been largely succeeded within
   CNCF by the Gateway API GAMMA initiative).
-- **Breadth of integrations and extension points.** Meshery integrates with
-  Kubernetes and 10+ service meshes (Istio, Linkerd, Consul, Kuma, AWS App Mesh,
-  Open Service Mesh, NGINX Service Mesh, Traefik Mesh, Network Service Mesh,
-  Cilium, and others) and a large and growing catalog of cloud native
-  integrations via the **Meshery Models** registry (380+ integrations; see the
-  live [integrations page](https://meshery.io/integrations)). This breadth is
+- **Breadth of integrations and extension points.** Through the **Meshery
+  Models** registry, Meshery integrates with Kubernetes and a large and growing
+  catalog of cloud native technologies (380+ integrations; see the live
+  [integrations page](https://meshery.io/integrations)) — spanning workloads,
+  networking, observability, CI/CD, cloud-provider services, infrastructure-as-
+  code, and (as one category among many) service meshes. This breadth is
   delivered through Meshery's extension points — **adapters**, **providers**, and
   **models/integrations** — with community-contributed extensions maintained in a
   separate [`meshery-extensions`](https://github.com/meshery-extensions)
   organization so they can evolve independently of the core.
 - **Adoption pattern.** Because Meshery is frequently used as the management and
-  benchmarking layer over widely-deployed meshes and Kubernetes, a relatively
-  small number of Meshery operators can represent broad downstream usage across
-  the meshes and clusters they manage.
+  benchmarking layer over widely-deployed Kubernetes clusters and cloud native
+  technologies, a relatively small number of Meshery operators can represent
+  broad downstream usage across the infrastructure they manage.
 - **Contributor ecosystem.** By CNCF's accounting, Meshery is "the CNCF's sixth
   highest-velocity project," supported by weekly newcomer meetings, self-paced
   training, and the **Certified Meshery Contributor (CMC)** program — described
@@ -611,18 +619,18 @@ with results published to GitHub code scanning.
 The following representative scenarios illustrate real-world Meshery usage. They
 are framed as capability-grounded use cases.
 
-1. **Multi-mesh operations for a platform team.** A platform engineering team
-   standardizing on more than one service mesh (e.g., Istio in one environment,
-   Linkerd in another) uses Meshery as a single management plane to install,
-   configure, and visualize each mesh, and to apply consistent configuration
-   (including mesh mTLS policies) across them — avoiding a separate, bespoke
-   toolchain per mesh.
+1. **Unified operations for a platform team.** A platform engineering team
+   operating across multiple Kubernetes clusters and a mix of cloud native
+   technologies uses Meshery as a single management plane to install, configure,
+   and visualize those technologies, and to apply consistent configuration
+   (including data-plane security policies such as mTLS) across them — avoiding a
+   separate, bespoke toolchain for each.
 
 2. **Performance benchmarking and regression gating.** A team evaluating the
-   latency/throughput overhead of a service mesh (or comparing mesh versions and
-   configurations) uses Meshery's canonical SMP implementation to run repeatable
-   load tests, capture standardized results, and compare them over time as part
-   of release decisions.
+   latency/throughput impact of an infrastructure or configuration change (for
+   example, comparing versions or settings of a managed technology) uses
+   Meshery's standardized, repeatable load testing to capture results and compare
+   them over time as part of release decisions.
 
 3. **Collaborative, drift-aware design.** Teams model infrastructure as Meshery
    Designs from the Models registry, review them collaboratively, deploy them,
@@ -636,19 +644,21 @@ and visualization tools. Brief, neutral differentiators:
 
 - **Rancher** — server-side enterprise multi-cluster fleet management
   (provisioning, fleet ops, RBAC). Heavier operations platform; not focused on
-  visual design or mesh performance benchmarking.
+  visual infrastructure design or performance benchmarking.
 - **Lens / Headlamp** — Kubernetes dashboards/IDEs (desktop and, for Headlamp,
   web) focused on cluster navigation and extensibility. Meshery is an in-cluster/
-  web management plane oriented toward multi-mesh management and design.
+  web management plane oriented toward collaborative, multi-cluster infrastructure
+  design and operation.
 - **Backstage** — developer portal / service catalog for platform engineering;
-  broader than Kubernetes and oriented to software cataloging rather than mesh/
+  broader than Kubernetes and oriented to software cataloging rather than
   infrastructure operation.
 - **Argo CD** — GitOps continuous delivery; overlaps on declarative desired-state
-  operation but is CD-specific, not multi-mesh design/benchmarking.
-- **Kiali** — Istio service-mesh observability dashboard; single-mesh
-  observability versus Meshery's multi-mesh management plus SMP performance
-  benchmarking.
+  operation but is CD-specific, not collaborative infrastructure design,
+  visualization, or benchmarking.
+- **Kiali** — an Istio-focused service-mesh observability dashboard; narrow,
+  single-technology observability versus Meshery's general, multi-technology
+  management plane.
 
-Meshery's combination of visual infrastructure-as-design (Designs/Models),
-multi-service-mesh support, and SMP performance benchmarking is the differentiator
-that none of the comparable tools fully replicate.
+Meshery's combination of visual infrastructure-as-design (Designs/Models), broad
+multi-technology support, and standardized performance benchmarking is the
+differentiator that none of the comparable tools fully replicate.
