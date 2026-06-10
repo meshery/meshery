@@ -32,7 +32,6 @@ export type { IconProps } from './types';
 // Note: these are intentionally re-exported as `default` since the source
 // files only provide default exports today. Renaming their source exports
 // is out of scope for this purely-additive issue.
-export { ExpandMoreIcon } from '@sistent/sistent';
 
 // ---------------------------------------------------------------------------
 // Centralized design-system icon re-exports (Phase 2 #18736, relocated here in
@@ -47,6 +46,7 @@ export {
   AddCircleIcon as AddCircle,
   ArrowBackIcon as ArrowBack,
   ArrowDropDownIcon,
+  ArrowDropDownIcon as ArrowDropDown,
   BarChartIcon as BarChart,
   BuildRoundedIcon as BuildRounded,
   CachedIcon as Cached,
@@ -62,6 +62,7 @@ export {
   EditIcon,
   ErrorIcon as Error,
   ExpandLessIcon as ExpandLess,
+  ExpandMoreIcon,
   ExpandMoreIcon as ExpandMore,
   ExploreIcon as Explore,
   FileCopyIcon as FileCopy,
@@ -109,7 +110,6 @@ export {
 } from '@sistent/sistent';
 
 export { default as AddCircleOutlined } from './AddIconCircleBorder';
-export { ArrowDropDownIcon as ArrowDropDown } from '@sistent/sistent';
 export { default as FilterAlt } from './ContentFilterIcon';
 export { default as HelpOutlineOutlined } from './HelpOutlineIcon';
 export { default as LanOutlined } from './Connection';
