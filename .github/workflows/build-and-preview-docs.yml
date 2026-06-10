@@ -71,6 +71,7 @@ jobs:
           filter: blob:none
           sparse-checkout: |
             docs
+            pr-preview
           sparse-checkout-cone-mode: true
 
       - name: Checkout docs source for manual validation
@@ -84,6 +85,7 @@ jobs:
           filter: blob:none
           sparse-checkout: |
             docs
+            pr-preview
           sparse-checkout-cone-mode: true
 
       - name: Checkout for cleanup
