@@ -14,13 +14,13 @@ A popular way of exposing your cluster is by using [Ingress](https://kubernetes.
 ## Deploy a sample app on Meshery
 
 1. Go to the management page of any infrastructure and install any of its stable versions.
-<a href="./images/consul-install.png"><img alt="Consul-install" style="width:500px;height:auto;display:flex;padding-top:10px;" src="./images/consul-install.png" /></a>
+<a href="images/consul-install.png"><img alt="Consul-install" style="width:500px;height:auto;display:flex;padding-top:10px;" src="images/consul-install.png" /></a>
 
 1. Click (+) on **Manage Sample Application Lifecycle**. You will now be able to see a dropdown menu with the available sample applications.
-<a href="./images/consul-sample-app.png"><img alt="ImageHub sample app" style="width:500px;height:auto;display:flex;padding-top:10px;" src="./images/consul-sample-app.png" /></a>
+<a href="images/consul-sample-app.png"><img alt="ImageHub sample app" style="width:500px;height:auto;display:flex;padding-top:10px;" src="images/consul-sample-app.png" /></a>
 
 1. Click on the sample application you want to deploy. This might take up to a minute. You will be notified when the sample application has been deployed.
-<a href="./images/consul-imagehub-success.png"><img alt="ImageHub deployed" style="width:500px;height:auto;display:flex;padding-top:10px;" src="./images/consul-imagehub-success.png" /></a>
+<a href="images/consul-imagehub-success.png"><img alt="ImageHub deployed" style="width:500px;height:auto;display:flex;padding-top:10px;" src="images/consul-imagehub-success.png" /></a>
 
 ### BookInfo
 
@@ -33,7 +33,7 @@ Originally built by Istio, BookInfo is a sample application which on deployment 
 
 Once BookInfo is deployed, you can use Meshery to apply custom configurations to control traffic, inject latency, perform context-based routing, and so on. 
 
-<a href="./images/bookinfo.png"><img alt="BookInfo sample app" style="width:500px;height:auto;" src="./images/bookinfo.png" /></a>
+<a href="images/bookinfo.png"><img alt="BookInfo sample app" style="width:500px;height:auto;" src="images/bookinfo.png" /></a>
 
 ### [Emojivoto](https://github.com/BuoyantIO/emojivoto)
 
@@ -43,29 +43,29 @@ Emojivoto is a microservice application, originally built by Linkerd that allows
    - **emojivoto-emoji-svc**: gRPC API for finding and listing emoji
    - **emojivoto-voting-svc**: gRPC API for voting and leaderboard
 
-<a href="./images/emojivoto.png"><img alt="Emojivoto" style="width:500px;height:auto;" src="./images/emojivoto.png" /></a>
+<a href="images/emojivoto.png"><img alt="Emojivoto" style="width:500px;height:auto;" src="images/emojivoto.png" /></a>
 
 ### ImageHub
 
 Image Hub is a sample application for exploring WebAssembly modules used as Envoy filters. The application was originally written to run on Consul. However, it doesn't have any dependency on Consul and can be deployed on any infrastructure. These modules can be used to implement multi-tenancy or to implement per user rate limiting in your application’s endpoints, without messing with your application infrastructure. 
 
-<a href="./images/imagehub-on-consul.png"><img alt="Imagehub-on-Consul" style="width:500px;height:auto;" src="./images/imagehub-on-consul.png" /></a>
+<a href="images/imagehub-on-consul.png"><img alt="Imagehub-on-Consul" style="width:500px;height:auto;" src="images/imagehub-on-consul.png" /></a>
 
 ### [HTTPBin](https://httpbin.org)
 
 HttpBin is a simple HTTP request and response service that responds to many kinds of http/https requests including the standard http request methods (or verbs) used by REST.
 
-<a href="./images/httpbin.png"><img alt="httpbin" style="width:500px;height:auto;" src="./images/httpbin.png" /></a>
+<a href="images/httpbin.png"><img alt="httpbin" style="width:500px;height:auto;" src="images/httpbin.png" /></a>
 
 ### [Linkerd Books](https://github.com/BuoyantIO/booksapp)
 
 Linkerd Books is a sample Ruby based application. It is designed to demonstrate the various value propositions, including debugging, observability, and monitoring of your infrastructure. It can be used to scope out your mesh's efficiency and for debugging.
 
-<a href="./images/linkerd-books.png"><img alt="Linkerd Books" style="width:500px;height:auto;" src="./images/linkerd-books.png" /></a>
+<a href="images/linkerd-books.png"><img alt="Linkerd Books" style="width:500px;height:auto;" src="images/linkerd-books.png" /></a>
 
 ### [Online Boutique](https://github.com/GoogleCloudPlatform/microservices-demo)
 
 Online Boutique is a sample cloud-native application, originally built by Google. It comprises of 10 microservices and can be used to showcase and work with Kubernetes, Istio, gRPC and OpenCensus. On deployment, it runs a web-based e-commerce demo application, an example of which can be seen below:
 
-<a href="./images/online-boutique.png"><img alt="Online Boutique" style="width:500px;height:auto;" src="./images/online-boutique.png" /></a>
+<a href="images/online-boutique.png"><img alt="Online Boutique" style="width:500px;height:auto;" src="images/online-boutique.png" /></a>
 

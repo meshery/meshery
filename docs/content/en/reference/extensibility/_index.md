@@ -12,7 +12,7 @@ Meshery has an extensible architecture with several different types of extension
 
 Meshery is not just an application. It is a set of microservices where the central component is itself called Meshery. Integrators may extend Meshery by taking advantage of designated Extension Points. Extension points come in various forms and are available through Meshery’s architecture.
 
-![Meshery Extension Points](./images/meshery_extension_points.svg)
+![Meshery Extension Points](images/meshery_extension_points.svg)
 
 _Figure: Extension points available throughout Meshery_
 

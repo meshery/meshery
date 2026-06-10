@@ -5,7 +5,7 @@ aliases:
 - /concepts/organizations/
 ---
 
-An **Organization** is the unit of tenancy in Meshery. Organizations group users together and **own all of the resources those users create** — Workspaces, Environments, Designs, Connections, and more. Where a [Workspace](/concepts/logical/workspaces) is your team's collaboration space, the Organization is the top-level container that everything else lives inside of, and the boundary that keeps one tenant's resources isolated from another's.
+An **Organization** is the unit of tenancy in Meshery. Organizations group users together and **own all of the resources those users create** — Workspaces, Environments, Designs, Connections, and more. Where a [Workspace]({{< ref "concepts/logical/workspaces.md" >}}) is your team's collaboration space, the Organization is the top-level container that everything else lives inside of, and the boundary that keeps one tenant's resources isolated from another's.
 
 {{% alert color="dark" title="The unit of tenancy" %}}
 Organizations are the outermost boundary of ownership and access in Meshery. When using a Remote Provider, every Workspace, Environment, Design, and Connection belongs to exactly one Organization.
@@ -13,12 +13,12 @@ Organizations are the outermost boundary of ownership and access in Meshery. Whe
 
 ## Organizations and Providers
 
-Whether you have Organizations at all depends on which [Provider](/reference/extensibility/providers) Meshery is connected to:
+Whether you have Organizations at all depends on which [Provider]({{< ref "reference/extensibility/providers/index.md" >}}) Meshery is connected to:
 
 - With the **Local** provider, Meshery runs in single-user mode. There is no authentication and no multi-tenancy, so Organizations, teams, and shared ownership do not come into play.
 - With a **Remote Provider** (such as [Meshery Cloud](https://cloud.meshery.io)), Meshery runs in multi-user mode. The Remote Provider supplies identity, and **Organizations become the structure through which users, ownership, and access control are managed.**
 
-In other words, Organizations are a capability that a Remote Provider extends Meshery with. Different Remote Providers can offer richer or simpler organization models — hierarchical organizations, teams as user groups, fine-grained roles — through Meshery's [provider extensibility](/reference/extensibility/providers) framework.
+In other words, Organizations are a capability that a Remote Provider extends Meshery with. Different Remote Providers can offer richer or simpler organization models — hierarchical organizations, teams as user groups, fine-grained roles — through Meshery's [provider extensibility]({{< ref "reference/extensibility/providers/index.md" >}}) framework.
 
 ## Key Features
 
@@ -50,25 +50,25 @@ So a typical path from the top down is: *Organization → Team → Workspace →
 
 - Workspaces are owned by an Organization and serve as the collaboration point where teams do their work.
 
-See "[Workspaces](/concepts/logical/workspaces)" for more information.
+See "[Workspaces]({{< ref "concepts/logical/workspaces.md" >}})" for more information.
 
 ### Environments
 
 - Environments group Connections (Kubernetes clusters, Prometheus instances, and so on) and are owned by an Organization.
 
-See "[Environments](/concepts/logical/environments)" for more information.
+See "[Environments]({{< ref "concepts/logical/environments.md" >}})" for more information.
 
 ### Designs
 
 - Designs — reusable, declarative characterizations of your infrastructure — are owned by an Organization and deployed within the context of a Workspace.
 
-See "[Designs](/concepts/logical/designs)" for more information.
+See "[Designs]({{< ref "concepts/logical/designs.md" >}})" for more information.
 
 ### Connections
 
 - Connections are the managed or discovered infrastructure resources (Kubernetes clusters, Prometheus instances, and so on) that Meshery works with. They are grouped by Environments and owned by an Organization.
 
-See "[Connections](/concepts/logical/connections)" for more information.
+See "[Connections]({{< ref "concepts/logical/connections/index.md" >}})" for more information.
 
 ## Organizations with a Remote Provider
 

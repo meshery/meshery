@@ -11,8 +11,8 @@ Meshery continuously tracks activities affecting your infrastructure and workloa
 ### What is the Notification Center?
 The Notification Center is a dedicated panel in Meshery’s UI that helps you monitor, understand, and respond to events across your system. It acts as a central place where you can see important updates related to your infrastructure, workloads, and Meshery’s internal operations.
 
-<a href="./images/find-notification-center.gif">
-  <img src="./images/find-notification-center.gif" alt="Notification Position" style="width: 600px; height: auto; margin-top: 10px;" />
+<a href="images/find-notification-center.gif">
+  <img src="images/find-notification-center.gif" alt="Notification Position" style="width: 600px; height: auto; margin-top: 10px;" />
 </a>
 
 ### Types of Notifications
@@ -29,8 +29,8 @@ Each notification in Meshery includes a clear summary of what occurred in your s
 
 You can mark notifications as read or unread to stay organized and focused. Meshery highlights critical, actionable events in red, helping you quickly spot and respond to urgent issues.
 
-<a href="./images/description.png">
-  <img src="./images/description.png" alt="Event Descriptions" style="width: 600px; height: auto; margin-top: 10px;" />
+<a href="images/description.png">
+  <img src="images/description.png" alt="Event Descriptions" style="width: 600px; height: auto; margin-top: 10px;" />
 </a>
 
 > 🔗 For more technical details, see the [Contributor Reference](https://docs.meshery.io/project/contributing/contributing-ui-notification-center).
@@ -38,16 +38,16 @@ You can mark notifications as read or unread to stay organized and focused. Mesh
 ### Notification Timestamps
 Each notification includes a timestamp showing when the event happened. The time is displayed based on your local device’s time zone, so it reflects your current time.
 
-<a href="./images/timestamps.png">
-  <img src="./images/timestamps.png" alt="Notification Timestamps" style="width: 600px; height: auto; margin-top: 10px;" />
+<a href="images/timestamps.png">
+  <img src="images/timestamps.png" alt="Notification Timestamps" style="width: 600px; height: auto; margin-top: 10px;" />
 </a>
 
 ### Data Sharing
 Need to collaborate?
 You can share notifications with teammates or stakeholders in just a few clicks — making it easier to communicate and resolve issues.
 
-<a href="./images/notification-share.png">
-  <img src="./images/notification-share.png" alt="Notification Share" style="width: 600px; height: auto; margin-top: 10px;" />
+<a href="images/notification-share.png">
+  <img src="images/notification-share.png" alt="Notification Share" style="width: 600px; height: auto; margin-top: 10px;" />
 </a>
 
 ### Filtering and Searching
@@ -56,8 +56,8 @@ The Notification Center provides a powerful way to filter and search through eve
 
 > Note: Some filter options such as `action`, `category`, and `author` are dynamically generated based on the notifications your Meshery instance has received. These values are retrieved from the `/api/system/events/types` endpoint.
 
-<a href="./images/notification-filter.gif">
-  <img src="./images/notification-filter.gif" alt="Notification Filter" style="width: 600px; height: auto; margin-top: 10px;" />
+<a href="images/notification-filter.gif">
+  <img src="images/notification-filter.gif" alt="Notification Filter" style="width: 600px; height: auto; margin-top: 10px;" />
 </a>
 
 #### Severity  
@@ -83,8 +83,8 @@ Filter notifications based on whether they have been read. These statuses are de
 
 Meshery uses avatar icons to indicate who triggered a notification and what system was involved. These icons help users quickly understand the origin and nature of each event.
 
-<a href="./images/avatar-icons.png">
-  <img src="./images/avatar-icons.png" alt="Avatar Icons" style="width: 600px; height: auto; margin-top: 10px;" />
+<a href="images/avatar-icons.png">
+  <img src="images/avatar-icons.png" alt="Avatar Icons" style="width: 600px; height: auto; margin-top: 10px;" />
 </a>
 
 | Icon Type                       | Meaning                                                                 |
@@ -109,7 +109,7 @@ These icons are generated dynamically using the event’s metadata:
     </figcaption>
   </figure>
   <div id="embedded-design-a7310bb4-e642-4e4e-807a-dbb602228f07" style="height:30rem;width:100%;"></div>
-  <script src="./images/meshery-triggered.js" type="module"></script>
+  <script src="images/meshery-triggered.js" type="module"></script>
 
   <figure>
     <figcaption>
@@ -120,7 +120,7 @@ These icons are generated dynamically using the event’s metadata:
     </figcaption>
   </figure>
   <div id="embedded-design-a96a3008-9c36-4862-b1e3-20cc2c35ca89" style="height:30rem;width:100%;"></div>
-  <script src="./images/user-triggered.js" type="module"></script>
+  <script src="images/user-triggered.js" type="module"></script>
 
 </details>
 

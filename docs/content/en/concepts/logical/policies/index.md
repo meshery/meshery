@@ -10,8 +10,8 @@ Policies offer an evaluation algorithm to ensure desired behavior enforcement. P
 The relationships are a powerful way to design your infrastructure and each of them are backed by one or more policies. Policies evaluate the designs for potential relationships and the decide whether to create/delete/update the relationships.
 
 
-[![Meshery Models Policy Evaluation](./images/meshery-models-policy-evaluation.svg
-)](./images/meshery-models-policy-evaluation.svg)
+[![Meshery Models Policy Evaluation](images/meshery-models-policy-evaluation.svg
+)](images/meshery-models-policy-evaluation.svg)
 
 Meshery Server has a built-in policy engine implemented natively in Go (ported from the Open Policy Agent (OPA) Rego engine). Currently, Meshery Server is the only place where the policy evaluations occur. Policy evaluation is invoked each time a design is updated, and each time a design is imported. By default, policies evaluate for all registered relationships.
 

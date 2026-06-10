@@ -21,8 +21,8 @@ It also supports a collaborative environment, where DevOps engineers can share t
 3. Verify that your design has the appropriate technologies, description, and any cavaets or other considerations of its purpose of use listed.
 4. Click "Publish to Catalog", and your design is queued for review and approval by Workspace administrators.
 
-<a href="./images/publish-to-catalog-screenshot.png" class="lightbox-image">
-<img src="./images/publish-to-catalog-screenshot.png" width="70%" /></a>
+<a href="images/publish-to-catalog-screenshot.png" class="lightbox-image">
+<img src="images/publish-to-catalog-screenshot.png" width="70%" /></a>
 <figure>
   <figcaption>Figure: Workflow to publish a design in catalog</figcaption>
 </figure>
@@ -53,8 +53,8 @@ It also supports a collaborative environment, where DevOps engineers can share t
 5. **Notification for Changes**: If the design no longer adds value to the Meshery Catalog, a prior notification is sent to the author, and the design may be unpublished.
 6. **GitHub Workflow Integration**: Once approved, a GitHub workflow is triggered to publish the design to the Meshery.io Catalog.
 
-<a href="./images/Catalog-Publishing-Workflow.svg" class="lightbox-image">
-<img src="./images/Catalog-Publishing-Workflow.svg" width="70%" /></a>
+<a href="images/Catalog-Publishing-Workflow.svg" class="lightbox-image">
+<img src="images/Catalog-Publishing-Workflow.svg" width="70%" /></a>
 <figure>
   <figcaption>Figure: Approval workflow for reviewing design publishing requests in catalog</figcaption>
 </figure>

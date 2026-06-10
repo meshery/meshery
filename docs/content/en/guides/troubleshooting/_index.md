@@ -8,6 +8,6 @@ Troubleshooting guides to using Meshery's various features and components.
 
 #### See Also
 
-- [Meshery Error Code Reference]({{< ref "reference/error-codes.md" >}})
+- [Meshery Error Code Reference]({{< ref "reference/reference/error-codes.md" >}})
 
 {{< discuss >}}

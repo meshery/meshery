@@ -45,14 +45,14 @@ Pattern imported.
 
 From Meshery UI, patterns can be imported from your local filesystem or imported from a remote URL.
 
-<a href="./images/ImportPatternUI.png">
-    <img src="./images/ImportPatternUI.png" style="width: 60%" />
+<a href="images/ImportPatternUI.png">
+    <img src="images/ImportPatternUI.png" style="width: 60%" />
 </a>
 
 _To upload from url click the link icon_
 
-<a href="./images/UrlImport.png">
-    <img src="./images/UrlImport.png" style="width: 60%" />
+<a href="images/UrlImport.png">
+    <img src="images/UrlImport.png" style="width: 60%" />
 </a>
 
 

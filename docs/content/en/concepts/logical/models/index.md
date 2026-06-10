@@ -62,14 +62,14 @@ Each model package can be imported and exported from the system as OCI-compatibl
 Model constructs can be packaged and exported as OCI-compatible images. This makes them portable and allows them to be shared between different environments.
 {{% /alert %}}
 
-![Meshery Models](./images/meshery-models.png)
+![Meshery Models](images/meshery-models.png)
 _Figure: Model Construct Classification_
 
 ## Key aspects and characteristics
 
 You might not fully comprehend the Meshery Models figure above. The following analogy offers an alternative viewpoint from which to comprehend the Capabilities Registry (where Models are imported and their capabilities registered for use).  
 
-![Meshery Models Analogy](./images/meshery-models-analogy.svg)
+![Meshery Models Analogy](images/meshery-models-analogy.svg)
 _Figure: Registrar's Office and Meshery Models Analogy_
 
 ### Models
@@ -110,7 +110,7 @@ Metadata provide additional details about a component in Meshery. They offer spe
 
 ## Versioning
 
-![Versioning Models](./images/versioning-meshery-entities.svg)
+![Versioning Models](images/versioning-meshery-entities.svg)
 
 ## Summary
 

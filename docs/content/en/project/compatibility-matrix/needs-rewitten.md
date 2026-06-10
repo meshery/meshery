@@ -27,7 +27,7 @@ Docker is enough to run Meshery locally and use many of its features. A Kubernet
 | [Kubernetes deployment]({{< ref "installation/kubernetes/_index.md" >}}) (`mesheryctl system start`) | Any environment that can reach a cluster | `mesheryctl`, `kubectl`, access to an active Kubernetes cluster | Yes | Full Meshery management workflows on Kubernetes |
 | [Helm deployment]({{< ref "installation/kubernetes/helm.md" >}}) | Any environment that can reach a cluster | Helm v3, `kubectl`, access to an active Kubernetes cluster | Yes | Teams standardizing on Helm-based installation |
 | [Docker Extension]({{< ref "installation/docker/docker-extension/index.md" >}}) | Docker Desktop | Docker Desktop, Kubernetes enabled in Docker Desktop, Docker Extension support | Yes | Docker Desktop users who want the shortest local setup |
-| [GitHub Codespaces]({{< ref "installation/codespaces/index.md" >}}) | GitHub Codespaces | `mesheryctl`, Minikube, `kubectl`, enough Codespaces CPU and memory to run Minikube | Yes | Browser-based evaluation and contributor environments |
+| [GitHub Codespaces]({{< ref "installation/advanced/codespaces/index.md" >}}) | GitHub Codespaces | `mesheryctl`, Minikube, `kubectl`, enough Codespaces CPU and memory to run Minikube | Yes | Browser-based evaluation and contributor environments |
 
 ## Environment Matrix
 
@@ -37,7 +37,7 @@ Docker is enough to run Meshery locally and use many of its features. A Kubernet
 | [Windows]({{< ref "installation/windows/_index.md" >}}) | `mesheryctl`, Docker, Docker Extension, Kubernetes | `mesheryctl`; Docker Desktop for container-based installs | WSL2, Kubernetes enabled in Docker Desktop, `kubectl` | Meshery supports Windows workflows, but Docker-backed paths are generally the smoothest option. |
 | [Docker Desktop]({{< ref "installation/docker/docker-extension/index.md" >}}) | Docker deployment, Docker Extension | Docker Desktop with Compose support | Kubernetes enabled when you want cluster-backed features | Best fit for local development and evaluation on laptops. |
 | Remote or managed Kubernetes cluster | Kubernetes deployment, Helm | Reachable cluster, valid kubeconfig, `kubectl` | LoadBalancer, Ingress, or port-forward access to Meshery | Good fit for shared team environments and production-style installs. See also [Upgrading Meshery]({{< ref "installation/upgrades/index.md" >}}). |
-| [GitHub Codespaces]({{< ref "installation/codespaces/index.md" >}}) | Kubernetes deployment in Minikube | Codespace with enough resources, Minikube, `kubectl`, `mesheryctl` | VS Code desktop or browser-based Codespaces access | Useful when you do not want to manage a local cluster. |
+| [GitHub Codespaces]({{< ref "installation/advanced/codespaces/index.md" >}}) | Kubernetes deployment in Minikube | Codespace with enough resources, Minikube, `kubectl`, `mesheryctl` | VS Code desktop or browser-based Codespaces access | Useful when you do not want to manage a local cluster. |
 
 ## Feature Dependency Matrix
 

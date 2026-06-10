@@ -19,8 +19,8 @@ The extensible authorization system is available to both Local and Remote Provid
 
 Meshery utilizes CASL (JS-based permission framework) to evaluate any given user's set of session keys against the built-in keyhooks populated through each invidual Meshery UI page. This allows for granular control over the UI, empowering you to tailor your Meshery experience to your organization's needs by limiting access to specific features and functionalities based on the user's assigned keys.
 
-<a href="./images/permission-in-UI.png">
-  <img style="width:min(100%,800px)" src="./images/permission-in-UI.png" />
+<a href="images/permission-in-UI.png">
+  <img style="width:min(100%,800px)" src="images/permission-in-UI.png" />
 </a>
 
 ### Introduction to CASL.js

@@ -7,8 +7,8 @@ aliases:
 
 Broker is a custom Kubernetes controller that provides data streaming across independent components of Meshery whether those components are running inside or outside of the Kubernetes cluster.
 
-[![Meshery Log Viewer](./images/meshery-log-viewer.svg
-)](./images/meshery-log-viewer.svg)
+[![Meshery Log Viewer](images/meshery-log-viewer.svg
+)](images/meshery-log-viewer.svg)
 
 ### Broker FAQs
 

@@ -8,7 +8,7 @@ image: installation/docker/images/docker.svg
 description: Install Docker Extension for Meshery
 ---
 
-<h1>Quick Start with Docker Extension <img src="../images/docker.svg" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with Docker Extension <img src=".images/docker.svg" style="width:35px;height:35px;" /></h1>
 
 The Docker Extension for Meshery extends Docker Desktop's position as the developer's go-to Kubernetes environment with easy access to the full capabilities of Meshery's collaborative cloud native management features.
 

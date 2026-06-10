@@ -30,16 +30,16 @@ While Kubernetes components are commonly used, they follow the same principles a
 - **Standardized Icon Structure:** The fundamental structure is consistent: an outer container shape with the blue background, encompassing a unique inner white symbol.
 - **Meaningful Inner Symbols:** The white symbol inside each icon is the crucial unique identifier for that specific Kubernetes Kind, often inspired by the core function of the resource.
 
-<a href="./images/k8s_component.gif" target="_blank">
-  <img src="./images/k8s_component.gif" style="width:50%; height:auto;" alt="Kubernetes components in Meshery">
+<a href="images/k8s_component.gif" target="_blank">
+  <img src="images/k8s_component.gif" style="width:50%; height:auto;" alt="Kubernetes components in Meshery">
 </a>
 
 ### Integrated Technologies
 
 Meshery supports various technologies (like AWS, Prometheus, Istio, KEDA, etc.) with their official icons. These components have the same orchestratable capabilities as Kubernetes components.
 
-<a href="./images/AWS-models.png" target="_blank">
-  <img src="./images/AWS-models.png" style="width:50%; height:auto;" alt="AWS models in Meshery">
+<a href="images/AWS-models.png" target="_blank">
+  <img src="images/AWS-models.png" style="width:50%; height:auto;" alt="AWS models in Meshery">
 </a>
 
 {{% alert color="info" title="Exploring All Integrations" %}}
@@ -65,8 +65,8 @@ To learn more about edge components and their visual styles, visit the <strong><
 
 In addition to the rich library of predefined icons, Meshery also provides a core set of foundational geometric shapes. These are not tied to any specific technology but are intended for representing abstract concepts or for simple annotations within your designs where a specific component icon doesn't apply.
 
-<a href="./images/shapes.png" target="_blank">
-  <img src="./images/shapes.png" style="width:50%; height:auto;" alt="Generic shapes palette in Meshery">
+<a href="images/shapes.png" target="_blank">
+  <img src="images/shapes.png" style="width:50%; height:auto;" alt="Generic shapes palette in Meshery">
 </a>
 
 <details>
@@ -120,18 +120,18 @@ To see how this works in practice, let's take the Kubernetes `Deployment` compon
 
 1.The full component shape as it appears in a design:
 
-<a href="./images/deployment-shape.png">
-    <img src="./images/deployment-shape.png" style="width:30%; height:auto;" alt="Deployment Component Shape">
+<a href="images/deployment-shape.png">
+    <img src="images/deployment-shape.png" style="width:30%; height:auto;" alt="Deployment Component Shape">
 </a>
 
 2.The simplified icon as it appears in a component selection panel:
 
-<a href="./images/deployment-icon.png">
-    <img src="./images/deployment-icon.png" style="width:50%; height:auto;" alt="Deployment icon in a component selection panel">
+<a href="images/deployment-icon.png">
+    <img src="images/deployment-icon.png" style="width:50%; height:auto;" alt="Deployment icon in a component selection panel">
 </a>
 
 3.The icon as seen in a cluster resource overview:
 
-<a href="./images/deployment-dashboard.png">
-    <img src="./images/deployment-dashboard.png" style="width:50%; height:auto;" alt="Deployment component in a cluster resource overview">
+<a href="images/deployment-dashboard.png">
+    <img src="images/deployment-dashboard.png" style="width:50%; height:auto;" alt="Deployment component in a cluster resource overview">
 </a>

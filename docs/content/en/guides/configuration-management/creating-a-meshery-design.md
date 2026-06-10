@@ -111,11 +111,11 @@ See the [`mesheryctl design` reference]({{< ref "reference/reference/mesheryctl/
 
 When you start Meshery for the first time, a set of seed designs is available. These cover common Kubernetes patterns and serve as a starting point for exploration.
 
-<img src="../images/meshery-patterns.png" width="60%" alt="Seed designs in Meshery UI" />
+<img src=".images/meshery-patterns.png" width="60%" alt="Seed designs in Meshery UI" />
 
 You can also import community designs from the [Meshery Catalog](https://meshery.io/catalog) or from a Git repository.
 
-<img src="../images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" />
+<img src=".images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" />
 
 ---
 

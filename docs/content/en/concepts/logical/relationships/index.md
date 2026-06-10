@@ -93,19 +93,19 @@ This Relationship type configures the networking between one or more components.
 <details close><summary>Visual Representation of Edge-Network Relationships</summary>
            <br>
            <figure><figcaption>1. Edge - Network: Ingress to Service<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=1f79b0c6-2efe-4ee9-b08c-e1bd07a3926b"> (open in playground)</a></figcaption>
-           <img alt="Edge - Network" src="./images/edge_network_ingress_to_service_relationship.svg"/>
+           <img alt="Edge - Network" src="images/edge_network_ingress_to_service_relationship.svg"/>
            </figure>
            <figure><figcaption>2. Edge - Network: Service to Pod<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=90a9b4a0-a296-44b5-b1c5-7b1cb4827a77"> (open in playground)</a></figcaption>
-           <img alt="Edge - Network: Ingress to Service" src="./images/edge_network_service_to_pod_relationship.svg"/>
+           <img alt="Edge - Network: Ingress to Service" src="images/edge_network_service_to_pod_relationship.svg"/>
            </figure>
            <figure><figcaption>3. Edge - Network: Service to Service<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=4e368e07-5039-400e-b637-96b0241af799"> (open in playground)</a></figcaption>
-           <img alt="Edge - Network" src="./images/edge_network_service_to_service_relationship.svg"/>
+           <img alt="Edge - Network" src="images/edge_network_service_to_service_relationship.svg"/>
            </figure>
            <figure><figcaption>4. Edge - Network: Service to Endpoint<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=ab35416d-7cf7-4540-8b2e-7271ffeadde2"> (open in playground)</a></figcaption>
-           <img alt="Edge - Network" src="./images/edge_network_service_to_endpoints_relationship.svg"/>
+           <img alt="Edge - Network" src="images/edge_network_service_to_endpoints_relationship.svg"/>
            </figure>
            <figure><figcaption>5. Edge - Network: Service to Deployment<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=33742281-428d-4340-b42e-6a0fd4ba1d0a"> (open in playground)</a></figcaption>
-           <img alt="Edge - Network" src="./images/network_edge_relationship_service_deployment.svg"/>
+           <img alt="Edge - Network" src="images/network_edge_relationship_service_deployment.svg"/>
            </figure>
    </details>
 
@@ -119,7 +119,7 @@ This Relationship type configures the networking between one or more components.
            <br>
            <p>Edge - Mount: Pod and Persistent volume via Persistent volume claim<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=43d5fdfe-25f8-4c2c-be9d-30861bbc2a08"> (open in playground)</a> </p>
            <figure>
-           <img alt="Edge - Mount" src="./images/edge_mount_relationship_pod_persistent_volume.svg"/>
+           <img alt="Edge - Mount" src="images/edge_mount_relationship_pod_persistent_volume.svg"/>
            </figure>
    </details>
 
@@ -135,7 +135,7 @@ This Relationship type configures the networking between one or more components.
            <figure><figcaption>1. Edge - Permission: Cluster Role to Service Account <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=27454352-6b1b-426e-830e-683b8c34b94e"> (open in playground)</a></figcaption>
            </figure>
 <div id="embedded-design-a7b22d89-41bc-4379-a983-20e835341faf" style="height:30rem;width:100%;"></div>
-<script src="./images/embedded-design-edge-binding-permissions-relationship.js" type="module" ></script>
+<script src="images/embedded-design-edge-binding-permissions-relationship.js" type="module" ></script>
 </details>
 
 ### 4. Edge - Firewall
@@ -147,7 +147,7 @@ Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to
 <details close><summary>Visual Representation of Edge-Firewall Relationship</summary>
            <br>
            <figure><figcaption>Edge - Firewall: Pod to Pod<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=58fda714-eaa4-490f-b228-b8bcfe3a1e47"> (open in playground)</a></figcaption>
-           <img alt="Edge - Firewall" src="./images/edge_firewall_relationship_pod_to_pod.svg">
+           <img alt="Edge - Firewall" src="images/edge_firewall_relationship_pod_to_pod.svg">
            </figure>
    </details>
 
@@ -166,7 +166,7 @@ Logical or declarative links between components where one component refers to an
            <figure><figcaption>Edge - Reference: Pod to ConfigMap and Secret<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=8288ffad-c406-4129-94b1-86f044ef1ccb"> (open in playground)</a></figcaption>
            </figure>
 <div id="embedded-design-8288ffad-c406-4129-94b1-86f044ef1ccb" style="height:30rem;width:100%;"></div>
-<script src="./images/embedded-design-edge-reference.js" type="module" ></script>
+<script src="images/embedded-design-edge-reference.js" type="module" ></script>
    </details>
 
 ### 6. Hierarchical - Parent - Wallet
@@ -180,7 +180,7 @@ Logical or declarative links between components where one component refers to an
            <figure><br><figcaption>1. Hierarchical-Parent-Wallet: WASMFilter and IstioEnvoyFilter<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=7d3107fb-c0fe-43cb-9729-cf1674e5d1af"> (open in playground)</a></figcaption>
            </figure>
 <div id="embedded-design-d0987b9a-b20e-4bc1-b47c-69ca3078d380" style="height:30rem;width:100%;"></div>
-<script src="./images/embedded-design-hierarchical-parent-wallet-relationship.js" type="module" ></script>
+<script src="images/embedded-design-hierarchical-parent-wallet-relationship.js" type="module" ></script>
 </details>
 
 ### 7. Hierarchical - Parent - Inventory
@@ -193,7 +193,7 @@ Logical or declarative links between components where one component refers to an
            <figure><br><figcaption>1. Hierarchical - Parent: Namespace (Parent) and ConfigMap (child), Role (Child) <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=ccf38fba-6ada-4332-8ee7-033ee2c21f91"> (open in playground)</a></figcaption>
            </figure>
 <div id="embedded-design-ccf38fba-6ada-4332-8ee7-033ee2c21f91" style="height:30rem;width:100%;"></div>
-<script src="./images/embedded-design-hierarchical-parent-inventory-relationship.js" type="module" ></script>
+<script src="images/embedded-design-hierarchical-parent-inventory-relationship.js" type="module" ></script>
 </details>
 
 ### 8. Match - Labels (Tagsets)
@@ -205,7 +205,7 @@ This relationship type defines the associations between components based on shar
 <details close><summary>Visual Representation of Tag-Sets Relationship</summary>
           <br>
           <figure><figcaption>Tag-Set: Service and Deployment that share the same label<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=2d0a36b9-8170-4076-8aea-4fa6b28caf31"> (open in playground)</a></figcaption>
-          <img alt="Edge - Firewall" src="./images/tagset_relationship.svg"/>
+          <img alt="Edge - Firewall" src="images/tagset_relationship.svg"/>
           </figure>        
 </details>
 
@@ -219,7 +219,7 @@ This relationship depicts connections between components without conveying speci
            <figure><br><figcaption>Edge - Annotation: Relationship between AWS components <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=daecd14f-6c65-45d9-b74a-4fc536a7868f"> (open in playground)</a></figcaption>
            </figure>
 <div id="embedded-design-daecd14f-6c65-45d9-b74a-4fc536a7868f" style="height:30rem;width:100%;"></div>
-<script src="./images/embedded-design-edge-annotation-relationship.js" type="module" ></script>
+<script src="images/embedded-design-edge-annotation-relationship.js" type="module" ></script>
 </details>
 
 ## Selectors in Relationships
@@ -327,7 +327,7 @@ Currently, the filtering logic includes only relationships from models that are 
 
 Beyond this automatic filtering, relationship evaluation can also be selectively disabled within the design. This is achieved by setting preferences to false for specific relationship categories, defined by their kind, type, and subtype.
 
-![Meshery Relationship](./images/relationship-evaluation-flow.svg)
+![Meshery Relationship](images/relationship-evaluation-flow.svg)
 
 ### How Relationships are formed?
 

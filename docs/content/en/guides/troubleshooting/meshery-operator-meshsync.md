@@ -13,7 +13,7 @@ This guide offers comprehensive for troubleshooting instructions for [Meshery Op
 First, understand the [Meshery Operator Deployment Scenarios](#meshery-operator-deployment-scenarios) and the [Status of Meshery Operator, MeshSync, and Meshery Broker](#understanding-the-status-of-meshery-operator-meshsync-and-meshery-broker) to identify the deployment model fitting of your environment. Then, follow the guidance under the respective scenario to troubleshoot accordingly.
 
 {{% alert color="dark" title="Meshery Error Code Reference" %}}
-Have specific error with an error code? See the <a href='{{< ref "reference/error-codes.md" >}}'>Meshery Error Code Reference</a> for probable cause and suggested remediations.
+Have specific error with an error code? See the <a href='{{< ref "reference/reference/error-codes.md" >}}'>Meshery Error Code Reference</a> for probable cause and suggested remediations.
 {{% /alert %}}
 
 ## Understanding the Status of Meshery Operator, MeshSync, and Meshery Broker

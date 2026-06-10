@@ -43,4 +43,4 @@ No. Adapters much interface with Meshery Server via gRPC. What language is used 
 
 Yes. The default configuration of a Meshery deployment includes one instance of each of the Meshery adapters (that have reached a stable version status). You may choose to run multiple instances of the same type of Meshery adapter; e.g. two instances of the `meshery-istio` adapter. To do so, modify ~/.meshery/meshery.yaml to include multiple copies of the given adapter.
 
-See the "[Multiple Adapters]({{< ref "installation/multiple-adapters.md" >}})" guide for more information.
+See the "[Multiple Adapters]({{< ref "installation/advanced/multiple-adapters.md" >}})" guide for more information.

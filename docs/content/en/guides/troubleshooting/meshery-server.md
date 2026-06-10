@@ -48,4 +48,4 @@ make: *** [Makefile:76: server] Error 1
 
 #### See Also
 
-- [Error Code Reference]({{< ref "reference/error-codes.md" >}})
+- [Error Code Reference]({{< ref "reference/reference/error-codes.md" >}})

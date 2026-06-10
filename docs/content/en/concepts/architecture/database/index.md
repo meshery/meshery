@@ -11,7 +11,7 @@ Meshery Databases function as repositories for [MeshSync]({{< ref "concepts/arch
 
 See the figure below for additional details of the data formats supported and type of data stored.
 
-[![Architecture Diagram](./images/meshery-database.webp)](./images/meshery-database.webp)
+[![Architecture Diagram](images/meshery-database.webp)](images/meshery-database.webp)
 
 ### Components
 

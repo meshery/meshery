@@ -5,24 +5,24 @@ aliases:
 - /installation/platforms/digitalocean
 - /installation/kubernetes/doks
 display_title: false
-image: /installation/kubernetes/images/digitalocean.svg
+image: images/digitalocean.svg
 description: Install Meshery on DigitalOcean. Deploy Meshery out-of-cluster with Docker on a Droplet, or in-cluster on DigitalOcean Kubernetes (DOKS).
 ---
 
-<h1>Quick Start with DigitalOcean <img src="/installation/kubernetes/images/digitalocean.svg" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with DigitalOcean <img src="images/digitalocean.svg" style="width:35px;height:35px;" /></h1>
 
 Deploy and manage your DigitalOcean infrastructure with Meshery. You can run Meshery on DigitalOcean in two ways: [out-of-cluster](#option-1-docker-on-a-droplet-out-of-cluster) using Docker on a Droplet, or [in-cluster](#option-2-digitalocean-kubernetes-in-cluster) on a DigitalOcean Kubernetes (DOKS) cluster. **_Note: It is advisable to install Meshery in your DOKS cluster._**
 
 <div class="prereqs"><h4>Prerequisites</h4>
 <ol>
-<li>Install the Meshery command line client, <a href="/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
+<li>Install the Meshery command line client, <a href="{{< ref "installation/mesheryctl/_index.md" >}}" class="meshery-light">mesheryctl</a>.</li>
 <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
 <li>Install the <a href="https://docs.digitalocean.com/reference/doctl/how-to/install/">DigitalOcean CLI (doctl)</a>, authenticated for your account.</li>
 <li>A <a href="https://www.digitalocean.com/">DigitalOcean</a> account with access to either a Droplet or an active DOKS cluster.</li>
 </ol>
 </div>
 
-Also see: [Install Meshery on Kubernetes](/installation/kubernetes)
+Also see: [Install Meshery on Kubernetes]({{< ref "installation/kubernetes/_index.md" >}})
 
 ## Available Deployment Methods
 
@@ -50,7 +50,7 @@ Meshery runs comfortably on a Droplet with at least 2 vCPUs and 4 GB of memory. 
 
 {{< code code="ssh root@[DROPLET_IP]" >}}
 
-Install [Docker](https://docs.docker.com/engine/install/ubuntu/) and [Docker Compose](https://docs.docker.com/compose/install/) on the Droplet, followed by [mesheryctl](/installation/mesheryctl).
+Install [Docker](https://docs.docker.com/engine/install/ubuntu/) and [Docker Compose](https://docs.docker.com/compose/install/) on the Droplet, followed by [mesheryctl]({{< ref "installation/mesheryctl/_index.md" >}}).
 
 ## Install Meshery on Docker
 
@@ -58,7 +58,7 @@ On the Droplet, start Meshery on Docker:
 
 {{< code code="mesheryctl system start -p docker" >}}
 
-To manage a remote cluster (for example, a DOKS cluster) from this out-of-cluster deployment, make the cluster's kubeconfig available to Meshery. See [Customizing Kubernetes Configuration Location](/installation/docker#customizing-kubernetes-configuration-location).
+To manage a remote cluster (for example, a DOKS cluster) from this out-of-cluster deployment, make the cluster's kubeconfig available to Meshery. See [Customizing Kubernetes Configuration Location]({{< ref "installation/docker/_index.md#customizing-kubernetes-configuration-location" >}}).
 
 ## Access Meshery UI
 
@@ -90,21 +90,21 @@ Follow the steps below to install Meshery into your DigitalOcean Kubernetes (DOK
 
 ## Installation: Using `mesheryctl`
 
-Ensure that the current platform is set to `kubernetes` in `~/.meshery/config.yaml`, then execute <a href='/reference/mesheryctl/system/start'>mesheryctl system start</a> to start Meshery.
+Ensure that the current platform is set to `kubernetes` in `~/.meshery/config.yaml`, then execute <a href='{{< ref "reference/reference/mesheryctl/system/start.md" >}}'>mesheryctl system start</a> to start Meshery.
 
 {{< code code="mesheryctl system start" >}}
 
-If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here](/guides/mesheryctl/authenticate-with-meshery-via-cli) to learn more.
+If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}) to learn more.
 
 ## Installation: Using Helm
 
-For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
+For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide.
 
 ## Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
+Optionally, you can verify the health of your Meshery deployment using <a href='{{< ref "reference/reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
-To expose Meshery UI outside the cluster, create a `LoadBalancer` service; DigitalOcean automatically provisions a [DigitalOcean Load Balancer](https://docs.digitalocean.com/products/kubernetes/how-to/add-load-balancers/) and assigns an external IP. Alternatively, use port-forwarding by following the [mesheryctl system dashboard](/reference/mesheryctl/system/dashboard) guide.
+To expose Meshery UI outside the cluster, create a `LoadBalancer` service; DigitalOcean automatically provisions a [DigitalOcean Load Balancer](https://docs.digitalocean.com/products/kubernetes/how-to/add-load-balancers/) and assigns an external IP. Alternatively, use port-forwarding by following the [mesheryctl system dashboard]({{< ref "reference/reference/mesheryctl/system/dashboard.md" >}}) guide.
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 

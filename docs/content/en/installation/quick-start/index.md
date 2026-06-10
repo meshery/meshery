@@ -55,8 +55,8 @@ Meshery's command line interface is a client of Meshery Server's REST API (just 
 
 Select from the list of [Providers]({{< ref "reference/extensibility/providers/index.md" >}}) in order to log in to Meshery. Authenticate with your chosen Provider.
 
-<a href="./images/meshery-server-page.png">
-  <img class="center" style="width:min(100%,650px)" src="./images/meshery-server-page.png" />
+<a href="images/meshery-server-page.png">
+  <img class="center" style="width:min(100%,650px)" src="images/meshery-server-page.png" />
 </a>
 
 ## 4. Configure Connections to your Kubernetes Clusters
@@ -69,8 +69,8 @@ If you have deployed Meshery in-cluster, Meshery Server will automatically conne
 
 Visit <i class="fas fa-cog"></i> Settings:
 
-<a href="./images/meshery-settings.png">
-  <img class="center" style="width:min(100%,650px);" src="./images/meshery-settings.png" />
+<a href="images/meshery-settings.png">
+  <img class="center" style="width:min(100%,650px);" src="images/meshery-settings.png" />
 </a>
 
 If your config has not been autodetected, you can manually upload your kubeconfig file (or any number of kubeconfig files). By default, Meshery will attempt to connect to and deploy Meshery Operator to each reachable context contained in the imported kubeconfig files. See [Managing Kubernetes Clusters]({{< ref "installation/kubernetes/_index.md" >}}) for more information.
@@ -79,16 +79,16 @@ If your config has not been autodetected, you can manually upload your kubeconfi
 
 Run connectivity tests and verify the health of your Meshery system. Verify Meshery's connection to your Kubernetes clusters by clicking on the connection chip. A quick connectivity test will run and inform you of Meshery's ability to reach and authenticate to your Kubernetes control plane(s). You will be notified of your connection status. You can also verify any other connection between Meshery and either its components (like [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}})) or other managed infrastructure by clicking on any of the connection chips. When clicked, a chip will perform an ad hoc connectivity test.
 
-<a href="./images/k8s-context-switcher.png" alt="Meshery Kubernetes Context Switcher">
-  <img class="center" style="width:min(100%,350px);" src="./images/k8s-context-switcher.png" />
+<a href="images/k8s-context-switcher.png" alt="Meshery Kubernetes Context Switcher">
+  <img class="center" style="width:min(100%,350px);" src="images/k8s-context-switcher.png" />
 </a>
 
 ## 6. Design and operate Kubernetes clusters and their workloads
 
 You may now proceed to manage any cloud native infrastructure supported by Meshery. See all [integrations]({{< ref "extensions/models/_index.md" >}}) for a complete list of supported infrastructure.
 
-<a href="./images/meshery-designs.png">
-  <img class="center" style="width:min(100%,650px);" src="./images/meshery-designs.png" />
+<a href="images/meshery-designs.png">
+  <img class="center" style="width:min(100%,650px);" src="images/meshery-designs.png" />
 </a>
 
 ## Explore Tutorials
@@ -102,7 +102,7 @@ You may now proceed to manage any cloud native infrastructure supported by Meshe
 <div class="section">
     <ul>
         <li><a href="{{< ref "guides/troubleshooting/installation/index.md" >}}">Troubleshooting Meshery Installations</a></li>
-        <li><a href="{{< ref "reference/error-codes.md" >}}">Meshery Error Code Reference</a></li>
+        <li><a href="{{< ref "reference/reference/error-codes.md" >}}">Meshery Error Code Reference</a></li>
         <li><a href="{{< ref "reference/reference/mesheryctl/system/check.md" >}}">mesheryctl system check</a></li>
     </ul>
 </div>

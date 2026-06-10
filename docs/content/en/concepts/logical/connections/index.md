@@ -18,7 +18,7 @@ Managed Connections are those that are discovered by MeshSync and are managed by
 
 Meshery tracks the status of each connections throughout the connection's lifecycle. Meshery is intentional about the currently assigned state and which state a connection may or may not transition to and from. To better understand connection states and their meaning, let's consider an example in which you a `Kubernetes` cluster with `Prometheus` installed.
 
-![States for Kubernetes Cluster Connections](./images/states-for-kubernetes-cluster-connections.svg)
+![States for Kubernetes Cluster Connections](images/states-for-kubernetes-cluster-connections.svg)
 
 ### State: Discovered
 
@@ -100,7 +100,7 @@ Note that some connections, such as the registration of Meshery server with remo
 
 For more information on the different states and the lifecycle of connections, refer to the documentation above.
 
-![Meshery Server Registration with Remote Providers](./images/meshery-server-registration-with-remote-providers.svg)
+![Meshery Server Registration with Remote Providers](images/meshery-server-registration-with-remote-providers.svg)
 
 
 

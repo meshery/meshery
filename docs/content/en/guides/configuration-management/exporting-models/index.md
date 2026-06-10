@@ -44,7 +44,7 @@ To Export a model into Meshery using the Meshery UI, you must first [install Mes
 
 Once you have accessed the Meshery UI, navigate to the Registry under Settings. This page can be accessed by clicking on the Settings on the top right on setting icon and then selecting "Registry" and then choose model.
 
-<a href="./images/Registry.png"><img alt="Registry-Navigator" style="width:500px;height:auto;" src="./images/Registry.png" /></a>
+<a href="images/Registry.png"><img alt="Registry-Navigator" style="width:500px;height:auto;" src="images/Registry.png" /></a>
 
 **Step 3: Upload the Models**
 
@@ -52,6 +52,6 @@ On the Registry page, you can export your model by select Model in registry page
 
 This Meshery model will include components, relationships.
 
-<a href="./images/ExportModel.gif"><img alt="Export-Model" style="width:500px;height:auto;" src="./images/ExportModel.gif" /></a>
+<a href="images/ExportModel.gif"><img alt="Export-Model" style="width:500px;height:auto;" src="images/ExportModel.gif" /></a>
 
 Once the Meshery model has been exported, you can export your model anytime back using `Import` on UI and then visualize in Meshery, operate and observe your components that are geneated from the crd. You can also use Meshery to deploy your Meshery Model in form of a design to any of your connected kubernetes clusters. For more information, see [connections]({{< ref "installation/kubernetes/_index.md" >}})

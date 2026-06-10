@@ -6,7 +6,7 @@ aliases:
 - /architecture/operator/
 ---
 
-# Meshery Operator <img src="./images/B203EFA85E89491B.png" width="30" height="35" style="display:inline"/>
+# Meshery Operator <img src="images/B203EFA85E89491B.png" width="30" height="35" style="display:inline"/>
 
 Meshery Operator is a Kubernetes Operator that deploys and manages the lifecycle of two Meshery components critical to Meshery's operations of Kubernetes clusters. Deploy one Meshery Operator per Kubernetes cluster under management - whether Meshery Server is deploy inside or outside of the clusters under management. 
 
@@ -14,13 +14,13 @@ Meshery Operator is a Kubernetes Operator that deploys and manages the lifecycle
 
 It is recommended to deploy one Meshery Operator per cluster.
 
-[![Meshery Operator and MeshSync](./images/meshery-operator-and-meshsync.svg
-)](./images/meshery-operator-and-meshsync.svg)
+[![Meshery Operator and MeshSync](images/meshery-operator-and-meshsync.svg
+)](images/meshery-operator-and-meshsync.svg)
 
 ### Initialization Sequence
 
-[![Meshery Operator and MeshSync](./images/meshery-operator-deployment-sequence.svg
-)](./images/meshery-operator-deployment-sequence.svg)
+[![Meshery Operator and MeshSync](images/meshery-operator-deployment-sequence.svg
+)](images/meshery-operator-deployment-sequence.svg)
 
 ## Controllers managed by Meshery Operator
 

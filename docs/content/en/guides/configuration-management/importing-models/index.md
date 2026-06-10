@@ -54,7 +54,7 @@ To import a model into Meshery using the Meshery UI, you must first [install Mes
 
 Once you have accessed the Meshery UI, navigate to the Registry under Settings. This page can be accessed by clicking on the Settings on the top right on setting icon and then selecting "Registry" and then choose model.
 
-<a href="./images/Registry.png"><img alt="Registry-Navigator" style="width:500px;height:auto;" src="./images/Registry.png" /></a>
+<a href="images/Registry.png"><img alt="Registry-Navigator" style="width:500px;height:auto;" src="images/Registry.png" /></a>
 
 **Step 3: Upload the Model**
 
@@ -62,6 +62,6 @@ On the Registry page, you can import your model clicking the import button in re
 
 This Meshery model will include components, relationships.
 
-<a href="./images/ImportModel.gif"><img alt="Import-Model" style="width:500px;height:auto;" src="./images/ImportModel.gif" /></a>
+<a href="images/ImportModel.gif"><img alt="Import-Model" style="width:500px;height:auto;" src="images/ImportModel.gif" /></a>
 
 

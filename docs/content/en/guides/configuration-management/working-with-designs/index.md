@@ -11,7 +11,7 @@ As a cloud native management platform, Meshery has built-in support for infrastr
 
 Meshery's core construct of configuration management is that of a design. A design is a declarative document in which you capture and describe the desired state of your infrastructure and applications.
 
-[![Context Aware Design](./images/context-aware-design.svg)](./images/context-aware-design.svg)
+[![Context Aware Design](images/context-aware-design.svg)](images/context-aware-design.svg)
 
 ## Creating a Meshery Design
 
@@ -23,17 +23,17 @@ See [Creating a Meshery Design]({{< ref "guides/configuration-management/creatin
 
 Meshery also comes with seed patterns when users start Meshery for the first time. These patterns cover common use cases and examples for you as you explore Meshery.
 
-<img src="../images/meshery-patterns.png" width="50%" />
+<img src=".images/meshery-patterns.png" width="50%" />
 
 Users can also import these patterns to their remote provider from this [sample repository](https://github.com/service-mesh-patterns/service-mesh-patterns/tree/master/samples).
 
-<img src="../images/pattern-import.png" width="50%" />
+<img src=".images/pattern-import.png" width="50%" />
 
 Once these patterns are imported, you can then edit these patterns or use the pattern configurator to configure them according to your requirements.
 
-<img src="./images/pattern-configure-button.png" width="50%" />
+<img src="images/pattern-configure-button.png" width="50%" />
 
-<img src="./images/pattern-configure.png" width="50%" />
+<img src="images/pattern-configure.png" width="50%" />
 
 ## Pattern Management Through Meshery CLI
 
@@ -65,7 +65,7 @@ Meshery can be used for managing WebAssembly Filters through the UI or the CLI.
 
 Like patterns, Meshery also comes with some sample WebAssembly Filters for you to experiment.
 
-<img src="./images/meshery-filters.png" width="50%" />
+<img src="images/meshery-filters.png" width="50%" />
 
 You can also import these filters manually to your provider from the [wasm-filters](https://github.com/meshery-extensions/wasm-filters) repo.
 
@@ -73,7 +73,7 @@ Meshery's sample application [ImageHub]({{< ref "guides/infrastructure-managemen
 
 You can onboard ImageHub to an installed service mesh as shown below.
 
-<img src="./images/image-hub.png" width="50%" />
+<img src="images/image-hub.png" width="50%" />
 
 ### Filter Management Through Meshery CLI
 

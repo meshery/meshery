@@ -15,7 +15,7 @@ See your deployment before you merge. Connect Meshery to your GitHub repo and se
 
 See [Extension: Meshery Snapshot]({{< ref "extensions/helm-snapshot/index.md" >}}) for more details.
 
-## <img src="./images/smp-dark-text-side.svg" className="image-left-no-shadow" alt="Infrastructure fperformance logo" style="width: 60%; max-width: 200px;vertical-align:middle" /> Meshery Performance Analysis GitHub Action
+## <img src="images/smp-dark-text-side.svg" className="image-left-no-shadow" alt="Infrastructure fperformance logo" style="width: 60%; max-width: 200px;vertical-align:middle" /> Meshery Performance Analysis GitHub Action
 
 - See your performance regressions before you merge
 - Connect Performance Management to your GitHub repo and see changes pull request-to-pull request
@@ -88,7 +88,7 @@ duration: "30m"
 
 See this sample GitHub workflow (<a href="https://github.com/meshery-extensions/meshery-performance-action/blob/master/action.yml">action.yml</a>) for more configuration details.
 
-<a href="./images/service-mesh-performance-profile-test-results.png"><img src="./images/service-mesh-performance-profile-test-results.png" className="image-center" alt="performance management dashboard" /></a>
+<a href="images/service-mesh-performance-profile-test-results.png"><img src="images/service-mesh-performance-profile-test-results.png" className="image-center" alt="performance management dashboard" /></a>
 
 The results from the tests are updated on the Performance Management dashboard in Meshery. To learn more about interpreting the test results, check out <a href="{{< ref "guides/performance-management/interpreting-performance-test-results/index.md" >}}">this guide</a>. You can always checkout the <a href="{{< ref "guides/_index.md" >}}">Meshery User Guides</a> to dive deep into these features.
 

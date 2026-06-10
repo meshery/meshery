@@ -84,7 +84,7 @@ If the `Service` was previously set to another type (for example, `ClusterIP`), 
 {{< code code=`kubectl patch service meshery --namespace meshery --type merge -p '{"spec":{"type":"LoadBalancer"}}'` >}}
 
 {{% alert title="EXTERNAL-IP not assigned?" color="warning" %}}
-A `LoadBalancer` `Service` is only assigned an external address when the cluster runs a load balancer controller. Managed clouds provide one out of the box; bare-metal and local clusters (for example, Minikube or kind) do not. On those clusters, install a load balancer implementation such as [MetalLB](https://metallb.universe.tf/), expose Meshery through a `NodePort` `Service` instead, or reach the UI with port-forwarding by following the [mesheryctl system dashboard](/reference/mesheryctl/system/dashboard) guide.
+A `LoadBalancer` `Service` is only assigned an external address when the cluster runs a load balancer controller. Managed clouds provide one out of the box; bare-metal and local clusters (for example, Minikube or kind) do not. On those clusters, install a load balancer implementation such as [MetalLB](https://metallb.universe.tf/), expose Meshery through a `NodePort` `Service` instead, or reach the UI with port-forwarding by following the [mesheryctl system dashboard]({{< ref "reference/reference/mesheryctl/system/dashboard.md" >}}) guide.
 {{% /alert %}}
 
 # Out-of-cluster Installation

@@ -103,7 +103,7 @@ weight: 100
 <summary>
 <h6>Question: What systems can I deploy Meshery onto?</h6>
 </summary>
-<strong>Answer:</strong> Many. See Meshery's <a href="{{< ref "installation/compatibility-matrix/_index.md" >}}">Compatibility Matrix</a>.
+<strong>Answer:</strong> Many. See Meshery's <a href="{{< ref "project/compatibility-matrix/compatibility-matrix.md" >}}">Compatibility Matrix</a>.
 </details>
 
 <details>
