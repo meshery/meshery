@@ -23,9 +23,7 @@ export type { IconProps } from './types';
 // Typed SVG icons (Phase 2 #18730).
 // ---------------------------------------------------------------------------
 
-export { LockIcon } from './LockIcon';
-export { SaveIcon } from './SaveIcon';
-export { SettingsIcon } from './SettingsIcon';
+
 
 // Pre-existing typed icons in `ui/assets/icons/` whose glyphs also appear
 // >=3 times via `@mui/icons-material`. Re-exported here so that downstream
@@ -34,7 +32,6 @@ export { SettingsIcon } from './SettingsIcon';
 // Note: these are intentionally re-exported as `default` since the source
 // files only provide default exports today. Renaming their source exports
 // is out of scope for this purely-additive issue.
-export { default as DeleteIcon } from './DeleteIcon';
 export { ExpandMoreIcon } from '@sistent/sistent';
 
 // ---------------------------------------------------------------------------
@@ -58,7 +55,7 @@ export {
   CodeIcon as Code,
   DeleteIcon,
   DeleteIcon as Delete,
-  DeleteForever,
+  DeleteForeverIcon as DeleteForever,
   DirectionsCarIcon as DirectionsCar,
   DoneAllIcon as DoneAll,
   EditIcon as Edit,
@@ -113,8 +110,6 @@ export {
 
 export { default as AddCircleOutlined } from './AddIconCircleBorder';
 export { ArrowDropDownIcon as ArrowDropDown } from '@sistent/sistent';
-export { default as Delete } from './DeleteIcon';
-export { default as DeleteForever } from './DeleteIcon';
 export { default as FilterAlt } from './ContentFilterIcon';
 export { default as HelpOutlineOutlined } from './HelpOutlineIcon';
 export { default as LanOutlined } from './Connection';
