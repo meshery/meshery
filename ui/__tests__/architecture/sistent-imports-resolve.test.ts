@@ -82,13 +82,19 @@ const IMPORT_RE =
   /import\s+(type\s+)?(?:[A-Za-z_$][\w$]*\s*,\s*)?\{([^}]*)\}\s*from\s*['"]@sistent\/sistent['"]/g;
 
 function unresolvedValueImports(source: string): string[] {
+  // Strip block and line comments from the whole file before matching, so a
+  // commented-out import cannot raise a false positive and a specifier after
+  // an inline comment is still validated. String literals are preserved so a
+  // `//` inside a URL (e.g. 'https://…') is never mistaken for a comment.
+  const cleanSource = source.replace(
+    /("([^"\\]|\\.)*"|'([^'\\]|\\.)*'|`([^`\\]|\\.)*`)|\/\*[\s\S]*?\*\/|\/\/.*/g,
+    (full, stringLiteral) => (stringLiteral ? stringLiteral : ''),
+  );
+
   const bad: string[] = [];
-  for (const match of source.matchAll(IMPORT_RE)) {
+  for (const match of cleanSource.matchAll(IMPORT_RE)) {
     if (match[1]) continue; // whole statement is `import type { ... }`
-    // Strip block and line comments first, otherwise a specifier sitting after
-    // an inline comment (`Foo, // note`) would be skipped and never validated.
-    const cleanBlock = match[2].replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '');
-    for (const rawSpecifier of cleanBlock.split(',')) {
+    for (const rawSpecifier of match[2].split(',')) {
       const specifier = rawSpecifier.trim();
       if (!specifier) continue;
       if (/^type\s+/.test(specifier)) continue; // inline type-only specifier
