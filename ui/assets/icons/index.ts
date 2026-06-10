@@ -58,7 +58,7 @@ export {
   CodeIcon as Code,
   DeleteIcon,
   DeleteIcon as Delete,
-  DeleteForever,
+  DeleteForeverIcon as DeleteForever,
   DirectionsCarIcon as DirectionsCar,
   DoneAllIcon as DoneAll,
   EditIcon as Edit,
