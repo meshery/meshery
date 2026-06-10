@@ -544,7 +544,7 @@ make docs
 - **Prevention**: Check the shortcode file in `docs/layouts/shortcodes/` — if it calls `.Inner`, use `{{% %}}` when wrapping Markdown body content
 
 #### Problem: Generated CLI reference docs drift
-- **Solution**: Do not edit files under `docs/content/en/reference/reference/mesheryctl/` directly; they are auto-generated from `mesheryctl` Cobra command definitions. Edit the `Short`, `Long`, or `Example` fields in the relevant Go source file instead
+- **Solution**: Do not edit files under `docs/content/en/references/reference/mesheryctl/` directly; they are auto-generated from `mesheryctl` Cobra command definitions. Edit the `Short`, `Long`, or `Example` fields in the relevant Go source file instead
 - **Prevention**: Note `# This file is auto-generated` comments at the top of generated files; treat them as read-only
 
 ## Documentation Patterns
