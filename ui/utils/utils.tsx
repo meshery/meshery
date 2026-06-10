@@ -396,9 +396,15 @@ export const encodeDesignFile = (designJson) => {
  * Process the design data to extract the components and design version
  * @param {object} design - The design file of format design schema v1beta1
  */
-export const processDesign = (design) => {
-  if (design.schemaVersion != 'designs.meshery.io/v1beta1') {
-    console.error('Invalid design schema version', design);
+export const processDesign = (design = {}) => {
+  const normalizedDesign = design ?? {};
+
+  const schemaVersion = normalizedDesign?.schemaVersion;
+  const isSupportedDesignSchema =
+    typeof schemaVersion === 'string' && schemaVersion.startsWith('designs.meshery.io/v1beta');
+
+  if (!isSupportedDesignSchema) {
+    console.error('Invalid design schema version', normalizedDesign);
     return {
       configurableComponents: [],
       annotationComponents: [],
@@ -406,13 +412,14 @@ export const processDesign = (design) => {
       designJson: {
         name: '',
         components: [],
+        schemaVersion: undefined,
       },
     };
   }
 
   const isAnnotation = (component) => component?.metadata?.isAnnotation;
 
-  const components = design.components;
+  const components = Array.isArray(normalizedDesign.components) ? normalizedDesign.components : [];
   const configurableComponents = components.filter(_.negate(isAnnotation));
   const annotationComponents = components.filter(isAnnotation);
 
@@ -420,7 +427,7 @@ export const processDesign = (design) => {
     configurableComponents,
     annotationComponents,
     components,
-    designJson: design,
+    designJson: normalizedDesign,
   };
 };
 
