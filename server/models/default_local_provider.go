@@ -69,6 +69,10 @@ type DefaultLocalProvider struct {
 	Log                             logger.Handler
 
 	MeshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode
+
+	// mu guards in-place mutations of Extensions performed by InstallExtension
+	// and RemoveExtension, which may be invoked concurrently from HTTP handlers.
+	mu sync.Mutex
 }
 
 // LocalProviderName is the canonical name of the built-in local provider.
@@ -94,6 +98,11 @@ func (l *DefaultLocalProvider) InstallExtension(extType string, packageUrl strin
 		return ErrMarshal(err, "extension metadata")
 	}
 
+	// Only the navigator and account extension points carry a Title, which is
+	// the identity used to upsert (on install) and locate (on remove) an
+	// extension. The other extension types have no stable identity here and
+	// therefore cannot be removed, so they are rejected to keep InstallExtension
+	// and RemoveExtension symmetric and to avoid accumulating duplicates.
 	switch extType {
 	case "navigator":
 		var parsed NavigatorExtension
@@ -115,51 +124,59 @@ func (l *DefaultLocalProvider) InstallExtension(extType string, packageUrl strin
 			return err
 		}
 
-		// replace existing extension with same title or append
-		replaced := false
-		for i, e := range l.Extensions.Navigator {
-			if strings.EqualFold(strings.TrimSpace(e.Title), strings.TrimSpace(parsed.Title)) && parsed.Title != "" {
-				l.Extensions.Navigator[i] = parsed
-				replaced = true
-				break
-			}
-		}
-		if !replaced {
-			l.Extensions.Navigator = append(l.Extensions.Navigator, parsed)
-		}
-
-	case "userprefs":
-		var parsed UserPrefsExtension
-		if err := json.Unmarshal(metaBytes, &parsed); err != nil {
-			return ErrUnmarshal(err, "userprefs extension metadata")
-		}
-		l.Extensions.UserPrefs = append(l.Extensions.UserPrefs, parsed)
-
-	case "graphql":
-		var parsed GraphQLExtension
-		if err := json.Unmarshal(metaBytes, &parsed); err != nil {
-			return ErrUnmarshal(err, "graphql extension metadata")
-		}
-		l.Extensions.GraphQL = append(l.Extensions.GraphQL, parsed)
+		l.mu.Lock()
+		l.Extensions.Navigator = upsertNavigatorExtension(l.Extensions.Navigator, parsed)
+		l.mu.Unlock()
 
 	case "account":
 		var parsed AccountExtension
 		if err := json.Unmarshal(metaBytes, &parsed); err != nil {
 			return ErrUnmarshal(err, "account extension metadata")
 		}
-		l.Extensions.Acccount = append(l.Extensions.Acccount, parsed)
 
-	case "collaborator":
-		var parsed CollaboratorExtension
-		if err := json.Unmarshal(metaBytes, &parsed); err != nil {
-			return ErrUnmarshal(err, "collaborator extension metadata")
+		if parsed.Title == "" {
+			if t, ok := extensionMetadata["title"].(string); ok {
+				parsed.Title = t
+			}
 		}
-		l.Extensions.Collaborator = append(l.Extensions.Collaborator, parsed)
+		if strings.TrimSpace(parsed.Title) == "" {
+			return fmt.Errorf("InstallExtension: account extension title is required")
+		}
+
+		l.mu.Lock()
+		l.Extensions.Acccount = upsertAccountExtension(l.Extensions.Acccount, parsed)
+		l.mu.Unlock()
 
 	default:
-		return fmt.Errorf("InstallExtension: unsupported extension type '%s'", extType)
+		return fmt.Errorf("InstallExtension: unsupported extension type %q (supported types: navigator, account)", extType)
 	}
 	return nil
+}
+
+// upsertNavigatorExtension replaces the navigator extension that has a matching
+// (case-insensitive) title or appends it when none matches, so repeated
+// installs of the same extension are idempotent rather than accumulating
+// duplicate entries.
+func upsertNavigatorExtension(existing NavigatorExtensions, ext NavigatorExtension) NavigatorExtensions {
+	for i, e := range existing {
+		if strings.EqualFold(strings.TrimSpace(e.Title), strings.TrimSpace(ext.Title)) {
+			existing[i] = ext
+			return existing
+		}
+	}
+	return append(existing, ext)
+}
+
+// upsertAccountExtension replaces the account extension that has a matching
+// (case-insensitive) title or appends it when none matches.
+func upsertAccountExtension(existing AccountExtensions, ext AccountExtension) AccountExtensions {
+	for i, e := range existing {
+		if strings.EqualFold(strings.TrimSpace(e.Title), strings.TrimSpace(ext.Title)) {
+			existing[i] = ext
+			return existing
+		}
+	}
+	return append(existing, ext)
 }
 
 func (l *DefaultLocalProvider) RemoveExtension(extType, title string) error {
@@ -168,6 +185,9 @@ func (l *DefaultLocalProvider) RemoveExtension(extType, title string) error {
 	if title == "" {
 		return fmt.Errorf("RemoveExtension called with empty title")
 	}
+
+	l.mu.Lock()
+	defer l.mu.Unlock()
 
 	switch extType {
 	case "navigator":
@@ -199,7 +219,7 @@ func (l *DefaultLocalProvider) RemoveExtension(extType, title string) error {
 		}
 		l.Extensions.Acccount = filtered
 	default:
-		return fmt.Errorf("RemoveExtension: unsupported extension type '%s'", extType)
+		return fmt.Errorf("RemoveExtension: unsupported extension type %q (supported types: navigator, account)", extType)
 	}
 
 	return nil
@@ -217,8 +237,6 @@ func (l *DefaultLocalProvider) Initialize() {
 	l.ProviderType = LocalProviderType
 	l.PackageVersion = viper.GetString("BUILD")
 	l.PackageURL = ""
-	// t := true
-	// f := false
 	l.Extensions = Extensions{Navigator: NavigatorExtensions{}}
 	l.Capabilities = Capabilities{
 		{Feature: PersistMesheryPatterns},
@@ -278,7 +296,6 @@ func (l *DefaultLocalProvider) DownloadProviderExtensionPackageFromURL(packageUr
 	}
 
 	log.Info(fmt.Sprintf("[Initialize]: Package not found at %s proceeding to download", loc))
-	// logrus the provider package
 	if err := TarXZF(packageUrl, loc, log); err != nil {
 		return ErrDownloadPackage(err, "provider package")
 	}
