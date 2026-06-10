@@ -25,7 +25,7 @@ Some examples include:
   - Examples: session management, two factor authentication, LDAP integration.
 - **Identity and Organization Management**
   - Examples: multi-tenant [Organizations](/concepts/logical/organizations), teams as user groups, fine-grained roles and permissions.
-  - Examples: per-organization identity providers (OAuth/OIDC single sign-on), custom domains, and branding / white-labeling.
+  - Examples: per-organization identity providers (OAuth/OIDC single sign-on), custom domains, and branding/white-labeling.
 - **Long-Term Persistence**
   - Examples: Storage and retrieval of performance test results.
   - Examples: Storage and retrieval of user preferences.

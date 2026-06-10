@@ -86,5 +86,6 @@ How those choices combine — from a shared, hosted experience to a fully white-
 - Use separate Organizations to isolate tenants — distinct customers, partners, or business units — so their resources and access never overlap.
 - Keep ownership at the Organization level (rather than relying on individual users) so work persists as team membership changes.
 - When using a Remote Provider, assign access through teams and roles rather than per-user, and choose the [organization configuration](https://docs.layer5.io/cloud/guides/organizations/configuration-scenarios/) that matches your branding and identity needs.
+- When graduating from the Local provider to a Remote Provider, create an Organization first so resource ownership is established from the start.
 
 Organizations give Meshery a clear, isolated home for every team's work. Paired with a Remote Provider, they become the foundation for identity, access control, and a branded, multi-tenant experience.
