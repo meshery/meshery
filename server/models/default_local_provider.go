@@ -219,23 +219,7 @@ func (l *DefaultLocalProvider) Initialize() {
 	l.PackageURL = ""
 	// t := true
 	// f := false
-	l.Extensions = Extensions{Navigator: NavigatorExtensions{
-		// NavigatorExtension{
-		// 	Title:           "Kanvas",
-		// 	OnClickCallback: 1,
-		// 	Href: Href{
-		// 		URI:      "/meshmap",
-		// 		External: &f,
-		// 	},
-		// 	Component: "/provider/navigator/meshmap/index.js?packageVersion=v1.0.40-1",
-		// 	Icon:      "/provider/navigator/img/kanvas-icon.svg",
-
-		// 	Link:   &t,
-		// 	Show:   &t,
-		// 	Type:   "full_page",
-		// 	IsBeta: &t,
-		// },
-	}}
+	l.Extensions = Extensions{Navigator: NavigatorExtensions{}}
 	l.Capabilities = Capabilities{
 		{Feature: PersistMesheryPatterns},
 		{Feature: PersistMesheryApplications},
