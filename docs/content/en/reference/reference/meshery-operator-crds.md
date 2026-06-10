@@ -1,6 +1,6 @@
 ---
-title: Meshery Operator CRD Reference
-description: Details for the Custom Resource Definitions included in Meshery Operator and used by it's custom controllers.
+title: Meshery Operator CRDs
+description: Details of the Custom Resource Definitions included in Meshery Operator and used by its custom controllers.
 aliases:
 - /reference/meshery-operator-crds/
 ---
