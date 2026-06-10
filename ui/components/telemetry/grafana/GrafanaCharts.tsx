@@ -1,7 +1,8 @@
 import React, { Suspense, lazy, useState } from 'react';
 import PropTypes from 'prop-types';
-import { ExpandMoreIcon, NoSsr } from '@sistent/sistent';
 import {
+  ExpandMoreIcon,
+  NoSsr,
   Grid2,
   Accordion,
   AccordionSummary,

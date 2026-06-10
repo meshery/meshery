@@ -85,10 +85,13 @@ function unresolvedValueImports(source: string): string[] {
   const bad: string[] = [];
   for (const match of source.matchAll(IMPORT_RE)) {
     if (match[1]) continue; // whole statement is `import type { ... }`
-    for (const rawSpecifier of match[2].split(',')) {
+    // Strip block and line comments first, otherwise a specifier sitting after
+    // an inline comment (`Foo, // note`) would be skipped and never validated.
+    const cleanBlock = match[2].replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '');
+    for (const rawSpecifier of cleanBlock.split(',')) {
       const specifier = rawSpecifier.trim();
-      if (!specifier || specifier.startsWith('//')) continue;
-      if (specifier.startsWith('type ')) continue; // inline type-only specifier
+      if (!specifier) continue;
+      if (/^type\s+/.test(specifier)) continue; // inline type-only specifier
       const sourceName = specifier.split(/\s+as\s+/)[0].trim();
       if (!/^[A-Za-z_$][\w$]*$/.test(sourceName)) continue;
       if (RUNTIME_EXPORTS.has(sourceName)) continue;
