@@ -72,9 +72,9 @@ vi.mock('@sistent/sistent', () => {
 
 vi.mock('@/assets/icons', () => ({
   Delete: () => <svg data-testid="delete-icon" />,
-  Fullscreen: () => <svg data-testid="fullscreen-icon" />,
+  FullScreenIcon: () => <svg data-testid="fullscreen-icon" />,
   Save: () => <svg data-testid="save-icon" />,
-  FullscreenExit: () => <svg data-testid="fullscreen-exit-icon" />,
+  FullScreenExitIcon: () => <svg data-testid="fullscreen-exit-icon" />,
   Public: () => <svg data-testid="public-icon" />,
   GetApp: () => <svg data-testid="get-app-icon" />,
   Lock: () => <svg data-testid="lock-icon" />,

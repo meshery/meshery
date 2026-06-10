@@ -16,14 +16,11 @@ vi.mock('@sistent/sistent', () => ({
   useTheme: () => ({
     typography: { pxToRem: (n: number) => `${n}px`, fontWeightRegular: 400 },
   }),
+  ExpandMoreIcon: () => <svg data-testid="expand-icon" />,
 }));
 
 vi.mock('../../../../assets/icons/DeleteIcon', () => ({
   default: () => <svg data-testid="delete-icon" />,
-}));
-
-vi.mock('../../../../assets/icons/ExpandMoreIcon', () => ({
-  default: () => <svg data-testid="expand-icon" />,
 }));
 
 vi.mock('../../../../css/icons.styles', () => ({ iconSmall: {} }));

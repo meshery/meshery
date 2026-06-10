@@ -8,8 +8,8 @@ import {
   Divider,
   IconButton,
   styled,
-  FullScreenIcon as FullscreenIcon,
-  FullScreenExitIcon as FullscreenExitIcon,
+  FullScreenIcon,
+  FullScreenExitIcon,
 } from '@sistent/sistent';
 import { UnControlled as CodeMirror } from '../CodeMirror';
 import { FILE_OPS } from '../../utils/Enum';
@@ -68,9 +68,9 @@ function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
             onClick={toggleFullScreen}
           >
             {fullScreen ? (
-              <FullscreenExitIcon style={iconMedium} />
+              <FullScreenExitIcon style={iconMedium} />
             ) : (
-              <FullscreenIcon style={iconMedium} />
+              <FullScreenIcon style={iconMedium} />
             )}
           </TooltipIcon>
           <TooltipIcon title="Exit" onClick={onClose}>

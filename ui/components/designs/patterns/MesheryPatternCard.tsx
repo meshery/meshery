@@ -15,9 +15,9 @@ import { CustomTooltip, VisibilityChipMenu } from '@sistent/sistent';
 import {
   Delete as DeleteIcon,
   Save,
-  Fullscreen,
+  FullScreenIcon,
   GetApp as GetAppIcon,
-  FullscreenExit,
+  FullScreenExitIcon,
   DoneAll as DoneAllIcon,
 } from '@/assets/icons';
 import Moment from 'react-moment';
@@ -372,7 +372,7 @@ function MesheryPatternCard_({
                       })
                     }
                   >
-                    {fullScreen ? <FullscreenExit /> : <Fullscreen />}
+                    {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
                   </IconButton>
                 </CustomTooltip>
               </CardHeaderRight>

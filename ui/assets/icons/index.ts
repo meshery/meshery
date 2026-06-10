@@ -23,10 +23,6 @@ export type { IconProps } from './types';
 // Typed SVG icons (Phase 2 #18730).
 // ---------------------------------------------------------------------------
 
-export { ArrowDropDownIcon } from '@sistent/sistent';
-export { EditIcon } from '@sistent/sistent';
-export { FullScreenExitIcon as FullscreenExitIcon } from '@sistent/sistent';
-export { FullScreenIcon as FullscreenIcon } from '@sistent/sistent';
 export { GetAppIcon } from './GetAppIcon';
 export { LockIcon } from './LockIcon';
 export { SaveIcon } from './SaveIcon';
@@ -54,6 +50,7 @@ export {
   AccessTimeIcon,
   AddCircleIcon as AddCircle,
   ArrowBackIcon as ArrowBack,
+  ArrowDropDownIcon,
   BarChartIcon as BarChart,
   BuildRoundedIcon as BuildRounded,
   CachedIcon as Cached,
@@ -63,6 +60,7 @@ export {
   DirectionsCarIcon as DirectionsCar,
   DoneAllIcon as DoneAll,
   EditIcon as Edit,
+  EditIcon,
   ErrorIcon as Error,
   ExpandLessIcon as ExpandLess,
   ExpandMoreIcon as ExpandMore,
@@ -70,6 +68,8 @@ export {
   FileCopyIcon as FileCopy,
   FileUploadIcon as FileUpload,
   FilterIcon as Filter,
+  FullScreenExitIcon,
+  FullScreenIcon,
   GetAppIcon as GetApp,
   GroupAddIcon,
   HandymanIcon as Handyman,
@@ -109,8 +109,6 @@ export { ArrowDropDownIcon as ArrowDropDown } from '@sistent/sistent';
 export { default as Delete } from './DeleteIcon';
 export { default as DeleteForever } from './DeleteIcon';
 export { default as FilterAlt } from './ContentFilterIcon';
-export { FullScreenIcon as Fullscreen } from '@sistent/sistent';
-export { FullScreenExitIcon as FullscreenExit } from '@sistent/sistent';
 export { default as HelpOutlineOutlined } from './HelpOutlineIcon';
 export { default as LanOutlined } from './Connection';
 export { default as SaveOutlined } from './SaveIcon';
