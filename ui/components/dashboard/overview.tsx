@@ -5,7 +5,7 @@ import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
 import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
 import ConnectCluster from './charts/ConnectCluster';
 import { ErrorContainer, HoneycombRoot } from './style';
-import { ErrorIcon, Typography, useTheme, Theme } from '@sistent/sistent';
+import { ErrorIcon, Typography, useTheme, type Theme } from '@sistent/sistent';
 import { useSelector } from 'react-redux';
 
 const ErrorDisplay = ({ theme }: { theme: Theme }) => (

@@ -22,7 +22,7 @@ import {
   DoneAllIcon,
   DoneIcon,
   RemoveDoneIcon,
-  Search,
+  SearchIcon as Search,
   Tab,
   Tabs,
   TextField,

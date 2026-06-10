@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import {
-  IndeterminateCheckBox,
-  CompareArrows,
-  GetApp,
+  IndeterminateCheckBoxIcon as IndeterminateCheckBox,
+  CompareArrowsIcon as CompareArrows,
+  GetAppIcon as GetApp,
   IconButton,
   Tooltip,
   styled,
