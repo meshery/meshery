@@ -33,7 +33,7 @@ var (
 )
 
 var linkDocPatternList = map[string]string{
-	"link":    "![pattern-list-usage](/reference/images/patternList.png)",
+	"link":    "![pattern-list-usage](/reference/reference/images/patternList.png)",
 	"caption": "Usage of mesheryctl design list",
 }
 

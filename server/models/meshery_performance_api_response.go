@@ -47,13 +47,7 @@ type PerformanceTestParameters struct {
 	Duration string `json:"dur"`
 }
 
-// PerformanceProfilesAPIResponse response retruned by performance endpoint on meshery server
-type PerformanceProfilesAPIResponse struct {
-	Page       uint                 `json:"page"`
-	PageSize   uint                 `json:"pageSize"`
-	TotalCount uint                 `json:"totalCount"`
-	Profiles   []PerformanceProfile `json:"profiles,omitempty"`
-}
+type PerformanceProfilesAPIResponse = PerformanceProfilePage
 
 // PerformanceResultsAPIResponse response retruned by performance endpoint on meshery server
 type PerformanceResultsAPIResponse struct {

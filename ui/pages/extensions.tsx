@@ -1,16 +1,15 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme, Box } from '@sistent/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
-import { Adapters } from '../components/extensions';
+import { Adapters, KanvasExtension } from '../components/extensions';
 import DefaultError from '@/components/general/error-404';
 import { EVENT_TYPES } from '../lib/event-types';
-import { EXTENSION_NAMES } from '../utils/Enum';
 import { useNotification, usePageTitle } from '@/utils/hooks';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CardContainer, FrontSideDescription } from '../css/icons.styles';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { toggleCatalogContent } from '@/store/slices/mesheryUi';
 
 type ChildrenProps = {
@@ -464,7 +463,6 @@ const Extensions = () => {
   const [updateUserPref] = useUpdateUserPrefMutation();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { providerCapabilities } = useSelector((state) => state.ui);
   const { data: userData } = useGetUserPrefQuery();
 
   const serverCatalogContent = userData?.usersExtensionPreferences?.catalogContent;
@@ -476,14 +474,6 @@ const Extensions = () => {
   useEffect(() => {
     setCatalogContentOverride(null);
   }, [serverCatalogContent]);
-
-  const hasAccessToMeshMap = useMemo(
-    () =>
-      !!providerCapabilities?.extensions?.navigator?.some(
-        (val: { title: string }) => val.title.toLowerCase() === EXTENSION_NAMES.EXTENSION,
-      ),
-    [providerCapabilities],
-  );
 
   const handleToggle = () => {
     const next = !catalogContent;
@@ -514,6 +504,7 @@ const Extensions = () => {
       </Head>
       {CAN(keys.VIEW_EXTENSIONS.action, keys.VIEW_EXTENSIONS.subject) ? (
         <Grid2 container spacing={2} size="grow">
+          <KanvasExtension />
           <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
           <WrappedMesheryPerformanceAction githubActionEnabled={false} />
           <WrappedMesheryHelmExtension />

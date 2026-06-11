@@ -36,4 +36,3 @@ jobs:
         repo: meshery-extensions/meshery-extensions-packages
         token: ${{ secrets.GH_ACCESS_TOKEN }}
         ref: master
-        inputs: '{"version": "${{ steps.vars.outputs.tag }}"}'
