@@ -163,6 +163,9 @@ jobs:
         with:
           ref: gh-pages
           fetch-depth: 0
+          filter: blob:none
+          sparse-checkout: |
+            pr-preview
           path: gh-pages-maintenance
 
       - name: Prune old PR previews
