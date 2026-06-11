@@ -7,14 +7,10 @@ import {
   Divider,
   IconButton,
   styled,
+  FullScreenIcon,
+  FullScreenExitIcon,
 } from '@sistent/sistent';
-import {
-  Close as CloseIcon,
-  Delete as DeleteIcon,
-  Fullscreen as FullscreenIcon,
-  FullscreenExit as FullscreenExitIcon,
-  Save as SaveIcon,
-} from '@/assets/icons';
+import { Close as CloseIcon, Delete as DeleteIcon, Save as SaveIcon } from '@/assets/icons';
 import { UnControlled as CodeMirror } from '../../CodeMirror';
 import { FILE_OPS } from '../../../utils/Enum';
 import CAN from '@/utils/can';
@@ -60,7 +56,7 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
             onClick={toggleFullScreen}
           >
-            {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+            {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
           </CustomTooltip>
           <CustomTooltip placement="top" title="Exit" onClick={onClose}>
             <CloseIcon />
