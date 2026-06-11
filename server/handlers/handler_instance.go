@@ -15,6 +15,7 @@ import (
 	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/viper"
 	"github.com/vmihailenco/taskq/v3"
+	"gorm.io/gorm"
 )
 
 // Handler type is the bucket for configs and http handlers
@@ -80,5 +81,19 @@ func NewHandlerInstance(
 		Handler: h.CollectStaticMetrics,
 	})
 
+	h.dbHandler.Exec("Analyze")
+	registerAnalysisCallBack(h.dbHandler.DB)
+
 	return h
+}
+
+// add analyze callback every data mutations
+func registerAnalysisCallBack(db *gorm.DB) {
+	runAnalysis := func(db *gorm.DB) {
+		db.Exec("Analyze")
+	}
+
+	db.Callback().Create().After("gorm:create").Register("analyze_create", runAnalysis)
+	db.Callback().Create().After("gorm:update").Register("analyze_create", runAnalysis)
+	db.Callback().Create().After("gorm:delete").Register("analyze_create", runAnalysis)
 }
