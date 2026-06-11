@@ -163,6 +163,12 @@ jobs:
         with:
           ref: gh-pages
           fetch-depth: 0
+          # Retention pruning only reads and writes the preview umbrella
+          # directory, so avoid materializing the rest of gh-pages.
+          filter: blob:none
+          sparse-checkout: |
+            pr-preview
+          sparse-checkout-cone-mode: true
           path: gh-pages-maintenance
 
       - name: Prune old PR previews
