@@ -57,7 +57,7 @@ export const ChevronButtonWrapper = styled('div', {
         0.14,
       )}, 2.5px 1px 3px 0px ${alpha(theme.palette.common.black, 0.12)}`
     : 'none',
-  position: 'fixed',
+  position: 'absolute',
   borderRadius: '0 5px 5px 0',
   cursor: 'pointer',
   bottom: '12%',
