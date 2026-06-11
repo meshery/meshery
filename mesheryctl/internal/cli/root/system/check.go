@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -500,7 +501,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		return err
 	}
 
-	client := &http.Client{}
+	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Do(req)
 	// failed to fetch response for server version
 	if err != nil || resp.StatusCode != 200 {
@@ -692,7 +693,7 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 // If no adapter is specified all the adapters are checked
 func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 	url := hc.mctlCfg.GetBaseMesheryURL()
-	client := &http.Client{}
+	client := &http.Client{Timeout: 10 * time.Second}
 	var adapters []*models.Adapter
 	prefs, err := utils.GetSessionData(hc.mctlCfg)
 	if err != nil {
