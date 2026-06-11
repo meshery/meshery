@@ -94,6 +94,6 @@ func registerAnalysisCallBack(db *gorm.DB) {
 	}
 
 	db.Callback().Create().After("gorm:create").Register("analyze_create", runAnalysis)
-	db.Callback().Create().After("gorm:update").Register("analyze_create", runAnalysis)
-	db.Callback().Create().After("gorm:delete").Register("analyze_create", runAnalysis)
+	db.Callback().Update().After("gorm:update").Register("analyze_update", runAnalysis)
+	db.Callback().Delete().After("gorm:delete").Register("analyze_delete", runAnalysis)
 }
