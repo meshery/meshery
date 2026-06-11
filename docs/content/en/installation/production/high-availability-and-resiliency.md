@@ -24,13 +24,13 @@ Meshery is designed so that its **runtime state is reconstructable**:
 
 - The Meshery Server database is an **ephemeral cache**, tied to the Server's
   lifetime.
-- The [Meshery Broker](/concepts/architecture/broker) holds messages
+- The [Meshery Broker]({{< ref "concepts/architecture/broker/index.md" >}}) holds messages
   **in-memory** until consumed; brief interruptions are bridged by NATS topic
   persistence, but the Broker is not a durable store.
 - **Durable, long-term state lives with a
-  [Remote Provider](/installation/production/authentication-and-identity)**:
+  [Remote Provider]({{< ref "installation/production/authentication-and-identity.md" >}})**:
   user identity, environments, saved designs, and preferences.
-- [MeshSync](/concepts/architecture/meshsync) **re-populates** the cluster
+- [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) **re-populates** the cluster
   snapshot on reconnect through continuous discovery.
 
 The practical consequence: if Meshery Server is restarted or replaced, users'
@@ -42,7 +42,7 @@ rather than around protecting the local database.
 Running production on the **Local Provider** means user state has no durable
 home beyond the ephemeral database, and sessions are unauthenticated. Preselect
 a Remote Provider—see
-[Authentication, Authorization & Identity](/installation/production/authentication-and-identity).
+[Authentication, Authorization & Identity]({{< ref "installation/production/authentication-and-identity.md" >}}).
 This is the single most important resiliency decision.
 {{% /alert %}}
 
@@ -87,8 +87,8 @@ During upgrades, capability reloading can make the Server temporarily
 unavailable. The chart provides `values-upgrade.yaml` with a startup probe and
 higher failure thresholds so pods are not killed mid-initialization. Use it for
 upgrades—see
-[Operational Readiness](/installation/production/operational-readiness-checklist)
-and the [Helm guide](/installation/kubernetes/helm).
+[Operational Readiness]({{< ref "installation/production/operational-readiness-checklist.md" >}})
+and the [Helm guide]({{< ref "installation/kubernetes/helm.md" >}}).
 {{% /alert %}}
 
 ## High availability for Meshery Server
@@ -126,7 +126,7 @@ scaling:
 
 {{% alert title="Plan replication around the cache model" color="warning" %}}
 Do not treat the local database as a shared source of truth across replicas. Let
-the [Remote Provider](/installation/production/authentication-and-identity) be
+the [Remote Provider]({{< ref "installation/production/authentication-and-identity.md" >}}) be
 the system of record and the local database be a per-Server cache. This keeps
 scaling decisions safe.
 {{% /alert %}}
@@ -151,7 +151,7 @@ required after a Server restart.
 
 ### Operator-managed recovery
 
-The [Meshery Operator](/concepts/architecture/operator) continuously reconciles
+The [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}) continuously reconciles
 the Broker and MeshSync toward their desired state. If the Broker or MeshSync is
 disrupted, the Operator restores it. This is why running the Operator per
 cluster is important for resilient discovery.
@@ -164,7 +164,7 @@ recovery model:
 - Meshery Server authenticates users and stores durable state through the
   provider, so the provider's availability affects login and durable reads.
 - Ensure egress connectivity to the provider is reliable (see
-  [Networking & Connectivity](/installation/production/networking-and-connectivity))
+  [Networking & Connectivity]({{< ref "installation/production/networking-and-connectivity.md" >}}))
   and include the provider in your monitoring and incident runbooks.
 - The on-disk cache lets Meshery continue serving already-loaded data during
   brief provider blips, but treat sustained provider unavailability as a

@@ -17,11 +17,11 @@ authentication, authorization, and durable user state all flow from its
 **provider** model. This page explains why production deployments should
 preselect a Remote Provider, how to configure the OAuth flow correctly behind an
 ingress, and how authorization is expressed. It pairs with
-[Security Hardening](/installation/production/security-hardening).
+[Security Hardening]({{< ref "installation/production/security-hardening.md" >}}).
 
 ## Providers: Local vs. Remote
 
-Meshery supports two kinds of [providers](/reference/extensibility/providers):
+Meshery supports two kinds of [providers]({{< ref "reference/extensibility/providers/index.md" >}}):
 
 | Provider | Identity | Durable state | Production fit |
 | :--- | :--- | :--- | :--- |
@@ -45,7 +45,7 @@ lives with the provider, not the ephemeral cache).
 
 Two environment variables control provider behavior. Set them via the Helm chart
 (`env.*`) or your deployment's environment. See the
-[environment variables reference](/installation/advanced/environment-variables).
+[environment variables reference]({{< ref "installation/advanced/environment-variables.md" >}}).
 
 - **`PROVIDER`** — enforces a single provider and **bypasses the provider
   selection screen**. Set it to your Remote Provider's registered name (for
@@ -67,7 +67,7 @@ opportunity to select the Local Provider.
 
 `mesheryctl` users can also view and set the provider for CLI-driven workflows
 via `mesheryctl system provider` (see the
-[reference](/reference/mesheryctl/system/provider/set)), but the server-side
+[reference]({{< ref "reference/references/mesheryctl/system/provider/set.md" >}})), but the server-side
 `PROVIDER` setting is what governs the deployment as a whole.
 
 ## Configuring the OAuth callback URL
@@ -96,7 +96,7 @@ application, register the same external callback
 {{% alert title="Callback URL and ingress go together" color="info" %}}
 If you front Meshery with an ingress (you should), set
 `MESHERY_SERVER_CALLBACK_URL` to the public hostname at the same time. See
-[Networking & Connectivity](/installation/production/networking-and-connectivity)
+[Networking & Connectivity]({{< ref "installation/production/networking-and-connectivity.md" >}})
 for the ingress, TLS, and WebSocket configuration the OAuth flow depends on.
 {{% /alert %}}
 
@@ -117,7 +117,7 @@ authorization is expressed through the provider model. Production notes:
 
 - Meshery loads provider capabilities at startup; readiness/health reflect that
   capabilities are loaded (see
-  [High Availability & Resiliency](/installation/production/high-availability-and-resiliency)).
+  [High Availability & Resiliency]({{< ref "installation/production/high-availability-and-resiliency.md" >}})).
 - For tightly egress-restricted or offline environments, capabilities can be
   loaded from a local file via `PROVIDER_CAPABILITIES_FILEPATH` instead of the
   provider's endpoint. Use this deliberately; it pins capabilities rather than
@@ -147,7 +147,7 @@ Remote Provider is required for multi-user production.
   clear.
 - Treat the Remote Provider as part of your availability model—login depends on
   it. See
-  [High Availability & Resiliency](/installation/production/high-availability-and-resiliency).
+  [High Availability & Resiliency]({{< ref "installation/production/high-availability-and-resiliency.md" >}}).
 
 ## Identity checklist
 

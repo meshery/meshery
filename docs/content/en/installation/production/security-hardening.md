@@ -17,14 +17,14 @@ for lifecycle management, control over—the infrastructure it connects to. That
 makes hardening it a priority. This page covers the controls that reduce
 Meshery's attack surface and blast radius in production. Identity and provider
 choices are covered separately in
-[Authentication, Authorization & Identity](/installation/production/authentication-and-identity);
+[Authentication, Authorization & Identity]({{< ref "installation/production/authentication-and-identity.md" >}});
 read both together.
 
 {{% alert title="Start with identity" color="warning" %}}
 The highest-impact security decision is to **preselect a Remote Provider** so
 production never runs with the unauthenticated Local Provider, and so you
 control which identity providers are accepted. That topic has its own page:
-[Authentication, Authorization & Identity](/installation/production/authentication-and-identity).
+[Authentication, Authorization & Identity]({{< ref "installation/production/authentication-and-identity.md" >}}).
 {{% /alert %}}
 
 ## Least-privilege RBAC
@@ -43,7 +43,7 @@ Grant only what is needed.
 - **Separate duty by cluster.** In out-of-cluster and multi-cloud topologies,
   use a distinct, minimally scoped credential per managed cluster so a single
   compromised credential cannot reach every cluster. See
-  [Multi-Cluster & Multi-Cloud](/installation/production/multi-cluster-and-multi-cloud).
+  [Multi-Cluster & Multi-Cloud]({{< ref "installation/production/multi-cluster-and-multi-cloud.md" >}}).
 - **Review adapter permissions.** By default adapters share the Meshery
   ServiceAccount's permissions. If you deploy adapters, consider distinct,
   scoped ServiceAccounts (`serviceAccountNameOverride`) so an adapter does not
@@ -119,7 +119,7 @@ configuration safe to store and share.
 
 - **User-facing traffic.** Terminate TLS at the ingress so browsers use
   `https://` and `wss://`. See
-  [Networking & Connectivity](/installation/production/networking-and-connectivity).
+  [Networking & Connectivity]({{< ref "installation/production/networking-and-connectivity.md" >}}).
 - **Provider egress.** Communication with the Remote Provider is over HTTPS
   (`443`). Do not disable certificate verification or route it through an
   intercepting proxy that breaks trust.
@@ -139,7 +139,7 @@ the cluster so the Server can reach it. Treat that exposure deliberately:
   an out-of-cluster Server and managed-cluster Brokers over public exposure.
 - Pair exposure with network policies that allow Broker ingress only from the
   Server. See
-  [Networking & Connectivity](/installation/production/networking-and-connectivity).
+  [Networking & Connectivity]({{< ref "installation/production/networking-and-connectivity.md" >}}).
 
 ## Namespace isolation and multi-tenancy
 
@@ -149,7 +149,7 @@ the cluster so the Server can reach it. Treat that exposure deliberately:
 - **Resource quotas and limits.** Apply `ResourceQuota`/`LimitRange` to the
   namespace so a discovery surge cannot starve neighbors (and pair with the
   sizing guidance in
-  [Infrastructure, Sizing & Performance](/installation/production/infrastructure-sizing-and-performance)).
+  [Infrastructure, Sizing & Performance]({{< ref "installation/production/infrastructure-sizing-and-performance.md" >}})).
 - **Tenant boundaries.** Use Meshery's organizations, workspaces, and
   environments (provided through a Remote Provider) to separate teams logically,
   and back that with per-cluster credential scoping for hard isolation.
@@ -164,10 +164,10 @@ the cluster so the Server can reach it. Treat that exposure deliberately:
   guarantee, since tags can in principle be reassigned.
 - **Mirror to a private registry** in regulated or air-gapped environments and
   scan images as part of your pipeline. Meshery's published
-  [security vulnerabilities](/project/security-vulnerabilities) and release notes
+  [security vulnerabilities]({{< ref "project/security-vulnerabilities.md" >}}) and release notes
   help you track fixes.
 - **Verify the chart source.** Install from the official
-  [Meshery Helm chart](/installation/kubernetes/helm) and review values you
+  [Meshery Helm chart]({{< ref "installation/kubernetes/helm.md" >}}) and review values you
   override.
 
 ## Hardening checklist

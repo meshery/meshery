@@ -147,8 +147,8 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 ## Screenshots
 
 Usage of mesheryctl perf apply
-![perf-apply-usage](/reference/reference/images/perf-apply.png)
+![perf-apply-usage](../../../images/perf-apply.png)
 
 ## See Also
 
-Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
+Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/contributing-cli.md#preserving-manually-added-documentation" >}}) for guidance.
