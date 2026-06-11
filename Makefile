@@ -102,7 +102,7 @@ run-local: server-local error
 ## and point to (expect) a locally running Remote Provider
 ## for user authentication.
 server-local: dep-check
-	cd server; cd cmd; go clean;  \
+	cd server; cd cmd; go clean; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
 	PORT=9081 \
@@ -115,7 +115,7 @@ server-local: dep-check
 
 ## Build Meshery Server on your local machine.
 build-server: dep-check
-	cd server; cd cmd;  cd "../.."
+	cd server; cd cmd; go mod tidy; cd "../.."
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
@@ -153,7 +153,7 @@ server-binary-local:
 ## Build and run Meshery Server on your local machine
 ## and point to Remote Provider in staging environment
 server-stg: dep-check
-	cd server; cd cmd;  \
+	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_STAGING) \
 	PORT=9081 \
@@ -165,7 +165,7 @@ server-stg: dep-check
 
 ## Build and run Meshery Server on your local machine.
 server: dep-check
-	cd server; cd cmd;  \
+	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=$(PORT) \
@@ -179,7 +179,7 @@ server: dep-check
 
 ## Build and run Meshery Server with some Meshery Adapters on your local machine.
 server-with-adapters: dep-check
-	cd server; cd cmd;  \
+	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
@@ -192,7 +192,7 @@ server-with-adapters: dep-check
 ## Build and run Meshery Server on your local machine.
 ## Disable deployment of the Meshery Operator to your Kubernetes cluster(s).
 server-without-operator: dep-check
-	cd server; cd cmd;  \
+	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
@@ -205,7 +205,7 @@ server-without-operator: dep-check
 
 ## Build and run Meshery Server with no Kubernetes components on your local machine.
 server-skip-compgen:
-	cd server; cd cmd;  \
+	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
@@ -219,7 +219,7 @@ server-skip-compgen:
 ## Build and run Meshery Server on your local machine.
 ## Do not generate and register Kubernetes models.
 server-without-k8s: dep-check
-	cd server; cd cmd;  \
+	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	REGISTER_STATIC_K8S=false \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
@@ -231,7 +231,7 @@ server-without-k8s: dep-check
 	go run main.go error.go;
 
 server-remote-provider: dep-check
-	cd server; cd cmd;  \
+	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER=$(REMOTE_PROVIDER) \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
@@ -243,7 +243,7 @@ server-remote-provider: dep-check
 	go run main.go error.go;
 
 server-local-provider: dep-check
-	cd server; cd cmd;  \
+	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER=$(LOCAL_PROVIDER) \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_DEV) \
@@ -256,7 +256,7 @@ server-local-provider: dep-check
 
 ## Build and run Meshery Server with no seed content.
 server-no-content:
-	cd server; cd cmd;  \
+	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
 	PORT=9081 \
@@ -268,7 +268,7 @@ server-no-content:
 	go run main.go error.go;
 
 server-playground: dep-check
-	cd server; cd cmd;  \
+	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER=$(REMOTE_PROVIDER) \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_URLS) \
