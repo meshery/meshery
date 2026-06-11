@@ -6,7 +6,7 @@ display_title: false
 
 # Meshery Registry: A Central Hub for Capabilities
 
-The Meshery Registry is a vital component within Meshery, serving as a centralized repository for managing a diverse range of cloud and cloud native resources. It stores and organizes crucial information such as models, categories, components, and relationships, enabling efficient interaction and utilization of these resources within the Meshery ecosystem. You can conveniently [access and manage registry data](#interacting-with-the-meshery-registry) through Meshery UI, and through Meshery CLI ([mesheryctl registry](/reference/mesheryctl/registry)).
+The Meshery Registry is a vital component within Meshery, serving as a centralized repository for managing a diverse range of cloud and cloud native resources. It stores and organizes crucial information such as models, categories, components, and relationships, enabling efficient interaction and utilization of these resources within the Meshery ecosystem. You can conveniently [access and manage registry data](#interacting-with-the-meshery-registry) through Meshery UI, and through Meshery CLI ([mesheryctl registry](/reference/references/mesheryctl/registry)).
 
 As the central repository for all capabilities known to Meshery, the registry contains various entities.
 
@@ -55,7 +55,7 @@ The process of generating a Model (and its entities) is a multi-step process and
 
 Meshery CLI supports the generation of models from a Google Spreadsheet. The Google Spreadsheet should contain a list of model names and source locations from any supported Registrant (e.g. GitHub, Artifact Hub) repositories. The source locations can be a URL to a folder containing Kubernetes CRDs, or to a Helm Chart tar.gz, or an individual Kubernetes Manifest with custom resource definition.
 
-See [`mesheryctl registry generate`](/reference/mesheryctl/registry/generate) for more information.
+See [`mesheryctl registry generate`](/reference/references/mesheryctl/registry/generate) for more information.
 
 ### Model Registration
 
