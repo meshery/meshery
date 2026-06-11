@@ -108,6 +108,10 @@ const resolveExtensionHref = (href?: ExtensionMetadata['href']) => {
     return '';
   }
 
+  // Guarantee exactly one separating slash so a relative href such as 'meshmap'
+  // resolves to '/extension/meshmap' rather than the malformed '/extensionmeshmap'.
+  const ensureLeadingSlash = (path: string) => (path.startsWith('/') ? path : '/' + path);
+
   if (typeof href === 'string') {
     if (
       href.startsWith('http://') ||
@@ -117,7 +121,7 @@ const resolveExtensionHref = (href?: ExtensionMetadata['href']) => {
       return href;
     }
 
-    return '/extension' + href;
+    return '/extension' + ensureLeadingSlash(href);
   }
 
   if (!href.uri) {
@@ -132,7 +136,7 @@ const resolveExtensionHref = (href?: ExtensionMetadata['href']) => {
     return href.uri;
   }
 
-  return '/extension' + href.uri;
+  return '/extension' + ensureLeadingSlash(href.uri);
 };
 
 const InstallableExtension: React.FC<InstallableExtensionProps> = ({ extension }) => {

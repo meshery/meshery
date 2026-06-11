@@ -8,6 +8,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/spf13/viper"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -247,7 +248,12 @@ func TestDefaultLocalProviderRemoveExtension_ReturnsErrorForMissingExtension(t *
 
 func TestDefaultLocalProviderInstallExtension_RequiresPackageWhenAssetsMissing(t *testing.T) {
 	t.Setenv("HOME", t.TempDir())
-	t.Setenv(SKIP_DOWNLOAD_EXTENSIONS_ENV, "false")
+	// Exercise the real download path (not skipped) so the missing package URL
+	// is surfaced as an error. viper is the source of truth for this flag;
+	// capture and restore its original value to avoid leaking state to other tests.
+	origSkip := viper.Get(SKIP_DOWNLOAD_EXTENSIONS_ENV)
+	defer viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, origSkip)
+	viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, false)
 
 	provider := &DefaultLocalProvider{}
 	provider.Initialize()
@@ -276,7 +282,13 @@ func TestDefaultLocalProviderInstallExtension_RequiresPackageWhenAssetsMissing(t
 }
 
 func TestDefaultLocalProviderInstallExtension_ReplacesMatchingNavigatorExtension(t *testing.T) {
-	t.Setenv(SKIP_DOWNLOAD_EXTENSIONS_ENV, "true")
+	// viper, not the OS environment, is the source of truth for this flag, and
+	// the test binary never calls viper.AutomaticEnv(); set it via viper so the
+	// package download is deterministically skipped without network access.
+	// Capture and restore the original value to avoid leaking state to other tests.
+	origSkip := viper.Get(SKIP_DOWNLOAD_EXTENSIONS_ENV)
+	defer viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, origSkip)
+	viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, true)
 
 	provider := &DefaultLocalProvider{}
 	provider.Initialize()
