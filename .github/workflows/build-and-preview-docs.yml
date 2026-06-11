@@ -138,7 +138,7 @@ jobs:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
           HUGO_PREVIEW: "true"
-          PREVIEW_BASE_URL: "/${{ github.event.repository.name }}/pr-preview/pr-${{ github.event.pull_request.number }}/"
+          PREVIEW_BASE_URL: "/pr-preview/pr-${{ github.event.pull_request.number }}/"
         run: |
           cd docs
           npm run build:production -- --gc --baseURL "${PREVIEW_BASE_URL}"
