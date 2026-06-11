@@ -354,7 +354,6 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
         <ChevronButtonWrapper
           isCollapsed={!open}
           onClick={handleDrawerToggle}
-          style={{ position: 'absolute' }}
         >
           <LeftArrowIcon
             alt="Sidebar collapse toggle"
