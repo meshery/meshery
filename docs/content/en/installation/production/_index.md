@@ -21,7 +21,7 @@ operability.
 This documentation set collects the considerations, best practices, known
 caveats, and hardening guidance you need to deploy and operate Meshery with
 confidence in a production environment. It does not replace the
-[installation guides](/installation); rather, it builds on them with the
+[installation guides]({{< ref "installation/_index.md" >}}); rather, it builds on them with the
 "what to think about and why" that production demands.
 
 {{% alert title="Who this guide is for" color="info" %}}
@@ -40,14 +40,14 @@ runs separately from the clusters it manages). A single Meshery Server can
 manage many clusters concurrently, across one or more clouds.
 
 For an authoritative description of each component and how the pieces fit
-together, start with the [Meshery Architecture](/concepts/architecture)
+together, start with the [Meshery Architecture]({{< ref "concepts/architecture/_index.md" >}})
 reference. The
-[Deployment Models & Reference Architecture](/installation/production/deployment-models)
+[Deployment Models & Reference Architecture]({{< ref "installation/production/deployment-models.md" >}})
 page in this set translates that architecture into production topology
 decisions.
 
-<a href="/concepts/architecture/images/meshery-architecture.webp" class="lightbox-image">
-<img src="/concepts/architecture/images/meshery-architecture.webp" width="55%" /></a>
+<a href="{{< static "images/meshery-architecture.webp" >}}" class="lightbox-image">
+<img src="{{< static "images/meshery-architecture.webp" >}}" width="55%" /></a>
 
 _Figure: Meshery deploys inside or outside of a Kubernetes cluster and manages one or more clusters._
 
@@ -59,15 +59,15 @@ reference material.
 
 | Area | What it covers |
 | :--- | :--- |
-| **[Deployment Models & Reference Architecture](/installation/production/deployment-models)** | In-cluster vs. out-of-cluster, Docker vs. Kubernetes, component inventory and statefulness, and the single-cluster, multi-cluster, and multi-cloud topology patterns. |
-| **[Infrastructure, Sizing & Performance](/installation/production/infrastructure-sizing-and-performance)** | Resource requirements per component, capacity planning, MeshSync tiered discovery, Broker throughput, scalability levers, and known performance bounds. |
-| **[High Availability & Resiliency](/installation/production/high-availability-and-resiliency)** | Replication, health probes, failure modes and recovery, the ephemeral database, Remote Provider persistence, and backup & disaster recovery posture. |
-| **[Networking & Connectivity](/installation/production/networking-and-connectivity)** | Network port and directional-flow matrix, ingress and Emissary configuration, secure WebSocket support, Broker exposure, egress, and network policies. |
-| **[Security Hardening](/installation/production/security-hardening)** | RBAC and least privilege, pod and container security contexts, secret and kubeconfig handling, TLS, supply-chain integrity, and namespace isolation. |
-| **[Authentication, Authorization & Identity](/installation/production/authentication-and-identity)** | Why to preselect a Remote Provider over the Local Provider, OAuth callback configuration, identity providers, and keys/permissions. |
-| **[Multi-Cluster & Multi-Cloud Operations](/installation/production/multi-cluster-and-multi-cloud)** | Managed vs. unmanaged cluster connections, one Operator per cluster, kubeconfig and context management, MeshSync modes, and cloud-specific guidance. |
-| **[Monitoring, Observability & Health KPIs](/installation/production/monitoring-observability-and-kpis)** | Health endpoints, the key performance indicators of Meshery's health, metrics, tracing, centralized logging, and alerting. |
-| **[Operational Readiness Checklist & Known Caveats](/installation/production/operational-readiness-checklist)** | A consolidated, actionable checklist across every dimension, plus upgrade strategy and the caveats to plan around. |
+| **[Deployment Models & Reference Architecture]({{< ref "installation/production/deployment-models.md" >}})** | In-cluster vs. out-of-cluster, Docker vs. Kubernetes, component inventory and statefulness, and the single-cluster, multi-cluster, and multi-cloud topology patterns. |
+| **[Infrastructure, Sizing & Performance]({{< ref "installation/production/infrastructure-sizing-and-performance.md" >}})** | Resource requirements per component, capacity planning, MeshSync tiered discovery, Broker throughput, scalability levers, and known performance bounds. |
+| **[High Availability & Resiliency]({{< ref "installation/production/high-availability-and-resiliency.md" >}})** | Replication, health probes, failure modes and recovery, the ephemeral database, Remote Provider persistence, and backup & disaster recovery posture. |
+| **[Networking & Connectivity]({{< ref "installation/production/networking-and-connectivity.md" >}})** | Network port and directional-flow matrix, ingress and Emissary configuration, secure WebSocket support, Broker exposure, egress, and network policies. |
+| **[Security Hardening]({{< ref "installation/production/security-hardening.md" >}})** | RBAC and least privilege, pod and container security contexts, secret and kubeconfig handling, TLS, supply-chain integrity, and namespace isolation. |
+| **[Authentication, Authorization & Identity]({{< ref "installation/production/authentication-and-identity.md" >}})** | Why to preselect a Remote Provider over the Local Provider, OAuth callback configuration, identity providers, and keys/permissions. |
+| **[Multi-Cluster & Multi-Cloud Operations]({{< ref "installation/production/multi-cluster-and-multi-cloud.md" >}})** | Managed vs. unmanaged cluster connections, one Operator per cluster, kubeconfig and context management, MeshSync modes, and cloud-specific guidance. |
+| **[Monitoring, Observability & Health KPIs]({{< ref "installation/production/monitoring-observability-and-kpis.md" >}})** | Health endpoints, the key performance indicators of Meshery's health, metrics, tracing, centralized logging, and alerting. |
+| **[Operational Readiness Checklist & Known Caveats]({{< ref "installation/production/operational-readiness-checklist.md" >}})** | A consolidated, actionable checklist across every dimension, plus upgrade strategy and the caveats to plan around. |
 
 ## Production-readiness principles
 
@@ -77,14 +77,14 @@ deployment decisions:
 1. **Treat the Meshery database as a cache, not a system of record.** Meshery's
    on-disk database is ephemeral and tied to the lifetime of its Server
    instance. Durable, long-term state lives with a
-   [Remote Provider](/reference/extensibility/providers). Design accordingly.
+   [Remote Provider]({{< ref "reference/extensibility/providers/index.md" >}}). Design accordingly.
 2. **Prefer a preselected Remote Provider in production.** Pinning a Remote
    Provider avoids unauthenticated Local Provider sessions and lets you control
    which identity providers are accepted. See
-   [Authentication, Authorization & Identity](/installation/production/authentication-and-identity).
+   [Authentication, Authorization & Identity]({{< ref "installation/production/authentication-and-identity.md" >}}).
 3. **Right-size for discovery, not just for traffic.** Meshery's footprint is
    driven as much by the size and number of clusters it discovers (via
-   [MeshSync](/concepts/architecture/meshsync)) as by user-facing API load.
+   [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}})) as by user-facing API load.
 4. **Make connectivity explicit.** Know which ports flow in which direction
    between Meshery Server, the Broker, and each managed cluster—especially for
    out-of-cluster and multi-cloud topologies.
@@ -94,11 +94,11 @@ deployment decisions:
 ## Before you begin
 
 If you have not yet chosen an installation method, review the
-[Installation Overview](/installation/overview) and the
-[platform-specific guides](/installation). For Kubernetes production
-deployments, the [Helm chart](/installation/kubernetes/helm) is the recommended
+[Installation Overview]({{< ref "installation/overview.md" >}}) and the
+[platform-specific guides]({{< ref "installation/_index.md" >}}). For Kubernetes production
+deployments, the [Helm chart]({{< ref "installation/kubernetes/helm.md" >}}) is the recommended
 path and is referenced throughout this set. For runtime configuration, keep the
-[Meshery Server Environment Variables](/installation/advanced/environment-variables)
+[Meshery Server Environment Variables]({{< ref "installation/advanced/environment-variables.md" >}})
 reference close at hand.
 
 {{< related-discussions tag="meshery" >}}
