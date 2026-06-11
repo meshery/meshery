@@ -2,6 +2,7 @@
 <tr>
   <th> DATE ANNOUNCED </th>
   <th> CVE ID </th>
+  <th> SEVERITY (CVSS v3) </th>
   <th> DESCRIPTION </th>
   <th> AFFECTED COMPONENT </th>
   <th> VULNERABLE VERSION </th>
@@ -14,6 +15,7 @@
 <tr>
   <td> {{ .DateAnnounced }} </td>
   <td> {{ .CVE }} </td>
+  <td> {{ .Severity }}{{ with .CVSS }} ({{ . }}){{ end }} </td>
   <td> {{ .Description }} </td>
   <td> {{ .AffectedComponent }} </td>
   <td> {{ .VulnerableVersion }} </td>
