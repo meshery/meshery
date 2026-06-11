@@ -17,14 +17,14 @@ for lifecycle management, control over—the infrastructure it connects to. That
 makes hardening it a priority. This page covers the controls that reduce
 Meshery's attack surface and blast radius in production. Identity and provider
 choices are covered separately in
-[Authentication, Authorization &amp; Identity](/installation/production/authentication-and-identity);
+[Authentication, Authorization & Identity](/installation/production/authentication-and-identity);
 read both together.
 
 {{% alert title="Start with identity" color="warning" %}}
 The highest-impact security decision is to **preselect a Remote Provider** so
 production never runs with the unauthenticated Local Provider, and so you
 control which identity providers are accepted. That topic has its own page:
-[Authentication, Authorization &amp; Identity](/installation/production/authentication-and-identity).
+[Authentication, Authorization & Identity](/installation/production/authentication-and-identity).
 {{% /alert %}}
 
 ## Least-privilege RBAC
@@ -43,7 +43,7 @@ Grant only what is needed.
 - **Separate duty by cluster.** In out-of-cluster and multi-cloud topologies,
   use a distinct, minimally scoped credential per managed cluster so a single
   compromised credential cannot reach every cluster. See
-  [Multi-Cluster &amp; Multi-Cloud](/installation/production/multi-cluster-and-multi-cloud).
+  [Multi-Cluster & Multi-Cloud](/installation/production/multi-cluster-and-multi-cloud).
 - **Review adapter permissions.** By default adapters share the Meshery
   ServiceAccount's permissions. If you deploy adapters, consider distinct,
   scoped ServiceAccounts (`serviceAccountNameOverride`) so an adapter does not
@@ -119,7 +119,7 @@ configuration safe to store and share.
 
 - **User-facing traffic.** Terminate TLS at the ingress so browsers use
   `https://` and `wss://`. See
-  [Networking &amp; Connectivity](/installation/production/networking-and-connectivity).
+  [Networking & Connectivity](/installation/production/networking-and-connectivity).
 - **Provider egress.** Communication with the Remote Provider is over HTTPS
   (`443`). Do not disable certificate verification or route it through an
   intercepting proxy that breaks trust.
@@ -139,7 +139,7 @@ the cluster so the Server can reach it. Treat that exposure deliberately:
   an out-of-cluster Server and managed-cluster Brokers over public exposure.
 - Pair exposure with network policies that allow Broker ingress only from the
   Server. See
-  [Networking &amp; Connectivity](/installation/production/networking-and-connectivity).
+  [Networking & Connectivity](/installation/production/networking-and-connectivity).
 
 ## Namespace isolation and multi-tenancy
 
@@ -149,7 +149,7 @@ the cluster so the Server can reach it. Treat that exposure deliberately:
 - **Resource quotas and limits.** Apply `ResourceQuota`/`LimitRange` to the
   namespace so a discovery surge cannot starve neighbors (and pair with the
   sizing guidance in
-  [Infrastructure, Sizing &amp; Performance](/installation/production/infrastructure-sizing-and-performance)).
+  [Infrastructure, Sizing & Performance](/installation/production/infrastructure-sizing-and-performance)).
 - **Tenant boundaries.** Use Meshery's organizations, workspaces, and
   environments (provided through a Remote Provider) to separate teams logically,
   and back that with per-cluster credential scoping for hard isolation.
@@ -158,13 +158,14 @@ the cluster so the Server can reach it. Treat that exposure deliberately:
 
 - **Pin image provenance.** Pull Meshery images from trusted registries. The
   chart defaults to the `stable-latest` tag with `pullPolicy: Always`; for
-  production, pin to a **specific, immutable version tag** so deployments are
-  reproducible and auditable, and so an upstream tag move cannot silently change
-  what you run.
+  production, pin to a **specific, immutable version tag (or an image digest,
+  `sha256:…`)** so deployments are reproducible and auditable, and so an upstream
+  tag move cannot silently change what you run. A digest is the strongest
+  guarantee, since tags can in principle be reassigned.
 - **Mirror to a private registry** in regulated or air-gapped environments and
   scan images as part of your pipeline. Meshery's published
-  [vulnerability information](/project/contributing) and release notes help you
-  track fixes.
+  [security vulnerabilities](/project/security-vulnerabilities) and release notes
+  help you track fixes.
 - **Verify the chart source.** Install from the official
   [Meshery Helm chart](/installation/kubernetes/helm) and review values you
   override.

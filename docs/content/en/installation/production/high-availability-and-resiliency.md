@@ -42,7 +42,7 @@ rather than around protecting the local database.
 Running production on the **Local Provider** means user state has no durable
 home beyond the ephemeral database, and sessions are unauthenticated. Preselect
 a Remote Provider—see
-[Authentication, Authorization &amp; Identity](/installation/production/authentication-and-identity).
+[Authentication, Authorization & Identity](/installation/production/authentication-and-identity).
 This is the single most important resiliency decision.
 {{% /alert %}}
 
@@ -119,6 +119,10 @@ scaling:
 - If you scale out replicas, validate behavior under your workload and front
   them with the Service/ingress; treat the local database as a per-instance
   cache that MeshSync and the provider re-populate.
+- Because each replica keeps its own local cache, enable **session affinity
+  (sticky sessions)** at the ingress or load balancer so a user's requests
+  consistently reach the same Server instance and the UI presents a stable
+  view rather than alternating between per-replica caches.
 
 {{% alert title="Plan replication around the cache model" color="warning" %}}
 Do not treat the local database as a shared source of truth across replicas. Let
@@ -160,7 +164,7 @@ recovery model:
 - Meshery Server authenticates users and stores durable state through the
   provider, so the provider's availability affects login and durable reads.
 - Ensure egress connectivity to the provider is reliable (see
-  [Networking &amp; Connectivity](/installation/production/networking-and-connectivity))
+  [Networking & Connectivity](/installation/production/networking-and-connectivity))
   and include the provider in your monitoring and incident runbooks.
 - The on-disk cache lets Meshery continue serving already-loaded data during
   brief provider blips, but treat sustained provider unavailability as a

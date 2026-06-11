@@ -70,7 +70,7 @@ Because MeshSync's working snapshot is held in the Server's database and partly
 in memory, an undersized memory limit on Meshery Server can lead to restarts
 under large or churny clusters. Give the Server generous memory headroom and
 alert on its utilization—see
-[Monitoring, Observability &amp; Health KPIs](/installation/production/monitoring-observability-and-kpis).
+[Monitoring, Observability & Health KPIs](/installation/production/monitoring-observability-and-kpis).
 {{% /alert %}}
 
 ## MeshSync: tiered discovery and scoping
@@ -99,7 +99,7 @@ scalability. Two controls let you bound its cost:
    useful for clusters where you cannot or prefer not to deploy the Operator.
    The default for new connections is set by
    `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` (`embedded` or `operator`). See
-   [Multi-Cluster &amp; Multi-Cloud](/installation/production/multi-cluster-and-multi-cloud).
+   [Multi-Cluster & Multi-Cloud](/installation/production/multi-cluster-and-multi-cloud).
 
 For very large clusters, blacklisting noisy, high-cardinality resource types is
 the single most effective lever on Meshery's footprint.
@@ -124,7 +124,7 @@ data and events between each cluster and the Server. Production guidance:
 - **API/GraphQL load** scales with concurrent users and clients. Horizontal
   replication helps with read/stateless request handling; mind the database
   caveats in
-  [High Availability &amp; Resiliency](/installation/production/high-availability-and-resiliency).
+  [High Availability & Resiliency](/installation/production/high-availability-and-resiliency).
 - **Registry and models** are held to serve design and relationship operations;
   larger registries increase baseline memory.
 - **Relationship/policy evaluation** is CPU-bound and time-boxed by
@@ -137,7 +137,7 @@ data and events between each cluster and the Server. Production guidance:
 
 | Lever | Effect | Where configured |
 | :--- | :--- | :--- |
-| Meshery Server CPU/memory requests &amp; limits | Headroom for traffic, registry, and discovery snapshot | Helm `resources` |
+| Meshery Server CPU/memory requests & limits | Headroom for traffic, registry, and discovery snapshot | Helm `resources` |
 | Meshery Server replicas | More request-handling capacity (see HA caveats) | Helm `replicaCount` + autoscaling |
 | MeshSync blacklist (`informer_config`) | Lower event volume and database growth | `meshsyncs.meshery.io` CRD |
 | MeshSync mode (operator vs. embedded) | Shifts discovery cost in-cluster vs. into Server | Per connection / `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` |
@@ -149,7 +149,7 @@ data and events between each cluster and the Server. Production guidance:
 - **The database is a single-writer SQLite/Bitcask cache.** It is excellent for
   a cached working set but is not a horizontally shared, multi-writer datastore.
   This shapes how far a single Server instance scales and how replicas behave
-  (see [HA &amp; Resiliency](/installation/production/high-availability-and-resiliency)).
+  (see [HA & Resiliency](/installation/production/high-availability-and-resiliency)).
 - **Discovery cost is proportional to cluster size and churn.** Without
   blacklisting, very large or high-churn clusters can dominate Server memory and
   database growth.
@@ -168,6 +168,6 @@ data and events between each cluster and the Server. Production guidance:
 5. Set requests/limits with headroom (especially Server memory) and configure
    autoscaling where appropriate.
 6. Add the resulting thresholds to your alerting—see
-   [Monitoring, Observability &amp; Health KPIs](/installation/production/monitoring-observability-and-kpis).
+   [Monitoring, Observability & Health KPIs](/installation/production/monitoring-observability-and-kpis).
 
 {{< related-discussions tag="meshery" >}}

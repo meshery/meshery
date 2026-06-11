@@ -45,17 +45,18 @@ multi-cluster context. Be clear about which you mean:
 
 | Connection style | What's deployed into the cluster | Trade-offs |
 | :--- | :--- | :--- |
-| **Operator-managed (default)** | Operator + MeshSync + Broker run in the managed cluster. | Full, event-driven discovery with in-cluster components; the Operator self-heals them. Requires permission to deploy into the cluster. |
-| **Embedded (library) MeshSync** | Nothing—MeshSync runs as a library inside Meshery Server for that connection. | No in-cluster footprint; useful where you can't or won't deploy the Operator. Shifts discovery work into the Server process. |
+| **Operator-managed** | Operator + MeshSync + Broker run in the managed cluster. | Full, event-driven discovery with in-cluster components; the Operator self-heals them. Requires permission to deploy into the cluster. |
+| **Embedded (library, default)** | Nothing—MeshSync runs as a library inside Meshery Server for that connection. | No in-cluster footprint; useful where you can't or won't deploy the Operator. Shifts discovery work into the Server process. |
 
-The default mode for new connections is set by
-`MESHSYNC_DEFAULT_DEPLOYMENT_MODE` (`operator` or `embedded`), and the mode can
-be switched per connection on the connections page. Switching from operator to
+The mode for new connections is governed by
+`MESHSYNC_DEFAULT_DEPLOYMENT_MODE` (`operator` or `embedded`), which **defaults
+to `embedded`**, and the mode can be switched per connection on the connections
+page. Switching from operator to
 embedded undeploys the in-cluster components and starts the in-Server routine;
 switching back redeploys them. Choose per cluster based on whether in-cluster
 deployment is acceptable and on the Server's capacity to absorb embedded
 discovery (see
-[Infrastructure, Sizing &amp; Performance](/installation/production/infrastructure-sizing-and-performance)).
+[Infrastructure, Sizing & Performance](/installation/production/infrastructure-sizing-and-performance)).
 
 ### Cloud-managed vs. self-managed Kubernetes
 
@@ -82,7 +83,7 @@ For a fleet, kubeconfig/context management is the operational backbone:
   meaningful.
 - Treat the **set of connections as version-controlled configuration** so the
   fleet can be reconstructed during recovery (see
-  [High Availability &amp; Resiliency](/installation/production/high-availability-and-resiliency)).
+  [High Availability & Resiliency](/installation/production/high-availability-and-resiliency)).
 - Prefer short-lived or provider-issued credentials where the cloud supports
   them, and rotate per-cluster credentials independently.
 
@@ -101,7 +102,7 @@ The practical implications across a fleet:
   supported and that the resulting endpoint is reachable from the Server.
 - Restrict that exposure to the Server's network origin (security groups,
   load-balancer source ranges, private connectivity). See
-  [Networking &amp; Connectivity](/installation/production/networking-and-connectivity).
+  [Networking & Connectivity](/installation/production/networking-and-connectivity).
 
 {{% alert title="The #1 multi-cloud pitfall" color="warning" %}}
 The most common cross-cloud failure is an unreachable Broker endpoint: the
@@ -136,7 +137,7 @@ that matter:
 - **Per-cluster connection health.** Each connection's chip in the UI reflects
   live connectivity; Broker/Operator/MeshSync follow the connection lifecycle.
   Watch these as fleet KPIs (see
-  [Monitoring, Observability &amp; Health KPIs](/installation/production/monitoring-observability-and-kpis)).
+  [Monitoring, Observability & Health KPIs](/installation/production/monitoring-observability-and-kpis)).
 - **Per-cluster discovery scope.** Tune MeshSync's `informer_config` blacklist
   per cluster to control footprint on large clusters
   ([sizing](/installation/production/infrastructure-sizing-and-performance)).

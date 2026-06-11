@@ -96,7 +96,7 @@ application, register the same external callback
 {{% alert title="Callback URL and ingress go together" color="info" %}}
 If you front Meshery with an ingress (you should), set
 `MESHERY_SERVER_CALLBACK_URL` to the public hostname at the same time. See
-[Networking &amp; Connectivity](/installation/production/networking-and-connectivity)
+[Networking & Connectivity](/installation/production/networking-and-connectivity)
 for the ingress, TLS, and WebSocket configuration the OAuth flow depends on.
 {{% /alert %}}
 
@@ -117,7 +117,7 @@ authorization is expressed through the provider model. Production notes:
 
 - Meshery loads provider capabilities at startup; readiness/health reflect that
   capabilities are loaded (see
-  [High Availability &amp; Resiliency](/installation/production/high-availability-and-resiliency)).
+  [High Availability & Resiliency](/installation/production/high-availability-and-resiliency)).
 - For tightly egress-restricted or offline environments, capabilities can be
   loaded from a local file via `PROVIDER_CAPABILITIES_FILEPATH` instead of the
   provider's endpoint. Use this deliberately; it pins capabilities rather than
@@ -147,7 +147,7 @@ Remote Provider is required for multi-user production.
   clear.
 - Treat the Remote Provider as part of your availability model—login depends on
   it. See
-  [High Availability &amp; Resiliency](/installation/production/high-availability-and-resiliency).
+  [High Availability & Resiliency](/installation/production/high-availability-and-resiliency).
 
 ## Identity checklist
 

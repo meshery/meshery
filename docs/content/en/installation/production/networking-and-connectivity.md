@@ -45,6 +45,12 @@ initiated, not just the ports.
 | Meshery Server | Meshery Adapters | adapter ports (e.g. 10000+/tcp) | Capability operations | Only when adapters are deployed. |
 | Operations/monitoring | Meshery Broker | 8222/tcp | Broker HTTP monitoring endpoint | Optional; for observability. |
 
+The `9081/tcp` (API) and `80/tcp` (WebSocket) values are Meshery Server's
+component ports as listed in the [port table above](#network-ports). In a
+production deployment you do not expose these directly: front them with a single
+external HTTPS endpoint at the ingress, which serves both the APIs (`https://`)
+and the WebSocket (`wss://`) over `443`—see [below](#exposing-meshery-securely-ingress-tls-websocket).
+
 {{% alert title="Direction matters for out-of-cluster" color="info" %}}
 When Meshery Server is out-of-cluster, the Server initiates connections **to**
 each managed cluster's API server and Broker. Those endpoints must be reachable
@@ -121,7 +127,7 @@ The callback path Meshery uses is `/api/user/token`, so the effective callback
 becomes `https://meshery.example.com/api/user/token`. If login redirects fail or
 loop when behind a proxy, a missing or incorrect callback URL is the usual
 cause. See
-[Authentication, Authorization &amp; Identity](/installation/production/authentication-and-identity)
+[Authentication, Authorization & Identity](/installation/production/authentication-and-identity)
 and the
 [environment variables reference](/installation/advanced/environment-variables).
 
@@ -152,7 +158,7 @@ status:
 Confirm the cluster supports the Service type you rely on (`LoadBalancer` or
 `NodePort`) and that the resulting `external` endpoint is reachable from Meshery
 Server. This is the most common multi-cloud connectivity pitfall—see
-[Multi-Cluster &amp; Multi-Cloud](/installation/production/multi-cluster-and-multi-cloud).
+[Multi-Cluster & Multi-Cloud](/installation/production/multi-cluster-and-multi-cloud).
 
 ## Egress requirements
 
@@ -197,6 +203,6 @@ After deployment, validate connectivity end-to-end:
 - In the UI, the connection chip for each cluster reflects live connectivity;
   the Broker and Operator/MeshSync follow the connection's lifecycle.
 - For Broker/Operator/MeshSync connectivity problems, use the
-  [Operator &amp; MeshSync troubleshooting guide](/guides/troubleshooting/meshery-operator-meshsync).
+  [Operator & MeshSync troubleshooting guide](/guides/troubleshooting/meshery-operator-meshsync).
 
 {{< related-discussions tag="meshery" >}}

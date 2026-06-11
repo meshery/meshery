@@ -56,7 +56,7 @@ is taken.
 | KPI | Why it matters | Healthy signal |
 | :--- | :--- | :--- |
 | Liveness/readiness status | Core availability | Both passing; readiness stable, not flapping |
-| API/GraphQL latency &amp; error rate | User-facing responsiveness | Low p95 latency; low 5xx/error rate |
+| API/GraphQL latency & error rate | User-facing responsiveness | Low p95 latency; low 5xx/error rate |
 | CPU utilization | Saturation under load/policy eval | Comfortably below limit |
 | Memory utilization | Holds the MeshSync snapshot/registry; restart risk if exhausted | Comfortable headroom below limit |
 | Restart count | Crash-loop / OOM detection | Stable; no recurring restarts |
@@ -66,8 +66,8 @@ is taken.
 
 | KPI | Why it matters | Healthy signal |
 | :--- | :--- | :--- |
-| Operator pod running &amp; reconciling | Manages Broker/MeshSync lifecycle | Running; no reconcile errors |
-| MeshSync running &amp; syncing | Cluster snapshot freshness | Running; snapshot updates as the cluster changes |
+| Operator pod running & reconciling | Manages Broker/MeshSync lifecycle | Running; no reconcile errors |
+| MeshSync running & syncing | Cluster snapshot freshness | Running; snapshot updates as the cluster changes |
 | Broker pod running | Eventing path up | StatefulSet pod ready |
 | Broker memory | In-memory message backlog | Stable; not climbing (a climb means the Server consumer is behind) |
 | Connection/chip status (per cluster) | End-to-end connectivity | Connected; Broker/Operator/MeshSync following the connection |
@@ -76,7 +76,7 @@ is taken.
 
 | KPI | Why it matters | Healthy signal |
 | :--- | :--- | :--- |
-| Provider reachability (egress) | Login &amp; durable state depend on it | Reachable over HTTPS; auth succeeding |
+| Provider reachability (egress) | Login & durable state depend on it | Reachable over HTTPS; auth succeeding |
 | Auth success rate | User access | High success; no spikes in login failures |
 
 {{% alert title="Watch Broker memory and Server memory together" color="info" %}}
@@ -84,7 +84,7 @@ Two early-warning signals deserve dedicated alerts: **Meshery Server memory**
 (undersizing causes restarts that drop the cache) and **Broker memory** (a climb
 indicates the Server consumer is falling behind). Together they catch most
 capacity problems before they become outages. See
-[Infrastructure, Sizing &amp; Performance](/installation/production/infrastructure-sizing-and-performance).
+[Infrastructure, Sizing & Performance](/installation/production/infrastructure-sizing-and-performance).
 {{% /alert %}}
 
 ## Metrics with Prometheus and Grafana
@@ -165,7 +165,7 @@ links (troubleshooting, sizing, networking) in the alert.
 
 When a KPI trips, these guides are the fastest path to resolution:
 
-- [Operator &amp; MeshSync troubleshooting](/guides/troubleshooting/meshery-operator-meshsync)
+- [Operator & MeshSync troubleshooting](/guides/troubleshooting/meshery-operator-meshsync)
   — Broker, MeshSync, and Operator issues.
 - [Meshery Server troubleshooting](/guides/troubleshooting/meshery-server)
   — Server startup, provider, and API issues.

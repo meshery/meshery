@@ -38,6 +38,11 @@ independently. For Kubernetes production deployments:
     --wait --timeout 10m
   ```
 
+  For reproducible production upgrades, download `values-upgrade.yaml`,
+  version-control it alongside your own values, and reference your local copy
+  (with a pinned chart and image version) rather than fetching from `master` at
+  upgrade time.
+
 - **Choose a release channel deliberately.** `stable` for production; `edge`
   only for testing. The channel is reflected by `RELEASE_CHANNEL`.
 - **Mind component groupings.** See the
@@ -64,7 +69,7 @@ production architecture:
   local disk, not a shared multi-writer datastore. Durable state must come from
   a [Remote Provider](/installation/production/authentication-and-identity);
   this also shapes how Server replication behaves
-  ([HA &amp; Resiliency](/installation/production/high-availability-and-resiliency)).
+  ([HA & Resiliency](/installation/production/high-availability-and-resiliency)).
 - **The Broker persists messages in memory only.** No persistent volume is used.
   Brief interruptions are bridged by NATS topic persistence, but a far-behind or
   unavailable Server consumer lets Broker memory climb
@@ -102,7 +107,7 @@ Work through these before going live. Each group links to its source page.
 - [ ] One Operator/MeshSync/Broker per managed cluster (or embedded mode chosen
       deliberately).
 
-### Sizing &amp; performance
+### Sizing & performance
 
 - [ ] Explicit CPU/memory **requests and limits** set for Server, Operator,
       MeshSync, and Broker.
@@ -113,16 +118,16 @@ Work through these before going live. Each group links to its source page.
 - [ ] Storage provisioned for the Server cache; autoscaling configured where
       appropriate.
 
-### High availability &amp; resiliency
+### High availability & resiliency
 
 - [ ] Liveness/readiness probes enabled and tuned.
-      [HA &amp; Resiliency](/installation/production/high-availability-and-resiliency)
+      [HA & Resiliency](/installation/production/high-availability-and-resiliency)
 - [ ] Anti-affinity spreads replicas across nodes/zones.
 - [ ] Helm values, env config, and connection definitions in version control
       (your real backup).
 - [ ] Redeploy-from-config recovery drill validated.
 
-### Networking &amp; connectivity
+### Networking & connectivity
 
 - [ ] Ingress fronts Meshery with TLS; **WebSocket upgrades** verified.
       [Networking](/installation/production/networking-and-connectivity)
@@ -131,7 +136,7 @@ Work through these before going live. Each group links to its source page.
 - [ ] Egress to the Remote Provider and registries allowed; network policies
       applied.
 
-### Security &amp; identity
+### Security & identity
 
 - [ ] **Remote Provider preselected** (`PROVIDER`, `PROVIDER_BASE_URLS`); Local
       Provider not used.
@@ -144,17 +149,17 @@ Work through these before going live. Each group links to its source page.
 - [ ] Secrets (kubeconfig, provider, pull) sourced from Secrets/external manager.
 - [ ] Images pinned to immutable tags from a trusted/mirrored registry.
 
-### Multi-cluster &amp; multi-cloud
+### Multi-cluster & multi-cloud
 
 - [ ] One least-privilege kubeconfig context per cluster.
       [Multi-Cloud](/installation/production/multi-cluster-and-multi-cloud)
 - [ ] Per-cloud node-watch RBAC and Broker endpoint reachability validated.
 - [ ] Private connectivity for private clusters; cross-region latency assessed.
 
-### Monitoring &amp; observability
+### Monitoring & observability
 
 - [ ] External uptime check on `/healthz/ready`; workload metrics scraped.
-      [Monitoring &amp; KPIs](/installation/production/monitoring-observability-and-kpis)
+      [Monitoring & KPIs](/installation/production/monitoring-observability-and-kpis)
 - [ ] Dedicated alerts on Server memory and Broker memory; per-cluster
       connection health and provider reachability monitored.
 - [ ] OpenTelemetry tracing to a real collector; logs centralized at

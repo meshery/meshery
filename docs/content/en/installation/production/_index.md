@@ -42,7 +42,7 @@ manage many clusters concurrently, across one or more clouds.
 For an authoritative description of each component and how the pieces fit
 together, start with the [Meshery Architecture](/concepts/architecture)
 reference. The
-[Deployment Models &amp; Reference Architecture](/installation/production/deployment-models)
+[Deployment Models & Reference Architecture](/installation/production/deployment-models)
 page in this set translates that architecture into production topology
 decisions.
 
@@ -59,15 +59,15 @@ reference material.
 
 | Area | What it covers |
 | :--- | :--- |
-| **[Deployment Models &amp; Reference Architecture](/installation/production/deployment-models)** | In-cluster vs. out-of-cluster, Docker vs. Kubernetes, component inventory and statefulness, and the single-cluster, multi-cluster, and multi-cloud topology patterns. |
-| **[Infrastructure, Sizing &amp; Performance](/installation/production/infrastructure-sizing-and-performance)** | Resource requirements per component, capacity planning, MeshSync tiered discovery, Broker throughput, scalability levers, and known performance bounds. |
-| **[High Availability &amp; Resiliency](/installation/production/high-availability-and-resiliency)** | Replication, health probes, failure modes and recovery, the ephemeral database, Remote Provider persistence, and backup &amp; disaster recovery posture. |
-| **[Networking &amp; Connectivity](/installation/production/networking-and-connectivity)** | Network port and directional-flow matrix, ingress and Emissary configuration, secure WebSocket support, Broker exposure, egress, and network policies. |
+| **[Deployment Models & Reference Architecture](/installation/production/deployment-models)** | In-cluster vs. out-of-cluster, Docker vs. Kubernetes, component inventory and statefulness, and the single-cluster, multi-cluster, and multi-cloud topology patterns. |
+| **[Infrastructure, Sizing & Performance](/installation/production/infrastructure-sizing-and-performance)** | Resource requirements per component, capacity planning, MeshSync tiered discovery, Broker throughput, scalability levers, and known performance bounds. |
+| **[High Availability & Resiliency](/installation/production/high-availability-and-resiliency)** | Replication, health probes, failure modes and recovery, the ephemeral database, Remote Provider persistence, and backup & disaster recovery posture. |
+| **[Networking & Connectivity](/installation/production/networking-and-connectivity)** | Network port and directional-flow matrix, ingress and Emissary configuration, secure WebSocket support, Broker exposure, egress, and network policies. |
 | **[Security Hardening](/installation/production/security-hardening)** | RBAC and least privilege, pod and container security contexts, secret and kubeconfig handling, TLS, supply-chain integrity, and namespace isolation. |
-| **[Authentication, Authorization &amp; Identity](/installation/production/authentication-and-identity)** | Why to preselect a Remote Provider over the Local Provider, OAuth callback configuration, identity providers, and keys/permissions. |
-| **[Multi-Cluster &amp; Multi-Cloud Operations](/installation/production/multi-cluster-and-multi-cloud)** | Managed vs. unmanaged cluster connections, one Operator per cluster, kubeconfig and context management, MeshSync modes, and cloud-specific guidance. |
-| **[Monitoring, Observability &amp; Health KPIs](/installation/production/monitoring-observability-and-kpis)** | Health endpoints, the key performance indicators of Meshery's health, metrics, tracing, centralized logging, and alerting. |
-| **[Operational Readiness Checklist &amp; Known Caveats](/installation/production/operational-readiness-checklist)** | A consolidated, actionable checklist across every dimension, plus upgrade strategy and the caveats to plan around. |
+| **[Authentication, Authorization & Identity](/installation/production/authentication-and-identity)** | Why to preselect a Remote Provider over the Local Provider, OAuth callback configuration, identity providers, and keys/permissions. |
+| **[Multi-Cluster & Multi-Cloud Operations](/installation/production/multi-cluster-and-multi-cloud)** | Managed vs. unmanaged cluster connections, one Operator per cluster, kubeconfig and context management, MeshSync modes, and cloud-specific guidance. |
+| **[Monitoring, Observability & Health KPIs](/installation/production/monitoring-observability-and-kpis)** | Health endpoints, the key performance indicators of Meshery's health, metrics, tracing, centralized logging, and alerting. |
+| **[Operational Readiness Checklist & Known Caveats](/installation/production/operational-readiness-checklist)** | A consolidated, actionable checklist across every dimension, plus upgrade strategy and the caveats to plan around. |
 
 ## Production-readiness principles
 
@@ -81,7 +81,7 @@ deployment decisions:
 2. **Prefer a preselected Remote Provider in production.** Pinning a Remote
    Provider avoids unauthenticated Local Provider sessions and lets you control
    which identity providers are accepted. See
-   [Authentication, Authorization &amp; Identity](/installation/production/authentication-and-identity).
+   [Authentication, Authorization & Identity](/installation/production/authentication-and-identity).
 3. **Right-size for discovery, not just for traffic.** Meshery's footprint is
    driven as much by the size and number of clusters it discovers (via
    [MeshSync](/concepts/architecture/meshsync)) as by user-facing API load.

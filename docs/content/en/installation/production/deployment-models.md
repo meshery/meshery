@@ -45,8 +45,8 @@ When Meshery Server is out-of-cluster, it must be able to reach the
 cluster. The Broker's externally reachable endpoint is derived from the
 cluster's Service type (LoadBalancer, NodePort, or ClusterIP). Plan Broker
 exposure deliberately—see
-[Networking &amp; Connectivity](/installation/production/networking-and-connectivity)
-and [Multi-Cluster &amp; Multi-Cloud](/installation/production/multi-cluster-and-multi-cloud).
+[Networking & Connectivity](/installation/production/networking-and-connectivity)
+and [Multi-Cluster & Multi-Cloud](/installation/production/multi-cluster-and-multi-cloud).
 {{% /alert %}}
 
 ## How Meshery is hosted: Docker vs. Kubernetes
@@ -96,7 +96,7 @@ Two implications dominate production planning:
    resources into the Server's database. The number and size of managed clusters
    therefore influence Server memory and database size as much as user traffic
    does. See
-   [Infrastructure, Sizing &amp; Performance](/installation/production/infrastructure-sizing-and-performance).
+   [Infrastructure, Sizing & Performance](/installation/production/infrastructure-sizing-and-performance).
 
 ## One Operator (and Broker and MeshSync) per cluster
 
@@ -108,11 +108,11 @@ Meshery Server is in-cluster or out-of-cluster. The Operator is deployed when
 Meshery Server connects to a cluster and removed when it disconnects (or via the
 on/off control in the UI).
 
-MeshSync can also run in **embedded mode**, where it executes as a library
-inside Meshery Server and deploys no resources into the managed cluster. The
-mode is chosen per connection and has meaningful production trade-offs covered
-in
-[Multi-Cluster &amp; Multi-Cloud Operations](/installation/production/multi-cluster-and-multi-cloud).
+MeshSync can instead run in **embedded mode**—the default for new Kubernetes
+connections—where it executes as a library inside Meshery Server and deploys no
+resources into the managed cluster. The mode is chosen per connection and has
+meaningful production trade-offs covered in
+[Multi-Cluster & Multi-Cloud Operations](/installation/production/multi-cluster-and-multi-cloud).
 
 ## Topology patterns
 
@@ -139,7 +139,7 @@ providers (for example EKS, GKE, and AKS). The differences are practical rather
 than architectural: per-cloud node-watch RBAC, how each cloud surfaces a
 reachable Broker endpoint (LoadBalancer hostname vs. IP vs. NodePort), and
 cross-region latency. See
-[Multi-Cluster &amp; Multi-Cloud Operations](/installation/production/multi-cluster-and-multi-cloud).
+[Multi-Cluster & Multi-Cloud Operations](/installation/production/multi-cluster-and-multi-cloud).
 
 ### Highly available management plane
 
@@ -147,7 +147,7 @@ Any of the above can be made highly available by running Meshery Server with
 appropriate replication and health probes on Kubernetes, and by relying on a
 Remote Provider for durable state. The mechanics—and the caveats around the
 single-writer SQLite database and the in-memory Broker—are covered in
-[High Availability &amp; Resiliency](/installation/production/high-availability-and-resiliency).
+[High Availability & Resiliency](/installation/production/high-availability-and-resiliency).
 
 ## Choosing a model
 
