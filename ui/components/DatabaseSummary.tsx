@@ -109,8 +109,18 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
       if (searchText) setPage(0);
       setSearchText(searchText != null ? searchText : '');
     }),
-    onColumnSortChange: (_, direction) => {
-      setSortOrder(`name ${direction}`);
+    onColumnSortChange: (column, direction) => {
+      const allowedCollumns = ['name', 'count'];
+      const allowedDirection = ['asc', 'desc'];
+
+      if (
+        typeof column === 'string' &&
+        typeof direction === 'string' &&
+        allowedCollumns.includes(column) &&
+        allowedDirection.includes(direction)
+      ) {
+        setSortOrder(`${column} ${direction}`);
+      }
     },
   };
 
