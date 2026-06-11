@@ -24,14 +24,18 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	var totalTables int64
 	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 
-	tableFinder := h.dbHandler.DB.Table("sqlite_schema").
+	tableQueryBase := h.dbHandler.DB.Table("sqlite_schema AS s").
 		Where("type = ?", "table")
 
 	if search != "" {
-		tableFinder = tableFinder.Where("name LIKE ?", "%"+search+"%")
+		tableQueryBase = tableQueryBase.Where("name LIKE ?", "%"+search+"%")
 	}
 
-	tableFinder.Count(&totalTables)
+	tableQueryBase.Count(&totalTables)
+
+	tableFinder := tableQueryBase.
+		Select("s.*, CAST(COALESCE(st.stat, '0') AS INTEGER) as count").
+		Joins("LEFT JOIN sqlite_stat1 st ON s.name = st.tbl")
 
 	if limit != 0 {
 		tableFinder = tableFinder.Limit(limit)
@@ -39,7 +43,7 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	if offset != 0 {
 		tableFinder = tableFinder.Offset(offset)
 	}
-	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name", "count"})
 	if order != "" {
 		if sort == "desc" {
 			tableFinder = tableFinder.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
@@ -51,7 +55,6 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	tableFinder.Find(&tables)
 
 	for i := range tables {
-		h.dbHandler.DB.Table(tables[i].Name).Count(&tables[i].Count)
 		recordCount += int(tables[i].Count)
 	}
 
