@@ -46,10 +46,8 @@ vi.mock('@sistent/sistent', () => ({
   ListItemIcon: ({ children }: any) => <span>{children}</span>,
   ListItemText: ({ primary }: any) => <span>{primary}</span>,
   IconButton: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
-  ChevronLeftIcon: (props) =>
-    React.createElement('svg', { 'data-component': 'chevron-left-icon', ...props }),
-  ChevronRightIcon: (props) =>
-    React.createElement('svg', { 'data-component': 'chevron-right-icon', ...props }),
+  LeftArrowIcon: (props: any) =>
+    React.createElement('svg', { 'data-component': 'left-arrow-icon', ...props }),
   FileIcon: () => <svg data-testid="file-icon" />,
   InfoIcon: () => <svg data-testid="info-icon" />,
   DatabaseIcon: () => <svg data-testid="database-icon" />,

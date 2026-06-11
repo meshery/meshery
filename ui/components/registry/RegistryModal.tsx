@@ -14,9 +14,7 @@ import { useContext, useState, useEffect, ReactNode, FC } from 'react';
 import {
   ModalBody,
   List,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  IconButton,
+  LeftArrowIcon,
   ListItem,
   ListItemButton,
   ListItemIcon,
@@ -28,6 +26,7 @@ import {
   DatabaseIcon,
   DARK_BLUE_GRAY,
   useMediaQuery,
+  alpha,
 } from '@sistent/sistent';
 import { styled, useTheme } from '@/theme';
 import { Modal } from '@/components/shared/Modal';
@@ -47,20 +46,43 @@ import { removeDuplicateVersions } from './helper';
 
 const DRAWER_WIDTH = 250;
 
-const DrawerHeader = styled('div', {
-  shouldForwardProp: (prop) => prop !== 'open',
-})<{ open?: boolean }>(({ theme, open }) => ({
+export const ChevronButtonWrapper = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'isCollapsed',
+})<{ isCollapsed: boolean }>(({ isCollapsed, theme }) => ({
+  backgroundColor: theme.palette.background.tabs,
+  color: isCollapsed ? theme.palette.background.constant.white : 'inherit',
+  boxShadow: !isCollapsed
+    ? `0.5px 0px 0px 0px ${alpha(theme.palette.common.black, 0.2)}, 1.5px 0px 0px 0px ${alpha(
+        theme.palette.common.black,
+        0.14,
+      )}, 2.5px 1px 3px 0px ${alpha(theme.palette.common.black, 0.12)}`
+    : 'none',
+  position: 'fixed',
+  borderRadius: '0 5px 5px 0',
+  cursor: 'pointer',
+  bottom: '12%',
+  left: isCollapsed ? '49px' : '257px',
+  zIndex: '1400',
+  width: 'auto',
+  transition: 'left 225ms',
+  transform: isCollapsed ? 'rotate(180deg)' : 'none',
   display: 'flex',
-  alignItems: 'flex-end',
-  justifyContent: open ? 'flex-end' : 'center',
-  marginBottom: '1rem',
-  height: '100%',
-  ...theme.mixins.toolbar,
+  justifyContent: 'center',
+
+  '&:hover': {
+    opacity: 1,
+    background: !isCollapsed ? theme.palette.background.card : undefined,
+  },
+  '&:focus': {
+    opacity: 1,
+    background: !isCollapsed ? theme.palette.background.card : undefined,
+  },
 }));
 
 const StyledDrawer = styled(Drawer, { shouldForwardProp: (prop) => prop !== 'open' })<{
   open?: boolean;
 }>(({ theme, open }) => ({
+  position: 'relative',
   width: DRAWER_WIDTH,
   flexShrink: 0,
   whiteSpace: 'nowrap',
@@ -329,11 +351,22 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
             />
           ))}
         </List>
-        <DrawerHeader open={open}>
-          <IconButton onClick={handleDrawerToggle}>
-            {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
-        </DrawerHeader>
+        <ChevronButtonWrapper
+          isCollapsed={!open}
+          onClick={handleDrawerToggle}
+          style={{ position: 'absolute' }}
+        >
+          <LeftArrowIcon
+            alt="Sidebar collapse toggle"
+            style={{
+              cursor: 'pointer',
+              verticalAlign: 'middle',
+            }}
+            fill={theme.palette.icon.default}
+            width="1.2rem"
+            height="2.8rem"
+          />
+        </ChevronButtonWrapper>
       </StyledDrawer>
       <StyledMainContent>
         <RegistryContentWrapper
