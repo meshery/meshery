@@ -50,9 +50,9 @@ mesheryctl completion bash &gt; $(brew --prefix)/etc/bash_completion.d/mesheryct
 	start
 &lt;/h3&gt;
 &lt;p&gt;&lt;code&gt;mesheryctl system start&lt;/code&gt; : This will initiate Meshery &amp;amp; automatically open it in your default web browser.&lt;/p&gt;
-&lt;p&gt;&lt;a href="../../guides/mesheryctl/images/start.png"&gt;&lt;img alt="skip-browser" style="width:500px;height:auto;" src="../../guides/mesheryctl/images/start.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="images/start.png"&gt;&lt;img alt="skip-browser" style="width:500px;height:auto;" src="images/start.png" /&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;mesheryctl system start --skip-browser&lt;/code&gt; : It skips opening Meshery in your browser with the provided URL.&lt;/p&gt;
-&lt;p&gt;&lt;a href="../../guides/mesheryctl/images/skipbrowser.png"&gt;&lt;img alt="skip-browser" style="width:500px;height:auto;" src="../../guides/mesheryctl/images/skipbrowser.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="images/skipbrowser.png"&gt;&lt;img alt="skip-browser" style="width:500px;height:auto;" src="images/skipbrowser.png" /&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;mesheryctl system start --skip-update&lt;/code&gt; : It is used when you want to skip updating Meshery if an update is available.&lt;/p&gt;</description></item><item><title>Running system checks using Meshery CLI</title><link>/guides/mesheryctl/running-system-checks-using-mesheryctl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/running-system-checks-using-mesheryctl/</guid><description>&lt;p&gt;Meshery&amp;rsquo;s CLI, &lt;code&gt;mesheryctl&lt;/code&gt;, includes commands for verifying system readiness for a Meshery deployment and health checks to confirm the health of an existing Meshery deployment. Whether you have yet to deploy Meshery or have already deployed Meshery, &lt;code&gt;mesheryctl system check&lt;/code&gt; is a useful utility to ensure that your Meshery deployments are healthy.&lt;/p&gt;
 &lt;pre class="codeblock-pre"&gt;
 &lt;div class="codeblock"&gt;&lt;div class="clipboardjs"&gt;mesheryctl system check&lt;/div&gt;&lt;/div&gt;

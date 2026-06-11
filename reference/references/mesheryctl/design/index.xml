@@ -55,7 +55,7 @@ mesheryctl design apply [design-name]
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl design apply
-&lt;img class="content-image" src="../../../../reference/reference/images/patternApply.png" alt="pattern-apply-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-design-delete</title><link>/reference/references/mesheryctl/design/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/design/delete/</guid><description>&lt;h1 id="mesheryctl-design-delete"&gt;
+&lt;img class="content-image" src="../../../images/patternApply.png" alt="pattern-apply-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-design-delete</title><link>/reference/references/mesheryctl/design/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/design/delete/</guid><description>&lt;h1 id="mesheryctl-design-delete"&gt;
 	mesheryctl design delete
 &lt;/h1&gt;
 &lt;p&gt;Delete design file&lt;/p&gt;
@@ -103,7 +103,7 @@ mesheryctl design delete [file | URL]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="../../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-design-deploy</title><link>/reference/references/mesheryctl/design/deploy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/design/deploy/</guid><description>&lt;h1 id="mesheryctl-design-deploy"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-design-deploy</title><link>/reference/references/mesheryctl/design/deploy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/design/deploy/</guid><description>&lt;h1 id="mesheryctl-design-deploy"&gt;
 	mesheryctl design deploy
 &lt;/h1&gt;
 &lt;p&gt;Deploy design&lt;/p&gt;
@@ -154,7 +154,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl design deploy
-&lt;img class="content-image" src="../../../../reference/reference/images/pattern-onboard.png" alt="pattern-onboard-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-design-evaluate</title><link>/reference/references/mesheryctl/design/evaluate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/design/evaluate/</guid><description>&lt;h1 id="mesheryctl-design-evaluate"&gt;
+&lt;img class="content-image" src="../../../images/app-onboard.png" alt="pattern-onboard-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-design-evaluate</title><link>/reference/references/mesheryctl/design/evaluate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/design/evaluate/</guid><description>&lt;h1 id="mesheryctl-design-evaluate"&gt;
 	mesheryctl design evaluate
 &lt;/h1&gt;
 &lt;p&gt;Evaluate a design&lt;/p&gt;
@@ -301,7 +301,7 @@ mesheryctl design undeploy -f [filepath]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="../../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-design-view</title><link>/reference/references/mesheryctl/design/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/design/view/</guid><description>&lt;h1 id="mesheryctl-design-view"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-design-view</title><link>/reference/references/mesheryctl/design/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/design/view/</guid><description>&lt;h1 id="mesheryctl-design-view"&gt;
 	mesheryctl design view
 &lt;/h1&gt;
 &lt;p&gt;Display a design content&lt;/p&gt;
@@ -351,4 +351,4 @@ mesheryctl design view [design-name | ID]
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl design view
-&lt;img class="content-image" src="../../../../reference/reference/images/patternView.png" alt="pattern-view-usage" /&gt;&lt;/p&gt;</description></item></channel></rss>
+&lt;img class="content-image" src="../../../images/patternView.png" alt="pattern-view-usage" /&gt;&lt;/p&gt;</description></item></channel></rss>

@@ -101,7 +101,7 @@ mesheryctl exp [flags]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-version</title><link>/reference/references/mesheryctl/version/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/version/</guid><description>&lt;h1 id="mesheryctl-version"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-version</title><link>/reference/references/mesheryctl/version/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/version/</guid><description>&lt;h1 id="mesheryctl-version"&gt;
 	mesheryctl version
 &lt;/h1&gt;
 &lt;p&gt;Show Meshery CLI and Server versions&lt;/p&gt;
@@ -148,4 +148,4 @@ mesheryctl version
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl version
-&lt;img class="content-image" src="../../../reference/reference/images/version.png" alt="version-usage" /&gt;&lt;/p&gt;</description></item></channel></rss>
+&lt;img class="content-image" src="../../images/version.png" alt="version-usage" /&gt;&lt;/p&gt;</description></item></channel></rss>

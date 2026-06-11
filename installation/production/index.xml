@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Production Deployment on Documentation</title><link>/installation/production/</link><description>Recent content in Production Deployment on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/installation/production/index.xml" rel="self" type="application/rss+xml"/><item><title>Deployment Models &amp; Reference Architecture</title><link>/installation/production/deployment-models/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/production/deployment-models/</guid><description>&lt;p&gt;The first production decision is &lt;em&gt;where&lt;/em&gt; Meshery runs relative to the
 infrastructure it manages, and &lt;em&gt;how&lt;/em&gt; its components are hosted. This page frames
 those choices and maps the Meshery component inventory onto production
-topologies. It complements the &lt;a href="../../concepts/architecture/"&gt;Meshery Architecture&lt;/a&gt;
+topologies. It complements the &lt;a href="/concepts/architecture/"&gt;Meshery Architecture&lt;/a&gt;
 reference with the trade-offs that matter when the deployment is shared and
 long-lived.&lt;/p&gt;
 &lt;h2 id="where-meshery-runs-in-cluster-vs-out-of-cluster"&gt;
@@ -43,22 +43,22 @@ for lifecycle management, control over—the infrastructure it connects to. That
 makes hardening it a priority. This page covers the controls that reduce
 Meshery&amp;rsquo;s attack surface and blast radius in production. Identity and provider
 choices are covered separately in
-&lt;a href="../../installation/production/authentication-and-identity/"&gt;Authentication, Authorization &amp;amp; Identity&lt;/a&gt;;
+&lt;a href="/installation/production/authentication-and-identity/"&gt;Authentication, Authorization &amp;amp; Identity&lt;/a&gt;;
 read both together.&lt;/p&gt;
 &lt;div class="alert alert-warning" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Start with identity&lt;/div&gt;
 &lt;p&gt;The highest-impact security decision is to &lt;strong&gt;preselect a Remote Provider&lt;/strong&gt; so
 production never runs with the unauthenticated Local Provider, and so you
 control which identity providers are accepted. That topic has its own page:
-&lt;a href="../../installation/production/authentication-and-identity/"&gt;Authentication, Authorization &amp;amp; Identity&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Authentication, Authorization &amp; Identity</title><link>/installation/production/authentication-and-identity/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/production/authentication-and-identity/</guid><description>&lt;p&gt;Identity is the first security control to get right in production. Meshery&amp;rsquo;s
+&lt;a href="/installation/production/authentication-and-identity/"&gt;Authentication, Authorization &amp;amp; Identity&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Authentication, Authorization &amp; Identity</title><link>/installation/production/authentication-and-identity/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/production/authentication-and-identity/</guid><description>&lt;p&gt;Identity is the first security control to get right in production. Meshery&amp;rsquo;s
 authentication, authorization, and durable user state all flow from its
 &lt;strong&gt;provider&lt;/strong&gt; model. This page explains why production deployments should
 preselect a Remote Provider, how to configure the OAuth flow correctly behind an
 ingress, and how authorization is expressed. It pairs with
-&lt;a href="../../installation/production/security-hardening/"&gt;Security Hardening&lt;/a&gt;.&lt;/p&gt;
+&lt;a href="/installation/production/security-hardening/"&gt;Security Hardening&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="providers-local-vs-remote"&gt;
 	Providers: Local vs. Remote
 &lt;/h2&gt;
-&lt;p&gt;Meshery supports two kinds of &lt;a href="../../reference/extensibility/providers/"&gt;providers&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;Meshery supports two kinds of &lt;a href="/reference/extensibility/providers/"&gt;providers&lt;/a&gt;:&lt;/p&gt;
 &lt;table&gt;
  &lt;thead&gt;
  &lt;tr&gt;

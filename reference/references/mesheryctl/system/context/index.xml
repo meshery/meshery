@@ -59,7 +59,7 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl context create
-&lt;img class="content-image" src="../../../../../reference/reference/images/newcontext.png" alt="context-create-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-delete</title><link>/reference/references/mesheryctl/system/context/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/context/delete/</guid><description>&lt;h1 id="mesheryctl-system-context-delete"&gt;
+&lt;img class="content-image" src="../../../../images/newcontext.png" alt="context-create-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-delete</title><link>/reference/references/mesheryctl/system/context/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/context/delete/</guid><description>&lt;h1 id="mesheryctl-system-context-delete"&gt;
 	mesheryctl system context delete
 &lt;/h1&gt;
 &lt;p&gt;Delete context&lt;/p&gt;
@@ -110,7 +110,7 @@ mesheryctl system context delete [context name]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="../../../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-list</title><link>/reference/references/mesheryctl/system/context/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/context/list/</guid><description>&lt;h1 id="mesheryctl-system-context-list"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-list</title><link>/reference/references/mesheryctl/system/context/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/context/list/</guid><description>&lt;h1 id="mesheryctl-system-context-list"&gt;
 	mesheryctl system context list
 &lt;/h1&gt;
 &lt;p&gt;list contexts&lt;/p&gt;
@@ -158,7 +158,7 @@ mesheryctl system context list
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="../../../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-switch</title><link>/reference/references/mesheryctl/system/context/switch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/context/switch/</guid><description>&lt;h1 id="mesheryctl-system-context-switch"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-switch</title><link>/reference/references/mesheryctl/system/context/switch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/context/switch/</guid><description>&lt;h1 id="mesheryctl-system-context-switch"&gt;
 	mesheryctl system context switch
 &lt;/h1&gt;
 &lt;p&gt;switch context&lt;/p&gt;
@@ -207,7 +207,7 @@ mesheryctl system context switch sample
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl context switch
-&lt;img class="content-image" src="../../../../../reference/reference/images/contextswitch.png" alt="context-switch-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-view</title><link>/reference/references/mesheryctl/system/context/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/context/view/</guid><description>&lt;h1 id="mesheryctl-system-context-view"&gt;
+&lt;img class="content-image" src="../../../../images/contextswitch.png" alt="context-switch-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-view</title><link>/reference/references/mesheryctl/system/context/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/context/view/</guid><description>&lt;h1 id="mesheryctl-system-context-view"&gt;
 	mesheryctl system context view
 &lt;/h1&gt;
 &lt;p&gt;Display the current Meshery CLI configuration context&lt;/p&gt;

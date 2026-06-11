@@ -46,7 +46,7 @@ mesheryctl system provider list
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="../../../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-reset</title><link>/reference/references/mesheryctl/system/provider/reset/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/provider/reset/</guid><description>&lt;h1 id="mesheryctl-system-provider-reset"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-reset</title><link>/reference/references/mesheryctl/system/provider/reset/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/provider/reset/</guid><description>&lt;h1 id="mesheryctl-system-provider-reset"&gt;
 	mesheryctl system provider reset
 &lt;/h1&gt;
 &lt;p&gt;Clear the configured provider&lt;/p&gt;
@@ -94,7 +94,7 @@ mesheryctl system provider reset
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="../../../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-set</title><link>/reference/references/mesheryctl/system/provider/set/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/provider/set/</guid><description>&lt;h1 id="mesheryctl-system-provider-set"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-set</title><link>/reference/references/mesheryctl/system/provider/set/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/provider/set/</guid><description>&lt;h1 id="mesheryctl-system-provider-set"&gt;
 	mesheryctl system provider set
 &lt;/h1&gt;
 &lt;p&gt;set provider&lt;/p&gt;
@@ -143,7 +143,7 @@ mesheryctl system provider set [provider]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="../../../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-switch</title><link>/reference/references/mesheryctl/system/provider/switch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/provider/switch/</guid><description>&lt;h1 id="mesheryctl-system-provider-switch"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-switch</title><link>/reference/references/mesheryctl/system/provider/switch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/provider/switch/</guid><description>&lt;h1 id="mesheryctl-system-provider-switch"&gt;
 	mesheryctl system provider switch
 &lt;/h1&gt;
 &lt;p&gt;switch provider and redeploy&lt;/p&gt;
@@ -191,7 +191,7 @@ mesheryctl system provider switch [provider]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="../../../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-view</title><link>/reference/references/mesheryctl/system/provider/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/provider/view/</guid><description>&lt;h1 id="mesheryctl-system-provider-view"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-view</title><link>/reference/references/mesheryctl/system/provider/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/provider/view/</guid><description>&lt;h1 id="mesheryctl-system-provider-view"&gt;
 	mesheryctl system provider view
 &lt;/h1&gt;
 &lt;p&gt;view provider&lt;/p&gt;
@@ -240,4 +240,4 @@ mesheryctl system provider view
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="../../../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item></channel></rss>

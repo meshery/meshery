@@ -76,11 +76,11 @@ td {
  authoritative source schema definitions live in
  https://github.com/meshery/schemas.
 ---&gt;
-&lt;p&gt;Reference documentation for Meshery&amp;rsquo;s GraphQL API. The API can be explored interactively using the GraphQL Playground at &lt;code&gt;http://localhost:9081/api/system/graphql/playground&lt;/code&gt;, if you have built and are running Meshery Server from source. The authoritative source is the GraphQL schema at &lt;code&gt;server/internal/graphql/schema/schema.graphql&lt;/code&gt;; this page is a static snapshot. Each table below documents a GraphQL type.&lt;/p&gt;</description></item><item><title>Meshery Operator CRDs</title><link>/reference/references/meshery-operator-crds/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/meshery-operator-crds/</guid><description>&lt;p&gt;Included in &lt;a href="../../concepts/architecture/operator/"&gt;Meshery Operator&lt;/a&gt; are a couple of Kubernetes Custom Resource Definitions (CRDs) and a ConfigMap.&lt;/p&gt;
+&lt;p&gt;Reference documentation for Meshery&amp;rsquo;s GraphQL API. The API can be explored interactively using the GraphQL Playground at &lt;code&gt;http://localhost:9081/api/system/graphql/playground&lt;/code&gt;, if you have built and are running Meshery Server from source. The authoritative source is the GraphQL schema at &lt;code&gt;server/internal/graphql/schema/schema.graphql&lt;/code&gt;; this page is a static snapshot. Each table below documents a GraphQL type.&lt;/p&gt;</description></item><item><title>Meshery Operator CRDs</title><link>/reference/references/meshery-operator-crds/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/meshery-operator-crds/</guid><description>&lt;p&gt;Included in &lt;a href="/concepts/architecture/operator/"&gt;Meshery Operator&lt;/a&gt; are a couple of Kubernetes Custom Resource Definitions (CRDs) and a ConfigMap.&lt;/p&gt;
 &lt;h2 id="broker-crd"&gt;
 	Broker CRD
 &lt;/h2&gt;
-&lt;p&gt;The CRD is used to configure &lt;a href="../../concepts/architecture/broker/"&gt;Broker&lt;/a&gt; instances in a cluster.&lt;/p&gt;
+&lt;p&gt;The CRD is used to configure &lt;a href="/concepts/architecture/broker/"&gt;Broker&lt;/a&gt; instances in a cluster.&lt;/p&gt;
 &lt;h2 id="yaml-synopsis"&gt;
 	YAML synopsis
 &lt;/h2&gt;
@@ -105,7 +105,7 @@ td {
 &lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Customizable Permissions&lt;/div&gt;
 &lt;p&gt;Default permissions can be easily customized by simply creating your own keychains and roles.&lt;/div&gt;&lt;/p&gt;
 &lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Contributing to Permission Keys&lt;/div&gt;
-&lt;p&gt;To contribute permission keys, see the &lt;a href='../../extensibility/authorization'&gt;Authorization Extensibility Documentation&lt;/a&gt;. This guide explains Meshery&amp;rsquo;s extensible authorization system.&lt;/div&gt;&lt;/p&gt;
+&lt;p&gt;To contribute permission keys, see the &lt;a href='/reference/extensibility/authorization/'&gt;Authorization Extensibility Documentation&lt;/a&gt;. This guide explains Meshery&amp;rsquo;s extensible authorization system.&lt;/div&gt;&lt;/p&gt;
 &lt;div style="overflow-x:auto;"&gt;
 &lt;style&gt;
  tbody {

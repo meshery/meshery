@@ -2,7 +2,7 @@
 	What are Meshery Adapters?
 &lt;/h2&gt;
 &lt;p&gt;Part of Meshery&amp;rsquo;s extensibility as a platform, Meshery Adapters are purpopse-built to address an area in need of management that is either considered optional to the platform and/or is considered an area in which additional depth of control is needed. Adapters extend Meshery&amp;rsquo;s management capabilities in any number of ways, including lifecycle, configuration, performance, governance, identity and so on. Meshery Adapters come in different form factors, and depending on their purpose, deliver different sets or capabilities. Each Adapter registers its capabilities with Meshery Server. Meshery Server, in-turn, exposes those capabilities for you to control.&lt;/p&gt;</description></item><item><title>Broker</title><link>/concepts/architecture/broker/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/concepts/architecture/broker/</guid><description>&lt;p&gt;Broker is a custom Kubernetes controller that provides data streaming across independent components of Meshery whether those components are running inside or outside of the Kubernetes cluster.&lt;/p&gt;
-&lt;p&gt;&lt;a href="../../concepts/architecture/broker/images/meshery-log-viewer.svg"&gt;&lt;img class="content-image" src="./images/meshery-log-viewer.svg" alt="Meshery Log Viewer" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="/concepts/architecture/broker/images/meshery-log-viewer.svg"&gt;&lt;img class="content-image" src="./images/meshery-log-viewer.svg" alt="Meshery Log Viewer" /&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h3 id="broker-faqs"&gt;
 	Broker FAQs
 &lt;/h3&gt;
@@ -16,12 +16,12 @@
 &lt;p&gt;Meshery Catalog functions much like a cloud marketplace, providing a user-friendly interface for browsing, discovering, and sharing configurations and patterns for cloud native infrastructure. With Meshery Catalog, you can easily find and deploy Kubernetes-based infrastructure and tools, making it easy to streamline your cloud native development and operations processes.&lt;/p&gt;</description></item><item><title>Database</title><link>/concepts/architecture/database/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/concepts/architecture/database/</guid><description>&lt;h2 id="what-are-the-meshery-databases"&gt;
 	What are the Meshery Databases?
 &lt;/h2&gt;
-&lt;p&gt;Meshery Databases function as repositories for &lt;a href="../../concepts/architecture/meshsync/"&gt;MeshSync&lt;/a&gt;, user preferences and system settings. Both databases are considered ephemeral and should be treated as caches. Data retention is tethered to the lifetime of their Meshery Server instance. &lt;a href="../../extensibility/providers"&gt;Remote Providers&lt;/a&gt; may offer long-term data persistence. Meshery&amp;rsquo;s APIs offer mechanisms for clients, like &lt;a href="../../reference/mesheryctl"&gt;&lt;code&gt;mesheryctl&lt;/code&gt;&lt;/a&gt; and Meshery UI to retrieve data.&lt;/p&gt;
+&lt;p&gt;Meshery Databases function as repositories for &lt;a href="/concepts/architecture/meshsync/"&gt;MeshSync&lt;/a&gt;, user preferences and system settings. Both databases are considered ephemeral and should be treated as caches. Data retention is tethered to the lifetime of their Meshery Server instance. &lt;a href="/reference/extensibility/providers/"&gt;Remote Providers&lt;/a&gt; may offer long-term data persistence. Meshery&amp;rsquo;s APIs offer mechanisms for clients, like &lt;a href="/reference/references/mesheryctl/"&gt;&lt;code&gt;mesheryctl&lt;/code&gt;&lt;/a&gt; and Meshery UI to retrieve data.&lt;/p&gt;
 &lt;p&gt;See the figure below for additional details of the data formats supported and type of data stored.&lt;/p&gt;</description></item><item><title>MeshSync</title><link>/concepts/architecture/meshsync/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/concepts/architecture/meshsync/</guid><description>&lt;div style="display:flex;align-items:center;"&gt;
  &lt;div style="flex: 4;"&gt;
  &lt;h1&gt;MeshSync&lt;/h1&gt;
  &lt;p&gt;
- MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of managed multi-cloud and cloud native infrastructure. It operates in one of two modes: operator or embedded. When it runs in operator mode, it is managed by the &lt;a href="../../concepts/architecture/operator"&gt;Meshery Operator&lt;/a&gt;.
+ MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of managed multi-cloud and cloud native infrastructure. It operates in one of two modes: operator or embedded. When it runs in operator mode, it is managed by the &lt;a href="/concepts/architecture/operator/"&gt;Meshery Operator&lt;/a&gt;.
  &lt;/p&gt;
  &lt;/div&gt;
 &lt;/div&gt;
@@ -44,8 +44,8 @@
 	Deployments
 &lt;/h2&gt;
 &lt;p&gt;It is recommended to deploy one Meshery Operator per cluster.&lt;/p&gt;
-&lt;p&gt;&lt;a href="../../concepts/architecture/operator/images/meshery-operator-and-meshsync.svg"&gt;&lt;img class="content-image" src="./images/meshery-operator-and-meshsync.svg" alt="Meshery Operator and MeshSync" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="/concepts/architecture/operator/images/meshery-operator-and-meshsync.svg"&gt;&lt;img class="content-image" src="./images/meshery-operator-and-meshsync.svg" alt="Meshery Operator and MeshSync" /&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h3 id="initialization-sequence"&gt;
 	Initialization Sequence
 &lt;/h3&gt;
-&lt;p&gt;&lt;a href="../../concepts/architecture/operator/images/meshery-operator-deployment-sequence.svg"&gt;&lt;img class="content-image" src="./images/meshery-operator-deployment-sequence.svg" alt="Meshery Operator and MeshSync" /&gt;&lt;/a&gt;&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;&lt;a href="/concepts/architecture/operator/images/meshery-operator-deployment-sequence.svg"&gt;&lt;img class="content-image" src="./images/meshery-operator-deployment-sequence.svg" alt="Meshery Operator and MeshSync" /&gt;&lt;/a&gt;&lt;/p&gt;</description></item></channel></rss>

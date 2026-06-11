@@ -47,7 +47,7 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="../../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-workspace-list</title><link>/reference/references/mesheryctl/workspace/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/workspace/list/</guid><description>&lt;h1 id="mesheryctl-workspace-list"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-workspace-list</title><link>/reference/references/mesheryctl/workspace/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/workspace/list/</guid><description>&lt;h1 id="mesheryctl-workspace-list"&gt;
 	mesheryctl workspace list
 &lt;/h1&gt;
 &lt;p&gt;List registered workspaces&lt;/p&gt;
@@ -111,7 +111,7 @@ mesheryctl workspace list --orgId [orgId] --count
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="../../../../reference/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="../../../../project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-workspace-view</title><link>/reference/references/mesheryctl/workspace/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/workspace/view/</guid><description>&lt;h1 id="mesheryctl-workspace-view"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-workspace-view</title><link>/reference/references/mesheryctl/workspace/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/workspace/view/</guid><description>&lt;h1 id="mesheryctl-workspace-view"&gt;
 	mesheryctl workspace view
 &lt;/h1&gt;
 &lt;p&gt;View a workspace&lt;/p&gt;

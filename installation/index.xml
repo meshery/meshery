@@ -6,7 +6,7 @@
 &lt;p&gt;Infrastructure diversity is a reality for any enterprise. Whether you&amp;rsquo;re running a single Kubernetes cluster or multiple Kubernetes clusters, on one cloud or multiple clouds, you&amp;rsquo;ll find that Meshery supports your infrastructure diversity (or lack thereof).&lt;/p&gt;</description></item><item><title>Quick Start Guide</title><link>/installation/quick-start/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/quick-start/</guid><description>&lt;p&gt;&lt;a name="getting-started"&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes is easy. Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster.&lt;/p&gt;
 &lt;div class="alert alert-warning" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Quick Start Assumptions&lt;/div&gt;
-&lt;p&gt;This quick start guide enables you to download, install, and run Meshery in a single command. See all &lt;a href='../installation'&gt;supported platforms&lt;/a&gt; for more specific (and less presumptuous) instructions.&lt;/p&gt;
+&lt;p&gt;This quick start guide enables you to download, install, and run Meshery in a single command. See all &lt;a href='/installation/'&gt;supported platforms&lt;/a&gt; for more specific (and less presumptuous) instructions.&lt;/p&gt;
 &lt;/div&gt;
 &lt;h2 id="1-download-install-and-run-meshery"&gt;
 	1. Download, install, and run Meshery

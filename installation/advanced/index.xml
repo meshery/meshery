@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Advanced Configuration on Documentation</title><link>/installation/advanced/</link><description>Recent content in Advanced Configuration on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/installation/advanced/index.xml" rel="self" type="application/rss+xml"/><item><title>Codespaces</title><link>/installation/advanced/codespaces/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/advanced/codespaces/</guid><description>&lt;p&gt;Use Minikube in GitHub Codespaces to setup your development environment for Meshery.&lt;/p&gt;
 &lt;div class="prereqs"&gt;&lt;p&gt;&lt;strong style="font-size: 20px;"&gt;Prerequisites&lt;/strong&gt; &lt;/p&gt; 
  &lt;ol&gt;
- &lt;li&gt;Install the Meshery command line client, &lt;a href="../../installation/mesheryctl" class="meshery-light"&gt;mesheryctl&lt;/a&gt;.&lt;/li&gt;
+ &lt;li&gt;Install the Meshery command line client, &lt;a href="/installation/mesheryctl/" class="meshery-light"&gt;mesheryctl&lt;/a&gt;.&lt;/li&gt;
  &lt;/ol&gt;
 &lt;/div&gt;
 &lt;h2 id="available-deployment-methods"&gt;
 	Available Deployment Methods
 &lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="../../installation/advanced/codespaces/#in-cluster-installation"&gt;In-cluster Installation&lt;/a&gt;
+&lt;li&gt;&lt;a href="/installation/advanced/codespaces/#in-cluster-installation"&gt;In-cluster Installation&lt;/a&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="../../installation/advanced/codespaces/#preflight-checks"&gt;Preflight Checks&lt;/a&gt;
+&lt;li&gt;&lt;a href="/installation/advanced/codespaces/#preflight-checks"&gt;Preflight Checks&lt;/a&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="../../installation/advanced/codespaces/#preflight-cluster-connectivity"&gt;Preflight: Cluster Connectivity&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/installation/advanced/codespaces/#preflight-cluster-connectivity"&gt;Preflight: Cluster Connectivity&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;&lt;a href="../../installation/advanced/codespaces/#installation-using-mesheryctl"&gt;Installation: Using &lt;code&gt;mesheryctl&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="../../installation/advanced/codespaces/#installation-using-helm"&gt;Installation: Using Helm&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="../../installation/advanced/codespaces/#installation-manual-steps"&gt;Installation: Manual Steps&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/installation/advanced/codespaces/#installation-using-mesheryctl"&gt;Installation: Using &lt;code&gt;mesheryctl&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/installation/advanced/codespaces/#installation-using-helm"&gt;Installation: Using Helm&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/installation/advanced/codespaces/#installation-manual-steps"&gt;Installation: Manual Steps&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;&lt;a href="../../installation/advanced/codespaces/#post-installation-steps"&gt;Post-Installation Steps&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/installation/advanced/codespaces/#post-installation-steps"&gt;Post-Installation Steps&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h1 id="in-cluster-installation"&gt;
 	In-cluster Installation
