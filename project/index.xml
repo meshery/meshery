@@ -216,6 +216,7 @@
 &lt;tr&gt;
  &lt;th&gt; DATE ANNOUNCED &lt;/th&gt;
  &lt;th&gt; CVE ID &lt;/th&gt;
+ &lt;th&gt; SEVERITY (CVSS v3) &lt;/th&gt;
  &lt;th&gt; DESCRIPTION &lt;/th&gt;
  &lt;th&gt; AFFECTED COMPONENT &lt;/th&gt;
  &lt;th&gt; VULNERABLE VERSION &lt;/th&gt;
@@ -226,14 +227,75 @@
 
 
 &lt;tr&gt;
+ &lt;td&gt; 2024-08-05 &lt;/td&gt;
+ &lt;td&gt; CVE-2024-35182 &lt;/td&gt;
+ &lt;td&gt; Medium (5.9) &lt;/td&gt;
+ &lt;td&gt; A SQL injection vulnerability in Meshery prior to v0.7.22 in the events API (/api/v2/events, GetAllEvents) allows a remote attacker to execute arbitrary SQL via the sort parameter, including stacked queries and arbitrary file writes via ATTACH DATABASE. &lt;/td&gt;
+ &lt;td&gt; Events API (GetAllEvents) &lt;/td&gt;
+ &lt;td&gt; &amp;lt; v0.7.22 &lt;/td&gt;
+ &lt;td&gt; v0.7.22 &lt;/td&gt;
+ &lt;td&gt; &lt;a href="https://github.com/meshery/meshery/pull/10280"&gt;PR #10280&lt;/a&gt; &lt;/td&gt;
+ &lt;td&gt; &lt;a href="https://nvd.nist.gov/vuln/detail/CVE-2024-35182"&gt;NVD&lt;/a&gt;,&lt;br&gt;&lt;a href="https://github.com/advisories/GHSA-h7cm-jvpp-69xf"&gt;GHSA-h7cm-jvpp-69xf&lt;/a&gt;,&lt;br&gt;&lt;a href="https://securitylab.github.com/advisories/GHSL-2024-013_GHSL-2024-014_Meshery/"&gt;GitHub Security Lab&lt;/a&gt; &lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+ &lt;td&gt; 2024-08-05 &lt;/td&gt;
+ &lt;td&gt; CVE-2024-35181 &lt;/td&gt;
+ &lt;td&gt; Medium (5.9) &lt;/td&gt;
+ &lt;td&gt; A SQL injection vulnerability in Meshery prior to v0.7.22 in the GetMeshSyncResourcesKinds handler (/api/system/meshsync/resources/kinds) allows a remote attacker to execute arbitrary SQL via the order parameter, including stacked queries and arbitrary file writes via ATTACH DATABASE. &lt;/td&gt;
+ &lt;td&gt; MeshSync resources API (GetMeshSyncResourcesKinds) &lt;/td&gt;
+ &lt;td&gt; &amp;lt; v0.7.22 &lt;/td&gt;
+ &lt;td&gt; v0.7.22 &lt;/td&gt;
+ &lt;td&gt; &lt;a href="https://github.com/meshery/meshery/pull/10280"&gt;PR #10280&lt;/a&gt; &lt;/td&gt;
+ &lt;td&gt; &lt;a href="https://nvd.nist.gov/vuln/detail/CVE-2024-35181"&gt;NVD&lt;/a&gt;,&lt;br&gt;&lt;a href="https://github.com/advisories/GHSA-9f24-jrv4-f8g5"&gt;GHSA-9f24-jrv4-f8g5&lt;/a&gt;,&lt;br&gt;&lt;a href="https://securitylab.github.com/advisories/GHSL-2024-013_GHSL-2024-014_Meshery/"&gt;GitHub Security Lab&lt;/a&gt; &lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+ &lt;td&gt; 2024-08-05 &lt;/td&gt;
+ &lt;td&gt; CVE-2024-29031 &lt;/td&gt;
+ &lt;td&gt; High (7.5) &lt;/td&gt;
+ &lt;td&gt; A SQL injection vulnerability in Meshery prior to v0.7.17 allows a remote attacker to obtain sensitive information via the order parameter of the GetMeshSyncResources function. &lt;/td&gt;
+ &lt;td&gt; MeshSync resources API (GetMeshSyncResources) &lt;/td&gt;
+ &lt;td&gt; &amp;lt; v0.7.17 &lt;/td&gt;
+ &lt;td&gt; v0.7.17 &lt;/td&gt;
+ &lt;td&gt; &lt;a href="https://github.com/meshery/meshery/pull/10207"&gt;PR #10207&lt;/a&gt; &lt;/td&gt;
+ &lt;td&gt; &lt;a href="https://nvd.nist.gov/vuln/detail/CVE-2024-29031"&gt;NVD&lt;/a&gt;,&lt;br&gt;&lt;a href="https://github.com/advisories/GHSA-652r-q29p-m25h"&gt;GHSA-652r-q29p-m25h&lt;/a&gt;,&lt;br&gt;&lt;a href="https://securitylab.github.com/advisories/GHSL-2023-249_Meshery/"&gt;GitHub Security Lab&lt;/a&gt; &lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+ &lt;td&gt; 2024-07-24 &lt;/td&gt;
+ &lt;td&gt; CVE-2024-36535 &lt;/td&gt;
+ &lt;td&gt; Critical (9.8) &lt;/td&gt;
+ &lt;td&gt; Insecure default permissions in Meshery v0.7.51 allow an attacker to access sensitive data and escalate privileges by obtaining the Meshery ServiceAccount token. With the default Helm installation the interface is exposed on an external IP and permits open self-registration, so anyone who can reach it can sign up, gain broad visibility into cluster activity, deploy pods, and execute arbitrary code unless Meshery is secured or restricted to internal networks. &lt;/td&gt;
+ &lt;td&gt; Default deployment / RBAC (ServiceAccount token) &lt;/td&gt;
+ &lt;td&gt; v0.7.51 &lt;/td&gt;
+ &lt;td&gt; Mitigation only &lt;/td&gt;
+ &lt;td&gt; Mitigated by configuration &amp;mdash; see &lt;a href="../installation/production/security-hardening"&gt;Security Hardening&lt;/a&gt; and &lt;a href="../installation/production/authentication-and-identity"&gt;Authentication &amp;amp; Identity&lt;/a&gt; &lt;/td&gt;
+ &lt;td&gt; &lt;a href="https://nvd.nist.gov/vuln/detail/CVE-2024-36535"&gt;NVD&lt;/a&gt;,&lt;br&gt;&lt;a href="https://www.cve.org/CVERecord?id=CVE-2024-36535"&gt;cve.org&lt;/a&gt;,&lt;br&gt;&lt;a href="https://gist.github.com/HouqiyuA/2950c3993cdeff23afcbd73ba7a33879"&gt;advisory&lt;/a&gt; &lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+ &lt;td&gt; 2023-11-24 &lt;/td&gt;
+ &lt;td&gt; CVE-2023-46575 &lt;/td&gt;
+ &lt;td&gt; Critical (9.1) &lt;/td&gt;
+ &lt;td&gt; A SQL injection vulnerability in Meshery prior to v0.6.179 enables a remote attacker to retrieve sensitive information and execute arbitrary code via the order parameter. &lt;/td&gt;
+ &lt;td&gt; REST API (order parameter) &lt;/td&gt;
+ &lt;td&gt; &amp;lt; v0.6.179 &lt;/td&gt;
+ &lt;td&gt; v0.6.179 &lt;/td&gt;
+ &lt;td&gt; &lt;a href="https://github.com/meshery/meshery/pull/9372"&gt;PR #9372&lt;/a&gt; &lt;/td&gt;
+ &lt;td&gt; &lt;a href="https://nvd.nist.gov/vuln/detail/CVE-2023-46575"&gt;NVD&lt;/a&gt;,&lt;br&gt;&lt;a href="https://github.com/advisories/GHSA-9jjc-grg5-67gj"&gt;GHSA-9jjc-grg5-67gj&lt;/a&gt; &lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
  &lt;td&gt; 2021-04-28 &lt;/td&gt;
  &lt;td&gt; CVE-2021-31856 &lt;/td&gt;
+ &lt;td&gt; Critical (9.8) &lt;/td&gt;
  &lt;td&gt; A SQL Injection vulnerability in the REST API in Meshery 0.5.2 allows an attacker to execute arbitrary SQL commands via the /experimental/patternfiles endpoint (order parameter in GetMesheryPatterns in models/meshery_pattern_persister.go). &lt;/td&gt;
  &lt;td&gt; REST API &lt;/td&gt;
  &lt;td&gt; v0.5.2 &lt;/td&gt;
  &lt;td&gt; v0.5.3 &lt;/td&gt;
- &lt;td&gt; &lt;a href="https://github.com/meshery/meshery/pull/2745"&gt;fix pull&lt;/a&gt; &lt;/td&gt;
- &lt;td&gt; &lt;a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-31856"&gt;mitre&lt;/a&gt;,&lt;br&gt;&lt;a href="https://github.com/ssst0n3/CVE-2021-31856"&gt;details&lt;/a&gt; &lt;/td&gt;
+ &lt;td&gt; &lt;a href="https://github.com/meshery/meshery/pull/2745"&gt;PR #2745&lt;/a&gt; &lt;/td&gt;
+ &lt;td&gt; &lt;a href="https://nvd.nist.gov/vuln/detail/CVE-2021-31856"&gt;NVD&lt;/a&gt;,&lt;br&gt;&lt;a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-31856"&gt;mitre&lt;/a&gt;,&lt;br&gt;&lt;a href="https://github.com/ssst0n3/CVE-2021-31856"&gt;details&lt;/a&gt; &lt;/td&gt;
 &lt;/tr&gt;
 
 &lt;/table&gt;
