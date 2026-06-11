@@ -10,8 +10,8 @@ integrations-subcategory: Streaming & Messaging
 registrant: GitHub
 components: 
 - name: alias
-  colorIcon: content/en/extensions/models/azure-subscription/components/alias/icons/color/alias-color.svg
-  whiteIcon: content/en/extensions/models/azure-subscription/components/alias/icons/white/alias-white.svg
+  colorIcon: extensions/models/azure-subscription/components/alias/icons/color/alias-color.svg
+  whiteIcon: extensions/models/azure-subscription/components/alias/icons/white/alias-white.svg
   description: 
 components-count: 1
 relationships: 

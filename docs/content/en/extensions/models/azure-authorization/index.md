@@ -10,12 +10,12 @@ integrations-subcategory: Security Identity Compliance
 registrant: GitHub
 components: 
 - name: role-assignment
-  colorIcon: content/en/extensions/models/azure-authorization/components/role-assignment/icons/color/role-assignment-color.svg
-  whiteIcon: content/en/extensions/models/azure-authorization/components/role-assignment/icons/white/role-assignment-white.svg
+  colorIcon: extensions/models/azure-authorization/components/role-assignment/icons/color/role-assignment-color.svg
+  whiteIcon: extensions/models/azure-authorization/components/role-assignment/icons/white/role-assignment-white.svg
   description: 
 - name: role-definition
-  colorIcon: content/en/extensions/models/azure-authorization/components/role-definition/icons/color/role-definition-color.svg
-  whiteIcon: content/en/extensions/models/azure-authorization/components/role-definition/icons/white/role-definition-white.svg
+  colorIcon: extensions/models/azure-authorization/components/role-definition/icons/color/role-definition-color.svg
+  whiteIcon: extensions/models/azure-authorization/components/role-definition/icons/white/role-definition-white.svg
   description: 
 components-count: 2
 relationships: 

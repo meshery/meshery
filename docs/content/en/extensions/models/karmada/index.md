@@ -10,8 +10,8 @@ integrations-subcategory: Scheduling & Orchestration
 registrant: GitHub
 components: 
 - name: karmada
-  colorIcon: content/en/extensions/models/karmada/components/karmada/icons/color/karmada-color.svg
-  whiteIcon: content/en/extensions/models/karmada/components/karmada/icons/white/karmada-white.svg
+  colorIcon: extensions/models/karmada/components/karmada/icons/color/karmada-color.svg
+  whiteIcon: extensions/models/karmada/components/karmada/icons/white/karmada-white.svg
   description: 
 components-count: 1
 relationships: 

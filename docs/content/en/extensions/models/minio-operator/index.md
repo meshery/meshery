@@ -10,8 +10,8 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: tenant
-  colorIcon: content/en/extensions/models/minio-operator/components/tenant/icons/color/tenant-color.svg
-  whiteIcon: content/en/extensions/models/minio-operator/components/tenant/icons/white/tenant-white.svg
+  colorIcon: extensions/models/minio-operator/components/tenant/icons/color/tenant-color.svg
+  whiteIcon: extensions/models/minio-operator/components/tenant/icons/white/tenant-white.svg
   description: 
 components-count: 1
 relationships: 

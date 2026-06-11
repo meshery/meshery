@@ -10,8 +10,8 @@ integrations-subcategory: Machine Learning
 registrant: GitHub
 components: 
 - name: iot-hub
-  colorIcon: content/en/extensions/models/azure-devices/components/iot-hub/icons/color/iot-hub-color.svg
-  whiteIcon: content/en/extensions/models/azure-devices/components/iot-hub/icons/white/iot-hub-white.svg
+  colorIcon: extensions/models/azure-devices/components/iot-hub/icons/color/iot-hub-color.svg
+  whiteIcon: extensions/models/azure-devices/components/iot-hub/icons/white/iot-hub-white.svg
   description: 
 components-count: 1
 relationships: 

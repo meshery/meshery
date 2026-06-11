@@ -10,12 +10,12 @@ integrations-subcategory: Networking Content Delivery
 registrant: Artifact Hub
 components: 
 - name: eni-config
-  colorIcon: content/en/extensions/models/aws-vpc-cni/components/eni-config/icons/color/eni-config-color.svg
-  whiteIcon: content/en/extensions/models/aws-vpc-cni/components/eni-config/icons/white/eni-config-white.svg
+  colorIcon: extensions/models/aws-vpc-cni/components/eni-config/icons/color/eni-config-color.svg
+  whiteIcon: extensions/models/aws-vpc-cni/components/eni-config/icons/white/eni-config-white.svg
   description: 
 - name: policy-endpoint
-  colorIcon: content/en/extensions/models/aws-vpc-cni/components/policy-endpoint/icons/color/policy-endpoint-color.svg
-  whiteIcon: content/en/extensions/models/aws-vpc-cni/components/policy-endpoint/icons/white/policy-endpoint-white.svg
+  colorIcon: extensions/models/aws-vpc-cni/components/policy-endpoint/icons/color/policy-endpoint-color.svg
+  whiteIcon: extensions/models/aws-vpc-cni/components/policy-endpoint/icons/white/policy-endpoint-white.svg
   description: 
 components-count: 2
 relationships: 

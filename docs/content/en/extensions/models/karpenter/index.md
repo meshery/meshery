@@ -10,24 +10,24 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: aws-node-template
-  colorIcon: content/en/extensions/models/karpenter/components/aws-node-template/icons/color/aws-node-template-color.svg
-  whiteIcon: content/en/extensions/models/karpenter/components/aws-node-template/icons/white/aws-node-template-white.svg
+  colorIcon: extensions/models/karpenter/components/aws-node-template/icons/color/aws-node-template-color.svg
+  whiteIcon: extensions/models/karpenter/components/aws-node-template/icons/white/aws-node-template-white.svg
   description: 
 - name: provisioner
-  colorIcon: content/en/extensions/models/karpenter/components/provisioner/icons/color/provisioner-color.svg
-  whiteIcon: content/en/extensions/models/karpenter/components/provisioner/icons/white/provisioner-white.svg
+  colorIcon: extensions/models/karpenter/components/provisioner/icons/color/provisioner-color.svg
+  whiteIcon: extensions/models/karpenter/components/provisioner/icons/white/provisioner-white.svg
   description: 
 - name: node-claim
-  colorIcon: content/en/extensions/models/karpenter/components/node-claim/icons/color/node-claim-color.svg
-  whiteIcon: content/en/extensions/models/karpenter/components/node-claim/icons/white/node-claim-white.svg
+  colorIcon: extensions/models/karpenter/components/node-claim/icons/color/node-claim-color.svg
+  whiteIcon: extensions/models/karpenter/components/node-claim/icons/white/node-claim-white.svg
   description: 
 - name: node-pool
-  colorIcon: content/en/extensions/models/karpenter/components/node-pool/icons/color/node-pool-color.svg
-  whiteIcon: content/en/extensions/models/karpenter/components/node-pool/icons/white/node-pool-white.svg
+  colorIcon: extensions/models/karpenter/components/node-pool/icons/color/node-pool-color.svg
+  whiteIcon: extensions/models/karpenter/components/node-pool/icons/white/node-pool-white.svg
   description: 
 - name: oci-node-class
-  colorIcon: content/en/extensions/models/karpenter/components/oci-node-class/icons/color/oci-node-class-color.svg
-  whiteIcon: content/en/extensions/models/karpenter/components/oci-node-class/icons/white/oci-node-class-white.svg
+  colorIcon: extensions/models/karpenter/components/oci-node-class/icons/color/oci-node-class-color.svg
+  whiteIcon: extensions/models/karpenter/components/oci-node-class/icons/white/oci-node-class-white.svg
   description: 
 components-count: 5
 relationships: 
