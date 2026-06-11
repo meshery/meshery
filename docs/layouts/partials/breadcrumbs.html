@@ -10,7 +10,7 @@
   {{ range $index, $crumb := $crumbs }}
     {{ if and $crumb (gt (len $crumb) 0) (gt $index 0) }}
       {{ if eq (add $index 1) (len $crumbs) }}
-        / {{ lower $root.Page.Title }}
+        / <span class="breadcrumb-current" aria-current="page">{{ lower $root.Page.Title }}</span>
       {{ else }}
         {{ $path := delimit (first (add $index 1) $crumbs) "/" }}
        / <a href="{{ printf "%s/" $path | absURL }}">{{ replace (replace (lower $crumb) "-" " ") ".html" "" }}</a>

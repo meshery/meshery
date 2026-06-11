@@ -93,6 +93,11 @@ ol {
         color: var(--color-secondary-dark);
       }
     }
+    & .breadcrumb-current {
+      color: var(--color-secondary-dark);
+      font-weight: 600;
+      pointer-events: none;
+    }
   }
 }
 
@@ -107,4 +112,3 @@ ol {
     display: none;
   }
 }
-
