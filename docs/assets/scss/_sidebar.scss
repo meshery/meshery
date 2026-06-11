@@ -325,11 +325,11 @@
   // navigation hierarchy reads clearly at a glance.
   & .td-sidebar-nav__section.with-child > a.td-sidebar-link,
   & .td-sidebar-nav__section.with-child > .sidebar-section-flex-wrapper > a.td-sidebar-link {
-    font-weight: 600;
+    font-weight: 800;
   }
 
   & .td-sidebar-nav__section.without-child > a.td-sidebar-link {
-    font-weight: 400;
+    font-weight: 600;
   }
 
   & .td-sidebar-link:hover,
