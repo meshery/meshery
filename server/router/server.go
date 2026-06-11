@@ -45,6 +45,9 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	// remote like the old polling-based /api/providers did.
 	gMux.HandleFunc("/api/providers/stream", h.ProvidersStreamHandler).
 		Methods("GET")
+	gMux.Handle("/api/provider/extension/install", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.InstallExtensionHandler), models.ProviderAuth))).Methods("POST")
+	gMux.Handle("/api/provider/extension/remove", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.RemoveExtensionHandler), models.ProviderAuth))).Methods("POST")
+
 	gMux.PathPrefix("/api/provider/extension").
 		Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.ProviderComponentsHandler)), models.ProviderAuth))).
 		Methods("GET", "POST", "OPTIONS", "PUT", "DELETE")
