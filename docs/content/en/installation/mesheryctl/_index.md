@@ -11,7 +11,7 @@ weight: 5
 
 Meshery's command line client is `mesheryctl` and is the recommended tool for configuring and deploying one or more Meshery deployments. To install `mesheryctl` on your system, you may choose from any of the following supported methods.
 
-`mesheryctl` can be installed via [bash](/installation/linux-mac/bash), [Homebrew](/installation/linux-mac/brew), [Scoop](/installation/windows/scoop) or [directly downloaded](https://github.com/meshery/meshery/releases/latest).
+`mesheryctl` can be installed via [bash]({{< ref "installation/mesheryctl/linux-mac/bash.md" >}}), [Homebrew]({{< ref "installation/mesheryctl/linux-mac/brew.md" >}}), [Scoop]({{< ref "installation/mesheryctl/windows/scoop.md" >}}) or [directly downloaded](https://github.com/meshery/meshery/releases/latest).
 
 {{% alert color="info" title="NOTE" %}} 
 Mesheryctl is configured for Kubernetes by default. To specify a different supported platform, use the `-p` flag. 
@@ -29,7 +29,7 @@ Mesheryctl is configured for Kubernetes by default. To specify a different suppo
 
 {{% mesheryctl/installation-scoop %}}
 
-Continue deploying Meshery onto one of the [Supported Platforms](/installation).
+Continue deploying Meshery onto one of the [Supported Platforms]({{< ref "installation/_index.md" >}}).
 
 # Related Reading
 

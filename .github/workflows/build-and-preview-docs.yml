@@ -138,9 +138,10 @@ jobs:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
           HUGO_PREVIEW: "true"
+          PREVIEW_BASE_URL: "/pr-preview/pr-${{ github.event.pull_request.number }}/"
         run: |
           cd docs
-          npm run build:production -- --gc --baseURL "/"
+          npm run build:production -- --gc --baseURL "${PREVIEW_BASE_URL}"
           find public -maxdepth 1 -type d -name 'v0.*' -exec rm -rf {} +
           cat > public/robots.txt <<'ROBOTS'
           User-agent: *

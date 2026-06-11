@@ -29,10 +29,10 @@ the cluster's Kubernetes API:
   `mesheryctl system start` or uploading a kubeconfig in the UI creates the
   connection; each context becomes a managed connection.
 
-On connection, Meshery deploys one [Operator](/concepts/architecture/operator)
+On connection, Meshery deploys one [Operator]({{< ref "concepts/architecture/operator/index.md" >}})
 per cluster (unless you use embedded MeshSync—see below), which manages that
-cluster's [MeshSync](/concepts/architecture/meshsync) and
-[Broker](/concepts/architecture/broker). On disconnect, those components are
+cluster's [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) and
+[Broker]({{< ref "concepts/architecture/broker/index.md" >}}). On disconnect, those components are
 removed. The Operator is also controllable from the UI's on/off switch
 independently of the connection.
 
@@ -56,7 +56,7 @@ embedded undeploys the in-cluster components and starts the in-Server routine;
 switching back redeploys them. Choose per cluster based on whether in-cluster
 deployment is acceptable and on the Server's capacity to absorb embedded
 discovery (see
-[Infrastructure, Sizing & Performance](/installation/production/infrastructure-sizing-and-performance)).
+[Infrastructure, Sizing & Performance]({{< ref "installation/production/infrastructure-sizing-and-performance.md" >}})).
 
 ### Cloud-managed vs. self-managed Kubernetes
 
@@ -76,14 +76,14 @@ For a fleet, kubeconfig/context management is the operational backbone:
 
 - **One context per cluster**, each scoped to a **least-privilege credential**
   for that cluster (see
-  [Security Hardening](/installation/production/security-hardening)). Avoid a
+  [Security Hardening]({{< ref "installation/production/security-hardening.md" >}})). Avoid a
   single all-powerful credential spanning the fleet.
 - Mount kubeconfig from a Secret and point Meshery at it with
   `KUBECONFIG_FOLDER` (default `~/.kube`). Keep context names stable and
   meaningful.
 - Treat the **set of connections as version-controlled configuration** so the
   fleet can be reconstructed during recovery (see
-  [High Availability & Resiliency](/installation/production/high-availability-and-resiliency)).
+  [High Availability & Resiliency]({{< ref "installation/production/high-availability-and-resiliency.md" >}})).
 - Prefer short-lived or provider-issued credentials where the cloud supports
   them, and rotate per-cluster credentials independently.
 
@@ -102,7 +102,7 @@ The practical implications across a fleet:
   supported and that the resulting endpoint is reachable from the Server.
 - Restrict that exposure to the Server's network origin (security groups,
   load-balancer source ranges, private connectivity). See
-  [Networking & Connectivity](/installation/production/networking-and-connectivity).
+  [Networking & Connectivity]({{< ref "installation/production/networking-and-connectivity.md" >}}).
 
 {{% alert title="The #1 multi-cloud pitfall" color="warning" %}}
 The most common cross-cloud failure is an unreachable Broker endpoint: the
@@ -127,7 +127,7 @@ that matter:
   the central Server needs network reachability to both the API server and the
   Broker—via VPC/VNet peering, private load balancers, transit gateways, or a
   VPN. Public exposure is discouraged (see
-  [Security Hardening](/installation/production/security-hardening)).
+  [Security Hardening]({{< ref "installation/production/security-hardening.md" >}})).
 - **Cross-region latency.** A central Server managing distant clusters incurs
   latency on discovery streaming and API calls. Keep it acceptable, and consider
   regional management planes if a single central plane spans high-latency links.
@@ -137,10 +137,10 @@ that matter:
 - **Per-cluster connection health.** Each connection's chip in the UI reflects
   live connectivity; Broker/Operator/MeshSync follow the connection lifecycle.
   Watch these as fleet KPIs (see
-  [Monitoring, Observability & Health KPIs](/installation/production/monitoring-observability-and-kpis)).
+  [Monitoring, Observability & Health KPIs]({{< ref "installation/production/monitoring-observability-and-kpis.md" >}})).
 - **Per-cluster discovery scope.** Tune MeshSync's `informer_config` blacklist
   per cluster to control footprint on large clusters
-  ([sizing](/installation/production/infrastructure-sizing-and-performance)).
+  ([sizing]({{< ref "installation/production/infrastructure-sizing-and-performance.md" >}})).
 - **Blast-radius isolation.** Distinct per-cluster credentials and network
   policies mean a problem in one cluster's connection does not cascade across
   the fleet.
