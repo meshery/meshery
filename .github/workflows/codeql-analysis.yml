@@ -123,7 +123,12 @@ jobs:
             }
 
       - name: 🚨 Email Alert on Failure
-        if: ${{ failure() && secrets.MAIL_USERNAME != '' && secrets.MAIL_PASSWORD != '' }}
+        # 1. Map the secrets to environment variables first
+        env: 
+          MAIL_USER: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASS: ${{ secrets.MAIL_PASSWORD }}
+        # 2. Check the 'env' context instead of the 'secrets' context
+        if: failure() && env.MAIL_USER != '' && env.MAIL_PASS != ''
         uses: dawidd6/action-send-mail@v7
         with:
           server_address: smtp.gmail.com
