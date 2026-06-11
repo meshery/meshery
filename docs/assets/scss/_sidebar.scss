@@ -200,16 +200,31 @@
   }
 
   & .sidebar-section-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: none;
     border: none;
     color: var(--color-secondary-medium);
     cursor: pointer;
     font-size: 1rem;
-    padding: 0 0.5rem 0 0;
+    padding: 0 0.4rem 0 0;
     line-height: 1;
     opacity: 0.7;
     flex-shrink: 0;
-    transition: opacity 0.2s, color 0.2s, transform 0.2s ease-in-out;
+    transition: opacity 0.2s, color 0.2s;
+
+    // Caret/chevron disclosure indicator. Points right when collapsed and
+    // rotates to point down when the section is expanded (see .active-path
+    // rule below) to convey expanded vs. collapsed state.
+    .caret-icon {
+      display: block;
+      width: 0.85em;
+      height: 0.85em;
+      transform: rotate(0deg);
+      transform-origin: center;
+      transition: transform 0.25s ease-in-out;
+    }
 
     &:hover {
       opacity: 1;
@@ -220,9 +235,17 @@
       font-size: 0.75rem;
       padding: 0;
       width: 1.5rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    }
+  }
+
+  // When a section is expanded, its <li> carries the `active-path` class.
+  // Rotate the caret 90deg (right -> down) and bring the toggle to full
+  // opacity so the expanded state reads clearly.
+  & li.active-path > .sidebar-section-flex-wrapper > .sidebar-section-toggle {
+    opacity: 1;
+
+    .caret-icon {
+      transform: rotate(90deg);
     }
   }
 
@@ -296,6 +319,17 @@
   & .td-sidebar-link.td-sidebar-link__page {
     font-weight: 400;
     font-size: 1rem;
+  }
+
+  // Sections that contain child pages are emphasised over leaf pages so the
+  // navigation hierarchy reads clearly at a glance.
+  & .td-sidebar-nav__section.with-child > a.td-sidebar-link,
+  & .td-sidebar-nav__section.with-child > .sidebar-section-flex-wrapper > a.td-sidebar-link {
+    font-weight: 600;
+  }
+
+  & .td-sidebar-nav__section.without-child > a.td-sidebar-link {
+    font-weight: 400;
   }
 
   & .td-sidebar-link:hover,
