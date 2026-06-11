@@ -64,9 +64,11 @@ func CreateK8sResource(
 		Resource: resource,
 	}
 
-	// Create namespace
-	if err := CreateNamespace(client, obj.GetNamespace()); err != nil {
-		return err
+	// Create namespace (skip for cluster-scoped resources)
+	if namespace := obj.GetNamespace(); namespace != "" {
+		if err := CreateNamespace(client, namespace); err != nil {
+			return err
+		}
 	}
 
 	if _, err := client.

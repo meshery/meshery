@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import DeleteIcon from '../../../../assets/icons/DeleteIcon';
+import { DeleteIcon } from '@sistent/sistent';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
 import {
   IconButton,
@@ -28,7 +28,7 @@ export default function SimpleAccordion(props) {
   const accordionDetailsRef = React.useRef(null);
   const theme = useTheme();
   return (
-    <Box width={'100%'} marginBottom={'0rem'}>
+    <Box sx={{ width: '100%', marginBottom: '0rem' }}>
       <MuiAccordion defaultExpanded elevation={0}>
         <MuiAccordionSummary
           expandIcon={<ExpandMoreIcon style={iconSmall} fill="gray" />}

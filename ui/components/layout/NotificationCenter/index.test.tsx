@@ -129,6 +129,7 @@ vi.mock('@sistent/sistent', () => ({
       text: { primary: '#000' },
     },
   }),
+  DeleteIcon: () => <svg data-testid="delete-icon" />,
 }));
 
 vi.mock('./filter', () => ({
@@ -157,10 +158,6 @@ vi.mock('../../../assets/icons/ReadIcon', () => ({
 
 vi.mock('../../../assets/icons/UnreadIcon', () => ({
   default: () => <svg data-testid="unread-icon" />,
-}));
-
-vi.mock('../../../assets/icons/DeleteIcon', () => ({
-  default: () => <svg data-testid="delete-icon" />,
 }));
 
 vi.mock('../../../css/icons.styles', () => ({

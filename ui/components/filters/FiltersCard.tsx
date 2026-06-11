@@ -9,6 +9,7 @@ import {
   Link,
   Avatar,
   useTheme,
+  InfoOutlinedIcon,
 } from '@sistent/sistent';
 import { Delete as DeleteIcon, Fullscreen, Save, FullscreenExit } from '@/assets/icons';
 import Moment from 'react-moment';
@@ -27,13 +28,7 @@ import {
 } from '../designs/patterns/Cards.styles';
 import YAMLDialog from '../YamlDialog';
 import CloneIcon from '../../public/static/img/CloneIcon';
-import {
-  Public as PublicIcon,
-  GetApp as GetAppIcon,
-  InfoOutlined as InfoOutlinedIcon,
-  Public,
-  Lock,
-} from '@/assets/icons';
+import { Public as PublicIcon, GetApp as GetAppIcon, Public, Lock } from '@/assets/icons';
 import TooltipButton from '../../utils/TooltipButton';
 import { VISIBILITY } from '../../utils/Enum';
 import { useGetUserByIdQuery } from '../../rtk-query/user';

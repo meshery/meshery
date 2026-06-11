@@ -1,21 +1,26 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme, Box } from '@sistent/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
-import { Adapters } from '../components/extensions';
+import { Adapters, KanvasExtension } from '../components/extensions';
 import DefaultError from '@/components/general/error-404';
 import { EVENT_TYPES } from '../lib/event-types';
-import { EXTENSION_NAMES } from '../utils/Enum';
 import { useNotification, usePageTitle } from '@/utils/hooks';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CardContainer, FrontSideDescription } from '../css/icons.styles';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { toggleCatalogContent } from '@/store/slices/mesheryUi';
 
 type ChildrenProps = {
   children: React.ReactNode;
 };
+// Meshery Extension Point
+// ---
+// Purpose: Notify Remote Providers of changes in Golang dependencies
+// Learn more: See https://docs.meshery.io/extensibility
+// Add your repository to the list: https://github.com/meshery/meshery/issues/new/choose
+// ---
 
 const UnifiedCardContainer = ({ children, sx = {} }: ChildrenProps & { sx?: object }) => (
   <CardContainer
@@ -237,7 +242,7 @@ const MesheryHelmExtension = () => (
           variant="contained"
           color="primary"
           data-testid="helm-learn-more-btn"
-          onClick={openExternal('https://docs.meshery.io/extensions/helm-kanvas-snapshot')}
+          onClick={openExternal('https://docs.meshery.io/extensions/helm-snapshot')}
         >
           Learn More
         </Button>
@@ -271,7 +276,7 @@ const MesheryDesignEmbedExtension = () => (
           variant="contained"
           color="primary"
           data-testid="design-embed-learn-more-btn"
-          onClick={openExternal('https://meshery.io/extensions/meshery-design-embed/')}
+          onClick={openExternal('https://meshery.io/extensions/meshery-design-embed')}
         >
           Learn More
         </Button>
@@ -339,7 +344,7 @@ const KubectlPluginExtension = () => (
           variant="contained"
           color="primary"
           data-testid="kubectl-plugin-learn-more-btn"
-          onClick={openExternal('https://docs.meshery.io/extensions/kubectl-kanvas-snapshot')}
+          onClick={openExternal('https://docs.meshery.io/extensions/kubectl-snapshot')}
         >
           Learn More
         </Button>
@@ -458,7 +463,6 @@ const Extensions = () => {
   const [updateUserPref] = useUpdateUserPrefMutation();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { providerCapabilities } = useSelector((state) => state.ui);
   const { data: userData } = useGetUserPrefQuery();
 
   const serverCatalogContent = userData?.usersExtensionPreferences?.catalogContent;
@@ -470,14 +474,6 @@ const Extensions = () => {
   useEffect(() => {
     setCatalogContentOverride(null);
   }, [serverCatalogContent]);
-
-  const hasAccessToMeshMap = useMemo(
-    () =>
-      !!providerCapabilities?.extensions?.navigator?.some(
-        (val: { title: string }) => val.title.toLowerCase() === EXTENSION_NAMES.KANVAS,
-      ),
-    [providerCapabilities],
-  );
 
   const handleToggle = () => {
     const next = !catalogContent;
@@ -508,6 +504,7 @@ const Extensions = () => {
       </Head>
       {CAN(keys.VIEW_EXTENSIONS.action, keys.VIEW_EXTENSIONS.subject) ? (
         <Grid2 container spacing={2} size="grow">
+          <KanvasExtension />
           <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
           <WrappedMesheryPerformanceAction githubActionEnabled={false} />
           <WrappedMesheryHelmExtension />

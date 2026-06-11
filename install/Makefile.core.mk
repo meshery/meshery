@@ -20,10 +20,13 @@ GIT_COMMITSHA = $(shell git rev-list -1 HEAD)
 GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
 
 # Extension Point for remote provider . Add your provider here.
-REMOTE_PROVIDER="Layer5"
+# Empty by default so installs do not enforce a specific provider; users see
+# the provider-selection UI on first launch. Set to e.g. "Meshery" 
+# to enforce a single provider via the PROVIDER env var.
+REMOTE_PROVIDER=""
 
-LOCAL_PROVIDER="None"
-GOVERSION = 1.25
+LOCAL_PROVIDER="Local"
+GOVERSION = 1.26
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
 KEYS_PATH="../../server/permissions/keys.csv"
@@ -48,14 +51,23 @@ REMOTE_PROVIDER_LOCAL="http://localhost:9876"
 EQUINIX_DEV="http://meshery.console.equinix.com"
 EQUINIX_DEV2="http://meshery-2.console.equinix.com"
 MESHERY_CLOUD_DEV="http://localhost:9876"
-MESHERY_CLOUD_PROD="https://cloud.meshery.io"
 MESHERY_CLOUD_STAGING="https://staging-cloud.meshery.io"
 EXOSCALE_PROD="https://sks.exoscale.com"
 EXOSCALE_STG="https://stg-sks.exoscale.com"
 EXOSCALE_DEV="https://dev-sks.exoscale.com"
-LAYER5_CLOUD_PROD="https://cloud.layer5.io"
 PROVIDER_CAPABILITIES_FILEPATH="" # Path to capabilities file for remote provider. If empty, capabilities will be fetched from remote provider.
-REMOTE_PROVIDER_URLS=$(MESHERY_CLOUD_PROD),$(LAYER5_CLOUD_PROD)
+
+# REMOTE_PROVIDER_URLS is the comma-joined list of Meshery's production remote
+# providers, derived from the single canonical source install/providers.env. Edit
+# providers.env (not this line) and run `make providers-propagate` to propagate the change
+# to every install artifact.
+# The `\#` is escaped so Make passes a literal `#` to awk instead of treating the rest
+# of the line as a Make comment. awk skips comment/blank lines, requires an `=`, and
+# prints everything after the first `=` (the URL), so quoted names like "TCS Labs" work.
+# Support invoking make from subdirectories (e.g., mesheryctl); prefer local install/
+# and fall back to parent dirs' install/ if needed.
+PROVIDERS_ENV := $(firstword $(wildcard install/providers.env ../install/providers.env ../../install/providers.env))
+REMOTE_PROVIDER_URLS := $(shell [ -n "$(PROVIDERS_ENV)" ] && awk '!/^[[:space:]]*\#/ && /=/ { sub(/^[^=]*=/, ""); print }' $(PROVIDERS_ENV) | paste -sd, - || echo "")
 
 #-----------------------------------------------------------------------------
 # Server

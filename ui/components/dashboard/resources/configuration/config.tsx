@@ -11,7 +11,7 @@ import { buildRuntimeClassColumns } from './runtime-class-columns';
 import { buildLeasesColumns } from './leases-columns';
 import { buildMutatingWebhookConfigurationColumns } from './mutating-webhook-configuration-columns';
 
-export const ConfigurationTableConfig = (
+export const useConfigurationTableConfig = (
   switchView,
   meshSyncResources,
   k8sConfig,

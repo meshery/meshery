@@ -25,6 +25,8 @@ tags:
     description: Operations related to features and entitlements
   - name: Support_Support
     description: Operations related to help and support requests
+  - name: System_API_System
+    description: Operational endpoints for Meshery Server.
   - name: Badge_Badge
     description: Operations related to user and organization badges.
   - name: credential_credentials
@@ -82,8 +84,9 @@ tags:
   - name: Workspace_designs
     description: APIs for Meshery Cloud designs associated with workspaces.
 paths:
-  /evaluate:
+  /api/meshmodels/relationships/evaluate:
     post:
+      operationId: evaluateRelationships
       x-internal:
         - meshery
       tags:
@@ -8734,6 +8737,279 @@ paths:
                 type: string
         '500':
           description: Internal server error
+  /api/system/database:
+    get:
+      x-internal:
+        - meshery
+      tags:
+        - System_API_System
+      summary: Get a summary of the Meshery server's database
+      description: Returns a paginated summary of Meshery database tables and row counts.
+      operationId: getSystemDatabase
+      parameters:
+        - name: page
+          in: query
+          description: Zero-based page index for the table list.
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+        - name: pageSize
+          in: query
+          description: Number of tables to include per page.
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - name: search
+          in: query
+          description: Substring filter applied to table names.
+          required: false
+          schema:
+            type: string
+            maxLength: 255
+        - name: sort
+          in: query
+          description: Column to order the table list by.
+          required: false
+          schema:
+            type: string
+            enum:
+              - name
+        - name: order
+          in: query
+          description: Sort direction for the `sort` column.
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+      responses:
+        '200':
+          description: Database summary
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Paginated summary of the Meshery server's embedded database.
+                additionalProperties: false
+                required:
+                  - page
+                  - pageSize
+                  - totalTables
+                  - recordCount
+                  - tables
+                properties:
+                  page:
+                    type: integer
+                    description: Zero-based page index of the returned table slice.
+                    minimum: 0
+                  pageSize:
+                    type: integer
+                    description: Number of tables included in this page.
+                    minimum: 1
+                  totalTables:
+                    type: integer
+                    description: Total number of tables in the database matching the search filter.
+                    minimum: 0
+                  recordCount:
+                    type: integer
+                    description: Aggregate row count across the tables returned in this page.
+                    minimum: 0
+                  tables:
+                    type: array
+                    description: Tables included in this page, with per-table row counts.
+                    items:
+                      type: object
+                      description: Database table summary.
+                      additionalProperties: false
+                      required:
+                        - name
+                        - type
+                        - count
+                      properties:
+                        name:
+                          type: string
+                          description: Name of the table.
+                          maxLength: 255
+                        type:
+                          type: string
+                          description: SQLite object type (e.g. `table`).
+                          maxLength: 64
+                        count:
+                          type: integer
+                          description: Number of rows currently in the table.
+                          format: int64
+                          minimum: 0
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+  /api/system/database/reset:
+    delete:
+      x-internal:
+        - meshery
+      tags:
+        - System_API_System
+      summary: Reset the Meshery server's database
+      description: Resets the Meshery server database. This is a destructive operation.
+      operationId: resetSystemDatabase
+      responses:
+        '200':
+          description: Database reset
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Status message response.
+                additionalProperties: false
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    description: Human-readable status message.
+                    minLength: 1
+                    maxLength: 1024
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error during reset (archive, drop, migrate, or reseed).
+  /api/system/version:
+    get:
+      x-internal:
+        - cloud
+        - meshery
+      tags:
+        - System_API_System
+      summary: Get the running Meshery server's version metadata
+      description: Returns version metadata for the running Meshery service.
+      operationId: getSystemVersion
+      security: []
+      responses:
+        '200':
+          description: Server version metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Version metadata for a running Meshery service.
+                additionalProperties: false
+                properties:
+                  version:
+                    type: string
+                    description: Meshery Cloud deployment version.
+                    maxLength: 128
+                  build:
+                    type: string
+                    description: Build identifier (typically the git tag of the running binary).
+                    maxLength: 128
+                  latest:
+                    type: string
+                    description: Latest available Meshery release tag fetched from GitHub.
+                    maxLength: 128
+                  outdated:
+                    type: boolean
+                    description: True when the running build is older than the latest available release.
+                  commitsha:
+                    type: string
+                    description: Git commit SHA of the running service. The wire field is `commitsha`.
+                    maxLength: 64
+                  releaseChannel:
+                    type: string
+                    description: Release channel of the running binary (e.g. `stable`, `edge`).
+                    maxLength: 64
+        '500':
+          description: Encoding error while serializing the version payload.
+  /api/system/sync:
+    get:
+      x-internal:
+        - meshery
+      tags:
+        - System_API_System
+      summary: Get initial session bootstrap data
+      description: Returns session bootstrap data for the authenticated user.
+      operationId: getSystemSync
+      responses:
+        '200':
+          description: Session sync payload
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Session bootstrap payload for the authenticated user.
+                additionalProperties: true
+                properties:
+                  k8sConfig:
+                    type: array
+                    description: Kubernetes contexts currently tracked by the Meshery server.
+                    items:
+                      type: object
+                      description: Kubernetes context tracked by Meshery.
+                      additionalProperties: false
+                      properties:
+                        id:
+                          type: string
+                          description: Stable identifier for the Kubernetes context.
+                          x-id-format: external
+                          minLength: 32
+                          maxLength: 32
+                          pattern: ^[0-9a-f]{32}$
+                        name:
+                          type: string
+                          description: Human-readable name of the Kubernetes context.
+                          maxLength: 255
+                        clusterConfigured:
+                          type: boolean
+                          description: True when Meshery has a usable kubeconfig for this context.
+                        server:
+                          type: string
+                          description: API server URL for the Kubernetes context.
+                          maxLength: 2048
+                        clusterId:
+                          description: Kubernetes server ID associated with this context.
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                        createdAt:
+                          description: When the context was first registered with Meshery.
+                          x-go-type: time.Time
+                          type: string
+                          format: date-time
+                          x-go-name: CreatedAt
+                          x-oapi-codegen-extra-tags:
+                            db: created_at
+                            yaml: created_at
+                          x-go-type-skip-optional-pointer: true
+                        updatedAt:
+                          description: When the context was last updated.
+                          x-go-type: time.Time
+                          type: string
+                          format: date-time
+                          x-go-name: UpdatedAt
+                          x-oapi-codegen-extra-tags:
+                            db: updated_at
+                            yaml: updated_at
+                          x-go-type-skip-optional-pointer: true
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Marshal error while serializing the session sync payload.
   /api/integrations/credentials:
     get:
       x-internal:
@@ -9983,6 +10259,43 @@ paths:
                                   type: object
                                   description: Preferences specific to dashboard behavior.
                                   additionalProperties: true
+                                links:
+                                  x-go-type: Links
+                                  type: object
+                                  x-internal:
+                                    - cloud
+                                  description: >-
+                                    Per-organization overrides for the legal and support links shown on the auth pages
+                                    and the error page. termsOfService and privacy are the named legal links; support is
+                                    an open-ended set of named support contacts/links. Empty or omitted fields fall back
+                                    to the platform defaults.
+                                  properties:
+                                    termsOfService:
+                                      type: string
+                                      format: uri
+                                      maxLength: 2048
+                                      description: URL of the organization's Terms of Service page.
+                                    privacy:
+                                      type: string
+                                      format: uri
+                                      maxLength: 2048
+                                      description: URL of the organization's Privacy Policy page.
+                                    support:
+                                      type: object
+                                      additionalProperties:
+                                        type: string
+                                        maxLength: 2048
+                                      description: >-
+                                        Open-ended set of named support contacts/links rendered on the auth and error
+                                        pages, keyed by display name with a value that is a URL, a mailto:/tel: link, or
+                                        free text. For example a "slack" entry pointing at https://slack.meshery.io, a
+                                        "discussion forum" entry, or a "support desk" entry holding a phone number.
+                                showAuthCarousel:
+                                  type: boolean
+                                  default: true
+                                  description: >-
+                                    Whether the feature carousel renders on the organization's auth pages. Unset is
+                                    treated as true (shown); set false to hide it.
                         createdAt:
                           description: Timestamp when the organization was created.
                           x-oapi-codegen-extra-tags:
@@ -10163,6 +10476,42 @@ paths:
                       type: object
                       description: Preferences specific to dashboard behavior.
                       additionalProperties: true
+                    links:
+                      x-go-type: Links
+                      type: object
+                      x-internal:
+                        - cloud
+                      description: >-
+                        Per-organization overrides for the legal and support links shown on the auth pages and the error
+                        page. termsOfService and privacy are the named legal links; support is an open-ended set of
+                        named support contacts/links. Empty or omitted fields fall back to the platform defaults.
+                      properties:
+                        termsOfService:
+                          type: string
+                          format: uri
+                          maxLength: 2048
+                          description: URL of the organization's Terms of Service page.
+                        privacy:
+                          type: string
+                          format: uri
+                          maxLength: 2048
+                          description: URL of the organization's Privacy Policy page.
+                        support:
+                          type: object
+                          additionalProperties:
+                            type: string
+                            maxLength: 2048
+                          description: >-
+                            Open-ended set of named support contacts/links rendered on the auth and error pages, keyed
+                            by display name with a value that is a URL, a mailto:/tel: link, or free text. For example a
+                            "slack" entry pointing at https://slack.meshery.io, a "discussion forum" entry, or a
+                            "support desk" entry holding a phone number.
+                    showAuthCarousel:
+                      type: boolean
+                      default: true
+                      description: >-
+                        Whether the feature carousel renders on the organization's auth pages. Unset is treated as true
+                        (shown); set false to hide it.
       responses:
         '201':
           description: Single-organization page response
@@ -10336,6 +10685,43 @@ paths:
                                   type: object
                                   description: Preferences specific to dashboard behavior.
                                   additionalProperties: true
+                                links:
+                                  x-go-type: Links
+                                  type: object
+                                  x-internal:
+                                    - cloud
+                                  description: >-
+                                    Per-organization overrides for the legal and support links shown on the auth pages
+                                    and the error page. termsOfService and privacy are the named legal links; support is
+                                    an open-ended set of named support contacts/links. Empty or omitted fields fall back
+                                    to the platform defaults.
+                                  properties:
+                                    termsOfService:
+                                      type: string
+                                      format: uri
+                                      maxLength: 2048
+                                      description: URL of the organization's Terms of Service page.
+                                    privacy:
+                                      type: string
+                                      format: uri
+                                      maxLength: 2048
+                                      description: URL of the organization's Privacy Policy page.
+                                    support:
+                                      type: object
+                                      additionalProperties:
+                                        type: string
+                                        maxLength: 2048
+                                      description: >-
+                                        Open-ended set of named support contacts/links rendered on the auth and error
+                                        pages, keyed by display name with a value that is a URL, a mailto:/tel: link, or
+                                        free text. For example a "slack" entry pointing at https://slack.meshery.io, a
+                                        "discussion forum" entry, or a "support desk" entry holding a phone number.
+                                showAuthCarousel:
+                                  type: boolean
+                                  default: true
+                                  description: >-
+                                    Whether the feature carousel renders on the organization's auth pages. Unset is
+                                    treated as true (shown); set false to hide it.
                         createdAt:
                           description: Timestamp when the organization was created.
                           x-oapi-codegen-extra-tags:
@@ -10725,6 +11111,43 @@ paths:
                                   type: object
                                   description: Preferences specific to dashboard behavior.
                                   additionalProperties: true
+                                links:
+                                  x-go-type: Links
+                                  type: object
+                                  x-internal:
+                                    - cloud
+                                  description: >-
+                                    Per-organization overrides for the legal and support links shown on the auth pages
+                                    and the error page. termsOfService and privacy are the named legal links; support is
+                                    an open-ended set of named support contacts/links. Empty or omitted fields fall back
+                                    to the platform defaults.
+                                  properties:
+                                    termsOfService:
+                                      type: string
+                                      format: uri
+                                      maxLength: 2048
+                                      description: URL of the organization's Terms of Service page.
+                                    privacy:
+                                      type: string
+                                      format: uri
+                                      maxLength: 2048
+                                      description: URL of the organization's Privacy Policy page.
+                                    support:
+                                      type: object
+                                      additionalProperties:
+                                        type: string
+                                        maxLength: 2048
+                                      description: >-
+                                        Open-ended set of named support contacts/links rendered on the auth and error
+                                        pages, keyed by display name with a value that is a URL, a mailto:/tel: link, or
+                                        free text. For example a "slack" entry pointing at https://slack.meshery.io, a
+                                        "discussion forum" entry, or a "support desk" entry holding a phone number.
+                                showAuthCarousel:
+                                  type: boolean
+                                  default: true
+                                  description: >-
+                                    Whether the feature carousel renders on the organization's auth pages. Unset is
+                                    treated as true (shown); set false to hide it.
                         createdAt:
                           description: Timestamp when the organization was created.
                           x-oapi-codegen-extra-tags:
@@ -10979,6 +11402,42 @@ paths:
                       type: object
                       description: Preferences specific to dashboard behavior.
                       additionalProperties: true
+                    links:
+                      x-go-type: Links
+                      type: object
+                      x-internal:
+                        - cloud
+                      description: >-
+                        Per-organization overrides for the legal and support links shown on the auth pages and the error
+                        page. termsOfService and privacy are the named legal links; support is an open-ended set of
+                        named support contacts/links. Empty or omitted fields fall back to the platform defaults.
+                      properties:
+                        termsOfService:
+                          type: string
+                          format: uri
+                          maxLength: 2048
+                          description: URL of the organization's Terms of Service page.
+                        privacy:
+                          type: string
+                          format: uri
+                          maxLength: 2048
+                          description: URL of the organization's Privacy Policy page.
+                        support:
+                          type: object
+                          additionalProperties:
+                            type: string
+                            maxLength: 2048
+                          description: >-
+                            Open-ended set of named support contacts/links rendered on the auth and error pages, keyed
+                            by display name with a value that is a URL, a mailto:/tel: link, or free text. For example a
+                            "slack" entry pointing at https://slack.meshery.io, a "discussion forum" entry, or a
+                            "support desk" entry holding a phone number.
+                    showAuthCarousel:
+                      type: boolean
+                      default: true
+                      description: >-
+                        Whether the feature carousel renders on the organization's auth pages. Unset is treated as true
+                        (shown); set false to hide it.
       responses:
         '200':
           description: Single-organization page response for the updated organization
@@ -11152,6 +11611,43 @@ paths:
                                   type: object
                                   description: Preferences specific to dashboard behavior.
                                   additionalProperties: true
+                                links:
+                                  x-go-type: Links
+                                  type: object
+                                  x-internal:
+                                    - cloud
+                                  description: >-
+                                    Per-organization overrides for the legal and support links shown on the auth pages
+                                    and the error page. termsOfService and privacy are the named legal links; support is
+                                    an open-ended set of named support contacts/links. Empty or omitted fields fall back
+                                    to the platform defaults.
+                                  properties:
+                                    termsOfService:
+                                      type: string
+                                      format: uri
+                                      maxLength: 2048
+                                      description: URL of the organization's Terms of Service page.
+                                    privacy:
+                                      type: string
+                                      format: uri
+                                      maxLength: 2048
+                                      description: URL of the organization's Privacy Policy page.
+                                    support:
+                                      type: object
+                                      additionalProperties:
+                                        type: string
+                                        maxLength: 2048
+                                      description: >-
+                                        Open-ended set of named support contacts/links rendered on the auth and error
+                                        pages, keyed by display name with a value that is a URL, a mailto:/tel: link, or
+                                        free text. For example a "slack" entry pointing at https://slack.meshery.io, a
+                                        "discussion forum" entry, or a "support desk" entry holding a phone number.
+                                showAuthCarousel:
+                                  type: boolean
+                                  default: true
+                                  description: >-
+                                    Whether the feature carousel renders on the organization's auth pages. Unset is
+                                    treated as true (shown); set false to hide it.
                         createdAt:
                           description: Timestamp when the organization was created.
                           x-oapi-codegen-extra-tags:
@@ -11343,6 +11839,42 @@ paths:
                         type: object
                         description: Preferences specific to dashboard behavior.
                         additionalProperties: true
+                      links:
+                        x-go-type: Links
+                        type: object
+                        x-internal:
+                          - cloud
+                        description: >-
+                          Per-organization overrides for the legal and support links shown on the auth pages and the
+                          error page. termsOfService and privacy are the named legal links; support is an open-ended set
+                          of named support contacts/links. Empty or omitted fields fall back to the platform defaults.
+                        properties:
+                          termsOfService:
+                            type: string
+                            format: uri
+                            maxLength: 2048
+                            description: URL of the organization's Terms of Service page.
+                          privacy:
+                            type: string
+                            format: uri
+                            maxLength: 2048
+                            description: URL of the organization's Privacy Policy page.
+                          support:
+                            type: object
+                            additionalProperties:
+                              type: string
+                              maxLength: 2048
+                            description: >-
+                              Open-ended set of named support contacts/links rendered on the auth and error pages, keyed
+                              by display name with a value that is a URL, a mailto:/tel: link, or free text. For example
+                              a "slack" entry pointing at https://slack.meshery.io, a "discussion forum" entry, or a
+                              "support desk" entry holding a phone number.
+                      showAuthCarousel:
+                        type: boolean
+                        default: true
+                        description: >-
+                          Whether the feature carousel renders on the organization's auth pages. Unset is treated as
+                          true (shown); set false to hide it.
         '401':
           description: Expired JWT token used or insufficient privilege
           content:
@@ -18392,6 +18924,2044 @@ paths:
                 type: string
         '404':
           description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /api/performance/profiles:
+    get:
+      x-internal:
+        - cloud
+        - meshery
+      tags:
+        - Performance_Profile_performance
+      operationId: getPerformanceProfiles
+      summary: List performance profiles
+      description: Returns the performance profiles owned by the authenticated user, with pagination, search, and ordering.
+      parameters:
+        - name: page
+          in: query
+          description: Get responses by page
+          schema:
+            type: string
+        - name: pagesize
+          in: query
+          description: Get responses by pagesize
+          schema:
+            type: string
+        - name: search
+          in: query
+          description: Get responses that match search param value
+          schema:
+            type: string
+        - name: order
+          in: query
+          description: Get ordered responses
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Performance profiles
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Paginated list of performance profiles.
+                required:
+                  - page
+                  - pageSize
+                  - totalCount
+                  - profiles
+                properties:
+                  page:
+                    type: integer
+                    description: Zero-based page index returned in this response.
+                    minimum: 0
+                    maximum: 1000000
+                    x-go-type-skip-optional-pointer: true
+                  pageSize:
+                    type: integer
+                    description: Maximum number of items returned on each page.
+                    minimum: 1
+                    maximum: 1000
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      json: pageSize
+                  totalCount:
+                    type: integer
+                    description: Total number of performance profiles across all pages.
+                    minimum: 0
+                    maximum: 100000000
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      json: totalCount
+                  profiles:
+                    type: array
+                    description: Performance profiles in this page.
+                    x-go-type-skip-optional-pointer: true
+                    items:
+                      x-go-type: PerformanceProfile
+                      $id: https://schemas.meshery.io/performance_profile.yaml
+                      $schema: http://json-schema.org/draft-07/schema#
+                      title: PerformanceProfile
+                      description: >-
+                        A performance profile captures the configuration for a load test run by Meshery against one or
+                        more service-mesh endpoints. Profiles are owned by a user and can optionally be associated with
+                        a recurring schedule. Learn more at https://docs.meshery.io/tasks/performance-management
+                      additionalProperties: false
+                      type: object
+                      required:
+                        - id
+                        - name
+                        - userId
+                        - createdAt
+                        - updatedAt
+                      properties:
+                        id:
+                          description: Unique identifier for the performance profile.
+                          x-order: 1
+                          x-go-name: ID
+                          x-oapi-codegen-extra-tags:
+                            db: id
+                            json: id
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                        name:
+                          type: string
+                          description: Human-readable name of the performance profile.
+                          minLength: 1
+                          maxLength: 255
+                          x-order: 2
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: name
+                            json: name
+                        userId:
+                          description: User ID of the profile owner.
+                          x-order: 3
+                          x-go-name: UserID
+                          x-oapi-codegen-extra-tags:
+                            db: user_id
+                            json: userId
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                        schedule:
+                          description: >-
+                            Optional schedule ID associated with this performance profile. Null when the profile is not
+                            bound to a recurring schedule.
+                          nullable: true
+                          x-order: 4
+                          x-oapi-codegen-extra-tags:
+                            db: schedule
+                            json: schedule,omitempty
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                        loadGenerators:
+                          type: array
+                          description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
+                          minItems: 1
+                          items:
+                            type: string
+                            description: Identifier of a single load generator.
+                            minLength: 1
+                            maxLength: 64
+                          x-order: 5
+                          x-go-type: pq.StringArray
+                          x-go-type-import:
+                            path: github.com/lib/pq
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: load_generators
+                            gorm: type:text[]
+                            json: loadGenerators
+                        endpoints:
+                          type: array
+                          description: Endpoints (URLs) targeted by the performance profile's load test.
+                          minItems: 1
+                          items:
+                            type: string
+                            description: A single endpoint URL targeted by the load test.
+                            minLength: 1
+                            maxLength: 2048
+                          x-order: 6
+                          x-go-type: pq.StringArray
+                          x-go-type-import:
+                            path: github.com/lib/pq
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: endpoints
+                            gorm: type:text[]
+                            json: endpoints
+                        serviceMesh:
+                          type: string
+                          description: >-
+                            Service mesh under test for the profile (e.g. istio, linkerd, consul). Empty string when the
+                            profile is mesh-agnostic.
+                          maxLength: 100
+                          x-order: 7
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: service_mesh
+                            json: serviceMesh
+                        concurrentRequest:
+                          type: integer
+                          description: Number of concurrent requests issued by the load generator.
+                          minimum: 1
+                          maximum: 100000
+                          x-order: 8
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: concurrent_request
+                            json: concurrentRequest
+                        qps:
+                          type: integer
+                          description: >-
+                            Target queries-per-second rate for the load generator. Zero indicates the generator runs
+                            unthrottled.
+                          minimum: 0
+                          maximum: 1000000
+                          x-order: 9
+                          x-go-name: QPS
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: qps
+                            json: qps
+                        duration:
+                          type: string
+                          description: Duration of the load test, expressed as a Go duration string (e.g. "30s", "5m", "1h").
+                          minLength: 1
+                          maxLength: 32
+                          pattern: ^[0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h)([0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h))*$
+                          x-order: 10
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: duration
+                            json: duration
+                        requestHeaders:
+                          type: string
+                          description: >-
+                            HTTP request headers, serialized as JSON, sent on each load-test request. Empty string when
+                            no headers are configured.
+                          maxLength: 16384
+                          x-order: 11
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: request_headers
+                            json: requestHeaders
+                        requestCookies:
+                          type: string
+                          description: >-
+                            HTTP request cookies, serialized as JSON, sent on each load-test request. Empty string when
+                            no cookies are configured.
+                          maxLength: 16384
+                          x-order: 12
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: request_cookies
+                            json: requestCookies
+                        requestBody:
+                          type: string
+                          description: HTTP request body sent on each load-test request. Empty string when no body is configured.
+                          maxLength: 1048576
+                          x-order: 13
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: request_body
+                            json: requestBody
+                        contentType:
+                          type: string
+                          description: >-
+                            Content-Type header value applied to each load-test request body (e.g. "application/json").
+                            Empty string when no body is configured.
+                          maxLength: 255
+                          x-order: 14
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: content_type
+                            json: contentType
+                        metadata:
+                          type: object
+                          description: Free-form metadata associated with the performance profile.
+                          additionalProperties: true
+                          x-order: 15
+                          x-go-type: core.Map
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: metadata
+                            json: metadata
+                        lastRun:
+                          description: >-
+                            Server-computed timestamp of the most recent load-test run that used this profile. Null
+                            until the first run completes. Server-managed; clients must not set this on create/update.
+                          nullable: true
+                          x-order: 16
+                          x-oapi-codegen-extra-tags:
+                            db: last_run
+                            json: lastRun,omitempty
+                          x-go-type: NullTime
+                          type: string
+                          format: date-time
+                          x-go-type-skip-optional-pointer: true
+                        totalResults:
+                          type: integer
+                          description: >-
+                            Server-computed count of load-test results recorded for this profile. Server-managed;
+                            clients must not set this on create/update.
+                          minimum: 0
+                          x-order: 17
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: total_results
+                            json: totalResults
+                        createdAt:
+                          description: Timestamp when the performance profile was created.
+                          x-order: 18
+                          x-oapi-codegen-extra-tags:
+                            db: created_at
+                            yaml: created_at
+                            json: createdAt
+                          x-go-type: time.Time
+                          type: string
+                          format: date-time
+                          x-go-name: CreatedAt
+                          x-go-type-skip-optional-pointer: true
+                        updatedAt:
+                          description: Timestamp when the performance profile was last updated.
+                          x-order: 19
+                          x-oapi-codegen-extra-tags:
+                            db: updated_at
+                            yaml: updated_at
+                            json: updatedAt
+                          x-go-type: time.Time
+                          type: string
+                          format: date-time
+                          x-go-name: UpdatedAt
+                          x-go-type-skip-optional-pointer: true
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+    post:
+      x-internal:
+        - cloud
+        - meshery
+      tags:
+        - Performance_Profile_performance
+      operationId: upsertPerformanceProfile
+      summary: Create or update a performance profile
+      description: >-
+        Creates a new performance profile when the body omits id, or updates the matching existing profile when an id is
+        provided.
+      requestBody:
+        description: Body for creating or updating a performance profile.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: >-
+                Payload for creating or updating a performance profile. Includes only client-settable fields;
+                server-generated fields (id on create, createdAt, updatedAt, lastRun, totalResults) are populated by the
+                server.
+              required:
+                - name
+                - loadGenerators
+                - endpoints
+                - duration
+              properties:
+                id:
+                  description: Existing performance-profile ID for updates; omit on create.
+                  x-go-name: ID
+                  x-oapi-codegen-extra-tags:
+                    json: id,omitempty
+                  type: string
+                  format: uuid
+                  x-go-type: uuid.UUID
+                  x-go-type-import:
+                    path: github.com/gofrs/uuid
+                name:
+                  type: string
+                  description: Human-readable name of the performance profile.
+                  minLength: 1
+                  maxLength: 255
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: name
+                userId:
+                  description: Owner user ID. When omitted, the server infers it from the authenticated user.
+                  x-go-name: UserID
+                  x-oapi-codegen-extra-tags:
+                    json: userId,omitempty
+                  type: string
+                  format: uuid
+                  x-go-type: uuid.UUID
+                  x-go-type-import:
+                    path: github.com/gofrs/uuid
+                schedule:
+                  description: Optional schedule ID associating the profile with a recurring run.
+                  nullable: true
+                  x-oapi-codegen-extra-tags:
+                    json: schedule,omitempty
+                  type: string
+                  format: uuid
+                  x-go-type: uuid.UUID
+                  x-go-type-import:
+                    path: github.com/gofrs/uuid
+                loadGenerators:
+                  type: array
+                  description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
+                  minItems: 1
+                  items:
+                    type: string
+                    description: Identifier of a single load generator.
+                    minLength: 1
+                    maxLength: 64
+                  x-go-type: pq.StringArray
+                  x-go-type-import:
+                    path: github.com/lib/pq
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: loadGenerators
+                endpoints:
+                  type: array
+                  description: Endpoints (URLs) targeted by the performance profile's load test.
+                  minItems: 1
+                  items:
+                    type: string
+                    description: A single endpoint URL targeted by the load test.
+                    minLength: 1
+                    maxLength: 2048
+                  x-go-type: pq.StringArray
+                  x-go-type-import:
+                    path: github.com/lib/pq
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: endpoints
+                serviceMesh:
+                  type: string
+                  description: >-
+                    Service mesh under test for the profile (e.g. istio, linkerd, consul). Empty string when the profile
+                    is mesh-agnostic.
+                  maxLength: 100
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: serviceMesh,omitempty
+                concurrentRequest:
+                  type: integer
+                  description: Number of concurrent requests issued by the load generator.
+                  minimum: 1
+                  maximum: 100000
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: concurrentRequest,omitempty
+                qps:
+                  type: integer
+                  description: >-
+                    Target queries-per-second rate for the load generator. Zero indicates the generator runs
+                    unthrottled.
+                  minimum: 0
+                  maximum: 1000000
+                  x-go-name: QPS
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: qps,omitempty
+                duration:
+                  type: string
+                  description: Duration of the load test, expressed as a Go duration string (e.g. "30s", "5m", "1h").
+                  minLength: 1
+                  maxLength: 32
+                  pattern: ^[0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h)([0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h))*$
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: duration
+                requestHeaders:
+                  type: string
+                  description: HTTP request headers, serialized as JSON, sent on each load-test request.
+                  maxLength: 16384
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: requestHeaders,omitempty
+                requestCookies:
+                  type: string
+                  description: HTTP request cookies, serialized as JSON, sent on each load-test request.
+                  maxLength: 16384
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: requestCookies,omitempty
+                requestBody:
+                  type: string
+                  description: HTTP request body sent on each load-test request.
+                  maxLength: 1048576
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: requestBody,omitempty
+                contentType:
+                  type: string
+                  description: Content-Type header value applied to each load-test request body (e.g. "application/json").
+                  maxLength: 255
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: contentType,omitempty
+                metadata:
+                  type: object
+                  description: Free-form metadata associated with the performance profile.
+                  additionalProperties: true
+                  x-go-type: core.Map
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: metadata,omitempty
+      responses:
+        '200':
+          description: Performance profile upserted
+          content:
+            application/json:
+              schema:
+                $id: https://schemas.meshery.io/performance_profile.yaml
+                $schema: http://json-schema.org/draft-07/schema#
+                title: PerformanceProfile
+                description: >-
+                  A performance profile captures the configuration for a load test run by Meshery against one or more
+                  service-mesh endpoints. Profiles are owned by a user and can optionally be associated with a recurring
+                  schedule. Learn more at https://docs.meshery.io/tasks/performance-management
+                additionalProperties: false
+                type: object
+                required:
+                  - id
+                  - name
+                  - userId
+                  - createdAt
+                  - updatedAt
+                properties:
+                  id:
+                    description: Unique identifier for the performance profile.
+                    x-order: 1
+                    x-go-name: ID
+                    x-oapi-codegen-extra-tags:
+                      db: id
+                      json: id
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                  name:
+                    type: string
+                    description: Human-readable name of the performance profile.
+                    minLength: 1
+                    maxLength: 255
+                    x-order: 2
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: name
+                      json: name
+                  userId:
+                    description: User ID of the profile owner.
+                    x-order: 3
+                    x-go-name: UserID
+                    x-oapi-codegen-extra-tags:
+                      db: user_id
+                      json: userId
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                  schedule:
+                    description: >-
+                      Optional schedule ID associated with this performance profile. Null when the profile is not bound
+                      to a recurring schedule.
+                    nullable: true
+                    x-order: 4
+                    x-oapi-codegen-extra-tags:
+                      db: schedule
+                      json: schedule,omitempty
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                  loadGenerators:
+                    type: array
+                    description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
+                    minItems: 1
+                    items:
+                      type: string
+                      description: Identifier of a single load generator.
+                      minLength: 1
+                      maxLength: 64
+                    x-order: 5
+                    x-go-type: pq.StringArray
+                    x-go-type-import:
+                      path: github.com/lib/pq
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: load_generators
+                      gorm: type:text[]
+                      json: loadGenerators
+                  endpoints:
+                    type: array
+                    description: Endpoints (URLs) targeted by the performance profile's load test.
+                    minItems: 1
+                    items:
+                      type: string
+                      description: A single endpoint URL targeted by the load test.
+                      minLength: 1
+                      maxLength: 2048
+                    x-order: 6
+                    x-go-type: pq.StringArray
+                    x-go-type-import:
+                      path: github.com/lib/pq
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: endpoints
+                      gorm: type:text[]
+                      json: endpoints
+                  serviceMesh:
+                    type: string
+                    description: >-
+                      Service mesh under test for the profile (e.g. istio, linkerd, consul). Empty string when the
+                      profile is mesh-agnostic.
+                    maxLength: 100
+                    x-order: 7
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: service_mesh
+                      json: serviceMesh
+                  concurrentRequest:
+                    type: integer
+                    description: Number of concurrent requests issued by the load generator.
+                    minimum: 1
+                    maximum: 100000
+                    x-order: 8
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: concurrent_request
+                      json: concurrentRequest
+                  qps:
+                    type: integer
+                    description: >-
+                      Target queries-per-second rate for the load generator. Zero indicates the generator runs
+                      unthrottled.
+                    minimum: 0
+                    maximum: 1000000
+                    x-order: 9
+                    x-go-name: QPS
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: qps
+                      json: qps
+                  duration:
+                    type: string
+                    description: Duration of the load test, expressed as a Go duration string (e.g. "30s", "5m", "1h").
+                    minLength: 1
+                    maxLength: 32
+                    pattern: ^[0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h)([0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h))*$
+                    x-order: 10
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: duration
+                      json: duration
+                  requestHeaders:
+                    type: string
+                    description: >-
+                      HTTP request headers, serialized as JSON, sent on each load-test request. Empty string when no
+                      headers are configured.
+                    maxLength: 16384
+                    x-order: 11
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: request_headers
+                      json: requestHeaders
+                  requestCookies:
+                    type: string
+                    description: >-
+                      HTTP request cookies, serialized as JSON, sent on each load-test request. Empty string when no
+                      cookies are configured.
+                    maxLength: 16384
+                    x-order: 12
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: request_cookies
+                      json: requestCookies
+                  requestBody:
+                    type: string
+                    description: HTTP request body sent on each load-test request. Empty string when no body is configured.
+                    maxLength: 1048576
+                    x-order: 13
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: request_body
+                      json: requestBody
+                  contentType:
+                    type: string
+                    description: >-
+                      Content-Type header value applied to each load-test request body (e.g. "application/json"). Empty
+                      string when no body is configured.
+                    maxLength: 255
+                    x-order: 14
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: content_type
+                      json: contentType
+                  metadata:
+                    type: object
+                    description: Free-form metadata associated with the performance profile.
+                    additionalProperties: true
+                    x-order: 15
+                    x-go-type: core.Map
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: metadata
+                      json: metadata
+                  lastRun:
+                    description: >-
+                      Server-computed timestamp of the most recent load-test run that used this profile. Null until the
+                      first run completes. Server-managed; clients must not set this on create/update.
+                    nullable: true
+                    x-order: 16
+                    x-oapi-codegen-extra-tags:
+                      db: last_run
+                      json: lastRun,omitempty
+                    x-go-type: NullTime
+                    type: string
+                    format: date-time
+                    x-go-type-skip-optional-pointer: true
+                  totalResults:
+                    type: integer
+                    description: >-
+                      Server-computed count of load-test results recorded for this profile. Server-managed; clients must
+                      not set this on create/update.
+                    minimum: 0
+                    x-order: 17
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: total_results
+                      json: totalResults
+                  createdAt:
+                    description: Timestamp when the performance profile was created.
+                    x-order: 18
+                    x-oapi-codegen-extra-tags:
+                      db: created_at
+                      yaml: created_at
+                      json: createdAt
+                    x-go-type: time.Time
+                    type: string
+                    format: date-time
+                    x-go-name: CreatedAt
+                    x-go-type-skip-optional-pointer: true
+                  updatedAt:
+                    description: Timestamp when the performance profile was last updated.
+                    x-order: 19
+                    x-oapi-codegen-extra-tags:
+                      db: updated_at
+                      yaml: updated_at
+                      json: updatedAt
+                    x-go-type: time.Time
+                    type: string
+                    format: date-time
+                    x-go-name: UpdatedAt
+                    x-go-type-skip-optional-pointer: true
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /api/performance/profiles/{performanceProfileId}:
+    get:
+      x-internal:
+        - cloud
+        - meshery
+      tags:
+        - Performance_Profile_performance
+      operationId: getPerformanceProfile
+      summary: Get a performance profile by ID
+      description: Returns a single performance profile owned by (or visible to) the authenticated user.
+      parameters:
+        - name: performanceProfileId
+          in: path
+          description: Performance profile ID.
+          schema:
+            type: string
+            format: uuid
+            description: >-
+              A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is
+              used across different schemas.
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+          required: true
+      responses:
+        '200':
+          description: Performance profile
+          content:
+            application/json:
+              schema:
+                $id: https://schemas.meshery.io/performance_profile.yaml
+                $schema: http://json-schema.org/draft-07/schema#
+                title: PerformanceProfile
+                description: >-
+                  A performance profile captures the configuration for a load test run by Meshery against one or more
+                  service-mesh endpoints. Profiles are owned by a user and can optionally be associated with a recurring
+                  schedule. Learn more at https://docs.meshery.io/tasks/performance-management
+                additionalProperties: false
+                type: object
+                required:
+                  - id
+                  - name
+                  - userId
+                  - createdAt
+                  - updatedAt
+                properties:
+                  id:
+                    description: Unique identifier for the performance profile.
+                    x-order: 1
+                    x-go-name: ID
+                    x-oapi-codegen-extra-tags:
+                      db: id
+                      json: id
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                  name:
+                    type: string
+                    description: Human-readable name of the performance profile.
+                    minLength: 1
+                    maxLength: 255
+                    x-order: 2
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: name
+                      json: name
+                  userId:
+                    description: User ID of the profile owner.
+                    x-order: 3
+                    x-go-name: UserID
+                    x-oapi-codegen-extra-tags:
+                      db: user_id
+                      json: userId
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                  schedule:
+                    description: >-
+                      Optional schedule ID associated with this performance profile. Null when the profile is not bound
+                      to a recurring schedule.
+                    nullable: true
+                    x-order: 4
+                    x-oapi-codegen-extra-tags:
+                      db: schedule
+                      json: schedule,omitempty
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                  loadGenerators:
+                    type: array
+                    description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
+                    minItems: 1
+                    items:
+                      type: string
+                      description: Identifier of a single load generator.
+                      minLength: 1
+                      maxLength: 64
+                    x-order: 5
+                    x-go-type: pq.StringArray
+                    x-go-type-import:
+                      path: github.com/lib/pq
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: load_generators
+                      gorm: type:text[]
+                      json: loadGenerators
+                  endpoints:
+                    type: array
+                    description: Endpoints (URLs) targeted by the performance profile's load test.
+                    minItems: 1
+                    items:
+                      type: string
+                      description: A single endpoint URL targeted by the load test.
+                      minLength: 1
+                      maxLength: 2048
+                    x-order: 6
+                    x-go-type: pq.StringArray
+                    x-go-type-import:
+                      path: github.com/lib/pq
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: endpoints
+                      gorm: type:text[]
+                      json: endpoints
+                  serviceMesh:
+                    type: string
+                    description: >-
+                      Service mesh under test for the profile (e.g. istio, linkerd, consul). Empty string when the
+                      profile is mesh-agnostic.
+                    maxLength: 100
+                    x-order: 7
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: service_mesh
+                      json: serviceMesh
+                  concurrentRequest:
+                    type: integer
+                    description: Number of concurrent requests issued by the load generator.
+                    minimum: 1
+                    maximum: 100000
+                    x-order: 8
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: concurrent_request
+                      json: concurrentRequest
+                  qps:
+                    type: integer
+                    description: >-
+                      Target queries-per-second rate for the load generator. Zero indicates the generator runs
+                      unthrottled.
+                    minimum: 0
+                    maximum: 1000000
+                    x-order: 9
+                    x-go-name: QPS
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: qps
+                      json: qps
+                  duration:
+                    type: string
+                    description: Duration of the load test, expressed as a Go duration string (e.g. "30s", "5m", "1h").
+                    minLength: 1
+                    maxLength: 32
+                    pattern: ^[0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h)([0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h))*$
+                    x-order: 10
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: duration
+                      json: duration
+                  requestHeaders:
+                    type: string
+                    description: >-
+                      HTTP request headers, serialized as JSON, sent on each load-test request. Empty string when no
+                      headers are configured.
+                    maxLength: 16384
+                    x-order: 11
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: request_headers
+                      json: requestHeaders
+                  requestCookies:
+                    type: string
+                    description: >-
+                      HTTP request cookies, serialized as JSON, sent on each load-test request. Empty string when no
+                      cookies are configured.
+                    maxLength: 16384
+                    x-order: 12
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: request_cookies
+                      json: requestCookies
+                  requestBody:
+                    type: string
+                    description: HTTP request body sent on each load-test request. Empty string when no body is configured.
+                    maxLength: 1048576
+                    x-order: 13
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: request_body
+                      json: requestBody
+                  contentType:
+                    type: string
+                    description: >-
+                      Content-Type header value applied to each load-test request body (e.g. "application/json"). Empty
+                      string when no body is configured.
+                    maxLength: 255
+                    x-order: 14
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: content_type
+                      json: contentType
+                  metadata:
+                    type: object
+                    description: Free-form metadata associated with the performance profile.
+                    additionalProperties: true
+                    x-order: 15
+                    x-go-type: core.Map
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: metadata
+                      json: metadata
+                  lastRun:
+                    description: >-
+                      Server-computed timestamp of the most recent load-test run that used this profile. Null until the
+                      first run completes. Server-managed; clients must not set this on create/update.
+                    nullable: true
+                    x-order: 16
+                    x-oapi-codegen-extra-tags:
+                      db: last_run
+                      json: lastRun,omitempty
+                    x-go-type: NullTime
+                    type: string
+                    format: date-time
+                    x-go-type-skip-optional-pointer: true
+                  totalResults:
+                    type: integer
+                    description: >-
+                      Server-computed count of load-test results recorded for this profile. Server-managed; clients must
+                      not set this on create/update.
+                    minimum: 0
+                    x-order: 17
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: total_results
+                      json: totalResults
+                  createdAt:
+                    description: Timestamp when the performance profile was created.
+                    x-order: 18
+                    x-oapi-codegen-extra-tags:
+                      db: created_at
+                      yaml: created_at
+                      json: createdAt
+                    x-go-type: time.Time
+                    type: string
+                    format: date-time
+                    x-go-name: CreatedAt
+                    x-go-type-skip-optional-pointer: true
+                  updatedAt:
+                    description: Timestamp when the performance profile was last updated.
+                    x-order: 19
+                    x-oapi-codegen-extra-tags:
+                      db: updated_at
+                      yaml: updated_at
+                      json: updatedAt
+                    x-go-type: time.Time
+                    type: string
+                    format: date-time
+                    x-go-name: UpdatedAt
+                    x-go-type-skip-optional-pointer: true
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+    put:
+      x-internal:
+        - cloud
+        - meshery
+      tags:
+        - Performance_Profile_performance
+      operationId: updatePerformanceProfile
+      summary: Update a performance profile
+      description: Updates the performance profile identified by the path parameter.
+      parameters:
+        - name: performanceProfileId
+          in: path
+          description: Performance profile ID.
+          schema:
+            type: string
+            format: uuid
+            description: >-
+              A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is
+              used across different schemas.
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+          required: true
+      requestBody:
+        description: Body for creating or updating a performance profile.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: >-
+                Payload for creating or updating a performance profile. Includes only client-settable fields;
+                server-generated fields (id on create, createdAt, updatedAt, lastRun, totalResults) are populated by the
+                server.
+              required:
+                - name
+                - loadGenerators
+                - endpoints
+                - duration
+              properties:
+                id:
+                  description: Existing performance-profile ID for updates; omit on create.
+                  x-go-name: ID
+                  x-oapi-codegen-extra-tags:
+                    json: id,omitempty
+                  type: string
+                  format: uuid
+                  x-go-type: uuid.UUID
+                  x-go-type-import:
+                    path: github.com/gofrs/uuid
+                name:
+                  type: string
+                  description: Human-readable name of the performance profile.
+                  minLength: 1
+                  maxLength: 255
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: name
+                userId:
+                  description: Owner user ID. When omitted, the server infers it from the authenticated user.
+                  x-go-name: UserID
+                  x-oapi-codegen-extra-tags:
+                    json: userId,omitempty
+                  type: string
+                  format: uuid
+                  x-go-type: uuid.UUID
+                  x-go-type-import:
+                    path: github.com/gofrs/uuid
+                schedule:
+                  description: Optional schedule ID associating the profile with a recurring run.
+                  nullable: true
+                  x-oapi-codegen-extra-tags:
+                    json: schedule,omitempty
+                  type: string
+                  format: uuid
+                  x-go-type: uuid.UUID
+                  x-go-type-import:
+                    path: github.com/gofrs/uuid
+                loadGenerators:
+                  type: array
+                  description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
+                  minItems: 1
+                  items:
+                    type: string
+                    description: Identifier of a single load generator.
+                    minLength: 1
+                    maxLength: 64
+                  x-go-type: pq.StringArray
+                  x-go-type-import:
+                    path: github.com/lib/pq
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: loadGenerators
+                endpoints:
+                  type: array
+                  description: Endpoints (URLs) targeted by the performance profile's load test.
+                  minItems: 1
+                  items:
+                    type: string
+                    description: A single endpoint URL targeted by the load test.
+                    minLength: 1
+                    maxLength: 2048
+                  x-go-type: pq.StringArray
+                  x-go-type-import:
+                    path: github.com/lib/pq
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: endpoints
+                serviceMesh:
+                  type: string
+                  description: >-
+                    Service mesh under test for the profile (e.g. istio, linkerd, consul). Empty string when the profile
+                    is mesh-agnostic.
+                  maxLength: 100
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: serviceMesh,omitempty
+                concurrentRequest:
+                  type: integer
+                  description: Number of concurrent requests issued by the load generator.
+                  minimum: 1
+                  maximum: 100000
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: concurrentRequest,omitempty
+                qps:
+                  type: integer
+                  description: >-
+                    Target queries-per-second rate for the load generator. Zero indicates the generator runs
+                    unthrottled.
+                  minimum: 0
+                  maximum: 1000000
+                  x-go-name: QPS
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: qps,omitempty
+                duration:
+                  type: string
+                  description: Duration of the load test, expressed as a Go duration string (e.g. "30s", "5m", "1h").
+                  minLength: 1
+                  maxLength: 32
+                  pattern: ^[0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h)([0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h))*$
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: duration
+                requestHeaders:
+                  type: string
+                  description: HTTP request headers, serialized as JSON, sent on each load-test request.
+                  maxLength: 16384
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: requestHeaders,omitempty
+                requestCookies:
+                  type: string
+                  description: HTTP request cookies, serialized as JSON, sent on each load-test request.
+                  maxLength: 16384
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: requestCookies,omitempty
+                requestBody:
+                  type: string
+                  description: HTTP request body sent on each load-test request.
+                  maxLength: 1048576
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: requestBody,omitempty
+                contentType:
+                  type: string
+                  description: Content-Type header value applied to each load-test request body (e.g. "application/json").
+                  maxLength: 255
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: contentType,omitempty
+                metadata:
+                  type: object
+                  description: Free-form metadata associated with the performance profile.
+                  additionalProperties: true
+                  x-go-type: core.Map
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: metadata,omitempty
+      responses:
+        '200':
+          description: Performance profile
+          content:
+            application/json:
+              schema:
+                $id: https://schemas.meshery.io/performance_profile.yaml
+                $schema: http://json-schema.org/draft-07/schema#
+                title: PerformanceProfile
+                description: >-
+                  A performance profile captures the configuration for a load test run by Meshery against one or more
+                  service-mesh endpoints. Profiles are owned by a user and can optionally be associated with a recurring
+                  schedule. Learn more at https://docs.meshery.io/tasks/performance-management
+                additionalProperties: false
+                type: object
+                required:
+                  - id
+                  - name
+                  - userId
+                  - createdAt
+                  - updatedAt
+                properties:
+                  id:
+                    description: Unique identifier for the performance profile.
+                    x-order: 1
+                    x-go-name: ID
+                    x-oapi-codegen-extra-tags:
+                      db: id
+                      json: id
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                  name:
+                    type: string
+                    description: Human-readable name of the performance profile.
+                    minLength: 1
+                    maxLength: 255
+                    x-order: 2
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: name
+                      json: name
+                  userId:
+                    description: User ID of the profile owner.
+                    x-order: 3
+                    x-go-name: UserID
+                    x-oapi-codegen-extra-tags:
+                      db: user_id
+                      json: userId
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                  schedule:
+                    description: >-
+                      Optional schedule ID associated with this performance profile. Null when the profile is not bound
+                      to a recurring schedule.
+                    nullable: true
+                    x-order: 4
+                    x-oapi-codegen-extra-tags:
+                      db: schedule
+                      json: schedule,omitempty
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
+                  loadGenerators:
+                    type: array
+                    description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
+                    minItems: 1
+                    items:
+                      type: string
+                      description: Identifier of a single load generator.
+                      minLength: 1
+                      maxLength: 64
+                    x-order: 5
+                    x-go-type: pq.StringArray
+                    x-go-type-import:
+                      path: github.com/lib/pq
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: load_generators
+                      gorm: type:text[]
+                      json: loadGenerators
+                  endpoints:
+                    type: array
+                    description: Endpoints (URLs) targeted by the performance profile's load test.
+                    minItems: 1
+                    items:
+                      type: string
+                      description: A single endpoint URL targeted by the load test.
+                      minLength: 1
+                      maxLength: 2048
+                    x-order: 6
+                    x-go-type: pq.StringArray
+                    x-go-type-import:
+                      path: github.com/lib/pq
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: endpoints
+                      gorm: type:text[]
+                      json: endpoints
+                  serviceMesh:
+                    type: string
+                    description: >-
+                      Service mesh under test for the profile (e.g. istio, linkerd, consul). Empty string when the
+                      profile is mesh-agnostic.
+                    maxLength: 100
+                    x-order: 7
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: service_mesh
+                      json: serviceMesh
+                  concurrentRequest:
+                    type: integer
+                    description: Number of concurrent requests issued by the load generator.
+                    minimum: 1
+                    maximum: 100000
+                    x-order: 8
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: concurrent_request
+                      json: concurrentRequest
+                  qps:
+                    type: integer
+                    description: >-
+                      Target queries-per-second rate for the load generator. Zero indicates the generator runs
+                      unthrottled.
+                    minimum: 0
+                    maximum: 1000000
+                    x-order: 9
+                    x-go-name: QPS
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: qps
+                      json: qps
+                  duration:
+                    type: string
+                    description: Duration of the load test, expressed as a Go duration string (e.g. "30s", "5m", "1h").
+                    minLength: 1
+                    maxLength: 32
+                    pattern: ^[0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h)([0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h))*$
+                    x-order: 10
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: duration
+                      json: duration
+                  requestHeaders:
+                    type: string
+                    description: >-
+                      HTTP request headers, serialized as JSON, sent on each load-test request. Empty string when no
+                      headers are configured.
+                    maxLength: 16384
+                    x-order: 11
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: request_headers
+                      json: requestHeaders
+                  requestCookies:
+                    type: string
+                    description: >-
+                      HTTP request cookies, serialized as JSON, sent on each load-test request. Empty string when no
+                      cookies are configured.
+                    maxLength: 16384
+                    x-order: 12
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: request_cookies
+                      json: requestCookies
+                  requestBody:
+                    type: string
+                    description: HTTP request body sent on each load-test request. Empty string when no body is configured.
+                    maxLength: 1048576
+                    x-order: 13
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: request_body
+                      json: requestBody
+                  contentType:
+                    type: string
+                    description: >-
+                      Content-Type header value applied to each load-test request body (e.g. "application/json"). Empty
+                      string when no body is configured.
+                    maxLength: 255
+                    x-order: 14
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: content_type
+                      json: contentType
+                  metadata:
+                    type: object
+                    description: Free-form metadata associated with the performance profile.
+                    additionalProperties: true
+                    x-order: 15
+                    x-go-type: core.Map
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: metadata
+                      json: metadata
+                  lastRun:
+                    description: >-
+                      Server-computed timestamp of the most recent load-test run that used this profile. Null until the
+                      first run completes. Server-managed; clients must not set this on create/update.
+                    nullable: true
+                    x-order: 16
+                    x-oapi-codegen-extra-tags:
+                      db: last_run
+                      json: lastRun,omitempty
+                    x-go-type: NullTime
+                    type: string
+                    format: date-time
+                    x-go-type-skip-optional-pointer: true
+                  totalResults:
+                    type: integer
+                    description: >-
+                      Server-computed count of load-test results recorded for this profile. Server-managed; clients must
+                      not set this on create/update.
+                    minimum: 0
+                    x-order: 17
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: total_results
+                      json: totalResults
+                  createdAt:
+                    description: Timestamp when the performance profile was created.
+                    x-order: 18
+                    x-oapi-codegen-extra-tags:
+                      db: created_at
+                      yaml: created_at
+                      json: createdAt
+                    x-go-type: time.Time
+                    type: string
+                    format: date-time
+                    x-go-name: CreatedAt
+                    x-go-type-skip-optional-pointer: true
+                  updatedAt:
+                    description: Timestamp when the performance profile was last updated.
+                    x-order: 19
+                    x-oapi-codegen-extra-tags:
+                      db: updated_at
+                      yaml: updated_at
+                      json: updatedAt
+                    x-go-type: time.Time
+                    type: string
+                    format: date-time
+                    x-go-name: UpdatedAt
+                    x-go-type-skip-optional-pointer: true
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+    delete:
+      x-internal:
+        - cloud
+        - meshery
+      tags:
+        - Performance_Profile_performance
+      operationId: deletePerformanceProfile
+      summary: Delete a performance profile
+      description: Deletes the performance profile identified by the path parameter and any associated performance results.
+      parameters:
+        - name: performanceProfileId
+          in: path
+          description: Performance profile ID.
+          schema:
+            type: string
+            format: uuid
+            description: >-
+              A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is
+              used across different schemas.
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+          required: true
+      responses:
+        '204':
+          description: Performance profile deleted
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /api/performance/profiles/{performanceProfileId}/results:
+    get:
+      x-internal:
+        - cloud
+        - meshery
+      tags:
+        - Performance_Profile_performance
+      operationId: getPerformanceProfileResults
+      summary: List performance results for a profile
+      description: Returns paginated load-test results associated with the performance profile identified by the path parameter.
+      parameters:
+        - name: performanceProfileId
+          in: path
+          description: Performance profile ID.
+          schema:
+            type: string
+            format: uuid
+            description: >-
+              A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core definition is
+              used across different schemas.
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+          required: true
+        - name: page
+          in: query
+          description: Get responses by page
+          schema:
+            type: string
+        - name: pagesize
+          in: query
+          description: Get responses by pagesize
+          schema:
+            type: string
+        - name: search
+          in: query
+          description: Get responses that match search param value
+          schema:
+            type: string
+        - name: order
+          in: query
+          description: Get ordered responses
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Performance results
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Paginated list of performance results.
+                required:
+                  - page
+                  - pageSize
+                  - totalCount
+                  - results
+                properties:
+                  page:
+                    type: integer
+                    description: Zero-based page index returned in this response.
+                    minimum: 0
+                    maximum: 1000000
+                    x-go-type-skip-optional-pointer: true
+                  pageSize:
+                    type: integer
+                    description: Maximum number of items returned on each page.
+                    minimum: 1
+                    maximum: 1000
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      json: pageSize
+                  totalCount:
+                    type: integer
+                    description: Total number of performance results across all pages.
+                    minimum: 0
+                    maximum: 100000000
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      json: totalCount
+                  results:
+                    type: array
+                    description: Performance results in this page.
+                    x-go-type-skip-optional-pointer: true
+                    items:
+                      x-go-type: PerformanceResult
+                      type: object
+                      description: Load-test result captured for a Meshery performance profile.
+                      additionalProperties: false
+                      properties:
+                        mesheryId:
+                          type: string
+                          format: uuid
+                          description: >-
+                            A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core
+                            definition is used across different schemas.
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                          x-go-name: ID
+                          x-oapi-codegen-extra-tags:
+                            db: id
+                            json: mesheryId,omitempty
+                        name:
+                          type: string
+                          description: Human-readable name of the performance result.
+                          maxLength: 255
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: name
+                            json: name,omitempty
+                        mesh:
+                          type: string
+                          description: Service mesh under test for this result.
+                          maxLength: 255
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: mesh
+                            json: mesh,omitempty
+                        performanceProfile:
+                          type: string
+                          format: uuid
+                          description: >-
+                            A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core
+                            definition is used across different schemas.
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                          nullable: true
+                          x-oapi-codegen-extra-tags:
+                            db: performance_profile
+                            json: performanceProfile,omitempty
+                        testId:
+                          type: string
+                          description: Provider-assigned test identifier for this result.
+                          maxLength: 255
+                          x-go-name: TestID
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            json: testId,omitempty
+                        runnerResults:
+                          type: object
+                          description: Raw load-generator output for this performance result.
+                          additionalProperties: true
+                          x-go-type: core.Map
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: runner_results
+                            json: runnerResults,omitempty
+                        serverMetrics:
+                          type: object
+                          description: Server-side metrics collected for this performance result.
+                          additionalProperties: true
+                          x-go-type: core.Map
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: server_metrics
+                            json: serverMetrics,omitempty
+                        serverBoardConfig:
+                          type: object
+                          description: Server board configuration associated with this performance result.
+                          additionalProperties: true
+                          x-go-type: core.Map
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: server_board_config
+                            json: serverBoardConfig,omitempty
+                        testStartTime:
+                          type: string
+                          format: date-time
+                          description: Time when the load test started.
+                          x-oapi-codegen-extra-tags:
+                            db: test_start_time
+                            json: testStartTime,omitempty
+                        userId:
+                          type: string
+                          format: uuid
+                          description: >-
+                            A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core
+                            definition is used across different schemas.
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                          x-go-name: UserID
+                          x-oapi-codegen-extra-tags:
+                            db: user_id
+                            json: userId,omitempty
+                        createdAt:
+                          description: Timestamp when the performance result was created.
+                          x-oapi-codegen-extra-tags:
+                            db: created_at
+                            yaml: created_at
+                            json: createdAt,omitempty
+                          x-go-type: time.Time
+                          type: string
+                          format: date-time
+                          x-go-name: CreatedAt
+                          x-go-type-skip-optional-pointer: true
+                        updatedAt:
+                          description: Timestamp when the performance result was last updated.
+                          x-oapi-codegen-extra-tags:
+                            db: updated_at
+                            yaml: updated_at
+                            json: updatedAt,omitempty
+                          x-go-type: time.Time
+                          type: string
+                          format: date-time
+                          x-go-name: UpdatedAt
+                          x-go-type-skip-optional-pointer: true
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /api/performance/results:
+    get:
+      x-internal:
+        - cloud
+        - meshery
+      tags:
+        - Performance_Profile_performance
+      operationId: getPerformanceResults
+      summary: List all performance results
+      description: Returns paginated load-test results visible to the authenticated user.
+      parameters:
+        - name: page
+          in: query
+          description: Get responses by page
+          schema:
+            type: string
+        - name: pagesize
+          in: query
+          description: Get responses by pagesize
+          schema:
+            type: string
+        - name: search
+          in: query
+          description: Get responses that match search param value
+          schema:
+            type: string
+        - name: order
+          in: query
+          description: Get ordered responses
+          schema:
+            type: string
+        - name: from
+          in: query
+          description: Start date for filtering results by test start time, in YYYY-MM-DD format.
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          description: End date for filtering results by test start time, in YYYY-MM-DD format.
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Performance results
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Paginated list of performance results.
+                required:
+                  - page
+                  - pageSize
+                  - totalCount
+                  - results
+                properties:
+                  page:
+                    type: integer
+                    description: Zero-based page index returned in this response.
+                    minimum: 0
+                    maximum: 1000000
+                    x-go-type-skip-optional-pointer: true
+                  pageSize:
+                    type: integer
+                    description: Maximum number of items returned on each page.
+                    minimum: 1
+                    maximum: 1000
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      json: pageSize
+                  totalCount:
+                    type: integer
+                    description: Total number of performance results across all pages.
+                    minimum: 0
+                    maximum: 100000000
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      json: totalCount
+                  results:
+                    type: array
+                    description: Performance results in this page.
+                    x-go-type-skip-optional-pointer: true
+                    items:
+                      x-go-type: PerformanceResult
+                      type: object
+                      description: Load-test result captured for a Meshery performance profile.
+                      additionalProperties: false
+                      properties:
+                        mesheryId:
+                          type: string
+                          format: uuid
+                          description: >-
+                            A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core
+                            definition is used across different schemas.
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                          x-go-name: ID
+                          x-oapi-codegen-extra-tags:
+                            db: id
+                            json: mesheryId,omitempty
+                        name:
+                          type: string
+                          description: Human-readable name of the performance result.
+                          maxLength: 255
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: name
+                            json: name,omitempty
+                        mesh:
+                          type: string
+                          description: Service mesh under test for this result.
+                          maxLength: 255
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: mesh
+                            json: mesh,omitempty
+                        performanceProfile:
+                          type: string
+                          format: uuid
+                          description: >-
+                            A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core
+                            definition is used across different schemas.
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                          nullable: true
+                          x-oapi-codegen-extra-tags:
+                            db: performance_profile
+                            json: performanceProfile,omitempty
+                        testId:
+                          type: string
+                          description: Provider-assigned test identifier for this result.
+                          maxLength: 255
+                          x-go-name: TestID
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            json: testId,omitempty
+                        runnerResults:
+                          type: object
+                          description: Raw load-generator output for this performance result.
+                          additionalProperties: true
+                          x-go-type: core.Map
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: runner_results
+                            json: runnerResults,omitempty
+                        serverMetrics:
+                          type: object
+                          description: Server-side metrics collected for this performance result.
+                          additionalProperties: true
+                          x-go-type: core.Map
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: server_metrics
+                            json: serverMetrics,omitempty
+                        serverBoardConfig:
+                          type: object
+                          description: Server board configuration associated with this performance result.
+                          additionalProperties: true
+                          x-go-type: core.Map
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: server_board_config
+                            json: serverBoardConfig,omitempty
+                        testStartTime:
+                          type: string
+                          format: date-time
+                          description: Time when the load test started.
+                          x-oapi-codegen-extra-tags:
+                            db: test_start_time
+                            json: testStartTime,omitempty
+                        userId:
+                          type: string
+                          format: uuid
+                          description: >-
+                            A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core
+                            definition is used across different schemas.
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                          x-go-name: UserID
+                          x-oapi-codegen-extra-tags:
+                            db: user_id
+                            json: userId,omitempty
+                        createdAt:
+                          description: Timestamp when the performance result was created.
+                          x-oapi-codegen-extra-tags:
+                            db: created_at
+                            yaml: created_at
+                            json: createdAt,omitempty
+                          x-go-type: time.Time
+                          type: string
+                          format: date-time
+                          x-go-name: CreatedAt
+                          x-go-type-skip-optional-pointer: true
+                        updatedAt:
+                          description: Timestamp when the performance result was last updated.
+                          x-oapi-codegen-extra-tags:
+                            db: updated_at
+                            yaml: updated_at
+                            json: updatedAt,omitempty
+                          x-go-type: time.Time
+                          type: string
+                          format: date-time
+                          x-go-name: UpdatedAt
+                          x-go-type-skip-optional-pointer: true
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
           content:
             text/plain:
               schema:

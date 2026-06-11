@@ -1,4 +1,4 @@
-FROM golang:1.25.5 AS meshery-server
+FROM golang:1.26.4 AS meshery-server
 ARG GIT_VERSION
 
 RUN adduser --disabled-login appuser
@@ -18,7 +18,7 @@ WORKDIR /app
 
 COPY ui/package.json ui/package-lock.json ./
 ENV HUSKY=0
-RUN npm ci --omit=dev --legacy-peer-deps --ignore-scripts
+RUN npm ci --legacy-peer-deps --ignore-scripts
 
 FROM base-node AS ui-builder
 WORKDIR /app
@@ -37,7 +37,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 # Install dependencies based on the preferred package manager
 COPY provider-ui/package.json provider-ui/package-lock.json ./
-RUN npm ci --omit=dev --legacy-peer-deps
+RUN npm ci --legacy-peer-deps
 
 FROM base-node AS ui-provider-builder
 WORKDIR /app

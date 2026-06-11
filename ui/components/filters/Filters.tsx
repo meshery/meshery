@@ -210,16 +210,16 @@ function MesheryFilters() {
     };
   }
 
-  async function showmodal(count: number) {
-    let response = await modalRef.current?.show({
+  async function showmodal(count: number, name?: string) {
+    return await modalRef.current?.show({
       title: `Delete ${count ? count : ''} Filter${count > 1 ? 's' : ''}?`,
-      subtitle: `Are you sure you want to delete ${count > 1 ? 'these' : 'this'} ${
-        count ? count : ''
-      } filter${count > 1 ? 's' : ''}?`,
+      subtitle:
+        count > 1
+          ? `Are you sure you want to delete these ${count} filters?`
+          : `Are you sure you want to delete ${name ? `"${name}"` : 'this filter'}?`,
       primaryOption: 'Delete',
       variant: PROMPT_VARIANTS.DANGER,
     });
-    return response;
   }
 
   const handleUnpublishModal = createHandleUnpublishModal({
