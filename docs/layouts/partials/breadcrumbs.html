@@ -1,6 +1,6 @@
 <div id="breadcrumbs">
   {{ if not .IsHome }}
-    <a href="{{ .Site.Home.RelPermalink }}">home</a>
+    <a href="{{ "" | relURL }}">home</a>
     {{ range .Ancestors.Reverse }}
       {{ if ne . $.Site.Home }}
         / <a href="{{ .RelPermalink }}">{{ lower .LinkTitle }}</a>
