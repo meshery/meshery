@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -334,7 +333,7 @@ func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
 // PackageLocation returns the location of where the package for the current
 // provider is located
 func (l *DefaultLocalProvider) PackageLocation() string {
-	return path.Join(homedir.HomeDir(), ".meshery", "provider", l.ProviderName, l.PackageVersion)
+	return filepath.Join(homedir.HomeDir(), ".meshery", "provider", l.ProviderName, l.PackageVersion)
 }
 
 func (l *DefaultLocalProvider) SetJWTCookie(_ http.ResponseWriter, _ string) {
