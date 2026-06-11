@@ -9,6 +9,7 @@ vi.mock('@sistent/sistent', () => ({
   crimson: { 40: '#F91313' },
   InfoOutlinedIcon: () => <svg data-testid="info-outlined" />,
   AccountTreeIcon: () => <svg data-testid="account-tree" />,
+  EditIcon: () => <svg data-testid="edit" />,
 }));
 
 vi.mock('react-moment', () => ({
@@ -19,7 +20,6 @@ vi.mock('@/assets/icons', () => ({
   GetApp: () => <svg data-testid="get-app" />,
   DoneAll: () => <svg data-testid="done-all" />,
   Public: () => <svg data-testid="public" />,
-  Edit: () => <svg data-testid="edit" />,
 }));
 
 vi.mock('../../../public/static/img/UndeployIcon', () => ({
