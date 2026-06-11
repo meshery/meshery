@@ -3,7 +3,7 @@ import { Box, Typography, styled, CustomTooltip, Collapse, ErrorBoundary } from 
 import { ComponentIcon } from '@/components/designs/lifecycle/common';
 import { InfoIcon } from '@sistent/sistent'; // Assuming MUI icons are available
 import ExpandLessIcon from '@/assets/icons/ExpandLessIcon';
-import ExpandMoreIcon from '@/assets/icons/ExpandMoreIcon';
+import { ExpandMoreIcon } from '@sistent/sistent';
 
 // Styled components
 const SectionContainer = styled(Box)(({ theme }) => ({
