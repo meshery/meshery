@@ -1,37 +1,57 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-
-	// "io"
+	"io"
 	"net/http"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshery/server/models"
 )
+
+func performanceProfileIDFromRequest(r *http.Request) string {
+	return mux.Vars(r)["performanceProfileId"]
+}
 
 // SavePerformanceProfileHandler will save performance profile using the current provider's persistence mechanism
 func (h *Handler) SavePerformanceProfileHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
+	user *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
 		_ = r.Body.Close()
 	}()
 
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+	body = bytes.TrimSpace(body)
+	if len(body) == 0 || bytes.Equal(body, []byte("null")) {
+		err := fmt.Errorf("performance profile request body is empty or null")
+		h.log.Error(ErrRequestBody(err))
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
 	parsedBody := &models.PerformanceProfile{}
-	parsedBody.Metadata = make(sql.Map, 0)
-	err := json.NewDecoder(r.Body).Decode(&parsedBody)
+	err = json.Unmarshal(body, parsedBody)
 	if err != nil {
 		//failed to read request body
 		h.log.Error(ErrRequestBody(err))
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
+	}
+	if user != nil && user.ID != uuid.Nil {
+		parsedBody.UserID = user.ID
 	}
 
 	j, _ := json.Marshal(parsedBody)
@@ -100,7 +120,7 @@ func (h *Handler) DeletePerformanceProfileHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	performanceProfileID := mux.Vars(r)["id"]
+	performanceProfileID := performanceProfileIDFromRequest(r)
 
 	resp, err := provider.DeletePerformanceProfile(r, performanceProfileID)
 	if err != nil {
@@ -124,7 +144,7 @@ func (h *Handler) GetPerformanceProfileHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	performanceProfileID := mux.Vars(r)["id"]
+	performanceProfileID := performanceProfileIDFromRequest(r)
 
 	resp, err := provider.GetPerformanceProfile(r, performanceProfileID)
 	if err != nil {

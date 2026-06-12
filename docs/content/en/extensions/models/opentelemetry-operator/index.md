@@ -10,8 +10,8 @@ integrations-subcategory: Tracing
 registrant: Artifact Hub
 components: 
 - name: op-amp-bridge
-  colorIcon: content/en/extensions/models/opentelemetry-operator/components/op-amp-bridge/icons/color/op-amp-bridge-color.svg
-  whiteIcon: content/en/extensions/models/opentelemetry-operator/components/op-amp-bridge/icons/white/op-amp-bridge-white.svg
+  colorIcon: extensions/models/opentelemetry-operator/components/op-amp-bridge/icons/color/op-amp-bridge-color.svg
+  whiteIcon: extensions/models/opentelemetry-operator/components/op-amp-bridge/icons/white/op-amp-bridge-white.svg
   description: 
 components-count: 1
 relationships: 

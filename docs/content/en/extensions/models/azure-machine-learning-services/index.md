@@ -10,20 +10,20 @@ integrations-subcategory: Machine Learning
 registrant: GitHub
 components: 
 - name: registry
-  colorIcon: content/en/extensions/models/azure-machine-learning-services/components/registry/icons/color/registry-color.svg
-  whiteIcon: content/en/extensions/models/azure-machine-learning-services/components/registry/icons/white/registry-white.svg
+  colorIcon: extensions/models/azure-machine-learning-services/components/registry/icons/color/registry-color.svg
+  whiteIcon: extensions/models/azure-machine-learning-services/components/registry/icons/white/registry-white.svg
   description: 
 - name: workspace
-  colorIcon: content/en/extensions/models/azure-machine-learning-services/components/workspace/icons/color/workspace-color.svg
-  whiteIcon: content/en/extensions/models/azure-machine-learning-services/components/workspace/icons/white/workspace-white.svg
+  colorIcon: extensions/models/azure-machine-learning-services/components/workspace/icons/color/workspace-color.svg
+  whiteIcon: extensions/models/azure-machine-learning-services/components/workspace/icons/white/workspace-white.svg
   description: 
 - name: workspaces-compute
-  colorIcon: content/en/extensions/models/azure-machine-learning-services/components/workspaces-compute/icons/color/workspaces-compute-color.svg
-  whiteIcon: content/en/extensions/models/azure-machine-learning-services/components/workspaces-compute/icons/white/workspaces-compute-white.svg
+  colorIcon: extensions/models/azure-machine-learning-services/components/workspaces-compute/icons/color/workspaces-compute-color.svg
+  whiteIcon: extensions/models/azure-machine-learning-services/components/workspaces-compute/icons/white/workspaces-compute-white.svg
   description: 
 - name: workspaces-connection
-  colorIcon: content/en/extensions/models/azure-machine-learning-services/components/workspaces-connection/icons/color/workspaces-connection-color.svg
-  whiteIcon: content/en/extensions/models/azure-machine-learning-services/components/workspaces-connection/icons/white/workspaces-connection-white.svg
+  colorIcon: extensions/models/azure-machine-learning-services/components/workspaces-connection/icons/color/workspaces-connection-color.svg
+  whiteIcon: extensions/models/azure-machine-learning-services/components/workspaces-connection/icons/white/workspaces-connection-white.svg
   description: 
 components-count: 4
 relationships: 

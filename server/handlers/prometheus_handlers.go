@@ -226,7 +226,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 
-		h.log.Debug("Prometheus URL %s saved", promURL)
+		h.log.Debugf("Prometheus URL %s saved", promURL)
 	}
 
 	err := provider.RecordPreferences(req, user.UserId, prefObj)

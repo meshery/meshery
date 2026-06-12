@@ -10,16 +10,16 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: click-house-installation
-  colorIcon: content/en/extensions/models/posthog/components/click-house-installation/icons/color/click-house-installation-color.svg
-  whiteIcon: content/en/extensions/models/posthog/components/click-house-installation/icons/white/click-house-installation-white.svg
+  colorIcon: extensions/models/posthog/components/click-house-installation/icons/color/click-house-installation-color.svg
+  whiteIcon: extensions/models/posthog/components/click-house-installation/icons/white/click-house-installation-white.svg
   description: 
 - name: click-house-installation-template
-  colorIcon: content/en/extensions/models/posthog/components/click-house-installation-template/icons/color/click-house-installation-template-color.svg
-  whiteIcon: content/en/extensions/models/posthog/components/click-house-installation-template/icons/white/click-house-installation-template-white.svg
+  colorIcon: extensions/models/posthog/components/click-house-installation-template/icons/color/click-house-installation-template-color.svg
+  whiteIcon: extensions/models/posthog/components/click-house-installation-template/icons/white/click-house-installation-template-white.svg
   description: 
 - name: click-house-operator-configuration
-  colorIcon: content/en/extensions/models/posthog/components/click-house-operator-configuration/icons/color/click-house-operator-configuration-color.svg
-  whiteIcon: content/en/extensions/models/posthog/components/click-house-operator-configuration/icons/white/click-house-operator-configuration-white.svg
+  colorIcon: extensions/models/posthog/components/click-house-operator-configuration/icons/color/click-house-operator-configuration-color.svg
+  whiteIcon: extensions/models/posthog/components/click-house-operator-configuration/icons/white/click-house-operator-configuration-white.svg
   description: 
 components-count: 3
 relationships: 

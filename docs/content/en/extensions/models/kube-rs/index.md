@@ -10,8 +10,8 @@ integrations-subcategory: Scheduling & Orchestration
 registrant: Github
 components: 
 - name: document
-  colorIcon: content/en/extensions/models/kube-rs/components/document/icons/color/document-color.svg
-  whiteIcon: content/en/extensions/models/kube-rs/components/document/icons/white/document-white.svg
+  colorIcon: extensions/models/kube-rs/components/document/icons/color/document-color.svg
+  whiteIcon: extensions/models/kube-rs/components/document/icons/white/document-white.svg
   description: 
 components-count: 1
 relationships: 

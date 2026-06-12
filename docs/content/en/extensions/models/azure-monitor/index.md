@@ -10,8 +10,8 @@ integrations-subcategory: Monitoring
 registrant: GitHub
 components: 
 - name: account
-  colorIcon: content/en/extensions/models/azure-monitor/components/account/icons/color/account-color.svg
-  whiteIcon: content/en/extensions/models/azure-monitor/components/account/icons/white/account-white.svg
+  colorIcon: extensions/models/azure-monitor/components/account/icons/color/account-color.svg
+  whiteIcon: extensions/models/azure-monitor/components/account/icons/white/account-white.svg
   description: 
 components-count: 1
 relationships: 

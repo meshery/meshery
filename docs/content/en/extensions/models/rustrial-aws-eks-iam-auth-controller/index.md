@@ -10,8 +10,8 @@ integrations-subcategory: Security Identity Compliance
 registrant: Artifact Hub
 components: 
 - name: iam-identity-mapping
-  colorIcon: content/en/extensions/models/rustrial-aws-eks-iam-auth-controller/components/iam-identity-mapping/icons/color/iam-identity-mapping-color.svg
-  whiteIcon: content/en/extensions/models/rustrial-aws-eks-iam-auth-controller/components/iam-identity-mapping/icons/white/iam-identity-mapping-white.svg
+  colorIcon: extensions/models/rustrial-aws-eks-iam-auth-controller/components/iam-identity-mapping/icons/color/iam-identity-mapping-color.svg
+  whiteIcon: extensions/models/rustrial-aws-eks-iam-auth-controller/components/iam-identity-mapping/icons/white/iam-identity-mapping-white.svg
   description: 
 components-count: 1
 relationships: 

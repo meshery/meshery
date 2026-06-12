@@ -10,8 +10,8 @@ integrations-subcategory: Application Definition & Image Build
 registrant: Artifact Hub
 components: 
 - name: application
-  colorIcon: content/en/extensions/models/application-crds/components/application/icons/color/application-color.svg
-  whiteIcon: content/en/extensions/models/application-crds/components/application/icons/white/application-white.svg
+  colorIcon: extensions/models/application-crds/components/application/icons/color/application-color.svg
+  whiteIcon: extensions/models/application-crds/components/application/icons/white/application-white.svg
   description: 
 components-count: 1
 relationships: 

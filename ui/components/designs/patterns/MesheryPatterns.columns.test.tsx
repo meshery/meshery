@@ -8,6 +8,8 @@ vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: any) => <div>{children}</div>,
   crimson: { 40: '#F91313' },
   InfoOutlinedIcon: () => <svg data-testid="info-outlined" />,
+  AccountTreeIcon: () => <svg data-testid="account-tree" />,
+  EditIcon: () => <svg data-testid="edit" />,
 }));
 
 vi.mock('react-moment', () => ({
@@ -18,7 +20,6 @@ vi.mock('@/assets/icons', () => ({
   GetApp: () => <svg data-testid="get-app" />,
   DoneAll: () => <svg data-testid="done-all" />,
   Public: () => <svg data-testid="public" />,
-  Edit: () => <svg data-testid="edit" />,
 }));
 
 vi.mock('../../../public/static/img/UndeployIcon', () => ({
@@ -54,6 +55,7 @@ vi.mock('@/utils/permission_constants', () => ({
     DOWNLOAD_A_DESIGN: { action: 'download', subject: 'design' },
     DETAILS_OF_DESIGN: { action: 'details', subject: 'design' },
     UNPUBLISH_DESIGN: { action: 'unpublish', subject: 'design' },
+    EVALUATE_RELATIONSHIPS: { action: 'evaluate', subject: 'evaluate relationships' },
   },
 }));
 
@@ -110,6 +112,7 @@ const makeHandlers = () => ({
   handleDesignDownloadModal: vi.fn(),
   handleInfoModal: vi.fn(),
   handleUnpublishModal: vi.fn(),
+  handleEvaluateRelationship: vi.fn(),
   userCanEdit: (_: any) => true,
 });
 

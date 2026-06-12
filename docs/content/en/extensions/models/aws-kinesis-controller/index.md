@@ -10,20 +10,20 @@ integrations-subcategory: Streaming & Messaging
 registrant: GitHub
 components: 
 - name: field-export
-  colorIcon: content/en/extensions/models/aws-kinesis-controller/components/field-export/icons/color/field-export-color.svg
-  whiteIcon: content/en/extensions/models/aws-kinesis-controller/components/field-export/icons/white/field-export-white.svg
+  colorIcon: extensions/models/aws-kinesis-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: extensions/models/aws-kinesis-controller/components/field-export/icons/white/field-export-white.svg
   description: 
 - name: adopted-resource
-  colorIcon: content/en/extensions/models/aws-kinesis-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
-  whiteIcon: content/en/extensions/models/aws-kinesis-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  colorIcon: extensions/models/aws-kinesis-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: extensions/models/aws-kinesis-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
 - name: stream
-  colorIcon: content/en/extensions/models/aws-kinesis-controller/components/stream/icons/color/stream-color.svg
-  whiteIcon: content/en/extensions/models/aws-kinesis-controller/components/stream/icons/white/stream-white.svg
+  colorIcon: extensions/models/aws-kinesis-controller/components/stream/icons/color/stream-color.svg
+  whiteIcon: extensions/models/aws-kinesis-controller/components/stream/icons/white/stream-white.svg
   description: 
 - name: iam-role-selector
-  colorIcon: content/en/extensions/models/aws-kinesis-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
-  whiteIcon: content/en/extensions/models/aws-kinesis-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  colorIcon: extensions/models/aws-kinesis-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: extensions/models/aws-kinesis-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
 components-count: 4
 relationships: 
