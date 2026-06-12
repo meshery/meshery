@@ -12,11 +12,11 @@ export const ToolWrapper = styled(Box)(({ theme }) => ({
   position: 'relative',
   zIndex: '101',
   '& [data-testid="searchbar-input"]': {
-    minWidth: '12.5rem !important',
+    minWidth: '12.5rem',
   },
   [theme.breakpoints.down('sm')]: {
     '& [data-testid="searchbar-input"]': {
-      minWidth: '9rem !important',
+      minWidth: '9rem',
     },
   },
 }));

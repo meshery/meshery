@@ -8,6 +8,7 @@ import {
   CloseIcon,
   SearchIcon,
   useTheme,
+  useMediaQuery,
 } from '@sistent/sistent';
 import debounce from './debounce';
 
@@ -87,12 +88,9 @@ const SearchBar = ({
     }
   };
 
-  const width = window.innerWidth;
-  let searchWidth = '15rem';
-  if (width <= 750) {
-    searchWidth = '10rem';
-  }
   const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const searchWidth = isSmallScreen ? '9rem' : '12.5rem';
   return (
     <SearchContainer>
       <SearchTextField
