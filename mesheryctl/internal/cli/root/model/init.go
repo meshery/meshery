@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 
+	gyaml "github.com/ghodss/yaml"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas"
 	"github.com/spf13/cobra"
+	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/yaml.v3"
 )
 
@@ -304,42 +305,32 @@ func initModelReplacePlaceholders(input string, replacements map[string]string) 
 
 // TODO move it to more general package
 func initModelValidateDataOverSchema(schema []byte, data map[string]interface{}) error {
-	// version with full schema validation, like gojsonschema.Validate(schemaLoader, dataLoader),  is not working now,
-	// probably because of the external references and relative paths in schema
-	// it returns
-	// Error: Could not read schema from HTTP, response status is 404 Not Found
-	// --
-	// as we need only to validate the model name
-	// below we extract pattern for name property from schema json and validate manually string over pattern.
-	// TODO figure out how to do a proper validation over schema.
-
-	validationErrors := []string{}
-	for property, value := range data {
-		stringValue, ok := (value).(string)
-		if !ok {
-			continue
-		}
-		pattern, _ := initModelGetPatternFromSchema(schema, property)
-		if pattern == "" {
-			// skip if not possible to extract pattern
-			continue
-		}
-
-		re, err := regexp.Compile(pattern)
-		if err != nil {
-			// skip on invalid regexp
-			continue
-		}
-		if !re.MatchString(stringValue) {
-			validationErrors = append(
-				validationErrors,
-				fmt.Sprintf("%s must match pattern %s", property, pattern),
-			)
-		}
+	// Convert the YAML using our aliased package 'gyaml'
+	// Load the converted JSON Schema
+	// Load the data being validated
+	// Run the actual validation!
+	jsonSchemaBytes, err := gyaml.YAMLToJSON(schema)
+	if err != nil {
+		return fmt.Errorf("failed to convert schema YAML to JSON: %v", err)
 	}
 
-	if len(validationErrors) > 0 {
-		return errors.New(strings.Join(validationErrors, ""))
+	schemaLoader := gojsonschema.NewBytesLoader(jsonSchemaBytes)
+
+	dataLoader := gojsonschema.NewGoLoader(data)
+
+	result, err := gojsonschema.Validate(schemaLoader, dataLoader)
+	if err != nil {
+		// Now if we hit the 404 error, we will actually see it!
+		return fmt.Errorf("schema validation failed to execute: %v", err)
+	}
+
+	// Catch validation rule failures
+	if !result.Valid() {
+		var errStrings []string
+		for _, desc := range result.Errors() {
+			errStrings = append(errStrings, desc.String())
+		}
+		return errors.New(strings.Join(errStrings, ", "))
 	}
 
 	return nil
