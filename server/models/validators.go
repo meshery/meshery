@@ -5,11 +5,14 @@ import (
 	"slices"
 	"time"
 
-	SMP "github.com/layer5io/service-mesh-performance/spec"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 )
 
-// SMPPerformanceTestConfigValidator performs validations on the given PerformanceTestConfig object
-func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) error {
+// PerformanceTestConfigValidator performs validations on the given PerformanceTestConfig object
+func PerformanceTestConfigValidator(perfTest *perfprofile.PerformanceTestConfig) error {
+	if perfTest == nil {
+		return ErrField
+	}
 	if perfTest.Name == "" {
 		return ErrField
 	}
@@ -21,9 +24,14 @@ func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) erro
 		return ErrTestClient
 	}
 
-	validGenerators := []string{Wrk2LG.Name(), FortioLG.Name()}
+	// fortio is the only supported load generator. The removed "wrk2" is
+	// retained purely as a backward-compatibility alias so performance
+	// profiles saved before its removal still validate; such profiles
+	// transparently run on fortio (see executeLoadTest). An empty value is
+	// treated as the default (fortio). Any other value is rejected.
+	validGenerators := []string{FortioLG.Name(), "wrk2", ""}
 	for _, testClient := range perfTest.Clients {
-		if testClient.Protocol.String() == "" {
+		if testClient.Protocol == "" {
 			return ErrProtocol
 		}
 		isValidGenerator := slices.Contains(validGenerators, testClient.LoadGenerator)

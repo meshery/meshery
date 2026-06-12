@@ -10,12 +10,12 @@ integrations-subcategory: Uncategorized
 registrant: Artifact Hub
 components: 
 - name: mojaloop-permission-exclusions
-  colorIcon: content/en/extensions/models/security-role-perm-operator-svc/components/mojaloop-permission-exclusions/icons/color/mojaloop-permission-exclusions-color.svg
-  whiteIcon: content/en/extensions/models/security-role-perm-operator-svc/components/mojaloop-permission-exclusions/icons/white/mojaloop-permission-exclusions-white.svg
+  colorIcon: extensions/models/security-role-perm-operator-svc/components/mojaloop-permission-exclusions/icons/color/mojaloop-permission-exclusions-color.svg
+  whiteIcon: extensions/models/security-role-perm-operator-svc/components/mojaloop-permission-exclusions/icons/white/mojaloop-permission-exclusions-white.svg
   description: 
 - name: mojaloop-role
-  colorIcon: content/en/extensions/models/security-role-perm-operator-svc/components/mojaloop-role/icons/color/mojaloop-role-color.svg
-  whiteIcon: content/en/extensions/models/security-role-perm-operator-svc/components/mojaloop-role/icons/white/mojaloop-role-white.svg
+  colorIcon: extensions/models/security-role-perm-operator-svc/components/mojaloop-role/icons/color/mojaloop-role-color.svg
+  whiteIcon: extensions/models/security-role-perm-operator-svc/components/mojaloop-role/icons/white/mojaloop-role-white.svg
   description: 
 components-count: 2
 relationships: 

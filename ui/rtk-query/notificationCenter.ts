@@ -92,6 +92,9 @@ export const notificationCenterApi = api
             params: {
               ...parsedFilters,
               page: page,
+              // `sort` here is the SQL column name, not a JSON field — the
+              // server passes it through to GORM via SanitizeOrderInput which
+              // whitelists DB column names (created_at, updated_at, name).
               sort: 'created_at',
               order: 'desc',
               pagesize: 15,
@@ -114,9 +117,9 @@ export const notificationCenterApi = api
         },
         transformResponse: (response) => {
           return {
-            count_by_severity_level: response.count_by_severity_level,
-            total_count: response.total_count,
-            read_count: response.read_count || 0,
+            countBySeverityLevel: response.countBySeverityLevel,
+            totalCount: response.totalCount,
+            readCount: response.readCount || 0,
           };
         },
         providesTags: [PROVIDER_TAGS.EVENT],
@@ -205,8 +208,8 @@ export const notificationCenterApi = api
           method: 'GET',
         }),
         transformResponse: (response) => ({
-          logLevel: response.event_log_level,
-          availableLevels: response.available_levels,
+          logLevel: response.eventLogLevel,
+          availableLevels: response.availableLevels,
         }),
         providesTags: [PROVIDER_TAGS.EVENT],
       }),

@@ -10,12 +10,12 @@ integrations-subcategory: Scheduling & Orchestration
 registrant: Artifact Hub
 components: 
 - name: controller
-  colorIcon: content/en/extensions/models/aperture-controller/components/controller/icons/color/controller-color.svg
-  whiteIcon: content/en/extensions/models/aperture-controller/components/controller/icons/white/controller-white.svg
+  colorIcon: extensions/models/aperture-controller/components/controller/icons/color/controller-color.svg
+  whiteIcon: extensions/models/aperture-controller/components/controller/icons/white/controller-white.svg
   description: 
 - name: policy
-  colorIcon: content/en/extensions/models/aperture-controller/components/policy/icons/color/policy-color.svg
-  whiteIcon: content/en/extensions/models/aperture-controller/components/policy/icons/white/policy-white.svg
+  colorIcon: extensions/models/aperture-controller/components/policy/icons/color/policy-color.svg
+  whiteIcon: extensions/models/aperture-controller/components/policy/icons/white/policy-white.svg
   description: 
 components-count: 2
 relationships: 

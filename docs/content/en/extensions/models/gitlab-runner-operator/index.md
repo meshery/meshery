@@ -10,8 +10,8 @@ integrations-subcategory: Source Version Control
 registrant: Artifact Hub
 components: 
 - name: runner
-  colorIcon: content/en/extensions/models/gitlab-runner-operator/components/runner/icons/color/runner-color.svg
-  whiteIcon: content/en/extensions/models/gitlab-runner-operator/components/runner/icons/white/runner-white.svg
+  colorIcon: extensions/models/gitlab-runner-operator/components/runner/icons/color/runner-color.svg
+  whiteIcon: extensions/models/gitlab-runner-operator/components/runner/icons/white/runner-white.svg
   description: 
 components-count: 1
 relationships: 

@@ -12,11 +12,11 @@ import GrafanaDisplaySelection from '../grafana/GrafanaDisplaySelection';
 import GrafanaCustomCharts from '../grafana/GrafanaCustomCharts';
 import PrometheusConfigComponent from './PrometheusConfigComponent';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
-import fetchAvailableAddons from '../../graphql/queries/AddonsStatusQuery';
+import fetchAvailableAddons from '@/graphql/queries/AddonsStatusQuery';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
-import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
+import { withTelemetryHook } from '@/utils/hooks/useTelemetryHook';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updatePrometheusConfig } from '@/store/slices/telemetry';
@@ -67,8 +67,7 @@ const PrometheusComponent = (props) => {
   const [prometheusURL, setPrometheusURL] = useState(initialPrometheus.prometheusURL);
   const [connectionID, setConnectionID] = useState(initialPrometheus.connectionID);
   const [connectionName, setConnectionName] = useState(initialPrometheus.connectionName);
-  const { k8sConfig } = useSelector((state) => state.ui);
-  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { k8sConfig, selectedK8sContexts } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
 
   const getK8sClusterIds = () => {

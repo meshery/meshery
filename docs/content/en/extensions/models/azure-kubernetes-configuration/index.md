@@ -10,12 +10,12 @@ integrations-subcategory: Kubernetes
 registrant: GitHub
 components: 
 - name: extension
-  colorIcon: content/en/extensions/models/azure-kubernetes-configuration/components/extension/icons/color/extension-color.svg
-  whiteIcon: content/en/extensions/models/azure-kubernetes-configuration/components/extension/icons/white/extension-white.svg
+  colorIcon: extensions/models/azure-kubernetes-configuration/components/extension/icons/color/extension-color.svg
+  whiteIcon: extensions/models/azure-kubernetes-configuration/components/extension/icons/white/extension-white.svg
   description: 
 - name: flux-configuration
-  colorIcon: content/en/extensions/models/azure-kubernetes-configuration/components/flux-configuration/icons/color/flux-configuration-color.svg
-  whiteIcon: content/en/extensions/models/azure-kubernetes-configuration/components/flux-configuration/icons/white/flux-configuration-white.svg
+  colorIcon: extensions/models/azure-kubernetes-configuration/components/flux-configuration/icons/color/flux-configuration-color.svg
+  whiteIcon: extensions/models/azure-kubernetes-configuration/components/flux-configuration/icons/white/flux-configuration-white.svg
   description: 
 components-count: 2
 relationships: 
