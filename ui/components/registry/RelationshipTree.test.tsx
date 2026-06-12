@@ -29,8 +29,8 @@ vi.mock('../../assets/icons/DotSquare', () => ({
 }));
 
 vi.mock('./StyledTreeItem', () => ({
-  default: ({ itemId, labelText, onClick, children }: any) => (
-    <div data-testid={`tree-item-${itemId}`}>
+  default: ({ itemId, labelText, onClick, children, 'data-id': dataId }: any) => (
+    <div data-testid={`tree-item-${itemId}`} data-id={dataId}>
       <button onClick={onClick} data-testid={`tree-item-button-${itemId}`}>
         {labelText}
       </button>
