@@ -79,7 +79,7 @@
     }
 
     $(document).ready(function () {
-        const $searchInputs = $('.td-search-input');
+        const $searchInputs = $('.td-search--offline .td-search-input');
         if ($searchInputs.length === 0) return;
 
         let activeIndex = -1;
@@ -98,7 +98,7 @@
             activeIndex = -1;
             if (!fuse) fetchSearchIndex(getIndexUrl());
             const $this = $(this);
-            const $suggestionsContainer = $this.siblings('.search-suggestions-dropdown');
+            const $suggestionsContainer = $this.closest('.td-search--offline').find('.search-suggestions-dropdown');
             if ($this.val().trim().length >= 2) {
                 $suggestionsContainer.show();
             }
@@ -107,7 +107,7 @@
         $searchInputs.on('input', function() {
             const $this = $(this);
             const query = $this.val().trim();
-            const $suggestionsContainer = $this.siblings('.search-suggestions-dropdown');
+            const $suggestionsContainer = $this.closest('.td-search--offline').find('.search-suggestions-dropdown');
 
             if (query.length < 2) {
                 $suggestionsContainer.hide();
@@ -166,7 +166,7 @@
 
         $searchInputs.on('keydown', function(e) {
             const $this = $(this);
-            const $suggestionsContainer = $this.siblings('.search-suggestions-dropdown');
+            const $suggestionsContainer = $this.closest('.td-search--offline').find('.search-suggestions-dropdown');
             const $items = $suggestionsContainer.find('a.suggestion-item');
             
             if ($items.length === 0 || !$suggestionsContainer.is(':visible')) return;
@@ -202,15 +202,14 @@
             }
         });
 
-        // Prevent form submission to avoid standard docsy search redirect
-        $('.td-sidebar__search, .td-search').closest('form').on('submit', function(e) {
-            e.preventDefault();
-            const $suggestionsContainer = $(this).find('.search-suggestions-dropdown');
+        $('.td-sidebar__search').on('submit', function(e) {
+            const $suggestionsContainer = $(this).find('.td-search--offline .search-suggestions-dropdown');
             const $items = $suggestionsContainer.find('a.suggestion-item');
+
             if (activeIndex >= 0 && activeIndex < $items.length) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
                 window.location.href = $items.eq(activeIndex).attr('href');
-            } else if ($items.length > 0) {
-                window.location.href = $items.first().attr('href');
             }
         });
     });
