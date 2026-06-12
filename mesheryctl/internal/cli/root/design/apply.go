@@ -40,7 +40,7 @@ var (
 )
 
 var linkDocPatternApply = map[string]string{
-	"link":    "![pattern-apply-usage](/reference/images/patternApply.png)",
+	"link":    "![pattern-apply-usage](../../../images/patternApply.png)",
 	"caption": "Usage of mesheryctl design apply",
 }
 

@@ -10,8 +10,8 @@ integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
 - name: kyverno-monitor
-  colorIcon: content/en/extensions/models/kyverno-monitor/components/kyverno-monitor/icons/color/kyverno-monitor-color.svg
-  whiteIcon: content/en/extensions/models/kyverno-monitor/components/kyverno-monitor/icons/white/kyverno-monitor-white.svg
+  colorIcon: extensions/models/kyverno-monitor/components/kyverno-monitor/icons/color/kyverno-monitor-color.svg
+  whiteIcon: extensions/models/kyverno-monitor/components/kyverno-monitor/icons/white/kyverno-monitor-white.svg
   description: 
 components-count: 1
 relationships: 

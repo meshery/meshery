@@ -23,14 +23,7 @@ export type { IconProps } from './types';
 // Typed SVG icons (Phase 2 #18730).
 // ---------------------------------------------------------------------------
 
-export { ArrowDropDownIcon } from './ArrowDropDownIcon';
-export { EditIcon } from './EditIcon';
-export { FullscreenExitIcon } from './FullscreenExitIcon';
-export { FullscreenIcon } from './FullscreenIcon';
-export { GetAppIcon } from './GetAppIcon';
-export { LockIcon } from './LockIcon';
-export { SaveIcon } from './SaveIcon';
-export { SettingsIcon } from './SettingsIcon';
+
 
 // Pre-existing typed icons in `ui/assets/icons/` whose glyphs also appear
 // >=3 times via `@mui/icons-material`. Re-exported here so that downstream
@@ -39,8 +32,6 @@ export { SettingsIcon } from './SettingsIcon';
 // Note: these are intentionally re-exported as `default` since the source
 // files only provide default exports today. Renaming their source exports
 // is out of scope for this purely-additive issue.
-export { default as DeleteIcon } from './DeleteIcon';
-export { default as ExpandMoreIcon } from './ExpandMoreIcon';
 
 // ---------------------------------------------------------------------------
 // Centralized design-system icon re-exports (Phase 2 #18736, relocated here in
@@ -54,22 +45,32 @@ export {
   AccessTimeIcon,
   AddCircleIcon as AddCircle,
   ArrowBackIcon as ArrowBack,
+  ArrowDropDownIcon,
+  ArrowDropDownIcon as ArrowDropDown,
   BarChartIcon as BarChart,
   BuildRoundedIcon as BuildRounded,
   CachedIcon as Cached,
   CheckCircleIcon as CheckCircle,
   CloseIcon as Close,
   CodeIcon as Code,
+  DeleteIcon,
+  DeleteIcon as Delete,
+  DeleteForeverIcon as DeleteForever,
   DirectionsCarIcon as DirectionsCar,
   DoneAllIcon as DoneAll,
   EditIcon as Edit,
+  EditIcon,
   ErrorIcon as Error,
   ExpandLessIcon as ExpandLess,
+  ExpandMoreIcon,
   ExpandMoreIcon as ExpandMore,
   ExploreIcon as Explore,
   FileCopyIcon as FileCopy,
   FileUploadIcon as FileUpload,
   FilterIcon as Filter,
+  FullScreenExitIcon,
+  FullScreenIcon,
+  GetAppIcon,
   GetAppIcon as GetApp,
   GroupAddIcon,
   HandymanIcon as Handyman,
@@ -80,6 +81,7 @@ export {
   LaunchIcon as Launch,
   Link,
   ListAltIcon as ListAlt,
+  LockIcon,
   LockIcon as Lock,
   MergeOutlinedIcon as MergeOutlined,
   MoreHorizIcon as MoreHoriz,
@@ -90,8 +92,11 @@ export {
   RemoveIcon as RemoveCircle,
   ReplyIcon as Reply,
   SaveAsIcon as SaveAs,
+  SaveIcon,
   SaveIcon as Save,
+  SaveIcon as SaveOutlined,
   SearchIcon as Search,
+  SettingsIcon,
   SettingsIcon as Settings,
   SimCardIcon as SimCard,
   SupervisedUserCircleIcon as SupervisedUserCircle,
@@ -105,12 +110,6 @@ export {
 } from '@sistent/sistent';
 
 export { default as AddCircleOutlined } from './AddIconCircleBorder';
-export { ArrowDropDownIcon as ArrowDropDown } from './ArrowDropDownIcon';
-export { default as Delete } from './DeleteIcon';
-export { default as DeleteForever } from './DeleteIcon';
 export { default as FilterAlt } from './ContentFilterIcon';
-export { default as Fullscreen } from './FullscreenIcon';
-export { default as FullscreenExit } from './FullscreenExitIcon';
 export { default as HelpOutlineOutlined } from './HelpOutlineIcon';
 export { default as LanOutlined } from './Connection';
-export { default as SaveOutlined } from './SaveIcon';
