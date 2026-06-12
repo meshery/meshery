@@ -570,7 +570,7 @@ const TabCard = ({ label, count, active, onClick }) => {
           marginLeft: '4px',
         }}
       >
-        {`(${Number(count).toLocaleString()})`}
+        {`(${count?.toLocaleString() || 0})`}
       </span>
       {label}
     </CardStyle>
