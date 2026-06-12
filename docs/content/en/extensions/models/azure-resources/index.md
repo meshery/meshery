@@ -10,8 +10,8 @@ integrations-subcategory: App Integration
 registrant: GitHub
 components: 
 - name: resource-group
-  colorIcon: content/en/extensions/models/azure-resources/components/resource-group/icons/color/resource-group-color.svg
-  whiteIcon: content/en/extensions/models/azure-resources/components/resource-group/icons/white/resource-group-white.svg
+  colorIcon: extensions/models/azure-resources/components/resource-group/icons/color/resource-group-color.svg
+  whiteIcon: extensions/models/azure-resources/components/resource-group/icons/white/resource-group-white.svg
   description: 
 components-count: 1
 relationships: 

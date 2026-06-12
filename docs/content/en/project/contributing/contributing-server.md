@@ -27,8 +27,8 @@ After running Meshery server, you will need to select your **Cloud Provider** by
 
 **Please note**: If you get error while starting the server as **"Meshery Development Incompatible"** then follow the below guideline 👇
 
-<a href="/project/contributing/images/meshery-development-incompatible-error.png">
-  <img style= "max-width: 450px;" src="/project/contributing/images/meshery-development-incompatible-error.png" />
+<a href="../images/meshery-development-incompatible-error.png">
+  <img style= "max-width: 450px;" src="../images/meshery-development-incompatible-error.png" />
 </a>
 
 Potential Solution:
@@ -53,7 +53,7 @@ Every Golang-based component within the Meshery ecosystem incorporates a utility
 
 {{< code code=`make error` >}}
 
-For more details, <a href="/project/contributing/contributing-error">Error Utility</a>
+For more details, <a href="{{< ref "project/contributing/contributing-error.md" >}}">Error Utility</a>
 
 ### Configuring Log levels at Runtime
 
@@ -77,7 +77,7 @@ The default setting for the `LOG_LEVEL` is `4` (Info). However, if the `DEBUG` e
 
 Meshery Server supports a broader set of runtime, provider, tracing, policy, and metadata environment variables than the contributor-specific subset that used to be documented here.
 
-Use the canonical reference instead: [Meshery Server Environment Variables](/installation/advanced/environment-variables).
+Use the canonical reference instead: [Meshery Server Environment Variables]({{< ref "installation/advanced/environment-variables.md" >}}).
 
 ### Using custom Meshkit code for Meshery server development
 

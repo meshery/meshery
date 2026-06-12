@@ -10,8 +10,8 @@ integrations-subcategory: Scheduling & Orchestration
 registrant: Artifact Hub
 components: 
 - name: agent
-  colorIcon: content/en/extensions/models/aperture-agent/components/agent/icons/color/agent-color.svg
-  whiteIcon: content/en/extensions/models/aperture-agent/components/agent/icons/white/agent-white.svg
+  colorIcon: extensions/models/aperture-agent/components/agent/icons/color/agent-color.svg
+  whiteIcon: extensions/models/aperture-agent/components/agent/icons/white/agent-white.svg
   description: 
 components-count: 1
 relationships: 

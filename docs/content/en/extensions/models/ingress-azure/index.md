@@ -10,12 +10,12 @@ integrations-subcategory: Uncategorized
 registrant: Artifact Hub
 components: 
 - name: azure-application-gateway-rewrite
-  colorIcon: content/en/extensions/models/ingress-azure/components/azure-application-gateway-rewrite/icons/color/azure-application-gateway-rewrite-color.svg
-  whiteIcon: content/en/extensions/models/ingress-azure/components/azure-application-gateway-rewrite/icons/white/azure-application-gateway-rewrite-white.svg
+  colorIcon: extensions/models/ingress-azure/components/azure-application-gateway-rewrite/icons/color/azure-application-gateway-rewrite-color.svg
+  whiteIcon: extensions/models/ingress-azure/components/azure-application-gateway-rewrite/icons/white/azure-application-gateway-rewrite-white.svg
   description: 
 - name: azure-ingress-prohibited-target
-  colorIcon: content/en/extensions/models/ingress-azure/components/azure-ingress-prohibited-target/icons/color/azure-ingress-prohibited-target-color.svg
-  whiteIcon: content/en/extensions/models/ingress-azure/components/azure-ingress-prohibited-target/icons/white/azure-ingress-prohibited-target-white.svg
+  colorIcon: extensions/models/ingress-azure/components/azure-ingress-prohibited-target/icons/color/azure-ingress-prohibited-target-color.svg
+  whiteIcon: extensions/models/ingress-azure/components/azure-ingress-prohibited-target/icons/white/azure-ingress-prohibited-target-white.svg
   description: 
 components-count: 2
 relationships: 

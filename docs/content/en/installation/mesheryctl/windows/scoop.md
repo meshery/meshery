@@ -4,7 +4,7 @@ categories: [mesheryctl]
 aliases:
 - /installation/platforms/scoop
 display_title: false
-image: /installation/windows/images/scoop.png
+image: installation/mesheryctl/windows/images/scoop.png
 description: Install Meshery CLI on Windows with Scoop
 ---
 # Install Meshery CLI with Scoop

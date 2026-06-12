@@ -8,11 +8,11 @@ As an extensible platform, Meshery empowers you with a wide range of logical con
 The logical concepts included in Meshery establish a set of foundational constructs. Each logical construct is:
 
 1. Versioned (see [Schemas](https://github.com/meshery/schemas))
-2. Extensible (see [Extension Points](/extensibility))
-3. Composable (see [Patterns](/concepts/logical/patterns))
-4. Portable (see Export/Import of [Designs](/concepts/logical/designs) and [Models](/concepts/logical/models))
-5. Interoperable (see [Compatibility Matrix](/installation/compatibility-matrix))
-6. Configurable (see [Lifecycle Management](/guides/infrastructure-management/lifecycle-management))
+2. Extensible (see [Extension Points]({{< ref "reference/extensibility/_index.md" >}}))
+3. Composable (see [Patterns]({{< ref "concepts/logical/patterns.md" >}}))
+4. Portable (see Export/Import of [Designs]({{< ref "concepts/logical/designs.md" >}}) and [Models]({{< ref "concepts/logical/models/index.md" >}}))
+5. Interoperable (see [Compatibility Matrix]({{< ref "project/compatibility-matrix/compatibility-matrix.md" >}}))
+6. Configurable (see [Lifecycle Management]({{< ref "guides/infrastructure-management/lifecycle-management/index.md" >}}))
 7. Documented (_you are here_)
 8. Testable
 9. Maintainable

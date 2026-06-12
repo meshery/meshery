@@ -10,8 +10,8 @@ integrations-subcategory: Cloud Provider
 registrant: Artifact Hub
 components: 
 - name: rule
-  colorIcon: content/en/extensions/models/backend/components/rule/icons/color/rule-color.svg
-  whiteIcon: content/en/extensions/models/backend/components/rule/icons/white/rule-white.svg
+  colorIcon: extensions/models/backend/components/rule/icons/color/rule-color.svg
+  whiteIcon: extensions/models/backend/components/rule/icons/white/rule-white.svg
   description: 
 components-count: 1
 relationships: 

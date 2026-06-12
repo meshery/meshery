@@ -5,11 +5,11 @@ aliases:
 - /reference/meshery-operator-crds/
 ---
 
-Included in [Meshery Operator](/concepts/architecture/operator) are a couple of Kubernetes Custom Resource Definitions (CRDs) and a ConfigMap.
+Included in [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}) are a couple of Kubernetes Custom Resource Definitions (CRDs) and a ConfigMap.
 
 ## Broker CRD
 
-The CRD is used to configure [Broker](/concepts/architecture/broker) instances in a cluster.
+The CRD is used to configure [Broker]({{< ref "concepts/architecture/broker/index.md" >}}) instances in a cluster.
 
 ## YAML synopsis
 
@@ -73,7 +73,7 @@ spec:
 ```
 ## MeshSync CRD
 
-The MeshSync CRD is used as a configuration tool the [MeshSync](/concepts/architecture/meshsync). The CRD is used to control the replica count for MeshSync instances, [Broker](/concepts/architecture/broker) configuration and the resources that MeshSync watches and listens to in a cluster.
+The MeshSync CRD is used as a configuration tool the [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}). The CRD is used to control the replica count for MeshSync instances, [Broker]({{< ref "concepts/architecture/broker/index.md" >}}) configuration and the resources that MeshSync watches and listens to in a cluster.
 
 ### YAML Synopsis
 
@@ -163,7 +163,7 @@ The following section outlines the fields and their descriptions
 
 The following section defines the usage for this Custom Resource
 
-The Custom Resource is used to configure the [Broker](/concepts/architecture/broker) and Events to be tracked by [MeshSync](/concepts/architecture/meshsync)
+The Custom Resource is used to configure the [Broker]({{< ref "concepts/architecture/broker/index.md" >}}) and Events to be tracked by [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}})
 
 #### Example Use
 
