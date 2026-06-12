@@ -12,7 +12,7 @@ other = "Read more"
 [ui_search]
 other = "Search"
 
-# Used in sentences such as "Posted in News"
+# Used in sent
 [ui_in]
 other = "in"
 
