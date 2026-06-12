@@ -170,17 +170,17 @@ interface CountSummary {
 const getNavItems = (theme: ReturnType<typeof useTheme>, counts: CountSummary): NavItemDef[] => [
   {
     id: MODELS,
-    label: `Models (${counts.models})`,
+    label: `Models (${Number(counts.models).toLocaleString()})`,
     icon: <FileIcon {...iconSmall} fill={theme.palette.icon.default} />,
   },
   {
     id: COMPONENTS,
-    label: `Components (${counts.components})`,
+    label: `Components (${Number(counts.components).toLocaleString()})`,
     icon: <ComponentIcon {...iconSmall} fill={theme.palette.icon.default} />,
   },
   {
     id: RELATIONSHIPS,
-    label: `Relationships (${counts.relationships})`,
+    label: `Relationships (${Number(counts.relationships).toLocaleString()})`,
     icon: (
       <ConnectionIcon
         {...iconSmall}
@@ -192,7 +192,7 @@ const getNavItems = (theme: ReturnType<typeof useTheme>, counts: CountSummary): 
   },
   {
     id: REGISTRANTS,
-    label: `Registrants (${counts.registrants})`,
+    label: `Registrants (${Number(counts.registrants).toLocaleString()})`,
     icon: <DatabaseIcon {...iconSmall} fill={theme.palette.icon.default} />,
   },
 ];
