@@ -33,9 +33,18 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 
 	tableQueryBase.Count(&totalTables)
 
-	tableFinder := tableQueryBase.
-		Select("s.*, CAST(COALESCE(st.stat, '0') AS INTEGER) as count").
-		Joins("LEFT JOIN sqlite_stat1 st ON s.name = st.tbl")
+	// Check if stat table exists
+	hasStat := h.dbHandler.DB.Migrator().HasTable("sqlite_stat1")
+	tableFinder := tableQueryBase
+
+	if hasStat {
+		tableFinder = tableFinder.
+			Select("s.*, CAST(COALESCE(st.stat, '0') AS INTEGER) as count").
+			Joins("LEFT JOIN sqlite_stat1 st ON s.name = st.tbl")
+	} else {
+		tableFinder = tableFinder.
+			Select("s.*, 0 as count")
+	}
 
 	if limit != 0 {
 		tableFinder = tableFinder.Limit(limit)
