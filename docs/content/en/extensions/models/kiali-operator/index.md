@@ -10,8 +10,8 @@ integrations-subcategory: Monitoring
 registrant: Artifact Hub
 components: 
 - name: kiali
-  colorIcon: content/en/extensions/models/kiali-operator/components/kiali/icons/color/kiali-color.svg
-  whiteIcon: content/en/extensions/models/kiali-operator/components/kiali/icons/white/kiali-white.svg
+  colorIcon: extensions/models/kiali-operator/components/kiali/icons/color/kiali-color.svg
+  whiteIcon: extensions/models/kiali-operator/components/kiali/icons/white/kiali-white.svg
   description: 
 components-count: 1
 relationships: 

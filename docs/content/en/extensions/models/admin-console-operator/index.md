@@ -10,8 +10,8 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: admin-console
-  colorIcon: content/en/extensions/models/admin-console-operator/components/admin-console/icons/color/admin-console-color.svg
-  whiteIcon: content/en/extensions/models/admin-console-operator/components/admin-console/icons/white/admin-console-white.svg
+  colorIcon: extensions/models/admin-console-operator/components/admin-console/icons/color/admin-console-color.svg
+  whiteIcon: extensions/models/admin-console-operator/components/admin-console/icons/white/admin-console-white.svg
   description: 
 components-count: 1
 relationships: 

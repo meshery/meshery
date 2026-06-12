@@ -10,8 +10,8 @@ integrations-subcategory: Tracing
 registrant: GitHub
 components: 
 - name: search-service
-  colorIcon: content/en/extensions/models/azure-search/components/search-service/icons/color/search-service-color.svg
-  whiteIcon: content/en/extensions/models/azure-search/components/search-service/icons/white/search-service-white.svg
+  colorIcon: extensions/models/azure-search/components/search-service/icons/color/search-service-color.svg
+  whiteIcon: extensions/models/azure-search/components/search-service/icons/white/search-service-white.svg
   description: 
 components-count: 1
 relationships: 

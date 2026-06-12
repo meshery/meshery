@@ -10,8 +10,8 @@ integrations-subcategory: Cloud Native Storage
 registrant: Github
 components: 
 - name: ceph-connection
-  colorIcon: content/en/extensions/models/rook/components/ceph-connection/icons/color/ceph-connection-color.svg
-  whiteIcon: content/en/extensions/models/rook/components/ceph-connection/icons/white/ceph-connection-white.svg
+  colorIcon: extensions/models/rook/components/ceph-connection/icons/color/ceph-connection-color.svg
+  whiteIcon: extensions/models/rook/components/ceph-connection/icons/white/ceph-connection-white.svg
   description: 
 components-count: 1
 relationships: 

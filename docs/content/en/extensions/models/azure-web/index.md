@@ -10,16 +10,16 @@ integrations-subcategory: API Gateway
 registrant: GitHub
 components: 
 - name: server-farm
-  colorIcon: content/en/extensions/models/azure-web/components/server-farm/icons/color/server-farm-color.svg
-  whiteIcon: content/en/extensions/models/azure-web/components/server-farm/icons/white/server-farm-white.svg
+  colorIcon: extensions/models/azure-web/components/server-farm/icons/color/server-farm-color.svg
+  whiteIcon: extensions/models/azure-web/components/server-farm/icons/white/server-farm-white.svg
   description: 
 - name: site
-  colorIcon: content/en/extensions/models/azure-web/components/site/icons/color/site-color.svg
-  whiteIcon: content/en/extensions/models/azure-web/components/site/icons/white/site-white.svg
+  colorIcon: extensions/models/azure-web/components/site/icons/color/site-color.svg
+  whiteIcon: extensions/models/azure-web/components/site/icons/white/site-white.svg
   description: 
 - name: sites-sourcecontrol
-  colorIcon: content/en/extensions/models/azure-web/components/sites-sourcecontrol/icons/color/sites-sourcecontrol-color.svg
-  whiteIcon: content/en/extensions/models/azure-web/components/sites-sourcecontrol/icons/white/sites-sourcecontrol-white.svg
+  colorIcon: extensions/models/azure-web/components/sites-sourcecontrol/icons/color/sites-sourcecontrol-color.svg
+  whiteIcon: extensions/models/azure-web/components/sites-sourcecontrol/icons/white/sites-sourcecontrol-white.svg
   description: 
 components-count: 3
 relationships: 

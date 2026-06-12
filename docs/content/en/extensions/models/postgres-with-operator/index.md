@@ -10,8 +10,8 @@ integrations-subcategory: App Definition and Development
 registrant: Artifact Hub
 components: 
 - name: kubegres
-  colorIcon: content/en/extensions/models/postgres-with-operator/components/kubegres/icons/color/kubegres-color.svg
-  whiteIcon: content/en/extensions/models/postgres-with-operator/components/kubegres/icons/white/kubegres-white.svg
+  colorIcon: extensions/models/postgres-with-operator/components/kubegres/icons/color/kubegres-color.svg
+  whiteIcon: extensions/models/postgres-with-operator/components/kubegres/icons/white/kubegres-white.svg
   description: 
 components-count: 1
 relationships: 
