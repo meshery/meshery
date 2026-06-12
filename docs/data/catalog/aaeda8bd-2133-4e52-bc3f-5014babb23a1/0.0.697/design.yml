@@ -2,7 +2,7 @@
   "id": "aaeda8bd-2133-4e52-bc3f-5014babb23a1",
   "name": "LoxiLB Multi-Cloud VPN \u0026 Connectivity",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.700",
+  "version": "0.0.703",
   "metadata": {
     "resolvedAliases": {}
   },
@@ -45,8 +45,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 763.9605459325346,
-          "y": 152.1333494724912
+          "x": 765.5862723235161,
+          "y": 151.3483234214139
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#00D3A9",
@@ -119,8 +119,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 764.1562138449444,
-          "y": 44.32569049938435
+          "x": 761.574120596805,
+          "y": 45.65776050029945
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#00D3A9",
@@ -190,8 +190,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 877.7704126049649,
-          "y": -16.169474584641566
+          "x": 872.8759880147319,
+          "y": -11.647274405823602
         },
         "primaryColor": "#ff9900",
         "secondaryColor": "#F4BC79",
@@ -270,8 +270,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 993.9747253465164,
-          "y": -14.700962026931665
+          "x": 991.0650531930695,
+          "y": -11.159656784509487
         },
         "primaryColor": "#7AA116",
         "secondaryColor": "#00D3A9",
@@ -379,8 +379,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 654.7480691823919,
-          "y": 54.099664197671274
+          "x": 655.0443345365286,
+          "y": 52.44417783321877
         },
         "primaryColor": "#326CE5",
         "secondaryColor": "#7aa1f0",
@@ -451,8 +451,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 872.3157030290281,
-          "y": 150.17431671011283
+          "x": 871.434957150177,
+          "y": 152.1389964507217
         },
         "primaryColor": "#466BB0",
         "secondaryColor": "#93b0e7",
@@ -525,8 +525,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 936.2165373237209,
-          "y": -12.57529647864877
+          "x": 934.239801333003,
+          "y": -11.920723023992046
         },
         "primaryColor": "#ED7100",
         "secondaryColor": "#00D3A9",
@@ -599,8 +599,8 @@
         "border-style": "dashed",
         "border-width": 2,
         "position": {
-          "x": 721.0526196802725,
-          "y": 84.53273592761127
+          "x": 719.8718061717473,
+          "y": 84.49487431549642
         },
         "primaryColor": "#326CE5",
         "secondaryColor": "#7aa1f0",
@@ -667,8 +667,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 936.1225689757407,
-          "y": -2.435218305786613
+          "x": 932.2205206039007,
+          "y": 1.5965344048334558
         },
         "primaryColor": "#326CE5",
         "secondaryColor": "#7aa1f0",
@@ -740,8 +740,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 950.1014401110024,
-          "y": 164.90500093598018
+          "x": 950.2644320168943,
+          "y": 166.49545533558017
         },
         "primaryColor": "#326CE5",
         "secondaryColor": "#7aa1f0",
@@ -811,8 +811,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 503.88870203682416,
-          "y": 193.74287512354877
+          "x": 503.5038110104915,
+          "y": 193.3241158968911
         },
         "primaryColor": "#326CE5",
         "secondaryColor": "#7aa1f0",
@@ -887,8 +887,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 936.0249372672916,
-          "y": 152.43766711606315
+          "x": 933.2343756852289,
+          "y": 153.10652289442444
         },
         "primaryColor": "#4a90e2",
         "secondaryColor": "#7aa1f0",
@@ -959,8 +959,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 507.862005783933,
-          "y": 69.10453334039488
+          "x": 506.6213627765993,
+          "y": 68.07843965734753
         },
         "primaryColor": "#326CE5",
         "secondaryColor": "#7aa1f0",
@@ -1032,8 +1032,8 @@
         "opacity": 1,
         "padding": 12,
         "position": {
-          "x": 658.7492429965579,
-          "y": 144.8204368957033
+          "x": 660.7084401291751,
+          "y": 146.12145779289298
         },
         "primaryColor": "#326CE5",
         "secondaryColor": "#7aa1f0",
@@ -1105,8 +1105,8 @@
         "opacity": 1,
         "padding": 12,
         "position": {
-          "x": 651.8128885309445,
-          "y": -46.677403268326216
+          "x": 651.5589617089292,
+          "y": -46.33436726589825
         },
         "primaryColor": "#326CE5",
         "secondaryColor": "#7aa1f0",
@@ -1177,8 +1177,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 1013.3871771929767,
-          "y": 153.6356851618475
+          "x": 1014.5939068836117,
+          "y": 154.88438777673588
         },
         "primaryColor": "#2384f1",
         "secondaryColor": "#3990f2",
