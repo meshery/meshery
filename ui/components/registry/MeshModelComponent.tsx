@@ -444,6 +444,7 @@ const MeshModelComponent_ = ({
               showDetailsData={showDetailsData}
               setResourcesDetail={setResourcesDetail}
               setModelsFilters={setModelsFilters}
+              setRegistrantsFilters={setRegistrantsFilters}
               externalSelectedItemUUID={externalSelectedItemUUID} // Pass external UUID
               isModalMode={externalView !== null} // Modal mode // external view
               lastItemRef={{
