@@ -2,6 +2,8 @@
 package handlers
 
 import (
+	"time"
+
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
@@ -15,7 +17,6 @@ import (
 	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/viper"
 	"github.com/vmihailenco/taskq/v3"
-	"gorm.io/gorm"
 )
 
 // Handler type is the bucket for configs and http handlers
@@ -81,19 +82,15 @@ func NewHandlerInstance(
 		Handler: h.CollectStaticMetrics,
 	})
 
+	// Background routine to get tables stat
 	h.dbHandler.Exec("Analyze")
-	registerAnalysisCallBack(h.dbHandler.DB)
+	ticker := time.NewTicker(10 * time.Minute)
+	go func() {
+		for {
+			<-ticker.C
+			h.dbHandler.Exec("Analyze")
+		}
+	}()
 
 	return h
-}
-
-// add analyze callback every data mutations
-func registerAnalysisCallBack(db *gorm.DB) {
-	runAnalysis := func(db *gorm.DB) {
-		db.Exec("Analyze")
-	}
-
-	db.Callback().Create().After("gorm:create").Register("analyze_create", runAnalysis)
-	db.Callback().Update().After("gorm:update").Register("analyze_update", runAnalysis)
-	db.Callback().Delete().After("gorm:delete").Register("analyze_delete", runAnalysis)
 }
