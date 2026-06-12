@@ -10,8 +10,8 @@ integrations-subcategory: Metrics
 registrant: GitHub
 components: 
 - name: workspace
-  colorIcon: content/en/extensions/models/azure-operational-insights/components/workspace/icons/color/workspace-color.svg
-  whiteIcon: content/en/extensions/models/azure-operational-insights/components/workspace/icons/white/workspace-white.svg
+  colorIcon: extensions/models/azure-operational-insights/components/workspace/icons/color/workspace-color.svg
+  whiteIcon: extensions/models/azure-operational-insights/components/workspace/icons/white/workspace-white.svg
   description: 
 components-count: 1
 relationships: 

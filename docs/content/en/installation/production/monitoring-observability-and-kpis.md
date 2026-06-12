@@ -84,7 +84,7 @@ Two early-warning signals deserve dedicated alerts: **Meshery Server memory**
 (undersizing causes restarts that drop the cache) and **Broker memory** (a climb
 indicates the Server consumer is falling behind). Together they catch most
 capacity problems before they become outages. See
-[Infrastructure, Sizing & Performance](/installation/production/infrastructure-sizing-and-performance).
+[Infrastructure, Sizing & Performance]({{< ref "installation/production/infrastructure-sizing-and-performance.md" >}}).
 {{% /alert %}}
 
 ## Metrics with Prometheus and Grafana
@@ -98,7 +98,7 @@ infrastructure's performance and for observing Meshery itself:
   monitoring) for Broker-level visibility.
 - Connect Prometheus and Grafana to Meshery to correlate management-plane health
   with the performance of the infrastructure under management. See the
-  [performance management guides](/guides/performance-management/meshery-metrics).
+  [performance management guides]({{< ref "guides/performance-management/meshery-metrics/index.md" >}}).
 
 Build dashboards that put Server availability, resource saturation, per-cluster
 connection health, and provider reachability on one pane.
@@ -155,7 +155,7 @@ links (troubleshooting, sizing, networking) in the alert.
 
 - **`mesheryctl system check`** runs pre- and post-deployment health checks,
   including connectivity, and is well suited to scheduled synthetic validation.
-  See the [reference](/reference/mesheryctl/system/check).
+  See the [reference]({{< ref "reference/references/mesheryctl/system/check.md" >}}).
 - **External uptime checks** against `/healthz/ready` validate the full ingress
   → Server path (TLS, routing, readiness) from a user's perspective.
 - **Per-connection checks** in the UI provide on-demand validation of each
@@ -165,9 +165,9 @@ links (troubleshooting, sizing, networking) in the alert.
 
 When a KPI trips, these guides are the fastest path to resolution:
 
-- [Operator & MeshSync troubleshooting](/guides/troubleshooting/meshery-operator-meshsync)
+- [Operator & MeshSync troubleshooting]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}})
   — Broker, MeshSync, and Operator issues.
-- [Meshery Server troubleshooting](/guides/troubleshooting/meshery-server)
+- [Meshery Server troubleshooting]({{< ref "guides/troubleshooting/meshery-server.md" >}})
   — Server startup, provider, and API issues.
 
 ## Monitoring checklist

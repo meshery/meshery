@@ -10,16 +10,16 @@ integrations-subcategory: Key Management
 registrant: Artifact Hub
 components: 
 - name: cluster-federated-trust-domain
-  colorIcon: content/en/extensions/models/spire/components/cluster-federated-trust-domain/icons/color/cluster-federated-trust-domain-color.svg
-  whiteIcon: content/en/extensions/models/spire/components/cluster-federated-trust-domain/icons/white/cluster-federated-trust-domain-white.svg
+  colorIcon: extensions/models/spire/components/cluster-federated-trust-domain/icons/color/cluster-federated-trust-domain-color.svg
+  whiteIcon: extensions/models/spire/components/cluster-federated-trust-domain/icons/white/cluster-federated-trust-domain-white.svg
   description: 
 - name: cluster-spiffeid
-  colorIcon: content/en/extensions/models/spire/components/cluster-spiffeid/icons/color/cluster-spiffeid-color.svg
-  whiteIcon: content/en/extensions/models/spire/components/cluster-spiffeid/icons/white/cluster-spiffeid-white.svg
+  colorIcon: extensions/models/spire/components/cluster-spiffeid/icons/color/cluster-spiffeid-color.svg
+  whiteIcon: extensions/models/spire/components/cluster-spiffeid/icons/white/cluster-spiffeid-white.svg
   description: 
 - name: controller-manager-config
-  colorIcon: content/en/extensions/models/spire/components/controller-manager-config/icons/color/controller-manager-config-color.svg
-  whiteIcon: content/en/extensions/models/spire/components/controller-manager-config/icons/white/controller-manager-config-white.svg
+  colorIcon: extensions/models/spire/components/controller-manager-config/icons/color/controller-manager-config-color.svg
+  whiteIcon: extensions/models/spire/components/controller-manager-config/icons/white/controller-manager-config-white.svg
   description: 
 components-count: 3
 relationships: 

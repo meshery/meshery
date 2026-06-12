@@ -10,8 +10,8 @@ integrations-subcategory: Monitoring
 registrant: Artifact Hub
 components: 
 - name: pod-logs
-  colorIcon: content/en/extensions/models/grafana-agent/components/pod-logs/icons/color/pod-logs-color.svg
-  whiteIcon: content/en/extensions/models/grafana-agent/components/pod-logs/icons/white/pod-logs-white.svg
+  colorIcon: extensions/models/grafana-agent/components/pod-logs/icons/color/pod-logs-color.svg
+  whiteIcon: extensions/models/grafana-agent/components/pod-logs/icons/white/pod-logs-white.svg
   description: 
 components-count: 1
 relationships: 

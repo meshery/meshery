@@ -10,20 +10,20 @@ integrations-subcategory: Coordination & Service Discovery
 registrant: GitHub
 components: 
 - name: dns-endpoint
-  colorIcon: content/en/extensions/models/k8gb/components/dns-endpoint/icons/color/dns-endpoint-color.svg
-  whiteIcon: content/en/extensions/models/k8gb/components/dns-endpoint/icons/white/dns-endpoint-white.svg
+  colorIcon: extensions/models/k8gb/components/dns-endpoint/icons/color/dns-endpoint-color.svg
+  whiteIcon: extensions/models/k8gb/components/dns-endpoint/icons/white/dns-endpoint-white.svg
   description: 
 - name: gslb
-  colorIcon: content/en/extensions/models/k8gb/components/gslb/icons/color/gslb-color.svg
-  whiteIcon: content/en/extensions/models/k8gb/components/gslb/icons/white/gslb-white.svg
+  colorIcon: extensions/models/k8gb/components/gslb/icons/color/gslb-color.svg
+  whiteIcon: extensions/models/k8gb/components/gslb/icons/white/gslb-white.svg
   description: 
 - name: zone-delegation
-  colorIcon: content/en/extensions/models/k8gb/components/zone-delegation/icons/color/zone-delegation-color.svg
-  whiteIcon: content/en/extensions/models/k8gb/components/zone-delegation/icons/white/zone-delegation-white.svg
+  colorIcon: extensions/models/k8gb/components/zone-delegation/icons/color/zone-delegation-color.svg
+  whiteIcon: extensions/models/k8gb/components/zone-delegation/icons/white/zone-delegation-white.svg
   description: 
 - name: zone-delegation
-  colorIcon: content/en/extensions/models/k8gb/components/zone-delegation/icons/color/zone-delegation-color.svg
-  whiteIcon: content/en/extensions/models/k8gb/components/zone-delegation/icons/white/zone-delegation-white.svg
+  colorIcon: extensions/models/k8gb/components/zone-delegation/icons/color/zone-delegation-color.svg
+  whiteIcon: extensions/models/k8gb/components/zone-delegation/icons/white/zone-delegation-white.svg
   description: 
 components-count: 4
 relationships: 

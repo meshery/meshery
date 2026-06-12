@@ -10,8 +10,8 @@ integrations-subcategory: Service Proxy
 registrant: Artifact Hub
 components: 
 - name: target-group-binding
-  colorIcon: content/en/extensions/models/aws-target-group-binding/components/target-group-binding/icons/color/target-group-binding-color.svg
-  whiteIcon: content/en/extensions/models/aws-target-group-binding/components/target-group-binding/icons/white/target-group-binding-white.svg
+  colorIcon: extensions/models/aws-target-group-binding/components/target-group-binding/icons/color/target-group-binding-color.svg
+  whiteIcon: extensions/models/aws-target-group-binding/components/target-group-binding/icons/white/target-group-binding-white.svg
   description: 
 components-count: 1
 relationships: 

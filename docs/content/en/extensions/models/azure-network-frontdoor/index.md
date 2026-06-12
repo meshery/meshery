@@ -10,8 +10,8 @@ integrations-subcategory: Networking Content Delivery
 registrant: GitHub
 components: 
 - name: web-application-firewall-policy
-  colorIcon: content/en/extensions/models/azure-network-frontdoor/components/web-application-firewall-policy/icons/color/web-application-firewall-policy-color.svg
-  whiteIcon: content/en/extensions/models/azure-network-frontdoor/components/web-application-firewall-policy/icons/white/web-application-firewall-policy-white.svg
+  colorIcon: extensions/models/azure-network-frontdoor/components/web-application-firewall-policy/icons/color/web-application-firewall-policy-color.svg
+  whiteIcon: extensions/models/azure-network-frontdoor/components/web-application-firewall-policy/icons/white/web-application-firewall-policy-white.svg
   description: 
 components-count: 1
 relationships: 

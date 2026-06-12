@@ -10,8 +10,8 @@ integrations-subcategory: Uncategorized
 registrant: Artifact Hub
 components: 
 - name: metrics-configuration
-  colorIcon: content/en/extensions/models/kubevault-metrics/components/metrics-configuration/icons/color/metrics-configuration-color.svg
-  whiteIcon: content/en/extensions/models/kubevault-metrics/components/metrics-configuration/icons/white/metrics-configuration-white.svg
+  colorIcon: extensions/models/kubevault-metrics/components/metrics-configuration/icons/color/metrics-configuration-color.svg
+  whiteIcon: extensions/models/kubevault-metrics/components/metrics-configuration/icons/white/metrics-configuration-white.svg
   description: 
 components-count: 1
 relationships: 

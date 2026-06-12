@@ -10,8 +10,8 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: edp-component
-  colorIcon: content/en/extensions/models/edp-component-operator/components/edp-component/icons/color/edp-component-color.svg
-  whiteIcon: content/en/extensions/models/edp-component-operator/components/edp-component/icons/white/edp-component-white.svg
+  colorIcon: extensions/models/edp-component-operator/components/edp-component/icons/color/edp-component-color.svg
+  whiteIcon: extensions/models/edp-component-operator/components/edp-component/icons/white/edp-component-white.svg
   description: 
 components-count: 1
 relationships: 
