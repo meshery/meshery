@@ -69,7 +69,7 @@ Docker Deployment: Watchtower updates this component in accordance with the user
         </td>
     </tr>
     <tr>
-        <td rowspan="2" class="childcomponent"><a style="color:white;" href="/extensibility/providers">Remote Providers</a></td>
+        <td rowspan="2" class="childcomponent"><a style="color:white;" href="{{< ref "reference/extensibility/providers/index.md" >}}">Remote Providers</a></td>
         <td>Meshery Cloud</td>
         <td>Process Extension: Integrators manage the lifecycle of their Remote Providers. The process is unique per provider.</td>
     </tr>

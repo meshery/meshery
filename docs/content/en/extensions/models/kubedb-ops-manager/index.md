@@ -10,8 +10,8 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: recommendation
-  colorIcon: content/en/extensions/models/kubedb-ops-manager/components/recommendation/icons/color/recommendation-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-ops-manager/components/recommendation/icons/white/recommendation-white.svg
+  colorIcon: extensions/models/kubedb-ops-manager/components/recommendation/icons/color/recommendation-color.svg
+  whiteIcon: extensions/models/kubedb-ops-manager/components/recommendation/icons/white/recommendation-white.svg
   description: 
 components-count: 1
 relationships: 

@@ -10,8 +10,8 @@ integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
 - name: image-key
-  colorIcon: content/en/extensions/models/nirmata-venafi-adapter/components/image-key/icons/color/image-key-color.svg
-  whiteIcon: content/en/extensions/models/nirmata-venafi-adapter/components/image-key/icons/white/image-key-white.svg
+  colorIcon: extensions/models/nirmata-venafi-adapter/components/image-key/icons/color/image-key-color.svg
+  whiteIcon: extensions/models/nirmata-venafi-adapter/components/image-key/icons/white/image-key-white.svg
   description: 
 components-count: 1
 relationships: 

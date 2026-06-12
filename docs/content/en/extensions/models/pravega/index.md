@@ -10,8 +10,8 @@ integrations-subcategory: Streaming & Messaging
 registrant: Github
 components: 
 - name: zookeeper-cluster
-  colorIcon: content/en/extensions/models/pravega/components/zookeeper-cluster/icons/color/zookeeper-cluster-color.svg
-  whiteIcon: content/en/extensions/models/pravega/components/zookeeper-cluster/icons/white/zookeeper-cluster-white.svg
+  colorIcon: extensions/models/pravega/components/zookeeper-cluster/icons/color/zookeeper-cluster-color.svg
+  whiteIcon: extensions/models/pravega/components/zookeeper-cluster/icons/white/zookeeper-cluster-white.svg
   description: 
 components-count: 1
 relationships: 

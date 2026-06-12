@@ -10,8 +10,8 @@ integrations-subcategory: Key Management
 registrant: Artifact Hub
 components: 
 - name: workload-identity
-  colorIcon: content/en/extensions/models/identity-manager/components/workload-identity/icons/color/workload-identity-color.svg
-  whiteIcon: content/en/extensions/models/identity-manager/components/workload-identity/icons/white/workload-identity-white.svg
+  colorIcon: extensions/models/identity-manager/components/workload-identity/icons/color/workload-identity-color.svg
+  whiteIcon: extensions/models/identity-manager/components/workload-identity/icons/white/workload-identity-white.svg
   description: 
 components-count: 1
 relationships: 
