@@ -56,6 +56,10 @@ vi.mock('@/rtk-query/meshModel', () => ({
   useLazyGetComponentsQuery: () => lazyMock(),
   useLazyGetRelationshipsQuery: () => lazyMock(),
   useLazyGetRegistrantsQuery: () => lazyMock(),
+  useGetMeshModelsQuery: () => ({ data: { totalCount: 0 } }),
+  useGetComponentsQuery: () => ({ data: { totalCount: 0 } }),
+  useGetRelationshipsQuery: () => ({ data: { totalCount: 0 } }),
+  useGetRegistrantsQuery: () => ({ data: { totalCount: 0 } }),
 }));
 
 vi.mock('./helper', () => ({
