@@ -25,6 +25,7 @@ type ChildrenProps = {
 const UnifiedCardContainer = ({ children, sx = {} }: ChildrenProps & { sx?: object }) => (
   <CardContainer
     sx={{
+      height: '100%',
       minHeight: { xs: '280px', sm: '260px', lg: '280px' },
       display: 'flex',
       flexDirection: 'column',
@@ -87,8 +88,6 @@ const ResponsiveImage = ({ src, alt, testId }: ResponsiveImageProps) => (
       width: 'auto',
       maxWidth: '140px',
       maxHeight: '85px',
-      minWidth: '100px',
-      minHeight: '60px',
       flexShrink: 0,
     }}
     data-testid={testId}
