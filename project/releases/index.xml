@@ -1,4 +1,75 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Thu, 11 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.42</title><link>/project/releases/v1.0.42/</link><pubDate>Thu, 11 Jun 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.42/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Sat, 13 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.43</title><link>/project/releases/v1.0.43/</link><pubDate>Sat, 13 Jun 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.43/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Bump shell-quote from 1.8.3 to 1.8.4 in /install/docker-extension/ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#19948)&lt;/li&gt;
+&lt;li&gt;[Docs] Fix broken mesheryctl reference page anchor links @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#20029)&lt;/li&gt;
+&lt;li&gt;Update MAINTAINERS.md: Add Mericio&amp;rsquo;s last name and adjust table formatting. @simihablo (#20005)&lt;/li&gt;
+&lt;li&gt;fix(tests): remove seeding assertions from MapPreferencePersister test @ishwar170695 (#19602)&lt;/li&gt;
+&lt;li&gt;Update integrations-updater.yml @marblom007 (#20002)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Restucture docs and fix 404 path resolve, toggle relative Url to false @CodexRaunak (#19997)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[UI] Clear stale permission keys and workspace on organization switch @rishiraj38 (#20032)&lt;/li&gt;
+&lt;li&gt;[UI] Fix: Registry Models tab — components and relationships not clickable / deeplinking broken @YASHMAHAKAL (#20038)&lt;/li&gt;
+&lt;li&gt;fix: deeplinking to specific relationship definitions @KhushamBansal (#20033)&lt;/li&gt;
+&lt;li&gt;[UI] Preserve TreeView event bubbling in RelationshipTree @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#20041)&lt;/li&gt;
+&lt;li&gt;[UI] Fix Extensions page card layout and logo visibility in dark mode @KhushamBansal (#20030)&lt;/li&gt;
+&lt;li&gt;[UI] fix: correctly display and format total counts in registry tabs @KhushamBansal (#20031)&lt;/li&gt;
+&lt;li&gt;[UI] Migrate selected icons from local assets to sistent @KhushamBansal (#19924)&lt;/li&gt;
+&lt;li&gt;fix(kanvas): prevent blank canvas when reopening v1beta3 designs @Bakul2006 (#19965)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Add sparse checkout @CodexRaunak (#19998)&lt;/li&gt;
+&lt;li&gt;Update hugo.yml @CodexRaunak (#20007)&lt;/li&gt;
+&lt;li&gt;ci(docs): sparse, blobless checkout for Hugo Pages deploy @leecalcote (#20004)&lt;/li&gt;
+&lt;li&gt;CI: Bump notify-providers to include additional provider @sarajkrishnasingh (#20000)&lt;/li&gt;
+&lt;li&gt;Restucture docs and fix 404 path resolve, toggle relative Url to false @CodexRaunak (#19997)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Docs] Fix broken Credential Schema hyperlink @emphor11 (#19990)&lt;/li&gt;
+&lt;li&gt;Revise description for Academies extension @winkletinkle (#20026)&lt;/li&gt;
+&lt;li&gt;[Docs] Add attendance for Mohit Yadav @mohityadav8 (#20028)&lt;/li&gt;
+&lt;li&gt;Fix link to meshery-academy in documentation @marblom007 (#20027)&lt;/li&gt;
+&lt;li&gt;My introduction in meeting notes @padmasri-web (#20024)&lt;/li&gt;
+&lt;li&gt;Create sulagna @suzy-g38 (#20023)&lt;/li&gt;
+&lt;li&gt;Add introduction for Arjun in meetings documentation @arj-co (#20022)&lt;/li&gt;
+&lt;li&gt;docs: add bhumika attendance for newcomers meeting week-of-06-11-2026 @bhumikadangayach (#20021)&lt;/li&gt;
+&lt;li&gt;Add Jayy Salunke&amp;rsquo;s introduction for the meeting @Jayyy19 (#20019)&lt;/li&gt;
+&lt;li&gt;Create kumar-nirupam-attendance.md @KUMARNiru007 (#20018)&lt;/li&gt;
+&lt;li&gt;Create introduction file for Shruti Jain @Shruti2110-coder (#20017)&lt;/li&gt;
+&lt;li&gt;Create Siddhi.md @siddhitripathi25 (#20016)&lt;/li&gt;
+&lt;li&gt;Add introduction for Akshat Singhai @akshatsinghai6682-sketch (#20015)&lt;/li&gt;
+&lt;li&gt;Create Yash.md @YASHMAHAKAL (#20014)&lt;/li&gt;
+&lt;li&gt;Update _index.md @simihablo (#20013)&lt;/li&gt;
+&lt;li&gt;Update _index.md @fitzergerald (#20003)&lt;/li&gt;
+&lt;li&gt;Restucture docs and fix 404 path resolve, toggle relative Url to false @CodexRaunak (#19997)&lt;/li&gt;
+&lt;li&gt;Create index.md @YASHMAHAKAL (#19993)&lt;/li&gt;
+&lt;li&gt;[Docs] Fix broken mesheryctl registry hyperlinks in registry concept … @aprv10 (#19988)&lt;/li&gt;
+&lt;li&gt;fix: improve mobile search experience @Sbragul26 (#19881)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Bakul2006, @CodexRaunak, @Copilot, @Jayyy19, @KUMARNiru007, @KhushamBansal, @Sbragul26, @Shruti2110-coder, @YASHMAHAKAL, @aabidsofi19, @akshatsinghai6682-sketch, @alexquincy, @aprv10, @arj-co, @arjunmehta-git, @bhumikadangayach, @emphor11, @fitzergerald, @hortison, @ishwar170695, @leecalcote, @marblom007, @meshery-ci, @mohityadav8, @padmasri-web, @pontusringblom, @rishiraj38, @ritzorama, @sarajkrishnasingh, @saurabhraghuvanshii, @siddhitripathi25, @simihablo, @suzy-g38, @winkletinkle, @yi-nuo426, [copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.42</title><link>/project/releases/v1.0.42/</link><pubDate>Thu, 11 Jun 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.42/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -33545,7 +33616,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.42&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.43&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
