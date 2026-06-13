@@ -171,8 +171,14 @@ export function OrgMenu(props) {
 
   const handleOrgSelect = async (e) => {
     const id = e.target.value;
+    const selected = uniqueOrgs.find((org) => org.id === id);
     try {
       await updateSelectedOrg(id).unwrap();
+      if (selected && typeof window !== 'undefined' && window.sessionStorage) {
+        sessionStorage.setItem('currentOrg', JSON.stringify(selected));
+        sessionStorage.removeItem('keys');
+        sessionStorage.removeItem('currentWorkspace');
+      }
       window.location.reload();
     } catch (err) {
       notify({
