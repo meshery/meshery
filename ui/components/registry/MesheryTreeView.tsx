@@ -275,8 +275,15 @@ const MesheryTreeView = React.memo(
                     )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`}
                     sx={{ margin: '0rem', padding: '0rem' }}
                   >
-                    <IconButton>
-                      <InfoOutlinedIcon height={20} width={20} />
+                    <IconButton
+                      size="small"
+                      sx={{
+                        width: 32,
+                        height: 32,
+                        mt: '5px',
+                      }}
+                    >
+                      <InfoOutlinedIcon />
                     </IconButton>
                   </CustomTextTooltip>
                 </>
