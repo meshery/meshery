@@ -1,0 +1,14 @@
+{
+    "id":  "a769746b-fcaa-47c9-b17e-5232373b0e2f",
+    "schemaVersion":  "models.meshery.io/v1beta1",
+    "version":  "v1.0.0",
+    "name":  "grafana",
+    "displayName":  "Grafana",
+    "status":  "enabled",
+    "category":  {
+                     "name":  "Observability and Analysis"
+                 },
+    "model":  {
+                  "version":  "v1.0.0"
+              }
+}

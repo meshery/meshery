@@ -1,0 +1,24 @@
+{
+    "id":  "5c7c6471-2115-4f1b-8473-2f3dd8deec16",
+    "schemaVersion":  "components.meshery.io/v1beta1",
+    "version":  "v1.0.0",
+    "displayName":  "Prometheus Connection",
+    "format":  "JSON",
+    "model":  {
+                  "name":  "prometheus",
+                  "version":  "v1.0.0",
+                  "displayName":  "Prometheus",
+                  "category":  {
+                                   "name":  "Observability and Analysis"
+                               }
+              },
+    "component":  {
+                      "kind":  "PrometheusConnection",
+                      "version":  "core.meshery.io/v1alpha1",
+                      "schema":  ""
+                  },
+    "configuration":  null,
+    "metadata":  {
+                     "published":  false
+                 }
+}

@@ -1,0 +1,24 @@
+{
+    "id":  "fe4a6dff-2004-4b4e-a9cc-ba6945e24ce3",
+    "schemaVersion":  "components.meshery.io/v1beta1",
+    "version":  "v1.0.0",
+    "displayName":  "Grafana Connection",
+    "format":  "JSON",
+    "model":  {
+                  "name":  "grafana",
+                  "version":  "v1.0.0",
+                  "displayName":  "Grafana",
+                  "category":  {
+                                   "name":  "Observability and Analysis"
+                               }
+              },
+    "component":  {
+                      "kind":  "GrafanaConnection",
+                      "version":  "core.meshery.io/v1alpha1",
+                      "schema":  ""
+                  },
+    "configuration":  null,
+    "metadata":  {
+                     "published":  false
+                 }
+}

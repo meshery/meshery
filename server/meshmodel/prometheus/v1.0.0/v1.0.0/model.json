@@ -1,0 +1,14 @@
+{
+    "id":  "88c87b8c-63d9-49fa-b2d8-11c83ce6e3c9",
+    "schemaVersion":  "models.meshery.io/v1beta1",
+    "version":  "v1.0.0",
+    "name":  "prometheus",
+    "displayName":  "Prometheus",
+    "status":  "enabled",
+    "category":  {
+                     "name":  "Observability and Analysis"
+                 },
+    "model":  {
+                  "version":  "v1.0.0"
+              }
+}
