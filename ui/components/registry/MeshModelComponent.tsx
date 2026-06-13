@@ -186,22 +186,18 @@ const MeshModelComponent_ = ({
           break;
       }
       if (response?.data && response.data[view.toLowerCase()]) {
-        // When search or "show duplicates" functionality is active:
-        // Avoid appending data to the previous dataset.
-        // preventing duplicate entries and ensuring the UI reflects the API's response accurately.
-        // For instance, during a search, display the data returned by the API instead of appending it to the previous results.
-        //
-        // FIX: Use functional update form of setResourcesDetail to read previous state
-        // without adding resourcesDetail to the useCallback dependency array.
-        // Previously, resourcesDetail was in the deps array which caused an infinite loop:
-        // checked changes -> fetchData runs -> setResourcesDetail called -> resourcesDetail
-        // changes -> fetchData recreated -> useEffect fires -> fetchData runs again -> loop.
+        // Use functional state update to avoid depending on resourcesDetail in the
+        // useCallback dependency array (which caused a stale-closure re-fetch loop).
+        // Replace vs append is determined by whether this is the first page of the
+        // current view, so infinite scroll pagination works correctly in all cases.
         setResourcesDetail((prev) => {
-          const fresh = response.data[view.toLowerCase()];
-          const newData =
-            searchText || view === RELATIONSHIPS || checked
-              ? [...fresh]
-              : [...prev, ...fresh];
+          const fresh = response.data[view.toLowerCase()] ?? [];
+          const isFirstPage =
+            (view === MODELS && modelFilters.page === 0) ||
+            (view === COMPONENTS && componentsFilters.page === 0) ||
+            (view === REGISTRANTS && registrantFilters.page === 0) ||
+            view === RELATIONSHIPS;
+          const newData = searchText || isFirstPage ? [...fresh] : [...prev, ...fresh];
           return _.uniqWith(newData, _.isEqual);
         });
 
@@ -223,12 +219,12 @@ const MeshModelComponent_ = ({
     getRegistrantsData,
     modelFilters,
     registrantFilters,
+    componentsFilters,
+    relationshipsFilters,
     view,
     page,
     rowsPerPage,
     searchText,
-    // FIX: resourcesDetail removed from deps to prevent infinite re-fetch loop.
-    // It is now accessed via functional update in setResourcesDetail instead.
     checked,
   ]);
 
@@ -336,7 +332,7 @@ const MeshModelComponent_ = ({
 
   useEffect(() => {
     fetchData();
-  }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
+  }, [fetchData]);
 
   // Update view when external view changes (for modal usage)
   useEffect(() => {
