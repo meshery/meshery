@@ -1,19 +1,24 @@
 {
-  "id": "9b8a7f6e-5d4c-3b2a-1b0c-9d8e7f6a5b4c",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Prometheus Connection",
-  "format": "JSON",
-  "model": {
-    "name": "prometheus",
-    "version": "v1.0.0",
-    "displayName": "Prometheus",
-    "category": {
-      "name": "Observability and Analysis"
-    }
-  },
-  "component": {
-    "kind": "PrometheusConnection",
-    "version": "core.meshery.io/v1alpha1"
-  }
+    "id":  "9b8a7f6e-5d4c-3b2a-1b0c-9d8e7f6a5b4c",
+    "schemaVersion":  "components.meshery.io/v1beta1",
+    "version":  "v1.0.0",
+    "displayName":  "Prometheus Connection",
+    "format":  "JSON",
+    "model":  {
+                  "name":  "prometheus",
+                  "version":  "v1.0.0",
+                  "displayName":  "Prometheus",
+                  "category":  {
+                                   "name":  "Observability and Analysis"
+                               }
+              },
+    "component":  {
+                      "kind":  "PrometheusConnection",
+                      "version":  "core.meshery.io/v1alpha1",
+                      "schema":  ""
+                  },
+    "configuration":  null,
+    "metadata":  {
+                     "published":  false
+                 }
 }

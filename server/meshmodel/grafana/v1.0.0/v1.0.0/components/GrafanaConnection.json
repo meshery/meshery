@@ -1,19 +1,24 @@
 {
-  "id": "3b9d8c4a-6f2d-4b8a-9c1e-7f3a5b2c4d6e",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Grafana Connection",
-  "format": "JSON",
-  "model": {
-    "name": "grafana",
-    "version": "v1.0.0",
-    "displayName": "Grafana",
-    "category": {
-      "name": "Observability and Analysis"
-    }
-  },
-  "component": {
-    "kind": "GrafanaConnection",
-    "version": "core.meshery.io/v1alpha1"
-  }
+    "id":  "3b9d8c4a-6f2d-4b8a-9c1e-7f3a5b2c4d6e",
+    "schemaVersion":  "components.meshery.io/v1beta1",
+    "version":  "v1.0.0",
+    "displayName":  "Grafana Connection",
+    "format":  "JSON",
+    "model":  {
+                  "name":  "grafana",
+                  "version":  "v1.0.0",
+                  "displayName":  "Grafana",
+                  "category":  {
+                                   "name":  "Observability and Analysis"
+                               }
+              },
+    "component":  {
+                      "kind":  "GrafanaConnection",
+                      "version":  "core.meshery.io/v1alpha1",
+                      "schema":  ""
+                  },
+    "configuration":  null,
+    "metadata":  {
+                     "published":  false
+                 }
 }
