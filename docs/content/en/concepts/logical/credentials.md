@@ -4,7 +4,7 @@ description: Meshery uses one or more Credentials when authenticating to a manag
 aliases:
 - /concepts/credentials/
 ---
-Meshery uses one or more Credentials when authenticating to a managed or unmanaged Connection. Credentials are based on the Meshery's [Credential Schema](https://github.com/meshery/schemas/blob/master/schemas/constructs/openapi/credentials.yml) with defined attributes.
+Meshery uses one or more Credentials when authenticating to a managed or unmanaged Connection. Credentials are based on the Meshery's [Credential Schema](https://github.com/meshery/schemas/blob/master/schemas/constructs/v1beta2/credential/api.yml) with defined attributes.
 
 ## Understanding Credentials in Meshery
 
