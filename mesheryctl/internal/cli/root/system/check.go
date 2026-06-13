@@ -44,6 +44,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+const healthCheckHTTPTimeout = 10 * time.Second
+
 var (
 	failure int
 )
@@ -501,7 +503,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		return err
 	}
 
-	client := &http.Client{Timeout: 10 * time.Second}
+	client := &http.Client{Timeout: healthCheckHTTPTimeout}
 	resp, err := client.Do(req)
 	// failed to fetch response for server version
 	if err != nil || resp.StatusCode != 200 {
@@ -693,7 +695,7 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 // If no adapter is specified all the adapters are checked
 func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 	url := hc.mctlCfg.GetBaseMesheryURL()
-	client := &http.Client{Timeout: 10 * time.Second}
+	client := &http.Client{Timeout: healthCheckHTTPTimeout}
 	var adapters []*models.Adapter
 	prefs, err := utils.GetSessionData(hc.mctlCfg)
 	if err != nil {
