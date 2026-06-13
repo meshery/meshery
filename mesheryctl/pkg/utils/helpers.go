@@ -394,8 +394,11 @@ func BackupConfigFile(cfgFile string) {
 	if err != nil {
 		Log.Fatal(err)
 	}
-	_, err = os.Create(cfgFile)
+	f, err := os.Create(cfgFile)
 	if err != nil {
+		Log.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
 		Log.Fatal(err)
 	}
 }
