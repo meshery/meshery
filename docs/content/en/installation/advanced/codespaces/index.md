@@ -3,7 +3,6 @@ title: Codespaces
 categories: [kubernetes]
 aliases:
 - /installation/platforms/codespaces
-- /installation/codespaces
 # display_title: false
 image: ./images/codespaces.png
 description: Build and contribute to Meshery using GitHub Codespaces
