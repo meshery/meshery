@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "connections.meshery.io/v1beta3",
+  "name": "Grafana",
+  "description": "Connection definition for registering a Grafana instance as a first-class Meshery connection for dashboards and imports.",
+  "kind": "grafana",
+  "type": "telemetry",
+  "subType": "metrics",
+  "status": "registered",
+  "connectionSchema": {
+    "type": "object",
+    "title": "Grafana Connection",
+    "required": ["url"],
+    "properties": {
+      "url": {
+        "type": "string",
+        "format": "uri",
+        "title": "Grafana Endpoint",
+        "description": "Base URL of the Grafana instance (e.g. http://grafana.example:3000)."
+      },
+      "name": {
+        "type": "string",
+        "title": "Connection Name",
+        "description": "Optional friendly name for this Grafana connection."
+      }
+    }
+  },
+  "credentialSchema": {
+    "type": "object",
+    "title": "Grafana Credential",
+    "properties": {
+      "secret": {
+        "type": "string",
+        "title": "API Key or Basic Auth",
+        "description": "API key, or basic-auth credential formatted as username:password, used to access Grafana."
+      }
+    }
+  }
+}

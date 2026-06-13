@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "connections.meshery.io/v1beta3",
+  "name": "Prometheus",
+  "description": "Connection definition for registering a Prometheus endpoint as a first-class Meshery connection for metrics collection.",
+  "kind": "prometheus",
+  "type": "telemetry",
+  "subType": "metrics",
+  "status": "registered",
+  "connectionSchema": {
+    "type": "object",
+    "title": "Prometheus Connection",
+    "required": ["url"],
+    "properties": {
+      "url": {
+        "type": "string",
+        "format": "uri",
+        "title": "Prometheus Endpoint",
+        "description": "Base URL of the Prometheus server (e.g. http://prometheus.example:9090)."
+      },
+      "name": {
+        "type": "string",
+        "title": "Connection Name",
+        "description": "Optional friendly name for this Prometheus connection."
+      }
+    }
+  },
+  "credentialSchema": {
+    "type": "object",
+    "title": "Prometheus Credential",
+    "properties": {
+      "secret": {
+        "type": "string",
+        "title": "API Key or Basic Auth",
+        "description": "API key, or basic-auth credential formatted as username:password, used to query Prometheus."
+      }
+    }
+  }
+}

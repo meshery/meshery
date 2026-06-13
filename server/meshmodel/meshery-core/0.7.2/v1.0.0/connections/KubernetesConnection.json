@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "connections.meshery.io/v1beta3",
+  "name": "Kubernetes",
+  "description": "Connection definition for registering a Kubernetes cluster (discovered from a kubeconfig context) as a first-class Meshery connection.",
+  "kind": "kubernetes",
+  "type": "platform",
+  "subType": "orchestration",
+  "status": "discovered",
+  "connectionSchema": {
+    "type": "object",
+    "title": "Kubernetes Connection",
+    "required": ["server", "name"],
+    "properties": {
+      "server": {
+        "type": "string",
+        "format": "uri",
+        "title": "API Server",
+        "description": "Kubernetes API server endpoint for the cluster context."
+      },
+      "name": {
+        "type": "string",
+        "title": "Context Name",
+        "description": "Context name from the kubeconfig that identifies the cluster."
+      }
+    }
+  },
+  "credentialSchema": {
+    "type": "object",
+    "title": "Kubernetes Credential",
+    "required": ["kubeconfig"],
+    "properties": {
+      "kubeconfig": {
+        "type": "string",
+        "title": "Kubeconfig",
+        "description": "The kubeconfig content that authenticates to the cluster context."
+      }
+    }
+  }
+}
