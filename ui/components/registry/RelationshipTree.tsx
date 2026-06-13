@@ -70,7 +70,8 @@ const RelationshipTree = ({
                 itemId={`${idForKind}.${relationship.id}`}
                 data-id={`${idForKind}.${relationship.id}`}
                 labelText={`${relationship.subType} (${relationship.model.name})`}
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   setShowDetailsData({
                     type: RELATIONSHIPS,
                     data: relationship,
