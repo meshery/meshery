@@ -388,7 +388,7 @@ const MeshModelComponent_ = ({
   }, [externalSearchText]);
 
   return (
-    <div data-test="workloads">
+    <div data-test="workloads" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <ImportModelModal
         isImportModalOpen={isImportModalOpen}
         setIsImportModalOpen={setIsImportModalOpen}
