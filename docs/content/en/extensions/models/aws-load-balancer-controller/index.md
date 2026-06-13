@@ -10,8 +10,8 @@ integrations-subcategory: Service Proxy
 registrant: Artifact Hub
 components: 
 - name: ingress-class-params
-  colorIcon: content/en/extensions/models/aws-load-balancer-controller/components/ingress-class-params/icons/color/ingress-class-params-color.svg
-  whiteIcon: content/en/extensions/models/aws-load-balancer-controller/components/ingress-class-params/icons/white/ingress-class-params-white.svg
+  colorIcon: extensions/models/aws-load-balancer-controller/components/ingress-class-params/icons/color/ingress-class-params-color.svg
+  whiteIcon: extensions/models/aws-load-balancer-controller/components/ingress-class-params/icons/white/ingress-class-params-white.svg
   description: 
 components-count: 1
 relationships: 

@@ -10,16 +10,16 @@ integrations-subcategory: Monitoring
 registrant: Artifact Hub
 components: 
 - name: sidekick
-  colorIcon: content/en/extensions/models/sidekick/components/sidekick/icons/color/sidekick-color.svg
-  whiteIcon: content/en/extensions/models/sidekick/components/sidekick/icons/white/sidekick-white.svg
+  colorIcon: extensions/models/sidekick/components/sidekick/icons/color/sidekick-color.svg
+  whiteIcon: extensions/models/sidekick/components/sidekick/icons/white/sidekick-white.svg
   description: 
 - name: certificate
-  colorIcon: content/en/extensions/models/sidekick/components/certificate/icons/color/certificate-color.svg
-  whiteIcon: content/en/extensions/models/sidekick/components/certificate/icons/white/certificate-white.svg
+  colorIcon: extensions/models/sidekick/components/certificate/icons/color/certificate-color.svg
+  whiteIcon: extensions/models/sidekick/components/certificate/icons/white/certificate-white.svg
   description: 
 - name: issuer
-  colorIcon: content/en/extensions/models/sidekick/components/issuer/icons/color/issuer-color.svg
-  whiteIcon: content/en/extensions/models/sidekick/components/issuer/icons/white/issuer-white.svg
+  colorIcon: extensions/models/sidekick/components/issuer/icons/color/issuer-color.svg
+  whiteIcon: extensions/models/sidekick/components/issuer/icons/white/issuer-white.svg
   description: 
 components-count: 3
 relationships: 

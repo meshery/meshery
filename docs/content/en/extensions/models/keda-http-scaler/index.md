@@ -10,8 +10,8 @@ integrations-subcategory: Scheduling & Orchestration
 registrant: Artifact Hub
 components: 
 - name: http-scaled-object
-  colorIcon: content/en/extensions/models/keda-http-scaler/components/http-scaled-object/icons/color/http-scaled-object-color.svg
-  whiteIcon: content/en/extensions/models/keda-http-scaler/components/http-scaled-object/icons/white/http-scaled-object-white.svg
+  colorIcon: extensions/models/keda-http-scaler/components/http-scaled-object/icons/color/http-scaled-object-color.svg
+  whiteIcon: extensions/models/keda-http-scaler/components/http-scaled-object/icons/white/http-scaled-object-white.svg
   description: 
 components-count: 1
 relationships: 

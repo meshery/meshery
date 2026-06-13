@@ -33,6 +33,7 @@ vi.mock('@sistent/sistent', () => {
         {children}
       </div>
     ),
+    DeleteForeverIcon: () => <svg data-testid="delete-forever-icon" />,
     ExploreIcon: () => <svg data-testid="explore-icon" />,
     HandymanIcon: () => <svg data-testid="handyman-icon" />,
     RemoveIcon: () => <svg data-testid="remove-icon" />,
@@ -196,5 +197,17 @@ describe('ConnectionStateChip', () => {
 
     rerender(<ConnectionStateChip status="mystery-state" />);
     expect(screen.getByTestId('discovered-state-chip')).toHaveTextContent('mystery-state');
+  });
+
+  it('renders the deleted-state chip with its DeleteForever avatar icon', () => {
+    // Regression guard: the icon barrel re-exported a non-existent
+    // `DeleteForever` from Sistent (which only exports `DeleteForeverIcon`),
+    // so the avatar resolved to `undefined` and crashed the Connections page
+    // with "Element type is invalid" (React error #130) whenever a DELETED
+    // connection was listed.
+    render(<ConnectionStateChip status="deleted" />);
+
+    expect(screen.getByTestId('deleted-state-chip')).toHaveTextContent('deleted');
+    expect(screen.getByTestId('delete-forever-icon')).toBeInTheDocument();
   });
 });

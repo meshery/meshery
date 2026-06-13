@@ -10,12 +10,12 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: configuration
-  colorIcon: content/en/extensions/models/akri/components/configuration/icons/color/configuration-color.svg
-  whiteIcon: content/en/extensions/models/akri/components/configuration/icons/white/configuration-white.svg
+  colorIcon: extensions/models/akri/components/configuration/icons/color/configuration-color.svg
+  whiteIcon: extensions/models/akri/components/configuration/icons/white/configuration-white.svg
   description: 
 - name: instance
-  colorIcon: content/en/extensions/models/akri/components/instance/icons/color/instance-color.svg
-  whiteIcon: content/en/extensions/models/akri/components/instance/icons/white/instance-white.svg
+  colorIcon: extensions/models/akri/components/instance/icons/color/instance-color.svg
+  whiteIcon: extensions/models/akri/components/instance/icons/white/instance-white.svg
   description: 
 components-count: 2
 relationships: 

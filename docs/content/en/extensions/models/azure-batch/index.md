@@ -10,8 +10,8 @@ integrations-subcategory: Compute
 registrant: GitHub
 components: 
 - name: batch-account
-  colorIcon: content/en/extensions/models/azure-batch/components/batch-account/icons/color/batch-account-color.svg
-  whiteIcon: content/en/extensions/models/azure-batch/components/batch-account/icons/white/batch-account-white.svg
+  colorIcon: extensions/models/azure-batch/components/batch-account/icons/color/batch-account-color.svg
+  whiteIcon: extensions/models/azure-batch/components/batch-account/icons/white/batch-account-white.svg
   description: 
 components-count: 1
 relationships: 

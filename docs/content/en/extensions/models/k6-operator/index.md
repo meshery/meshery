@@ -10,16 +10,16 @@ integrations-subcategory: Monitoring
 registrant: GitHub
 components: 
 - name: private-load-zone
-  colorIcon: content/en/extensions/models/k6-operator/components/private-load-zone/icons/color/private-load-zone-color.svg
-  whiteIcon: content/en/extensions/models/k6-operator/components/private-load-zone/icons/white/private-load-zone-white.svg
+  colorIcon: extensions/models/k6-operator/components/private-load-zone/icons/color/private-load-zone-color.svg
+  whiteIcon: extensions/models/k6-operator/components/private-load-zone/icons/white/private-load-zone-white.svg
   description: 
 - name: test-run
-  colorIcon: content/en/extensions/models/k6-operator/components/test-run/icons/color/test-run-color.svg
-  whiteIcon: content/en/extensions/models/k6-operator/components/test-run/icons/white/test-run-white.svg
+  colorIcon: extensions/models/k6-operator/components/test-run/icons/color/test-run-color.svg
+  whiteIcon: extensions/models/k6-operator/components/test-run/icons/white/test-run-white.svg
   description: 
 - name: test-run
-  colorIcon: content/en/extensions/models/k6-operator/components/test-run/icons/color/test-run-color.svg
-  whiteIcon: content/en/extensions/models/k6-operator/components/test-run/icons/white/test-run-white.svg
+  colorIcon: extensions/models/k6-operator/components/test-run/icons/color/test-run-color.svg
+  whiteIcon: extensions/models/k6-operator/components/test-run/icons/white/test-run-white.svg
   description: 
 components-count: 3
 relationships: 

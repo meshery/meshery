@@ -10,16 +10,16 @@ integrations-subcategory: Kubernetes
 registrant: GitHub
 components: 
 - name: cluster
-  colorIcon: content/en/extensions/models/azure-kusto/components/cluster/icons/color/cluster-color.svg
-  whiteIcon: content/en/extensions/models/azure-kusto/components/cluster/icons/white/cluster-white.svg
+  colorIcon: extensions/models/azure-kusto/components/cluster/icons/color/cluster-color.svg
+  whiteIcon: extensions/models/azure-kusto/components/cluster/icons/white/cluster-white.svg
   description: 
 - name: database
-  colorIcon: content/en/extensions/models/azure-kusto/components/database/icons/color/database-color.svg
-  whiteIcon: content/en/extensions/models/azure-kusto/components/database/icons/white/database-white.svg
+  colorIcon: extensions/models/azure-kusto/components/database/icons/color/database-color.svg
+  whiteIcon: extensions/models/azure-kusto/components/database/icons/white/database-white.svg
   description: 
 - name: data-connection
-  colorIcon: content/en/extensions/models/azure-kusto/components/data-connection/icons/color/data-connection-color.svg
-  whiteIcon: content/en/extensions/models/azure-kusto/components/data-connection/icons/white/data-connection-white.svg
+  colorIcon: extensions/models/azure-kusto/components/data-connection/icons/color/data-connection-color.svg
+  whiteIcon: extensions/models/azure-kusto/components/data-connection/icons/white/data-connection-white.svg
   description: 
 components-count: 3
 relationships: 

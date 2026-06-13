@@ -33,6 +33,8 @@ type HandlerInterface interface {
 	ProviderUIHandler(w http.ResponseWriter, r *http.Request)
 	ProviderCapabilityHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProviderComponentsHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	InstallExtensionHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	RemoveExtensionHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	TokenHandler(w http.ResponseWriter, r *http.Request, provider Provider, fromMiddleWare bool)
 	LoginHandler(w http.ResponseWriter, r *http.Request, provider Provider, fromMiddleWare bool)
@@ -269,8 +271,8 @@ type HandlerConfig struct {
 
 	// GraphQLHandler           http.Handler
 	// GraphQLPlaygroundHandler http.Handler
-	PlaygroundBuild        bool
-	Providers              map[string]Provider
+	PlaygroundBuild bool
+	Providers       map[string]Provider
 	// ProviderTracker is the authoritative availability state for
 	// Providers. /api/providers reads its snapshot and
 	// /api/providers/stream subscribes to its updates so the provider

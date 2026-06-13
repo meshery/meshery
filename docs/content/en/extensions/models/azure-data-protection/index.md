@@ -10,16 +10,16 @@ integrations-subcategory: Automation & Configuration
 registrant: GitHub
 components: 
 - name: backup-vault
-  colorIcon: content/en/extensions/models/azure-data-protection/components/backup-vault/icons/color/backup-vault-color.svg
-  whiteIcon: content/en/extensions/models/azure-data-protection/components/backup-vault/icons/white/backup-vault-white.svg
+  colorIcon: extensions/models/azure-data-protection/components/backup-vault/icons/color/backup-vault-color.svg
+  whiteIcon: extensions/models/azure-data-protection/components/backup-vault/icons/white/backup-vault-white.svg
   description: 
 - name: backup-vaults-backup-instance
-  colorIcon: content/en/extensions/models/azure-data-protection/components/backup-vaults-backup-instance/icons/color/backup-vaults-backup-instance-color.svg
-  whiteIcon: content/en/extensions/models/azure-data-protection/components/backup-vaults-backup-instance/icons/white/backup-vaults-backup-instance-white.svg
+  colorIcon: extensions/models/azure-data-protection/components/backup-vaults-backup-instance/icons/color/backup-vaults-backup-instance-color.svg
+  whiteIcon: extensions/models/azure-data-protection/components/backup-vaults-backup-instance/icons/white/backup-vaults-backup-instance-white.svg
   description: 
 - name: backup-vaults-backup-policy
-  colorIcon: content/en/extensions/models/azure-data-protection/components/backup-vaults-backup-policy/icons/color/backup-vaults-backup-policy-color.svg
-  whiteIcon: content/en/extensions/models/azure-data-protection/components/backup-vaults-backup-policy/icons/white/backup-vaults-backup-policy-white.svg
+  colorIcon: extensions/models/azure-data-protection/components/backup-vaults-backup-policy/icons/color/backup-vaults-backup-policy-color.svg
+  whiteIcon: extensions/models/azure-data-protection/components/backup-vaults-backup-policy/icons/white/backup-vaults-backup-policy-white.svg
   description: 
 components-count: 3
 relationships: 
