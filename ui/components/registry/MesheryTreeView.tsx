@@ -7,7 +7,13 @@ import {
   Typography,
   InfoOutlinedIcon,
 } from '@sistent/sistent';
-import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
+import {
+  MODELS,
+  COMPONENTS,
+  RELATIONSHIPS,
+  REGISTRANTS,
+  CONNECTIONS,
+} from '../../constants/navigator';
 import SearchBar from '@/utils/custom-search';
 import debounce from '@/utils/debounce';
 import { useWindowDimensions } from '@/utils/dimension';
@@ -23,6 +29,7 @@ import MesheryTreeViewModel from './MesheryTreeViewModel';
 import MesheryTreeViewRegistrants from './MesheryTreeViewRegistrants';
 import ComponentTree from './ComponentTree';
 import RelationshipTree from './RelationshipTree';
+import ConnectionDefinitionTree from './ConnectionDefinitionTree';
 
 type MesheryTreeViewProps = {
   data: any[];
@@ -208,7 +215,7 @@ const MesheryTreeView = React.memo(
     }, [view]);
 
     const disabledExpand = () => {
-      return view === COMPONENTS;
+      return view === COMPONENTS || view === CONNECTIONS;
     };
 
     const renderHeader = (type: string, hasRecords: boolean) => (
@@ -407,6 +414,21 @@ const MesheryTreeView = React.memo(
               isRelationshipFetching={isFetching[RELATIONSHIPS]}
             />,
             RELATIONSHIPS,
+            isLoading[view],
+          )}
+        {view === CONNECTIONS &&
+          renderTree(
+            <ConnectionDefinitionTree
+              handleToggle={handleToggle}
+              handleSelect={handleSelect}
+              expanded={expanded}
+              selected={selected}
+              data={data}
+              setShowDetailsData={setShowDetailsData}
+              lastConnectionRef={lastItemRef[CONNECTIONS]}
+              isConnectionFetching={isFetching[CONNECTIONS]}
+            />,
+            CONNECTIONS,
             isLoading[view],
           )}
       </MesheryTreeViewWrapper>

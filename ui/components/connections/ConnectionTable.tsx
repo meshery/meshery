@@ -37,6 +37,14 @@ import { useConnectionColumns } from './ConnectionTable.columns';
 import { useConnectionTableOptions } from './ConnectionTable.options';
 import { ConnectionActionMenu, ConnectionDeploymentModeMenu } from './ConnectionActionMenu';
 import { ConnectionTableToolbar } from './ConnectionTableToolbar';
+import dynamic from 'next/dynamic';
+import type { ConfigurableConnection } from './ConnectionConfigureModal';
+
+// Lazy-loaded: it pulls in the RJSF/theme chain, which we keep out of the
+// table's static import graph (smaller bundle + avoids eager theme init).
+const ConnectionConfigureModal = dynamic(() => import('./ConnectionConfigureModal'), {
+  ssr: false,
+});
 
 const ConnectionTable = ({
   selectedFilter,
@@ -86,6 +94,9 @@ const ConnectionTable = ({
   } = useConnectionActions({ organizationId: organization?.id });
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [deploymentModeAnchorEl, setDeploymentModeAnchorEl] = useState<HTMLElement | null>(null);
+  const [configureConnection, setConfigureConnection] = useState<ConfigurableConnection | null>(
+    null,
+  );
   const open = Boolean(anchorEl);
   const deploymentModeOpen = Boolean(deploymentModeAnchorEl);
   const modalRef = useRef<{ show: (options: unknown) => Promise<string | null> } | null>(null);
@@ -356,6 +367,14 @@ const ConnectionTable = ({
     },
     [filteredConnections],
   );
+
+  const handleConfigureConnection = useCallback(() => {
+    const connection = getConnectionAtRowIndex(rowData?.rowIndex);
+    handleActionMenuClose();
+    if (connection) {
+      setConfigureConnection(connection as ConfigurableConnection);
+    }
+  }, [getConnectionAtRowIndex, handleActionMenuClose, rowData?.rowIndex]);
 
   const handleDeploymentModeChange = useCallback(
     async (newMode: string) => {
@@ -681,7 +700,17 @@ const ConnectionTable = ({
         onClose={handleActionMenuClose}
         onFlushMeshSync={handleFlushMeshSync}
         onDeploymentModeAnchor={handleDeploymentModeAnchorOpen}
+        onConfigure={handleConfigureConnection}
       />
+
+      {/* Only mount (and thus load) the configure modal once a row is chosen. */}
+      {configureConnection && (
+        <ConnectionConfigureModal
+          isOpen={Boolean(configureConnection)}
+          connection={configureConnection}
+          onClose={() => setConfigureConnection(null)}
+        />
+      )}
 
       <ConnectionDeploymentModeMenu
         anchorEl={deploymentModeAnchorEl}

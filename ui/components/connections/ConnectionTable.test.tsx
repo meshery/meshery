@@ -44,6 +44,7 @@ vi.mock('@sistent/sistent', () => ({
   MenuItem: ({ children }) => <div>{children}</div>,
   Box: ({ children }) => <div>{children}</div>,
   SyncAltIcon: () => <svg data-testid="sync-alt-icon" />,
+  SettingsIcon: () => <svg data-testid="settings-icon" />,
   MoreVertIcon: () => <svg data-testid="more-vert-icon" />,
   InfoOutlinedIcon: () => <svg data-testid="info-outlined-icon" />,
   IconButton: ({ children, onClick, ...props }) => (
@@ -108,8 +109,8 @@ vi.mock('@/assets/styles/general/tool.styles', () => ({
   ToolWrapper: ({ children }) => <div>{children}</div>,
 }));
 
-vi.mock('../MesherySettingsEnvButtons', () => ({
-  default: () => <div data-testid="settings-buttons" />,
+vi.mock('./ConnectionWizardLauncher', () => ({
+  default: () => <div data-testid="connection-wizard-launcher" />,
 }));
 
 vi.mock('../../utils/utils', () => ({

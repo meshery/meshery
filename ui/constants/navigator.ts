@@ -51,6 +51,7 @@ export const COMPONENTS = 'Components';
 export const RELATIONSHIPS = 'Relationships';
 export const POLICIES = 'Policies';
 export const REGISTRANTS = 'Registrants';
+export const CONNECTIONS = 'Connections';
 export const REGISTRY = 'Registry';
 export const ADAPTERS = 'Adapters';
 export const RESET = 'Reset';
