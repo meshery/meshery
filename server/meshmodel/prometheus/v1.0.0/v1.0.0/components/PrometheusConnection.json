@@ -15,7 +15,7 @@
     "component":  {
                       "kind":  "PrometheusConnection",
                       "version":  "core.meshery.io/v1alpha1",
-                      "schema":  ""
+                      "schema":  "{\"title\":\"Connection Details\",\"properties\":{\"url\":{\"type\":\"string\",\"description\":\"The base URL of the server (e.g. http://localhost:9090)\"}},\"type\":\"object\",\"required\":[\"url\"]}"
                   },
     "configuration":  null,
     "metadata":  {
