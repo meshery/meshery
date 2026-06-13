@@ -1,266 +1,29 @@
-<!DOCTYPE html>
-{{- /*
-  Standalone 404 page.
+{{ define "main" }}
+<div class="content" style="text-align: left; margin: 50px auto; max-width: 800px;">
+  <h1 id="funny-message" style="font-weight: 400; margin-bottom: 1.5em; font-size: 2em;"></h1>
+  <h3 style="font-style: italic; margin-bottom: 2em; font-size: 1.3em;">Things tend to get a bit meshy around here...</h3>
+  <div class="alert alert-info" style="text-align: center;">
+    Please <a href="https://github.com/meshery/meshery/issues/new?assignees=&labels=docs&template=documentation.md&title=Docs:" target="_blank">report this issue</a> (thank you!) and return to the <a href="{{ "" | relURL }}">Meshery Documentation</a>.
+  </div>
+</div>
 
-  This template intentionally does NOT extend the theme base layout
-  (`{{ define "main" }}`). The site is built with `relativeURLs = true` so it can
-  be served both from the domain root (docs.meshery.io) and from a subpath
-  (GitHub Pages PR previews under `/pr-preview/pr-<N>/`). GitHub Pages serves the
-  single root `/404.html` for *any* missing path, so a 404 that relies on the
-  theme's relative CSS/JS would resolve those assets against the requested
-  (deep) path and render unstyled.
-
-  To stay clean at any depth and in either deployment, this page is fully
-  self-contained: inline CSS, an inline SVG logo, and a small inline script that
-  computes the correct site base for its links. The only Hugo dependency is the
-  logo partial, which emits inline SVG with no external references.
-*/ -}}
-<html lang="{{ .Site.Language.Lang | default "en" }}" class="dark-mode">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex, nofollow" />
-    <title>404: Page Not Found | Meshery Documentation</title>
-    <meta
-      name="description"
-      content="The Meshery documentation page you were looking for could not be found." />
-    <link
-      id="favicon"
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="https://docs.meshery.io/favicons/favicon-32x32.png" />
-    <style>
-      :root {
-        --teal: #00b39f;
-        --teal-bright: #00d3a9;
-      }
-      html.dark-mode {
-        --bg: #16181d;
-        --surface: #1f2329;
-        --text: #e9ecef;
-        --muted: #aab2bd;
-        --border: #2b3038;
-        --btn-secondary-text: #e9ecef;
-        --meshery-logo-text-fill: #ffffff;
-      }
-      html.light-mode {
-        --bg: #ffffff;
-        --surface: #f6f8fa;
-        --text: #1b1f24;
-        --muted: #5b6570;
-        --border: #e5e9ed;
-        --btn-secondary-text: #1b1f24;
-        --meshery-logo-text-fill: #3c494f;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-      }
-      body {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem 1.25rem;
-        background-color: var(--bg);
-        color: var(--text);
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        text-rendering: optimizeLegibility;
-      }
-      .notfound {
-        width: 100%;
-        max-width: 640px;
-        text-align: center;
-      }
-      .logo {
-        display: inline-block;
-        margin-bottom: 2rem;
-      }
-      .logo svg {
-        width: 230px;
-        max-width: 60vw;
-        height: auto;
-      }
-      .code {
-        margin: 0;
-        font-size: clamp(4.5rem, 18vw, 8.5rem);
-        font-weight: 800;
-        line-height: 1;
-        letter-spacing: -0.04em;
-        background: linear-gradient(120deg, var(--teal-bright), var(--teal));
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        color: var(--teal);
-      }
-      .headline {
-        margin: 0.75rem 0 0;
-        font-size: clamp(1.2rem, 4.5vw, 1.6rem);
-        font-weight: 600;
-      }
-      .subtitle {
-        margin: 0.75rem auto 0;
-        max-width: 30rem;
-        color: var(--muted);
-        font-size: 1.05rem;
-      }
-      .actions {
-        margin: 2rem 0 0;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        justify-content: center;
-      }
-      .btn {
-        display: inline-block;
-        padding: 0.7rem 1.4rem;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.98rem;
-        text-decoration: none;
-        border: 1.5px solid transparent;
-        transition: transform 0.05s ease, background-color 0.15s ease,
-          border-color 0.15s ease, color 0.15s ease;
-      }
-      .btn:active {
-        transform: translateY(1px);
-      }
-      .btn-primary {
-        background-color: var(--teal);
-        color: #ffffff;
-      }
-      .btn-primary:hover {
-        background-color: var(--teal-bright);
-      }
-      .btn-secondary {
-        border-color: var(--border);
-        color: var(--btn-secondary-text);
-        background-color: var(--surface);
-      }
-      .btn-secondary:hover {
-        border-color: var(--teal);
-        color: var(--teal);
-      }
-      .btn:focus-visible,
-      a:focus-visible {
-        outline: 3px solid var(--teal-bright);
-        outline-offset: 2px;
-      }
-      .report {
-        margin: 2.25rem auto 0;
-        color: var(--muted);
-        font-size: 0.92rem;
-      }
-      .report a {
-        color: var(--teal);
-        text-decoration: none;
-      }
-      .report a:hover {
-        text-decoration: underline;
-      }
-      @media (max-width: 480px) {
-        .btn {
-          width: 100%;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <main class="notfound">
-      <a id="logo-link" class="logo" href="https://docs.meshery.io/" aria-label="Meshery Documentation home">
-        {{ partial "svg/meshery-logo.html" . }}
-      </a>
-      <p class="code">404</p>
-      <h1 id="funny-message" class="headline">Mesh happens! We&rsquo;re working on it.</h1>
-      <p class="subtitle">
-        Things tend to get a bit meshy around here&hellip; the page you&rsquo;re
-        looking for can&rsquo;t be found or may have moved.
-      </p>
-      <div class="actions">
-        <a id="home-link" class="btn btn-primary" href="https://docs.meshery.io/" data-rel="">Back to documentation</a>
-        <a id="quickstart-link" class="btn btn-secondary" href="https://docs.meshery.io/installation/quick-start/" data-rel="installation/quick-start/">Quick Start</a>
-        <a id="install-link" class="btn btn-secondary" href="https://docs.meshery.io/installation/" data-rel="installation/">Installation</a>
-      </div>
-      <p class="report">
-        If you reached this page from a link,
-        <a id="report-link" href="https://github.com/meshery/meshery/issues/new?labels=area/docs&amp;title=Docs:%20Broken%20link%20or%20missing%20page" target="_blank" rel="noopener">please report it</a>
-        &mdash; thank you!
-      </p>
-    </main>
-
-    <script>
-      (function () {
-        var docEl = document.documentElement;
-
-        // Match the site's saved theme preference (defaults to dark, as the
-        // rest of the site does). Falls back gracefully if storage is blocked.
-        try {
-          var mode = window.localStorage.getItem("mode");
-          docEl.classList.remove("dark-mode", "light-mode");
-          docEl.classList.add(mode === "light-mode" ? "light-mode" : "dark-mode");
-        } catch (e) {
-          /* keep the default dark-mode class */
-        }
-
-        // Determine the site root so links work both at the domain root and
-        // under GitHub Pages PR previews served from /pr-preview/pr-<N>/.
-        var path = window.location.pathname || "/";
-        var match = path.match(/^(.*\/pr-preview\/pr-\d+\/)/);
-        var base = match ? match[1] : "/";
-
-        // Rewrite same-site links to absolute, base-aware paths. Using a leading
-        // "/" (or the preview prefix) keeps them correct even though GitHub
-        // Pages serves this root 404 document at the originally requested path.
-        var links = document.querySelectorAll("a[data-rel]");
-        for (var i = 0; i < links.length; i++) {
-          links[i].setAttribute("href", base + links[i].getAttribute("data-rel"));
-        }
-        var logo = document.getElementById("logo-link");
-        if (logo) logo.setAttribute("href", base);
-
-        // Point the favicon at the matching base as well.
-        var fav = document.getElementById("favicon");
-        if (fav) fav.setAttribute("href", base + "favicons/favicon-32x32.png");
-
-        // Pre-fill the bug report with the path that 404'd, to speed triage.
-        var report = document.getElementById("report-link");
-        if (report) {
-          var missing = window.location.pathname + window.location.search;
-          report.setAttribute(
-            "href",
-            "https://github.com/meshery/meshery/issues/new?labels=area/docs" +
-              "&title=" + encodeURIComponent("Docs: Broken link or missing page: " + missing) +
-              "&body=" + encodeURIComponent("The following documentation URL returned a 404:\n\n" + window.location.href + "\n\nHow did you get here? (e.g. a link on another page, a bookmark, a search result)\n")
-          );
-        }
-
-        // Rotate a friendly, on-brand message.
-        var messages = [
-          "Oh, no. Please pardon our meshy site.",
-          "Oops. Please excuse the mesh.",
-          "Looks like this page doesn't exist. What a mesh!",
-          "Please pardon our mesh.",
-          "Lost in the mesh! Our apologies.",
-          "404: Mesh not found. Sorry about that!",
-          "Oops, caught in the mesh. Bear with us!",
-          "Looks like this page got tangled in our mesh. Apologies!",
-          "Mesh happens! We're working on it.",
-          "Oh mesh, where did that page go? Our bad!",
-          "404 error: Page meltdown. We're on the case!",
-          "Lost in the mesh maze. Sorry for the inconvenience!",
-          "Meshed up! Page not found. We're untangling it."
-        ];
-        var msgEl = document.getElementById("funny-message");
-        if (msgEl) msgEl.textContent = messages[Math.floor(Math.random() * messages.length)];
-      })();
-    </script>
-  </body>
-</html>
+<script type="text/javascript">
+  var messages = [
+    "Oh, no. Please pardon our meshy site.",
+    "Oops. Please excuse the mesh.",
+    "Looks like this page doesn't exist. What a mesh!",
+    "Please pardon our mesh.",
+    "Lost in the mesh! Our apologies.",
+    "404: Mesh not found. Sorry about that!",
+    "Oops, caught in the mesh. Bear with us!",
+    "Looks like this page got tangled in our mesh. Apologies!",
+    "Mesh happens! We're working on it.",
+    "Oh mesh, where did that page go? Our bad!",
+    "404 error: Page meltdown. We're on the case!",
+    "Lost in the mesh maze. Sorry for the inconvenience!",
+    "Meshed up! Page not found. We're untangling it."
+  ];
+  var message = messages[Math.floor(Math.random()*messages.length)];
+  document.getElementById("funny-message").innerHTML = message;
+</script>
+{{ end }}

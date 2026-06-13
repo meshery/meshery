@@ -10,8 +10,8 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: plugin
-  colorIcon: content/en/extensions/models/kubegems-installer/components/plugin/icons/color/plugin-color.svg
-  whiteIcon: content/en/extensions/models/kubegems-installer/components/plugin/icons/white/plugin-white.svg
+  colorIcon: extensions/models/kubegems-installer/components/plugin/icons/color/plugin-color.svg
+  whiteIcon: extensions/models/kubegems-installer/components/plugin/icons/white/plugin-white.svg
   description: 
 components-count: 1
 relationships: 

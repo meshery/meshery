@@ -42,6 +42,7 @@ const GRID_SIZE = { xs: 12, sm: 12, md: 12, lg: 6, xl: 4 };
 const UnifiedCardContainer = ({ children, sx = {} }: ChildrenProps & { sx?: object }) => (
   <CardContainer
     sx={{
+      height: '100%',
       minHeight: { xs: '280px', sm: '260px', lg: '280px' },
       display: 'flex',
       flexDirection: 'column',
@@ -94,8 +95,6 @@ const StyledResponsiveImage = styled('img')({
   width: 'auto',
   maxWidth: '140px',
   maxHeight: '85px',
-  minWidth: '100px',
-  minHeight: '60px',
   flexShrink: 0,
 });
 

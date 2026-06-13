@@ -25,7 +25,7 @@ current releases.
 
 {{< network-ports >}}
 
-In addition, optional [Meshery Adapters](/concepts/architecture/adapters) listen
+In addition, optional [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}}) listen
 on their own ports (for example `10000/tcp` and up), and the Meshery Operator's
 `kube-rbac-proxy` listens on `8443/tcp` in-cluster. Inside the pod, Meshery
 Server listens on `8080/tcp`, which the Kubernetes Service exposes as
@@ -127,13 +127,13 @@ The callback path Meshery uses is `/api/user/token`, so the effective callback
 becomes `https://meshery.example.com/api/user/token`. If login redirects fail or
 loop when behind a proxy, a missing or incorrect callback URL is the usual
 cause. See
-[Authentication, Authorization & Identity](/installation/production/authentication-and-identity)
+[Authentication, Authorization & Identity]({{< ref "installation/production/authentication-and-identity.md" >}})
 and the
-[environment variables reference](/installation/advanced/environment-variables).
+[environment variables reference]({{< ref "installation/advanced/environment-variables.md" >}}).
 
 ## Exposing the Broker
 
-The [Meshery Broker](/concepts/architecture/broker) is reached by Meshery Server
+The [Meshery Broker]({{< ref "concepts/architecture/broker/index.md" >}}) is reached by Meshery Server
 on `4222/tcp`. How it is exposed depends on topology:
 
 - **In-cluster Server.** The Server reaches the Broker over its ClusterIP; no
@@ -158,7 +158,7 @@ status:
 Confirm the cluster supports the Service type you rely on (`LoadBalancer` or
 `NodePort`) and that the resulting `external` endpoint is reachable from Meshery
 Server. This is the most common multi-cloud connectivity pitfall—see
-[Multi-Cluster & Multi-Cloud](/installation/production/multi-cluster-and-multi-cloud).
+[Multi-Cluster & Multi-Cloud]({{< ref "installation/production/multi-cluster-and-multi-cloud.md" >}}).
 
 ## Egress requirements
 
@@ -191,7 +191,7 @@ them, explicitly allow:
 
 Scope policies per namespace (deploy Meshery into a dedicated `meshery`
 namespace) and pair them with the RBAC and security-context hardening in
-[Security Hardening](/installation/production/security-hardening).
+[Security Hardening]({{< ref "installation/production/security-hardening.md" >}}).
 
 ## Connectivity validation
 
@@ -199,10 +199,10 @@ After deployment, validate connectivity end-to-end:
 
 - `mesheryctl system check` runs pre- and post-deployment health checks,
   including connectivity. See the
-  [reference](/reference/mesheryctl/system/check).
+  [reference]({{< ref "reference/references/mesheryctl/system/check.md" >}}).
 - In the UI, the connection chip for each cluster reflects live connectivity;
   the Broker and Operator/MeshSync follow the connection's lifecycle.
 - For Broker/Operator/MeshSync connectivity problems, use the
-  [Operator & MeshSync troubleshooting guide](/guides/troubleshooting/meshery-operator-meshsync).
+  [Operator & MeshSync troubleshooting guide]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}}).
 
 {{< related-discussions tag="meshery" >}}

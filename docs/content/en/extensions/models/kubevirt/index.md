@@ -10,8 +10,8 @@ integrations-subcategory: Application Definition & Image Build
 registrant: Github
 components: 
 - name: ssp
-  colorIcon: content/en/extensions/models/kubevirt/components/ssp/icons/color/ssp-color.svg
-  whiteIcon: content/en/extensions/models/kubevirt/components/ssp/icons/white/ssp-white.svg
+  colorIcon: extensions/models/kubevirt/components/ssp/icons/color/ssp-color.svg
+  whiteIcon: extensions/models/kubevirt/components/ssp/icons/white/ssp-white.svg
   description: 
 components-count: 1
 relationships: 

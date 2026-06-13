@@ -10,16 +10,16 @@ integrations-subcategory: Key Management
 registrant: Artifact Hub
 components: 
 - name: bitwarden-secret
-  colorIcon: content/en/extensions/models/bitwarden-crd-operator/components/bitwarden-secret/icons/color/bitwarden-secret-color.svg
-  whiteIcon: content/en/extensions/models/bitwarden-crd-operator/components/bitwarden-secret/icons/white/bitwarden-secret-white.svg
+  colorIcon: extensions/models/bitwarden-crd-operator/components/bitwarden-secret/icons/color/bitwarden-secret-color.svg
+  whiteIcon: extensions/models/bitwarden-crd-operator/components/bitwarden-secret/icons/white/bitwarden-secret-white.svg
   description: 
 - name: bitwarden-template
-  colorIcon: content/en/extensions/models/bitwarden-crd-operator/components/bitwarden-template/icons/color/bitwarden-template-color.svg
-  whiteIcon: content/en/extensions/models/bitwarden-crd-operator/components/bitwarden-template/icons/white/bitwarden-template-white.svg
+  colorIcon: extensions/models/bitwarden-crd-operator/components/bitwarden-template/icons/color/bitwarden-template-color.svg
+  whiteIcon: extensions/models/bitwarden-crd-operator/components/bitwarden-template/icons/white/bitwarden-template-white.svg
   description: 
 - name: registry-credential
-  colorIcon: content/en/extensions/models/bitwarden-crd-operator/components/registry-credential/icons/color/registry-credential-color.svg
-  whiteIcon: content/en/extensions/models/bitwarden-crd-operator/components/registry-credential/icons/white/registry-credential-white.svg
+  colorIcon: extensions/models/bitwarden-crd-operator/components/registry-credential/icons/color/registry-credential-color.svg
+  whiteIcon: extensions/models/bitwarden-crd-operator/components/registry-credential/icons/white/registry-credential-white.svg
   description: 
 components-count: 3
 relationships: 
