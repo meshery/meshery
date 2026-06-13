@@ -34118,7 +34118,7 @@ While this isn&amp;rsquo;t a necessary step, if you plan on doing anything more 
 &lt;h2 id="ways-to-create-a-design"&gt;
 	Ways to Create a Design
 &lt;/h2&gt;
-&lt;p&gt;You can create a Meshery Design in two ways:&lt;/p&gt;</description></item><item><title>Credentials</title><link>/concepts/logical/credentials/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/concepts/logical/credentials/</guid><description>&lt;p&gt;Meshery uses one or more Credentials when authenticating to a managed or unmanaged Connection. Credentials are based on the Meshery&amp;rsquo;s &lt;a href="https://github.com/meshery/schemas/blob/master/schemas/constructs/openapi/credentials.yml"&gt;Credential Schema&lt;/a&gt; with defined attributes.&lt;/p&gt;
+&lt;p&gt;You can create a Meshery Design in two ways:&lt;/p&gt;</description></item><item><title>Credentials</title><link>/concepts/logical/credentials/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/concepts/logical/credentials/</guid><description>&lt;p&gt;Meshery uses one or more Credentials when authenticating to a managed or unmanaged Connection. Credentials are based on the Meshery&amp;rsquo;s &lt;a href="https://github.com/meshery/schemas/blob/master/schemas/constructs/v1beta2/credential/api.yml"&gt;Credential Schema&lt;/a&gt; with defined attributes.&lt;/p&gt;
 &lt;h2 id="understanding-credentials-in-meshery"&gt;
 	Understanding Credentials in Meshery
 &lt;/h2&gt;
