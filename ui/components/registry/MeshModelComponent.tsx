@@ -127,6 +127,7 @@ const MeshModelComponent_ = ({
     }
     setRelationshipsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
   }, [relationshipsRes, hasMoreRelationships]);
+
   /**
    * IntersectionObservers
    */
@@ -180,7 +181,6 @@ const MeshModelComponent_ = ({
           break;
         case REGISTRANTS:
           response = await getRegistrants();
-
           break;
         default:
           break;
@@ -190,16 +190,20 @@ const MeshModelComponent_ = ({
         // Avoid appending data to the previous dataset.
         // preventing duplicate entries and ensuring the UI reflects the API's response accurately.
         // For instance, during a search, display the data returned by the API instead of appending it to the previous results.
-        let newData = [];
-        if (response.data[view.toLowerCase()]) {
-          newData =
-            searchText || view === RELATIONSHIPS
-              ? [...response.data[view.toLowerCase()]]
-              : [...resourcesDetail, ...response.data[view.toLowerCase()]];
-        }
-
-        // Set unique data
-        setResourcesDetail(_.uniqWith(newData, _.isEqual));
+        //
+        // FIX: Use functional update form of setResourcesDetail to read previous state
+        // without adding resourcesDetail to the useCallback dependency array.
+        // Previously, resourcesDetail was in the deps array which caused an infinite loop:
+        // checked changes -> fetchData runs -> setResourcesDetail called -> resourcesDetail
+        // changes -> fetchData recreated -> useEffect fires -> fetchData runs again -> loop.
+        setResourcesDetail((prev) => {
+          const fresh = response.data[view.toLowerCase()];
+          const newData =
+            searchText || view === RELATIONSHIPS || checked
+              ? [...fresh]
+              : [...prev, ...fresh];
+          return _.uniqWith(newData, _.isEqual);
+        });
 
         // Deeplink may contain higher rowsPerPage val for first time fetch
         // In such case set it to default as 14 after UI renders
@@ -223,7 +227,8 @@ const MeshModelComponent_ = ({
     page,
     rowsPerPage,
     searchText,
-    resourcesDetail,
+    // FIX: resourcesDetail removed from deps to prevent infinite re-fetch loop.
+    // It is now accessed via functional update in setResourcesDetail instead.
     checked,
   ]);
 
@@ -275,6 +280,7 @@ const MeshModelComponent_ = ({
     setRowsPerPage(25);
     return response;
   };
+
   const handleTabClick = (selectedView) => {
     // -> use settingsRouter when not in modal mode (Settings page)
     if (handleChangeSelectedTab && externalView === null) {
@@ -300,6 +306,7 @@ const MeshModelComponent_ = ({
       data: {},
     });
   };
+
   const modifyData = () => {
     if (!resourcesDetail) return [];
 
@@ -549,6 +556,7 @@ const TabCard = ({ label, count, active, onClick }) => {
     </CardStyle>
   );
 };
+
 const MeshModelComponent = (props) => {
   return (
     <NoSsr>
@@ -556,4 +564,5 @@ const MeshModelComponent = (props) => {
     </NoSsr>
   );
 };
+
 export default MeshModelComponent;
