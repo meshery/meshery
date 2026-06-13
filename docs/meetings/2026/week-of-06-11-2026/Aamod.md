@@ -1,4 +1,6 @@
-Hi everyone, I'm Aamod! I am a CS undergrad with experience working in Go and Kubernetes. 
+# Aamod - Introduction
+
+Hi everyone, I'm Aamod! I am a CS undergrad with experience working in Go and Kubernetes.
 
 As part of an LFX prep project, I recently built a Meshery AI adapter that translates natural language into Kubernetes YAML (using Go and various backends like Ollama, OpenAI, and Anthropic). This project has given me a solid understanding of the adapter architecture and MeshKit.
 
