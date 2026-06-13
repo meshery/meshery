@@ -41,6 +41,12 @@ type K8sContext struct {
 	UpdatedAt          *time.Time `json:"updatedAt,omitempty" yaml:"updatedAt,omitempty"`
 	CreatedAt          *time.Time `json:"createdAt,omitempty" yaml:"createdAt,omitempty"`
 	ConnectionID       string     `json:"connectionId,omitempty" yaml:"connectionId,omitempty"`
+	// Reachable reports whether the cluster's API server responded while the
+	// context was being processed. It is transient (never persisted): it is set
+	// during discovery so callers can surface reachability and gate the
+	// transition to the connected state. An unreachable context can still be
+	// registered as a (discovered) connection.
+	Reachable bool `json:"reachable" yaml:"-" gorm:"-"`
 }
 
 // K8sContextFromConnection converts a kubernetes connection into a K8sContext.
@@ -178,7 +184,18 @@ func NewK8sContextWithServerID(
 
 // K8sContextsFromKubeconfig takes in a kubeconfig and meshery instance ID and generates
 // kubernetes contexts from it
-func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler) []*K8sContext {
+func K8sContextsFromKubeconfig(provider Provider, userID string, broadcast *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler) []*K8sContext {
+	return K8sContextsFromKubeconfigWithOptions(provider, userID, broadcast, kubeconfig, instanceID, eventMetadata, log, false)
+}
+
+// K8sContextsFromKubeconfigWithOptions parses the kubeconfig into per-context
+// K8sContexts. When includeUnreachable is false (the default behaviour used by
+// component registration and startup discovery) contexts whose API server is
+// unreachable are skipped. When it is true, unreachable contexts are still
+// returned with Reachable=false so callers (the connection wizard's discover &
+// import flow) can register them as discovered connections and let the user
+// decide; reachability only gates the transition to the connected state.
+func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler, includeUnreachable bool) []*K8sContext {
 	kcs := []*K8sContext{}
 
 	parsed, _, err := kubernetes.ProcessConfig(kubeconfig, "")
@@ -216,6 +233,9 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, k
 			// 	// _ = provider.PersistEvent(token,*event)
 			// 	// eventChan.Publish(userUUID, event)
 			log.Warn(ErrGenerateK8sHandler(err, kc.Name))
+			// The kube handler could not even be constructed from the context's
+			// credentials, so there is nothing reachable to register; skip it
+			// regardless of includeUnreachable.
 			continue
 		}
 
@@ -254,8 +274,20 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, k
 			// 	// _ = provider.PersistEvent(token,*event)
 			// 	// eventChan.Publish(userUUID, event)
 			log.Warn(ErrRetrieveK8sClusterID(err, kc.Name))
+			// Failing to read the kube-system namespace UID means the API server
+			// is unreachable. Historically the context was dropped; when the
+			// caller opts in we instead return it flagged unreachable so it can be
+			// registered as a discovered connection (without a server ID/version).
+			if includeUnreachable {
+				kc.Reachable = false
+				kcs = append(kcs, &kc)
+			}
 			continue
 		}
+
+		// The API server responded to the kube-system namespace lookup, so the
+		// context is reachable even if a later (non-fatal) version lookup fails.
+		kc.Reachable = true
 
 		err = kc.AssignVersion(handler)
 		if err != nil {

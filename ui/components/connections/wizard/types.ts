@@ -51,14 +51,33 @@ export type WizardData = {
   postConfig: GenericRecord;
 };
 
+/** A kubeconfig context as returned by the discovery endpoint (not persisted). */
+export type DiscoveredKubeContext = {
+  id: string;
+  name: string;
+  server: string;
+  reachable: boolean;
+  connectionId?: string;
+};
+
+/** Options forwarded to the kubeconfig upload (create) endpoint. */
+export type KubeconfigImportOptions = {
+  /** Restrict the import to these discovered context IDs. */
+  selectedContextIds?: string[];
+  /** Per-context name overrides, keyed by discovered context ID. */
+  names?: Record<string, string>;
+};
+
 export type WizardServices = {
   notify: (opts: { message: string; event_type: number; details?: string }) => void;
   /** POST /integrations/connections/register with the given body. */
   registerConnection: (body: GenericRecord) => Promise<GenericRecord>;
   /** POST /integrations/connections/register (status: connect). */
   connectConnection: (body: GenericRecord) => Promise<GenericRecord>;
-  /** POST /system/kubernetes with the kubeconfig file. */
-  uploadKubeconfig: (file: File) => Promise<GenericRecord>;
+  /** POST /system/kubernetes/contexts — parse contexts without persisting. */
+  discoverKubeContexts: (file: File) => Promise<DiscoveredKubeContext[]>;
+  /** POST /system/kubernetes — persist the selected contexts as connections. */
+  uploadKubeconfig: (file: File, options?: KubeconfigImportOptions) => Promise<GenericRecord>;
   /** PUT /integrations/connections/{id} { status }. */
   updateConnectionById: (connectionId: string, body: GenericRecord) => Promise<GenericRecord>;
   credentials: CredentialRecord[];

@@ -9,9 +9,10 @@ import {
   Typography,
 } from '@sistent/sistent';
 import { ReactNode } from 'react';
-import { alpha, styled } from '@/theme';
+import { alpha, styled, useTheme } from '@/theme';
 import RJSFWrapper from '@/components/meshery-mesh-interface/PatternService/RJSF_wrapper';
 import ConnectionIcon from '@/assets/icons/Connection';
+import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
 import {
   type ConnectionWizardKindConfig,
   type SupportedConnectionWizardKind,
@@ -67,6 +68,9 @@ const KindCard = styled('button', {
   background: selected
     ? alpha(theme.palette.background.brand.default, 0.06)
     : theme.palette.background.card,
+  // A native <button> defaults to the UA text color; set it explicitly so the
+  // Typography children (which inherit) follow the theme in dark mode.
+  color: theme.palette.text.primary,
   padding: theme.spacing(2.5),
   cursor: 'pointer',
   display: 'flex',
@@ -97,7 +101,10 @@ const KindIconWrap = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  background: alpha(theme.palette.background.brand.default, 0.1),
+  // A light, neutral tile so colored integration logos read clearly on the
+  // dark card surface.
+  background: theme.palette.common.white,
+  border: `1px solid ${theme.palette.divider}`,
   marginBottom: theme.spacing(0.5),
 }));
 
@@ -191,6 +198,7 @@ const UploadDropzone = styled('button')(({ theme }) => ({
   borderRadius: theme.spacing(1.5),
   border: `1.5px dashed ${theme.palette.divider}`,
   background: theme.palette.background.card,
+  color: theme.palette.text.primary,
   cursor: 'pointer',
   textAlign: 'center',
   transition: 'border-color 0.15s ease, background 0.15s ease',
@@ -200,10 +208,20 @@ const UploadDropzone = styled('button')(({ theme }) => ({
   },
 }));
 
+const UploadIconCircle = styled(Box)(({ theme }) => ({
+  width: 56,
+  height: 56,
+  borderRadius: '50%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: alpha(theme.palette.background.brand.default, 0.12),
+}));
+
 const UploadIcon = styled(CloudUploadIcon)(({ theme }) => ({
-  width: 36,
-  height: 36,
-  fill: theme.palette.text.secondary,
+  width: 28,
+  height: 28,
+  fill: theme.palette.background.brand.default,
 }));
 
 const HiddenFileInput = styled('input')({
@@ -233,63 +251,75 @@ export const ConnectionKindSelectionStep = ({
   connectionIconMap,
   onSelectKind,
   canUseKind,
-}: ConnectionKindSelectionStepProps) => (
-  <StepLayout>
-    <StepHeader
-      title="Choose a connection type"
-      subtitle="Select the kind of first-class connection you want Meshery to create or register."
-    />
-    {isLoading ? (
-      <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
-        <CircularProgress />
-      </Box>
-    ) : kinds.length === 0 ? (
-      <Typography variant="body2" color="text.secondary">
-        No connection definitions are registered in the registry yet.
-      </Typography>
-    ) : (
-      <KindGrid>
-        {kinds.map((config) => {
-          const isPermitted = canUseKind(config);
-          const iconSrc = connectionIconMap?.[config.kind]?.icon;
-          const isSelected = selectedKind === config.kind;
+}: ConnectionKindSelectionStepProps) => {
+  const theme = useTheme();
+  return (
+    <StepLayout>
+      <StepHeader
+        title="Choose a connection type"
+        subtitle="Select the kind of first-class connection you want Meshery to create or register."
+      />
+      {isLoading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+          <CircularProgress />
+        </Box>
+      ) : kinds.length === 0 ? (
+        <Typography variant="body2" color="text.secondary">
+          No connection definitions are registered in the registry yet.
+        </Typography>
+      ) : (
+        <KindGrid>
+          {kinds.map((config) => {
+            const isPermitted = canUseKind(config);
+            // Icon paths from the connection metadata are repo-relative and must
+            // be normalized the same way the connections table does, otherwise the
+            // <img> src is broken. Fall back to the per-kind static asset.
+            const iconSrc =
+              normalizeStaticImagePath(connectionIconMap?.[config.kind]?.icon) ||
+              normalizeStaticImagePath(getFallbackImageBasedOnKind(config.kind));
+            const isSelected = selectedKind === config.kind;
 
-          return (
-            <KindCard
-              key={config.kind}
-              type="button"
-              onClick={() => isPermitted && onSelectKind(config.kind)}
-              selected={isSelected}
-              disabled={!isPermitted}
-            >
-              {isSelected && <SelectedBadge />}
-              <KindIconWrap>
-                {iconSrc ? (
-                  <KindIcon src={iconSrc} alt={`${config.label} icon`} />
-                ) : (
-                  <ConnectionIcon height={30} width={30} />
+            return (
+              <KindCard
+                key={config.kind}
+                type="button"
+                onClick={() => isPermitted && onSelectKind(config.kind)}
+                selected={isSelected}
+                disabled={!isPermitted}
+              >
+                {isSelected && <SelectedBadge />}
+                <KindIconWrap>
+                  {iconSrc ? (
+                    <KindIcon src={iconSrc} alt={`${config.label} icon`} />
+                  ) : (
+                    <ConnectionIcon
+                      height={28}
+                      width={28}
+                      fill={theme.palette.background.brand.default}
+                    />
+                  )}
+                </KindIconWrap>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                  {config.label}
+                </Typography>
+                {config.description && (
+                  <Typography variant="body2" color="text.secondary">
+                    {config.description}
+                  </Typography>
                 )}
-              </KindIconWrap>
-              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                {config.label}
-              </Typography>
-              {config.description && (
-                <Typography variant="body2" color="text.secondary">
-                  {config.description}
-                </Typography>
-              )}
-              {!isPermitted && (
-                <Typography variant="caption" color="error">
-                  You don&apos;t have permission to add this connection type.
-                </Typography>
-              )}
-            </KindCard>
-          );
-        })}
-      </KindGrid>
-    )}
-  </StepLayout>
-);
+                {!isPermitted && (
+                  <Typography variant="caption" color="error">
+                    You don&apos;t have permission to add this connection type.
+                  </Typography>
+                )}
+              </KindCard>
+            );
+          })}
+        </KindGrid>
+      )}
+    </StepLayout>
+  );
+};
 
 type GenericConnectionDetailsStepProps = {
   label?: string;
@@ -453,7 +483,9 @@ export const KubernetesImportStep = ({ kubeconfigFile, onPickFile }: KubernetesI
       type="button"
       onClick={() => document.getElementById('connection-wizard-kubeconfig-input')?.click()}
     >
-      <UploadIcon />
+      <UploadIconCircle>
+        <UploadIcon />
+      </UploadIconCircle>
       {kubeconfigFile ? (
         <Typography variant="body1" sx={{ fontWeight: 600 }}>
           {kubeconfigFile.name}

@@ -1050,7 +1050,12 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 		}
 	}
 
-	k8sServerID := *k8sContext.KubernetesServerID
+	// An unreachable context has no server ID assigned; persist it anyway as a
+	// discovered connection rather than dereferencing a nil pointer.
+	var k8sServerID uuid.UUID
+	if k8sContext.KubernetesServerID != nil {
+		k8sServerID = *k8sContext.KubernetesServerID
+	}
 
 	_metadata := map[string]string{
 		"id":                 k8sContext.ID,

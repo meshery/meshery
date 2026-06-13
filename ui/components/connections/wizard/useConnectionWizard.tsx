@@ -3,6 +3,7 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import {
   useAddKubernetesConfigMutation,
   useConnectToConnectionMutation,
+  useDiscoverKubernetesContextsMutation,
   useGetCredentialsQuery,
   useUpdateConnectionByIdMutation,
   useVerifyAndRegisterConnectionMutation,
@@ -54,6 +55,7 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
   const [verifyAndRegisterConnection] = useVerifyAndRegisterConnectionMutation();
   const [connectToConnection] = useConnectToConnectionMutation();
   const [addKubernetesConfig] = useAddKubernetesConfigMutation();
+  const [discoverKubernetesContexts] = useDiscoverKubernetesContextsMutation();
   const [updateConnectionById] = useUpdateConnectionByIdMutation();
   const { data: credentialsResponse } = useGetCredentialsQuery(undefined, { skip: !isOpen });
 
@@ -110,9 +112,25 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
       notify,
       registerConnection: (body) => verifyAndRegisterConnection({ body }).unwrap(),
       connectConnection: (body) => connectToConnection({ body }).unwrap(),
-      uploadKubeconfig: (file) => {
+      discoverKubeContexts: async (file) => {
         const formData = new FormData();
         formData.append('k8sfile', file);
+        const result = await discoverKubernetesContexts({ body: formData }).unwrap();
+        return Array.isArray(result) ? result : [];
+      },
+      uploadKubeconfig: (file, options) => {
+        const formData = new FormData();
+        formData.append('k8sfile', file);
+        if (options?.selectedContextIds) {
+          formData.append('selectedContexts', JSON.stringify(options.selectedContextIds));
+        }
+        if (options?.names && Object.keys(options.names).length > 0) {
+          // The backend keys per-context options under `contexts` by context id.
+          const contexts = Object.fromEntries(
+            Object.entries(options.names).map(([id, name]) => [id, { name }]),
+          );
+          formData.append('contexts', JSON.stringify(contexts));
+        }
         return addKubernetesConfig({ body: formData }).unwrap();
       },
       updateConnectionById: (connectionId, body) =>
@@ -124,6 +142,7 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
       verifyAndRegisterConnection,
       connectToConnection,
       addKubernetesConfig,
+      discoverKubernetesContexts,
       updateConnectionById,
       credentialsResponse,
     ],

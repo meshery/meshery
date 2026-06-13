@@ -107,6 +107,16 @@ const connectionsApi = api.injectEndpoints({
       }),
       invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
     }),
+    // Parses a kubeconfig and returns its contexts (including unreachable ones,
+    // flagged) WITHOUT persisting them, so the wizard can let the user pick
+    // which to import before any connection is created.
+    discoverKubernetesContexts: builder.mutation({
+      query: (queryArg) => ({
+        url: mesheryApiPath(`system/kubernetes/contexts`),
+        method: 'POST',
+        body: queryArg.body,
+      }),
+    }),
   }),
 });
 
@@ -121,6 +131,7 @@ export const {
   useUpdateConnectionByIdMutation,
   useCancelConnectionRegisterMutation,
   useAddKubernetesConfigMutation,
+  useDiscoverKubernetesContextsMutation,
   useLazyPingKubernetesQuery,
   useUpdateConnectionStatusMutation,
 } = connectionsApi;
