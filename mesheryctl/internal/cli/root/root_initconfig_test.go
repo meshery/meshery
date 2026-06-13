@@ -98,7 +98,7 @@ func TestInitConfigUseCases(t *testing.T) {
 			skipOnWin: true, // chmod 0o000 has no effect on Windows
 		},
 		{
-			name: "given permission denied when calling initconfig then returns error",
+			name: "given an existing non-empty config file when calling initConfig then the pre-existing file is preserved",
 			setup: func(t *testing.T, tmp string) {
 				utils.MesheryFolder = filepath.Join(tmp, "meshery-existing")
 				if err := os.MkdirAll(utils.MesheryFolder, 0o755); err != nil {
@@ -111,9 +111,13 @@ func TestInitConfigUseCases(t *testing.T) {
 				}
 			},
 			assert: func(t *testing.T) {
-				// initConfig should leave a pre-existing non-empty config file in place
-				if _, err := os.Stat(utils.DefaultConfigPath); os.IsNotExist(err) {
-					t.Errorf("expected pre-existing config file to remain at %s after initConfig, but it was removed", utils.DefaultConfigPath)
+				// initConfig should leave a pre-existing non-empty config file in place with contents unchanged
+				got, err := os.ReadFile(utils.DefaultConfigPath)
+				if err != nil {
+					t.Fatalf("unexpected error reading pre-existing config file: %v", err)
+				}
+				if string(got) != "test" {
+					t.Errorf("expected pre-existing config file contents to be preserved, got %q", string(got))
 				}
 			},
 		},

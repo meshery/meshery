@@ -567,8 +567,11 @@ func AskForConfirmation(s string) bool {
 
 // CreateConfigFile creates config file in Meshery Folder
 func CreateConfigFile() error {
-	_, err := os.Stat(DefaultConfigPath)
+	info, err := os.Stat(DefaultConfigPath)
 	if err == nil {
+		if info.IsDir() {
+			return fmt.Errorf("config path %q is a directory, not a file", DefaultConfigPath)
+		}
 		// file already exists
 		return nil
 	}
