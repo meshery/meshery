@@ -10,8 +10,8 @@ integrations-subcategory: Source Version Control
 registrant: Artifact Hub
 components: 
 - name: github-action-runner
-  colorIcon: content/en/extensions/models/github-actions-runner-operator/components/github-action-runner/icons/color/github-action-runner-color.svg
-  whiteIcon: content/en/extensions/models/github-actions-runner-operator/components/github-action-runner/icons/white/github-action-runner-white.svg
+  colorIcon: extensions/models/github-actions-runner-operator/components/github-action-runner/icons/color/github-action-runner-color.svg
+  whiteIcon: extensions/models/github-actions-runner-operator/components/github-action-runner/icons/white/github-action-runner-white.svg
   description: 
 components-count: 1
 relationships: 

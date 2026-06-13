@@ -61,7 +61,7 @@ Storage:
   Server's data folder. The database grows with discovery scope and registry
   size. Because it is a cache (not a system of record), size for working-set
   performance rather than long-term retention—durable data lives with the
-  [Remote Provider](/installation/production/authentication-and-identity).
+  [Remote Provider]({{< ref "installation/production/authentication-and-identity.md" >}}).
 - **Meshery Broker.** No persistent volume is required; the Broker holds
   messages in memory until consumed. Size **memory**, not disk, for the Broker.
 
@@ -70,12 +70,12 @@ Because MeshSync's working snapshot is held in the Server's database and partly
 in memory, an undersized memory limit on Meshery Server can lead to restarts
 under large or churny clusters. Give the Server generous memory headroom and
 alert on its utilization—see
-[Monitoring, Observability & Health KPIs](/installation/production/monitoring-observability-and-kpis).
+[Monitoring, Observability & Health KPIs]({{< ref "installation/production/monitoring-observability-and-kpis.md" >}}).
 {{% /alert %}}
 
 ## MeshSync: tiered discovery and scoping
 
-[MeshSync](/concepts/architecture/meshsync) is the component most sensitive to
+[MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) is the component most sensitive to
 the size of managed clusters. It uses **tiered discovery** to progressively
 refine identification of resources, balancing granularity against speed and
 scalability. Two controls let you bound its cost:
@@ -99,14 +99,14 @@ scalability. Two controls let you bound its cost:
    useful for clusters where you cannot or prefer not to deploy the Operator.
    The default for new connections is set by
    `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` (`embedded` or `operator`). See
-   [Multi-Cluster & Multi-Cloud](/installation/production/multi-cluster-and-multi-cloud).
+   [Multi-Cluster & Multi-Cloud]({{< ref "installation/production/multi-cluster-and-multi-cloud.md" >}}).
 
 For very large clusters, blacklisting noisy, high-cardinality resource types is
 the single most effective lever on Meshery's footprint.
 
 ## Broker throughput
 
-The [Meshery Broker](/concepts/architecture/broker) (NATS) streams discovery
+The [Meshery Broker]({{< ref "concepts/architecture/broker/index.md" >}}) (NATS) streams discovery
 data and events between each cluster and the Server. Production guidance:
 
 - Run **one Broker per managed cluster**. A single Broker instance can be scaled
@@ -124,14 +124,14 @@ data and events between each cluster and the Server. Production guidance:
 - **API/GraphQL load** scales with concurrent users and clients. Horizontal
   replication helps with read/stateless request handling; mind the database
   caveats in
-  [High Availability & Resiliency](/installation/production/high-availability-and-resiliency).
+  [High Availability & Resiliency]({{< ref "installation/production/high-availability-and-resiliency.md" >}}).
 - **Registry and models** are held to serve design and relationship operations;
   larger registries increase baseline memory.
 - **Relationship/policy evaluation** is CPU-bound and time-boxed by
   `POLICY_EVAL_TIMEOUT` (default `3m`). If you see evaluations timing out on
   large designs, raise the timeout or allocate more CPU. The engine selection
   (`USE_GO_POLICY_ENGINE`) also affects evaluation characteristics. See the
-  [environment variables reference](/installation/advanced/environment-variables).
+  [environment variables reference]({{< ref "installation/advanced/environment-variables.md" >}}).
 
 ## Scalability levers, at a glance
 
@@ -149,7 +149,7 @@ data and events between each cluster and the Server. Production guidance:
 - **The database is a single-writer SQLite/Bitcask cache.** It is excellent for
   a cached working set but is not a horizontally shared, multi-writer datastore.
   This shapes how far a single Server instance scales and how replicas behave
-  (see [HA & Resiliency](/installation/production/high-availability-and-resiliency)).
+  (see [HA & Resiliency]({{< ref "installation/production/high-availability-and-resiliency.md" >}})).
 - **Discovery cost is proportional to cluster size and churn.** Without
   blacklisting, very large or high-churn clusters can dominate Server memory and
   database growth.
@@ -168,6 +168,6 @@ data and events between each cluster and the Server. Production guidance:
 5. Set requests/limits with headroom (especially Server memory) and configure
    autoscaling where appropriate.
 6. Add the resulting thresholds to your alerting—see
-   [Monitoring, Observability & Health KPIs](/installation/production/monitoring-observability-and-kpis).
+   [Monitoring, Observability & Health KPIs]({{< ref "installation/production/monitoring-observability-and-kpis.md" >}}).
 
 {{< related-discussions tag="meshery" >}}

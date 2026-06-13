@@ -17,6 +17,10 @@ import {
   useLazyGetComponentsQuery,
   useLazyGetRelationshipsQuery,
   useLazyGetRegistrantsQuery,
+  useGetMeshModelsQuery,
+  useGetComponentsQuery,
+  useGetRelationshipsQuery,
+  useGetRegistrantsQuery,
 } from '@/rtk-query/meshModel';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
@@ -86,6 +90,22 @@ const MeshModelComponent_ = ({
   const [getComponentsData, componentsRes] = useLazyGetComponentsQuery();
   const [getRelationshipsData, relationshipsRes] = useLazyGetRelationshipsQuery();
   const [getRegistrantsData, registrantsRes] = useLazyGetRegistrantsQuery();
+
+  /**
+   * RTK Queries for counts
+   */
+  const { data: modelsCountData } = useGetMeshModelsQuery({
+    params: { page: 0, pagesize: 1, components: false, relationships: false },
+  });
+  const { data: componentsCountData } = useGetComponentsQuery({
+    params: { page: 0, pagesize: 1, trim: true },
+  });
+  const { data: relationshipsCountData } = useGetRelationshipsQuery({
+    params: { page: 0, pagesize: 1 },
+  });
+  const { data: registrantsCountData } = useGetRegistrantsQuery({
+    params: { page: 0, pagesize: 1 },
+  });
 
   const modelsData = modelsRes.data;
   const registrantsData = registrantsRes.data;
@@ -395,25 +415,25 @@ const MeshModelComponent_ = ({
           <InnerContainer>
             <TabCard
               label="Models"
-              count={modelsData?.totalCount || 0}
+              count={modelsData?.totalCount ?? modelsCountData?.totalCount ?? 0}
               active={view === MODELS}
               onClick={() => handleTabClick(MODELS)}
             />
             <TabCard
               label="Components"
-              count={componentsData?.totalCount || 0}
+              count={componentsData?.totalCount ?? componentsCountData?.totalCount ?? 0}
               active={view === COMPONENTS}
               onClick={() => handleTabClick(COMPONENTS)}
             />
             <TabCard
               label="Relationships"
-              count={relationshipsData?.totalCount || 0}
+              count={relationshipsData?.totalCount ?? relationshipsCountData?.totalCount ?? 0}
               active={view === RELATIONSHIPS}
               onClick={() => handleTabClick(RELATIONSHIPS)}
             />
             <TabCard
               label="Registrants"
-              count={registrantsData?.totalCount || 0}
+              count={registrantsData?.totalCount ?? registrantsCountData?.totalCount ?? 0}
               active={view === REGISTRANTS}
               onClick={() => handleTabClick(REGISTRANTS)}
             />
@@ -550,7 +570,7 @@ const TabCard = ({ label, count, active, onClick }) => {
           marginLeft: '4px',
         }}
       >
-        {`(${count})`}
+        {`(${count?.toLocaleString() || 0})`}
       </span>
       {label}
     </CardStyle>

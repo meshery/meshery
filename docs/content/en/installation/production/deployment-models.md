@@ -15,7 +15,7 @@ aliases:
 The first production decision is _where_ Meshery runs relative to the
 infrastructure it manages, and _how_ its components are hosted. This page frames
 those choices and maps the Meshery component inventory onto production
-topologies. It complements the [Meshery Architecture](/concepts/architecture)
+topologies. It complements the [Meshery Architecture]({{< ref "concepts/architecture/_index.md" >}})
 reference with the trade-offs that matter when the deployment is shared and
 long-lived.
 
@@ -34,19 +34,19 @@ and the clusters under management.
 A single Meshery Server commonly does both at once: it runs _in_ one cluster
 while managing that cluster _and_ additional remote clusters
 out-of-cluster. The practical consequences of the choice are mostly about
-[networking](/installation/production/networking-and-connectivity) (how Meshery
+[networking]({{< ref "installation/production/networking-and-connectivity.md" >}}) (how Meshery
 Server reaches each cluster's API server and Broker) and
-[security](/installation/production/security-hardening) (where credentials live
+[security]({{< ref "installation/production/security-hardening.md" >}}) (where credentials live
 and what is exposed).
 
 {{% alert title="Out-of-cluster Broker reachability" color="warning" %}}
 When Meshery Server is out-of-cluster, it must be able to reach the
-[Meshery Broker](/concepts/architecture/broker) running inside each managed
+[Meshery Broker]({{< ref "concepts/architecture/broker/index.md" >}}) running inside each managed
 cluster. The Broker's externally reachable endpoint is derived from the
 cluster's Service type (LoadBalancer, NodePort, or ClusterIP). Plan Broker
 exposure deliberately—see
-[Networking & Connectivity](/installation/production/networking-and-connectivity)
-and [Multi-Cluster & Multi-Cloud](/installation/production/multi-cluster-and-multi-cloud).
+[Networking & Connectivity]({{< ref "installation/production/networking-and-connectivity.md" >}})
+and [Multi-Cluster & Multi-Cloud]({{< ref "installation/production/multi-cluster-and-multi-cloud.md" >}}).
 {{% /alert %}}
 
 ## How Meshery is hosted: Docker vs. Kubernetes
@@ -61,7 +61,7 @@ cluster.
 - **Kubernetes (via Helm).** The recommended path for production. Kubernetes
   supplies the scheduling, self-healing, rolling upgrades, and scaling
   primitives that Meshery's high-availability and resiliency posture builds on.
-  The [Helm chart](/installation/kubernetes/helm) is referenced throughout this
+  The [Helm chart]({{< ref "installation/kubernetes/helm.md" >}}) is referenced throughout this
   set.
 
 For production, prefer Kubernetes with Helm unless you have a specific reason to
@@ -89,21 +89,21 @@ Two implications dominate production planning:
 
 1. **The Meshery Server database is a cache.** Because both the on-disk database
    and the Broker's in-memory queue are ephemeral, durable state must come from
-   a [Remote Provider](/reference/extensibility/providers). A Server can be
+   a [Remote Provider]({{< ref "reference/extensibility/providers/index.md" >}}). A Server can be
    destroyed and recreated; what users care about persists with the provider,
    and MeshSync re-populates the cluster snapshot on reconnect.
 2. **Discovery scope drives footprint.** MeshSync continuously mirrors cluster
    resources into the Server's database. The number and size of managed clusters
    therefore influence Server memory and database size as much as user traffic
    does. See
-   [Infrastructure, Sizing & Performance](/installation/production/infrastructure-sizing-and-performance).
+   [Infrastructure, Sizing & Performance]({{< ref "installation/production/infrastructure-sizing-and-performance.md" >}}).
 
 ## One Operator (and Broker and MeshSync) per cluster
 
 For each Kubernetes cluster under management, Meshery deploys exactly one
-[Meshery Operator](/concepts/architecture/operator), which in turn manages one
-[MeshSync](/concepts/architecture/meshsync) and one
-[Broker](/concepts/architecture/broker) in that cluster. This holds whether
+[Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}), which in turn manages one
+[MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) and one
+[Broker]({{< ref "concepts/architecture/broker/index.md" >}}) in that cluster. This holds whether
 Meshery Server is in-cluster or out-of-cluster. The Operator is deployed when
 Meshery Server connects to a cluster and removed when it disconnects (or via the
 on/off control in the UI).
@@ -112,7 +112,7 @@ MeshSync can instead run in **embedded mode**—the default for new Kubernetes
 connections—where it executes as a library inside Meshery Server and deploys no
 resources into the managed cluster. The mode is chosen per connection and has
 meaningful production trade-offs covered in
-[Multi-Cluster & Multi-Cloud Operations](/installation/production/multi-cluster-and-multi-cloud).
+[Multi-Cluster & Multi-Cloud Operations]({{< ref "installation/production/multi-cluster-and-multi-cloud.md" >}}).
 
 ## Topology patterns
 
@@ -139,7 +139,7 @@ providers (for example EKS, GKE, and AKS). The differences are practical rather
 than architectural: per-cloud node-watch RBAC, how each cloud surfaces a
 reachable Broker endpoint (LoadBalancer hostname vs. IP vs. NodePort), and
 cross-region latency. See
-[Multi-Cluster & Multi-Cloud Operations](/installation/production/multi-cluster-and-multi-cloud).
+[Multi-Cluster & Multi-Cloud Operations]({{< ref "installation/production/multi-cluster-and-multi-cloud.md" >}}).
 
 ### Highly available management plane
 
@@ -147,7 +147,7 @@ Any of the above can be made highly available by running Meshery Server with
 appropriate replication and health probes on Kubernetes, and by relying on a
 Remote Provider for durable state. The mechanics—and the caveats around the
 single-writer SQLite database and the in-memory Broker—are covered in
-[High Availability & Resiliency](/installation/production/high-availability-and-resiliency).
+[High Availability & Resiliency]({{< ref "installation/production/high-availability-and-resiliency.md" >}}).
 
 ## Choosing a model
 

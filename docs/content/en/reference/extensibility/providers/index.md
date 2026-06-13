@@ -24,7 +24,7 @@ Some examples include:
 - **Authentication and Authorization**
   - Examples: session management, two factor authentication, LDAP integration.
 - **Identity and Organization Management**
-  - Examples: multi-tenant [Organizations](/concepts/logical/organizations), teams as user groups, fine-grained roles and permissions.
+  - Examples: multi-tenant [Organizations]({{< ref "concepts/logical/organizations.md" >}}), teams as user groups, fine-grained roles and permissions.
   - Examples: per-organization identity providers (OAuth/OIDC single sign-on), custom domains, and branding/white-labeling.
 - **Long-Term Persistence**
   - Examples: Storage and retrieval of performance test results.
@@ -54,10 +54,10 @@ There are two types of providers defined in Meshery, `local` and `remote`.
 
 The provider you choose determines whether Meshery is single-user or multi-tenant:
 
-- With the **Local** provider, Meshery is **single-user**: there is no authentication, no identity, and no multi-tenancy. There are no [Organizations](/concepts/logical/organizations), teams, or shared ownership — every resource belongs to the single local user.
-- With a **Remote Provider**, Meshery is **multi-user and multi-tenant**. The provider supplies identity, and [Organizations](/concepts/logical/organizations) become the unit of tenancy: they group users, own all Workspaces, Environments, Designs, and Connections, and carry the roles and permissions that govern access. A Remote Provider can extend an Organization further with its own identity provider, custom domain, and branding.
+- With the **Local** provider, Meshery is **single-user**: there is no authentication, no identity, and no multi-tenancy. There are no [Organizations]({{< ref "concepts/logical/organizations.md" >}}), teams, or shared ownership — every resource belongs to the single local user.
+- With a **Remote Provider**, Meshery is **multi-user and multi-tenant**. The provider supplies identity, and [Organizations]({{< ref "concepts/logical/organizations.md" >}}) become the unit of tenancy: they group users, own all Workspaces, Environments, Designs, and Connections, and carry the roles and permissions that govern access. A Remote Provider can extend an Organization further with its own identity provider, custom domain, and branding.
 
-This is the central reason to use a Remote Provider for any shared, ongoing, or public-facing Meshery deployment — see [Recommended Production Deployment Settings](#recommended-production-deployment-settings) below. For the tenancy model itself, see [Organizations](/concepts/logical/organizations).
+This is the central reason to use a Remote Provider for any shared, ongoing, or public-facing Meshery deployment — see [Recommended Production Deployment Settings](#recommended-production-deployment-settings) below. For the tenancy model itself, see [Organizations]({{< ref "concepts/logical/organizations.md" >}}).
 
 ### Default Installation Configuration
 
@@ -90,7 +90,7 @@ Name: **"Meshery"** (default), URL: `https://cloud.meshery.io`
 - Long-term term persistence.
 - Save environment setup.
 - Retrieve performance test results.
-- Events are stored locally and can be published to remote provider. [Read more about server events](/project/contributing/contributing-server-events)
+- Events are stored locally and can be published to remote provider. [Read more about server events]({{< ref "project/contributing/contributing-server-events/index.md" >}})
 
 Name: **"Digital Ocean"**, URL: `https://meshery.digitalocean.com`
 
@@ -105,7 +105,7 @@ Name: **"Acme"**
 - Long-term term persistence.
 - Save environment setup.
 - Retrieve performance test results.
-- Events are stored locally and can be published to remote provider. [Read more about server events](/project/contributing/contributing-server-events)
+- Events are stored locally and can be published to remote provider. [Read more about server events]({{< ref "project/contributing/contributing-server-events/index.md" >}})
 - Free to use.
 
 ### Local Provider
@@ -119,7 +119,7 @@ Name: **"Local"** (legacy alias: **"None"**)
 - Container-local storage of test results. Ephemeral.
 - Environment setup not saved.
 - No performance test result history.
-- Server events are stored locally in database. [Read more about server events](/project/contributing/contributing-server-events)
+- Server events are stored locally in database. [Read more about server events]({{< ref "project/contributing/contributing-server-events/index.md" >}})
 - Free to use.
 
 #### Login Behavior
@@ -174,7 +174,7 @@ Deep-link targets are validated to prevent open redirect vulnerabilities. Only r
 
 Meshery provides runtime configuration options to control provider behavior:
 
-For the full server-wide reference, including provider-independent settings such as tracing, policy evaluation, and storage paths, see [Meshery Server Environment Variables](/installation/advanced/environment-variables).
+For the full server-wide reference, including provider-independent settings such as tracing, policy evaluation, and storage paths, see [Meshery Server Environment Variables]({{< ref "installation/advanced/environment-variables.md" >}}).
 
 ### PROVIDER
 

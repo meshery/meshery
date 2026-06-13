@@ -10,8 +10,8 @@ integrations-subcategory: Monitoring
 registrant: Artifact Hub
 components: 
 - name: grafana-dashboard
-  colorIcon: content/en/extensions/models/grafana-ui-server/components/grafana-dashboard/icons/color/grafana-dashboard-color.svg
-  whiteIcon: content/en/extensions/models/grafana-ui-server/components/grafana-dashboard/icons/white/grafana-dashboard-white.svg
+  colorIcon: extensions/models/grafana-ui-server/components/grafana-dashboard/icons/color/grafana-dashboard-color.svg
+  whiteIcon: extensions/models/grafana-ui-server/components/grafana-dashboard/icons/white/grafana-dashboard-white.svg
   description: 
 components-count: 1
 relationships: 

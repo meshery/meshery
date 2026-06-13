@@ -10,24 +10,24 @@ integrations-subcategory: CNI
 registrant: GitHub
 components: 
 - name: ip-pool
-  colorIcon: content/en/extensions/models/whereabouts/components/ip-pool/icons/color/ip-pool-color.svg
-  whiteIcon: content/en/extensions/models/whereabouts/components/ip-pool/icons/white/ip-pool-white.svg
+  colorIcon: extensions/models/whereabouts/components/ip-pool/icons/color/ip-pool-color.svg
+  whiteIcon: extensions/models/whereabouts/components/ip-pool/icons/white/ip-pool-white.svg
   description: 
 - name: overlapping-range-ip-reservation
-  colorIcon: content/en/extensions/models/whereabouts/components/overlapping-range-ip-reservation/icons/color/overlapping-range-ip-reservation-color.svg
-  whiteIcon: content/en/extensions/models/whereabouts/components/overlapping-range-ip-reservation/icons/white/overlapping-range-ip-reservation-white.svg
+  colorIcon: extensions/models/whereabouts/components/overlapping-range-ip-reservation/icons/color/overlapping-range-ip-reservation-color.svg
+  whiteIcon: extensions/models/whereabouts/components/overlapping-range-ip-reservation/icons/white/overlapping-range-ip-reservation-white.svg
   description: 
 - name: ip-pool
-  colorIcon: content/en/extensions/models/whereabouts/components/ip-pool/icons/color/ip-pool-color.svg
-  whiteIcon: content/en/extensions/models/whereabouts/components/ip-pool/icons/white/ip-pool-white.svg
+  colorIcon: extensions/models/whereabouts/components/ip-pool/icons/color/ip-pool-color.svg
+  whiteIcon: extensions/models/whereabouts/components/ip-pool/icons/white/ip-pool-white.svg
   description: 
 - name: overlapping-range-ip-reservation
-  colorIcon: content/en/extensions/models/whereabouts/components/overlapping-range-ip-reservation/icons/color/overlapping-range-ip-reservation-color.svg
-  whiteIcon: content/en/extensions/models/whereabouts/components/overlapping-range-ip-reservation/icons/white/overlapping-range-ip-reservation-white.svg
+  colorIcon: extensions/models/whereabouts/components/overlapping-range-ip-reservation/icons/color/overlapping-range-ip-reservation-color.svg
+  whiteIcon: extensions/models/whereabouts/components/overlapping-range-ip-reservation/icons/white/overlapping-range-ip-reservation-white.svg
   description: 
 - name: node-slice-pool
-  colorIcon: content/en/extensions/models/whereabouts/components/node-slice-pool/icons/color/node-slice-pool-color.svg
-  whiteIcon: content/en/extensions/models/whereabouts/components/node-slice-pool/icons/white/node-slice-pool-white.svg
+  colorIcon: extensions/models/whereabouts/components/node-slice-pool/icons/color/node-slice-pool-color.svg
+  whiteIcon: extensions/models/whereabouts/components/node-slice-pool/icons/white/node-slice-pool-white.svg
   description: 
 components-count: 5
 relationships: 
