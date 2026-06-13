@@ -1,6 +1,6 @@
 ---
 title: Academies
-description: Meshery architecture is extensible. Meshery provides several extension points for working with different cloud native infrastructure via adapters, load generators and providers.
+description: Transform Meshery into an integrated learning platform.
 type: extension
 ---
 Academy extensions enable Meshery as an integrated learning platform. Academy extensions provide a hands-on, structured learning experience for beginners entering the cloud native ecosystem and advanced practitioners seeking deeper expertise. By embedding Meshery [designs](/concepts/logical/designs) directly into courses, learners gain immediate, interactive practice with real Meshery-powered workflows—turning passive study into active, contextual application.
@@ -31,4 +31,4 @@ This architecture supports multi-tenancy, white-labeling (for branded experience
 
 Meshery Academies exemplifies Meshery’s philosophy of extensibility—empowering the community to democratize cloud native knowledge through practical, visual, and interactive learning experiences. It serves as both an official learning hub for Meshery (with paths like “Mastering Meshery”) and a framework for anyone to create their own specialized academies.
 
-To find a complete list of academies available, exploore https://meshery-extensions/ repositories, like the [https://meshery-extensions/meshery-academy](https://meshery-extensions/meshery-academy). Contributions and extensions are welcome in the Meshery Extensions organization.
+To find a complete list of academies available, explore the [meshery-extensions](https://github.com/meshery-extensions) repositories, like [meshery-academy](https://github.com/meshery-extensions/meshery-academy). Contributions and extensions are welcome in the Meshery Extensions organization.
