@@ -376,6 +376,14 @@ const NavigatorContent = () => {
     );
   };
 
+  const hasActiveChild = (children): boolean => {
+    if (!children?.length) return false;
+    return children.some(
+      ({ href: childHref, children: grandchildren }) =>
+        currentPath === childHref || hasActiveChild(grandchildren),
+    );
+  };
+
   const getMesheryVersionText = () => {
     const { build, outdated, release_channel } = versionDetail;
 
@@ -701,6 +709,15 @@ const NavigatorContent = () => {
             submenu,
             permission,
           }) => {
+            const isItemActive = currentPath === href && !hasActiveChild(children);
+            const iconFill = isItemActive ? theme.palette.icon.brand : theme.palette.common.white;
+            const iconWithFill =
+              React.isValidElement(icon) && typeof icon.type !== 'string'
+                ? React.cloneElement(icon as React.ReactElement<{ fill?: string }>, {
+                    fill: iconFill,
+                  })
+                : icon;
+
             return (
               <RootDiv key={childId}>
                 <SideBarListItem
@@ -708,7 +725,7 @@ const NavigatorContent = () => {
                   dense
                   key={childId}
                   link={!!link}
-                  isActive={currentPath === href}
+                  isActive={isItemActive}
                   isShow={!show}
                   onClick={() => toggleItemCollapse(childId)}
                   onMouseOver={() => (isDrawerCollapsed ? setHoveredId(childId) : null)}
@@ -744,7 +761,7 @@ const NavigatorContent = () => {
                             </CustomTooltip>
                           </div>
                         ) : (
-                          <MainListIcon>{icon}</MainListIcon>
+                          <MainListIcon>{iconWithFill}</MainListIcon>
                         )}
                       </CustomTooltip>
                       <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>
