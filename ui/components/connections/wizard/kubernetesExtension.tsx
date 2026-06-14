@@ -5,6 +5,7 @@ import {
   Checkbox,
   CheckCircleIcon,
   CircularProgress,
+  MenuItem,
   TextField,
   Typography,
 } from '@sistent/sistent';
@@ -13,6 +14,11 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { CONNECTION_STATES } from '@/utils/Enum';
 import { getKubernetesContexts } from '../ConnectionWizard.helpers';
 import { formatWizardError } from './errors';
+import {
+  DEFAULT_MESHSYNC_DEPLOYMENT_MODE,
+  MESHSYNC_DEPLOYMENT_MODE_OPTIONS,
+  kubernetesDeploymentModeStep,
+} from './kubernetesDeploymentMode';
 import { ConnectionStateChip } from '../ConnectionChip';
 import { KubernetesImportStep, StepHeader } from '../ConnectionWizardStepContent';
 import type {
@@ -87,7 +93,7 @@ const SummaryListRow = styled(Box)(({ theme }) => ({
   },
 }));
 
-type ContextChoice = { selected: boolean; name: string };
+type ContextChoice = { selected: boolean; name: string; meshsyncDeploymentMode: string };
 
 // ---------------------------------------------------------------------------
 // postConfig accessors. The kubernetes flow keeps its working state on the
@@ -102,6 +108,13 @@ const getChoices = (ctx: WizardContext): Record<string, ContextChoice> =>
 
 const getConnectOnImport = (ctx: WizardContext): boolean =>
   ctx.data.postConfig.connectOnImport !== false;
+
+// A discovered context's choice, defaulted for contexts not yet touched.
+const defaultChoice = (name: string): ContextChoice => ({
+  selected: true,
+  name,
+  meshsyncDeploymentMode: DEFAULT_MESHSYNC_DEPLOYMENT_MODE,
+});
 
 // ---------------------------------------------------------------------------
 // 2. Import kubeconfig (overrides the generic details step). Picks a file and,
@@ -140,7 +153,7 @@ const kubernetesDetailsStep: WizardStep = {
         return false;
       }
       const contextChoices = Object.fromEntries(
-        discovered.map((context) => [context.id, { selected: true, name: context.name }]),
+        discovered.map((context) => [context.id, defaultChoice(context.name)]),
       );
       ctx.patchPostConfig({
         discoveredContexts: discovered,
@@ -190,7 +203,7 @@ const ReviewContextsStepBody = ({ ctx }: { ctx: WizardContext }) => {
       )}
       <Box sx={{ display: 'grid', gap: 1.5 }}>
         {discovered.map((context) => {
-          const choice = choices[context.id] || { selected: true, name: context.name };
+          const choice = choices[context.id] || defaultChoice(context.name);
           return (
             <ContextRow key={context.id} muted={!choice.selected}>
               <Checkbox
@@ -211,6 +224,26 @@ const ReviewContextsStepBody = ({ ctx }: { ctx: WizardContext }) => {
                   {context.server || 'unknown server'}
                 </Typography>
               </Box>
+              {/* Per-context MeshSync deployment mode; persisted to the
+                  connection's metadata when the context is imported. */}
+              <TextField
+                select
+                variant="standard"
+                label="MeshSync"
+                value={choice.meshsyncDeploymentMode}
+                disabled={!choice.selected}
+                onChange={(event) =>
+                  updateChoice(context.id, { meshsyncDeploymentMode: event.target.value })
+                }
+                sx={{ minWidth: 120 }}
+                inputProps={{ 'aria-label': `MeshSync deployment mode for ${context.name}` }}
+              >
+                {MESHSYNC_DEPLOYMENT_MODE_OPTIONS.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
               {/* Reachable contexts land in the Discovered state; unreachable
                   ones could not be contacted, mirroring the Not Found state. */}
               <ConnectionStateChip
@@ -280,12 +313,21 @@ const kubernetesReviewStep: WizardStep = {
     }
     ctx.patch({ registrationError: null });
     try {
-      const names = Object.fromEntries(
-        selected.map((context) => [context.id, choices[context.id].name.trim() || context.name]),
+      const contexts = Object.fromEntries(
+        selected.map((context) => {
+          const choice = choices[context.id];
+          return [
+            context.id,
+            {
+              name: choice.name.trim() || context.name,
+              meshsyncDeploymentMode: choice.meshsyncDeploymentMode,
+            },
+          ];
+        }),
       );
       const result = await ctx.services.uploadKubeconfig(ctx.data.kubeconfigFile, {
         selectedContextIds: selected.map((context) => context.id),
-        names,
+        contexts,
       });
       ctx.patch({ registrationResult: result ?? {} });
 
@@ -486,8 +528,10 @@ const kubernetesContextsStep: WizardStep = {
   label: 'Manage Clusters',
   Component: ContextsStepBody,
   // The creation flow handles selecting + connecting in the review step; this
-  // step only adds value when (re)configuring an existing connection.
-  hidden: (ctx) => ctx.mode === 'create',
+  // step only adds value when (re)configuring an existing connection that
+  // actually carries discovered contexts to manage.
+  hidden: (ctx) =>
+    ctx.mode === 'create' || collectContexts(ctx.data.registrationResult).length === 0,
 };
 
 // ---------------------------------------------------------------------------
@@ -551,6 +595,6 @@ export const kubernetesExtension: ConnectionExtension = {
   detailsStep: kubernetesDetailsStep,
   credentialStep: null, // the kubeconfig is the credential
   registerStep: kubernetesReviewStep,
-  postConfigSteps: [kubernetesContextsStep],
+  postConfigSteps: [kubernetesDeploymentModeStep, kubernetesContextsStep],
   receiptStep: kubernetesReceiptStep,
 };

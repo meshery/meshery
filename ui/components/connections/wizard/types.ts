@@ -61,12 +61,20 @@ export type DiscoveredKubeContext = {
   connectionId?: string;
 };
 
+/** Per-context options forwarded to the kubeconfig upload endpoint. */
+export type KubeconfigContextOption = {
+  /** Name override for the created connection. */
+  name?: string;
+  /** MeshSync deployment mode for this context's connection. */
+  meshsyncDeploymentMode?: string;
+};
+
 /** Options forwarded to the kubeconfig upload (create) endpoint. */
 export type KubeconfigImportOptions = {
   /** Restrict the import to these discovered context IDs. */
   selectedContextIds?: string[];
-  /** Per-context name overrides, keyed by discovered context ID. */
-  names?: Record<string, string>;
+  /** Per-context options (name + MeshSync mode), keyed by discovered context ID. */
+  contexts?: Record<string, KubeconfigContextOption>;
 };
 
 export type WizardServices = {

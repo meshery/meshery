@@ -125,12 +125,11 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
         if (options?.selectedContextIds) {
           formData.append('selectedContexts', JSON.stringify(options.selectedContextIds));
         }
-        if (options?.names && Object.keys(options.names).length > 0) {
-          // The backend keys per-context options under `contexts` by context id.
-          const contexts = Object.fromEntries(
-            Object.entries(options.names).map(([id, name]) => [id, { name }]),
-          );
-          formData.append('contexts', JSON.stringify(contexts));
+        // The backend keys per-context options (name + meshsyncDeploymentMode)
+        // under `contexts` by context id, persisting the mode to each
+        // connection's metadata before it connects.
+        if (options?.contexts && Object.keys(options.contexts).length > 0) {
+          formData.append('contexts', JSON.stringify(options.contexts));
         }
         return addKubernetesConfig({ body: formData }).unwrap();
       },

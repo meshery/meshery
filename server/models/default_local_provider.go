@@ -1342,7 +1342,7 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 		ID:           id,
 		Name:         conn.Name,
 		CredentialID: connectionCredentialID(conn.CredentialID),
-		Type:         conn.Type,
+		ConnectionType:         conn.Type,
 		SubType:      conn.SubType,
 		Kind:         conn.Kind,
 		Metadata:     conn.MetaData,
@@ -1400,7 +1400,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 	connection := connections.Connection{
 		ID:           conn.ID,
 		Name:         conn.Name,
-		Type:         conn.Type,
+		ConnectionType:         conn.Type,
 		SubType:      conn.SubType,
 		Kind:         conn.Kind,
 		Metadata:     conn.MetaData,
