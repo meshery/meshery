@@ -1,0 +1,13 @@
+name: PattternApp # display name in Meshery UI
+services:
+  meshapp:
+    type: Application
+    namespace: test
+    settings:
+      replicas: 1
+      containers:
+        - name: meshy
+          image: philip21/meshy:v5
+          ports:
+            - name: http
+              containerPort: 8080

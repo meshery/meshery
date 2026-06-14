@@ -1,0 +1,59 @@
+comment:
+  # header: "Please note the following requirement:"
+  footer: "\
+    ---\n\n
+    > &nbsp; &#9; &nbsp; &#9;  &nbsp; &#9;  &nbsp; &#9; Be sure to [join the community](https://slack.meshery.io), if you haven't yet and please leave a :star: [star on the project](../stargazers) :smile:
+    "
+
+labels:
+  - name: issue/design required
+    labeled:
+      issue:
+        body: This issue has been labeled with 'design-required'. Note that prior to commencing on implementation, a design specification needs to be created and reviewed for approval. See [Creating a Functional Specification](https://docs.google.com/document/d/1RP3IWLc-MiQS-QYasqCoVuCH7--G87p5ezE5f_nOzB8/edit?usp=sharing) to create a design spec.
+        action: open
+  - name: issue/remind
+    labeled:
+      issue:
+        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community#meshmates/) or any other [community member](https://meshery.io/community/members) for assistance.
+        action: open
+      pr:
+        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community#meshmates/) or any other [community member](https://meshery.io/community/members) for assistance.
+        action: open
+  - name: issue/dco
+    labeled:
+      issue:
+        body: "🚨 Alert! Git Police! We couldn’t help but notice that one or more of your commits is missing a sign-off. _A what?_ A commit sign-off (your email address).\n\n
+         To amend the commits in this PR with your signoff using the instructions provided in the DCO check. \n\n
+         To configure your dev environment to automatically signoff on your commits in the future, see [these instructions](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)."
+        action: open
+      pr:
+        body: "🚨 Alert! Git Police! We couldn’t help but notice that one or more of your commits is missing a sign-off. _A what?_ A commit sign-off (your email address).\n\n
+         To amend the commits in this PR with your signoff using the instructions provided in the DCO check. \n\n
+         To configure your dev environment to automatically signoff on your commits in the future, see [these instructions](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)."
+        action: open
+  - name: component/ui
+    labeled:
+      issue:
+        body: This issue has been labeled with 'component/ui'. 🧰 Here are docs on [Contributing to Meshery UI](https://docs.meshery.io/project/contributing/contributing-ui). 🎨 Here is the [Meshery UI Figma File](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI?node-id=4%3A0) File. Lastly, here are docs on [Contributing to Meshery's End-to-End Tests](https://docs.meshery.io/project/contributing/contributing-ui-tests).
+        action: open
+      pr:
+        body: This PR has been labeled with 'component/ui'. 🧰 Here are docs on [Contributing to Meshery UI](https://docs.meshery.io/project/contributing/contributing-ui). 🎨 Here is the [Meshery UI Figma File](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI?node-id=4%3A0) File. Lastly, here are docs on [Contributing to Meshery's End-to-End Tests](https://docs.meshery.io/project/contributing/contributing-ui-tests).
+        action: open
+  - name: component/mesheryctl
+    labeled:
+      issue:
+        body: This issue has been labeled with 'component/mesheryctl'. Note that after making changes you need to update it in the [mesheryctl command tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) spreadsheet.
+        action: open
+      pr:
+        body: This PR has been labeled with 'component/mesheryctl'. Note that after making changes you need to update it in the [mesheryctl command tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) spreadsheet.
+        action: open
+      # pr:
+      #   body: Hi, please note that this issue will need an approved design specification before implementation proceeds. See [Creating a Functional Specification](https://docs.google.com/document/d/1RP3IWLc-MiQS-QYasqCoVuCH7--G87p5ezE5f_nOzB8/edit?usp=sharing) to create a design spec.
+      #   action: open
+  - name: issue/docs-needed
+    labeled:
+      pr:
+        body: This PR has been labeled with 'issue/docs-needed'. It looks like this PR might need an update to the Meshery Docs. Please ensure the documentation is updated accordingly. Here are docs on [Contributing to Meshery Docs](https://docs.meshery.io/project/contributing/contributing-docs).
+        action: open
+
+

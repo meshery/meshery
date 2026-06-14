@@ -1,0 +1,238 @@
+// Copyright Meshery Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package system
+
+import (
+	"context"
+	"fmt"
+	"strings"
+	"time"
+
+	"github.com/pkg/errors"
+
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+)
+
+type cmdSystemStatusFlags struct {
+	Verbose bool `json:"verbose" validate:"boolean"`
+}
+
+var systemStatusFlags cmdSystemStatusFlags
+
+var linkDocStatus = map[string]string{
+	"link":    "![status-usage](../../../images/status.png)",
+	"caption": "Usage of mesheryctl system status",
+}
+
+// statusCmd represents the status command
+var statusCmd = &cobra.Command{
+	Use:   "status",
+	Short: "Check Meshery status",
+	Long:  `Check status of Meshery and Meshery components.`,
+	Example: `
+// Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
+mesheryctl system status
+
+// (optional) Extra data in status table
+mesheryctl system status --verbose
+	`,
+	Annotations: linkDocStatus,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		// Check prerequisite
+		if err := mesheryctlflags.ValidateCmdFlags(cmd, &systemStatusFlags); err != nil {
+			return err
+		}
+		hcOptions := &HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			return ErrHealthCheckFailed(err)
+		}
+		// execute healthchecks
+		err = hc.RunPreflightHealthChecks()
+		if err != nil {
+			cmd.SilenceUsage = true
+		}
+
+		return err
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(
+				fmt.Errorf("this command takes no arguments. See '%s --help' for more information", cmd.CommandPath()),
+			)
+		}
+		// Get viper instance used for context
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return err
+		}
+		// get the platform, channel and the version of the current context
+		// if a temp context is set using the -c flag, use it as the current context
+		if tempContext != "" {
+			err = mctlCfg.SetCurrentContext(tempContext)
+			if err != nil {
+				return ErrSetCurrentContext(errors.Wrap(err, "failed to set temporary context"))
+			}
+		}
+
+		currCtx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return ErrGetCurrentContext(err)
+		}
+
+		currPlatform := currCtx.GetPlatform()
+
+		ok, err := utils.AreMesheryComponentsRunning(currPlatform)
+		if err != nil {
+			return err
+		}
+
+		// If Meshery is not running, print the status and return
+		if !ok {
+			utils.Log.Infof("Context: %s\nPlatform: %s\nStatus: Meshery is not running", mctlCfg.GetCurrentContextName(), currPlatform)
+			return nil
+		}
+
+		switch currPlatform {
+		case platformDocker:
+			// List the running Meshery containers using compose library
+			composeClient, err := utils.NewComposeClient()
+			if err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to create compose client"))
+			}
+
+			outputString, err := composeClient.GetPsOutput(context.Background(), utils.DockerComposeFile)
+			if err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to get Meshery status"))
+			}
+
+			if strings.Contains(outputString, "meshery") {
+				utils.Log.Info(outputString)
+			}
+
+			hcOptions := &HealthCheckOptions{
+				PrintLogs:           false,
+				IsPreRunE:           false,
+				Subcommand:          "status",
+				RunKubernetesChecks: false,
+			}
+			hc, err := NewHealthChecker(hcOptions)
+			if err != nil {
+				return ErrHealthCheckFailed(err)
+			}
+			// If k8s is available print the status of pods in the MesheryNamespace
+			if err = hc.Run(); err != nil {
+				return nil
+			}
+
+		case platformKubernetes:
+			// if the platform is kubernetes, use kubernetes go-client to
+			// display pod status in the MesheryNamespace
+
+			// create an kubernetes client
+			client, err := meshkitkube.New([]byte(""))
+			if err != nil {
+				return err
+			}
+
+			// List the pods in the MesheryNamespace
+			podList, err := utils.GetPodList(client, utils.MesheryNamespace)
+			if err != nil {
+				return err
+			}
+
+			var data [][]string
+			columnNames := []string{"Name", "Ready", "Status", "Restarts", "Age"}
+			// List all the pods similar to kubectl get pods -n MesheryNamespace
+			for _, pod := range podList.Items {
+				// Calculate the age of the pod
+				podCreationTime := pod.GetCreationTimestamp()
+				age := time.Since(podCreationTime.Time).Round(time.Second)
+
+				// Get the status of each of the pods
+				podStatus := pod.Status
+				var containerRestarts int32
+				var containerReady int
+				var totalContainers int
+
+				if len(pod.Spec.Containers) > 0 && len(podStatus.ContainerStatuses) > 0 {
+					// If a pod has multiple containers, get the status from all
+					for container := range pod.Spec.Containers {
+						containerRestarts += podStatus.ContainerStatuses[container].RestartCount
+						if podStatus.ContainerStatuses[container].Ready {
+							containerReady++
+						}
+						totalContainers++
+					}
+				}
+
+				// Get the values from the pod status
+				name := utils.GetCleanPodName(pod.GetName())
+				ready := fmt.Sprintf("%d/%d", containerReady, totalContainers)
+				status := fmt.Sprintf("%v", podStatus.Phase)
+				restarts := fmt.Sprintf("%v", containerRestarts)
+				ageS := age.String()
+				row := []string{name, ready, status, restarts, ageS}
+
+				// Append this to data to be printed in a table
+				if systemStatusFlags.Verbose {
+					row = append(row, pod.Name)
+					row = append(row, podStatus.PodIP)
+				}
+				data = append(data, row)
+			}
+			if systemStatusFlags.Verbose {
+				columnNames = append(columnNames, "Pod-Names")
+				columnNames = append(columnNames, "Pod-IP")
+			}
+			// Print the data to a table for readability
+			utils.PrintToTable(columnNames, data, nil)
+
+			configuredEndpoint := currCtx.GetEndpoint()
+			displayEndpoint := configuredEndpoint
+
+			if currPlatform == "kubernetes" {
+				endpoint, err := utils.GetMesheryEndpoint(cmd.Context(), client)
+				if err != nil && systemStatusFlags.Verbose {
+					utils.Log.Warnf("Could not discover Meshery service endpoint: %v", err)
+				}
+				if err == nil && endpoint.External != nil && endpoint.External.Address != "" && endpoint.External.Address != "localhost" {
+					displayEndpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.External.Address, endpoint.External.Port)
+				}
+			}
+
+			utils.Log.Info(fmt.Sprintf("\nMeshery endpoint is %s", displayEndpoint))
+			if displayEndpoint != configuredEndpoint {
+				utils.Log.Info(fmt.Sprintf("Note: Your configured endpoint (%s) differs from the discovered endpoint.", configuredEndpoint))
+				utils.Log.Info("Run 'mesheryctl system dashboard' to update your configuration.")
+			}
+		}
+		return nil
+	},
+}
+
+func init() {
+	statusCmd.Flags().BoolVarP(&systemStatusFlags.Verbose, "verbose", "v", false, "(optional) Extra data in status table")
+}

@@ -1,0 +1,24 @@
+{
+  "page": 0,
+  "page_size": 10,
+  "total_count": 1,
+  "profiles": [
+    {
+      "id": "8f3daf25-e58e-4c59-8bf8-f474b76463ec",
+      "name": "new",
+      "user_id": "5157b2ae-4f7c-44b8-b7d6-4e13a177ef20",
+      "load_generators": [
+        "fortio"
+      ],
+      "endpoints": [
+        "https://soundcloud.com/saqib-zaidi-741169929/te-amo-ash-king-harrlin-flip"
+      ],
+      "service_mesh": "consul",
+      "duration": "30s",
+      "last_run": "2021-06-28T09:00:22.935762Z",
+      "total_results": 5,
+      "created_at": "2021-06-28T08:30:28.849774Z",
+      "updated_at": "2021-06-28T08:30:28.849784Z"
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+package handlers
+
+import (
+	"encoding/json"
+	"net/http"
+
+	"github.com/gorilla/mux"
+	"github.com/meshery/meshery/server/helpers"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/meshmodel/entity"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
+	regv1alpha3 "github.com/meshery/meshkit/models/meshmodel/registry/v1alpha3"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+)
+
+func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	typ := mux.Vars(r)["model"]
+	name := mux.Vars(r)["name"]
+	var greedy bool
+	if search == queryParamTrue {
+		greedy = true
+	}
+
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{
+		Version:   r.URL.Query().Get("version"),
+		Kind:      name,
+		ModelName: typ,
+		Greedy:    greedy,
+		Limit:     limit,
+		Offset:    offset,
+		OrderOn:   order,
+		Sort:      sort,
+	})
+
+	var pgSize int64
+	if limit == 0 {
+		pgSize = count
+	} else {
+		pgSize = int64(limit)
+	}
+
+	response := models.MeshmodelRelationshipsAPIResponse{
+		Page:          page,
+		PageSize:      int(pgSize),
+		TotalCount:    count,
+		Relationships: entities,
+	}
+
+	if err := enc.Encode(response); err != nil {
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
+	}
+}
+
+func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+	page, offset, limit, _, order, sort, _ := getPaginationParams(r)
+	typ := mux.Vars(r)["model"]
+
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{
+		Id:               r.URL.Query().Get("id"),
+		Version:          r.URL.Query().Get("version"),
+		ModelName:        typ,
+		Limit:            limit,
+		Offset:           offset,
+		OrderOn:          order,
+		Sort:             sort,
+		Kind:             r.URL.Query().Get("kind"),
+		SubType:          r.URL.Query().Get("subType"),
+		RelationshipType: r.URL.Query().Get("type"),
+	})
+
+	var pgSize int64
+	if limit == 0 {
+		pgSize = count
+	} else {
+		pgSize = int64(limit)
+	}
+
+	response := models.MeshmodelRelationshipsAPIResponse{
+		Page:          page,
+		PageSize:      int(pgSize),
+		TotalCount:    count,
+		Relationships: entities,
+	}
+
+	if err := enc.Encode(response); err != nil {
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
+	}
+}
+
+func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {
+	dec := json.NewDecoder(r.Body)
+	var cc registry.MeshModelRegistrantData
+	err := dec.Decode(&cc)
+	if err != nil {
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+	switch cc.EntityType {
+	case entity.RelationshipDefinition:
+		var isModelError bool
+		var isRegistranError bool
+		var r relationship.RelationshipDefinition
+		err = json.Unmarshal(cc.Entity, &r)
+		if err != nil {
+			writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+			return
+		}
+		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &r)
+		helpers.HandleError(cc.Connection, &r, err, isModelError, isRegistranError)
+	}
+	err = helpers.WriteLogsToFiles()
+	if err != nil {
+		// WriteLogsToFiles is an internal flush of registry-attempt
+		// state — surface a 500 with MeshKit metadata so the JSON
+		// envelope carries a code and remediation, not just the raw
+		// stdlib message.
+		wrappedErr := ErrWriteRegistryLogs(err)
+		h.log.Error(wrappedErr)
+		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
+		return
+	}
+	go h.config.MeshModelSummaryChannel.Publish()
+}

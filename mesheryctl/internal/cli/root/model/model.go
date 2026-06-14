@@ -1,0 +1,143 @@
+// Copyright Meshery Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package model
+
+import (
+	"fmt"
+
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+
+	"github.com/meshery/meshery/server/models"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+)
+
+type cmdModelFlags struct {
+	Count bool `json:"count" validate:"boolean"`
+}
+
+var modelFlags cmdModelFlags
+
+var (
+	// Available model subcommands
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, deleteModelCmd, importModelCmd, exportModelCmd, generateModelCmd, initModelCmd, buildModelCmd}
+)
+
+// ModelCmd represents the mesheryctl model command
+var ModelCmd = &cobra.Command{
+	Use:   "model",
+	Short: "Manage models in the registry",
+	Long: `Export, generate, import, list, search and view model(s) and detailed informations
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model`,
+	Example: `
+// Display number of available models in Meshery
+mesheryctl model --count
+
+// Export registered models
+mesheryctl model export [model-name]
+
+// Generate a model from a CSV directory
+mesheryctl model generate [path-to-csv-directory]
+
+// Generate a model from a URL based on a JSON template
+mesheryctl model generate --file [URL] --template [path-to-template.json]
+
+// Import model(s)
+mesheryctl model import -f [Uri]
+
+// List available model(s)
+mesheryctl model list
+
+// Delete available model(s)
+mesheryctl model delete [model-id]
+
+// Search for a specific model
+mesheryctl model search [model-name]
+
+// View a specific model
+mesheryctl model view [model-name]
+
+// Scaffold a folder structure for model creation
+mesheryctl model init [model-name]
+
+// Create an OCI-compliant package from the model files
+mesheryctl model build [model-name]
+mesheryctl model build [model-name]/[model-version]
+`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &modelFlags)
+	},
+	Args: func(cmd *cobra.Command, args []string) error {
+		count, _ := cmd.Flags().GetBool("count")
+		if len(args) == 0 && !count {
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
+			return utils.ErrInvalidArgument(errors.New("please provide a subcommand"))
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		countFlag, _ := cmd.Flags().GetBool("count")
+		if countFlag {
+			models, err := api.Fetch[models.MeshmodelsAPIResponse](fmt.Sprintf("%s?page=1", modelsApiPath))
+
+			if err != nil {
+				return err
+			}
+
+			utils.DisplayCount("models", models.TotalCount)
+
+			return nil
+		}
+
+		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Use 'mesheryctl model --help' to display usage guide.\n", args[0]), "model"))
+		}
+		_, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return err
+		}
+
+		err = cmd.Usage()
+		if err != nil {
+			return err
+		}
+		return nil
+	},
+}
+
+func init() {
+	ModelCmd.AddCommand(availableSubcommands...)
+	ModelCmd.Flags().BoolVarP(&modelFlags.Count, "count", "", false, "(optional) Get the number of models in total")
+}
+
+func generateModelDataToDisplay(modelsResponse *models.MeshmodelsAPIResponse) ([][]string, int64) {
+	rows := [][]string{}
+
+	for _, model := range modelsResponse.Models {
+		modelName := model.Name
+		if modelName == "" {
+			modelName = "N/A"
+		}
+		rows = append(rows, []string{model.ID.String(), modelName, string(model.Category.Name), model.Version})
+	}
+
+	return rows, modelsResponse.TotalCount
+}

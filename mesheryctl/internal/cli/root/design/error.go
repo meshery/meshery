@@ -1,0 +1,192 @@
+// Copyright Meshery Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package design
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshkit/errors"
+)
+
+const (
+	ErrImportDesignCode               = "mesheryctl-1001"
+	ErrInValidSourceCode              = "mesheryctl-1002"
+	ErrDeployDesignCode               = "mesheryctl-1003"
+	ErrUndeployDesignCode             = "mesheryctl-1005"
+	ErrDesignFlagCode                 = "mesheryctl-1006"
+	ErrDesignManifestCode             = "mesheryctl-1007"
+	ErrDesignFileNotProvidedCode      = "mesheryctl-1140"
+	ErrDesignsNotFoundCode            = "mesheryctl-1037"
+	ErrInvalidDesignFileCode          = "mesheryctl-1038"
+	ErrPatternSourceTypeCode          = "mesheryctl-1121"
+	ErrParseDesignFileCode            = "mesheryctl-1163"
+	ErrDeleteDesignCode               = "mesheryctl-1164"
+	ErrInvalidCommandCode             = "mesheryctl-1191"
+	ErrDesignNameOrIDNotSpecifiedCode = "mesheryctl-1192"
+	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
+	ErrEvaluateDesignCode             = "mesheryctl-1247"
+	ErrEvaluateDesignResponseCode     = "mesheryctl-1248"
+)
+
+const (
+	errPatternMsg = `Usage: mesheryctl design import -f [file/url] -s [source-type]
+Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`
+
+	errUndeployMsg = `Usage: mesheryctl design undeploy -f [filepath]
+Example: mesheryctl design undeploy -f ./pattern.yml
+Description: Undeploy design`
+	errInvalidPathMsg = "file path %s is invalid. Enter a valid path"
+)
+
+func ErrDesignNotFound(design string) error {
+	return errors.New(ErrDesignsNotFoundCode, errors.Fatal,
+		[]string{"Design Not Found"},
+		[]string{fmt.Sprintf("No Design found with name, ID or at path: %s", design)}, []string{"Design with the given name, ID or path is not present"}, []string{"Please check if the given design name or ID is present via 'mesheryctl design list' or provide a valid file path"})
+}
+
+func ErrInvalidDesignFile(err error) error {
+	return errors.New(ErrInvalidDesignFileCode, errors.Fatal, []string{err.Error()}, []string{"Design appears invalid. Could not parse provided design"}, []string{"Design file provided is not valid"}, []string{"Please check that your design file is a valid yaml file"})
+}
+
+func ErrImportDesign(err error) error {
+	return errors.New(ErrImportDesignCode, errors.Fatal,
+		[]string{"Unable to import design"},
+		[]string{err.Error()},
+		[]string{"Invalid design file"},
+		[]string{"Check your design URL/file path"})
+}
+
+func ErrInValidSource(invalidSourceType string, validSourceTypes []string) error {
+	return errors.New(ErrInValidSourceCode, errors.Fatal,
+		[]string{fmt.Sprintf("Invalid design source type: `%s`", invalidSourceType)},
+		[]string{"Invalid design source type was provided"},
+		[]string{"Provided design source type (-s) is invalid"},
+		[]string{"Ensure you pass a valid source type", fmt.Sprintf("\nAllowed source types: %s", strings.Join(validSourceTypes, ", "))})
+}
+
+func ErrDesignManifest() error {
+	return errors.New(ErrDesignManifestCode, errors.Alert,
+		[]string{"No file path detected"},
+		[]string{"No manifest file path detected"},
+		[]string{"Manifest path not provided"},
+		[]string{"Provide the path to the design manifest. \n\n%v", errPatternMsg})
+}
+
+func ErrDesignFileNotProvided() error {
+	return errors.New(ErrDesignFileNotProvidedCode, errors.Alert,
+		[]string{"Design file path not provided"},
+		[]string{"Design [File | File Path | URL] isn't specified"},
+		[]string{"[File | File Path | URL] not detected. The '-f' flag is missing or empty in the 'mesheryctl design import' command"},
+		[]string{"Provide the path to the design file using the '-f' flag. Ensure that the file path or URL is correctly specified and accessible. \n\n%v", errPatternMsg})
+}
+
+func ErrDeployDesign() error {
+	return errors.New(ErrDeployDesignCode, errors.Alert,
+		[]string{"Deploying design failed"},
+		[]string{"Unable to deploy design due to error during the processing"},
+		[]string{"File path or design name not provided. ", "Meshery server failed to interact with the Kubernetes cluster. ",
+			"There was an error connecting to the selected target platform (i.e. Kubernetes cluster(s))..This connection might not be assigned to the selected environment."},
+		[]string{"Provide a valid file path/design name. ", "Ensure the Meshery server can interact with the Kubernetes cluster. ", "Check if the selected target platform is assigned to the current environment.\n"})
+}
+
+func ErrDesignSourceType() error {
+	return errors.New(ErrPatternSourceTypeCode, errors.Alert,
+		[]string{"Source type for the design to import not specified"},
+		[]string{"Empty  source type detected"},
+		[]string{"Design source type not provided"},
+		[]string{"Provide one of the supported source type for the design to import. \n\n%v", errPatternMsg})
+}
+
+func ErrViewDesignFlag() error {
+	return errors.New(ErrDesignFlagCode, errors.Alert,
+		[]string{"Invalid command"},
+		[]string{"Wrong use of command flags"},
+		[]string{"-a/all flag is being used while an design is specified"},
+		[]string{"-a/-all cannot be used when [design name|id] is specified"})
+}
+
+func ErrUndeployDesign(err error) error {
+	return errors.New(ErrUndeployDesignCode, errors.Alert,
+		[]string{"Undeploying design failed"},
+		[]string{"Unable to undeploy design due to empty path"},
+		[]string{"File path or design name not provided."},
+		[]string{"Provide a file path/design name. \n\n%v", errUndeployMsg})
+}
+
+func ErrParseDesignFile(err error) error {
+	return errors.New(ErrParseDesignFileCode, errors.Alert,
+		[]string{"Failed to parse design file"},
+		[]string{err.Error()},
+		[]string{"The design file format is invalid or corrupted", "The YAML/JSON syntax may be incorrect"},
+		[]string{"Ensure the design file is a valid Meshery design format", "Check for YAML/JSON syntax errors", "Validate the design file structure"})
+}
+
+func ErrDeleteDesign(err error, designName string) error {
+	return errors.New(ErrDeleteDesignCode, errors.Alert,
+		[]string{"Unable to delete design"},
+		[]string{fmt.Sprintf("%s: %s", utils.DesignError(fmt.Sprintf("failed to delete design %s", designName)), err.Error())},
+		[]string{"Design may not exist", "Network connection issue", "Meshery server unreachable"},
+		[]string{"Verify the design exists using 'mesheryctl design list'", "Check your network connection and Meshery server status"})
+}
+
+func ErrInvalidCommand(cmd string, suggestions []string) error {
+	var longDesc string
+	if len(suggestions) > 0 {
+		longDesc = fmt.Sprintf("'%s' is an invalid command. Did you mean one of these?\n\t%s", cmd, strings.Join(suggestions, "\n\t"))
+	} else {
+		longDesc = fmt.Sprintf("'%s' is an invalid command", cmd)
+	}
+
+	return errors.New(ErrInvalidCommandCode, errors.Alert,
+		[]string{"Invalid command"},
+		[]string{longDesc},
+		[]string{"The provided command is not recognized"},
+		[]string{"Run 'mesheryctl design --help' to see available commands"},
+	)
+}
+
+func ErrDesignNameOrIDNotSpecified() error {
+	return errors.New(ErrDesignNameOrIDNotSpecifiedCode, errors.Alert,
+		[]string{"Design name or ID not specified"},
+		[]string{"No design name or ID was provided"},
+		[]string{"Command requires a design name or ID as argument"},
+		[]string{"Provide a design name or ID, or use '-a' flag to view all designs.\nRun 'mesheryctl design view --help' for usage details"})
+}
+
+func ErrDesignInvalidApiResponse(message string) error {
+	return errors.New(ErrDesignInvalidApiResponseCode, errors.Alert,
+		[]string{"Invalid API response"},
+		[]string{message},
+		[]string{"The API response is missing expected fields or has an unexpected format"},
+		[]string{"Ensure the Meshery server is running a compatible version", "Check for any issues with the Meshery server that may cause it to return malformed responses"})
+}
+
+func ErrEvaluateDesign() error {
+	return errors.New(ErrEvaluateDesignCode, errors.Alert,
+		[]string{"Design not specified for evaluation"},
+		[]string{"Exactly one of a design file path (-f) or a design ID must be provided, not both"},
+		[]string{"A design must be specified either by file path (-f) or by ID as an argument, but not both simultaneously"},
+		[]string{"Provide a design file using '-f' flag or pass a design ID as an argument (not both).\n\nUsage: mesheryctl design evaluate [ID] -o [output-file]\n       mesheryctl design evaluate -f [file] -o [output-file]"})
+}
+
+func ErrEvaluateDesignResponse(err error) error {
+	return errors.New(ErrEvaluateDesignResponseCode, errors.Alert,
+		[]string{"Failed to evaluate design"},
+		[]string{err.Error()},
+		[]string{"The Meshery server returned an error while evaluating the design", "The design file may be invalid or the server may be experiencing issues"},
+		[]string{"Ensure the design file is valid", "Check that the Meshery server is running and accessible", "Verify that the server has the required policies loaded"})
+}

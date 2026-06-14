@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 207.46 207.57">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #00d3a9;
+      }
+
+      .cls-2 {
+        fill: #00b39f;
+      }
+
+      .cls-3 {
+        filter: url(#drop-shadow-1);
+      }
+    </style>
+    <filter id="drop-shadow-1" filterUnits="userSpaceOnUse">
+      <feOffset dx="2.83" dy="2.83"/>
+      <feGaussianBlur result="blur" stdDeviation="2.83"/>
+      <feFlood flood-color="#000" flood-opacity=".5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g class="cls-3">
+    <polygon class="cls-1" points="106.83 48.92 106.83 98.49 149.79 73.62 106.83 48.92"/>
+    <polygon class="cls-1" points="106.83 108.86 106.83 158.67 150.19 133.88 106.83 108.86"/>
+    <polygon class="cls-2" points="100.64 98.15 100.64 49.34 58.21 73.66 100.64 98.15"/>
+    <path class="cls-2" d="m15.53,158.5c8.32,13.38,19.59,24.72,32.92,33.12v-52.18l-32.92,19.06Z"/>
+    <polygon class="cls-2" points="100.64 158.44 100.64 109.22 58.11 133.85 100.64 158.44"/>
+    <polygon class="cls-1" points="54.63 188.52 97.71 163.89 54.63 138.98 54.63 188.52"/>
+    <polygon class="cls-2" points="153.13 188.78 153.13 139.32 110.12 163.92 153.13 188.78"/>
+    <path class="cls-2" d="m195.27,152.75c7.16-13.35,11.48-28.44,12.17-44.48l-44.84,25.64,32.67,18.85Z"/>
+    <polygon class="cls-1" points="159.32 128.66 202.55 103.94 159.32 79.09 159.32 128.66"/>
+    <polygon class="cls-2" points="153.13 68.4 153.13 19.25 110.32 43.79 153.13 68.4"/>
+    <polygon class="cls-2" points="153.13 128.44 153.13 78.83 110.22 103.68 153.13 128.44"/>
+    <polygon class="cls-2" points="103.74 207.57 103.74 207.57 103.73 207.57 103.74 207.57"/>
+    <polygon class="cls-1" points="54.63 78.74 54.63 128.71 97.86 103.68 54.63 78.74"/>
+    <path class="cls-2" d="m100.64,0c-16.43.48-31.9,4.78-45.56,12.04l45.56,26.19V0Z"/>
+    <polygon class="cls-1" points="54.63 18.91 54.63 68.58 97.89 43.78 54.63 18.91"/>
+    <path class="cls-2" d="m48.44,15.89c-13.33,8.4-24.6,19.75-32.92,33.14l32.92,19V15.89Z"/>
+    <path class="cls-1" d="m152.85,12.28C139.08,4.88,123.44.49,106.83,0v38.66l46.02-26.38Z"/>
+    <path class="cls-1" d="m0,107.4c.57,16.52,4.99,32.06,12.41,45.75l33.34-19.3L0,107.4Z"/>
+    <path class="cls-1" d="m12.41,54.37C5.03,68,.61,83.46,0,99.9l45.79-26.25L12.41,54.37Z"/>
+    <path class="cls-2" d="m55,195.43c13.68,7.29,29.18,11.6,45.64,12.09v-38.18l-45.64,26.1Z"/>
+    <path class="cls-1" d="m192.04,49.16c-8.27-13.34-19.47-24.68-32.72-33.09v52.03l32.72-18.94Z"/>
+    <path class="cls-1" d="m159.32,191.44c13.32-8.46,24.59-19.88,32.87-33.33l-32.87-18.97v52.29Z"/>
+    <path class="cls-2" d="m207.46,99.63c-.64-16.28-5.02-31.6-12.32-45.12l-32.97,19.09,45.28,26.03Z"/>
+    <path class="cls-1" d="m106.83,207.52c16.42-.48,31.89-4.78,45.54-12.03l-45.54-26.33v38.36Z"/>
+    <polygon class="cls-2" points="48.44 128.26 48.44 79.26 5.88 103.66 48.44 128.26"/>
+  </g>
+</svg>

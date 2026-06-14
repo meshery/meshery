@@ -1,0 +1,102 @@
+// Copyright Meshery Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package system
+
+import (
+	"fmt"
+
+	config "github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+)
+
+var (
+	availableSubcommands = []*cobra.Command{}
+	// flag to change the current context to a temporary context
+	tempContext = ""
+	// token path
+)
+
+const (
+	platformDocker     = "docker"
+	platformKubernetes = "kubernetes"
+)
+
+func unsupportedPlatformError(platform string) error {
+	return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\n%s\n%s\nPlease check %s/config.yaml file", platform, platformDocker, platformKubernetes, utils.MesheryFolder)
+}
+
+func focusedSystemContext(cmd *cobra.Command, defaultContext string) string {
+	if flag := cmd.Flags().Lookup("context"); flag != nil && flag.Changed && tempContext != "" {
+		return tempContext
+	}
+
+	if flag := cmd.InheritedFlags().Lookup("context"); flag != nil && flag.Changed && tempContext != "" {
+		return tempContext
+	}
+
+	return defaultContext
+}
+
+// SystemCmd represents Meshery Lifecycle Management cli commands
+var SystemCmd = &cobra.Command{
+	Use:   "system",
+	Short: "Configure, deploy, and operate Meshery deployments",
+	Long:  `Manage the state and configuration of Meshery server, components, and client.`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return cmd.Help()
+		}
+		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+			return errors.New(utils.SystemError(fmt.Sprintf("'%s' is an invalid command.  Use 'mesheryctl system --help' to display usage guide.\n", args[0])))
+		}
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+		mctlCfg.GetBaseMesheryURL()
+		return nil
+	},
+}
+
+func init() {
+	availableSubcommands = []*cobra.Command{
+		resetCmd,
+		logsCmd,
+		startCmd,
+		stopCmd,
+		restartCmd,
+		statusCmd,
+		updateCmd,
+		configCmd,
+		ContextCmd,
+		channelCmd,
+		providerCmd,
+		checkCmd,
+		loginCmd,
+		logoutCmd,
+		tokenCmd,
+		dashboardCmd,
+		deleteCmd,
+	}
+	// --context flag to temporarily change context. This is global to all system commands
+	SystemCmd.PersistentFlags().StringVarP(&tempContext, "context", "c", "", "(optional) temporarily change the current context.")
+	SystemCmd.PersistentFlags().BoolVarP(&utils.SilentFlag, "yes", "y", false, "(optional) assume yes for user interactive prompts.")
+	SystemCmd.AddCommand(availableSubcommands...)
+}

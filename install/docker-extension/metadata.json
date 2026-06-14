@@ -1,0 +1,34 @@
+{
+  "icon": "meshery-logo-light.svg",
+  "vm": {
+    "composefile": "docker-compose.yaml"
+  },
+  "ui": {
+    "dashboard-tab": {
+      "title": "Meshery",
+      "src": "/index.html",
+      "root": "/ui"
+    }
+  },
+  "host": {
+    "binaries": [
+      {
+        "darwin": [
+          {
+            "path": "/mesheryctl/darwin/mesheryctl"
+          }
+        ],
+        "windows": [
+          {
+            "path": "/mesheryctl/windows/mesheryctl.exe"
+          }
+        ],
+        "linux": [
+          {
+            "path": "/mesheryctl/linux/mesheryctl"
+          }
+        ]
+      }
+    ]
+  }
+}

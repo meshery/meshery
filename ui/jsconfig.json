@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": ["components/*"],
+      "@/graphql/*": ["graphql/*"],
+      "@/utils/*": ["utils/*"],
+      "@/rtk-query/*": ["rtk-query/*"],
+      "@/constants/*": ["constants/*"],
+      "@/api/*": ["api/*"],
+      "@/assets/*": ["assets/*"],
+      "@/theme": ["theme/index"],
+      "@/theme/*": ["theme/*"],
+      "@/themes/*": ["themes/*"],
+      "@/store/*": ["store/*"],
+      "lib/*": ["lib/*"],
+      "machines/*": ["machines/*"],
+      "css/*": ["css/*"],
+      "assets/*": ["assets/*"],
+      "utils/*": ["utils/*"],
+      "rtk-query/*": ["rtk-query/*"]
+    }
+  },
+  "exclude": ["node_modules", "out"]
+}

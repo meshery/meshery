@@ -1,0 +1,116 @@
+{
+    "errors_export": {
+        "component_name": "meshery-adapter-library",
+        "component_type": "library",
+        "errors": {
+            "1000": {
+                "name": "ErrGetNameCode",
+                "code": "1000",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1001": {
+                "name": "ErrCreateInstanceCode",
+                "code": "1001",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1002": {
+                "name": "ErrMeshConfigCode",
+                "code": "1002",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1003": {
+                "name": "ErrValidateKubeconfigCode",
+                "code": "1003",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1004": {
+                "name": "ErrClientConfigCode",
+                "code": "1004",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1005": {
+                "name": "ErrClientSetCode",
+                "code": "1005",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1006": {
+                "name": "ErrStreamEventCode",
+                "code": "1006",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1007": {
+                "name": "ErrOpInvalidCode",
+                "code": "1007",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1008": {
+                "name": "ErrApplyOperationCode",
+                "code": "1008",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1009": {
+                "name": "ErrListOperationsCode",
+                "code": "1009",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1010": {
+                "name": "ErrNewSmiCode",
+                "code": "1010",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1011": {
+                "name": "ErrRunSmiCode",
+                "code": "1011",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            }
+        }
+    }
+}

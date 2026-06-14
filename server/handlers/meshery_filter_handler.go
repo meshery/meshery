@@ -1,0 +1,605 @@
+package handlers
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"strings"
+
+	"github.com/gofrs/uuid"
+	guid "github.com/google/uuid"
+	"github.com/gorilla/mux"
+	"github.com/meshery/meshery/server/meshes"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/pattern/utils"
+	"github.com/meshery/meshkit/models/events"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta3/component"
+	"github.com/meshery/schemas/models/v1beta1/model"
+)
+
+func (h *Handler) GetMesheryFilterFileHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	provider models.Provider,
+) {
+	filterID := mux.Vars(r)["id"]
+
+	resp, err := provider.GetMesheryFilterFile(r, filterID)
+	if err != nil {
+		h.log.Error(ErrGetFilter(err))
+		writeMeshkitError(rw, ErrGetFilter(err), http.StatusNotFound)
+		return
+	}
+
+	reader := bytes.NewReader(resp)
+	rw.Header().Set("Content-Type", "application/wasm")
+	_, err = io.Copy(rw, reader)
+	if err != nil {
+		// Headers were already committed above (Content-Type:
+		// application/wasm) and the WASM byte stream has started,
+		// so we cannot send a fresh JSON error response here. Log only.
+		h.log.Error(ErrDownloadWASMFile(err, "download"))
+	}
+}
+
+// FilterFileRequestHandler will handle requests of both type GET and POST
+// on the route /api/filter
+func (h *Handler) FilterFileRequestHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	if r.Method == http.MethodGet {
+		h.GetMesheryFiltersHandler(rw, r, prefObj, user, provider)
+		return
+	}
+
+	if r.Method == http.MethodPost {
+		h.handleFilterPOST(rw, r, prefObj, user, provider)
+		return
+	}
+}
+
+func (h *Handler) handleFilterPOST(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+
+	userID := user.ID
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("filter").WithAction("update")
+	token, err := provider.GetProviderToken(r)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		event := eventBuilder.WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
+			"error": ErrRetrieveUserToken(err),
+		}).WithDescription("No auth token provided in the request.").Build()
+		_ = provider.PersistSystemEvent(*event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
+		return
+	}
+
+	defer func() {
+		_ = r.Body.Close()
+	}()
+	res := meshes.EventsResponse{
+		Component:     "core",
+		ComponentName: "Filters",
+		OperationId:   guid.NewString(),
+		EventType:     meshes.EventType_INFO,
+	}
+	var parsedBody *models.MesheryFilterRequestBody
+
+	actedUpon := &userID
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+		// Wrap the decode error in the operation-level ErrSaveFilter so log,
+		// event metadata, wire response, and EventsBuffer publish all carry the
+		// same code. Per-reviewer feedback (PR #18919): clients of a save
+		// endpoint expect a save-side error code; the underlying decode failure
+		// is preserved on the wrapper's LongDescription via err.Error().
+		errSaveFilter := ErrSaveFilter(err)
+		h.log.Error(errSaveFilter)
+
+		description := "Filter request body is corrupted."
+		if parsedBody != nil && parsedBody.FilterData != nil {
+			description = fmt.Sprintf("Filter %s is corrupted.", parsedBody.FilterData.Name)
+		}
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": errSaveFilter,
+		}).WithDescription(description).Build()
+
+		_ = provider.PersistEvent(*event, token)
+		go h.config.EventBroadcaster.Publish(userID, event)
+
+		writeMeshkitError(rw, errSaveFilter, http.StatusBadRequest)
+		addMeshkitErr(&res, errSaveFilter)
+		go h.EventsBuffer.Publish(&res)
+		return
+	}
+
+	if parsedBody.FilterData != nil && parsedBody.FilterData.ID != nil {
+		actedUpon = parsedBody.FilterData.ID
+	}
+
+	eventBuilder.ActedUpon(*actedUpon)
+
+	format := r.URL.Query().Get("output")
+
+	filterResource, err := h.generateFilterComponent(parsedBody.Config)
+	if err != nil {
+		h.log.Error(ErrEncodeFilter(err))
+		writeMeshkitError(rw, ErrEncodeFilter(err), http.StatusInternalServerError)
+		return
+	}
+
+	// If Content is not empty then assume it's a local upload
+	if parsedBody.FilterData != nil {
+		// Assign a name if no name is provided
+		if parsedBody.FilterData.Name == "" {
+			parsedBody.FilterData.Name = "meshery-filter-" + utils.GetRandomAlphabetsOfDigit(5)
+		}
+		// Assign a location if no location is specified
+		if len(parsedBody.FilterData.Location) == 0 {
+			parsedBody.FilterData.Location = map[string]interface{}{
+				"host":   "",
+				"path":   "",
+				"type":   "local",
+				"branch": "",
+			}
+		}
+
+		mesheryFilter := models.MesheryFilter{
+			FilterFile:     parsedBody.FilterData.FilterFile,
+			Name:           parsedBody.FilterData.Name,
+			ID:             parsedBody.FilterData.ID,
+			UserID:         parsedBody.FilterData.UserID,
+			UpdatedAt:      parsedBody.FilterData.UpdatedAt,
+			Location:       parsedBody.FilterData.Location,
+			FilterResource: filterResource,
+			CatalogData:    parsedBody.FilterData.CatalogData,
+		}
+
+		if parsedBody.Save {
+			resp, err := provider.SaveMesheryFilter(token, &mesheryFilter)
+			if err != nil {
+				errFilterSave := ErrSaveFilter(err)
+				h.log.Error(errFilterSave)
+				writeMeshkitError(rw, errFilterSave, http.StatusInternalServerError)
+
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": errFilterSave,
+				}).WithDescription(fmt.Sprintf("Failed persisting filter %s", parsedBody.FilterData.Name)).Build()
+
+				_ = provider.PersistEvent(*event, token)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				addMeshkitErr(&res, ErrSaveFilter(err))
+				go h.EventsBuffer.Publish(&res)
+				return
+			}
+
+			go h.config.FilterChannel.Publish(userID, struct{}{})
+			h.formatFilterOutput(rw, resp, format, &res, eventBuilder)
+
+			eventBuilder.WithSeverity(events.Informational).Build()
+			return
+		}
+
+		byt, err := json.Marshal([]models.MesheryFilter{mesheryFilter})
+		if err != nil {
+			h.log.Error(ErrEncodeFilter(err))
+			writeMeshkitError(rw, ErrEncodeFilter(err), http.StatusInternalServerError)
+			return
+		}
+
+		h.formatFilterOutput(rw, byt, format, &res, eventBuilder)
+		_ = provider.PersistEvent(*eventBuilder.Build(), token)
+		return
+	}
+
+	if parsedBody.URL != "" {
+		resp, err := provider.RemoteFilterFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save, filterResource)
+
+		if err != nil {
+			h.log.Error(ErrImportFilter(err))
+			writeMeshkitError(rw, ErrImportFilter(err), http.StatusInternalServerError)
+			return
+		}
+
+		h.formatFilterOutput(rw, resp, format, &res, eventBuilder)
+		_ = provider.PersistEvent(*eventBuilder.Build(), token)
+		return
+	}
+}
+
+func (h *Handler) GetMesheryFiltersHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	provider models.Provider,
+) {
+	q := r.URL.Query()
+	tokenString := r.Context().Value(models.TokenCtxKey).(string)
+
+	filter := struct {
+		Visibility []string `json:"visibility"`
+	}{}
+
+	visibility := q.Get("visibility")
+	if visibility != "" {
+		err := json.Unmarshal([]byte(visibility), &filter.Visibility)
+		if err != nil {
+			// Visibility is a URL query string — unmarshal failure is a
+			// client-side bad request, not a 500.
+			h.log.Error(ErrFetchFilter(err))
+			writeMeshkitError(rw, ErrFetchFilter(err), http.StatusBadRequest)
+			return
+		}
+	}
+
+	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), filter.Visibility)
+	if err != nil {
+		h.log.Error(ErrFetchFilter(err))
+		writeMeshkitError(rw, ErrFetchFilter(err), http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
+}
+
+func (h *Handler) GetCatalogMesheryFiltersHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	provider models.Provider,
+) {
+	q := r.URL.Query()
+	tokenString := r.Context().Value(models.TokenCtxKey).(string)
+
+	resp, err := provider.GetCatalogMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
+	if err != nil {
+		h.log.Error(ErrFetchFilter(err))
+		writeMeshkitError(rw, ErrFetchFilter(err), http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
+}
+
+func (h *Handler) DeleteMesheryFilterHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	filterID := mux.Vars(r)["id"]
+
+	resp, err := provider.DeleteMesheryFilter(r, filterID)
+	if err != nil {
+		h.log.Error(ErrDeleteFilter(err))
+		writeMeshkitError(rw, ErrDeleteFilter(err), http.StatusInternalServerError)
+		return
+	}
+
+	go h.config.FilterChannel.Publish(user.ID, struct{}{})
+	rw.Header().Set("Content-Type", "application/json")
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
+}
+
+func (h *Handler) CloneMesheryFilterHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	filterID := mux.Vars(r)["id"]
+	var parsedBody *models.MesheryCloneFilterRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || filterID == "" {
+		h.log.Error(ErrRequestBody(err))
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
+	resp, err := provider.CloneMesheryFilter(r, filterID, parsedBody)
+	if err != nil {
+		h.log.Error(ErrCloneFilter(err))
+		writeMeshkitError(rw, ErrCloneFilter(err), http.StatusInternalServerError)
+		return
+	}
+
+	go h.config.FilterChannel.Publish(user.ID, struct{}{})
+	rw.Header().Set("Content-Type", "application/json")
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
+}
+
+func (h *Handler) PublishCatalogFilterHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	userID := user.ID
+	eventBuilder := events.NewEvent().
+		FromUser(userID).
+		FromSystem(*h.SystemID).
+		WithCategory("filter").
+		WithAction("publish").
+		ActedUpon(userID)
+	token, err := provider.GetProviderToken(r)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
+		return
+	}
+
+	var parsedBody *models.MesheryCatalogFilterRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+		h.log.Error(ErrRequestBody(err))
+		e := eventBuilder.WithSeverity(events.Error).
+			WithMetadata(map[string]interface{}{
+				"error": ErrRequestBody(err),
+			}).
+			WithDescription("Error parsing filter payload.").Build()
+		_ = provider.PersistEvent(*e, token)
+		go h.config.EventBroadcaster.Publish(userID, e)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
+	resp, err := provider.PublishCatalogFilter(r, parsedBody)
+	if err != nil {
+		h.log.Error(ErrPublishCatalogFilter(err))
+		e := eventBuilder.WithSeverity(events.Error).
+			WithMetadata(map[string]interface{}{
+				"error": ErrPublishCatalogFilter(err),
+			}).
+			WithDescription("Error publishing filter.").Build()
+		_ = provider.PersistEvent(*e, token)
+		go h.config.EventBroadcaster.Publish(userID, e)
+		writeMeshkitError(rw, ErrPublishCatalogFilter(err), http.StatusInternalServerError)
+		return
+	}
+
+	var respBody *models.CatalogRequest
+	err = json.Unmarshal(resp, &respBody)
+	if err != nil {
+		h.log.Error(ErrPublishCatalogFilter(err))
+		e := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrPublishCatalogFilter(err),
+		}).WithDescription("Error parsing response.").Build()
+		_ = provider.PersistEvent(*e, token)
+		go h.config.EventBroadcaster.Publish(userID, e)
+		writeMeshkitError(rw, ErrPublishCatalogFilter(err), http.StatusInternalServerError)
+		return
+	}
+
+	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("Request to publish '%s' filter submitted with status: %s", respBody.ContentName, respBody.Status)).Build()
+	_ = provider.PersistEvent(*e, token)
+	go h.config.EventBroadcaster.Publish(userID, e)
+
+	go h.config.FilterChannel.Publish(user.ID, struct{}{})
+	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusAccepted)
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
+}
+
+func (h *Handler) UnPublishCatalogFilterHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	userID := user.ID
+	eventBuilder := events.NewEvent().
+		FromUser(userID).
+		FromSystem(*h.SystemID).
+		WithCategory("filter").
+		WithAction("unpublish_request").
+		ActedUpon(userID)
+	token, err := provider.GetProviderToken(r)
+	if err != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+		writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
+		return
+	}
+
+	var parsedBody *models.MesheryCatalogFilterRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+		h.log.Error(ErrRequestBody(err))
+		e := eventBuilder.WithSeverity(events.Error).
+			WithMetadata(map[string]interface{}{
+				"error": ErrRequestBody(err),
+			}).
+			WithDescription("Error parsing filter payload.").Build()
+		_ = provider.PersistEvent(*e, token)
+		go h.config.EventBroadcaster.Publish(userID, e)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+	resp, err := provider.UnPublishCatalogFilter(r, parsedBody)
+	if err != nil {
+		h.log.Error(ErrPublishCatalogFilter(err))
+		e := eventBuilder.WithSeverity(events.Error).
+			WithMetadata(map[string]interface{}{
+				"error": ErrPublishCatalogFilter(err),
+			}).
+			WithDescription("Error publishing filter.").Build()
+		_ = provider.PersistEvent(*e, token)
+		go h.config.EventBroadcaster.Publish(userID, e)
+		writeMeshkitError(rw, ErrPublishCatalogFilter(err), http.StatusInternalServerError)
+		return
+	}
+
+	var respBody *models.CatalogRequest
+	err = json.Unmarshal(resp, &respBody)
+	if err != nil {
+		h.log.Error(ErrPublishCatalogFilter(err))
+		e := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrPublishCatalogFilter(err),
+		}).WithDescription("Error parsing response.").Build()
+		_ = provider.PersistEvent(*e, token)
+		go h.config.EventBroadcaster.Publish(userID, e)
+		writeMeshkitError(rw, ErrPublishCatalogFilter(err), http.StatusInternalServerError)
+		return
+	}
+
+	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("'%s' filter unpublished", respBody.ContentName)).Build()
+	_ = provider.PersistEvent(*e, token)
+	go h.config.EventBroadcaster.Publish(userID, e)
+
+	go h.config.FilterChannel.Publish(user.ID, struct{}{})
+	rw.Header().Set("Content-Type", "application/json")
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
+}
+
+// GetMesheryFilterHandler fetched the filter with the given id
+func (h *Handler) GetMesheryFilterHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	provider models.Provider,
+) {
+	filterID := mux.Vars(r)["id"]
+
+	resp, err := provider.GetMesheryFilter(r, filterID)
+	if err != nil {
+		h.log.Error(ErrGetFilter(err))
+		writeMeshkitError(rw, ErrGetFilter(err), http.StatusNotFound)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
+		h.log.Error(err)
+	}
+}
+
+func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ string, res *meshes.EventsResponse, eventBuilder *events.EventBuilder) {
+	contentMesheryFilterSlice := make([]models.MesheryFilter, 0)
+	names := []string{}
+	if err := json.Unmarshal(content, &contentMesheryFilterSlice); err != nil {
+		writeMeshkitError(rw, ErrDecodeFilter(err), http.StatusInternalServerError)
+
+		return
+	}
+
+	result := []models.MesheryFilter{}
+
+	data, err := json.Marshal(&result)
+	if err != nil {
+		obj := "filter file"
+		writeMeshkitError(rw, models.ErrMarshal(err, obj), http.StatusInternalServerError)
+
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	if _, err := fmt.Fprint(rw, string(data)); err != nil {
+		h.log.Error(err)
+	}
+	for _, filter := range contentMesheryFilterSlice {
+		names = append(names, filter.Name)
+		if filter.ID != nil {
+			eventBuilder.ActedUpon(*filter.ID)
+		}
+	}
+	res.Details = "filters saved"
+	res.Summary = "following filters were saved: " + strings.Join(names, ",")
+	go h.EventsBuffer.Publish(res)
+	eventBuilder.WithDescription(fmt.Sprintf("Filter %s saved", strings.Join(names, ",")))
+}
+
+// FilterFileHandler handles the requested related to filter files
+func (h *Handler) FilterFileHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	// Filter files are just pattern files
+	h.PatternFileHandler(rw, r, prefObj, user, provider)
+}
+
+func (h *Handler) generateFilterComponent(config string) (string, error) {
+	res, _, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
+		Name:       "WASMFilter",
+		Trim:       false,
+		APIVersion: v1beta1.ComponentSchemaVersion,
+		Version:    "v1.0.0",
+		Limit:      1,
+	})
+
+	if len(res) > 0 {
+		filterEntity := res[0]
+		filterCompDef, ok := filterEntity.(*component.ComponentDefinition)
+		if ok {
+			filterID, _ := uuid.NewV4()
+			filterSvc := component.ComponentDefinition{
+				ID:          filterID,
+				DisplayName: strings.ToLower(filterCompDef.Component.Kind) + utils.GetRandomAlphabetsOfDigit(5),
+				Component: component.Component{
+					Kind:    filterCompDef.Component.Kind,
+					Version: filterCompDef.Component.Version,
+				},
+				Model: &model.ModelDefinition{
+					Name: filterCompDef.Model.Name,
+					Model: model.Model{
+						Version: filterCompDef.Model.Model.Version,
+					},
+				},
+				Metadata: component.ComponentDefinition_Metadata{
+					IsAnnotation: true,
+				},
+				Configuration: map[string]interface{}{
+					"config": config,
+				},
+			}
+			marshalledFilter, err := json.Marshal(filterSvc)
+			if err != nil {
+				return string(marshalledFilter), err
+			}
+			return string(marshalledFilter), nil
+		}
+	}
+	return "", nil
+}

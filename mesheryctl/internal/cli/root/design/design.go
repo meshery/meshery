@@ -1,0 +1,128 @@
+// Copyright Meshery Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package design
+
+import (
+	"errors"
+	"fmt"
+	"slices"
+	"strings"
+
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/pattern/core"
+	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/spf13/cobra"
+)
+
+var (
+	availableSubcommands []*cobra.Command
+	file                 string
+)
+
+// DesignCmd represents the root command for design commands
+var DesignCmd = &cobra.Command{
+	Use:   "design",
+	Short: "Manage cloud native designs",
+	Long: `Manage cloud and cloud native infrastructure using predefined designs.
+Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
+	Example: `
+// Apply design file:
+mesheryctl design apply --file [path to design file | URL of the file]
+
+// Delete design file:
+mesheryctl design delete --file [path to design file]
+
+// View design file:
+mesheryctl design view [design name | ID]
+
+// List all designs:
+mesheryctl design list
+`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return cmd.Help()
+		}
+		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+			suggestions := make([]string, 0)
+			for _, subcmd := range availableSubcommands {
+				if strings.HasPrefix(subcmd.Name(), args[0]) {
+					suggestions = append(suggestions, subcmd.Name())
+				}
+			}
+			if len(suggestions) > 0 {
+				return ErrInvalidCommand(args[0], suggestions)
+			}
+			return ErrInvalidCommand(args[0], []string{})
+		}
+		return nil
+	},
+}
+
+func init() {
+	DesignCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
+
+	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, deployDesignCmd, exportCmd, designUndeployCmd, evaluateCmd}
+	DesignCmd.AddCommand(availableSubcommands...)
+}
+
+func getDesignSourceTypes() ([]string, error) {
+	apiResponse, err := api.Fetch[[]models.PatternSourceTypesAPIResponse]("api/pattern/types")
+	if err != nil {
+		return nil, err
+	}
+
+	sourceTypes := make([]string, 0, len(*apiResponse))
+	for _, sourceTypeResponse := range *apiResponse {
+		sourceTypes = append(sourceTypes, strings.ToLower(sourceTypeResponse.DesignType))
+	}
+
+	return sourceTypes, nil
+}
+
+func retrieveProvidedSourceType(sType string, validDesignSourceTypes []string) (string, error) {
+	sType = strings.ToLower(sType)
+	if slices.Contains(validDesignSourceTypes, sType) {
+		return sType, nil
+	}
+	return "", ErrInValidSource(sType, validDesignSourceTypes)
+}
+
+// fetchDesignByID fetches a design from the server by ID and parses it into a PatternFile.
+func fetchDesignByID(baseUrl, designID string) (pattern.PatternFile, error) {
+	dataURL := fmt.Sprintf("%s/api/pattern/%s", baseUrl, designID)
+	patternData, err := fetchPatternData(dataURL)
+	if err != nil {
+		return pattern.PatternFile{}, err
+	}
+
+	pf, err := core.NewPatternFile([]byte(patternData.PatternFile))
+	if err != nil {
+		return pattern.PatternFile{}, ErrParseDesignFile(err)
+	}
+	// core.NewPatternFile returns a v1beta3/design.PatternFile, but the
+	// evaluation engine (EvaluationRequest/EvaluationResponse) is a documented
+	// v1beta1/pattern carve-out, so bridge it back to v1beta1.
+	bridged, err := patternutils.PatternV1beta3ToV1beta1(&pf)
+	if err != nil {
+		return pattern.PatternFile{}, ErrParseDesignFile(err)
+	}
+	if bridged == nil {
+		return pattern.PatternFile{}, ErrParseDesignFile(errors.New("bridged pattern file is nil"))
+	}
+	return *bridged, nil
+}

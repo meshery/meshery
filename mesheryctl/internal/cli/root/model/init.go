@@ -1,0 +1,367 @@
+package model
+
+import (
+	"errors"
+	"fmt"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
+
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/schemas"
+	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
+)
+
+type cmdModelInitFlags struct {
+	Path         string `json:"path" validate:"omitempty,relabspath"`
+	Version      string `json:"version" validate:"semver"`
+	OutputFormat string `json:"output-format" validate:"oneof=json yaml"`
+}
+
+var modelInitFlags cmdModelInitFlags
+
+var initModelCmd = &cobra.Command{
+	Use:   "init",
+	Short: "Generates scaffolding for convenient model creation",
+	Long: `Generates a folder structure and guides user on model creation
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model/init`,
+	Example: `
+// generates a folder structure
+mesheryctl model init [model-name]
+
+// generates a folder structure and sets up model version
+mesheryctl model init [model-name] --version [version] (default is v0.1.0)
+
+// generates a folder structure under specified path
+mesheryctl model init [model-name] --path [path-to-location] (default is current folder)
+
+// generate a folder structure in json format
+mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is json)
+    `,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &modelInitFlags)
+	},
+	Args: func(cmd *cobra.Command, args []string) error {
+
+		// validate model name
+		if len(args) != 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("%s", errInitOneArg))
+		}
+		modelName := args[0]
+		input := map[string]any{"name": modelName}
+		schema, err := initModelReadTemplate(initModelModelSchema)
+		if err != nil {
+			return ErrModelInit(err)
+		}
+		if err := initModelValidateDataOverSchema(schema, input); err != nil {
+			return ErrModelInit(
+				fmt.Errorf("invalid model name: %v", err),
+			)
+		}
+
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		// validation done above that args contains exactly one argument
+		modelName := args[0]
+		path := modelInitFlags.Path
+		// immediately remove trailing folder separator
+		path = strings.TrimRight(path, string(os.PathSeparator))
+		// this will make it in one format
+		path = filepath.Join(path)
+
+		utils.Log.Infof("Creating new Meshery model: %s", modelName)
+
+		modelFolder := filepath.Join(path, modelName)
+		modelVersionFolder := filepath.Join(modelFolder, modelInitFlags.Version)
+
+		{
+			// if model/version folder already exists return with error
+			info, err := os.Stat(modelVersionFolder)
+			if !os.IsNotExist(err) && info.IsDir() {
+				return ErrModelInitFromString(
+					fmt.Sprintf(
+						errInitFolderExists,
+						modelVersionFolder,
+					),
+				)
+			}
+		}
+
+		infoOnModelFolder, err := os.Stat(modelFolder)
+		// this indicates if model folder already exists (before we created it)
+		// this information will be used for clean up
+		isModelFolderAlreadyExists := !os.IsNotExist(err) && infoOnModelFolder.IsDir()
+
+		utils.Log.Infof("Creating directory structure...")
+		err = os.MkdirAll(modelVersionFolder, initModelDirPerm)
+		if err != nil {
+			return ErrModelInit(err)
+		}
+
+		// we need to wrap the next code block in the function which returns error
+		// because it has several return statements
+		// and we want to capture all of them and perform action on failure.
+		err = func() error {
+			for _, item := range initModelData {
+				item.beforeHook()
+				itemFolderPath := modelVersionFolder
+				if item.folderPath != "" {
+					itemFolderPath = filepath.Join(modelVersionFolder, item.folderPath)
+					err = os.MkdirAll(itemFolderPath, initModelDirPerm)
+					if err != nil {
+						return ErrModelInit(err)
+					}
+				}
+				for name, templatePath := range item.files {
+					content, err := getTemplateInOutputFormat(templatePath, modelInitFlags.OutputFormat)
+					if err != nil {
+						return ErrModelInit(err)
+					}
+					filePath := filepath.Join(
+
+						itemFolderPath,
+						strings.Join(
+							[]string{name, modelInitFlags.OutputFormat},
+							".",
+						),
+					)
+					file, err := os.Create(filePath)
+					if err != nil {
+						return ErrModelInit(err)
+					}
+					defer func() { _ = file.Close() }() // Ensure the file is closed when the function exits
+
+					_, err = file.Write(content)
+					if err != nil {
+						return ErrModelInit(err)
+					}
+				}
+			}
+			utils.Log.Infof("Created %s model at %s", modelName, modelFolder)
+			utils.Log.Info("")
+			utils.Log.Info(
+				initModelReplacePlaceholders(
+					initModelNextStepsText,
+					map[string]string{
+						"{path}":               path,
+						"{modelName}":          modelName,
+						"{modelVersion}":       modelInitFlags.Version,
+						"{modelFolder}":        modelFolder,
+						"{outputFormat}":       modelInitFlags.OutputFormat,
+						"{modelVersionFolder}": modelVersionFolder,
+					},
+				),
+			)
+			return nil
+		}()
+		if err != nil {
+			utils.Log.Info("Failure, cleaning up...")
+			if !isModelFolderAlreadyExists {
+				// if model folder didn't exist before -> delete it
+				utils.Log.Infof("Removing %s", modelFolder)
+				_ = os.RemoveAll(modelFolder)
+			} else {
+				// otherwise remove only version folder
+				utils.Log.Infof("Removing %s", modelVersionFolder)
+				_ = os.RemoveAll(modelVersionFolder)
+			}
+			return err
+		}
+
+		// TODO put a model name into generated model file
+		return nil
+	},
+}
+
+func init() {
+	initModelCmd.Flags().StringVarP(&modelInitFlags.Path, "path", "p", ".", "(optional) target directory (default: current dir)")
+	initModelCmd.Flags().StringVarP(&modelInitFlags.Version, "version", "", "v0.1.0", "(optional) model version (default: v0.1.0)")
+	initModelCmd.Flags().StringVarP(&modelInitFlags.OutputFormat, "output-format", "o", "json", "(optional) format to display in [json|yaml]")
+}
+
+const (
+	initModelDirPerm                  = 0o755
+	initModelModelSchema              = "schemas/constructs/v1beta2/model/model.yaml"
+	initModelTemplatePathModel        = "schemas/constructs/v1beta2/model/templates/model_template"
+	initModelTemplatePathComponent    = "schemas/constructs/v1beta3/component/templates/component_template"
+	initModelTemplatePathRelationship = "schemas/constructs/v1beta3/relationship/templates/relationship_template"
+)
+
+// TODO: Connection templates are temporarily disabled.
+// This constant is not currently in use.
+// const initModelTemplatePathConnection = "schemas/constructs/v1beta1/connection/connection_template"
+
+// TODO
+// if csv output is not directory based
+// should it have different text for csv output format?
+const initModelNextStepsText = `Next steps:
+1. cd {modelVersionFolder}
+2. Edit model.{outputFormat} to customize your model configuration
+3. Add your components in the components/ directory
+4. Define relationships in relationships/ directory
+5. Add your connections in the connections/ directory
+6. Define credentials in credentials/ directory
+7. Use 'mesheryctl model build' to package your model
+
+To import this model into Meshery:
+$ mesheryctl model import {modelFolder}
+
+To export this model as OCI image:
+$ mesheryctl model build {modelName}/{modelVersion} --path {path}
+
+Detailed guide: https://docs.meshery.io/guides/creating-new-model-with-mesheryctl`
+
+// TODO
+// initModelData fits well for json and yaml format
+// if csv output is different (non folder based), will initModelData fit it?
+var initModelData = []struct {
+	folderPath string
+	files      map[string]string
+	beforeHook func()
+}{
+	{
+		folderPath: "",
+		// map file name to template key
+		files: map[string]string{
+			"model": initModelTemplatePathModel,
+		},
+		beforeHook: func() {
+			utils.Log.Info("Generating model definition...")
+		},
+	},
+	{
+		folderPath: "components",
+		// map file name to template key
+		files: map[string]string{
+			"component": initModelTemplatePathComponent,
+		},
+		beforeHook: func() {
+			utils.Log.Info("Adding sample components...")
+		},
+	},
+	{
+		folderPath: "relationships",
+		// map file name to template key
+		files: map[string]string{
+			"relationship": initModelTemplatePathRelationship,
+		},
+		beforeHook: func() {
+			utils.Log.Info("Creating sample relationships...")
+		},
+	},
+	{
+		folderPath: "connections",
+		// map file name to template key
+		files: nil,
+		beforeHook: func() {
+			utils.Log.Info("Creating connections directory...")
+		},
+	},
+	{
+		folderPath: "credentials",
+		// map file name to template key
+		files: nil,
+		beforeHook: func() {
+			utils.Log.Info("Creating credentials directory...")
+		},
+	},
+}
+
+func initModelReadTemplate(templatePath string) ([]byte, error) {
+	return schemas.Schemas.ReadFile(templatePath)
+}
+
+func getTemplateInOutputFormat(templatePath string, outputFormat string) ([]byte, error) {
+	// outputFormat was already validated, it is one of the initModelGetValidOutputFormat()
+	if outputFormat == "json" || outputFormat == "yaml" {
+		return initModelReadTemplate(
+			strings.Join(
+				[]string{templatePath, outputFormat},
+				".",
+			),
+		)
+	}
+
+	if outputFormat == "csv" {
+		// impossible to reach here, as outputFormat is validated in prerun
+		return nil, ErrModelUnsupportedOutputFormat("TODO implement csv")
+	}
+
+	// impossible to reach here, as outputFormat is validated in prerun
+	return nil, ErrModelUnsupportedOutputFormat("unsupported output format")
+}
+
+func initModelReplacePlaceholders(input string, replacements map[string]string) string {
+	for key, value := range replacements {
+		input = strings.ReplaceAll(input, key, value)
+	}
+	return input
+}
+
+// TODO move it to more general package
+func initModelValidateDataOverSchema(schema []byte, data map[string]interface{}) error {
+	// version with full schema validation, like gojsonschema.Validate(schemaLoader, dataLoader),  is not working now,
+	// probably because of the external references and relative paths in schema
+	// it returns
+	// Error: Could not read schema from HTTP, response status is 404 Not Found
+	// --
+	// as we need only to validate the model name
+	// below we extract pattern for name property from schema json and validate manually string over pattern.
+	// TODO figure out how to do a proper validation over schema.
+
+	validationErrors := []string{}
+	for property, value := range data {
+		stringValue, ok := (value).(string)
+		if !ok {
+			continue
+		}
+		pattern, _ := initModelGetPatternFromSchema(schema, property)
+		if pattern == "" {
+			// skip if not possible to extract pattern
+			continue
+		}
+
+		re, err := regexp.Compile(pattern)
+		if err != nil {
+			// skip on invalid regexp
+			continue
+		}
+		if !re.MatchString(stringValue) {
+			validationErrors = append(
+				validationErrors,
+				fmt.Sprintf("%s must match pattern %s", property, pattern),
+			)
+		}
+	}
+
+	if len(validationErrors) > 0 {
+		return errors.New(strings.Join(validationErrors, ""))
+	}
+
+	return nil
+}
+
+func initModelGetPatternFromSchema(schema []byte, property string) (string, error) {
+	// Generic structure to decode Yaml
+	var schemaMap map[string]interface{}
+
+	// Unmarshal Yaml schema into a map
+	if err := yaml.Unmarshal(schema, &schemaMap); err != nil {
+		return "", err
+	}
+
+	// Navigate to "properties" -> propertyName -> "pattern"
+	if properties, ok := schemaMap["properties"].(map[string]interface{}); ok {
+		if propSchema, ok := properties[property].(map[string]interface{}); ok {
+			if pattern, ok := propSchema["pattern"].(string); ok {
+				return pattern, nil
+			}
+		}
+	}
+
+	return "", fmt.Errorf("pattern not found for property: %s", property)
+}

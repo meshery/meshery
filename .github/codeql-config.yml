@@ -1,0 +1,5 @@
+paths-ignore:
+  - docs/static/v0.*
+  - docs/assets/js/main.js
+  - docs/assets/js/search.js
+  - docs/meetings/**

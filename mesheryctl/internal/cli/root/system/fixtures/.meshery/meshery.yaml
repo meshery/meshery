@@ -1,0 +1,30 @@
+services:
+    meshery:
+        environment:
+            - PROVIDER_BASE_URLS=https://cloud.meshery.io,https://cloud.acme.io
+            - EVENT=mesheryLocal
+            - KUBECONFIG_FOLDER=/home/appuser/.kube
+            - PORT=9081
+        image: meshery/meshery:stable-latest
+        labels:
+            - com.centurylinklabs.watchtower.enable=true
+        ports:
+            - 9081:9081
+        volumes:
+            - $HOME/.kube:/home/appuser/.kube:ro
+            - $HOME/.minikube:$HOME/.minikube:ro
+            - /var/run/docker.sock:/var/run/docker.sock
+    meshery-istio:
+        image: meshery/meshery-istio:stable-latest
+        labels:
+            - com.centurylinklabs.watchtower.enable=true
+        ports:
+            - 10000:10000
+    watchtower:
+        command: --label-enable
+        image: containrrr/watchtower
+        labels:
+            - com.centurylinklabs.watchtower.enable=true
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+version: "3"

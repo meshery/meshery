@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "meshery.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.annotations | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "meshery.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "meshery.selectorLabels" . | nindent 8 }}
+    spec:
+      restartPolicy: {{ .Values.restartPolicy }}
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "meshery.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository}}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          {{- if .Values.probe.startupProbe.enabled }}
+          startupProbe:
+            httpGet:
+              path: /healthz/live
+              port: http
+            initialDelaySeconds: {{ .Values.probe.startupProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probe.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.probe.startupProbe.failureThreshold }}
+            timeoutSeconds: {{ .Values.probe.startupProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.probe.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: /healthz/live
+              port: http
+            initialDelaySeconds: {{ .Values.probe.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probe.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.probe.livenessProbe.failureThreshold }}
+            timeoutSeconds: {{ .Values.probe.livenessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.probe.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: /healthz/ready
+              port: http
+            initialDelaySeconds: {{ .Values.probe.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probe.readinessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.probe.readinessProbe.failureThreshold }}
+            timeoutSeconds: {{ .Values.probe.readinessProbe.timeoutSeconds }}
+          {{- end }}
+          env:
+          {{- if .Values.env }}
+          {{- range $key, $val := .Values.env }}
+          - name: {{ $key }}
+            value: {{ $val }}
+          {{- end }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+

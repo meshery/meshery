@@ -1,0 +1,21 @@
+meshery:
+  port: 9081
+
+istio:
+  port: 10000
+  enabled: false
+
+linkerd:
+  port: 10001
+  enabled: false
+
+consul:
+  port: 10002
+  enabled: false
+
+nsm:
+  port: 10004
+  enabled: false
+
+labels:
+  watchtower: "com.centurylinklabs.watchtower.enable=true"

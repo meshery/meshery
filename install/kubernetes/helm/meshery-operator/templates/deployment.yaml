@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "meshery-operator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.annotations | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "meshery-operator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "meshery-operator.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "meshery-operator.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Values.mesheryOperator.name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          # TODO: Need to confirm the meshery-operator image version
+          image: "{{ .Values.mesheryOperator.image.repository }}"
+          imagePullPolicy: {{ .Values.mesheryOperator.image.pullPolicy }}
+          ports:
+            - containerPort: 9443
+              # hostPort: 9443
+              name: server
+            - containerPort: 8080
+              # TODO it's not a good idea we take account to the 8080 port, is there we need communicate through the physical ports
+              # hostPort: 8080
+              name: metrics
+          {{- if .Values.probe.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          {{- end }}
+          {{- if .Values.probe.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          {{- end }}
+          env:
+          {{- if .Values.env }}
+          {{- range $key, $val := .Values.env }}
+          - name: {{ $key }}
+            value: {{ $val }}
+          {{- end }}
+          {{- end }}
+          args: {{- toYaml .Values.mesheryOperator.args | nindent 12}}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          command: {{- toYaml .Values.mesheryOperator.command | nindent 12 }}
+        - name: {{ .Values.kubeRbac.name }}
+          image: {{ .Values.kubeRbac.image.repository }}
+          imagePullPolicy: {{ .Values.kubeRbac.image.pullPolicy }}
+          ports:
+          - name: https
+            containerPort: 8443
+          args: {{- toYaml .Values.kubeRbac.args | nindent 12}}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

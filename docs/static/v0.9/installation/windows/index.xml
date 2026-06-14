@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Install Meshery CLI on Windows on Documentation</title>
+    <link>/v0.9/installation/windows/</link>
+    <description>Recent content in Install Meshery CLI on Windows on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/installation/windows/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Scoop</title>
+      <link>/v0.9/installation/windows/scoop/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/installation/windows/scoop/</guid>
+      <description>&lt;h1 id=&#34;install-meshery-cli-with-scoop&#34;&gt;&#xA;&#x9;Install Meshery CLI with Scoop&#xA;&lt;/h1&gt;&#xA;&lt;h2 id=&#34;prerequisites&#34;&gt;&#xA;&#x9;Prerequisites&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;You need to have &lt;code&gt;scoop&lt;/code&gt; installed on your Windows system to perform these actions.&lt;/p&gt;&#xA;&lt;h3 id=&#34;install-mesheryctl-with-scoop&#34;&gt;&#xA;&#x9;Install &lt;code&gt;mesheryctl&lt;/code&gt; with Scoop&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;To install &lt;code&gt;mesheryctl&lt;/code&gt; using Scoop, execute the following commands.&lt;/p&gt;&#xA;&lt;pre class=&#34;codeblock-pre&#34;&gt;&lt;div class=&#34;codeblock&#34;&gt;&#xA;&lt;div class=&#34;clipboardjs&#34;&gt;scoop bucket add mesheryctl https://github.com/meshery/scoop-bucket.git&#xA;scoop install mesheryctl&lt;/div&gt;&lt;/div&gt;&#xA;&lt;/pre&gt;&#xA;&lt;p&gt;You&amp;rsquo;re ready to run Meshery. To do so, execute the following command.&lt;/p&gt;&#xA;&lt;pre class=&#34;codeblock-pre&#34;&gt;&lt;div class=&#34;codeblock&#34;&gt;&#xA;&lt;div class=&#34;clipboardjs&#34;&gt;mesheryctl system start&lt;/div&gt;&lt;/div&gt;&#xA;&lt;/pre&gt;&#xA;&lt;p&gt;If you are running Meshery on Docker, execute the following command.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

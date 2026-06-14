@@ -1,0 +1,35 @@
+name: BookInfoForCatalogIstio
+services:
+  API Service:
+    name: API Service
+    type: APIService.K8s
+    namespace: default
+    version: v1.23.3
+    settings:
+      name: API Service
+      namespace: default
+    traits:
+      meshmap:
+        edges: []
+        id: 7f544d73-9d02-46df-b5d5-b2298b29ae59
+        label: API Service
+        position:
+          posX: -12.87532858717755
+          posY: 63.026552335666615
+  Istio:
+    name: Istio
+    type: IstioMesh
+    namespace: default
+    version: 1.12.0
+    settings:
+      name: Istio
+      namespace: default
+      profile: default
+    traits:
+      meshmap:
+        edges: []
+        id: a30b2842-6885-4166-9b05-7e93db1d67aa
+        label: Istio
+        position:
+          posX: 54.58489868554972
+          posY: 57.938484153848435

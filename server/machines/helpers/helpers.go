@@ -1,0 +1,98 @@
+package helpers
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/machines/grafana"
+	"github.com/meshery/meshery/server/machines/kubernetes"
+	"github.com/meshery/meshery/server/machines/prometheus"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/core"
+)
+
+func StatusToEvent(status connections.ConnectionStatus) machines.EventType {
+	switch status {
+	case connections.DISCOVERED:
+		return machines.Discovery
+	case connections.REGISTERED:
+		return machines.Register
+	case connections.CONNECTED:
+		return machines.Connect
+	case connections.DISCONNECTED:
+		return machines.Disconnect
+	case connections.IGNORED:
+		return machines.Ignore
+	case connections.DELETED:
+		return machines.Delete
+	case connections.NOTFOUND:
+		return machines.NotFound
+	}
+	return machines.EventType(machines.DefaultState)
+}
+func getMachine(initialState machines.StateType, mtype, id string, userID core.Uuid, log logger.Handler, dbHandler *database.Handler) (*machines.StateMachine, error) {
+	switch mtype {
+	case "kubernetes":
+		return kubernetes.New(id, userID, log)
+	case "grafana":
+		mch, err := machines.New(initialState, id, userID, log, mtype)
+		if err != nil {
+			return mch, err
+		}
+		register := mch.States[machines.REGISTERED]
+		mch.States[machines.REGISTERED] = *register.RegisterAction(&grafana.RegisterAction{})
+
+		connect := mch.States[machines.CONNECTED]
+		mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
+		return mch, nil
+	case "prometheus":
+		mch, err := machines.New(initialState, id, userID, log, mtype)
+		if err != nil {
+			return mch, err
+		}
+		register := mch.States[machines.REGISTERED]
+		mch.States[machines.REGISTERED] = *register.RegisterAction(&prometheus.RegisterAction{})
+
+		connect := mch.States[machines.CONNECTED]
+		mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
+
+		return mch, nil
+	}
+	return nil, machines.ErrInvalidType(fmt.Errorf("invlaid type requested"))
+}
+
+func InitializeMachineWithContext(
+	machineCtx interface{},
+	ctx context.Context,
+	ID core.Uuid,
+	userID core.Uuid,
+	smInstanceTracker *machines.ConnectionToStateMachineInstanceTracker,
+	log logger.Handler,
+	provider models.Provider,
+	initialState machines.StateType,
+	mtype string,
+	initFunc connections.InitFunc,
+) (*machines.StateMachine, error) {
+	inst, ok := smInstanceTracker.Get(ID)
+	if ok {
+		return inst, nil
+	}
+
+	inst, err := getMachine(initialState, mtype, ID.String(), userID, log, provider.GetGenericPersister())
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	inst.Provider = provider
+	_, err = inst.Start(ctx, machineCtx, log, initFunc)
+	smInstanceTracker.Add(ID, inst)
+	if err != nil {
+		return nil, err
+	}
+
+	return inst, nil
+}

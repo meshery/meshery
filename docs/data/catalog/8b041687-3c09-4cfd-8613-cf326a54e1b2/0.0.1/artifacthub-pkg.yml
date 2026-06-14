@@ -1,0 +1,20 @@
+version: 0.0.1
+name: jax-'hello-world'-using-nvidia-gpus-a100-80gb-on-gke
+displayName: JAX 'Hello World' using NVIDIA GPUs A100-80GB on GKE
+createdAt: "2024-03-01T13:00:13Z"
+description: JAX 'Hello World' using NVIDIA GPUs A100-80GB on GKE
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/8b041687-3c09-4cfd-8613-cf326a54e1b2/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 62b081a5-1273-4c58-807f-b6be539275d0
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

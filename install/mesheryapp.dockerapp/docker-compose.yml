@@ -1,0 +1,46 @@
+services:
+  meshery:
+    image: meshery/meshery:stable-latest
+    labels:
+      - ${labels.watchtower}
+    environment:
+      - "PROVIDER_BASE_URLS=https://cloud.meshery.io,https://perf.smp-spec.io,https://cloud.layer5.io,https://platform.tata-consulting.co.uk,https://collab.eti.cisco.com,https://kickstart.metabit.com,https://provider.od10.in"
+      - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004"
+      - "EVENT=mesheryLocal"
+    ports:
+      - "${meshery.port}:8080"
+  meshery-istio:
+    image: meshery/meshery-istio:stable-latest
+    labels:
+      - ${labels.watchtower}
+    ports:
+      - "${istio.port}:10000"
+    x-enabled: ${istio.enabled}
+  meshery-linkerd:
+    image: meshery/meshery-linkerd:stable-latest
+    labels:
+      - ${labels.watchtower}
+    ports:
+      - "${linkerd.port}:10001"
+    x-enabled: ${linkerd.enabled}
+  meshery-consul:
+    image: meshery/meshery-consul:stable-latest
+    labels:
+      - ${labels.watchtower}
+    ports:
+      - "${consul.port}:10002"
+    x-enabled: ${consul.enabled}
+  meshery-nsm:
+    image: meshery/meshery-nsm:stable-latest
+    labels:
+      - ${labels.watchtower}
+    ports:
+      - "${nsm.port}:10004"
+    x-enabled: ${nsm.enabled}
+  watchtower:
+    image: containrrr/watchtower
+    labels:
+      - ${labels.watchtower}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --label-enable

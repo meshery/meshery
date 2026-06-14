@@ -1,0 +1,103 @@
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+.DS_Store
+.dccache
+.vscode/
+.cusorignore
+*.config
+.claude
+
+Chart.min.js
+
+fortio_chart.js
+
+# UI
+**/node_modules/
+**/out/
+
+**/ui/playground/
+ui/.next/
+ui/out/
+ui/.eslintcache
+ui/node_modules/
+ui/tests/e2e/.env
+ui/next-env.d.ts
+
+provider-ui/out/
+provider-ui/.next/
+provider-ui/node_modules/
+provider-ui/.eslintcache
+
+# mesheryctl
+mesheryctl/cmd/mesheryctl/mesheryctl
+mesheryctl/.meshery/
+mesheryctl/mesheryctl
+mesheryctl/default.profraw
+main
+
+# Meshery
+cmd/meshery
+
+log.txt
+
+# Docs
+docs/public
+docs/resources/
+docs/.hugo_build.lock
+docs/hugo_stats.json
+
+#docs/static/v0.*/
+
+dist/
+
+*/npm-debug.log
+
+**/.idea
+
+yarn.lock
+
+# Generated binaries
+**/bin
+*.Identifier
+
+default.profraw
+**errorutil_analyze_errors.json
+**errorutil_analyze_summary.json
+**errorutil_errors_export.json
+.ruby-version
+
+wasm/policies/temp-bundle-extract-dir/**
+server/policies/wasm/policy_engine.wasm
+server/policies/wasm/wasm_exec.js
+ui/public/static/wasm/policy_engine.wasm
+ui/public/static/wasm/wasm_exec.js
+.nvim.lua
+
+allure-results/
+playwright-report/
+
+install/docker-extension/vm/vm
+.env
+ui/.env
+*.env
+*/.env
+# install/providers.env is the canonical, version-controlled remote-provider list,
+# not a secrets file - keep it tracked despite the *.env rules above.
+!install/providers.env
+docs/hugo_stats.json
+
+LLMs
+.copilot-tmp/*
+.claude/worktrees/*

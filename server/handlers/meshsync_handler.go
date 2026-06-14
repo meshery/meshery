@@ -1,0 +1,560 @@
+package handlers
+
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"strconv"
+
+	"github.com/meshery/schemas/models/core"
+
+	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
+	"github.com/meshery/meshery/server/models"
+	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
+	"github.com/meshery/meshkit/models/patterns"
+	"github.com/meshery/meshsync/pkg/model"
+	// NOTE: meshsync_handler retains v1beta1/pattern + v1beta1/component
+	// because it calls EvaluateDesign, which consumes
+	// pattern.EvaluationRequest / pattern.EvaluationResponse. Those eval
+	// types live only in v1beta1/pattern. When the handler needs to call
+	// meshkit's patterns.DehydratePattern (which only accepts
+	// v1beta3/design.PatternFile) it bridges via patternutils.
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
+	"gorm.io/gorm"
+)
+
+// MapToStruct converts a map[string]interface{} to a specified struct type.
+// The targetStruct should be a pointer to the desired struct.
+func MapToStruct(data map[string]interface{}, targetStruct interface{}) error {
+	// Validate input
+	if data == nil {
+		return fmt.Errorf("data is nil")
+	}
+	if targetStruct == nil {
+		return fmt.Errorf("targetStruct is nil")
+	}
+
+	// Marshal the map into JSON
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return fmt.Errorf("failed to marshal map: %w", err)
+	}
+
+	// Unmarshal the JSON into the target struct
+	if err := json.Unmarshal(jsonData, targetStruct); err != nil {
+		return fmt.Errorf("failed to unmarshal JSON into struct: %w", err)
+	}
+
+	return nil
+}
+
+// JsonParse safely parses a JSON string into an interface{} with a fallback default value.
+func JsonParse(input *string, allowEmpty bool, defaultValue interface{}) interface{} {
+	if input == nil {
+		return defaultValue
+	}
+	var result interface{}
+	if err := json.Unmarshal([]byte(*input), &result); err != nil {
+		if allowEmpty {
+			return defaultValue
+		}
+		return nil
+	}
+	return result
+}
+
+func KubernetesResourceToComponentDef(resource model.KubernetesResource, stripSchema bool, stripInstanceDetails bool) (*component.ComponentDefinition, error) {
+
+	var componentDef component.ComponentDefinition
+	err := MapToStruct(resource.ComponentMetadata, &componentDef)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to map component metadata: %w", err)
+	}
+
+	componentDef.ID = uuid.FromStringOrNil(resource.KubernetesResourceMeta.UID)
+	componentDef.DisplayName = resource.KubernetesResourceMeta.Name
+
+	var spec interface{}
+	if resource.Spec != nil {
+		spec = JsonParse(&resource.Spec.Attribute, true, map[string]interface{}{})
+	}
+
+	labels := map[string]string{}
+	annotations := map[string]string{}
+
+	if resource.KubernetesResourceMeta.Labels != nil {
+		for _, label := range resource.KubernetesResourceMeta.Labels {
+			labels[label.Key] = label.Value
+		}
+	}
+
+	if resource.KubernetesResourceMeta.Annotations != nil {
+		for _, annotation := range resource.KubernetesResourceMeta.Annotations {
+			annotations[annotation.Key] = annotation.Value
+		}
+	}
+
+	metadata := map[string]interface{}{
+		"labels":      labels,
+		"annotations": annotations,
+		"name":        resource.KubernetesResourceMeta.Name,
+	}
+
+	// only set namespace if it is not empty otherwise evaluator creates empty namespace
+	if resource.KubernetesResourceMeta.Namespace != "" {
+		metadata["namespace"] = resource.KubernetesResourceMeta.Namespace
+	}
+
+	componentDef.Configuration = map[string]interface{}{
+		"metadata": metadata,
+		"spec":     spec,
+		"data":     JsonParse(&resource.Data, true, map[string]interface{}{}),
+	}
+
+	if componentDef.Metadata.AdditionalProperties == nil {
+		componentDef.Metadata.AdditionalProperties = make(map[string]interface{})
+	}
+
+	componentDef.Metadata.AdditionalProperties["resourceId"] = resource.ID
+
+	if !stripInstanceDetails {
+		componentDef.Metadata.AdditionalProperties["instanceDetails"] = resource
+	}
+
+	if stripSchema {
+		componentDef.Component.Schema = ""
+	}
+
+	return &componentDef, nil
+}
+
+// ConvertToPatternFile converts a list of Kubernetes resources to a PatternFile.
+func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool) pattern.PatternFile {
+	components := []*component.ComponentDefinition{}
+
+	for _, resource := range resources {
+		componentDef, err := KubernetesResourceToComponentDef(resource, stripSchema, true)
+		if err != nil || componentDef == nil {
+			continue // skip this resource if there's an error
+		}
+
+		components = append(components, componentDef)
+	}
+
+	var emptyUUID core.Uuid
+
+	return pattern.PatternFile{
+		Name:          "ClusterSnapshot",
+		ID:            emptyUUID,
+		SchemaVersion: "designs.meshery.io/v1beta1",
+		Version:       "v1",
+		Components:    components,
+		Relationships: []*relationship.RelationshipDefinition{},
+	}
+}
+
+// scopes down the query based on the namespaces
+func filterByNamespaces(query *gorm.DB, namespaces []string) *gorm.DB {
+	if len(namespaces) > 0 {
+		return query.Where("kubernetes_resource_object_meta.namespace IN (?) or ( kubernetes_resources.kind = 'Namespace' AND kubernetes_resource_object_meta.name IN (?) )", namespaces, namespaces)
+
+	}
+	return query
+}
+
+func searchResources(query *gorm.DB, search string) *gorm.DB {
+	if search != "" {
+		return query.Where("kubernetes_resource_object_meta.name LIKE ?", "%"+search+"%")
+	}
+	return query
+}
+
+func filterByKinds(query *gorm.DB, kinds []string) *gorm.DB {
+	if len(kinds) > 0 {
+		return query.Where("kubernetes_resources.kind IN (?)", kinds)
+	}
+	return query
+}
+
+func filterByModels(query *gorm.DB, models []string) *gorm.DB {
+	if len(models) > 0 {
+		return query.Where("kubernetes_resources.model IN (?)", models)
+	}
+	return query
+}
+
+func filterByClusters(query *gorm.DB, clusterIDs []string) *gorm.DB {
+	if len(clusterIDs) > 0 {
+		return query.Where("kubernetes_resources.cluster_id IN (?)", clusterIDs)
+	}
+	return query
+}
+
+func filterByPatternIds(query *gorm.DB, patternIDs []string) *gorm.DB {
+	if len(patternIDs) > 0 {
+		return query.Where("kubernetes_resources.pattern_resource IN (?)", patternIDs)
+	}
+	return query
+}
+
+// filterByKey filters a GORM query to only include resources with specific key-value pairs in their metadata.
+//
+// This function performs the following steps:
+// 1. Joins the `kubernetes_resources` table with `kubernetes_resource_object_meta` to access metadata for resources.
+// 2. Joins the `kubernetes_resource_object_meta` table with `kubernetes_key_values` to access key-value pairs.
+// 3. Filters the results based on:
+//   - The `kind` of the key-value pair (e.g., "label", "annotation").
+//   - A set of key-value pairs provided in the `keyValues` slice, formatted as "key=value".
+//
+// The query ensures only matching resources are returned.
+//
+// Parameters:
+// - query: The initial GORM query to apply the filters to.
+// - kind: The kind of key-value pair to filter by (e.g., "label").
+// - keyValues: A slice of strings in the format "key=value" used to match key-value pairs.
+//
+// Returns:
+// - A filtered GORM query that includes only resources with matching key-value pairs.
+func filterByKey(query *gorm.DB, kind string, keyValues []string) *gorm.DB {
+	if len(keyValues) == 0 {
+		return query
+	}
+	return query.
+		// Joins("join kubernetes_resource_object_meta on kubernetes_resources.id = kubernetes_resource_object_meta.id").
+		Joins("join kubernetes_key_values on kubernetes_resource_object_meta.id = kubernetes_key_values.id").
+		// We need to use the `||` operator to concatenate the key and value, so we can compare it to the key-value pairs. and not cross match with other key value pairs
+		Where("kubernetes_key_values.kind = ? AND  (kubernetes_key_values.key || '=' || kubernetes_key_values.value) IN (?)", kind, keyValues)
+}
+
+func selectDistinctKeyValues(db *gorm.DB, kind string) *gorm.DB {
+
+	return db.
+		Select("DISTINCT kubernetes_key_values.key, kubernetes_key_values.value").
+		Joins("join kubernetes_resource_object_meta on kubernetes_resources.id = kubernetes_resource_object_meta.id").
+		Joins("join kubernetes_key_values on kubernetes_resource_object_meta.id = kubernetes_key_values.id").
+		Where("kubernetes_key_values.kind = ?", kind)
+}
+
+func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	rw.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+	page, offset, limit, search, order, _, _ := getPaginationParams(r)
+	var resources []model.KubernetesResource
+	var totalCount int64
+
+	apiVersion := r.URL.Query().Get("apiVersion")
+	spec, _ := strconv.ParseBool(r.URL.Query().Get("spec"))
+	status, _ := strconv.ParseBool(r.URL.Query().Get("status"))
+	isAnnotaion, _ := strconv.ParseBool(r.URL.Query().Get("annotations"))
+	isLabels, _ := strconv.ParseBool(r.URL.Query().Get("labels"))
+	asDesign, _ := strconv.ParseBool(r.URL.Query().Get("asDesign"))
+	patternIds := r.URL.Query()["patternId"]
+
+	namespaces := r.URL.Query()["namespace"] // namespace is an array of strings to scope the resources
+	labels := r.URL.Query()["label"]         // label is an array of strings
+	// kind is an array of strings
+	kind := r.URL.Query()["kind"]
+	modelNames := r.URL.Query()["model"]
+
+	filter := struct {
+		ClusterIds []string `json:"clusterIds"`
+	}{}
+
+	clusterIds := r.URL.Query().Get("clusterIds")
+	if clusterIds != "" {
+		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
+		if err != nil {
+			// Client-side payload parse — 400.
+			h.log.Error(ErrRequestBody(err))
+			writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+			return
+		}
+	} else {
+		filter.ClusterIds = []string{}
+	}
+
+	query := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
+		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
+		Preload("KubernetesResourceMeta").
+		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
+
+	query = filterByNamespaces(query, namespaces)
+	query = searchResources(query, search)
+	query = filterByKinds(query, kind)
+	query = filterByModels(query, modelNames)
+	query = filterByPatternIds(query, patternIds)
+	query = filterByKey(query, model.KindLabel, labels)
+
+	if apiVersion != "" {
+		query = query.Where("kubernetes_resources.api_version = ?", apiVersion)
+	}
+
+	if isLabels {
+		query = query.Preload("KubernetesResourceMeta.Labels", "kind = ?", model.KindLabel)
+	}
+	if isAnnotaion {
+		query = query.Preload("KubernetesResourceMeta.Annotations", "kind = ?", model.KindAnnotation)
+	}
+
+	if spec {
+		query = query.Preload("Spec")
+	}
+
+	if status {
+		query = query.Preload("Status")
+	}
+
+	query.Count(&totalCount)
+
+	if limit != 0 {
+		query = query.Limit(limit)
+	}
+
+	if offset != 0 {
+		query = query.Offset(offset)
+	}
+
+	order = models.SanitizeOrderInput(order, []string{"creation_timestamp", "name", "kind", "model", "api_version", "namespace"})
+	query.Order(order)
+
+	err := query.Find(&resources).Error
+	if err != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err))
+		writeMeshkitError(rw, ErrFetchMeshSyncResources(err), http.StatusInternalServerError)
+		return
+	}
+
+	var pgSize int
+	if limit == 0 {
+		pgSize = len(resources)
+	} else {
+		pgSize = limit
+	}
+
+	var design pattern.PatternFile
+
+	if asDesign {
+		rawDesign := ConvertToPatternFile(resources, true) // strip schema
+
+		rawDesign.Preferences = &pattern.DesignPreferences{
+			Layers: map[string]interface{}{
+				"relationships": map[string]interface{}{
+					"hierarchical-sibling-matchlabels": false,
+				},
+			},
+		}
+
+		resources = []model.KubernetesResource{} // clear resources to save memory
+		// evalResponse, error := h.Rego.RegoPolicyHandler(rawDesign, RelationshipPolicyPackageName)
+		evalResponse, error := h.EvaluateDesign(pattern.EvaluationRequest{
+			Design: rawDesign,
+		}, 1)
+
+		if error != nil {
+			design = rawDesign
+			h.log.Error(fmt.Errorf("error evaluating design: %v", error))
+		} else {
+			design = evalResponse.Design // use the evaluated design
+		}
+
+	}
+
+	// Extra Optimization ( need to confirm if its worth doing this) clean up components.configuration ( remove data and spec to reduce payload )
+	// for _, comp := range design.Components {
+	// 	comp.Configuration["data"] = map[string]interface{}{}
+	// 	comp.Configuration["spec"] = map[string]interface{}{}
+	// }
+
+	// meshkit's patterns.DehydratePattern operates on v1beta3/design.PatternFile;
+	// this handler still produces a v1beta1/pattern.PatternFile (the
+	// evaluation engine carve-out). Bridge via a typed shallow copy just for
+	// the dehydrate call, then fold the dehydrated fields back onto the
+	// v1beta1 value so the response envelope keeps its existing wire shape.
+	// Log bridge/round-trip errors instead of silently swallowing them —
+	// a failure here means the response goes out un-dehydrated (potentially
+	// carrying extra configuration payload) and that is worth observing.
+	if bridged, bridgeErr := patternutils.PatternV1beta1ToV1beta3(&design); bridgeErr == nil && bridged != nil {
+		patterns.DehydratePattern(bridged)
+		if roundtripped, rtErr := patternutils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
+			design = *roundtripped
+		} else if rtErr != nil {
+			h.log.Warn(fmt.Errorf("meshsync: v1beta3→v1beta1 dehydrate round-trip failed: %w; response will not be dehydrated", rtErr))
+		}
+	} else if bridgeErr != nil {
+		h.log.Warn(fmt.Errorf("meshsync: v1beta1→v1beta3 dehydrate bridge failed: %w; response will not be dehydrated", bridgeErr))
+	}
+
+	response := &models.MeshSyncResourcesAPIResponse{
+		Page:       page,
+		PageSize:   pgSize,
+		TotalCount: totalCount,
+		Resources:  resources,
+		Design:     design,
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+
+	if err := enc.Encode(response); err != nil {
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
+	}
+}
+
+func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	rw.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+
+	resourceID := mux.Vars(r)["id"]
+
+	var resource model.KubernetesResource
+
+	query := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
+		// Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
+		Preload("KubernetesResourceMeta").
+		Preload("Spec").
+		Preload("Status").
+		Preload("KubernetesResourceMeta.Labels", "kind = ?", model.KindLabel).
+		Preload("KubernetesResourceMeta.Annotations", "kind = ?", model.KindAnnotation).
+		Where("kubernetes_resources.id = ?", resourceID)
+
+	err := query.First(&resource).Error
+
+	if err != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err))
+		writeMeshkitError(rw, ErrFetchMeshSyncResources(err), http.StatusInternalServerError)
+		return
+	}
+
+	componentDef, err := KubernetesResourceToComponentDef(resource, true, false)
+
+	if err != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err))
+		writeMeshkitError(rw, ErrFetchMeshSyncResources(err), http.StatusInternalServerError)
+		return
+	}
+
+	if err := enc.Encode(componentDef); err != nil {
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
+	}
+}
+
+func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	rw.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+
+	clusterIds := r.URL.Query()["clusterId"]
+	namespaceScope := r.URL.Query()["namespace"]
+	patternIds := r.URL.Query()["patternId"]
+	h.log.Info("Fetching meshsync resources summary", "clusterIds", clusterIds)
+
+	if len(clusterIds) == 0 {
+		h.log.Error(ErrQueryGet("clusterIds"))
+		writeMeshkitError(rw, ErrQueryGet("clusterIds"), http.StatusBadRequest)
+		return
+	}
+
+	var kindCounts []struct {
+		Kind  string
+		Model string
+		Count int64
+	}
+	var namespaces []string
+
+	// TODO: simplify into one query if possible
+	kindsQuery := provider.GetGenericPersister().
+		Model(&model.KubernetesResource{}).
+		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
+		Select("kind, model, count(*) as count").
+		Group("kind, model").
+		Having("model IS NOT NULL")
+
+	kindsQuery = filterByClusters(kindsQuery, clusterIds)
+	kindsQuery = filterByNamespaces(kindsQuery, namespaceScope)
+	kindsQuery = filterByPatternIds(kindsQuery, patternIds)
+
+	err1 := kindsQuery.Scan(&kindCounts).Error
+
+	if err1 != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err1))
+	}
+
+	err2 := provider.GetGenericPersister().
+		Model(&model.KubernetesResource{}).
+		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
+		Select("distinct namespace").
+		Where("kubernetes_resources.cluster_id IN (?)", clusterIds).
+		Scan(&namespaces).Error
+
+	if err2 != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err2))
+	}
+
+	var labels []model.KubernetesKeyValue
+
+	labelsQuery := selectDistinctKeyValues(provider.GetGenericPersister().Model(&model.KubernetesResource{}), "label")
+	labelsQuery = filterByClusters(labelsQuery, clusterIds)
+	labelsQuery = filterByNamespaces(labelsQuery, namespaceScope)
+	labelsQuery = filterByPatternIds(labelsQuery, patternIds)
+
+	err := labelsQuery.Scan(&labels).Error
+
+	if err != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err))
+	}
+
+	// only return error if both queries failed
+	if err1 != nil && err2 != nil {
+		combinedErr := fmt.Errorf("error fetching meshsync resources summary: %v, %v", err1, err2)
+		writeMeshkitError(rw, ErrFetchMeshSyncResources(combinedErr), http.StatusInternalServerError)
+		return
+	}
+
+	response := &models.MeshSyncResourcesSummaryAPIResponse{
+		Kinds:      kindCounts,
+		Namespaces: namespaces,
+		Labels:     labels,
+	}
+
+	if err := enc.Encode(response); err != nil {
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
+	}
+}
+
+func (h *Handler) DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	resourceID := mux.Vars(r)["id"]
+	db := provider.GetGenericPersister()
+	err := db.Model(&model.KubernetesResource{}).Delete(&model.KubernetesResource{ID: resourceID}).Error
+	if err != nil {
+		deleteErr := ErrFailToDelete(err, "meshsync resource")
+		h.log.Error(deleteErr)
+		writeMeshkitError(rw, deleteErr, http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(rw).Encode(struct {
+		Deleted bool `json:"deleted"`
+	}{Deleted: true}); err != nil {
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
+	}
+}

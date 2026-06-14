@@ -1,0 +1,61 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: meshery-leader-election-rolebinding
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{- include "meshery-operator.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: meshery-leader-election-role
+subjects:
+- kind: ServiceAccount
+  name: meshery-operator
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: meshery-operator-rolebinding
+  labels:
+{{- include "meshery-operator.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: meshery-operator-role
+subjects:
+- kind: ServiceAccount
+  name: meshery-operator
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: meshery-proxy-rolebinding
+  labels:
+{{- include "meshery-operator.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: meshery-proxy-role
+subjects:
+- kind: ServiceAccount
+  name: meshery-operator
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: meshery-controller-rolebinding
+  labels:
+  {{- include "meshery-operator.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: meshery-controller-role
+subjects:
+  - kind: ServiceAccount
+    name: meshery-operator
+    namespace: {{ .Release.Namespace }}

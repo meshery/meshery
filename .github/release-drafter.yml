@@ -1,0 +1,59 @@
+name-template: 'Meshery v$NEXT_PATCH_VERSION'
+tag-template: 'v$NEXT_PATCH_VERSION'
+categories:
+  - title: '🚀 Features'
+    labels:
+      - 'kind/feature'
+      - 'kind/enhancement'
+  - title: '⌨️ Meshery CLI'
+    labels:
+      - 'component/mesheryctl'
+  - title: '🖥 Meshery UI'
+    labels:
+      - 'component/ui'
+  - title: '🔋 Patterns, Filters, Applications'
+    labels:
+      - 'component/patterns'
+      - 'component/applications'
+      - 'component/filters'      
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'kind/fix'
+      - 'kind/bugfix'
+      - 'kind/bug'
+  - title: '🧰 Maintenance'
+    labels:
+      - 'kind/chore'
+      - 'area/ci'
+      - 'area/tests'
+  - title: 📖 Documentation
+    label: area/docs
+  - title: 🔒 Security
+    label: security  
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+template: |
+  ## What's New
+  ## 🔤 General
+  $CHANGES
+
+  ## 👨🏽‍💻 Contributors
+
+  Thank you to our contributors for making this release possible:
+  $CONTRIBUTORS
+autolabeler:
+  - label: 'area/docs'
+    branch:
+      - '/docs/'
+  - label: 'area/ci'    
+    branch:
+      - '/.github/'
+  - label: 'component/ui'
+    branch:
+      - '/ui/'
+      - '/provider-ui/'
+  - label: 'component/mesheryctl'
+    branch:
+      - '/mesheryctl/'
+  - label: 'area/lifecycle'
+    branch:
+      - '/install/'

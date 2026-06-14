@@ -1,0 +1,11 @@
+import React from 'react';
+import CustomErrorMessage from '../components/ErrorPage';
+import { MesheryPage } from '../components/MesheryPage';
+
+const Error = () => (
+  <MesheryPage title="Error" headTitle="404 - Page Not Found" noSuffix>
+    <CustomErrorMessage />
+  </MesheryPage>
+);
+
+export default Error;
