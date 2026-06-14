@@ -1,7 +1,7 @@
 import React from 'react';
 import { DetailsContainer, Segment, FullWidth } from '@/assets/styles/general/tool.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
-import { FormatStructuredData, reorderObjectProperties } from '@/components/data-formatter';
+import { reorderObjectProperties } from '@/components/data-formatter';
 import {
   FormControl,
   Select,
@@ -68,6 +68,25 @@ type RenderContentsProps = {
   jsonData?: any;
 };
 
+const renderData = (
+  data: Record<string, any>,
+  formatters: Record<string, (_value: any) => React.ReactElement>,
+  order: string[],
+) => {
+  const ordered = reorderObjectProperties(data, order);
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+      {Object.entries(ordered).map(([key, value]) => {
+        if (value == null || value === '') return null;
+        if (formatters?.[key]) {
+          return <div key={key}>{formatters[key](value)}</div>;
+        }
+        return null;
+      })}
+    </div>
+  );
+};
+
 const RenderContents = ({
   metaDataLeft,
   metaDataRight,
@@ -81,19 +100,13 @@ const RenderContents = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
       <Segment>
-        <FullWidth style={{ display: 'flex', flexDirection: 'column', paddingRight: '1rem' }}>
-          <FormatStructuredData
-            data={reorderObjectProperties(metaDataLeft, orderLeft)}
-            propertyFormatters={PropertyFormattersLeft}
-            order={orderLeft}
-          />
+        <FullWidth
+          style={{ display: 'flex', flexDirection: 'column', paddingRight: '1rem', width: '60%' }}
+        >
+          {renderData(metaDataLeft, PropertyFormattersLeft, orderLeft)}
         </FullWidth>
-        <FullWidth style={{ display: 'flex', flexDirection: 'column' }}>
-          <FormatStructuredData
-            data={reorderObjectProperties(metaDataRight, orderRight)}
-            propertyFormatters={PropertyFormattersRight}
-            order={orderRight}
-          />
+        <FullWidth style={{ display: 'flex', flexDirection: 'column', width: '40%' }}>
+          {renderData(metaDataRight, PropertyFormattersRight, orderRight)}
         </FullWidth>
       </Segment>
       {jsonData && (
