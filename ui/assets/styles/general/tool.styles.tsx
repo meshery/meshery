@@ -13,6 +13,12 @@ export const ToolWrapper = styled(Box)(({ theme }) => ({
   zIndex: '101',
 }));
 
+export const WorkloadsContainer = styled('div')(() => ({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+}));
+
 export const MeshModelToolbar = styled(Box)(() => ({
   display: 'flex',
   justifyContent: 'space-between',
@@ -29,8 +35,8 @@ export const MainContainer = styled(Box)(() => ({
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
-  height: '100%',
   flex: 1,
+  minHeight: 0,
   overflow: 'hidden',
 }));
 
@@ -144,6 +150,8 @@ export const TreeWrapper = styled(Box)(({ theme }) => ({
   borderBottomRightRadius: '0.5rem',
   [theme.breakpoints.down('sm')]: {
     flexDirection: 'column-reverse',
+    overflow: 'unset',
+    flex: 'none',
   },
 }));
 
