@@ -1506,7 +1506,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 		}
 	}
 }
-}
 
 func (l *DefaultLocalProvider) Cleanup() error {
 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&K8sContext{}); err != nil {
