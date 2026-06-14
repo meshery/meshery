@@ -376,7 +376,7 @@ const NavigatorContent = () => {
     );
   };
 
-  const hasActiveChild = (children): boolean => {
+  const hasActiveChild = (children: any[] | undefined): boolean => {
     if (!children?.length) return false;
     return children.some(
       ({ href: childHref, children: grandchildren }) =>
