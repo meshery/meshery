@@ -284,10 +284,11 @@ const MesheryTreeView = React.memo(
                   >
                     <IconButton
                       size="small"
+                      aria-label="View duplicate entries information"
                       sx={{
                         width: 32,
                         height: 32,
-                        mt: '5px',
+                        mt: 0.5,
                       }}
                     >
                       <InfoOutlinedIcon />
