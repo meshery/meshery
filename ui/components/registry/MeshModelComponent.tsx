@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import {
   MeshModelToolbar,
@@ -17,6 +17,10 @@ import {
   useLazyGetComponentsQuery,
   useLazyGetRelationshipsQuery,
   useLazyGetRegistrantsQuery,
+  useGetMeshModelsQuery,
+  useGetComponentsQuery,
+  useGetRelationshipsQuery,
+  useGetRegistrantsQuery,
 } from '@/rtk-query/meshModel';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
@@ -86,6 +90,22 @@ const MeshModelComponent_ = ({
   const [getComponentsData, componentsRes] = useLazyGetComponentsQuery();
   const [getRelationshipsData, relationshipsRes] = useLazyGetRelationshipsQuery();
   const [getRegistrantsData, registrantsRes] = useLazyGetRegistrantsQuery();
+
+  /**
+   * RTK Queries for counts
+   */
+  const { data: modelsCountData } = useGetMeshModelsQuery({
+    params: { page: 0, pagesize: 1, components: false, relationships: false },
+  });
+  const { data: componentsCountData } = useGetComponentsQuery({
+    params: { page: 0, pagesize: 1, trim: true },
+  });
+  const { data: relationshipsCountData } = useGetRelationshipsQuery({
+    params: { page: 0, pagesize: 1 },
+  });
+  const { data: registrantsCountData } = useGetRegistrantsQuery({
+    params: { page: 0, pagesize: 1 },
+  });
 
   const modelsData = modelsRes.data;
   const registrantsData = registrantsRes.data;
@@ -190,16 +210,17 @@ const MeshModelComponent_ = ({
         // Avoid appending data to the previous dataset.
         // preventing duplicate entries and ensuring the UI reflects the API's response accurately.
         // For instance, during a search, display the data returned by the API instead of appending it to the previous results.
-        let newData = [];
-        if (response.data[view.toLowerCase()]) {
-          newData =
-            searchText || view === RELATIONSHIPS
-              ? [...response.data[view.toLowerCase()]]
-              : [...resourcesDetail, ...response.data[view.toLowerCase()]];
-        }
-
-        // Set unique data
-        setResourcesDetail(_.uniqWith(newData, _.isEqual));
+        // Use functional setState so we don't need resourcesDetail in the
+        // useCallback dependency array (which caused a stale-closure re-fetch
+        // loop and the 2304ms Redux middleware warning).
+        setResourcesDetail((prev) => {
+          const incoming = response.data[view.toLowerCase()];
+          const combined =
+            searchText || view === RELATIONSHIPS ? [...incoming] : [...prev, ...incoming];
+          // Use _.uniqWith for safe deep equality deduplication, as
+          // not all objects (e.g. static seed files) carry unique UUIDs.
+          return _.uniqWith(combined, _.isEqual);
+        });
 
         // Deeplink may contain higher rowsPerPage val for first time fetch
         // In such case set it to default as 14 after UI renders
@@ -223,7 +244,8 @@ const MeshModelComponent_ = ({
     page,
     rowsPerPage,
     searchText,
-    resourcesDetail,
+    // resourcesDetail intentionally omitted — read via functional setState above
+    // to avoid stale-closure re-fetch loop and O(n²) _.isEqual dedup.
     checked,
   ]);
 
@@ -316,6 +338,11 @@ const MeshModelComponent_ = ({
     }
   };
 
+  // Memoize so MesheryTreeView receives the same array reference when nothing
+  // has changed. This is what makes the O(1) referential guard in
+  // MesheryTreeView.tsx safe (prevState.data === data).
+  const treeData = useMemo(modifyData, [resourcesDetail, view, checked]);
+
   useEffect(() => {
     if (searchText !== null && page[view] > 0) {
       setPage({
@@ -388,25 +415,25 @@ const MeshModelComponent_ = ({
           <InnerContainer>
             <TabCard
               label="Models"
-              count={modelsData?.totalCount || 0}
+              count={modelsData?.totalCount ?? modelsCountData?.totalCount ?? 0}
               active={view === MODELS}
               onClick={() => handleTabClick(MODELS)}
             />
             <TabCard
               label="Components"
-              count={componentsData?.totalCount || 0}
+              count={componentsData?.totalCount ?? componentsCountData?.totalCount ?? 0}
               active={view === COMPONENTS}
               onClick={() => handleTabClick(COMPONENTS)}
             />
             <TabCard
               label="Relationships"
-              count={relationshipsData?.totalCount || 0}
+              count={relationshipsData?.totalCount ?? relationshipsCountData?.totalCount ?? 0}
               active={view === RELATIONSHIPS}
               onClick={() => handleTabClick(RELATIONSHIPS)}
             />
             <TabCard
               label="Registrants"
-              count={registrantsData?.totalCount || 0}
+              count={registrantsData?.totalCount ?? registrantsCountData?.totalCount ?? 0}
               active={view === REGISTRANTS}
               onClick={() => handleTabClick(REGISTRANTS)}
             />
@@ -426,7 +453,7 @@ const MeshModelComponent_ = ({
             }}
           >
             <MesheryTreeView
-              data={modifyData()}
+              data={treeData}
               view={view}
               setSearchText={setSearchText}
               setPage={setPage}
@@ -543,7 +570,7 @@ const TabCard = ({ label, count, active, onClick }) => {
           marginLeft: '4px',
         }}
       >
-        {`(${count})`}
+        {`(${count?.toLocaleString() || 0})`}
       </span>
       {label}
     </CardStyle>

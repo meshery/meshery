@@ -10,8 +10,8 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: model-deployment
-  colorIcon: content/en/extensions/models/kubegems-models/components/model-deployment/icons/color/model-deployment-color.svg
-  whiteIcon: content/en/extensions/models/kubegems-models/components/model-deployment/icons/white/model-deployment-white.svg
+  colorIcon: extensions/models/kubegems-models/components/model-deployment/icons/color/model-deployment-color.svg
+  whiteIcon: extensions/models/kubegems-models/components/model-deployment/icons/white/model-deployment-white.svg
   description: 
 components-count: 1
 relationships: 

@@ -10,16 +10,16 @@ integrations-subcategory: Database
 registrant: GitHub
 components: 
 - name: configuration
-  colorIcon: content/en/extensions/models/azure-db-for-mariadb/components/configuration/icons/color/configuration-color.svg
-  whiteIcon: content/en/extensions/models/azure-db-for-mariadb/components/configuration/icons/white/configuration-white.svg
+  colorIcon: extensions/models/azure-db-for-mariadb/components/configuration/icons/color/configuration-color.svg
+  whiteIcon: extensions/models/azure-db-for-mariadb/components/configuration/icons/white/configuration-white.svg
   description: 
 - name: database
-  colorIcon: content/en/extensions/models/azure-db-for-mariadb/components/database/icons/color/database-color.svg
-  whiteIcon: content/en/extensions/models/azure-db-for-mariadb/components/database/icons/white/database-white.svg
+  colorIcon: extensions/models/azure-db-for-mariadb/components/database/icons/color/database-color.svg
+  whiteIcon: extensions/models/azure-db-for-mariadb/components/database/icons/white/database-white.svg
   description: 
 - name: server
-  colorIcon: content/en/extensions/models/azure-db-for-mariadb/components/server/icons/color/server-color.svg
-  whiteIcon: content/en/extensions/models/azure-db-for-mariadb/components/server/icons/white/server-white.svg
+  colorIcon: extensions/models/azure-db-for-mariadb/components/server/icons/color/server-color.svg
+  whiteIcon: extensions/models/azure-db-for-mariadb/components/server/icons/white/server-white.svg
   description: 
 components-count: 3
 relationships: 

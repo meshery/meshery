@@ -29,6 +29,7 @@ vi.mock('@sistent/sistent', () => {
     ),
     ErrorBoundary: ({ children }: any) => <div data-testid="error-boundary">{children}</div>,
     InfoIcon: () => <svg data-testid="info-icon" />,
+    ExpandMoreIcon: () => <button data-testid="expand-more" type="button" />,
   };
 });
 
@@ -43,12 +44,6 @@ vi.mock('@/components/designs/lifecycle/common', () => ({
 vi.mock('@/assets/icons/ExpandLessIcon', () => ({
   default: ({ onClick }: any) => (
     <button data-testid="expand-less" onClick={onClick} type="button" />
-  ),
-}));
-
-vi.mock('@/assets/icons/ExpandMoreIcon', () => ({
-  default: ({ onClick }: any) => (
-    <button data-testid="expand-more" onClick={onClick} type="button" />
   ),
 }));
 
@@ -217,12 +212,26 @@ describe('RelationshipEvaluationTraceFormatter', () => {
 });
 
 describe('RelationshipEvaluationEventFormatter', () => {
-  it('wraps content in ErrorBoundary and shows the event description', () => {
+  it('wraps content in ErrorBoundary and shows the event description with legacy evaluation_response', () => {
     render(
       <RelationshipEvaluationEventFormatter
         event={{
           description: 'Evaluation finished',
           metadata: { evaluation_response: { actions: [], design: {} } },
+        }}
+      />,
+    );
+
+    expect(screen.getByTestId('error-boundary')).toBeInTheDocument();
+    expect(screen.getByText('Evaluation finished')).toBeInTheDocument();
+  });
+
+  it('wraps content in ErrorBoundary and shows the event description with camelCase evaluationResponse', () => {
+    render(
+      <RelationshipEvaluationEventFormatter
+        event={{
+          description: 'Evaluation finished',
+          metadata: { evaluationResponse: { actions: [], design: {} } },
         }}
       />,
     );
