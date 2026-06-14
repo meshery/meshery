@@ -368,6 +368,8 @@ type CredentialAssociationStepProps = {
   existingCredentials: CredentialOption[];
   credentialMode: 'existing' | 'new';
   selectedCredentialId: string;
+  credentialName: string;
+  onCredentialNameChange: (name: string) => void;
   onCredentialModeChange: (mode: 'existing' | 'new') => void;
   onSelectedCredentialChange: (id: string) => void;
   credentialSchema: Record<string, unknown> | null;
@@ -383,6 +385,8 @@ export const CredentialAssociationStep = ({
   existingCredentials,
   credentialMode,
   selectedCredentialId,
+  credentialName,
+  onCredentialNameChange,
   onCredentialModeChange,
   onSelectedCredentialChange,
   credentialSchema,
@@ -434,17 +438,26 @@ export const CredentialAssociationStep = ({
       </>
     )}
     {(credentialMode === 'new' || existingCredentials.length === 0) && credentialSchema && (
-      <FormContainer>
-        <RJSFWrapper
-          key={`${label}-credential-form`}
-          jsonSchema={credentialSchema}
-          formData={credentialFormData}
-          formRef={formRef}
-          liveValidate={false}
-          hideTitle
-          onChange={onCredentialFormChange}
+      <>
+        <TextField
+          fullWidth
+          label="Credential name"
+          value={credentialName}
+          onChange={(event) => onCredentialNameChange(event.target.value)}
+          helperText="A name to identify this credential. Defaults to the connection name."
         />
-      </FormContainer>
+        <FormContainer>
+          <RJSFWrapper
+            key={`${label}-credential-form`}
+            jsonSchema={credentialSchema}
+            formData={credentialFormData}
+            formRef={formRef}
+            liveValidate={false}
+            hideTitle
+            onChange={onCredentialFormChange}
+          />
+        </FormContainer>
+      </>
     )}
     <InlineNotice
       onClick={() => onSkipCredentialVerificationChange(!skipCredentialVerification)}

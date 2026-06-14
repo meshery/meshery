@@ -35,6 +35,7 @@ export type WizardData = {
   connectionFormData: GenericRecord;
   credentialMode: 'existing' | 'new';
   selectedCredentialId: string;
+  credentialName: string;
   credentialFormData: GenericRecord;
   skipCredentialVerification: boolean;
 

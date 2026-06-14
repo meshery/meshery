@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Alert, Box, CheckCircleIcon, Typography } from '@sistent/sistent';
 import { alpha, styled } from '@/theme';
@@ -111,12 +112,29 @@ export const genericDetailsStep: WizardStep = {
 
 const CredentialStepBody = ({ ctx }: { ctx: WizardContext }) => {
   const existingCredentials = existingCredentialsFor(ctx);
+  const connectionName = resolveConnectionName(
+    ctx.data.kindConfig?.kind || 'connection',
+    ctx.data.connectionFormData,
+  );
+
+  // Default the credential name to the connection name. Seeded once when the
+  // step mounts and only while the field is still untouched, so the default
+  // tracks a freshly configured connection name without clobbering a name the
+  // user has typed.
+  useEffect(() => {
+    if (!ctx.data.credentialName) {
+      ctx.patch({ credentialName: connectionName });
+    }
+  }, []);
+
   return (
     <CredentialAssociationStep
       label={ctx.data.kindConfig?.label}
       existingCredentials={existingCredentials}
       credentialMode={ctx.data.credentialMode}
       selectedCredentialId={ctx.data.selectedCredentialId}
+      credentialName={ctx.data.credentialName}
+      onCredentialNameChange={(credentialName) => ctx.patch({ credentialName })}
       onCredentialModeChange={(credentialMode) => ctx.patch({ credentialMode })}
       onSelectedCredentialChange={(selectedCredentialId) => ctx.patch({ selectedCredentialId })}
       credentialSchema={ctx.data.kindConfig?.credentialSchema ?? null}
@@ -166,8 +184,7 @@ const RegisterStepBody = ({ ctx }: { ctx: WizardContext }) => {
     (credential) => credential.id === ctx.data.selectedCredentialId,
   );
   const credentialName =
-    selectedCredential?.name ||
-    (typeof ctx.data.credentialFormData.name === 'string' ? ctx.data.credentialFormData.name : '');
+    selectedCredential?.name || ctx.data.credentialName.trim() || connectionName;
 
   return (
     <Box sx={{ display: 'grid', gap: 2 }}>
@@ -197,15 +214,27 @@ const buildGenericPayload = (ctx: WizardContext) => {
   const selectedCredential = existingCredentialsFor(ctx).find(
     (credential) => credential.id === ctx.data.selectedCredentialId,
   );
+  const connectionName = resolveConnectionName(
+    kindConfig?.kind || 'connection',
+    ctx.data.connectionFormData,
+  );
+  const credentialSecret = buildCredentialSecret(selectedCredential, ctx.data.credentialFormData);
+
+  // For a newly created credential, stamp the user-supplied name (falling back
+  // to the connection name) so it is persisted as a first-class, identifiable
+  // credential rather than an unnamed secret.
+  if (!selectedCredential) {
+    credentialSecret.name = ctx.data.credentialName.trim() || connectionName;
+  }
 
   return {
     id: ctx.data.registrationId,
     kind: kindConfig?.kind,
-    name: resolveConnectionName(kindConfig?.kind || 'connection', ctx.data.connectionFormData),
+    name: connectionName,
     type: typeof connectionType === 'string' ? connectionType.toLowerCase() : undefined,
     subType: typeof connectionSubType === 'string' ? connectionSubType.toLowerCase() : undefined,
     metadata: ctx.data.connectionFormData,
-    credentialSecret: buildCredentialSecret(selectedCredential, ctx.data.credentialFormData),
+    credentialSecret,
     skipCredentialVerification: ctx.data.skipCredentialVerification,
   };
 };

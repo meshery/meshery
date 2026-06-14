@@ -39,6 +39,7 @@ const makeInitialData = (params: UseConnectionWizardParams): WizardData => ({
   connectionFormData: {},
   credentialMode: 'existing',
   selectedCredentialId: '',
+  credentialName: '',
   credentialFormData: {},
   skipCredentialVerification: false,
   kubeconfigFile: null,
