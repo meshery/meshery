@@ -19,7 +19,7 @@ func ErrGetK8sComponents(err error) error {
 }
 
 func ErrParseK8sManifest(err error) error {
-	return errors.New(ErrParseK8sManifestCode, errors.Alert, []string{"Failed to parse manifest into JSON"}, []string{err.Error()}, []string{"Ensure manifests are valid and also use the restricted YAML features like using only \"strings\" in the field names"}, []string{"Ensure YAML is a valid Kubernetes Manifest"})
+	return errors.New(ErrParseK8sManifestCode, errors.Alert, []string{"Failed to parse manifest into JSON"}, []string{err.Error()}, []string{"Invalid YAML or JSON format in the imported file", "No Kubernetes cluster is connected or components have not been registered", "Manifest contains resources not recognized by Meshery"}, []string{"Ensure YAML is a valid Kubernetes Manifest", "Connect a Kubernetes cluster to populate the component registry"})
 }
 
 func ErrCreatePatternService(err error) error {
