@@ -102,6 +102,8 @@ describe('ConnectionWizard.helpers', () => {
         docsUrl: DEFAULT_CONNECTION_DOCS_URL,
         connectionSchema: promConnectionSchema,
         credentialSchema: promCredentialSchema,
+        svgColor: null,
+        svgWhite: null,
       },
       {
         kind: CONNECTION_KINDS.KUBERNETES,
@@ -113,8 +115,23 @@ describe('ConnectionWizard.helpers', () => {
         docsUrl: 'https://docs.meshery.io/installation/kubernetes',
         connectionSchema: null,
         credentialSchema: null,
+        svgColor: null,
+        svgWhite: null,
       },
     ]);
+  });
+
+  it('extracts svgColor/svgWhite from the definition styles', () => {
+    const [config] = buildConnectionWizardKindConfigs([
+      {
+        kind: CONNECTION_KINDS.KUBERNETES,
+        name: 'Kubernetes',
+        styles: { svgColor: '<svg>color</svg>', svgWhite: '<svg>white</svg>' },
+      },
+    ]);
+
+    expect(config.svgColor).toBe('<svg>color</svg>');
+    expect(config.svgWhite).toBe('<svg>white</svg>');
   });
 
   it('treats empty connection/credential schema objects as absent', () => {

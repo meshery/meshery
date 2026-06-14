@@ -20,6 +20,16 @@ export type ConnectionWizardKindConfig = {
   // directly instead of fetching them from the registration state machine.
   connectionSchema: JsonSchema | null;
   credentialSchema: JsonSchema | null;
+  // Inline SVG markup from the connection definition's styles, used for the
+  // kind's icon (white variant for dark backgrounds).
+  svgColor: string | null;
+  svgWhite: string | null;
+};
+
+export type ConnectionDefinitionStyles = {
+  svgColor?: string;
+  svgWhite?: string;
+  svgComplete?: string;
 };
 
 /**
@@ -35,6 +45,7 @@ export type ConnectionDefinition = {
   description?: string;
   connectionSchema?: JsonSchema | null;
   credentialSchema?: JsonSchema | null;
+  styles?: ConnectionDefinitionStyles | null;
   metadata?: {
     flow?: ConnectionWizardFlow;
     docsURL?: string;
@@ -95,6 +106,8 @@ export const buildConnectionWizardKindConfigs = (
         DEFAULT_CONNECTION_DOCS_URL,
       connectionSchema: asSchema(definition.connectionSchema),
       credentialSchema: asSchema(definition.credentialSchema),
+      svgColor: definition.styles?.svgColor || null,
+      svgWhite: definition.styles?.svgWhite || null,
     });
 
     return configs;

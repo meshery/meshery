@@ -66,7 +66,7 @@ import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
 import uiConfig from '../ui.config';
 import { NotificationCenterProvider } from '../components/layout/NotificationCenter';
-import { getMeshModelComponentByName } from '../api/meshmodel';
+import { getConnectionDefinitions, getMeshModelComponentByName } from '../api/meshmodel';
 import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../utils/Enum';
 import { ability } from '../utils/can';
 import { useLazyGetCredentialByIdQuery } from '@/rtk-query/credentials';
@@ -213,13 +213,30 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   const loadMeshModelComponent = useCallback(async () => {
     const connectionDef = {};
 
+    // Connection definitions carry the kind's icon on `styles` (svgColor/svgWhite),
+    // so prefer those over the legacy `<Kind>Connection` component lookup. The
+    // component is still used for the state-machine transitions.
+    const stylesByKind = {};
+    try {
+      const res = await getConnectionDefinitions();
+      (res?.connectionDefinitions || []).forEach((definition) => {
+        if (definition?.kind) {
+          stylesByKind[definition.kind] = definition.styles || {};
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching connection definitions:', error);
+    }
+
     const promises = CONNECTION_KINDS_DEF.map(async (kind) => {
       try {
         const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
         if (res?.components) {
-          connectionDef[CONNECTION_KINDS[kind]] = {
+          const kindKey = CONNECTION_KINDS[kind];
+          const definitionStyles = stylesByKind[kindKey] || {};
+          connectionDef[kindKey] = {
             transitions: res?.components[0].metadata.transitions,
-            icon: res?.components[0].styles.svgColor,
+            icon: definitionStyles.svgColor || res?.components[0].styles.svgColor,
           };
         }
       } catch (error) {

@@ -271,10 +271,16 @@ export const ConnectionKindSelectionStep = ({
         <KindGrid>
           {kinds.map((config) => {
             const isPermitted = canUseKind(config);
-            // Icon paths from the connection metadata are repo-relative and must
-            // be normalized the same way the connections table does, otherwise the
-            // <img> src is broken. Fall back to the per-kind static asset.
+            // Prefer the SVG carried on the connection definition (white variant
+            // on dark backgrounds), then the redux connection metadata icon, then
+            // the per-kind static asset. normalizeStaticImagePath turns inline SVG
+            // markup into a data URI and normalizes repo-relative paths.
+            const definitionSvg =
+              theme.palette.mode === 'dark'
+                ? config.svgWhite || config.svgColor
+                : config.svgColor || config.svgWhite;
             const iconSrc =
+              normalizeStaticImagePath(definitionSvg) ||
               normalizeStaticImagePath(connectionIconMap?.[config.kind]?.icon) ||
               normalizeStaticImagePath(getFallbackImageBasedOnKind(config.kind));
             const isSelected = selectedKind === config.kind;
