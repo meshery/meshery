@@ -419,7 +419,7 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 		return pattern, ErrParseK8sManifest(fmt.Errorf("kubernetes manifest is empty"))
 	}
 
-	if resolvedCount == 0 {
+	if resolvedCount == 0 && !ignoreErrors {
 		return pattern, ErrNoResolvedComponents(fmt.Errorf("0 of %d manifest resources resolved to known components", totalDecoded))
 	}
 
@@ -463,7 +463,7 @@ func createPatternDeclarationFromK8s(manifest map[string]interface{}, regManager
 	componentList, _, _, _ := regManager.GetEntitiesMemoized(&componentFilter, registryCache)
 
 	if len(componentList) == 0 {
-		return component.ComponentDefinition{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
+		return component.ComponentDefinition{}, ErrNoResolvedComponents(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 
 	// just needs the first entry to grab meshmodel-metadata and other model

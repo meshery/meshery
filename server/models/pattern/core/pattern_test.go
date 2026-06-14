@@ -2,6 +2,10 @@ package core
 
 import (
 	"testing"
+
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
 )
 
 func TestDesignNameFromFileName(t *testing.T) {
@@ -90,4 +94,87 @@ func TestDesignNameFromFileName(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestNewPatternFileFromK8sManifestIgnoreErrors(t *testing.T) {
+	registryManager := newTestRegistryManager(t)
+
+	tests := []struct {
+		name         string
+		manifest     string
+		ignoreErrors bool
+		expectedCode string
+	}{
+		{
+			name: "given unresolved manifest and ignoreErrors true when NewPatternFileFromK8sManifest then return empty pattern",
+			manifest: `
+apiVersion: v1
+kind: Service
+metadata:
+  name: unresolved-service
+`,
+			ignoreErrors: true,
+		},
+		{
+			name: "given unresolved manifest and ignoreErrors false when NewPatternFileFromK8sManifest then return no resolved components error",
+			manifest: `
+apiVersion: v1
+kind: Service
+metadata:
+  name: unresolved-service
+`,
+			ignoreErrors: false,
+			expectedCode: ErrNoResolvedComponentsCode,
+		},
+		{
+			name: "given empty yaml documents when NewPatternFileFromK8sManifest then return empty manifest error",
+			manifest: `
+---
+---
+`,
+			ignoreErrors: true,
+			expectedCode: ErrParseK8sManifestCode,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pattern, err := NewPatternFileFromK8sManifest(tt.manifest, "manifest.yaml", tt.ignoreErrors, registryManager)
+
+			if tt.expectedCode != "" && err == nil {
+				t.Fatal("expected error, got nil")
+			}
+
+			if tt.expectedCode == "" && err != nil {
+				t.Fatalf("expected nil error, got %v", err)
+			}
+
+			if tt.expectedCode != "" && errors.GetCode(err) != tt.expectedCode {
+				t.Fatalf("expected error code %q, got %q", tt.expectedCode, errors.GetCode(err))
+			}
+
+			if tt.expectedCode == "" && len(pattern.Components) != 0 {
+				t.Fatalf("expected no resolved components, got %d", len(pattern.Components))
+			}
+		})
+	}
+}
+
+func newTestRegistryManager(t *testing.T) *registry.RegistryManager {
+	t.Helper()
+
+	db, err := database.New(database.Options{
+		Filename: ":memory:",
+		Engine:   "sqlite",
+	})
+	if err != nil {
+		t.Fatalf("failed to create in-memory database: %v", err)
+	}
+
+	registryManager, err := registry.NewRegistryManager(&db)
+	if err != nil {
+		t.Fatalf("failed to create registry manager: %v", err)
+	}
+
+	return registryManager
 }
