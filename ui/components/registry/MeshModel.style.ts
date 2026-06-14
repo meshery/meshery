@@ -83,6 +83,9 @@ export const StyledKeyValueFormattedValue = styled('div')(({ theme }) => ({
   margin: '0',
   fontSize: theme.typography.htmlFontSize,
   fontFamily: theme.typography.fontFamily,
+  overflowWrap: 'break-word',
+  wordBreak: 'break-word',
+  minWidth: 0,
 }));
 
 export const StyledTreeItemNameDiv = styled('div')(({ theme }) => ({
