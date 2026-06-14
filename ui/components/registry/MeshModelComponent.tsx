@@ -297,8 +297,25 @@ const MeshModelComponent_ = ({
     page,
     rowsPerPage,
     searchText,
-    checked,
   ]);
+
+  // Reset models list when the Duplicates toggle changes.
+  // checked is intentionally excluded from fetchData deps above.
+  useEffect(() => {
+    if (view === MODELS) {
+      setModelsFilters({ page: 0 });
+      setResourcesDetail([]);
+    }
+  }, [checked]);
+
+  // Reset models list when the Duplicates toggle changes.
+  // checked is intentionally excluded from fetchData deps above.
+  useEffect(() => {
+    if (view === MODELS) {
+      setModelsFilters({ page: 0 });
+      setResourcesDetail([]);
+    }
+  }, [checked]);
 
   const handleTabClick = (selectedView) => {
     // -> use settingsRouter when not in modal mode (Settings page)
