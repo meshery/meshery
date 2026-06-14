@@ -63,20 +63,18 @@ type RenderContentsProps = {
   metaDataRight: Record<string, any>;
   PropertyFormattersLeft: Record<string, (_value: any) => React.ReactNode>;
   PropertyFormattersRight: Record<string, (_value: any) => React.ReactNode>;
-  orderLeft: string[];
-  orderRight: string[];
+  orderLeft: Record<string, any>;
+  orderRight: Record<string, any>;
   jsonData?: any;
 };
 
 const renderData = (
   data: Record<string, any>,
   formatters: Record<string, (_value: any) => React.ReactNode>,
-  order: string[],
 ) => {
-  const ordered = reorderObjectProperties(data, order);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-      {Object.entries(ordered).map(([key, value]) => {
+      {Object.entries(data).map(([key, value]) => {
         if (value == null || value === '') return null;
         if (formatters[key]) {
           return <div key={key}>{formatters[key](value)}</div>;
@@ -109,10 +107,10 @@ const RenderContents = ({
         <FullWidth
           style={{ display: 'flex', flexDirection: 'column', paddingRight: '1rem', width: '60%' }}
         >
-          {renderData(metaDataLeft, PropertyFormattersLeft, orderLeft)}
+          {renderData(orderLeft, PropertyFormattersLeft)}
         </FullWidth>
         <FullWidth style={{ display: 'flex', flexDirection: 'column', width: '40%' }}>
-          {renderData(metaDataRight, PropertyFormattersRight, orderRight)}
+          {renderData(orderRight, PropertyFormattersRight)}
         </FullWidth>
       </Segment>
       {jsonData && (
