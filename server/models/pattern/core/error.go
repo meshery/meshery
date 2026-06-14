@@ -18,9 +18,8 @@ const (
 func ErrGetK8sComponents(err error) error {
 	return errors.New(ErrGetK8sComponentsCode, errors.Alert, []string{"Could not get K8s components for registration"}, []string{err.Error()}, []string{"Invalid kubeconfig", "Filters passed incorrectly in config", "Could not fetch API resources from Kubernetes server"}, []string{"Make sure that the configuration filters passed are in accordance with output from /openapi/v2"})
 }
-
 func ErrParseK8sManifest(err error) error {
-	return errors.New(ErrParseK8sManifestCode, errors.Alert, []string{"Failed to parse manifest into JSON"}, []string{err.Error()}, []string{"Invalid YAML or JSON format in the imported file", "No Kubernetes cluster is connected or components have not been registered", "Manifest contains resources not recognized by Meshery"}, []string{"Ensure YAML is a valid Kubernetes Manifest", "Connect a Kubernetes cluster to populate the component registry"})
+	return errors.New(ErrParseK8sManifestCode, errors.Alert, []string{"Failed to parse manifest into JSON"}, []string{err.Error()}, []string{"Invalid YAML or JSON format in the imported file", "Ensure manifests are valid and use restricted YAML features like using only \"strings\" in the field names"}, []string{"Ensure YAML is a valid Kubernetes Manifest"})
 }
 
 func ErrNoResolvedComponents(err error) error {
