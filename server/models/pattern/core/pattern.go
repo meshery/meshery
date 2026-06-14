@@ -383,6 +383,9 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 			if items, ok := manifest["items"].([]interface{}); ok {
 				for _, item := range items {
 					if itemMap, ok := item.(map[string]interface{}); ok {
+						if len(itemMap) == 0 {
+							continue
+						}
 						totalDecoded++
 						declaration, err := createPatternDeclarationFromK8s(itemMap, reg, registryCache)
 						if err != nil {
