@@ -351,7 +351,8 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 	}
 
 	decoder := yaml.NewDecoder(bytes.NewBufferString(data))
-	resourceCount := 0
+	totalDecoded := 0
+	resolvedCount := 0
 
 	for {
 		manifest := map[string]interface{}{}
@@ -382,14 +383,15 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 			if items, ok := manifest["items"].([]interface{}); ok {
 				for _, item := range items {
 					if itemMap, ok := item.(map[string]interface{}); ok {
-						resourceCount++
+						totalDecoded++
 						declaration, err := createPatternDeclarationFromK8s(itemMap, reg, registryCache)
 						if err != nil {
 							if ignoreErrors {
 								continue
 							}
-							return pattern, ErrCreatePatternService(fmt.Errorf("failed to create design service from kubernetes component: %s", err))
+							return pattern, err
 						}
+						resolvedCount++
 						pattern.Components = append(pattern.Components, &declaration)
 					}
 				}
@@ -397,20 +399,25 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 			continue
 		}
 
-		resourceCount++
 		// Process single manifest
+		totalDecoded++
 		declaration, err := createPatternDeclarationFromK8s(manifest, reg, registryCache)
 		if err != nil {
 			if ignoreErrors {
 				continue
 			}
-			return pattern, ErrCreatePatternService(fmt.Errorf("failed to create design service from kubernetes component: %s", err))
+			return pattern, err
 		}
+		resolvedCount++
 		pattern.Components = append(pattern.Components, &declaration)
 	}
 
-	if resourceCount == 0 {
+	if totalDecoded == 0 {
 		return pattern, ErrParseK8sManifest(fmt.Errorf("kubernetes manifest is empty"))
+	}
+
+	if resolvedCount == 0 {
+		return pattern, ErrNoResolvedComponents(fmt.Errorf("0 of %d manifest resources resolved to known components", totalDecoded))
 	}
 
 	return pattern, nil
