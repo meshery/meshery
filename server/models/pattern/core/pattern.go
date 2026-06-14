@@ -411,7 +411,7 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 
 	if len(pattern.Components) == 0 {
 		if resourceCount > 0 {
-			return pattern, ErrParseK8sManifest(fmt.Errorf("none of the %d resources in the manifest could be resolved to known components. Ensure a Kubernetes cluster is connected so component definitions are available in the registry", resourceCount))
+			return pattern, ErrNoResolvedComponents(fmt.Errorf("none of the %d resources in the manifest could be resolved to known components. Possible causes: no Kubernetes cluster is connected, the component registry is not populated, or the manifest contains resources not recognized by Meshery", resourceCount))
 		}
 		return pattern, ErrParseK8sManifest(fmt.Errorf("kubernetes manifest is empty"))
 	}
