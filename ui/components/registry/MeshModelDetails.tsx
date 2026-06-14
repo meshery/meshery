@@ -61,8 +61,8 @@ const StyledTitle = styled('div')(({ theme }) => ({
 type RenderContentsProps = {
   metaDataLeft: Record<string, any>;
   metaDataRight: Record<string, any>;
-  PropertyFormattersLeft: Record<string, (_value: any) => React.ReactElement>;
-  PropertyFormattersRight: Record<string, (_value: any) => React.ReactElement>;
+  PropertyFormattersLeft: Record<string, (_value: any) => React.ReactNode>;
+  PropertyFormattersRight: Record<string, (_value: any) => React.ReactNode>;
   orderLeft: string[];
   orderRight: string[];
   jsonData?: any;
@@ -70,7 +70,7 @@ type RenderContentsProps = {
 
 const renderData = (
   data: Record<string, any>,
-  formatters: Record<string, (_value: any) => React.ReactElement>,
+  formatters: Record<string, (_value: any) => React.ReactNode>,
   order: string[],
 ) => {
   const ordered = reorderObjectProperties(data, order);
@@ -78,10 +78,16 @@ const renderData = (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
       {Object.entries(ordered).map(([key, value]) => {
         if (value == null || value === '') return null;
-        if (formatters?.[key]) {
+        if (formatters[key]) {
           return <div key={key}>{formatters[key](value)}</div>;
         }
-        return null;
+        const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase());
+        const display = typeof value === 'object' ? JSON.stringify(value) : String(value);
+        return (
+          <div key={key}>
+            <KeyValue property={label} value={display} />
+          </div>
+        );
       })}
     </div>
   );
