@@ -221,7 +221,19 @@ components:
   colorIcon: extensions/models/kuma/components/workload/icons/color/workload-color.svg
   whiteIcon: extensions/models/kuma/components/workload/icons/white/workload-white.svg
   description: 
-components-count: 53
+- name: mesh-open-telemetry-backend
+  colorIcon: extensions/models/kuma/components/mesh-open-telemetry-backend/icons/color/mesh-open-telemetry-backend-color.svg
+  whiteIcon: extensions/models/kuma/components/mesh-open-telemetry-backend/icons/white/mesh-open-telemetry-backend-white.svg
+  description: 
+- name: mesh-zone-address
+  colorIcon: extensions/models/kuma/components/mesh-zone-address/icons/color/mesh-zone-address-color.svg
+  whiteIcon: extensions/models/kuma/components/mesh-zone-address/icons/white/mesh-zone-address-white.svg
+  description: 
+- name: mesh-zone-address
+  colorIcon: extensions/models/kuma/components/mesh-zone-address/icons/color/mesh-zone-address-color.svg
+  whiteIcon: extensions/models/kuma/components/mesh-zone-address/icons/white/mesh-zone-address-white.svg
+  description: 
+components-count: 56
 relationships: 
 relationship-count: 0
 featureList: [

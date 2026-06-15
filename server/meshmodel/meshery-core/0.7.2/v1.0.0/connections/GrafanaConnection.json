@@ -6,6 +6,48 @@
   "type": "telemetry",
   "subType": "metrics",
   "status": "registered",
+  "transitionMap": {
+    "discovered": [
+      {
+        "nextState": "registered",
+        "description": "Are you sure you want to transition from DISCOVERED to REGISTERED? This will register the discovered Grafana connection with Meshery."
+      },
+      {
+        "nextState": "ignored",
+        "description": "Are you sure you want to transition from DISCOVERED to IGNORED? This will ignore the discovered Grafana connection."
+      }
+    ],
+    "registered": [
+      {
+        "nextState": "connected",
+        "description": "Are you sure you want to transition from REGISTERED to CONNECTED? This will connect to the Grafana connection."
+      },
+      {
+        "nextState": "ignored",
+        "description": "Are you sure you want to transition from REGISTERED to IGNORED? This will keep the Grafana registration but not connect to it."
+      }
+    ],
+    "connected": [
+      {
+        "nextState": "disconnected",
+        "description": "Are you sure you want to transition from CONNECTED to DISCONNECTED? This will disconnect the Grafana connection."
+      },
+      {
+        "nextState": "deleted",
+        "description": "Are you sure you want to transition from CONNECTED to DELETED? This will remove the Grafana connection completely."
+      }
+    ],
+    "disconnected": [
+      {
+        "nextState": "connected",
+        "description": "Are you sure you want to transition from DISCONNECTED to CONNECTED? This will reconnect the Grafana connection."
+      },
+      {
+        "nextState": "deleted",
+        "description": "Are you sure you want to transition from DISCONNECTED to DELETED? This will remove the Grafana connection completely."
+      }
+    ]
+  },
   "connectionSchema": {
     "type": "object",
     "title": "Grafana Connection",

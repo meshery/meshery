@@ -183,8 +183,15 @@ const MesheryTreeView = React.memo(
             setSelected([selectedItemUUID]);
           }
           const showData = getFilteredDataForDetailsComponent(data, selectedItemUUID);
-          // O(1) ID comparison instead of deep JSON.stringify on large objects.
-          if (showData?.data?.id !== showDetailsDataRef.current?.data?.id) {
+          // Only update the details panel when the item was found in the top-level data.
+          // If showData.data is empty, the selected item is nested (a component or
+          // relationship inside a model version). Those cases are handled by
+          // VersionedModelComponentTree / VersionedModelRelationshipTree — overwriting
+          // with an empty object here would wipe the details panel the onClick just set.
+          if (
+            Object.keys(showData.data).length > 0 &&
+            showData?.data?.id !== showDetailsDataRef.current?.data?.id
+          ) {
             setShowDetailsData(showData);
           }
         }

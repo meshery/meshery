@@ -6,6 +6,80 @@
   "type": "platform",
   "subType": "orchestration",
   "status": "discovered",
+  "transitionMap": {
+    "discovered": [
+      {
+        "nextState": "registered",
+        "description": "Are you sure you want to transition from DISCOVERED to REGISTERED? This will register the discovered cluster with Meshery so it can be managed."
+      },
+      {
+        "nextState": "not found",
+        "description": "Are you sure you want to transition from DISCOVERED to NOT FOUND? Meshery can no longer reach the cluster's API server."
+      },
+      {
+        "nextState": "deleted",
+        "description": "Are you sure you want to transition from DISCOVERED to DELETED? This will discard the discovered cluster without registering it."
+      }
+    ],
+    "registered": [
+      {
+        "nextState": "connected",
+        "description": "Are you sure you want to transition from REGISTERED to CONNECTED? This will connect to the cluster and deploy the operator to begin managing it."
+      },
+      {
+        "nextState": "ignored",
+        "description": "Are you sure you want to transition from REGISTERED to IGNORED? This will keep the registration but not connect to the cluster."
+      }
+    ],
+    "connected": [
+      {
+        "nextState": "disconnected",
+        "description": "Are you sure you want to transition from CONNECTED to DISCONNECTED? This will perform planned maintenance by removing the operator but keeping the cluster registered."
+      },
+      {
+        "nextState": "ignored",
+        "description": "Are you sure you want to transition from CONNECTED to IGNORED? This will mark the connection as ignored due to unplanned maintenance, without deleting the registration."
+      },
+      {
+        "nextState": "not found",
+        "description": "Are you sure you want to transition from CONNECTED to NOT FOUND? Meshery could not connect to the cluster or it is currently unavailable. You can either delete the connection or try re-registering."
+      },
+      {
+        "nextState": "deleted",
+        "description": "Are you sure you want to transition from CONNECTED to DELETED? This will undeploy the operator and unregister the cluster completely."
+      }
+    ],
+    "disconnected": [
+      {
+        "nextState": "connected",
+        "description": "Are you sure you want to transition from DISCONNECTED to CONNECTED? This will reconnect the cluster and redeploy the operator after maintenance."
+      },
+      {
+        "nextState": "deleted",
+        "description": "Are you sure you want to transition from DISCONNECTED to DELETED? This will remove the cluster completely by undeploying the operator and unregistering."
+      }
+    ],
+    "ignored": [
+      {
+        "nextState": "registered",
+        "description": "Are you sure you want to transition from IGNORED to REGISTERED? This will reinitiate the registration process for the ignored connection and attempt to connect it again."
+      },
+      {
+        "nextState": "deleted",
+        "description": "Are you sure you want to transition from IGNORED to DELETED? This will completely remove the ignored cluster by undeploying the operator and unregistering."
+      }
+    ],
+    "not found": [
+      {
+        "nextState": "discovered",
+        "description": "Are you sure you want to transition from NOT FOUND to DISCOVERED? You are trying to re-register the cluster. Meshery will attempt to reconnect to the cluster."
+      },
+      {
+        "nextState": "deleted",
+        "description": "Are you sure you want to transition from NOT FOUND to DELETED? This will remove the unreachable connection completely by unregistering it."
+      }
+    ]
+  },
   "connectionSchema": {
     "type": "object",
     "title": "Kubernetes Connection",
