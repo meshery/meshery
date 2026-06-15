@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "RelationshipDefinition",
+  "metadata": {
+    "description": "EKS Cluster to Nodegroup network binding. A Nodegroup references its parent Cluster via the clusterName field. This relationship represents the first link in the EKS compute stack: the cluster defines the control plane, and nodegroups provision the worker nodes within it."
+  },
+  "model": {
+    "name": "aws-eks-controller",
+    "version": "v1.9.3"
+  },
+  "type": "binding",
+  "subType": "network",
+  "evaluationQuery": "edge_binding_network_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-eks-controller",
+            "kind": "Cluster",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-eks-controller",
+            "kind": "Nodegroup",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "clusterName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

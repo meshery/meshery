@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "RelationshipDefinition",
+  "metadata": {
+    "description": "LaunchTemplate to EKS Nodegroup network binding. A Nodegroup references a LaunchTemplate by name to define the EC2 instance configuration (AMI, instance type, user data) for its worker nodes. This relationship represents the second link in the EKS compute stack."
+  },
+  "model": {
+    "name": "aws-eks-controller",
+    "version": "v1.9.3"
+  },
+  "type": "binding",
+  "subType": "network",
+  "evaluationQuery": "edge_binding_network_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-ec2-controller",
+            "kind": "LaunchTemplate",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-eks-controller",
+            "kind": "Nodegroup",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "launchTemplate",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

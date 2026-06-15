@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "RelationshipDefinition",
+  "metadata": {
+    "description": "SecurityGroup to LaunchTemplate firewall binding. A LaunchTemplate references SecurityGroups via the securityGroupIDs field in its data block. This defines the network firewall rules that apply to every EC2 instance launched from the template, forming the blast radius boundary for EKS worker node access."
+  },
+  "model": {
+    "name": "aws-ec2-controller",
+    "version": "v1.13.1"
+  },
+  "type": "binding",
+  "subType": "firewall",
+  "evaluationQuery": "edge_binding_firewall_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-ec2-controller",
+            "kind": "SecurityGroup",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-ec2-controller",
+            "kind": "LaunchTemplate",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "data",
+                  "securityGroupIDs",
+                  "0"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

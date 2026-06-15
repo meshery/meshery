@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "RelationshipDefinition",
+  "metadata": {
+    "description": "Lambda Function to S3 Bucket non-binding network relationship. A Lambda function writes processed data to an S3 bucket at runtime, forming the storage layer of data platform architectures (e.g., Kinesis → Lambda → S3 data lake). This is a runtime data-flow dependency rather than a spec-level binding."
+  },
+  "model": {
+    "name": "aws-lambda-controller",
+    "version": "v1.13.0"
+  },
+  "type": "non-binding",
+  "subType": "network",
+  "evaluationQuery": "edge_non_binding_network_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-lambda-controller",
+            "kind": "Function",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-s3-controller",
+            "kind": "Bucket",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

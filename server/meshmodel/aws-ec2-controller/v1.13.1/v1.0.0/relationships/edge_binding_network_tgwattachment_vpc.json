@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "RelationshipDefinition",
+  "metadata": {
+    "description": "VPC to Transit Gateway VPC Attachment network binding. A TransitGatewayVPCAttachment references a specific VPC via its vpcID field, connecting that VPC to the transit gateway routing domain. This relationship completes the hub-and-spoke visualization in Kanvas."
+  },
+  "model": {
+    "name": "aws-ec2-controller",
+    "version": "v1.13.1"
+  },
+  "type": "binding",
+  "subType": "network",
+  "evaluationQuery": "edge_binding_network_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-ec2-controller",
+            "kind": "VPC",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-ec2-controller",
+            "kind": "TransitGatewayVPCAttachment",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "vpcID"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

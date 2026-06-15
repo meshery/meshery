@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "RelationshipDefinition",
+  "metadata": {
+    "description": "Lambda Function to EventSourceMapping network binding. An EventSourceMapping references its target Lambda Function via the functionName field. This relationship connects the event source (SQS, Kinesis, DynamoDB Streams) to the function that processes the events."
+  },
+  "model": {
+    "name": "aws-lambda-controller",
+    "version": "v1.13.0"
+  },
+  "type": "binding",
+  "subType": "network",
+  "evaluationQuery": "edge_binding_network_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-lambda-controller",
+            "kind": "Function",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-lambda-controller",
+            "kind": "EventSourceMapping",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "functionName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "RelationshipDefinition",
+  "metadata": {
+    "description": "Lambda Function to DynamoDB Table non-binding network relationship. A Lambda function writes to or reads from a DynamoDB table at runtime. Unlike binding relationships, this is a runtime data-flow dependency — the function's code references the table name but no Kubernetes spec field is mutated. This relationship enables Kanvas to visualize the end-to-end serverless event pipeline."
+  },
+  "model": {
+    "name": "aws-lambda-controller",
+    "version": "v1.13.0"
+  },
+  "type": "non-binding",
+  "subType": "network",
+  "evaluationQuery": "edge_non_binding_network_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-lambda-controller",
+            "kind": "Function",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-dynamodb-controller",
+            "kind": "Table",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "tableName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

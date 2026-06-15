@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "RelationshipDefinition",
+  "metadata": {
+    "description": "SQS Queue to EventBridge Rule network binding. An EventBridge Rule targets an SQS Queue via the targets[].arn field. When the rule's event pattern matches, the matched event is delivered to the SQS queue. This relationship represents the first link in serverless event pipelines."
+  },
+  "model": {
+    "name": "aws-eventbridge-controller",
+    "version": "v1.3.0"
+  },
+  "type": "binding",
+  "subType": "network",
+  "evaluationQuery": "edge_binding_network_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-sqs-controller",
+            "kind": "Queue",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "queueName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-eventbridge-controller",
+            "kind": "Rule",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "targets",
+                  "0",
+                  "arn"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

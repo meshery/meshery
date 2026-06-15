@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "RelationshipDefinition",
+  "metadata": {
+    "description": "Kinesis Stream to Lambda EventSourceMapping network binding. An EventSourceMapping polls a Kinesis data stream and invokes a Lambda function for each batch of records. The eventSourceARN field on the EventSourceMapping references the Kinesis stream. This relationship represents the ingestion layer of real-time data platform architectures."
+  },
+  "model": {
+    "name": "aws-lambda-controller",
+    "version": "v1.13.0"
+  },
+  "type": "binding",
+  "subType": "network",
+  "evaluationQuery": "edge_binding_network_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-kinesis-controller",
+            "kind": "Stream",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-lambda-controller",
+            "kind": "EventSourceMapping",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "eventSourceARN"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

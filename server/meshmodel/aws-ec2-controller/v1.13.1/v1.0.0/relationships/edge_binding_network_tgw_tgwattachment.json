@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "RelationshipDefinition",
+  "metadata": {
+    "description": "Transit Gateway to VPC Attachment network binding. In AWS hub-and-spoke topologies, a TransitGateway acts as the central routing hub. Each VPC connects to it via a TransitGatewayVPCAttachment, which references the transit gateway ID. This relationship enables Kanvas to visualize multi-account, multi-VPC routing architectures."
+  },
+  "model": {
+    "name": "aws-ec2-controller",
+    "version": "v1.13.1"
+  },
+  "type": "binding",
+  "subType": "network",
+  "evaluationQuery": "edge_binding_network_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "model": "aws-ec2-controller",
+            "kind": "TransitGateway",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "model": "aws-ec2-controller",
+            "kind": "TransitGatewayVPCAttachment",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "transitGatewayID"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
