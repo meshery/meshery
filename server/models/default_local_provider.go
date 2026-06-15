@@ -1724,9 +1724,6 @@ func (l *DefaultLocalProvider) AddEnvironmentToWorkspace(_ *http.Request, worksp
 	if err != nil {
 		return nil, err
 	}
-	return l.WorkspacePersister.AddEnvironmentToWorkspace(wsID, envID)
-}
-
 func (l *DefaultLocalProvider) RemoveEnvironmentFromWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
 	wsID, err := uuid.FromString(workspaceID)
 	if err != nil {
