@@ -158,6 +158,7 @@ interface NavItemDef {
   id: string;
   label: string;
   icon: ReactNode;
+  headerIcon: ReactNode;
 }
 
 interface CountSummary {
@@ -172,11 +173,13 @@ const getNavItems = (theme: ReturnType<typeof useTheme>, counts: CountSummary): 
     id: MODELS,
     label: `Models (${counts.models?.toLocaleString() || 0})`,
     icon: <FileIcon {...iconSmall} fill={theme.palette.icon.default} />,
+    headerIcon: <FileIcon {...iconMedium} fill={theme.palette.common.white} />,
   },
   {
     id: COMPONENTS,
     label: `Components (${counts.components?.toLocaleString() || 0})`,
     icon: <ComponentIcon {...iconSmall} fill={theme.palette.icon.default} />,
+    headerIcon: <ComponentIcon {...iconMedium} fill={theme.palette.common.white} />,
   },
   {
     id: RELATIONSHIPS,
@@ -189,11 +192,20 @@ const getNavItems = (theme: ReturnType<typeof useTheme>, counts: CountSummary): 
         secondaryFill={theme.palette.icon.default}
       />
     ),
+    headerIcon: (
+      <ConnectionIcon
+        {...iconMedium}
+        fill={theme.palette.common.white}
+        primaryFill={theme.palette.common.white}
+        secondaryFill={theme.palette.common.white}
+      />
+    ),
   },
   {
     id: REGISTRANTS,
     label: `Registrants (${counts.registrants?.toLocaleString() || 0})`,
     icon: <DatabaseIcon {...iconSmall} fill={theme.palette.icon.default} />,
+    headerIcon: <DatabaseIcon {...iconMedium} fill={theme.palette.common.white} />,
   },
 ];
 
@@ -299,7 +311,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
     if (item) {
       setHeaderInfo({
         title: `Registry - ${id}`,
-        icon: <FileIcon {...iconMedium} fill={theme.palette.common.white} />,
+        icon: item.headerIcon,
       });
     }
   };
