@@ -15,10 +15,19 @@
     "component":  {
                       "kind":  "GrafanaConnection",
                       "version":  "core.meshery.io/v1alpha1",
-                      "schema":  "{\"title\":\"Connection Details\",\"properties\":{\"url\":{\"type\":\"string\",\"description\":\"The base URL of the server (e.g. http://localhost:9090)\"}},\"type\":\"object\",\"required\":[\"url\"]}"
+                      "schema":  "{\"title\":\"Connection Details\",\"properties\":{\"url\":{\"type\":\"string\",\"description\":\"The base URL of the server (e.g. http://grafana:3000)\"}},\"type\":\"object\",\"required\":[\"url\"]}"
                   },
     "configuration":  null,
-    "metadata":  {
-                     "published":  false
-                 }
+    "status": "enabled",
+    "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+    },
+    "createdAt": "0001-01-01T00:00:00Z",
+    "updatedAt": "0001-01-01T00:00:00Z",
+    "deletedAt": null
 }
