@@ -10,8 +10,8 @@ integrations-subcategory: Service Proxy
 registrant: Artifact Hub
 components: 
 - name: awsapi-gateway
-  colorIcon: content/en/extensions/models/aws-api-gateway-operator/components/awsapi-gateway/icons/color/awsapi-gateway-color.svg
-  whiteIcon: content/en/extensions/models/aws-api-gateway-operator/components/awsapi-gateway/icons/white/awsapi-gateway-white.svg
+  colorIcon: extensions/models/aws-api-gateway-operator/components/awsapi-gateway/icons/color/awsapi-gateway-color.svg
+  whiteIcon: extensions/models/aws-api-gateway-operator/components/awsapi-gateway/icons/white/awsapi-gateway-white.svg
   description: 
 components-count: 1
 relationships: 

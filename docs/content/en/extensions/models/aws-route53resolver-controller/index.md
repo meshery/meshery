@@ -10,28 +10,28 @@ integrations-subcategory: Networking Content Delivery
 registrant: GitHub
 components: 
 - name: field-export
-  colorIcon: content/en/extensions/models/aws-route53resolver-controller/components/field-export/icons/color/field-export-color.svg
-  whiteIcon: content/en/extensions/models/aws-route53resolver-controller/components/field-export/icons/white/field-export-white.svg
+  colorIcon: extensions/models/aws-route53resolver-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: extensions/models/aws-route53resolver-controller/components/field-export/icons/white/field-export-white.svg
   description: 
 - name: adopted-resource
-  colorIcon: content/en/extensions/models/aws-route53resolver-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
-  whiteIcon: content/en/extensions/models/aws-route53resolver-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  colorIcon: extensions/models/aws-route53resolver-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: extensions/models/aws-route53resolver-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
 - name: resolver-endpoint
-  colorIcon: content/en/extensions/models/aws-route53resolver-controller/components/resolver-endpoint/icons/color/resolver-endpoint-color.svg
-  whiteIcon: content/en/extensions/models/aws-route53resolver-controller/components/resolver-endpoint/icons/white/resolver-endpoint-white.svg
+  colorIcon: extensions/models/aws-route53resolver-controller/components/resolver-endpoint/icons/color/resolver-endpoint-color.svg
+  whiteIcon: extensions/models/aws-route53resolver-controller/components/resolver-endpoint/icons/white/resolver-endpoint-white.svg
   description: 
 - name: resolver-rule
-  colorIcon: content/en/extensions/models/aws-route53resolver-controller/components/resolver-rule/icons/color/resolver-rule-color.svg
-  whiteIcon: content/en/extensions/models/aws-route53resolver-controller/components/resolver-rule/icons/white/resolver-rule-white.svg
+  colorIcon: extensions/models/aws-route53resolver-controller/components/resolver-rule/icons/color/resolver-rule-color.svg
+  whiteIcon: extensions/models/aws-route53resolver-controller/components/resolver-rule/icons/white/resolver-rule-white.svg
   description: 
 - name: iam-role-selector
-  colorIcon: content/en/extensions/models/aws-route53resolver-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
-  whiteIcon: content/en/extensions/models/aws-route53resolver-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  colorIcon: extensions/models/aws-route53resolver-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: extensions/models/aws-route53resolver-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
 - name: resolver-rule-association
-  colorIcon: content/en/extensions/models/aws-route53resolver-controller/components/resolver-rule-association/icons/color/resolver-rule-association-color.svg
-  whiteIcon: content/en/extensions/models/aws-route53resolver-controller/components/resolver-rule-association/icons/white/resolver-rule-association-white.svg
+  colorIcon: extensions/models/aws-route53resolver-controller/components/resolver-rule-association/icons/color/resolver-rule-association-color.svg
+  whiteIcon: extensions/models/aws-route53resolver-controller/components/resolver-rule-association/icons/white/resolver-rule-association-white.svg
   description: 
 components-count: 6
 relationships: 

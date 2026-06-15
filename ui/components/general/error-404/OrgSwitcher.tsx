@@ -13,13 +13,19 @@ import {
   StyledTypography,
   CustomDownIcon,
 } from './styles';
-import { useGetCurrentAbilities } from 'rtk-query/ability';
+import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import CustomErrorFallback from '../../shared/ErrorBoundary/ErrorBoundary';
 import { useTheme } from '@sistent/sistent';
 import { useDispatch, useSelector } from 'react-redux';
 import { setKeys, setOrganization } from '@/store/slices/mesheryUi';
+import {
+  useGetSelectedOrganization,
+  useUpdateSelectedOrganizationMutation,
+} from '@/rtk-query/user';
 
 const OrgSwitcher = () => {
+  const [updateSelectedOrg] = useUpdateSelectedOrganizationMutation();
+  const { selectedOrganization } = useGetSelectedOrganization();
   const {
     data: orgsResponse,
     isSuccess: isOrgsSuccess,
@@ -30,11 +36,12 @@ const OrgSwitcher = () => {
   const dispatch = useDispatch();
   const dispatchSetOrganization = (org) => dispatch(setOrganization(org));
 
+  const activeOrg = selectedOrganization || organization;
   let orgs = orgsResponse?.organizations || [];
 
   const { notify } = useNotification();
 
-  const abilitiesResult = useGetCurrentAbilities(organization);
+  const abilitiesResult = useGetCurrentAbilities(activeOrg);
 
   useEffect(() => {
     if (abilitiesResult?.currentData?.keys) {
@@ -51,14 +58,23 @@ const OrgSwitcher = () => {
     }
   }, [orgsError]);
 
-  const handleOrgSelect = (e) => {
+  const handleOrgSelect = async (e) => {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
-    dispatchSetOrganization({ organization: selected });
-
-    setTimeout(() => {
-      location.reload();
-    }, 1000);
+    try {
+      await updateSelectedOrg(id).unwrap();
+      dispatchSetOrganization({ organization: selected });
+      if (typeof window !== 'undefined' && window.sessionStorage) {
+        sessionStorage.removeItem('keys');
+        sessionStorage.removeItem('currentWorkspace');
+      }
+      window.location.reload();
+    } catch (err) {
+      notify({
+        message: 'Failed to switch organization. Please try again.',
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
   };
   const theme = useTheme();
   return (
@@ -74,7 +90,7 @@ const OrgSwitcher = () => {
               control={
                 <StyledSelect
                   fullWidth
-                  value={organization?.id ? organization.id : ''}
+                  value={activeOrg?.id ? activeOrg.id : ''}
                   onChange={handleOrgSelect}
                   SelectDisplayProps={{ style: { display: 'flex' } }}
                   IconComponent={CustomDownIcon}

@@ -10,12 +10,12 @@ integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
 - name: vault-binding
-  colorIcon: content/en/extensions/models/k8svault-controller/components/vault-binding/icons/color/vault-binding-color.svg
-  whiteIcon: content/en/extensions/models/k8svault-controller/components/vault-binding/icons/white/vault-binding-white.svg
+  colorIcon: extensions/models/k8svault-controller/components/vault-binding/icons/color/vault-binding-color.svg
+  whiteIcon: extensions/models/k8svault-controller/components/vault-binding/icons/white/vault-binding-white.svg
   description: 
 - name: vault-mirror
-  colorIcon: content/en/extensions/models/k8svault-controller/components/vault-mirror/icons/color/vault-mirror-color.svg
-  whiteIcon: content/en/extensions/models/k8svault-controller/components/vault-mirror/icons/white/vault-mirror-white.svg
+  colorIcon: extensions/models/k8svault-controller/components/vault-mirror/icons/color/vault-mirror-color.svg
+  whiteIcon: extensions/models/k8svault-controller/components/vault-mirror/icons/white/vault-mirror-white.svg
   description: 
 components-count: 2
 relationships: 

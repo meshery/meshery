@@ -10,8 +10,8 @@ integrations-subcategory: Machine Learning
 registrant: Artifact Hub
 components: 
 - name: mpi-job
-  colorIcon: content/en/extensions/models/mpi-operator/components/mpi-job/icons/color/mpi-job-color.svg
-  whiteIcon: content/en/extensions/models/mpi-operator/components/mpi-job/icons/white/mpi-job-white.svg
+  colorIcon: extensions/models/mpi-operator/components/mpi-job/icons/color/mpi-job-color.svg
+  whiteIcon: extensions/models/mpi-operator/components/mpi-job/icons/white/mpi-job-white.svg
   description: 
 components-count: 1
 relationships: 

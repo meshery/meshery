@@ -3,7 +3,7 @@ import { Box, Typography, styled, CustomTooltip, Collapse, ErrorBoundary } from 
 import { ComponentIcon } from '@/components/designs/lifecycle/common';
 import { InfoIcon } from '@sistent/sistent'; // Assuming MUI icons are available
 import ExpandLessIcon from '@/assets/icons/ExpandLessIcon';
-import ExpandMoreIcon from '@/assets/icons/ExpandMoreIcon';
+import { ExpandMoreIcon } from '@sistent/sistent';
 
 // Styled components
 const SectionContainer = styled(Box)(({ theme }) => ({
@@ -335,13 +335,15 @@ export const RelationshipEvaluationTraceFormatter = ({ actions, design }) => {
 };
 
 export const RelationshipEvaluationEventFormatter = ({ event }) => {
+  const evaluationResponse =
+    event?.metadata?.evaluationResponse || event?.metadata?.evaluation_response;
   return (
     <ErrorBoundary>
       <Box sx={{ mt: 2 }}>
         <Typography variant="body1">{event.description}</Typography>
         <RelationshipEvaluationTraceFormatter
-          actions={event?.metadata?.evaluation_response?.actions || []}
-          design={event?.metadata?.evaluation_response?.design || {}}
+          actions={evaluationResponse?.actions || []}
+          design={evaluationResponse?.design || {}}
         />
       </Box>
     </ErrorBoundary>

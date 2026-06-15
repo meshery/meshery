@@ -65,7 +65,7 @@
     <div class="extension-guide-card">
       <div class="extension-guide-svg-container">
         {{ if index . $guideSvg }}
-          <img src="/images/{{ $guideAssetsFolder | lower }}/{{ index . $guideSvg }}" alt="{{ index . $guideTitle }}">
+          <img src="{{ printf "images/%s/%s" (lower $guideAssetsFolder) (index . $guideSvg) | relURL }}" alt="{{ index . $guideTitle }}">
         {{ end }}
         <div style="text-align:center;">{{ index . $guideTitle }}</div>
       </div>

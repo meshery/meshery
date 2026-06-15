@@ -10,8 +10,8 @@ integrations-subcategory: Container Registry
 registrant: GitHub
 components: 
 - name: factory
-  colorIcon: content/en/extensions/models/azure-data-factory/components/factory/icons/color/factory-color.svg
-  whiteIcon: content/en/extensions/models/azure-data-factory/components/factory/icons/white/factory-white.svg
+  colorIcon: extensions/models/azure-data-factory/components/factory/icons/color/factory-color.svg
+  whiteIcon: extensions/models/azure-data-factory/components/factory/icons/white/factory-white.svg
   description: 
 components-count: 1
 relationships: 

@@ -10,12 +10,12 @@ integrations-subcategory: Security Identity Compliance
 registrant: GitHub
 components: 
 - name: federated-identity-credential
-  colorIcon: content/en/extensions/models/azure-managed-identity/components/federated-identity-credential/icons/color/federated-identity-credential-color.svg
-  whiteIcon: content/en/extensions/models/azure-managed-identity/components/federated-identity-credential/icons/white/federated-identity-credential-white.svg
+  colorIcon: extensions/models/azure-managed-identity/components/federated-identity-credential/icons/color/federated-identity-credential-color.svg
+  whiteIcon: extensions/models/azure-managed-identity/components/federated-identity-credential/icons/white/federated-identity-credential-white.svg
   description: 
 - name: user-assigned-identity
-  colorIcon: content/en/extensions/models/azure-managed-identity/components/user-assigned-identity/icons/color/user-assigned-identity-color.svg
-  whiteIcon: content/en/extensions/models/azure-managed-identity/components/user-assigned-identity/icons/white/user-assigned-identity-white.svg
+  colorIcon: extensions/models/azure-managed-identity/components/user-assigned-identity/icons/color/user-assigned-identity-color.svg
+  whiteIcon: extensions/models/azure-managed-identity/components/user-assigned-identity/icons/white/user-assigned-identity-white.svg
   description: 
 components-count: 2
 relationships: 

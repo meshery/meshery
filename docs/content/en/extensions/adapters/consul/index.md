@@ -8,8 +8,8 @@ port: 10002/gRPC
 project_status: stable
 lab: consul-meshery-adapter
 github_link: https://github.com/meshery/meshery-consul
-image: /extensions/adapters/consul/images/consul.svg
-white_image: /extensions/adapters/consul/images/consul-white.svg
+image: extensions/adapters/consul/images/consul.svg
+white_image: extensions/adapters/consul/images/consul-white.svg
 aliases: 
 - /service-meshes/adapters/consul
 - /extensibility/adapters/consul
@@ -28,11 +28,11 @@ aliases:
 
 Meshery supports the deployment of a variety of sample applications on Meshery Adapter for Consul. Use Meshery to deploy any of these sample applications.
 
-- [httpbin](/guides/infrastructure-management/sample-apps#httpbin)
+- [httpbin]({{< ref "guides/infrastructure-management/sample-apps/index.md#httpbin" >}})
   - Httpbin is a simple HTTP request and response service.
-- [Bookinfo](/guides/infrastructure-management/sample-apps#bookinfo)
+- [Bookinfo]({{< ref "guides/infrastructure-management/sample-apps/index.md#bookinfo" >}})
   - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
-- [Image Hub](/guides/infrastructure-management/sample-apps#imagehub)
+- [Image Hub]({{< ref "guides/infrastructure-management/sample-apps/index.md#imagehub" >}})
   - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.
 
 ### Performance management of Consul and it workloads
@@ -43,9 +43,9 @@ The Meshery Adapter for Consul will connect to Meshery Adapter for Consul's Prom
 
 ### Architecture
 
-[![Consul Service Mesh Architecture](/extensions/adapters/consul/images/service-mesh-architecture-consul.png)](/extensions/adapters/consul/images/service-mesh-architecture-consul.png)
+[![Consul Service Mesh Architecture](images/service-mesh-architecture-consul.png)](images/service-mesh-architecture-consul.png)
 
 ### Suggested Topics
 
-- Examine [Meshery's architecture](/concepts/architecture) and how adapters fit in as a component.
-- Learn more about [Meshery Adapters](/concepts/architecture/adapters).
+- Examine [Meshery's architecture]({{< ref "concepts/architecture/_index.md" >}}) and how adapters fit in as a component.
+- Learn more about [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}}).

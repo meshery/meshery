@@ -10,8 +10,8 @@ integrations-subcategory: Application Definition & Image Build
 registrant: Github
 components: 
 - name: cluster-extension
-  colorIcon: content/en/extensions/models/operator-framework/components/cluster-extension/icons/color/cluster-extension-color.svg
-  whiteIcon: content/en/extensions/models/operator-framework/components/cluster-extension/icons/white/cluster-extension-white.svg
+  colorIcon: extensions/models/operator-framework/components/cluster-extension/icons/color/cluster-extension-color.svg
+  whiteIcon: extensions/models/operator-framework/components/cluster-extension/icons/white/cluster-extension-white.svg
   description: 
 components-count: 1
 relationships: 
