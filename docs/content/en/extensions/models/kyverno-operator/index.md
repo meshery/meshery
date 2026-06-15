@@ -10,8 +10,8 @@ integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
 - name: kyverno-operator
-  colorIcon: content/en/extensions/models/kyverno-operator/components/kyverno-operator/icons/color/kyverno-operator-color.svg
-  whiteIcon: content/en/extensions/models/kyverno-operator/components/kyverno-operator/icons/white/kyverno-operator-white.svg
+  colorIcon: extensions/models/kyverno-operator/components/kyverno-operator/icons/color/kyverno-operator-color.svg
+  whiteIcon: extensions/models/kyverno-operator/components/kyverno-operator/icons/white/kyverno-operator-white.svg
   description: 
 components-count: 1
 relationships: 

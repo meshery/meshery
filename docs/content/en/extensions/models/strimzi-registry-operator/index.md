@@ -10,8 +10,8 @@ integrations-subcategory: Streaming & Messaging
 registrant: Artifact Hub
 components: 
 - name: strimzi-schema-registry
-  colorIcon: content/en/extensions/models/strimzi-registry-operator/components/strimzi-schema-registry/icons/color/strimzi-schema-registry-color.svg
-  whiteIcon: content/en/extensions/models/strimzi-registry-operator/components/strimzi-schema-registry/icons/white/strimzi-schema-registry-white.svg
+  colorIcon: extensions/models/strimzi-registry-operator/components/strimzi-schema-registry/icons/color/strimzi-schema-registry-color.svg
+  whiteIcon: extensions/models/strimzi-registry-operator/components/strimzi-schema-registry/icons/white/strimzi-schema-registry-white.svg
   description: 
 components-count: 1
 relationships: 

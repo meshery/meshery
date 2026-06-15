@@ -10,12 +10,12 @@ integrations-subcategory: Monitoring
 registrant: GitHub
 components: 
 - name: prometheus-rule-group
-  colorIcon: content/en/extensions/models/azure-alerts-management/components/prometheus-rule-group/icons/color/prometheus-rule-group-color.svg
-  whiteIcon: content/en/extensions/models/azure-alerts-management/components/prometheus-rule-group/icons/white/prometheus-rule-group-white.svg
+  colorIcon: extensions/models/azure-alerts-management/components/prometheus-rule-group/icons/color/prometheus-rule-group-color.svg
+  whiteIcon: extensions/models/azure-alerts-management/components/prometheus-rule-group/icons/white/prometheus-rule-group-white.svg
   description: 
 - name: smart-detector-alert-rule
-  colorIcon: content/en/extensions/models/azure-alerts-management/components/smart-detector-alert-rule/icons/color/smart-detector-alert-rule-color.svg
-  whiteIcon: content/en/extensions/models/azure-alerts-management/components/smart-detector-alert-rule/icons/white/smart-detector-alert-rule-white.svg
+  colorIcon: extensions/models/azure-alerts-management/components/smart-detector-alert-rule/icons/color/smart-detector-alert-rule-color.svg
+  whiteIcon: extensions/models/azure-alerts-management/components/smart-detector-alert-rule/icons/white/smart-detector-alert-rule-white.svg
   description: 
 components-count: 2
 relationships: 

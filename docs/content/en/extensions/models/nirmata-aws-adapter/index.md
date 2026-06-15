@@ -10,8 +10,8 @@ integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
 - name: aws-config
-  colorIcon: content/en/extensions/models/nirmata-aws-adapter/components/aws-config/icons/color/aws-config-color.svg
-  whiteIcon: content/en/extensions/models/nirmata-aws-adapter/components/aws-config/icons/white/aws-config-white.svg
+  colorIcon: extensions/models/nirmata-aws-adapter/components/aws-config/icons/color/aws-config-color.svg
+  whiteIcon: extensions/models/nirmata-aws-adapter/components/aws-config/icons/white/aws-config-white.svg
   description: 
 components-count: 1
 relationships: 

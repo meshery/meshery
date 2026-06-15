@@ -10,12 +10,12 @@ integrations-subcategory: Continuous Integration & Delivery
 registrant: Artifact Hub
 components: 
 - name: armory-account
-  colorIcon: content/en/extensions/models/armory-spinnaker-operator/components/armory-account/icons/color/armory-account-color.svg
-  whiteIcon: content/en/extensions/models/armory-spinnaker-operator/components/armory-account/icons/white/armory-account-white.svg
+  colorIcon: extensions/models/armory-spinnaker-operator/components/armory-account/icons/color/armory-account-color.svg
+  whiteIcon: extensions/models/armory-spinnaker-operator/components/armory-account/icons/white/armory-account-white.svg
   description: 
 - name: spinnaker-service
-  colorIcon: content/en/extensions/models/armory-spinnaker-operator/components/spinnaker-service/icons/color/spinnaker-service-color.svg
-  whiteIcon: content/en/extensions/models/armory-spinnaker-operator/components/spinnaker-service/icons/white/spinnaker-service-white.svg
+  colorIcon: extensions/models/armory-spinnaker-operator/components/spinnaker-service/icons/color/spinnaker-service-color.svg
+  whiteIcon: extensions/models/armory-spinnaker-operator/components/spinnaker-service/icons/white/spinnaker-service-white.svg
   description: 
 components-count: 2
 relationships: 

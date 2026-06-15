@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useId, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import CreateSelect from 'react-select/creatable';
 import {
   CancelIcon,
   Typography,
-  TextField,
   Paper,
   Chip,
   ListItemButton,
@@ -48,33 +47,15 @@ const StyledChip = styled(Chip)(({ theme }) => ({
   },
 }));
 
+const StyledLabel = styled('label')(({ theme }) => ({
+  display: 'block',
+  marginBottom: theme.spacing(1),
+  color: theme.palette.text.primary,
+  fontSize: '1rem',
+}));
+
 function NoOptionsMessage(props) {
   return <StyledNoOptionsMessage {...props.innerProps}>{props.children}</StyledNoOptionsMessage>;
-}
-
-function inputComponent({ inputRef, ...props }) {
-  return <div ref={inputRef} {...props} />;
-}
-
-function Control(props) {
-  return (
-    <TextField
-      fullWidth
-      variant="outlined"
-      InputProps={{
-        inputComponent,
-        inputProps: {
-          style: {
-            display: 'flex',
-          },
-          inputRef: props.innerRef,
-          children: props.children,
-          ...props.innerProps,
-        },
-      }}
-      {...props.selectProps.textFieldProps}
-    />
-  );
 }
 
 function Option(props) {
@@ -123,7 +104,6 @@ function Menu(props) {
 }
 
 const components = {
-  Control,
   Menu,
   MultiValue,
   NoOptionsMessage,
@@ -145,36 +125,87 @@ const ReactSelectWrapper = ({
   noOptionsMessage = 'Type to create a new Environment',
 }) => {
   const theme = useTheme();
-  const selectStyles = {
-    input: (base) => ({
-      ...base,
-      color: theme.palette.text.primary,
-      '& input': { font: 'inherit' },
+
+  const inputId = useId();
+
+  const selectStyles = useMemo(
+    () => ({
+      control: (base, state) => ({
+        ...base,
+        backgroundColor: theme.palette.background.paper,
+        borderColor: error
+          ? theme.palette.error.main
+          : state.isFocused
+            ? theme.palette.primary.main
+            : theme.palette.divider,
+        minHeight: 56,
+        borderRadius: 4,
+        boxShadow: 'none',
+        '&:hover': {
+          borderColor: theme.palette.primary.main,
+        },
+      }),
+
+      input: (base) => ({
+        ...base,
+        color: theme.palette.text.primary,
+        '& input': { font: 'inherit' },
+      }),
+
+      singleValue: (base) => ({
+        ...base,
+        color: theme.palette.text.primary,
+      }),
+
+      placeholder: (base) => ({
+        ...base,
+        color: theme.palette.text.disabled,
+      }),
+
+      menu: (base) => ({
+        ...base,
+        zIndex: 9999,
+        backgroundColor: theme.palette.background.paper,
+      }),
+
+      option: (base, state) => ({
+        ...base,
+        backgroundColor: state.isFocused
+          ? theme.palette.action.hover
+          : theme.palette.background.paper,
+        color: theme.palette.text.primary,
+        cursor: 'pointer',
+      }),
+
+      indicatorSeparator: () => ({
+        display: 'none',
+      }),
     }),
-    indicatorSeparator: () => ({
-      display: 'none',
-    }),
-  };
+    [theme, error],
+  );
 
   return (
     <NoSsr>
-      <CreateSelect
-        styles={selectStyles}
-        textFieldProps={{
-          label,
-          InputLabelProps: { shrink: true },
-          error,
-        }}
-        options={options}
-        components={components}
-        value={value}
-        onChange={onChange}
-        onInputChange={onInputChange}
-        placeholder={placeholder}
-        isClearable
-        isMulti={isMulti}
-        noOptionsMessage={() => noOptionsMessage}
-      />
+      <div>
+        {label && <StyledLabel htmlFor={inputId}>{label}</StyledLabel>}
+
+        <CreateSelect
+          inputId={inputId}
+          aria-label={label}
+          aria-invalid={!!error}
+          styles={selectStyles}
+          options={options}
+          components={components}
+          value={value}
+          onChange={onChange}
+          onInputChange={onInputChange}
+          placeholder={placeholder}
+          isClearable
+          isMulti={isMulti}
+          backspaceRemovesValue={!isMulti}
+          noOptionsMessage={() => noOptionsMessage}
+        />
+      </div>
     </NoSsr>
   );
 };
@@ -183,7 +214,7 @@ ReactSelectWrapper.propTypes = {
   label: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   onInputChange: PropTypes.func,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   options: PropTypes.array.isRequired,
   error: PropTypes.bool,
   isMulti: PropTypes.bool,

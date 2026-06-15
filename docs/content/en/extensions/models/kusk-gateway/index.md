@@ -10,16 +10,16 @@ integrations-subcategory: API Gateway
 registrant: Artifact Hub
 components: 
 - name: envoy-fleet
-  colorIcon: content/en/extensions/models/kusk-gateway/components/envoy-fleet/icons/color/envoy-fleet-color.svg
-  whiteIcon: content/en/extensions/models/kusk-gateway/components/envoy-fleet/icons/white/envoy-fleet-white.svg
+  colorIcon: extensions/models/kusk-gateway/components/envoy-fleet/icons/color/envoy-fleet-color.svg
+  whiteIcon: extensions/models/kusk-gateway/components/envoy-fleet/icons/white/envoy-fleet-white.svg
   description: 
 - name: static-route
-  colorIcon: content/en/extensions/models/kusk-gateway/components/static-route/icons/color/static-route-color.svg
-  whiteIcon: content/en/extensions/models/kusk-gateway/components/static-route/icons/white/static-route-white.svg
+  colorIcon: extensions/models/kusk-gateway/components/static-route/icons/color/static-route-color.svg
+  whiteIcon: extensions/models/kusk-gateway/components/static-route/icons/white/static-route-white.svg
   description: 
 - name: api
-  colorIcon: content/en/extensions/models/kusk-gateway/components/api/icons/color/api-color.svg
-  whiteIcon: content/en/extensions/models/kusk-gateway/components/api/icons/white/api-white.svg
+  colorIcon: extensions/models/kusk-gateway/components/api/icons/color/api-color.svg
+  whiteIcon: extensions/models/kusk-gateway/components/api/icons/white/api-white.svg
   description: 
 components-count: 3
 relationships: 

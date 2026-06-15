@@ -10,16 +10,16 @@ integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
 - name: ca-provider-class
-  colorIcon: content/en/extensions/models/cert-manager-csi-driver-cacerts/components/ca-provider-class/icons/color/ca-provider-class-color.svg
-  whiteIcon: content/en/extensions/models/cert-manager-csi-driver-cacerts/components/ca-provider-class/icons/white/ca-provider-class-white.svg
+  colorIcon: extensions/models/cert-manager-csi-driver-cacerts/components/ca-provider-class/icons/color/ca-provider-class-color.svg
+  whiteIcon: extensions/models/cert-manager-csi-driver-cacerts/components/ca-provider-class/icons/white/ca-provider-class-white.svg
   description: 
 - name: cluster-issuer
-  colorIcon: content/en/extensions/models/cert-manager-csi-driver-cacerts/components/cluster-issuer/icons/color/cluster-issuer-color.svg
-  whiteIcon: content/en/extensions/models/cert-manager-csi-driver-cacerts/components/cluster-issuer/icons/white/cluster-issuer-white.svg
+  colorIcon: extensions/models/cert-manager-csi-driver-cacerts/components/cluster-issuer/icons/color/cluster-issuer-color.svg
+  whiteIcon: extensions/models/cert-manager-csi-driver-cacerts/components/cluster-issuer/icons/white/cluster-issuer-white.svg
   description: 
 - name: issuer
-  colorIcon: content/en/extensions/models/cert-manager-csi-driver-cacerts/components/issuer/icons/color/issuer-color.svg
-  whiteIcon: content/en/extensions/models/cert-manager-csi-driver-cacerts/components/issuer/icons/white/issuer-white.svg
+  colorIcon: extensions/models/cert-manager-csi-driver-cacerts/components/issuer/icons/color/issuer-color.svg
+  whiteIcon: extensions/models/cert-manager-csi-driver-cacerts/components/issuer/icons/white/issuer-white.svg
   description: 
 components-count: 3
 relationships: 
