@@ -118,7 +118,7 @@ const MeshModelComponent_ = ({
   const hasMoreComponents =
     componentsData?.totalCount > componentsData?.pageSize * componentsData?.page;
   const hasMoreRelationships =
-    componentsData?.totalCount > relationshipsData?.pageSize * relationshipsData?.page;
+    relationshipsData?.totalCount > relationshipsData?.pageSize * relationshipsData?.page;
 
   const loadNextModelsPage = useCallback(() => {
     if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
@@ -240,6 +240,8 @@ const MeshModelComponent_ = ({
     getRegistrantsData,
     modelFilters,
     registrantFilters,
+    componentsFilters,
+    relationshipsFilters,
     view,
     page,
     rowsPerPage,
@@ -356,7 +358,17 @@ const MeshModelComponent_ = ({
 
   useEffect(() => {
     fetchData();
-  }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
+  }, [
+    view,
+    page,
+    rowsPerPage,
+    checked,
+    searchText,
+    modelFilters,
+    registrantFilters,
+    componentsFilters,
+    relationshipsFilters,
+  ]);
 
   // Update view when external view changes (for modal usage)
   useEffect(() => {

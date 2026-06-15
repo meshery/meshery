@@ -1,8 +1,19 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const lazyMock = () => [vi.fn(), { data: undefined, isLoading: false, isFetching: false }];
+const queryMocks = vi.hoisted(() => ({
+  getMeshModelsData: vi.fn(),
+  getComponentsData: vi.fn(),
+  getRelationshipsData: vi.fn(),
+  getRegistrantsData: vi.fn(),
+  selectedTab: 'Models',
+}));
+
+const lazyMock = (queryFn: any, data: any = undefined) => [
+  queryFn,
+  { data, isLoading: false, isFetching: false },
+];
 
 vi.mock('next/router', () => ({
   useRouter: () => ({
@@ -42,8 +53,10 @@ vi.mock('@/assets/styles/general/tool.styles', () => ({
 }));
 
 vi.mock('./MesheryTreeView', () => ({
-  default: ({ view, data }: any) => (
-    <div data-testid="meshery-tree-view" data-view={view} data-len={data.length} />
+  default: ({ view, data, lastItemRef }: any) => (
+    <div data-testid="meshery-tree-view" data-view={view} data-len={data.length}>
+      <button onClick={() => lastItemRef[view]?.({})}>load next</button>
+    </div>
   ),
 }));
 
@@ -52,10 +65,29 @@ vi.mock('./MeshModelDetails', () => ({
 }));
 
 vi.mock('@/rtk-query/meshModel', () => ({
-  useLazyGetMeshModelsQuery: () => lazyMock(),
-  useLazyGetComponentsQuery: () => lazyMock(),
-  useLazyGetRelationshipsQuery: () => lazyMock(),
-  useLazyGetRegistrantsQuery: () => lazyMock(),
+  useLazyGetMeshModelsQuery: () =>
+    lazyMock(queryMocks.getMeshModelsData, { models: [], totalCount: 0, pageSize: 25, page: 0 }),
+  useLazyGetComponentsQuery: () =>
+    lazyMock(queryMocks.getComponentsData, {
+      components: [{ id: 'component-1' }],
+      totalCount: 50,
+      pageSize: 25,
+      page: 1,
+    }),
+  useLazyGetRelationshipsQuery: () =>
+    lazyMock(queryMocks.getRelationshipsData, {
+      relationships: [{ id: 'relationship-1', kind: 'edge' }],
+      totalCount: 50,
+      pageSize: 25,
+      page: 1,
+    }),
+  useLazyGetRegistrantsQuery: () =>
+    lazyMock(queryMocks.getRegistrantsData, {
+      registrants: [],
+      totalCount: 0,
+      pageSize: 25,
+      page: 0,
+    }),
   useGetMeshModelsQuery: () => ({ data: { totalCount: 0 } }),
   useGetComponentsQuery: () => ({ data: { totalCount: 0 } }),
   useGetRelationshipsQuery: () => ({ data: { totalCount: 0 } }),
@@ -68,11 +100,11 @@ vi.mock('./helper', () => ({
 }));
 
 vi.mock('./hooks', () => ({
-  useInfiniteScrollRef: () => ({ current: null }),
+  useInfiniteScrollRef: (loadNextPage: any) => loadNextPage,
   useMeshModelComponentRouter: () => ({
     searchQuery: null,
     selectedPageSize: 25,
-    selectedTab: 'Models',
+    selectedTab: queryMocks.selectedTab,
   }),
 }));
 
@@ -100,6 +132,20 @@ import MeshModelComponent from './MeshModelComponent';
 describe('MeshModelComponent', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    queryMocks.selectedTab = 'Models';
+    queryMocks.getMeshModelsData.mockResolvedValue({ data: { models: [] } });
+    queryMocks.getComponentsData.mockResolvedValue({
+      data: { components: [{ id: 'component-1' }], totalCount: 50, pageSize: 25, page: 1 },
+    });
+    queryMocks.getRelationshipsData.mockResolvedValue({
+      data: {
+        relationships: [{ id: 'relationship-1', kind: 'edge' }],
+        totalCount: 50,
+        pageSize: 25,
+        page: 1,
+      },
+    });
+    queryMocks.getRegistrantsData.mockResolvedValue({ data: { registrants: [] } });
   });
 
   it('renders the toolbar with create / import buttons', () => {
@@ -116,5 +162,57 @@ describe('MeshModelComponent', () => {
   it('uses externalView when provided', () => {
     render(<MeshModelComponent externalView="Components" />);
     expect(screen.getByTestId('meshery-tree-view')).toHaveAttribute('data-view', 'Components');
+  });
+
+  it('loads the next components page when the components tab scroll trigger fires', async () => {
+    queryMocks.selectedTab = 'Components';
+
+    render(<MeshModelComponent />);
+
+    await waitFor(() => {
+      expect(queryMocks.getComponentsData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({ page: 0 }),
+        }),
+        true,
+      );
+    });
+
+    fireEvent.click(screen.getByText('load next'));
+
+    await waitFor(() => {
+      expect(queryMocks.getComponentsData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({ page: 1 }),
+        }),
+        true,
+      );
+    });
+  });
+
+  it('loads the next relationships page from relationship pagination metadata', async () => {
+    queryMocks.selectedTab = 'Relationships';
+
+    render(<MeshModelComponent />);
+
+    await waitFor(() => {
+      expect(queryMocks.getRelationshipsData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({ page: 0 }),
+        }),
+        true,
+      );
+    });
+
+    fireEvent.click(screen.getByText('load next'));
+
+    await waitFor(() => {
+      expect(queryMocks.getRelationshipsData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({ page: 1 }),
+        }),
+        true,
+      );
+    });
   });
 });
