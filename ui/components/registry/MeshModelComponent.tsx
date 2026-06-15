@@ -358,17 +358,7 @@ const MeshModelComponent_ = ({
 
   useEffect(() => {
     fetchData();
-  }, [
-    view,
-    page,
-    rowsPerPage,
-    checked,
-    searchText,
-    modelFilters,
-    registrantFilters,
-    componentsFilters,
-    relationshipsFilters,
-  ]);
+  }, [fetchData]);
 
   // Update view when external view changes (for modal usage)
   useEffect(() => {
