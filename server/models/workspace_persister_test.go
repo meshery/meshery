@@ -123,3 +123,93 @@ func TestDefaultLocalProviderUpdateWorkspace_ReturnsErrorForInvalidUUID(t *testi
 		t.Fatal("expected invalid workspace ID to return an error")
 	}
 }
+
+func TestDefaultLocalProviderWorkspaceMethods_ReturnErrorForInvalidUUIDs(t *testing.T) {
+	provider := &DefaultLocalProvider{}
+	validID := "11111111-1111-1111-1111-111111111111"
+	invalidID := "not-a-uuid"
+
+	tests := []struct {
+		name string
+		call func() error
+	}{
+		{
+			name: "get workspace rejects invalid workspace ID",
+			call: func() error {
+				_, err := provider.GetWorkspaceByID(nil, invalidID, "")
+				return err
+			},
+		},
+		{
+			name: "delete workspace rejects invalid workspace ID",
+			call: func() error {
+				_, err := provider.DeleteWorkspace(nil, invalidID)
+				return err
+			},
+		},
+		{
+			name: "add environment rejects invalid workspace ID",
+			call: func() error {
+				_, err := provider.AddEnvironmentToWorkspace(nil, invalidID, validID)
+				return err
+			},
+		},
+		{
+			name: "add environment rejects invalid environment ID",
+			call: func() error {
+				_, err := provider.AddEnvironmentToWorkspace(nil, validID, invalidID)
+				return err
+			},
+		},
+		{
+			name: "remove environment rejects invalid workspace ID",
+			call: func() error {
+				_, err := provider.RemoveEnvironmentFromWorkspace(nil, invalidID, validID)
+				return err
+			},
+		},
+		{
+			name: "remove environment rejects invalid environment ID",
+			call: func() error {
+				_, err := provider.RemoveEnvironmentFromWorkspace(nil, validID, invalidID)
+				return err
+			},
+		},
+		{
+			name: "get workspace environments rejects invalid workspace ID",
+			call: func() error {
+				_, err := provider.GetEnvironmentsOfWorkspace(nil, invalidID, "", "", "", "", "")
+				return err
+			},
+		},
+		{
+			name: "add design rejects invalid workspace ID",
+			call: func() error {
+				_, err := provider.AddDesignToWorkspace(nil, invalidID, validID)
+				return err
+			},
+		},
+		{
+			name: "add design rejects invalid design ID",
+			call: func() error {
+				_, err := provider.AddDesignToWorkspace(nil, validID, invalidID)
+				return err
+			},
+		},
+		{
+			name: "get workspace designs rejects invalid workspace ID",
+			call: func() error {
+				_, err := provider.GetDesignsOfWorkspace(nil, invalidID, "", "", "", "", "", nil)
+				return err
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := tt.call(); err == nil {
+				t.Fatal("expected invalid UUID to return an error")
+			}
+		})
+	}
+}

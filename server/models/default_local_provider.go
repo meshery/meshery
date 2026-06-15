@@ -1683,12 +1683,18 @@ func (l *DefaultLocalProvider) GetWorkspaces(_, page, pageSize, search, order, f
 }
 
 func (l *DefaultLocalProvider) GetWorkspaceByID(_ *http.Request, workspaceID string, _ string) ([]byte, error) {
-	id := uuid.FromStringOrNil(workspaceID)
+	id, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
 	return l.WorkspacePersister.GetWorkspaceByID(id)
 }
 
 func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID string) ([]byte, error) {
-	id := uuid.FromStringOrNil(workspaceID)
+	id, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
 	return l.WorkspacePersister.DeleteWorkspaceByID(id)
 }
 
@@ -1713,31 +1719,55 @@ func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload
 }
 
 func (l *DefaultLocalProvider) AddEnvironmentToWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	envId, _ := uuid.FromString(environmentID)
-	return l.WorkspacePersister.AddEnvironmentToWorkspace(workspaceId, envId)
+	workspaceIDParsed, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	environmentIDParsed, err := uuid.FromString(environmentID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.AddEnvironmentToWorkspace(workspaceIDParsed, environmentIDParsed)
 }
 
 func (l *DefaultLocalProvider) RemoveEnvironmentFromWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	envId, _ := uuid.FromString(environmentID)
-	return l.WorkspacePersister.DeleteEnvironmentFromWorkspace(workspaceId, envId)
+	workspaceIDParsed, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	environmentIDParsed, err := uuid.FromString(environmentID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.DeleteEnvironmentFromWorkspace(workspaceIDParsed, environmentIDParsed)
 }
 
 func (l *DefaultLocalProvider) GetEnvironmentsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	return l.WorkspacePersister.GetWorkspaceEnvironments(workspaceId, search, order, page, pageSize, filter)
+	workspaceIDParsed, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.GetWorkspaceEnvironments(workspaceIDParsed, search, order, page, pageSize, filter)
 }
 
 func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	designId, _ := uuid.FromString(designID)
-	return l.WorkspacePersister.AddDesignToWorkspace(workspaceId, designId)
+	workspaceIDParsed, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	designIDParsed, err := uuid.FromString(designID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.AddDesignToWorkspace(workspaceIDParsed, designIDParsed)
 }
 
 func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string, visibility []string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	return l.WorkspacePersister.GetWorkspaceDesigns(workspaceId, search, order, page, pageSize, filter, visibility)
+	workspaceIDParsed, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	return l.WorkspacePersister.GetWorkspaceDesigns(workspaceIDParsed, search, order, page, pageSize, filter, visibility)
 }
 
 func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
