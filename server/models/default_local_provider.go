@@ -1749,8 +1749,6 @@ func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, workspaceID
 		return nil, err
 	}
 	return l.WorkspacePersister.AddDesignToWorkspace(wsID, dID)
-}
-
 func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string, visibility []string) ([]byte, error) {
 	wsID, err := uuid.FromString(workspaceID)
 	if err != nil {
