@@ -1,25 +1,29 @@
 {
-  "kind": "edge",
-  "type": "binding",
-  "subType": "permission",
-  "evaluationQuery": "edge_binding_permission_relationship",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "RelationshipDefinition",
+  "metadata": {
+    "description": "API Gateway to Lambda Permission Binding"
+  },
   "model": {
     "name": "aws-apigatewayv2-controller",
     "version": "v1.3.0"
   },
+  "type": "binding",
+  "subType": "permission",
+  "evaluationQuery": "edge_binding_permission_relationship",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "model": "aws-apigatewayv2-controller",
-            "kind": "Integration",
+            "model": "aws-lambda-controller",
+            "kind": "Function",
             "patch": {
               "mutatorRef": [
                 [
                   "configuration",
-                  "spec",
-                  "integrationUri"
+                  "arn"
                 ]
               ],
               "patchStrategy": "replace"
@@ -28,13 +32,14 @@
         ],
         "to": [
           {
-            "model": "aws-lambda-controller",
-            "kind": "Function",
+            "model": "aws-apigatewayv2-controller",
+            "kind": "Integration",
             "patch": {
               "mutatedRef": [
                 [
                   "configuration",
-                  "arn"
+                  "spec",
+                  "integrationUri"
                 ]
               ],
               "patchStrategy": "replace"

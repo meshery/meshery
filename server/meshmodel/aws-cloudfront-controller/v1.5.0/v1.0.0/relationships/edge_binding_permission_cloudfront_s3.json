@@ -1,28 +1,29 @@
 {
-  "kind": "edge",
-  "type": "binding",
-  "subType": "permission",
-  "evaluationQuery": "edge_binding_permission_relationship",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "RelationshipDefinition",
+  "metadata": {
+    "description": "CloudFront to S3 Permission Binding"
+  },
   "model": {
     "name": "aws-cloudfront-controller",
     "version": "v1.5.0"
   },
+  "type": "binding",
+  "subType": "permission",
+  "evaluationQuery": "edge_binding_permission_relationship",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "model": "aws-cloudfront-controller",
-            "kind": "Distribution",
+            "model": "aws-s3-controller",
+            "kind": "Bucket",
             "patch": {
               "mutatorRef": [
                 [
                   "configuration",
-                  "spec",
-                  "distributionConfig",
-                  "origins",
-                  "items",
-                  "domainName"
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"
@@ -31,13 +32,17 @@
         ],
         "to": [
           {
-            "model": "aws-s3-controller",
-            "kind": "Bucket",
+            "model": "aws-cloudfront-controller",
+            "kind": "Distribution",
             "patch": {
               "mutatedRef": [
                 [
                   "configuration",
-                  "name"
+                  "spec",
+                  "distributionConfig",
+                  "origins",
+                  "items",
+                  "domainName"
                 ]
               ],
               "patchStrategy": "replace"

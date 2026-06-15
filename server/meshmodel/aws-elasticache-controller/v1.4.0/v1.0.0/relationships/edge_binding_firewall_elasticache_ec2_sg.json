@@ -1,25 +1,29 @@
 {
-  "kind": "edge",
-  "type": "binding",
-  "subType": "network",
-  "evaluationQuery": "edge_binding_network_relationship",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "RelationshipDefinition",
+  "metadata": {
+    "description": "ElastiCache to EC2 Security Group Firewall Binding"
+  },
   "model": {
     "name": "aws-elasticache-controller",
     "version": "v1.4.0"
   },
+  "type": "binding",
+  "subType": "firewall",
+  "evaluationQuery": "edge_binding_firewall_relationship",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "model": "aws-elasticache-controller",
-            "kind": "ReplicationGroup",
+            "model": "aws-ec2-controller",
+            "kind": "SecurityGroup",
             "patch": {
               "mutatorRef": [
                 [
                   "configuration",
-                  "spec",
-                  "securityGroupIds"
+                  "id"
                 ]
               ],
               "patchStrategy": "replace"
@@ -28,13 +32,14 @@
         ],
         "to": [
           {
-            "model": "aws-ec2-controller",
-            "kind": "SecurityGroup",
+            "model": "aws-elasticache-controller",
+            "kind": "ReplicationGroup",
             "patch": {
               "mutatedRef": [
                 [
                   "configuration",
-                  "id"
+                  "spec",
+                  "securityGroupIds"
                 ]
               ],
               "patchStrategy": "replace"

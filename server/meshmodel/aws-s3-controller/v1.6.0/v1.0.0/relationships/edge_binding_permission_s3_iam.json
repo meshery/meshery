@@ -1,25 +1,29 @@
 {
-  "kind": "edge",
-  "type": "binding",
-  "subType": "permission",
-  "evaluationQuery": "edge_binding_permission_relationship",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "RelationshipDefinition",
+  "metadata": {
+    "description": "S3 to IAM Role Permission Binding"
+  },
   "model": {
     "name": "aws-s3-controller",
     "version": "v1.6.0"
   },
+  "type": "binding",
+  "subType": "permission",
+  "evaluationQuery": "edge_binding_permission_relationship",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "model": "aws-s3-controller",
-            "kind": "Bucket",
+            "model": "aws-iam-controller",
+            "kind": "Role",
             "patch": {
               "mutatorRef": [
                 [
                   "configuration",
-                  "spec",
-                  "policy"
+                  "arn"
                 ]
               ],
               "patchStrategy": "replace"
@@ -28,13 +32,18 @@
         ],
         "to": [
           {
-            "model": "aws-iam-controller",
-            "kind": "Role",
+            "model": "aws-s3-controller",
+            "kind": "Bucket",
             "patch": {
               "mutatedRef": [
                 [
                   "configuration",
-                  "arn"
+                  "spec",
+                  "policy",
+                  "Statement",
+                  "0",
+                  "Principal",
+                  "AWS"
                 ]
               ],
               "patchStrategy": "replace"
