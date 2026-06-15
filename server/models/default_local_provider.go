@@ -1739,9 +1739,6 @@ func (l *DefaultLocalProvider) GetEnvironmentsOfWorkspace(_ *http.Request, works
 	if err != nil {
 		return nil, err
 	}
-	return l.WorkspacePersister.GetWorkspaceEnvironments(wsID, search, order, page, pageSize, filter)
-}
-
 func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
 	wsID, err := uuid.FromString(workspaceID)
 	if err != nil {
