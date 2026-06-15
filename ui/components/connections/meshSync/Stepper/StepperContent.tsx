@@ -99,8 +99,8 @@ export const SelectConnection = ({ setSharedData, handleNext }) => {
     () =>
       selectCompSchema(
         connectionTypes.map((ct) => ct.label),
-        'Select one of the available Connection type',
-        'Select type of Connection to register',
+        'Select one of the available connection types',
+        'Select the type of connection to register',
         'selectedConnectionType',
       ),
     [connectionTypes],
@@ -160,7 +160,7 @@ export const SelectConnection = ({ setSharedData, handleNext }) => {
     );
   }
 
-  if (isComponentsError) {
+  if (isComponentsError && connectionTypes.length === 0) {
     return (
       <StepperContent {...SelectConnectionTypeContent} handleCallback={handleCallback}>
         <Typography variant="body2" color="error">

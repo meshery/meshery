@@ -8,6 +8,7 @@
  */
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { deriveConnectionTypes } from './StepperContent';
 
@@ -217,6 +218,21 @@ describe('SelectConnection component', () => {
     expect(screen.getByText(/failed to load connection types/i)).toBeInTheDocument();
   });
 
+  it('renders cached connection types even if a refetch fails (isError is true)', () => {
+    mockUseGetComponentsQuery.mockReturnValue({
+      data: {
+        components: [{ component: { kind: 'PrometheusConnection' } }],
+      },
+      isLoading: false,
+      isError: true,
+    });
+
+    render(<SelectConnection setSharedData={mockSetSharedData} handleNext={mockHandleNext} />);
+
+    expect(screen.queryByText(/failed to load connection types/i)).not.toBeInTheDocument();
+    expect(screen.getByTestId('option-Prometheus Connection')).toBeInTheDocument();
+  });
+
   it('shows an empty state when no connection types are available', () => {
     mockUseGetComponentsQuery.mockReturnValue({
       data: { components: [] },
@@ -248,6 +264,8 @@ describe('SelectConnection component', () => {
   });
 
   it('passes stable kind (not a sliced label) to the registration payload', async () => {
+    const user = userEvent.setup();
+
     // RTK Query mutations return an object with an `.unwrap()` method.
     mockRegisterConnection.mockReturnValue({
       unwrap: () =>
@@ -267,7 +285,7 @@ describe('SelectConnection component', () => {
 
     render(<SelectConnection setSharedData={mockSetSharedData} handleNext={mockHandleNext} />);
 
-    screen.getByTestId('option-Prometheus Connection').click();
+    await user.click(screen.getByTestId('option-Prometheus Connection'));
 
     await waitFor(() => {
       expect(mockRegisterConnection).toHaveBeenCalledWith({
