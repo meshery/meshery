@@ -1734,8 +1734,6 @@ func (l *DefaultLocalProvider) RemoveEnvironmentFromWorkspace(_ *http.Request, w
 		return nil, err
 	}
 	return l.WorkspacePersister.DeleteEnvironmentFromWorkspace(wsID, envID)
-}
-
 func (l *DefaultLocalProvider) GetEnvironmentsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
 	wsID, err := uuid.FromString(workspaceID)
 	if err != nil {
