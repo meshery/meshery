@@ -187,6 +187,13 @@ describe('MesheryTreeView', () => {
     expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
   });
 
+  it('shows the empty-state message when data is empty and loading is complete', () => {
+    render(<MesheryTreeView {...makeProps({ view: 'Models', data: [] })} />);
+
+    expect(screen.getByText('No models found')).toBeInTheDocument();
+    expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument();
+  });
+
   it('shows "No result found" when search returns empty', () => {
     render(
       <MesheryTreeView
