@@ -321,6 +321,7 @@ const ImportModelModal = memo<ImportModelModalProps>(
             onSubmit={handleImportModelSubmit}
             submitText="Next"
             helpText={helpText}
+            sx={{ zIndex: 1600 }}
           />
         ) : (
           <Modal
@@ -330,6 +331,7 @@ const ImportModelModal = memo<ImportModelModalProps>(
             size="sm"
             helpText="Click Finish to complete the model import process. The imported model will be available in your Model Registry."
             actions={<ModalButtonPrimary onClick={handleClose}>Finish</ModalButtonPrimary>}
+            sx={{ zIndex: 1600 }}
           >
             <FinishDeploymentStep deploymentType="register" />
           </Modal>
@@ -341,6 +343,7 @@ const ImportModelModal = memo<ImportModelModalProps>(
           title="Import CSV"
           size="sm"
           disableBodyWrap
+          sx={{ zIndex: 1600 }}
         >
           <CsvStepper handleClose={handleClose} />
         </Modal>
