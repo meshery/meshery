@@ -39,7 +39,8 @@
                 [
                   "configuration",
                   "spec",
-                  "securityGroupIds"
+                  "securityGroupIds",
+                  "0"
                 ]
               ],
               "patchStrategy": "replace"
