@@ -1,0 +1,1 @@
+computed: { ...mapState(['iconColor']), getThemeColor() { return theme.colors.primary; } }
