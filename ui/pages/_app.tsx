@@ -213,30 +213,39 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   const loadMeshModelComponent = useCallback(async () => {
     const connectionDef = {};
 
-    // Connection definitions carry the kind's icon on `styles` (svgColor/svgWhite),
-    // so prefer those over the legacy `<Kind>Connection` component lookup. The
-    // component is still used for the state-machine transitions.
-    const stylesByKind = {};
+    // Connection definitions are the source of truth for a kind's icon
+    // (styles.svgColor) and its state machine (transitionMap). Seed the metadata
+    // from them — these entries must survive even when the legacy
+    // `<Kind>Connection` *component* no longer exists (connection definitions
+    // replaced those components), otherwise the kind has no transitionMap and
+    // the status dropdown shows "No transitions Available".
     try {
       const res = await getConnectionDefinitions();
       (res?.connectionDefinitions || []).forEach((definition) => {
         if (definition?.kind) {
-          stylesByKind[definition.kind] = definition.styles || {};
+          connectionDef[definition.kind] = {
+            transitionMap: definition.transitionMap,
+            icon: definition.styles?.svgColor,
+          };
         }
       });
     } catch (error) {
       console.error('Error fetching connection definitions:', error);
     }
 
+    // Fall back to the legacy `<Kind>Connection` component for kinds without a
+    // first-class connection definition yet (e.g. meshery, github), and to
+    // backfill the flat `transitions` list / icon the definition did not provide.
     const promises = CONNECTION_KINDS_DEF.map(async (kind) => {
       try {
         const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
-        if (res?.components) {
+        if (res?.components?.length) {
           const kindKey = CONNECTION_KINDS[kind];
-          const definitionStyles = stylesByKind[kindKey] || {};
+          const existing = connectionDef[kindKey] || {};
           connectionDef[kindKey] = {
-            transitions: res?.components[0].metadata.transitions,
-            icon: definitionStyles.svgColor || res?.components[0].styles.svgColor,
+            ...existing,
+            transitions: existing.transitions ?? res.components[0].metadata?.transitions,
+            icon: existing.icon || res.components[0].styles?.svgColor,
           };
         }
       } catch (error) {

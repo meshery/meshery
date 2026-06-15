@@ -32,6 +32,7 @@ import {
   getErrorMessage,
   getStatusTransition,
 } from './ConnectionTable.constants';
+import type { ConnectionTransitionMap } from './ConnectionTable.constants';
 import { useConnectionActions } from './ConnectionTable.hooks';
 import { useConnectionColumns } from './ConnectionTable.columns';
 import { useConnectionTableOptions } from './ConnectionTable.options';
@@ -64,7 +65,10 @@ const ConnectionTable = ({
         // `store/slices/mesheryUi.ts`). The slice is only populated after
         // `_app.tsx`'s async `loadMeshModelComponent` resolves, which can
         // race the first render of this page.
-        connectionMetadataState: Record<string, { transitions?: string[]; icon?: string }> | null;
+        connectionMetadataState: Record<
+          string,
+          { transitions?: string[]; icon?: string; transitionMap?: ConnectionTransitionMap }
+        > | null;
         controllerState: unknown;
       };
     }) => state.ui,
@@ -263,6 +267,7 @@ const ConnectionTable = ({
       ['created_at', 'na'],
       ['status', 'xs'],
       ['Actions', 'xs'],
+      ['transitionMap', 'xs'],
       ['ConnectionID', 'na'],
     ],
     [],
@@ -530,7 +535,11 @@ const ConnectionTable = ({
       }
 
       const status = event.target.value;
-      const subtitle = getStatusTransition(connectionKind, connectionStatus, status.toLowerCase());
+      const subtitle = getStatusTransition(
+        connectionMetadataState?.[connectionKind]?.transitionMap,
+        connectionStatus,
+        status.toLowerCase(),
+      );
       const response = await modalRef.current.show({
         title: `Transition connection to ${status.toUpperCase()}?`,
         subtitle,
@@ -543,7 +552,7 @@ const ConnectionTable = ({
         await updateConnectionStatus(connectionId, status);
       }
     },
-    [updateConnectionStatus],
+    [connectionMetadataState, updateConnectionStatus],
   );
 
   const handleActionMenuOpen = useCallback((event, tableMeta: RowData) => {
@@ -607,6 +616,15 @@ const ConnectionTable = ({
     expansionFlags.current.isInitialLoad = false;
   }, [selectedConnectionId, filteredConnectionsKey]);
 
+  // Project the per-kind connection definitions down to just their state
+  // machines for the status-transition dropdown.
+  const transitionMapByKind = useMemo(() => {
+    if (!connectionMetadataState) return null;
+    return Object.fromEntries(
+      Object.entries(connectionMetadataState).map(([kind, meta]) => [kind, meta?.transitionMap]),
+    );
+  }, [connectionMetadataState]);
+
   const columns = useConnectionColumns({
     url: CONNECTION_DOCS_URL,
     envUrl: ENVIRONMENT_DOCS_URL,
@@ -618,8 +636,12 @@ const ConnectionTable = ({
     handleStatusChange,
     handleActionMenuOpen,
     ping,
+    transitionMapByKind,
   });
-  const columnNames = useMemo(() => columns.map((column) => column.name), [columns]);
+  const columnNames = useMemo(
+    () => columns.map((column) => column.name),
+    [columns, isEnvironmentsSuccess],
+  );
 
   const options = useConnectionTableOptions({
     totalCount: connectionData?.totalCount,

@@ -399,6 +399,53 @@ describe('ConnectionTable', () => {
     });
   });
 
+  // Regression: the Environments select disappeared from the table. The cells
+  // come from a memoized `columns` whose `customBodyRender` closes over
+  // `isEnvironmentsSuccess` at definition time, and ResponsiveDataTable renders
+  // from a `tableCols` *snapshot* that it only re-syncs to the live `columns`
+  // when `columnVisibility` identity changes. On first render the environments
+  // query is still pending (isEnvironmentsSuccess=false), so the snapshot froze
+  // a cell that renders nothing; once the query resolved the snapshot was never
+  // refreshed and the select never reappeared. ConnectionTable now keeps
+  // `tableCols` following `columns`, so the resolved cell reaches the table.
+  it('re-renders the Environments select once the environments query resolves', async () => {
+    getEnvironmentsQuery.mockReturnValue({
+      data: { environments: [] },
+      isSuccess: false,
+      isError: false,
+      error: undefined,
+    });
+
+    const { rerender } = render(<ConnectionTable />);
+
+    // Render the snapshot's environments cell and report whether the select
+    // (mocked as `multi-select-wrapper`) is present.
+    const environmentsSelectIsRendered = () => {
+      const envColumn = dataTableProps.tableCols.find((col) => col.name === 'environments');
+      const { container, unmount } = render(
+        <>{envColumn.options.customBodyRender([], { rowData: [] })}</>,
+      );
+      const present = !!container.querySelector('[data-testid="multi-select-wrapper"]');
+      unmount();
+      return present;
+    };
+
+    expect(environmentsSelectIsRendered()).toBe(false);
+
+    getEnvironmentsQuery.mockReturnValue({
+      data: { environments: [{ id: 'env-1', name: 'dev' }] },
+      isSuccess: true,
+      isError: false,
+      error: undefined,
+    });
+    // Re-render under act() so the tableCols-sync effect flushes; then assert
+    // once (no render() inside waitFor, so a regression fails fast instead of
+    // looping the snapshot render until timeout).
+    rerender(<ConnectionTable />);
+
+    expect(environmentsSelectIsRendered()).toBe(true);
+  });
+
   // Regression for issue #19405 — `/management/connections` crashes with
   // "React error #185" / a `TypeError: Cannot read properties of null` in
   // production. The Redux slice (`store/slices/mesheryUi.ts`) initialises

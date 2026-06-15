@@ -23,7 +23,8 @@ import { keys } from '@/utils/permission_constants';
 import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { formatDate } from '../data-formatter';
 import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
-import { CONNECTION_STATE_TRANSITIONS } from './ConnectionTable.constants';
+import { getNextStates } from './ConnectionTable.constants';
+import type { ConnectionTransitionMap } from './ConnectionTable.constants';
 import type { EnvironmentOption, RowData } from './ConnectionTable.types';
 
 type UseConnectionColumnsArgs = {
@@ -48,6 +49,9 @@ type UseConnectionColumnsArgs = {
   ) => void | Promise<void>;
   handleActionMenuOpen: (event: any, tableMeta: RowData) => void;
   ping: (name: string, server: string, id: string) => void;
+  // Per-kind connection state machine, keyed by connection kind. Sourced from
+  // the connection definitions' `transitionMap` (see `_app.tsx`).
+  transitionMapByKind: Record<string, ConnectionTransitionMap | undefined> | null;
 };
 
 export const useConnectionColumns = ({
@@ -61,6 +65,7 @@ export const useConnectionColumns = ({
   handleStatusChange,
   handleActionMenuOpen,
   ping,
+  transitionMapByKind,
 }: UseConnectionColumnsArgs) => {
   return useMemo(() => {
     const nextColumns = [
@@ -196,38 +201,38 @@ export const useConnectionColumns = ({
                 value: environment.id,
               })) || [];
 
+            console.log('rendering environ', isEnvironmentsSuccess, value, cleanedEnvs);
+
             return (
-              isEnvironmentsSuccess && (
-                <div onClick={(event) => event.stopPropagation()}>
-                  <Grid2 size={{ xs: 12 }} style={{ height: '5rem', width: '15rem' }}>
-                    <Grid2 size={{ xs: 12 }} style={{ marginTop: '2rem', cursor: 'pointer' }}>
-                      <MultiSelectWrapper
-                        updating={updatingConnection.current}
-                        onChange={(selected, unselected) =>
-                          handleEnvironmentSelect(
-                            getColumnValue(tableMeta.rowData, 'id', nextColumns),
-                            getColumnValue(tableMeta.rowData, 'name', nextColumns),
-                            cleanedEnvs,
-                            selected,
-                            unselected,
-                          )
-                        }
-                        options={environmentOptions}
-                        value={cleanedEnvs}
-                        placeholder={`Assigned Environments`}
-                        isSelectAll={true}
-                        menuPlacement={'bottom'}
-                        disabled={
-                          !CAN(
-                            keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
-                            keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
-                          )
-                        }
-                      />
-                    </Grid2>
+              <div onClick={(event) => event.stopPropagation()}>
+                <Grid2 size={{ xs: 12 }} style={{ height: '5rem', width: '15rem' }}>
+                  <Grid2 size={{ xs: 12 }} style={{ marginTop: '2rem', cursor: 'pointer' }}>
+                    <MultiSelectWrapper
+                      updating={updatingConnection.current}
+                      onChange={(selected, unselected) =>
+                        handleEnvironmentSelect(
+                          getColumnValue(tableMeta.rowData, 'id', nextColumns),
+                          getColumnValue(tableMeta.rowData, 'name', nextColumns),
+                          cleanedEnvs,
+                          selected,
+                          unselected,
+                        )
+                      }
+                      options={environmentOptions}
+                      value={cleanedEnvs}
+                      placeholder={`Assigned Environments`}
+                      isSelectAll={true}
+                      menuPlacement={'bottom'}
+                      disabled={
+                        !CAN(
+                          keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
+                          keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
+                        )
+                      }
+                    />
                   </Grid2>
-                </div>
-              )
+                </Grid2>
+              </div>
             );
           },
         },
@@ -403,9 +408,7 @@ export const useConnectionColumns = ({
             const currentStatus = value;
             const kind = getColumnValue(tableMeta.rowData, 'kind', nextColumns);
 
-            const nextStatus = Object.keys(
-              CONNECTION_STATE_TRANSITIONS?.[kind]?.[currentStatus] ?? {},
-            );
+            const nextStatus = getNextStates(transitionMapByKind?.[kind], currentStatus);
             nextStatus.push(currentStatus);
 
             const disabled =
@@ -536,6 +539,7 @@ export const useConnectionColumns = ({
     handleStatusChange,
     isEnvironmentsSuccess,
     ping,
+    transitionMapByKind,
     updatingConnection,
     url,
   ]);
