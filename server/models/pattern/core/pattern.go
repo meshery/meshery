@@ -419,10 +419,6 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 		return pattern, ErrParseK8sManifest(fmt.Errorf("kubernetes manifest is empty"))
 	}
 
-	if resolvedCount == 0 && !ignoreErrors {
-		return pattern, ErrNoResolvedComponents(fmt.Errorf("0 of %d manifest resources resolved to known components", totalDecoded))
-	}
-
 	return pattern, nil
 }
 

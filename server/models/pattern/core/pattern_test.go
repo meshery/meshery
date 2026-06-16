@@ -100,10 +100,11 @@ func TestNewPatternFileFromK8sManifestIgnoreErrors(t *testing.T) {
 	registryManager := newTestRegistryManager(t)
 
 	tests := []struct {
-		name         string
-		manifest     string
-		ignoreErrors bool
-		expectedCode string
+		name               string
+		manifest           string
+		ignoreErrors       bool
+		expectedCode       string
+		expectedComponents int
 	}{
 		{
 			name: "given unresolved manifest and ignoreErrors true when NewPatternFileFromK8sManifest then return empty pattern",
@@ -153,8 +154,8 @@ metadata:
 				t.Fatalf("expected error code %q, got %q", tt.expectedCode, errors.GetCode(err))
 			}
 
-			if tt.expectedCode == "" && len(pattern.Components) != 0 {
-				t.Fatalf("expected no resolved components, got %d", len(pattern.Components))
+			if len(pattern.Components) != tt.expectedComponents {
+				t.Fatalf("expected %d resolved components, got %d", tt.expectedComponents, len(pattern.Components))
 			}
 		})
 	}
@@ -170,6 +171,12 @@ func newTestRegistryManager(t *testing.T) *registry.RegistryManager {
 	if err != nil {
 		t.Fatalf("failed to create in-memory database: %v", err)
 	}
+
+	t.Cleanup(func() {
+		if err := db.DBClose(); err != nil {
+			t.Logf("failed to close database: %v", err)
+		}
+	})
 
 	registryManager, err := registry.NewRegistryManager(&db)
 	if err != nil {
