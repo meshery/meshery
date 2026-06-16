@@ -382,7 +382,7 @@ const MeshModelComponent_ = ({
         data: {},
       });
     }
-  }, [externalView, selectedTab, externalSearchText, view]);
+  }, [externalView, selectedTab, externalSearchText]);
 
   useEffect(() => {
     if (externalSearchText !== null && externalSearchText !== searchText) {
