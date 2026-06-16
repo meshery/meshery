@@ -40,7 +40,12 @@
   position: relative;
 }
 
+.td-search--offline {
+  position: relative;
+}
+
 .search-suggestions-dropdown {
+  display: none;
   position: absolute;
   top: 100%;
   left: 0;
