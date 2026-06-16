@@ -361,7 +361,8 @@ const MeshModelComponent_ = ({
 
   // Sync view state with externalView or selectedTab (for modal or route usage)
   useEffect(() => {
-    const newView = externalView || (selectedTab as string);
+    const newView =
+      externalView ?? (typeof selectedTab === 'string' ? selectedTab : selectedTab?.[0]);
     if (newView && newView !== view) {
       setView(newView);
       setResourcesDetail([]);
