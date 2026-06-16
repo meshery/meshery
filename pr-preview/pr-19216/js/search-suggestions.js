@@ -12,6 +12,18 @@
         if (/^(?:[a-z]+:)?\/\//i.test(pathname)) return pathname;
         if (/^(?:data:|mailto:|tel:|#)/i.test(pathname)) return pathname;
         if (!pathname.startsWith("/")) return pathname;
+
+        const siteRootPath = getSiteRootUrl().pathname.replace(/\/+$/, "/");
+        const siteRootWithoutTrailingSlash = siteRootPath.replace(/\/$/, "");
+
+        if (
+            siteRootPath === "/" ||
+            pathname === siteRootWithoutTrailingSlash ||
+            pathname.startsWith(siteRootPath)
+        ) {
+            return new URL(pathname, window.location.origin).toString();
+        }
+
         return new URL(pathname.slice(1), getSiteRootUrl()).toString();
     }
 
@@ -41,6 +53,8 @@
             return true;
         }).catch(function (err) {
             console.error("Error loading search index:", err);
+            indexFetchPromise = null;
+            fuse = null;
             return false;
         });
 
@@ -83,6 +97,21 @@
         if ($searchInputs.length === 0) return;
 
         let activeIndex = -1;
+        let debounceTimer = null;
+        let instanceCounter = 0;
+
+        // Assign unique IDs to each search input / dropdown pair for ARIA
+        $searchInputs.each(function () {
+            const $input = $(this);
+            const $container = $input.closest('.td-search--offline').find('.search-suggestions-dropdown');
+            const uid = 'search-suggestions-' + (instanceCounter++);
+
+            $container.attr('id', uid).attr('role', 'listbox');
+            $input.attr('role', 'combobox')
+                  .attr('aria-autocomplete', 'list')
+                  .attr('aria-expanded', 'false')
+                  .attr('aria-controls', uid);
+        });
 
         // Read the index URL from the data attribute set by Hugo
         function getIndexUrl() {
@@ -94,13 +123,23 @@
             return resolveSitePath('/offline-search-index.json');
         }
 
+        function showDropdown($input, $container) {
+            $container.show();
+            $input.attr('aria-expanded', 'true');
+        }
+
+        function hideDropdown($input, $container) {
+            $container.hide();
+            $input.attr('aria-expanded', 'false').removeAttr('aria-activedescendant');
+        }
+
         $searchInputs.on('focus', function() {
             activeIndex = -1;
             if (!fuse) fetchSearchIndex(getIndexUrl());
             const $this = $(this);
             const $suggestionsContainer = $this.closest('.td-search--offline').find('.search-suggestions-dropdown');
             if ($this.val().trim().length >= 2) {
-                $suggestionsContainer.show();
+                showDropdown($this, $suggestionsContainer);
             }
         });
 
@@ -110,28 +149,37 @@
             const $suggestionsContainer = $this.closest('.td-search--offline').find('.search-suggestions-dropdown');
 
             if (query.length < 2) {
-                $suggestionsContainer.hide();
+                hideDropdown($this, $suggestionsContainer);
+                clearTimeout(debounceTimer);
                 return;
             }
 
-            if (!fuse) {
-                fetchSearchIndex(getIndexUrl()).then(ready => {
-                    if (ready) renderSuggestions(query, $suggestionsContainer);
-                });
-            } else {
-                renderSuggestions(query, $suggestionsContainer);
-            }
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(function () {
+                if (!fuse) {
+                    fetchSearchIndex(getIndexUrl()).then(function (ready) {
+                        if (ready) renderSuggestions(query, $this, $suggestionsContainer);
+                    });
+                } else {
+                    renderSuggestions(query, $this, $suggestionsContainer);
+                }
+            }, 200);
         });
 
-        function renderSuggestions(query, $suggestionsContainer) {
+        function renderSuggestions(query, $input, $suggestionsContainer) {
             if (!fuse) return;
             const results = fuse.search(query);
             $suggestionsContainer.empty();
             activeIndex = -1;
+            $input.removeAttr('aria-activedescendant');
+
+            const listboxId = $suggestionsContainer.attr('id');
 
             if (results.length === 0) {
-                $suggestionsContainer.append('<div class="suggestion-item no-results">No results found</div>');
-                $suggestionsContainer.show();
+                $suggestionsContainer.append(
+                    '<div class="suggestion-item no-results" role="option" aria-disabled="true">No results found</div>'
+                );
+                showDropdown($input, $suggestionsContainer);
                 return;
             }
 
@@ -144,12 +192,15 @@
 
             filteredResults.forEach((result, idx) => {
                 const doc = result.item;
+                const optionId = listboxId + '-option-' + idx;
 
                 const titleHtml = highlightMatches(doc.title, result.matches, 'title');
                 
                 const $item = $('<a class="suggestion-item">')
                     .attr('href', resolveSitePath(doc.ref))
-                    .attr('data-index', idx);
+                    .attr('data-index', idx)
+                    .attr('id', optionId)
+                    .attr('role', 'option');
                 
                 const $title = $('<div class="suggestion-title">').html(titleHtml);
                 $item.append($title);
@@ -158,9 +209,9 @@
             });
 
             if ($suggestionsContainer.children().length > 0) {
-                $suggestionsContainer.show();
+                showDropdown($input, $suggestionsContainer);
             } else {
-                $suggestionsContainer.hide();
+                hideDropdown($input, $suggestionsContainer);
             }
         }
 
@@ -174,31 +225,36 @@
             if (e.key === 'ArrowDown') {
                 e.preventDefault();
                 activeIndex = (activeIndex + 1) % $items.length;
-                updateActiveItem($items);
+                updateActiveItem($this, $items);
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
                 activeIndex = (activeIndex - 1 + $items.length) % $items.length;
-                updateActiveItem($items);
+                updateActiveItem($this, $items);
             } else if (e.key === 'Enter') {
                 if (activeIndex >= 0 && activeIndex < $items.length) {
                     e.preventDefault();
                     window.location.href = $items.eq(activeIndex).attr('href');
                 }
             } else if (e.key === 'Escape') {
-                $suggestionsContainer.hide();
+                hideDropdown($this, $suggestionsContainer);
             }
         });
 
-        function updateActiveItem($items) {
-            $items.removeClass('active');
+        function updateActiveItem($input, $items) {
+            $items.removeClass('active').attr('aria-selected', 'false');
             if (activeIndex >= 0) {
-                $items.eq(activeIndex).addClass('active');
+                const $active = $items.eq(activeIndex);
+                $active.addClass('active').attr('aria-selected', 'true');
+                $input.attr('aria-activedescendant', $active.attr('id'));
+            } else {
+                $input.removeAttr('aria-activedescendant');
             }
         }
 
         $(document).on('click', function(e) {
             if (!$(e.target).closest('.td-search').length) {
                 $('.search-suggestions-dropdown').hide();
+                $searchInputs.attr('aria-expanded', 'false').removeAttr('aria-activedescendant');
             }
         });
 
