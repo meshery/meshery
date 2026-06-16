@@ -354,7 +354,7 @@ func ErrParseForm(err error) error {
 }
 
 func ErrQueryGet(obj string) error {
-	return errors.New(ErrQueryGetCode, errors.Alert, []string{"unable to get: ", obj}, []string{}, []string{"Query parameter is not a part of the request"}, []string{"Make sure to pass the query paramater in the request"})
+	return errors.New(ErrQueryGetCode, errors.Alert, []string{"unable to get: ", obj}, []string{}, []string{"Query parameter is not a part of the request"}, []string{"Make sure to pass the query parameter in the request"})
 }
 
 func ErrGetResult(err error) error {
@@ -509,7 +509,7 @@ func ErrGetFilter(err error) error {
 }
 
 func ErrSaveFilter(err error) error {
-	return errors.New(ErrSaveFilterCode, errors.Alert, []string{"Error failed to save filter"}, []string{err.Error()}, []string{"Cannot save the Filter due to wrong path or URL", "Filter is corrupted."}, []string{"Check if the given path or URL of the filter is correct", "Try uplaoding a different filter"})
+	return errors.New(ErrSaveFilterCode, errors.Alert, []string{"Error failed to save filter"}, []string{err.Error()}, []string{"Cannot save the Filter due to wrong path or URL", "Filter is corrupted."}, []string{"Check if the given path or URL of the filter is correct", "Try uploading a different filter"})
 }
 
 func ErrDecodeFilter(err error) error {
@@ -533,7 +533,7 @@ func ErrDeleteFilter(err error) error {
 }
 
 func ErrSavePattern(err error) error {
-	return errors.New(ErrSavePatternCode, errors.Alert, []string{"Error failed to save design."}, []string{err.Error()}, []string{"Cannot save the design due to an invalid path or URL"}, []string{"Verify that you have an active user session. Try logging and in again.", "Confirm that you have sufficient permissions to save the design.", "Try reducing the size of the design file by removing the number of images, using alternative image formats or removing other non-critical components from the design. See https://docs.layer5.io/kanvas/advanced/performance/."})
+	return errors.New(ErrSavePatternCode, errors.Alert, []string{"Error failed to save design."}, []string{err.Error()}, []string{"Cannot save the design due to an invalid path or URL"}, []string{"Verify that you have an active user session. Try logging and in again.", "Confirm that you have sufficient permissions to save the design.", "Try reducing the size of the design file by removing the number of images, using alternative image formats or removing other non-critical components from the design."})
 }
 
 func ErrSaveApplication(err error) error {
@@ -656,7 +656,7 @@ func ErrPublishCatalogFilter(err error) error {
 }
 
 func ErrGetMeshModels(err error) error {
-	return errors.New(ErrGetMeshModelsCode, errors.Alert, []string{"could not get meshmodel entitities"}, []string{err.Error()}, []string{"Meshmodel entity could not be converted into valid json", "data in the registry was inconsistent"}, []string{"make sure correct and consistent data is present inside the registry", "drop the Meshmodel tables and restart Meshery server"})
+	return errors.New(ErrGetMeshModelsCode, errors.Alert, []string{"could not get meshmodel entities"}, []string{err.Error()}, []string{"Meshmodel entity could not be converted into valid json", "data in the registry was inconsistent"}, []string{"make sure correct and consistent data is present inside the registry", "drop the Meshmodel tables and restart Meshery server"})
 }
 
 func ErrGetComponentDefinition(err error) error {
@@ -668,7 +668,7 @@ func ErrGetUserDetails(err error) error {
 }
 
 func ErrResolvingRegoRelationship(err error) error {
-	return errors.New(ErrResolvingRelationshipCode, errors.Alert, []string{"could not resolve rego relationship"}, []string{err.Error()}, []string{"The rego evaluation engine failed to resolve policies", "Design-File/Application-File is in incorrect format", "The policy query is invalid", "The evaluation engine response is unexpected for the code written"}, []string{"Make sure the design-file/application-file is a valid yaml", "Make sure you're proving correct rego query", "Make sure the server is evaluating the query correctly, add some logs"})
+	return errors.New(ErrResolvingRelationshipCode, errors.Alert, []string{"could not resolve rego relationship"}, []string{err.Error()}, []string{"The rego evaluation engine failed to resolve policies", "Design-File/Application-File is in incorrect format", "The policy query is invalid", "The evaluation engine response is unexpected for the code written"}, []string{"Make sure the design-file/application-file is a valid yaml", "Make sure you're providing correct rego query", "Make sure the server is evaluating the query correctly, add some logs"})
 }
 
 func ErrCreateFile(err error, obj string) error {
@@ -724,7 +724,7 @@ func ErrGetConnections(err error) error {
 }
 
 func ErrWritingIntoFile(err error, obj string) error {
-	return errors.New(ErrWritingIntoFileCode, errors.Alert, []string{fmt.Sprintf("failed to write into file %s", obj)}, []string{err.Error()}, []string{"Insufficient permissions to write into file", "file might be corrupted"}, []string{"check if sufficient permissions are givent to the file", "check if the file is corrupted"})
+	return errors.New(ErrWritingIntoFileCode, errors.Alert, []string{fmt.Sprintf("failed to write into file %s", obj)}, []string{err.Error()}, []string{"Insufficient permissions to write into file", "file might be corrupted"}, []string{"check if sufficient permissions are given to the file", "check if the file is corrupted"})
 }
 
 func ErrBuildOCIImg(err error) error {
@@ -769,7 +769,7 @@ func ErrPersistEventToRemoteProvider(err error) error {
 	return errors.New(ErrPersistEventToRemoteProviderCode, errors.Alert, []string{"failed to persist event to remote provider"}, []string{err.Error()}, []string{"token is expired/revoked", "Remote Provider is not reachable or unavailable"}, []string{"Try re-authenticating with the remote provider", "Verify remote provider for its reachability or availability."})
 }
 func ErrNoTarInsideOCi() error {
-	return errors.New(ErrNoTarInsideOCiCode, errors.Alert, []string{"No tar file found inside OCI image"}, []string{"Unable to locate the compressed file(.tar.gz) inside the OCI image."}, []string{"The OCI image does not contain a ziped file."}, []string{"Verify that the OCI image contains a ziped file."})
+	return errors.New(ErrNoTarInsideOCiCode, errors.Alert, []string{"No tar file found inside OCI image"}, []string{"Unable to locate the compressed file(.tar.gz) inside the OCI image."}, []string{"The OCI image does not contain a zipped file."}, []string{"Verify that the OCI image contains a zipped file."})
 }
 func ErrEmptyOCIImage(err error) error {
 	return errors.New(ErrEmptyOCIImageCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
@@ -1028,7 +1028,7 @@ func ErrUpdateEntityStatus(err error) error {
 // failures (the common case), 501 Not Implemented when the active
 // provider is the local provider, which has no extensions backend.
 func ErrExtensionProxy(err error) error {
-	return errors.New(ErrExtensionProxyCode, errors.Alert, []string{"Extension proxy request failed"}, []string{err.Error()}, []string{"The remote provider could not be reached (network failure, DNS resolution, or TLS handshake failure).", "The remote provider returned a non-2xx response that the proxy could not translate.", "The active provider is the local provider, which has no extensions backend."}, []string{"Verify the remote provider is reachable from this Meshery instance and that the user's session token has not expired. Retry the request after re-authenticating if the failure persists.", "If running against the local provider, switch to a remote provider (Layer5 Cloud) that exposes the extensions surface."})
+	return errors.New(ErrExtensionProxyCode, errors.Alert, []string{"Extension proxy request failed"}, []string{err.Error()}, []string{"The remote provider could not be reached (network failure, DNS resolution, or TLS handshake failure).", "The remote provider returned a non-2xx response that the proxy could not translate.", "The active provider is the local provider, which has no extensions backend."}, []string{"Verify the remote provider is reachable from this Meshery instance and that the user's session token has not expired. Retry the request after re-authenticating if the failure persists.", "If running against the local provider, switch to a remote provider that exposes the extensions surface."})
 }
 
 // ErrInitializeMachine wraps failures of the connection state-machine

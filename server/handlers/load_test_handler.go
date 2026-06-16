@@ -19,7 +19,6 @@ import (
 	yaml "github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
@@ -60,6 +59,15 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 		return
 	}
 
+	// Guard against a missing/empty "test" config before dereferencing it
+	// below (name, id, duration, clients[0]); a malformed body must not panic.
+	if perfTest == nil || perfTest.Config == nil || len(perfTest.Config.Clients) == 0 {
+		err := fmt.Errorf("request body is missing the required \"test\" performance configuration or load-test clients")
+		h.log.Error(models.ErrUnmarshal(err, "performance test config"))
+		writeMeshkitError(w, models.ErrUnmarshal(err, "performance test config"), http.StatusBadRequest)
+		return
+	}
+
 	// testName - should be loaded from the file and updated with a random string appended to the end of the name
 	testName := perfTest.Config.Name
 	if testName == "" {
@@ -68,10 +76,11 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 		return
 	}
 
-	meshType := perfTest.ServiceMesh.Type
-	meshName := SMP.ServiceMesh_Type_name[int32(meshType)]
+	// The technology under test is identified by a Meshery Registry model
+	// name (free-form string), replacing the constraining SMP service-mesh enum.
+	meshName := perfTest.ServiceMesh
 
-	profileID := perfTest.Config.Id
+	profileID := perfTest.Config.ID
 
 	loadTestOptions := &models.LoadTestOptions{}
 
@@ -88,6 +97,12 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 
 	// TODO: check multiple clients in case of distributed perf test
 	testClient := perfTest.Config.Clients[0]
+	if len(testClient.EndpointUrls) == 0 {
+		err := fmt.Errorf("request body is missing load-test endpoint URLs")
+		h.log.Error(models.ErrUnmarshal(err, "performance test config"))
+		writeMeshkitError(w, models.ErrUnmarshal(err, "performance test config"), http.StatusBadRequest)
+		return
+	}
 
 	// TODO: consider the multiple endpoints
 	loadTestOptions.URL = testClient.EndpointUrls[0]
@@ -116,16 +131,9 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 		loadTestOptions.HTTPQPS = 0
 	}
 
-	loadGenerator := testClient.LoadGenerator
-
-	switch loadGenerator {
-	case models.Wrk2LG.Name():
-		loadTestOptions.LoadGenerator = models.Wrk2LG
-	case models.NighthawkLG.Name():
-		loadTestOptions.LoadGenerator = models.NighthawkLG
-	default:
-		loadTestOptions.LoadGenerator = models.FortioLG
-	}
+	// fortio is the only supported load generator. Any generator carried by
+	// an existing profile (including the removed "wrk2") runs on fortio.
+	loadTestOptions.LoadGenerator = models.FortioLG
 	loadTestOptions.AllowInitialErrors = true
 
 	h.loadTestHelperHandler(w, req, profileID, testName, meshName, "", prefObj, loadTestOptions, provider)
@@ -317,16 +325,9 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	}
 	loadTestOptions.HTTPQPS = qps
 
-	loadGenerator := q.Get("loadGenerator")
-
-	switch loadGenerator {
-	case models.Wrk2LG.Name():
-		loadTestOptions.LoadGenerator = models.Wrk2LG
-	case models.NighthawkLG.Name():
-		loadTestOptions.LoadGenerator = models.NighthawkLG
-	default:
-		loadTestOptions.LoadGenerator = models.FortioLG
-	}
+	// fortio is the only supported load generator. Any generator passed by
+	// the client (including the removed "wrk2") runs on fortio.
+	loadTestOptions.LoadGenerator = models.FortioLG
 	h.log.Info("perf test with config: ", loadTestOptions)
 	h.loadTestHelperHandler(w, req, profileID, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
 }
@@ -422,16 +423,8 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 		resultInst *periodic.RunnerResults
 		err        error
 	)
-	switch loadTestOptions.LoadGenerator {
-	case models.Wrk2LG:
-		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions, h.log)
-
-	case models.NighthawkLG:
-		resultsMap, resultInst, err = helpers.NighthawkLoadTest(loadTestOptions, h.log)
-
-	default:
-		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions, h.log)
-	}
+	// fortio is the only supported load generator.
+	resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions, h.log)
 	if err != nil {
 		h.log.Error(ErrLoadTest(err, "unable to perform"))
 		respChan <- &models.LoadTestResponse{

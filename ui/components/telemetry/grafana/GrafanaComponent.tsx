@@ -7,12 +7,12 @@ import GrafanaConfigComponent from './GrafanaConfigComponent';
 import GrafanaSelectionComponent from './GrafanaSelectionComponent';
 import GrafanaDisplaySelection from './GrafanaDisplaySelection';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
-import fetchAvailableAddons from '../../graphql/queries/AddonsStatusQuery';
+import fetchAvailableAddons from '@/graphql/queries/AddonsStatusQuery';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS } from '@/utils/Enum';
-import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
+import { withTelemetryHook } from '@/utils/hooks/useTelemetryHook';
 import { useLazyGetCredentialByIdQuery } from '@/rtk-query/credentials';
 import { useUpdateConnectionByIdMutation } from '@/rtk-query/connection';
 import {
@@ -189,7 +189,7 @@ const GrafanaComponent = (props) => {
     // Get the connection object from the event value and update configuration
     const grafanaConnectionObj = value;
     try {
-      const res = await fetchCredentialById(grafanaConnectionObj.credential_id).unwrap();
+      const res = await fetchCredentialById(grafanaConnectionObj.credentialId).unwrap();
       const grafanaCfg = {
         grafanaURL: grafanaConnectionObj?.value || '',
         grafanaAPIKey: res?.secret?.secret || '',

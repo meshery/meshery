@@ -10,8 +10,8 @@ integrations-subcategory: Uncategorized
 registrant: Artifact Hub
 components: 
 - name: channel
-  colorIcon: content/en/extensions/models/slack-operator/components/channel/icons/color/channel-color.svg
-  whiteIcon: content/en/extensions/models/slack-operator/components/channel/icons/white/channel-white.svg
+  colorIcon: extensions/models/slack-operator/components/channel/icons/color/channel-color.svg
+  whiteIcon: extensions/models/slack-operator/components/channel/icons/white/channel-white.svg
   description: 
 components-count: 1
 relationships: 

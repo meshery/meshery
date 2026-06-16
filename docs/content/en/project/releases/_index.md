@@ -11,4 +11,4 @@ cascade:
     toc_hide: true
 ---
 
-See also Meshery's [Compatibility Matrix](/installation) and [Build and Release](/project/contributing/build-and-release) process.
+See also Meshery's [Compatibility Matrix]({{< ref "installation/_index.md" >}}) and [Build and Release]({{< ref "project/contributing/build-and-release.md" >}}) process.

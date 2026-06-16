@@ -10,16 +10,16 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: edge-cluster
-  colorIcon: content/en/extensions/models/kubegems-edge/components/edge-cluster/icons/color/edge-cluster-color.svg
-  whiteIcon: content/en/extensions/models/kubegems-edge/components/edge-cluster/icons/white/edge-cluster-white.svg
+  colorIcon: extensions/models/kubegems-edge/components/edge-cluster/icons/color/edge-cluster-color.svg
+  whiteIcon: extensions/models/kubegems-edge/components/edge-cluster/icons/white/edge-cluster-white.svg
   description: 
 - name: edge-hub
-  colorIcon: content/en/extensions/models/kubegems-edge/components/edge-hub/icons/color/edge-hub-color.svg
-  whiteIcon: content/en/extensions/models/kubegems-edge/components/edge-hub/icons/white/edge-hub-white.svg
+  colorIcon: extensions/models/kubegems-edge/components/edge-hub/icons/color/edge-hub-color.svg
+  whiteIcon: extensions/models/kubegems-edge/components/edge-hub/icons/white/edge-hub-white.svg
   description: 
 - name: edge-task
-  colorIcon: content/en/extensions/models/kubegems-edge/components/edge-task/icons/color/edge-task-color.svg
-  whiteIcon: content/en/extensions/models/kubegems-edge/components/edge-task/icons/white/edge-task-white.svg
+  colorIcon: extensions/models/kubegems-edge/components/edge-task/icons/color/edge-task-color.svg
+  whiteIcon: extensions/models/kubegems-edge/components/edge-task/icons/white/edge-task-white.svg
   description: 
 components-count: 3
 relationships: 

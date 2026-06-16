@@ -1,6 +1,7 @@
 package models
 
 import (
+	"sync"
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
@@ -15,13 +16,12 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/meshery/schemas/models/core"
+	"k8s.io/client-go/util/homedir"
 
 	"github.com/gofrs/uuid"
-	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
@@ -33,6 +33,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta2/organization"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
@@ -62,27 +63,192 @@ type DefaultLocalProvider struct {
 	ConnectionPersister             *ConnectionPersister
 	EnvironmentPersister            *EnvironmentPersister
 	WorkspacePersister              *WorkspacePersister
-
-	GenericPersister *database.Handler
-	KubeClient       *mesherykube.Client
-	Log              logger.Handler
+	GenericPersister                *database.Handler
+	KubeClient                      *mesherykube.Client
+	Log                             logger.Handler
 
 	MeshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode
+
+	// mu guards concurrent access to Extensions: InstallExtension and
+	// RemoveExtension take the write lock to mutate it, while readers such as
+	// GetProviderCapabilities/GetProviderProperties take the read lock.
+	mu sync.RWMutex
+	// downloadMu serializes provider package downloads so concurrent installs
+	// don't race on the shared on-disk package location.
+	downloadMu sync.Mutex
+}
+
+// LocalProviderName is the canonical name of the built-in local provider.
+// LocalProviderLegacyAlias is the prior name ("None"). It is still accepted on
+// inbound cookies/headers/env so existing sessions and ~/.meshery/config.yaml
+// entries continue to work after the rename. Normalization happens in
+// NormalizeProviderName (see models/providers.go).
+const (
+	LocalProviderName        = "Local"
+	LocalProviderLegacyAlias = "None"
+)
+
+func (l *DefaultLocalProvider) InstallExtension(extType string, packageUrl string, extensionMetadata map[string]interface{}) error {
+	if extensionMetadata == nil {
+		return fmt.Errorf("InstallExtension called with nil extensionMetadata")
+	}
+
+	extType = strings.ToLower(strings.TrimSpace(extType))
+
+	// marshal incoming map to JSON then unmarshal into the concrete struct
+	metaBytes, err := json.Marshal(extensionMetadata)
+	if err != nil {
+		return ErrMarshal(err, "extension metadata")
+	}
+
+	// Only the navigator and account extension points carry a Title, which is
+	// the identity used to upsert (on install) and locate (on remove) an
+	// extension. The other extension types have no stable identity here and
+	// therefore cannot be removed, so they are rejected to keep InstallExtension
+	// and RemoveExtension symmetric and to avoid accumulating duplicates.
+	switch extType {
+	case "navigator":
+		var parsed NavigatorExtension
+		if err := json.Unmarshal(metaBytes, &parsed); err != nil {
+			return ErrUnmarshal(err, "navigator extension metadata")
+		}
+
+		// ensure Title is present (fallback to map value if needed)
+		if parsed.Title == "" {
+			if t, ok := extensionMetadata["title"].(string); ok {
+				parsed.Title = t
+			}
+		}
+		if strings.TrimSpace(parsed.Title) == "" {
+			return fmt.Errorf("InstallExtension: navigator extension title is required")
+		}
+
+		if err := l.DownloadProviderExtensionPackageFromURL(packageUrl, l.Log); err != nil {
+			return err
+		}
+
+		l.mu.Lock()
+		l.Extensions.Navigator = upsertNavigatorExtension(l.Extensions.Navigator, parsed)
+		l.mu.Unlock()
+
+	case "account":
+		var parsed AccountExtension
+		if err := json.Unmarshal(metaBytes, &parsed); err != nil {
+			return ErrUnmarshal(err, "account extension metadata")
+		}
+
+		if parsed.Title == "" {
+			if t, ok := extensionMetadata["title"].(string); ok {
+				parsed.Title = t
+			}
+		}
+		if strings.TrimSpace(parsed.Title) == "" {
+			return fmt.Errorf("InstallExtension: account extension title is required")
+		}
+
+		l.mu.Lock()
+		l.Extensions.Acccount = upsertAccountExtension(l.Extensions.Acccount, parsed)
+		l.mu.Unlock()
+
+	default:
+		return fmt.Errorf("InstallExtension: unsupported extension type %q (supported types: navigator, account)", extType)
+	}
+	return nil
+}
+
+// upsertNavigatorExtension replaces the navigator extension that has a matching
+// (case-insensitive) title or appends it when none matches, so repeated
+// installs of the same extension are idempotent rather than accumulating
+// duplicate entries.
+func upsertNavigatorExtension(existing NavigatorExtensions, ext NavigatorExtension) NavigatorExtensions {
+	// Copy-on-write: build a new backing array instead of mutating in place, so a
+	// reader holding a previously returned slice header always observes an
+	// immutable snapshot even after the write lock is released.
+	newExts := make(NavigatorExtensions, len(existing), len(existing)+1)
+	copy(newExts, existing)
+	for i, e := range newExts {
+		if strings.EqualFold(strings.TrimSpace(e.Title), strings.TrimSpace(ext.Title)) {
+			newExts[i] = ext
+			return newExts
+		}
+	}
+	return append(newExts, ext)
+}
+
+// upsertAccountExtension replaces the account extension that has a matching
+// (case-insensitive) title or appends it when none matches.
+func upsertAccountExtension(existing AccountExtensions, ext AccountExtension) AccountExtensions {
+	// Copy-on-write (see upsertNavigatorExtension).
+	newExts := make(AccountExtensions, len(existing), len(existing)+1)
+	copy(newExts, existing)
+	for i, e := range newExts {
+		if strings.EqualFold(strings.TrimSpace(e.Title), strings.TrimSpace(ext.Title)) {
+			newExts[i] = ext
+			return newExts
+		}
+	}
+	return append(newExts, ext)
+}
+
+func (l *DefaultLocalProvider) RemoveExtension(extType, title string) error {
+	extType = strings.ToLower(strings.TrimSpace(extType))
+	title = strings.TrimSpace(title)
+	if title == "" {
+		return fmt.Errorf("RemoveExtension called with empty title")
+	}
+
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	switch extType {
+	case "navigator":
+		filtered := make(NavigatorExtensions, 0, len(l.Extensions.Navigator))
+		removed := false
+		for _, extension := range l.Extensions.Navigator {
+			if strings.EqualFold(strings.TrimSpace(extension.Title), title) {
+				removed = true
+				continue
+			}
+			filtered = append(filtered, extension)
+		}
+		if !removed {
+			return fmt.Errorf("RemoveExtension: navigator extension %q not found", title)
+		}
+		l.Extensions.Navigator = filtered
+	case "account":
+		filtered := make(AccountExtensions, 0, len(l.Extensions.Acccount))
+		removed := false
+		for _, extension := range l.Extensions.Acccount {
+			if strings.EqualFold(strings.TrimSpace(extension.Title), title) {
+				removed = true
+				continue
+			}
+			filtered = append(filtered, extension)
+		}
+		if !removed {
+			return fmt.Errorf("RemoveExtension: account extension %q not found", title)
+		}
+		l.Extensions.Acccount = filtered
+	default:
+		return fmt.Errorf("RemoveExtension: unsupported extension type %q (supported types: navigator, account)", extType)
+	}
+
+	return nil
 }
 
 // Initialize will initialize the local provider
 func (l *DefaultLocalProvider) Initialize() {
-	l.ProviderName = "None"
+	l.ProviderName = LocalProviderName
 	l.ProviderDescription = []string{
-		"Ephemeral sessions",
-		"Environment setup not saved",
-		"No performance or conformance test result history",
-		"Free Use",
+		"Built-in - no external services required",
+		"On-disk persistence for designs, filters, and credentials",
+		"Anonymous, single-user session (no login)",
+		"Always free, always available",
 	}
 	l.ProviderType = LocalProviderType
 	l.PackageVersion = viper.GetString("BUILD")
 	l.PackageURL = ""
-	l.Extensions = Extensions{}
+	l.Extensions = Extensions{Navigator: NavigatorExtensions{}}
 	l.Capabilities = Capabilities{
 		{Feature: PersistMesheryPatterns},
 		{Feature: PersistMesheryApplications},
@@ -113,19 +279,61 @@ func (l *DefaultLocalProvider) GetProviderType() ProviderType {
 func (l *DefaultLocalProvider) DownloadProviderExtensionPackage() {
 }
 
+// downloadProviderExtensionPackage will download the remote provider extensions
+// package
+func (l *DefaultLocalProvider) DownloadProviderExtensionPackageFromURL(packageUrl string, log logger.Handler) error {
+	// Skip download if the SKIP_DOWNLOAD_EXTENSIONS flag is set
+	if viper.GetBool(SKIP_DOWNLOAD_EXTENSIONS_ENV) {
+		log.Info("[DownloadProviderExtensionPackage]: Skipping extension download due to SKIP_DOWNLOAD_EXTENSIONS flag")
+		return nil
+	}
+
+	// Serialize the check-then-download so concurrent installs don't extract to
+	// the same shared location simultaneously and corrupt the package.
+	l.downloadMu.Lock()
+	defer l.downloadMu.Unlock()
+
+	// Location for the package to be stored
+	loc := l.PackageLocation()
+
+	log.Infof("Package location %s", loc)
+
+	// Skip download if the file is already present
+	if _, err := os.Stat(loc); err == nil {
+		log.Debug(fmt.Sprintf("[Initialize]: Package found at %s skipping download", loc))
+		return nil
+	}
+
+	if strings.TrimSpace(packageUrl) == "" {
+		return fmt.Errorf("provider package URL is required to install local extension assets")
+	}
+	if !strings.HasPrefix(packageUrl, "https://github.com/meshery-extensions/") {
+		return fmt.Errorf("untrusted provider package URL: %s", packageUrl)
+	}
+
+	log.Info(fmt.Sprintf("[Initialize]: Package not found at %s proceeding to download", loc))
+	if err := TarXZF(packageUrl, loc, log); err != nil {
+		return ErrDownloadPackage(err, "provider package")
+	}
+
+	return nil
+}
+
 func (l *DefaultLocalProvider) SetProviderProperties(providerProperties ProviderProperties) {
 	l.ProviderProperties = providerProperties
 }
 
 // GetProviderProperties - Returns all the provider properties required
 func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
 	return l.ProviderProperties
 }
 
-// PackageLocation returns an empty string as there is no extension package for
-// the local provider
+// PackageLocation returns the location of where the package for the current
+// provider is located
 func (l *DefaultLocalProvider) PackageLocation() string {
-	return ""
+	return filepath.Join(homedir.HomeDir(), ".meshery", "provider", l.ProviderName, l.PackageVersion)
 }
 
 func (l *DefaultLocalProvider) SetJWTCookie(_ http.ResponseWriter, _ string) {
@@ -136,7 +344,12 @@ func (l *DefaultLocalProvider) UnSetJWTCookie(_ http.ResponseWriter) {
 
 func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request, _ string) {
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(l.ProviderProperties); err != nil {
+	// Read Extensions/ProviderProperties under the read lock so the encode does
+	// not race with concurrent InstallExtension/RemoveExtension mutations.
+	l.mu.RLock()
+	err := json.NewEncoder(&buf).Encode(l.ProviderProperties)
+	l.mu.RUnlock()
+	if err != nil {
 		errObj := ErrEncoding(err, "provider capabilities")
 		l.Log.Error(errObj)
 		httputil.WriteMeshkitError(w, errObj, http.StatusInternalServerError)
@@ -632,12 +845,12 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, _ *http.Reque
 }
 
 // SMPTestConfigStore Stores the given PerformanceTestConfig into local datastore
-func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error) {
+func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *perfprofile.PerformanceTestConfig) (string, error) {
 	uid, err := uuid.NewV4()
 	if err != nil {
 		return "", ErrGenerateUUID(err)
 	}
-	perfConfig.Id = uid.String()
+	perfConfig.ID = uid.String()
 	data, err := json.Marshal(perfConfig)
 	if err != nil {
 		return "", ErrMarshal(err, "test config for persisting")
@@ -646,7 +859,7 @@ func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *S
 }
 
 // SMPTestConfigGet gets the given PerformanceTestConfig from the local datastore
-func (l *DefaultLocalProvider) SMPTestConfigGet(_ *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
+func (l *DefaultLocalProvider) SMPTestConfigGet(_ *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error) {
 	uid, err := uuid.FromString(testUUID)
 	if err != nil {
 		return nil, ErrGenerateUUID(err)
@@ -1015,16 +1228,20 @@ func (l *DefaultLocalProvider) ShareFilter(_ *http.Request) (int, error) {
 
 // SavePerformanceProfile saves given performance profile with the provider
 func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfile *PerformanceProfile) ([]byte, error) {
-	var uid core.Uuid
-	if performanceProfile.ID != nil {
-		uid = *performanceProfile.ID
-	} else {
-		var err error
-		uid, err = uuid.NewV4()
+	if performanceProfile == nil {
+		return nil, fmt.Errorf("performance profile is nil")
+	}
+
+	if performanceProfile.ID == (core.Uuid{}) {
+		uid, err := uuid.NewV4()
 		if err != nil {
 			return nil, ErrGenerateUUID(err)
 		}
-		performanceProfile.ID = &uid
+		performanceProfile.ID = uid
+	}
+
+	if performanceProfile.Metadata == nil {
+		performanceProfile.Metadata = core.Map{}
 	}
 
 	data, err := json.Marshal(performanceProfile)
@@ -1032,7 +1249,7 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfi
 		return nil, ErrMarshal(err, "Perf Profile for persisting")
 	}
 
-	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(uid, performanceProfile)
+	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile.ID, performanceProfile)
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
@@ -1119,7 +1336,7 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 	connection := &connections.Connection{
 		ID:           id,
 		Name:         conn.Name,
-		CredentialID: &uuid.Nil, // compatibilitiy
+		CredentialID: connectionCredentialID(conn.CredentialID),
 		Type:         conn.Type,
 		SubType:      conn.SubType,
 		Kind:         conn.Kind,
@@ -1134,6 +1351,13 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 		return nil, err
 	}
 	return connectionCreated, nil
+}
+
+func connectionCredentialID(credentialID *core.Uuid) *core.Uuid {
+	if credentialID != nil {
+		return credentialID
+	}
+	return new(core.Uuid) // compatibility
 }
 
 func (l *DefaultLocalProvider) GetConnections(_ *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
@@ -1215,10 +1439,6 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 }
 
 func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
-	var (
-		seededUUIDs   []core.Uuid
-		seededUUIDsMu sync.Mutex
-	)
 	seedContents := []string{"Pattern", "Filter"}
 	nilUserID := ""
 
@@ -1226,8 +1446,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
 
 	for _, seedContent := range seedContents {
-		go func(comp string, log logger.Handler) {
-			switch comp {
+			switch seedContent {
 			case "Pattern":
 				files, err := walker.WalkLocalDirectory(catalogDir)
 				if err != nil {
@@ -1235,52 +1454,48 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 					return
 				}
 
-				var wg sync.WaitGroup
+				for _, file := range files {
+    if file.Name != "design.yml" && file.Name != "design.yaml" {
+        continue
+    }
 
-				for i, file := range files {
-					// Ensure only design.yml is imported
-					if file.Name == "design.yml" || file.Name == "design.yaml" {
-						wg.Add(1)
-						go func(file *walker.File, index int) {
-							defer wg.Done()
-							id, _ := uuid.NewV4()
+    id, err := uuid.NewV4()
+    if err != nil {
+        log.Error(err)
+        continue
+    }
 
-							patternName, err := GetPatternName(file.Content)
-							if err != nil {
-								log.Error(err)
-								return
-							}
+    patternName, err := GetPatternName(file.Content)
+    if err != nil {
+        log.Error(err)
+        continue
+    }
 
-							var pattern = &MesheryPattern{
-								PatternFile: file.Content,
-								Name:        patternName,
-								ID:          &id,
-								UserID:      &nilUserID,
-								Visibility:  Published,
-								Location: map[string]interface{}{
-									"host":   "",
-									"path":   "",
-									"type":   "local",
-									"branch": "",
-								},
-							}
-							if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
-								log.Error(ErrGettingSeededComponents(err, comp+"s"))
-							}
-							seededUUIDsMu.Lock()
-							seededUUIDs = append(seededUUIDs, id)
-							seededUUIDsMu.Unlock()
-						}(file, i)
-					}
-				}
+    pattern := &MesheryPattern{
+        PatternFile: file.Content,
+        Name:        patternName,
+        ID:          &id,
+        UserID:      &nilUserID,
+        Visibility:  Published,
+        Location: map[string]interface{}{
+            "host":   "",
+            "path":   "",
+            "type":   "local",
+            "branch": "",
+        },
+    }
 
-				wg.Wait()
+    if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
+        log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
+    }
+
+}				
 
 			case "Filter":
 				// Keep the existing behavior for filters
-				names, content, err := getSeededComponents(comp, log)
+				names, content, err := getSeededComponents(seedContent, log)
 				if err != nil {
-					log.Error(ErrGettingSeededComponents(err, comp))
+					log.Error(ErrGettingSeededComponents(err, seedContent))
 				} else {
 					for i, name := range names {
 						id, _ := uuid.NewV4()
@@ -1299,15 +1514,11 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 						}
 						_, err := l.MesheryFilterPersister.SaveMesheryFilter(filter)
 						if err != nil {
-							log.Error(ErrGettingSeededComponents(err, comp+"s"))
+							log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
 						}
-						seededUUIDsMu.Lock()
-						seededUUIDs = append(seededUUIDs, id)
-						seededUUIDsMu.Unlock()
 					}
 				}
 			}
-		}(seedContent, log)
 	}
 
 	// Seed default organization before the UI requests organizations.
@@ -1880,8 +2091,8 @@ func getFiltersFromWasmFiltersRepo(downloadPath string) error {
 	// if err != nil {
 	// 	return err
 	// }
-	//Temporary hardcoding until https://github.com/layer5io/wasm-filters/issues/38 is resolved
-	downloadURL := "https://github.com/layer5io/wasm-filters/releases/download/v0.1.0/wasm-filters-v0.1.0.tar.gz"
+	//Temporary hardcoding until https://github.com/meshery-extensions/wasm-filters/issues/38 is resolved
+	downloadURL := "https://github.com/meshery-extensions/wasm-filters/releases/download/v0.1.0/wasm-filters-v0.1.0.tar.gz"
 	res, err := http.Get(downloadURL)
 	if err != nil {
 		return err
@@ -1930,7 +2141,12 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 // Events
 
 func (e *EventsPersister) PersistEvent(event events.Event, token string) error {
-	err := e.DB.Save(event).Error
+	// GORM's Save requires a pointer (it reflects on the struct to read/update
+	// the primary key and timestamps). Passing the value directly produced
+	// "invalid value, should be pointer to struct or slice" and dropped every
+	// system event silently — including the controller-emitted events that
+	// flow through PersistSystemEvent.
+	err := e.DB.Save(&event).Error
 	if err != nil {
 		return ErrPersistEvent(err)
 	}
@@ -2058,27 +2274,3 @@ func (l *DefaultLocalProvider) BulkDeleteEvent(token string, eventIDs []*core.Uu
 	}
 	return nil
 }
-
-// // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
-// func getLatestStableReleaseTag() (string, error) {
-// 	url := "https://github.com/layer5io/wasm-filters/releases/latest"
-// 	resp, err := http.Get(url)
-// 	if err != nil {
-// 		return "", errors.New("failed to get latest stable release tag")
-// 	}
-// 	defer SafeClose(resp.Body)
-
-// 	if resp.StatusCode != http.StatusOK {
-// 		return "", errors.New("failed to get latest stable release tag")
-// 	}
-
-// 	body, err := io.ReadAll(resp.Body)
-// 	if err != nil {
-// 		return "", errors.New("failed to get latest stable release tag")
-// 	}
-// 	re := regexp.MustCompile("/releases/tag/(.*?)\"")
-// 	releases := re.FindAllString(string(body), -1)
-// 	latest := strings.ReplaceAll(releases[0], "/releases/tag/", "")
-// 	latest = strings.ReplaceAll(latest, "\"", "")
-// 	return latest, nil
-// }

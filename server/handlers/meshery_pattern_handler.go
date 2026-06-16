@@ -149,13 +149,12 @@ func (p *MesheryPatternUPDATERequestBody) UnmarshalJSON(data []byte) error {
 // wire form is camelCase (`designFile`) per the identifier-naming
 // migration; legacy snake_case (`design_file`) and the alternate
 // "pattern file" vocabulary (`patternFile`, `pattern_file`) are still
-// accepted for the deprecation window so unmigrated clients (e.g.
-// meshery-extensions' meshmap `saveDesign` and Kanvas' legacy body
+// accepted for the deprecation window so unmigrated clients on either
 // shape) keep working. Custom MarshalJSON emits both canonical and
 // legacy spellings so any external consumer still reading either form
 // continues to round-trip.
 //
-// Once every known consumer (meshery-cloud, meshery-extensions, Kanvas)
+// Once every known consumer (meshery-cloud, meshery-extensions)
 // has migrated off the legacy spellings, drop MarshalJSON/UnmarshalJSON
 // and keep only the `designFile` struct tag.
 type DesignPostPayload struct {
@@ -892,7 +891,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		return
 	}
 
-	// v1beta1
+	// Detect and migrate legacy v1alpha2 designs to the current schema.
 	isOldFormat, err := patternutils.IsDesignInAlpha2Format(pattern.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)

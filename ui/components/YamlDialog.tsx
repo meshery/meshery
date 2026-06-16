@@ -4,15 +4,15 @@ import {
   DialogActions,
   DialogContent,
   Divider,
-  FullScreenIconExit as FullscreenExitIcon,
-  FullScreenIcon as FullscreenIcon,
+  FullScreenExitIcon,
+  FullScreenIcon,
   IconButton,
   SaveIcon,
   Tooltip,
 } from '@sistent/sistent';
 import { UnControlled as CodeMirror } from './CodeMirror';
-import { YamlDialogTitleText, StyledDialog } from './MesheryPatterns/style';
-import { StyledCodeMirrorWrapper } from './MesheryPatterns/Cards.styles';
+import { YamlDialogTitleText, StyledDialog } from './designs/patterns/style';
+import { StyledCodeMirrorWrapper } from './designs/patterns/Cards.styles';
 
 const YAMLDialog = ({
   fullScreen,
@@ -36,7 +36,7 @@ const YAMLDialog = ({
         <YamlDialogTitleText variant="h6">{name}</YamlDialogTitleText>
         <Tooltip title="Exit Fullscreen" arrow placement="bottom">
           <IconButton onClick={toggleFullScreen} size="large">
-            {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+            {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
           </IconButton>
         </Tooltip>
       </StyledDialog>

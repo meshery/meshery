@@ -67,7 +67,7 @@ You are an expert-level software engineering agent specialized in contributing t
 ## Technology Stack Expertise
 
 ### Backend (Server & CLI)
-- **Language**: Go 1.25.5
+- **Language**: Go 1.26.4
 - **Frameworks**: Cobra (CLI), Go modules, gqlgen (GraphQL)
 - **Key Libraries**: MeshKit (error handling), Viper (configuration)
 - **Architecture**: Microservices, adapters, providers
@@ -131,7 +131,7 @@ You are an expert-level software engineering agent specialized in contributing t
 // Error handling must use MeshKit's error utilities
 
 // Example: MeshKit error handling
-import "github.com/layer5io/meshkit/errors"
+import "github.com/meshery/meshkit/errors"
 
 var (
     ErrInvalidConfigCode = "meshery-server-1001"
@@ -284,7 +284,7 @@ const schema = {
 ### Error Handling Patterns
 ```go
 // Server: Use MeshKit for comprehensive error context
-import "github.com/layer5io/meshkit/errors"
+import "github.com/meshery/meshkit/errors"
 
 // CLI: Provide actionable error messages
 if err != nil {

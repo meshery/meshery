@@ -10,12 +10,12 @@ integrations-subcategory: Key Management
 registrant: Artifact Hub
 components: 
 - name: vald-helm-operator-release
-  colorIcon: content/en/extensions/models/vald-helm-operator/components/vald-helm-operator-release/icons/color/vald-helm-operator-release-color.svg
-  whiteIcon: content/en/extensions/models/vald-helm-operator/components/vald-helm-operator-release/icons/white/vald-helm-operator-release-white.svg
+  colorIcon: extensions/models/vald-helm-operator/components/vald-helm-operator-release/icons/color/vald-helm-operator-release-color.svg
+  whiteIcon: extensions/models/vald-helm-operator/components/vald-helm-operator-release/icons/white/vald-helm-operator-release-white.svg
   description: 
 - name: vald-release
-  colorIcon: content/en/extensions/models/vald-helm-operator/components/vald-release/icons/color/vald-release-color.svg
-  whiteIcon: content/en/extensions/models/vald-helm-operator/components/vald-release/icons/white/vald-release-white.svg
+  colorIcon: extensions/models/vald-helm-operator/components/vald-release/icons/color/vald-release-color.svg
+  whiteIcon: extensions/models/vald-helm-operator/components/vald-release/icons/white/vald-release-white.svg
   description: 
 components-count: 2
 relationships: 

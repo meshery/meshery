@@ -10,8 +10,8 @@ integrations-subcategory: App Definition and Development
 registrant: Artifact Hub
 components: 
 - name: postgres-database
-  colorIcon: content/en/extensions/models/postgres-controller/components/postgres-database/icons/color/postgres-database-color.svg
-  whiteIcon: content/en/extensions/models/postgres-controller/components/postgres-database/icons/white/postgres-database-white.svg
+  colorIcon: extensions/models/postgres-controller/components/postgres-database/icons/color/postgres-database-color.svg
+  whiteIcon: extensions/models/postgres-controller/components/postgres-database/icons/white/postgres-database-white.svg
   description: 
 components-count: 1
 relationships: 
