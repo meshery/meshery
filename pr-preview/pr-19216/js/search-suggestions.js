@@ -48,25 +48,33 @@
         if (indexFetchPromise) return indexFetchPromise;
 
         var url = getIndexUrl();
-        indexFetchPromise = $.ajax({ url: url, dataType: "json" }).then(function (data) {
-            var options = {
-                includeMatches: true,
-                threshold: 0.3,
-                minMatchCharLength: 2,
-                keys: [
-                    { name: 'title', weight: 0.7 },
-                    { name: 'description', weight: 0.2 },
-                    { name: 'body', weight: 0.1 }
-                ]
-            };
-            fuse = new Fuse(data, options);
-            return true;
-        }).catch(function (err) {
-            console.error("Error loading search index:", err);
-            indexFetchPromise = null;
-            fuse = null;
-            return false;
-        });
+        indexFetchPromise = $.ajax({ url: url, dataType: "json" }).then(
+            function (data) {
+                if (typeof window.Fuse === 'undefined') {
+                    console.error("Fuse.js library is not loaded.");
+                    indexFetchPromise = null;
+                    return false;
+                }
+                var options = {
+                    includeMatches: true,
+                    threshold: 0.3,
+                    minMatchCharLength: 2,
+                    keys: [
+                        { name: 'title', weight: 0.7 },
+                        { name: 'description', weight: 0.2 },
+                        { name: 'body', weight: 0.1 }
+                    ]
+                };
+                fuse = new window.Fuse(data, options);
+                return true;
+            },
+            function (err) {
+                console.error("Error loading search index:", err);
+                indexFetchPromise = null;
+                fuse = null;
+                return false;
+            }
+        );
 
         return indexFetchPromise;
     }
@@ -189,7 +197,11 @@
                 state.debounceTimer = setTimeout(function () {
                     if (!fuse) {
                         fetchSearchIndex().then(function (ready) {
-                            if (ready) renderSuggestions(query, $this, $suggestionsContainer);
+                            // Re-read the current input value to avoid rendering stale suggestions
+                            var currentQuery = $this.val().trim();
+                            if (ready && currentQuery.length >= 2) {
+                                renderSuggestions(currentQuery, $this, $suggestionsContainer);
+                            }
                         });
                     } else {
                         renderSuggestions(query, $this, $suggestionsContainer);
@@ -288,7 +300,7 @@
         }
 
         $(document).on('click', function (e) {
-            if (!$(e.target).closest('.td-search').length) {
+            if (!$(e.target).closest('.td-search--offline').length) {
                 $searchInputs.each(function () {
                     var $input = $(this);
                     var $container = $input.closest('.td-search--offline').find('.search-suggestions-dropdown');
