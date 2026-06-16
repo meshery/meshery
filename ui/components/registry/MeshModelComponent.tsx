@@ -7,6 +7,7 @@ import {
   DetailsContainer,
   InnerContainer,
   CardStyle,
+  WorkloadsContainer,
 } from '@/assets/styles/general/tool.styles';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
@@ -388,7 +389,7 @@ const MeshModelComponent_ = ({
   }, [externalSearchText]);
 
   return (
-    <div data-test="workloads">
+    <WorkloadsContainer data-test="workloads">
       <ImportModelModal
         isImportModalOpen={isImportModalOpen}
         setIsImportModalOpen={setIsImportModalOpen}
@@ -493,7 +494,7 @@ const MeshModelComponent_ = ({
           />
         </TreeWrapper>
       </MainContainer>
-    </div>
+    </WorkloadsContainer>
   );
 };
 
