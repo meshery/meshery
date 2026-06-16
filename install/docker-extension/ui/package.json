@@ -45,8 +45,8 @@
     "xstate": "^5.26.0"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
+    "start": "node init && react-app-rewired start",
+    "build": "node init && react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject"
   },
