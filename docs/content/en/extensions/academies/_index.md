@@ -1,6 +1,6 @@
 ---
 title: Academies
-description: Meshery architecture is extensible. Meshery provides several extension points for working with different cloud native infrastructure via adapters, load generators and providers.
+description: Transform Meshery into an integrated learning platform.
 type: extension
 ---
 Academy extensions enable Meshery as an integrated learning platform. Academy extensions provide a hands-on, structured learning experience for beginners entering the cloud native ecosystem and advanced practitioners seeking deeper expertise. By embedding Meshery [designs](/concepts/logical/designs) directly into courses, learners gain immediate, interactive practice with real Meshery-powered workflows—turning passive study into active, contextual application.
@@ -18,7 +18,7 @@ The platform organizes educational material into three primary formats:
 Built on a modular Hugo-based static site framework (with a multi-repository architecture separating theme, content, and build concerns), academies is highly extensible. Organizations and contributors can:
 
 - Plug in custom academies or content repositories tailored to specific technologies, teams, or use cases.
-- Embed live Meshery designs, visualizations, and Kanvas interactions for immersive labs.
+- Embed live Meshery designs, visualizations, and interactions for immersive labs.
 - Use Git-native workflows for content creation—manage everything in Markdown with Hugo shortcodes, custom CSS, and HTML mixing, while leveraging version control, pull requests, and automated builds/releases.
 
 This architecture supports multi-tenancy, white-labeling (for branded experiences), and seamless integration with the broader Meshery ecosystem.
