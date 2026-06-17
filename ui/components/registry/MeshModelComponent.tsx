@@ -130,7 +130,7 @@ const MeshModelComponent_ = ({
   const hasMoreComponents =
     componentsData?.totalCount > componentsData?.pageSize * componentsData?.page;
   const hasMoreRelationships =
-    componentsData?.totalCount > relationshipsData?.pageSize * relationshipsData?.page;
+    relationshipsData?.totalCount > relationshipsData?.pageSize * relationshipsData?.page;
   const hasMoreConnections =
     connectionsData?.totalCount > connectionsData?.pageSize * connectionsData?.page;
 
