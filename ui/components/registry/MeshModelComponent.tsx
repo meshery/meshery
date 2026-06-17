@@ -13,6 +13,7 @@ import {
   DetailsContainer,
   InnerContainer,
   CardStyle,
+  WorkloadsContainer,
 } from '@/assets/styles/general/tool.styles';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
@@ -409,10 +410,12 @@ const MeshModelComponent_ = ({
     connectionsFilters,
   ]);
 
-  // Update view when external view changes (for modal usage)
+  // Sync view state with externalView or selectedTab (for modal or route usage)
   useEffect(() => {
-    if (externalView && externalView !== view) {
-      setView(externalView);
+    const newView =
+      externalView ?? (typeof selectedTab === 'string' ? selectedTab : selectedTab?.[0]);
+    if (newView && newView !== view) {
+      setView(newView);
       setResourcesDetail([]);
       setSearchText(externalSearchText || null);
       setModelsFilters({ page: 0 });
@@ -430,7 +433,7 @@ const MeshModelComponent_ = ({
         data: {},
       });
     }
-  }, [externalView, externalSearchText]);
+  }, [externalView, selectedTab, externalSearchText]);
 
   useEffect(() => {
     if (externalSearchText !== null && externalSearchText !== searchText) {
@@ -439,7 +442,7 @@ const MeshModelComponent_ = ({
   }, [externalSearchText]);
 
   return (
-    <div data-test="workloads">
+    <WorkloadsContainer data-test="workloads">
       <ImportModelModal
         isImportModalOpen={isImportModalOpen}
         setIsImportModalOpen={setIsImportModalOpen}
@@ -553,7 +556,7 @@ const MeshModelComponent_ = ({
           />
         </TreeWrapper>
       </MainContainer>
-    </div>
+    </WorkloadsContainer>
   );
 };
 
