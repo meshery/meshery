@@ -15,7 +15,7 @@ import { useGetSelectedOrganization, useGetLoggedInUserQuery } from '@/rtk-query
 
 const CurrentSessionInfo = () => {
   const { selectedOrganization } = useGetSelectedOrganization();
-  const { data: userData } = useGetLoggedInUserQuery();
+  const { data: userData, isLoading: isUserLoading, isError: isUserError } = useGetLoggedInUserQuery();
 
   const currentOrgWithRoles = userData?.organizations?.organizationsWithRoles?.find(
     (org) => org.id === selectedOrganization?.id,
