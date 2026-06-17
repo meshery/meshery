@@ -23,6 +23,14 @@ type ConnectionWizardModalProps = {
   onClose: () => void;
 };
 
+// The stepper renders each step's `icon` component bare (no size props), so it
+// relies on the icon's own defaults — `CheckIcon`/`DescriptionIcon` default to
+// 24px, but `ConnectionIcon` has no size default and would collapse to zero.
+// Wrap it with an explicit size so the first step's icon actually shows.
+const StepConnectionIcon = (props: { width?: number; height?: number }) => (
+  <ConnectionIcon width={24} height={24} {...props} />
+);
+
 const ConnectionWizardModal = ({ isOpen, onClose }: ConnectionWizardModalProps) => {
   const { connectionMetadataState } = useSelector((state: RootState) => state.ui);
   const { data: connectionDefinitionsResponse, isFetching: isLoadingKinds } =
@@ -57,7 +65,7 @@ const ConnectionWizardModal = ({ isOpen, onClose }: ConnectionWizardModalProps) 
       label,
       icon:
         index === 0
-          ? ConnectionIcon
+          ? StepConnectionIcon
           : index === wizard.stepLabels.length - 1
             ? CheckIcon
             : DescriptionIcon,

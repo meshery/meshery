@@ -1,7 +1,7 @@
 {
   "schemaVersion": "connections.meshery.io/v1beta3",
   "name": "Prometheus",
-  "description": "Connection definition for registering a Prometheus endpoint as a first-class Meshery connection for metrics collection.",
+  "description": "A Prometheus endpoint that feeds time-series metrics into Meshery, powering performance benchmarks, dashboards, and real-time visibility into the health and resource usage of your workloads.",
   "kind": "prometheus",
   "type": "telemetry",
   "subType": "metrics",

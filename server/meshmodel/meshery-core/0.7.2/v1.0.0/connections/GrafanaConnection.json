@@ -1,7 +1,7 @@
 {
   "schemaVersion": "connections.meshery.io/v1beta3",
   "name": "Grafana",
-  "description": "Connection definition for registering a Grafana instance as a first-class Meshery connection for dashboards and imports.",
+  "description": "A Grafana instance that brings its dashboards and panels into Meshery, letting you import existing boards and view rich, unified observability of your infrastructure alongside Meshery's own insights.",
   "kind": "grafana",
   "type": "telemetry",
   "subType": "metrics",

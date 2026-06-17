@@ -1,7 +1,7 @@
 {
   "schemaVersion": "connections.meshery.io/v1beta3",
   "name": "Kubernetes",
-  "description": "Connection definition for registering a Kubernetes cluster (discovered from a kubeconfig context) as a first-class Meshery connection.",
+  "description": "A Kubernetes cluster that Meshery manages and observes — deploy and operate workloads, run MeshSync discovery to keep an inventory of cluster resources, and visualize and configure the cluster from a single place.",
   "kind": "kubernetes",
   "type": "platform",
   "subType": "orchestration",

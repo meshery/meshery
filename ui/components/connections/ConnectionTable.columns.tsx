@@ -201,8 +201,6 @@ export const useConnectionColumns = ({
                 value: environment.id,
               })) || [];
 
-            console.log('rendering environ', isEnvironmentsSuccess, value, cleanedEnvs);
-
             return (
               <div onClick={(event) => event.stopPropagation()}>
                 <Grid2 size={{ xs: 12 }} style={{ height: '5rem', width: '15rem' }}>

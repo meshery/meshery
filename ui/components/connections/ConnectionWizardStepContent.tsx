@@ -8,7 +8,7 @@ import {
   TextField,
   Typography,
 } from '@sistent/sistent';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { alpha, styled, useTheme } from '@/theme';
 import RJSFWrapper from '@/components/meshery-mesh-interface/PatternService/RJSF_wrapper';
 import ConnectionIcon from '@/assets/icons/Connection';
@@ -271,14 +271,15 @@ export const ConnectionKindSelectionStep = ({
         <KindGrid>
           {kinds.map((config) => {
             const isPermitted = canUseKind(config);
-            // Prefer the SVG carried on the connection definition (white variant
-            // on dark backgrounds), then the redux connection metadata icon, then
-            // the per-kind static asset. normalizeStaticImagePath turns inline SVG
-            // markup into a data URI and normalizes repo-relative paths.
-            const definitionSvg =
-              theme.palette.mode === 'dark'
-                ? config.svgWhite || config.svgColor
-                : config.svgColor || config.svgWhite;
+            // Prefer the SVG carried on the connection definition, then the redux
+            // connection metadata icon, then the per-kind static asset.
+            // normalizeStaticImagePath turns inline SVG markup into a data URI and
+            // normalizes repo-relative paths.
+            //
+            // The icon tile (KindIconWrap) is always a white surface, so always
+            // use the COLOR variant — the white variant (e.g. Kubernetes' all-white
+            // logo) would render white-on-white and disappear.
+            const definitionSvg = config.svgColor || config.svgWhite;
             const iconSrc =
               normalizeStaticImagePath(definitionSvg) ||
               normalizeStaticImagePath(connectionIconMap?.[config.kind]?.icon) ||
@@ -327,6 +328,29 @@ export const ConnectionKindSelectionStep = ({
   );
 };
 
+// Derive an RJSF uiSchema from a connection/credential JSON schema so each
+// field gets a placeholder hint. Meshery's RJSF widgets already surface a
+// field's `description` as a hover info-button; we mirror that text into a
+// `ui:placeholder` so the guidance is also visible inline in the empty input.
+const buildPlaceholderUiSchema = (
+  schema: Record<string, unknown> | null,
+): Record<string, { 'ui:placeholder': string }> => {
+  const properties = (schema?.properties ?? {}) as Record<
+    string,
+    { description?: string; title?: string }
+  >;
+  return Object.entries(properties).reduce<Record<string, { 'ui:placeholder': string }>>(
+    (acc, [key, prop]) => {
+      const placeholder = prop?.description || prop?.title;
+      if (placeholder) {
+        acc[key] = { 'ui:placeholder': placeholder };
+      }
+      return acc;
+    },
+    {},
+  );
+};
+
 type GenericConnectionDetailsStepProps = {
   label?: string;
   isInitializing: boolean;
@@ -343,31 +367,35 @@ export const GenericConnectionDetailsStep = ({
   formData,
   formRef,
   onChange,
-}: GenericConnectionDetailsStepProps) => (
-  <StepLayout>
-    <StepHeader
-      title={`Configure ${label ?? 'connection'}`}
-      subtitle="These fields are rendered from the connection definition's registration schema."
-    />
-    {isInitializing || !schema ? (
-      <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
-        <CircularProgress />
-      </Box>
-    ) : (
-      <FormContainer>
-        <RJSFWrapper
-          key={`${label}-connection-form`}
-          jsonSchema={schema}
-          formData={formData}
-          formRef={formRef}
-          liveValidate={false}
-          hideTitle
-          onChange={onChange}
-        />
-      </FormContainer>
-    )}
-  </StepLayout>
-);
+}: GenericConnectionDetailsStepProps) => {
+  const uiSchema = useMemo(() => buildPlaceholderUiSchema(schema), [schema]);
+  return (
+    <StepLayout>
+      <StepHeader
+        title={`Configure ${label ?? 'connection'}`}
+        subtitle="These fields are rendered from the connection definition's registration schema."
+      />
+      {isInitializing || !schema ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <FormContainer>
+          <RJSFWrapper
+            key={`${label}-connection-form`}
+            jsonSchema={schema}
+            uiSchema={uiSchema}
+            formData={formData}
+            formRef={formRef}
+            liveValidate={false}
+            hideTitle
+            onChange={onChange}
+          />
+        </FormContainer>
+      )}
+    </StepLayout>
+  );
+};
 
 type CredentialAssociationStepProps = {
   label?: string;
@@ -401,91 +429,99 @@ export const CredentialAssociationStep = ({
   onCredentialFormChange,
   skipCredentialVerification,
   onSkipCredentialVerificationChange,
-}: CredentialAssociationStepProps) => (
-  <StepLayout>
-    <StepHeader
-      title="Associate a credential"
-      subtitle={`Reuse an existing credential or create a new one for this ${label ?? ''} connection.`}
-    />
-    {existingCredentials.length > 0 && (
-      <>
-        <Segmented role="tablist">
-          <SegmentButton
-            type="button"
-            active={credentialMode === 'existing'}
-            onClick={() => onCredentialModeChange('existing')}
-          >
-            Use existing
-          </SegmentButton>
-          <SegmentButton
-            type="button"
-            active={credentialMode === 'new'}
-            onClick={() => onCredentialModeChange('new')}
-          >
-            Create new
-          </SegmentButton>
-        </Segmented>
-        {credentialMode === 'existing' && (
-          <TextField
-            select
-            fullWidth
-            label="Existing credential"
-            value={selectedCredentialId}
-            onChange={(event) => onSelectedCredentialChange(event.target.value)}
-          >
-            <MenuItem value="">Select a credential</MenuItem>
-            {existingCredentials.map((credential) => (
-              <MenuItem key={credential.id} value={credential.id}>
-                {credential.name}
-              </MenuItem>
-            ))}
-          </TextField>
-        )}
-      </>
-    )}
-    {(credentialMode === 'new' || existingCredentials.length === 0) && credentialSchema && (
-      <>
-        <TextField
-          fullWidth
-          label="Credential name"
-          value={credentialName}
-          onChange={(event) => onCredentialNameChange(event.target.value)}
-          helperText="A name to identify this credential. Defaults to the connection name."
-        />
-        <FormContainer>
-          <RJSFWrapper
-            key={`${label}-credential-form`}
-            jsonSchema={credentialSchema}
-            formData={credentialFormData}
-            formRef={formRef}
-            liveValidate={false}
-            hideTitle
-            onChange={onCredentialFormChange}
-          />
-        </FormContainer>
-      </>
-    )}
-    <InlineNotice
-      onClick={() => onSkipCredentialVerificationChange(!skipCredentialVerification)}
-      sx={{ cursor: 'pointer' }}
-    >
-      <Checkbox
-        checked={skipCredentialVerification}
-        onChange={(event) => onSkipCredentialVerificationChange(event.target.checked)}
-        sx={{ p: 0, mt: 0.25 }}
-        onClick={(event) => event.stopPropagation()}
+}: CredentialAssociationStepProps) => {
+  const credentialUiSchema = useMemo(
+    () => buildPlaceholderUiSchema(credentialSchema),
+    [credentialSchema],
+  );
+  return (
+    <StepLayout>
+      <StepHeader
+        title="Associate a credential"
+        subtitle={`Reuse an existing credential or create a new one for this ${label ?? ''} connection.`}
       />
-      <Box>
-        <Typography variant="body2" sx={{ fontWeight: 600 }}>
-          Bypass credential verification
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          Skip the connectivity check and register this connection without verifying the credential.
-        </Typography>
-      </Box>
-    </InlineNotice>
-  </StepLayout>
-);
+      {existingCredentials.length > 0 && (
+        <>
+          <Segmented role="tablist">
+            <SegmentButton
+              type="button"
+              active={credentialMode === 'existing'}
+              onClick={() => onCredentialModeChange('existing')}
+            >
+              Use existing
+            </SegmentButton>
+            <SegmentButton
+              type="button"
+              active={credentialMode === 'new'}
+              onClick={() => onCredentialModeChange('new')}
+            >
+              Create new
+            </SegmentButton>
+          </Segmented>
+          {credentialMode === 'existing' && (
+            <TextField
+              select
+              fullWidth
+              label="Existing credential"
+              value={selectedCredentialId}
+              onChange={(event) => onSelectedCredentialChange(event.target.value)}
+            >
+              <MenuItem value="">Select a credential</MenuItem>
+              {existingCredentials.map((credential) => (
+                <MenuItem key={credential.id} value={credential.id}>
+                  {credential.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        </>
+      )}
+      {(credentialMode === 'new' || existingCredentials.length === 0) && credentialSchema && (
+        <>
+          <TextField
+            fullWidth
+            label="Credential name"
+            value={credentialName}
+            onChange={(event) => onCredentialNameChange(event.target.value)}
+            helperText="A name to identify this credential. Defaults to the connection name."
+          />
+          <FormContainer>
+            <RJSFWrapper
+              key={`${label}-credential-form`}
+              jsonSchema={credentialSchema}
+              uiSchema={credentialUiSchema}
+              formData={credentialFormData}
+              formRef={formRef}
+              liveValidate={false}
+              hideTitle
+              onChange={onCredentialFormChange}
+            />
+          </FormContainer>
+        </>
+      )}
+      <InlineNotice
+        onClick={() => onSkipCredentialVerificationChange(!skipCredentialVerification)}
+        sx={{ cursor: 'pointer' }}
+      >
+        <Checkbox
+          checked={skipCredentialVerification}
+          onChange={(event) => onSkipCredentialVerificationChange(event.target.checked)}
+          sx={{ p: 0, mt: 0.25 }}
+          onClick={(event) => event.stopPropagation()}
+        />
+        <Box>
+          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+            Bypass credential verification
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            Skip the connectivity check and register this connection without verifying the
+            credential.
+          </Typography>
+        </Box>
+      </InlineNotice>
+    </StepLayout>
+  );
+};
 
 type KubernetesImportStepProps = {
   kubeconfigFile: File | null;
