@@ -185,6 +185,7 @@ function Connections() {
                         component="span"
                         disableRipple={true}
                         disableFocusRipple={true}
+                        onClick={(e) => e.stopPropagation()}
                         style={{ marginLeft: '5px' }}
                       >
                         <InfoOutlinedIcon
