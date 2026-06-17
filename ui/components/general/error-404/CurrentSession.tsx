@@ -1,5 +1,4 @@
 import React from 'react';
-import { useGetUserOrgRolesQuery } from '@/rtk-query/orgRoles';
 import { useGetUserProviderRolesQuery } from '@/rtk-query/providerRoles';
 import {
   StyledBox,
@@ -12,20 +11,16 @@ import { NoSsr } from '@sistent/sistent';
 import OrgIcon from 'assets/icons/OrgIcon';
 import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '../../shared/ErrorBoundary/ErrorBoundary';
-import { useGetSelectedOrganization } from '@/rtk-query/user';
+import { useGetSelectedOrganization, useGetLoggedInUserQuery } from '@/rtk-query/user';
 
 const CurrentSessionInfo = () => {
   const { selectedOrganization } = useGetSelectedOrganization();
+  const { data: userData } = useGetLoggedInUserQuery();
 
-  const {
-    data: rolesRes,
-    // isSuccess: isRolesSuccess,
-    // isError: isRolesError,
-    // error: rolesError,
-  } = useGetUserOrgRolesQuery(
-    { orgId: selectedOrganization?.id },
-    { skip: !selectedOrganization?.id },
+  const currentOrgWithRoles = userData?.organizations?.organizationsWithRoles?.find(
+    (org) => org.id === selectedOrganization?.id,
   );
+  const userRoles = currentOrgWithRoles?.roleNames || [];
 
   const {
     data: providerRolesRes,
@@ -50,8 +45,8 @@ const CurrentSessionInfo = () => {
           Organization Role(s)
         </StyledTypographyDisabled>
         <StyledBox>
-          {rolesRes
-            ? rolesRes?.roles?.map?.((role) => <StyledChip key={role.id} label={role.roleName} />)
+          {userRoles.length > 0
+            ? userRoles.map((role) => <StyledChip key={role} label={role} />)
             : 'No roles found'}
         </StyledBox>
       </div>
