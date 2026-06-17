@@ -54,10 +54,10 @@ const CurrentSessionInfo = () => {
           {isUserLoading
             ? 'Loading roles…'
             : isUserError
-            ? 'Unable to load roles'
-            : userRoles.length > 0
-            ? userRoles.map((role) => <StyledChip key={role} label={role} />)
-            : 'No roles found'}
+              ? 'Unable to load roles'
+              : userRoles.length > 0
+                ? userRoles.map((role) => <StyledChip key={role} label={role} />)
+                : 'No roles found'}
         </StyledBox>
       </div>
       <div>
