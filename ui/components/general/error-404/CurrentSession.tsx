@@ -8,18 +8,24 @@ import {
   StyledTypographyDisabled,
 } from './styles';
 import { NoSsr } from '@sistent/sistent';
-import OrgIcon from 'assets/icons/OrgIcon';
+import OrgIcon from '@/assets/icons/OrgIcon';
 import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '../../shared/ErrorBoundary/ErrorBoundary';
 import { useGetSelectedOrganization, useGetLoggedInUserQuery } from '@/rtk-query/user';
 
 const CurrentSessionInfo = () => {
   const { selectedOrganization } = useGetSelectedOrganization();
-  const { data: userData, isLoading: isUserLoading, isError: isUserError } = useGetLoggedInUserQuery();
+  const {
+    data: userData,
+    isLoading: isUserLoading,
+    isError: isUserError,
+  } = useGetLoggedInUserQuery();
 
-  const currentOrgWithRoles = userData?.organizations?.organizationsWithRoles?.find(
-    (org) => org.id === selectedOrganization?.id,
-  );
+  const currentOrgWithRoles = selectedOrganization?.id
+    ? userData?.organizations?.organizationsWithRoles?.find(
+        (org) => org.id === selectedOrganization.id,
+      )
+    : null;
   const userRoles = currentOrgWithRoles?.roleNames || [];
 
   const {
@@ -45,7 +51,11 @@ const CurrentSessionInfo = () => {
           Organization Role(s)
         </StyledTypographyDisabled>
         <StyledBox>
-          {userRoles.length > 0
+          {isUserLoading
+            ? 'Loading roles…'
+            : isUserError
+            ? 'Unable to load roles'
+            : userRoles.length > 0
             ? userRoles.map((role) => <StyledChip key={role} label={role} />)
             : 'No roles found'}
         </StyledBox>
