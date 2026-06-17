@@ -10,8 +10,8 @@ integrations-subcategory: App Integration
 registrant: GitHub
 components: 
 - name: configuration-store
-  colorIcon: content/en/extensions/models/azure-app-configuration/components/configuration-store/icons/color/configuration-store-color.svg
-  whiteIcon: content/en/extensions/models/azure-app-configuration/components/configuration-store/icons/white/configuration-store-white.svg
+  colorIcon: extensions/models/azure-app-configuration/components/configuration-store/icons/color/configuration-store-color.svg
+  whiteIcon: extensions/models/azure-app-configuration/components/configuration-store/icons/white/configuration-store-white.svg
   description: 
 components-count: 1
 relationships: 

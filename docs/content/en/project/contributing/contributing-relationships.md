@@ -4,9 +4,9 @@ description: How to contribute to Meshery Models Relationships, Policies...
 categories: [contributing]
 ---
 
-**Relationships follow a schema-defined structure.** The [Relationship schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1alpha3/relationship) specifies how relationships between components are expressed. Refer to the schema when defining new relationship types or selectors. See [Contributing to Schemas](/project/contributing/contributing-schemas) for details.
+**Relationships follow a schema-defined structure.** The [Relationship schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1alpha3/relationship) specifies how relationships between components are expressed. Refer to the schema when defining new relationship types or selectors. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.
 
-[Relationships](/concepts/logical/relationships) within [Models](/concepts/logical/models) play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected [Components](/concepts/logical/components).
+[Relationships]({{< ref "concepts/logical/relationships/index.md" >}}) within [Models]({{< ref "concepts/logical/models/index.md" >}}) play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected [Components]({{< ref "concepts/logical/components.md" >}}).
 
 ## Overview of Steps to Create Relationships
 
@@ -140,7 +140,7 @@ Once selected, note the relationship's `kind`, `type`, and `subtype` of your sel
 
 ### 3. Create a Relationship Definition as a JSON file
 
-Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models](/project/contributing/contributing-models)). Relationship definition files are commonly named  `relationships.yaml` as a convention, however, this name is not required. A model may include any number of relationship definitions. Include the following attributes in your relationship definition:
+Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models]({{< ref "project/contributing/contributing-models.md" >}})). Relationship definition files are commonly named  `relationships.yaml` as a convention, however, this name is not required. A model may include any number of relationship definitions. Include the following attributes in your relationship definition:
 
 - `kind`: The genre of relationship (e.g., hierarchical, edge, sibling).
 - `type`: The augmentative category of the relationship (e.g., binding, non-binding, inventory).
@@ -362,7 +362,7 @@ Submit a pull request to the Meshery repository with your new relationship defin
 Keeping your relationship definition in a separate file allows for easier management and review of the relationship(s) you have defined.
 
 {{% alert title="Keeping your custom Relationships private" color="info" %}}
-Alternatively, if you would like to keep the relatioship definition private, you can bundle your relatinship(s) in a custom model, import the custom model into your Meshery deployment. Your private relationship definition(s) will be registered in your Meshery Server's <a href='/concepts/logical/registry'>registry</a> and available for use within your Meshery deployment.
+Alternatively, if you would like to keep the relatioship definition private, you can bundle your relatinship(s) in a custom model, import the custom model into your Meshery deployment. Your private relationship definition(s) will be registered in your Meshery Server's <a href='{{< ref "concepts/logical/registry.md" >}}'>registry</a> and available for use within your Meshery deployment.
 {{% /alert %}}
 
 For more information refer - [Model - Construct Models in Meshery](https://docs.google.com/document/d/16z5hA8qVfSq885of9LXFUVvfom-hQXr-6oTD_GgoFmk/edit)

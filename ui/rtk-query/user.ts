@@ -193,6 +193,24 @@ export const userApi = api
         query: () => '/api/system/version',
         method: 'GET',
       }),
+      installProviderExtension: builder.mutation({
+        query: (queryArg) => ({
+          url: '/api/provider/extension/install',
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: queryArg,
+        }),
+        invalidatesTags: [Tags.PROVIDER_CAP],
+      }),
+      removeProviderExtension: builder.mutation({
+        query: (queryArg) => ({
+          url: '/api/provider/extension/remove',
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: queryArg,
+        }),
+        invalidatesTags: [Tags.PROVIDER_CAP],
+      }),
       handleFeedbackFormSubmission: builder.mutation({
         query: (queryArg) => ({
           url: mesheryApiPath(`extensions/api/identity/users/notify/feedback`),
@@ -262,6 +280,8 @@ export const {
   useGetAllUsersQuery,
   useRemoveUserFromTeamMutation,
   useGetSystemVersionQuery,
+  useInstallProviderExtensionMutation,
+  useRemoveProviderExtensionMutation,
   useGetUserProfileSummaryByIdQuery,
 } = userApi;
 

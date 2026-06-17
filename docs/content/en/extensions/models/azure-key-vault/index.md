@@ -10,8 +10,8 @@ integrations-subcategory: Secrets Management
 registrant: GitHub
 components: 
 - name: vault
-  colorIcon: content/en/extensions/models/azure-key-vault/components/vault/icons/color/vault-color.svg
-  whiteIcon: content/en/extensions/models/azure-key-vault/components/vault/icons/white/vault-white.svg
+  colorIcon: extensions/models/azure-key-vault/components/vault/icons/color/vault-color.svg
+  whiteIcon: extensions/models/azure-key-vault/components/vault/icons/white/vault-white.svg
   description: 
 components-count: 1
 relationships: 

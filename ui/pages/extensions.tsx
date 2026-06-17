@@ -1,16 +1,15 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme, Box } from '@sistent/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
-import { Adapters } from '../components/extensions';
+import { Adapters, KanvasExtension } from '../components/extensions';
 import DefaultError from '@/components/general/error-404';
 import { EVENT_TYPES } from '../lib/event-types';
-import { EXTENSION_NAMES } from '../utils/Enum';
 import { useNotification, usePageTitle } from '@/utils/hooks';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CardContainer, FrontSideDescription } from '../css/icons.styles';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { toggleCatalogContent } from '@/store/slices/mesheryUi';
 
 type ChildrenProps = {
@@ -26,6 +25,7 @@ type ChildrenProps = {
 const UnifiedCardContainer = ({ children, sx = {} }: ChildrenProps & { sx?: object }) => (
   <CardContainer
     sx={{
+      height: '100%',
       minHeight: { xs: '280px', sm: '260px', lg: '280px' },
       display: 'flex',
       flexDirection: 'column',
@@ -88,8 +88,6 @@ const ResponsiveImage = ({ src, alt, testId }: ResponsiveImageProps) => (
       width: 'auto',
       maxWidth: '140px',
       maxHeight: '85px',
-      minWidth: '100px',
-      minHeight: '60px',
       flexShrink: 0,
     }}
     data-testid={testId}
@@ -109,39 +107,46 @@ const MeshMapSnapShotCard = ({
   githubActionEnabled = false,
 }: {
   githubActionEnabled?: boolean;
-}) => (
-  <Grid2 size={GRID_SIZE}>
-    <UnifiedCardContainer>
-      <Typography data-testid="snapshot-heading" variant="h5" component="div">
-        GitHub Action: Snapshot
-      </Typography>
+}) => {
+  const theme = useTheme();
+  return (
+    <Grid2 size={GRID_SIZE}>
+      <UnifiedCardContainer>
+        <Typography data-testid="snapshot-heading" variant="h5" component="div">
+          GitHub Action: Snapshot
+        </Typography>
 
-      <UnifiedDescription data-testid="snapshot-description" hasIcon>
-        <ResponsiveImage
-          src="/static/img/extensions/meshmap-snapshot-logo.svg"
-          alt="Snapshot Logo"
-          testId="snapshot-image"
-        />
-        <div>
-          Connect to your GitHub repo and see changes pull request-to-pull request. Get snapshots of
-          your infrastructure directly in your PRs.
-        </div>
-      </UnifiedDescription>
+        <UnifiedDescription data-testid="snapshot-description" hasIcon>
+          <ResponsiveImage
+            src={
+              theme.palette.mode === 'dark'
+                ? '/static/img/extensions/meshmap-snapshot-logo-white.svg'
+                : '/static/img/extensions/meshmap-snapshot-logo.svg'
+            }
+            alt="Snapshot Logo"
+            testId="snapshot-image"
+          />
+          <div>
+            Connect to your GitHub repo and see changes pull request-to-pull request. Get snapshots
+            of your infrastructure directly in your PRs.
+          </div>
+        </UnifiedDescription>
 
-      <UnifiedButtonContainer>
-        <Button
-          variant="contained"
-          color="primary"
-          data-testid="snapshot-enable-btn"
-          disabled={githubActionEnabled}
-          onClick={openExternal('https://cloud.meshery.io/connect/github/new/')}
-        >
-          {githubActionEnabled ? 'Remove' : 'Enable'}
-        </Button>
-      </UnifiedButtonContainer>
-    </UnifiedCardContainer>
-  </Grid2>
-);
+        <UnifiedButtonContainer>
+          <Button
+            variant="contained"
+            color="primary"
+            data-testid="snapshot-enable-btn"
+            disabled={githubActionEnabled}
+            onClick={openExternal('https://cloud.meshery.io/connect/github/new/')}
+          >
+            {githubActionEnabled ? 'Remove' : 'Enable'}
+          </Button>
+        </UnifiedButtonContainer>
+      </UnifiedCardContainer>
+    </Grid2>
+  );
+};
 
 const MesheryPerformanceAction = ({
   githubActionEnabled = false,
@@ -464,7 +469,6 @@ const Extensions = () => {
   const [updateUserPref] = useUpdateUserPrefMutation();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { providerCapabilities } = useSelector((state) => state.ui);
   const { data: userData } = useGetUserPrefQuery();
 
   const serverCatalogContent = userData?.usersExtensionPreferences?.catalogContent;
@@ -476,14 +480,6 @@ const Extensions = () => {
   useEffect(() => {
     setCatalogContentOverride(null);
   }, [serverCatalogContent]);
-
-  const hasAccessToMeshMap = useMemo(
-    () =>
-      !!providerCapabilities?.extensions?.navigator?.some(
-        (val: { title: string }) => val.title.toLowerCase() === EXTENSION_NAMES.EXTENSION,
-      ),
-    [providerCapabilities],
-  );
 
   const handleToggle = () => {
     const next = !catalogContent;
@@ -514,6 +510,7 @@ const Extensions = () => {
       </Head>
       {CAN(keys.VIEW_EXTENSIONS.action, keys.VIEW_EXTENSIONS.subject) ? (
         <Grid2 container spacing={2} size="grow">
+          <KanvasExtension />
           <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
           <WrappedMesheryPerformanceAction githubActionEnabled={false} />
           <WrappedMesheryHelmExtension />

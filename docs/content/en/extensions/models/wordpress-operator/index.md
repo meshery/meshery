@@ -10,8 +10,8 @@ integrations-subcategory: Installable Platform
 registrant: Artifact Hub
 components: 
 - name: wordpress
-  colorIcon: content/en/extensions/models/wordpress-operator/components/wordpress/icons/color/wordpress-color.svg
-  whiteIcon: content/en/extensions/models/wordpress-operator/components/wordpress/icons/white/wordpress-white.svg
+  colorIcon: extensions/models/wordpress-operator/components/wordpress/icons/color/wordpress-color.svg
+  whiteIcon: extensions/models/wordpress-operator/components/wordpress/icons/white/wordpress-white.svg
   description: 
 components-count: 1
 relationships: 
