@@ -60,8 +60,12 @@ const CurrentSessionInfo = () => {
             Organization Role(s)
           </StyledTypographyDisabled>
           <CustomTooltip title="Organization Roles define your permissions within the selected organization (e.g., Organization Admin, Workspace Admin, Team Admin, User).">
-            <IconButton size="small" style={{ padding: 4 }}>
-              <InfoCircleIcon fill={theme.palette.icon.secondary} width="16" height="16" />
+            <IconButton size="small" style={{ padding: 4 }} aria-label="Organization roles help">
+              <InfoCircleIcon
+                fill={theme.palette.icon?.secondary || theme.palette.text?.secondary}
+                width="16"
+                height="16"
+              />
             </IconButton>
           </CustomTooltip>
         </HeaderContainer>
@@ -77,8 +81,12 @@ const CurrentSessionInfo = () => {
             Provider Role(s)
           </StyledTypographyDisabled>
           <CustomTooltip title="Provider Roles define your global roles and access rights across Meshery Cloud (e.g., Admin, MeshMap User, Curator).">
-            <IconButton size="small" style={{ padding: 4 }}>
-              <InfoCircleIcon fill={theme.palette.icon.secondary} width="16" height="16" />
+            <IconButton size="small" style={{ padding: 4 }} aria-label="Provider roles help">
+              <InfoCircleIcon
+                fill={theme.palette.icon?.secondary || theme.palette.text?.secondary}
+                width="16"
+                height="16"
+              />
             </IconButton>
           </CustomTooltip>
         </HeaderContainer>

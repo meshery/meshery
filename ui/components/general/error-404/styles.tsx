@@ -41,16 +41,6 @@ export const ErrorContainer = styled('div')(({ theme }) => ({
   flexWrap: 'wrap',
 }));
 
-export const ImageContainer = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '2rem',
-  marginBottom: '1rem',
-  [theme.breakpoints.down('sm')]: {
-    flexDirection: 'column',
-  },
-}));
-
 export const ErrorSectionContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexWrap: 'wrap',
@@ -216,14 +206,6 @@ export const IconWrapper = styled('div')(({ theme }) => ({
   paddingTop: '1rem',
   alignSelf: 'flex-end',
   color: theme.palette.icon.secondary,
-}));
-
-export const Logo = styled('img')(() => ({
-  height: 'clamp(100px, 20vw, 150px)',
-}));
-
-export const LogoText = styled('img')(() => ({
-  height: 'clamp(30px, 5vw, 100px)',
 }));
 
 export const StyledDivider = styled(Divider)(({ theme }) => ({
