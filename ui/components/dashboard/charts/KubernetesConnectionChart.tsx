@@ -4,14 +4,21 @@ import BBChart from '../../BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
 import Link from 'next/link';
 import { iconSmall } from '../../../css/icons.styles';
-import { CustomTextTooltip } from '@/components/meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
-import { Box, InfoOutlinedIcon, KubernetesIcon, Typography, useTheme, CustomTooltip, IconButton } from '@sistent/sistent';
+import {
+  Box,
+  InfoOutlinedIcon,
+  KubernetesIcon,
+  Typography,
+  useTheme,
+  CustomTooltip,
+  IconButton,
+} from '@sistent/sistent';
 
 export default function KubernetesConnectionStatsChart() {
   const { data: connectionData } = useGetConnectionsQuery({
@@ -95,7 +102,11 @@ export default function KubernetesConnectionStatsChart() {
         </Typography>
       </div>
       <div onClick={(e) => e.stopPropagation()}>
-        <CustomTooltip title="This chart shows the status of connections to your Kubernetes clusters." placement="top" interactive>
+        <CustomTooltip
+          title="This chart shows the status of connections to your Kubernetes clusters."
+          placement="top"
+          interactive
+        >
           <IconButton disableRipple={true} disableFocusRipple={true} style={{ marginLeft: '5px' }}>
             <InfoOutlinedIcon
               color={theme.palette.icon.default}

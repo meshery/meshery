@@ -1,6 +1,12 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { NoSsr } from '@sistent/sistent';
-import { ErrorBoundary, AppBar, IconButton, CustomTooltip, InfoOutlinedIcon } from '@sistent/sistent';
+import {
+  ErrorBoundary,
+  AppBar,
+  IconButton,
+  CustomTooltip,
+  InfoOutlinedIcon,
+} from '@sistent/sistent';
 import Modal from '../shared/Modal/Modal';
 import { ConnectionIconText, ConnectionTab, ConnectionTabs } from './styles';
 import MeshSyncTable from './meshSync';
@@ -170,7 +176,11 @@ function Connections() {
                   <ConnectionIconText>
                     <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
                     <MeshsyncIcon width="20" height="20" />
-                    <CustomTooltip title={`MeshSync discovers and keeps Meshery in sync with your Kubernetes clusters. [Learn more](https://docs.meshery.io/concepts/architecture/meshsync/)`} placement="top" interactive>
+                    <CustomTooltip
+                      title={`MeshSync discovers and keeps Meshery in sync with your Kubernetes clusters. [Learn more](https://docs.meshery.io/concepts/architecture/meshsync/)`}
+                      placement="top"
+                      interactive
+                    >
                       <IconButton
                         disableRipple={true}
                         disableFocusRipple={true}

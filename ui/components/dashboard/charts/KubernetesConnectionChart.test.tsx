@@ -81,6 +81,8 @@ vi.mock('@sistent/sistent', () => ({
   InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
   KubernetesIcon: () => <svg data-testid="k8s-icon" />,
   Typography: ({ children }: { children?: React.ReactNode }) => <p>{children}</p>,
+  CustomTooltip: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+  IconButton: ({ children }: { children?: React.ReactNode }) => <button>{children}</button>,
   useTheme: () => ({
     palette: { mode: 'light', icon: { default: '#000', disabled: '#777' } },
   }),
