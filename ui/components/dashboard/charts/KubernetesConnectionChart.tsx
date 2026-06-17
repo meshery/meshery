@@ -107,7 +107,12 @@ export default function KubernetesConnectionStatsChart() {
           placement="top"
           interactive
         >
-          <IconButton disableRipple={true} disableFocusRipple={true} style={{ marginLeft: '5px' }}>
+          <IconButton
+            component="span"
+            disableRipple={true}
+            disableFocusRipple={true}
+            style={{ marginLeft: '5px' }}
+          >
             <InfoOutlinedIcon
               color={theme.palette.icon.default}
               style={{ ...iconSmall, cursor: 'pointer' }}

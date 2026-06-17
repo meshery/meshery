@@ -182,6 +182,7 @@ function Connections() {
                       interactive
                     >
                       <IconButton
+                        component="span"
                         disableRipple={true}
                         disableFocusRipple={true}
                         style={{ marginLeft: '5px' }}
