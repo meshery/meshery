@@ -101,11 +101,15 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
     }));
   }, [mode, initialKindConfig, initialRegistrationResult]);
 
+  // Keep `reset` stable while still resetting from the latest params: read them
+  // from a ref updated in the render body (not an effect, so children never see
+  // stale values during commit).
+  const paramsRef = useRef(params);
+  paramsRef.current = params;
   const reset = useCallback(() => {
-    setData(makeInitialData(params));
+    setData(makeInitialData(paramsRef.current));
     setActiveIndex(0);
     setIsBusy(false);
-    // params identity is stable enough for a reset trigger; intentionally not a dep.
   }, []);
 
   const services = useMemo<WizardServices>(

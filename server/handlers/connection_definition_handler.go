@@ -58,8 +58,9 @@ func (h *Handler) GetConnectionDefinitions(rw http.ResponseWriter, r *http.Reque
 	})
 
 	if err != nil {
-		h.log.Error(models.ErrEncoding(err, "connection definitions"))
-		writeMeshkitError(rw, models.ErrEncoding(err, "connection definitions"), http.StatusInternalServerError)
+		h.log.Error(ErrQueryGet("connection definitions"))
+		writeMeshkitError(rw, ErrQueryGet("connection definitions"), http.StatusInternalServerError)
+		return
 	}
 
 	pgSize := limit
@@ -95,10 +96,15 @@ func (h *Handler) GetConnectionDefinitionByID(rw http.ResponseWriter, r *http.Re
 		return
 	}
 
-	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.ConnectionFilter{
+	entities, _, _, err := h.registryManager.GetEntities(&regv1beta1.ConnectionFilter{
 		Id:    connectionDefinitionID,
 		Limit: 1,
 	})
+	if err != nil {
+		h.log.Error(ErrQueryGet("connection definition"))
+		writeMeshkitError(rw, ErrQueryGet("connection definition"), http.StatusInternalServerError)
+		return
+	}
 	defs := connectionDefinitionsFromEntities(entities)
 	if len(defs) == 0 {
 		writeMeshkitError(rw, ErrQueryGet("connection definition"), http.StatusNotFound)

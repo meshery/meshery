@@ -39,7 +39,7 @@ const ConnectionWizardLauncher = () => {
           Create Connection
         </Typography>
       </LaunchButton>
-      {isOpen && <ConnectionWizardModal isOpen={isOpen} onClose={() => setIsOpen(false)} />}
+      <ConnectionWizardModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </>
   );
 };
