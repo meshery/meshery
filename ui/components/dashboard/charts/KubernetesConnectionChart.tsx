@@ -11,7 +11,7 @@ import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
-import { Box, InfoOutlinedIcon, KubernetesIcon, Typography, useTheme } from '@sistent/sistent';
+import { Box, InfoOutlinedIcon, KubernetesIcon, Typography, useTheme, CustomTooltip, IconButton } from '@sistent/sistent';
 
 export default function KubernetesConnectionStatsChart() {
   const { data: connectionData } = useGetConnectionsQuery({
@@ -95,14 +95,14 @@ export default function KubernetesConnectionStatsChart() {
         </Typography>
       </div>
       <div onClick={(e) => e.stopPropagation()}>
-        <CustomTextTooltip title="This chart shows the status of connections to your Kubernetes clusters.">
-          <div>
+        <CustomTooltip title="This chart shows the status of connections to your Kubernetes clusters." placement="top" interactive>
+          <IconButton disableRipple={true} disableFocusRipple={true} style={{ marginLeft: '5px' }}>
             <InfoOutlinedIcon
               color={theme.palette.icon.default}
-              style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+              style={{ ...iconSmall, cursor: 'pointer' }}
             />
-          </div>
-        </CustomTextTooltip>
+          </IconButton>
+        </CustomTooltip>
       </div>
     </div>
   );
