@@ -10,8 +10,8 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: workspace
-  colorIcon: content/en/extensions/models/terraform/components/workspace/icons/color/workspace-color.svg
-  whiteIcon: content/en/extensions/models/terraform/components/workspace/icons/white/workspace-white.svg
+  colorIcon: extensions/models/terraform/components/workspace/icons/color/workspace-color.svg
+  whiteIcon: extensions/models/terraform/components/workspace/icons/white/workspace-white.svg
   description: 
 components-count: 1
 relationships: 

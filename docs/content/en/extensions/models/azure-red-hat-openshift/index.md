@@ -10,8 +10,8 @@ integrations-subcategory: Certified Kubernetes - Distribution
 registrant: GitHub
 components: 
 - name: open-shift-cluster
-  colorIcon: content/en/extensions/models/azure-red-hat-openshift/components/open-shift-cluster/icons/color/open-shift-cluster-color.svg
-  whiteIcon: content/en/extensions/models/azure-red-hat-openshift/components/open-shift-cluster/icons/white/open-shift-cluster-white.svg
+  colorIcon: extensions/models/azure-red-hat-openshift/components/open-shift-cluster/icons/color/open-shift-cluster-color.svg
+  whiteIcon: extensions/models/azure-red-hat-openshift/components/open-shift-cluster/icons/white/open-shift-cluster-white.svg
   description: 
 components-count: 1
 relationships: 

@@ -10,8 +10,8 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: argo-application
-  colorIcon: content/en/extensions/models/edp-argocd-operator/components/argo-application/icons/color/argo-application-color.svg
-  whiteIcon: content/en/extensions/models/edp-argocd-operator/components/argo-application/icons/white/argo-application-white.svg
+  colorIcon: extensions/models/edp-argocd-operator/components/argo-application/icons/color/argo-application-color.svg
+  whiteIcon: extensions/models/edp-argocd-operator/components/argo-application/icons/white/argo-application-white.svg
   description: 
 components-count: 1
 relationships: 

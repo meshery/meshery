@@ -10,8 +10,8 @@ integrations-subcategory: Uncategorized
 registrant: Artifact Hub
 components: 
 - name: vault-server-version
-  colorIcon: content/en/extensions/models/kubevault-catalog/components/vault-server-version/icons/color/vault-server-version-color.svg
-  whiteIcon: content/en/extensions/models/kubevault-catalog/components/vault-server-version/icons/white/vault-server-version-white.svg
+  colorIcon: extensions/models/kubevault-catalog/components/vault-server-version/icons/color/vault-server-version-color.svg
+  whiteIcon: extensions/models/kubevault-catalog/components/vault-server-version/icons/white/vault-server-version-white.svg
   description: 
 components-count: 1
 relationships: 

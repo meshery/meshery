@@ -10,12 +10,12 @@ integrations-subcategory: Continuous Integration & Delivery
 registrant: Artifact Hub
 components: 
 - name: cd-pipeline
-  colorIcon: content/en/extensions/models/cd-pipeline-operator/components/cd-pipeline/icons/color/cd-pipeline-color.svg
-  whiteIcon: content/en/extensions/models/cd-pipeline-operator/components/cd-pipeline/icons/white/cd-pipeline-white.svg
+  colorIcon: extensions/models/cd-pipeline-operator/components/cd-pipeline/icons/color/cd-pipeline-color.svg
+  whiteIcon: extensions/models/cd-pipeline-operator/components/cd-pipeline/icons/white/cd-pipeline-white.svg
   description: 
 - name: stage
-  colorIcon: content/en/extensions/models/cd-pipeline-operator/components/stage/icons/color/stage-color.svg
-  whiteIcon: content/en/extensions/models/cd-pipeline-operator/components/stage/icons/white/stage-white.svg
+  colorIcon: extensions/models/cd-pipeline-operator/components/stage/icons/color/stage-color.svg
+  whiteIcon: extensions/models/cd-pipeline-operator/components/stage/icons/white/stage-white.svg
   description: 
 components-count: 2
 relationships: 

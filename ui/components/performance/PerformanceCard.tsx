@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { Delete as DeleteIcon, Edit as EditIcon } from '@/assets/icons';
+import { Delete as DeleteIcon } from '@/assets/icons';
 import {
   CustomTooltip,
   Typography,
@@ -13,6 +13,7 @@ import {
   Table,
   TableCell,
   TableRow,
+  EditIcon,
 } from '@sistent/sistent';
 import FlipCard from '../FlipCard';
 import PerformanceResults from './PerformanceResults';
