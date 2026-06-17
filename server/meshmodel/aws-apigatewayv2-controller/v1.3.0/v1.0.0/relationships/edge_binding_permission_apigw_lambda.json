@@ -3,7 +3,7 @@
   "version": "v1.0.0",
   "kind": "RelationshipDefinition",
   "metadata": {
-    "description": "API Gateway to Lambda Permission Binding"
+    "description": "Lambda to API Gateway Permission Binding"
   },
   "model": {
     "name": "aws-apigatewayv2-controller",

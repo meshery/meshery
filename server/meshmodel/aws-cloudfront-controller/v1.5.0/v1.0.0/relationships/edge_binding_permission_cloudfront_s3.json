@@ -3,7 +3,7 @@
   "version": "v1.0.0",
   "kind": "RelationshipDefinition",
   "metadata": {
-    "description": "CloudFront to S3 Permission Binding"
+    "description": "S3 to CloudFront Permission Binding"
   },
   "model": {
     "name": "aws-cloudfront-controller",

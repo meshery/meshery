@@ -3,7 +3,7 @@
   "version": "v1.0.0",
   "kind": "RelationshipDefinition",
   "metadata": {
-    "description": "S3 to IAM Role Permission Binding"
+    "description": "IAM Role to S3 Permission Binding"
   },
   "model": {
     "name": "aws-s3-controller",
