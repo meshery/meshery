@@ -77,6 +77,9 @@
             <h1>{{ .Title }}</h1>
           {{ end }}
           {{ block "main" . }}{{ end }}
+          <div class="related-reading">
+            {{ partial "related-reading.html" . -}}
+          </div>
         </div>
         {{ if or .IsPage .IsSection }}
           {{ partial "pagination.html" . }}
