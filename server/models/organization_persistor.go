@@ -28,7 +28,11 @@ func (op *OrganizationPersister) GetOrganizations(search, order string, page, pa
 	count := int64(0)
 	organizations := []*organization.Organization{}
 
-	query := op.DB.Where("updated_at > ?", updatedAfter).Order(order)
+	query := op.DB.Order(order)
+
+	if updatedAfter != "" {
+		query = query.Where("updated_at > ?", updatedAfter)
+	}
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
