@@ -73,51 +73,11 @@ const relationshipSelectMenuProps = {
     vertical: 'top' as const,
     horizontal: 'left' as const,
   },
-  sx: {
-    '& .MuiPaper-root': {
-      maxHeight: RELATIONSHIP_DROPDOWN_MAX_HEIGHT,
-      overflowY: 'auto',
-    },
-    '& .MuiList-root': {
-      maxHeight: 'inherit',
-      overflowY: 'auto',
-    },
-  },
   PaperProps: {
     className: RELATIONSHIP_SELECT_MENU_PAPER_CLASS,
-    sx: {
-      maxHeight: RELATIONSHIP_DROPDOWN_MAX_HEIGHT,
-      overflowY: 'auto',
-    },
-    style: {
-      maxHeight: RELATIONSHIP_DROPDOWN_MAX_HEIGHT,
-      overflowY: 'auto' as const,
-    },
-  },
-  slotProps: {
-    paper: {
-      sx: {
-        maxHeight: RELATIONSHIP_DROPDOWN_MAX_HEIGHT,
-        overflowY: 'auto',
-      },
-      style: {
-        maxHeight: RELATIONSHIP_DROPDOWN_MAX_HEIGHT,
-        overflowY: 'auto' as const,
-      },
-    },
-    list: {
-      sx: {
-        maxHeight: 'inherit',
-        overflowY: 'auto',
-      },
-    },
   },
   MenuListProps: {
     className: RELATIONSHIP_SELECT_MENU_LIST_CLASS,
-    style: {
-      maxHeight: 'inherit',
-      overflowY: 'auto' as const,
-    },
   },
 };
 
@@ -251,16 +211,6 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                 <FormControl fullWidth>
                   <TextField
                     select={true}
-                    SelectProps={{
-                      MenuProps: relationshipSelectMenuProps,
-                      renderValue: (selected) => {
-                        if (!selected || selected.length === 0) {
-                          return <em>Select Category</em>;
-                        }
-                        return selected;
-                      },
-                      displayEmpty: true,
-                    }}
                     slotProps={{
                       select: {
                         MenuProps: relationshipSelectMenuProps,
@@ -297,16 +247,6 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                   <TextField
                     select={true}
                     disabled={!selectedCategory}
-                    SelectProps={{
-                      MenuProps: relationshipSelectMenuProps,
-                      renderValue: (selected) => {
-                        if (!selected || selected.length === 0) {
-                          return <em>Select Model</em>;
-                        }
-                        return selected;
-                      },
-                      displayEmpty: true,
-                    }}
                     slotProps={{
                       select: {
                         MenuProps: relationshipSelectMenuProps,
