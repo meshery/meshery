@@ -328,17 +328,22 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
       <ChevronButtonWrapper
         isCollapsed={!open}
         onClick={handleDrawerToggle}
-        style={{
+        sx={{
           position: 'absolute',
           bottom: '12%',
-          left: open ? `${DRAWER_WIDTH}px` : `calc(${theme.spacing(8)} + 1px - 1.2rem)`,
+          left: open
+            ? `${DRAWER_WIDTH}px`
+            : {
+                xs: `calc(${theme.spacing(7)} + 1px - 1.2rem)`,
+                sm: `calc(${theme.spacing(8)} + 1px - 1.2rem)`,
+              },
           right: 'auto',
           top: 'auto',
           zIndex: 1400,
         }}
       >
         <LeftArrowIcon
-          alt="Sidebar collapse toggle"
+          aria-label="Sidebar collapse toggle"
           style={{
             cursor: 'pointer',
             verticalAlign: 'middle',
