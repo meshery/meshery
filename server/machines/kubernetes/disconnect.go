@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/meshery/meshery/server/machines"
@@ -17,8 +18,14 @@ func (da *DisconnectAction) ExecuteOnEntry(ctx context.Context, machineCtx inter
 
 }
 func (da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	user, ok := ctx.Value(models.UserCtxKey).(*models.User)
+	if !ok || user == nil {
+		return machines.NoOp, nil, fmt.Errorf("user missing from context")
+	}
+	sysID, ok := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	if !ok || sysID == nil {
+		return machines.NoOp, nil, fmt.Errorf("system ID missing from context")
+	}
 	userUUID := user.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")

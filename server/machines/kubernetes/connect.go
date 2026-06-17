@@ -22,10 +22,19 @@ func (ca *ConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interfac
 }
 
 func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	user, ok := ctx.Value(models.UserCtxKey).(*models.User)
+	if !ok || user == nil {
+		return machines.NoOp, nil, fmt.Errorf("user missing from context")
+	}
+	sysID, ok := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	if !ok || sysID == nil {
+		return machines.NoOp, nil, fmt.Errorf("system ID missing from context")
+	}
+	provider, ok := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if !ok || provider == nil {
+		return machines.NoOp, nil, fmt.Errorf("provider missing from context")
+	}
 	userUUID := user.ID
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
 
