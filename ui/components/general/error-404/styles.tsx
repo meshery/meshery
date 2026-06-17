@@ -15,8 +15,14 @@ export const ErrorMain = styled('main')(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
   padding: '4rem 8rem',
   minHeight: '100vh',
+  [theme.breakpoints.down('lg')]: {
+    padding: '4rem 4rem',
+  },
+  [theme.breakpoints.down('md')]: {
+    padding: '3rem 2rem',
+  },
   [theme.breakpoints.down('sm')]: {
-    padding: '4rem 0rem',
+    padding: '2rem 1rem',
   },
   display: 'flex',
   flexDirection: 'column',
@@ -45,12 +51,15 @@ export const ImageContainer = styled('div')(({ theme }) => ({
   },
 }));
 
-export const ErrorSectionContainer = styled('div')(() => ({
+export const ErrorSectionContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexWrap: 'wrap',
+  [theme.breakpoints.down('md')]: {
+    flexDirection: 'column',
+  },
 }));
 
-export const ErrorSection = styled('div')(() => ({
+export const ErrorSection = styled('div')(({ theme }) => ({
   flex: '1',
   width: '100%',
   display: 'flex',
@@ -58,7 +67,12 @@ export const ErrorSection = styled('div')(() => ({
   paddingInline: '2rem',
   gap: '2rem',
   marginBlock: '2rem',
-  minWidth: 'max-content',
+  minWidth: '300px',
+  [theme.breakpoints.down('md')]: {
+    minWidth: 'auto',
+    marginBlock: '1rem',
+    paddingInline: '1rem',
+  },
 }));
 
 export const ErrorSectionContent = styled('div')(() => ({
@@ -123,6 +137,7 @@ export const StyledSelect = styled(Select)({
 
 export const StyledBox = styled(Box)(({ theme }) => ({
   display: 'flex',
+  flexWrap: 'wrap',
   gap: '10px',
   alignItems: 'center',
   borderRadius: '10px',
@@ -130,6 +145,12 @@ export const StyledBox = styled(Box)(({ theme }) => ({
   padding: '1.3rem',
   border: `1px solid ${theme.palette.background.brand.disabled}`,
   color: theme.palette.text.default,
+}));
+
+export const HeaderContainer = styled('div')(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.25rem',
 }));
 
 export const FormField = styled('div')(() => ({
