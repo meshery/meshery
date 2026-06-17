@@ -11,7 +11,7 @@ import {
   useStepper,
 } from '@sistent/sistent';
 import { Modal } from '@/components/shared/Modal';
-import { useGetConnectionDefinitionsQuery } from '@/rtk-query/meshModel';
+import { useListConnectionDefinitionsQuery } from '@meshery/schemas/mesheryApi';
 import {
   buildConnectionWizardKindConfigs,
   type ConnectionWizardKindConfig,
@@ -63,8 +63,8 @@ const ConnectionConfigureModal = ({
   onClose,
   connection,
 }: ConnectionConfigureModalProps) => {
-  const { data: connectionDefinitionsResponse } = useGetConnectionDefinitionsQuery(
-    { params: { pagesize: 'all' } },
+  const { data: connectionDefinitionsResponse } = useListConnectionDefinitionsQuery(
+    {},
     { skip: !isOpen },
   );
 

@@ -14,7 +14,7 @@ import { Modal } from '@/components/shared/Modal';
 import ConnectionIcon from '@/assets/icons/Connection';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import type { RootState } from '@/store/store';
-import { useGetConnectionDefinitionsQuery } from '@/rtk-query/meshModel';
+import { useListConnectionDefinitionsQuery } from '@meshery/schemas/mesheryApi';
 import { buildConnectionWizardKindConfigs } from './ConnectionWizard.helpers';
 import { useConnectionWizard } from './wizard/useConnectionWizard';
 
@@ -34,7 +34,7 @@ const StepConnectionIcon = (props: { width?: number; height?: number }) => (
 const ConnectionWizardModal = ({ isOpen, onClose }: ConnectionWizardModalProps) => {
   const { connectionMetadataState } = useSelector((state: RootState) => state.ui);
   const { data: connectionDefinitionsResponse, isFetching: isLoadingKinds } =
-    useGetConnectionDefinitionsQuery({ params: { pagesize: 'all' } }, { skip: !isOpen });
+    useListConnectionDefinitionsQuery({}, { skip: !isOpen });
 
   // The endpoint returns the page under `connectionDefinitions`; the wizard
   // builds its selectable kinds from that list instead of a hardcoded set.

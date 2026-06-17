@@ -4,9 +4,14 @@ import {
 } from '@meshery/schemas/mesheryApi';
 import { api, mesheryApiPath } from './index';
 
+// These must match the tag types declared on the shared `mesheryApi`
+// (see @meshery/schemas/mesheryApi) — the connections list query
+// (`getConnections`) provides `Connection_API_Connections`, so mutations have to
+// invalidate that exact tag to make the table refetch. A bare 'connections'
+// string isn't a registered tag type and silently invalidates nothing.
 const TAGS = {
-  CONNECTIONS: 'connections',
-  CREDENTIALS: 'credentials',
+  CONNECTIONS: 'Connection_API_Connections',
+  CREDENTIALS: 'credential_credentials',
 };
 
 const connectionsApi = api.injectEndpoints({
