@@ -7,6 +7,7 @@ import ConnectionTable from './ConnectionTable';
 const notify = vi.fn();
 const push = vi.fn();
 const ping = vi.fn();
+const pingGrafana = vi.fn();
 const modalShow = vi.fn();
 const updateConnectionByIdMutator = vi.fn();
 const addConnectionToEnvironmentMutator = vi.fn();
@@ -127,6 +128,10 @@ vi.mock('@/graphql/queries/ResetDatabaseQuery', () => ({
 
 vi.mock('@/utils/hooks/useKubernetesHook', () => ({
   default: () => ping,
+}));
+
+vi.mock('@/utils/hooks/useGrafanaPingHook', () => ({
+  default: () => pingGrafana,
 }));
 
 vi.mock('./ConnectionChip', () => ({

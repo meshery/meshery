@@ -210,6 +210,7 @@ const (
 	ErrExtensionProxyCode                  = "meshery-server-1427"
 	ErrInitializeMachineCode               = "meshery-server-1428"
 	ErrSendMachineEventCode                = "meshery-server-1429"
+	ErrTelemetryGrafanaCode                = "meshery-server-1430"
 )
 
 var (
@@ -928,6 +929,13 @@ func ErrInvalidConnectionKind(actual, expected string) error {
 // HTTP 500.
 func ErrUpdateConnection(err error) error {
 	return errors.New(ErrUpdateConnectionCode, errors.Alert, []string{"Could not update the connection"}, []string{err.Error()}, []string{"Remote provider is unreachable.", "Connection has been deleted since it was loaded.", "Persisted metadata is corrupt."}, []string{"Verify provider connectivity and that the connection still exists, then retry."})
+}
+
+// ErrTelemetryGrafana wraps failures talking to a Grafana telemetry connection
+// (health, board search/fetch, datasource listing, or datasource query proxy).
+// The op string identifies the operation that failed. Emitted with HTTP 502.
+func ErrTelemetryGrafana(err error, op string) error {
+	return errors.New(ErrTelemetryGrafanaCode, errors.Alert, []string{fmt.Sprintf("Grafana telemetry request failed during %s", op)}, []string{err.Error()}, []string{"The Grafana instance is unreachable or returned an error.", "The stored credential (API key / basic auth) is missing, expired, or lacks permission.", "The connection's URL is incorrect."}, []string{"Verify the Grafana URL is reachable from the Meshery server and that the connection's credential is valid, then retry."})
 }
 
 // ErrExportModel wraps failures in the ExportModel pipeline — building the

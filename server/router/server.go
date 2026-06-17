@@ -161,6 +161,20 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/telemetry/metrics/grafana/ping/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaPingHandler), models.ProviderAuth))).
 		Methods("GET")
 
+	// Telemetry (v2) — clean, connection-driven Grafana dashboard browsing & rendering.
+	gMux.Handle("/api/telemetry/grafana/{connectionID}/ping", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaTelemetryPingHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/telemetry/grafana/{connectionID}/boards", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaTelemetryBoardsHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/telemetry/grafana/{connectionID}/boards/{uid}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaTelemetryBoardHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/telemetry/grafana/{connectionID}/datasources", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaTelemetryDatasourcesHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/telemetry/grafana/{connectionID}/query_range", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaTelemetryQueryRangeHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/telemetry/grafana/{connectionID}/pinned", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaTelemetryPinnedBoardsHandler), models.ProviderAuth))).
+		Methods("GET", "POST")
+
 	gMux.Handle("/api/telemetry/metrics/config", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusConfigHandler), models.ProviderAuth))).
 		Methods("GET", "POST", "DELETE")
 	gMux.Handle("/api/telemetry/metrics/board_import/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaBoardImportForPrometheusHandler), models.ProviderAuth))).
