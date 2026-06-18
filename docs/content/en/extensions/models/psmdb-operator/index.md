@@ -10,16 +10,16 @@ integrations-subcategory: App Definition and Development
 registrant: Artifact Hub
 components: 
 - name: percona-server-mongo-db-backup
-  colorIcon: content/en/extensions/models/psmdb-operator/components/percona-server-mongo-db-backup/icons/color/percona-server-mongo-db-backup-color.svg
-  whiteIcon: content/en/extensions/models/psmdb-operator/components/percona-server-mongo-db-backup/icons/white/percona-server-mongo-db-backup-white.svg
+  colorIcon: extensions/models/psmdb-operator/components/percona-server-mongo-db-backup/icons/color/percona-server-mongo-db-backup-color.svg
+  whiteIcon: extensions/models/psmdb-operator/components/percona-server-mongo-db-backup/icons/white/percona-server-mongo-db-backup-white.svg
   description: 
 - name: percona-server-mongo-db-restore
-  colorIcon: content/en/extensions/models/psmdb-operator/components/percona-server-mongo-db-restore/icons/color/percona-server-mongo-db-restore-color.svg
-  whiteIcon: content/en/extensions/models/psmdb-operator/components/percona-server-mongo-db-restore/icons/white/percona-server-mongo-db-restore-white.svg
+  colorIcon: extensions/models/psmdb-operator/components/percona-server-mongo-db-restore/icons/color/percona-server-mongo-db-restore-color.svg
+  whiteIcon: extensions/models/psmdb-operator/components/percona-server-mongo-db-restore/icons/white/percona-server-mongo-db-restore-white.svg
   description: 
 - name: percona-server-mongo-db
-  colorIcon: content/en/extensions/models/psmdb-operator/components/percona-server-mongo-db/icons/color/percona-server-mongo-db-color.svg
-  whiteIcon: content/en/extensions/models/psmdb-operator/components/percona-server-mongo-db/icons/white/percona-server-mongo-db-white.svg
+  colorIcon: extensions/models/psmdb-operator/components/percona-server-mongo-db/icons/color/percona-server-mongo-db-color.svg
+  whiteIcon: extensions/models/psmdb-operator/components/percona-server-mongo-db/icons/white/percona-server-mongo-db-white.svg
   description: 
 components-count: 3
 relationships: 

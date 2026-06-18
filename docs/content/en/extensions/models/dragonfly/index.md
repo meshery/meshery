@@ -10,8 +10,8 @@ integrations-subcategory: Container Registry
 registrant: GitHub
 components: 
 - name: dragonfly
-  colorIcon: content/en/extensions/models/dragonfly/components/dragonfly/icons/color/dragonfly-color.svg
-  whiteIcon: content/en/extensions/models/dragonfly/components/dragonfly/icons/white/dragonfly-white.svg
+  colorIcon: extensions/models/dragonfly/components/dragonfly/icons/color/dragonfly-color.svg
+  whiteIcon: extensions/models/dragonfly/components/dragonfly/icons/white/dragonfly-white.svg
   description: 
 components-count: 1
 relationships: 

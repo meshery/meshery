@@ -35,8 +35,8 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/v1beta1/environment"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
-	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"
 )
@@ -1707,7 +1707,7 @@ func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString stri
 		return ErrMarshal(err, "meshery event")
 	}
 
-	l.Log.Info("attempting to publish event to remote provider, size: %d", len(data))
+	l.Log.Infof("attempting to publish event to remote provider, size: %d", len(data))
 	bf := bytes.NewBuffer(data)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 
@@ -2006,7 +2006,7 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 		return ErrMarshal(err, "meshery metrics for shipping")
 	}
 
-	l.Log.Debug("Result: %s, size: %d", data, len(data))
+	l.Log.Debugf("Result: %s, size: %d", data, len(data))
 	l.Log.Info("attempting to publish metrics to remote provider")
 	bf := bytes.NewBuffer(data)
 
@@ -3739,7 +3739,7 @@ func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *Performa
 		return nil, ErrDataRead(err, "Perf Profile")
 	}
 
-	if resp.StatusCode == http.StatusCreated {
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
 		l.Log.Info("performance profile sent to remote provider: ", string(bdr))
 		return bdr, nil
 	}
@@ -4244,7 +4244,7 @@ func (l *RemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Request) {
 }
 
 // SMPTestConfigStore - persist test profile details to provider
-func (l *RemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error) {
+func (l *RemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *perfprofile.PerformanceTestConfig) (string, error) {
 	if !l.Capabilities.IsSupported(PersistSMPTestProfile) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return "", ErrInvalidCapability("PersistSMPTestProfile", l.ProviderName)
@@ -4287,7 +4287,7 @@ func (l *RemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.P
 }
 
 // SMPTestConfigGet - retrieve a single test profile details
-func (l *RemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
+func (l *RemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error) {
 	if !l.Capabilities.IsSupported(PersistSMPTestProfile) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, ErrInvalidCapability("PersistSMPTestProfile", l.ProviderName)
@@ -4322,7 +4322,7 @@ func (l *RemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*
 	}
 	l.Log.Debug(string(bdr))
 	if resp.StatusCode == http.StatusOK {
-		testConfig := SMP.PerformanceTestConfig{}
+		testConfig := perfprofile.PerformanceTestConfig{}
 		err := json.Unmarshal(bdr, &testConfig)
 		if err != nil {
 			return nil, err
@@ -4608,15 +4608,17 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID core.Uuid)
 		statusCode := http.StatusInternalServerError
 		return nil, statusCode, ErrFetch(err, "connection", statusCode)
 	}
+	// Close the body on every path once DoRequest has handed us a response.
+	// This defer previously lived inside the 200 branch, leaking the
+	// connection whenever the provider returned a non-2xx status.
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	bdr, err := io.ReadAll(resp.Body)
 	if resp.StatusCode == http.StatusOK {
-		defer func() {
-			_ = resp.Body.Close()
-		}()
-
 		if err != nil {
-			l.Log.Errorf("unable to read response body for connection with id %s: %v , resp body", connectionID, err, string(bdr))
+			l.Log.Errorf("unable to read response body for connection with id %s: %v, resp body: %s", connectionID, err, string(bdr))
 			return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s, err body %s", connectionID, string(bdr)), "connection", resp.StatusCode)
 		}
 		var conn connections.Connection
@@ -4627,7 +4629,11 @@ func (l *RemoteProvider) GetConnectionByID(token string, connectionID core.Uuid)
 		return &conn, resp.StatusCode, nil
 	}
 
-	l.Log.Errorf("unable to read response body for connection with id %s: %v , resp body", connectionID, err, string(bdr))
+	if err != nil {
+		l.Log.Errorf("unable to read response body for connection with id %s: %v", connectionID, err)
+	} else {
+		l.Log.Errorf("failed to retrieve connection with id %s: unexpected status %d, resp body: %s", connectionID, resp.StatusCode, string(bdr))
+	}
 	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", resp.StatusCode)
 }
 

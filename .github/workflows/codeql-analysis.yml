@@ -1,35 +1,25 @@
-# For most projects, this workflow file will not need changing; you simply need
-# to commit it to your repository.
-#
-# You may wish to alter this file to override the set of languages analyzed,
-# or to provide custom queries or build logic.
-#
-# ******** NOTE ********
-# We have attempted to detect the languages in your repository. Please check
-# the `language` matrix defined below to confirm you have the correct set of
-# supported CodeQL languages.
-#
 name: "CodeQL"
 
 on:
   workflow_dispatch:
-#   push:
-#     tags:
-#       - 'v*'
-#   pull_request:
-#     # The branches below must be a subset of the branches above
-#     branches: [ master ]
+    inputs:
+      debug_mode:
+        description: "Enable verbose workflow context logging"
+        required: false
+        default: false
+        type: boolean
   schedule:
     - cron: '26 22 * * 6'
 
-permissions:
-  contents: read  # Only needs to read code for scanning
-
 jobs:
   analyze:
-    name: Analyze
+    name: Analyze (${{ matrix.language }})
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+      security-events: write
 
     strategy:
       fail-fast: false
@@ -40,35 +30,120 @@ jobs:
         # https://docs.github.com/en/free-pro-team@latest/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#changing-the-languages-that-are-analyzed
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@master
+      - name: 🔍 Introspect Inputs
+        uses: actions/github-script@v8
+        with:
+          script: |
+            core.startGroup('Workflow Inputs and Context');
+            core.info(`debug_mode: ${JSON.stringify(context.payload.inputs?.debug_mode ?? false)}`);
+            core.info(`repository: ${context.repo.owner}/${context.repo.repo}`);
+            core.info(`event_name: ${context.eventName}`);
+            core.info(`actor: ${context.actor}`);
+            core.info(`ref: ${context.ref}`);
+            core.info(`sha: ${context.sha}`);
+            core.info(`run_id: ${context.runId}`);
+            core.info(`language: ${process.env.CODEQL_LANGUAGE}`);
+            core.endGroup();
+        env:
+          CODEQL_LANGUAGE: ${{ matrix.language }}
 
-    # Initializes the CodeQL tools for scanning.
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: ${{ matrix.language }}
-        config-file: ./.github/codeql-config.yml
-        # If you wish to specify custom queries, you can do so here or in a config file.
-        # By default, queries listed here will override any specified in a config file.
-        # Prefix the list here with "+" to use these queries and those in the config file.
-        # queries: ./path/to/local/query, your-org/your-repo/queries@main
+      - name: Checkout repository
+        uses: actions/checkout@v6
 
-    # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
-    # If this step fails, then you should remove it and run the build manually (see below)
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v3
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          config-file: ./.github/codeql-config.yml
+          # If you wish to specify custom queries, you can do so here or in a config file.
+          # By default, queries listed here will override any specified in a config file.
+          # Prefix the list here with "+" to use these queries and those in the config file.
+          # queries: ./path/to/local/query, your-org/your-repo/queries@main
 
-    # ℹ️ Command-line programs to run using the OS shell.
-    # 📚 https://git.io/JvXDl
+      # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
+      # If this step fails, then you should remove it and run the build manually (see below)
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v4
 
-    # ✏️ If the Autobuild fails above, remove it and uncomment the following three lines
-    #    and modify them (or add more) to build your code if your project
-    #    uses a compiled language
+      # ℹ️ Command-line programs to run using the OS shell.
+      # 📚 https://git.io/JvXDl
 
-    #- run: |
-    #   make bootstrap
-    #   make release
+      # ✏️ If the Autobuild fails above, remove it and uncomment the following three lines
+      #    and modify them (or add more) to build your code if your project
+      #    uses a compiled language
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      #- run: |
+      #   make bootstrap
+      #   make release
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+
+      - name: Comment on associated pull requests when analysis fails
+        if: failure()
+        uses: actions/github-script@v8
+        env:
+          CODEQL_LANGUAGE: ${{ matrix.language }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const associatedPullRequests = await github.paginate(
+              github.rest.repos.listPullRequestsAssociatedWithCommit,
+              {
+                owner,
+                repo,
+                commit_sha: context.sha,
+              },
+            );
+
+            const openPullRequests = associatedPullRequests.filter((pullRequest) => pullRequest.state === 'open');
+            if (!openPullRequests.length) {
+              core.info('No associated open pull requests found for this commit.');
+              return;
+            }
+
+            const body = [
+              `⚠️ CodeQL analysis failed for \`${process.env.CODEQL_LANGUAGE}\` on \`${context.sha.slice(0, 7)}\`.`,
+              '',
+              `- Workflow: ${context.workflow}`,
+              `- Event: ${context.eventName}`,
+              `- Actor: ${context.actor}`,
+              `- Run: ${process.env.RUN_URL}`,
+            ].join('\n');
+
+            for (const pullRequest of openPullRequests) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: pullRequest.number,
+                body,
+              });
+            }
+
+      - name: 🚨 Email Alert on Failure
+        # 1. Map the secrets to environment variables first
+        env: 
+          MAIL_USER: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASS: ${{ secrets.MAIL_PASSWORD }}
+        # 2. Check the 'env' context instead of the 'secrets' context
+        if: failure() && env.MAIL_USER != '' && env.MAIL_PASS != ''
+        uses: dawidd6/action-send-mail@v7
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "Workflow Failed: ${{ github.workflow }} (${{ matrix.language }})"
+          from: '"Meshery" <no-reply@meshery.io>'
+          to: maintainers@meshery.io
+          body: |
+            Repository: ${{ github.repository }}
+            Workflow: ${{ github.workflow }}
+            Job: ${{ github.job }}
+            Language: ${{ matrix.language }}
+            Event: ${{ github.event_name }}
+            Actor: ${{ github.actor }}
+            Run URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

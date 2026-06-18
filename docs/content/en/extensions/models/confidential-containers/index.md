@@ -10,8 +10,8 @@ integrations-subcategory: Security & Compliance
 registrant: GitHub
 components: 
 - name: cc-runtime
-  colorIcon: content/en/extensions/models/confidential-containers/components/cc-runtime/icons/color/cc-runtime-color.svg
-  whiteIcon: content/en/extensions/models/confidential-containers/components/cc-runtime/icons/white/cc-runtime-white.svg
+  colorIcon: extensions/models/confidential-containers/components/cc-runtime/icons/color/cc-runtime-color.svg
+  whiteIcon: extensions/models/confidential-containers/components/cc-runtime/icons/white/cc-runtime-white.svg
   description: 
 components-count: 1
 relationships: 

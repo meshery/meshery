@@ -10,8 +10,8 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: vald-mirror-target
-  colorIcon: content/en/extensions/models/vald/components/vald-mirror-target/icons/color/vald-mirror-target-color.svg
-  whiteIcon: content/en/extensions/models/vald/components/vald-mirror-target/icons/white/vald-mirror-target-white.svg
+  colorIcon: extensions/models/vald/components/vald-mirror-target/icons/color/vald-mirror-target-color.svg
+  whiteIcon: extensions/models/vald/components/vald-mirror-target/icons/white/vald-mirror-target-white.svg
   description: 
 components-count: 1
 relationships: 

@@ -169,27 +169,32 @@ interface CountSummary {
 
 const getNavItems = (counts: CountSummary): NavItemDef[] => [
   {
-    id: MODELS,
-    label: `Models (${counts.models})`,
-    renderIcon: (fill) => <FileIcon {...iconSmall} fill={fill} />,
-  },
-  {
-    id: COMPONENTS,
-    label: `Components (${counts.components})`,
-    renderIcon: (fill) => <ComponentIcon {...iconSmall} fill={fill} />,
-  },
-  {
-    id: RELATIONSHIPS,
-    label: `Relationships (${counts.relationships})`,
-    renderIcon: (fill) => (
-      <ConnectionIcon {...iconSmall} fill={fill} primaryFill={fill} secondaryFill={fill} />
-    ),
-  },
-  {
-    id: REGISTRANTS,
-    label: `Registrants (${counts.registrants})`,
-    renderIcon: (fill) => <DatabaseIcon {...iconSmall} fill={fill} />,
-  },
+  id: MODELS,
+  label: `Models (${counts.models?.toLocaleString() || 0})`,
+  renderIcon: (fill) => <FileIcon {...iconSmall} fill={fill} />,
+},
+{
+  id: COMPONENTS,
+  label: `Components (${counts.components?.toLocaleString() || 0})`,
+  renderIcon: (fill) => <ComponentIcon {...iconSmall} fill={fill} />,
+},
+{
+  id: RELATIONSHIPS,
+  label: `Relationships (${counts.relationships?.toLocaleString() || 0})`,
+  renderIcon: (fill) => (
+    <ConnectionIcon
+      {...iconSmall}
+      fill={fill}
+      primaryFill={fill}
+      secondaryFill={fill}
+    />
+  ),
+},
+{
+  id: REGISTRANTS,
+  label: `Registrants (${counts.registrants?.toLocaleString() || 0})`,
+  renderIcon: (fill) => <DatabaseIcon {...iconSmall} fill={fill} />,
+},
 ];
 
 interface NavItemProps {

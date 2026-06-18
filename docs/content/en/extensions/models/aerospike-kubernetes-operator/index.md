@@ -10,20 +10,20 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: aerospike-cluster
-  colorIcon: content/en/extensions/models/aerospike-kubernetes-operator/components/aerospike-cluster/icons/color/aerospike-cluster-color.svg
-  whiteIcon: content/en/extensions/models/aerospike-kubernetes-operator/components/aerospike-cluster/icons/white/aerospike-cluster-white.svg
+  colorIcon: extensions/models/aerospike-kubernetes-operator/components/aerospike-cluster/icons/color/aerospike-cluster-color.svg
+  whiteIcon: extensions/models/aerospike-kubernetes-operator/components/aerospike-cluster/icons/white/aerospike-cluster-white.svg
   description: 
 - name: aerospike-backup
-  colorIcon: content/en/extensions/models/aerospike-kubernetes-operator/components/aerospike-backup/icons/color/aerospike-backup-color.svg
-  whiteIcon: content/en/extensions/models/aerospike-kubernetes-operator/components/aerospike-backup/icons/white/aerospike-backup-white.svg
+  colorIcon: extensions/models/aerospike-kubernetes-operator/components/aerospike-backup/icons/color/aerospike-backup-color.svg
+  whiteIcon: extensions/models/aerospike-kubernetes-operator/components/aerospike-backup/icons/white/aerospike-backup-white.svg
   description: 
 - name: aerospike-backup-service
-  colorIcon: content/en/extensions/models/aerospike-kubernetes-operator/components/aerospike-backup-service/icons/color/aerospike-backup-service-color.svg
-  whiteIcon: content/en/extensions/models/aerospike-kubernetes-operator/components/aerospike-backup-service/icons/white/aerospike-backup-service-white.svg
+  colorIcon: extensions/models/aerospike-kubernetes-operator/components/aerospike-backup-service/icons/color/aerospike-backup-service-color.svg
+  whiteIcon: extensions/models/aerospike-kubernetes-operator/components/aerospike-backup-service/icons/white/aerospike-backup-service-white.svg
   description: 
 - name: aerospike-restore
-  colorIcon: content/en/extensions/models/aerospike-kubernetes-operator/components/aerospike-restore/icons/color/aerospike-restore-color.svg
-  whiteIcon: content/en/extensions/models/aerospike-kubernetes-operator/components/aerospike-restore/icons/white/aerospike-restore-white.svg
+  colorIcon: extensions/models/aerospike-kubernetes-operator/components/aerospike-restore/icons/color/aerospike-restore-color.svg
+  whiteIcon: extensions/models/aerospike-kubernetes-operator/components/aerospike-restore/icons/white/aerospike-restore-white.svg
   description: 
 components-count: 4
 relationships: 

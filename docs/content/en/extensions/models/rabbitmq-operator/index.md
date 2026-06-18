@@ -10,8 +10,8 @@ integrations-subcategory: Streaming & Messaging
 registrant: Artifact Hub
 components: 
 - name: rabbitmq-cluster
-  colorIcon: content/en/extensions/models/rabbitmq-operator/components/rabbitmq-cluster/icons/color/rabbitmq-cluster-color.svg
-  whiteIcon: content/en/extensions/models/rabbitmq-operator/components/rabbitmq-cluster/icons/white/rabbitmq-cluster-white.svg
+  colorIcon: extensions/models/rabbitmq-operator/components/rabbitmq-cluster/icons/color/rabbitmq-cluster-color.svg
+  whiteIcon: extensions/models/rabbitmq-operator/components/rabbitmq-cluster/icons/white/rabbitmq-cluster-white.svg
   description: 
 components-count: 1
 relationships: 

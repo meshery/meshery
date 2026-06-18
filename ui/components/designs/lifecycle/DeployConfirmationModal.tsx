@@ -22,7 +22,7 @@ import {
   DoneAllIcon,
   DoneIcon,
   RemoveDoneIcon,
-  Search,
+  SearchIcon as Search,
   Tab,
   Tabs,
   TextField,
@@ -248,7 +248,7 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
                 )}
               </div>
             }
-            disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.resource)}
+            disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject)}
           />
         )}
         <Tab

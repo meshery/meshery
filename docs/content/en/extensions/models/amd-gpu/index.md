@@ -10,16 +10,16 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: node-feature
-  colorIcon: content/en/extensions/models/amd-gpu/components/node-feature/icons/color/node-feature-color.svg
-  whiteIcon: content/en/extensions/models/amd-gpu/components/node-feature/icons/white/node-feature-white.svg
+  colorIcon: extensions/models/amd-gpu/components/node-feature/icons/color/node-feature-color.svg
+  whiteIcon: extensions/models/amd-gpu/components/node-feature/icons/white/node-feature-white.svg
   description: 
 - name: node-feature-rule
-  colorIcon: content/en/extensions/models/amd-gpu/components/node-feature-rule/icons/color/node-feature-rule-color.svg
-  whiteIcon: content/en/extensions/models/amd-gpu/components/node-feature-rule/icons/white/node-feature-rule-white.svg
+  colorIcon: extensions/models/amd-gpu/components/node-feature-rule/icons/color/node-feature-rule-color.svg
+  whiteIcon: extensions/models/amd-gpu/components/node-feature-rule/icons/white/node-feature-rule-white.svg
   description: 
 - name: node-feature-group
-  colorIcon: content/en/extensions/models/amd-gpu/components/node-feature-group/icons/color/node-feature-group-color.svg
-  whiteIcon: content/en/extensions/models/amd-gpu/components/node-feature-group/icons/white/node-feature-group-white.svg
+  colorIcon: extensions/models/amd-gpu/components/node-feature-group/icons/color/node-feature-group-color.svg
+  whiteIcon: extensions/models/amd-gpu/components/node-feature-group/icons/white/node-feature-group-white.svg
   description: 
 components-count: 3
 relationships: 

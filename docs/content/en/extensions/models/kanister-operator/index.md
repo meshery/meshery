@@ -10,20 +10,20 @@ integrations-subcategory: Provisioning
 registrant: Artifact Hub
 components: 
 - name: action-set
-  colorIcon: content/en/extensions/models/kanister-operator/components/action-set/icons/color/action-set-color.svg
-  whiteIcon: content/en/extensions/models/kanister-operator/components/action-set/icons/white/action-set-white.svg
+  colorIcon: extensions/models/kanister-operator/components/action-set/icons/color/action-set-color.svg
+  whiteIcon: extensions/models/kanister-operator/components/action-set/icons/white/action-set-white.svg
   description: 
 - name: blueprint
-  colorIcon: content/en/extensions/models/kanister-operator/components/blueprint/icons/color/blueprint-color.svg
-  whiteIcon: content/en/extensions/models/kanister-operator/components/blueprint/icons/white/blueprint-white.svg
+  colorIcon: extensions/models/kanister-operator/components/blueprint/icons/color/blueprint-color.svg
+  whiteIcon: extensions/models/kanister-operator/components/blueprint/icons/white/blueprint-white.svg
   description: 
 - name: profile
-  colorIcon: content/en/extensions/models/kanister-operator/components/profile/icons/color/profile-color.svg
-  whiteIcon: content/en/extensions/models/kanister-operator/components/profile/icons/white/profile-white.svg
+  colorIcon: extensions/models/kanister-operator/components/profile/icons/color/profile-color.svg
+  whiteIcon: extensions/models/kanister-operator/components/profile/icons/white/profile-white.svg
   description: 
 - name: repository-server
-  colorIcon: content/en/extensions/models/kanister-operator/components/repository-server/icons/color/repository-server-color.svg
-  whiteIcon: content/en/extensions/models/kanister-operator/components/repository-server/icons/white/repository-server-white.svg
+  colorIcon: extensions/models/kanister-operator/components/repository-server/icons/color/repository-server-color.svg
+  whiteIcon: extensions/models/kanister-operator/components/repository-server/icons/white/repository-server-white.svg
   description: 
 components-count: 4
 relationships: 
