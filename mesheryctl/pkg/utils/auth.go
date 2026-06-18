@@ -21,6 +21,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+const authHTTPTimeout = 30 * time.Second
+
 type Provider struct {
 	ProviderURL  string `json:"providerUrl,omitempty"`
 	ProviderName string `json:"providerName,omitempty"`
@@ -88,7 +90,7 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 // Function returns a new http response given a http request
 // Function will test the response and return any errors associated with it
 func MakeRequest(req *http.Request) (*http.Response, error) {
-	client := &http.Client{}
+	client := &http.Client{Timeout: authHTTPTimeout}
 
 	// check status code from request, checks for issues with auth token
 	resp, err := client.Do(req)
@@ -224,21 +226,20 @@ func UpdateAuthDetails(filepath string) error {
 
 	req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/token", bytes.NewBuffer([]byte("")))
 	if err != nil {
-		err = errors.Wrap(err, "error Creating the request: ")
+		err = errors.Wrap(err, "error creating the request: ")
 		return err
 	}
 	if err := AddAuthDetails(req, filepath); err != nil {
 		return err
 	}
 
-	client := &http.Client{}
+	client := &http.Client{Timeout: authHTTPTimeout}
 	resp, err := client.Do(req)
-	defer SafeClose(resp.Body)
 
 	if err != nil {
-		err = errors.Wrap(err, "error dispatching there request: ")
-		return err
+		return errors.Wrap(err, "error dispatching the request: ")
 	}
+	defer SafeClose(resp.Body)
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -348,10 +349,12 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, err
 func GetProviderInfo(mctCfg *config.MesheryCtlConfig) (map[string]Provider, error) {
 	res := map[string]Provider{}
 
-	resp, err := http.Get(mctCfg.GetBaseMesheryURL() + "/api/providers")
+	client := &http.Client{Timeout: authHTTPTimeout}
+	resp, err := client.Get(mctCfg.GetBaseMesheryURL() + "/api/providers")
 	if err != nil {
 		return nil, err
 	}
+	defer func() { _ = resp.Body.Close() }()
 
 	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		return nil, err
@@ -483,7 +486,7 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 		HttpOnly: true,
 	})
 
-	cli := &http.Client{}
+	cli := &http.Client{Timeout: authHTTPTimeout}
 	resp, err := cli.Do(req)
 	if err != nil {
 		return nil, err
