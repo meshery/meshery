@@ -130,12 +130,16 @@ const StyledMainContent = styled(Box)(() => ({
 // screens. Mirrors the legacy `StyledModal` behaviour.
 const StyledRegistryModal = styled(Modal)(({ theme }) => ({
   zIndex: 1500,
-  '& .MuiDialog-paperFullScreen': {
-    margin: 0,
-  },
-  '& .MuiDialog-paperFullWidth': {
+  '& .MuiDialog-paperFullWidth:not(.MuiDialog-paperFullScreen)': {
     width: '90%',
     height: '80%',
+  },
+  '& .MuiDialog-paperFullScreen': {
+    margin: '0 !important',
+    width: '100% !important',
+    height: '100% !important',
+    maxWidth: '100% !important',
+    maxHeight: '100% !important',
   },
   '& .MuiDialog-paper': {
     maxWidth: '100%',

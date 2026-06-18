@@ -101,8 +101,7 @@ export const Modal: FC<ModalProps> = ({
       title={title}
       headerIcon={headerIcon}
       maxWidth={sizeToMaxWidth[size]}
-      fullScreen={size === 'fullscreen'}
-      fullWidth
+      {...(size === 'fullscreen' ? { fullScreen: true } : {})}
       isFullScreenModeAllowed={isFullScreenModeAllowed}
       className={className}
       sx={sx}
