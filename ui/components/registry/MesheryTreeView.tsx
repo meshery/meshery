@@ -310,9 +310,7 @@ const MesheryTreeView = React.memo(
       if (!isExpand) {
         setSearchText(() => null);
         setResourcesDetail(() => []);
-        if (view === REGISTRANTS) {
-          setRegistrantsFilters?.((prev) => ({ ...prev, page: 0 }));
-        }
+        setRegistrantsFilters({ page: 0 });
         setPage({
           Models: 0,
           Components: 0,
