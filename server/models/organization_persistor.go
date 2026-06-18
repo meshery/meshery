@@ -30,8 +30,8 @@ func (op *OrganizationPersister) GetOrganizations(search, order string, page, pa
 
 	query := op.DB.Order(order)
 
-	if updatedAfter != "" {
-		query = query.Where("updated_at > ?", updatedAfter)
+	if strings.TrimSpace(updatedAfter) != "" {
+		query = query.Where("updated_at > ?", strings.TrimSpace(updatedAfter))
 	}
 
 	if search != "" {

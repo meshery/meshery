@@ -49,8 +49,8 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 
 	query = query.Order(order)
 
-	if updatedAfter != "" {
-		query = query.Where("updated_at > ?", updatedAfter)
+	if strings.TrimSpace(updatedAfter) != "" {
+		query = query.Where("updated_at > ?", strings.TrimSpace(updatedAfter))
 	}
 
 	if search != "" {
