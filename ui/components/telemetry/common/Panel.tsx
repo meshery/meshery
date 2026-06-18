@@ -13,12 +13,12 @@ import {
 } from '@sistent/sistent';
 import TimeSeriesChart from './TimeSeriesChart';
 import { formatValue } from './time';
-import type { ChartSeries, Panel as PanelType } from './types';
+import type { ChartSeries, PanelMeta } from './types';
 
 interface PanelProps {
-  panel: PanelType;
-  // Data + state are computed once at the board level (one batched request) and
-  // passed down, so this component is purely presentational.
+  panel: PanelMeta;
+  // Data + state are computed once at the board/grid level (one batched request)
+  // and passed down, so this component is purely presentational.
   series: ChartSeries[];
   loading: boolean;
   error: string | null;
@@ -69,9 +69,9 @@ const StatValue = styled(Typography)(() => ({
 }));
 
 /**
- * Panel renders a single dashboard panel from already-fetched series as either a
+ * Panel renders a single panel from already-fetched series as either a
  * time-series chart or a single-stat value, with explicit loading / error /
- * empty states. Data fetching is owned by BoardView (one batched request).
+ * empty states. Data fetching is owned by the parent grid (one batched request).
  */
 const Panel: React.FC<PanelProps> = ({ panel, series, loading, error }) => {
   const theme = useTheme();

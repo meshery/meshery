@@ -12,18 +12,25 @@ interface ConnectionPickerProps {
   connections: TelemetryConnection[];
   value: string;
   onChange: (connectionID: string) => void;
+  // Label for the picker, e.g. "Grafana connection" / "Prometheus connection".
+  label?: string;
 }
 
 /**
- * ConnectionPicker selects which registered Grafana connection the telemetry
- * section is operating against.
+ * ConnectionPicker selects which registered telemetry connection the section is
+ * operating against. Product-agnostic — pass a label per module.
  */
-const ConnectionPicker: React.FC<ConnectionPickerProps> = ({ connections, value, onChange }) => (
+const ConnectionPicker: React.FC<ConnectionPickerProps> = ({
+  connections,
+  value,
+  onChange,
+  label = 'Connection',
+}) => (
   <FormControl size="small" sx={{ minWidth: 220 }}>
-    <InputLabel id="telemetry-connection-label">Grafana connection</InputLabel>
+    <InputLabel id="telemetry-connection-label">{label}</InputLabel>
     <Select
       labelId="telemetry-connection-label"
-      label="Grafana connection"
+      label={label}
       value={value}
       onChange={(e) => onChange(String(e.target.value))}
     >

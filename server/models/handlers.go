@@ -103,6 +103,16 @@ type HandlerInterface interface {
 	GrafanaTelemetryQueryRangeBatchHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GrafanaTelemetryPinnedBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
+	PrometheusTelemetryPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryMetricsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryLabelsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryLabelValuesHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryMetadataHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryQueryRangeBatchHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryPanelsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
 	// ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	// ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	// ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)

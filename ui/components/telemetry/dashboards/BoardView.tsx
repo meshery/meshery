@@ -18,9 +18,9 @@ import {
   useGetGrafanaDatasourcesQuery,
   useQueryGrafanaRangeBatchQuery,
 } from '@/rtk-query/telemetryGrafana';
-import Panel from './Panel';
+import Panel from '../common/Panel';
+import { parsePromMatrix } from '../common/time';
 import { buildVarValues, resolveDatasourceUid, resolveExpr } from './resolve';
-import { parsePromMatrix } from './time';
 import type { Board, ChartSeries, Datasource, PinnedBoard, TimeWindow } from './types';
 
 interface BoardViewProps {

@@ -177,6 +177,26 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/telemetry/grafana/{connectionID}/pinned", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaTelemetryPinnedBoardsHandler), models.ProviderAuth))).
 		Methods("GET", "POST")
 
+	// Telemetry (v2) — clean, connection-driven Prometheus-native metric browsing & rendering.
+	gMux.Handle("/api/telemetry/prometheus/{connectionID}/ping", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusTelemetryPingHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/telemetry/prometheus/{connectionID}/metrics", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusTelemetryMetricsHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/telemetry/prometheus/{connectionID}/labels", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusTelemetryLabelsHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/telemetry/prometheus/{connectionID}/label_values", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusTelemetryLabelValuesHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/telemetry/prometheus/{connectionID}/metadata", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusTelemetryMetadataHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/telemetry/prometheus/{connectionID}/query", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusTelemetryQueryHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/telemetry/prometheus/{connectionID}/query_range", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusTelemetryQueryRangeHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/telemetry/prometheus/{connectionID}/query_range_batch", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusTelemetryQueryRangeBatchHandler), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/telemetry/prometheus/{connectionID}/panels", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusTelemetryPanelsHandler), models.ProviderAuth))).
+		Methods("GET", "POST")
+
 	gMux.Handle("/api/telemetry/metrics/config", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusConfigHandler), models.ProviderAuth))).
 		Methods("GET", "POST", "DELETE")
 	gMux.Handle("/api/telemetry/metrics/board_import/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaBoardImportForPrometheusHandler), models.ProviderAuth))).

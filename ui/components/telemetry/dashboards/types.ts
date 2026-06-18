@@ -1,13 +1,9 @@
-// Shared types for the telemetry dashboards UI. These mirror the wire contract
-// served by the backend grafana telemetry handlers
-// (server/models/telemetry/grafana).
+// Grafana-specific telemetry types served by the backend grafana telemetry
+// handlers (server/models/telemetry/grafana). Product-agnostic types
+// (GridPos, TimeWindow, ChartSeries) live in ../common/types.
+import type { GridPos } from '../common/types';
 
-export interface GridPos {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
+export type { GridPos, TimeWindow, ChartSeries } from '../common/types';
 
 export interface Target {
   refId: string;
@@ -60,19 +56,4 @@ export interface BoardSummary {
 export interface PinnedBoard {
   uid: string;
   title: string;
-}
-
-// A resolved time window for queries: an absolute [start, end] in epoch seconds
-// plus a step (resolution) in seconds.
-export interface TimeWindow {
-  start: number;
-  end: number;
-  step: number;
-}
-
-// A single rendered series for a chart.
-export interface ChartSeries {
-  name: string;
-  // points are [epochSeconds, value]; value may be NaN for gaps.
-  points: Array<[number, number]>;
 }

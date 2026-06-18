@@ -211,6 +211,7 @@ const (
 	ErrInitializeMachineCode               = "meshery-server-1428"
 	ErrSendMachineEventCode                = "meshery-server-1429"
 	ErrTelemetryGrafanaCode                = "meshery-server-1430"
+	ErrTelemetryPrometheusCode             = "meshery-server-1431"
 )
 
 var (
@@ -957,6 +958,20 @@ func ErrTelemetryGrafanaDatasource(ref string, available []string) error {
 // error code with a credential-specific message.
 func ErrTelemetryGrafanaAuth(err error) error {
 	return errors.New(ErrTelemetryGrafanaCode, errors.Alert, []string{"Grafana rejected the connection's credential"}, []string{err.Error()}, []string{"The API key / token is missing, expired, or invalid.", "The credential lacks permission for this operation."}, []string{"Update the connection with a valid Grafana credential that has the required permissions, then retry."})
+}
+
+// ErrTelemetryPrometheus wraps failures talking to a Prometheus telemetry
+// connection (health, metric/label discovery, metadata, or query/query_range).
+// The op string identifies the operation that failed. Emitted with HTTP 502.
+func ErrTelemetryPrometheus(err error, op string) error {
+	return errors.New(ErrTelemetryPrometheusCode, errors.Alert, []string{fmt.Sprintf("Prometheus telemetry request failed during %s", op)}, []string{err.Error()}, []string{"The Prometheus instance is unreachable or returned an error.", "The stored credential (API key / basic auth) is missing, expired, or lacks permission.", "The connection's URL is incorrect."}, []string{"Verify the Prometheus URL is reachable from the Meshery server and that the connection's credential is valid, then retry."})
+}
+
+// ErrTelemetryPrometheusAuth reports that Prometheus rejected the connection's
+// credential (HTTP 401/403). Emitted with HTTP 502. Shares the Prometheus
+// telemetry error code with a credential-specific message.
+func ErrTelemetryPrometheusAuth(err error) error {
+	return errors.New(ErrTelemetryPrometheusCode, errors.Alert, []string{"Prometheus rejected the connection's credential"}, []string{err.Error()}, []string{"The API key / token is missing, expired, or invalid.", "The credential lacks permission for this operation."}, []string{"Update the connection with a valid Prometheus credential that has the required permissions, then retry."})
 }
 
 // ErrExportModel wraps failures in the ExportModel pipeline — building the
