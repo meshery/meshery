@@ -107,14 +107,16 @@ func TestNewPatternFileFromK8sManifestIgnoreErrors(t *testing.T) {
 		expectedComponents int
 	}{
 		{
-			name: "given unresolved manifest and ignoreErrors true when NewPatternFileFromK8sManifest then return empty pattern",
+			name: "given unresolved manifest and ignoreErrors true when NewPatternFileFromK8sManifest then return no resolved components error",
 			manifest: `
 apiVersion: v1
 kind: Service
 metadata:
   name: unresolved-service
 `,
-			ignoreErrors: true,
+			ignoreErrors:       true,
+			expectedCode:       ErrNoResolvedComponentsCode,
+			expectedComponents: 0,
 		},
 		{
 			name: "given unresolved manifest and ignoreErrors false when NewPatternFileFromK8sManifest then return no resolved components error",
