@@ -331,7 +331,7 @@ const MesheryHelmExtension = () => {
   return (
     <Grid2 size={GRID_SIZE}>
       <UnifiedCardContainer>
-        <Typography variant="h5" component="div">
+        <Typography data-testid="helm-heading" variant="h5" component="div">
           Snapshot Helm Plugin
         </Typography>
 
