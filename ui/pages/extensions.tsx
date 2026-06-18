@@ -326,39 +326,46 @@ const ShapeBuilderExtension = () => (
   </Grid2>
 );
 
-const MesheryHelmExtension = () => (
-  <Grid2 size={GRID_SIZE}>
-    <UnifiedCardContainer>
-      <Typography variant="h5" component="div">
-        Snapshot Helm Plugin
-      </Typography>
+const MesheryHelmExtension = () => {
+  const theme = useTheme();
+  return (
+    <Grid2 size={GRID_SIZE}>
+      <UnifiedCardContainer>
+        <Typography variant="h5" component="div">
+          Snapshot Helm Plugin
+        </Typography>
 
-      <UnifiedDescription hasIcon>
-        <ResponsiveImage
-          src="/static/img/extensions/helm_chart.svg"
-          alt="Helm Chart Logo"
-          testId="helm-icon"
-        />
-        <div>
-          The Snapshot Helm Plugin allows you to generate a visual snapshot of your Helm charts
-          directly from the command line. It simplifies the process of creating Meshery Snapshots,
-          providing a visual representation of packaged Helm charts.
-        </div>
-      </UnifiedDescription>
+        <UnifiedDescription hasIcon>
+          <ResponsiveImage
+            src={
+              theme.palette.mode === 'dark'
+                ? '/static/img/extensions/helm_chart-white.svg'
+                : '/static/img/extensions/helm_chart.svg'
+            }
+            alt="Helm Chart Logo"
+            testId="helm-icon"
+          />
+          <div>
+            The Snapshot Helm Plugin allows you to generate a visual snapshot of your Helm charts
+            directly from the command line. It simplifies the process of creating Meshery Snapshots,
+            providing a visual representation of packaged Helm charts.
+          </div>
+        </UnifiedDescription>
 
-      <UnifiedButtonContainer>
-        <Button
-          variant="contained"
-          color="primary"
-          data-testid="helm-learn-more-btn"
-          onClick={openExternal('https://docs.meshery.io/extensions/helm-snapshot')}
-        >
-          Learn More
-        </Button>
-      </UnifiedButtonContainer>
-    </UnifiedCardContainer>
-  </Grid2>
-);
+        <UnifiedButtonContainer>
+          <Button
+            variant="contained"
+            color="primary"
+            data-testid="helm-learn-more-btn"
+            onClick={openExternal('https://docs.meshery.io/extensions/helm-snapshot')}
+          >
+            Learn More
+          </Button>
+        </UnifiedButtonContainer>
+      </UnifiedCardContainer>
+    </Grid2>
+  );
+};
 
 const MesheryDesignEmbedExtension = () => (
   <Grid2 size={GRID_SIZE}>

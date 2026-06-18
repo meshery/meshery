@@ -2,6 +2,7 @@ interface AdapterConfig {
   name: string;
   label: string;
   imageSrc: string;
+  darkImageSrc?: string;
   description: string;
   defaultPort: number;
   enabled: boolean;
@@ -70,6 +71,7 @@ export const adaptersList: AdaptersListType = {
     name: 'Kuma',
     label: 'meshery-kuma',
     imageSrc: '/static/img/adapters/kuma.svg',
+    darkImageSrc: '/static/img/adapters/kuma-white.svg',
     description: adaptersDescription('Kuma'),
     defaultPort: 10007,
     enabled: false,
