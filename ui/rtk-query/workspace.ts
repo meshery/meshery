@@ -17,6 +17,7 @@ const workspacesApi = api
     addTagTypes: [TAGS.WORKSPACES, TAGS.DESIGNS, TAGS.ENVIRONMENTS, TAGS.VIEWS, TAGS.TEAMS],
   })
   .injectEndpoints({
+    overrideExisting: true,
     endpoints: (builder) => ({
       getWorkspaces: builder.query({
         keepUnusedDataFor: 0,
@@ -345,23 +346,31 @@ const workspacesApi = api
       }),
 
       updateWorkspace: builder.mutation({
-        query: (queryArg) => ({
-          url: mesheryApiPath(`workspaces/${queryArg.id}`),
-          method: 'PUT',
-          body: {
-            name: queryArg.name,
-            description: queryArg.description,
-            organizationId: queryArg.organizationId || queryArg.organization_id,
-          },
-        }),
+        query: (queryArg) => {
+          const workspaceId = queryArg.workspaceId || queryArg.id;
+
+          return {
+            url: mesheryApiPath(`workspaces/${workspaceId}`),
+            method: 'PUT',
+            body: queryArg.body || {
+              name: queryArg.name,
+              description: queryArg.description,
+              organizationId: queryArg.organizationId || queryArg.organization_id,
+            },
+          };
+        },
         invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
       }),
 
       deleteWorkspace: builder.mutation({
-        query: (queryArg) => ({
-          url: mesheryApiPath(`workspaces/${queryArg.id}`),
-          method: 'DELETE',
-        }),
+        query: (queryArg) => {
+          const workspaceId = queryArg.workspaceId || queryArg.id;
+
+          return {
+            url: mesheryApiPath(`workspaces/${workspaceId}`),
+            method: 'DELETE',
+          };
+        },
         invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
       }),
     }),
