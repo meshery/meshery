@@ -20,7 +20,7 @@ import { getColumnValue } from '../../utils/utils';
 import MultiSelectWrapper from '../multi-select-wrapper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
+
 import { formatDate } from '../data-formatter';
 import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
 import { getNextStates } from './ConnectionTable.constants';
@@ -141,8 +141,9 @@ export const useConnectionColumns = ({
                   width="12rem"
                 />
                 {kind === 'kubernetes' && (
-                  <CustomTextTooltip
+                  <CustomTooltip
                     placement="top"
+                    interactive
                     title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
                   >
                     <div style={{ display: 'inline-block' }}>
@@ -152,11 +153,13 @@ export const useConnectionColumns = ({
                           event.stopPropagation();
                           event.preventDefault();
                         }}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onTouchStart={(e) => e.stopPropagation()}
                       >
                         <InfoOutlinedIcon height={20} width={20} />
                       </IconButton>
                     </div>
-                  </CustomTextTooltip>
+                  </CustomTooltip>
                 )}
               </>
             );
@@ -180,6 +183,8 @@ export const useConnectionColumns = ({
                     onClick={(event) => {
                       event.stopPropagation();
                     }}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onTouchStart={(e) => e.stopPropagation()}
                   >
                     <InfoOutlinedIcon
                       style={{
@@ -390,6 +395,8 @@ export const useConnectionColumns = ({
                     onClick={(event) => {
                       event.stopPropagation();
                     }}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onTouchStart={(e) => e.stopPropagation()}
                   >
                     <InfoOutlinedIcon
                       style={{

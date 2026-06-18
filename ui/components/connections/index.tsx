@@ -186,6 +186,8 @@ function Connections() {
                         disableRipple={true}
                         disableFocusRipple={true}
                         onClick={(e) => e.stopPropagation()}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onTouchStart={(e) => e.stopPropagation()}
                         style={{ marginLeft: '5px' }}
                       >
                         <InfoOutlinedIcon

@@ -111,6 +111,8 @@ export default function KubernetesConnectionStatsChart() {
             component="span"
             disableRipple={true}
             disableFocusRipple={true}
+            onMouseDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
             style={{ marginLeft: '5px' }}
           >
             <InfoOutlinedIcon
