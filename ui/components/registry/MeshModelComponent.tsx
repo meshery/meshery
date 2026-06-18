@@ -548,7 +548,7 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
             onClick={openRelationshipModal}
             style={{ display: 'flex' }}
             disabled={false}
-            startIcon={<LinkIcon style={iconSmall} fill="currentColor" />}
+            startIcon={<LinkIcon style={iconSmall} color="inherit" />}
             data-testid="TabBar-Button-CreateRelationship"
           >
             Create Relationship
