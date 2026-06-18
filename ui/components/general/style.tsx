@@ -414,8 +414,8 @@ export const NavigatorLink = styled('span')({
 
 export const HelpListItem = styled(ListItem)(({ theme }) => ({
   paddingLeft: 0,
-  paddingTop: 10,
-  paddingBottom: 10,
+  paddingTop: theme.spacing(1.25),
+  paddingBottom: theme.spacing(1.25),
   color: theme.palette.background.constant.disabled,
   fill: theme.palette.background.constant.white,
   '&:hover': {
