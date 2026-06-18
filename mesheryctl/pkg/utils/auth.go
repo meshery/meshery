@@ -226,8 +226,7 @@ func UpdateAuthDetails(filepath string) error {
 
 	req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/token", bytes.NewBuffer([]byte("")))
 	if err != nil {
-		err = errors.Wrap(err, "error creating the request: ")
-		return err
+		return errors.Wrap(err, "error creating the request")
 	}
 	if err := AddAuthDetails(req, filepath); err != nil {
 		return err
@@ -237,18 +236,17 @@ func UpdateAuthDetails(filepath string) error {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		return errors.Wrap(err, "error dispatching the request: ")
+		return errors.Wrap(err, "error dispatching the request")
 	}
 	defer SafeClose(resp.Body)
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		err = errors.Wrap(err, "error reading body: ")
-		return err
+		return errors.Wrap(err, "error reading body")
 	}
 
 	if ContentTypeIsHTML(resp) {
-		return errors.New("invalid body")
+		return fmt.Errorf("invalid body")
 	}
 
 	return os.WriteFile(filepath, data, os.ModePerm)
