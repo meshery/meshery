@@ -6,6 +6,11 @@ import (
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/schemas/models/core"
+	"github.com/meshery/schemas/models/v1beta1/category"
+	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta1/model"
+	v1beta3comp "github.com/meshery/schemas/models/v1beta3/component"
 )
 
 func TestDesignNameFromFileName(t *testing.T) {
@@ -160,6 +165,78 @@ metadata:
 				t.Fatalf("expected %d resolved components, got %d", tt.expectedComponents, len(pattern.Components))
 			}
 		})
+	}
+
+	t.Run("given resolvable manifest when NewPatternFileFromK8sManifest then return resolved component", func(t *testing.T) {
+		rm := newTestRegistryManager(t)
+		seedDeploymentComponent(t, rm)
+
+		pattern, err := NewPatternFileFromK8sManifest(`
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+`, "manifest.yaml", true, rm)
+
+		if err != nil {
+			t.Fatalf("expected nil error, got %v", err)
+		}
+
+		if len(pattern.Components) != 1 {
+			t.Fatalf("expected 1 resolved component, got %d", len(pattern.Components))
+		}
+
+		if pattern.Components[0].DisplayName != "Deployment" {
+			t.Fatalf("expected DisplayName 'Deployment', got %q", pattern.Components[0].DisplayName)
+		}
+	})
+}
+
+func seedDeploymentComponent(t *testing.T, rm *registry.RegistryManager) {
+	t.Helper()
+
+	conn := connection.Connection{
+		Name:    "test-registrant",
+		Kind:    "kubernetes",
+		Type:    "platform",
+		SubType: "orchestration",
+		Status:  connection.ConnectionStatusConnected,
+	}
+	enabled := v1beta3comp.Enabled
+	bgColor := "#123456"
+	shape := core.Shape("round-rectangle")
+	comp := v1beta3comp.ComponentDefinition{
+		DisplayName:   "Deployment",
+		SchemaVersion: "core.meshery.io/v1beta1",
+		Status:        &enabled,
+		Component: v1beta3comp.Component{
+			Kind:    "Deployment",
+			Version: "apps/v1",
+			Schema:  `{"properties":{}}`,
+		},
+		Model: &model.ModelDefinition{
+			Name:          "kubernetes",
+			DisplayName:   "Kubernetes",
+			SchemaVersion: "models.meshery.io/v1beta1",
+			Version:       "v1.25.0",
+			Model:         model.Model{Version: "v1.25.0"},
+			Category:      category.CategoryDefinition{Name: "Orchestration"},
+			Status:        model.Enabled,
+		},
+		Styles: &core.ComponentStyles{
+			BackgroundColor: &bgColor,
+			PrimaryColor:    "#123456",
+			Shape:           &shape,
+		},
+	}
+	id, err := comp.GenerateID()
+	if err != nil {
+		t.Fatalf("seedDeploymentComponent: GenerateID failed: %v", err)
+	}
+	comp.ID = id
+	_, _, err = rm.RegisterEntity(conn, &comp)
+	if err != nil {
+		t.Fatalf("seedDeploymentComponent: RegisterEntity failed: %v", err)
 	}
 }
 
