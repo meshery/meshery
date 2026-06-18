@@ -1,3 +1,17 @@
+// Copyright 2023 Meshery Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package utils
 
 import (
@@ -42,10 +56,11 @@ func TestAuth(t *testing.T) {
 	})
 
 	t.Run("MakeRequest", func(t *testing.T) {
-		_, err := MakeRequest(req)
+		resp, err := MakeRequest(req)
 		if err != nil {
 			t.Fatal(err)
 		}
+		_ = resp.Body.Close()
 	})
 }
 
@@ -127,10 +142,11 @@ func TestMakeRequestSuccess(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			_, err = MakeRequest(req)
+			resp, err := MakeRequest(req)
 			if err != nil {
 				t.Fatalf("expected nil error, got %v", err)
 			}
+			_ = resp.Body.Close()
 		})
 	}
 }
@@ -141,8 +157,7 @@ func TestMakeRequestErrors(t *testing.T) {
 		status     int
 		body       string
 		ctype      string
-		wantErr    error
-		wantErrMsg string
+		wantErr error
 	}{
 		{
 			name:       "302 redirect returns invalid token",
@@ -159,28 +174,25 @@ func TestMakeRequestErrors(t *testing.T) {
 			wantErr:    ErrUnauthenticated(),
 		},
 		{
-			name:       "404 returns not found",
-			status:     http.StatusNotFound,
-			body:       `{"error":"not found"}`,
-			ctype:      "application/json",
-			wantErr:    ErrNotFound(nil),
-			wantErrMsg: "not found",
+			name:    "404 returns not found",
+			status:  http.StatusNotFound,
+			body:    `{"error":"not found"}`,
+			ctype:   "application/json",
+			wantErr: ErrNotFound(fmt.Errorf(`{"error":"not found"}`)),
 		},
 		{
-			name:       "500 returns internal server error",
-			status:     http.StatusInternalServerError,
-			body:       `{"error":"server error"}`,
-			ctype:      "application/json",
-			wantErr:    ErrMesheryServerInternalError(nil),
-			wantErrMsg: "server error",
+			name:    "500 returns internal server error",
+			status:  http.StatusInternalServerError,
+			body:    `{"error":"server error"}`,
+			ctype:   "application/json",
+			wantErr: ErrMesheryServerInternalError(fmt.Errorf(`{"error":"server error"}`)),
 		},
 		{
-			name:       "non-standard status returns fail request error",
-			status:     http.StatusTeapot,
-			body:       `{"error":"teapot"}`,
-			ctype:      "application/json",
-			wantErr:    ErrFailReqStatus(0, ""),
-			wantErrMsg: "418",
+			name:    "418 teapot returns fail request error",
+			status:  http.StatusTeapot,
+			body:    `{"error":"teapot"}`,
+			ctype:   "application/json",
+			wantErr: ErrFailReqStatus(http.StatusTeapot, `{"error":"teapot"}`),
 		},
 	}
 
@@ -206,16 +218,7 @@ func TestMakeRequestErrors(t *testing.T) {
 				t.Fatal("expected error, got nil")
 			}
 
-			if tt.wantErrMsg != "" {
-				if errors.GetCode(err) != errors.GetCode(tt.wantErr) {
-					t.Fatalf("expected error code %s, got %s", errors.GetCode(tt.wantErr), errors.GetCode(err))
-				}
-				return
-			}
-
-			wantCode := errors.GetCode(tt.wantErr)
-			gotCode := errors.GetCode(err)
-			if gotCode != wantCode {
+			if gotCode, wantCode := errors.GetCode(err), errors.GetCode(tt.wantErr); gotCode != wantCode {
 				t.Fatalf("expected error code %s, got %s", wantCode, gotCode)
 			}
 		})
