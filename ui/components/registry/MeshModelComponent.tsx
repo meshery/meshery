@@ -532,7 +532,7 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
               onClick={openImportModal}
               style={{ display: 'flex' }}
               disabled={false} //TODO: Need to make key for this component
-              startIcon={<UploadIcon style={iconSmall} fill="currentColor" />}
+              startIcon={<UploadIcon style={iconSmall} color="inherit" />}
               data-testid="TabBar-Button-ImportModel"
             >
               Import Model
