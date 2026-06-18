@@ -619,7 +619,8 @@ const NavigatorContent = () => {
     const updatedIcon =
       React.isValidElement(iconc) && typeof iconc.type !== 'string'
         ? React.cloneElement(iconc, {
-            fill: currentPath === hrefc ? theme.palette.icon.brand : theme.palette.common.white,
+            fill:
+              currentPath === hrefc ? theme.palette.navigation.active : theme.palette.common.white,
           })
         : iconc;
     let linkContent = (
