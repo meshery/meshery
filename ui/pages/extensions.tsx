@@ -223,6 +223,109 @@ const MesheryDockerExtension = () => (
   </Grid2>
 );
 
+const MesheryAcademyExtension = () => (
+  <Grid2 size={GRID_SIZE}>
+    <UnifiedCardContainer>
+      <Typography data-testid="meshery-academy-heading" variant="h5" component="div">
+        Meshery Academy
+      </Typography>
+
+      <UnifiedDescription hasIcon>
+        <ResponsiveImage
+          src="/static/img/extensions/meshery-academy.svg"
+          alt="Meshery Academy Logo"
+          testId="meshery-academy-icon"
+        />
+        <div>
+          Meshery Academy is a platform that provides a comprehensive learning experience for anyone
+          beginning their journey into Meshery and cloud native infrastructure.
+        </div>
+      </UnifiedDescription>
+
+      <UnifiedButtonContainer>
+        <Button
+          variant="contained"
+          color="primary"
+          data-testid="meshery-academy-learn-more-btn"
+          onClick={openExternal('https://cloud.meshery.io/academy')}
+        >
+          Learn More
+        </Button>
+      </UnifiedButtonContainer>
+    </UnifiedCardContainer>
+  </Grid2>
+);
+
+const DigitalOceanAcademyExtension = () => {
+  const theme = useTheme();
+  return (
+    <Grid2 size={GRID_SIZE}>
+      <UnifiedCardContainer>
+        <Typography data-testid="digitalocean-academy-heading" variant="h5" component="div">
+          DigitalOcean Academy
+        </Typography>
+
+        <UnifiedDescription hasIcon>
+          <ResponsiveImage
+            src={
+              theme.palette.mode === 'dark'
+                ? '/static/img/extensions/do-vertical-white.png'
+                : '/static/img/extensions/do-vertical-blue.png'
+            }
+            alt="DigitalOcean Academy Logo"
+            testId="digitalocean-academy-icon"
+          />
+          <div>
+            DigitalOcean Academy is a platform that provides a comprehensive learning experience for
+            anyone beginning their journey into DigitalOcean and cloud native infrastructure.
+          </div>
+        </UnifiedDescription>
+
+        <UnifiedButtonContainer>
+          <Button
+            variant="contained"
+            color="primary"
+            data-testid="digitalocean-academy-learn-more-btn"
+            onClick={openExternal('https://docs.meshery.io/extensions/academies/')}
+          >
+            Learn More
+          </Button>
+        </UnifiedButtonContainer>
+      </UnifiedCardContainer>
+    </Grid2>
+  );
+};
+
+const ShapeBuilderExtension = () => (
+  <Grid2 size={GRID_SIZE}>
+    <UnifiedCardContainer>
+      <Typography data-testid="shape-builder-heading" variant="h5" component="div">
+        Shape Builder
+      </Typography>
+
+      <UnifiedDescription hasIcon>
+        <ResponsiveImage
+          src="/static/img/extensions/shape-builder.svg"
+          alt="Shape Builder Logo"
+          testId="shape-builder-icon"
+        />
+        <div>A Meshery extension for creating custom polygon shapes for Meshery components.</div>
+      </UnifiedDescription>
+
+      <UnifiedButtonContainer>
+        <Button
+          variant="contained"
+          color="primary"
+          data-testid="shape-builder-learn-more-btn"
+          onClick={openExternal('https://shapes.meshery.io/')}
+        >
+          Learn More
+        </Button>
+      </UnifiedButtonContainer>
+    </UnifiedCardContainer>
+  </Grid2>
+);
+
 const MesheryHelmExtension = () => (
   <Grid2 size={GRID_SIZE}>
     <UnifiedCardContainer>
@@ -462,6 +565,9 @@ export const WrappedMesheryPerformanceAction = MesheryPerformanceAction;
 export const WrappedMesheryDockerExtension = MesheryDockerExtension;
 export const WrappedMesheryEmbedDesignExtension = MesheryDesignEmbedExtension;
 export const WrappedMesheryHelmExtension = MesheryHelmExtension;
+export const WrappedMesheryAcademyExtension = MesheryAcademyExtension;
+export const WrappedDigitalOceanAcademyExtension = DigitalOceanAcademyExtension;
+export const WrappedShapeBuilderExtension = ShapeBuilderExtension;
 
 const Extensions = () => {
   usePageTitle('Extensions');
@@ -519,6 +625,9 @@ const Extensions = () => {
           <WrappedCloudExtension />
           <WrappedKubectlPluginExtension />
           <WrappedKubectlMeshSyncExtension />
+          <WrappedMesheryAcademyExtension />
+          <WrappedDigitalOceanAcademyExtension />
+          <WrappedShapeBuilderExtension />
           <CatalogCard catalogContent={catalogContent} handleToggle={handleToggle} theme={theme} />
           <Adapters />
         </Grid2>
