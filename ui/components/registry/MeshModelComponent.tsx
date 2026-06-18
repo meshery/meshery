@@ -520,7 +520,7 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
               onClick={openCreateModal}
               style={{ display: 'flex' }}
               disabled={false} //TODO: Need to make key for this component
-              startIcon={<AddIcon style={iconSmall} fill="currentColor" />}
+              startIcon={<AddIcon style={iconSmall} color="inherit" />}
               data-testid="TabBar-Button-CreateModel"
             >
               Create Model
