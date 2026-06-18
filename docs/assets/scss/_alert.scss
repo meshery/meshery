@@ -70,13 +70,13 @@
 }
 .alert-primary {
   border-style: solid;
-  border-color:  #1976d2;
-  background-color: #a3c8ed;
+  border-color: var(--brand-color-primary, #1976d2);
+  background-color: #1976d222;
   border-width: 0 0 0 4px;
   font-size: 1rem;
   & .alert-heading > *,
   & .alert-heading {
-    color:  #1976d2;
+    color: #0d5bbd;
     margin: 0;
     margin-bottom: 1rem;
   }
