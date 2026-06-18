@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -74,4 +76,62 @@ func TestHandlerWrappers_ForwardToHttputil(t *testing.T) {
 			t.Errorf("expected body %q, got %q", "{}", body)
 		}
 	})
+}
+
+func TestSafeFilePath(t *testing.T) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		t.Fatalf("Failed to get user home dir: %v", err)
+	}
+	mesheryLogs := filepath.Join(home, ".meshery", "logs")
+	if err := os.MkdirAll(mesheryLogs, 0755); err != nil {
+		t.Fatalf("Failed to create meshery logs dir: %v", err)
+	}
+	// We don't remove it because it might be the user's actual .meshery dir.
+
+	tests := []struct {
+		name        string
+		inputPath   string
+		expectError bool
+	}{
+		{
+			name:        "Valid internal absolute path",
+			inputPath:   filepath.Join(mesheryLogs, "registry.log"),
+			expectError: false,
+		},
+		{
+			name:        "Valid temp absolute path",
+			inputPath:   filepath.Join(os.TempDir(), "tempfile.txt"),
+			expectError: false,
+		},
+		{
+			name:        "Path traversal attempt",
+			inputPath:   "../../etc/passwd",
+			expectError: true,
+		},
+		{
+			name:        "Absolute path outside allowed scope",
+			inputPath:   "/etc/passwd",
+			expectError: true,
+		},
+		{
+			name:        "Empty path",
+			inputPath:   "",
+			expectError: true,
+		},
+		{
+			name:        "Traversal attempting to escape meshery logs",
+			inputPath:   filepath.Join(mesheryLogs, "..", "..", "..", "etc", "passwd"),
+			expectError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := SafeFilePath(tt.inputPath)
+			if (err != nil) != tt.expectError {
+				t.Errorf("SafeFilePath(%q) error = %v, expectError %v", tt.inputPath, err, tt.expectError)
+			}
+		})
+	}
 }
