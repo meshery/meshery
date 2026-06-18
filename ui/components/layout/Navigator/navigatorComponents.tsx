@@ -142,17 +142,11 @@ export const getNavigatorComponents = (
         id: CATALOG,
         icon: (
           <CatalogIcon
-            primaryFill={
+            fill={
               window.location.pathname === '/configuration/catalog'
                 ? theme.palette.background.constant.white
-                : ''
+                : theme.palette.icon.default
             }
-            secondaryFill={
-              window.location.pathname === '/configuration/catalog'
-                ? theme.palette.background.constant.white
-                : ''
-            }
-            tertiaryFill="transparent"
             style={{ ...drawerIconsStyle }}
           />
         ),
