@@ -357,7 +357,7 @@ const MesheryHelmExtension = () => {
             variant="contained"
             color="primary"
             data-testid="helm-learn-more-btn"
-            onClick={openExternal('https://docs.meshery.io/extensions/helm-snapshot')}
+            onClick={openExternal('https://docs.meshery.io/extensions/extensions/helm-snapshot/')}
           >
             Learn More
           </Button>
@@ -494,7 +494,9 @@ const KubectlMeshSyncExtension = () => (
           variant="contained"
           color="primary"
           data-testid="kubectl-meshsync-learn-more-btn"
-          onClick={openExternal('https://docs.meshery.io/extensions/kubectl-meshsync-snapshot')}
+          onClick={openExternal(
+            'https://docs.meshery.io/extensions/extensions/kubectl-meshsync-snapshot/',
+          )}
         >
           Learn More
         </Button>
