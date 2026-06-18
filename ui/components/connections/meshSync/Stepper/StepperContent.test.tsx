@@ -344,7 +344,7 @@ describe('SelectConnection component', () => {
     render(<SelectConnection setSharedData={mockSetSharedData} handleNext={mockHandleNext} />);
 
     expect(mockUseGetComponentsQuery).toHaveBeenCalledWith({
-      params: { pagesize: 'all', search: 'Connection' },
+      params: { pagesize: 'all', search: 'Connection', trim: true },
     });
   });
 });

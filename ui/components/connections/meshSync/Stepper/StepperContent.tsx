@@ -85,7 +85,7 @@ export const SelectConnection = ({ setSharedData, handleNext }) => {
     isLoading: isLoadingComponents,
     isError: isComponentsError,
   } = useGetComponentsQuery({
-    params: { pagesize: 'all', search: CONNECTION_COMPONENT_SUFFIX },
+    params: { pagesize: 'all', search: CONNECTION_COMPONENT_SUFFIX, trim: true },
   });
 
   const connectionTypes: ConnectionType[] = useMemo(
