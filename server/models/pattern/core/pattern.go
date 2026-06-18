@@ -420,7 +420,7 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 	}
 
 	if totalDecoded > 0 && resolvedCount == 0 {
-		return pattern, ErrNoResolvedComponents(fmt.Errorf("no components resolved"))
+		return pattern, ErrNoResolvedComponents(fmt.Errorf("no components resolved from %d manifest resource(s)", totalDecoded))
 	}
 
 	return pattern, nil
