@@ -215,7 +215,7 @@ const ModelContents = ({ modelDef }: { modelDef: any }) => {
               onClick={handleExport}
               size="small"
               data-testid="export-model-button"
-              startIcon={<DownloadIcon style={iconSmall} fill="currentColor" />}
+              startIcon={<DownloadIcon style={iconSmall} color="inherit" />}
             >
               Export
             </Button>
