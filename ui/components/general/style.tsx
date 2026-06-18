@@ -171,8 +171,8 @@ export const NavigatorListItem = styled(ListItemButton, {
       transition: 'opacity 200ms ease-in',
     },
   },
-  paddingTop: theme.spacing(1.25),
-  paddingBottom: theme.spacing(1.25),
+  paddingTop: 10,
+  paddingBottom: 10,
 }));
 
 export const NavigatorListItemII = styled(ListItemButton, {
@@ -196,8 +196,8 @@ export const NavigatorListItemII = styled(ListItemButton, {
       transition: 'opacity 200ms ease-in',
     },
   },
-  paddingTop: theme.spacing(1.25),
-  paddingBottom: theme.spacing(1.25),
+  paddingTop: 10,
+  paddingBottom: 10,
 }));
 
 export const NavigatorListItemIII = styled(ListItemButton, {
@@ -221,8 +221,8 @@ export const NavigatorListItemIII = styled(ListItemButton, {
       transition: 'opacity 200ms ease-in',
     },
   },
-  paddingTop: theme.spacing(1.25),
-  paddingBottom: theme.spacing(1.25),
+  paddingTop: 10,
+  paddingBottom: 10,
   pointerEvents: isShow ? 'none' : 'auto',
   opacity: isShow ? 0.5 : '',
 }));
@@ -248,8 +248,8 @@ export const SideBarListItem = styled(ListItemButton, {
       visibility: 'visible',
     },
   },
-  paddingTop: theme.spacing(1.25),
-  paddingBottom: theme.spacing(1.25),
+  paddingTop: 10,
+  paddingBottom: 10,
   pointerEvents: isShow ? 'none' : 'auto',
   opacity: isShow ? 0.5 : '',
   fontSize: '1rem',
