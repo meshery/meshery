@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -217,11 +218,121 @@ func (h *Handler) GrafanaTelemetryQueryRangeHandler(w http.ResponseWriter, req *
 
 	body, err := client.QueryRange(req.Context(), dsUID, params)
 	if err != nil {
-		writeMeshkitError(w, ErrTelemetryGrafana(err, "datasource query"), http.StatusBadGateway)
+		// Panel queries fail one panel at a time and the UI renders each failure
+		// inline. We therefore surface them ONLY as the HTTP response and never as
+		// broadcast notification events: a single unreachable connection or bad
+		// credential would otherwise spawn one notification per panel/target and
+		// bury the user. The message is classified so the inline error is precise.
+		merr, status := grafanaQueryError(err, dsUID)
+		writeMeshkitError(w, merr, status)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(body)
+}
+
+// maxBatchQueries bounds how many queries a single batch request may carry, so a
+// malformed or hostile client can't ask the server to fan out an unbounded number
+// of upstream Grafana calls in one request.
+const maxBatchQueries = 200
+
+// grafanaBatchQuery is one entry in a batch query_range request body.
+type grafanaBatchQuery struct {
+	ID    string `json:"id"`
+	DS    string `json:"ds"`
+	Query string `json:"query"`
+}
+
+// grafanaBatchRequest is the body of a batched query_range request: a shared
+// time window plus a set of per-target queries.
+type grafanaBatchRequest struct {
+	Start   string              `json:"start"`
+	End     string              `json:"end"`
+	Step    string              `json:"step"`
+	Queries []grafanaBatchQuery `json:"queries"`
+}
+
+// grafanaBatchResultItem is one entry in a batch response. It always carries the
+// originating id and exactly one of Response (the raw Prometheus query_range
+// JSON, unmodified) or Error (a concise, classified failure message).
+type grafanaBatchResultItem struct {
+	ID       string          `json:"id"`
+	Response json.RawMessage `json:"response,omitempty"`
+	Error    string          `json:"error,omitempty"`
+}
+
+// GrafanaTelemetryQueryRangeBatchHandler runs many Prometheus range queries for a
+// board in a single request, fanning them out to Grafana concurrently. The UI
+// sends one request per board instead of one per panel-target.
+//
+// A per-query failure is reported inline on that result item (never failing the
+// whole batch) and, like the single query_range path, is NOT emitted as a
+// notification event: one bad connection would otherwise bury the user under one
+// notification per panel. Only a wholly invalid request (bad body, no/too-many
+// queries, or an unresolvable connection) returns a non-200 status.
+//
+// POST /api/telemetry/grafana/{connectionID}/query_range_batch
+func (h *Handler) GrafanaTelemetryQueryRangeBatchHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+
+	body, err := io.ReadAll(req.Body)
+	if err != nil {
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+	var request grafanaBatchRequest
+	if err := json.Unmarshal(body, &request); err != nil {
+		writeMeshkitError(w, models.ErrUnmarshal(err, "grafana batch query"), http.StatusBadRequest)
+		return
+	}
+	if len(request.Queries) == 0 {
+		writeMeshkitError(w, ErrRequestBody(fmt.Errorf("no queries supplied")), http.StatusBadRequest)
+		return
+	}
+	if len(request.Queries) > maxBatchQueries {
+		writeMeshkitError(w, ErrRequestBody(fmt.Errorf("too many queries: %d (max %d)", len(request.Queries), maxBatchQueries)), http.StatusBadRequest)
+		return
+	}
+
+	client, _, statusCode, err := h.grafanaClientForConnection(token, connectionID, p)
+	if err != nil {
+		writeMeshkitError(w, err, statusCode)
+		return
+	}
+
+	queries := make([]grafana.BatchQuery, len(request.Queries))
+	for i, q := range request.Queries {
+		queries[i] = grafana.BatchQuery{ID: q.ID, DS: q.DS, Query: q.Query}
+	}
+
+	results := client.QueryRangeBatch(req.Context(), request.Start, request.End, request.Step, queries)
+	items := make([]grafanaBatchResultItem, len(results))
+	for i, r := range results {
+		item := grafanaBatchResultItem{ID: r.ID}
+		if r.Err != nil {
+			merr, _ := grafanaQueryError(r.Err, request.Queries[i].DS)
+			item.Error = merr.Error()
+		} else {
+			item.Response = r.Body
+		}
+		items[i] = item
+	}
+	h.writeJSON(w, map[string]interface{}{"results": items})
+}
+
+// grafanaQueryError classifies a datasource-query failure into a specific,
+// user-facing error and the HTTP status to return with it.
+func grafanaQueryError(err error, dsRef string) (error, int) {
+	var dsErr *grafana.DatasourceNotFoundError
+	if errors.As(err, &dsErr) {
+		return ErrTelemetryGrafanaDatasource(dsErr.Ref, dsErr.Available), http.StatusNotFound
+	}
+	switch grafana.StatusCode(err) {
+	case http.StatusUnauthorized, http.StatusForbidden:
+		return ErrTelemetryGrafanaAuth(err), http.StatusBadGateway
+	}
+	return ErrTelemetryGrafana(err, "datasource query"), http.StatusBadGateway
 }
 
 // GrafanaTelemetryPinnedBoardsHandler reads (GET) or replaces (POST) the set of

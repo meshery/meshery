@@ -63,6 +63,19 @@ const telemetryGrafanaApi = api.injectEndpoints({
       }),
     }),
 
+    // Batch-proxy every query for a board in a single request; the backend fans
+    // out to Grafana concurrently and returns one result per query id. This keeps
+    // a board's render to one round trip instead of one request per panel target.
+    queryGrafanaRangeBatch: builder.query({
+      query: ({ connectionID, start, end, step, queries }) => ({
+        url: mesheryApiPath(`${base(connectionID)}/query_range_batch`),
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: { start, end, step, queries },
+      }),
+    }),
+
     // Read the user's pinned (added) boards for a connection.
     getPinnedBoards: builder.query({
       query: ({ connectionID }) => ({
@@ -94,6 +107,7 @@ export const {
   useGetGrafanaBoardQuery,
   useGetGrafanaDatasourcesQuery,
   useLazyQueryGrafanaRangeQuery,
+  useQueryGrafanaRangeBatchQuery,
   useGetPinnedBoardsQuery,
   useUpdatePinnedBoardsMutation,
 } = telemetryGrafanaApi;

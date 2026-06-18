@@ -65,6 +65,23 @@ export function resolveExpr(
       .join(value);
   }
 
+  // A variable that resolves to a regex — the match-all `.*` (unset / "All") or a
+  // multi-value alternation `a|b` — is only meaningful inside a regex matcher.
+  // Dashboards frequently use an exact matcher (e.g. `cluster="$cluster"`), which
+  // would become `cluster=".*"` and match the literal string `.*` (returning no
+  // data). Upgrade `=`/`!=` to `=~`/`!~` for matchers referencing such variables
+  // before substituting, so the query returns data as Grafana would.
+  for (const [name, value] of Object.entries(varValues)) {
+    if (value !== '.*' && !value.includes('|')) continue; // concrete single value: leave `=` as-is
+    const n = escapeRegExp(name);
+    const ref = `(?:\\$\\{${n}(?::[^}]+)?\\}|\\[\\[${n}(?::[^\\]]+)?\\]\\]|\\$${n}\\b)`;
+    const exactMatcher = new RegExp(`([a-zA-Z_]\\w*)\\s*(!?=)(?!~)\\s*("[^"]*${ref}[^"]*")`, 'g');
+    out = out.replace(
+      exactMatcher,
+      (_m, label, op, quoted) => `${label}${op === '=' ? '=~' : '!~'}${quoted}`,
+    );
+  }
+
   // Known template variables: ${name}, $name, [[name]] / [[name:format]].
   for (const [name, value] of Object.entries(varValues)) {
     const n = escapeRegExp(name);

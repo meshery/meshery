@@ -144,6 +144,9 @@ type rawPanel struct {
 	Datasource  json.RawMessage `json:"datasource"`
 	FieldConfig rawFieldConfig  `json:"fieldConfig"`
 	Targets     []rawTarget     `json:"targets"`
+	// Panels holds a collapsed row's child panels. Grafana nests them here when
+	// the row is collapsed; an expanded row's children are top-level siblings.
+	Panels []rawPanel `json:"panels"`
 }
 
 type rawFieldConfig struct {

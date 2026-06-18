@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import {
   Box,
   Card,
@@ -11,18 +11,17 @@ import {
   styled,
   useTheme,
 } from '@sistent/sistent';
-import { useLazyQueryGrafanaRangeQuery } from '@/rtk-query/telemetryGrafana';
 import TimeSeriesChart from './TimeSeriesChart';
-import { formatValue, parsePromMatrix } from './time';
-import { buildVarValues, resolveDatasourceUid, resolveExpr } from './resolve';
-import type { ChartSeries, Datasource, Panel as PanelType, TemplateVar, TimeWindow } from './types';
+import { formatValue } from './time';
+import type { ChartSeries, Panel as PanelType } from './types';
 
 interface PanelProps {
-  connectionID: string;
   panel: PanelType;
-  timeWindow: TimeWindow;
-  templateVars?: TemplateVar[];
-  datasources?: Datasource[];
+  // Data + state are computed once at the board level (one batched request) and
+  // passed down, so this component is purely presentational.
+  series: ChartSeries[];
+  loading: boolean;
+  error: string | null;
 }
 
 const STAT_TYPES = new Set(['stat', 'singlestat', 'gauge']);
@@ -70,62 +69,12 @@ const StatValue = styled(Typography)(() => ({
 }));
 
 /**
- * Panel fetches the data for a single dashboard panel (one query per target)
- * and renders it as a time-series chart or a single-stat value, with explicit
- * loading / error / empty states.
+ * Panel renders a single dashboard panel from already-fetched series as either a
+ * time-series chart or a single-stat value, with explicit loading / error /
+ * empty states. Data fetching is owned by BoardView (one batched request).
  */
-const Panel: React.FC<PanelProps> = ({
-  connectionID,
-  panel,
-  timeWindow,
-  templateVars = [],
-  datasources = [],
-}) => {
+const Panel: React.FC<PanelProps> = ({ panel, series, loading, error }) => {
   const theme = useTheme();
-  const [trigger] = useLazyQueryGrafanaRangeQuery();
-  const [series, setSeries] = useState<ChartSeries[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const varValues = useMemo(() => buildVarValues(templateVars), [templateVars]);
-
-  const fetchData = useCallback(async () => {
-    const targets = (panel.targets ?? []).filter((t) => t.expr && t.expr.trim() !== '');
-    if (targets.length === 0) {
-      setSeries([]);
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      const collected: ChartSeries[] = [];
-      for (const target of targets) {
-        // Resolve Grafana template variables and macros into a concrete
-        // datasource + executable PromQL before proxying the query.
-        const ds = resolveDatasourceUid(target.datasourceUid, templateVars, datasources);
-        const query = resolveExpr(target.expr, varValues, timeWindow);
-        const resp = await trigger({
-          connectionID,
-          ds,
-          query,
-          start: String(timeWindow.start),
-          end: String(timeWindow.end),
-          step: String(timeWindow.step),
-        }).unwrap();
-        collected.push(...parsePromMatrix(resp, target.legendFormat));
-      }
-      setSeries(collected);
-    } catch (e: any) {
-      setError(e?.data?.error || e?.error || e?.message || 'Failed to load panel data');
-      setSeries([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [connectionID, panel, timeWindow, trigger, templateVars, datasources, varValues]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
 
   const isStat = STAT_TYPES.has(panel.type);
   const hasData = series.length > 0 && series.some((s) => s.points.length > 0);

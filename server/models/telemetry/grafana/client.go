@@ -4,11 +4,13 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/meshery/meshkit/logger"
@@ -57,8 +59,53 @@ func authHeader(secret string) string {
 // BaseURL returns the normalized Grafana base URL.
 func (c *Client) BaseURL() string { return c.baseURL }
 
+// apiError is returned by do for non-2xx Grafana responses. It carries the
+// status code so callers can react to specific conditions (e.g. a 404 when a
+// datasource reference turns out to be a name rather than a uid).
+type apiError struct {
+	StatusCode int
+	Method     string
+	Path       string
+	Body       string
+}
+
+func (e *apiError) Error() string {
+	return fmt.Sprintf("grafana: %s %s returned %d: %s", e.Method, e.Path, e.StatusCode, e.Body)
+}
+
+// DatasourceNotFoundError indicates a panel referenced a datasource the Grafana
+// instance could not resolve — typically a name or stale uid carried by a
+// provisioned dashboard, or a datasource the credential is not allowed to see.
+// It is distinct from a generic API error so callers can explain it precisely.
+//
+// Available lists the datasources Grafana actually returned ("name (uid=...)"),
+// so the user can immediately see whether Ref is missing entirely (dangling
+// reference) or the list came back empty (credential can't read datasources).
+type DatasourceNotFoundError struct {
+	Ref       string
+	Available []string
+}
+
+func (e *DatasourceNotFoundError) Error() string {
+	if len(e.Available) == 0 {
+		return fmt.Sprintf("grafana: datasource %q was not found, and no datasources were listable — the credential may lack permission to read datasources", e.Ref)
+	}
+	return fmt.Sprintf("grafana: datasource %q was not found; available datasources: %s", e.Ref, strings.Join(e.Available, ", "))
+}
+
+// StatusCode returns the HTTP status carried by a Grafana API error, or 0 when
+// err is not one. It lets callers classify failures (auth vs not-found vs ...)
+// without depending on the unexported error type.
+func StatusCode(err error) int {
+	var apiErr *apiError
+	if errors.As(err, &apiErr) {
+		return apiErr.StatusCode
+	}
+	return 0
+}
+
 // do issues a request against the Grafana API and returns the response body.
-// Non-2xx responses are surfaced as errors carrying the status and a trimmed body.
+// Non-2xx responses are surfaced as *apiError carrying the status and a trimmed body.
 func (c *Client) do(ctx context.Context, method, path string, query url.Values) ([]byte, error) {
 	if c.baseURL == "" {
 		return nil, fmt.Errorf("grafana: empty base URL")
@@ -87,7 +134,12 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values) 
 		return nil, fmt.Errorf("grafana: read response from %s: %w", path, err)
 	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf("grafana: %s %s returned %d: %s", method, path, resp.StatusCode, strings.TrimSpace(string(body)))
+		return nil, &apiError{
+			StatusCode: resp.StatusCode,
+			Method:     method,
+			Path:       path,
+			Body:       strings.TrimSpace(string(body)),
+		}
 	}
 	return body, nil
 }
@@ -174,12 +226,160 @@ func (c *Client) ListDatasources(ctx context.Context) ([]Datasource, error) {
 //
 // dsUID is the target datasource UID; params carries the Prometheus query_range
 // parameters (query, start, end, step).
-func (c *Client) QueryRange(ctx context.Context, dsUID string, params url.Values) ([]byte, error) {
-	if strings.TrimSpace(dsUID) == "" {
+func (c *Client) QueryRange(ctx context.Context, dsRef string, params url.Values) ([]byte, error) {
+	if strings.TrimSpace(dsRef) == "" {
 		return nil, fmt.Errorf("grafana: empty datasource uid")
 	}
-	path := "/api/datasources/proxy/uid/" + url.PathEscape(dsUID) + "/api/v1/query_range"
+	body, err := c.queryRangeByUID(ctx, dsRef, params)
+	if err == nil {
+		return body, nil
+	}
+	// A 404 means Grafana has no datasource with that uid. Provisioned dashboards
+	// frequently reference datasources by name (or a stale uid) instead, so try to
+	// resolve the reference to a real uid and retry once before giving up.
+	var apiErr *apiError
+	if errors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound {
+		// dsRef may be a name (or stale uid) rather than a real uid. Resolve it
+		// against the live datasource list and retry once before giving up.
+		sources, _ := c.ListDatasources(ctx)
+		if uid := datasourceUIDByName(sources, dsRef); uid != "" && uid != dsRef {
+			if body, retryErr := c.queryRangeByUID(ctx, uid, params); retryErr == nil {
+				return body, nil
+			}
+		}
+		// Still unresolved. Surface a typed error naming the reference and what
+		// datasources are actually available, so the user can see precisely why.
+		return nil, &DatasourceNotFoundError{Ref: dsRef, Available: datasourceIdentifiers(sources)}
+	}
+	return nil, err
+}
+
+func (c *Client) queryRangeByUID(ctx context.Context, uid string, params url.Values) ([]byte, error) {
+	path := "/api/datasources/proxy/uid/" + url.PathEscape(uid) + "/api/v1/query_range"
 	return c.do(ctx, http.MethodGet, path, params)
+}
+
+// batchConcurrency bounds how many query_range calls a single batch fans out to
+// Grafana at once, so one board with many panels can't open an unbounded number
+// of simultaneous connections to the upstream instance.
+const batchConcurrency = 8
+
+// BatchQuery is a single resolved query within a batch. ID is an opaque,
+// caller-chosen key (e.g. "<panelID>:<refID>") echoed back on the matching
+// result; DS is the datasource reference (uid or name); Query is the resolved
+// PromQL expression.
+type BatchQuery struct {
+	ID    string
+	DS    string
+	Query string
+}
+
+// BatchResult carries the outcome of one BatchQuery. ID matches the input query.
+// Exactly one of Body (the raw Prometheus query_range JSON, unmodified) or Err
+// (a per-query failure) is set.
+type BatchResult struct {
+	ID   string
+	Body json.RawMessage
+	Err  error
+}
+
+// QueryRangeBatch runs many Prometheus range queries against this Grafana
+// instance concurrently and returns one result per input query, in input order.
+//
+// A single failing query never fails the whole batch: its result simply carries
+// an Err while the others succeed. The datasource list is fetched at most once
+// for the entire batch (best-effort; an error is treated as an empty list) and
+// shared across every query's name-resolution fallback, so a board with many
+// panels referencing datasources by name doesn't trigger a list lookup per query.
+//
+// start, end and step are the shared Prometheus query_range window for the batch.
+func (c *Client) QueryRangeBatch(ctx context.Context, start, end, step string, queries []BatchQuery) []BatchResult {
+	results := make([]BatchResult, len(queries))
+	if len(queries) == 0 {
+		return results
+	}
+
+	// Resolve the datasource list once for the whole batch (best-effort). A
+	// failure here is non-fatal: name resolution simply has nothing to match
+	// against, and individual queries fall back to a DatasourceNotFoundError.
+	sources, _ := c.ListDatasources(ctx)
+
+	sem := make(chan struct{}, batchConcurrency)
+	var wg sync.WaitGroup
+	for i, q := range queries {
+		wg.Add(1)
+		go func(i int, q BatchQuery) {
+			defer wg.Done()
+			select {
+			case sem <- struct{}{}:
+				defer func() { <-sem }()
+			case <-ctx.Done():
+				results[i] = BatchResult{ID: q.ID, Err: ctx.Err()}
+				return
+			}
+			params := url.Values{
+				"query": {q.Query},
+				"start": {start},
+				"end":   {end},
+				"step":  {step},
+			}
+			body, err := c.queryRangeWith(ctx, q.DS, params, sources)
+			results[i] = BatchResult{ID: q.ID, Body: body, Err: err}
+		}(i, q)
+	}
+	wg.Wait()
+	return results
+}
+
+// queryRangeWith runs a single range query against dsRef, reusing the already
+// resolved datasource list (sources) instead of fetching it per query. It mirrors
+// QueryRange's 404 -> resolve-name -> retry-once dance, surfacing a typed
+// DatasourceNotFoundError when the reference still can't be resolved.
+func (c *Client) queryRangeWith(ctx context.Context, dsRef string, params url.Values, sources []Datasource) (json.RawMessage, error) {
+	if strings.TrimSpace(dsRef) == "" {
+		return nil, fmt.Errorf("grafana: empty datasource uid")
+	}
+	body, err := c.queryRangeByUID(ctx, dsRef, params)
+	if err == nil {
+		return body, nil
+	}
+	var apiErr *apiError
+	if errors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound {
+		if uid := datasourceUIDByName(sources, dsRef); uid != "" && uid != dsRef {
+			if body, retryErr := c.queryRangeByUID(ctx, uid, params); retryErr == nil {
+				return body, nil
+			}
+		}
+		return nil, &DatasourceNotFoundError{Ref: dsRef, Available: datasourceIdentifiers(sources)}
+	}
+	return nil, err
+}
+
+// datasourceUIDByName maps a datasource reference that is actually a name (the
+// common provisioned-dashboard case) to its uid. A uid match takes precedence,
+// then a name match. Returns "" when nothing matches.
+func datasourceUIDByName(sources []Datasource, ref string) string {
+	for _, ds := range sources {
+		if ds.UID == ref { // already a valid uid
+			return ds.UID
+		}
+	}
+	for _, ds := range sources {
+		if ds.Name == ref {
+			return ds.UID
+		}
+	}
+	return ""
+}
+
+// datasourceIdentifiers renders each datasource as "name (uid=...)" for surfacing
+// in a not-found error so the user can see what is actually available.
+func datasourceIdentifiers(sources []Datasource) []string {
+	out := make([]string, 0, len(sources))
+	for _, ds := range sources {
+		out = append(out, fmt.Sprintf("%s (uid=%s)", ds.Name, ds.UID))
+	}
+	return out
 }
 
 func normalizeBoard(d rawDashboard) *Board {
@@ -189,10 +389,7 @@ func normalizeBoard(d rawDashboard) *Board {
 		Tags:   d.Tags,
 		Panels: make([]Panel, 0, len(d.Panels)),
 	}
-	for _, rp := range d.Panels {
-		if rp.Type == "row" { // row separators carry no data
-			continue
-		}
+	for _, rp := range flattenPanels(d.Panels) {
 		p := Panel{
 			ID:      rp.ID,
 			Title:   rp.Title,
@@ -231,6 +428,22 @@ func normalizeBoard(d rawDashboard) *Board {
 		})
 	}
 	return board
+}
+
+// flattenPanels drops row separators while recovering panels nested inside a
+// collapsed row. Grafana stores a collapsed row's children in the row's own
+// "panels" array, whereas an expanded row's children are top-level siblings;
+// without descending, panels under a collapsed row would be silently lost.
+func flattenPanels(panels []rawPanel) []rawPanel {
+	out := make([]rawPanel, 0, len(panels))
+	for _, p := range panels {
+		if p.Type == "row" {
+			out = append(out, flattenPanels(p.Panels)...)
+			continue
+		}
+		out = append(out, p)
+	}
+	return out
 }
 
 // currentValues flattens a template variable's "current.value", which may be a

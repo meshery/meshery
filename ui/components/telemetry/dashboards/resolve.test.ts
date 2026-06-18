@@ -41,6 +41,35 @@ describe('resolveExpr', () => {
   it('does not treat $__ macros as unknown variables', () => {
     expect(resolveExpr('rate(x[$__rate_interval_ms])', {}, win)).toBe('rate(x[60000])');
   });
+
+  it('upgrades exact matchers to regex when a variable resolves to match-all or multi-value', () => {
+    const vars = { cluster: '.*', namespace: '.*', pod: '.*' };
+    // Real kube-prometheus panel: exact matchers must become =~ so .* matches.
+    expect(
+      resolveExpr(
+        'container_memory_rss{namespace="$namespace", pod="$pod", cluster="$cluster", container != ""}',
+        vars,
+        win,
+      ),
+    ).toBe('container_memory_rss{namespace=~".*", pod=~".*", cluster=~".*", container != ""}');
+    // != upgrades to !~
+    expect(resolveExpr('m{ns!="$namespace"}', vars, win)).toBe('m{ns!~".*"}');
+    // multi-value (a|b) also needs a regex matcher
+    expect(resolveExpr('m{instance="$instance"}', { instance: 'a|b' }, win)).toBe(
+      'm{instance=~"a|b"}',
+    );
+  });
+
+  it('leaves matchers untouched for concrete single values and non-variable literals', () => {
+    // concrete value -> keep exact `=`
+    expect(resolveExpr('m{job="$job"}', { job: 'api' }, win)).toBe('m{job="api"}');
+    // already a regex matcher stays regex
+    expect(resolveExpr('m{job=~"$job"}', { job: '.*' }, win)).toBe('m{job=~".*"}');
+    // literal matchers with no variable are never rewritten
+    expect(resolveExpr('m{container != "", container != "POD"}', { pod: '.*' }, win)).toBe(
+      'm{container != "", container != "POD"}',
+    );
+  });
 });
 
 describe('resolveDatasourceUid', () => {
