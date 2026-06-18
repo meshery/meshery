@@ -135,11 +135,7 @@ const StyledRegistryModal = styled(Modal)(({ theme }) => ({
     height: '80%',
   },
   '& .MuiDialog-paperFullScreen': {
-    margin: '0 !important',
-    width: '100% !important',
-    height: '100% !important',
-    maxWidth: '100% !important',
-    maxHeight: '100% !important',
+    margin: 0,
   },
   '& .MuiDialog-paper': {
     maxWidth: '100%',
