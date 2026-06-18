@@ -520,7 +520,7 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
               onClick={openCreateModal}
               style={{ display: 'flex' }}
               disabled={false} //TODO: Need to make key for this component
-              startIcon={<AddIcon style={iconSmall} color="inherit" />}
+              startIcon={<AddIcon style={iconSmall} fill="currentColor" />}
               data-testid="TabBar-Button-CreateModel"
             >
               Create Model
@@ -532,7 +532,7 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
               onClick={openImportModal}
               style={{ display: 'flex' }}
               disabled={false} //TODO: Need to make key for this component
-              startIcon={<UploadIcon style={iconSmall} color="inherit" />}
+              startIcon={<UploadIcon style={iconSmall} fill="currentColor" />}
               data-testid="TabBar-Button-ImportModel"
             >
               Import Model
@@ -548,7 +548,7 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
             onClick={openRelationshipModal}
             style={{ display: 'flex' }}
             disabled={false}
-            startIcon={<LinkIcon style={iconSmall} color="inherit" />}
+            startIcon={<LinkIcon style={iconSmall} fill="currentColor" />}
             data-testid="TabBar-Button-CreateRelationship"
           >
             Create Relationship
