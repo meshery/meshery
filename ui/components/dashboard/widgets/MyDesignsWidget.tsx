@@ -66,14 +66,7 @@ const MyDesignsWidget = ({ iconsProps }: MyDesignsWidgetProps) => {
         name: pattern.name,
         timestamp: pattern.updatedAt,
         link: `/extension/meshmap?mode=design&design=${pattern.id}`,
-        icon: (
-          <DesignIcon
-            width="15px"
-            height="15px"
-            primaryFill="currentColor"
-            secondaryFill="currentColor"
-          />
-        ),
+        icon: <DesignIcon width="15px" height="15px" fill="currentColor" />,
       })) ?? [],
     [patternsData?.patterns],
   );

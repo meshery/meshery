@@ -538,7 +538,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
           open={teamsModal.open}
           closeModal={handleTeamsModalClose}
           title={`Manage "${teamsModal.workspaceName}" Teams`}
-          headerIcon={<TeamsIcon {...iconMedium} primaryFill={theme.palette.common.white} />}
+          headerIcon={<TeamsIcon {...iconMedium} fill={theme.palette.common.white} />}
         >
           <WorkspaceTeamsTable
             workspaceId={teamsModal.workspaceId}

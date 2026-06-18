@@ -83,7 +83,7 @@ export const StyledDrawer = styled('nav', {
       ? theme.transitions.duration.leavingScreen
       : theme.transitions.duration.enteringScreen,
   }),
-  '& > div:first-child': {
+  '& > div:first-of-type': {
     height: 'inherit',
     width: 'inherit',
   },

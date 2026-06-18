@@ -216,7 +216,7 @@ const DesignViewListItem = ({
                       key={user.client_id}
                       alt={user.name}
                       src={user.avatar_url}
-                      imgProps={{ referrerPolicy: 'no-referrer' }}
+                      slotProps={{ img: { referrerPolicy: 'no-referrer' } }}
                     />
                   </CustomTooltip>
                 ))}

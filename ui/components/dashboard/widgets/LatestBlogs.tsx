@@ -69,14 +69,7 @@ const LatestBlogs = ({ iconsProps }: LatestBlogsProps) => {
     () =>
       resources.map((resource) => ({
         ...resource,
-        icon: (
-          <DesignIcon
-            width="15px"
-            height="15px"
-            primaryFill="currentColor"
-            secondaryFill="currentColor"
-          />
-        ),
+        icon: <DesignIcon width="15px" height="15px" fill="currentColor" />,
       })),
     [resources],
   );
@@ -84,13 +77,7 @@ const LatestBlogs = ({ iconsProps }: LatestBlogsProps) => {
   return (
     <PlainCard
       resources={loading ? LOADING_RESOURCES : cardResources}
-      icon={
-        <BellIcon
-          {...iconsProps}
-          fill={theme.palette.icon.default}
-          secondaryFill={theme.palette.background.brand.default}
-        />
-      }
+      icon={<BellIcon {...iconsProps} fill={theme.palette.icon.default} />}
       title="LATEST BLOGS"
     />
   );

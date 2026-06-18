@@ -483,7 +483,6 @@ const NavigatorContent = () => {
         return (
           <RootDiv key={id} data-testid={depth === 1 ? 'extension-nav-root-item' : undefined}>
             <NavigatorListItem
-              button
               depth={depth}
               isDrawerCollapsed={isDrawerCollapsed}
               isActive={isActive}
@@ -505,7 +504,11 @@ const NavigatorContent = () => {
     }
 
     return (
-      <NavigatorList disablePadding data-testid="extension-nav-submenu">
+      <NavigatorList
+        key={`extension-nav-submenu-${depth}`}
+        disablePadding
+        data-testid="extension-nav-submenu"
+      >
         {extensionItems}
       </NavigatorList>
     );
@@ -561,7 +564,7 @@ const NavigatorContent = () => {
     const ListItemComponent = isLifecycleGroup ? NavigatorListItemIII : NavigatorListItemII;
 
     return (
-      <List disablePadding>
+      <List disablePadding key={`${idname}-${depth}`}>
         {children.map(
           ({
             id: idc,
@@ -588,7 +591,6 @@ const NavigatorContent = () => {
                         isShow: !showc,
                       }
                     : {})}
-                  button
                   data-testid={idc}
                   depth={depth}
                   isDrawerCollapsed={isDrawerCollapsed}
@@ -704,9 +706,7 @@ const NavigatorContent = () => {
             return (
               <RootDiv key={childId}>
                 <SideBarListItem
-                  button={!!link}
                   dense
-                  key={childId}
                   link={!!link}
                   isActive={currentPath === href}
                   isShow={!show}
@@ -725,7 +725,7 @@ const NavigatorContent = () => {
                         disableFocusListener={!isDrawerCollapsed}
                         disableHoverListener={true}
                         disableTouchListener={!isDrawerCollapsed}
-                        TransitionComponent={Zoom}
+                        slots={{ transition: Zoom }}
                       >
                         {isDrawerCollapsed &&
                         (hoveredId === childId || (openItems.includes(childId) && submenu)) ? (
@@ -733,7 +733,7 @@ const NavigatorContent = () => {
                             <CustomTooltip
                               title={title}
                               placement="right"
-                              TransitionComponent={Zoom}
+                              slots={{ transition: Zoom }}
                             >
                               <ListItemIcon
                                 onClick={() => toggleItemCollapse(childId)}
@@ -753,7 +753,6 @@ const NavigatorContent = () => {
                   <ExpandMore
                     onClick={() => toggleItemCollapse(childId)}
                     isCollapsed={openItems.includes(childId)}
-                    isDrawerCollapsed={isDrawerCollapsed}
                     theme={theme}
                     hasChildren={!!children}
                   />
