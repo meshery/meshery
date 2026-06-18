@@ -235,8 +235,10 @@ func UpdateAuthDetails(filepath string) error {
 
 	client := &http.Client{Timeout: authHTTPTimeout}
 	resp, err := client.Do(req)
-
 	if err != nil {
+		if resp != nil {
+			SafeClose(resp.Body)
+		}
 		return errors.Wrap(err, "error dispatching the request")
 	}
 	defer SafeClose(resp.Body)
@@ -449,9 +451,6 @@ func chooseDirectProvider(provs map[string]Provider, option string) (Provider, e
 			return provArray[i], nil
 		}
 	}
-	if len(provArray) > 1 {
-		return provArray[1], fmt.Errorf("the specified provider '%s' is not available. Please try giving correct provider name", option)
-	}
 	return Provider{}, fmt.Errorf("the specified provider '%s' is not available. Please try giving correct provider name", option)
 }
 
@@ -491,9 +490,11 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 	cli := &http.Client{Timeout: authHTTPTimeout}
 	resp, err := cli.Do(req)
 	if err != nil {
+		if resp != nil {
+			_ = resp.Body.Close()
+		}
 		return nil, err
 	}
-
 	defer func() { _ = resp.Body.Close() }()
 
 	return io.ReadAll(resp.Body)
