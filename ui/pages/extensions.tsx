@@ -120,10 +120,10 @@ const MeshMapSnapShotCard = ({
           <ResponsiveImage
             src={
               theme.palette.mode === 'dark'
-                ? '/static/img/extensions/meshmap-snapshot-logo-white.svg'
-                : '/static/img/extensions/meshmap-snapshot-logo.svg'
+                ? '/static/img/extensions/github-white.svg'
+                : '/static/img/extensions/github.svg'
             }
-            alt="Snapshot Logo"
+            alt="GitHub Logo"
             testId="snapshot-image"
           />
           <div>
