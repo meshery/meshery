@@ -92,21 +92,22 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 func MakeRequest(req *http.Request) (*http.Response, error) {
 	client := &http.Client{Timeout: authHTTPTimeout}
 
-	// check status code from request, checks for issues with auth token
 	resp, err := client.Do(req)
 
-	if err != nil && resp == nil {
+	if err != nil {
+		if resp != nil {
+			_ = resp.Body.Close()
+		}
 		return nil, ErrFailRequest(err)
 	}
 
-	// If statuscode = 302, then we either have an expired or invalid token
-	// We return the response and correct error message
 	if resp.StatusCode == 302 {
+		_ = resp.Body.Close()
 		return nil, ErrInvalidToken()
 	}
 
-	// failsafe for not being authenticated
 	if ContentTypeIsHTML(resp) {
+		_ = resp.Body.Close()
 		return nil, ErrUnauthenticated()
 	}
 
@@ -448,7 +449,10 @@ func chooseDirectProvider(provs map[string]Provider, option string) (Provider, e
 			return provArray[i], nil
 		}
 	}
-	return provArray[1], fmt.Errorf("the specified provider '%s' is not available. Please try giving correct provider name", option)
+	if len(provArray) > 1 {
+		return provArray[1], fmt.Errorf("the specified provider '%s' is not available. Please try giving correct provider name", option)
+	}
+	return Provider{}, fmt.Errorf("the specified provider '%s' is not available. Please try giving correct provider name", option)
 }
 
 func createProviderURI(provider Provider, host string, port int) (string, error) {
