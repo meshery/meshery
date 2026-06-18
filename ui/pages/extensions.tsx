@@ -369,7 +369,7 @@ const MesheryDesignEmbedExtension = () => (
 
       <UnifiedDescription hasIcon>
         <ResponsiveImage
-          src="/static/img/extensions/meshmap.svg"
+          src="/static/img/meshery-logo/meshery-logo.svg"
           alt="Meshery Design Logo"
           testId="design-embed-icon"
         />
