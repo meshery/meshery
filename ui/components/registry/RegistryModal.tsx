@@ -157,7 +157,7 @@ const StyledModalBody = styled(ModalBody)(() => ({
 interface NavItemDef {
   id: string;
   label: string;
-  icon: ReactNode;
+  renderIcon: (fill: string) => ReactNode;
 }
 
 interface CountSummary {
@@ -167,33 +167,28 @@ interface CountSummary {
   registrants: number;
 }
 
-const getNavItems = (theme: ReturnType<typeof useTheme>, counts: CountSummary): NavItemDef[] => [
+const getNavItems = (counts: CountSummary): NavItemDef[] => [
   {
     id: MODELS,
     label: `Models (${counts.models})`,
-    icon: <FileIcon {...iconSmall} fill={theme.palette.icon.default} />,
+    renderIcon: (fill) => <FileIcon {...iconSmall} fill={fill} />,
   },
   {
     id: COMPONENTS,
     label: `Components (${counts.components})`,
-    icon: <ComponentIcon {...iconSmall} fill={theme.palette.icon.default} />,
+    renderIcon: (fill) => <ComponentIcon {...iconSmall} fill={fill} />,
   },
   {
     id: RELATIONSHIPS,
     label: `Relationships (${counts.relationships})`,
-    icon: (
-      <ConnectionIcon
-        {...iconSmall}
-        fill={theme.palette.icon.default}
-        primaryFill={theme.palette.icon.default}
-        secondaryFill={theme.palette.icon.default}
-      />
+    renderIcon: (fill) => (
+      <ConnectionIcon {...iconSmall} fill={fill} primaryFill={fill} secondaryFill={fill} />
     ),
   },
   {
     id: REGISTRANTS,
     label: `Registrants (${counts.registrants})`,
-    icon: <DatabaseIcon {...iconSmall} fill={theme.palette.icon.default} />,
+    renderIcon: (fill) => <DatabaseIcon {...iconSmall} fill={fill} />,
   },
 ];
 
@@ -204,32 +199,38 @@ interface NavItemProps {
   onSelect: (_id: string) => void;
 }
 
-const NavItem: FC<NavItemProps> = ({ item, open, selectedId, onSelect }) => (
-  <CustomTooltip title={item.label} disableHoverListener={open} placement="right">
-    <ListItem disablePadding sx={{ display: 'block' }}>
-      <ListItemButton
-        selected={selectedId === item.id}
-        onClick={() => onSelect(item.id)}
-        sx={{
-          minHeight: 48,
-          px: 2.5,
-          justifyContent: open ? 'initial' : 'center',
-        }}
-      >
-        <ListItemIcon
+const NavItem: FC<NavItemProps> = ({ item, open, selectedId, onSelect }) => {
+  const theme = useTheme();
+  const isSelected = selectedId === item.id;
+  const iconFill = isSelected ? theme.palette.icon.brand : theme.palette.icon.default;
+
+  return (
+    <CustomTooltip title={item.label} disableHoverListener={open} placement="right">
+      <ListItem disablePadding sx={{ display: 'block' }}>
+        <ListItemButton
+          selected={isSelected}
+          onClick={() => onSelect(item.id)}
           sx={{
-            minWidth: 0,
-            justifyContent: 'center',
-            mr: open ? 3 : 'auto',
+            minHeight: 48,
+            px: 2.5,
+            justifyContent: open ? 'initial' : 'center',
           }}
         >
-          {item.icon}
-        </ListItemIcon>
-        <ListItemText primary={item.label} sx={{ opacity: open ? 1 : 0 }} />
-      </ListItemButton>
-    </ListItem>
-  </CustomTooltip>
-);
+          <ListItemIcon
+            sx={{
+              minWidth: 0,
+              justifyContent: 'center',
+              mr: open ? 3 : 'auto',
+            }}
+          >
+            {item.renderIcon(iconFill)}
+          </ListItemIcon>
+          <ListItemText primary={item.label} sx={{ opacity: open ? 1 : 0 }} />
+        </ListItemButton>
+      </ListItem>
+    </CustomTooltip>
+  );
+};
 
 interface RegistryContentProps {
   selectedView: string;
@@ -290,7 +291,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
     relationships: relationshipsData?.totalCount ?? relationshipsData?.total_count ?? 0,
     registrants: registrantsData?.totalCount ?? registrantsData?.total_count ?? 0,
   };
-  const navConfig = getNavItems(theme, counts);
+  const navConfig = getNavItems(counts);
 
   const handleDrawerToggle = () => setOpen((prev) => !prev);
 
