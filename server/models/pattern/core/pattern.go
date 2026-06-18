@@ -394,9 +394,9 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 							}
 							return pattern, err
 						}
-resolvedCount++
-decl := declaration
-pattern.Components = append(pattern.Components, &decl)
+						resolvedCount++
+						decl := declaration
+						pattern.Components = append(pattern.Components, &decl)
 					}
 				}
 			}
