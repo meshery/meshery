@@ -352,14 +352,25 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		)
 		if err != nil {
 			h.log.Error(err)
+			continue
 		}
 
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
 			if err != nil {
+				h.log.Error(err)
+				if event != nil {
+					_ = provider.PersistEvent(*event, token)
+					go h.config.EventBroadcaster.Publish(userUUID, event)
+				}
+				return
+			}
+			if event != nil {
 				_ = provider.PersistEvent(*event, token)
 				go h.config.EventBroadcaster.Publish(userUUID, event)
+			} else {
+				h.log.Warnf("SendEvent returned a nil event without an error for connection %s; skipping event persistence", inst.ID)
 			}
 		}(inst)
 	}
@@ -411,14 +422,25 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		)
 		if err != nil {
 			h.log.Error(err)
+			continue
 		}
 
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
 			if err != nil {
+				h.log.Error(err)
+				if event != nil {
+					_ = provider.PersistEvent(*event, token)
+					go h.config.EventBroadcaster.Publish(userUUID, event)
+				}
+				return
+			}
+			if event != nil {
 				_ = provider.PersistEvent(*event, token)
 				go h.config.EventBroadcaster.Publish(userUUID, event)
+			} else {
+				h.log.Warnf("SendEvent returned a nil event without an error for connection %s; skipping event persistence", inst.ID)
 			}
 		}(inst)
 		kubernesMachineCtx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
