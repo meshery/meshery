@@ -652,7 +652,7 @@ type Provider interface {
 	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error)
 	GetConnectionByID(token string, connectionID core.Uuid) (*connections.Connection, int, error)
 	UpdateConnection(req *http.Request, conn *connections.Connection) (*connections.Connection, error)
-	UpdateConnectionById(token string, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error)
+	UpdateConnectionByID(token string, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error)
 	UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error)
 	DeleteConnection(req *http.Request, connID core.Uuid) (*connections.Connection, error)
 	DeleteMesheryConnection() error

@@ -4728,8 +4728,8 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connect
 	return nil, ErrFetch(fmt.Errorf("failed to update the connection"), string(bdr), resp.StatusCode)
 }
 
-// UpdateConnectionById - to update an existing connection using the connection id
-func (l *RemoteProvider) UpdateConnectionById(token string, connection *connections.ConnectionPayload, connId string) (*connections.Connection, error) {
+// UpdateConnectionByID - to update an existing connection using the connection id
+func (l *RemoteProvider) UpdateConnectionByID(token string, connection *connections.ConnectionPayload, connId string) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)

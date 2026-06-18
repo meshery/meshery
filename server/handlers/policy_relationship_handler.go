@@ -41,14 +41,14 @@ const (
 	suffix                        = "_relationship"
 )
 
-const RELATIONSHIP_SUBTYPE_ALIAS = "alias"
+const RelationshipSubtypeAlias = "alias"
 
 // Aliasses Are not resolved
 func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (coremodelv1beta2.NonResolvedAlias, bool) {
 
 	alias := coremodelv1beta2.NonResolvedAlias{}
 
-	if relationshipDeclaration.SubType != RELATIONSHIP_SUBTYPE_ALIAS {
+	if relationshipDeclaration.SubType != RelationshipSubtypeAlias {
 		return alias, false
 	}
 
@@ -109,8 +109,8 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 	return coremodelv1beta2.NonResolvedAlias{}, false
 }
 
-// getComponentById retrieves a component from the design by its ID
-func getComponentById(design pattern.PatternFile, id legacycoremodel.Uuid) *component.ComponentDefinition {
+// getComponentByID retrieves a component from the design by its ID
+func getComponentByID(design pattern.PatternFile, id legacycoremodel.Uuid) *component.ComponentDefinition {
 	for _, comp := range design.Components {
 		if comp.ID == id {
 			return comp
@@ -120,7 +120,7 @@ func getComponentById(design pattern.PatternFile, id legacycoremodel.Uuid) *comp
 }
 
 func ResolveAlias(nonResolvedAlias coremodelv1beta2.NonResolvedAlias, currentNonResolved coremodelv1beta2.NonResolvedAlias, path []string, design pattern.PatternFile) coremodelv1beta2.ResolvedAlias {
-	parentComponent := getComponentById(design, currentNonResolved.ImmediateParentId)
+	parentComponent := getComponentByID(design, currentNonResolved.ImmediateParentId)
 	if parentComponent == nil {
 		return coremodelv1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
 	}
@@ -264,7 +264,7 @@ func doesntNeedReeval(response pattern.EvaluationResponse) bool {
 }
 
 // max number of time to keep revaluating the design till there are no reval triggering actions in the response
-const MAX_RE_EVALUATION_DEPTH = 5
+const MaxReEvaluationDepth = 5
 
 // defaultPolicyEvalTimeout bounds a single evaluation. Override via POLICY_EVAL_TIMEOUT.
 const defaultPolicyEvalTimeout = 3 * time.Minute
@@ -341,7 +341,7 @@ func (h *Handler) EvaluateDesign(
 		convertedRels = gopolicies.ConvertRelationships(relInterfaces)
 	}
 
-	for i := range MAX_RE_EVALUATION_DEPTH {
+	for i := range MaxReEvaluationDepth {
 
 		var evaluationResponse pattern.EvaluationResponse
 		var err error
@@ -385,8 +385,8 @@ func (h *Handler) EvaluateDesign(
 			h.log.Info("Evaluation completed in iteration ", i+1)
 			break
 		}
-		if i == (MAX_RE_EVALUATION_DEPTH - 1) {
-			h.log.Warnf("Evaluation depth limit of %d reached; returning partial result", MAX_RE_EVALUATION_DEPTH)
+		if i == (MaxReEvaluationDepth - 1) {
+			h.log.Warnf("Evaluation depth limit of %d reached; returning partial result", MaxReEvaluationDepth)
 			break
 		}
 
@@ -806,7 +806,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		h.evalTracker,
 		designKey,
 		func() (pattern.EvaluationResponse, error) {
-			return h.EvaluateDesign(relationshipPolicyEvalPayload, MAX_RE_EVALUATION_DEPTH)
+			return h.EvaluateDesign(relationshipPolicyEvalPayload, MaxReEvaluationDepth)
 		},
 		evalRespChan,
 		evalErrChan,

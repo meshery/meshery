@@ -375,14 +375,14 @@ func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Requ
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
-	avatarUrl := ""
+	avatarURL := ""
 	localEmail := types.Email("meshery@meshery.local")
 	return &User{
 		UserId:    "meshery",
 		FirstName: "Meshery",
 		LastName:  "Meshery",
 		Email:     localEmail,
-		AvatarUrl: &avatarUrl,
+		AvatarUrl: &avatarURL,
 	}
 }
 
@@ -414,12 +414,12 @@ func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID 
 }
 
 func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
-	orgId := core.Uuid(environmentPayload.OrgId)
+	orgID := core.Uuid(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
-		OrganizationID: orgId,
+		OrganizationID: orgID,
 		Owner:          &uuid.Nil, // "Meshery"
 		UpdatedAt:      time.Now(),
 	}
@@ -428,13 +428,13 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 
 func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
 	id, _ := uuid.FromString(environmentID)
-	orgId := core.Uuid(environmentPayload.OrgId)
+	orgID := core.Uuid(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		ID:             id,
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
-		OrganizationID: orgId,
+		OrganizationID: orgID,
 		Owner:          &uuid.Nil, // "Meshery"
 		UpdatedAt:      time.Now(),
 	}
@@ -442,20 +442,20 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 }
 
 func (l *DefaultLocalProvider) AddConnectionToEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
-	envId, _ := uuid.FromString(environmentID)
-	conId, _ := uuid.FromString(connectionID)
-	return l.EnvironmentPersister.AddConnectionToEnvironment(envId, conId)
+	envID, _ := uuid.FromString(environmentID)
+	conID, _ := uuid.FromString(connectionID)
+	return l.EnvironmentPersister.AddConnectionToEnvironment(envID, conID)
 }
 
 func (l *DefaultLocalProvider) RemoveConnectionFromEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
-	envId, _ := uuid.FromString(environmentID)
-	conId, _ := uuid.FromString(connectionID)
-	return l.EnvironmentPersister.DeleteConnectionFromEnvironment(envId, conId)
+	envID, _ := uuid.FromString(environmentID)
+	conID, _ := uuid.FromString(connectionID)
+	return l.EnvironmentPersister.DeleteConnectionFromEnvironment(envID, conID)
 }
 
 func (l *DefaultLocalProvider) GetConnectionsOfEnvironment(_ *http.Request, environmentID, page, pageSize, search, order, filter string) ([]byte, error) {
-	envId, _ := uuid.FromString(environmentID)
-	return l.EnvironmentPersister.GetEnvironmentConnections(envId, search, order, page, pageSize, filter)
+	envID, _ := uuid.FromString(environmentID)
+	return l.EnvironmentPersister.GetEnvironmentConnections(envID, search, order, page, pageSize, filter)
 }
 
 // GetSession - returns the session
@@ -1391,7 +1391,7 @@ func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connecti
 	return updatedConnection, http.StatusOK, nil
 }
 
-func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, _ string) (*connections.Connection, error) {
+func (l *DefaultLocalProvider) UpdateConnectionByID(token string, conn *connections.ConnectionPayload, _ string) (*connections.Connection, error) {
 	connection := connections.Connection{
 		ID:           conn.ID,
 		Name:         conn.Name,
@@ -1408,7 +1408,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 }
 
 func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, connectionID core.Uuid) (*connections.Connection, error) {
-	return l.ConnectionPersister.DeleteConnectionById(connectionID)
+	return l.ConnectionPersister.DeleteConnectionByID(connectionID)
 }
 
 func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
@@ -1714,14 +1714,14 @@ func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload
 
 func (l *DefaultLocalProvider) AddEnvironmentToWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
 	workspaceId, _ := uuid.FromString(workspaceID)
-	envId, _ := uuid.FromString(environmentID)
-	return l.WorkspacePersister.AddEnvironmentToWorkspace(workspaceId, envId)
+	envID, _ := uuid.FromString(environmentID)
+	return l.WorkspacePersister.AddEnvironmentToWorkspace(workspaceId, envID)
 }
 
 func (l *DefaultLocalProvider) RemoveEnvironmentFromWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
 	workspaceId, _ := uuid.FromString(workspaceID)
-	envId, _ := uuid.FromString(environmentID)
-	return l.WorkspacePersister.DeleteEnvironmentFromWorkspace(workspaceId, envId)
+	envID, _ := uuid.FromString(environmentID)
+	return l.WorkspacePersister.DeleteEnvironmentFromWorkspace(workspaceId, envID)
 }
 
 func (l *DefaultLocalProvider) GetEnvironmentsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {

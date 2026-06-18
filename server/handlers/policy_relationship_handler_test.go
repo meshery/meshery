@@ -608,7 +608,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 		{
 			name: "nil Selectors returns false",
 			input: relationship.RelationshipDefinition{
-				SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+				SubType:   RelationshipSubtypeAlias,
 				Selectors: nil,
 			},
 			wantOk: false,
@@ -616,7 +616,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 		{
 			name: "empty Selectors returns false",
 			input: relationship.RelationshipDefinition{
-				SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+				SubType:   RelationshipSubtypeAlias,
 				Selectors: &relationship.SelectorSet{},
 			},
 			wantOk: false,
@@ -633,7 +633,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 					},
 				}
 				return relationship.RelationshipDefinition{
-					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					SubType:   RelationshipSubtypeAlias,
 					Selectors: &ss,
 				}
 			}(),
@@ -651,7 +651,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 					},
 				}
 				return relationship.RelationshipDefinition{
-					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					SubType:   RelationshipSubtypeAlias,
 					Selectors: &ss,
 				}
 			}(),
@@ -669,7 +669,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 					},
 				}
 				return relationship.RelationshipDefinition{
-					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					SubType:   RelationshipSubtypeAlias,
 					Selectors: &ss,
 				}
 			}(),
@@ -694,7 +694,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 					},
 				}
 				return relationship.RelationshipDefinition{
-					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					SubType:   RelationshipSubtypeAlias,
 					Selectors: &ss,
 				}
 			}(),
@@ -720,7 +720,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 					},
 				}
 				return relationship.RelationshipDefinition{
-					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					SubType:   RelationshipSubtypeAlias,
 					Selectors: &ss,
 				}
 			}(),
@@ -746,7 +746,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 					},
 				}
 				return relationship.RelationshipDefinition{
-					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					SubType:   RelationshipSubtypeAlias,
 					Selectors: &ss,
 				}
 			}(),
@@ -772,7 +772,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 					},
 				}
 				return relationship.RelationshipDefinition{
-					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					SubType:   RelationshipSubtypeAlias,
 					Selectors: &ss,
 				}
 			}(),
@@ -798,7 +798,7 @@ func TestParseRelationshipToAlias(t *testing.T) {
 					},
 				}
 				rd := relationship.RelationshipDefinition{
-					SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+					SubType:   RelationshipSubtypeAlias,
 					Selectors: &ss,
 				}
 				rd.ID = relID

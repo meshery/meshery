@@ -100,7 +100,7 @@ func installUsingHelm(client *mesherykube.Client, delete bool, _ models.Adapters
 	return nil
 }
 
-// SetOverrideValues detects the currently insalled adapters and sets appropriate
+// SetOverrideValues detects the currently installed adapters and sets appropriate
 // overrides so as to not uninstall them. It also sets override values for
 // operator so that it can be enabled or disabled depending on the need
 
@@ -186,7 +186,7 @@ func (k *K8sConnectionTracker) Set(id string, url string) {
 	k.contextToBroker[id] = url
 }
 
-// Takes a set of endpoints and discard the current endpoint if its not present in the set
+// ResetEndpoints takes a set of endpoints and discards the current endpoint if not present
 func (k *K8sConnectionTracker) ResetEndpoints(available map[string]bool) {
 	k.mx.Lock()
 	defer k.mx.Unlock()

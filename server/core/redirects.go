@@ -6,7 +6,7 @@ import (
 	"net/url"
 )
 
-func EncodeRefUrl(url url.URL) string {
+func EncodeRefURL(url url.URL) string {
 	refURL := url.String()
 	// If the source is "/", and doesn't include any path or param, set refURL as empty string.
 	// Even if this isn't handle, it doesn't lead to issues but adds an extra /? after login in the URL.

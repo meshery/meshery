@@ -114,10 +114,10 @@ func TestGetWorkspacesHandler_AcceptsOrgIdAndLegacyOrgID(t *testing.T) {
 	}
 }
 
-// TestGetWorkspaceByIdHandler_AcceptsOrgIdAndLegacyOrgID mirrors the coverage
+// TestGetWorkspaceByIDHandler_AcceptsOrgIdAndLegacyOrgID mirrors the coverage
 // above for the single-workspace endpoint: canonical `orgId` preferred,
 // legacy `orgID` dual-accepted during Phase 2.
-func TestGetWorkspaceByIdHandler_AcceptsOrgIdAndLegacyOrgID(t *testing.T) {
+func TestGetWorkspaceByIDHandler_AcceptsOrgIdAndLegacyOrgID(t *testing.T) {
 	cases := []struct {
 		name         string
 		rawQuery     string
@@ -157,7 +157,7 @@ func TestGetWorkspaceByIdHandler_AcceptsOrgIdAndLegacyOrgID(t *testing.T) {
 			req = mux.SetURLVars(req, map[string]string{"id": "workspace-1"})
 			rec := httptest.NewRecorder()
 
-			h.GetWorkspaceByIdHandler(rec, req, nil, nil, provider)
+			h.GetWorkspaceByIDHandler(rec, req, nil, nil, provider)
 
 			if rec.Code != tc.wantStatus {
 				t.Fatalf("expected status %d, got %d (body=%q)", tc.wantStatus, rec.Code, rec.Body.String())

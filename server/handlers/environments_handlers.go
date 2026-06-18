@@ -33,8 +33,8 @@ func (p *environmentPayloadWire) UnmarshalJSON(data []byte) error {
 	type alias environment.EnvironmentPayload
 	aux := struct {
 		*alias
-		OrgIdCamel  *openapi_types.UUID `json:"organizationId,omitempty"`
-		OrgIdSnake  *openapi_types.UUID `json:"organization_id,omitempty"`
+		OrgIDCamel  *openapi_types.UUID `json:"organizationId,omitempty"`
+		OrgIDSnake  *openapi_types.UUID `json:"organization_id,omitempty"`
 	}{alias: (*alias)(&p.EnvironmentPayload)}
 
 	// Zero OrgId so a reused receiver does not carry stale data when the
@@ -46,10 +46,10 @@ func (p *environmentPayloadWire) UnmarshalJSON(data []byte) error {
 	}
 	// Canonical wins when both are supplied.
 	switch {
-	case aux.OrgIdCamel != nil:
-		p.OrgId = *aux.OrgIdCamel
-	case aux.OrgIdSnake != nil:
-		p.OrgId = *aux.OrgIdSnake
+	case aux.OrgIDCamel != nil:
+		p.OrgId = *aux.OrgIDCamel
+	case aux.OrgIDSnake != nil:
+		p.OrgId = *aux.OrgIDSnake
 	}
 	return nil
 }
