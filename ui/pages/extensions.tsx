@@ -460,7 +460,7 @@ const KubectlPluginExtension = () => (
           variant="contained"
           color="primary"
           data-testid="kubectl-plugin-learn-more-btn"
-          onClick={openExternal('https://docs.meshery.io/extensions/kubectl-snapshot')}
+          onClick={openExternal('https://meshery.io/extensions/kubectl-kanvas-snapshot')}
         >
           Learn More
         </Button>
