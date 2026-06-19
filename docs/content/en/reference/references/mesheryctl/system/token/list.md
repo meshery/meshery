@@ -3,6 +3,9 @@ title: mesheryctl-system-token-list
 display_title: false
 command: system
 subcommand: token
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys, mesheryctl-tkn]
 ---
 
 # mesheryctl system token list
@@ -17,7 +20,7 @@ List all the tokens in your meshconfig
 mesheryctl system token list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -26,7 +29,7 @@ mesheryctl system token list [flags]
 mesheryctl system token list
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -48,7 +51,5 @@ mesheryctl system token list
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

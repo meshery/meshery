@@ -3,6 +3,9 @@ title: mesheryctl-relationship-list
 display_title: false
 command: relationship
 subcommand: list
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-relationship]
 ---
 
 # mesheryctl relationship list
@@ -17,7 +20,7 @@ List all relationships registered in Meshery Server
 mesheryctl relationship list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ List all relationships
 mesheryctl relationship list
 
 </div>
-</pre> 
+</pre>
 
 List relationships for a specified page
 <pre class='codeblock-pre'>
@@ -35,7 +38,7 @@ List relationships for a specified page
 mesheryctl relationship list --page [page-number]
 
 </div>
-</pre> 
+</pre>
 
 List relationships with a custom page size
 <pre class='codeblock-pre'>
@@ -43,7 +46,7 @@ List relationships with a custom page size
 mesheryctl relationship list --pagesize [page-size]
 
 </div>
-</pre> 
+</pre>
 
 Display the total number of available relationships in Meshery
 <pre class='codeblock-pre'>
@@ -51,7 +54,7 @@ Display the total number of available relationships in Meshery
 mesheryctl relationship list --count
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -74,7 +77,5 @@ mesheryctl relationship list --count
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

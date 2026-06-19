@@ -3,6 +3,9 @@ title: mesheryctl-model-build
 display_title: false
 command: model
 subcommand: build
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-model]
 ---
 
 # mesheryctl model build
@@ -20,7 +23,7 @@ Expects input to be in the format scaffolded by the model init command.
 mesheryctl model build [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -30,21 +33,21 @@ Create an OCI-compliant package from the model files
 mesheryctl model build [model-name]
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model build [model-name]/[model-version]
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-    
+
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -65,7 +68,5 @@ mesheryctl model build [model-name]/[model-version]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

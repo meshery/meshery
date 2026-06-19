@@ -3,6 +3,9 @@ title: mesheryctl-design
 display_title: false
 command: design
 subcommand: nil
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl design
@@ -18,7 +21,7 @@ Manage cloud and cloud native infrastructure using predefined designs.
 mesheryctl design [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Apply design file:
 mesheryctl design apply --file [path to design file | URL of the file]
 
 </div>
-</pre> 
+</pre>
 
 Delete design file:
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ Delete design file:
 mesheryctl design delete --file [path to design file]
 
 </div>
-</pre> 
+</pre>
 
 View design file:
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ View design file:
 mesheryctl design view [design name | ID]
 
 </div>
-</pre> 
+</pre>
 
 List all designs:
 <pre class='codeblock-pre'>
@@ -52,7 +55,7 @@ List all designs:
 mesheryctl design list
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -73,7 +76,5 @@ mesheryctl design list
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

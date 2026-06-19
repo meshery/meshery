@@ -3,6 +3,9 @@ title: mesheryctl-model-import
 display_title: false
 command: model
 subcommand: import
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-model]
 ---
 
 # mesheryctl model import
@@ -18,7 +21,7 @@ Import models by specifying the directory, file, or URL. You can also provide a 
 mesheryctl model import [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Import model
 mesheryctl model import --file [URI]
 
 </div>
-</pre> 
+</pre>
 
 Import model from a URL to a meshery model
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ Import model from a URL to a meshery model
 mesheryctl model import --file [URL]
 
 </div>
-</pre> 
+</pre>
 
 Import model from an OCI artifact
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ Import model from an OCI artifact
 mesheryctl model import --file [OCI]
 
 </div>
-</pre> 
+</pre>
 
 Import model from a tar.gz file
 <pre class='codeblock-pre'>
@@ -52,7 +55,7 @@ Import model from a tar.gz file
 mesheryctl model import --file [path-to-model.tar.gz]
 
 </div>
-</pre> 
+</pre>
 
 Import model from a path
 <pre class='codeblock-pre'>
@@ -60,7 +63,7 @@ Import model from a path
 mesheryctl model import --file [path-to-model]
 
 </div>
-</pre> 
+</pre>
 
 Import model using CSV files
 <pre class='codeblock-pre'>
@@ -68,7 +71,7 @@ Import model using CSV files
 mesheryctl model import --file [path-to-csv-directory]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -89,7 +92,5 @@ mesheryctl model import --file [path-to-csv-directory]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

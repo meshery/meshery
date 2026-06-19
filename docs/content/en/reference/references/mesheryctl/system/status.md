@@ -3,6 +3,9 @@ title: mesheryctl-system-status
 display_title: false
 command: system
 subcommand: status
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys]
 ---
 
 # mesheryctl system status
@@ -17,7 +20,7 @@ Check status of Meshery and Meshery components.
 mesheryctl system status [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
 mesheryctl system status
 
 </div>
-</pre> 
+</pre>
 
 (optional) Extra data in status table
 <pre class='codeblock-pre'>
@@ -35,7 +38,7 @@ mesheryctl system status
 mesheryctl system status --verbose
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -62,7 +65,5 @@ mesheryctl system status --verbose
 
 Usage of mesheryctl system status
 ![status-usage](../../../images/status.png)
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -3,6 +3,9 @@ title: mesheryctl-system-logs
 display_title: false
 command: system
 subcommand: logs
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys]
 ---
 
 # mesheryctl system logs
@@ -19,7 +22,7 @@ It also shows the logs of a specific component.
 mesheryctl system logs [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -29,7 +32,7 @@ Show logs (without tailing)
 mesheryctl system logs
 
 </div>
-</pre> 
+</pre>
 
 Starts tailing Meshery server debug logs (works with components also)
 <pre class='codeblock-pre'>
@@ -37,14 +40,14 @@ Starts tailing Meshery server debug logs (works with components also)
 mesheryctl system logs --follow
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system logs meshery-istio
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -67,7 +70,5 @@ mesheryctl system logs meshery-istio
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

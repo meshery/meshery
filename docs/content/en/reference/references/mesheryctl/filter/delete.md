@@ -3,6 +3,9 @@ title: mesheryctl-filter-delete
 display_title: false
 command: filter
 subcommand: delete
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-filter]
 ---
 
 # mesheryctl filter delete
@@ -17,7 +20,7 @@ Delete a filter file using the name or ID of a filter
 mesheryctl filter delete [filter-name | ID] [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ A unique prefix of the name or ID can also be provided. If the prefix is not uni
 mesheryctl filter delete [filter-name | ID]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -49,7 +52,5 @@ mesheryctl filter delete [filter-name | ID]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

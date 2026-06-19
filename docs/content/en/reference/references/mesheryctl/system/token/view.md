@@ -3,6 +3,9 @@ title: mesheryctl-system-token-view
 display_title: false
 command: system
 subcommand: token
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys, mesheryctl-tkn]
 ---
 
 # mesheryctl system token view
@@ -17,7 +20,7 @@ View a specific token in meshery config
 mesheryctl system token view [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -26,14 +29,14 @@ mesheryctl system token view [flags]
 mesheryctl system token view [token-name]
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system token view (show token of current context)
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -56,7 +59,5 @@ mesheryctl system token view (show token of current context)
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

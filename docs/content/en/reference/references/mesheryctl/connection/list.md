@@ -3,6 +3,9 @@ title: mesheryctl-connection-list
 display_title: false
 command: connection
 subcommand: list
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-connection]
 ---
 
 # mesheryctl connection list
@@ -18,7 +21,7 @@ List all available connections.
 mesheryctl connection list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ List all the connections
 mesheryctl connection list
 
 </div>
-</pre> 
+</pre>
 
 List all the connections with page number
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ List all the connections with page number
 mesheryctl connection list --page [page-number]
 
 </div>
-</pre> 
+</pre>
 
 List all the connections matching a specific kind and status
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ List all the connections matching a specific kind and status
 mesheryctl connection list --kind [kind] --status [status]
 
 </div>
-</pre> 
+</pre>
 
 List all the connections matching a set of kinds and statuses
 <pre class='codeblock-pre'>
@@ -52,7 +55,7 @@ List all the connections matching a set of kinds and statuses
 mesheryctl connection list --kind [kind] --kind [kind] --status [status] --status [status]
 
 </div>
-</pre> 
+</pre>
 
 Display total count of all available connections
 <pre class='codeblock-pre'>
@@ -60,7 +63,7 @@ Display total count of all available connections
 mesheryctl connection list --count
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -85,7 +88,5 @@ mesheryctl connection list --count
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

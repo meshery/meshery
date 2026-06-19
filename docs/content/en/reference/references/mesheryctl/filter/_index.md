@@ -3,6 +3,9 @@ title: mesheryctl-filter
 display_title: false
 command: filter
 subcommand: nil
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl filter
@@ -18,7 +21,7 @@ Cloud Native Filter Management
 mesheryctl filter [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Base command for WASM filters:
 mesheryctl filter [subcommands]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -49,7 +52,5 @@ mesheryctl filter [subcommands]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -3,6 +3,9 @@ title: mesheryctl-perf
 display_title: false
 command: perf
 subcommand: nil
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl perf
@@ -18,7 +21,7 @@ Load generation and performance characterization
 mesheryctl perf [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Run performance test:
 mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
 
 </div>
-</pre> 
+</pre>
 
 List performance profiles:
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ List performance profiles:
 mesheryctl perf profile sam-test
 
 </div>
-</pre> 
+</pre>
 
 List performance results:
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ List performance results:
 mesheryctl perf result sam-test
 
 </div>
-</pre> 
+</pre>
 
 Display Perf profile in JSON or YAML:
 <pre class='codeblock-pre'>
@@ -52,14 +55,14 @@ Display Perf profile in JSON or YAML:
 mesheryctl perf result -o json
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf result -o yaml
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -82,7 +85,5 @@ mesheryctl perf result -o yaml
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

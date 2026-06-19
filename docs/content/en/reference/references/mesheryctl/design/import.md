@@ -19,13 +19,13 @@ Import a Meshery design
 
 		If you are providing remote URL, it should be a direct URL to a downloadable file.
 		For example, if the file is stored on GitHub, the URL should be 'https://raw.githubusercontent.com/path-to-file'.
-	
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design import [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -35,28 +35,28 @@ Import design manifest
 mesheryctl design import -f [file/URL] -s [source-type] -n [name]
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design import -f design.tar
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design import -f design.yml -n design-name
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -80,7 +80,5 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

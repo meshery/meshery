@@ -3,6 +3,9 @@ title: mesheryctl-system-start
 display_title: false
 command: system
 subcommand: start
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys]
 ---
 
 # mesheryctl system start
@@ -17,7 +20,7 @@ Start Meshery and each of its cloud native components.
 mesheryctl system start [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ Start meshery
 mesheryctl system start
 
 </div>
-</pre> 
+</pre>
 
 (optional) skip opening of MesheryUI in browser.
 <pre class='codeblock-pre'>
@@ -35,7 +38,7 @@ mesheryctl system start
 mesheryctl system start --skip-browser
 
 </div>
-</pre> 
+</pre>
 
 (optional) skip checking for new updates available in Meshery.
 <pre class='codeblock-pre'>
@@ -43,7 +46,7 @@ mesheryctl system start --skip-browser
 mesheryctl system start --skip-update
 
 </div>
-</pre> 
+</pre>
 
 Reset Meshery's configuration file to default settings.
 <pre class='codeblock-pre'>
@@ -51,7 +54,7 @@ Reset Meshery's configuration file to default settings.
 mesheryctl system start --reset
 
 </div>
-</pre> 
+</pre>
 
 Specify Platform to deploy Meshery to.
 <pre class='codeblock-pre'>
@@ -59,7 +62,7 @@ Specify Platform to deploy Meshery to.
 mesheryctl system start -p docker
 
 </div>
-</pre> 
+</pre>
 
 Specify Provider to use.
 <pre class='codeblock-pre'>
@@ -67,7 +70,7 @@ Specify Provider to use.
 mesheryctl system start --provider Meshery
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -94,7 +97,5 @@ mesheryctl system start --provider Meshery
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -3,6 +3,9 @@ title: mesheryctl-system-check
 display_title: false
 command: system
 subcommand: check
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys]
 ---
 
 # mesheryctl system check
@@ -18,7 +21,7 @@ Verify environment pre/post-deployment of Meshery.
 mesheryctl system check [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Run all system checks for both pre and post-deployment scenarios
 mesheryctl system check
 
 </div>
-</pre> 
+</pre>
 
 Run pre-deployment checks (Docker and Kubernetes)
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ Run pre-deployment checks (Docker and Kubernetes)
 mesheryctl system check --preflight
 
 </div>
-</pre> 
+</pre>
 
 Run pre-deployment checks (Docker and Kubernetes)
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ Run pre-deployment checks (Docker and Kubernetes)
 mesheryctl system check --pre
 
 </div>
-</pre> 
+</pre>
 
 Run checks for all Meshery adapters
 <pre class='codeblock-pre'>
@@ -52,7 +55,7 @@ Run checks for all Meshery adapters
 mesheryctl system check --adapters
 
 </div>
-</pre> 
+</pre>
 
 Run checks on a specific Meshery adapter
 <pre class='codeblock-pre'>
@@ -60,14 +63,14 @@ Run checks on a specific Meshery adapter
 mesheryctl system check --adapter meshery-istio:10000
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system check --adapter meshery-istio
 
 </div>
-</pre> 
+</pre>
 
 Verify the health of Meshery Operator's deployment with MeshSync and Broker
 <pre class='codeblock-pre'>
@@ -75,7 +78,7 @@ Verify the health of Meshery Operator's deployment with MeshSync and Broker
 mesheryctl system check --operator
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -108,7 +111,5 @@ mesheryctl system check --operator
 
 Usage of mesheryctl system check
 ![check-usage](../../../images/check.png)
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

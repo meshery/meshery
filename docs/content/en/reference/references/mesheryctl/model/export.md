@@ -3,6 +3,9 @@ title: mesheryctl-model-export
 display_title: false
 command: model
 subcommand: export
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-model]
 ---
 
 # mesheryctl model export
@@ -18,17 +21,17 @@ Export the registered model to the specified output type
 mesheryctl model export [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
-Export a model by name 
+Export a model by name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
 
 </div>
-</pre> 
+</pre>
 
 Export a model by name in JSON type
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ Export a model by name in JSON type
 mesheryctl model export [model-name] -t [yaml|json] (default is YAML)
 
 </div>
-</pre> 
+</pre>
 
 Export a model by name in YAML type in a specific location
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ Export a model by name in YAML type in a specific location
 mesheryctl model export [model-name] -l [path-to-location]
 
 </div>
-</pre> 
+</pre>
 
 Export a model by name in YAML type discarding components and relationships
 <pre class='codeblock-pre'>
@@ -52,7 +55,7 @@ Export a model by name in YAML type discarding components and relationships
 mesheryctl model export [model-name] --discard-components --discard-relationships
 
 </div>
-</pre> 
+</pre>
 
 Export a model version by name in YAML type
 <pre class='codeblock-pre'>
@@ -60,7 +63,7 @@ Export a model version by name in YAML type
 mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -87,7 +90,5 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

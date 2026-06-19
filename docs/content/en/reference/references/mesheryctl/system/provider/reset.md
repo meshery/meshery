@@ -3,6 +3,9 @@ title: mesheryctl-system-provider-reset
 display_title: false
 command: system
 subcommand: provider
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys, mesheryctl-prov]
 ---
 
 # mesheryctl system provider reset
@@ -17,7 +20,7 @@ Clear the configured provider for the current context. This allows users to sele
 mesheryctl system provider reset [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ Clear the configured provider
 mesheryctl system provider reset
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -49,7 +52,5 @@ mesheryctl system provider reset
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

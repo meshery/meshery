@@ -3,6 +3,9 @@ title: mesheryctl-environment
 display_title: false
 command: environment
 subcommand: nil
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl environment
@@ -18,7 +21,7 @@ Create, delete, list of view details of environment(s) of a specific organizatio
 mesheryctl environment [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Create an environment in an organization
 mesheryctl environment create --orgId [orgId] --name [name] --description [description]
 
 </div>
-</pre> 
+</pre>
 
 Delete an environment in an organization
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ Delete an environment in an organization
 mesheryctl environment delete environment-id
 
 </div>
-</pre> 
+</pre>
 
 List of registered environments in an organization
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ List of registered environments in an organization
 mesheryctl environment list --orgId [orgId]
 
 </div>
-</pre> 
+</pre>
 
 View a particular environment
 <pre class='codeblock-pre'>
@@ -52,7 +55,7 @@ View a particular environment
 mesheryctl environment view --orgId [orgId]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -72,7 +75,5 @@ mesheryctl environment view --orgId [orgId]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

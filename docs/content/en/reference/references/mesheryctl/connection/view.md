@@ -3,6 +3,9 @@ title: mesheryctl-connection-view
 display_title: false
 command: connection
 subcommand: view
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-connection]
 ---
 
 # mesheryctl connection view
@@ -18,7 +21,7 @@ View a connection by its ID or name.
 mesheryctl connection view [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ View details of a specific connection in default format (yaml)
 mesheryctl connection view [connection-name|connection-id]
 
 </div>
-</pre> 
+</pre>
 
 View details of a specific connection in JSON format
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ View details of a specific connection in JSON format
 mesheryctl connection view [connection-name|connection-id] --output-format json
 
 </div>
-</pre> 
+</pre>
 
 View details of a specific connection in json format and save it to a file
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ View details of a specific connection in json format and save it to a file
 mesheryctl connection view [connection-name|connection-id] --output-format json --save
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -66,7 +69,5 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

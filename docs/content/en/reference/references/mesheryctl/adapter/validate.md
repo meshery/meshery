@@ -3,6 +3,9 @@ title: mesheryctl-adapter-validate
 display_title: false
 command: adapter
 subcommand: validate
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-adapter]
 ---
 
 # mesheryctl adapter validate
@@ -17,7 +20,7 @@ Validate predefined conformance to different standard specifications
 mesheryctl adapter validate [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ Validate conformance to predefined standards
 mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
 
 </div>
-</pre> 
+</pre>
 
 Validate Istio to predefined standards
 <pre class='codeblock-pre'>
@@ -35,7 +38,7 @@ Validate Istio to predefined standards
 mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -64,7 +67,5 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 
 Usage of mesheryctl adapter validate
 ![mesh-validate-usage](../../../images/mesh-validate.png)
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -3,6 +3,9 @@ title: mesheryctl-relationship-view
 display_title: false
 command: relationship
 subcommand: view
+no_list: true
+hide_section_list:
+categories: [mesheryctl-ref, mesheryctl-relationship]
 ---
 
 # mesheryctl relationship view
@@ -17,7 +20,7 @@ view a relationship queried by the model name
 mesheryctl relationship view [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ View relationships of a model in default format yaml
 mesheryctl relationship view [model-name]
 
 </div>
-</pre> 
+</pre>
 
 View relationships of a model in JSON format
 <pre class='codeblock-pre'>
@@ -35,7 +38,7 @@ View relationships of a model in JSON format
 mesheryctl relationship view [model-name] --output-format json
 
 </div>
-</pre> 
+</pre>
 
 View relationships of a model in json format and save it to a file
 <pre class='codeblock-pre'>
@@ -43,7 +46,7 @@ View relationships of a model in json format and save it to a file
 mesheryctl relationship view [model-name] --output-format json --save
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -65,7 +68,5 @@ mesheryctl relationship view [model-name] --output-format json --save
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

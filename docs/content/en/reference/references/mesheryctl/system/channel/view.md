@@ -3,6 +3,9 @@ title: mesheryctl-system-channel-view
 display_title: false
 command: system
 subcommand: channel
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys, mesheryctl-chan]
 ---
 
 # mesheryctl system channel view
@@ -18,7 +21,7 @@ View release channel and version of context in focus
 mesheryctl system channel view [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ View current release channel
 mesheryctl system channel view edge
 
 </div>
-</pre> 
+</pre>
 
 View release channel for all contexts
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ View release channel for all contexts
 mesheryctl system channel view --all
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -59,7 +62,5 @@ mesheryctl system channel view --all
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

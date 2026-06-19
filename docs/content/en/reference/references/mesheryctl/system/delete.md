@@ -3,6 +3,9 @@ title: mesheryctl-system-delete
 display_title: false
 command: system
 subcommand: delete
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys]
 ---
 
 # mesheryctl system delete
@@ -17,7 +20,7 @@ Delete Meshery containers. This command removes all Meshery containers created b
 mesheryctl system delete [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ Delete Meshery containers
 mesheryctl system delete
 
 </div>
-</pre> 
+</pre>
 
 Delete Meshery containers without confirmation
 <pre class='codeblock-pre'>
@@ -35,7 +38,7 @@ Delete Meshery containers without confirmation
 mesheryctl system delete -y
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -57,7 +60,5 @@ mesheryctl system delete -y
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

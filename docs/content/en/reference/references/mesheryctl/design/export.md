@@ -3,6 +3,9 @@ title: mesheryctl-design-export
 display_title: false
 command: design
 subcommand: export
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-design]
 ---
 
 # mesheryctl design export
@@ -21,7 +24,7 @@ type allowed are oci, original, and current. The default design type is current.
 mesheryctl design export [pattern-name | ID] [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -31,7 +34,7 @@ Export a design with a specific ID
 mesheryctl design export [pattern-name | ID]
 
 </div>
-</pre> 
+</pre>
 
 Export a design with a specific ID and type
 <pre class='codeblock-pre'>
@@ -39,7 +42,7 @@ Export a design with a specific ID and type
 mesheryctl design export [pattern-name | ID] --type [design-type]
 
 </div>
-</pre> 
+</pre>
 
 Export a design and save it to a specific directory
 <pre class='codeblock-pre'>
@@ -47,7 +50,7 @@ Export a design and save it to a specific directory
 mesheryctl design export [pattern-name | ID] --output ./designs
 
 </div>
-</pre> 
+</pre>
 
 Export a design with a specific type and save it to a directory
 <pre class='codeblock-pre'>
@@ -55,7 +58,7 @@ Export a design with a specific type and save it to a directory
 mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exports
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -78,7 +81,5 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

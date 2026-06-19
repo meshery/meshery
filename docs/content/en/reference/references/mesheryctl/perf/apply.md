@@ -3,6 +3,9 @@ title: mesheryctl-perf-apply
 display_title: false
 command: perf
 subcommand: apply
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-perf]
 ---
 
 # mesheryctl perf apply
@@ -17,7 +20,7 @@ Run Performance test using existing profiles or using flags
 mesheryctl perf apply [profile-name] [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ Execute a Performance test with the specified performance profile
 mesheryctl perf apply meshery-profile [flags]
 
 </div>
-</pre> 
+</pre>
 
 Execute a Performance test with creating a new performance profile
 <pre class='codeblock-pre'>
@@ -35,7 +38,7 @@ Execute a Performance test with creating a new performance profile
 mesheryctl perf apply meshery-profile-new --url "https://google.com"
 
 </div>
-</pre> 
+</pre>
 
 Execute a Performance test creating a new performance profile and pass certificate to be used
 <pre class='codeblock-pre'>
@@ -43,7 +46,7 @@ Execute a Performance test creating a new performance profile and pass certifica
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --cert-path path/to/cert.pem
 
 </div>
-</pre> 
+</pre>
 
 Execute a performance profile without using the certificate present in the profile
 <pre class='codeblock-pre'>
@@ -51,7 +54,7 @@ Execute a performance profile without using the certificate present in the profi
 mesheryctl perf apply meshery-profile --url "https://google.com" --disable-cert
 
 </div>
-</pre> 
+</pre>
 
 Run Performance test using SMP compatible test configuration
 If the profile already exists, the test will be run overriding the values with the ones provided in the configuration file
@@ -60,7 +63,7 @@ If the profile already exists, the test will be run overriding the values with t
 mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml
 
 </div>
-</pre> 
+</pre>
 
 Run performance test using SMP compatible test configuration and override values with flags
 <pre class='codeblock-pre'>
@@ -68,7 +71,7 @@ Run performance test using SMP compatible test configuration and override values
 mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml [flags]
 
 </div>
-</pre> 
+</pre>
 
 Execute a Performance test with specified queries per second
 <pre class='codeblock-pre'>
@@ -76,7 +79,7 @@ Execute a Performance test with specified queries per second
 mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --qps 30
 
 </div>
-</pre> 
+</pre>
 
 Execute a Performance test with specified infrastructure
 <pre class='codeblock-pre'>
@@ -84,7 +87,7 @@ Execute a Performance test with specified infrastructure
 mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --mesh istio
 
 </div>
-</pre> 
+</pre>
 
 Execute a Performance test creating a new performance profile and pass options to the load generator used
 If any options are already present in the profile or passed through flags, the --options flag will take precedence over the profile and flag options
@@ -94,21 +97,21 @@ Options for fortio - https://github.com/fortio/fortio/blob/v1.57.0/fhttp/httprun
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --options [filepath|json-string]
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --options path/to/options.json
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator fortio --options '{"MethodOverride": "POST"}'
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -148,7 +151,5 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 
 Usage of mesheryctl perf apply
 ![perf-apply-usage](../../../images/perf-apply.png)
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

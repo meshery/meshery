@@ -3,6 +3,9 @@ title: mesheryctl-workspace
 display_title: false
 command: workspace
 subcommand: nil
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl workspace
@@ -18,7 +21,7 @@ Create, list of workspaces under an organization
 mesheryctl workspace [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ To view a list workspaces
 mesheryctl workspace list --orgId [orgId]
 
 </div>
-</pre> 
+</pre>
 
 To create a workspace
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ To create a workspace
 mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -57,7 +60,5 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

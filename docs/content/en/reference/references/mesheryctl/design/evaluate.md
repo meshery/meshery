@@ -3,6 +3,9 @@ title: mesheryctl-design-evaluate
 display_title: false
 command: design
 subcommand: evaluate
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-design]
 ---
 
 # mesheryctl design evaluate
@@ -19,7 +22,7 @@ of evaluation actions is printed to the terminal.
 mesheryctl design evaluate [ID] [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -29,7 +32,7 @@ Evaluate a design from a file and save the result
 mesheryctl design evaluate -f design.yaml -o evaluated-design.yaml
 
 </div>
-</pre> 
+</pre>
 
 Evaluate a design by ID
 <pre class='codeblock-pre'>
@@ -37,7 +40,7 @@ Evaluate a design by ID
 mesheryctl design evaluate 12345678-abcd-efgh-ijkl-123456789012 -o result.yaml
 
 </div>
-</pre> 
+</pre>
 
 Evaluate and save as JSON
 <pre class='codeblock-pre'>
@@ -45,7 +48,7 @@ Evaluate and save as JSON
 mesheryctl design evaluate -f design.yaml --output-format json -o evaluated-design.json
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -69,7 +72,5 @@ mesheryctl design evaluate -f design.yaml --output-format json -o evaluated-desi
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

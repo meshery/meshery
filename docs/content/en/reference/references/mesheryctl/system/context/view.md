@@ -3,6 +3,9 @@ title: mesheryctl-system-context-view
 display_title: false
 command: system
 subcommand: context
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys, mesheryctl-ctx]
 ---
 
 # mesheryctl system context view
@@ -20,7 +23,7 @@ Use this to verify or debug your current CLI settings.
 mesheryctl system context view [context-name | --context context-name | --all] --flags [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -30,7 +33,7 @@ View the default context
 mesheryctl system context view
 
 </div>
-</pre> 
+</pre>
 
 View a specified context
 <pre class='codeblock-pre'>
@@ -38,7 +41,7 @@ View a specified context
 mesheryctl system context view context-name
 
 </div>
-</pre> 
+</pre>
 
 View a specified context using the --context flag
 <pre class='codeblock-pre'>
@@ -46,7 +49,7 @@ View a specified context using the --context flag
 mesheryctl system context view --context context-name
 
 </div>
-</pre> 
+</pre>
 
 View configuration of all contexts
 <pre class='codeblock-pre'>
@@ -54,14 +57,14 @@ View configuration of all contexts
 mesheryctl system context view --all
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-    
+
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -89,7 +92,5 @@ mesheryctl system context view --all
 
 Usage of mesheryctl context view
 ![context-view-usage](../../../../images/context-view.png)
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

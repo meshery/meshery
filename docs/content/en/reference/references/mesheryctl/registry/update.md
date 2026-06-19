@@ -3,6 +3,9 @@ title: mesheryctl-registry-update
 display_title: false
 command: registry
 subcommand: update
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-reg]
 ---
 
 # mesheryctl registry update
@@ -18,7 +21,7 @@ Updates the component metadata (SVGs, shapes, styles and other) by referring fro
 mesheryctl registry update [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Update models from Meshery Integration Spreadsheet
 mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred "$CRED" -i [path to the directory containing models].
 
 </div>
-</pre> 
+</pre>
 
 Updating models in the meshery/meshery repository based on the spreadsheet
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ Updating models in the meshery/meshery repository based on the spreadsheet
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred "$CRED"
 
 </div>
-</pre> 
+</pre>
 
 Updating models in the meshery/meshery repository based on flag
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ Updating models in the meshery/meshery repository based on flag
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred "$CRED" --model "[model-name]"
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -68,7 +71,5 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

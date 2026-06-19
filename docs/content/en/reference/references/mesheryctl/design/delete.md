@@ -3,6 +3,9 @@ title: mesheryctl-design-delete
 display_title: false
 command: design
 subcommand: delete
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-design]
 ---
 
 # mesheryctl design delete
@@ -17,7 +20,7 @@ delete design file will trigger deletion of the design file
 mesheryctl design delete [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ delete a design file
 mesheryctl design delete [file | URL]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -49,7 +52,5 @@ mesheryctl design delete [file | URL]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

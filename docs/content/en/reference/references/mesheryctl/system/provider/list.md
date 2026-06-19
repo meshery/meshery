@@ -3,6 +3,9 @@ title: mesheryctl-system-provider-list
 display_title: false
 command: system
 subcommand: provider
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys, mesheryctl-prov]
 ---
 
 # mesheryctl system provider list
@@ -17,7 +20,7 @@ List current provider and available providers
 mesheryctl system provider list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ List all available providers
 mesheryctl system provider list
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -49,7 +52,5 @@ mesheryctl system provider list
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

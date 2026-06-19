@@ -3,6 +3,9 @@ title: mesheryctl-registry-generate
 display_title: false
 command: registry
 subcommand: generate
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-reg]
 ---
 
 # mesheryctl registry generate
@@ -18,7 +21,7 @@ Prerequisite: Execute this command from the root of a meshery/meshery repo fork.
 mesheryctl registry generate [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" s
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED"
 
 </div>
-</pre> 
+</pre>
 
 Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ Directly generate models from one of the supported registrants by using Registra
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
 
 </div>
-</pre> 
+</pre>
 
 Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations"
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred --model "[model-name]"
 
 </div>
-</pre> 
+</pre>
 
 Generate Meshery Models and Component from csv files in a local directory.
 <pre class='codeblock-pre'>
@@ -52,7 +55,7 @@ Generate Meshery Models and Component from csv files in a local directory.
 mesheryctl registry generate --directory [DIRECTORY_PATH]
 
 </div>
-</pre> 
+</pre>
 
 Generate Meshery Models from individual CSV files.
 <pre class='codeblock-pre'>
@@ -60,7 +63,7 @@ Generate Meshery Models from individual CSV files.
 mesheryctl registry generate --model-csv [path/to/models.csv] --component-csv [path/to/components.csv] --relationship-csv [path/to/relationships.csv]
 
 </div>
-</pre> 
+</pre>
 
 Generate models with a custom per-model timeout (e.g., 10 minutes per model).
 <pre class='codeblock-pre'>
@@ -68,7 +71,7 @@ Generate models with a custom per-model timeout (e.g., 10 minutes per model).
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED" --timeout 10m
 
 </div>
-</pre> 
+</pre>
 
 Generate only the latest version of each model.
 <pre class='codeblock-pre'>
@@ -76,7 +79,7 @@ Generate only the latest version of each model.
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED" --latest-only
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -108,7 +111,5 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

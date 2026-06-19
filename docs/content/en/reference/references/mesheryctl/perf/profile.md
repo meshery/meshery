@@ -3,6 +3,9 @@ title: mesheryctl-perf-profile
 display_title: false
 command: perf
 subcommand: profile
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-perf]
 ---
 
 # mesheryctl perf profile
@@ -17,7 +20,7 @@ List all the available performance profiles
 mesheryctl perf profile [profile-name] [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ List performance profiles (maximum 25 profiles)
 mesheryctl perf profile
 
 </div>
-</pre> 
+</pre>
 
 List performance profiles with search (maximum 25 profiles)
 <pre class='codeblock-pre'>
@@ -35,7 +38,7 @@ List performance profiles with search (maximum 25 profiles)
 mesheryctl perf profile test 2
 
 </div>
-</pre> 
+</pre>
 
 View single performance profile with detailed information
 <pre class='codeblock-pre'>
@@ -43,7 +46,7 @@ View single performance profile with detailed information
 mesheryctl perf profile test --view
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -68,7 +71,5 @@ mesheryctl perf profile test --view
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

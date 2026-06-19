@@ -3,6 +3,9 @@ title: mesheryctl-adapter-remove
 display_title: false
 command: adapter
 subcommand: remove
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-adapter]
 ---
 
 # mesheryctl adapter remove
@@ -17,7 +20,7 @@ remove cloud and cloud native infrastructure
 mesheryctl adapter remove [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ Remove Linkerd deployment
 mesheryctl adapter remove linkerd
 
 </div>
-</pre> 
+</pre>
 
 Remove a Linkerd control plane found under a specific namespace (linkerd-ns)
 <pre class='codeblock-pre'>
@@ -35,14 +38,14 @@ Remove a Linkerd control plane found under a specific namespace (linkerd-ns)
 mesheryctl adapter remove linkerd --namespace linkerd-ns
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-		
+
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -64,7 +67,5 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

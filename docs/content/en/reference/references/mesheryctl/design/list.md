@@ -3,6 +3,9 @@ title: mesheryctl-design-list
 display_title: false
 command: design
 subcommand: list
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-design]
 ---
 
 # mesheryctl design list
@@ -18,7 +21,7 @@ Display list of all available designs.
 mesheryctl design list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Display a list of all available designs
 mesheryctl design list
 
 </div>
-</pre> 
+</pre>
 
 Display a list of all available designs with verbose output
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ Display a list of all available designs with verbose output
 mesheryctl design list --verbose
 
 </div>
-</pre> 
+</pre>
 
 Display a list of all available designs with specified page number (10 designs per page by default)
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ Display a list of all available designs with specified page number (10 designs p
 mesheryctl design list --page [pange-number]
 
 </div>
-</pre> 
+</pre>
 
 Display a list of all available designs with custom page size (10 designs per page by default)
 <pre class='codeblock-pre'>
@@ -52,7 +55,7 @@ Display a list of all available designs with custom page size (10 designs per pa
 mesheryctl design list --pagesize [page-size]
 
 </div>
-</pre> 
+</pre>
 
 Display only the count of all available designs
 <pre class='codeblock-pre'>
@@ -60,7 +63,7 @@ Display only the count of all available designs
 mesheryctl design list --count
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -89,7 +92,5 @@ mesheryctl design list --count
 
 Usage of mesheryctl design list
 ![pattern-list-usage](../../../images/patternList.png)
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -3,6 +3,9 @@ title: mesheryctl-filter-list
 display_title: false
 command: filter
 subcommand: list
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-filter]
 ---
 
 # mesheryctl filter list
@@ -17,7 +20,7 @@ Display list of all available filter files.
 mesheryctl filter list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ List all WASM filter files present
 mesheryctl filter list	(maximum 25 filters)
 
 </div>
-</pre> 
+</pre>
 
 Search for filter
 <pre class='codeblock-pre'>
@@ -35,7 +38,7 @@ Search for filter
 mesheryctl filter list Test (maximum 25 filters)
 
 </div>
-</pre> 
+</pre>
 
 Search for filter with space
 <pre class='codeblock-pre'>
@@ -43,7 +46,7 @@ Search for filter with space
 mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -65,7 +68,5 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -3,6 +3,9 @@ title: mesheryctl-workspace-view
 display_title: false
 command: workspace
 subcommand: view
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-wrk]
 ---
 
 # mesheryctl workspace view
@@ -18,7 +21,7 @@ View a workspace by its ID or name.
 mesheryctl workspace view [workspace-name|workspace-id] [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ View details of a specific workspace by ID
 mesheryctl workspace view [workspace-id] --orgId [orgId]
 
 </div>
-</pre> 
+</pre>
 
 View details of a specific workspace by name
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ View details of a specific workspace by name
 mesheryctl workspace view [workspace-name] --orgId [orgId]
 
 </div>
-</pre> 
+</pre>
 
 View details of a specific workspace in JSON format
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ View details of a specific workspace in JSON format
 mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json
 
 </div>
-</pre> 
+</pre>
 
 View details of a specific workspace and save it to a file
 <pre class='codeblock-pre'>
@@ -52,7 +55,7 @@ View details of a specific workspace and save it to a file
 mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --save
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -75,7 +78,5 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.
