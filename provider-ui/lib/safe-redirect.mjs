@@ -90,8 +90,22 @@ export const resolveSafeRedirectURL = ({ search, providerUrl, currentOrigin, all
   const returnTo = params.get("return_to");
   const trustedHosts = buildTrustedHosts({ providerUrl, currentOrigin, allowedHosts });
 
+  // Merge the incoming params into the destination via the URL API (rather than
+  // string concatenation) so a return_to that already carries a query string
+  // stays well-formed instead of producing a double `?`.
+  let destination;
   if (returnTo && isReturnToTrusted(returnTo, trustedHosts)) {
-    return new URL(`${returnTo}?${params.toString()}`).toString();
+    destination = new URL(returnTo);
+  } else {
+    // Untrusted or absent return_to: land on the provider's canonical root so
+    // the token is never handed to an untrusted origin.
+    destination = new URL(providerUrl);
+    if (!destination.pathname.endsWith("/")) {
+      destination.pathname += "/";
+    }
   }
-  return new URL(`${providerUrl}/?${params.toString()}`).toString();
+  for (const [key, value] of params) {
+    destination.searchParams.set(key, value);
+  }
+  return destination.toString();
 };

@@ -39,6 +39,19 @@ test("forwards to a trusted roster host, preserving query params", () => {
   assert.equal(url.searchParams.get("ref"), "/dashboard");
 });
 
+test("merges params when return_to already carries a query string", () => {
+  const out = resolve(
+    "?return_to=https%3A%2F%2Fcloud.layer5.io%2Fauth%2Fredirect%2Faccept%3Fexisting%3D1&token=abc&ref=%2Fdashboard",
+  );
+  const url = new URL(out);
+  assert.equal(url.hostname, "cloud.layer5.io");
+  assert.equal(url.pathname, "/auth/redirect/accept");
+  // Pre-existing query on return_to is preserved, not clobbered into a double `?`.
+  assert.equal(url.searchParams.get("existing"), "1");
+  assert.equal(url.searchParams.get("token"), "abc");
+  assert.equal(url.searchParams.get("ref"), "/dashboard");
+});
+
 test("forwards to the configured provider host", () => {
   const out = resolve(
     "?return_to=https%3A%2F%2Fcloud.meshery.io%2Fauth%2Fredirect%2Faccept&token=t",
