@@ -7,10 +7,7 @@ import {
   ErrorMain,
   ErrorSectionContent,
   StyledButton,
-  ImageContainer,
   IconWrapper,
-  Logo,
-  LogoText,
   StyledDivider,
   ErrorLink,
 } from './styles';
@@ -56,17 +53,6 @@ const DefaultError = (props) => {
           alignItems: 'center',
         }}
       >
-        <ImageContainer>
-          <Logo src="/static/img/meshery-logo/meshery-logo.svg" alt="Meshery logo" />
-          <LogoText
-            src={
-              theme.palette.mode === 'dark'
-                ? '/static/img/meshery-logo/meshery-white.svg'
-                : '/static/img/meshery-logo/meshery-black.svg'
-            }
-            alt="Meshery logo text"
-          />
-        </ImageContainer>
         <Typography
           variant="h4"
           component="h4"
@@ -76,7 +62,7 @@ const DefaultError = (props) => {
         >
           {errorTitle
             ? errorTitle
-            : "Oops! It seems like you don't have the necessary permissions to view this page."}
+            : "Oops! You don't have the required permissions to access this page."}
         </Typography>
         {errorType === ErrorTypes.UNKNOWN ? (
           <UnknownServerSideError errorContent={errorContent} />
