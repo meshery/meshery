@@ -67,9 +67,9 @@ type ComplexityRoot struct {
 		ID              func(childComplexity int) int
 		Location        func(childComplexity int) int
 		Name            func(childComplexity int) int
+		Owner           func(childComplexity int) int
 		Type            func(childComplexity int) int
 		UpdatedAt       func(childComplexity int) int
-		UserID          func(childComplexity int) int
 		Visibility      func(childComplexity int) int
 	}
 
@@ -81,8 +81,8 @@ type ComplexityRoot struct {
 		ID             func(childComplexity int) int
 		Location       func(childComplexity int) int
 		Name           func(childComplexity int) int
+		Owner          func(childComplexity int) int
 		UpdatedAt      func(childComplexity int) int
-		UserID         func(childComplexity int) int
 		Visibility     func(childComplexity int) int
 	}
 
@@ -92,9 +92,9 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		Location    func(childComplexity int) int
 		Name        func(childComplexity int) int
+		Owner       func(childComplexity int) int
 		PatternFile func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
 		Visibility  func(childComplexity int) int
 	}
 
@@ -190,8 +190,8 @@ type ComplexityRoot struct {
 		ID             func(childComplexity int) int
 		Location       func(childComplexity int) int
 		Name           func(childComplexity int) int
+		Owner          func(childComplexity int) int
 		UpdatedAt      func(childComplexity int) int
-		UserID         func(childComplexity int) int
 		Visibility     func(childComplexity int) int
 	}
 
@@ -307,10 +307,10 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		Location    func(childComplexity int) int
 		Name        func(childComplexity int) int
+		Owner       func(childComplexity int) int
 		PatternFile func(childComplexity int) int
 		Type        func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
 		Visibility  func(childComplexity int) int
 	}
 
@@ -339,6 +339,7 @@ type ComplexityRoot struct {
 		LoadGenerators    func(childComplexity int) int
 		Metadata          func(childComplexity int) int
 		Name              func(childComplexity int) int
+		Owner             func(childComplexity int) int
 		QPS               func(childComplexity int) int
 		RequestBody       func(childComplexity int) int
 		RequestCookies    func(childComplexity int) int
@@ -346,7 +347,6 @@ type ComplexityRoot struct {
 		ServiceMesh       func(childComplexity int) int
 		TotalResults      func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
-		UserID            func(childComplexity int) int
 	}
 
 	Query struct {
@@ -515,6 +515,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.ApplicationResult.Name(childComplexity), true
+	case "ApplicationResult.owner":
+		if e.complexity.ApplicationResult.Owner == nil {
+			break
+		}
+
+		return e.complexity.ApplicationResult.Owner(childComplexity), true
 	case "ApplicationResult.type":
 		if e.complexity.ApplicationResult.Type == nil {
 			break
@@ -527,12 +533,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.ApplicationResult.UpdatedAt(childComplexity), true
-	case "ApplicationResult.user_id":
-		if e.complexity.ApplicationResult.UserID == nil {
-			break
-		}
-
-		return e.complexity.ApplicationResult.UserID(childComplexity), true
 	case "ApplicationResult.visibility":
 		if e.complexity.ApplicationResult.Visibility == nil {
 			break
@@ -582,18 +582,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.CatalogFilter.Name(childComplexity), true
+	case "CatalogFilter.owner":
+		if e.complexity.CatalogFilter.Owner == nil {
+			break
+		}
+
+		return e.complexity.CatalogFilter.Owner(childComplexity), true
 	case "CatalogFilter.updated_at":
 		if e.complexity.CatalogFilter.UpdatedAt == nil {
 			break
 		}
 
 		return e.complexity.CatalogFilter.UpdatedAt(childComplexity), true
-	case "CatalogFilter.user_id":
-		if e.complexity.CatalogFilter.UserID == nil {
-			break
-		}
-
-		return e.complexity.CatalogFilter.UserID(childComplexity), true
 	case "CatalogFilter.visibility":
 		if e.complexity.CatalogFilter.Visibility == nil {
 			break
@@ -631,6 +631,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.CatalogPattern.Name(childComplexity), true
+	case "CatalogPattern.owner":
+		if e.complexity.CatalogPattern.Owner == nil {
+			break
+		}
+
+		return e.complexity.CatalogPattern.Owner(childComplexity), true
 	case "CatalogPattern.pattern_file":
 		if e.complexity.CatalogPattern.PatternFile == nil {
 			break
@@ -643,12 +649,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.CatalogPattern.UpdatedAt(childComplexity), true
-	case "CatalogPattern.user_id":
-		if e.complexity.CatalogPattern.UserID == nil {
-			break
-		}
-
-		return e.complexity.CatalogPattern.UserID(childComplexity), true
 	case "CatalogPattern.visibility":
 		if e.complexity.CatalogPattern.Visibility == nil {
 			break
@@ -1015,18 +1015,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.FilterResult.Name(childComplexity), true
+	case "FilterResult.owner":
+		if e.complexity.FilterResult.Owner == nil {
+			break
+		}
+
+		return e.complexity.FilterResult.Owner(childComplexity), true
 	case "FilterResult.updated_at":
 		if e.complexity.FilterResult.UpdatedAt == nil {
 			break
 		}
 
 		return e.complexity.FilterResult.UpdatedAt(childComplexity), true
-	case "FilterResult.user_id":
-		if e.complexity.FilterResult.UserID == nil {
-			break
-		}
-
-		return e.complexity.FilterResult.UserID(childComplexity), true
 	case "FilterResult.visibility":
 		if e.complexity.FilterResult.Visibility == nil {
 			break
@@ -1455,6 +1455,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PatternResult.Name(childComplexity), true
+	case "PatternResult.owner":
+		if e.complexity.PatternResult.Owner == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.Owner(childComplexity), true
 	case "PatternResult.pattern_file":
 		if e.complexity.PatternResult.PatternFile == nil {
 			break
@@ -1473,12 +1479,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PatternResult.UpdatedAt(childComplexity), true
-	case "PatternResult.user_id":
-		if e.complexity.PatternResult.UserID == nil {
-			break
-		}
-
-		return e.complexity.PatternResult.UserID(childComplexity), true
 	case "PatternResult.visibility":
 		if e.complexity.PatternResult.Visibility == nil {
 			break
@@ -1596,6 +1596,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PerfProfile.Name(childComplexity), true
+	case "PerfProfile.owner":
+		if e.complexity.PerfProfile.Owner == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.Owner(childComplexity), true
 	case "PerfProfile.qps":
 		if e.complexity.PerfProfile.QPS == nil {
 			break
@@ -1638,12 +1644,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PerfProfile.UpdatedAt(childComplexity), true
-	case "PerfProfile.user_id":
-		if e.complexity.PerfProfile.UserID == nil {
-			break
-		}
-
-		return e.complexity.PerfProfile.UserID(childComplexity), true
 
 	case "Query.fetchAllResults":
 		if e.complexity.Query.FetchAllResults == nil {
@@ -2436,7 +2436,7 @@ type ApplicationResult {
   name: String!
   application_file: String!
   type: NullString!
-  user_id: String!
+  owner: String!
   location: Location!
   visibility: String!
   created_at: String
@@ -2462,7 +2462,7 @@ type FilterResult {
   name: String!
   filter_file: String!
   filter_resource: String!
-  user_id: String!
+  owner: String!
   location: Location!
   visibility: String!
   catalog_data: Map
@@ -2474,7 +2474,7 @@ type CatalogFilter {
   id: ID!
   name: String!
   filter_file: String!
-  user_id: String!
+  owner: String!
   location: Location!
   filter_resource: String!
   visibility: String!
@@ -2495,7 +2495,7 @@ type PatternPageResult {
 type PatternResult {
   id: ID!
   name: String!
-  user_id: String!
+  owner: String!
   location: Location!
   pattern_file: String!
   visibility: String!
@@ -2517,7 +2517,7 @@ type Location {
 type CatalogPattern {
   id: ID!
   name: String!
-  user_id: String!
+  owner: String!
   pattern_file: String!
   location: Location!
   visibility: String!
@@ -2556,7 +2556,7 @@ type PerfProfile {
   qps: Int
   total_results: Int
   updated_at: String
-  user_id: String!
+  owner: String!
   request_headers: String
   request_cookies: String
   request_body: String
@@ -3372,8 +3372,8 @@ func (ec *executionContext) fieldContext_ApplicationPage_applications(_ context.
 				return ec.fieldContext_ApplicationResult_application_file(ctx, field)
 			case "type":
 				return ec.fieldContext_ApplicationResult_type(ctx, field)
-			case "user_id":
-				return ec.fieldContext_ApplicationResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_ApplicationResult_owner(ctx, field)
 			case "location":
 				return ec.fieldContext_ApplicationResult_location(ctx, field)
 			case "visibility":
@@ -3511,14 +3511,14 @@ func (ec *executionContext) fieldContext_ApplicationResult_type(_ context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _ApplicationResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _ApplicationResult_owner(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_ApplicationResult_user_id,
+		ec.fieldContext_ApplicationResult_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -3527,7 +3527,7 @@ func (ec *executionContext) _ApplicationResult_user_id(ctx context.Context, fiel
 	)
 }
 
-func (ec *executionContext) fieldContext_ApplicationResult_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ApplicationResult_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ApplicationResult",
 		Field:      field,
@@ -3753,14 +3753,14 @@ func (ec *executionContext) fieldContext_CatalogFilter_filter_file(_ context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _CatalogFilter_user_id(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
+func (ec *executionContext) _CatalogFilter_owner(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_CatalogFilter_user_id,
+		ec.fieldContext_CatalogFilter_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -3769,7 +3769,7 @@ func (ec *executionContext) _CatalogFilter_user_id(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_CatalogFilter_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_CatalogFilter_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CatalogFilter",
 		Field:      field,
@@ -4024,14 +4024,14 @@ func (ec *executionContext) fieldContext_CatalogPattern_name(_ context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _CatalogPattern_user_id(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
+func (ec *executionContext) _CatalogPattern_owner(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_CatalogPattern_user_id,
+		ec.fieldContext_CatalogPattern_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -4040,7 +4040,7 @@ func (ec *executionContext) _CatalogPattern_user_id(ctx context.Context, field g
 	)
 }
 
-func (ec *executionContext) fieldContext_CatalogPattern_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_CatalogPattern_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CatalogPattern",
 		Field:      field,
@@ -5823,8 +5823,8 @@ func (ec *executionContext) fieldContext_FilterPage_filters(_ context.Context, f
 				return ec.fieldContext_FilterResult_filter_file(ctx, field)
 			case "filter_resource":
 				return ec.fieldContext_FilterResult_filter_resource(ctx, field)
-			case "user_id":
-				return ec.fieldContext_FilterResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_FilterResult_owner(ctx, field)
 			case "location":
 				return ec.fieldContext_FilterResult_location(ctx, field)
 			case "visibility":
@@ -5958,14 +5958,14 @@ func (ec *executionContext) fieldContext_FilterResult_filter_resource(_ context.
 	return fc, nil
 }
 
-func (ec *executionContext) _FilterResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _FilterResult_owner(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_FilterResult_user_id,
+		ec.fieldContext_FilterResult_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -5974,7 +5974,7 @@ func (ec *executionContext) _FilterResult_user_id(ctx context.Context, field gra
 	)
 }
 
-func (ec *executionContext) fieldContext_FilterResult_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_FilterResult_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "FilterResult",
 		Field:      field,
@@ -7946,8 +7946,8 @@ func (ec *executionContext) fieldContext_PatternPageResult_patterns(_ context.Co
 				return ec.fieldContext_PatternResult_id(ctx, field)
 			case "name":
 				return ec.fieldContext_PatternResult_name(ctx, field)
-			case "user_id":
-				return ec.fieldContext_PatternResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_PatternResult_owner(ctx, field)
 			case "location":
 				return ec.fieldContext_PatternResult_location(ctx, field)
 			case "pattern_file":
@@ -8031,14 +8031,14 @@ func (ec *executionContext) fieldContext_PatternResult_name(_ context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _PatternResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _PatternResult_owner(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PatternResult_user_id,
+		ec.fieldContext_PatternResult_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -8047,7 +8047,7 @@ func (ec *executionContext) _PatternResult_user_id(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_PatternResult_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PatternResult_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PatternResult",
 		Field:      field,
@@ -8470,8 +8470,8 @@ func (ec *executionContext) fieldContext_PerfPageProfiles_profiles(_ context.Con
 				return ec.fieldContext_PerfProfile_total_results(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_PerfProfile_updated_at(ctx, field)
-			case "user_id":
-				return ec.fieldContext_PerfProfile_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_PerfProfile_owner(ctx, field)
 			case "request_headers":
 				return ec.fieldContext_PerfProfile_request_headers(ctx, field)
 			case "request_cookies":
@@ -8952,14 +8952,14 @@ func (ec *executionContext) fieldContext_PerfProfile_updated_at(_ context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _PerfProfile_user_id(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+func (ec *executionContext) _PerfProfile_owner(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PerfProfile_user_id,
+		ec.fieldContext_PerfProfile_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -8968,7 +8968,7 @@ func (ec *executionContext) _PerfProfile_user_id(ctx context.Context, field grap
 	)
 }
 
-func (ec *executionContext) fieldContext_PerfProfile_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PerfProfile_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PerfProfile",
 		Field:      field,
@@ -9912,8 +9912,8 @@ func (ec *executionContext) fieldContext_Query_fetchPatternCatalogContent(ctx co
 				return ec.fieldContext_CatalogPattern_id(ctx, field)
 			case "name":
 				return ec.fieldContext_CatalogPattern_name(ctx, field)
-			case "user_id":
-				return ec.fieldContext_CatalogPattern_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_CatalogPattern_owner(ctx, field)
 			case "pattern_file":
 				return ec.fieldContext_CatalogPattern_pattern_file(ctx, field)
 			case "location":
@@ -9975,8 +9975,8 @@ func (ec *executionContext) fieldContext_Query_fetchFilterCatalogContent(ctx con
 				return ec.fieldContext_CatalogFilter_name(ctx, field)
 			case "filter_file":
 				return ec.fieldContext_CatalogFilter_filter_file(ctx, field)
-			case "user_id":
-				return ec.fieldContext_CatalogFilter_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_CatalogFilter_owner(ctx, field)
 			case "location":
 				return ec.fieldContext_CatalogFilter_location(ctx, field)
 			case "filter_resource":
@@ -12761,8 +12761,8 @@ func (ec *executionContext) _ApplicationResult(ctx context.Context, sel ast.Sele
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._ApplicationResult_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._ApplicationResult_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -12829,8 +12829,8 @@ func (ec *executionContext) _CatalogFilter(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._CatalogFilter_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._CatalogFilter_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -12899,8 +12899,8 @@ func (ec *executionContext) _CatalogPattern(ctx context.Context, sel ast.Selecti
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._CatalogPattern_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._CatalogPattern_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -13560,8 +13560,8 @@ func (ec *executionContext) _FilterResult(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._FilterResult_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._FilterResult_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -14376,8 +14376,8 @@ func (ec *executionContext) _PatternResult(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._PatternResult_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._PatternResult_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -14578,8 +14578,8 @@ func (ec *executionContext) _PerfProfile(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._PerfProfile_total_results(ctx, field, obj)
 		case "updated_at":
 			out.Values[i] = ec._PerfProfile_updated_at(ctx, field, obj)
-		case "user_id":
-			out.Values[i] = ec._PerfProfile_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._PerfProfile_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

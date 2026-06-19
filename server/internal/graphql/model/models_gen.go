@@ -39,7 +39,7 @@ type ApplicationResult struct {
 	Name            string      `json:"name"`
 	ApplicationFile string      `json:"application_file"`
 	Type            *NullString `json:"type"`
-	UserID          string      `json:"user_id"`
+	Owner           string      `json:"owner"`
 	Location        *Location   `json:"location"`
 	Visibility      string      `json:"visibility"`
 	CreatedAt       *string     `json:"created_at,omitempty"`
@@ -50,7 +50,7 @@ type CatalogFilter struct {
 	ID             string         `json:"id"`
 	Name           string         `json:"name"`
 	FilterFile     string         `json:"filter_file"`
-	UserID         string         `json:"user_id"`
+	Owner          string         `json:"owner"`
 	Location       *Location      `json:"location"`
 	FilterResource string         `json:"filter_resource"`
 	Visibility     string         `json:"visibility"`
@@ -62,7 +62,7 @@ type CatalogFilter struct {
 type CatalogPattern struct {
 	ID          string         `json:"id"`
 	Name        string         `json:"name"`
-	UserID      string         `json:"user_id"`
+	Owner       string         `json:"owner"`
 	PatternFile string         `json:"pattern_file"`
 	Location    *Location      `json:"location"`
 	Visibility  string         `json:"visibility"`
@@ -175,7 +175,7 @@ type FilterResult struct {
 	Name           string         `json:"name"`
 	FilterFile     string         `json:"filter_file"`
 	FilterResource string         `json:"filter_resource"`
-	UserID         string         `json:"user_id"`
+	Owner          string         `json:"owner"`
 	Location       *Location      `json:"location"`
 	Visibility     string         `json:"visibility"`
 	CatalogData    map[string]any `json:"catalog_data,omitempty"`
@@ -310,7 +310,7 @@ type PatternPageResult struct {
 type PatternResult struct {
 	ID          string         `json:"id"`
 	Name        string         `json:"name"`
-	UserID      string         `json:"user_id"`
+	Owner       string         `json:"owner"`
 	Location    *Location      `json:"location"`
 	PatternFile string         `json:"pattern_file"`
 	Visibility  string         `json:"visibility"`
@@ -348,7 +348,7 @@ type PerfProfile struct {
 	QPS               *int           `json:"qps,omitempty"`
 	TotalResults      *int           `json:"total_results,omitempty"`
 	UpdatedAt         *string        `json:"updated_at,omitempty"`
-	UserID            string         `json:"user_id"`
+	Owner             string         `json:"owner"`
 	RequestHeaders    *string        `json:"request_headers,omitempty"`
 	RequestCookies    *string        `json:"request_cookies,omitempty"`
 	RequestBody       *string        `json:"request_body,omitempty"`
