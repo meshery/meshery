@@ -235,11 +235,11 @@ const ConnectionTable = ({
   const filteredConnections = useMemo(
     () =>
       enhancedConnections.filter(({ status, kind }) => {
-        const statusMatch = selectedFilters.status === 'All' || status === selectedFilters.status;
-        const kindMatch = selectedFilters.kind === 'All' || kind === selectedFilters.kind;
+        const statusMatch = !statusFilter || status === statusFilter;
+        const kindMatch = !kindFilter || kind === kindFilter;
         return statusMatch && kindMatch;
       }),
-    [enhancedConnections, selectedFilters],
+    [enhancedConnections, statusFilter, kindFilter],
   );
 
   const colViews = useMemo(
