@@ -107,7 +107,7 @@ type RemoteProvider struct {
 }
 type AnonymousFlowResponse struct {
 	AccessToken string    `json:"accessToken"`
-	UserID      core.Uuid `json:"userId,omitempty"`
+	Owner       core.Uuid `json:"owner,omitempty"`
 }
 
 type userSession struct {

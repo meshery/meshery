@@ -168,11 +168,11 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		Metadata    func(childComplexity int) int
 		OperationID func(childComplexity int) int
+		Owner       func(childComplexity int) int
 		Severity    func(childComplexity int) int
 		Status      func(childComplexity int) int
 		SystemID    func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
 	}
 
 	FilterPage struct {
@@ -260,6 +260,7 @@ type ComplexityRoot struct {
 		Mesh               func(childComplexity int) int
 		MesheryID          func(childComplexity int) int
 		Name               func(childComplexity int) int
+		Owner              func(childComplexity int) int
 		PerformanceProfile func(childComplexity int) int
 		RunnerResults      func(childComplexity int) int
 		ServerBoardConfig  func(childComplexity int) int
@@ -267,7 +268,6 @@ type ComplexityRoot struct {
 		TestID             func(childComplexity int) int
 		TestStartTime      func(childComplexity int) int
 		UpdatedAt          func(childComplexity int) int
-		UserID             func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -917,6 +917,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Event.OperationID(childComplexity), true
+	case "Event.owner":
+		if e.complexity.Event.Owner == nil {
+			break
+		}
+
+		return e.complexity.Event.Owner(childComplexity), true
 	case "Event.severity":
 		if e.complexity.Event.Severity == nil {
 			break
@@ -941,12 +947,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Event.UpdatedAt(childComplexity), true
-	case "Event.userID":
-		if e.complexity.Event.UserID == nil {
-			break
-		}
-
-		return e.complexity.Event.UserID(childComplexity), true
 
 	case "FilterPage.filters":
 		if e.complexity.FilterPage.Filters == nil {
@@ -1265,6 +1265,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.MesheryResult.Name(childComplexity), true
+	case "MesheryResult.owner":
+		if e.complexity.MesheryResult.Owner == nil {
+			break
+		}
+
+		return e.complexity.MesheryResult.Owner(childComplexity), true
 	case "MesheryResult.performance_profile":
 		if e.complexity.MesheryResult.PerformanceProfile == nil {
 			break
@@ -1307,12 +1313,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.MesheryResult.UpdatedAt(childComplexity), true
-	case "MesheryResult.user_id":
-		if e.complexity.MesheryResult.UserID == nil {
-			break
-		}
-
-		return e.complexity.MesheryResult.UserID(childComplexity), true
 
 	case "Mutation.changeAdapterStatus":
 		if e.complexity.Mutation.ChangeAdapterStatus == nil {
@@ -2209,7 +2209,7 @@ type Error {
 
 type Event {
   id: ID!,
-  userID: ID!,
+  owner: ID!,
   actedUpon: ID!,
   operationID: ID!,
   systemID: ID!,
@@ -2575,7 +2575,7 @@ type MesheryResult {
   server_metrics: String
   server_board_config: String
   test_start_time: String
-  user_id: String
+  owner: String
   updated_at: String
   created_at: String
 }
@@ -5327,14 +5327,14 @@ func (ec *executionContext) fieldContext_Event_id(_ context.Context, field graph
 	return fc, nil
 }
 
-func (ec *executionContext) _Event_userID(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
+func (ec *executionContext) _Event_owner(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Event_userID,
+		ec.fieldContext_Event_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNID2string,
@@ -5343,7 +5343,7 @@ func (ec *executionContext) _Event_userID(ctx context.Context, field graphql.Col
 	)
 }
 
-func (ec *executionContext) fieldContext_Event_userID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Event_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Event",
 		Field:      field,
@@ -7398,14 +7398,14 @@ func (ec *executionContext) fieldContext_MesheryResult_test_start_time(_ context
 	return fc, nil
 }
 
-func (ec *executionContext) _MesheryResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.MesheryResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _MesheryResult_owner(ctx context.Context, field graphql.CollectedField, obj *model.MesheryResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_MesheryResult_user_id,
+		ec.fieldContext_MesheryResult_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalOString2ᚖstring,
@@ -7414,7 +7414,7 @@ func (ec *executionContext) _MesheryResult_user_id(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_MesheryResult_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_MesheryResult_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "MesheryResult",
 		Field:      field,
@@ -8620,8 +8620,8 @@ func (ec *executionContext) fieldContext_PerfPageResult_results(_ context.Contex
 				return ec.fieldContext_MesheryResult_server_board_config(ctx, field)
 			case "test_start_time":
 				return ec.fieldContext_MesheryResult_test_start_time(ctx, field)
-			case "user_id":
-				return ec.fieldContext_MesheryResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_MesheryResult_owner(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_MesheryResult_updated_at(ctx, field)
 			case "created_at":
@@ -9608,8 +9608,8 @@ func (ec *executionContext) fieldContext_Query_getPerfResult(ctx context.Context
 				return ec.fieldContext_MesheryResult_server_board_config(ctx, field)
 			case "test_start_time":
 				return ec.fieldContext_MesheryResult_test_start_time(ctx, field)
-			case "user_id":
-				return ec.fieldContext_MesheryResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_MesheryResult_owner(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_MesheryResult_updated_at(ctx, field)
 			case "created_at":
@@ -10649,8 +10649,8 @@ func (ec *executionContext) fieldContext_Subscription_subscribeEvents(_ context.
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Event_id(ctx, field)
-			case "userID":
-				return ec.fieldContext_Event_userID(ctx, field)
+			case "owner":
+				return ec.fieldContext_Event_owner(ctx, field)
 			case "actedUpon":
 				return ec.fieldContext_Event_actedUpon(ctx, field)
 			case "operationID":
@@ -13396,8 +13396,8 @@ func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "userID":
-			out.Values[i] = ec._Event_userID(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._Event_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -14080,8 +14080,8 @@ func (ec *executionContext) _MesheryResult(ctx context.Context, sel ast.Selectio
 			out.Values[i] = ec._MesheryResult_server_board_config(ctx, field, obj)
 		case "test_start_time":
 			out.Values[i] = ec._MesheryResult_test_start_time(ctx, field, obj)
-		case "user_id":
-			out.Values[i] = ec._MesheryResult_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._MesheryResult_owner(ctx, field, obj)
 		case "updated_at":
 			out.Values[i] = ec._MesheryResult_updated_at(ctx, field, obj)
 		case "created_at":

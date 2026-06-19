@@ -148,7 +148,7 @@ type Error struct {
 
 type Event struct {
 	ID          string         `json:"id"`
-	UserID      string         `json:"userID"`
+	Owner       string         `json:"owner"`
 	ActedUpon   string         `json:"actedUpon"`
 	OperationID string         `json:"operationID"`
 	SystemID    string         `json:"systemID"`
@@ -257,7 +257,7 @@ type MesheryResult struct {
 	ServerMetrics      *string        `json:"server_metrics,omitempty"`
 	ServerBoardConfig  *string        `json:"server_board_config,omitempty"`
 	TestStartTime      *string        `json:"test_start_time,omitempty"`
-	UserID             *string        `json:"user_id,omitempty"`
+	Owner              *string        `json:"owner,omitempty"`
 	UpdatedAt          *string        `json:"updated_at,omitempty"`
 	CreatedAt          *string        `json:"created_at,omitempty"`
 }

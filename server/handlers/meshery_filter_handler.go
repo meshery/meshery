@@ -163,7 +163,7 @@ func (h *Handler) handleFilterPOST(
 			FilterFile:     parsedBody.FilterData.FilterFile,
 			Name:           parsedBody.FilterData.Name,
 			ID:             parsedBody.FilterData.ID,
-			UserID:         parsedBody.FilterData.UserID,
+			Owner:          parsedBody.FilterData.Owner,
 			UpdatedAt:      parsedBody.FilterData.UpdatedAt,
 			Location:       parsedBody.FilterData.Location,
 			FilterResource: filterResource,

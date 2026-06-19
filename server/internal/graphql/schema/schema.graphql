@@ -117,7 +117,7 @@ type Error {
 
 type Event {
   id: ID!,
-  userID: ID!,
+  owner: ID!,
   actedUpon: ID!,
   operationID: ID!,
   systemID: ID!,
@@ -483,7 +483,7 @@ type MesheryResult {
   server_metrics: String
   server_board_config: String
   test_start_time: String
-  user_id: String
+  owner: String
   updated_at: String
   created_at: String
 }
