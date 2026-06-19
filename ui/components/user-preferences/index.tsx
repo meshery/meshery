@@ -56,9 +56,7 @@ import { SecondaryTab, SecondaryTabs } from '../dashboard/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
 
-interface ThemeTogglerProps {
-  handleUpdateUserPref: (_theme: string) => void;
-}
+interface ThemeTogglerProps {}
 
 interface ThemeComponentProps {
   mode: 'light' | 'dark';
@@ -206,10 +204,10 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
         : 'Sending anonymous performance results was disabled';
     }
 
-    const requestBody = JSON.stringify({
+    const requestBody = {
       anonymousUsageStats: name === 'anonymousUsageStats' ? val : anonymousStats,
       anonymousPerfResults: name === 'anonymousPerfResults' ? val : perfResultStats,
-    });
+    };
 
     updateProgress({ showProgress: true });
     updateUserPrefWithContext({ body: requestBody })
@@ -525,7 +523,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
 
   const handleUpdateUserPref = (key, value) => {
     const updates = _.set(_.cloneDeep(userData), key, value);
-    updateUserPrefWithContext(updates);
+    updateUserPrefWithContext({ body: updates });
   };
   return (
     <>
@@ -625,10 +623,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                   <FormLegend component="legend">Theme</FormLegend>
 
                   <FormGroup>
-                    <ThemeToggler
-                      handleUpdateUserPref={handleUpdateUserPref}
-                      classes={props.classes}
-                    />
+                    <ThemeToggler classes={props.classes} />
                   </FormGroup>
                 </FormGroupWrapper>
               </FormContainerWrapper>

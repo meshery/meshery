@@ -78,7 +78,7 @@ export const userApi = api
           headers: {
             'Content-Type': 'application/json;charset=UTF-8',
           },
-          body: queryArg.body,
+          body: JSON.stringify(queryArg.body),
         }),
         invalidatesTags: [Tags.USER_PREF],
         // Perform optimistic update

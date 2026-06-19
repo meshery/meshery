@@ -617,6 +617,7 @@ const clientSideEmotionCache = createCache({ key: 'css', prepend: true });
 const MesheryThemeProvider = ({ children, emotionCache }) => {
   const themePref = useThemePreference();
   const mode = themePref?.data?.mode || 'dark';
+  console.log('_app mode:', mode);
   return (
     <SistentThemeProvider initialMode={mode} emotionCache={emotionCache}>
       {children}

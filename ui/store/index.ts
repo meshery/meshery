@@ -7,7 +7,6 @@ import prefTestReducer from './slices/prefTest';
 import telemetryReducer from './slices/telemetry';
 import adapterReducer from './slices/adapter';
 import { rtkErrorMiddleware } from './middleware/rtkErrorMiddleware';
-import themeReducer from './slices/themeSlice';
 import { mesheryEventBus } from '@/utils/eventBus';
 
 export const store = configureStore({
@@ -18,7 +17,6 @@ export const store = configureStore({
     prefTest: prefTestReducer,
     telemetry: telemetryReducer,
     adapter: adapterReducer,
-    theme: themeReducer,
     [api.reducerPath]: api.reducer,
   },
   middleware: (getDefaultMiddleware) =>
