@@ -148,6 +148,7 @@ const MeshModelComponent_ = ({
     }
     setRelationshipsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
   }, [relationshipsRes, hasMoreRelationships]);
+
   /**
    * IntersectionObservers
    */
@@ -156,101 +157,7 @@ const MeshModelComponent_ = ({
   const lastRelationshipRef = useInfiniteScrollRef(loadNextRelationshipsPage);
   const lastRegistrantRef = useInfiniteScrollRef(loadNextRegistrantsPage);
 
-  const fetchData = useCallback(async () => {
-    try {
-      let response;
-      switch (view) {
-        case MODELS:
-          response = await getMeshModelsData(
-            {
-              params: {
-                page: searchText ? 0 : modelFilters.page,
-                pagesize: searchText ? 'all' : 25,
-                components: false,
-                relationships: false,
-                search: searchText || '',
-              },
-            },
-            true, // arg to use cache as default
-          );
-          break;
-        case COMPONENTS:
-          response = await getComponentsData(
-            {
-              params: {
-                page: searchText ? 0 : componentsFilters.page,
-                pagesize: searchText ? 'all' : rowsPerPage,
-                search: searchText || '',
-                trim: true,
-              },
-            },
-            true,
-          );
-          break;
-        case RELATIONSHIPS:
-          response = await getRelationshipsData(
-            {
-              params: {
-                page: searchText ? 0 : relationshipsFilters.page,
-                pagesize: 'all',
-                search: searchText || '',
-              },
-            },
-            true,
-          );
-          break;
-        case REGISTRANTS:
-          response = await getRegistrants();
-
-          break;
-        default:
-          break;
-      }
-      if (response?.data && response.data[view.toLowerCase()]) {
-        // When search or "show duplicates" functionality is active:
-        // Avoid appending data to the previous dataset.
-        // preventing duplicate entries and ensuring the UI reflects the API's response accurately.
-        // For instance, during a search, display the data returned by the API instead of appending it to the previous results.
-        // Use functional setState so we don't need resourcesDetail in the
-        // useCallback dependency array (which caused a stale-closure re-fetch
-        // loop and the 2304ms Redux middleware warning).
-        setResourcesDetail((prev) => {
-          const incoming = response.data[view.toLowerCase()];
-          const combined =
-            searchText || view === RELATIONSHIPS ? [...incoming] : [...prev, ...incoming];
-          // Use _.uniqWith for safe deep equality deduplication, as
-          // not all objects (e.g. static seed files) carry unique UUIDs.
-          return _.uniqWith(combined, _.isEqual);
-        });
-
-        // Deeplink may contain higher rowsPerPage val for first time fetch
-        // In such case set it to default as 14 after UI renders
-        // This ensures the correct pagesize for subsequent API calls triggered on scrolling tree.
-        if (rowsPerPage !== 25) {
-          setRowsPerPage(25);
-        }
-      }
-    } catch (error) {
-      console.error(`Failed to fetch ${view.toLowerCase()}:`, error);
-      setResourcesDetail([]); // Set empty array on error
-    }
-  }, [
-    getMeshModelsData,
-    getComponentsData,
-    getRelationshipsData,
-    getRegistrantsData,
-    modelFilters,
-    registrantFilters,
-    view,
-    page,
-    rowsPerPage,
-    searchText,
-    // resourcesDetail intentionally omitted — read via functional setState above
-    // to avoid stale-closure re-fetch loop and O(n²) _.isEqual dedup.
-    checked,
-  ]);
-
-  const getRegistrants = async () => {
+  const getRegistrants = useCallback(async () => {
     let registrantResponse;
     let response;
     registrantResponse = await getRegistrantsData(
@@ -297,7 +204,111 @@ const MeshModelComponent_ = ({
     }
     setRowsPerPage(25);
     return response;
-  };
+  }, [getRegistrantsData, getMeshModelsData, searchText, registrantFilters.page, page]);
+
+  const fetchData = useCallback(async () => {
+    try {
+      let response;
+      switch (view) {
+        case MODELS:
+          response = await getMeshModelsData(
+            {
+              params: {
+                page: searchText ? 0 : modelFilters.page,
+                pagesize: searchText ? 'all' : 25,
+                components: false,
+                relationships: false,
+                search: searchText || '',
+              },
+            },
+            true, // arg to use cache as default
+          );
+          break;
+        case COMPONENTS:
+          response = await getComponentsData(
+            {
+              params: {
+                page: searchText ? 0 : componentsFilters.page,
+                pagesize: searchText ? 'all' : rowsPerPage,
+                search: searchText || '',
+                trim: true,
+              },
+            },
+            true,
+          );
+          break;
+        case RELATIONSHIPS:
+          response = await getRelationshipsData(
+            {
+              params: {
+                page: searchText ? 0 : relationshipsFilters.page,
+                pagesize: 'all',
+                search: searchText || '',
+              },
+            },
+            true,
+          );
+          break;
+        case REGISTRANTS:
+          response = await getRegistrants();
+          break;
+        default:
+          break;
+      }
+      if (response?.data && response.data[view.toLowerCase()]) {
+        // Use functional state update to avoid depending on resourcesDetail in the
+        // useCallback dependency array (which caused a stale-closure re-fetch loop).
+        // Replace vs append is determined by whether this is the first page of the
+        // current view, so infinite scroll pagination works correctly in all cases.
+        // Relationships always fetch all pages at once (pagesize: 'all'), so they
+        // always replace.
+        setResourcesDetail((prev) => {
+          const fresh = response.data[view.toLowerCase()] ?? [];
+          const isFirstPage =
+            (view === MODELS && modelFilters.page === 0) ||
+            (view === COMPONENTS && componentsFilters.page === 0) ||
+            (view === REGISTRANTS && registrantFilters.page === 0) ||
+            (view === RELATIONSHIPS && relationshipsFilters.page === 0);
+          const newData = searchText || isFirstPage ? [...fresh] : [...prev, ...fresh];
+          return _.uniqWith(newData, _.isEqual);
+        });
+
+        // Deeplink may contain higher rowsPerPage val for first time fetch
+        // In such case set it to default as 14 after UI renders
+        // This ensures the correct pagesize for subsequent API calls triggered on scrolling tree.
+        if (rowsPerPage !== 25) {
+          setRowsPerPage(25);
+        }
+      }
+    } catch (error) {
+      console.error(`Failed to fetch ${view.toLowerCase()}:`, error);
+      setResourcesDetail([]); // Set empty array on error
+    }
+  }, [
+    getMeshModelsData,
+    getComponentsData,
+    getRelationshipsData,
+    getRegistrantsData,
+    getRegistrants,
+    modelFilters,
+    registrantFilters,
+    componentsFilters,
+    relationshipsFilters,
+    view,
+    page,
+    rowsPerPage,
+    searchText,
+  ]);
+
+  // Reset models list when the Duplicates toggle changes.
+  // checked is intentionally excluded from fetchData deps above.
+  useEffect(() => {
+    if (view === MODELS) {
+      setModelsFilters({ page: 0 });
+      setResourcesDetail([]);
+    }
+  }, [checked]);
+
   const handleTabClick = (selectedView) => {
     // -> use settingsRouter when not in modal mode (Settings page)
     if (handleChangeSelectedTab && externalView === null) {
@@ -323,6 +334,7 @@ const MeshModelComponent_ = ({
       data: {},
     });
   };
+
   const modifyData = () => {
     if (!resourcesDetail) return [];
 
@@ -357,7 +369,7 @@ const MeshModelComponent_ = ({
 
   useEffect(() => {
     fetchData();
-  }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
+  }, [fetchData]);
 
   // Sync view state with externalView or selectedTab (for modal or route usage)
   useEffect(() => {
@@ -579,6 +591,7 @@ const TabCard = ({ label, count, active, onClick }) => {
     </CardStyle>
   );
 };
+
 const MeshModelComponent = (props) => {
   return (
     <NoSsr>
@@ -586,4 +599,5 @@ const MeshModelComponent = (props) => {
     </NoSsr>
   );
 };
+
 export default MeshModelComponent;
