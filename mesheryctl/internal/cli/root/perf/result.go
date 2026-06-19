@@ -241,13 +241,13 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 
 		// append data for extended output
 		name := "None"
-		userid := uuid.Nil
+		owner := uuid.Nil
 		mesheryid := uuid.Nil
 		url := "None"
 		loadGenerator := "None"
 
 		if result.Owner != nil {
-			userid = *result.Owner
+			owner = *result.Owner
 		}
 
 		if result.MesheryID != nil {
@@ -268,7 +268,7 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 
 		a := resultStruct{
 			Name:     name,
-			Owner:    &userid,
+			Owner:    &owner,
 			URL:      url,
 			QPS:      int(result.RunnerResults.QPS),
 			Duration: result.RunnerResults.RequestedDuration,
