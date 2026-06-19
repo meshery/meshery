@@ -101,7 +101,7 @@ interface _UserData {
   };
 }
 
-const ThemeToggler: React.FC<ThemeTogglerProps> = ({ handleUpdateUserPref }) => {
+const ThemeToggler: React.FC<ThemeTogglerProps> = () => {
   const Component: React.FC<ThemeComponentProps> = ({ mode, toggleTheme }) => {
     return (
       <div>
@@ -623,7 +623,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                   <FormLegend component="legend">Theme</FormLegend>
 
                   <FormGroup>
-                    <ThemeToggler classes={props.classes} />
+                    <ThemeToggler />
                   </FormGroup>
                 </FormGroupWrapper>
               </FormContainerWrapper>
