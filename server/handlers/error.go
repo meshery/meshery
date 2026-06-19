@@ -795,7 +795,6 @@ func ErrServeSchema(err error) error {
 func ErrInvalidFileRequest(err error) error {
 	return errors.New(ErrInvalidFileRequestCode, errors.Alert, []string{"Invalid file request"}, []string{err.Error()}, []string{"The provided file query parameter could not be decoded"}, []string{"Ensure the file parameter is a properly URL-encoded path"})
 }
-
 func ErrUnsafeFilePath(err error) error {
 	return errors.New(ErrUnsafeFilePathCode, errors.Alert, []string{"Unsafe file path requested"}, []string{err.Error()}, []string{"The requested file path is outside allowed directories or contains path traversal attempts"}, []string{"Ensure the file parameter points to an allowed directory (e.g. ~/.meshery) and does not contain path traversal elements"})
 }

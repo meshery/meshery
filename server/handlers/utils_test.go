@@ -127,10 +127,10 @@ func TestSafeFilePath(t *testing.T) {
 	}
 
 	symlinkTestPath := filepath.Join(os.TempDir(), "meshery_test_symlink")
-	os.Remove(symlinkTestPath)
+	_ = os.Remove(symlinkTestPath)
 	symlinkErr := os.Symlink("/etc", symlinkTestPath)
 	if symlinkErr == nil {
-		defer os.Remove(symlinkTestPath)
+		defer func() { _ = os.Remove(symlinkTestPath) }()
 		tests = append(tests, struct {
 			name        string
 			inputPath   string
