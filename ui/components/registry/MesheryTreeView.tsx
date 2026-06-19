@@ -284,8 +284,16 @@ const MesheryTreeView = React.memo(
                     )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`}
                     sx={{ margin: '0rem', padding: '0rem' }}
                   >
-                    <IconButton>
-                      <InfoOutlinedIcon height={20} width={20} />
+                    <IconButton
+                      size="small"
+                      aria-label="View duplicate entries information"
+                      sx={{
+                        width: 32,
+                        height: 32,
+                        mt: 0.5,
+                      }}
+                    >
+                      <InfoOutlinedIcon />
                     </IconButton>
                   </CustomTextTooltip>
                 </>
