@@ -1,7 +1,6 @@
 package models
 
 import (
-	"sync"
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
@@ -16,6 +15,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/meshery/schemas/models/core"
@@ -1446,79 +1446,79 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
 
 	for _, seedContent := range seedContents {
-			switch seedContent {
-			case "Pattern":
-				files, err := walker.WalkLocalDirectory(catalogDir)
-				if err != nil {
-					log.Error(err)
-					return
+		switch seedContent {
+		case "Pattern":
+			files, err := walker.WalkLocalDirectory(catalogDir)
+			if err != nil {
+				log.Error(err)
+				return
+			}
+
+			for _, file := range files {
+				if file.Name != "design.yml" && file.Name != "design.yaml" {
+					continue
 				}
 
-				for _, file := range files {
-    if file.Name != "design.yml" && file.Name != "design.yaml" {
-        continue
-    }
-
-    id, err := uuid.NewV4()
-    if err != nil {
-        log.Error(err)
-        continue
-    }
-
-    patternName, err := GetPatternName(file.Content)
-    if err != nil {
-        log.Error(err)
-        continue
-    }
-
-    pattern := &MesheryPattern{
-        PatternFile: file.Content,
-        Name:        patternName,
-        ID:          &id,
-        UserID:      &nilUserID,
-        Visibility:  Published,
-        Location: map[string]interface{}{
-            "host":   "",
-            "path":   "",
-            "type":   "local",
-            "branch": "",
-        },
-    }
-
-    if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
-        log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
-    }
-
-}				
-
-			case "Filter":
-				// Keep the existing behavior for filters
-				names, content, err := getSeededComponents(seedContent, log)
+				id, err := uuid.NewV4()
 				if err != nil {
-					log.Error(ErrGettingSeededComponents(err, seedContent))
-				} else {
-					for i, name := range names {
-						id, _ := uuid.NewV4()
-						var filter = &MesheryFilter{
-							FilterFile: []byte(content[i]),
-							Name:       name,
-							ID:         &id,
-							UserID:     &nilUserID,
-							Visibility: Published,
-							Location: map[string]interface{}{
-								"host":   "",
-								"path":   "",
-								"type":   "local",
-								"branch": "",
-							},
-						}
-						_, err := l.MesheryFilterPersister.SaveMesheryFilter(filter)
-						if err != nil {
-							log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
-						}
+					log.Error(err)
+					continue
+				}
+
+				patternName, err := GetPatternName(file.Content)
+				if err != nil {
+					log.Error(err)
+					continue
+				}
+
+				pattern := &MesheryPattern{
+					PatternFile: file.Content,
+					Name:        patternName,
+					ID:          &id,
+					Owner:       &nilUserID,
+					Visibility:  Published,
+					Location: map[string]interface{}{
+						"host":   "",
+						"path":   "",
+						"type":   "local",
+						"branch": "",
+					},
+				}
+
+				if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
+					log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
+				}
+
+			}
+
+		case "Filter":
+			// Keep the existing behavior for filters
+			names, content, err := getSeededComponents(seedContent, log)
+			if err != nil {
+				log.Error(ErrGettingSeededComponents(err, seedContent))
+			} else {
+				for i, name := range names {
+					id, _ := uuid.NewV4()
+					var filter = &MesheryFilter{
+						FilterFile: []byte(content[i]),
+						Name:       name,
+						ID:         &id,
+						Owner:      &nilUserID,
+						Visibility: Published,
+						Location: map[string]interface{}{
+							"host":   "",
+							"path":   "",
+							"type":   "local",
+							"branch": "",
+						},
+					}
+					_, err := l.MesheryFilterPersister.SaveMesheryFilter(filter)
+					if err != nil {
+						log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
 					}
 				}
 			}
+		}
 	}
 
 	// Seed default organization before the UI requests organizations.

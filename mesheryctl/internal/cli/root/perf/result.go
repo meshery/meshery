@@ -39,7 +39,7 @@ type resultStruct struct {
 	LatenciesMs   *models.LatenciesMs
 	QPS           int
 	URL           string
-	UserID        *core.Uuid
+	Owner         *core.Uuid
 	Duration      string
 	MesheryID     *core.Uuid
 	LoadGenerator string
@@ -166,7 +166,7 @@ mesheryctl perf result saturday-profile --view
 			}
 			a := expandedData[index]
 			fmt.Printf("Name: %v\n", a.Name)
-			fmt.Printf("UserID: %s\n", a.UserID.String())
+			fmt.Printf("Owner: %s\n", a.Owner.String())
 			fmt.Printf("Endpoint: %v\n", a.URL)
 			fmt.Printf("QPS: %v\n", a.QPS)
 			fmt.Printf("Test run duration: %v\n", a.Duration)
@@ -246,8 +246,8 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 		url := "None"
 		loadGenerator := "None"
 
-		if result.UserID != nil {
-			userid = *result.UserID
+		if result.Owner != nil {
+			userid = *result.Owner
 		}
 
 		if result.MesheryID != nil {
@@ -268,7 +268,7 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 
 		a := resultStruct{
 			Name:     name,
-			UserID:   &userid,
+			Owner:    &userid,
 			URL:      url,
 			QPS:      int(result.RunnerResults.QPS),
 			Duration: result.RunnerResults.RequestedDuration,
