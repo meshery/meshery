@@ -3,6 +3,9 @@ title: mesheryctl-adapter-remove
 display_title: false
 command: adapter
 subcommand: remove
+no_list: true 
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-adapter]
 ---
 
 # mesheryctl adapter remove
@@ -64,7 +67,5 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/contributing-cli.md#preserving-manually-added-documentation" >}}) for guidance.

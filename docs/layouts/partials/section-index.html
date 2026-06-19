@@ -1,4 +1,4 @@
-{{ if or (gt (len .Sections) 0) (gt (len .RegularPages) 0) }}
+{{ if and (not .Params.hide_section_list) (or (gt (len .Sections) 0) (gt (len .RegularPages) 0)) }}
 
 <ul class="section-title">
 

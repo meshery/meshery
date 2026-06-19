@@ -3,6 +3,9 @@ title: mesheryctl-adapter-validate
 display_title: false
 command: adapter
 subcommand: validate
+no_list: true 
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-adapter]
 ---
 
 # mesheryctl adapter validate
@@ -64,7 +67,5 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 
 Usage of mesheryctl adapter validate
 ![mesh-validate-usage](../../../images/mesh-validate.png)
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/contributing-cli.md#preserving-manually-added-documentation" >}}) for guidance.

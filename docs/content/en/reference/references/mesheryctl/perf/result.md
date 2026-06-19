@@ -3,6 +3,9 @@ title: mesheryctl-perf-result
 display_title: false
 command: perf
 subcommand: result
+no_list: true 
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-perf]
 ---
 
 # mesheryctl perf result
@@ -73,7 +76,5 @@ mesheryctl perf result saturday-profile --view
 
 Usage of mesheryctl perf result
 ![perf-result-usage](../../../images/perf-result.png)
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/contributing-cli.md#preserving-manually-added-documentation" >}}) for guidance.

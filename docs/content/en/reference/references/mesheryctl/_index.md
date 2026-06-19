@@ -7,6 +7,8 @@ aliases:
 - /reference/mesheryctl/
 cascade:
   body_class: mesheryctl-reference-page
+no_list: true 
+hide_section_list: true
 ---
 
 ## Categories and Command Structure
@@ -94,5 +96,3 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 ## Frequently Asked Questions for Meshery CLI
 
 Refer to the following [frequently asked questions]({{< ref "guides/mesheryctl/working-with-mesheryctl.md" >}}) related to Meshery CLI.
-
-## See Also

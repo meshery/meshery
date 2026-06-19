@@ -45,7 +45,3 @@ make: *** [Makefile:76: server] Error 1
 
 1. Flush the database by deleting the `.meshery/config`
 2. `make server`
-
-#### See Also
-
-- [Error Code Reference]({{< ref "reference/references/error-codes.md" >}})

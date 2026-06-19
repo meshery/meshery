@@ -3,6 +3,9 @@ title: mesheryctl-environment-create
 display_title: false
 command: environment
 subcommand: create
+no_list: true 
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-env]
 ---
 
 # mesheryctl environment create
@@ -51,7 +54,5 @@ mesheryctl environment create --orgId [orgId] --name [name] --description [descr
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/contributing-cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -129,13 +129,5 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 **Answer**: _Configure Meshery to use on your Kubernetes cluster, then upload the kubeconfig file via Meshery UI to notify Meshery to use that cluster. If that didn't work, feel free to [open up an issue](https://github.com/meshery/meshery/issues) in GitHub._
 
-### Suggested Reading
-
-For an exhaustive list of `mesheryctl` commands and syntax:
-
-- See [`mesheryctl` Command Reference]({{< ref "reference/references/mesheryctl/_index.md" >}}).
-
-Guides to using Meshery's various features and components.
-
 {{< related-discussions tag="mesheryctl" >}}
 

@@ -118,5 +118,3 @@ Install Meshery on Docker (out-of-cluster) and connect it to your Kubernetes clu
 {{< code code="kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.15.3/cert-manager.yaml" >}}
 
 {{< related-discussions tag="meshery" >}}
-
-### See Also 
