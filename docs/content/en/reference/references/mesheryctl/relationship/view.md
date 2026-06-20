@@ -4,7 +4,7 @@ display_title: false
 command: relationship
 subcommand: view
 no_list: true 
-hide_section_list: 
+hide_section_list: true 
 categories: [mesheryctl-ref, mesheryctl-relationship]
 ---
 

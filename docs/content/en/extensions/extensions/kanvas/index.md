@@ -42,8 +42,8 @@ Not finding what you're looking for? Ask on the <a href="https://meshery.io/comm
 
 [Meshery Extensions](https://meshery.io/extensions) are plugins or add-ons that enhance the functionality of the Meshery platform beyond its core capabilities. Meshery supports different types of extensions ([docs]({{< ref "extensions/_index.md" >}})):
 
-- [Adapters]({{< ref "concepts/architecture/adapters.md" >}}): Adapters allow Meshery to interface with the different cloud native infrastructure.
-- [Load Generators]({{< ref "reference/extensibility/load-generators.md" >}}): for performance characterization and benchmarking
-- [Integrations]({{< ref "reference/extensibility/api.md" >}}): model-based support for a broad variety of design and orchestration of cloud and cloud native platforms, tools, and technologies.
-- [Providers]({{< ref "reference/extensibility/providers/index.md" >}}): for connecting to different cloud providers and infrastructure platforms
+- [Adapters]({{< ref "concepts/architecture/adapters.md" >}}): Adapters allow Meshery to interface with different cloud native infrastructures.
+- [Load Generators]({{< ref "reference/extensibility/load-generators.md" >}}): For performance characterization and benchmarking.
+- [Integrations]({{< ref "reference/extensibility/api.md" >}}): Model-based support for a broad variety of design and orchestration of cloud and cloud native platforms, tools, and technologies.
+- [Providers]({{< ref "reference/extensibility/providers/index.md" >}}): For connecting to different cloud providers and infrastructure platforms.
 - [UI Plugins]({{< ref "reference/extensibility/ui.md" >}}): Meshery UI has a number of extension points that allow users to customize their experience with third-party plugins.
