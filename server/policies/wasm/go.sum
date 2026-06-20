@@ -160,8 +160,8 @@ github.com/compose-spec/compose-go/v2 v2.10.0 h1:K2C5LQ3KXvkYpy5N/SG6kIYB90iiAir
 github.com/compose-spec/compose-go/v2 v2.10.0/go.mod h1:Ohac1SzhO/4fXXrzWIztIVB6ckmKBv1Nt5Z5mGVESUg=
 github.com/containerd/console v1.0.5 h1:R0ymNeydRqH2DmakFNdmjR2k0t7UPuiOV/N/27/qqsc=
 github.com/containerd/console v1.0.5/go.mod h1:YynlIjWYF8myEu6sdkwKIvGQq+cOckRm6So2avqoYAk=
-github.com/containerd/containerd v1.7.32 h1:S54xuVcPxeLaYgaRABtpJ2VyVUVsy0IGf7qHBs+sbY8=
-github.com/containerd/containerd v1.7.32/go.mod h1:jdwD6s/BhV4XVJGrvtziNPVA+83n66TwptVaPKprq4E=
+github.com/containerd/containerd v1.7.33 h1:iAkYGC/ifR/V+0eR4iXWHNGYUF0DF2PmGV5iz4Irj5M=
+github.com/containerd/containerd v1.7.33/go.mod h1:gSbSCVjPCdkfJCjyrzz7aRC+xFlqVbatNpfHfVCYGUM=
 github.com/containerd/containerd/api v1.10.0 h1:5n0oHYVBwN4VhoX9fFykCV9dF1/BvAXeg2F8W6UYq1o=
 github.com/containerd/containerd/api v1.10.0/go.mod h1:NBm1OAk8ZL+LG8R0ceObGxT5hbUYj7CzTmR3xh0DlMM=
 github.com/containerd/containerd/v2 v2.2.4 h1:8x2UdXqww7NYqGNabQ7i1nAgB5LegzjC9KQzO/900iA=
@@ -536,12 +536,12 @@ github.com/mattn/go-sqlite3 v1.14.32 h1:JD12Ag3oLy1zQA+BNn74xRgaBbdhbNIDYvQUEuuE
 github.com/mattn/go-sqlite3 v1.14.32/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxUwlHK0RXw+Y=
 github.com/meshery/meshery-operator v0.8.11 h1:eDo2Sw0jjVrXsvvhF8LenADM58pK+7Z68ROPVIejTPc=
 github.com/meshery/meshery-operator v0.8.11/go.mod h1:hQEtFKKa5Fr/Mskk6bV5ip3bQ0+3F0u1voYS3XisBp4=
-github.com/meshery/meshkit v1.0.12 h1:bN21nRWPceqhLYTfSWk56kalPNV7ZaZrPsxcDtCaNb0=
-github.com/meshery/meshkit v1.0.12/go.mod h1:gw8kLughiSJE2XNq0QefYTW+CzxJDEBd6hwLiUOczIk=
+github.com/meshery/meshkit v1.0.13 h1:jAbg2w36MxnHhPMfizS+z0JUWP+7Jh0xdqmuupVQjnk=
+github.com/meshery/meshkit v1.0.13/go.mod h1:gw8kLughiSJE2XNq0QefYTW+CzxJDEBd6hwLiUOczIk=
 github.com/meshery/meshsync v1.0.0 h1:BIHEVG4BDjqOnSd3vBt9B4IfWJNTfMRAgdwLroBcCfY=
 github.com/meshery/meshsync v1.0.0/go.mod h1:mFsPXkZRiCSuk5DhxBTrkWdlo6peItRBUoIEEQCovIg=
-github.com/meshery/schemas v1.3.9 h1:vfj5RTOpdBAA2hSxgIpoFnBKr5Aus6BMbRHC8JN1k8M=
-github.com/meshery/schemas v1.3.9/go.mod h1:Ms8bfwux/bAiogaSJirBaLwkvPxOsCT4KCH76SlhU0E=
+github.com/meshery/schemas v1.3.10 h1:54MdwAisIccO61hdlNfzV3BC+K+qf6ozR9veElnjexg=
+github.com/meshery/schemas v1.3.10/go.mod h1:Ms8bfwux/bAiogaSJirBaLwkvPxOsCT4KCH76SlhU0E=
 github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
 github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
 github.com/miekg/pkcs11 v1.1.1 h1:Ugu9pdy6vAYku5DEpVWVFPYnzV+bxB+iRdbuFSu7TvU=
