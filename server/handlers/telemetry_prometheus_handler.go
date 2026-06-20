@@ -63,7 +63,7 @@ func (h *Handler) PrometheusTelemetryPingHandler(w http.ResponseWriter, req *htt
 
 	eventBuilder := events.NewEvent().
 		ActedUpon(connectionID).
-		FromUser(userID).
+		FromOwner(userID).
 		FromSystem(*h.SystemID).
 		WithCategory("connection").
 		WithAction("ping")
