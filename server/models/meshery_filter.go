@@ -17,7 +17,7 @@ type MesheryFilter struct {
 	FilterFile []byte `json:"filterFile"`
 	// Meshery doesn't have the owner field
 	// but the remote provider is allowed to provide one
-	Owner *string `json:"owner"`
+	Owner *string `json:"owner" gorm:"-"`
 
 	Location       sql.Map    `json:"location"`
 	Visibility     string     `json:"visibility"`
