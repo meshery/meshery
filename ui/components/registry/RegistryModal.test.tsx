@@ -50,6 +50,8 @@ vi.mock('@sistent/sistent', () => ({
     React.createElement('svg', { 'data-component': 'chevron-left-icon', ...props }),
   ChevronRightIcon: (props) =>
     React.createElement('svg', { 'data-component': 'chevron-right-icon', ...props }),
+  LeftArrowIcon: (props) =>
+    React.createElement('svg', { 'data-component': 'left-arrow-icon', ...props }),
   FileIcon: () => <svg data-testid="file-icon" />,
   InfoIcon: () => <svg data-testid="info-icon" />,
   DatabaseIcon: () => <svg data-testid="database-icon" />,
@@ -150,6 +152,19 @@ vi.mock('@/rtk-query/meshModel', () => ({
 
 vi.mock('./helper', () => ({
   removeDuplicateVersions: (m: any[]) => m,
+}));
+
+vi.mock('../general/style', () => ({
+  ChevronButtonWrapper: ({ children, onClick, isCollapsed }: any) => (
+    <button
+      type="button"
+      onClick={onClick}
+      data-collapsed={String(!!isCollapsed)}
+      data-testid="sidebar-collapse-toggle"
+    >
+      {children}
+    </button>
+  ),
 }));
 
 import RegistryModal, { Navigation } from './RegistryModal';
