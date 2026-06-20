@@ -61,8 +61,8 @@ export const StyledListItem = styled(ListItem, {
   cursor: 'pointer',
   backgroundColor: charcoal[30],
   boxShadow: '0 -1px 0 #404854 inset',
-  paddingTop: '1.325rem',
-  paddingBottom: '1.325rem',
+  paddingTop: '1.625rem',
+  paddingBottom: '1.625rem',
   position: 'sticky',
   top: 0,
   zIndex: 5,
@@ -171,8 +171,8 @@ export const NavigatorListItem = styled(ListItemButton, {
       transition: 'opacity 200ms ease-in',
     },
   },
-  paddingTop: 4,
-  paddingBottom: 4,
+  paddingTop: theme.spacing(1.25),
+  paddingBottom: theme.spacing(1.25),
 }));
 
 export const NavigatorListItemII = styled(ListItemButton, {
@@ -196,8 +196,8 @@ export const NavigatorListItemII = styled(ListItemButton, {
       transition: 'opacity 200ms ease-in',
     },
   },
-  paddingTop: 4,
-  paddingBottom: 4,
+  paddingTop: theme.spacing(1.25),
+  paddingBottom: theme.spacing(1.25),
 }));
 
 export const NavigatorListItemIII = styled(ListItemButton, {
@@ -221,8 +221,8 @@ export const NavigatorListItemIII = styled(ListItemButton, {
       transition: 'opacity 200ms ease-in',
     },
   },
-  paddingTop: 4,
-  paddingBottom: 4,
+  paddingTop: theme.spacing(1.25),
+  paddingBottom: theme.spacing(1.25),
   pointerEvents: isShow ? 'none' : 'auto',
   opacity: isShow ? 0.5 : '',
 }));
@@ -248,8 +248,8 @@ export const SideBarListItem = styled(ListItemButton, {
       visibility: 'visible',
     },
   },
-  paddingTop: 4,
-  paddingBottom: 4,
+  paddingTop: theme.spacing(1.25),
+  paddingBottom: theme.spacing(1.25),
   pointerEvents: isShow ? 'none' : 'auto',
   opacity: isShow ? 0.5 : '',
   fontSize: '1rem',
@@ -414,8 +414,8 @@ export const NavigatorLink = styled('span')({
 
 export const HelpListItem = styled(ListItem)(({ theme }) => ({
   paddingLeft: 0,
-  paddingTop: 4,
-  paddingBottom: 4,
+  paddingTop: theme.spacing(1.25),
+  paddingBottom: theme.spacing(1.25),
   color: theme.palette.background.constant.disabled,
   fill: theme.palette.background.constant.white,
   '&:hover': {

@@ -17322,11 +17322,11 @@ paths:
                             gorm: type:bytes;serializer:json
                             json: transitionMap,omitempty
                           x-order: 18
-                        userId:
-                          x-go-name: UserID
+                        owner:
+                          x-go-name: Owner
                           x-oapi-codegen-extra-tags:
-                            db: user_id
-                            json: userId
+                            db: owner
+                            json: owner
                           x-order: 11
                           description: User ID who owns this connection
                           type: string
@@ -19759,11 +19759,11 @@ paths:
                       gorm: type:bytes;serializer:json
                       json: transitionMap,omitempty
                     x-order: 18
-                  userId:
-                    x-go-name: UserID
+                  owner:
+                    x-go-name: Owner
                     x-oapi-codegen-extra-tags:
-                      db: user_id
-                      json: userId
+                      db: owner
+                      json: owner
                     x-order: 11
                     description: User ID who owns this connection
                     type: string
@@ -21709,11 +21709,11 @@ paths:
                       gorm: type:bytes;serializer:json
                       json: transitionMap,omitempty
                     x-order: 18
-                  userId:
-                    x-go-name: UserID
+                  owner:
+                    x-go-name: Owner
                     x-oapi-codegen-extra-tags:
-                      db: user_id
-                      json: userId
+                      db: owner
+                      json: owner
                     x-order: 11
                     description: User ID who owns this connection
                     type: string
@@ -24129,11 +24129,11 @@ paths:
                       gorm: type:bytes;serializer:json
                       json: transitionMap,omitempty
                     x-order: 18
-                  userId:
-                    x-go-name: UserID
+                  owner:
+                    x-go-name: Owner
                     x-oapi-codegen-extra-tags:
-                      db: user_id
-                      json: userId
+                      db: owner
+                      json: owner
                     x-order: 11
                     description: User ID who owns this connection
                     type: string
@@ -26473,7 +26473,7 @@ paths:
                       required:
                         - id
                         - name
-                        - userId
+                        - owner
                         - createdAt
                         - updatedAt
                       properties:
@@ -26499,13 +26499,13 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: name
                             json: name
-                        userId:
+                        owner:
                           description: User ID of the profile owner.
                           x-order: 3
-                          x-go-name: UserID
+                          x-go-name: Owner
                           x-oapi-codegen-extra-tags:
-                            db: user_id
-                            json: userId
+                            db: owner
+                            json: owner
                           type: string
                           format: uuid
                           x-go-type: uuid.UUID
@@ -26911,7 +26911,7 @@ paths:
                 required:
                   - id
                   - name
-                  - userId
+                  - owner
                   - createdAt
                   - updatedAt
                 properties:
@@ -26937,13 +26937,13 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: name
                       json: name
-                  userId:
+                  owner:
                     description: User ID of the profile owner.
                     x-order: 3
-                    x-go-name: UserID
+                    x-go-name: Owner
                     x-oapi-codegen-extra-tags:
-                      db: user_id
-                      json: userId
+                      db: owner
+                      json: owner
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -27204,7 +27204,7 @@ paths:
                 required:
                   - id
                   - name
-                  - userId
+                  - owner
                   - createdAt
                   - updatedAt
                 properties:
@@ -27230,13 +27230,13 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: name
                       json: name
-                  userId:
+                  owner:
                     description: User ID of the profile owner.
                     x-order: 3
-                    x-go-name: UserID
+                    x-go-name: Owner
                     x-oapi-codegen-extra-tags:
-                      db: user_id
-                      json: userId
+                      db: owner
+                      json: owner
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -27660,7 +27660,7 @@ paths:
                 required:
                   - id
                   - name
-                  - userId
+                  - owner
                   - createdAt
                   - updatedAt
                 properties:
@@ -27686,13 +27686,13 @@ paths:
                     x-oapi-codegen-extra-tags:
                       db: name
                       json: name
-                  userId:
+                  owner:
                     description: User ID of the profile owner.
                     x-order: 3
-                    x-go-name: UserID
+                    x-go-name: Owner
                     x-oapi-codegen-extra-tags:
-                      db: user_id
-                      json: userId
+                      db: owner
+                      json: owner
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
