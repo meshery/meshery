@@ -1983,7 +1983,7 @@ func (e *EventsPersister) PersistSystemEvent(event events.Event) error {
 func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {
 	e := l.EventsPersister
 	eventsDB := []*events.Event{}
-	finder := e.DB.Model(&events.Event{}).Where("user_id = ? OR user_id = ?", userID, sysID)
+	finder := e.DB.Model(&events.Event{}).Where("owner = ? OR owner = ?", userID, sysID)
 
 	if len(eventsFilter.Category) != 0 {
 		finder = finder.Where("category IN ?", eventsFilter.Category)
@@ -2046,12 +2046,12 @@ func (l *DefaultLocalProvider) GetEventTypes(token string, userID core.Uuid, sys
 	eventTypes := EventTypesResponse{}
 
 	var categories, actions []string
-	err := e.DB.Table("events").Distinct("category").Where("user_id = ? OR user_id = ?", userID, sysID).Find(&categories).Error
+	err := e.DB.Table("events").Distinct("category").Where("owner = ? OR owner = ?", userID, sysID).Find(&categories).Error
 	if err != nil {
 		return eventTypes, err
 	}
 
-	err = e.DB.Table("events").Distinct("action").Where("user_id = ?", userID).Find(&actions).Error
+	err = e.DB.Table("events").Distinct("action").Where("owner = ?", userID).Find(&actions).Error
 	if err != nil {
 		return eventTypes, err
 	}
