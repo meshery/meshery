@@ -172,7 +172,11 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
         });
       })
       .catch(() => {
-        handleError('There was an error sending your preference');
+        updateProgress({ showProgress: false });
+        notify({
+          message: 'There was an error sending your preference',
+          event_type: EVENT_TYPES.ERROR,
+        });
       });
   };
 
@@ -219,7 +223,11 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
         }
       })
       .catch(() => {
-        handleError('There was an error sending your preference');
+        updateProgress({ showProgress: false });
+        notify({
+          message: 'There was an error sending your preference',
+          event_type: EVENT_TYPES.ERROR,
+        });
       });
   };
 
