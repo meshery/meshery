@@ -340,21 +340,23 @@ function K8sContextMenu({
                         }}
                       >
                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <Checkbox
-                            checked={activeContexts.includes('all')}
-                            onChange={() =>
-                              activeContexts.includes('all')
-                                ? setActiveContexts([])
-                                : setActiveContexts('all')
-                            }
-                            icon={
-                              <FilterAllIcon
-                                fill={theme.palette.background.brand.default}
-                                style={{ opacity: 0.4 }}
-                              />
-                            }
-                            inputProps={{ 'aria-label': 'select all contexts' }}
-                          />
+                          <>
+                            <Checkbox
+                              checked={activeContexts.includes('all')}
+                              onChange={() =>
+                                activeContexts.includes('all')
+                                  ? setActiveContexts([])
+                                  : setActiveContexts('all')
+                              }
+                              icon={
+                                <FilterAllIcon
+                                  fill={theme.palette.background.brand.default}
+                                  style={{ opacity: 0.4 }}
+                                />
+                              }
+                              inputProps={{ 'aria-label': 'select all contexts' }}
+                            />
+                          </>
                           <span style={{ fontWeight: 'bolder', whiteSpace: 'nowrap' }}>
                             select all
                           </span>
