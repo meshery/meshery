@@ -77,7 +77,7 @@ func (h *Handler) handleFilterPOST(
 ) {
 
 	userID := user.ID
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("filter").WithAction("update")
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("filter").WithAction("update")
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
 		h.log.Error(ErrRetrieveUserToken(err))
@@ -349,7 +349,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 
 	userID := user.ID
 	eventBuilder := events.NewEvent().
-		FromUser(userID).
+		FromOwner(userID).
 		FromSystem(*h.SystemID).
 		WithCategory("filter").
 		WithAction("publish").
@@ -427,7 +427,7 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 
 	userID := user.ID
 	eventBuilder := events.NewEvent().
-		FromUser(userID).
+		FromOwner(userID).
 		FromSystem(*h.SystemID).
 		WithCategory("filter").
 		WithAction("unpublish_request").

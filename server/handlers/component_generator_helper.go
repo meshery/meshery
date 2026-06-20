@@ -209,7 +209,7 @@ func incrementCountersOnSuccess(mu *sync.Mutex, entityType entity.EntityType, co
 }
 
 func (h *Handler) sendErrorEvent(userID core.Uuid, provider models.Provider, description string, err error, token string) {
-	event := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithAction("register").WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
+	event := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithAction("register").WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
 		"error": err,
 	}).Build()
 	_ = provider.PersistEvent(*event, token)
@@ -360,7 +360,7 @@ func (h *Handler) sendFileEvent(userID core.Uuid, provider models.Provider, resp
 
 	event := events.NewEvent().
 		ActedUpon(userID).
-		FromUser(userID).
+		FromOwner(userID).
 		FromSystem(*h.SystemID).
 		WithAction("register").
 		WithDescription(description).
@@ -393,7 +393,7 @@ func (h *Handler) sendEventForImport(userID core.Uuid, provider models.Provider,
 	}
 	event := events.NewEvent().
 		ActedUpon(userID).
-		FromUser(userID).
+		FromOwner(userID).
 		FromSystem(*h.SystemID).
 		WithAction("generate").
 		WithDescription(description).

@@ -1334,17 +1334,17 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 		id = conn.ID
 	}
 	connection := &connections.Connection{
-		ID:           id,
-		Name:         conn.Name,
-		CredentialID: connectionCredentialID(conn.CredentialID),
-		Type:         conn.Type,
-		SubType:      conn.SubType,
-		Kind:         conn.Kind,
-		Metadata:     conn.MetaData,
-		Status:       conn.Status,
-		UserID:       &uuid.Nil,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
+		ID:             id,
+		Name:           conn.Name,
+		CredentialID:   connectionCredentialID(conn.CredentialID),
+		ConnectionType: conn.Type,
+		SubType:        conn.SubType,
+		Kind:           conn.Kind,
+		Metadata:       conn.MetaData,
+		Status:         conn.Status,
+		Owner:          &uuid.Nil,
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
 	}
 	connectionCreated, err := l.ConnectionPersister.SaveConnection(connection)
 	if err != nil {
@@ -1393,16 +1393,16 @@ func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connecti
 
 func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, _ string) (*connections.Connection, error) {
 	connection := connections.Connection{
-		ID:           conn.ID,
-		Name:         conn.Name,
-		Type:         conn.Type,
-		SubType:      conn.SubType,
-		Kind:         conn.Kind,
-		Metadata:     conn.MetaData,
-		Status:       conn.Status,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
-		CredentialID: conn.CredentialID,
+		ID:             conn.ID,
+		Name:           conn.Name,
+		ConnectionType: conn.Type,
+		SubType:        conn.SubType,
+		Kind:           conn.Kind,
+		Metadata:       conn.MetaData,
+		Status:         conn.Status,
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
+		CredentialID:   conn.CredentialID,
 	}
 	return l.UpdateConnection(nil, &connection)
 }
