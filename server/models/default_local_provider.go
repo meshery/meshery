@@ -1,7 +1,6 @@
 package models
 
 import (
-	"sync"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -13,6 +12,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/meshery/schemas/models/core"
@@ -1331,17 +1331,17 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 		id = conn.ID
 	}
 	connection := &connections.Connection{
-		ID:           id,
-		Name:         conn.Name,
-		CredentialID: connectionCredentialID(conn.CredentialID),
-		Type:         conn.Type,
-		SubType:      conn.SubType,
-		Kind:         conn.Kind,
-		Metadata:     conn.MetaData,
-		Status:       conn.Status,
-		UserID:       &uuid.Nil,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
+		ID:             id,
+		Name:           conn.Name,
+		CredentialID:   connectionCredentialID(conn.CredentialID),
+		ConnectionType: conn.Type,
+		SubType:        conn.SubType,
+		Kind:           conn.Kind,
+		Metadata:       conn.MetaData,
+		Status:         conn.Status,
+		Owner:          &uuid.Nil,
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
 	}
 	connectionCreated, err := l.ConnectionPersister.SaveConnection(connection)
 	if err != nil {
@@ -1390,16 +1390,16 @@ func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connecti
 
 func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, _ string) (*connections.Connection, error) {
 	connection := connections.Connection{
-		ID:           conn.ID,
-		Name:         conn.Name,
-		Type:         conn.Type,
-		SubType:      conn.SubType,
-		Kind:         conn.Kind,
-		Metadata:     conn.MetaData,
-		Status:       conn.Status,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
-		CredentialID: conn.CredentialID,
+		ID:             conn.ID,
+		Name:           conn.Name,
+		ConnectionType: conn.Type,
+		SubType:        conn.SubType,
+		Kind:           conn.Kind,
+		Metadata:       conn.MetaData,
+		Status:         conn.Status,
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
+		CredentialID:   conn.CredentialID,
 	}
 	return l.UpdateConnection(nil, &connection)
 }
@@ -1437,55 +1437,54 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 
 func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	seedContents := []string{"Pattern"}
-	nilUserID := ""
+	nilOwner := ""
 
 	// Use the relative directory for patterns
 	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
 
 	for _, seedContent := range seedContents {
-			switch seedContent {
-			case "Pattern":
-				files, err := walker.WalkLocalDirectory(catalogDir)
-				if err != nil {
-					log.Error(err)
-					return
+		switch seedContent {
+		case "Pattern":
+			files, err := walker.WalkLocalDirectory(catalogDir)
+			if err != nil {
+				log.Error(err)
+				return
+			}
+
+			for _, file := range files {
+				if file.Name != "design.yml" && file.Name != "design.yaml" {
+					continue
 				}
 
-				for _, file := range files {
-    if file.Name != "design.yml" && file.Name != "design.yaml" {
-        continue
-    }
+				id, err := uuid.NewV4()
+				if err != nil {
+					log.Error(err)
+					continue
+				}
 
-    id, err := uuid.NewV4()
-    if err != nil {
-        log.Error(err)
-        continue
-    }
+				patternName, err := GetPatternName(file.Content)
+				if err != nil {
+					log.Error(err)
+					continue
+				}
 
-    patternName, err := GetPatternName(file.Content)
-    if err != nil {
-        log.Error(err)
-        continue
-    }
+				pattern := &MesheryPattern{
+					PatternFile: file.Content,
+					Name:        patternName,
+					ID:          &id,
+					Owner:       &nilOwner,
+					Visibility:  Published,
+					Location: map[string]interface{}{
+						"host":   "",
+						"path":   "",
+						"type":   "local",
+						"branch": "",
+					},
+				}
 
-    pattern := &MesheryPattern{
-        PatternFile: file.Content,
-        Name:        patternName,
-        ID:          &id,
-        UserID:      &nilUserID,
-        Visibility:  Published,
-        Location: map[string]interface{}{
-            "host":   "",
-            "path":   "",
-            "type":   "local",
-            "branch": "",
-        },
-    }
-
-    if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
-        log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
-    }
-
+				if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
+					log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
+				}
 			}
 		}
 	}
@@ -1961,8 +1960,6 @@ func genericHTTPFilterFile(fileURL string, log logger.Handler) ([]MesheryFilter,
 
 	return []MesheryFilter{ff}, nil
 }
-
-
 
 // Events
 
