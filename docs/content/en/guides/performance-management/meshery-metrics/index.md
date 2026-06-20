@@ -1,39 +1,26 @@
 ---
 title: Using Metrics in Meshery
-description: How to connect and use Prometheus and Grafana metrics in Meshery
+description: How to view Prometheus and Grafana metrics in Meshery
 categories: [performance]
 ---
 
-## Connect and use metrics in Meshery
+## View metrics in Meshery
 
-Meshery provides performance reports, including performance test results, node resource metrics etc. so that operators may easily understand the overhead of their cloud native infrastructure control plane and data plane in context of the overhead incurred on nodes running within the cluster. In order to generate performance test reports of infrastructure and their workloads, Meshery uses Grafana and/or Prometheus as visualization and metrics systems, respectively. This guide outlines the requirements necessary for Meshery to connect to these systems. The steps may vary depending upon the infrastructure and its configuration.
+Meshery integrates with **Grafana** and **Prometheus** so you can visualize the health and resource usage of your cloud native infrastructure without leaving Meshery.
 
-In order to pull in these environment metrics, you can also manually configure Meshery to connect with your existing Grafana and/or Prometheus instances through the Meshery dashboard. Once they have been loaded and are displayed on the screen, you may also perform an _ad-hoc_ test to check Meshery's connection status.
+Metrics visualization lives in the dedicated **[Telemetry]({{< ref "guides/telemetry/_index.md" >}})** section of Meshery. Rather than entering a Grafana or Prometheus URL and API key into a settings form, you register Grafana and Prometheus as Meshery [Connections]({{< ref "concepts/logical/connections/index.md" >}}) (each with an associated [Credential]({{< ref "concepts/logical/credentials.md" >}})), and Telemetry queries them on your behalf — proxying every request securely through the Meshery server.
+
+There are two ways to view metrics:
+
+- **[Grafana Dashboards]({{< ref "guides/telemetry/grafana-dashboards.md" >}})** (Telemetry → Charts) — browse, pin, and render your existing Grafana dashboards.
+- **[Prometheus Metrics]({{< ref "guides/telemetry/prometheus-metrics.md" >}})** (Telemetry → Metrics) — explore metrics, compose PromQL, preview the result, and save your own panels.
 
 ---
 
-{{< tabs id="meshery-metrics-tabs" >}}
-Prometheus Metrics
+## Getting started
 
-<p>User needs to set the Prometheus URL and API key to create and query boards.</p>
+1. Create a [Credential]({{< ref "concepts/logical/credentials.md" >}}) for your Grafana API key / service-account token, or your Prometheus token (if authentication is required).
+2. [Register a connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}) of kind **Grafana** or **Prometheus**, pointing at the instance URL and selecting the credential.
+3. Open **Telemetry** in the Meshery navigation, pick your connection, and start viewing dashboards or metrics.
 
-<img src="images/PrometheusCharts.svg" alt="Prometheus Metrics in Meshery" />
-
-<!-- tab -->
-Grafana Charts
-
-<p>User needs to set the Grafana URL and API key to create and query boards.</p>
-
-<img src="images/GrafanaBoards.svg" alt="Grafana Charts in Meshery" />
-
-<!-- tab -->
-Static Boards
-
-<p>Static Boards capture the standard performance metrics included in every Meshery performance test irrespective of which load generator is used. A set calculations are made using statistical analysis of the metrics gathered in the static boards. Static Boards Queries Prometheus SDK directly.</p>
-
-<!-- tab -->
-Dynamic Boards
-
-<p>Dynamic Boards can be generated from Prometheus or Grafana. These boards are defined by the user. Grafana SDK is used for these boards.</p>
-
-{{< /tabs >}}
+For details on authentication, shared controls, and how rendering works, see the [Telemetry guide]({{< ref "guides/telemetry/_index.md" >}}).
