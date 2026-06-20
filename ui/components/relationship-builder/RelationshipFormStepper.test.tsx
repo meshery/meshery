@@ -16,12 +16,32 @@ vi.mock('@meshery/schemas', () => ({
             name: { type: 'string' },
             kind: { type: 'string' },
             capabilities: { type: 'array' },
+            model: {
+              description: 'Model Reference to the specific registered model...',
+            },
             selectors: {
               items: {
                 properties: {
                   allow: {
                     properties: { from: { items: { properties: { kind: {}, model: {} } } } },
                   },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  ModelDefinitionV1Beta1OpenApiSchema: {
+    components: {
+      schemas: {
+        ModelDefinition: {
+          properties: {
+            category: {
+              properties: {
+                name: {
+                  description: 'The category of the model that determines the main grouping.',
                 },
               },
             },
