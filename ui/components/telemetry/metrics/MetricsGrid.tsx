@@ -20,6 +20,8 @@ interface PanelState {
   error: string | null;
 }
 
+const EMPTY_STATE: PanelState = { series: [], loading: false, error: null };
+
 // A 24-column grid mirrors the Grafana layout model used across telemetry.
 const PanelGrid = styled(Box)(({ theme }) => ({
   display: 'grid',
@@ -84,18 +86,38 @@ const MetricsGrid: React.FC<MetricsGridProps> = ({
     return map;
   }, [batchData]);
 
-  const panelState = (panel: MetricPanel): PanelState => {
-    const r = resultsById.get(panel.id);
-    if (isError) return { series: [], loading: isFetching, error: 'Failed to load panel data' };
-    if (!r) return { series: [], loading: isFetching, error: null };
-    if (r.error) return { series: [], loading: isFetching, error: r.error };
-    return { series: parsePromMatrix(r.response), loading: isFetching, error: null };
-  };
+  // Compute each panel's state once per batch result. This keeps `series`
+  // referentially stable across unrelated re-renders (so the memoized Panel can
+  // skip re-rendering) and avoids re-parsing the response on every render.
+  const panelStates = useMemo(() => {
+    const states = new Map<string, PanelState>();
+    for (const panel of panels) {
+      const r = resultsById.get(panel.id);
+      if (isError) {
+        states.set(panel.id, {
+          series: [],
+          loading: isFetching,
+          error: 'Failed to load panel data',
+        });
+      } else if (!r) {
+        states.set(panel.id, { series: [], loading: isFetching, error: null });
+      } else if (r.error) {
+        states.set(panel.id, { series: [], loading: isFetching, error: r.error });
+      } else {
+        states.set(panel.id, {
+          series: parsePromMatrix(r.response),
+          loading: isFetching,
+          error: null,
+        });
+      }
+    }
+    return states;
+  }, [panels, resultsById, isFetching, isError]);
 
   return (
     <PanelGrid>
       {panels.map((panel) => {
-        const state = panelState(panel);
+        const state = panelStates.get(panel.id) ?? EMPTY_STATE;
         return (
           <Cell
             key={panel.id}

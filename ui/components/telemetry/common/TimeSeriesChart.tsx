@@ -160,4 +160,8 @@ const TimeSeriesChart: React.FC<TimeSeriesChartProps> = ({
   );
 };
 
-export default TimeSeriesChart;
+// Memoized: recharts is the most expensive thing on the page. Series/unit/filled
+// are referentially stable (computed in memoized parents), so this skips
+// re-rendering charts when the page re-renders for unrelated reasons (drawer
+// open/close, toolbar changes, polling).
+export default React.memo(TimeSeriesChart);

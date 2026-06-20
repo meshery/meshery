@@ -52,7 +52,9 @@ export function renderLegend(
   legendFormat: string | undefined,
   metric: Record<string, string>,
 ): string {
-  if (legendFormat && legendFormat.trim() !== '') {
+  // Grafana uses the sentinel "__auto" to mean "derive the series name from the
+  // metric labels" — treat it the same as an unset legendFormat.
+  if (legendFormat && legendFormat.trim() !== '' && legendFormat.trim() !== '__auto') {
     return legendFormat.replace(/\{\{\s*([\w.]+)\s*\}\}/g, (_m, key) => metric[key] ?? '');
   }
   const name = metric.__name__ ?? '';

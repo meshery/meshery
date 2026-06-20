@@ -150,4 +150,7 @@ const Panel: React.FC<PanelProps> = ({ panel, series, loading, error }) => {
   );
 };
 
-export default Panel;
+// Memoized so a panel only re-renders when its own data/state changes. Parents
+// pass referentially-stable series objects (computed in a memoized map), so a
+// board/grid re-render doesn't cascade into every panel's chart.
+export default React.memo(Panel);
