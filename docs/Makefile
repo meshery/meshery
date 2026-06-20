@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+include ../.github/build/Makefile.core.mk
+include ../.github/build/Makefile.show-help.mk
 
 ## Install docs.meshery.io dependencies on your local machine.
 ## See https://gohugo.io/categories/installation
@@ -53,9 +55,15 @@ clean: check-deps
 	npm run dev:clean
 	$(MAKE) site
 
-## Validate Go is installed by delegating to the root Makefile check.
+## Verify Go is installed locally.
 check-go:
-	@$(MAKE) -C .. check-go
+	@echo "Checking if Go is installed..."
+	@command -v go > /dev/null || (echo "Go is not installed. Please install it before proceeding."; exit 1)
+	@echo "Go is installed."
+
+## Format code using Prettier
+format:
+	npm run format
 
 ## Install base OS dependencies needed in Docker-based docs builds.
 docker-install-base-deps:
@@ -139,6 +147,7 @@ docker:
 	serve \
 	clean \
 	check-go \
+	format \
 	docker \
 	docker-install-base-deps \
 	docker-deps \
