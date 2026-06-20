@@ -210,35 +210,37 @@ export const useConnectionColumns = ({
               })) || [];
 
             return (
-              <div onClick={(event) => event.stopPropagation()}>
-                <Grid2 size={{ xs: 12 }} style={{ height: '5rem', width: '15rem' }}>
-                  <Grid2 size={{ xs: 12 }} style={{ marginTop: '2rem', cursor: 'pointer' }}>
-                    <MultiSelectWrapper
-                      updating={updatingConnection.current}
-                      onChange={(selected, unselected) =>
-                        handleEnvironmentSelect(
-                          getColumnValue(tableMeta.rowData, 'id', nextColumns),
-                          getColumnValue(tableMeta.rowData, 'name', nextColumns),
-                          cleanedEnvs,
-                          selected,
-                          unselected,
-                        )
-                      }
-                      options={environmentOptions}
-                      value={cleanedEnvs}
-                      placeholder={`Assigned Environments`}
-                      isSelectAll={true}
-                      menuPlacement={'bottom'}
-                      disabled={
-                        !CAN(
-                          keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
-                          keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
-                        )
-                      }
-                    />
+              isEnvironmentsSuccess && (
+                <div onClick={(event) => event.stopPropagation()}>
+                  <Grid2 size={{ xs: 12 }} style={{ height: '5rem', width: '15rem' }}>
+                    <Grid2 size={{ xs: 12 }} style={{ marginTop: '2rem', cursor: 'pointer' }}>
+                      <MultiSelectWrapper
+                        updating={updatingConnection.current}
+                        onChange={(selected, unselected) =>
+                          handleEnvironmentSelect(
+                            getColumnValue(tableMeta.rowData, 'id', nextColumns),
+                            getColumnValue(tableMeta.rowData, 'name', nextColumns),
+                            cleanedEnvs,
+                            selected,
+                            unselected,
+                          )
+                        }
+                        options={environmentOptions}
+                        value={cleanedEnvs}
+                        placeholder={`Assigned Environments`}
+                        isSelectAll={true}
+                        menuPlacement={'bottom'}
+                        disabled={
+                          !CAN(
+                            keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
+                            keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
+                          )
+                        }
+                      />
+                    </Grid2>
                   </Grid2>
-                </Grid2>
-              </div>
+                </div>
+              )
             );
           },
         },

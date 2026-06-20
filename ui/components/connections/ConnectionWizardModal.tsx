@@ -1,22 +1,21 @@
 import { useEffect, useMemo } from 'react';
 import {
   Box,
-  CustomizedStepper,
   DescriptionIcon,
   ModalBody,
   ModalButtonPrimary,
   ModalButtonSecondary,
   ModalFooter,
-  useStepper,
 } from '@sistent/sistent';
 import { useSelector } from 'react-redux';
 import { Modal } from '@/components/shared/Modal';
 import ConnectionIcon from '@/assets/icons/Connection';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import type { RootState } from '@/store/store';
-import { useGetConnectionDefinitionsQuery } from '@/rtk-query/meshModel';
+import { useListConnectionDefinitionsQuery } from '@meshery/schemas/mesheryApi';
 import { buildConnectionWizardKindConfigs } from './ConnectionWizard.helpers';
 import { useConnectionWizard } from './wizard/useConnectionWizard';
+import WizardStepper from './wizard/WizardStepper';
 
 type ConnectionWizardModalProps = {
   isOpen: boolean;
@@ -34,7 +33,7 @@ const StepConnectionIcon = (props: { width?: number; height?: number }) => (
 const ConnectionWizardModal = ({ isOpen, onClose }: ConnectionWizardModalProps) => {
   const { connectionMetadataState } = useSelector((state: RootState) => state.ui);
   const { data: connectionDefinitionsResponse, isFetching: isLoadingKinds } =
-    useGetConnectionDefinitionsQuery({ params: { pagesize: 'all' } }, { skip: !isOpen });
+    useListConnectionDefinitionsQuery({}, { skip: !isOpen });
 
   // The endpoint returns the page under `connectionDefinitions`; the wizard
   // builds its selectable kinds from that list instead of a hardcoded set.
@@ -60,23 +59,16 @@ const ConnectionWizardModal = ({ isOpen, onClose }: ConnectionWizardModalProps) 
     // wizard.reset is stable; avoid re-running on every render.
   }, [isOpen]);
 
-  const stepper = useStepper({
-    steps: wizard.stepLabels.map((label, index) => ({
-      label,
-      icon:
-        index === 0
-          ? StepConnectionIcon
-          : index === wizard.stepLabels.length - 1
-            ? CheckIcon
-            : DescriptionIcon,
-      component: <></>,
-    })),
-  });
-
-  // Drive the visual stepper header from the engine's active step.
-  useEffect(() => {
-    stepper.setActiveStep(wizard.activeIndex);
-  }, [wizard.activeIndex, wizard.stepLabels.length]);
+  const steps = wizard.stepLabels.map((label, index) => ({
+    label,
+    icon:
+      index === 0
+        ? StepConnectionIcon
+        : index === wizard.stepLabels.length - 1
+          ? CheckIcon
+          : DescriptionIcon,
+    component: <></>,
+  }));
 
   const ActiveBody = wizard.activeStep?.Component;
 
@@ -90,9 +82,9 @@ const ConnectionWizardModal = ({ isOpen, onClose }: ConnectionWizardModalProps) 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Create Connection" size="lg">
       <ModalBody>
-        <CustomizedStepper {...stepper}>
+        <WizardStepper steps={steps} activeIndex={wizard.activeIndex}>
           {ActiveBody ? <ActiveBody ctx={wizard.ctx} /> : <></>}
-        </CustomizedStepper>
+        </WizardStepper>
       </ModalBody>
       <ModalFooter
         variant="filled"

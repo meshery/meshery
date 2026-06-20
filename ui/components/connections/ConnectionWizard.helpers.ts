@@ -89,11 +89,15 @@ export const buildConnectionWizardKindConfigs = (
 
   return definitions.reduce<ConnectionWizardKindConfig[]>((configs, definition) => {
     const kind = definition?.kind;
-    if (!kind || seen.has(kind)) {
+    if (!kind) {
       return configs;
     }
-    seen.add(kind);
 
+    const dedupeKey = [kind, definition.type || '', definition.subType || ''].join('|');
+    if (seen.has(dedupeKey)) {
+      return configs;
+    }
+    seen.add(dedupeKey);
     configs.push({
       kind,
       type: definition.type || '',

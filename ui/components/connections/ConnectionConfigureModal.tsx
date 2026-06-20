@@ -2,21 +2,20 @@ import { useEffect, useMemo } from 'react';
 import {
   Box,
   CheckIcon,
-  CustomizedStepper,
   DescriptionIcon,
   ModalBody,
   ModalButtonPrimary,
   ModalButtonSecondary,
   ModalFooter,
-  useStepper,
 } from '@sistent/sistent';
 import { Modal } from '@/components/shared/Modal';
-import { useGetConnectionDefinitionsQuery } from '@/rtk-query/meshModel';
+import { useListConnectionDefinitionsQuery } from '@meshery/schemas/mesheryApi';
 import {
   buildConnectionWizardKindConfigs,
   type ConnectionWizardKindConfig,
 } from './ConnectionWizard.helpers';
 import { useConnectionWizard } from './wizard/useConnectionWizard';
+import WizardStepper from './wizard/WizardStepper';
 
 export type ConfigurableConnection = {
   id?: string;
@@ -63,8 +62,8 @@ const ConnectionConfigureModal = ({
   onClose,
   connection,
 }: ConnectionConfigureModalProps) => {
-  const { data: connectionDefinitionsResponse } = useGetConnectionDefinitionsQuery(
-    { params: { pagesize: 'all' } },
+  const { data: connectionDefinitionsResponse } = useListConnectionDefinitionsQuery(
+    {},
     { skip: !isOpen },
   );
 
@@ -92,17 +91,11 @@ const ConnectionConfigureModal = ({
     }
   }, [isOpen]);
 
-  const stepper = useStepper({
-    steps: wizard.stepLabels.map((label, index) => ({
-      label,
-      icon: index === wizard.stepLabels.length - 1 ? CheckIcon : DescriptionIcon,
-      component: <></>,
-    })),
-  });
-
-  useEffect(() => {
-    stepper.setActiveStep(wizard.activeIndex);
-  }, [wizard.activeIndex, wizard.stepLabels.length]);
+  const steps = wizard.stepLabels.map((label, index) => ({
+    label,
+    icon: index === wizard.stepLabels.length - 1 ? CheckIcon : DescriptionIcon,
+    component: <></>,
+  }));
 
   const ActiveBody = wizard.activeStep?.Component;
 
@@ -121,9 +114,9 @@ const ConnectionConfigureModal = ({
       size="lg"
     >
       <ModalBody>
-        <CustomizedStepper {...stepper}>
+        <WizardStepper steps={steps} activeIndex={wizard.activeIndex}>
           {ActiveBody ? <ActiveBody ctx={wizard.ctx} /> : <></>}
-        </CustomizedStepper>
+        </WizardStepper>
       </ModalBody>
       <ModalFooter variant="filled">
         <Box sx={{ width: '100%', display: 'flex', justifyContent: 'end', gap: 2 }}>

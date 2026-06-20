@@ -477,12 +477,7 @@ func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req 
 
 func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, additionalMetadata map[string]any) (connections.Connection, error) {
 
-	// An unreachable context has no server ID assigned; persist it anyway as a
-	// discovered connection rather than dereferencing a nil pointer.
-	var k8sServerID uuid.UUID
-	if k8sContext.KubernetesServerID != nil {
-		k8sServerID = *k8sContext.KubernetesServerID
-	}
+	k8sServerID := *k8sContext.KubernetesServerID
 
 	var connID core.Uuid
 	id, err := K8sContextGenerateID(k8sContext)

@@ -667,6 +667,24 @@ const ConnectionTable = ({
 
   const [tableCols, setTableCols] = useState(columns);
 
+  // Keep the latest `columns` in a ref so the sync effect below can read them
+  // without depending on `columns` identity — `columns` is rebuilt on most
+  // renders (not all of its inputs are referentially stable), so a `[columns]`
+  // dependency would setState every render and loop infinitely.
+  const columnsRef = useRef(columns);
+  columnsRef.current = columns;
+
+  // ResponsiveDataTable renders cells from this `tableCols` snapshot and only
+  // re-syncs it on columnVisibility identity changes, so a cell whose
+  // `customBodyRender` closes over async data (the environments select is gated
+  // on `isEnvironmentsSuccess`) would stay frozen at its first-render output.
+  // Re-push the freshly built columns once those inputs settle — keyed on the
+  // settling signals (not `columns`) so it runs only when the rendered output
+  // can actually change.
+  useEffect(() => {
+    setTableCols(columnsRef.current);
+  }, [isEnvironmentsSuccess, environmentOptions]);
+
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean | undefined>>(
     () => getResponsiveColumnVisibility(columnNames, colViews, width),
   );

@@ -107,7 +107,7 @@ func (h *Handler) GetConnectionDefinitionByID(rw http.ResponseWriter, r *http.Re
 	}
 	defs := connectionDefinitionsFromEntities(entities)
 	if len(defs) == 0 {
-		writeMeshkitError(rw, ErrQueryGet("connection definition"), http.StatusNotFound)
+		writeJSONError(rw, fmt.Sprintf("connection definition with id %s not found", connectionDefinitionID), http.StatusNotFound)
 		return
 	}
 
