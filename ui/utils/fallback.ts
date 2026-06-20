@@ -16,6 +16,12 @@ export function normalizeStaticImagePath(path) {
     return '';
   }
 
+  // Inline SVG markup (e.g. a connection/component definition's styles.svgColor)
+  // is encoded as a data URI so it can be used directly as an <img> src.
+  if (trimmed.startsWith('<svg') || trimmed.startsWith('<?xml')) {
+    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(trimmed)}`;
+  }
+
   if (trimmed.startsWith('http') || trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
     return trimmed;
   }
