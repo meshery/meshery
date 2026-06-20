@@ -312,11 +312,11 @@ func (c *Client) QueryRangeBatch(ctx context.Context, start, end, step string, q
 			defer wg.Done()
 			select {
 			case sem <- struct{}{}:
-				defer func() { <-sem }()
 			case <-ctx.Done():
 				results[i] = BatchResult{ID: q.ID, Err: ctx.Err()}
 				return
 			}
+			defer func() { <-sem }()
 			params := url.Values{
 				"query": {q.Query},
 				"start": {start},
