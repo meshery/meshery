@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include ../.github/build/Makefile.core.mk
-include ../.github/build/Makefile.show-help.mk
+include ../install/Makefile.core.mk
+include ../install/Makefile.show-help.mk
 
 ## Install docs.meshery.io dependencies on your local machine.
 ## See https://gohugo.io/categories/installation
