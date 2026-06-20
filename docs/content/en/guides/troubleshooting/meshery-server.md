@@ -4,6 +4,8 @@ description: Troubleshooting Meshery errors when running make run-fast / meshery
 aliases: 
 - /guides/troubleshooting/running
 categories: [troubleshooting]
+no_list: true 
+hide_section_list: true
 ---
 
 ## mesheryctl system start
