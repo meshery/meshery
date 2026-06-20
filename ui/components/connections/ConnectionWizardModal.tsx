@@ -1,13 +1,11 @@
 import { useEffect, useMemo } from 'react';
 import {
   Box,
-  CustomizedStepper,
   DescriptionIcon,
   ModalBody,
   ModalButtonPrimary,
   ModalButtonSecondary,
   ModalFooter,
-  useStepper,
 } from '@sistent/sistent';
 import { useSelector } from 'react-redux';
 import { Modal } from '@/components/shared/Modal';
@@ -17,6 +15,7 @@ import type { RootState } from '@/store/store';
 import { useListConnectionDefinitionsQuery } from '@meshery/schemas/mesheryApi';
 import { buildConnectionWizardKindConfigs } from './ConnectionWizard.helpers';
 import { useConnectionWizard } from './wizard/useConnectionWizard';
+import WizardStepper from './wizard/WizardStepper';
 
 type ConnectionWizardModalProps = {
   isOpen: boolean;
@@ -60,23 +59,16 @@ const ConnectionWizardModal = ({ isOpen, onClose }: ConnectionWizardModalProps) 
     // wizard.reset is stable; avoid re-running on every render.
   }, [isOpen]);
 
-  const stepper = useStepper({
-    steps: wizard.stepLabels.map((label, index) => ({
-      label,
-      icon:
-        index === 0
-          ? StepConnectionIcon
-          : index === wizard.stepLabels.length - 1
-            ? CheckIcon
-            : DescriptionIcon,
-      component: <></>,
-    })),
-  });
-
-  // Drive the visual stepper header from the engine's active step.
-  useEffect(() => {
-    stepper.setActiveStep(wizard.activeIndex);
-  }, [wizard.activeIndex, wizard.stepLabels.length]);
+  const steps = wizard.stepLabels.map((label, index) => ({
+    label,
+    icon:
+      index === 0
+        ? StepConnectionIcon
+        : index === wizard.stepLabels.length - 1
+          ? CheckIcon
+          : DescriptionIcon,
+    component: <></>,
+  }));
 
   const ActiveBody = wizard.activeStep?.Component;
 
@@ -90,9 +82,9 @@ const ConnectionWizardModal = ({ isOpen, onClose }: ConnectionWizardModalProps) 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Create Connection" size="lg">
       <ModalBody>
-        <CustomizedStepper {...stepper}>
+        <WizardStepper steps={steps} activeIndex={wizard.activeIndex}>
           {ActiveBody ? <ActiveBody ctx={wizard.ctx} /> : <></>}
-        </CustomizedStepper>
+        </WizardStepper>
       </ModalBody>
       <ModalFooter
         variant="filled"
