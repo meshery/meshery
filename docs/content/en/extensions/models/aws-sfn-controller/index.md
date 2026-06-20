@@ -29,7 +29,11 @@ components:
   colorIcon: extensions/models/aws-sfn-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
   whiteIcon: extensions/models/aws-sfn-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
-components-count: 5
+- name: state-machine-alias
+  colorIcon: extensions/models/aws-sfn-controller/components/state-machine-alias/icons/color/state-machine-alias-color.svg
+  whiteIcon: extensions/models/aws-sfn-controller/components/state-machine-alias/icons/white/state-machine-alias-white.svg
+  description: 
+components-count: 6
 relationships: 
 - type: "non-binding"
   kind: "edge"
