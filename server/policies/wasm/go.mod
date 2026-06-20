@@ -13,7 +13,7 @@ replace github.com/meshery/meshery => ../../../
 
 require (
 	github.com/meshery/meshery v0.0.0-00010101000000-000000000000
-	github.com/meshery/schemas v1.3.7
+	github.com/meshery/schemas v1.3.10
 )
 
 require (
@@ -72,7 +72,7 @@ require (
 	github.com/cloudflare/circl v1.6.3 // indirect
 	github.com/cockroachdb/apd/v3 v3.2.1 // indirect
 	github.com/compose-spec/compose-go/v2 v2.10.0 // indirect
-	github.com/containerd/containerd v1.7.32 // indirect
+	github.com/containerd/containerd v1.7.33 // indirect
 	github.com/containerd/errdefs v1.0.0 // indirect
 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
 	github.com/containerd/log v0.1.0 // indirect
@@ -187,7 +187,7 @@ require (
 	github.com/mattn/go-shellwords v1.0.12 // indirect
 	github.com/mattn/go-sqlite3 v1.14.32 // indirect
 	github.com/meshery/meshery-operator v0.8.11 // indirect
-	github.com/meshery/meshkit v1.0.10 // indirect
+	github.com/meshery/meshkit v1.0.13 // indirect
 	github.com/meshery/meshsync v1.0.0 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect

@@ -126,7 +126,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 						// Delete the meshsync resource which has been upgraded to Connection.
 						_ = arh.dbHandler.Model(&meshsyncmodel.KubernetesResource{}).Delete(&meshsyncmodel.KubernetesResource{ID: data.Obj.ID})
 
-						event = events.NewEvent().WithCategory("connection").WithAction("register").FromUser(data.MeshsyncDataHandler.UserID).ActedUpon(data.MeshsyncDataHandler.ConnectionID).WithDescription(fmt.Sprintf("Auto Registered connection of type \"%s\" at %s", connectionName, url)).Build()
+						event = events.NewEvent().WithCategory("connection").WithAction("register").FromOwner(data.MeshsyncDataHandler.UserID).ActedUpon(data.MeshsyncDataHandler.ConnectionID).WithDescription(fmt.Sprintf("Auto Registered connection of type \"%s\" at %s", connectionName, url)).Build()
 
 						go arh.eventBroadcast.Publish(data.MeshsyncDataHandler.UserID, event)
 						_ = data.MeshsyncDataHandler.Provider.PersistSystemEvent(*event)
