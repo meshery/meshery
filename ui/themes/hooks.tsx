@@ -16,7 +16,9 @@ const getStoredTheme = (): string | null => {
 const setStoredTheme = (theme: string): void => {
   try {
     localStorage.setItem(THEME_STORAGE_KEY, theme);
-  } catch {}
+  } catch {
+    // Ignore storage errors (e.g., storage disabled/unavailable).
+  }
 };
 
 export const useGetSystemTheme = () => {
@@ -42,6 +44,13 @@ export const useThemePreference = () => {
   const mode = isLoading
     ? storedMode || systemPref || 'dark'
     : data?.remoteProviderPreferences?.theme || storedMode || systemPref || 'dark';
+
+  useEffect(() => {
+    if (!isLoading && data?.remoteProviderPreferences?.theme) {
+      setStoredTheme(data.remoteProviderPreferences.theme);
+      setStoredMode(data.remoteProviderPreferences.theme);
+    }
+  }, [isLoading, data?.remoteProviderPreferences?.theme]);
 
   return {
     data: { mode },

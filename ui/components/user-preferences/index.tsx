@@ -190,11 +190,6 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
     }
   };
 
-  const handleError = (name) => () => {
-    updateProgress({ showProgress: false });
-    notify({ message: name, event_type: EVENT_TYPES.ERROR });
-  };
-
   const handleChange = (name, resultState) => {
     let val = resultState,
       msg;
