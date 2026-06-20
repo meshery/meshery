@@ -15,9 +15,9 @@
 #-----------------------------------------------------------------------------
 # Global Variables
 #-----------------------------------------------------------------------------
-GIT_VERSION	= $(shell git describe --tags `git rev-list --tags --max-count=1`)
-GIT_COMMITSHA = $(shell git rev-list -1 HEAD)
-GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
+GIT_VERSION = $(shell git describe --tags $$(git rev-list --tags --max-count=1 2>/dev/null) 2>/dev/null)
+GIT_COMMITSHA = $(shell git rev-list -1 HEAD 2>/dev/null)
+GIT_STRIPPED_VERSION = $(shell git describe --tags $$(git rev-list --tags --max-count=1 2>/dev/null) 2>/dev/null | cut -c 2-)
 REMOTE_PROVIDER="Layer5"
 LOCAL_PROVIDER="None"
 GOVERSION = 1.25
