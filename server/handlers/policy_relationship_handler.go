@@ -760,7 +760,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		_ = r.Body.Close()
 	}()
 
-	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userUUID).WithCategory("relationship").WithAction("evaluation")
+	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromOwner(userUUID).WithCategory("relationship").WithAction("evaluation")
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {

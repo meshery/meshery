@@ -49,7 +49,11 @@ components:
   colorIcon: extensions/models/cloudnative-pg/components/failover-quorum/icons/color/failover-quorum-color.svg
   whiteIcon: extensions/models/cloudnative-pg/components/failover-quorum/icons/white/failover-quorum-white.svg
   description: 
-components-count: 10
+- name: database-role
+  colorIcon: extensions/models/cloudnative-pg/components/database-role/icons/color/database-role-color.svg
+  whiteIcon: extensions/models/cloudnative-pg/components/database-role/icons/white/database-role-white.svg
+  description: 
+components-count: 11
 relationships: 
 relationship-count: 0
 featureList: [
