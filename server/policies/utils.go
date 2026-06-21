@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
@@ -93,12 +93,12 @@ func canonicalSeed(seed interface{}) string {
 func newUUID(seed interface{}) uuid.UUID {
 	now := fmt.Sprintf("%d", time.Now().UnixNano())
 	data := canonicalSeed(seed) + now
-	return uuid.NewV5(uuid.NamespaceDNS, data)
+	return uuid.NewSHA1(uuid.NameSpaceDNS, []byte(data))
 }
 
 // staticUUID generates a deterministic UUID from a seed (no time component).
 func staticUUID(seed interface{}) uuid.UUID {
-	return uuid.NewV5(uuid.NamespaceDNS, canonicalSeed(seed))
+	return uuid.NewSHA1(uuid.NameSpaceDNS, []byte(canonicalSeed(seed)))
 }
 
 // matchName checks if a component name matches a selector pattern.
@@ -170,7 +170,7 @@ func deepEqual(a, b interface{}) bool {
 
 // uuidFromString parses a UUID from a string, returning zero UUID on error.
 func uuidFromString(s string) (uuid.UUID, error) {
-	return uuid.FromString(s)
+	return uuid.Parse(s)
 }
 
 // deepCopyDesign creates a deep copy of a PatternFile via JSON round-trip.

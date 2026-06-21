@@ -1,7 +1,7 @@
 ---
 title: Kuma
 subtitle: Collaborative and visual infrastructure as design for Kuma
-image: /extensions/models/kuma/icons/color/kuma-color.svg
+image: extensions/models/kuma/icons/color/kuma-color.svg
 aliases: /extensibility/integrations/kuma
 docURL: https://docs.meshery.io/extensibility/integrations/kuma
 description: 

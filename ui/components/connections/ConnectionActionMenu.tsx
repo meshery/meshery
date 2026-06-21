@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Popover, Typography, SyncAltIcon } from '@sistent/sistent';
+import { Button, Popover, Typography, SyncAltIcon, SettingsIcon } from '@sistent/sistent';
 import { ActionListItem } from './styles';
 import { iconMedium } from '../../css/icons.styles';
 import CAN from '@/utils/can';
@@ -12,6 +12,7 @@ type ConnectionActionMenuProps = {
   onClose: () => void;
   onFlushMeshSync: () => void;
   onDeploymentModeAnchor: (event: React.MouseEvent<HTMLElement>) => void;
+  onConfigure?: () => void;
 };
 
 export const ConnectionActionMenu = ({
@@ -20,6 +21,7 @@ export const ConnectionActionMenu = ({
   onClose,
   onFlushMeshSync,
   onDeploymentModeAnchor,
+  onConfigure,
 }: ConnectionActionMenuProps) => {
   return (
     <Popover
@@ -31,6 +33,16 @@ export const ConnectionActionMenu = ({
         horizontal: 'left',
       }}
     >
+      {onConfigure && (
+        <ActionListItem>
+          <Button type="button" onClick={onConfigure} data-cy="btnConfigureConnection">
+            <SettingsIcon {...iconMedium} />
+            <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+              Configure
+            </Typography>
+          </Button>
+        </ActionListItem>
+      )}
       <ActionListItem>
         <Button
           type="submit"

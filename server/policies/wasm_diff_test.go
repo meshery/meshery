@@ -9,7 +9,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -182,9 +182,9 @@ func TestWasmEngineMatchesNative(t *testing.T) {
 	}
 
 	compA := &component.ComponentDefinition{}
-	compA.ID, _ = uuid.FromString("00000000-0000-0000-0000-0000000000aa")
+	compA.ID, _ = uuid.Parse("00000000-0000-0000-0000-0000000000aa")
 	compMissing := &component.ComponentDefinition{}
-	compMissing.ID, _ = uuid.FromString("00000000-0000-0000-0000-00000000dead")
+	compMissing.ID, _ = uuid.Parse("00000000-0000-0000-0000-00000000dead")
 
 	relStatus := relationship.RelationshipDefinitionStatus("approved")
 	rel := &relationship.RelationshipDefinition{
@@ -200,7 +200,7 @@ func TestWasmEngineMatchesNative(t *testing.T) {
 			},
 		},
 	}
-	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
+	rel.ID, _ = uuid.Parse("00000000-0000-0000-0000-000000000001")
 
 	design := *makePatternFile([]*component.ComponentDefinition{compA}, []*relationship.RelationshipDefinition{rel})
 	rels := []*relationship.RelationshipDefinition{rel}

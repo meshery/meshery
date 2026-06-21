@@ -1,7 +1,7 @@
 ---
 title: K8GB
 subtitle: Collaborative and visual infrastructure as design for K8GB
-image: /extensions/models/k8gb/icons/color/k8gb-color.svg
+image: extensions/models/k8gb/icons/color/k8gb-color.svg
 aliases: /extensibility/integrations/k8gb
 docURL: https://docs.meshery.io/extensibility/integrations/k8gb
 description: 

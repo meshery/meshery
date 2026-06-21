@@ -1,7 +1,7 @@
 ---
 title: Apache ShardingSphere
 subtitle: Collaborative and visual infrastructure as design for Apache ShardingSphere
-image: /extensions/models/apache-shardingsphere-operator-charts/icons/color/apache-shardingsphere-operator-charts-color.svg
+image: extensions/models/apache-shardingsphere-operator-charts/icons/color/apache-shardingsphere-operator-charts-color.svg
 aliases: /extensibility/integrations/apache-shardingsphere-operator-charts
 docURL: https://docs.meshery.io/extensibility/integrations/apache-shardingsphere-operator-charts
 description: 

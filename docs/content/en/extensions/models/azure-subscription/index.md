@@ -1,7 +1,7 @@
 ---
 title: Azure Subscription
 subtitle: Collaborative and visual infrastructure as design for Azure Subscription
-image: /extensions/models/azure-subscription/icons/color/azure-subscription-color.svg
+image: extensions/models/azure-subscription/icons/color/azure-subscription-color.svg
 aliases: /extensibility/integrations/azure-subscription
 docURL: https://docs.meshery.io/extensibility/integrations/azure-subscription
 description: 

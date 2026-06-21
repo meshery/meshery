@@ -1,7 +1,7 @@
 ---
 title: Flagger
 subtitle: Collaborative and visual infrastructure as design for Flagger
-image: /extensions/models/flagger/icons/color/flagger-color.svg
+image: extensions/models/flagger/icons/color/flagger-color.svg
 aliases: /extensibility/integrations/flagger
 docURL: https://docs.meshery.io/extensibility/integrations/flagger
 description: 

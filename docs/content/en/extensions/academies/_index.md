@@ -18,7 +18,7 @@ The platform organizes educational material into three primary formats:
 Built on a modular Hugo-based static site framework (with a multi-repository architecture separating theme, content, and build concerns), academies is highly extensible. Organizations and contributors can:
 
 - Plug in custom academies or content repositories tailored to specific technologies, teams, or use cases.
-- Embed live Meshery designs, visualizations, and Kanvas interactions for immersive labs.
+- Embed live Meshery designs, visualizations, and interactions for immersive labs.
 - Use Git-native workflows for content creation—manage everything in Markdown with Hugo shortcodes, custom CSS, and HTML mixing, while leveraging version control, pull requests, and automated builds/releases.
 
 This architecture supports multi-tenancy, white-labeling (for branded experiences), and seamless integration with the broader Meshery ecosystem.
@@ -31,4 +31,4 @@ This architecture supports multi-tenancy, white-labeling (for branded experience
 
 Meshery Academies exemplifies Meshery’s philosophy of extensibility—empowering the community to democratize cloud native knowledge through practical, visual, and interactive learning experiences. It serves as both an official learning hub for Meshery (with paths like “Mastering Meshery”) and a framework for anyone to create their own specialized academies.
 
-To find a complete list of academies available, explore the [meshery-extensions](https://github.com/meshery-extensions) repositories, like [meshery-academy](https://github.com/meshery-extensions/meshery-academy). Contributions and extensions are welcome in the Meshery Extensions organization.
+To find a complete list of academies available, explore the repositories under the [meshery-academy topic](https://github.com/topics/meshery-academy), like [meshery-academy](https://github.com/meshery-extensions/meshery-academy). Contributions and extensions are welcome in the Meshery Extensions organization.

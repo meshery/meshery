@@ -9,7 +9,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/v1beta1/environment"
@@ -138,10 +138,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 
 func (wp *WorkspacePersister) SaveWorkspace(workspace *workspace.Workspace) ([]byte, error) {
 	if workspace.ID == uuid.Nil {
-		id, err := uuid.NewV4()
-		if err != nil {
-			return nil, ErrGenerateUUID(err)
-		}
+		id := uuid.New()
 		workspace.ID = id
 	}
 
@@ -257,10 +254,7 @@ func (wp *WorkspacePersister) AddEnvironmentToWorkspace(workspaceID, environment
 		UpdatedAt:     time.Now(),
 	}
 
-	id, err := uuid.NewV4()
-	if err != nil {
-		return nil, ErrGenerateUUID(err)
-	}
+	id := uuid.New()
 	wsEnvMapping.ID = id
 
 	// Add environment to workspace
@@ -410,10 +404,7 @@ func (wp *WorkspacePersister) AddDesignToWorkspace(workspaceID, designID core.Uu
 		UpdatedAt:   time.Now(),
 	}
 
-	id, err := uuid.NewV4()
-	if err != nil {
-		return nil, ErrGenerateUUID(err)
-	}
+	id := uuid.New()
 	wsDesignMapping.ID = id
 
 	// Add design to workspace
@@ -563,10 +554,7 @@ func (wp *WorkspacePersister) AddViewToWorkspace(workspaceID, viewID core.Uuid) 
 		UpdatedAt:   time.Now(),
 	}
 
-	id, err := uuid.NewV4()
-	if err != nil {
-		return nil, ErrGenerateUUID(err)
-	}
+	id := uuid.New()
 	wsViewMapping.ID = id
 
 	if err := wp.DB.Create(wsViewMapping).Error; err != nil {
@@ -691,10 +679,7 @@ func (wp *WorkspacePersister) AddTeamToWorkspace(workspaceID, teamID core.Uuid) 
 		UpdatedAt:   time.Now(),
 	}
 
-	id, err := uuid.NewV4()
-	if err != nil {
-		return nil, ErrGenerateUUID(err)
-	}
+	id := uuid.New()
 	wsTeamMapping.ID = id
 
 	if err := wp.DB.Create(wsTeamMapping).Error; err != nil {

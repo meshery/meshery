@@ -1,7 +1,7 @@
 ---
 title: Kubevault Crds
 subtitle: Collaborative and visual infrastructure as design for Kubevault Crds
-image: /extensions/models/kubevault-crds/icons/color/kubevault-crds-color.svg
+image: extensions/models/kubevault-crds/icons/color/kubevault-crds-color.svg
 aliases: /extensibility/integrations/kubevault-crds
 docURL: https://docs.meshery.io/extensibility/integrations/kubevault-crds
 description: 
