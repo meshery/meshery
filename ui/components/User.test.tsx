@@ -87,6 +87,8 @@ vi.mock('./layout/Header/Header.styles', () => ({
           target={target}
           rel={rel}
           aria-label={ariaLabel}
+          data-color={color}
+          data-has-popup={hasPopup}
         >
           {children}
         </a>
@@ -96,7 +98,7 @@ vi.mock('./layout/Header/Header.styles', () => ({
       <button
         data-testid="icon-button-avatar"
         data-color={color}
-        aria-haspopup={hasPopup}
+        data-has-popup={hasPopup}
         aria-label={ariaLabel}
         onClick={onClick}
       >

@@ -72,35 +72,35 @@ const User = (props) => {
     );
   }
 
+  const avatar = (
+    <Avatar
+      sx={{ height: 36, width: 36 }}
+      src={isGetUserSuccess ? userData?.avatarUrl : null}
+      imgProps={{ referrerPolicy: 'no-referrer' }}
+    />
+  );
+
+  const profileLinkProps = profileUrl
+    ? {
+        component: Link as any,
+        href: profileUrl,
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        'aria-label': 'Open user profile',
+      }
+    : {
+        disabled: true,
+      };
+
   return (
     <div>
       <NoSsr>
         <div data-testid="profile-button">
-          {profileUrl ? (
-            <IconButtonAvatar
-              color={color}
-              aria-haspopup="true"
-              component={Link}
-              href={profileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Open user profile"
-            >
-              <Avatar
-                sx={{ height: 36, width: 36 }}
-                src={isGetUserSuccess ? userData?.avatarUrl : null}
-                imgProps={{ referrerPolicy: 'no-referrer' }}
-              />
+          {
+            <IconButtonAvatar color={color} {...profileLinkProps}>
+              {avatar}
             </IconButtonAvatar>
-          ) : (
-            <IconButtonAvatar color={color} aria-haspopup="true">
-              <Avatar
-                sx={{ height: 36, width: 36 }}
-                src={isGetUserSuccess ? userData?.avatarUrl : null}
-                imgProps={{ referrerPolicy: 'no-referrer' }}
-              />
-            </IconButtonAvatar>
-          )}
+          }
         </div>
       </NoSsr>
     </div>
