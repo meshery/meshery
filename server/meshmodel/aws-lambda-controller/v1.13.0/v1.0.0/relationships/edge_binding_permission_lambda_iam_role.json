@@ -1,21 +1,52 @@
 {
-  "kind": "edge",
-  "type": "binding",
-  "subType": "permission",
+  "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "edge_binding_permission_relationship",
-  "model": {
-    "name": "aws-lambda-controller",
-    "version": "v1.13.0"
+  "kind": "edge",
+  "metadata": {
+    "description": "",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
   },
+  "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.13.0"
+    },
+    "name": "aws-lambda-controller",
+    "registrant": {
+      "kind": "github"
+    },
+    "version": ""
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "model": "aws-lambda-controller",
+            "id": null,
             "kind": "Function",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-lambda-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
@@ -28,12 +59,28 @@
         ],
         "to": [
           {
-            "model": "aws-iam-controller",
+            "id": null,
             "kind": "Role",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-iam-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "configuration",
+                  "status",
+                  "ackResourceMetadata",
                   "arn"
                 ]
               ],
@@ -41,7 +88,15 @@
             }
           }
         ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
       }
     }
-  ]
+  ],
+  "subType": "permission",
+  "status": "enabled",
+  "type": "binding",
+  "version": "v1.0.0"
 }

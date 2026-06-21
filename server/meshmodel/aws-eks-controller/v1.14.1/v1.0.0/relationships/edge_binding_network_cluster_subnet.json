@@ -1,26 +1,58 @@
 {
-  "kind": "edge",
-  "type": "binding",
-  "subType": "network",
+  "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "edge_binding_network_relationship",
-  "model": {
-    "name": "aws-eks-controller",
-    "version": "v1.14.1"
+  "kind": "edge",
+  "metadata": {
+    "description": "",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
   },
+  "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.14.1"
+    },
+    "name": "aws-eks-controller",
+    "registrant": {
+      "kind": "github"
+    },
+    "version": ""
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "model": "aws-eks-controller",
+            "id": null,
             "kind": "Cluster",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-eks-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
-                  "vpcConfig",
-                  "subnetIds"
+                  "resourcesVPCConfig",
+                  "subnetIDs",
+                  "0"
                 ]
               ],
               "patchStrategy": "replace"
@@ -29,12 +61,27 @@
         ],
         "to": [
           {
-            "model": "aws-ec2-controller",
+            "id": null,
             "kind": "Subnet",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-ec2-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "configuration",
+                  "status",
                   "id"
                 ]
               ],
@@ -42,7 +89,15 @@
             }
           }
         ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
       }
     }
-  ]
+  ],
+  "subType": "network",
+  "status": "enabled",
+  "type": "binding",
+  "version": "v1.0.0"
 }
