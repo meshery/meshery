@@ -16,7 +16,7 @@ export default function fetchCatalogFilter(variables: CatalogFilterVariables) {
       catalogFilters: fetchFilterCatalogContent(selector: $selector) {
         id
         name
-        user_id
+        owner
         filter_file
         filter_resource
         visibility

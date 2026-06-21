@@ -10,7 +10,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
@@ -336,7 +335,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			EventBroadcaster:   h.config.EventBroadcaster,
 			RegistryManager:    h.registryManager,
 		}
-		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+		connectionUUID := parseUUIDOrNil(k8sContext.ConnectionID)
 
 		inst, err := mhelpers.InitializeMachineWithContext(
 			machineCtx,
@@ -395,7 +394,7 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			EventBroadcaster:   h.config.EventBroadcaster,
 			RegistryManager:    h.registryManager,
 		}
-		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+		connectionUUID := parseUUIDOrNil(k8sContext.ConnectionID)
 
 		inst, err := mhelpers.InitializeMachineWithContext(
 			machineCtx,

@@ -6,7 +6,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/environments"
@@ -149,10 +149,7 @@ func (cp *ConnectionPersister) getConnectionsStatusSummary() (*map[schemasConnec
 
 func (cp *ConnectionPersister) SaveConnection(connection *connections.Connection) (*connections.Connection, error) {
 	if connection.ID == uuid.Nil {
-		id, err := uuid.NewV4()
-		if err != nil {
-			return nil, ErrGenerateUUID(err)
-		}
+		id := uuid.New()
 		connection.ID = id
 	}
 

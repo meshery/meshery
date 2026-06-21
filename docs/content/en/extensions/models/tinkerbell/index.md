@@ -1,7 +1,7 @@
 ---
 title: Tinkerbell
 subtitle: Collaborative and visual infrastructure as design for Tinkerbell
-image: /extensions/models/tinkerbell/icons/color/tinkerbell-color.svg
+image: extensions/models/tinkerbell/icons/color/tinkerbell-color.svg
 aliases: /extensibility/integrations/tinkerbell
 docURL: https://docs.meshery.io/extensibility/integrations/tinkerbell
 description: 

@@ -1,7 +1,7 @@
 ---
 title: AWS Simple Storage Service (S3)
 subtitle: Collaborative and visual infrastructure as design for AWS Simple Storage Service (S3)
-image: /extensions/models/aws-s3-controller/icons/color/aws-s3-controller-color.svg
+image: extensions/models/aws-s3-controller/icons/color/aws-s3-controller-color.svg
 aliases: /extensibility/integrations/aws-s3-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-s3-controller
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Jfrog Distribution
 subtitle: Managed release binary distribution with JFrog distribution
-image: /extensions/models/distribution/icons/color/distribution-color.svg
+image: extensions/models/distribution/icons/color/distribution-color.svg
 aliases: /extensibility/integrations/distribution
 docURL: https://docs.meshery.io/extensibility/integrations/distribution
 description: 

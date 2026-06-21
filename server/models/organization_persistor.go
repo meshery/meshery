@@ -6,7 +6,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/v1beta2/organization"
 )
@@ -51,10 +51,7 @@ func (op *OrganizationPersister) GetOrganizations(search, order string, page, pa
 
 func (op *OrganizationPersister) SaveOrganization(org *organization.Organization) ([]byte, error) {
 	if org.ID == uuid.Nil {
-		id, err := uuid.NewV4()
-		if err != nil {
-			return nil, ErrGenerateUUID(err)
-		}
+		id := uuid.New()
 
 		org.ID = id
 	}

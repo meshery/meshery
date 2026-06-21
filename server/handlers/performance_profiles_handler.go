@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 )
@@ -51,7 +51,7 @@ func (h *Handler) SavePerformanceProfileHandler(
 		return
 	}
 	if user != nil && user.ID != uuid.Nil {
-		parsedBody.UserID = user.ID
+		parsedBody.Owner = user.ID
 	}
 
 	j, _ := json.Marshal(parsedBody)

@@ -23,7 +23,8 @@ import { keys } from '@/utils/permission_constants';
 import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { formatDate } from '../data-formatter';
 import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
-import { CONNECTION_STATE_TRANSITIONS } from './ConnectionTable.constants';
+import { getNextStates } from './ConnectionTable.constants';
+import type { ConnectionTransitionMap } from './ConnectionTable.constants';
 import type { EnvironmentOption, RowData } from './ConnectionTable.types';
 
 type UseConnectionColumnsArgs = {
@@ -48,6 +49,9 @@ type UseConnectionColumnsArgs = {
   ) => void | Promise<void>;
   handleActionMenuOpen: (event: any, tableMeta: RowData) => void;
   ping: (name: string, server: string, id: string) => void;
+  // Per-kind connection state machine, keyed by connection kind. Sourced from
+  // the connection definitions' `transitionMap` (see `_app.tsx`).
+  transitionMapByKind: Record<string, ConnectionTransitionMap | undefined> | null;
 };
 
 export const useConnectionColumns = ({
@@ -61,6 +65,7 @@ export const useConnectionColumns = ({
   handleStatusChange,
   handleActionMenuOpen,
   ping,
+  transitionMapByKind,
 }: UseConnectionColumnsArgs) => {
   return useMemo(() => {
     const nextColumns = [
@@ -403,9 +408,7 @@ export const useConnectionColumns = ({
             const currentStatus = value;
             const kind = getColumnValue(tableMeta.rowData, 'kind', nextColumns);
 
-            const nextStatus = Object.keys(
-              CONNECTION_STATE_TRANSITIONS?.[kind]?.[currentStatus] ?? {},
-            );
+            const nextStatus = getNextStates(transitionMapByKind?.[kind], currentStatus);
             nextStatus.push(currentStatus);
 
             const disabled =
@@ -536,6 +539,7 @@ export const useConnectionColumns = ({
     handleStatusChange,
     isEnvironmentsSuccess,
     ping,
+    transitionMapByKind,
     updatingConnection,
     url,
   ]);
