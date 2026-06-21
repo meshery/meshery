@@ -1,39 +1,50 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "version": "v1.0.0",
-  "kind": "RelationshipDefinition",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "edge_binding_permission_relationship",
+  "kind": "edge",
   "metadata": {
-    "description": "Lambda to API Gateway Permission Binding"
+    "description": "Lambda to API Gateway Permission Binding",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
   },
   "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.3.0"
+    },
     "name": "aws-apigatewayv2-controller",
-    "version": "v1.3.0"
+    "registrant": {
+      "kind": "github"
+    },
+    "version": ""
   },
-  "type": "binding",
-  "subType": "permission",
-  "evaluationQuery": "edge_binding_permission_relationship",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "model": "aws-lambda-controller",
-            "kind": "Function",
-            "patch": {
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "arn"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
-          }
-        ],
-        "to": [
-          {
-            "model": "aws-apigatewayv2-controller",
+            "id": null,
             "kind": "Integration",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-apigatewayv2-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
               "mutatedRef": [
                 [
@@ -45,8 +56,47 @@
               "patchStrategy": "replace"
             }
           }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Function",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-lambda-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
         ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
       }
     }
-  ]
+  ],
+  "subType": "permission",
+  "status": "enabled",
+  "type": "binding",
+  "version": "v1.0.0"
 }

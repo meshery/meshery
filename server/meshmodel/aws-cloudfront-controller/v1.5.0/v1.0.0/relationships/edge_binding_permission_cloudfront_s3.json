@@ -1,39 +1,50 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "version": "v1.0.0",
-  "kind": "RelationshipDefinition",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "edge_binding_permission_relationship",
+  "kind": "edge",
   "metadata": {
-    "description": "S3 to CloudFront Permission Binding"
+    "description": "CloudFront to S3 Permission Binding",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
   },
   "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.5.0"
+    },
     "name": "aws-cloudfront-controller",
-    "version": "v1.5.0"
+    "registrant": {
+      "kind": "github"
+    },
+    "version": ""
   },
-  "type": "binding",
-  "subType": "permission",
-  "evaluationQuery": "edge_binding_permission_relationship",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "model": "aws-s3-controller",
-            "kind": "Bucket",
-            "patch": {
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "name"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
-          }
-        ],
-        "to": [
-          {
-            "model": "aws-cloudfront-controller",
+            "id": null,
             "kind": "Distribution",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-cloudfront-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
               "mutatedRef": [
                 [
@@ -49,8 +60,46 @@
               "patchStrategy": "replace"
             }
           }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Bucket",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-s3-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
         ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
       }
     }
-  ]
+  ],
+  "subType": "permission",
+  "status": "enabled",
+  "type": "binding",
+  "version": "v1.0.0"
 }
