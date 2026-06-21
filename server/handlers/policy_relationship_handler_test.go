@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/schemas/models/core"
@@ -262,8 +262,7 @@ func TestProcessEvaluationResponse_NilPointerGuard(t *testing.T) {
 		t.Parallel()
 		rm, _ := newTestRegistryManager(t)
 		seedTestComponent(t, rm)
-		id, err := uuid.NewV4()
-		require.NoError(t, err)
+		id := uuid.New()
 		position := &struct {
 			X float64 `json:"x" yaml:"x"`
 			Y float64 `json:"y" yaml:"y"`
@@ -459,10 +458,8 @@ func TestProcessEvaluationResponse_PreservesUserCustomizationsOnExistingComponen
 	seedTestComponent(t, rm)        // Job, registry BackgroundColor "#123456"
 	seedNamespaceComponent(t, rm)   // Namespace, registry BackgroundColor "#326CE5"
 
-	existingPodID, err := uuid.NewV4()
-	require.NoError(t, err)
-	addedNamespaceID, err := uuid.NewV4()
-	require.NoError(t, err)
+	existingPodID := uuid.New()
+	addedNamespaceID := uuid.New()
 
 	// User customization on the existing component: red background. The
 	// registry's default for "Job" is "#123456"; if hydration accidentally
@@ -540,10 +537,8 @@ func TestProcessEvaluationResponse_HydratesMultipleAddedComponents(t *testing.T)
 	seedTestComponent(t, rm)       // Job → BackgroundColor "#123456"
 	seedNamespaceComponent(t, rm)  // Namespace → BackgroundColor "#326CE5"
 
-	jobID, err := uuid.NewV4()
-	require.NoError(t, err)
-	nsID, err := uuid.NewV4()
-	require.NoError(t, err)
+	jobID := uuid.New()
+	nsID := uuid.New()
 
 	bareJob := &component.ComponentDefinition{
 		ID:             jobID,
@@ -589,9 +584,9 @@ func TestProcessEvaluationResponse_HydratesMultipleAddedComponents(t *testing.T)
 }
 
 func TestParseRelationshipToAlias(t *testing.T) {
-	fromID := uuid.Must(uuid.NewV4())
-	toID := uuid.Must(uuid.NewV4())
-	relID := uuid.Must(uuid.NewV4())
+	fromID := uuid.New()
+	toID := uuid.New()
+	relID := uuid.New()
 
 	tests := []struct {
 		name   string

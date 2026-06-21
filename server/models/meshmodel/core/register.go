@@ -12,7 +12,7 @@ import (
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
 	cueJson "cuelang.org/go/encoding/json"
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshery/server/helpers"
 
 	"github.com/meshery/meshery/server/models"
@@ -52,8 +52,8 @@ type names struct {
 }
 
 func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context, config []byte, ctxID string, connectionID string, userID string, mesheryInstanceID core.Uuid, reg *registry.RegistryManager, ec *models.Broadcast, log logger.Handler, ctxName string) (err error) {
-	connectionUUID := uuid.FromStringOrNil(connectionID)
-	userUUID := uuid.FromStringOrNil(userID)
+	connectionUUID := parseUUIDOrNil(connectionID)
+	userUUID := parseUUIDOrNil(userID)
 
 	man, err := GetK8sMeshModelComponents(config)
 	eventMetadata := make(map[string]interface{}, 0)

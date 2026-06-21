@@ -3,7 +3,7 @@ package models
 import (
 	"strings"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/core"
 )
@@ -21,10 +21,7 @@ type PatternResourcePage struct {
 
 func (prp *PatternResourcePersister) SavePatternResource(pr *PatternResource) (*PatternResource, error) {
 	if pr.ID == nil {
-		id, err := uuid.NewV4()
-		if err != nil {
-			return nil, ErrGenerateUUID(err)
-		}
+		id := uuid.New()
 
 		pr.ID = &id
 	}

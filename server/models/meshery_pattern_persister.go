@@ -8,7 +8,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"gopkg.in/yaml.v2"
 
 	"github.com/meshery/meshkit/database"
@@ -135,16 +135,13 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(page, pageSize, se
 // CloneMesheryPattern clones meshery pattern to private
 func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error) {
 	var mesheryPattern MesheryPattern
-	patternUUID, _ := uuid.FromString(patternID)
+	patternUUID, _ := uuid.Parse(patternID)
 	err := mpp.DB.First(&mesheryPattern, patternUUID).Error
 	if err != nil || *mesheryPattern.ID == uuid.Nil {
 		return nil, fmt.Errorf("unable to get design: %w", err)
 	}
 
-	id, err := uuid.NewV4()
-	if err != nil {
-		return nil, err
-	}
+	id := uuid.New()
 
 	mesheryPattern.Visibility = Private
 	mesheryPattern.ID = &id
@@ -165,7 +162,7 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id core.Uuid) ([]byte, 
 func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
 	var deletedMaptterns []MesheryPattern
 	for _, pObj := range patterns.Patterns {
-		id := uuid.FromStringOrNil(pObj.ID)
+		id := parseUUIDOrNil(pObj.ID)
 		pattern := MesheryPattern{ID: &id}
 		mpp.DB.Delete(&pattern)
 		deletedMaptterns = append(deletedMaptterns, pattern)
@@ -184,10 +181,7 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 		pattern.Visibility = Private
 	}
 	if pattern.ID == nil {
-		id, err := uuid.NewV4()
-		if err != nil {
-			return nil, ErrGenerateUUID(err)
-		}
+		id := uuid.New()
 
 		patterns.AssignVersion(pf)
 
@@ -224,10 +218,7 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 		}
 		pattern.Owner = &nilOwner
 		if pattern.ID == nil {
-			id, err := uuid.NewV4()
-			if err != nil {
-				return nil, ErrGenerateUUID(err)
-			}
+			id := uuid.New()
 			patterns.AssignVersion(pf)
 			pattern.ID = &id
 		} else {

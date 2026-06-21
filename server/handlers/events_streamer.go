@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/meshes"
 	"github.com/meshery/meshery/server/models"
@@ -133,7 +133,7 @@ func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefOb
 }
 
 func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
+	eventID := parseUUIDOrNil(mux.Vars(req)["id"])
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 
 	defer func() {
@@ -218,7 +218,7 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 }
 
 func (h *Handler) DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
+	eventID := parseUUIDOrNil(mux.Vars(req)["id"])
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	err := provider.DeleteEvent(token, eventID)
 
@@ -467,7 +467,7 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID core.Uuid, userID string) {
 	log.Debug("Received a stream client...")
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
-	userUUID := uuid.FromStringOrNil(userID)
+	userUUID := parseUUIDOrNil(userID)
 	streamClient, err := mClient.MClient.StreamEvents(ctx, &meshes.EventsRequest{})
 	if err != nil {
 		log.Error(ErrStreamEvents(err))
@@ -490,7 +490,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		// log.Debugf("received an event: %+#v", event)
 		log.Debug("Received an event.")
 		eventType := event.EventType.String()
-		eventBuilder := events.NewEvent().FromSystem(uuid.FromStringOrNil(event.Component)).
+		eventBuilder := events.NewEvent().FromSystem(parseUUIDOrNil(event.Component)).
 			WithSeverity(events.Informational).WithDescription(event.Summary).WithCategory(event.ComponentName).WithAction("deploy").FromOwner(userUUID)
 		if strings.Contains(event.Summary, "removed") {
 			eventBuilder.WithAction("undeploy")

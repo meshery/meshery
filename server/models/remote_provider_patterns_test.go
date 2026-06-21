@@ -8,7 +8,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 )
 
 // TestSaveMesheryPattern_SendsPatternDataWrapperKey verifies that
@@ -51,10 +51,7 @@ func TestSaveMesheryPattern_SendsPatternDataWrapperKey(t *testing.T) {
 	provider := newTestRemoteProvider(t, server.URL)
 	provider.Capabilities = Capabilities{{Feature: PersistMesheryPatterns, Endpoint: "/patterns"}}
 
-	id, err := uuid.NewV4()
-	if err != nil {
-		t.Fatalf("failed to generate pattern id: %v", err)
-	}
+	id := uuid.New()
 	pattern := &MesheryPattern{
 		ID:          &id,
 		Name:        "Untitled Design",
