@@ -13,7 +13,7 @@ replace github.com/meshery/meshery => ../../../
 
 require (
 	github.com/meshery/meshery v0.0.0-00010101000000-000000000000
-	github.com/meshery/schemas v1.3.10
+	github.com/meshery/schemas v1.3.12
 )
 
 require (
@@ -187,7 +187,7 @@ require (
 	github.com/mattn/go-shellwords v1.0.12 // indirect
 	github.com/mattn/go-sqlite3 v1.14.32 // indirect
 	github.com/meshery/meshery-operator v0.8.11 // indirect
-	github.com/meshery/meshkit v1.0.13 // indirect
+	github.com/meshery/meshkit v1.0.14 // indirect
 	github.com/meshery/meshsync v1.0.0 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
