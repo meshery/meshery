@@ -1,7 +1,7 @@
 ---
 title: Redis Operator
 subtitle: Collaborative and visual infrastructure as design for Redis Operator
-image: /extensions/models/redis-operator/icons/color/redis-operator-color.svg
+image: extensions/models/redis-operator/icons/color/redis-operator-color.svg
 aliases: /extensibility/integrations/redis-operator
 docURL: https://docs.meshery.io/extensibility/integrations/redis-operator
 description: 

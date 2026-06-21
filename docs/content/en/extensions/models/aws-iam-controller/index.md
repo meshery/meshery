@@ -1,7 +1,7 @@
 ---
 title: AWS Identity and Access Management
 subtitle: Collaborative and visual infrastructure as design for AWS Identity and Access Management
-image: /extensions/models/aws-iam-controller/icons/color/aws-iam-controller-color.svg
+image: extensions/models/aws-iam-controller/icons/color/aws-iam-controller-color.svg
 aliases: /extensibility/integrations/aws-iam-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-iam-controller
 description: 

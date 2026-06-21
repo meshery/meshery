@@ -1,7 +1,7 @@
 ---
 title: Couchbase Monitor Stack
 subtitle: Collaborative and visual infrastructure as design for Couchbase Monitor Stack
-image: /extensions/models/couchbase-monitor-stack/icons/color/couchbase-monitor-stack-color.svg
+image: extensions/models/couchbase-monitor-stack/icons/color/couchbase-monitor-stack-color.svg
 aliases: /extensibility/integrations/couchbase-monitor-stack
 docURL: https://docs.meshery.io/extensibility/integrations/couchbase-monitor-stack
 description: 

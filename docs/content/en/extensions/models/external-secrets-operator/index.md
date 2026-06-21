@@ -1,7 +1,7 @@
 ---
 title: External Secrets Operator
 subtitle: Collaborative and visual infrastructure as design for External Secrets Operator
-image: /extensions/models/external-secrets-operator/icons/color/external-secrets-operator-color.svg
+image: extensions/models/external-secrets-operator/icons/color/external-secrets-operator-color.svg
 aliases: /extensibility/integrations/external-secrets-operator
 docURL: https://docs.meshery.io/extensibility/integrations/external-secrets-operator
 description: 

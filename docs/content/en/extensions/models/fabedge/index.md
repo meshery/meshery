@@ -1,7 +1,7 @@
 ---
 title: Fabedge
 subtitle: Collaborative and visual infrastructure as design for Fabedge
-image: /extensions/models/fabedge/icons/color/fabedge-color.svg
+image: extensions/models/fabedge/icons/color/fabedge-color.svg
 aliases: /extensibility/integrations/fabedge
 docURL: https://docs.meshery.io/extensibility/integrations/fabedge
 description: 

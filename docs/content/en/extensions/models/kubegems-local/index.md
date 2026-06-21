@@ -1,7 +1,7 @@
 ---
 title: Kubegems Local
 subtitle: Collaborative and visual infrastructure as design for Kubegems Local
-image: /extensions/models/kubegems-local/icons/color/kubegems-local-color.svg
+image: extensions/models/kubegems-local/icons/color/kubegems-local-color.svg
 aliases: /extensibility/integrations/kubegems-local
 docURL: https://docs.meshery.io/extensibility/integrations/kubegems-local
 description: 

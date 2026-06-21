@@ -1,7 +1,7 @@
 ---
 title: AWS Systems Manager
 subtitle: Collaborative and visual infrastructure as design for AWS Systems Manager
-image: /extensions/models/aws-ssm-controller/icons/color/aws-ssm-controller-color.svg
+image: extensions/models/aws-ssm-controller/icons/color/aws-ssm-controller-color.svg
 aliases: /extensibility/integrations/aws-ssm-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-ssm-controller
 description: 

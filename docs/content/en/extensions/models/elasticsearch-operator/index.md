@@ -1,7 +1,7 @@
 ---
 title: Elastic Search
 subtitle: Collaborative and visual infrastructure as design for Elastic Search
-image: /extensions/models/elasticsearch-operator/icons/color/elasticsearch-operator-color.svg
+image: extensions/models/elasticsearch-operator/icons/color/elasticsearch-operator-color.svg
 aliases: /extensibility/integrations/elasticsearch-operator
 docURL: https://docs.meshery.io/extensibility/integrations/elasticsearch-operator
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Consul
 subtitle: Collaborative and visual infrastructure as design for Consul
-image: /extensions/models/consul/icons/color/consul-color.svg
+image: extensions/models/consul/icons/color/consul-color.svg
 aliases: /extensibility/integrations/consul
 docURL: https://docs.meshery.io/extensibility/adapters/consul
 description: 
