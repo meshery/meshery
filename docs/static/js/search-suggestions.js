@@ -59,11 +59,7 @@
                     includeMatches: true,
                     threshold: 0.3,
                     minMatchCharLength: 2,
-                    keys: [
-                        { name: 'title', weight: 0.7 },
-                        { name: 'description', weight: 0.2 },
-                        { name: 'body', weight: 0.1 }
-                    ]
+                    keys: ['title']
                 };
                 fuse = new window.Fuse(data, options);
                 return true;
