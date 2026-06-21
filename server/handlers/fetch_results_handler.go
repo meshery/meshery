@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"gopkg.in/yaml.v2"
@@ -73,7 +73,7 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 		writeMeshkitError(w, ErrMissingResultID(), http.StatusBadRequest)
 		return
 	}
-	key := parseUUIDOrNil(id)
+	key := uuid.FromStringOrNil(id)
 	if key == uuid.Nil {
 		h.log.Error(ErrQueryGet("key"))
 		writeMeshkitError(w, ErrInvalidUUID(fmt.Errorf("invalid result id: %q", id)), http.StatusBadRequest)
@@ -138,7 +138,7 @@ func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.R
 	}
 	q := req.Form
 	id := mux.Vars(req)["id"]
-	key := parseUUIDOrNil(id)
+	key := uuid.FromStringOrNil(id)
 	if key == uuid.Nil {
 		h.log.Error(ErrQueryGet("key"))
 		writeMeshkitError(w, ErrInvalidUUID(fmt.Errorf("invalid result id: %q", id)), http.StatusBadRequest)

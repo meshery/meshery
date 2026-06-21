@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
@@ -32,7 +33,7 @@ func (e *EventsPersister) getCountBySeverity(userID core.Uuid, eventStatus event
 	}
 	// Get the system ID from the config for the current instance. This is used to filter events that are not associated with the user but are associated with the system
 	systemID := viper.GetString("INSTANCE_ID")
-	sysID := parseUUIDOrNil(systemID)
+	sysID := uuid.FromStringOrNil(systemID)
 
 	eventsBySeverity := []*CountBySeverityLevel{}
 	err := e.DB.Model(&events.Event{}).

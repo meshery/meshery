@@ -8,6 +8,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
+	gofrs "github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
 	mutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
@@ -191,7 +192,7 @@ func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, provider *
 		})
 		_ = (*provider).PersistSystemEvent(*errorEvent)
 		if userID != "" {
-			userUUID := parseUUIDOrNil(userID)
+			userUUID := gofrs.FromStringOrNil(userID)
 			ec.Publish(userUUID, errorEvent)
 
 		}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	gofrs "github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
@@ -115,7 +116,7 @@ func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, provider *
 		})
 		_ = (*provider).PersistSystemEvent(*errorEvent)
 		if userID != "" {
-			userUUID := parseUUIDOrNil(userID)
+			userUUID := gofrs.FromStringOrNil(userID)
 			ec.Publish(userUUID, errorEvent)
 
 		}
@@ -166,7 +167,7 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 
 	systemID := viper.GetString("INSTANCE_ID")
 
-	sysID := parseUUIDOrNil(systemID)
+	sysID := gofrs.FromStringOrNil(systemID)
 	hosts, _, err := regManager.GetRegistrants(&v1beta1.HostFilter{})
 	if err != nil {
 		log.Error(err)

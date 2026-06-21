@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/meshes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/viper"
@@ -329,8 +329,13 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	defer func() {
 		_ = mClient.Close()
 	}()
-	operationID := uuid.New()
+	operationID, err := uuid.NewV4()
 
+	if err != nil {
+		h.log.Error(ErrGenerateUUID(err))
+		writeMeshkitError(w, ErrGenerateUUID(err), http.StatusInternalServerError)
+		return
+	}
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
 		OperationId: operationID.String(),
 		OpName:      opName,

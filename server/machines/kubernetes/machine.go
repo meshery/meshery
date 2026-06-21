@@ -5,7 +5,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
@@ -121,7 +121,7 @@ const (
 )
 
 func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachine, error) {
-	connectionID, err := uuid.Parse(ID)
+	connectionID, err := uuid.FromString(ID)
 	log.Info("initialising K8s machine for connetion Id", connectionID)
 	if err != nil {
 		return nil, machines.ErrInititalizeK8sMachine(err)
