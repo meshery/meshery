@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/internal/graphql/generated"
 	"github.com/meshery/meshery/server/internal/graphql/model"

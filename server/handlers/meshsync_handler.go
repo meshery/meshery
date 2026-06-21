@@ -8,7 +8,6 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	patternutils "github.com/meshery/meshery/server/models/pattern/utils"

@@ -12,7 +12,6 @@ import (
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
 	cueJson "cuelang.org/go/encoding/json"
-	"github.com/google/uuid"
 	"github.com/meshery/meshery/server/helpers"
 
 	"github.com/meshery/meshery/server/models"

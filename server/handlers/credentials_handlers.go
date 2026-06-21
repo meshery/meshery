@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 )

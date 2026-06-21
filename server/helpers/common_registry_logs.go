@@ -8,7 +8,6 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/google/uuid"
 	"github.com/meshery/meshery/server/models"
 	mutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"

@@ -10,7 +10,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/google/uuid"
 	"github.com/meshery/meshery/server/machines"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"

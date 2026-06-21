@@ -93,12 +93,12 @@ func canonicalSeed(seed interface{}) string {
 func newUUID(seed interface{}) uuid.UUID {
 	now := fmt.Sprintf("%d", time.Now().UnixNano())
 	data := canonicalSeed(seed) + now
-	return uuid.NewV5(uuid.NamespaceDNS, data)
+	return uuid.NewSHA1(uuid.NameSpaceDNS, []byte(data))
 }
 
 // staticUUID generates a deterministic UUID from a seed (no time component).
 func staticUUID(seed interface{}) uuid.UUID {
-	return uuid.NewV5(uuid.NamespaceDNS, canonicalSeed(seed))
+	return uuid.NewSHA1(uuid.NameSpaceDNS, []byte(canonicalSeed(seed)))
 }
 
 // matchName checks if a component name matches a selector pattern.

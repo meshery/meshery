@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/machines"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"

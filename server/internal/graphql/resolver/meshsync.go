@@ -8,7 +8,6 @@ import (
 	"os"
 	"path"
 
-	"github.com/google/uuid"
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/internal/graphql/model"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"

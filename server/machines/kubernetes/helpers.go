@@ -6,7 +6,6 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/google/uuid"
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/machines"

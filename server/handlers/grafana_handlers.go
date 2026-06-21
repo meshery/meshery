@@ -10,7 +10,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
