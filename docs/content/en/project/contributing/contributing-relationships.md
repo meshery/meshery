@@ -322,6 +322,123 @@ Each policy has a set of evaluation rules defined and the `evaluationQuery` attr
 ##### General
 
 1. Use camelCasing as the formatting convention.
+2. Standardize relationship definitions to the `relationships.meshery.io/v1beta2` schema version.
+3. Set the `registrant.kind` property of selectors and models to `"github"` to align with the registry migration.
+
+##### AWS ACK and Cross-Model Relationship Design Standards (v1beta2 Schema)
+
+To design high-quality, reliable relationship definitions for AWS ACK controllers and other cross-model integrations, authors must adhere to the following standards.
+
+###### 1. Core Data-Flow Terminology and Direction
+In a binding relationship definition, data configuration is matched and patched between two nodes: a **Giver (Source)** and a **Receiver (Destination)**. 
+* **Giver / Source (`mutatorRef`)**: This is the resource that inherently owns or generates the configuration property (e.g., an IAM Role generating its `arn`, a Subnet generating its `id`, or an SQS Queue providing its `name`). Its selector patch configuration **must** be marked as `mutatorRef`.
+* **Receiver / Destination (`mutatedRef`)**: This is the resource that consumes the configuration property (e.g., a Lambda Function setting its execution `role`, or an EKS Cluster specifying its VPC `subnetIDs`). Its selector patch configuration **must** be marked as `mutatedRef`.
+
+> [!WARNING]
+> Swapping `mutatorRef` and `mutatedRef` or using the same strategy key on both sides of a selector (e.g., both selectors using `mutatedRef`) is a schema violation and will break the policy evaluation engine.
+
+###### 2. Code Example: Binding Relationship Selector
+Here is a complete example of a valid `v1beta2` binding selector connecting an **SQS Queue (Giver/Source)** to a **Lambda EventSourceMapping (Receiver/Destination)**:
+
+```json
+{
+  "allow": {
+    "from": [
+      {
+        "id": null,
+        "kind": "Queue",
+        "match": {},
+        "match_strategy_matrix": null,
+        "model": {
+          "displayName": "",
+          "id": "00000000-0000-0000-0000-000000000000",
+          "model": {
+            "version": ""
+          },
+          "name": "aws-sqs-controller",
+          "registrant": {
+            "kind": "github"
+          },
+          "version": ""
+        },
+        "patch": {
+          "mutatorRef": [
+            [
+              "configuration",
+              "spec",
+              "name"
+            ]
+          ],
+          "patchStrategy": "replace"
+        }
+      }
+    ],
+    "to": [
+      {
+        "id": null,
+        "kind": "EventSourceMapping",
+        "match": {},
+        "match_strategy_matrix": null,
+        "model": {
+          "displayName": "",
+          "id": "00000000-0000-0000-0000-000000000000",
+          "model": {
+            "version": ""
+          },
+          "name": "aws-lambda-controller",
+          "registrant": {
+            "kind": "github"
+          },
+          "version": ""
+        },
+        "patch": {
+          "mutatedRef": [
+            [
+              "configuration",
+              "spec",
+              "queueRefs",
+              "0",
+              "from",
+              "name"
+            ]
+          ],
+          "patchStrategy": "replace"
+        }
+      }
+    ]
+  },
+  "deny": {
+    "from": [],
+    "to": []
+  }
+}
+```
+
+###### 3. Design-Time vs. Runtime Referencing
+* **Design-Time Reference Fields (Recommended)**: Prefer name-based Kubernetes references (e.g., targeting `spec.queueRefs.0.from.name` instead of `eventSourceARN`). Sourcing raw ARN or ID fields at design-time is fragile because these values are typically not known until the resources are created in the live cloud. Targeting ACK's reference wrapper fields allows users to connect resources on the design canvas using simple resource names, leaving ARN resolution to the ACK controller at runtime.
+* **Non-Binding Visual-Only Relationships**: If a relationship is purely visual/informational and represents a runtime dependency that does not require declarative configuration patching (e.g., a Lambda Function writing to a DynamoDB Table via custom application code), the patch selectors **must** be set to `null` to prevent the evaluation engine from attempting configuration mutations:
+  ```json
+  "patch": null
+  ```
+
+###### 4. Casing and Array Indexing Rules
+* **Strict OpenAPI Schema Matching**: The JSON paths specified in `mutatorRef` and `mutatedRef` must match the Go/Kubernetes OpenAPI property schemas of the controller components exactly. Watch out for case-sensitive fields (e.g., EKS uses `resourcesVPCConfig.subnetIDs` rather than `subnetIds`; RDS uses `vpcSecurityGroupIDs` rather than `vpcSecurityGroupIds`).
+* **Explicit Array Indexing**: When patching into an array/list field, you must specify the index explicitly (e.g., `["configuration", "spec", "vpcSecurityGroupIDs", "0"]`) rather than referencing the naked array field. Overwriting a naked array field with a string scalar value will corrupt the resulting resource specification.
+
+###### 5. Registrant Kind Migration
+Meshery is migrating from the legacy Artifact Hub registry to the GitHub registry format.
+* Ensure all relationship models and selector components specify `"registrant": {"kind": "github"}` instead of `"artifacthub"`.
+
+###### 6. Authoring Checklist for Contributors
+Before submitting a new relationship definition pull request, verify:
+* [ ] Is `schemaVersion` set to `"relationships.meshery.io/v1beta2"`?
+* [ ] Does the Giver/Source component define `mutatorRef`?
+* [ ] Does the Receiver/Destination component define `mutatedRef`?
+* [ ] Do all JSON paths match the exact casing in the component schemas?
+* [ ] Are array indices targeted explicitly (e.g., ending with `"0"`)?
+* [ ] Are visual-only/non-binding relationships configured with `"patch": null`?
+* [ ] Are all model registrant kinds set to `"github"`?
+* [ ] Have you validated the relationship files locally using `check_relationships.py`?
 
 ##### Scoping
 
