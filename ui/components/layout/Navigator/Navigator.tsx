@@ -757,7 +757,10 @@ const NavigatorContent = () => {
                     </NavigatorLink>
                   </Link>
                   <ExpandMore
-                    onClick={() => toggleItemCollapse(childId)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleItemCollapse(childId);
+                    }}
                     isCollapsed={openItems.includes(childId)}
                     isDrawerCollapsed={isDrawerCollapsed}
                     theme={theme}
