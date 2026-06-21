@@ -49,8 +49,8 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "status",
-                  "id"
+                  "metadata",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"
@@ -80,7 +80,9 @@
                 [
                   "configuration",
                   "spec",
-                  "vpcID"
+                  "vpcRef",
+                  "from",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"

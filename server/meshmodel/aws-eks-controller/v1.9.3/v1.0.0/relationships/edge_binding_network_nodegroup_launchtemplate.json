@@ -49,7 +49,7 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "spec",
+                  "metadata",
                   "name"
                 ]
               ],

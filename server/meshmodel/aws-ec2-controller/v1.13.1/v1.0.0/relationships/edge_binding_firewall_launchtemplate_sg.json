@@ -49,8 +49,8 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "status",
-                  "id"
+                  "spec",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"
@@ -81,7 +81,7 @@
                   "configuration",
                   "spec",
                   "data",
-                  "securityGroupIDs",
+                  "securityGroups",
                   "0"
                 ]
               ],

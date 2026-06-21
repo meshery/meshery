@@ -45,16 +45,7 @@
               },
               "version": ""
             },
-            "patch": {
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "name"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
+            "patch": null
           }
         ],
         "to": [
@@ -75,16 +66,7 @@
               },
               "version": ""
             },
-            "patch": {
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "name"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
+            "patch": null
           }
         ]
       },

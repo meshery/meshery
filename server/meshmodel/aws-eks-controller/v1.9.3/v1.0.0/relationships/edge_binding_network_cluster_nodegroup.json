@@ -49,7 +49,7 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "spec",
+                  "metadata",
                   "name"
                 ]
               ],
@@ -80,7 +80,9 @@
                 [
                   "configuration",
                   "spec",
-                  "clusterName"
+                  "clusterRef",
+                  "from",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"

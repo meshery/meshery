@@ -49,8 +49,8 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "spec",
-                  "queueName"
+                  "metadata",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"
@@ -80,7 +80,10 @@
                 [
                   "configuration",
                   "spec",
-                  "eventSourceARN"
+                  "queueRefs",
+                  "0",
+                  "from",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"

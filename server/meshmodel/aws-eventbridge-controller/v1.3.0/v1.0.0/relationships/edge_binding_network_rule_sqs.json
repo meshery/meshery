@@ -46,11 +46,11 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "configuration",
-                  "spec",
-                  "queueName"
+                  "status",
+                  "arn"
                 ]
               ],
               "patchStrategy": "replace"
@@ -76,7 +76,7 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
