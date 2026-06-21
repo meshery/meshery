@@ -5,15 +5,21 @@ import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 const THEME_STORAGE_KEY = 'meshery-theme';
 
-const getStoredTheme = (): string | null => {
+type ThemeMode = 'light' | 'dark';
+
+const isThemeMode = (value: string | null): value is ThemeMode =>
+  value === 'light' || value === 'dark';
+
+const getStoredTheme = (): ThemeMode | null => {
   try {
-    return localStorage.getItem(THEME_STORAGE_KEY);
+    const value = localStorage.getItem(THEME_STORAGE_KEY);
+    return isThemeMode(value) ? value : null;
   } catch {
     return null;
   }
 };
 
-const setStoredTheme = (theme: string): void => {
+const setStoredTheme = (theme: ThemeMode): void => {
   try {
     localStorage.setItem(THEME_STORAGE_KEY, theme);
   } catch {
@@ -33,7 +39,7 @@ export const useGetSystemTheme = () => {
 export const useThemePreference = () => {
   const { data, isLoading, ...res } = useGetUserPrefQuery();
   const systemPref = useGetSystemTheme();
-  const [storedMode, setStoredMode] = useState<string | null>(getStoredTheme);
+  const [storedMode, setStoredMode] = useState<ThemeMode | null>(getStoredTheme);
 
   useEffect(() => {
     const handler = () => setStoredMode(getStoredTheme());
@@ -46,9 +52,10 @@ export const useThemePreference = () => {
     : data?.remoteProviderPreferences?.theme || storedMode || systemPref || 'dark';
 
   useEffect(() => {
-    if (!isLoading && data?.remoteProviderPreferences?.theme) {
-      setStoredTheme(data.remoteProviderPreferences.theme);
-      setStoredMode(data.remoteProviderPreferences.theme);
+    const remoteTheme = data?.remoteProviderPreferences?.theme;
+    if (!isLoading && isThemeMode(remoteTheme)) {
+      setStoredTheme(remoteTheme);
+      setStoredMode(remoteTheme);
     }
   }, [isLoading, data?.remoteProviderPreferences?.theme]);
 
@@ -63,12 +70,13 @@ export const useThemePreference = () => {
 const ThemeTogglerCore_ = ({ Component }) => {
   const themePref = useThemePreference();
   const [handleUpdateUserPref] = useUpdateUserPrefWithContextMutation();
-  const { data: userPrefs } = useGetUserPrefQuery();
+  const { data: userPrefs, isLoading } = useGetUserPrefQuery();
 
   const mode = themePref?.data?.mode;
   const { setStoredMode } = themePref;
 
   const toggleTheme = () => {
+    if (isLoading) return;
     const newTheme = mode === 'light' ? 'dark' : 'light';
     setStoredTheme(newTheme);
     setStoredMode(newTheme);
