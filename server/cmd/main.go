@@ -17,7 +17,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/helpers"
@@ -101,7 +101,11 @@ func main() {
 		log.SetLevel(logrus.Level(viper.GetInt("LOG_LEVEL")))
 	})
 
-	instanceID := uuid.New()
+	instanceID, err := uuid.NewV4()
+	if err != nil {
+		log.Error(ErrCreatingUUIDInstance(err))
+		os.Exit(1)
+	}
 
 	// operatingSystem, err := exec.Command("uname", "-s").Output()
 	// if err != nil {
@@ -214,7 +218,7 @@ func main() {
 	queryTracker := helpers.NewUUIDQueryTracker()
 
 	// Uncomment line below to generate a new UUID and force the user to login every time Meshery is started.
-	// fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.New().Bytes()))
+	// fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.NewV4().Bytes()))
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte("Meshery"))
 	// fileSessionStore.MaxLength(0)
 

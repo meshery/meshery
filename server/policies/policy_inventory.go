@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -242,7 +242,10 @@ func buildInventoryParentCandidate(
 	if kind == "" {
 		return nil
 	}
-	id := uuid.New()
+	id, err := uuid.NewV4()
+	if err != nil {
+		return nil
+	}
 
 	candidate := &component.ComponentDefinition{
 		ID:        id,

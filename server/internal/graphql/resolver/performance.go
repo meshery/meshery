@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/internal/graphql/model"
 	"github.com/meshery/meshery/server/models"
@@ -16,7 +16,7 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 		return nil, handlers.ErrQueryGet("*id")
 	}
 
-	resultID, err := uuid.Parse(id)
+	resultID, err := uuid.FromString(id)
 
 	if err != nil {
 		r.Log.Error(err)

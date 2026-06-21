@@ -698,12 +698,12 @@ github.com/maxatome/go-testdeep v1.14.0 h1:rRlLv1+kI8eOI3OaBXZwb3O7xY3exRzdW5QyX
 github.com/maxatome/go-testdeep v1.14.0/go.mod h1:lPZc/HAcJMP92l7yI6TRz1aZN5URwUBUAfUNvrclaNM=
 github.com/meshery/meshery-operator v0.8.11 h1:eDo2Sw0jjVrXsvvhF8LenADM58pK+7Z68ROPVIejTPc=
 github.com/meshery/meshery-operator v0.8.11/go.mod h1:hQEtFKKa5Fr/Mskk6bV5ip3bQ0+3F0u1voYS3XisBp4=
-github.com/meshery/meshkit v1.0.15 h1:sLHMseryAdW+z+PJNl+whoqw+FUdCW62zpiiwwPD9GQ=
-github.com/meshery/meshkit v1.0.15/go.mod h1:V1/PNdlN3QiOVRooP/7TpEPcyQY2MCyJ3EMMeWlJyDY=
+github.com/meshery/meshkit v1.0.16 h1:vnXuBSC2+Y7Q3aVI0jZGj9+P0qkkAJL9Sd1RG4XsK2w=
+github.com/meshery/meshkit v1.0.16/go.mod h1:gMPDnBpbw/nMIXd7PDDOB5Ry4QhNiF5MlcAgX0JJzPc=
 github.com/meshery/meshsync v1.0.0 h1:BIHEVG4BDjqOnSd3vBt9B4IfWJNTfMRAgdwLroBcCfY=
 github.com/meshery/meshsync v1.0.0/go.mod h1:mFsPXkZRiCSuk5DhxBTrkWdlo6peItRBUoIEEQCovIg=
-github.com/meshery/schemas v1.3.12 h1:KBP7rN8KnL29yeCfiK8Y1LVfDnzxjgvoUao5bHS8yFM=
-github.com/meshery/schemas v1.3.12/go.mod h1:Ms8bfwux/bAiogaSJirBaLwkvPxOsCT4KCH76SlhU0E=
+github.com/meshery/schemas v1.3.13 h1:q72IGBSYYbT3Zz7hZpprNFKTB3wQvKvjorFuHfK20s4=
+github.com/meshery/schemas v1.3.13/go.mod h1:o9g0uAmcyH7w/ZZbyHilVhZlEFoBGy8RE+OSJYqIfa0=
 github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
 github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
 github.com/miekg/pkcs11 v1.0.2/go.mod h1:XsNlhZGX73bx86s2hdc/FuaLm2CPZJemRLMA+WTFxgs=

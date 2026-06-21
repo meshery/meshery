@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 )

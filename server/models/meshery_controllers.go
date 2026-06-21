@@ -11,7 +11,7 @@ import (
 
 	"maps"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/broker"
 	channelBroker "github.com/meshery/meshkit/broker/channel"
 	"github.com/meshery/meshkit/broker/nats"
@@ -168,7 +168,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 			return mch
 		}
 		token, _ := ctx.Value(TokenCtxKey).(string)
-		msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, parseUUIDOrNil(k8scontext.ConnectionID), mesheryInstanceID, token, stopFunc)
+		msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token, stopFunc)
 		err := msDataHandler.Run()
 		if err != nil {
 			mch.log.Warn(err)
@@ -687,7 +687,7 @@ func controllerEventActedUpon(userID core.Uuid, metadata map[string]any) core.Uu
 	if metadata != nil {
 		switch connectionID := metadata["connectionID"].(type) {
 		case string:
-			if parsedID := parseUUIDOrNil(connectionID); parsedID != uuid.Nil {
+			if parsedID := uuid.FromStringOrNil(connectionID); parsedID != uuid.Nil {
 				return parsedID
 			}
 		case core.Uuid:
