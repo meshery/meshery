@@ -1,7 +1,7 @@
 ---
 title: Vault Config Operator
 subtitle: Collaborative and visual infrastructure as design for Vault Config Operator
-image: /extensions/models/vault-config-operator/icons/color/vault-config-operator-color.svg
+image: extensions/models/vault-config-operator/icons/color/vault-config-operator-color.svg
 aliases: /extensibility/integrations/vault-config-operator
 docURL: https://docs.meshery.io/extensibility/integrations/vault-config-operator
 description: 

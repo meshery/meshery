@@ -1,7 +1,7 @@
 ---
 title: Open Cluster Management
 subtitle: Collaborative and visual infrastructure as design for Open Cluster Management
-image: /extensions/models/open-cluster-management/icons/color/open-cluster-management-color.svg
+image: extensions/models/open-cluster-management/icons/color/open-cluster-management-color.svg
 aliases: /extensibility/integrations/open-cluster-management
 docURL: https://docs.meshery.io/extensibility/integrations/open cluster management
 description: 

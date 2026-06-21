@@ -1,7 +1,7 @@
 ---
 title: Jaeger
 subtitle: Collaborative and visual infrastructure as design for Jaeger
-image: /extensions/models/jaeger/icons/color/jaeger-color.svg
+image: extensions/models/jaeger/icons/color/jaeger-color.svg
 aliases: /extensibility/integrations/jaeger
 docURL: https://docs.meshery.io/extensibility/integrations/jaeger
 description: 

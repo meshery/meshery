@@ -1,7 +1,7 @@
 ---
 title: Kubevirt
 subtitle: Collaborative and visual infrastructure as design for Kubevirt
-image: /extensions/models/kubevirt/icons/color/kubevirt-color.svg
+image: extensions/models/kubevirt/icons/color/kubevirt-color.svg
 aliases: /extensibility/integrations/kubevirt
 docURL: https://docs.meshery.io/extensibility/integrations/kubevirt
 description: 

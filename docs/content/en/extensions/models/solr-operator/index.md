@@ -1,7 +1,7 @@
 ---
 title: Solr Operator
 subtitle: Collaborative and visual infrastructure as design for Solr Operator
-image: /extensions/models/solr-operator/icons/color/solr-operator-color.svg
+image: extensions/models/solr-operator/icons/color/solr-operator-color.svg
 aliases: /extensibility/integrations/solr-operator
 docURL: https://docs.meshery.io/extensibility/integrations/solr-operator
 description: 

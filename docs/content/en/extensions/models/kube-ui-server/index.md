@@ -1,7 +1,7 @@
 ---
 title: Kubernetes UI Server
 subtitle: Collaborative and visual infrastructure as design for Kubernetes UI Server
-image: /extensions/models/kube-ui-server/icons/color/kube-ui-server-color.svg
+image: extensions/models/kube-ui-server/icons/color/kube-ui-server-color.svg
 aliases: /extensibility/integrations/kube-ui-server
 docURL: https://docs.meshery.io/extensibility/integrations/kube-ui-server
 description: 

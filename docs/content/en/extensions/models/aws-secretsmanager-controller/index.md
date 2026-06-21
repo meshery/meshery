@@ -1,7 +1,7 @@
 ---
 title: AWS Secrets Manager
 subtitle: Collaborative and visual infrastructure as design for AWS Secrets Manager
-image: /extensions/models/aws-secretsmanager-controller/icons/color/aws-secretsmanager-controller-color.svg
+image: extensions/models/aws-secretsmanager-controller/icons/color/aws-secretsmanager-controller-color.svg
 aliases: /extensibility/integrations/aws-secretsmanager-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-secretsmanager-controller
 description: 
