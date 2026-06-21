@@ -1,7 +1,7 @@
 ---
 title: OpenELB
 subtitle: Collaborative and visual infrastructure as design for OpenELB
-image: /extensions/models/openelb/icons/color/openelb-color.svg
+image: extensions/models/openelb/icons/color/openelb-color.svg
 aliases: /extensibility/integrations/openelb
 docURL: https://docs.meshery.io/extensibility/integrations/openelb
 description: 

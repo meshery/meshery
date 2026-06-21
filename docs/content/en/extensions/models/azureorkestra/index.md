@@ -1,7 +1,7 @@
 ---
 title: Azure Orkestra
 subtitle: Collaborative and visual infrastructure as design for Azure Orkestra
-image: /extensions/models/azureorkestra/icons/color/azureorkestra-color.svg
+image: extensions/models/azureorkestra/icons/color/azureorkestra-color.svg
 aliases: /extensibility/integrations/azureorkestra
 docURL: https://docs.meshery.io/extensibility/integrations/azureorkestra
 description: 

@@ -1,7 +1,7 @@
 ---
 title: ondat-operator
 subtitle: Collaborative and visual infrastructure as design for ondat-operator
-image: /extensions/models/ondat-operator/icons/color/ondat-operator-color.svg
+image: extensions/models/ondat-operator/icons/color/ondat-operator-color.svg
 aliases: /extensibility/integrations/ondat-operator
 docURL: https://docs.meshery.io/extensibility/integrations/ondat-operator
 description: 

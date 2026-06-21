@@ -1,7 +1,7 @@
 ---
 title: Argo Workflows
 subtitle: Collaborative and visual infrastructure as design for Argo Workflows
-image: /extensions/models/argo-workflows/icons/color/argo-workflows-color.svg
+image: extensions/models/argo-workflows/icons/color/argo-workflows-color.svg
 aliases: /extensibility/integrations/argo-workflows
 docURL: https://docs.meshery.io/extensibility/integrations/argo-workflows
 description: 

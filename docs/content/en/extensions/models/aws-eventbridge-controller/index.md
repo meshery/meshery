@@ -1,7 +1,7 @@
 ---
 title: AWS EventBridge
 subtitle: Collaborative and visual infrastructure as design for AWS EventBridge
-image: /extensions/models/aws-eventbridge-controller/icons/color/aws-eventbridge-controller-color.svg
+image: extensions/models/aws-eventbridge-controller/icons/color/aws-eventbridge-controller-color.svg
 aliases: /extensibility/integrations/aws-eventbridge-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-eventbridge-controller
 description: 

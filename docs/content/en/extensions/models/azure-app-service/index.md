@@ -1,7 +1,7 @@
 ---
 title: Azure App Service
 subtitle: Collaborative and visual infrastructure as design for Azure App Service
-image: /extensions/models/azure-app-service/icons/color/azure-app-service-color.svg
+image: extensions/models/azure-app-service/icons/color/azure-app-service-color.svg
 aliases: /extensibility/integrations/azure-app-service
 docURL: https://docs.meshery.io/extensibility/integrations/azure-app-service
 description: 

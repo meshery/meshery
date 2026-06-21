@@ -1,7 +1,7 @@
 ---
 title: AWS Load Balancer
 subtitle: Collaborative and visual infrastructure as design for AWS Load Balancer
-image: /extensions/models/aws-load-balancer-controller/icons/color/aws-load-balancer-controller-color.svg
+image: extensions/models/aws-load-balancer-controller/icons/color/aws-load-balancer-controller-color.svg
 aliases: /extensibility/integrations/aws-load-balancer-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-load-balancer-controller
 description: 

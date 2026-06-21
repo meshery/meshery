@@ -1,7 +1,7 @@
 ---
 title: Scheduler Plugins
 subtitle: Collaborative and visual infrastructure as design for Scheduler Plugins
-image: /extensions/models/scheduler-plugins/icons/color/scheduler-plugins-color.svg
+image: extensions/models/scheduler-plugins/icons/color/scheduler-plugins-color.svg
 aliases: /extensibility/integrations/scheduler-plugins
 docURL: https://docs.meshery.io/extensibility/integrations/scheduler-plugins
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Kubedb Opscenter
 subtitle: Collaborative and visual infrastructure as design for Kubedb Opscenter
-image: /extensions/models/kubedb-opscenter/icons/color/kubedb-opscenter-color.svg
+image: extensions/models/kubedb-opscenter/icons/color/kubedb-opscenter-color.svg
 aliases: /extensibility/integrations/kubedb-opscenter
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-opscenter
 description: 
