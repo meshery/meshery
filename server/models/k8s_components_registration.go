@@ -11,7 +11,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta3/component"
 
@@ -94,11 +94,11 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		return
 	}
 
-	userUUID, _ := uuid.FromString(userID)
+	userUUID, _ := uuid.Parse(userID)
 
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
-		connectionID, _ := uuid.FromString(ctx.ConnectionID)
+		connectionID, _ := uuid.Parse(ctx.ConnectionID)
 		ctxName := ctx.Name
 
 		cg.mx.Lock()

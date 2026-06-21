@@ -10,7 +10,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
@@ -116,7 +115,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 // GrafanaPingHandler - used to initiate a Grafana ping
 func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	connectionID := parseUUIDOrNil(mux.Vars(req)["connectionID"])
 
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
@@ -151,7 +150,7 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 		return
 	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	connectionID := parseUUIDOrNil(mux.Vars(req)["connectionID"])
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	h.log.Debug("connection id : ", connectionID)
 	if err != nil {
@@ -199,7 +198,7 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 
 	reqQuery := req.URL.Query()
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	connectionID := parseUUIDOrNil(mux.Vars(req)["connectionID"])
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		writeMeshkitError(w, err, statusCode)
@@ -240,7 +239,7 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 	reqQuery := req.URL.Query()
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	connectionID := parseUUIDOrNil(mux.Vars(req)["connectionID"])
 	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		writeMeshkitError(w, err, statusCode)
@@ -302,7 +301,7 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	}
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+	connectionID := parseUUIDOrNil(mux.Vars(req)["connectionID"])
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
 		writeMeshkitError(w, err, statusCode)

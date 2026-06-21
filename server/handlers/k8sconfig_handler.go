@@ -393,7 +393,7 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 
 func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, prov models.Provider) ([]*models.K8sContext, error) {
 	var contexts []*models.K8sContext
-	// userUUID := uuid.FromStringOrNil(userID)
+	// userUUID := parseUUIDOrNil(userID)
 
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*core.Uuid)

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshery/server/models"
 )
 
@@ -19,10 +19,7 @@ func TestInstallExtensionHandler_RemoteProviderReturnsNotImplemented(t *testing.
 	h := newTestHandler(t, map[string]models.Provider{}, "")
 	req := httptest.NewRequest(http.MethodPost, "/api/provider/extension/install", strings.NewReader(`{"extType":"navigator"}`))
 	rec := httptest.NewRecorder()
-	userID, err := uuid.NewV4()
-	if err != nil {
-		t.Fatalf("failed to generate user id: %v", err)
-	}
+	userID := uuid.New()
 
 	h.InstallExtensionHandler(rec, req, nil, &models.User{ID: userID}, remote)
 

@@ -14,8 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gofrs/uuid"
-	guid "github.com/google/uuid"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	helpers "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/meshes"
@@ -757,7 +756,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 ) {
 	patternID := mux.Vars(r)["id"]
 	userID := user.ID
-	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("delete").ActedUpon(uuid.FromStringOrNil(patternID))
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("delete").ActedUpon(parseUUIDOrNil(patternID))
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
@@ -1251,7 +1250,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
-	patternUUID := uuid.FromStringOrNil(patternID)
+	patternUUID := parseUUIDOrNil(patternID)
 
 	userID := user.ID
 	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("clone").ActedUpon(patternUUID).WithSeverity(events.Informational)
@@ -1566,7 +1565,7 @@ func (h *Handler) GetMesheryPatternHandler(
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
-	patternUUID := uuid.FromStringOrNil(patternID)
+	patternUUID := parseUUIDOrNil(patternID)
 	userID := user.ID
 	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("view").ActedUpon(patternUUID)
 
@@ -1772,7 +1771,7 @@ func (h *Handler) handlePatternUpdate(
 	res := meshes.EventsResponse{
 		Component:     "core",
 		ComponentName: "Design",
-		OperationId:   guid.NewString(),
+		OperationId:   uuid.NewString(),
 		EventType:     meshes.EventType_INFO,
 	}
 

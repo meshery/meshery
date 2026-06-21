@@ -1,7 +1,7 @@
 package machines
 
 import (
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/schemas/models/core"
 )
@@ -44,7 +44,7 @@ func Initial() State {
 }
 
 func New(initialState StateType, ID string, userID core.Uuid, log logger.Handler, mtype string) (*StateMachine, error) {
-	connectionID, err := uuid.FromString(ID)
+	connectionID, err := uuid.Parse(ID)
 	if err != nil {
 		return nil, ErrInititalizeK8sMachine(err)
 	}

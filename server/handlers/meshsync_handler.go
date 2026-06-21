@@ -8,7 +8,6 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
@@ -75,7 +74,7 @@ func KubernetesResourceToComponentDef(resource model.KubernetesResource, stripSc
 		return nil, fmt.Errorf("failed to map component metadata: %w", err)
 	}
 
-	componentDef.ID = uuid.FromStringOrNil(resource.KubernetesResourceMeta.UID)
+	componentDef.ID = parseUUIDOrNil(resource.KubernetesResourceMeta.UID)
 	componentDef.DisplayName = resource.KubernetesResourceMeta.Name
 
 	var spec interface{}

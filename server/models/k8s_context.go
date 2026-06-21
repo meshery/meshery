@@ -14,7 +14,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshery/server/models/connections"
@@ -175,7 +175,7 @@ func NewK8sContextWithServerID(
 		return nil, err
 	}
 	uid := ksns.GetUID()
-	ksUUID := uuid.FromStringOrNil(string(uid))
+	ksUUID := parseUUIDOrNil(string(uid))
 
 	ctx.KubernetesServerID = &ksUUID
 
@@ -203,7 +203,7 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 		return kcs
 	}
 
-	userUUID := uuid.FromStringOrNil(userID)
+	userUUID := parseUUIDOrNil(userID)
 
 	kcfg := InternalKubeConfig{}
 	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
@@ -213,7 +213,7 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 	for name := range parsed.Contexts {
 		metadata := map[string]interface{}{}
 		kc, _ := kcfg.K8sContext(name, instanceID, log)
-		eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(kc.ConnectionID)).WithCategory("connection").WithAction("register").FromSystem(*instanceID).FromOwner(userUUID)
+		eventBuilder := events.NewEvent().ActedUpon(parseUUIDOrNil(kc.ConnectionID)).WithCategory("connection").WithAction("register").FromSystem(*instanceID).FromOwner(userUUID)
 
 		metadata["context"] = RedactCredentialsForContext(&kc)
 
@@ -487,7 +487,7 @@ func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 		return ErrUnreachableKubeAPI(err, kc.Server)
 	}
 	uid := ksns.GetUID()
-	ksUUID := uuid.FromStringOrNil(string(uid))
+	ksUUID := parseUUIDOrNil(string(uid))
 
 	kc.KubernetesServerID = &ksUUID
 
@@ -497,8 +497,8 @@ func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 // FlushMeshSyncData will flush the meshsync data for the passed kubernetes contextID
 func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Provider, eventsChan *Broadcast, userID string, mesheryInstanceID *core.Uuid, log logger.Handler) {
 	ctxID := k8sContext.ID
-	ctxUUID, _ := uuid.FromString(ctxID)
-	userUUID, _ := uuid.FromString(userID)
+	ctxUUID, _ := uuid.Parse(ctxID)
+	userUUID, _ := uuid.Parse(userID)
 	// Gets all the available kubernetes contexts
 
 	ctxName := k8sContext.Name

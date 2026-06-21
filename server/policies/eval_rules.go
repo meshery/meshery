@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -377,11 +377,11 @@ func buildIdentifiedRelationship(
 	relDef *relationship.RelationshipDefinition,
 ) *relationship.RelationshipDefinition {
 	newFromSel := fromSel
-	fromUUID, _ := uuid.FromString(compFromID)
+	fromUUID, _ := uuid.Parse(compFromID)
 	newFromSel.ID = &fromUUID
 
 	newToSel := toSel
-	toUUID, _ := uuid.FromString(compToID)
+	toUUID, _ := uuid.Parse(compToID)
 	newToSel.ID = &toUUID
 
 	selectorSet := relationship.SelectorSetItem{

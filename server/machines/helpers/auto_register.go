@@ -10,7 +10,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	helpers "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
@@ -189,5 +189,5 @@ func getTypeOfConnection(obj *meshsyncmodel.KubernetesResource) string {
 func generateUUID(data map[string]interface{}) (core.Uuid, error) {
 	marshalledData, _ := utils.Marshal(data)
 	hash := md5.Sum([]byte(marshalledData))
-	return uuid.FromString(hex.EncodeToString(hash[:]))
+	return uuid.Parse(hex.EncodeToString(hash[:]))
 }

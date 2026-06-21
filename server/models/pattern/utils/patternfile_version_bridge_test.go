@@ -14,7 +14,7 @@ import (
 	relationshipv1beta2 "github.com/meshery/schemas/models/v1beta2/relationship"
 	designv1beta3 "github.com/meshery/schemas/models/v1beta3/design"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 )
 
 func TestPatternV1beta1ToV1beta3_PreservesAliasedFields(t *testing.T) {
@@ -218,9 +218,9 @@ func newPatternV1beta1Fixture() *patternv1beta1.PatternFile {
 
 func mustUUID(t *testing.T, raw string) uuid.UUID {
 	t.Helper()
-	id, err := uuid.FromString(raw)
+	id, err := uuid.Parse(raw)
 	if err != nil {
-		t.Fatalf("uuid.FromString(%q): %v", raw, err)
+		t.Fatalf("uuid.Parse(%q): %v", raw, err)
 	}
 	return id
 }
