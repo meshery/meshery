@@ -17,7 +17,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/helpers"
@@ -101,11 +101,7 @@ func main() {
 		log.SetLevel(logrus.Level(viper.GetInt("LOG_LEVEL")))
 	})
 
-	instanceID, err := uuid.NewV4()
-	if err != nil {
-		log.Error(ErrCreatingUUIDInstance(err))
-		os.Exit(1)
-	}
+	instanceID := uuid.New()
 
 	// operatingSystem, err := exec.Command("uname", "-s").Output()
 	// if err != nil {
@@ -218,7 +214,7 @@ func main() {
 	queryTracker := helpers.NewUUIDQueryTracker()
 
 	// Uncomment line below to generate a new UUID and force the user to login every time Meshery is started.
-	// fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.NewV4().Bytes()))
+	// fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.New().Bytes()))
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte("Meshery"))
 	// fileSessionStore.MaxLength(0)
 
@@ -259,6 +255,7 @@ func main() {
 		models.K8sContext{},
 		schemasOrganization.Organization{},
 		models.Key{},
+		&models.Credential{},
 		connections.Connection{},
 		environment.Environment{},
 		environment.EnvironmentConnectionMapping{},
@@ -317,9 +314,9 @@ func main() {
 		// complete and the tracker has been built around the final
 		// `provs` map. The handlers must not access it before that
 		// assignment, but every route is registered after.
-		PlaygroundBuild:        viper.GetBool("PLAYGROUND"),
-		AdapterTracker:         adapterTracker,
-		QueryTracker:           queryTracker,
+		PlaygroundBuild: viper.GetBool("PLAYGROUND"),
+		AdapterTracker:  adapterTracker,
+		QueryTracker:    queryTracker,
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
 
@@ -470,11 +467,29 @@ func main() {
 		defer rp.StopSyncPreferences()
 	}
 
-	// verifies if the provider specified in the "PROVIDER" environment variable is from one of the supported providers.
-	// If it is one of the supported providers, the server gets configured to auto select the specified provider,
-	// else the provider specified in the environment variable is ignored and  each time user logs in they need to select a provider.
-	isProviderEnvVarValid := models.VerifyMesheryProvider(providerEnvVar, provs)
-	if !isProviderEnvVarValid {
+	// Resolve the configured PROVIDER to Meshery's internal registration key.
+	// Remote providers are registered under a stable key (typically URL host)
+	// before their async /capabilities probe reveals the canonical
+	// providerName, so a pre-selected remote such as PROVIDER=Meshery may need
+	// one bounded probe here to avoid falling back to the chooser.
+	resolveStart := time.Now()
+	resolvedProviderKey, providerResolved := models.ResolveProviderKeyWithProbe(ctx, providerEnvVar, provs)
+	if probeElapsed := time.Since(resolveStart); providerEnvVar != "" && probeElapsed > time.Second {
+		// Surface the boot-time remote /capabilities probe so operators can
+		// see why startup paused (each parallel probe waits up to 15s on an
+		// unreachable configured remote before timing out).
+		log.Infof("resolving configured PROVIDER %q required a remote capability probe that took %s", providerEnvVar, probeElapsed.Round(time.Millisecond))
+	}
+	if providerResolved {
+		providerEnvVar = resolvedProviderKey
+	} else {
+		if providerEnvVar != "" {
+			// Informational, not an error: a configured PROVIDER that
+			// matches no registered provider is a valid fallback to the
+			// chooser, but operators should be able to see why auto-select
+			// did not engage.
+			log.Infof("configured PROVIDER %q could not be resolved to any registered provider; falling back to the provider chooser", providerEnvVar)
+		}
 		providerEnvVar = ""
 	}
 

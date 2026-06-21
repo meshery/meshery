@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"gopkg.in/yaml.v2"
@@ -14,6 +14,9 @@ import (
 // FetchResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
 func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	profileID := mux.Vars(req)["id"]
+	if profileID == "" {
+		profileID = mux.Vars(req)["performanceProfileId"]
+	}
 
 	err := req.ParseForm()
 	if err != nil {
@@ -70,7 +73,7 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 		writeMeshkitError(w, ErrMissingResultID(), http.StatusBadRequest)
 		return
 	}
-	key := uuid.FromStringOrNil(id)
+	key := parseUUIDOrNil(id)
 	if key == uuid.Nil {
 		h.log.Error(ErrQueryGet("key"))
 		writeMeshkitError(w, ErrInvalidUUID(fmt.Errorf("invalid result id: %q", id)), http.StatusBadRequest)
@@ -135,7 +138,7 @@ func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.R
 	}
 	q := req.Form
 	id := mux.Vars(req)["id"]
-	key := uuid.FromStringOrNil(id)
+	key := parseUUIDOrNil(id)
 	if key == uuid.Nil {
 		h.log.Error(ErrQueryGet("key"))
 		writeMeshkitError(w, ErrInvalidUUID(fmt.Errorf("invalid result id: %q", id)), http.StatusBadRequest)

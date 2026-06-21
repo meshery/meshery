@@ -1,7 +1,7 @@
 ---
 title: Github Actions Runner Operator
 subtitle: Collaborative and visual infrastructure as design for Github Actions Runner Operator
-image: /extensions/models/github-actions-runner-operator/icons/color/github-actions-runner-operator-color.svg
+image: extensions/models/github-actions-runner-operator/icons/color/github-actions-runner-operator-color.svg
 aliases: /extensibility/integrations/github-actions-runner-operator
 docURL: https://docs.meshery.io/extensibility/integrations/github-actions-runner-operator
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Source Version Control
 registrant: Artifact Hub
 components: 
 - name: github-action-runner
-  colorIcon: content/en/extensions/models/github-actions-runner-operator/components/github-action-runner/icons/color/github-action-runner-color.svg
-  whiteIcon: content/en/extensions/models/github-actions-runner-operator/components/github-action-runner/icons/white/github-action-runner-white.svg
+  colorIcon: extensions/models/github-actions-runner-operator/components/github-action-runner/icons/color/github-action-runner-color.svg
+  whiteIcon: extensions/models/github-actions-runner-operator/components/github-action-runner/icons/white/github-action-runner-white.svg
   description: 
 components-count: 1
 relationships: 

@@ -6,7 +6,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
@@ -27,7 +27,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 	userUUID := user.ID
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
@@ -42,7 +42,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		return machines.NoOp, eventBuilder.Build(), errToken
 
 	}
-	connectionID := uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID)
+	connectionID := parseUUIDOrNil(machinectx.K8sContext.ConnectionID)
 	if connectionID == uuid.Nil {
 		errConnection := ErrConnectAction(fmt.Errorf("k8sCtx.ConnectionID is empty or invalid"))
 		eventBuilder.WithMetadata(map[string]interface{}{"error": errConnection})

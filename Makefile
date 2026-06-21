@@ -18,14 +18,14 @@ include install/Makefile.show-help.mk
 #-----------------------------------------------------------------------------
 # Install artifact generation
 #-----------------------------------------------------------------------------
-.PHONY: generate-install check-install
+.PHONY: providers-propagate providers-check
 
-## Propagate install/providers.env to every generated install artifact.
-generate-install:
+## Propagate remote providers defined in install/providers.env to every generated install artifact.
+providers-propagate:
 	python3 install/scripts/sync-provider-urls.py
 
-## Verify generated install artifacts are in sync with install/providers.env (CI gate).
-check-install:
+## Verify that the install artifacts are in sync with the list of remote providers in  install/providers.env.
+providers-check:
 	python3 install/scripts/sync-provider-urls.py --check
 
 #-----------------------------------------------------------------------------
@@ -318,10 +318,8 @@ ui-setup: dep-check-node
 	cd provider-ui; npm i; cd ..
 
 ## Clean Install dependencies for building Meshery UI.
-ui-setup-ci: dep-check-node
+ui-setup-ci: dep-check-node 
 	cd ui; npm ci; cd ..
-	cd provider-ui; npm ci; cd ..
-
 
 ## Run Meshery UI on your local machine. Listen for changes.
 ui: dep-check-node
@@ -329,7 +327,7 @@ ui: dep-check-node
 
 ## Run Meshery Provider UI  on your local machine. Listen for changes.
 ui-provider: dep-check-node
-	cd provider-ui; npm run dev; cd ..
+	cd provider-ui; npm i; npm run dev; cd ..
 
 ## Lint check Meshery UI and Provider UI on your local machine.
 ui-lint: dep-check-node
@@ -353,8 +351,8 @@ ui-meshery-build: dep-check-node wasm-engine
 	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
-ui-provider-build: dep-check-node
-	cd provider-ui; npm run build; cd ..
+ui-provider-build: 
+	cd provider-ui; npm i; npm run build; cd ..
 
 ## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
 ui-integration-tests: ui-setup
@@ -375,36 +373,27 @@ site-serve: docs-serve
 docs-setup:
 	cd docs; npm install
 
-## Run Meshery Docs. Listen for changes.
-docs: check-go
-	cd docs; hugo server -D -F
+## Run Meshery Docs in watch mode.
+docs:
+	@$(MAKE) -C docs site
 
-## Run Meshery Docs. Do not listen for changes.
-docs-serve: check-go
-	cd docs; hugo server -D -F --watch=false
+## Run Meshery Docs once without file watching.
+docs-serve:
+	@$(MAKE) -C docs serve
 
-## Run Meshery Docs. Do not listen for changes.
-docs-clean: check-go
-	cd docs; hugo --cleanDestinationDir
-	make docs
+## Clean build cache and run Meshery Docs in watch mode.
+docs-clean:
+	@$(MAKE) -C docs clean
 
 
 ## Build Meshery Docs on your local machine.
-docs-build: check-go
-	cd docs; hugo
+docs-build:
+	@$(MAKE) -C docs build
 
 ## Build Meshery Docs for production. BASE_URL is optional.
 ## Example: make docs-build-production BASE_URL=https://example.com
 docs-build-production:
-	cd docs; \
-	hugo_args="--gc --minify"; \
-	if [ -n "$(BASE_URL)" ]; then \
-		base_url="$(BASE_URL)"; \
-		base_url="$${base_url%/}/"; \
-		hugo_args="$$hugo_args --baseURL $$base_url"; \
-	fi; \
-	echo "Running: hugo $$hugo_args"; \
-	hugo $$hugo_args
+	@$(MAKE) -C docs build-production BASE_URL="$(BASE_URL)"
 
 ## Run Meshery Docs in a Docker container. Listen for changes.
 docs-docker:

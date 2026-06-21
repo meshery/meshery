@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	gofrs "github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
@@ -106,7 +105,7 @@ func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, provider *
 	}
 	if failedMsg != "" {
 		filePath := viper.GetString("REGISTRY_LOG_FILE")
-		errorEventBuilder := events.NewEvent().FromUser(mesheryInstanceID).FromSystem(mesheryInstanceID).WithCategory("registration").WithAction("get_summary")
+		errorEventBuilder := events.NewEvent().FromOwner(mesheryInstanceID).FromSystem(mesheryInstanceID).WithCategory("registration").WithAction("get_summary")
 		errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMsg)
 		errorEvent := errorEventBuilder.Build()
 		errorEventBuilder.WithMetadata(map[string]interface{}{
@@ -116,7 +115,7 @@ func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, provider *
 		})
 		_ = (*provider).PersistSystemEvent(*errorEvent)
 		if userID != "" {
-			userUUID := gofrs.FromStringOrNil(userID)
+			userUUID := parseUUIDOrNil(userID)
 			ec.Publish(userUUID, errorEvent)
 
 		}
@@ -135,20 +134,20 @@ func writeLogsToFiles(regLog *RegistrationFailureLog) error {
 	}
 	logMessage.WriteString("---------------------------------------- \n")
 	for host, modelNamespacedData := range regLog.failureData {
-		logMessage.WriteString(fmt.Sprintf("%s failed to register:\n", host))
+		fmt.Fprintf(&logMessage, "%s failed to register:\n", host)
 		for modelName, entityTypeNamespacedData := range modelNamespacedData {
 			if modelName == "" {
-				logMessage.WriteString(fmt.Sprintf("%sModels:\n", TAB))
+				fmt.Fprintf(&logMessage, "%sModels:\n", TAB)
 				for name, modelData := range entityTypeNamespacedData[string(entity.Model)] {
 					logMessage.WriteString(TAB + TAB + name + ": " + modelData.Error() + "\n")
 				}
 				continue
 			}
-			logMessage.WriteString(fmt.Sprintf("%sFor Model %s:\n", TAB, modelName))
+			fmt.Fprintf(&logMessage, "%sFor Model %s:\n", TAB, modelName)
 			for entityType, entityNameNamespacedData := range entityTypeNamespacedData {
-				logMessage.WriteString(fmt.Sprintf("%s%s%s:\n", TAB, TAB, entityType))
+				fmt.Fprintf(&logMessage, "%s%s%s:\n", TAB, TAB, entityType)
 				for name, err := range entityNameNamespacedData {
-					logMessage.WriteString(fmt.Sprintf("%s%s%s%s: %s\n", TAB, TAB, TAB, name, err.Error()))
+					fmt.Fprintf(&logMessage, "%s%s%s%s: %s\n", TAB, TAB, TAB, name, err.Error())
 				}
 
 			}
@@ -167,14 +166,14 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 
 	systemID := viper.GetString("INSTANCE_ID")
 
-	sysID := gofrs.FromStringOrNil(systemID)
+	sysID := parseUUIDOrNil(systemID)
 	hosts, _, err := regManager.GetRegistrants(&v1beta1.HostFilter{})
 	if err != nil {
 		log.Error(err)
 	}
 
 	for _, host := range hosts {
-		eventBuilder := events.NewEvent().FromSystem(sysID).FromUser(sysID).WithCategory("entity").WithAction("get_summary")
+		eventBuilder := events.NewEvent().FromSystem(sysID).FromOwner(sysID).WithCategory("entity").WithAction("get_summary")
 		successMessage := fmt.Sprintf("For registrant %s imported", host.Kind)
 		appendIfNonZero := func(value int64, label string) {
 			if value != 0 {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
@@ -121,7 +121,7 @@ const (
 )
 
 func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachine, error) {
-	connectionID, err := uuid.FromString(ID)
+	connectionID, err := uuid.Parse(ID)
 	log.Info("initialising K8s machine for connetion Id", connectionID)
 	if err != nil {
 		return nil, machines.ErrInititalizeK8sMachine(err)
@@ -154,7 +154,7 @@ func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Ha
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	userUUID := user.ID
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromOwner(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
 		return nil, eventBuilder.Build(), err
