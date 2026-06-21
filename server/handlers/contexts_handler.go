@@ -71,7 +71,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	userID := user.ID
 	contextID := mux.Vars(req)["id"]
 
-	eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(contextID)).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+	eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(contextID)).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
 
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {

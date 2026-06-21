@@ -7,6 +7,7 @@ import {
   Grid2,
   FormControl,
   TableCell,
+  InfoOutlinedIcon,
 } from '@sistent/sistent';
 import { ConnectionStyledSelect } from './styles';
 import { FormatId } from '../data-formatter';
@@ -20,10 +21,10 @@ import MultiSelectWrapper from '../multi-select-wrapper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
-import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { formatDate } from '../data-formatter';
 import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
-import { CONNECTION_STATE_TRANSITIONS } from './ConnectionTable.constants';
+import { getNextStates } from './ConnectionTable.constants';
+import type { ConnectionTransitionMap } from './ConnectionTable.constants';
 import type { EnvironmentOption, RowData } from './ConnectionTable.types';
 
 type UseConnectionColumnsArgs = {
@@ -48,6 +49,9 @@ type UseConnectionColumnsArgs = {
   ) => void | Promise<void>;
   handleActionMenuOpen: (event: any, tableMeta: RowData) => void;
   ping: (name: string, server: string, id: string) => void;
+  // Per-kind connection state machine, keyed by connection kind. Sourced from
+  // the connection definitions' `transitionMap` (see `_app.tsx`).
+  transitionMapByKind: Record<string, ConnectionTransitionMap | undefined> | null;
 };
 
 export const useConnectionColumns = ({
@@ -61,6 +65,7 @@ export const useConnectionColumns = ({
   handleStatusChange,
   handleActionMenuOpen,
   ping,
+  transitionMapByKind,
 }: UseConnectionColumnsArgs) => {
   return useMemo(() => {
     const nextColumns = [
@@ -403,9 +408,7 @@ export const useConnectionColumns = ({
             const currentStatus = value;
             const kind = getColumnValue(tableMeta.rowData, 'kind', nextColumns);
 
-            const nextStatus = Object.keys(
-              CONNECTION_STATE_TRANSITIONS?.[kind]?.[currentStatus] ?? {},
-            );
+            const nextStatus = getNextStates(transitionMapByKind?.[kind], currentStatus);
             nextStatus.push(currentStatus);
 
             const disabled =
@@ -484,7 +487,7 @@ export const useConnectionColumns = ({
           },
           customBodyRender: function CustomBody(_, tableMeta) {
             return (
-              <Box display={'flex'} justifyContent={'center'}>
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 {getColumnValue(tableMeta.rowData, 'kind', nextColumns) ===
                 CONNECTION_KINDS.KUBERNETES ? (
                   <IconButton
@@ -536,6 +539,7 @@ export const useConnectionColumns = ({
     handleStatusChange,
     isEnvironmentsSuccess,
     ping,
+    transitionMapByKind,
     updatingConnection,
     url,
   ]);

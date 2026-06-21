@@ -1,7 +1,7 @@
 ---
 title: in-toto
 subtitle: Collaborative and visual infrastructure as design for in-toto
-image: /extensions/models/in-toto/icons/color/in-toto-color.svg
+image: extensions/models/in-toto/icons/color/in-toto-color.svg
 aliases: /extensibility/integrations/in-toto
 docURL: https://docs.meshery.io/extensibility/integrations/in-toto
 description: 

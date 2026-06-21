@@ -4,6 +4,7 @@ import { NotificationDrawerButton } from '../NotificationCenter/index';
 import User from '../../User';
 import { successHandlerGenerator, errorHandlerGenerator } from '../../../utils/helpers/common';
 import { ConnectionChip } from '../../connections/ConnectionChip';
+import { normalizeStaticImagePath } from '../../../utils/fallback';
 import { useLazyGetSystemSyncQuery } from '../../../rtk-query/system';
 import { useUpdateConnectionStatusMutation } from '../../../rtk-query/connection';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '../../../utils/Enum';
@@ -117,10 +118,13 @@ const K8sContextConnectionChip_ = ({
             title={ctx?.name}
             onDelete={onDelete ? () => onDelete(ctx.name, ctx.connectionId) : null}
             handlePing={() => ping(ctx.name, ctx.server, ctx.connectionId)}
+            // Pass the raw icon (inline SVG markup from the connection
+            // definition's styles.svgColor, or a path) — ConnectionChip runs it
+            // through normalizeStaticImagePath, which turns SVG markup into a
+            // data URI. Prefixing with "/" here would corrupt the SVG markup.
             iconSrc={
-              connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
-                ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                : '/static/img/integrations/kubernetes.svg'
+              connectionMetadataState?.[CONNECTION_KINDS.KUBERNETES]?.icon ||
+              '/static/img/integrations/kubernetes.svg'
             }
             status={connectionStatus}
           />
@@ -279,10 +283,9 @@ function K8sContextMenu({
               <img
                 className="k8s-image"
                 src={
-                  connectionMetadataState &&
-                  connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
-                    ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                    : '/static/img/integrations/kubernetes.svg'
+                  normalizeStaticImagePath(
+                    connectionMetadataState?.[CONNECTION_KINDS.KUBERNETES]?.icon,
+                  ) || '/static/img/integrations/kubernetes.svg'
                 }
                 onError={(e) => {
                   e.target.src = '/static/img/integrations/kubernetes.svg';
@@ -456,7 +459,7 @@ const Header = ({
       <>
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
           <StyledToolbar disableGutters isDrawerCollapsed={onDrawerCollapse}>
-            <Grid2 container alignItems="center" size="grow">
+            <Grid2 container size="grow" sx={{ alignItems: 'center' }}>
               <Hidden smUp>
                 <Grid2 style={{ display: 'none' }}>
                   <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
@@ -464,7 +467,12 @@ const Header = ({
                   </MenuIconButton>
                 </Grid2>
               </Hidden>
-              <Grid2 container alignItems="center" component={PageTitleWrapper} size="grow">
+              <Grid2
+                container
+                component={PageTitleWrapper}
+                size="grow"
+                sx={{ alignItems: 'center' }}
+              >
                 {/* Extension Point for   Logo */}
                 <div
                   id="nav-header-logo"

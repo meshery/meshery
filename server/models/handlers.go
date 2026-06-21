@@ -29,9 +29,12 @@ type HandlerInterface interface {
 	ProviderHandler(w http.ResponseWriter, r *http.Request)
 	HandleErrorHandler(w http.ResponseWriter, r *http.Request)
 	ProvidersHandler(w http.ResponseWriter, r *http.Request)
+	ProvidersStreamHandler(w http.ResponseWriter, r *http.Request)
 	ProviderUIHandler(w http.ResponseWriter, r *http.Request)
 	ProviderCapabilityHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProviderComponentsHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	InstallExtensionHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	RemoveExtensionHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	TokenHandler(w http.ResponseWriter, r *http.Request, provider Provider, fromMiddleWare bool)
 	LoginHandler(w http.ResponseWriter, r *http.Request, provider Provider, fromMiddleWare bool)
@@ -140,6 +143,12 @@ type HandlerInterface interface {
 	GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
+
+	GetConnectionDefinitions(rw http.ResponseWriter, r *http.Request)
+	GetConnectionDefinitionByID(rw http.ResponseWriter, r *http.Request)
+	RegisterConnectionDefinition(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	DeleteConnectionDefinition(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Request)
@@ -268,8 +277,15 @@ type HandlerConfig struct {
 
 	// GraphQLHandler           http.Handler
 	// GraphQLPlaygroundHandler http.Handler
-	PlaygroundBuild        bool
-	Providers              map[string]Provider
+	PlaygroundBuild bool
+	Providers       map[string]Provider
+	// ProviderTracker is the authoritative availability state for
+	// Providers. /api/providers reads its snapshot and
+	// /api/providers/stream subscribes to its updates so the provider
+	// chooser can render every entry immediately and update them
+	// independently as each remote's probe completes. Always non-nil
+	// after main.go finishes registering providers.
+	ProviderTracker        *ProviderTracker
 	ProviderCookieName     string
 	ProviderCookieDuration time.Duration
 

@@ -152,7 +152,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 	sysID := h.SystemID
 	userUUID := user.ID
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
 
 	if req.Method == http.MethodDelete {
 		writeMeshkitError(w, ErrDeprecatedAPI("the connections API"), http.StatusGone)
@@ -226,7 +226,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 
-		h.log.Debug("Prometheus URL %s saved", promURL)
+		h.log.Debugf("Prometheus URL %s saved", promURL)
 	}
 
 	err := provider.RecordPreferences(req, user.UserId, prefObj)
