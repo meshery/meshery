@@ -50,11 +50,7 @@
                 [
                   "configuration",
                   "spec",
-                  "policy",
-                  "Statement",
-                  "0",
-                  "Principal",
-                  "AWS"
+                  "policy"
                 ]
               ],
               "patchStrategy": "replace"

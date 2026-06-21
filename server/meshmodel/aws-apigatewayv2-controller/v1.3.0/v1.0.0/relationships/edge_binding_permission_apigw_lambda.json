@@ -50,7 +50,7 @@
                 [
                   "configuration",
                   "spec",
-                  "integrationUri"
+                  "integrationURI"
                 ]
               ],
               "patchStrategy": "replace"
