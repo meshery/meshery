@@ -1,4 +1,80 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Sat, 13 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.43</title><link>/project/releases/v1.0.43/</link><pubDate>Sat, 13 Jun 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.43/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Sun, 21 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.44</title><link>/project/releases/v1.0.44/</link><pubDate>Sun, 21 Jun 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.44/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Bump github.com/containerd/containerd from 1.7.32 to 1.7.33 in /server/policies/wasm @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20153)&lt;/li&gt;
+&lt;li&gt;refactor(server): remove obsolete WASM filter startup seeding @ishwar170695 (#20057)&lt;/li&gt;
+&lt;li&gt;fix:[UI]resolve missing logo for AWS API Gateway model @aprv10 (#19498)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;refactor: migrate UUID library from gofrs/uuid to google/uuid @leecalcote (#20166)&lt;/li&gt;
+&lt;li&gt;refactor: consolidate ownership property naming to &amp;lsquo;owner&amp;rsquo; @leecalcote (#20147)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix: resolve Create a Model E2E test failure (Local - chromium-local-provider) @KhushamBansal (#20164)&lt;/li&gt;
+&lt;li&gt;Enhance connection registration backend and ux @aabidsofi19 (#20089)&lt;/li&gt;
+&lt;li&gt;Bump undici in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20152)&lt;/li&gt;
+&lt;li&gt;[UI] Increase Vertical Spacing Between Left Navigation Menu Items @NSTKrishna (#20124)&lt;/li&gt;
+&lt;li&gt;[UI] Add new extensions, fix links, and update logos on extensions page. @KhushamBansal (#20132)&lt;/li&gt;
+&lt;li&gt;[UI] Make permission error page responsive, remove logo and add role descriptions @rishiraj38 (#20099)&lt;/li&gt;
+&lt;li&gt;[UI] Make permission error page responsive, remove logo, add role descriptions @leecalcote (#20112)&lt;/li&gt;
+&lt;li&gt;[UI] Align Registry modal sidebar toggle with main Navigator @udita-0707 (#20094)&lt;/li&gt;
+&lt;li&gt;Bump form-data from 4.0.5 to 4.0.6 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20106)&lt;/li&gt;
+&lt;li&gt;Bump js-yaml from 4.1.1 to 4.2.0 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20107)&lt;/li&gt;
+&lt;li&gt;Bump form-data from 4.0.5 to 4.0.6 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20105)&lt;/li&gt;
+&lt;li&gt;fix [UI] : maintain circular hover state for registry info icon @Salmaan-M (#20048)&lt;/li&gt;
+&lt;li&gt;[UI] Fix: Registry layout in Settings Page @KhushamBansal (#20090)&lt;/li&gt;
+&lt;li&gt;fix: registry dialog box z-index @KhushamBansal (#20064)&lt;/li&gt;
+&lt;li&gt;fix: layout of component details in registry @KhushamBansal (#20063)&lt;/li&gt;
+&lt;li&gt;fix: overflow in registry page @KhushamBansal (#20047)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Bump undici in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20152)&lt;/li&gt;
+&lt;li&gt;refactor: consolidate ownership property naming to &amp;lsquo;owner&amp;rsquo; @leecalcote (#20147)&lt;/li&gt;
+&lt;li&gt;ci(docs): pin peaceiris/actions-gh-pages to v4.0.0 to fix intermittent deploy failures @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#20111)&lt;/li&gt;
+&lt;li&gt;Bump form-data from 4.0.5 to 4.0.6 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20106)&lt;/li&gt;
+&lt;li&gt;Bump js-yaml from 4.1.1 to 4.2.0 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20107)&lt;/li&gt;
+&lt;li&gt;Bump form-data from 4.0.5 to 4.0.6 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20105)&lt;/li&gt;
+&lt;li&gt;[CI] Recreate Discussion Forum data sync workflow @PragalvaXFREZ (#20101)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;refactor: consolidate ownership property naming to &amp;lsquo;owner&amp;rsquo; @leecalcote (#20147)&lt;/li&gt;
+&lt;li&gt;introduction for Uzair Hameed @uzairhameed (#20146)&lt;/li&gt;
+&lt;li&gt;Add Naitik&amp;rsquo;s attendance and introduction @naitikcodes15 (#20145)&lt;/li&gt;
+&lt;li&gt;Add attendance record for Sahil Paul @sahillpaul (#20144)&lt;/li&gt;
+&lt;li&gt;Add introductory note from Sulagna @suzy-g38 (#20143)&lt;/li&gt;
+&lt;li&gt;Create AbhishekTentiwala.md @AbhishekTentiwala (#20142)&lt;/li&gt;
+&lt;li&gt;Add introduction of Dhruvesh Mishra to Meshery @dhruveshmishra (#20141)&lt;/li&gt;
+&lt;li&gt;Create parthGartan.md @PARTH-TUSSLE (#20140)&lt;/li&gt;
+&lt;li&gt;Add introduction for Pragalva Sapkota @PragalvaXFREZ (#20139)&lt;/li&gt;
+&lt;li&gt;[docs]: update meshery-academy hyperlink and wording @banana-three-join (#20126)&lt;/li&gt;
+&lt;li&gt;Create index.md @YASHMAHAKAL (#20128)&lt;/li&gt;
+&lt;li&gt;docs: fix make docker target to docker-build @Daniel-1600 (#20093)&lt;/li&gt;
+&lt;li&gt;[Docs] Bringing Back Discussion Forum Shortcodes @PragalvaXFREZ (#20100)&lt;/li&gt;
+&lt;li&gt;Fix wording for clarity in Artifact Hub tutorial @chellej (#20095)&lt;/li&gt;
+&lt;li&gt;Create introduction file for Suhrid Marwah @suhr25 (#20052)&lt;/li&gt;
+&lt;li&gt;[Docs] Add Aamod&amp;rsquo;s Introduction @Aamod-Dev (#20051)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Aamod-Dev, @AbhishekTentiwala, @Copilot, @Daniel-1600, @KhushamBansal, @NSTKrishna, @PARTH-TUSSLE, @PragalvaXFREZ, @Salmaan-M, @YASHMAHAKAL, @aabidsofi19, @alexquincy, @aprv10, @arjunmehta-git, @banana-three-join, @chellej, @dependabot[bot], @dhruveshmishra, @fitzergerald, @ishwar170695, @jamieplu, @leecalcote, @marblom007, @meshery-ci, @naitikcodes15, @rishiraj38, @ritzorama, @sahillpaul, @saurabhraghuvanshii, @suhr25, @suttonskate, @suzy-g38, @udita-0707, @uzairhameed, @winkletinkle, [copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.43</title><link>/project/releases/v1.0.43/</link><pubDate>Sat, 13 Jun 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.43/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -33616,7 +33692,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.43&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.44&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
