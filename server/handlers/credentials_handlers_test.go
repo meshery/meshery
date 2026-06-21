@@ -9,7 +9,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshery/server/models"
 )
 
@@ -47,8 +47,8 @@ func (m *credentialSpyProvider) UpdateUserCredential(_ *http.Request, c *models.
 // to the authenticated user's ID after unmarshal precisely so this
 // overwrite attempt fails safely.
 func TestSaveUserCredential_ClientSuppliedUserIdCannotOverride(t *testing.T) {
-	authUser := &models.User{ID: uuid.Must(uuid.FromString("11111111-1111-1111-1111-111111111111"))}
-	attacker := uuid.Must(uuid.FromString("22222222-2222-2222-2222-222222222222"))
+	authUser := &models.User{ID: uuid.MustParse("11111111-1111-1111-1111-111111111111")}
+	attacker := uuid.MustParse("22222222-2222-2222-2222-222222222222")
 	body := fmt.Sprintf(`{"userId":%q,"name":"poisoned","type":"token","secret":{"k":"v"}}`, attacker)
 
 	h := newTestHandler(t, map[string]models.Provider{}, "")
@@ -80,8 +80,8 @@ func TestSaveUserCredential_ClientSuppliedUserIdCannotOverride(t *testing.T) {
 // update onto another user's credential by supplying a foreign
 // `userId` in the body.
 func TestUpdateUserCredential_ClientSuppliedUserIdCannotOverride(t *testing.T) {
-	authUser := &models.User{ID: uuid.Must(uuid.FromString("33333333-3333-3333-3333-333333333333"))}
-	attacker := uuid.Must(uuid.FromString("44444444-4444-4444-4444-444444444444"))
+	authUser := &models.User{ID: uuid.MustParse("33333333-3333-3333-3333-333333333333")}
+	attacker := uuid.MustParse("44444444-4444-4444-4444-444444444444")
 	body := fmt.Sprintf(`{"userId":%q,"id":"abcdefab-abcd-abcd-abcd-abcdefabcdef","name":"renamed","type":"token","secret":{}}`, attacker)
 
 	h := newTestHandler(t, map[string]models.Provider{}, "")

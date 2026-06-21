@@ -1,7 +1,7 @@
 ---
 title: cert-manager
 subtitle: Collaborative and visual infrastructure as design for cert-manager
-image: /extensions/models/cert-manager/icons/color/cert-manager-color.svg
+image: extensions/models/cert-manager/icons/color/cert-manager-color.svg
 aliases: /extensibility/integrations/cert-manager
 docURL: https://docs.meshery.io/extensibility/integrations/cert-manager
 description: 

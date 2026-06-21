@@ -13,7 +13,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"github.com/meshery/meshery/server/helpers"
@@ -875,7 +875,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 		return
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory(entityType).WithAction("update")
+	eventBuilder := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory(entityType).WithAction("update")
 	err = h.registryManager.UpdateEntityStatus(updateData.ID, updateData.Status, entityType)
 	if err != nil {
 		wrappedErr := ErrUpdateEntityStatus(err)
@@ -1504,7 +1504,7 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 
 func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	modelID := mux.Vars(r)["id"]
-	modelUUID, err := uuid.FromString(modelID)
+	modelUUID, err := uuid.Parse(modelID)
 	if err != nil {
 		h.log.Error(ErrInvalidUUID(err))
 		writeMeshkitError(rw, ErrInvalidUUID(err), http.StatusBadRequest)

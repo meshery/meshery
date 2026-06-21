@@ -1,7 +1,7 @@
 ---
 title: Docker
 subtitle: Collaborative and visual infrastructure as design for Docker
-image: /extensions/models/docker/icons/color/docker-color.svg
+image: extensions/models/docker/icons/color/docker-color.svg
 aliases: /extensibility/integrations/docker
 docURL: https://docs.meshery.io/installation/docker 
 description: 

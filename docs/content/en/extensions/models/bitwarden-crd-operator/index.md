@@ -1,7 +1,7 @@
 ---
 title: Bitwarden by Lerentis
 subtitle: Collaborative and visual infrastructure as design for Bitwarden by Lerentis
-image: /extensions/models/bitwarden-crd-operator/icons/color/bitwarden-crd-operator-color.svg
+image: extensions/models/bitwarden-crd-operator/icons/color/bitwarden-crd-operator-color.svg
 aliases: /extensibility/integrations/bitwarden-crd-operator
 docURL: https://docs.meshery.io/extensibility/integrations/bitwarden-crd-operator
 description: 

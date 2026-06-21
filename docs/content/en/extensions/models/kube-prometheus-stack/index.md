@@ -1,7 +1,7 @@
 ---
 title: Kube Prometheus Stack
 subtitle: Collaborative and visual infrastructure as design for Kube Prometheus Stack
-image: /extensions/models/kube-prometheus-stack/icons/color/kube-prometheus-stack-color.svg
+image: extensions/models/kube-prometheus-stack/icons/color/kube-prometheus-stack-color.svg
 aliases: /extensibility/integrations/kube-prometheus-stack
 docURL: https://docs.meshery.io/extensibility/integrations/kube-prometheus-stack
 description: 

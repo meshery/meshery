@@ -1,7 +1,7 @@
 ---
 title: Azure CDN
 subtitle: Collaborative and visual infrastructure as design for Azure CDN
-image: /extensions/models/azure-cdn/icons/color/azure-cdn-color.svg
+image: extensions/models/azure-cdn/icons/color/azure-cdn-color.svg
 aliases: /extensibility/integrations/azure-cdn
 docURL: https://docs.meshery.io/extensibility/integrations/azure-cdn
 description: 

@@ -8,7 +8,6 @@ import (
 	"os"
 	"path"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/internal/graphql/model"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
@@ -239,7 +238,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 		}
 		connectionID := k8sCtx.ConnectionID
 
-		machine, ok := instanceTracker.Get(uuid.FromStringOrNil(connectionID))
+		machine, ok := instanceTracker.Get(parseUUIDOrNil(connectionID))
 		if !ok || machine == nil {
 			return "", ErrResyncCluster(
 				fmt.Errorf(

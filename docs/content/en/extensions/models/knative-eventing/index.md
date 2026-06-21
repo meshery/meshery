@@ -1,7 +1,7 @@
 ---
 title: Knative Eventing
 subtitle: Collaborative and visual infrastructure as design for Knative Eventing
-image: /extensions/models/knative-eventing/icons/color/knative-eventing-color.svg
+image: extensions/models/knative-eventing/icons/color/knative-eventing-color.svg
 aliases: /extensibility/integrations/knative-eventing
 docURL: https://docs.meshery.io/extensibility/integrations/knative-eventing
 description: 

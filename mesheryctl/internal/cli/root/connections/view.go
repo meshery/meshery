@@ -21,7 +21,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -138,7 +138,7 @@ func selectConnectionPrompt(connectionsList []*connection.Connection) (*connecti
 	connectionNames := make([]string, len(connectionsList))
 
 	for i, conn := range connectionsList {
-		connectionNames[i] = fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn.ID.String(), conn.Name, conn.Type)
+		connectionNames[i] = fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn.ID.String(), conn.Name, conn.ConnectionType)
 	}
 
 	i, err := utils.RunSelectPrompt("Select connection", connectionNames)
@@ -150,7 +150,7 @@ func selectConnectionPrompt(connectionsList []*connection.Connection) (*connecti
 }
 
 func isArgumentUUID(arg string) bool {
-	_, err := uuid.FromString(arg)
+	_, err := uuid.Parse(arg)
 	return err == nil
 }
 

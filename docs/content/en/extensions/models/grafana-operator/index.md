@@ -1,7 +1,7 @@
 ---
 title: Grafana Operator
 subtitle: Operational dashboards for your data with Grafana and Meshery
-image: /extensions/models/grafana-operator/icons/color/grafana-operator-color.svg
+image: extensions/models/grafana-operator/icons/color/grafana-operator-color.svg
 aliases: /extensibility/integrations/grafana-operator
 docURL: https://docs.meshery.io/extensibility/integrations/grafana-operator
 description: 

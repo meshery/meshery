@@ -1,7 +1,7 @@
 ---
 title: Aperture Controller
 subtitle: Collaborative and visual infrastructure as design for Aperture Controller
-image: /extensions/models/aperture-controller/icons/color/aperture-controller-color.svg
+image: extensions/models/aperture-controller/icons/color/aperture-controller-color.svg
 aliases: /extensibility/integrations/aperture-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aperture-controller
 description: 

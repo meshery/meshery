@@ -1,7 +1,7 @@
 ---
 title: AWS ElasticSearch Service
 subtitle: Collaborative and visual infrastructure as design for AWS ElasticSearch Service
-image: /extensions/models/aws-elasticsearchservice-controller/icons/color/aws-elasticsearchservice-controller-color.svg
+image: extensions/models/aws-elasticsearchservice-controller/icons/color/aws-elasticsearchservice-controller-color.svg
 aliases: /extensibility/integrations/aws-elasticsearchservice-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-elasticsearchservice-controller
 description: 

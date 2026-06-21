@@ -1,7 +1,7 @@
 ---
 title: Curiefense
 subtitle: Collaborative and visual infrastructure as design for Curiefense
-image: /extensions/models/curiefense/icons/color/curiefense-color.svg
+image: extensions/models/curiefense/icons/color/curiefense-color.svg
 aliases: /extensibility/integrations/curiefense
 docURL: https://docs.meshery.io/extensibility/integrations/curiefense
 description: 

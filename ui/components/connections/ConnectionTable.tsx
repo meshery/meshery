@@ -32,11 +32,20 @@ import {
   getErrorMessage,
   getStatusTransition,
 } from './ConnectionTable.constants';
+import type { ConnectionTransitionMap } from './ConnectionTable.constants';
 import { useConnectionActions } from './ConnectionTable.hooks';
 import { useConnectionColumns } from './ConnectionTable.columns';
 import { useConnectionTableOptions } from './ConnectionTable.options';
 import { ConnectionActionMenu, ConnectionDeploymentModeMenu } from './ConnectionActionMenu';
 import { ConnectionTableToolbar } from './ConnectionTableToolbar';
+import dynamic from 'next/dynamic';
+import type { ConfigurableConnection } from './ConnectionConfigureModal';
+
+// Lazy-loaded: it pulls in the RJSF/theme chain, which we keep out of the
+// table's static import graph (smaller bundle + avoids eager theme init).
+const ConnectionConfigureModal = dynamic(() => import('./ConnectionConfigureModal'), {
+  ssr: false,
+});
 
 const ConnectionTable = ({
   selectedFilter,
@@ -56,7 +65,10 @@ const ConnectionTable = ({
         // `store/slices/mesheryUi.ts`). The slice is only populated after
         // `_app.tsx`'s async `loadMeshModelComponent` resolves, which can
         // race the first render of this page.
-        connectionMetadataState: Record<string, { transitions?: string[]; icon?: string }> | null;
+        connectionMetadataState: Record<
+          string,
+          { transitions?: string[]; icon?: string; transitionMap?: ConnectionTransitionMap }
+        > | null;
         controllerState: unknown;
       };
     }) => state.ui,
@@ -86,6 +98,9 @@ const ConnectionTable = ({
   } = useConnectionActions({ organizationId: organization?.id });
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [deploymentModeAnchorEl, setDeploymentModeAnchorEl] = useState<HTMLElement | null>(null);
+  const [configureConnection, setConfigureConnection] = useState<ConfigurableConnection | null>(
+    null,
+  );
   const open = Boolean(anchorEl);
   const deploymentModeOpen = Boolean(deploymentModeAnchorEl);
   const modalRef = useRef<{ show: (options: unknown) => Promise<string | null> } | null>(null);
@@ -252,6 +267,7 @@ const ConnectionTable = ({
       ['created_at', 'na'],
       ['status', 'xs'],
       ['Actions', 'xs'],
+      ['transitionMap', 'xs'],
       ['ConnectionID', 'na'],
     ],
     [],
@@ -356,6 +372,14 @@ const ConnectionTable = ({
     },
     [filteredConnections],
   );
+
+  const handleConfigureConnection = useCallback(() => {
+    const connection = getConnectionAtRowIndex(rowData?.rowIndex);
+    handleActionMenuClose();
+    if (connection) {
+      setConfigureConnection(connection as ConfigurableConnection);
+    }
+  }, [getConnectionAtRowIndex, handleActionMenuClose, rowData?.rowIndex]);
 
   const handleDeploymentModeChange = useCallback(
     async (newMode: string) => {
@@ -511,7 +535,11 @@ const ConnectionTable = ({
       }
 
       const status = event.target.value;
-      const subtitle = getStatusTransition(connectionKind, connectionStatus, status.toLowerCase());
+      const subtitle = getStatusTransition(
+        connectionMetadataState?.[connectionKind]?.transitionMap,
+        connectionStatus,
+        status.toLowerCase(),
+      );
       const response = await modalRef.current.show({
         title: `Transition connection to ${status.toUpperCase()}?`,
         subtitle,
@@ -524,7 +552,7 @@ const ConnectionTable = ({
         await updateConnectionStatus(connectionId, status);
       }
     },
-    [updateConnectionStatus],
+    [connectionMetadataState, updateConnectionStatus],
   );
 
   const handleActionMenuOpen = useCallback((event, tableMeta: RowData) => {
@@ -588,6 +616,15 @@ const ConnectionTable = ({
     expansionFlags.current.isInitialLoad = false;
   }, [selectedConnectionId, filteredConnectionsKey]);
 
+  // Project the per-kind connection definitions down to just their state
+  // machines for the status-transition dropdown.
+  const transitionMapByKind = useMemo(() => {
+    if (!connectionMetadataState) return null;
+    return Object.fromEntries(
+      Object.entries(connectionMetadataState).map(([kind, meta]) => [kind, meta?.transitionMap]),
+    );
+  }, [connectionMetadataState]);
+
   const columns = useConnectionColumns({
     url: CONNECTION_DOCS_URL,
     envUrl: ENVIRONMENT_DOCS_URL,
@@ -599,8 +636,12 @@ const ConnectionTable = ({
     handleStatusChange,
     handleActionMenuOpen,
     ping,
+    transitionMapByKind,
   });
-  const columnNames = useMemo(() => columns.map((column) => column.name), [columns]);
+  const columnNames = useMemo(
+    () => columns.map((column) => column.name),
+    [columns, isEnvironmentsSuccess],
+  );
 
   const options = useConnectionTableOptions({
     totalCount: connectionData?.totalCount,
@@ -622,6 +663,24 @@ const ConnectionTable = ({
   });
 
   const [tableCols, setTableCols] = useState(columns);
+
+  // Keep the latest `columns` in a ref so the sync effect below can read them
+  // without depending on `columns` identity — `columns` is rebuilt on most
+  // renders (not all of its inputs are referentially stable), so a `[columns]`
+  // dependency would setState every render and loop infinitely.
+  const columnsRef = useRef(columns);
+  columnsRef.current = columns;
+
+  // ResponsiveDataTable renders cells from this `tableCols` snapshot and only
+  // re-syncs it on columnVisibility identity changes, so a cell whose
+  // `customBodyRender` closes over async data (the environments select is gated
+  // on `isEnvironmentsSuccess`) would stay frozen at its first-render output.
+  // Re-push the freshly built columns once those inputs settle — keyed on the
+  // settling signals (not `columns`) so it runs only when the rendered output
+  // can actually change.
+  useEffect(() => {
+    setTableCols(columnsRef.current);
+  }, [isEnvironmentsSuccess, environmentOptions]);
 
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean | undefined>>(
     () => getResponsiveColumnVisibility(columnNames, colViews, width),
@@ -681,7 +740,17 @@ const ConnectionTable = ({
         onClose={handleActionMenuClose}
         onFlushMeshSync={handleFlushMeshSync}
         onDeploymentModeAnchor={handleDeploymentModeAnchorOpen}
+        onConfigure={handleConfigureConnection}
       />
+
+      {/* Only mount (and thus load) the configure modal once a row is chosen. */}
+      {configureConnection && (
+        <ConnectionConfigureModal
+          isOpen={Boolean(configureConnection)}
+          connection={configureConnection}
+          onClose={() => setConfigureConnection(null)}
+        />
+      )}
 
       <ConnectionDeploymentModeMenu
         anchorEl={deploymentModeAnchorEl}
