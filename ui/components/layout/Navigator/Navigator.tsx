@@ -710,7 +710,12 @@ const NavigatorContent = () => {
                   link={!!link}
                   isActive={currentPath === href}
                   isShow={!show}
-                  onClick={() => toggleItemCollapse(childId)}
+                  onClick={() => {
+                    toggleItemCollapse(childId);
+                    if (link && href) {
+                      router.push(href);
+                    }
+                  }}
                   onMouseOver={() => (isDrawerCollapsed ? setHoveredId(childId) : null)}
                   onMouseLeave={() =>
                     !submenu || !openItems.includes(childId) ? setHoveredId(null) : null
