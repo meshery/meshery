@@ -129,7 +129,7 @@ paths:
                         definition is used across different schemas.
                       x-go-type: uuid.UUID
                       x-go-type-import:
-                        path: github.com/google/uuid
+                        path: github.com/gofrs/uuid
                     name:
                       type: string
                       description: Name of the design; a descriptive, but concise title for the design document.
@@ -190,7 +190,7 @@ paths:
                                       UUID core definition is used across different schemas.
                                     x-go-type: uuid.UUID
                                     x-go-type-import:
-                                      path: github.com/google/uuid
+                                      path: github.com/gofrs/uuid
                                   alias_component_id:
                                     type: string
                                     format: uuid
@@ -199,7 +199,7 @@ paths:
                                       UUID core definition is used across different schemas.
                                     x-go-type: uuid.UUID
                                     x-go-type-import:
-                                      path: github.com/google/uuid
+                                      path: github.com/gofrs/uuid
                                   immediate_parent_id:
                                     type: string
                                     format: uuid
@@ -208,7 +208,7 @@ paths:
                                       UUID core definition is used across different schemas.
                                     x-go-type: uuid.UUID
                                     x-go-type-import:
-                                      path: github.com/google/uuid
+                                      path: github.com/gofrs/uuid
                                   immediate_ref_field_path:
                                     type: array
                                     items:
@@ -228,7 +228,7 @@ paths:
                                       UUID core definition is used across different schemas.
                                     x-go-type: uuid.UUID
                                     x-go-type-import:
-                                      path: github.com/google/uuid
+                                      path: github.com/gofrs/uuid
                                   resolved_ref_field_path:
                                     type: array
                                     items:
@@ -263,7 +263,7 @@ paths:
                                   UUID core definition is used across different schemas.
                                 x-go-type: uuid.UUID
                                 x-go-type-import:
-                                  path: github.com/google/uuid
+                                  path: github.com/gofrs/uuid
                                 x-order: 1
                                 x-oapi-codegen-extra-tags:
                                   yaml: id
@@ -350,7 +350,7 @@ paths:
                                       UUID core definition is used across different schemas.
                                     x-go-type: uuid.UUID
                                     x-go-type-import:
-                                      path: github.com/google/uuid
+                                      path: github.com/gofrs/uuid
                                     x-order: 1
                                     x-oapi-codegen-extra-tags:
                                       yaml: id
@@ -480,7 +480,7 @@ paths:
                                           The UUID core definition is used across different schemas.
                                         x-go-type: uuid.UUID
                                         x-go-type-import:
-                                          path: github.com/google/uuid
+                                          path: github.com/gofrs/uuid
                                         x-order: 1
                                         x-go-name: ID
                                         x-oapi-codegen-extra-tags:
@@ -501,7 +501,7 @@ paths:
                                           The UUID core definition is used across different schemas.
                                         x-go-type: uuid.UUID
                                         x-go-type-import:
-                                          path: github.com/google/uuid
+                                          path: github.com/gofrs/uuid
                                         x-go-name: CredentialID
                                         x-oapi-codegen-extra-tags:
                                           db: credential_id
@@ -565,7 +565,7 @@ paths:
                                           The UUID core definition is used across different schemas.
                                         x-go-type: uuid.UUID
                                         x-go-type-import:
-                                          path: github.com/google/uuid
+                                          path: github.com/gofrs/uuid
                                         x-go-name: UserID
                                         x-oapi-codegen-extra-tags:
                                           db: user_id
@@ -643,7 +643,7 @@ paths:
                                                 Meshery. The UUID core definition is used across different schemas.
                                               x-go-type: uuid.UUID
                                               x-go-type-import:
-                                                path: github.com/google/uuid
+                                                path: github.com/gofrs/uuid
                                               x-order: 1
                                               x-go-name: ID
                                               x-oapi-codegen-extra-tags:
@@ -692,7 +692,7 @@ paths:
                                                 Meshery. The UUID core definition is used across different schemas.
                                               x-go-type: uuid.UUID
                                               x-go-type-import:
-                                                path: github.com/google/uuid
+                                                path: github.com/gofrs/uuid
                                               x-go-name: OrganizationID
                                               x-oapi-codegen-extra-tags:
                                                 db: organization_id
@@ -706,7 +706,7 @@ paths:
                                                 Meshery. The UUID core definition is used across different schemas.
                                               x-go-type: uuid.UUID
                                               x-go-type-import:
-                                                path: github.com/google/uuid
+                                                path: github.com/gofrs/uuid
                                               x-oapi-codegen-extra-tags:
                                                 db: owner
                                                 yaml: owner
@@ -792,7 +792,7 @@ paths:
                                       UUID core definition is used across different schemas.
                                     x-go-type: uuid.UUID
                                     x-go-type-import:
-                                      path: github.com/google/uuid
+                                      path: github.com/gofrs/uuid
                                     x-oapi-codegen-extra-tags:
                                       yaml: connection_id
                                       json: connection_id
@@ -806,7 +806,7 @@ paths:
                                       UUID core definition is used across different schemas.
                                     x-go-type: uuid.UUID
                                     x-go-type-import:
-                                      path: github.com/google/uuid
+                                      path: github.com/gofrs/uuid
                                     x-oapi-codegen-extra-tags:
                                       yaml: '-'
                                       json: '-'
@@ -840,7 +840,7 @@ paths:
                                           The UUID core definition is used across different schemas.
                                         x-go-type: uuid.UUID
                                         x-go-type-import:
-                                          path: github.com/google/uuid
+                                          path: github.com/gofrs/uuid
                                         x-order: 1
                                       name:
                                         type: string
@@ -1406,7 +1406,7 @@ paths:
                                       UUID core definition is used across different schemas.
                                     x-go-type: uuid.UUID
                                     x-go-type-import:
-                                      path: github.com/google/uuid
+                                      path: github.com/gofrs/uuid
                                   name:
                                     type: string
                                     description: The unique name for the model within the scope of a registrant.
@@ -1466,7 +1466,7 @@ paths:
                                   UUID core definition is used across different schemas.
                                 x-go-type: uuid.UUID
                                 x-go-type-import:
-                                  path: github.com/google/uuid
+                                  path: github.com/gofrs/uuid
                                 x-oapi-codegen-extra-tags:
                                   gorm: index:idx_component_definition_dbs_model_id,column:model_id
                                   yaml: '-'
@@ -2307,7 +2307,7 @@ paths:
                                   UUID core definition is used across different schemas.
                                 x-go-type: uuid.UUID
                                 x-go-type-import:
-                                  path: github.com/google/uuid
+                                  path: github.com/gofrs/uuid
                                 x-go-type-skip-optional-pointer: true
                                 x-order: 1
                                 x-oapi-codegen-extra-tags:
@@ -2928,7 +2928,7 @@ paths:
                                       UUID core definition is used across different schemas.
                                     x-go-type: uuid.UUID
                                     x-go-type-import:
-                                      path: github.com/google/uuid
+                                      path: github.com/gofrs/uuid
                                   name:
                                     type: string
                                     description: The unique name for the model within the scope of a registrant.
@@ -2988,7 +2988,7 @@ paths:
                                   UUID core definition is used across different schemas.
                                 x-go-type: uuid.UUID
                                 x-go-type-import:
-                                  path: github.com/google/uuid
+                                  path: github.com/gofrs/uuid
                                 x-go-type-skip-optional-pointer: true
                                 x-go-name: ModelId
                                 x-order: 7
@@ -3057,7 +3057,7 @@ paths:
                                                   Meshery. The UUID core definition is used across different schemas.
                                                 x-go-type: uuid.UUID
                                                 x-go-type-import:
-                                                  path: github.com/google/uuid
+                                                  path: github.com/gofrs/uuid
                                                 x-oapi-codegen-extra-tags:
                                                   yaml: id
                                                   json: id
@@ -3101,7 +3101,7 @@ paths:
                                                             different schemas.
                                                           x-go-type: uuid.UUID
                                                           x-go-type-import:
-                                                            path: github.com/google/uuid
+                                                            path: github.com/gofrs/uuid
                                                           x-oapi-codegen-extra-tags:
                                                             yaml: id
                                                             json: id
@@ -3159,7 +3159,7 @@ paths:
                                                             different schemas.
                                                           x-go-type: uuid.UUID
                                                           x-go-type-import:
-                                                            path: github.com/google/uuid
+                                                            path: github.com/gofrs/uuid
                                                           x-oapi-codegen-extra-tags:
                                                             yaml: id
                                                             json: id
@@ -3238,7 +3238,7 @@ paths:
                                                       schemas.
                                                     x-go-type: uuid.UUID
                                                     x-go-type-import:
-                                                      path: github.com/google/uuid
+                                                      path: github.com/gofrs/uuid
                                                   name:
                                                     type: string
                                                     description: The unique name for the model within the scope of a registrant.
@@ -3386,7 +3386,7 @@ paths:
                                                   Meshery. The UUID core definition is used across different schemas.
                                                 x-go-type: uuid.UUID
                                                 x-go-type-import:
-                                                  path: github.com/google/uuid
+                                                  path: github.com/gofrs/uuid
                                                 x-oapi-codegen-extra-tags:
                                                   yaml: id
                                                   json: id
@@ -3430,7 +3430,7 @@ paths:
                                                             different schemas.
                                                           x-go-type: uuid.UUID
                                                           x-go-type-import:
-                                                            path: github.com/google/uuid
+                                                            path: github.com/gofrs/uuid
                                                           x-oapi-codegen-extra-tags:
                                                             yaml: id
                                                             json: id
@@ -3488,7 +3488,7 @@ paths:
                                                             different schemas.
                                                           x-go-type: uuid.UUID
                                                           x-go-type-import:
-                                                            path: github.com/google/uuid
+                                                            path: github.com/gofrs/uuid
                                                           x-oapi-codegen-extra-tags:
                                                             yaml: id
                                                             json: id
@@ -3567,7 +3567,7 @@ paths:
                                                       schemas.
                                                     x-go-type: uuid.UUID
                                                     x-go-type-import:
-                                                      path: github.com/google/uuid
+                                                      path: github.com/gofrs/uuid
                                                   name:
                                                     type: string
                                                     description: The unique name for the model within the scope of a registrant.
@@ -3728,7 +3728,7 @@ paths:
                                                   Meshery. The UUID core definition is used across different schemas.
                                                 x-go-type: uuid.UUID
                                                 x-go-type-import:
-                                                  path: github.com/google/uuid
+                                                  path: github.com/gofrs/uuid
                                                 x-oapi-codegen-extra-tags:
                                                   yaml: id
                                                   json: id
@@ -3772,7 +3772,7 @@ paths:
                                                             different schemas.
                                                           x-go-type: uuid.UUID
                                                           x-go-type-import:
-                                                            path: github.com/google/uuid
+                                                            path: github.com/gofrs/uuid
                                                           x-oapi-codegen-extra-tags:
                                                             yaml: id
                                                             json: id
@@ -3830,7 +3830,7 @@ paths:
                                                             different schemas.
                                                           x-go-type: uuid.UUID
                                                           x-go-type-import:
-                                                            path: github.com/google/uuid
+                                                            path: github.com/gofrs/uuid
                                                           x-oapi-codegen-extra-tags:
                                                             yaml: id
                                                             json: id
@@ -3909,7 +3909,7 @@ paths:
                                                       schemas.
                                                     x-go-type: uuid.UUID
                                                     x-go-type-import:
-                                                      path: github.com/google/uuid
+                                                      path: github.com/gofrs/uuid
                                                   name:
                                                     type: string
                                                     description: The unique name for the model within the scope of a registrant.
@@ -4057,7 +4057,7 @@ paths:
                                                   Meshery. The UUID core definition is used across different schemas.
                                                 x-go-type: uuid.UUID
                                                 x-go-type-import:
-                                                  path: github.com/google/uuid
+                                                  path: github.com/gofrs/uuid
                                                 x-oapi-codegen-extra-tags:
                                                   yaml: id
                                                   json: id
@@ -4101,7 +4101,7 @@ paths:
                                                             different schemas.
                                                           x-go-type: uuid.UUID
                                                           x-go-type-import:
-                                                            path: github.com/google/uuid
+                                                            path: github.com/gofrs/uuid
                                                           x-oapi-codegen-extra-tags:
                                                             yaml: id
                                                             json: id
@@ -4159,7 +4159,7 @@ paths:
                                                             different schemas.
                                                           x-go-type: uuid.UUID
                                                           x-go-type-import:
-                                                            path: github.com/google/uuid
+                                                            path: github.com/gofrs/uuid
                                                           x-oapi-codegen-extra-tags:
                                                             yaml: id
                                                             json: id
@@ -4238,7 +4238,7 @@ paths:
                                                       schemas.
                                                     x-go-type: uuid.UUID
                                                     x-go-type-import:
-                                                      path: github.com/google/uuid
+                                                      path: github.com/gofrs/uuid
                                                   name:
                                                     type: string
                                                     description: The unique name for the model within the scope of a registrant.
@@ -4425,7 +4425,7 @@ paths:
                           definition is used across different schemas.
                         x-go-type: uuid.UUID
                         x-go-type-import:
-                          path: github.com/google/uuid
+                          path: github.com/gofrs/uuid
                       name:
                         type: string
                         description: Name of the design; a descriptive, but concise title for the design document.
@@ -4487,7 +4487,7 @@ paths:
                                         The UUID core definition is used across different schemas.
                                       x-go-type: uuid.UUID
                                       x-go-type-import:
-                                        path: github.com/google/uuid
+                                        path: github.com/gofrs/uuid
                                     alias_component_id:
                                       type: string
                                       format: uuid
@@ -4496,7 +4496,7 @@ paths:
                                         The UUID core definition is used across different schemas.
                                       x-go-type: uuid.UUID
                                       x-go-type-import:
-                                        path: github.com/google/uuid
+                                        path: github.com/gofrs/uuid
                                     immediate_parent_id:
                                       type: string
                                       format: uuid
@@ -4505,7 +4505,7 @@ paths:
                                         The UUID core definition is used across different schemas.
                                       x-go-type: uuid.UUID
                                       x-go-type-import:
-                                        path: github.com/google/uuid
+                                        path: github.com/gofrs/uuid
                                     immediate_ref_field_path:
                                       type: array
                                       items:
@@ -4525,7 +4525,7 @@ paths:
                                         The UUID core definition is used across different schemas.
                                       x-go-type: uuid.UUID
                                       x-go-type-import:
-                                        path: github.com/google/uuid
+                                        path: github.com/gofrs/uuid
                                     resolved_ref_field_path:
                                       type: array
                                       items:
@@ -4560,7 +4560,7 @@ paths:
                                     UUID core definition is used across different schemas.
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                   x-order: 1
                                   x-oapi-codegen-extra-tags:
                                     yaml: id
@@ -4649,7 +4649,7 @@ paths:
                                         The UUID core definition is used across different schemas.
                                       x-go-type: uuid.UUID
                                       x-go-type-import:
-                                        path: github.com/google/uuid
+                                        path: github.com/gofrs/uuid
                                       x-order: 1
                                       x-oapi-codegen-extra-tags:
                                         yaml: id
@@ -4779,7 +4779,7 @@ paths:
                                             Meshery. The UUID core definition is used across different schemas.
                                           x-go-type: uuid.UUID
                                           x-go-type-import:
-                                            path: github.com/google/uuid
+                                            path: github.com/gofrs/uuid
                                           x-order: 1
                                           x-go-name: ID
                                           x-oapi-codegen-extra-tags:
@@ -4800,7 +4800,7 @@ paths:
                                             Meshery. The UUID core definition is used across different schemas.
                                           x-go-type: uuid.UUID
                                           x-go-type-import:
-                                            path: github.com/google/uuid
+                                            path: github.com/gofrs/uuid
                                           x-go-name: CredentialID
                                           x-oapi-codegen-extra-tags:
                                             db: credential_id
@@ -4864,7 +4864,7 @@ paths:
                                             Meshery. The UUID core definition is used across different schemas.
                                           x-go-type: uuid.UUID
                                           x-go-type-import:
-                                            path: github.com/google/uuid
+                                            path: github.com/gofrs/uuid
                                           x-go-name: UserID
                                           x-oapi-codegen-extra-tags:
                                             db: user_id
@@ -4942,7 +4942,7 @@ paths:
                                                   Meshery. The UUID core definition is used across different schemas.
                                                 x-go-type: uuid.UUID
                                                 x-go-type-import:
-                                                  path: github.com/google/uuid
+                                                  path: github.com/gofrs/uuid
                                                 x-order: 1
                                                 x-go-name: ID
                                                 x-oapi-codegen-extra-tags:
@@ -4991,7 +4991,7 @@ paths:
                                                   Meshery. The UUID core definition is used across different schemas.
                                                 x-go-type: uuid.UUID
                                                 x-go-type-import:
-                                                  path: github.com/google/uuid
+                                                  path: github.com/gofrs/uuid
                                                 x-go-name: OrganizationID
                                                 x-oapi-codegen-extra-tags:
                                                   db: organization_id
@@ -5005,7 +5005,7 @@ paths:
                                                   Meshery. The UUID core definition is used across different schemas.
                                                 x-go-type: uuid.UUID
                                                 x-go-type-import:
-                                                  path: github.com/google/uuid
+                                                  path: github.com/gofrs/uuid
                                                 x-oapi-codegen-extra-tags:
                                                   db: owner
                                                   yaml: owner
@@ -5091,7 +5091,7 @@ paths:
                                         The UUID core definition is used across different schemas.
                                       x-go-type: uuid.UUID
                                       x-go-type-import:
-                                        path: github.com/google/uuid
+                                        path: github.com/gofrs/uuid
                                       x-oapi-codegen-extra-tags:
                                         yaml: connection_id
                                         json: connection_id
@@ -5105,7 +5105,7 @@ paths:
                                         The UUID core definition is used across different schemas.
                                       x-go-type: uuid.UUID
                                       x-go-type-import:
-                                        path: github.com/google/uuid
+                                        path: github.com/gofrs/uuid
                                       x-oapi-codegen-extra-tags:
                                         yaml: '-'
                                         json: '-'
@@ -5139,7 +5139,7 @@ paths:
                                             Meshery. The UUID core definition is used across different schemas.
                                           x-go-type: uuid.UUID
                                           x-go-type-import:
-                                            path: github.com/google/uuid
+                                            path: github.com/gofrs/uuid
                                           x-order: 1
                                         name:
                                           type: string
@@ -5707,7 +5707,7 @@ paths:
                                         The UUID core definition is used across different schemas.
                                       x-go-type: uuid.UUID
                                       x-go-type-import:
-                                        path: github.com/google/uuid
+                                        path: github.com/gofrs/uuid
                                     name:
                                       type: string
                                       description: The unique name for the model within the scope of a registrant.
@@ -5767,7 +5767,7 @@ paths:
                                     UUID core definition is used across different schemas.
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                   x-oapi-codegen-extra-tags:
                                     gorm: index:idx_component_definition_dbs_model_id,column:model_id
                                     yaml: '-'
@@ -6614,7 +6614,7 @@ paths:
                                     UUID core definition is used across different schemas.
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                   x-go-type-skip-optional-pointer: true
                                   x-order: 1
                                   x-oapi-codegen-extra-tags:
@@ -7240,7 +7240,7 @@ paths:
                                         The UUID core definition is used across different schemas.
                                       x-go-type: uuid.UUID
                                       x-go-type-import:
-                                        path: github.com/google/uuid
+                                        path: github.com/gofrs/uuid
                                     name:
                                       type: string
                                       description: The unique name for the model within the scope of a registrant.
@@ -7300,7 +7300,7 @@ paths:
                                     UUID core definition is used across different schemas.
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                   x-go-type-skip-optional-pointer: true
                                   x-go-name: ModelId
                                   x-order: 7
@@ -7370,7 +7370,7 @@ paths:
                                                     schemas.
                                                   x-go-type: uuid.UUID
                                                   x-go-type-import:
-                                                    path: github.com/google/uuid
+                                                    path: github.com/gofrs/uuid
                                                   x-oapi-codegen-extra-tags:
                                                     yaml: id
                                                     json: id
@@ -7414,7 +7414,7 @@ paths:
                                                               across different schemas.
                                                             x-go-type: uuid.UUID
                                                             x-go-type-import:
-                                                              path: github.com/google/uuid
+                                                              path: github.com/gofrs/uuid
                                                             x-oapi-codegen-extra-tags:
                                                               yaml: id
                                                               json: id
@@ -7472,7 +7472,7 @@ paths:
                                                               across different schemas.
                                                             x-go-type: uuid.UUID
                                                             x-go-type-import:
-                                                              path: github.com/google/uuid
+                                                              path: github.com/gofrs/uuid
                                                             x-oapi-codegen-extra-tags:
                                                               yaml: id
                                                               json: id
@@ -7551,7 +7551,7 @@ paths:
                                                         different schemas.
                                                       x-go-type: uuid.UUID
                                                       x-go-type-import:
-                                                        path: github.com/google/uuid
+                                                        path: github.com/gofrs/uuid
                                                     name:
                                                       type: string
                                                       description: The unique name for the model within the scope of a registrant.
@@ -7701,7 +7701,7 @@ paths:
                                                     schemas.
                                                   x-go-type: uuid.UUID
                                                   x-go-type-import:
-                                                    path: github.com/google/uuid
+                                                    path: github.com/gofrs/uuid
                                                   x-oapi-codegen-extra-tags:
                                                     yaml: id
                                                     json: id
@@ -7745,7 +7745,7 @@ paths:
                                                               across different schemas.
                                                             x-go-type: uuid.UUID
                                                             x-go-type-import:
-                                                              path: github.com/google/uuid
+                                                              path: github.com/gofrs/uuid
                                                             x-oapi-codegen-extra-tags:
                                                               yaml: id
                                                               json: id
@@ -7803,7 +7803,7 @@ paths:
                                                               across different schemas.
                                                             x-go-type: uuid.UUID
                                                             x-go-type-import:
-                                                              path: github.com/google/uuid
+                                                              path: github.com/gofrs/uuid
                                                             x-oapi-codegen-extra-tags:
                                                               yaml: id
                                                               json: id
@@ -7882,7 +7882,7 @@ paths:
                                                         different schemas.
                                                       x-go-type: uuid.UUID
                                                       x-go-type-import:
-                                                        path: github.com/google/uuid
+                                                        path: github.com/gofrs/uuid
                                                     name:
                                                       type: string
                                                       description: The unique name for the model within the scope of a registrant.
@@ -8045,7 +8045,7 @@ paths:
                                                     schemas.
                                                   x-go-type: uuid.UUID
                                                   x-go-type-import:
-                                                    path: github.com/google/uuid
+                                                    path: github.com/gofrs/uuid
                                                   x-oapi-codegen-extra-tags:
                                                     yaml: id
                                                     json: id
@@ -8089,7 +8089,7 @@ paths:
                                                               across different schemas.
                                                             x-go-type: uuid.UUID
                                                             x-go-type-import:
-                                                              path: github.com/google/uuid
+                                                              path: github.com/gofrs/uuid
                                                             x-oapi-codegen-extra-tags:
                                                               yaml: id
                                                               json: id
@@ -8147,7 +8147,7 @@ paths:
                                                               across different schemas.
                                                             x-go-type: uuid.UUID
                                                             x-go-type-import:
-                                                              path: github.com/google/uuid
+                                                              path: github.com/gofrs/uuid
                                                             x-oapi-codegen-extra-tags:
                                                               yaml: id
                                                               json: id
@@ -8226,7 +8226,7 @@ paths:
                                                         different schemas.
                                                       x-go-type: uuid.UUID
                                                       x-go-type-import:
-                                                        path: github.com/google/uuid
+                                                        path: github.com/gofrs/uuid
                                                     name:
                                                       type: string
                                                       description: The unique name for the model within the scope of a registrant.
@@ -8376,7 +8376,7 @@ paths:
                                                     schemas.
                                                   x-go-type: uuid.UUID
                                                   x-go-type-import:
-                                                    path: github.com/google/uuid
+                                                    path: github.com/gofrs/uuid
                                                   x-oapi-codegen-extra-tags:
                                                     yaml: id
                                                     json: id
@@ -8420,7 +8420,7 @@ paths:
                                                               across different schemas.
                                                             x-go-type: uuid.UUID
                                                             x-go-type-import:
-                                                              path: github.com/google/uuid
+                                                              path: github.com/gofrs/uuid
                                                             x-oapi-codegen-extra-tags:
                                                               yaml: id
                                                               json: id
@@ -8478,7 +8478,7 @@ paths:
                                                               across different schemas.
                                                             x-go-type: uuid.UUID
                                                             x-go-type-import:
-                                                              path: github.com/google/uuid
+                                                              path: github.com/gofrs/uuid
                                                             x-oapi-codegen-extra-tags:
                                                               yaml: id
                                                               json: id
@@ -8557,7 +8557,7 @@ paths:
                                                         different schemas.
                                                       x-go-type: uuid.UUID
                                                       x-go-type-import:
-                                                        path: github.com/google/uuid
+                                                        path: github.com/gofrs/uuid
                                                     name:
                                                       type: string
                                                       description: The unique name for the model within the scope of a registrant.
@@ -8981,7 +8981,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         createdAt:
                           description: When the context was first registered with Meshery.
                           x-go-type: time.Time
@@ -9081,7 +9081,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         name:
                           type: string
                           description: Human-readable name for the credential.
@@ -9099,7 +9099,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         type:
                           type: string
                           description: Credential type (e.g. token, basic, AWS).
@@ -9204,7 +9204,7 @@ paths:
                   format: uuid
                   x-go-type: uuid.UUID
                   x-go-type-import:
-                    path: github.com/google/uuid
+                    path: github.com/gofrs/uuid
                 name:
                   type: string
                   description: Human-readable name for the credential.
@@ -9220,7 +9220,7 @@ paths:
                   format: uuid
                   x-go-type: uuid.UUID
                   x-go-type-import:
-                    path: github.com/google/uuid
+                    path: github.com/gofrs/uuid
                 type:
                   type: string
                   description: Credential type (e.g. token, basic, AWS).
@@ -9262,7 +9262,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   name:
                     type: string
                     description: Human-readable name for the credential.
@@ -9280,7 +9280,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   type:
                     type: string
                     description: Credential type (e.g. token, basic, AWS).
@@ -9374,7 +9374,7 @@ paths:
                   format: uuid
                   x-go-type: uuid.UUID
                   x-go-type-import:
-                    path: github.com/google/uuid
+                    path: github.com/gofrs/uuid
                 name:
                   type: string
                   description: Human-readable name for the credential.
@@ -9390,7 +9390,7 @@ paths:
                   format: uuid
                   x-go-type: uuid.UUID
                   x-go-type-import:
-                    path: github.com/google/uuid
+                    path: github.com/gofrs/uuid
                 type:
                   type: string
                   description: Credential type (e.g. token, basic, AWS).
@@ -9432,7 +9432,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   name:
                     type: string
                     description: Human-readable name for the credential.
@@ -9450,7 +9450,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   type:
                     type: string
                     description: Credential type (e.g. token, basic, AWS).
@@ -9543,7 +9543,7 @@ paths:
               used across different schemas.
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
       responses:
         '204':
           description: Credential deleted
@@ -9594,7 +9594,7 @@ paths:
               used across different schemas.
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
       responses:
         '200':
           description: Credential response
@@ -9623,7 +9623,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   name:
                     type: string
                     description: Human-readable name for the credential.
@@ -9641,7 +9641,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   type:
                     type: string
                     description: Credential type (e.g. token, basic, AWS).
@@ -9729,7 +9729,7 @@ paths:
               used across different schemas.
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
         - name: page
           in: query
           description: Get responses by page
@@ -9800,7 +9800,7 @@ paths:
                             definition is used across different schemas.
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-go-name: ID
                           x-oapi-codegen-extra-tags:
                             db: id
@@ -9814,7 +9814,7 @@ paths:
                             definition is used across different schemas.
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-go-name: Owner
                           x-oapi-codegen-extra-tags:
                             db: owner
@@ -10127,7 +10127,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         name:
                           description: Name of the organization.
                           type: string
@@ -10553,7 +10553,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         name:
                           description: Name of the organization.
                           type: string
@@ -10815,7 +10815,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   name:
                     type: string
                     description: Name of the organization.
@@ -10854,7 +10854,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   metadata:
                     type: object
                     description: Free-form metadata associated with the organization, including preferences.
@@ -10932,7 +10932,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: org_id
               json: org_id
@@ -10979,7 +10979,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         name:
                           description: Name of the organization.
                           type: string
@@ -11211,7 +11211,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: org_id
               json: org_id
@@ -11265,7 +11265,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: org_id
               json: org_id
@@ -11479,7 +11479,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         name:
                           description: Name of the organization.
                           type: string
@@ -11718,7 +11718,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: org_id
               json: org_id
@@ -11917,7 +11917,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: org_id
               json: org_id
@@ -11932,7 +11932,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: team_id
               json: team_id
@@ -11990,7 +11990,7 @@ paths:
                               format: uuid
                               x-go-type: uuid.UUID
                               x-go-type-import:
-                                path: github.com/google/uuid
+                                path: github.com/gofrs/uuid
                               x-oapi-codegen-extra-tags:
                                 db: id
                                 json: id
@@ -12006,7 +12006,7 @@ paths:
                               format: uuid
                               x-go-type: uuid.UUID
                               x-go-type-import:
-                                path: github.com/google/uuid
+                                path: github.com/gofrs/uuid
                             teamId:
                               description: Team ID for this mapping.
                               x-go-name: TeamID
@@ -12017,7 +12017,7 @@ paths:
                               format: uuid
                               x-go-type: uuid.UUID
                               x-go-type-import:
-                                path: github.com/google/uuid
+                                path: github.com/gofrs/uuid
                             createdAt:
                               description: Timestamp when the mapping was created.
                               x-oapi-codegen-extra-tags:
@@ -12077,7 +12077,7 @@ paths:
                               format: uuid
                               x-go-type: uuid.UUID
                               x-go-type-import:
-                                path: github.com/google/uuid
+                                path: github.com/gofrs/uuid
                               x-oapi-codegen-extra-tags:
                                 db: id
                                 json: id
@@ -12151,7 +12151,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: org_id
               json: org_id
@@ -12166,7 +12166,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: team_id
               json: team_id
@@ -12203,7 +12203,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   name:
                     x-oapi-codegen-extra-tags:
                       db: name
@@ -12228,7 +12228,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   metadata:
                     x-oapi-codegen-extra-tags:
                       db: metadata
@@ -12307,7 +12307,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: org_id
               json: org_id
@@ -12322,7 +12322,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: team_id
               json: team_id
@@ -12376,7 +12376,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   name:
                     x-oapi-codegen-extra-tags:
                       db: name
@@ -12401,7 +12401,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   metadata:
                     x-oapi-codegen-extra-tags:
                       db: metadata
@@ -12480,7 +12480,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: org_id
               json: org_id
@@ -12495,7 +12495,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: team_id
               json: team_id
@@ -12551,7 +12551,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: org_id
               json: org_id
@@ -12566,7 +12566,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: team_id
               json: team_id
@@ -12610,7 +12610,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-oapi-codegen-extra-tags:
                             db: id
                             json: id
@@ -12626,7 +12626,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         teamId:
                           description: Team ID for this mapping.
                           x-go-name: TeamID
@@ -12637,7 +12637,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         createdAt:
                           description: Timestamp when the mapping was created.
                           x-oapi-codegen-extra-tags:
@@ -12694,7 +12694,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: org_id
               json: org_id
@@ -12709,7 +12709,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: user_id
               json: user_id
@@ -12759,7 +12759,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: org_id
               json: org_id
@@ -12774,7 +12774,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: user_id
               json: user_id
@@ -12812,7 +12812,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: org_id
               json: org_id
@@ -12889,7 +12889,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         name:
                           x-oapi-codegen-extra-tags:
                             db: name
@@ -12914,7 +12914,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         metadata:
                           x-oapi-codegen-extra-tags:
                             db: metadata
@@ -12988,7 +12988,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: org_id
               json: org_id
@@ -13044,7 +13044,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   name:
                     x-oapi-codegen-extra-tags:
                       db: name
@@ -13069,7 +13069,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   metadata:
                     x-oapi-codegen-extra-tags:
                       db: metadata
@@ -13149,7 +13149,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: team_id
               json: team_id
@@ -13215,7 +13215,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-oapi-codegen-extra-tags:
                             db: id
                             json: id
@@ -13230,7 +13230,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         userId:
                           description: User ID
                           x-oapi-codegen-extra-tags:
@@ -13240,7 +13240,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         roleId:
                           description: >
                             Optional role assigned to this team membership. Nullable because a membership may exist
@@ -13253,7 +13253,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         createdAt:
                           description: Timestamp when the mapping was created.
                           x-oapi-codegen-extra-tags:
@@ -13323,7 +13323,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: org_id
               json: org_id
@@ -13338,7 +13338,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: team_id
               json: team_id
@@ -13372,7 +13372,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                     x-oapi-codegen-extra-tags:
                       db: id
                       json: id
@@ -13387,7 +13387,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   userId:
                     description: User ID
                     x-oapi-codegen-extra-tags:
@@ -13397,7 +13397,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   roleId:
                     description: >
                       Optional role assigned to this team membership. Nullable because a membership may exist without an
@@ -13410,7 +13410,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   createdAt:
                     description: Timestamp when the mapping was created.
                     x-oapi-codegen-extra-tags:
@@ -13478,7 +13478,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: org_id
               json: org_id
@@ -13493,7 +13493,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: team_id
               json: team_id
@@ -13553,7 +13553,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: org_id
               json: org_id
@@ -13568,7 +13568,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: team_id
               json: team_id
@@ -13763,7 +13763,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         userId:
                           type: string
                           maxLength: 200
@@ -14239,7 +14239,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         userId:
                           type: string
                           maxLength: 200
@@ -14645,7 +14645,7 @@ paths:
               used across different schemas.
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
       responses:
         '200':
           description: User profile for the requested ID
@@ -14677,7 +14677,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   userId:
                     type: string
                     maxLength: 200
@@ -15104,7 +15104,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   userId:
                     type: string
                     maxLength: 200
@@ -15626,7 +15626,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         name:
                           x-oapi-codegen-extra-tags:
                             db: name
@@ -15665,7 +15665,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         type:
                           x-oapi-codegen-extra-tags:
                             db: type
@@ -15722,7 +15722,7 @@ paths:
                               format: uuid
                               x-go-type: uuid.UUID
                               x-go-type-import:
-                                path: github.com/google/uuid
+                                path: github.com/gofrs/uuid
                             schemaVersion:
                               description: Specifies the version of the schema used for the definition.
                               x-order: 2
@@ -15851,7 +15851,7 @@ paths:
                                   format: uuid
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                 name:
                                   x-oapi-codegen-extra-tags:
                                     db: name
@@ -15870,7 +15870,7 @@ paths:
                                   format: uuid
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                 type:
                                   x-oapi-codegen-extra-tags:
                                     db: type
@@ -15932,7 +15932,7 @@ paths:
                                   format: uuid
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                 created_at:
                                   x-oapi-codegen-extra-tags:
                                     db: created_at
@@ -16007,7 +16007,7 @@ paths:
                                         format: uuid
                                         x-go-type: uuid.UUID
                                         x-go-type-import:
-                                          path: github.com/google/uuid
+                                          path: github.com/gofrs/uuid
                                       schemaVersion:
                                         description: Specifies the version of the schema to which the environment conforms.
                                         x-order: 2
@@ -16054,7 +16054,7 @@ paths:
                                         format: uuid
                                         x-go-type: uuid.UUID
                                         x-go-type-import:
-                                          path: github.com/google/uuid
+                                          path: github.com/gofrs/uuid
                                       owner:
                                         x-oapi-codegen-extra-tags:
                                           db: owner
@@ -16065,7 +16065,7 @@ paths:
                                         format: uuid
                                         x-go-type: uuid.UUID
                                         x-go-type-import:
-                                          path: github.com/google/uuid
+                                          path: github.com/gofrs/uuid
                                       created_at:
                                         x-order: 7
                                         description: Timestamp when the resource was created.
@@ -16150,7 +16150,7 @@ paths:
                               format: uuid
                               x-go-type: uuid.UUID
                               x-go-type-import:
-                                path: github.com/google/uuid
+                                path: github.com/gofrs/uuid
                             categoryId:
                               description: ID of the category.
                               x-oapi-codegen-extra-tags:
@@ -16162,7 +16162,7 @@ paths:
                               format: uuid
                               x-go-type: uuid.UUID
                               x-go-type-import:
-                                path: github.com/google/uuid
+                                path: github.com/gofrs/uuid
                             category:
                               x-order: 9
                               x-oapi-codegen-extra-tags:
@@ -16192,7 +16192,7 @@ paths:
                                     UUID core definition is used across different schemas.
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                 name:
                                   type: string
                                   minLength: 1
@@ -16745,7 +16745,7 @@ paths:
                                 core definition is used across different schemas.
                               x-go-type: uuid.UUID
                               x-go-type-import:
-                                path: github.com/google/uuid
+                                path: github.com/gofrs/uuid
                             name:
                               type: string
                               description: The unique name for the model within the scope of a registrant.
@@ -16812,7 +16812,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         metadata:
                           x-oapi-codegen-extra-tags:
                             db: metadata
@@ -17333,7 +17333,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         createdAt:
                           description: Timestamp when the connection was created.
                           x-oapi-codegen-extra-tags:
@@ -17410,7 +17410,7 @@ paths:
                                 format: uuid
                                 x-go-type: uuid.UUID
                                 x-go-type-import:
-                                  path: github.com/google/uuid
+                                  path: github.com/gofrs/uuid
                               schemaVersion:
                                 description: Specifies the version of the schema to which the environment conforms.
                                 x-order: 2
@@ -17457,7 +17457,7 @@ paths:
                                 format: uuid
                                 x-go-type: uuid.UUID
                                 x-go-type-import:
-                                  path: github.com/google/uuid
+                                  path: github.com/gofrs/uuid
                               owner:
                                 x-oapi-codegen-extra-tags:
                                   db: owner
@@ -17468,7 +17468,7 @@ paths:
                                 format: uuid
                                 x-go-type: uuid.UUID
                                 x-go-type-import:
-                                  path: github.com/google/uuid
+                                  path: github.com/gofrs/uuid
                               createdAt:
                                 description: Timestamp when the environment was created.
                                 x-oapi-codegen-extra-tags:
@@ -18092,7 +18092,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   name:
                     x-oapi-codegen-extra-tags:
                       db: name
@@ -18131,7 +18131,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   type:
                     x-oapi-codegen-extra-tags:
                       db: type
@@ -18186,7 +18186,7 @@ paths:
                         format: uuid
                         x-go-type: uuid.UUID
                         x-go-type-import:
-                          path: github.com/google/uuid
+                          path: github.com/gofrs/uuid
                       schemaVersion:
                         description: Specifies the version of the schema used for the definition.
                         x-order: 2
@@ -18315,7 +18315,7 @@ paths:
                             format: uuid
                             x-go-type: uuid.UUID
                             x-go-type-import:
-                              path: github.com/google/uuid
+                              path: github.com/gofrs/uuid
                           name:
                             x-oapi-codegen-extra-tags:
                               db: name
@@ -18334,7 +18334,7 @@ paths:
                             format: uuid
                             x-go-type: uuid.UUID
                             x-go-type-import:
-                              path: github.com/google/uuid
+                              path: github.com/gofrs/uuid
                           type:
                             x-oapi-codegen-extra-tags:
                               db: type
@@ -18394,7 +18394,7 @@ paths:
                             format: uuid
                             x-go-type: uuid.UUID
                             x-go-type-import:
-                              path: github.com/google/uuid
+                              path: github.com/gofrs/uuid
                           created_at:
                             x-oapi-codegen-extra-tags:
                               db: created_at
@@ -18469,7 +18469,7 @@ paths:
                                   format: uuid
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                 schemaVersion:
                                   description: Specifies the version of the schema to which the environment conforms.
                                   x-order: 2
@@ -18516,7 +18516,7 @@ paths:
                                   format: uuid
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                 owner:
                                   x-oapi-codegen-extra-tags:
                                     db: owner
@@ -18527,7 +18527,7 @@ paths:
                                   format: uuid
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                 created_at:
                                   x-order: 7
                                   description: Timestamp when the resource was created.
@@ -18612,7 +18612,7 @@ paths:
                         format: uuid
                         x-go-type: uuid.UUID
                         x-go-type-import:
-                          path: github.com/google/uuid
+                          path: github.com/gofrs/uuid
                       categoryId:
                         description: ID of the category.
                         x-oapi-codegen-extra-tags:
@@ -18624,7 +18624,7 @@ paths:
                         format: uuid
                         x-go-type: uuid.UUID
                         x-go-type-import:
-                          path: github.com/google/uuid
+                          path: github.com/gofrs/uuid
                       category:
                         x-order: 9
                         x-oapi-codegen-extra-tags:
@@ -18654,7 +18654,7 @@ paths:
                               core definition is used across different schemas.
                             x-go-type: uuid.UUID
                             x-go-type-import:
-                              path: github.com/google/uuid
+                              path: github.com/gofrs/uuid
                           name:
                             type: string
                             minLength: 1
@@ -19200,7 +19200,7 @@ paths:
                           definition is used across different schemas.
                         x-go-type: uuid.UUID
                         x-go-type-import:
-                          path: github.com/google/uuid
+                          path: github.com/gofrs/uuid
                       name:
                         type: string
                         description: The unique name for the model within the scope of a registrant.
@@ -19267,7 +19267,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   metadata:
                     x-oapi-codegen-extra-tags:
                       db: metadata
@@ -19770,7 +19770,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   createdAt:
                     description: Timestamp when the connection was created.
                     x-oapi-codegen-extra-tags:
@@ -19847,7 +19847,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         schemaVersion:
                           description: Specifies the version of the schema to which the environment conforms.
                           x-order: 2
@@ -19894,7 +19894,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         owner:
                           x-oapi-codegen-extra-tags:
                             db: owner
@@ -19905,7 +19905,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         createdAt:
                           description: Timestamp when the environment was created.
                           x-oapi-codegen-extra-tags:
@@ -20042,7 +20042,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   name:
                     x-oapi-codegen-extra-tags:
                       db: name
@@ -20081,7 +20081,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   type:
                     x-oapi-codegen-extra-tags:
                       db: type
@@ -20136,7 +20136,7 @@ paths:
                         format: uuid
                         x-go-type: uuid.UUID
                         x-go-type-import:
-                          path: github.com/google/uuid
+                          path: github.com/gofrs/uuid
                       schemaVersion:
                         description: Specifies the version of the schema used for the definition.
                         x-order: 2
@@ -20265,7 +20265,7 @@ paths:
                             format: uuid
                             x-go-type: uuid.UUID
                             x-go-type-import:
-                              path: github.com/google/uuid
+                              path: github.com/gofrs/uuid
                           name:
                             x-oapi-codegen-extra-tags:
                               db: name
@@ -20284,7 +20284,7 @@ paths:
                             format: uuid
                             x-go-type: uuid.UUID
                             x-go-type-import:
-                              path: github.com/google/uuid
+                              path: github.com/gofrs/uuid
                           type:
                             x-oapi-codegen-extra-tags:
                               db: type
@@ -20344,7 +20344,7 @@ paths:
                             format: uuid
                             x-go-type: uuid.UUID
                             x-go-type-import:
-                              path: github.com/google/uuid
+                              path: github.com/gofrs/uuid
                           created_at:
                             x-oapi-codegen-extra-tags:
                               db: created_at
@@ -20419,7 +20419,7 @@ paths:
                                   format: uuid
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                 schemaVersion:
                                   description: Specifies the version of the schema to which the environment conforms.
                                   x-order: 2
@@ -20466,7 +20466,7 @@ paths:
                                   format: uuid
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                 owner:
                                   x-oapi-codegen-extra-tags:
                                     db: owner
@@ -20477,7 +20477,7 @@ paths:
                                   format: uuid
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                 created_at:
                                   x-order: 7
                                   description: Timestamp when the resource was created.
@@ -20562,7 +20562,7 @@ paths:
                         format: uuid
                         x-go-type: uuid.UUID
                         x-go-type-import:
-                          path: github.com/google/uuid
+                          path: github.com/gofrs/uuid
                       categoryId:
                         description: ID of the category.
                         x-oapi-codegen-extra-tags:
@@ -20574,7 +20574,7 @@ paths:
                         format: uuid
                         x-go-type: uuid.UUID
                         x-go-type-import:
-                          path: github.com/google/uuid
+                          path: github.com/gofrs/uuid
                       category:
                         x-order: 9
                         x-oapi-codegen-extra-tags:
@@ -20604,7 +20604,7 @@ paths:
                               core definition is used across different schemas.
                             x-go-type: uuid.UUID
                             x-go-type-import:
-                              path: github.com/google/uuid
+                              path: github.com/gofrs/uuid
                           name:
                             type: string
                             minLength: 1
@@ -21150,7 +21150,7 @@ paths:
                           definition is used across different schemas.
                         x-go-type: uuid.UUID
                         x-go-type-import:
-                          path: github.com/google/uuid
+                          path: github.com/gofrs/uuid
                       name:
                         type: string
                         description: The unique name for the model within the scope of a registrant.
@@ -21217,7 +21217,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   metadata:
                     x-oapi-codegen-extra-tags:
                       db: metadata
@@ -21720,7 +21720,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   createdAt:
                     description: Timestamp when the connection was created.
                     x-oapi-codegen-extra-tags:
@@ -21797,7 +21797,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         schemaVersion:
                           description: Specifies the version of the schema to which the environment conforms.
                           x-order: 2
@@ -21844,7 +21844,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         owner:
                           x-oapi-codegen-extra-tags:
                             db: owner
@@ -21855,7 +21855,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         createdAt:
                           description: Timestamp when the environment was created.
                           x-oapi-codegen-extra-tags:
@@ -22462,7 +22462,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   name:
                     x-oapi-codegen-extra-tags:
                       db: name
@@ -22501,7 +22501,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   type:
                     x-oapi-codegen-extra-tags:
                       db: type
@@ -22556,7 +22556,7 @@ paths:
                         format: uuid
                         x-go-type: uuid.UUID
                         x-go-type-import:
-                          path: github.com/google/uuid
+                          path: github.com/gofrs/uuid
                       schemaVersion:
                         description: Specifies the version of the schema used for the definition.
                         x-order: 2
@@ -22685,7 +22685,7 @@ paths:
                             format: uuid
                             x-go-type: uuid.UUID
                             x-go-type-import:
-                              path: github.com/google/uuid
+                              path: github.com/gofrs/uuid
                           name:
                             x-oapi-codegen-extra-tags:
                               db: name
@@ -22704,7 +22704,7 @@ paths:
                             format: uuid
                             x-go-type: uuid.UUID
                             x-go-type-import:
-                              path: github.com/google/uuid
+                              path: github.com/gofrs/uuid
                           type:
                             x-oapi-codegen-extra-tags:
                               db: type
@@ -22764,7 +22764,7 @@ paths:
                             format: uuid
                             x-go-type: uuid.UUID
                             x-go-type-import:
-                              path: github.com/google/uuid
+                              path: github.com/gofrs/uuid
                           created_at:
                             x-oapi-codegen-extra-tags:
                               db: created_at
@@ -22839,7 +22839,7 @@ paths:
                                   format: uuid
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                 schemaVersion:
                                   description: Specifies the version of the schema to which the environment conforms.
                                   x-order: 2
@@ -22886,7 +22886,7 @@ paths:
                                   format: uuid
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                 owner:
                                   x-oapi-codegen-extra-tags:
                                     db: owner
@@ -22897,7 +22897,7 @@ paths:
                                   format: uuid
                                   x-go-type: uuid.UUID
                                   x-go-type-import:
-                                    path: github.com/google/uuid
+                                    path: github.com/gofrs/uuid
                                 created_at:
                                   x-order: 7
                                   description: Timestamp when the resource was created.
@@ -22982,7 +22982,7 @@ paths:
                         format: uuid
                         x-go-type: uuid.UUID
                         x-go-type-import:
-                          path: github.com/google/uuid
+                          path: github.com/gofrs/uuid
                       categoryId:
                         description: ID of the category.
                         x-oapi-codegen-extra-tags:
@@ -22994,7 +22994,7 @@ paths:
                         format: uuid
                         x-go-type: uuid.UUID
                         x-go-type-import:
-                          path: github.com/google/uuid
+                          path: github.com/gofrs/uuid
                       category:
                         x-order: 9
                         x-oapi-codegen-extra-tags:
@@ -23024,7 +23024,7 @@ paths:
                               core definition is used across different schemas.
                             x-go-type: uuid.UUID
                             x-go-type-import:
-                              path: github.com/google/uuid
+                              path: github.com/gofrs/uuid
                           name:
                             type: string
                             minLength: 1
@@ -23570,7 +23570,7 @@ paths:
                           definition is used across different schemas.
                         x-go-type: uuid.UUID
                         x-go-type-import:
-                          path: github.com/google/uuid
+                          path: github.com/gofrs/uuid
                       name:
                         type: string
                         description: The unique name for the model within the scope of a registrant.
@@ -23637,7 +23637,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   metadata:
                     x-oapi-codegen-extra-tags:
                       db: metadata
@@ -24140,7 +24140,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   createdAt:
                     description: Timestamp when the connection was created.
                     x-oapi-codegen-extra-tags:
@@ -24217,7 +24217,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         schemaVersion:
                           description: Specifies the version of the schema to which the environment conforms.
                           x-order: 2
@@ -24264,7 +24264,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         owner:
                           x-oapi-codegen-extra-tags:
                             db: owner
@@ -24275,7 +24275,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         createdAt:
                           description: Timestamp when the environment was created.
                           x-oapi-codegen-extra-tags:
@@ -25089,7 +25089,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   schemaVersion:
                     description: Specifies the version of the schema to which the environment conforms.
                     x-order: 2
@@ -25136,7 +25136,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   owner:
                     x-oapi-codegen-extra-tags:
                       db: owner
@@ -25147,7 +25147,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   createdAt:
                     description: Timestamp when the environment was created.
                     x-oapi-codegen-extra-tags:
@@ -25319,7 +25319,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         schemaVersion:
                           description: Specifies the version of the schema to which the environment conforms.
                           x-order: 2
@@ -25366,7 +25366,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         owner:
                           x-oapi-codegen-extra-tags:
                             db: owner
@@ -25377,7 +25377,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         createdAt:
                           description: Timestamp when the environment was created.
                           x-oapi-codegen-extra-tags:
@@ -25454,7 +25454,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-go-type-skip-optional-pointer: true
           required: true
         - name: orgId
@@ -25535,7 +25535,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         schemaVersion:
                           description: Specifies the version of the schema to which the environment conforms.
                           x-order: 2
@@ -25582,7 +25582,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         owner:
                           x-oapi-codegen-extra-tags:
                             db: owner
@@ -25593,7 +25593,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         createdAt:
                           description: Timestamp when the environment was created.
                           x-oapi-codegen-extra-tags:
@@ -25681,7 +25681,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-go-type-skip-optional-pointer: true
           required: true
       requestBody:
@@ -25791,7 +25791,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         schemaVersion:
                           description: Specifies the version of the schema to which the environment conforms.
                           x-order: 2
@@ -25838,7 +25838,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         owner:
                           x-oapi-codegen-extra-tags:
                             db: owner
@@ -25849,7 +25849,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         createdAt:
                           description: Timestamp when the environment was created.
                           x-oapi-codegen-extra-tags:
@@ -25937,7 +25937,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-go-type-skip-optional-pointer: true
           required: true
       responses:
@@ -25985,7 +25985,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-go-type-skip-optional-pointer: true
           required: true
         - name: search
@@ -26138,7 +26138,7 @@ paths:
                   description: UUID of the user associated with the event.
                   x-go-type: uuid.UUID
                   x-go-type-import:
-                    path: github.com/google/uuid
+                    path: github.com/gofrs/uuid
                   x-go-name: Owner
                   x-oapi-codegen-extra-tags:
                     db: owner
@@ -26205,7 +26205,7 @@ paths:
                       definition is used across different schemas.
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   description: UUIDs of the events to delete.
       responses:
         '200':
@@ -26270,7 +26270,7 @@ paths:
                       definition is used across different schemas.
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   description: UUIDs of the events to update.
                 status:
                   type: string
@@ -26489,7 +26489,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         name:
                           type: string
                           description: Human-readable name of the performance profile.
@@ -26511,7 +26511,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         schedule:
                           description: >-
                             Optional schedule ID associated with this performance profile. Null when the profile is not
@@ -26525,7 +26525,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         loadGenerators:
                           type: array
                           description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
@@ -26762,7 +26762,7 @@ paths:
                   format: uuid
                   x-go-type: uuid.UUID
                   x-go-type-import:
-                    path: github.com/google/uuid
+                    path: github.com/gofrs/uuid
                 name:
                   type: string
                   description: Human-readable name of the performance profile.
@@ -26781,7 +26781,7 @@ paths:
                   format: uuid
                   x-go-type: uuid.UUID
                   x-go-type-import:
-                    path: github.com/google/uuid
+                    path: github.com/gofrs/uuid
                 schedule:
                   description: Optional schedule ID associating the profile with a recurring run.
                   nullable: true
@@ -26791,7 +26791,7 @@ paths:
                   format: uuid
                   x-go-type: uuid.UUID
                   x-go-type-import:
-                    path: github.com/google/uuid
+                    path: github.com/gofrs/uuid
                 loadGenerators:
                   type: array
                   description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
@@ -26928,7 +26928,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   name:
                     type: string
                     description: Human-readable name of the performance profile.
@@ -26950,7 +26950,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   schedule:
                     description: >-
                       Optional schedule ID associated with this performance profile. Null when the profile is not bound
@@ -26964,7 +26964,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   loadGenerators:
                     type: array
                     description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
@@ -27186,7 +27186,7 @@ paths:
               used across different schemas.
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
           required: true
       responses:
         '200':
@@ -27221,7 +27221,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   name:
                     type: string
                     description: Human-readable name of the performance profile.
@@ -27243,7 +27243,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   schedule:
                     description: >-
                       Optional schedule ID associated with this performance profile. Null when the profile is not bound
@@ -27257,7 +27257,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   loadGenerators:
                     type: array
                     description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
@@ -27484,7 +27484,7 @@ paths:
               used across different schemas.
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
           required: true
       requestBody:
         description: Body for creating or updating a performance profile.
@@ -27512,7 +27512,7 @@ paths:
                   format: uuid
                   x-go-type: uuid.UUID
                   x-go-type-import:
-                    path: github.com/google/uuid
+                    path: github.com/gofrs/uuid
                 name:
                   type: string
                   description: Human-readable name of the performance profile.
@@ -27531,7 +27531,7 @@ paths:
                   format: uuid
                   x-go-type: uuid.UUID
                   x-go-type-import:
-                    path: github.com/google/uuid
+                    path: github.com/gofrs/uuid
                 schedule:
                   description: Optional schedule ID associating the profile with a recurring run.
                   nullable: true
@@ -27541,7 +27541,7 @@ paths:
                   format: uuid
                   x-go-type: uuid.UUID
                   x-go-type-import:
-                    path: github.com/google/uuid
+                    path: github.com/gofrs/uuid
                 loadGenerators:
                   type: array
                   description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
@@ -27678,7 +27678,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   name:
                     type: string
                     description: Human-readable name of the performance profile.
@@ -27700,7 +27700,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   schedule:
                     description: >-
                       Optional schedule ID associated with this performance profile. Null when the profile is not bound
@@ -27714,7 +27714,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   loadGenerators:
                     type: array
                     description: Load generators (e.g. fortio, wrk2, nighthawk) to drive the profile's load test.
@@ -27941,7 +27941,7 @@ paths:
               used across different schemas.
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
           required: true
       responses:
         '204':
@@ -27992,7 +27992,7 @@ paths:
               used across different schemas.
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
           required: true
         - name: page
           in: query
@@ -28068,7 +28068,7 @@ paths:
                             definition is used across different schemas.
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-go-name: ID
                           x-oapi-codegen-extra-tags:
                             db: id
@@ -28097,7 +28097,7 @@ paths:
                             definition is used across different schemas.
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           nullable: true
                           x-oapi-codegen-extra-tags:
                             db: performance_profile
@@ -28152,7 +28152,7 @@ paths:
                             definition is used across different schemas.
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-go-name: Owner
                           x-oapi-codegen-extra-tags:
                             db: owner
@@ -28300,7 +28300,7 @@ paths:
                             definition is used across different schemas.
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-go-name: ID
                           x-oapi-codegen-extra-tags:
                             db: id
@@ -28329,7 +28329,7 @@ paths:
                             definition is used across different schemas.
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           nullable: true
                           x-oapi-codegen-extra-tags:
                             db: performance_profile
@@ -28384,7 +28384,7 @@ paths:
                             definition is used across different schemas.
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-go-name: Owner
                           x-oapi-codegen-extra-tags:
                             db: owner
@@ -28517,7 +28517,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-oapi-codegen-extra-tags:
                             db: id
                             json: id
@@ -28564,7 +28564,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         ownerEmail:
                           type: string
                           description: Email address of the workspace owner.
@@ -28600,7 +28600,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         createdAt:
                           description: Timestamp when the workspace was created.
                           x-oapi-codegen-extra-tags:
@@ -28730,7 +28730,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                     x-oapi-codegen-extra-tags:
                       db: id
                       json: id
@@ -28764,7 +28764,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   owner:
                     description: User ID of the workspace owner.
                     x-oapi-codegen-extra-tags:
@@ -28774,7 +28774,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   metadata:
                     type: object
                     description: Metadata associated with the workspace.
@@ -28853,7 +28853,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: workspace_id
               json: workspace_id
@@ -28886,7 +28886,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                     x-oapi-codegen-extra-tags:
                       db: id
                       json: id
@@ -28920,7 +28920,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   owner:
                     description: User ID of the workspace owner.
                     x-oapi-codegen-extra-tags:
@@ -28930,7 +28930,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   metadata:
                     type: object
                     description: Metadata associated with the workspace.
@@ -29014,7 +29014,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: workspace_id
               json: workspace_id
@@ -29089,7 +29089,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                     x-oapi-codegen-extra-tags:
                       db: id
                       json: id
@@ -29123,7 +29123,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   owner:
                     description: User ID of the workspace owner.
                     x-oapi-codegen-extra-tags:
@@ -29133,7 +29133,7 @@ paths:
                     format: uuid
                     x-go-type: uuid.UUID
                     x-go-type-import:
-                      path: github.com/google/uuid
+                      path: github.com/gofrs/uuid
                   metadata:
                     type: object
                     description: Metadata associated with the workspace.
@@ -29217,7 +29217,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: workspace_id
               json: workspace_id
@@ -29270,7 +29270,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: workspace_id
               json: workspace_id
@@ -29349,7 +29349,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         name:
                           x-oapi-codegen-extra-tags:
                             db: name
@@ -29377,7 +29377,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         metadata:
                           x-oapi-codegen-extra-tags:
                             db: metadata
@@ -29460,7 +29460,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: workspace_id
               json: workspace_id
@@ -29475,7 +29475,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: team_id
               json: team_id
@@ -29529,7 +29529,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-oapi-codegen-extra-tags:
                             db: id
                             json: id
@@ -29546,7 +29546,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         teamId:
                           description: Team ID for this mapping.
                           x-go-name: TeamID
@@ -29558,7 +29558,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         createdAt:
                           description: Timestamp when the mapping was created.
                           x-oapi-codegen-extra-tags:
@@ -29634,7 +29634,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: workspace_id
               json: workspace_id
@@ -29649,7 +29649,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: team_id
               json: team_id
@@ -29702,7 +29702,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: workspace_id
               json: workspace_id
@@ -29805,7 +29805,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         schemaVersion:
                           description: Specifies the version of the schema to which the environment conforms.
                           x-order: 2
@@ -29852,7 +29852,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         owner:
                           x-oapi-codegen-extra-tags:
                             db: owner
@@ -29863,7 +29863,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         createdAt:
                           description: Timestamp when the environment was created.
                           x-oapi-codegen-extra-tags:
@@ -29953,7 +29953,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: workspace_id
               json: workspace_id
@@ -29968,7 +29968,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: environment_id
               json: environment_id
@@ -30022,7 +30022,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-oapi-codegen-extra-tags:
                             db: id
                             json: id
@@ -30039,7 +30039,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         environmentId:
                           description: Environment ID for this mapping.
                           x-go-name: EnvironmentID
@@ -30051,7 +30051,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                         createdAt:
                           description: Timestamp when the mapping was created.
                           x-oapi-codegen-extra-tags:
@@ -30127,7 +30127,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: workspace_id
               json: workspace_id
@@ -30142,7 +30142,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: environment_id
               json: environment_id
@@ -30196,7 +30196,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: workspace_id
               json: workspace_id
@@ -30364,7 +30364,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-go-type-skip-optional-pointer: true
                         location:
                           type: object
@@ -30393,7 +30393,7 @@ paths:
                                 core definition is used across different schemas.
                               x-go-type: uuid.UUID
                               x-go-type-import:
-                                path: github.com/google/uuid
+                                path: github.com/gofrs/uuid
                             name:
                               type: string
                               description: Name of the design; a descriptive, but concise title for the design document.
@@ -30455,7 +30455,7 @@ paths:
                                               Meshery. The UUID core definition is used across different schemas.
                                             x-go-type: uuid.UUID
                                             x-go-type-import:
-                                              path: github.com/google/uuid
+                                              path: github.com/gofrs/uuid
                                           alias_component_id:
                                             type: string
                                             format: uuid
@@ -30464,7 +30464,7 @@ paths:
                                               Meshery. The UUID core definition is used across different schemas.
                                             x-go-type: uuid.UUID
                                             x-go-type-import:
-                                              path: github.com/google/uuid
+                                              path: github.com/gofrs/uuid
                                           immediate_parent_id:
                                             type: string
                                             format: uuid
@@ -30473,7 +30473,7 @@ paths:
                                               Meshery. The UUID core definition is used across different schemas.
                                             x-go-type: uuid.UUID
                                             x-go-type-import:
-                                              path: github.com/google/uuid
+                                              path: github.com/gofrs/uuid
                                           immediate_ref_field_path:
                                             type: array
                                             items:
@@ -30493,7 +30493,7 @@ paths:
                                               Meshery. The UUID core definition is used across different schemas.
                                             x-go-type: uuid.UUID
                                             x-go-type-import:
-                                              path: github.com/google/uuid
+                                              path: github.com/gofrs/uuid
                                           resolved_ref_field_path:
                                             type: array
                                             items:
@@ -30528,7 +30528,7 @@ paths:
                                           The UUID core definition is used across different schemas.
                                         x-go-type: uuid.UUID
                                         x-go-type-import:
-                                          path: github.com/google/uuid
+                                          path: github.com/gofrs/uuid
                                         x-order: 1
                                         x-oapi-codegen-extra-tags:
                                           yaml: id
@@ -30619,7 +30619,7 @@ paths:
                                               Meshery. The UUID core definition is used across different schemas.
                                             x-go-type: uuid.UUID
                                             x-go-type-import:
-                                              path: github.com/google/uuid
+                                              path: github.com/gofrs/uuid
                                             x-order: 1
                                             x-oapi-codegen-extra-tags:
                                               yaml: id
@@ -30751,7 +30751,7 @@ paths:
                                                   Meshery. The UUID core definition is used across different schemas.
                                                 x-go-type: uuid.UUID
                                                 x-go-type-import:
-                                                  path: github.com/google/uuid
+                                                  path: github.com/gofrs/uuid
                                                 x-order: 1
                                                 x-go-name: ID
                                                 x-oapi-codegen-extra-tags:
@@ -30772,7 +30772,7 @@ paths:
                                                   Meshery. The UUID core definition is used across different schemas.
                                                 x-go-type: uuid.UUID
                                                 x-go-type-import:
-                                                  path: github.com/google/uuid
+                                                  path: github.com/gofrs/uuid
                                                 x-go-name: CredentialID
                                                 x-oapi-codegen-extra-tags:
                                                   db: credential_id
@@ -30838,7 +30838,7 @@ paths:
                                                   Meshery. The UUID core definition is used across different schemas.
                                                 x-go-type: uuid.UUID
                                                 x-go-type-import:
-                                                  path: github.com/google/uuid
+                                                  path: github.com/gofrs/uuid
                                                 x-go-name: UserID
                                                 x-oapi-codegen-extra-tags:
                                                   db: user_id
@@ -30917,7 +30917,7 @@ paths:
                                                         different schemas.
                                                       x-go-type: uuid.UUID
                                                       x-go-type-import:
-                                                        path: github.com/google/uuid
+                                                        path: github.com/gofrs/uuid
                                                       x-order: 1
                                                       x-go-name: ID
                                                       x-oapi-codegen-extra-tags:
@@ -30969,7 +30969,7 @@ paths:
                                                         different schemas.
                                                       x-go-type: uuid.UUID
                                                       x-go-type-import:
-                                                        path: github.com/google/uuid
+                                                        path: github.com/gofrs/uuid
                                                       x-go-name: OrganizationID
                                                       x-oapi-codegen-extra-tags:
                                                         db: organization_id
@@ -30984,7 +30984,7 @@ paths:
                                                         different schemas.
                                                       x-go-type: uuid.UUID
                                                       x-go-type-import:
-                                                        path: github.com/google/uuid
+                                                        path: github.com/gofrs/uuid
                                                       x-oapi-codegen-extra-tags:
                                                         db: owner
                                                         yaml: owner
@@ -31070,7 +31070,7 @@ paths:
                                               Meshery. The UUID core definition is used across different schemas.
                                             x-go-type: uuid.UUID
                                             x-go-type-import:
-                                              path: github.com/google/uuid
+                                              path: github.com/gofrs/uuid
                                             x-oapi-codegen-extra-tags:
                                               yaml: connection_id
                                               json: connection_id
@@ -31084,7 +31084,7 @@ paths:
                                               Meshery. The UUID core definition is used across different schemas.
                                             x-go-type: uuid.UUID
                                             x-go-type-import:
-                                              path: github.com/google/uuid
+                                              path: github.com/gofrs/uuid
                                             x-oapi-codegen-extra-tags:
                                               yaml: '-'
                                               json: '-'
@@ -31118,7 +31118,7 @@ paths:
                                                   Meshery. The UUID core definition is used across different schemas.
                                                 x-go-type: uuid.UUID
                                                 x-go-type-import:
-                                                  path: github.com/google/uuid
+                                                  path: github.com/gofrs/uuid
                                                 x-order: 1
                                               name:
                                                 type: string
@@ -31697,7 +31697,7 @@ paths:
                                               Meshery. The UUID core definition is used across different schemas.
                                             x-go-type: uuid.UUID
                                             x-go-type-import:
-                                              path: github.com/google/uuid
+                                              path: github.com/gofrs/uuid
                                           name:
                                             type: string
                                             description: The unique name for the model within the scope of a registrant.
@@ -31757,7 +31757,7 @@ paths:
                                           The UUID core definition is used across different schemas.
                                         x-go-type: uuid.UUID
                                         x-go-type-import:
-                                          path: github.com/google/uuid
+                                          path: github.com/gofrs/uuid
                                         x-oapi-codegen-extra-tags:
                                           gorm: index:idx_component_definition_dbs_model_id,column:model_id
                                           yaml: '-'
@@ -32624,7 +32624,7 @@ paths:
                                           The UUID core definition is used across different schemas.
                                         x-go-type: uuid.UUID
                                         x-go-type-import:
-                                          path: github.com/google/uuid
+                                          path: github.com/gofrs/uuid
                                         x-go-type-skip-optional-pointer: true
                                         x-order: 1
                                         x-oapi-codegen-extra-tags:
@@ -33261,7 +33261,7 @@ paths:
                                               Meshery. The UUID core definition is used across different schemas.
                                             x-go-type: uuid.UUID
                                             x-go-type-import:
-                                              path: github.com/google/uuid
+                                              path: github.com/gofrs/uuid
                                           name:
                                             type: string
                                             description: The unique name for the model within the scope of a registrant.
@@ -33321,7 +33321,7 @@ paths:
                                           The UUID core definition is used across different schemas.
                                         x-go-type: uuid.UUID
                                         x-go-type-import:
-                                          path: github.com/google/uuid
+                                          path: github.com/gofrs/uuid
                                         x-go-type-skip-optional-pointer: true
                                         x-go-name: ModelId
                                         x-order: 7
@@ -33392,7 +33392,7 @@ paths:
                                                           different schemas.
                                                         x-go-type: uuid.UUID
                                                         x-go-type-import:
-                                                          path: github.com/google/uuid
+                                                          path: github.com/gofrs/uuid
                                                         x-oapi-codegen-extra-tags:
                                                           yaml: id
                                                           json: id
@@ -33436,7 +33436,7 @@ paths:
                                                                     definition is used across different schemas.
                                                                   x-go-type: uuid.UUID
                                                                   x-go-type-import:
-                                                                    path: github.com/google/uuid
+                                                                    path: github.com/gofrs/uuid
                                                                   x-oapi-codegen-extra-tags:
                                                                     yaml: id
                                                                     json: id
@@ -33497,7 +33497,7 @@ paths:
                                                                     definition is used across different schemas.
                                                                   x-go-type: uuid.UUID
                                                                   x-go-type-import:
-                                                                    path: github.com/google/uuid
+                                                                    path: github.com/gofrs/uuid
                                                                   x-oapi-codegen-extra-tags:
                                                                     yaml: id
                                                                     json: id
@@ -33579,7 +33579,7 @@ paths:
                                                               across different schemas.
                                                             x-go-type: uuid.UUID
                                                             x-go-type-import:
-                                                              path: github.com/google/uuid
+                                                              path: github.com/gofrs/uuid
                                                           name:
                                                             type: string
                                                             description: >-
@@ -33732,7 +33732,7 @@ paths:
                                                           different schemas.
                                                         x-go-type: uuid.UUID
                                                         x-go-type-import:
-                                                          path: github.com/google/uuid
+                                                          path: github.com/gofrs/uuid
                                                         x-oapi-codegen-extra-tags:
                                                           yaml: id
                                                           json: id
@@ -33776,7 +33776,7 @@ paths:
                                                                     definition is used across different schemas.
                                                                   x-go-type: uuid.UUID
                                                                   x-go-type-import:
-                                                                    path: github.com/google/uuid
+                                                                    path: github.com/gofrs/uuid
                                                                   x-oapi-codegen-extra-tags:
                                                                     yaml: id
                                                                     json: id
@@ -33837,7 +33837,7 @@ paths:
                                                                     definition is used across different schemas.
                                                                   x-go-type: uuid.UUID
                                                                   x-go-type-import:
-                                                                    path: github.com/google/uuid
+                                                                    path: github.com/gofrs/uuid
                                                                   x-oapi-codegen-extra-tags:
                                                                     yaml: id
                                                                     json: id
@@ -33919,7 +33919,7 @@ paths:
                                                               across different schemas.
                                                             x-go-type: uuid.UUID
                                                             x-go-type-import:
-                                                              path: github.com/google/uuid
+                                                              path: github.com/gofrs/uuid
                                                           name:
                                                             type: string
                                                             description: >-
@@ -34085,7 +34085,7 @@ paths:
                                                           different schemas.
                                                         x-go-type: uuid.UUID
                                                         x-go-type-import:
-                                                          path: github.com/google/uuid
+                                                          path: github.com/gofrs/uuid
                                                         x-oapi-codegen-extra-tags:
                                                           yaml: id
                                                           json: id
@@ -34129,7 +34129,7 @@ paths:
                                                                     definition is used across different schemas.
                                                                   x-go-type: uuid.UUID
                                                                   x-go-type-import:
-                                                                    path: github.com/google/uuid
+                                                                    path: github.com/gofrs/uuid
                                                                   x-oapi-codegen-extra-tags:
                                                                     yaml: id
                                                                     json: id
@@ -34190,7 +34190,7 @@ paths:
                                                                     definition is used across different schemas.
                                                                   x-go-type: uuid.UUID
                                                                   x-go-type-import:
-                                                                    path: github.com/google/uuid
+                                                                    path: github.com/gofrs/uuid
                                                                   x-oapi-codegen-extra-tags:
                                                                     yaml: id
                                                                     json: id
@@ -34272,7 +34272,7 @@ paths:
                                                               across different schemas.
                                                             x-go-type: uuid.UUID
                                                             x-go-type-import:
-                                                              path: github.com/google/uuid
+                                                              path: github.com/gofrs/uuid
                                                           name:
                                                             type: string
                                                             description: >-
@@ -34425,7 +34425,7 @@ paths:
                                                           different schemas.
                                                         x-go-type: uuid.UUID
                                                         x-go-type-import:
-                                                          path: github.com/google/uuid
+                                                          path: github.com/gofrs/uuid
                                                         x-oapi-codegen-extra-tags:
                                                           yaml: id
                                                           json: id
@@ -34469,7 +34469,7 @@ paths:
                                                                     definition is used across different schemas.
                                                                   x-go-type: uuid.UUID
                                                                   x-go-type-import:
-                                                                    path: github.com/google/uuid
+                                                                    path: github.com/gofrs/uuid
                                                                   x-oapi-codegen-extra-tags:
                                                                     yaml: id
                                                                     json: id
@@ -34530,7 +34530,7 @@ paths:
                                                                     definition is used across different schemas.
                                                                   x-go-type: uuid.UUID
                                                                   x-go-type-import:
-                                                                    path: github.com/google/uuid
+                                                                    path: github.com/gofrs/uuid
                                                                   x-oapi-codegen-extra-tags:
                                                                     yaml: id
                                                                     json: id
@@ -34612,7 +34612,7 @@ paths:
                                                               across different schemas.
                                                             x-go-type: uuid.UUID
                                                             x-go-type-import:
-                                                              path: github.com/google/uuid
+                                                              path: github.com/gofrs/uuid
                                                           name:
                                                             type: string
                                                             description: >-
@@ -34760,7 +34760,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-go-type-skip-optional-pointer: true
                         visibility:
                           type: string
@@ -34809,7 +34809,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: workspace_id
               json: workspace_id
@@ -34824,7 +34824,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: design_id
               json: design_id
@@ -34878,7 +34878,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-oapi-codegen-extra-tags:
                             db: id
                             json: id
@@ -34892,7 +34892,7 @@ paths:
                             definition is used across different schemas.
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-go-name: WorkspaceID
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
@@ -34906,7 +34906,7 @@ paths:
                             definition is used across different schemas.
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-go-name: DesignID
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
@@ -34988,7 +34988,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: workspace_id
               json: workspace_id
@@ -35003,7 +35003,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: design_id
               json: design_id
@@ -35057,7 +35057,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: workspace_id
               json: workspace_id
@@ -35124,7 +35124,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-oapi-codegen-extra-tags:
                             db: id
                             json: id
@@ -35176,7 +35176,7 @@ paths:
                             definition is used across different schemas.
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-go-name: UserID
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
@@ -35198,7 +35198,7 @@ paths:
                             definition is used across different schemas.
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-go-name: WorkspaceID
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
@@ -35212,7 +35212,7 @@ paths:
                             definition is used across different schemas.
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-go-name: OrganizationID
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
@@ -35300,7 +35300,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: workspace_id
               json: workspace_id
@@ -35315,7 +35315,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: view_id
               json: view_id
@@ -35369,7 +35369,7 @@ paths:
                           format: uuid
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-oapi-codegen-extra-tags:
                             db: id
                             json: id
@@ -35383,7 +35383,7 @@ paths:
                             definition is used across different schemas.
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-go-name: WorkspaceID
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
@@ -35397,7 +35397,7 @@ paths:
                             definition is used across different schemas.
                           x-go-type: uuid.UUID
                           x-go-type-import:
-                            path: github.com/google/uuid
+                            path: github.com/gofrs/uuid
                           x-go-name: ViewID
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
@@ -35477,7 +35477,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: workspace_id
               json: workspace_id
@@ -35492,7 +35492,7 @@ paths:
             format: uuid
             x-go-type: uuid.UUID
             x-go-type-import:
-              path: github.com/google/uuid
+              path: github.com/gofrs/uuid
             x-oapi-codegen-extra-tags:
               db: view_id
               json: view_id
