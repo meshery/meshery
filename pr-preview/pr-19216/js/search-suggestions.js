@@ -76,6 +76,9 @@
     }
 
     function highlightMatches(text, matches, key) {
+        if (!Array.isArray(matches)) {
+            return escapeHTML(text);
+        }
         var match = matches.find(function (m) { return m.key === key; });
         if (!match || !match.indices || match.indices.length === 0) {
             return escapeHTML(text);
@@ -112,7 +115,7 @@
         var $searchInputs = $('.td-search--offline .td-search-input');
         if ($searchInputs.length === 0) return;
 
-        // Per-input state stored via jQuery .data() to avoid cross-input interference
+        // Per-input state stored via WeakMap to avoid cross-input interference
         var inputState = new WeakMap();
         var instanceCounter = 0;
 
@@ -261,6 +264,12 @@
             var $this = $(this);
             var state = getState(this);
             var $suggestionsContainer = $this.closest('.td-search--offline').find('.search-suggestions-dropdown');
+
+            if (e.key === 'Escape') {
+                hideDropdown($this, $suggestionsContainer);
+                return;
+            }
+
             var $items = $suggestionsContainer.find('a.suggestion-item');
 
             if ($items.length === 0 || !$suggestionsContainer.is(':visible')) return;
@@ -279,8 +288,6 @@
                     e.preventDefault();
                     window.location.href = $items.eq(state.activeIndex).attr('href');
                 }
-            } else if (e.key === 'Escape') {
-                hideDropdown($this, $suggestionsContainer);
             }
         });
 
