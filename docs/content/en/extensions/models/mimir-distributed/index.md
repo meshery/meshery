@@ -1,7 +1,7 @@
 ---
 title: Mimir
 subtitle: Scale to 1 billion metrics and beyond with Meshery and Grafana Mimir
-image: /extensions/models/mimir-distributed/icons/color/mimir-distributed-color.svg
+image: extensions/models/mimir-distributed/icons/color/mimir-distributed-color.svg
 aliases: /extensibility/integrations/mimir-distributed
 docURL: https://docs.meshery.io/tasks/performance/managing-performance
 description: 

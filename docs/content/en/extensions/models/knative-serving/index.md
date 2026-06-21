@@ -1,7 +1,7 @@
 ---
 title: Knative Serving
 subtitle: Collaborative and visual infrastructure as design for Knative Serving
-image: /extensions/models/knative-serving/icons/color/knative-serving-color.svg
+image: extensions/models/knative-serving/icons/color/knative-serving-color.svg
 aliases: /extensibility/integrations/knative-serving
 docURL: https://docs.meshery.io/extensibility/integrations/knative-serving
 description: 

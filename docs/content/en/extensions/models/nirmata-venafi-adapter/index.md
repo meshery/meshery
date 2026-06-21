@@ -1,7 +1,7 @@
 ---
 title: Nirmata Venafi Adapter
 subtitle: Collaborative and visual infrastructure as design for Nirmata Venafi Adapter
-image: /extensions/models/nirmata-venafi-adapter/icons/color/nirmata-venafi-adapter-color.svg
+image: extensions/models/nirmata-venafi-adapter/icons/color/nirmata-venafi-adapter-color.svg
 aliases: /extensibility/integrations/nirmata-venafi-adapter
 docURL: https://docs.meshery.io/extensibility/integrations/nirmata-venafi-adapter
 description: 

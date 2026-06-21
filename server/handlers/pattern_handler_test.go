@@ -6,7 +6,7 @@ package handlers
 // 	"path"
 // 	"testing"
 
-// 	"github.com/gofrs/uuid"
+// 	"github.com/google/uuid"
 // 	"github.com/meshery/meshery/server/models"
 // 	"github.com/meshery/meshkit/logger"
 // 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"

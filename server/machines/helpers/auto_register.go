@@ -10,7 +10,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	helpers "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
@@ -126,7 +126,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 						// Delete the meshsync resource which has been upgraded to Connection.
 						_ = arh.dbHandler.Model(&meshsyncmodel.KubernetesResource{}).Delete(&meshsyncmodel.KubernetesResource{ID: data.Obj.ID})
 
-						event = events.NewEvent().WithCategory("connection").WithAction("register").FromUser(data.MeshsyncDataHandler.UserID).ActedUpon(data.MeshsyncDataHandler.ConnectionID).WithDescription(fmt.Sprintf("Auto Registered connection of type \"%s\" at %s", connectionName, url)).Build()
+						event = events.NewEvent().WithCategory("connection").WithAction("register").FromOwner(data.MeshsyncDataHandler.UserID).ActedUpon(data.MeshsyncDataHandler.ConnectionID).WithDescription(fmt.Sprintf("Auto Registered connection of type \"%s\" at %s", connectionName, url)).Build()
 
 						go arh.eventBroadcast.Publish(data.MeshsyncDataHandler.UserID, event)
 						_ = data.MeshsyncDataHandler.Provider.PersistSystemEvent(*event)
@@ -189,5 +189,5 @@ func getTypeOfConnection(obj *meshsyncmodel.KubernetesResource) string {
 func generateUUID(data map[string]interface{}) (core.Uuid, error) {
 	marshalledData, _ := utils.Marshal(data)
 	hash := md5.Sum([]byte(marshalledData))
-	return uuid.FromString(hex.EncodeToString(hash[:]))
+	return uuid.Parse(hex.EncodeToString(hash[:]))
 }

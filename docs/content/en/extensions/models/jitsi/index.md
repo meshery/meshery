@@ -1,7 +1,7 @@
 ---
 title: Jitsi
 subtitle: Collaborative and visual infrastructure as design for Jitsi
-image: /extensions/models/jitsi/icons/color/jitsi-color.svg
+image: extensions/models/jitsi/icons/color/jitsi-color.svg
 aliases: /extensibility/integrations/jitsi
 docURL: https://docs.meshery.io/extensibility/integrations/jitsi
 description: 

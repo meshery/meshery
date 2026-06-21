@@ -1,7 +1,7 @@
 ---
 title: Azure Machine Learning Services
 subtitle: Collaborative and visual infrastructure as design for Azure Machine Learning Services
-image: /extensions/models/azure-machine-learning-services/icons/color/azure-machine-learning-services-color.svg
+image: extensions/models/azure-machine-learning-services/icons/color/azure-machine-learning-services-color.svg
 aliases: /extensibility/integrations/azure-machine-learning-services
 docURL: https://docs.meshery.io/extensibility/integrations/azure-machine-learning-services
 description: 

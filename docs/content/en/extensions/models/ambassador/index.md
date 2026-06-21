@@ -1,7 +1,7 @@
 ---
 title: Ambassador
 subtitle: Collaborative and visual infrastructure as design for Ambassador
-image: /extensions/models/ambassador/icons/color/ambassador-color.svg
+image: extensions/models/ambassador/icons/color/ambassador-color.svg
 aliases: /extensibility/integrations/ambassador
 docURL: https://docs.meshery.io/extensibility/integrations/ambassador
 description: 

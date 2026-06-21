@@ -6,7 +6,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	meshmodelcore "github.com/meshery/meshery/server/models/meshmodel/core"
@@ -25,7 +25,7 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	userUUID := user.ID
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	eventBuilder := events.NewEvent().ActedUpon(uuid.Nil).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().ActedUpon(uuid.Nil).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
