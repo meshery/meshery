@@ -125,14 +125,14 @@
             var $container = $input.closest('.td-search--offline').find('.search-suggestions-dropdown');
             var uid = 'search-suggestions-' + (instanceCounter++);
 
-            // Give the input a unique ID if it doesn't have one (for aria-labelledby)
+            // Give the input a unique ID if it doesn't have one (for aria references)
             if (!$input.attr('id')) {
                 $input.attr('id', uid + '-input');
             }
 
             $container.attr('id', uid)
                       .attr('role', 'listbox')
-                      .attr('aria-labelledby', $input.attr('id'));
+                      .attr('aria-label', 'Search suggestions');
 
             $input.attr('role', 'combobox')
                   .attr('aria-autocomplete', 'list')
@@ -242,6 +242,7 @@
 
                 var $item = $('<a class="suggestion-item">')
                     .attr('href', resolveSitePath(doc.ref))
+                    .attr('tabindex', '-1')
                     .attr('data-index', idx)
                     .attr('id', optionId)
                     .attr('role', 'option')
