@@ -1,7 +1,6 @@
 /**
- * @generated SignedSource<<e5e70b743a02083445c0939868bf429d>>
+ * @generated SignedSource<<92d3e163ce83d999377e62b54af81186>>
  * @lightSyntaxTransform
- * @nogrep
  */
 
 /* tslint:disable */
@@ -39,6 +38,7 @@ export type PerformanceProfilesSubscription$data = {
       readonly load_generators: ReadonlyArray<string | null | undefined> | null | undefined;
       readonly metadata: any | null | undefined;
       readonly name: string | null | undefined;
+      readonly owner: string;
       readonly qps: number | null | undefined;
       readonly request_body: string | null | undefined;
       readonly request_cookies: string | null | undefined;
@@ -46,7 +46,6 @@ export type PerformanceProfilesSubscription$data = {
       readonly service_mesh: string | null | undefined;
       readonly total_results: number | null | undefined;
       readonly updated_at: string | null | undefined;
-      readonly user_id: string;
     } | null | undefined> | null | undefined;
     readonly total_count: number;
   };
@@ -189,7 +188,7 @@ v1 = [
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "user_id",
+            "name": "owner",
             "storageKey": null
           },
           {
@@ -243,32 +242,32 @@ v1 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": (v0/*:: as any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "PerformanceProfilesSubscription",
-    "selections": (v1/*: any*/),
+    "selections": (v1/*:: as any*/),
     "type": "Subscription",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": (v0/*:: as any*/),
     "kind": "Operation",
     "name": "PerformanceProfilesSubscription",
-    "selections": (v1/*: any*/)
+    "selections": (v1/*:: as any*/)
   },
   "params": {
-    "cacheID": "5f6c02d0e3a568b9f4be8793665cb275",
+    "cacheID": "0f4908d8d1fd2fd8e9d32903a8ea0c86",
     "id": null,
     "metadata": {},
     "name": "PerformanceProfilesSubscription",
     "operationKind": "subscription",
-    "text": "subscription PerformanceProfilesSubscription(\n  $selector: PageFilter!\n) {\n  subscribePerfProfiles(selector: $selector) {\n    page\n    page_size\n    total_count\n    profiles {\n      concurrent_request\n      created_at\n      duration\n      endpoints\n      id\n      last_run\n      load_generators\n      name\n      qps\n      total_results\n      updated_at\n      user_id\n      request_body\n      request_cookies\n      request_headers\n      content_type\n      service_mesh\n      metadata\n    }\n  }\n}\n"
+    "text": "subscription PerformanceProfilesSubscription(\n  $selector: PageFilter!\n) {\n  subscribePerfProfiles(selector: $selector) {\n    page\n    page_size\n    total_count\n    profiles {\n      concurrent_request\n      created_at\n      duration\n      endpoints\n      id\n      last_run\n      load_generators\n      name\n      qps\n      total_results\n      updated_at\n      owner\n      request_body\n      request_cookies\n      request_headers\n      content_type\n      service_mesh\n      metadata\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4444030b4fe1fdb502b3e6036ccf6fd1";
+(node as any).hash = "96a468adaa1d6a43f86595c3c3902428";
 
 export default node;

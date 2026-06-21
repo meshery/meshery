@@ -10,7 +10,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
@@ -80,8 +79,10 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			})
 		}
 		if providerName != "" {
-			provider = h.config.Providers[providerName]
-			if provider == nil && h.Provider != "" && providerName == h.Provider {
+			if providerKey, ok := models.ResolveProviderKey(providerName, h.config.Providers); ok {
+				provider = h.config.Providers[providerKey]
+			}
+			if provider == nil && h.Provider != "" && providerName == models.NormalizeProviderName(h.Provider) {
 				h.log.Errorf("enforced provider %q is not registered in h.config.Providers; ProviderUIHandler will degrade to serving the provider-selection UI instead of auto-login. Register %q in PROVIDERS or unset PROVIDER on this deployment.", h.Provider, h.Provider)
 			}
 		}
@@ -334,7 +335,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			EventBroadcaster:   h.config.EventBroadcaster,
 			RegistryManager:    h.registryManager,
 		}
-		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+		connectionUUID := parseUUIDOrNil(k8sContext.ConnectionID)
 
 		inst, err := mhelpers.InitializeMachineWithContext(
 			machineCtx,
@@ -393,7 +394,7 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			EventBroadcaster:   h.config.EventBroadcaster,
 			RegistryManager:    h.registryManager,
 		}
-		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+		connectionUUID := parseUUIDOrNil(k8sContext.ConnectionID)
 
 		inst, err := mhelpers.InitializeMachineWithContext(
 			machineCtx,

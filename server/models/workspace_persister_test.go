@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/core"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
@@ -29,15 +29,9 @@ func TestSchemasWorkspaceAutoMigrateAndPersistMetadata(t *testing.T) {
 		t.Fatalf("failed to auto-migrate schemas workspace: %v", err)
 	}
 
-	workspaceID, err := uuid.NewV4()
-	if err != nil {
-		t.Fatalf("failed to generate workspace id: %v", err)
-	}
+	workspaceID := uuid.New()
 
-	organizationID, err := uuid.NewV4()
-	if err != nil {
-		t.Fatalf("failed to generate organization id: %v", err)
-	}
+	organizationID := uuid.New()
 
 	now := time.Now().UTC().Round(time.Second)
 	ws := workspace.Workspace{
@@ -74,15 +68,9 @@ func TestWorkspacePersisterUpdateWorkspace_PreservesOrganizationIDWhenOmitted(t 
 		t.Fatalf("failed to auto-migrate schemas workspace: %v", err)
 	}
 
-	workspaceID, err := uuid.NewV4()
-	if err != nil {
-		t.Fatalf("failed to generate workspace id: %v", err)
-	}
+	workspaceID := uuid.New()
 
-	organizationID, err := uuid.NewV4()
-	if err != nil {
-		t.Fatalf("failed to generate organization id: %v", err)
-	}
+	organizationID := uuid.New()
 
 	now := time.Now().UTC().Round(time.Second)
 	ws := workspace.Workspace{

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
 	component "github.com/meshery/schemas/models/v1beta2/component"
@@ -608,7 +608,7 @@ func TestErrEncodePattern_PreservesMeshKitCode(t *testing.T) {
 // regression and ensures the legacy spelling cannot be re-introduced
 // silently.
 func TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) {
-	id := uuid.Must(uuid.NewV4())
+	id := uuid.New()
 	df := design.PatternFile{
 		ID:            id,
 		Name:          "test-design",

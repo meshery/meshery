@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/internal/graphql/generated"
 	"github.com/meshery/meshery/server/internal/graphql/model"
@@ -178,7 +177,7 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 	// initialize the map
 
 	for _, connectionID := range connectionIDs {
-		inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
+		inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(parseUUIDOrNil(connectionID))
 		if ok && inst != nil {
 			machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
 			if err != nil {
@@ -236,7 +235,7 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 			}
 
 			for _, connectionID := range connectionIDs {
-				inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
+				inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(parseUUIDOrNil(connectionID))
 				if !ok || inst == nil {
 					continue
 				}

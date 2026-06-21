@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -99,8 +99,7 @@ func crossModelInventoryRelationship() *relationship.RelationshipDefinition {
 // referencing a Namespace that does not yet exist.
 func makePodWithNamespace(t *testing.T, ns string) (*pattern.PatternFile, *component.ComponentDefinition) {
 	t.Helper()
-	id, err := uuid.NewV4()
-	require.NoError(t, err)
+	id := uuid.New()
 	pod := &component.ComponentDefinition{
 		ID:        id,
 		Component: component.Component{Kind: "Pod", Version: "v1"},
@@ -148,8 +147,7 @@ func TestIdentifyInventoryAdditions_PodImpliesNamespace(t *testing.T) {
 func TestIdentifyInventoryAdditions_SkipsWhenParentAlreadyPresent(t *testing.T) {
 	t.Parallel()
 	design, pod := makePodWithNamespace(t, "default")
-	nsID, err := uuid.NewV4()
-	require.NoError(t, err)
+	nsID := uuid.New()
 	ns := &component.ComponentDefinition{
 		ID:             nsID,
 		Component:      component.Component{Kind: "Namespace", Version: "v1"},
@@ -172,8 +170,7 @@ func TestIdentifyInventoryAdditions_SkipsWhenParentAlreadyPresent(t *testing.T) 
 // test pins the correct contract.
 func TestIdentifyInventoryAdditions_PreservesToSideModelForCrossModelRelationships(t *testing.T) {
 	t.Parallel()
-	id, err := uuid.NewV4()
-	require.NoError(t, err)
+	id := uuid.New()
 	sub := &component.ComponentDefinition{
 		ID:        id,
 		Component: component.Component{Kind: "EventSubscription", Version: "v1"},
