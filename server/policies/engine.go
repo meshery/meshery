@@ -30,6 +30,7 @@ func NewGoEngine(log Logger) *GoEngine {
 			&EdgeBindingPolicy{},
 			&HierarchicalParentChildPolicy{},
 			&HierarchicalWalletPolicy{},
+			&MultihopValidationPolicy{},
 		},
 	}
 }

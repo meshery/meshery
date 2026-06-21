@@ -71,6 +71,7 @@ evaluate := eval_results if {
 		eval.alias_policy_identifier,
 		eval.edge_network_policy_identifier,
 		eval.hierarchical_parent_child_policy_identifier,
+		eval.multihop_policy_identifier,
 	]
 
 	# Iterate over relationships in the design file and resolve patches.
