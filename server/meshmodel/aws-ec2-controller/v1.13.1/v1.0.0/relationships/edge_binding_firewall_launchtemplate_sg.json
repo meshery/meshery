@@ -1,29 +1,56 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "version": "v1.0.0",
-  "kind": "RelationshipDefinition",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "edge_binding_firewall_relationship",
+  "kind": "edge",
   "metadata": {
-    "description": "SecurityGroup to LaunchTemplate firewall binding. A LaunchTemplate references SecurityGroups via the securityGroupIDs field in its data block. This defines the network firewall rules that apply to every EC2 instance launched from the template, forming the blast radius boundary for EKS worker node access."
+    "description": "SecurityGroup to LaunchTemplate firewall binding. A LaunchTemplate references SecurityGroups via the securityGroupIDs field in its data block. This defines the network firewall rules that apply to every EC2 instance launched from the template, forming the blast radius boundary for EKS worker node access.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
   },
   "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.13.1"
+    },
     "name": "aws-ec2-controller",
-    "version": "v1.13.1"
+    "registrant": {
+      "kind": "github"
+    },
+    "version": ""
   },
-  "type": "binding",
-  "subType": "firewall",
-  "evaluationQuery": "edge_binding_firewall_relationship",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "model": "aws-ec2-controller",
+            "id": null,
             "kind": "SecurityGroup",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-ec2-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
               "mutatorRef": [
                 [
                   "configuration",
-                  "name"
+                  "status",
+                  "id"
                 ]
               ],
               "patchStrategy": "replace"
@@ -32,8 +59,22 @@
         ],
         "to": [
           {
-            "model": "aws-ec2-controller",
+            "id": null,
             "kind": "LaunchTemplate",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-ec2-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
               "mutatedRef": [
                 [
@@ -48,7 +89,15 @@
             }
           }
         ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
       }
     }
-  ]
+  ],
+  "subType": "firewall",
+  "status": "enabled",
+  "type": "binding",
+  "version": "v1.0.0"
 }

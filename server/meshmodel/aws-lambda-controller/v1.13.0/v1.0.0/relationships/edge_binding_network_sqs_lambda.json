@@ -1,24 +1,50 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "version": "v1.0.0",
-  "kind": "RelationshipDefinition",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "edge_binding_network_relationship",
+  "kind": "edge",
   "metadata": {
-    "description": "SQS Queue to Lambda EventSourceMapping network binding. An EventSourceMapping polls an SQS queue and invokes a Lambda function for each batch of messages. The eventSourceARN field on the EventSourceMapping references the SQS queue. This relationship represents the SQS-to-Lambda leg of serverless event pipelines."
+    "description": "SQS Queue to Lambda EventSourceMapping network binding. An EventSourceMapping polls an SQS queue and invokes a Lambda function for each batch of messages. The eventSourceARN field on the EventSourceMapping references the SQS queue. This relationship represents the SQS-to-Lambda leg of serverless event pipelines.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
   },
   "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.13.0"
+    },
     "name": "aws-lambda-controller",
-    "version": "v1.13.0"
+    "registrant": {
+      "kind": "github"
+    },
+    "version": ""
   },
-  "type": "binding",
-  "subType": "network",
-  "evaluationQuery": "edge_binding_network_relationship",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "model": "aws-sqs-controller",
+            "id": null,
             "kind": "Queue",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-sqs-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
               "mutatorRef": [
                 [
@@ -33,8 +59,22 @@
         ],
         "to": [
           {
-            "model": "aws-lambda-controller",
+            "id": null,
             "kind": "EventSourceMapping",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-lambda-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
               "mutatedRef": [
                 [
@@ -47,7 +87,15 @@
             }
           }
         ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
       }
     }
-  ]
+  ],
+  "subType": "network",
+  "status": "enabled",
+  "type": "binding",
+  "version": "v1.0.0"
 }

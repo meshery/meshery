@@ -1,24 +1,50 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "version": "v1.0.0",
-  "kind": "RelationshipDefinition",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "edge_non_binding_network_relationship",
+  "kind": "edge",
   "metadata": {
-    "description": "Lambda Function to DynamoDB Table non-binding network relationship. A Lambda function writes to or reads from a DynamoDB table at runtime. Unlike binding relationships, this is a runtime data-flow dependency — the function's code references the table name but no Kubernetes spec field is mutated. This relationship enables Kanvas to visualize the end-to-end serverless event pipeline."
+    "description": "Lambda Function to DynamoDB Table non-binding network relationship. A Lambda function writes to or reads from a DynamoDB table at runtime. Unlike binding relationships, this is a runtime data-flow dependency \u2014 the function's code references the table name but no Kubernetes spec field is mutated. This relationship enables Kanvas to visualize the end-to-end serverless event pipeline.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
   },
   "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.13.0"
+    },
     "name": "aws-lambda-controller",
-    "version": "v1.13.0"
+    "registrant": {
+      "kind": "github"
+    },
+    "version": ""
   },
-  "type": "non-binding",
-  "subType": "network",
-  "evaluationQuery": "edge_non_binding_network_relationship",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "model": "aws-lambda-controller",
+            "id": null,
             "kind": "Function",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-lambda-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
               "mutatorRef": [
                 [
@@ -33,8 +59,22 @@
         ],
         "to": [
           {
-            "model": "aws-dynamodb-controller",
+            "id": null,
             "kind": "Table",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-dynamodb-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
               "mutatedRef": [
                 [
@@ -47,7 +87,15 @@
             }
           }
         ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
       }
     }
-  ]
+  ],
+  "subType": "network",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
 }

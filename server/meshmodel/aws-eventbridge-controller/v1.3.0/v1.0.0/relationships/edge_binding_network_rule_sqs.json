@@ -1,26 +1,52 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "version": "v1.0.0",
-  "kind": "RelationshipDefinition",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "edge_binding_network_relationship",
+  "kind": "edge",
   "metadata": {
-    "description": "SQS Queue to EventBridge Rule network binding. An EventBridge Rule targets an SQS Queue via the targets[].arn field. When the rule's event pattern matches, the matched event is delivered to the SQS queue. This relationship represents the first link in serverless event pipelines."
+    "description": "SQS Queue to EventBridge Rule network binding. An EventBridge Rule targets an SQS Queue via the targets[].arn field. When the rule's event pattern matches, the matched event is delivered to the SQS queue. This relationship represents the first link in serverless event pipelines.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
   },
   "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.3.0"
+    },
     "name": "aws-eventbridge-controller",
-    "version": "v1.3.0"
+    "registrant": {
+      "kind": "github"
+    },
+    "version": ""
   },
-  "type": "binding",
-  "subType": "network",
-  "evaluationQuery": "edge_binding_network_relationship",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "model": "aws-sqs-controller",
+            "id": null,
             "kind": "Queue",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-sqs-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
@@ -33,10 +59,24 @@
         ],
         "to": [
           {
-            "model": "aws-eventbridge-controller",
+            "id": null,
             "kind": "Rule",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-eventbridge-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
@@ -49,7 +89,15 @@
             }
           }
         ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
       }
     }
-  ]
+  ],
+  "subType": "network",
+  "status": "enabled",
+  "type": "binding",
+  "version": "v1.0.0"
 }

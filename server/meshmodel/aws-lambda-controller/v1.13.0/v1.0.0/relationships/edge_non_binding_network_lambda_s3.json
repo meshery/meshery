@@ -1,24 +1,50 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "version": "v1.0.0",
-  "kind": "RelationshipDefinition",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "edge_non_binding_network_relationship",
+  "kind": "edge",
   "metadata": {
-    "description": "Lambda Function to S3 Bucket non-binding network relationship. A Lambda function writes processed data to an S3 bucket at runtime, forming the storage layer of data platform architectures (e.g., Kinesis → Lambda → S3 data lake). This is a runtime data-flow dependency rather than a spec-level binding."
+    "description": "Lambda Function to S3 Bucket non-binding network relationship. A Lambda function writes processed data to an S3 bucket at runtime, forming the storage layer of data platform architectures (e.g., Kinesis \u2192 Lambda \u2192 S3 data lake). This is a runtime data-flow dependency rather than a spec-level binding.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
   },
   "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.13.0"
+    },
     "name": "aws-lambda-controller",
-    "version": "v1.13.0"
+    "registrant": {
+      "kind": "github"
+    },
+    "version": ""
   },
-  "type": "non-binding",
-  "subType": "network",
-  "evaluationQuery": "edge_non_binding_network_relationship",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "model": "aws-lambda-controller",
+            "id": null,
             "kind": "Function",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-lambda-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
               "mutatorRef": [
                 [
@@ -33,12 +59,27 @@
         ],
         "to": [
           {
-            "model": "aws-s3-controller",
+            "id": null,
             "kind": "Bucket",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-s3-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
             "patch": {
               "mutatedRef": [
                 [
                   "configuration",
+                  "spec",
                   "name"
                 ]
               ],
@@ -46,7 +87,15 @@
             }
           }
         ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
       }
     }
-  ]
+  ],
+  "subType": "network",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
 }
