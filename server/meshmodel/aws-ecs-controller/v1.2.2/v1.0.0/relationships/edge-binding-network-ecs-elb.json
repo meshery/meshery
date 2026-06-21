@@ -19,11 +19,11 @@
     },
     "name": "aws-ecs-controller",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "version": ""
   },
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
@@ -46,7 +46,7 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
@@ -73,17 +73,16 @@
               },
               "name": "cluster-essentials",
               "registrant": {
-                "kind": "artifacthub"
+                "kind": "github"
               },
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "configuration",
-                  "status",
-                  "ackResourceMetadata",
-                  "arn"
+                  "spec",
+                  "targetGroupARN"
                 ]
               ],
               "patchStrategy": "replace"
