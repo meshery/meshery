@@ -19,11 +19,11 @@
     },
     "name": "aws-sns-controller",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "version": ""
   },
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
@@ -45,17 +45,7 @@
               },
               "version": ""
             },
-            "patch": {
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "status",
-                  "ackResourceMetadata",
-                  "arn"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
+            "patch": null
           }
         ],
         "to": [
@@ -76,17 +66,7 @@
               },
               "version": ""
             },
-            "patch": {
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "status",
-                  "ackResourceMetadata",
-                  "arn"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
+            "patch": null
           }
         ]
       },
