@@ -45,9 +45,16 @@ var (
 	}
 )
 var (
-	//TODO: Add the image orgs of other control plane pods. This change is backwards compatible and wont break anything
 	controlPlaneImageOrgs = map[MeshType][]string{
-		MeshTypeCiliumServiceMesh: {"cilium"},
+		MeshTypeCiliumServiceMesh:  {"cilium"},
+		MeshTypeIstio:              {"istio"},
+		MeshTypeLinkerd:            {"linkerd"},
+		MeshTypeConsul:             {"hashicorp"},
+		MeshTypeKuma:               {"kumahq"},
+		MeshTypeTraefikMesh:        {"traefik"},
+		MeshTypeNetworkServiceMesh: {"networkservicemesh"},
+		MeshTypeNginxServiceMesh:   {"nginx"},
+		MeshTypeAppMesh:            {"amazon", "aws-appmesh"},
 	}
 )
 
