@@ -1,7 +1,7 @@
 ---
 title: Akri
 subtitle: Collaborative and visual infrastructure as design for Akri
-image: /extensions/models/akri/icons/color/akri-color.svg
+image: extensions/models/akri/icons/color/akri-color.svg
 aliases: /extensibility/integrations/akri
 docURL: https://docs.meshery.io/extensibility/integrations/akri
 description: 

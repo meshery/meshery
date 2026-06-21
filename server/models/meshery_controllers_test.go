@@ -3,14 +3,14 @@ package models
 import (
 	"testing"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/controllers"
 )
 
 func TestControllerEventActedUponPrefersConnectionID(t *testing.T) {
-	userID := uuid.Must(uuid.NewV4())
-	connectionID := uuid.Must(uuid.NewV4())
+	userID := uuid.New()
+	connectionID := uuid.New()
 
 	actedUpon := controllerEventActedUpon(userID, map[string]any{
 		"connectionID": connectionID.String(),
@@ -22,7 +22,7 @@ func TestControllerEventActedUponPrefersConnectionID(t *testing.T) {
 }
 
 func TestControllerEventActedUponFallsBackToUserID(t *testing.T) {
-	userID := uuid.Must(uuid.NewV4())
+	userID := uuid.New()
 
 	actedUpon := controllerEventActedUpon(userID, map[string]any{
 		"connectionID": "not-a-uuid",
@@ -44,8 +44,8 @@ func TestControllerEventActedUponReturnsNilWithoutValidIDs(t *testing.T) {
 }
 
 func TestShouldPersistControllerEvent(t *testing.T) {
-	userID := uuid.Must(uuid.NewV4())
-	resourceID := uuid.Must(uuid.NewV4())
+	userID := uuid.New()
+	resourceID := uuid.New()
 
 	if !shouldPersistControllerEvent(userID, resourceID) {
 		t.Fatal("expected controller event to be persisted when user and resource IDs are valid")

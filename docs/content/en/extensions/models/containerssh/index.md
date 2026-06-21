@@ -1,7 +1,7 @@
 ---
 title: Containerssh
 subtitle: Collaborative and visual infrastructure as design for Containerssh
-image: /extensions/models/containerssh/icons/color/containerssh-color.svg
+image: extensions/models/containerssh/icons/color/containerssh-color.svg
 aliases: /extensibility/integrations/containerssh
 docURL: https://docs.meshery.io/extensibility/integrations/containerssh
 description: 

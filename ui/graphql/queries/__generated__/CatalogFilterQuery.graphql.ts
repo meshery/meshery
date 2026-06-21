@@ -1,7 +1,6 @@
 /**
- * @generated SignedSource<<126d7055ae416a8abf815f9ea968c5cf>>
+ * @generated SignedSource<<4cd48e1b5e8227c4329832a11db0c6c0>>
  * @lightSyntaxTransform
- * @nogrep
  */
 
 /* tslint:disable */
@@ -34,8 +33,8 @@ export type CatalogFilterQuery$data = {
     readonly filter_resource: string;
     readonly id: string;
     readonly name: string;
+    readonly owner: string;
     readonly updated_at: string | null | undefined;
-    readonly user_id: string;
     readonly visibility: string;
   }>;
 };
@@ -85,7 +84,7 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "user_id",
+        "name": "owner",
         "storageKey": null
       },
       {
@@ -136,32 +135,32 @@ v1 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": (v0/*:: as any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "CatalogFilterQuery",
-    "selections": (v1/*: any*/),
+    "selections": (v1/*:: as any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": (v0/*:: as any*/),
     "kind": "Operation",
     "name": "CatalogFilterQuery",
-    "selections": (v1/*: any*/)
+    "selections": (v1/*:: as any*/)
   },
   "params": {
-    "cacheID": "2178c2622b2e672bcf288e1004c939a0",
+    "cacheID": "54a402060d50fc439524839d8ad8c47b",
     "id": null,
     "metadata": {},
     "name": "CatalogFilterQuery",
     "operationKind": "query",
-    "text": "query CatalogFilterQuery(\n  $selector: CatalogSelector!\n) {\n  catalogFilters: fetchFilterCatalogContent(selector: $selector) {\n    id\n    name\n    user_id\n    filter_file\n    filter_resource\n    visibility\n    catalog_data\n    created_at\n    updated_at\n  }\n}\n"
+    "text": "query CatalogFilterQuery(\n  $selector: CatalogSelector!\n) {\n  catalogFilters: fetchFilterCatalogContent(selector: $selector) {\n    id\n    name\n    owner\n    filter_file\n    filter_resource\n    visibility\n    catalog_data\n    created_at\n    updated_at\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "391a34d0da3dfd429e7a8a335e07930b";
+(node as any).hash = "bfa9963f8c464994cd5a0015cfb95f06";
 
 export default node;

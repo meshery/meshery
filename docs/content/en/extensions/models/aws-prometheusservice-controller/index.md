@@ -1,7 +1,7 @@
 ---
 title: AWS Managed Service for Prometheus
 subtitle: Collaborative and visual infrastructure as design for AWS Managed Service for Prometheus
-image: /extensions/models/aws-prometheusservice-controller/icons/color/aws-prometheusservice-controller-color.svg
+image: extensions/models/aws-prometheusservice-controller/icons/color/aws-prometheusservice-controller-color.svg
 aliases: /extensibility/integrations/aws-prometheusservice-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-prometheusservice-controller
 description: 

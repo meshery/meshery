@@ -1,7 +1,7 @@
 ---
 title: Intel Device Plugins Operator
 subtitle: Collaborative and visual infrastructure as design for Intel Device Plugins Operator
-image: /extensions/models/intel-device-plugins-operator/icons/color/intel-device-plugins-operator-color.svg
+image: extensions/models/intel-device-plugins-operator/icons/color/intel-device-plugins-operator-color.svg
 aliases: /extensibility/integrations/intel-device-plugins-operator
 docURL: https://docs.meshery.io/extensibility/integrations/intel-device-plugins-operator
 description: 

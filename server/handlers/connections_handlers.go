@@ -11,7 +11,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/machines/helpers"
@@ -104,7 +104,7 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 
 	id, ok := body["id"]
 	if ok {
-		smInstancetracker.Remove(uuid.FromStringOrNil(id))
+		smInstancetracker.Remove(parseUUIDOrNil(id))
 	}
 }
 
@@ -131,7 +131,7 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 	}
 	// id act as a connection registration process tracker.
 	// The clients should always include this "id" in the subsequent API calls until the process is completed or terminated.
-	id, _ := uuid.NewV4()
+	id := uuid.New()
 	schema["id"] = id
 
 	err := json.NewEncoder(w).Encode(&schema)
@@ -331,7 +331,7 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 }
 
 func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
+	connectionID := parseUUIDOrNil(mux.Vars(req)["connectionId"])
 	if connectionID == uuid.Nil {
 		invalidIDErr := ErrInvalidUUID(fmt.Errorf("invalid connection ID"))
 		h.log.Error(invalidIDErr)
@@ -357,7 +357,7 @@ func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ 
 }
 
 func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
+	connectionID := parseUUIDOrNil(mux.Vars(req)["connectionId"])
 	userID := user.ID
 
 	bd, err := io.ReadAll(req.Body)
@@ -545,7 +545,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 }
 
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
+	connectionID := parseUUIDOrNil(mux.Vars(req)["connectionId"])
 	userID := user.ID
 	token, err := provider.GetProviderToken(req)
 	if err != nil {

@@ -8,8 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gofrs/uuid"
-	guid "github.com/google/uuid"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/meshes"
 	"github.com/meshery/meshery/server/models"
@@ -96,7 +95,7 @@ func (h *Handler) handleFilterPOST(
 	res := meshes.EventsResponse{
 		Component:     "core",
 		ComponentName: "Filters",
-		OperationId:   guid.NewString(),
+		OperationId:   uuid.NewString(),
 		EventType:     meshes.EventType_INFO,
 	}
 	var parsedBody *models.MesheryFilterRequestBody
@@ -573,7 +572,7 @@ func (h *Handler) generateFilterComponent(config string) (string, error) {
 		filterEntity := res[0]
 		filterCompDef, ok := filterEntity.(*component.ComponentDefinition)
 		if ok {
-			filterID, _ := uuid.NewV4()
+			filterID := uuid.New()
 			filterSvc := component.ComponentDefinition{
 				ID:          filterID,
 				DisplayName: strings.ToLower(filterCompDef.Component.Kind) + utils.GetRandomAlphabetsOfDigit(5),

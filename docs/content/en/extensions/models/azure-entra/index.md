@@ -1,7 +1,7 @@
 ---
 title: Azure Entra
 subtitle: Collaborative and visual infrastructure as design for Azure Entra
-image: /extensions/models/azure-entra/icons/color/azure-entra-color.svg
+image: extensions/models/azure-entra/icons/color/azure-entra-color.svg
 aliases: /extensibility/integrations/azure-entra
 docURL: https://docs.meshery.io/extensibility/integrations/azure-entra
 description: 

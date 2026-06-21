@@ -17,7 +17,7 @@ import (
 
 	"fortio.org/fortio/periodic"
 	yaml "github.com/ghodss/yaml"
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/helpers/utils"
@@ -583,9 +583,9 @@ func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Re
 		})
 	}
 
-	key := uuid.FromStringOrNil(resultID)
+	key := parseUUIDOrNil(resultID)
 	if key == uuid.Nil {
-		key, _ = uuid.NewV4()
+		key = uuid.New()
 	}
 	result.ID = key
 	respChan <- &models.LoadTestResponse{
@@ -632,7 +632,7 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 	}
 	// TODO: we are NOT persisting the Node metrics for now
 
-	resultUUID, err := uuid.FromString(config.ResultID)
+	resultUUID, err := uuid.Parse(config.ResultID)
 	if err != nil {
 		h.log.Error(ErrParseBool(err, "result uuid"))
 		return err

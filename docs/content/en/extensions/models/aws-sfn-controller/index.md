@@ -1,7 +1,7 @@
 ---
 title: AWS Step Functions
 subtitle: Collaborative and visual infrastructure as design for AWS Step Functions
-image: /extensions/models/aws-sfn-controller/icons/color/aws-sfn-controller-color.svg
+image: extensions/models/aws-sfn-controller/icons/color/aws-sfn-controller-color.svg
 aliases: /extensibility/integrations/aws-sfn-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-sfn-controller
 description: 

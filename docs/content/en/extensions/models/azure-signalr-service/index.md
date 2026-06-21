@@ -1,7 +1,7 @@
 ---
 title: Azure SignalR Service
 subtitle: Collaborative and visual infrastructure as design for Azure SignalR Service
-image: /extensions/models/azure-signalr-service/icons/color/azure-signalr-service-color.svg
+image: extensions/models/azure-signalr-service/icons/color/azure-signalr-service-color.svg
 aliases: /extensibility/integrations/azure-signalr-service
 docURL: https://docs.meshery.io/extensibility/integrations/azure-signalr-service
 description: 

@@ -25,7 +25,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	servercore "github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/httputil"
@@ -1041,7 +1041,7 @@ func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.
 
 func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, additionalMetadata map[string]any) (connections.Connection, error) {
 	if k8sContext.ConnectionID != "" {
-		connectionID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+		connectionID := parseUUIDOrNil(k8sContext.ConnectionID)
 		if connectionID != uuid.Nil {
 			conn, status, _ := l.GetConnectionByID(token, connectionID)
 			if status >= http.StatusOK && status < http.StatusMultipleChoices && conn != nil && conn.Kind == "kubernetes" {
@@ -1050,7 +1050,12 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 		}
 	}
 
-	k8sServerID := *k8sContext.KubernetesServerID
+	// An unreachable context has no server ID assigned; persist it anyway as a
+	// discovered connection rather than dereferencing a nil pointer.
+	var k8sServerID uuid.UUID
+	if k8sContext.KubernetesServerID != nil {
+		k8sServerID = *k8sContext.KubernetesServerID
+	}
 
 	_metadata := map[string]string{
 		"id":                 k8sContext.ID,
@@ -1260,7 +1265,7 @@ func (l *RemoteProvider) GetK8sContext(token, connectionID string) (K8sContext, 
 		return K8sContext{}, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 
-	connID := uuid.FromStringOrNil(connectionID)
+	connID := parseUUIDOrNil(connectionID)
 	if connID == uuid.Nil {
 		return K8sContext{}, fmt.Errorf("invalid connection id: %s", connectionID)
 	}
