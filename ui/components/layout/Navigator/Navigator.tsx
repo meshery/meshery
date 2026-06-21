@@ -710,9 +710,10 @@ const NavigatorContent = () => {
                   link={!!link}
                   isActive={currentPath === href}
                   isShow={!show}
-                  onClick={() => {
+                  onClick={(e) => {
                     toggleItemCollapse(childId);
-                    if (link && href) {
+                    const clickedInsideAnchor = (e.target as HTMLElement).closest?.('a');
+                    if (link && href && !clickedInsideAnchor) {
                       router.push(href);
                     }
                   }}
