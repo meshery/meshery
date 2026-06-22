@@ -71,7 +71,7 @@
               "model": {
                 "version": ""
               },
-              "name": "cluster-essentials",
+              "name": "aws-load-balancer-controller",
               "registrant": {
                 "kind": "github"
               },
