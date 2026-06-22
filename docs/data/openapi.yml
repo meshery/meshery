@@ -26132,16 +26132,17 @@ paths:
               description: Payload for creating a new event.
               additionalProperties: true
               properties:
-                userId:
+                owner:
                   type: string
                   format: uuid
                   description: UUID of the user associated with the event.
                   x-go-type: uuid.UUID
                   x-go-type-import:
                     path: github.com/gofrs/uuid
-                  x-go-name: UserID
+                  x-go-name: Owner
                   x-oapi-codegen-extra-tags:
-                    json: userId,omitempty
+                    db: owner
+                    json: owner,omitempty
                 category:
                   type: string
                   description: The category of the event.
@@ -26770,11 +26771,12 @@ paths:
                   x-go-type-skip-optional-pointer: true
                   x-oapi-codegen-extra-tags:
                     json: name
-                userId:
+                owner:
                   description: Owner user ID. When omitted, the server infers it from the authenticated user.
-                  x-go-name: UserID
+                  x-go-name: Owner
                   x-oapi-codegen-extra-tags:
-                    json: userId,omitempty
+                    db: owner
+                    json: owner,omitempty
                   type: string
                   format: uuid
                   x-go-type: uuid.UUID
@@ -27519,11 +27521,12 @@ paths:
                   x-go-type-skip-optional-pointer: true
                   x-oapi-codegen-extra-tags:
                     json: name
-                userId:
+                owner:
                   description: Owner user ID. When omitted, the server infers it from the authenticated user.
-                  x-go-name: UserID
+                  x-go-name: Owner
                   x-oapi-codegen-extra-tags:
-                    json: userId,omitempty
+                    db: owner
+                    json: owner,omitempty
                   type: string
                   format: uuid
                   x-go-type: uuid.UUID
@@ -28141,7 +28144,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: test_start_time
                             json: testStartTime,omitempty
-                        userId:
+                        owner:
                           type: string
                           format: uuid
                           description: >-
@@ -28150,10 +28153,10 @@ paths:
                           x-go-type: uuid.UUID
                           x-go-type-import:
                             path: github.com/gofrs/uuid
-                          x-go-name: UserID
+                          x-go-name: Owner
                           x-oapi-codegen-extra-tags:
-                            db: user_id
-                            json: userId,omitempty
+                            db: owner
+                            json: owner,omitempty
                         createdAt:
                           description: Timestamp when the performance result was created.
                           x-oapi-codegen-extra-tags:
@@ -28373,7 +28376,7 @@ paths:
                           x-oapi-codegen-extra-tags:
                             db: test_start_time
                             json: testStartTime,omitempty
-                        userId:
+                        owner:
                           type: string
                           format: uuid
                           description: >-
@@ -28382,10 +28385,10 @@ paths:
                           x-go-type: uuid.UUID
                           x-go-type-import:
                             path: github.com/gofrs/uuid
-                          x-go-name: UserID
+                          x-go-name: Owner
                           x-oapi-codegen-extra-tags:
-                            db: user_id
-                            json: userId,omitempty
+                            db: owner
+                            json: owner,omitempty
                         createdAt:
                           description: Timestamp when the performance result was created.
                           x-oapi-codegen-extra-tags:

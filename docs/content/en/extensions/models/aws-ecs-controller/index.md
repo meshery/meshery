@@ -1,7 +1,7 @@
 ---
 title: AWS Elastic Container Service
 subtitle: Collaborative and visual infrastructure as design for AWS Elastic Container Service
-image: /extensions/models/aws-ecs-controller/icons/color/aws-ecs-controller-color.svg
+image: extensions/models/aws-ecs-controller/icons/color/aws-ecs-controller-color.svg
 aliases: /extensibility/integrations/aws-ecs-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-ecs-controller
 description: 

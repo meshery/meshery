@@ -1,7 +1,7 @@
 ---
 title: Identity Manager
 subtitle: Collaborative and visual infrastructure as design for Identity Manager
-image: /extensions/models/identity-manager/icons/color/identity-manager-color.svg
+image: extensions/models/identity-manager/icons/color/identity-manager-color.svg
 aliases: /extensibility/integrations/identity-manager
 docURL: https://docs.meshery.io/extensibility/integrations/identity-manager
 description: 
