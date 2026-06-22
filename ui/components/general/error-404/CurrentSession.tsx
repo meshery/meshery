@@ -8,14 +8,20 @@ import {
   StyledTypographyDisabled,
   HeaderContainer,
 } from './styles';
-import { NoSsr } from '@sistent/sistent';
+import {
+  NoSsr,
+  ErrorBoundary,
+  CustomTooltip,
+  InfoCircleIcon,
+  useTheme,
+  IconButton,
+} from '@sistent/sistent';
 import OrgIcon from '@/assets/icons/OrgIcon';
-import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '../../shared/ErrorBoundary/ErrorBoundary';
 import { useGetSelectedOrganization, useGetLoggedInUserQuery } from '@/rtk-query/user';
 
 const CurrentSessionInfo = () => {
-  const { selectedOrganization } = useGetSelectedOrganization();
+  const { selectedOrganization, isLoading: isLoadingSelectedOrg } = useGetSelectedOrganization();
   const {
     data: userData,
     isLoading: isUserLoading,
@@ -65,7 +71,7 @@ const CurrentSessionInfo = () => {
           </CustomTooltip>
         </HeaderContainer>
         <StyledBox>
-          {isUserLoading
+          {isLoadingSelectedOrg || isUserLoading
             ? 'Loading roles…'
             : isUserError
               ? 'Unable to load roles'
