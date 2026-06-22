@@ -372,37 +372,39 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
 
   const removeK8sContextByConnectionId = useCallback(
     (connectionId) => {
-      setState((prevState) => {
-        const contexts = prevState.k8sContexts?.contexts || [];
-        const removedIds = new Set(
-          contexts
-            .filter((ctx) => k8sContextMatchesConnectionId(ctx, connectionId))
-            .map((ctx) => ctx.id),
-        );
+      const contexts = state.k8sContexts?.contexts || [];
+      const removedIds = new Set(
+        contexts
+          .filter((ctx) => k8sContextMatchesConnectionId(ctx, connectionId))
+          .map((ctx) => ctx.id),
+      );
 
-        if (removedIds.size === 0) {
-          return prevState;
-        }
+      if (removedIds.size === 0) {
+        return;
+      }
 
-        const remainingContexts = contexts.filter((ctx) => !removedIds.has(ctx.id));
-        const activeK8sContexts = (prevState.activeK8sContexts || []).filter(
-          (id) => id !== 'all' && !removedIds.has(id),
-        );
+      const remainingContexts = contexts.filter((ctx) => !removedIds.has(ctx.id));
+      const wasSelectAll = (state.activeK8sContexts || []).includes('all');
+      const remainingIds = remainingContexts.map((ctx) => ctx.id).filter(Boolean);
+      const activeK8sContexts = wasSelectAll
+        ? remainingIds.length
+          ? [...remainingIds, 'all']
+          : []
+        : (state.activeK8sContexts || []).filter((id) => !removedIds.has(id));
 
-        activeContextChangeCallback(activeK8sContexts);
+      activeContextChangeCallback(activeK8sContexts);
 
-        return {
-          ...prevState,
-          k8sContexts: {
-            ...prevState.k8sContexts,
-            contexts: remainingContexts,
-            totalCount: remainingContexts.length,
-          },
-          activeK8sContexts,
-        };
-      });
+      setState((prevState) => ({
+        ...prevState,
+        k8sContexts: {
+          ...prevState.k8sContexts,
+          contexts: remainingContexts,
+          totalCount: remainingContexts.length,
+        },
+        activeK8sContexts,
+      }));
     },
-    [activeContextChangeCallback],
+    [state.k8sContexts, state.activeK8sContexts, activeContextChangeCallback],
   );
 
   const updateCurrentExtensionType = useCallback(

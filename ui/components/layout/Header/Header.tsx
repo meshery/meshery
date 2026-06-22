@@ -436,7 +436,7 @@ const Header = ({
   searchContexts,
   removeK8sContextByConnectionId,
 }) => {
-  const { notify } = useNotification;
+  const { notify } = useNotification();
   const { openModal } = useContext(WorkspaceModalContext) || {};
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));

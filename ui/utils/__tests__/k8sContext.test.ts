@@ -21,4 +21,9 @@ describe('k8sContextMatchesConnectionId', () => {
       ),
     ).toBe(false);
   });
+
+  it('returns false when ctx or connectionId is missing', () => {
+    expect(k8sContextMatchesConnectionId(undefined as never, connectionId)).toBe(false);
+    expect(k8sContextMatchesConnectionId({ id: contextId }, '')).toBe(false);
+  });
 });
