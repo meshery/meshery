@@ -456,6 +456,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("POST", "DELETE")
 	gMux.Handle("/api/integrations/connections/{connectionId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteConnection), models.ProviderAuth))).
 		Methods("DELETE")
+	gMux.Handle("/api/integrations/connections/{connectionId}/ping", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ConnectionPingHandler), models.ProviderAuth))).
+		Methods("GET")
 
 	gMux.HandleFunc("/auth/redirect", func(w http.ResponseWriter, r *http.Request) {
 		token := r.URL.Query().Get("token")
