@@ -43,7 +43,7 @@
               "registrant": {
                 "kind": "github"
               },
-              "version": ""
+              "version": "v1.2.2"
             },
             "patch": {
               "mutatedRef": [
