@@ -121,6 +121,7 @@ export const ExpandMoreIcon = styled('svg', {
   transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
   transition:
     'transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out',
+  outline: 'none',
 
   // Show icon when the parent element is hovered
   '&:hover, *:hover > &': {
@@ -130,6 +131,9 @@ export const ExpandMoreIcon = styled('svg', {
 
   '&:hover': {
     fill: theme?.palette?.background?.brand?.default || 'black',
+  },
+  '&:focus, &:focus-visible': {
+    outline: 'none',
   },
 }));
 
