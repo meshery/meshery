@@ -710,7 +710,7 @@ const NavigatorContent = () => {
                   link={!!link}
                   isActive={currentPath === href}
                   isShow={!show}
-                  onClick={(e) => {
+                  onClick={() => {
                     toggleItemCollapse(childId);
                   }}
                   onMouseOver={() => (isDrawerCollapsed ? setHoveredId(childId) : null)}
