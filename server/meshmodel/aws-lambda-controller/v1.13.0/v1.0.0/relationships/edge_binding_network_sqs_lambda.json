@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Binds an SQS Queue to an AWS Lambda function, enabling automatic queue polling and serverless message processing.",
+    "description": "Binds an SQS Queue to a Lambda Event Source Mapping, enabling automatic queue polling and serverless message processing.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
