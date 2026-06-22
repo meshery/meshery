@@ -35,7 +35,7 @@ on:
       debug_mode:
         description: 'Enable verbose debug logging'
         required: false
-        default: 'false'
+        default: false
         type: boolean
 
 # Minimal permissions required for this workflow
@@ -67,24 +67,32 @@ jobs:
       # -------------------------------------------------------------------------
       - name: 🔍 Introspect Inputs and Context
         env:
-          head_ref: ${{ github.event.pull_request.head.ref }}
+          EVENT_NAME: ${{ github.event_name }}
+          ACTOR: ${{ github.actor }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number || 'N/A' }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login || 'N/A' }}
+          PR_DRAFT: ${{ github.event.pull_request.draft || 'N/A' }}
+          PR_SHA: ${{ github.event.pull_request.head.sha || 'N/A' }}
+          PR_REF: ${{ github.event.pull_request.head.ref }}
+          DEBUG_MODE: ${{ inputs.debug_mode || 'false' }}
         run: |
           echo "::group::Workflow Context"
-          echo "Event Name: ${{ github.event_name }}"
-          echo "Actor: ${{ github.actor }}"
-          echo "Repository: ${{ github.repository }}"
+          echo "Event Name: $EVENT_NAME"
+          echo "Actor: $ACTOR"
+          echo "Repository: $REPOSITORY"
           echo "::endgroup::"
 
           echo "::group::Pull Request Information"
-          echo "PR Number: ${{ github.event.pull_request.number || inputs.pr_number || 'N/A' }}"
-          echo "PR Author: ${{ github.event.pull_request.user.login || 'N/A' }}"
-          echo "PR Draft Status: ${{ github.event.pull_request.draft || 'N/A' }}"
-          echo "PR Head SHA: ${{ github.event.pull_request.head.sha || 'N/A' }}"
-          echo "PR Head Ref: $head_ref"
+          echo "PR Number: $PR_NUMBER"
+          echo "PR Author: $PR_AUTHOR"
+          echo "PR Draft Status: $PR_DRAFT"
+          echo "PR Head SHA: $PR_SHA"
+          echo "PR Head Ref: $PR_REF"
           echo "::endgroup::"
 
           echo "::group::Debug Settings"
-          echo "Debug Mode: ${{ inputs.debug_mode || 'false' }}"
+          echo "Debug Mode: $DEBUG_MODE"
           echo "::endgroup::"
 
       # -------------------------------------------------------------------------
@@ -92,10 +100,12 @@ jobs:
       # -------------------------------------------------------------------------
       - name: 📝 Mark PR as Ready for Review
         uses: actions/github-script@v8
+        env:
+          PR_NUMBER_INPUT: ${{ inputs.pr_number }}
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           script: |
-            const prNumber = context.payload.pull_request?.number || parseInt('${{ inputs.pr_number }}') || null;
+            const prNumber = context.payload.pull_request?.number || parseInt(process.env.PR_NUMBER_INPUT) || null;
 
             if (!prNumber) {
               core.info('No PR number available, skipping ready for review step');
@@ -145,10 +155,12 @@ jobs:
       # -------------------------------------------------------------------------
       - name: ✅ Approve Pending Workflow Runs
         uses: actions/github-script@v8
+        env:
+          PR_NUMBER_INPUT: ${{ inputs.pr_number }}
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           script: |
-            const prNumber = context.payload.pull_request?.number || parseInt('${{ inputs.pr_number }}') || null;
+            const prNumber = context.payload.pull_request?.number || parseInt(process.env.PR_NUMBER_INPUT) || null;
             const headSha = context.payload.pull_request?.head?.sha || null;
             const headRef = context.payload.pull_request?.head?.ref || null;
 
@@ -211,17 +223,20 @@ jobs:
       - name: 📢 Post Status Comment
         if: always()
         uses: actions/github-script@v8
+        env:
+          PR_NUMBER_INPUT: ${{ inputs.pr_number }}
+          JOB_STATUS: ${{ job.status }}
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           script: |
-            const prNumber = context.payload.pull_request?.number || parseInt('${{ inputs.pr_number }}') || null;
+            const prNumber = context.payload.pull_request?.number || parseInt(process.env.PR_NUMBER_INPUT) || null;
 
             if (!prNumber) {
               core.info('No PR number available, skipping status comment');
               return;
             }
 
-            const jobStatus = '${{ job.status }}';
+            const jobStatus = process.env.JOB_STATUS;
             const statusEmoji = jobStatus === 'success' ? '✅' : jobStatus === 'failure' ? '❌' : '⚠️';
 
             // Only comment on success to avoid noise
