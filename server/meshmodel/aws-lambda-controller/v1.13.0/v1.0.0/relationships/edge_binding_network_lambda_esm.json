@@ -29,7 +29,7 @@
       "allow": {
         "from": [
           {
-            "id": "00000000-0000-0000-0000-000000000000",
+            "id": null,
             "kind": "Function",
             "match": {},
             "match_strategy_matrix": null,
