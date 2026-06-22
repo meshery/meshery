@@ -19,9 +19,9 @@
     },
     "name": "aws-lambda-controller",
     "registrant": {
-      "kind": "github"
+      "kind": ""
     },
-    "version": "v1.13.0"
+    "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
