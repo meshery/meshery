@@ -52,8 +52,7 @@
                   "spec",
                   "networkConfiguration",
                   "awsVPCConfiguration",
-                  "subnetRefs"
-                ]
+                  "subnets"
               ],
               "patchStrategy": "replace"
             }
