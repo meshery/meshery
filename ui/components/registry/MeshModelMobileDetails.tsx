@@ -74,6 +74,7 @@ const MeshModelMobileDetails = ({
       >
         <TitleSpan>{showDetailsData.data?.displayName || showDetailsData.type}</TitleSpan>
         <IconButton
+          aria-label="Close details"
           onClick={() => setShowDetailsData({ type: '', data: {} })}
           size="small"
           sx={{ flexShrink: 0 }}
