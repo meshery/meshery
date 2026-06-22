@@ -13,7 +13,7 @@ type SummaryChannel struct {
 
 func NewSummaryHelper() *SummaryChannel {
 	return &SummaryChannel{
-		channel: make([]chan struct{}, 10),
+		channel: make([]chan struct{}, 0),
 	}
 }
 

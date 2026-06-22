@@ -15,9 +15,9 @@ type ConfigurationChannel struct {
 
 func NewConfigurationHelper() *ConfigurationChannel {
 	return &ConfigurationChannel{
-		ApplicationsChannel: make([]chan struct{}, 10),
-		PatternsChannel:     make([]chan struct{}, 10),
-		FiltersChannel:      make([]chan struct{}, 10),
+		ApplicationsChannel: make([]chan struct{}, 0),
+		PatternsChannel:     make([]chan struct{}, 0),
+		FiltersChannel:      make([]chan struct{}, 0),
 	}
 }
 
