@@ -688,3 +688,342 @@ func TestMatchLabelsPolicyIdentificationIsDeterministic(t *testing.T) {
 		}
 	}
 }
+
+// TestMatchLabelsMultiRefIdentifiesAllPaths covers the multi-ref matchLabels
+// fixture: two Pods that share values under both `metadata.labels` and
+// `metadata.annotations`. Pre-fix only the first ref produced groups.
+func TestMatchLabelsMultiRefIdentifiesAllPaths(t *testing.T) {
+	pod := func(idHex string) *component.ComponentDefinition {
+		c := &component.ComponentDefinition{
+			Component: component.Component{Kind: "Pod"},
+			Configuration: map[string]interface{}{
+				"metadata": map[string]interface{}{
+					"labels":      map[string]interface{}{"app": "meshery"},
+					"annotations": map[string]interface{}{"team": "core"},
+				},
+			},
+		}
+		c.ID, _ = uuid.FromString("00000000-0000-0000-0000-" + idHex)
+		return c
+	}
+	podA, podB := pod("00000000aaa1"), pod("00000000bbb2")
+
+	kind := "Pod"
+	multiRefs := [][]string{
+		{"configuration", "metadata", "labels"},
+		{"configuration", "metadata", "annotations"},
+	}
+	singleRefs := multiRefs[:1]
+	makeRel := func(refs *[][]string) *relationship.RelationshipDefinition {
+		ss := relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{{Kind: &kind, Match: &relationship.MatchSelector{Refs: refs}}},
+				To:   []relationship.SelectorItem{{Kind: &kind, Match: &relationship.MatchSelector{Refs: refs}}},
+			},
+		}
+		return &relationship.RelationshipDefinition{
+			Kind:             relationship.RelationshipDefinitionKind("edge"),
+			RelationshipType: "sibling",
+			Selectors:        &relationship.SelectorSet{ss},
+		}
+	}
+
+	design := makePatternFile([]*component.ComponentDefinition{podA, podB}, nil)
+	p := &MatchLabelsPolicy{}
+
+	singleRel := singleRefs
+	single := p.IdentifyRelationship(makeRel((*[][]string)(&singleRel)), design)
+	multi := p.IdentifyRelationship(makeRel(&multiRefs), design)
+
+	if len(single) == 0 {
+		t.Fatal("expected single-ref to identify at least one relationship")
+	}
+	if len(multi) <= len(single) {
+		t.Fatalf("multi-ref should identify more groups than single-ref: single=%d multi=%d", len(single), len(multi))
+	}
+}
+
+// TestPatchBindingSelectorIDsTypedAllItems verifies that every MatchSelectorItem
+// in match.From / match.To receives the ID, not only [0].
+func TestPatchBindingSelectorIDsTypedAllItems(t *testing.T) {
+	from := []relationship.MatchSelectorItem{{Kind: "FromKind"}, {Kind: "FromKind"}}
+	to := []relationship.MatchSelectorItem{{Kind: "ToKind"}, {Kind: "ToKind"}, {Kind: "ToKind"}}
+	sel := &relationship.SelectorItem{
+		Match: &relationship.MatchSelector{From: &from, To: &to},
+	}
+
+	patchBindingSelectorIDsTyped(sel, "00000000-0000-0000-0000-00000000000a", "00000000-0000-0000-0000-00000000000b")
+
+	for i, m := range *sel.Match.From {
+		if m.ID == nil || m.ID.String() != "00000000-0000-0000-0000-00000000000a" {
+			t.Errorf("match.From[%d] ID not patched: %v", i, m.ID)
+		}
+	}
+	for i, m := range *sel.Match.To {
+		if m.ID == nil || m.ID.String() != "00000000-0000-0000-0000-00000000000b" {
+			t.Errorf("match.To[%d] ID not patched: %v", i, m.ID)
+		}
+	}
+}
+
+// TestExtractMutatorMutatedRefsConcatAcrossItems verifies that refs are pulled
+// from every match item, not only [0]. Covers the multi-ref binding fixture.
+func TestExtractMutatorMutatedRefsConcatAcrossItems(t *testing.T) {
+	idA, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	idB, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	compA := &component.ComponentDefinition{Component: component.Component{Kind: "A"}}
+	compA.ID = idA
+	compB := &component.ComponentDefinition{Component: component.Component{Kind: "B"}}
+	compB.ID = idB
+
+	mr1 := relationship.MutatorRef{{"configuration", "spec", "containers", "0", "image"}}
+	mr2 := relationship.MutatorRef{{"configuration", "spec", "containers", "1", "image"}}
+	md1 := relationship.MutatedRef{{"configuration", "image1"}}
+	md2 := relationship.MutatedRef{{"configuration", "image2"}}
+	match := &relationship.MatchSelector{
+		From: &[]relationship.MatchSelectorItem{{MutatorRef: &mr1}, {MutatorRef: &mr2}},
+		To:   &[]relationship.MatchSelectorItem{{MutatedRef: &md1}, {MutatedRef: &md2}},
+	}
+
+	_, mutatorPaths := extractMutatorFromMatch(match, compA, compB)
+	if len(mutatorPaths) != 2 {
+		t.Fatalf("expected 2 mutator paths from multi-item match.From, got %d", len(mutatorPaths))
+	}
+	_, mutatedPaths := extractMutatedFromMatch(match, compA, compB)
+	if len(mutatedPaths) != 2 {
+		t.Fatalf("expected 2 mutated paths from multi-item match.To, got %d", len(mutatedPaths))
+	}
+}
+
+// TestPatchBindingMatchFieldsMultiItemPair verifies the multi-ref binding
+// fixture: two MatchSelectorItems on each side of match produce side-effect
+// actions per paired item.
+func TestPatchBindingMatchFieldsMultiItemPair(t *testing.T) {
+	mutA, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	mutB, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	tgtA, _ := uuid.FromString("00000000-0000-0000-0000-00000000000a")
+	tgtB, _ := uuid.FromString("00000000-0000-0000-0000-00000000000b")
+
+	mutCompA := &component.ComponentDefinition{
+		Component:     component.Component{Kind: "Mutator"},
+		Configuration: map[string]interface{}{"value": "v1"},
+	}
+	mutCompA.ID = mutA
+	mutCompB := &component.ComponentDefinition{
+		Component:     component.Component{Kind: "Mutator"},
+		Configuration: map[string]interface{}{"value": "v2"},
+	}
+	mutCompB.ID = mutB
+	tgtCompA := &component.ComponentDefinition{
+		Component:     component.Component{Kind: "Target"},
+		Configuration: map[string]interface{}{"slot": "old"},
+	}
+	tgtCompA.ID = tgtA
+	tgtCompB := &component.ComponentDefinition{
+		Component:     component.Component{Kind: "Target"},
+		Configuration: map[string]interface{}{"slot": "old"},
+	}
+	tgtCompB.ID = tgtB
+
+	mr := relationship.MutatorRef{{"configuration", "value"}}
+	md := relationship.MutatedRef{{"configuration", "slot"}}
+	match := &relationship.MatchSelector{
+		From: &[]relationship.MatchSelectorItem{
+			{ID: &mutA, Kind: "Mutator", MutatorRef: &mr},
+			{ID: &mutB, Kind: "Mutator", MutatorRef: &mr},
+		},
+		To: &[]relationship.MatchSelectorItem{
+			{ID: &tgtA, Kind: "Target", MutatedRef: &md},
+			{ID: &tgtB, Kind: "Target", MutatedRef: &md},
+		},
+	}
+	bindingID, _ := uuid.FromString("00000000-0000-0000-0000-0000000000ff")
+	bindingComp := &component.ComponentDefinition{Component: component.Component{Kind: "Binding"}}
+	bindingComp.ID = bindingID
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.RelationshipDefinitionKind("edge"),
+		RelationshipType: "binding",
+		Selectors: &relationship.SelectorSet{
+			relationship.SelectorSetItem{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{{ID: &bindingID, Match: match}},
+				},
+			},
+		},
+	}
+
+	design := makePatternFile([]*component.ComponentDefinition{bindingComp, mutCompA, mutCompB, tgtCompA, tgtCompB}, nil)
+	actions := patchBindingMatchFields(rel, design)
+
+	if len(actions) != 2 {
+		t.Fatalf("expected 2 patch actions for 2-item match pair, got %d", len(actions))
+	}
+	seenTargets := map[string]bool{}
+	for _, a := range actions {
+		seenTargets[a.ID] = true
+	}
+	if !seenTargets[tgtA.String()] || !seenTargets[tgtB.String()] {
+		t.Fatalf("expected actions targeting both Target components, got %#v", seenTargets)
+	}
+}
+
+// TestPatchMutatorsActionMultiSelectorPairs verifies the shared patchMutatorsAction
+// helper (used by binding / edge-network / wallet SideEffects) pairs every From[i]
+// with To[i] instead of dropping selectors past [0].
+func TestPatchMutatorsActionMultiSelectorPairs(t *testing.T) {
+	fromA, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	fromB, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	toA, _ := uuid.FromString("00000000-0000-0000-0000-00000000000a")
+	toB, _ := uuid.FromString("00000000-0000-0000-0000-00000000000b")
+
+	mkFrom := func(id uuid.UUID, name string) *component.ComponentDefinition {
+		c := &component.ComponentDefinition{
+			Component:     component.Component{Kind: "Namespace"},
+			Configuration: map[string]interface{}{"name": name},
+		}
+		c.ID = id
+		return c
+	}
+	mkTo := func(id uuid.UUID, ns string) *component.ComponentDefinition {
+		c := &component.ComponentDefinition{
+			Component:     component.Component{Kind: "Deployment"},
+			Configuration: map[string]interface{}{"namespace": ns},
+		}
+		c.ID = id
+		return c
+	}
+	nsA := mkFrom(fromA, "alpha")
+	nsB := mkFrom(fromB, "beta")
+	depA := mkTo(toA, "stale-a")
+	depB := mkTo(toB, "stale-b")
+
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "name"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "namespace"}}
+	fromSel := func(id uuid.UUID) relationship.SelectorItem {
+		return relationship.SelectorItem{
+			ID: &id,
+			RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+				MutatorRef: &mutatorRef,
+			},
+		}
+	}
+	toSel := func(id uuid.UUID) relationship.SelectorItem {
+		return relationship.SelectorItem{
+			ID: &id,
+			RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+				MutatedRef: &mutatedRef,
+			},
+		}
+	}
+
+	relStatus := relationship.RelationshipDefinitionStatus("approved")
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.RelationshipDefinitionKind("edge"),
+		RelationshipType: "non-binding",
+		Status:           &relStatus,
+		Selectors: &relationship.SelectorSet{
+			relationship.SelectorSetItem{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{fromSel(fromA), fromSel(fromB)},
+					To:   []relationship.SelectorItem{toSel(toA), toSel(toB)},
+				},
+			},
+		},
+	}
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-0000000000ff")
+
+	design := makePatternFile([]*component.ComponentDefinition{nsA, nsB, depA, depB}, nil)
+	actions := patchMutatorsAction(rel, design)
+
+	if len(actions) != 2 {
+		t.Fatalf("expected 2 patch actions for 2-pair selector, got %d", len(actions))
+	}
+	got := map[string]string{}
+	for _, a := range actions {
+		v, _ := a.UpdateValue.(string)
+		got[a.ID] = v
+	}
+	if got[toA.String()] != "alpha" {
+		t.Fatalf("expected to[0] to be patched with from[0] value 'alpha', got %q", got[toA.String()])
+	}
+	if got[toB.String()] != "beta" {
+		t.Fatalf("expected to[1] to be patched with from[1] value 'beta', got %q", got[toB.String()])
+	}
+}
+
+// TestRelationshipsAreSameMultiSelectorDoesNotFalseDedup verifies dedup compares
+// full From/To slices instead of only [0]. Two binding-like relationships that
+// share their first selector but differ at [1] must not collapse into one.
+func TestRelationshipsAreSameMultiSelectorDoesNotFalseDedup(t *testing.T) {
+	idA, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	idB, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	idC, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
+	idD, _ := uuid.FromString("00000000-0000-0000-0000-000000000004")
+
+	mkRel := func(fromIDs, toIDs []uuid.UUID) *relationship.RelationshipDefinition {
+		from := make([]relationship.SelectorItem, len(fromIDs))
+		for i, id := range fromIDs {
+			id := id
+			from[i] = relationship.SelectorItem{ID: &id}
+		}
+		to := make([]relationship.SelectorItem, len(toIDs))
+		for i, id := range toIDs {
+			id := id
+			to[i] = relationship.SelectorItem{ID: &id}
+		}
+		return &relationship.RelationshipDefinition{
+			Kind:             relationship.RelationshipDefinitionKind("edge"),
+			RelationshipType: "binding",
+			Selectors: &relationship.SelectorSet{
+				relationship.SelectorSetItem{
+					Allow: relationship.Selector{From: from, To: to},
+				},
+			},
+		}
+	}
+
+	relAB := mkRel([]uuid.UUID{idA, idB}, []uuid.UUID{idC, idD})
+	relAOnly := mkRel([]uuid.UUID{idA}, []uuid.UUID{idC})
+	relADifferentTail := mkRel([]uuid.UUID{idA, idC}, []uuid.UUID{idB, idD})
+
+	if RelationshipsAreSame(relAB, relAOnly) {
+		t.Error("relationships with different From lengths must not be equal")
+	}
+	if RelationshipsAreSame(relAB, relADifferentTail) {
+		t.Error("relationships sharing only [0] must not be equal")
+	}
+	if !RelationshipsAreSame(relAB, mkRel([]uuid.UUID{idA, idB}, []uuid.UUID{idC, idD})) {
+		t.Error("identical multi-selector relationships should be equal")
+	}
+}
+
+// TestFromAndToComponentsExistRejectsMissingTailComponent verifies validity check
+// considers every From/To item, not only [0]. A multi-element relationship whose
+// trailing From component has been deleted must be reported as invalid.
+func TestFromAndToComponentsExistRejectsMissingTailComponent(t *testing.T) {
+	keptID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	missingID, _ := uuid.FromString("00000000-0000-0000-0000-0000000000de")
+	toID, _ := uuid.FromString("00000000-0000-0000-0000-00000000000a")
+
+	keptComp := &component.ComponentDefinition{Component: component.Component{Kind: "Pod"}}
+	keptComp.ID = keptID
+	toComp := &component.ComponentDefinition{Component: component.Component{Kind: "Service"}}
+	toComp.ID = toID
+
+	design := makePatternFile([]*component.ComponentDefinition{keptComp, toComp}, nil)
+
+	rel := &relationship.RelationshipDefinition{
+		Selectors: &relationship.SelectorSet{
+			relationship.SelectorSetItem{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{{ID: &keptID}, {ID: &missingID}},
+					To:   []relationship.SelectorItem{{ID: &toID}},
+				},
+			},
+		},
+	}
+
+	if fromAndToComponentsExist(rel, design) {
+		t.Error("expected relationship referencing a missing tail component to be invalid")
+	}
+}
