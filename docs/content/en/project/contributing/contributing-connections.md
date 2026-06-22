@@ -127,7 +127,7 @@ Two optional `metadata` keys tune wizard behavior:
 Place the definition as a JSON file in a `connections/` folder inside its Model, alongside that Model's `components/` and `relationships/`:
 
 ```
-server/meshmodel/<model>/<version>/<schemaVersion>/connections/<Name>Connection.json
+server/meshmodel/<model>/<version>/connections/<Name>Connection.json
 ```
 
 For example, the shipped definitions live under [`server/meshmodel/meshery-core/.../connections/`](https://github.com/meshery/meshery/tree/master/server/meshmodel) as `KubernetesConnection.json`, `GrafanaConnection.json`, and `PrometheusConnection.json`. A Model may include any number of connection definitions. Use these existing files as templates.
