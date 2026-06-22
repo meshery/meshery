@@ -32,6 +32,9 @@ vi.mock('@/theme', () => ({
       common: { white: '#fff' },
       divider: 'rgba(0, 0, 0, 0.12)',
     },
+    breakpoints: {
+      down: () => '',
+    },
   }),
 }));
 

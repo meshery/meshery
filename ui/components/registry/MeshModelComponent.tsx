@@ -561,11 +561,7 @@ const MeshModelComponent_ = ({
               setShowDetailsData={setShowDetailsData}
             />
           ) : (
-            <MeshModelDetails
-              view={view}
-              setShowDetailsData={setShowDetailsData}
-              showDetailsData={showDetailsData}
-            />
+            <MeshModelDetails view={view} showDetailsData={showDetailsData} />
           )}
         </TreeWrapper>
       </MainContainer>

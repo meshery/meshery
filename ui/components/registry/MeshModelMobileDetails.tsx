@@ -13,6 +13,8 @@ import MeshModelDetails from './MeshModelDetails';
 const TitleSpan = styled('span')(() => ({
   fontWeight: 600,
   fontSize: '1rem',
+  flex: 1,
+  minWidth: 0,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
@@ -84,11 +86,7 @@ const MeshModelMobileDetails = ({
       </DialogTitle>
       <DialogContent sx={{ padding: '1rem', overflowY: 'auto' }}>
         <ContentDiv>
-          <MeshModelDetails
-            view={view}
-            setShowDetailsData={setShowDetailsData}
-            showDetailsData={showDetailsData}
-          />
+          <MeshModelDetails view={view} showDetailsData={showDetailsData} />
         </ContentDiv>
       </DialogContent>
     </Dialog>
