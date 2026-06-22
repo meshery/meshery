@@ -1,6 +1,6 @@
 {
   "id": "150df316-e63b-45d5-aff3-f8caa33bf7ee",
-  "evaluationQuery": "edge_binding_network_relationship",
+  "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
     "description": "Binds an AWS Lambda function to an Event Source Mapping, registering source event triggers like stream or queue events.",
