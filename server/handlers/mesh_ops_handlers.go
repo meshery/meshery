@@ -351,4 +351,6 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		writeMeshkitError(w, ErrApplyChange(err), http.StatusInternalServerError)
 		return
 	}
+
+	writeJSONOperationResponse(w, operationID.String(), http.StatusOK)
 }
