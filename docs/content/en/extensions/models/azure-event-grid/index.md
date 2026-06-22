@@ -1,7 +1,7 @@
 ---
 title: Azure Event Grid
 subtitle: Collaborative and visual infrastructure as design for Azure Event Grid
-image: /extensions/models/azure-event-grid/icons/color/azure-event-grid-color.svg
+image: extensions/models/azure-event-grid/icons/color/azure-event-grid-color.svg
 aliases: /extensibility/integrations/azure-event-grid
 docURL: https://docs.meshery.io/extensibility/integrations/azure-event-grid
 description: 

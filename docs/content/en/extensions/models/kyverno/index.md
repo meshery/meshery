@@ -1,7 +1,7 @@
 ---
 title: Kyverno
 subtitle: Collaborative and visual infrastructure as design for Kyverno
-image: /extensions/models/kyverno/icons/color/kyverno-color.svg
+image: extensions/models/kyverno/icons/color/kyverno-color.svg
 aliases: /extensibility/integrations/kyverno
 docURL: https://docs.meshery.io/extensibility/integrations/kyverno
 description: 

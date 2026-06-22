@@ -1,7 +1,7 @@
 ---
 title: Jenkins Operator
 subtitle: Collaborative and visual infrastructure as design for Jenkins Operator
-image: /extensions/models/jenkins-operator/icons/color/jenkins-operator-color.svg
+image: extensions/models/jenkins-operator/icons/color/jenkins-operator-color.svg
 aliases: /extensibility/integrations/jenkins-operator
 docURL: https://docs.meshery.io/extensibility/integrations/jenkins-operator
 description: 

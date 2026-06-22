@@ -1,7 +1,7 @@
 ---
 title: Contrail Analytics
 subtitle: Collaborative and visual infrastructure as design for Contrail Analytics
-image: /extensions/models/contrail-analytics/icons/color/contrail-analytics-color.svg
+image: extensions/models/contrail-analytics/icons/color/contrail-analytics-color.svg
 aliases: /extensibility/integrations/contrail-analytics
 docURL: https://docs.meshery.io/extensibility/integrations/contrail-analytics
 description: 

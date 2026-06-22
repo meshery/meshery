@@ -6,6 +6,7 @@ import {
   ErrorSectionContent,
   OrgNameDisabled,
   StyledTypographyDisabled,
+  HeaderContainer,
 } from './styles';
 import { NoSsr } from '@sistent/sistent';
 import OrgIcon from '@/assets/icons/OrgIcon';
@@ -35,6 +36,8 @@ const CurrentSessionInfo = () => {
     // error: providerRolesError,
   } = useGetUserProviderRolesQuery();
 
+  const theme = useTheme();
+
   return (
     <ErrorSectionContent>
       <div>
@@ -47,9 +50,20 @@ const CurrentSessionInfo = () => {
         </StyledBox>
       </div>
       <div>
-        <StyledTypographyDisabled variant="h6" component="h6">
-          Organization Role(s)
-        </StyledTypographyDisabled>
+        <HeaderContainer>
+          <StyledTypographyDisabled variant="h6" component="h6">
+            Organization Role(s)
+          </StyledTypographyDisabled>
+          <CustomTooltip title="Organization Roles define your permissions within the selected organization (e.g., Organization Admin, Workspace Admin, Team Admin, User).">
+            <IconButton size="small" style={{ padding: 4 }} aria-label="Organization roles help">
+              <InfoCircleIcon
+                fill={theme.palette.icon?.secondary || theme.palette.text?.secondary}
+                width="16"
+                height="16"
+              />
+            </IconButton>
+          </CustomTooltip>
+        </HeaderContainer>
         <StyledBox>
           {isUserLoading
             ? 'Loading roles…'
@@ -61,9 +75,20 @@ const CurrentSessionInfo = () => {
         </StyledBox>
       </div>
       <div>
-        <StyledTypographyDisabled variant="h6" component="h6">
-          Provider Role(s)
-        </StyledTypographyDisabled>
+        <HeaderContainer>
+          <StyledTypographyDisabled variant="h6" component="h6">
+            Provider Role(s)
+          </StyledTypographyDisabled>
+          <CustomTooltip title="Provider Roles define your global roles and access rights across Meshery Cloud (e.g., Admin, MeshMap User, Curator).">
+            <IconButton size="small" style={{ padding: 4 }} aria-label="Provider roles help">
+              <InfoCircleIcon
+                fill={theme.palette.icon?.secondary || theme.palette.text?.secondary}
+                width="16"
+                height="16"
+              />
+            </IconButton>
+          </CustomTooltip>
+        </HeaderContainer>
         <StyledBox>
           {providerRolesRes
             ? providerRolesRes?.roleNames?.map?.((role, index) => (

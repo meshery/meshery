@@ -1,7 +1,7 @@
 ---
 title: Camel K
 subtitle: Collaborative and visual infrastructure as design for Camel K
-image: /extensions/models/camel-k/icons/color/camel-k-color.svg
+image: extensions/models/camel-k/icons/color/camel-k-color.svg
 aliases: /extensibility/integrations/camel-k
 docURL: https://docs.meshery.io/extensibility/integrations/camel-k
 description: 

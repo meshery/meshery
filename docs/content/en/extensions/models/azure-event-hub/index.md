@@ -1,7 +1,7 @@
 ---
 title: Azure Event Hub
 subtitle: Collaborative and visual infrastructure as design for Azure Event Hub
-image: /extensions/models/azure-event-hub/icons/color/azure-event-hub-color.svg
+image: extensions/models/azure-event-hub/icons/color/azure-event-hub-color.svg
 aliases: /extensibility/integrations/azure-event-hub
 docURL: https://docs.meshery.io/extensibility/integrations/azure-event-hub
 description: 

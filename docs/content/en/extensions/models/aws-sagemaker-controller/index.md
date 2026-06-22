@@ -1,7 +1,7 @@
 ---
 title: AWS SageMaker
 subtitle: Collaborative and visual infrastructure as design for AWS SageMaker
-image: /extensions/models/aws-sagemaker-controller/icons/color/aws-sagemaker-controller-color.svg
+image: extensions/models/aws-sagemaker-controller/icons/color/aws-sagemaker-controller-color.svg
 aliases: /extensibility/integrations/aws-sagemaker-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-sagemaker-controller
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Dragonfly
 subtitle: Collaborative and visual infrastructure as design for Dragonfly
-image: /extensions/models/dragonfly/icons/color/dragonfly-color.svg
+image: extensions/models/dragonfly/icons/color/dragonfly-color.svg
 aliases: /extensibility/integrations/dragonfly
 docURL: https://docs.meshery.io/extensibility/integrations/dragonfly
 description: 
