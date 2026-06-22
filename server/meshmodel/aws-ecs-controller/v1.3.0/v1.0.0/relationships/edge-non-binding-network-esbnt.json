@@ -78,7 +78,8 @@
               "version": "v1.13.1"
             },
             "patch": {
-              "mutatedRef": [
+              "patchStrategy": "replace",
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
@@ -86,8 +87,7 @@
                   "awsVPCConfiguration",
                   "subnetRefs"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ]

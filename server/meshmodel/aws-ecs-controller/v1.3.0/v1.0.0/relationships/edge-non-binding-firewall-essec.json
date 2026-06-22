@@ -46,14 +46,14 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
+              "patchStrategy": "replace",
+              "mutatedRef": [
                 [
                   "configuration",
                   "status",
                   "id"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ],
@@ -76,7 +76,8 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "patchStrategy": "replace",
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
@@ -84,8 +85,7 @@
                   "awsVPCConfiguration",
                   "securityGroupRefs"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ]
