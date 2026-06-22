@@ -19,9 +19,9 @@
     },
     "name": "aws-apigatewayv2-controller",
     "registrant": {
-      "kind": "github"
+      "kind": ""
     },
-    "version": "v1.3.0"
+    "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
