@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Binds an Amazon Kinesis Data Stream to a Lambda function to trigger serverless processing of streaming records.",
+    "description": "Binds an Amazon Kinesis Data Stream to a Lambda Event Source Mapping to trigger serverless processing of streaming records.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
