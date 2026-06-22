@@ -1,0 +1,83 @@
+{
+  "id": "462d2fca-c2ce-41f8-b6b7-ffa045f8f2de",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "Defines a logical network data-path reference from a Lambda function to an Amazon S3 bucket for reading or writing object assets.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.13.0"
+    },
+    "name": "aws-lambda-controller",
+    "registrant": {
+      "kind": ""
+    },
+    "version": ""
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Function",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": "v1.13.0"
+              },
+              "name": "aws-lambda-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": "v1.13.0"
+            },
+            "patch": null
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Bucket",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": "v1.6.0"
+              },
+              "name": "aws-s3-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": "v1.6.0"
+            },
+            "patch": null
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "network",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}
