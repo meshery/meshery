@@ -1533,11 +1533,15 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(models.ErrDataRead(err, "Request Body"))
+		writeMeshkitError(rw, models.ErrDataRead(err, "Request Body"), http.StatusInternalServerError)
+		return
 	}
 	var patterns models.MesheryPatternDeleteRequestBody
 	err = json.Unmarshal([]byte(body), &patterns)
 	if err != nil {
-		h.log.Error(models.ErrMarshal(err, "pattern"))
+		h.log.Error(models.ErrUnmarshal(err, "pattern"))
+		writeMeshkitError(rw, models.ErrUnmarshal(err, "pattern"), http.StatusBadRequest)
+		return
 	}
 
 	h.log.Debug("patterns to be deleted: ", patterns)
