@@ -58,6 +58,8 @@ function createAllureResult({
       { name: "framework", value: "bats" },
       { name: "language", value: "bash" },
       { name: "project" , value: "mesheryctl" },
+      { name: "env", value: "ci" },
+      { name: "type", value: "e2e" },
       ...extraLabels
     ]
   };

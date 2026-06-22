@@ -147,24 +147,24 @@ jobs:
 
       - name: Checkout QA
         uses: actions/checkout@v6
-        if: ${{ !cancelled() && github.event_name == 'push' }}
+        if: ${{ !cancelled() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
         with:
           repository: meshery/qa
           path: ./qa
           token: ${{ secrets.GH_ACCESS_TOKEN }}
 
       - name: Sync results with qa
-        if: ${{ !cancelled() && github.event_name == 'push' }}
+        if: ${{ !cancelled() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
         working-directory: qa
-        run: make mesheryctl-results-sync MESHERYCTL_RESULTS_PATH=../mesheryctl-allure-results
+        run: make mesheryctl-results-sync MESHERYCTL_RESULTS_PATH=../mesheryctl-allure-results/unit-test
 
       - name: Pull latest qa changes
-        if: ${{ !cancelled() && github.event_name == 'push' }}
+        if: ${{ !cancelled() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
         working-directory: qa
         run: git pull --rebase --autostash origin master
 
       - name: Commit & push to qa
-        if: ${{ !cancelled() && github.event_name == 'push' }}
+        if: ${{ !cancelled() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "[Mesheryctl] Sync Go Unit Test Results - ${GITHUB_SHA}"

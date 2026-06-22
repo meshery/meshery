@@ -11,32 +11,33 @@ setup() {
     export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures/model-import"
 }
 
-@test "given no model-id provided as an argument when running mesheryctl model delete then an error message is displayed" {
+@test "given no model-id provided when running mesheryctl model delete then an error message is displayed" {
     run $MESHERYCTL_BIN model delete
     assert_failure
-    assert_output --partial "[ model-id ] is required"
+    assert_output --partial "[ model-id | model-name ] is required"
     assert_output --partial "Error"
+    
 }
 
-@test "given an invalid model-id is provided as an argument when running mesheryctl model delete invalid-id then an error message is displayed" {
-    INVALID_ID="0000"
+@test "given a non existing model name when running mesheryctl model delete then an error message is displayed" {
+    NONEXISTENT_NAME="nonexistent-model-name"
 
-    run $MESHERYCTL_BIN model delete "$INVALID_ID"
+    run $MESHERYCTL_BIN model delete "$NONEXISTENT_NAME"
     assert_failure
-    assert_output --partial "Invalid ID format"
+    assert_output --partial "Failed to delete model with name or ID '$NONEXISTENT_NAME'"
     assert_output --partial "Error"
 }
 
-@test "given a non existing model-id is provided as an argument when running mesheryctl model delete non-existing-id then an error message is displayed" {
+@test "given a non existing model-id when running mesheryctl model delete then an error message is displayed" {
     NONEXISTENT_ID="00000000-0000-0000-0000-000000000000"
 
     run $MESHERYCTL_BIN model delete "$NONEXISTENT_ID"
     assert_failure
-    assert_output --partial "Failed to delete model"
+    assert_output --partial "Failed to delete model with name or ID '$NONEXISTENT_ID'"
     assert_output --partial "Error"
 }
 
-@test "given a valid model-id is provided as an argument when running mesheryctl model delete then the model is deleted successfully" {
+@test "given a valid model-id when running mesheryctl model delete then the model is deleted successfully" {
     run $MESHERYCTL_BIN model import -f "$FIXTURES_DIR/valid-model"
     assert_success
 

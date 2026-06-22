@@ -19,7 +19,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -37,7 +36,7 @@ mesheryctl model delete [model-name]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			return utils.ErrInvalidArgument(errors.New(errDeleteInvalidArg))
+			return utils.ErrInvalidArgument(fmt.Errorf("%s", errDeleteInvalidArg))
 		}
 		return nil
 	},
@@ -48,7 +47,7 @@ mesheryctl model delete [model-name]
 		if utils.IsUUID(modelArg) {
 			_, err := api.Delete(fmt.Sprintf("%s/%s", modelsApiPath, modelArg))
 			if err != nil {
-				return ErrDeleteModel(err, modelArg)
+				return ErrDeleteModel(modelArg)
 			}
 			utils.Log.Infof("Model with ID %s has been deleted", modelArg)
 			return nil
@@ -61,14 +60,13 @@ mesheryctl model delete [model-name]
 		}
 
 		if selectedModel == nil {
-			utils.Log.Infof("No model(s) found with the name: %s", modelArg)
-			return nil
+			return ErrDeleteModel(modelArg)
 		}
 
 		// Delete the selected model by its UUID
 		_, err = api.Delete(fmt.Sprintf("%s/%s", modelsApiPath, selectedModel.ID.String()))
 		if err != nil {
-			return ErrDeleteModel(err, modelArg)
+			return ErrDeleteModel(modelArg)
 		}
 		utils.Log.Infof("Model '%s' (ID: %s) has been deleted", selectedModel.DisplayName, selectedModel.ID.String())
 

@@ -19,6 +19,7 @@ func TestDeleteModel(t *testing.T) {
 	currDir := filepath.Dir(filename)
 
 	modelId := "d56fb25b-f92c-4cd6-821b-2cfd6bb87259"
+	nonExistentModelName := "nonexistent-model"
 
 	tests := []utils.MesheryCommandTest{
 		{
@@ -45,14 +46,15 @@ func TestDeleteModel(t *testing.T) {
 		},
 		{
 			Name:             "given a non-existent model name when running model delete then ErrModelNotFound is returned",
-			Args:             []string{"delete", "nonexistent-model"},
+			Args:             []string{"delete", nonExistentModelName},
 			HttpMethod:       "GET",
 			HttpStatusCode:   404,
-			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=nonexistent-model", modelsApiPath),
+			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=%s", modelsApiPath, nonExistentModelName),
 			Fixture:          "delete.model.empty.response.golden",
-			ExpectedResponse: "delete.model.empty.output.golden",
-			ExpectError:      false,
-			IsOutputGolden:   true,
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    ErrDeleteModel(nonExistentModelName),
 		},
 	}
 
