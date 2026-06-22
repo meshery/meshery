@@ -46,11 +46,13 @@
               "version": "v1.3.0"
             },
             "patch": {
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
-                  "status",
-                  "id"
+                  "spec",
+                  "networkConfiguration",
+                  "awsVPCConfiguration",
+                  "subnetRefs"
                 ]
               ],
               "patchStrategy": "replace"
