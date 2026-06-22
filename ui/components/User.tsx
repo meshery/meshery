@@ -80,27 +80,24 @@ const User = (props) => {
     />
   );
 
-  const profileLinkProps = profileUrl
-    ? {
-        component: Link as any,
-        href: profileUrl,
-        target: '_blank',
-        rel: 'noopener noreferrer',
-        'aria-label': 'Open user profile',
-      }
-    : {
-        disabled: true,
-      };
-
   return (
     <div>
       <NoSsr>
         <div data-testid="profile-button">
-          {
-            <IconButtonAvatar color={color} {...profileLinkProps}>
-              {avatar}
-            </IconButtonAvatar>
-          }
+          {profileUrl ? (
+            <a
+              href={profileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open user profile"
+            >
+              <IconButtonAvatar tabIndex={-1} aria-hidden="true">
+                {avatar}
+              </IconButtonAvatar>
+            </a>
+          ) : (
+            <IconButtonAvatar disabled>{avatar}</IconButtonAvatar>
+          )}
         </div>
       </NoSsr>
     </div>

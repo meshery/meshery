@@ -68,44 +68,16 @@ vi.mock('@sistent/sistent', () => ({
 }));
 
 vi.mock('./layout/Header/Header.styles', () => ({
-  IconButtonAvatar: ({
-    children,
-    onClick,
-    color,
-    'aria-haspopup': hasPopup,
-    'aria-label': ariaLabel,
-    component: Component,
-    href,
-    target,
-    rel,
-  }: any) => {
-    if (Component) {
-      return (
-        <a
-          data-testid="icon-button-avatar"
-          href={href}
-          target={target}
-          rel={rel}
-          aria-label={ariaLabel}
-          data-color={color}
-          data-has-popup={hasPopup}
-        >
-          {children}
-        </a>
-      );
-    }
-    return (
-      <button
-        data-testid="icon-button-avatar"
-        data-color={color}
-        data-has-popup={hasPopup}
-        aria-label={ariaLabel}
-        onClick={onClick}
-      >
-        {children}
-      </button>
-    );
-  },
+  IconButtonAvatar: ({ children, tabIndex, 'aria-hidden': ariaHidden, disabled }: any) => (
+    <button
+      data-testid="icon-button-avatar"
+      tabIndex={tabIndex}
+      aria-hidden={ariaHidden}
+      disabled={disabled}
+    >
+      {children}
+    </button>
+  ),
 }));
 
 import UserProvider from './User';
@@ -258,6 +230,12 @@ describe('User component', () => {
     expect(profileLink).toHaveAttribute('href', 'https://cloud.test/profile');
     expect(profileLink).toHaveAttribute('target', '_blank');
     expect(profileLink).toHaveAttribute('rel', 'noopener noreferrer');
+
+    const handleClick = vi.fn();
+    profileLink.addEventListener('click', handleClick);
+    await userEvent.click(profileLink);
+    expect(handleClick).toHaveBeenCalledTimes(1);
+
     expect(profileLink.querySelector('[data-testid="avatar"]')).toBeInTheDocument();
   });
 
