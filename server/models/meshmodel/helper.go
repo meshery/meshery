@@ -2,8 +2,6 @@ package meshmodel
 
 import (
 	"sync"
-
-	"github.com/meshery/meshery/server/helpers/utils"
 )
 
 type SummaryChannel struct {
@@ -24,9 +22,15 @@ func (c *SummaryChannel) Subscribe(ch chan struct{}) {
 }
 
 func (c *SummaryChannel) Publish() {
-	for _, ch := range c.channel {
-		if !utils.IsClosed(ch) {
-			ch <- struct{}{}
+	c.mx.Lock()
+	subscribers := make([]chan struct{}, len(c.channel))
+	copy(subscribers, c.channel)
+	c.mx.Unlock()
+
+	for _, ch := range subscribers {
+		select {
+		case ch <- struct{}{}:
+		default:
 		}
 	}
 }

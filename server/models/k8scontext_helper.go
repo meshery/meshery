@@ -2,8 +2,6 @@ package models
 
 import (
 	"sync"
-
-	"github.com/meshery/meshery/server/helpers/utils"
 )
 
 type K8scontextChan struct {
@@ -43,11 +41,9 @@ func (k *K8scontextChan) PublishContext() {
 	k.mx.Unlock()
 
 	for _, ch := range subscribers {
-		if !utils.IsClosed(ch) {
-			select {
-			case ch <- struct{}{}:
-			default:
-			}
+		select {
+		case ch <- struct{}{}:
+		default:
 		}
 	}
 }
