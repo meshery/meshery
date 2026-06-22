@@ -9,7 +9,7 @@ weight: -5
 description: Use the Connection Wizard to create and update Connections - Kubernetes clusters, Grafana, Prometheus, and more - in your Meshery deployment.
 ---
 
-A [Connection]({{< ref "concepts/logical/connections/index.md" >}}) is how Meshery tracks and manages a resource - a Kubernetes cluster, a Grafana instance, a Prometheus server, and [many more]({{< ref "reference/extensibility/api.md" >}}). The **Connection Wizard** is the guided, in-UI way to register a new Connection or reconfigure an existing one, without hand-editing YAML or memorizing API payloads.
+A [Connection]({{< ref "concepts/logical/connections/index.md" >}}) is how Meshery tracks and manages a resource - a Kubernetes cluster, a Grafana instance, a Prometheus server, and [many more]({{< ref "extensions/models/_index.md" >}}). The **Connection Wizard** is the guided, in-UI way to register a new Connection or reconfigure an existing one, without hand-editing YAML or memorizing API payloads.
 
 This guide covers creating and updating Connections with the wizard. For what a Connection _is_, the states it moves through, and how it is managed over time, see the canonical references:
 
