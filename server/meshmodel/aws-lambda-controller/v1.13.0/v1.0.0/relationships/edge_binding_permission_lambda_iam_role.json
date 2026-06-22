@@ -1,0 +1,102 @@
+{
+  "id": "6b3d31a8-b953-43d6-b04e-3f5b20264f4d",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "Grants an AWS Lambda function execution permissions by binding it to an IAM Role containing necessary execution policies.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.13.0"
+    },
+    "name": "aws-lambda-controller",
+    "registrant": {
+      "kind": "github"
+    },
+    "version": "v1.13.0"
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "kind": "Function",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-lambda-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": "v1.13.0"
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "role"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "kind": "Role",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-iam-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "permission",
+  "status": "enabled",
+  "type": "binding",
+  "version": "v1.0.0"
+}
