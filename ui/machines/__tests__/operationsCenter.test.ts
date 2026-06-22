@@ -7,7 +7,7 @@ import { createActor } from 'xstate';
 // NotificationCenter constants so we can drive events and assert side
 // effects.
 
-type EventCallback = (result: { event?: unknown }) => void;
+type EventCallback = (result: { event?: unknown; events?: unknown[] }) => void;
 type ErrorCallback = (err: unknown) => void;
 
 const hoisted = vi.hoisted(() => ({
@@ -18,10 +18,12 @@ const hoisted = vi.hoisted(() => ({
   },
   dispatch: vi.fn(),
   pushEvent: vi.fn((p: unknown) => ({ type: 'events/pushEvent', payload: p })),
+  pushEvents: vi.fn((p: unknown) => ({ type: 'events/pushEvents', payload: p })),
 }));
 const subscriptionState = hoisted.subscriptionState;
 const dispatch = hoisted.dispatch;
 const pushEvent = hoisted.pushEvent;
+const pushEvents = hoisted.pushEvents;
 
 vi.mock('@/graphql/subscriptions/EventsSubscription', () => ({
   default: (next: EventCallback, error: ErrorCallback) => {
@@ -37,6 +39,7 @@ vi.mock('../../store', () => ({
 
 vi.mock('@/store/slices/events', () => ({
   pushEvent: (p: unknown) => hoisted.pushEvent(p),
+  pushEvents: (p: unknown) => hoisted.pushEvents(p),
 }));
 
 vi.mock('../../rtk-query', () => ({
@@ -68,6 +71,7 @@ describe('operationsCenter machine', () => {
   beforeEach(() => {
     dispatch.mockClear();
     pushEvent.mockClear();
+    pushEvents.mockClear();
     subscriptionState.dispose.mockClear();
     subscriptionState.onEvent = undefined;
     subscriptionState.onError = undefined;
@@ -79,6 +83,43 @@ describe('operationsCenter machine', () => {
     expect(snap.value).toBe('idle');
     expect(subscriptionState.onEvent).toBeTypeOf('function');
     expect(subscriptionState.onError).toBeTypeOf('function');
+    actor.stop();
+  });
+
+  it('stores received event batches in redux and sends one batch notifier', () => {
+    const { actor, notify } = startActor();
+
+    const eventBatch = [
+      {
+        id: 'evt-1',
+        description: 'A thing happened',
+        severity: 'informational',
+        createdAt: '2025-01-01T00:00:00Z',
+      },
+      {
+        id: 'evt-2',
+        description: 'A bad thing happened',
+        severity: 'error',
+        createdAt: '2025-01-01T00:00:01Z',
+      },
+    ];
+
+    actor.send({
+      type: OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+      data: { event: eventBatch },
+    });
+
+    expect(pushEvent).not.toHaveBeenCalled();
+    expect(pushEvents).toHaveBeenCalledWith(eventBatch);
+    expect(dispatch).toHaveBeenCalledWith({ type: 'events/pushEvents', payload: eventBatch });
+    expect(notify).toHaveBeenCalledTimes(1);
+    expect(notify).toHaveBeenCalledWith({
+      message: '2 events received',
+      event_type: 'error',
+      id: 'evt-2',
+      showInNotificationCenter: true,
+    });
+
     actor.stop();
   });
 
@@ -145,6 +186,27 @@ describe('operationsCenter machine', () => {
     const event = { id: 'live', description: 'streamed', severity: 'warning' };
     subscriptionState.onEvent?.({ event });
     expect(pushEvent).toHaveBeenCalledWith(event);
+    actor.stop();
+  });
+
+  it('forwards subscription event batches into the machine via the next callback', () => {
+    const { actor } = startActor();
+    const seen: unknown[] = [];
+    actor.on('*', (event) => {
+      seen.push(event);
+    });
+    const eventBatch = [
+      { id: 'live-1', description: 'streamed one', severity: 'warning' },
+      { id: 'live-2', description: 'streamed two', severity: 'informational' },
+    ];
+    subscriptionState.onEvent?.({ events: eventBatch });
+    expect(pushEvents).toHaveBeenCalledWith(eventBatch);
+    expect(pushEvent).not.toHaveBeenCalled();
+    const emitted = seen.find(
+      (e: { type?: string }) => e?.type === OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+    ) as { data?: { event?: unknown } } | undefined;
+    expect(emitted?.data?.event).toEqual(eventBatch);
+    expect(Array.isArray(emitted?.data?.event)).toBe(true);
     actor.stop();
   });
 

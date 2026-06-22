@@ -18,7 +18,7 @@ vi.mock('@/graphql/subscriptions/EventsSubscription', () => ({
   default: () => ({ dispose: vi.fn() }),
 }));
 vi.mock('../../store', () => ({ store: { dispatch: vi.fn() } }));
-vi.mock('@/store/slices/events', () => ({ pushEvent: vi.fn() }));
+vi.mock('@/store/slices/events', () => ({ pushEvent: vi.fn(), pushEvents: vi.fn() }));
 vi.mock('../../rtk-query', () => ({ api: { util: { invalidateTags: vi.fn() } } }));
 vi.mock('@/rtk-query/notificationCenter', () => ({ PROVIDER_TAGS: { EVENT: 'Event' } }));
 vi.mock('@/components/layout/NotificationCenter/constants', () => ({

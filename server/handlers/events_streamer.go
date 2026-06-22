@@ -39,6 +39,21 @@ func defaultSubscribeToEventStream(eb *_events.EventStreamer, ch chan interface{
 // traffic; the timeout keeps the handler from waiting on an idle publisher.
 const eventStreamDrainTimeout = 100 * time.Millisecond
 
+const (
+	// Adapter streams can emit very high-volume bursts during MeshSync. Sending
+	// each event individually means a 1,000-event burst becomes 1,000 SSE writes
+	// and 1,000 downstream UI update opportunities. Batching 50 at a time turns
+	// the same burst into about 20 SSE writes, while the 250ms window caps the
+	// added latency for smaller trickles at a quarter second.
+	adapterEventStreamBatchSize   = 50
+	adapterEventStreamBatchWindow = 250 * time.Millisecond
+)
+
+type adapterEventStreamResult struct {
+	event *meshes.EventsResponse
+	err   error
+}
+
 type eventStatusPayload struct {
 	Status    string       `json:"status"`
 	StatusIDs []*core.Uuid `json:"ids"`
@@ -464,6 +479,122 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 		}
 	}
 }
+
+func receiveAdapterEvents(ctx context.Context, streamClient meshes.MeshService_StreamEventsClient) <-chan adapterEventStreamResult {
+	eventResults := make(chan adapterEventStreamResult)
+	go func() {
+		defer close(eventResults)
+		for {
+			event, err := streamClient.Recv()
+			select {
+			case eventResults <- adapterEventStreamResult{event: event, err: err}:
+			case <-ctx.Done():
+				return
+			}
+			if err != nil {
+				return
+			}
+		}
+	}()
+
+	return eventResults
+}
+
+func forwardAdapterEventBatches(ctx context.Context, eventResults <-chan adapterEventStreamResult, respChan chan<- []byte, log logger.Handler, batchSize int, batchWindow time.Duration, onEvent func(*meshes.EventsResponse)) {
+	if batchSize <= 0 {
+		batchSize = adapterEventStreamBatchSize
+	}
+	if batchWindow <= 0 {
+		batchWindow = adapterEventStreamBatchWindow
+	}
+
+	batch := make([]*meshes.EventsResponse, 0, batchSize)
+	var batchTimer *time.Timer
+	var batchTimerC <-chan time.Time
+
+	stopBatchTimer := func() {
+		if batchTimer == nil {
+			return
+		}
+		if !batchTimer.Stop() {
+			select {
+			case <-batchTimer.C:
+			default:
+			}
+		}
+		batchTimer = nil
+		batchTimerC = nil
+	}
+	defer stopBatchTimer()
+
+	startBatchTimer := func() {
+		if batchTimer != nil {
+			return
+		}
+		batchTimer = time.NewTimer(batchWindow)
+		batchTimerC = batchTimer.C
+	}
+
+	flushBatch := func() bool {
+		if len(batch) == 0 {
+			stopBatchTimer()
+			return true
+		}
+
+		data, err := json.Marshal(batch)
+		if err != nil {
+			log.Error(models.ErrMarshal(err, "adapter event batch"))
+			return false
+		}
+
+		if !sendStreamEvent(ctx, respChan, data) {
+			return false
+		}
+
+		batch = batch[:0]
+		stopBatchTimer()
+		return true
+	}
+
+	for {
+		select {
+		case result, ok := <-eventResults:
+			if !ok {
+				flushBatch()
+				return
+			}
+			if result.err != nil {
+				log.Error(ErrStreamClient(result.err))
+				flushBatch()
+				return
+			}
+			if result.event == nil {
+				continue
+			}
+
+			if onEvent != nil {
+				onEvent(result.event)
+			}
+
+			batch = append(batch, result.event)
+			if len(batch) == 1 {
+				startBatchTimer()
+			}
+			if len(batch) >= batchSize && !flushBatch() {
+				return
+			}
+		case <-batchTimerC:
+			batchTimer = nil
+			batchTimerC = nil
+			if !flushBatch() {
+				return
+			}
+		case <-ctx.Done():
+			return
+		}
+	}
+}
+
 func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID core.Uuid, userID string) {
 	log.Debug("Received a stream client...")
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
@@ -476,17 +607,9 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		return
 	}
 
-	for {
+	eventResults := receiveAdapterEvents(ctx, streamClient)
+	forwardAdapterEventBatches(ctx, eventResults, respChan, log, adapterEventStreamBatchSize, adapterEventStreamBatchWindow, func(event *meshes.EventsResponse) {
 		log.Debug("Waiting to receive events.")
-		event, err := streamClient.Recv()
-		if err != nil {
-			if err == io.EOF {
-				log.Error(ErrStreamClient(err))
-				return
-			}
-			log.Error(ErrStreamClient(err))
-			return
-		}
 		// log.Debugf("received an event: %+#v", event)
 		log.Debug("Received an event.")
 		eventType := event.EventType.String()
@@ -506,16 +629,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		_event := eventBuilder.Build()
 		_ = p.PersistEvent(*_event, token)
 		ec.Publish(userUUID, _event)
-
-		data, err := json.Marshal(event)
-		if err != nil {
-			log.Error(models.ErrMarshal(err, "event"))
-			return
-		}
-		if !sendStreamEvent(ctx, respChan, data) {
-			return
-		}
-	}
+	})
 }
 
 func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapters map[string]*meshes.MeshClient) map[string]*meshes.MeshClient {

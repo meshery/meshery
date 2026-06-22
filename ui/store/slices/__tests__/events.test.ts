@@ -1,6 +1,18 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+vi.mock('../../../components/layout/NotificationCenter/constants', () => ({
+  SEVERITY: {
+    INFO: 'informational',
+  },
+  STATUS: {
+    READ: 'read',
+    UNREAD: 'unread',
+  },
+}));
+
 import eventsReducer, {
   pushEvent,
+  pushEvents,
   setEvents,
   toggleNotificationCenter,
   closeNotificationCenter,
@@ -36,6 +48,24 @@ describe('events slice', () => {
     const state = eventsReducer(initial, pushEvent(event));
     expect(state.entities['evt-1'].severity).toBe('warning');
     expect(state.entities['evt-1'].status).toBe('read');
+  });
+
+  it('pushEvents adds a batch and trims severity and status', () => {
+    const initial = eventsReducer(undefined, { type: 'unknown' });
+    const state = eventsReducer(
+      initial,
+      pushEvents([
+        makeEvent({ id: 'evt-1', severity: '  warning  ', status: '  read  ' }),
+        makeEvent({ id: 'evt-2', severity: '', status: '' }),
+      ]),
+    );
+
+    expect(state.ids).toContain('evt-1');
+    expect(state.ids).toContain('evt-2');
+    expect(state.entities['evt-1'].severity).toBe('warning');
+    expect(state.entities['evt-1'].status).toBe('read');
+    expect(state.entities['evt-2'].severity).toBe('informational');
+    expect(state.entities['evt-2'].status).toBe('unread');
   });
 
   it('setEvents replaces all events', () => {

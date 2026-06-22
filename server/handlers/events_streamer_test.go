@@ -3,6 +3,8 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"errors"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -92,6 +94,17 @@ func waitForPayload(t *testing.T, ch <-chan []byte, name string) []byte {
 	panic("unreachable")
 }
 
+func decodeAdapterEventBatch(t *testing.T, payload []byte) []meshes.EventsResponse {
+	t.Helper()
+
+	var events []meshes.EventsResponse
+	if err := json.Unmarshal(payload, &events); err != nil {
+		t.Fatalf("failed to unmarshal adapter event batch %s: %v", payload, err)
+	}
+
+	return events
+}
+
 func assertNoPayload(t *testing.T, ch <-chan []byte, name string) {
 	t.Helper()
 
@@ -160,6 +173,134 @@ func TestSendStreamEvent(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestForwardAdapterEventBatches_FlushesAtBatchSize(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	log := newTestLogger(t)
+	eventResults := make(chan adapterEventStreamResult)
+	respChan := make(chan []byte, 1)
+	done := make(chan struct{})
+	var processed atomic.Int32
+
+	go func() {
+		forwardAdapterEventBatches(ctx, eventResults, respChan, log, 3, time.Hour, func(event *meshes.EventsResponse) {
+			processed.Add(1)
+		})
+		close(done)
+	}()
+
+	eventResults <- adapterEventStreamResult{event: &meshes.EventsResponse{Summary: "event-1"}}
+	eventResults <- adapterEventStreamResult{event: &meshes.EventsResponse{Summary: "event-2"}}
+	eventResults <- adapterEventStreamResult{event: &meshes.EventsResponse{Summary: "event-3"}}
+
+	payload := waitForPayload(t, respChan, "batch-size flush")
+	events := decodeAdapterEventBatch(t, payload)
+	if len(events) != 3 {
+		t.Fatalf("expected 3 events in batch, got %d", len(events))
+	}
+	for i := range events {
+		expected := "event-" + string(rune('1'+i))
+		if events[i].Summary != expected {
+			t.Fatalf("expected event %d summary %q, got %q", i, expected, events[i].Summary)
+		}
+	}
+	if processed.Load() != 3 {
+		t.Fatalf("expected callback to process 3 events, got %d", processed.Load())
+	}
+
+	cancel()
+	waitForSignal(t, done, "batch-size forwarder shutdown")
+}
+
+func TestForwardAdapterEventBatches_FlushesAfterWindow(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	log := newTestLogger(t)
+	eventResults := make(chan adapterEventStreamResult)
+	respChan := make(chan []byte, 1)
+	done := make(chan struct{})
+
+	go func() {
+		forwardAdapterEventBatches(ctx, eventResults, respChan, log, 50, 20*time.Millisecond, nil)
+		close(done)
+	}()
+
+	eventResults <- adapterEventStreamResult{event: &meshes.EventsResponse{Summary: "windowed-event"}}
+
+	payload := waitForPayload(t, respChan, "batch-window flush")
+	events := decodeAdapterEventBatch(t, payload)
+	if len(events) != 1 {
+		t.Fatalf("expected 1 event in timed batch, got %d", len(events))
+	}
+	if events[0].Summary != "windowed-event" {
+		t.Fatalf("expected timed event summary, got %q", events[0].Summary)
+	}
+
+	cancel()
+	waitForSignal(t, done, "batch-window forwarder shutdown")
+}
+
+func TestForwardAdapterEventBatches_FlushesOnStreamClose(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	log := newTestLogger(t)
+	eventResults := make(chan adapterEventStreamResult)
+	respChan := make(chan []byte, 1)
+	done := make(chan struct{})
+
+	go func() {
+		forwardAdapterEventBatches(ctx, eventResults, respChan, log, 50, time.Hour, nil)
+		close(done)
+	}()
+
+	eventResults <- adapterEventStreamResult{event: &meshes.EventsResponse{Summary: "stream-close-1"}}
+	eventResults <- adapterEventStreamResult{event: &meshes.EventsResponse{Summary: "stream-close-2"}}
+	close(eventResults)
+
+	payload := waitForPayload(t, respChan, "stream-close flush")
+	events := decodeAdapterEventBatch(t, payload)
+	if len(events) != 2 {
+		t.Fatalf("expected 2 events in close batch, got %d", len(events))
+	}
+	if events[0].Summary != "stream-close-1" || events[1].Summary != "stream-close-2" {
+		t.Fatalf("unexpected stream-close event order: %#v", events)
+	}
+
+	waitForSignal(t, done, "stream-close forwarder shutdown")
+}
+
+func TestForwardAdapterEventBatches_FlushesPendingBatchOnStreamError(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	log := newTestLogger(t)
+	eventResults := make(chan adapterEventStreamResult)
+	respChan := make(chan []byte, 1)
+	done := make(chan struct{})
+
+	go func() {
+		forwardAdapterEventBatches(ctx, eventResults, respChan, log, 50, time.Hour, nil)
+		close(done)
+	}()
+
+	eventResults <- adapterEventStreamResult{event: &meshes.EventsResponse{Summary: "pending-before-error"}}
+	eventResults <- adapterEventStreamResult{err: errors.New("adapter stream failed")}
+
+	payload := waitForPayload(t, respChan, "stream-error flush")
+	events := decodeAdapterEventBatch(t, payload)
+	if len(events) != 1 {
+		t.Fatalf("expected 1 event in error batch, got %d", len(events))
+	}
+	if events[0].Summary != "pending-before-error" {
+		t.Fatalf("expected pending event summary, got %q", events[0].Summary)
+	}
+
+	waitForSignal(t, done, "stream-error forwarder shutdown")
 }
 
 func TestWriteEventStream_StopsOnContextCancellation(t *testing.T) {
