@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -90,7 +90,7 @@ func (h *Handler) GetConnectionDefinitions(rw http.ResponseWriter, r *http.Reque
 func (h *Handler) GetConnectionDefinitionByID(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	connectionDefinitionID := mux.Vars(r)["connectionDefinitionId"]
-	if _, err := uuid.Parse(connectionDefinitionID); err != nil {
+	if _, err := uuid.FromString(connectionDefinitionID); err != nil {
 		h.log.Error(ErrInvalidUUID(err))
 		writeMeshkitError(rw, ErrInvalidUUID(err), http.StatusBadRequest)
 		return
@@ -164,7 +164,7 @@ func (h *Handler) RegisterConnectionDefinition(rw http.ResponseWriter, r *http.R
 func (h *Handler) UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
 	obj := "connection definition"
 	connectionDefinitionID := mux.Vars(r)["connectionDefinitionId"]
-	id, err := uuid.Parse(connectionDefinitionID)
+	id, err := uuid.FromString(connectionDefinitionID)
 	if err != nil {
 		h.log.Error(ErrInvalidUUID(err))
 		writeMeshkitError(rw, ErrInvalidUUID(err), http.StatusBadRequest)
@@ -203,7 +203,7 @@ func (h *Handler) UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Req
 //	204:
 func (h *Handler) DeleteConnectionDefinition(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
 	connectionDefinitionID := mux.Vars(r)["connectionDefinitionId"]
-	id, err := uuid.Parse(connectionDefinitionID)
+	id, err := uuid.FromString(connectionDefinitionID)
 	if err != nil {
 		h.log.Error(ErrInvalidUUID(err))
 		writeMeshkitError(rw, ErrInvalidUUID(err), http.StatusBadRequest)

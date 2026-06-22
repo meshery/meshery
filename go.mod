@@ -10,10 +10,6 @@ replace github.com/compose-spec/compose-go/v2 => github.com/compose-spec/compose
 
 // replace github.com/service-mesh-performance/service-mesh-performance => ../service-mesh-performance
 
-// replace github.com/meshery/schemas => ../schemas
-
-// replace github.com/meshery/meshkit => ../meshkit
-
 // replace github.com/meshery/meshsync v0.8.26 => ../meshsync
 
 require (
@@ -34,9 +30,9 @@ require (
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-openapi/strfmt v0.25.0
 	github.com/go-playground/validator/v10 v10.30.1
+	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/go-cmp v0.7.0
-	github.com/google/uuid v1.6.0
 	github.com/gorilla/mux v1.8.1
 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
 	github.com/gosimple/slug v1.15.0
@@ -45,9 +41,9 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v0.8.11
-	github.com/meshery/meshkit v1.0.15
+	github.com/meshery/meshkit v1.0.16
 	github.com/meshery/meshsync v1.0.0
-	github.com/meshery/schemas v1.3.12
+	github.com/meshery/schemas v1.3.13
 	github.com/nsf/termbox-go v1.1.1
 	github.com/oapi-codegen/runtime v1.4.1
 	github.com/olekukonko/tablewriter v1.1.4
@@ -153,7 +149,7 @@ require (
 	github.com/cloudflare/circl v1.6.3 // indirect
 	github.com/cockroachdb/apd/v3 v3.2.1 // indirect
 	github.com/containerd/console v1.0.5 // indirect
-	github.com/containerd/containerd v1.7.32 // indirect
+	github.com/containerd/containerd v1.7.33 // indirect
 	github.com/containerd/containerd/api v1.10.0 // indirect
 	github.com/containerd/containerd/v2 v2.2.4 // indirect
 	github.com/containerd/continuity v0.4.5 // indirect
@@ -229,7 +225,6 @@ require (
 	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/gofrs/flock v0.13.0 // indirect
-	github.com/gofrs/uuid v4.4.0+incompatible // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
@@ -238,6 +233,7 @@ require (
 	github.com/google/go-containerregistry v0.20.3 // indirect
 	github.com/google/s2a-go v0.1.9 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.16 // indirect
 	github.com/googleapis/gax-go/v2 v2.22.0 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect

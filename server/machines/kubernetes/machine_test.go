@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/schemas/models/core"
@@ -39,10 +39,13 @@ func TestAssignInitialCtx_AttachesLoggerBeforeClientSetAssignment(t *testing.T) 
 	// Fail fast on UUID generation so the event builder always sees a valid
 	// user ID and the test setup is deterministic; silently leaving user.ID
 	// unset would change the code path we're exercising.
-	userID := uuid.New()
+	userID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate user UUID: %v", err)
+	}
 	user := &models.User{ID: core.Uuid(userID)}
 
-	sysID := core.Uuid(parseUUIDOrNil("00000000-0000-0000-0000-000000000000"))
+	sysID := core.Uuid(uuid.FromStringOrNil("00000000-0000-0000-0000-000000000000"))
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, models.UserCtxKey, user)
@@ -61,7 +64,7 @@ func TestAssignInitialCtx_AttachesLoggerBeforeClientSetAssignment(t *testing.T) 
 			// previously panicking log.Warn path runs.
 			Name:         "unreachable-test-context",
 			Server:       "https://127.0.0.1:1", // RFC-reserved, refused instantly
-			ConnectionID: uuid.New().String(),
+			ConnectionID: uuid.Must(uuid.NewV4()).String(),
 		},
 		// clientset left nil to force AssignClientSetToContext to attempt
 		// GenerateClientSetAction (the panicking path).

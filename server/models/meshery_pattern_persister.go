@@ -8,7 +8,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"gopkg.in/yaml.v2"
 
 	"github.com/meshery/meshkit/database"
@@ -135,13 +135,19 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(page, pageSize, se
 // CloneMesheryPattern clones meshery pattern to private
 func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error) {
 	var mesheryPattern MesheryPattern
-	patternUUID, _ := uuid.Parse(patternID)
-	err := mpp.DB.First(&mesheryPattern, patternUUID).Error
+	patternUUID, err := uuid.FromString(patternID)
+	if err != nil {
+		return nil, ErrInvalidUUID(err)
+	}
+	err = mpp.DB.First(&mesheryPattern, patternUUID).Error
 	if err != nil || *mesheryPattern.ID == uuid.Nil {
 		return nil, fmt.Errorf("unable to get design: %w", err)
 	}
 
-	id := uuid.New()
+	id, err := uuid.NewV4()
+	if err != nil {
+		return nil, err
+	}
 
 	mesheryPattern.Visibility = Private
 	mesheryPattern.ID = &id
@@ -162,7 +168,7 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id core.Uuid) ([]byte, 
 func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
 	var deletedMaptterns []MesheryPattern
 	for _, pObj := range patterns.Patterns {
-		id := parseUUIDOrNil(pObj.ID)
+		id := uuid.FromStringOrNil(pObj.ID)
 		pattern := MesheryPattern{ID: &id}
 		mpp.DB.Delete(&pattern)
 		deletedMaptterns = append(deletedMaptterns, pattern)
@@ -181,7 +187,10 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 		pattern.Visibility = Private
 	}
 	if pattern.ID == nil {
-		id := uuid.New()
+		id, err := uuid.NewV4()
+		if err != nil {
+			return nil, ErrGenerateUUID(err)
+		}
 
 		patterns.AssignVersion(pf)
 
@@ -218,7 +227,10 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 		}
 		pattern.Owner = &nilOwner
 		if pattern.ID == nil {
-			id := uuid.New()
+			id, err := uuid.NewV4()
+			if err != nil {
+				return nil, ErrGenerateUUID(err)
+			}
 			patterns.AssignVersion(pf)
 			pattern.ID = &id
 		} else {

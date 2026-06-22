@@ -8,7 +8,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
@@ -106,7 +106,10 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 
 func (ep *EnvironmentPersister) SaveEnvironment(environment *environment.Environment) ([]byte, error) {
 	if environment.ID == uuid.Nil {
-		id := uuid.New()
+		id, err := uuid.NewV4()
+		if err != nil {
+			return nil, ErrGenerateUUID(err)
+		}
 		environment.ID = id
 	}
 
@@ -213,7 +216,10 @@ func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connec
 		UpdatedAt:     time.Now(),
 	}
 
-	id := uuid.New()
+	id, err := uuid.NewV4()
+	if err != nil {
+		return nil, ErrGenerateUUID(err)
+	}
 	envConMapping.ID = id
 
 	// Add connection to environment

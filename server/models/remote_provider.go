@@ -25,7 +25,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	servercore "github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/httputil"
@@ -1041,7 +1041,7 @@ func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.
 
 func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, additionalMetadata map[string]any) (connections.Connection, error) {
 	if k8sContext.ConnectionID != "" {
-		connectionID := parseUUIDOrNil(k8sContext.ConnectionID)
+		connectionID := uuid.FromStringOrNil(k8sContext.ConnectionID)
 		if connectionID != uuid.Nil {
 			conn, status, _ := l.GetConnectionByID(token, connectionID)
 			if status >= http.StatusOK && status < http.StatusMultipleChoices && conn != nil && conn.Kind == "kubernetes" {
@@ -1265,7 +1265,7 @@ func (l *RemoteProvider) GetK8sContext(token, connectionID string) (K8sContext, 
 		return K8sContext{}, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 
-	connID := parseUUIDOrNil(connectionID)
+	connID := uuid.FromStringOrNil(connectionID)
 	if connID == uuid.Nil {
 		return K8sContext{}, fmt.Errorf("invalid connection id: %s", connectionID)
 	}
