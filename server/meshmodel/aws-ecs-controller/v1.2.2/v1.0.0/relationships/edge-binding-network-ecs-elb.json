@@ -3,7 +3,7 @@
   "evaluationQuery": "edge_binding_network_relationship",
   "kind": "edge",
   "metadata": {
-    "description": "Establishes a binding network connection between an AWS ECS Service and an ELB TargetGroup, enabling routing configuration by patching targetGroupARN to associate containers with the load balancer.",
+    "description": "Establishes a network edge between an AWS ECS Service and a TargetGroupBinding by patching Service.spec.loadBalancers[0].targetGroupARN from TargetGroupBinding.spec.targetGroupARN.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
