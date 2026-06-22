@@ -11,7 +11,7 @@ export function k8sContextMatchesConnectionId(
   ctx: K8sContextIdentity,
   connectionId: string,
 ): boolean {
-  if (!connectionId) {
+  if (!ctx || !connectionId) {
     return false;
   }
 
