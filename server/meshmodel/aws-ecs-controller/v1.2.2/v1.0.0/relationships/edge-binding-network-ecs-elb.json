@@ -21,7 +21,7 @@
     "registrant": {
       "kind": "github"
     },
-    "version": ""
+    "version": "v1.2.2"
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
