@@ -460,3 +460,22 @@ func TestSetOperatorStatus(t *testing.T) {
 // 		})
 // 	}
 // }
+
+func TestValidateVersion(t *testing.T) {
+	t.Run("empty version defaults to latest", func(t *testing.T) {
+		ctx := &Context{Version: ""}
+		if err := ctx.ValidateVersion(); err != nil {
+			t.Fatalf("expected nil, got %v", err)
+		}
+		if ctx.Version != "latest" {
+			t.Fatalf("expected 'latest', got %q", ctx.Version)
+		}
+	})
+
+	t.Run("latest version returns nil", func(t *testing.T) {
+		ctx := &Context{Version: "latest"}
+		if err := ctx.ValidateVersion(); err != nil {
+			t.Fatalf("expected nil, got %v", err)
+		}
+	})
+}
