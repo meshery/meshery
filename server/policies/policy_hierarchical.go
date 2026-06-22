@@ -14,6 +14,8 @@ func (p *HierarchicalParentChildPolicy) Identifier() string {
 	return "hierarchical_parent_child"
 }
 
+func (p *HierarchicalParentChildPolicy) Priority() int { return 0 }
+
 func (p *HierarchicalParentChildPolicy) IsImplicatedBy(rel *relationship.RelationshipDefinition) bool {
 	return strings.EqualFold(string(rel.Kind), "hierarchical") &&
 		strings.EqualFold(rel.RelationshipType, "parent") &&

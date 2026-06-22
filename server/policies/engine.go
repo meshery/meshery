@@ -1,6 +1,8 @@
 package policies
 
 import (
+	"sync"
+
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
@@ -17,6 +19,10 @@ type Logger interface {
 type GoEngine struct {
 	policies []RelationshipPolicy
 	log      Logger
+
+	mu       sync.Mutex
+	flapHist map[string][]string // designID -> recent action fingerprints
+	lastTies []TieInfo           // ties detected in the most recent evaluation
 }
 
 // NewGoEngine creates a new Go policy engine with all built-in policies registered.
@@ -31,7 +37,28 @@ func NewGoEngine(log Logger) *GoEngine {
 			&HierarchicalParentChildPolicy{},
 			&HierarchicalWalletPolicy{},
 		},
+		flapHist: make(map[string][]string),
 	}
+}
+
+func cloneTieInfo(t TieInfo) TieInfo {
+	cloned := t
+	if t.Path != nil {
+		cloned.Path = make([]string, len(t.Path))
+		copy(cloned.Path, t.Path)
+	}
+	return cloned
+}
+
+// LastTies returns the ties detected during the most recent evaluation.
+func (e *GoEngine) LastTies() []TieInfo {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	out := make([]TieInfo, len(e.lastTies))
+	for i, tie := range e.lastTies {
+		out[i] = cloneTieInfo(tie)
+	}
+	return out
 }
 
 // ConvertRelationships converts entity interfaces to typed relationship definitions.
@@ -82,7 +109,39 @@ func (e *GoEngine) EvaluateDesign(
 
 	resp.Trace = buildTrace(allActions, &design, resultDesign)
 
+	if err := e.checkFlapping(design.ID.String(), allActions); err != nil {
+		return resp, err
+	}
 	return resp, nil
+}
+
+// hasTrackableDesignID reports whether designID is safe to use as a flapping
+// history key. Empty and zero UUID values are treated as "no design ID" and
+// should not share history across unrelated designs.
+func hasTrackableDesignID(designID string) bool {
+	return designID != "" && designID != "00000000-0000-0000-0000-000000000000"
+}
+
+// checkFlapping records the fingerprint of this evaluation's actions and
+// returns ErrFlappingDetected when the last four evaluations for designID
+// alternate between two results.
+func (e *GoEngine) checkFlapping(designID string, actions []PolicyAction) error {
+	if !hasTrackableDesignID(designID) {
+		return nil
+	}
+	fp := actionsFingerprint(actions)
+	e.mu.Lock()
+	flap := recordAndCheckFlap(e.flapHist, designID, fp)
+	hist := append([]string(nil), e.flapHist[designID]...)
+	e.mu.Unlock()
+	if flap {
+		e.log.Warnf("flapping detected for design %s", designID)
+		return ErrFlappingDetected(designID)
+	}
+	if len(hist) >= 3 && hist[len(hist)-1] == hist[len(hist)-3] && hist[len(hist)-1] != hist[len(hist)-2] {
+		e.log.Warnf("flapping candidate for design %s (1 inversion)", designID)
+	}
+	return nil
 }
 
 // evaluate runs the full evaluation pipeline on a design.
@@ -122,6 +181,14 @@ func (e *GoEngine) evaluate(design *pattern.PatternFile, relsInScope []*relation
 	for _, policy := range e.policies {
 		actions := generateActionsToApplyOnDesign(designWithIdentified, policy)
 		phaseActions = append(phaseActions, actions...)
+	}
+
+	phaseActions, ties := resolveTies(phaseActions)
+	e.mu.Lock()
+	e.lastTies = ties
+	e.mu.Unlock()
+	for _, t := range ties {
+		e.log.Warnf("tie detected on component %s path %v; dropping conflicting actions", t.ComponentID, t.Path)
 	}
 
 	allActions = append(allActions, identifyActions...)

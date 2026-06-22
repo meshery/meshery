@@ -19,6 +19,8 @@ func (p *MatchLabelsPolicy) Identifier() string {
 	return "sibling_match_labels_policy"
 }
 
+func (p *MatchLabelsPolicy) Priority() int { return 0 }
+
 func (p *MatchLabelsPolicy) IsImplicatedBy(rel *relationship.RelationshipDefinition) bool {
 	return strings.EqualFold(rel.RelationshipType, "sibling")
 }
