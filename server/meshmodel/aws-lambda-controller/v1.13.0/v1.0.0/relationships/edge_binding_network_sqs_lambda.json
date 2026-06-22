@@ -50,8 +50,8 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "spec",
-                  "queueName"
+                  "metadata",
+                  "name"
                 ]
               ]
             }
