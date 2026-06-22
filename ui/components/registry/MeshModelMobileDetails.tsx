@@ -22,10 +22,30 @@ const ContentDiv = styled('div')(() => ({
   width: '100%',
 }));
 
-const MeshModelMobileDetails = ({ showDetailsData, setShowDetailsData, view }) => {
+const MeshModelMobileDetails = ({
+  showDetailsData,
+  setShowDetailsData,
+  view,
+}: {
+  showDetailsData: {
+    type: string;
+    data: any;
+  };
+  setShowDetailsData: React.Dispatch<
+    React.SetStateAction<{
+      type: string;
+      data: any;
+    }>
+  >;
+  view: string;
+}) => {
   return (
     <Dialog
-      open={Object.keys(showDetailsData.data).length > 0 && showDetailsData.type !== 'none'}
+      open={Boolean(
+        showDetailsData?.data &&
+        Object.keys(showDetailsData.data).length > 0 &&
+        showDetailsData.type !== 'none',
+      )}
       onClose={() => setShowDetailsData({ type: '', data: {} })}
       fullWidth
       maxWidth="sm"
@@ -49,7 +69,7 @@ const MeshModelMobileDetails = ({ showDetailsData, setShowDetailsData, view }) =
           justifyContent: 'space-between',
           alignItems: 'center',
           padding: '0.75rem 1rem',
-          borderBottom: `1px solid ${alpha(theme.palette.common.white, 0.1)}`,
+          borderBottom: `1px solid ${alpha(theme.palette.divider, 1)}`,
         })}
       >
         <TitleSpan>{showDetailsData.data?.displayName || showDetailsData.type}</TitleSpan>
