@@ -50,8 +50,10 @@
               "mutatedRef": [
                 [
                   "configuration",
-                  "status",
-                  "id"
+                  "spec",
+                  "networkConfiguration",
+                  "awsVPCConfiguration",
+                  "securityGroupRefs"
                 ]
               ]
             }
@@ -80,10 +82,8 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "spec",
-                  "networkConfiguration",
-                  "awsVPCConfiguration",
-                  "securityGroupRefs"
+                  "status",
+                  "id"
                 ]
               ]
             }

@@ -82,10 +82,8 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "spec",
-                  "networkConfiguration",
-                  "awsVPCConfiguration",
-                  "subnetRefs"
+                  "status",
+                  "id"
                 ]
               ]
             }
