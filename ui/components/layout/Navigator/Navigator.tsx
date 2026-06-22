@@ -733,14 +733,7 @@ const NavigatorContent = () => {
                       (hoveredId === childId || (openItems.includes(childId) && submenu)) ? (
                         <div>
                           <CustomTooltip title={title} placement="right" TransitionComponent={Zoom}>
-                            <ListItemIcon
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                toggleItemCollapse(childId);
-                              }}
-                              style={{ marginLeft: '20%', marginBottom: '0.4rem' }}
-                            >
+                            <ListItemIcon style={{ marginLeft: '20%', marginBottom: '0.4rem' }}>
                               {hovericon}
                             </ListItemIcon>
                           </CustomTooltip>
