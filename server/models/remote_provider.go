@@ -4422,6 +4422,9 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	// splits the requested path into '/api/extensions' and '/<remote-provider-endpoint>'
 	p := req.URL.Path
 	split := strings.Split(p, "/api/extensions")
+	if len(split) < 2 {
+		return nil, fmt.Errorf("invalid extension proxy path: %s", p)
+	}
 	path := split[1]
 	// gets the available query parameters
 	q := req.URL.Query().Encode()
