@@ -712,52 +712,48 @@ const NavigatorContent = () => {
                   isShow={!show}
                   onClick={(e) => {
                     toggleItemCollapse(childId);
-                    const clickedInsideAnchor = (e.target as HTMLElement).closest?.('a');
-                    if (link && href && !clickedInsideAnchor) {
-                      router.push(href);
-                    }
                   }}
                   onMouseOver={() => (isDrawerCollapsed ? setHoveredId(childId) : null)}
                   onMouseLeave={() =>
                     !submenu || !openItems.includes(childId) ? setHoveredId(null) : null
                   }
                   disabled={permission ? !CAN(permission.action, permission.subject) : false}
+                  {...(link && href ? { component: Link, href } : {})}
                 >
-                  <Link href={link ? href : ''}>
-                    <NavigatorLink data-testid={childId}>
-                      <CustomTooltip
-                        title={childId}
-                        placement="right"
-                        disableFocusListener={!isDrawerCollapsed}
-                        disableHoverListener={true}
-                        disableTouchListener={!isDrawerCollapsed}
-                        TransitionComponent={Zoom}
-                      >
-                        {isDrawerCollapsed &&
-                        (hoveredId === childId || (openItems.includes(childId) && submenu)) ? (
-                          <div>
-                            <CustomTooltip
-                              title={title}
-                              placement="right"
-                              TransitionComponent={Zoom}
+                  <NavigatorLink data-testid={childId}>
+                    <CustomTooltip
+                      title={childId}
+                      placement="right"
+                      disableFocusListener={!isDrawerCollapsed}
+                      disableHoverListener={true}
+                      disableTouchListener={!isDrawerCollapsed}
+                      TransitionComponent={Zoom}
+                    >
+                      {isDrawerCollapsed &&
+                      (hoveredId === childId || (openItems.includes(childId) && submenu)) ? (
+                        <div>
+                          <CustomTooltip title={title} placement="right" TransitionComponent={Zoom}>
+                            <ListItemIcon
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                toggleItemCollapse(childId);
+                              }}
+                              style={{ marginLeft: '20%', marginBottom: '0.4rem' }}
                             >
-                              <ListItemIcon
-                                onClick={() => toggleItemCollapse(childId)}
-                                style={{ marginLeft: '20%', marginBottom: '0.4rem' }}
-                              >
-                                {hovericon}
-                              </ListItemIcon>
-                            </CustomTooltip>
-                          </div>
-                        ) : (
-                          <MainListIcon>{icon}</MainListIcon>
-                        )}
-                      </CustomTooltip>
-                      <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>
-                    </NavigatorLink>
-                  </Link>
+                              {hovericon}
+                            </ListItemIcon>
+                          </CustomTooltip>
+                        </div>
+                      ) : (
+                        <MainListIcon>{icon}</MainListIcon>
+                      )}
+                    </CustomTooltip>
+                    <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>
+                  </NavigatorLink>
                   <ExpandMore
                     onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
                       toggleItemCollapse(childId);
                     }}
