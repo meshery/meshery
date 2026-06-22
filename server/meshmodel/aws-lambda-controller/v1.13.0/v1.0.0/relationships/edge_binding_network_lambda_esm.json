@@ -59,7 +59,7 @@
         ],
         "to": [
           {
-            "id": "00000000-0000-0000-0000-000000000000",
+            "id": null,
             "kind": "EventSourceMapping",
             "match": {},
             "match_strategy_matrix": null,
