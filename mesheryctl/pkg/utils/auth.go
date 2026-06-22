@@ -101,7 +101,7 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 		return nil, ErrFailRequest(err)
 	}
 
-	if resp.StatusCode == 302 {
+	if resp.StatusCode == http.StatusFound {
 		_ = resp.Body.Close()
 		return nil, ErrInvalidToken()
 	}
@@ -356,6 +356,10 @@ func GetProviderInfo(mctCfg *config.MesheryCtlConfig) (map[string]Provider, erro
 		return nil, err
 	}
 	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code %d", resp.StatusCode)
+	}
 
 	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		return nil, err
