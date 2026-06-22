@@ -10,51 +10,57 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
-// MatchLabelsPolicy handles sibling match-label relationships.
-type MatchLabelsPolicy struct{}
+// TagPolicy handles sibling relationships that group components sharing an
+// equal-valued configuration field. Despite the historical "matchLabels" name
+// (Kubernetes terminology), the grouping is not restricted to metadata.labels;
+// it applies to any equal-valued config field referenced by the selector.
+type TagPolicy struct{}
 
-const maxMatchLabels = 20
+const maxTags = 20
 
-func (p *MatchLabelsPolicy) Identifier() string {
+func (p *TagPolicy) Identifier() string {
+	// Wire identifier shared with the Rego engine (matchlabels-policy.rego) and
+	// used as a staticUUID seed, so it stays stable until renamed in
+	// meshery/schemas. See meshery/meshery#19149 (3).
 	return "sibling_match_labels_policy"
 }
 
-func (p *MatchLabelsPolicy) IsImplicatedBy(rel *relationship.RelationshipDefinition) bool {
+func (p *TagPolicy) IsImplicatedBy(rel *relationship.RelationshipDefinition) bool {
 	return strings.EqualFold(rel.RelationshipType, "sibling")
 }
 
-func (p *MatchLabelsPolicy) IsInvalid(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
+func (p *TagPolicy) IsInvalid(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
 	return p.IsImplicatedBy(rel)
 }
 
-func (p *MatchLabelsPolicy) AlreadyExists(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
+func (p *TagPolicy) AlreadyExists(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
 	return relationshipAlreadyExists(design, rel)
 }
 
-func (p *MatchLabelsPolicy) IdentifyRelationship(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
-	return identifyMatchlabelRelationships(relDef, design)
+func (p *TagPolicy) IdentifyRelationship(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
+	return identifyTagRelationships(relDef, design)
 }
 
-func (p *MatchLabelsPolicy) SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
+func (p *TagPolicy) SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
 	return nil
 }
 
-// matchLabelGroup represents a group of components sharing a label field+value.
-type matchLabelGroup struct {
+// tagGroup represents a group of components sharing a config field+value.
+type tagGroup struct {
 	Field      string
 	Value      interface{}
 	Components []*component.ComponentDefinition
 }
 
-// identifyMatchlabels finds all matching label groups in the design.
+// identifyTags finds all groups of components sharing an equal-valued config field.
 //
 // Single-pass bucketing: each component contributes its (field, value) pairs to
 // shared buckets once, instead of re-scanning all (comp, other) pairs. Reduces
 // the dominating cost from O(N²·F) to O(N·F) where N = components and F =
 // average label fields per component. Output groups are byte-identical to the
-// previous double-loop implementation on symmetric matchlabels fixtures, which
-// is the only shape this policy is exercised against.
-func identifyMatchlabels(design *pattern.PatternFile, relDef *relationship.RelationshipDefinition) []matchLabelGroup {
+// previous double-loop implementation on symmetric fixtures, which is the only
+// shape this policy is exercised against.
+func identifyTags(design *pattern.PatternFile, relDef *relationship.RelationshipDefinition) []tagGroup {
 	type bucketKey struct {
 		field, valueKey string
 	}
@@ -117,7 +123,7 @@ func identifyMatchlabels(design *pattern.PatternFile, relDef *relationship.Relat
 	}
 
 	// Iterate buckets in sorted key order so the output (and the truncation
-	// when len > maxMatchLabels) is stable across runs. Key ordering matches
+	// when len > maxTags) is stable across runs. Key ordering matches
 	// the previous `fmt.Sprintf("%s=%v", field, value)` lexicographic sort.
 	sortedKeys := make([]bucketKey, 0, len(buckets))
 	for k := range buckets {
@@ -130,7 +136,7 @@ func identifyMatchlabels(design *pattern.PatternFile, relDef *relationship.Relat
 		return sortedKeys[i].valueKey < sortedKeys[j].valueKey
 	})
 
-	groups := make([]matchLabelGroup, 0, len(sortedKeys))
+	groups := make([]tagGroup, 0, len(sortedKeys))
 	for _, k := range sortedKeys {
 		b := buckets[k]
 		if !b.hasFrom || !b.hasTo {
@@ -139,21 +145,21 @@ func identifyMatchlabels(design *pattern.PatternFile, relDef *relationship.Relat
 		if len(b.components) < 2 {
 			continue
 		}
-		groups = append(groups, matchLabelGroup{
+		groups = append(groups, tagGroup{
 			Field:      b.field,
 			Value:      b.value,
 			Components: b.components,
 		})
 	}
-	if len(groups) > maxMatchLabels {
-		groups = groups[:maxMatchLabels]
+	if len(groups) > maxTags {
+		groups = groups[:maxTags]
 	}
 	return groups
 }
 
-// identifyMatchlabelRelationships creates relationship definitions from matchlabel groups.
-func identifyMatchlabelRelationships(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
-	groups := identifyMatchlabels(design, relDef)
+// identifyTagRelationships creates relationship definitions from tag groups.
+func identifyTagRelationships(relDef *relationship.RelationshipDefinition, design *pattern.PatternFile) []*relationship.RelationshipDefinition {
+	groups := identifyTags(design, relDef)
 
 	var identified []*relationship.RelationshipDefinition
 	seen := make(map[string]bool)

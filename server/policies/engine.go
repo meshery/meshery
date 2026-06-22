@@ -24,7 +24,7 @@ func NewGoEngine(log Logger) *GoEngine {
 	return &GoEngine{
 		log: log,
 		policies: []RelationshipPolicy{
-			&MatchLabelsPolicy{},
+			&TagPolicy{},
 			&AliasPolicy{},
 			&EdgeNonBindingPolicy{},
 			&EdgeBindingPolicy{},
