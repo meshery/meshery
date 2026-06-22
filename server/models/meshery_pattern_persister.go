@@ -135,8 +135,11 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(page, pageSize, se
 // CloneMesheryPattern clones meshery pattern to private
 func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error) {
 	var mesheryPattern MesheryPattern
-	patternUUID, _ := uuid.FromString(patternID)
-	err := mpp.DB.First(&mesheryPattern, patternUUID).Error
+	patternUUID, err := uuid.FromString(patternID)
+	if err != nil {
+		return nil, ErrInvalidUUID(err)
+	}
+	err = mpp.DB.First(&mesheryPattern, patternUUID).Error
 	if err != nil || *mesheryPattern.ID == uuid.Nil {
 		return nil, fmt.Errorf("unable to get design: %w", err)
 	}
@@ -211,7 +214,7 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 // SaveMesheryPatterns batch inserts the given patterns
 func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []MesheryPattern) ([]byte, error) {
 	finalPatterns := []MesheryPattern{}
-	nilUserID := ""
+	nilOwner := ""
 	for _, pattern := range mesheryPatterns {
 
 		pf, err := patterns.GetPatternFormat(pattern.PatternFile)
@@ -222,7 +225,7 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 		if pattern.Visibility == "" {
 			pattern.Visibility = Private
 		}
-		pattern.UserID = &nilUserID
+		pattern.Owner = &nilOwner
 		if pattern.ID == nil {
 			id, err := uuid.NewV4()
 			if err != nil {

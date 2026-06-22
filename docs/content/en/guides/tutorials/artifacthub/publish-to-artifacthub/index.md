@@ -43,7 +43,7 @@ You can find the download button in the design's card in the grid view, or in th
 
 ### 4. Push Design to Artifact Hub repository
 
-After exporting your design as a Meshery Design (OCI image) from Kanvas, a `.tar` archive will be downloaded.
+After exporting your design as a Meshery Design (OCI image), a `.tar` archive will be downloaded.
 1. Extract the downloaded .tar archive.
 2. Inside the extracted contents, locate the `.tar.gz` archive and extract it.
 3. After extraction, you should find the following files: `artifacthub-pkg.yml` and `design.yml`.

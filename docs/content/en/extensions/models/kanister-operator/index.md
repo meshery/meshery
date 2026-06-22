@@ -1,7 +1,7 @@
 ---
 title: Kanister Operator
 subtitle: Collaborative and visual infrastructure as design for Kanister Operator
-image: /extensions/models/kanister-operator/icons/color/kanister-operator-color.svg
+image: extensions/models/kanister-operator/icons/color/kanister-operator-color.svg
 aliases: /extensibility/integrations/kanister-operator
 docURL: https://docs.meshery.io/extensibility/integrations/kanister-operator
 description: 

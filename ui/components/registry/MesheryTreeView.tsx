@@ -7,7 +7,13 @@ import {
   Typography,
   InfoOutlinedIcon,
 } from '@sistent/sistent';
-import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
+import {
+  MODELS,
+  COMPONENTS,
+  RELATIONSHIPS,
+  REGISTRANTS,
+  CONNECTIONS,
+} from '../../constants/navigator';
 import SearchBar from '@/utils/custom-search';
 import debounce from '@/utils/debounce';
 import { useWindowDimensions } from '@/utils/dimension';
@@ -23,6 +29,7 @@ import MesheryTreeViewModel from './MesheryTreeViewModel';
 import MesheryTreeViewRegistrants from './MesheryTreeViewRegistrants';
 import ComponentTree from './ComponentTree';
 import RelationshipTree from './RelationshipTree';
+import ConnectionDefinitionTree from './ConnectionDefinitionTree';
 
 type MesheryTreeViewProps = {
   data: any[];
@@ -176,8 +183,15 @@ const MesheryTreeView = React.memo(
             setSelected([selectedItemUUID]);
           }
           const showData = getFilteredDataForDetailsComponent(data, selectedItemUUID);
-          // O(1) ID comparison instead of deep JSON.stringify on large objects.
-          if (showData?.data?.id !== showDetailsDataRef.current?.data?.id) {
+          // Only update the details panel when the item was found in the top-level data.
+          // If showData.data is empty, the selected item is nested (a component or
+          // relationship inside a model version). Those cases are handled by
+          // VersionedModelComponentTree / VersionedModelRelationshipTree — overwriting
+          // with an empty object here would wipe the details panel the onClick just set.
+          if (
+            Object.keys(showData.data).length > 0 &&
+            showData?.data?.id !== showDetailsDataRef.current?.data?.id
+          ) {
             setShowDetailsData(showData);
           }
         }
@@ -208,7 +222,7 @@ const MesheryTreeView = React.memo(
     }, [view]);
 
     const disabledExpand = () => {
-      return view === COMPONENTS;
+      return view === COMPONENTS || view === CONNECTIONS;
     };
 
     const renderHeader = (type: string, hasRecords: boolean) => (
@@ -275,8 +289,16 @@ const MesheryTreeView = React.memo(
                     )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`}
                     sx={{ margin: '0rem', padding: '0rem' }}
                   >
-                    <IconButton>
-                      <InfoOutlinedIcon height={20} width={20} />
+                    <IconButton
+                      size="small"
+                      aria-label="View duplicate entries information"
+                      sx={{
+                        width: 32,
+                        height: 32,
+                        mt: 0.5,
+                      }}
+                    >
+                      <InfoOutlinedIcon />
                     </IconButton>
                   </CustomTextTooltip>
                 </>
@@ -407,6 +429,21 @@ const MesheryTreeView = React.memo(
               isRelationshipFetching={isFetching[RELATIONSHIPS]}
             />,
             RELATIONSHIPS,
+            isLoading[view],
+          )}
+        {view === CONNECTIONS &&
+          renderTree(
+            <ConnectionDefinitionTree
+              handleToggle={handleToggle}
+              handleSelect={handleSelect}
+              expanded={expanded}
+              selected={selected}
+              data={data}
+              setShowDetailsData={setShowDetailsData}
+              lastConnectionRef={lastItemRef[CONNECTIONS]}
+              isConnectionFetching={isFetching[CONNECTIONS]}
+            />,
+            CONNECTIONS,
             isLoading[view],
           )}
       </MesheryTreeViewWrapper>

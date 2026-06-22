@@ -46,7 +46,16 @@ const RelationshipTree = ({
             itemId={idForKind}
             data-id={idForKind}
             labelText={`${relationshipByKind.kind} (${relationshipByKind.relationships.length})`}
-            onClick={() => {
+            onClick={(e) => {
+              const target = e.target;
+              if (!(target instanceof Element)) {
+                return;
+              }
+              const treeItem = target.closest('[data-id]');
+              if (treeItem?.getAttribute('data-id') !== idForKind) {
+                return;
+              }
+
               setShowDetailsData({
                 type: 'none',
                 data: {
@@ -61,7 +70,8 @@ const RelationshipTree = ({
                 itemId={`${idForKind}.${relationship.id}`}
                 data-id={`${idForKind}.${relationship.id}`}
                 labelText={`${relationship.subType} (${relationship.model.name})`}
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   setShowDetailsData({
                     type: RELATIONSHIPS,
                     data: relationship,

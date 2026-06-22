@@ -1,7 +1,7 @@
 ---
 title: Hybridnet
 subtitle: Collaborative and visual infrastructure as design for Hybridnet
-image: /extensions/models/hybridnet/icons/color/hybridnet-color.svg
+image: extensions/models/hybridnet/icons/color/hybridnet-color.svg
 aliases: /extensibility/integrations/hybridnet
 docURL: https://docs.meshery.io/extensibility/integrations/hybridnet
 description: 

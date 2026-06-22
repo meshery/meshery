@@ -1,7 +1,7 @@
 ---
 title: AWS Step Functions
 subtitle: Collaborative and visual infrastructure as design for AWS Step Functions
-image: /extensions/models/aws-sfn-controller/icons/color/aws-sfn-controller-color.svg
+image: extensions/models/aws-sfn-controller/icons/color/aws-sfn-controller-color.svg
 aliases: /extensibility/integrations/aws-sfn-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-sfn-controller
 description: 
@@ -29,7 +29,11 @@ components:
   colorIcon: extensions/models/aws-sfn-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
   whiteIcon: extensions/models/aws-sfn-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
-components-count: 5
+- name: state-machine-alias
+  colorIcon: extensions/models/aws-sfn-controller/components/state-machine-alias/icons/color/state-machine-alias-color.svg
+  whiteIcon: extensions/models/aws-sfn-controller/components/state-machine-alias/icons/white/state-machine-alias-white.svg
+  description: 
+components-count: 6
 relationships: 
 - type: "non-binding"
   kind: "edge"

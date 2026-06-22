@@ -1,7 +1,7 @@
 ---
 title: Azure Active Directory (AAD)
 subtitle: Collaborative and visual infrastructure as design for Azure Active Directory (AAD)
-image: /extensions/models/aad-pod-identity/icons/color/aad-pod-identity-color.svg
+image: extensions/models/aad-pod-identity/icons/color/aad-pod-identity-color.svg
 aliases: /extensibility/integrations/aad-pod-identity
 docURL: https://docs.meshery.io/extensibility/integrations/aad-pod-identity
 description: 

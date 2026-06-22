@@ -51,7 +51,7 @@ func (h *Handler) SavePerformanceProfileHandler(
 		return
 	}
 	if user != nil && user.ID != uuid.Nil {
-		parsedBody.UserID = user.ID
+		parsedBody.Owner = user.ID
 	}
 
 	j, _ := json.Marshal(parsedBody)
