@@ -54,6 +54,7 @@ import 'tippy.js/animations/perspective-subtle.css';
 import 'tippy.js/animations/perspective-extreme.css';
 import '@xterm/xterm/css/xterm.css';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
+import { k8sContextMatchesConnectionId } from '../utils/k8sContext';
 import './../public/static/style/index.css';
 import './styles/AnimatedFilter.css';
 import './styles/AnimatedMeshery.css';
@@ -369,6 +370,41 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     [activeContextChangeCallback, fetchKubernetesContexts],
   );
 
+  const removeK8sContextByConnectionId = useCallback(
+    (connectionId) => {
+      setState((prevState) => {
+        const contexts = prevState.k8sContexts?.contexts || [];
+        const removedIds = new Set(
+          contexts
+            .filter((ctx) => k8sContextMatchesConnectionId(ctx, connectionId))
+            .map((ctx) => ctx.id),
+        );
+
+        if (removedIds.size === 0) {
+          return prevState;
+        }
+
+        const remainingContexts = contexts.filter((ctx) => !removedIds.has(ctx.id));
+        const activeK8sContexts = (prevState.activeK8sContexts || []).filter(
+          (id) => id !== 'all' && !removedIds.has(id),
+        );
+
+        activeContextChangeCallback(activeK8sContexts);
+
+        return {
+          ...prevState,
+          k8sContexts: {
+            ...prevState.k8sContexts,
+            contexts: remainingContexts,
+            totalCount: remainingContexts.length,
+          },
+          activeK8sContexts,
+        };
+      });
+    },
+    [activeContextChangeCallback],
+  );
+
   const updateCurrentExtensionType = useCallback(
     (type) => {
       dispatch(updateExtensionType({ extensionType: type }));
@@ -578,6 +614,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                                   activeContexts={state.activeK8sContexts}
                                   setActiveContexts={setActiveContexts}
                                   searchContexts={searchContexts}
+                                  removeK8sContextByConnectionId={removeK8sContextByConnectionId}
                                   updateExtensionType={updateCurrentExtensionType}
                                   abilityUpdated={state.abilityUpdated}
                                 />
