@@ -2,13 +2,20 @@ code {
   font-size: 95%;
   color: var(--code);
   word-break: break-word;
-  & ::-webkit-scrollbar {
-    display: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-grey-light) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-grey-light);
+    border-radius: 4px;
   }
 }
-code::-webkit-scrollbar {
-  display: none;
-}
+
 .td-content {
   p code,
   li > code,
@@ -22,6 +29,7 @@ code::-webkit-scrollbar {
     border-radius: 0.25rem;
   }
 }
+
 .card,
 .td-content .highlight {
   position: relative;
@@ -41,20 +49,21 @@ code::-webkit-scrollbar {
   border: 1px solid var(--color-grey-light);
   border-radius: 0.25rem;
 }
+
 .td-content .highlight {
   margin: 2rem 0;
   padding: 1rem;
   background-color: var(--color-primary-medium);
   overflow: hidden;
 }
+
 .td-content pre > code {
   padding: 10px 0;
   margin: 0;
-  font-size: 100%;
+  font-size: 0.9rem;
   word-break: normal;
   white-space: pre;
   text-wrap: wrap;
-  font-size: 0.9rem;
   border: 0;
   width: 100%;
   overflow: auto;
@@ -64,12 +73,18 @@ code::-webkit-scrollbar {
 pre {
   display: block;
   color: var(--color-grey-medium);
-  & ::-webkit-scrollbar {
-    display: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-grey-light) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background: transparent;
   }
-}
-pre::-webkit-scrollbar {
-  display: none;
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-grey-light);
+    border-radius: 4px;
+  }
 }
 
 .highlight pre {
@@ -85,10 +100,18 @@ pre::-webkit-scrollbar {
     word-wrap: normal;
     background-color: var(--color-primary-medium);
     padding: 1rem;
-    overflow: hidden;
-    
-    & ::-webkit-scrollbar {
-      display: none;
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-grey-light) transparent;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-grey-light);
+      border-radius: 4px;
     }
   }
 }
