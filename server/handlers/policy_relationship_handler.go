@@ -356,8 +356,7 @@ func (h *Handler) EvaluateDesign(
 		}
 
 		if err != nil {
-			h.log.Debug(err)
-			// log an event
+			h.log.Error(err)
 			return pattern.EvaluationResponse{}, err
 		}
 
@@ -768,15 +767,14 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
-
 	relationshipPolicyEvalPayload := pattern.EvaluationRequest{}
 	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
-
 	if err != nil {
 		h.log.Error(ErrDecoding(err, "design file"))
 		writeMeshkitError(rw, ErrDecoding(err, "design file"), http.StatusBadRequest)
 		return
 	}
+
 	// decode the pattern file
 	patternUUID := relationshipPolicyEvalPayload.Design.ID
 	eventBuilder.ActedUpon(patternUUID)
@@ -816,10 +814,8 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	case err := <-evalErrChan:
 		h.log.Debug(err)
-		// log an event
 		writeMeshkitError(rw, ErrPolicyEval(err), http.StatusInternalServerError)
 		return
-
 	case evaluationResponse := <-evalRespChan:
 		// include trace instead of design file in the event
 		description := fmt.Sprintf("Relationship evaluation complete: %d changes in '%s' at version '%s'", len(evaluationResponse.Actions), evaluationResponse.Design.Name, evaluationResponse.Design.Version)
@@ -830,11 +826,13 @@ func (h *Handler) EvaluateRelationshipPolicy(
 			_ = provider.PersistEvent(*event, token)
 		}()
 
+		// write the response
 		h.writeEvaluationResult(rw, evalResult{resp: evaluationResponse})
 	case <-evalCtx.Done():
 		// Unblock any followers waiting on this designID.
 		h.evalTracker.publish(designKey, evalResult{err: errEvalTimeout})
 		h.writeEvalCtxError(rw, evalCtx)
+
 		return
 	}
 }
