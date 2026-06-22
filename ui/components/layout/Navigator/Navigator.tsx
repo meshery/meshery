@@ -736,7 +736,10 @@ const NavigatorContent = () => {
                               TransitionComponent={Zoom}
                             >
                               <ListItemIcon
-                                onClick={() => toggleItemCollapse(childId)}
+                                onClick={(e: React.MouseEvent<HTMLElement>) => {
+                                  e.stopPropagation();
+                                  toggleItemCollapse(childId);
+                                }}
                                 style={{ marginLeft: '20%', marginBottom: '0.4rem' }}
                               >
                                 {hovericon}
@@ -751,7 +754,7 @@ const NavigatorContent = () => {
                     </NavigatorLink>
                   </Link>
                   <ExpandMore
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent<HTMLElement>) => {
                       e.stopPropagation();
                       toggleItemCollapse(childId);
                     }}
