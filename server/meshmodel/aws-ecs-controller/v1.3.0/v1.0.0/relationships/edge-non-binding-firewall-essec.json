@@ -53,7 +53,8 @@
                   "spec",
                   "networkConfiguration",
                   "awsVPCConfiguration",
-                  "securityGroupRefs"
+                  "securityGroups",
+                  "0"
                 ]
               ]
             }
