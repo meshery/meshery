@@ -25,7 +25,7 @@ export const stepsData = [
       {
         id: 1,
         title: 'The Cloud Native Playground',
-        video: 'https://www.youtube.com/embed/Do7htKrRzDA?si=5iMQ5a1JUf3qpIiH',
+        video: 'https://www.youtube-nocookie.com/embed/Do7htKrRzDA',
         content: (
           <p>
             {
