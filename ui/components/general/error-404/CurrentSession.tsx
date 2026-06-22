@@ -1,5 +1,4 @@
 import React from 'react';
-import { useGetUserProviderRolesQuery } from '@/rtk-query/providerRoles';
 import {
   StyledBox,
   StyledChip,
@@ -18,29 +17,16 @@ import {
 } from '@sistent/sistent';
 import OrgIcon from '@/assets/icons/OrgIcon';
 import CustomErrorFallback from '../../shared/ErrorBoundary/ErrorBoundary';
-import { useGetSelectedOrganization, useGetLoggedInUserQuery } from '@/rtk-query/user';
+import { useGetSelectedOrganization, useGetCurrentUserRoles } from '@/rtk-query/user';
 
 const CurrentSessionInfo = () => {
   const { selectedOrganization, isLoading: isLoadingSelectedOrg } = useGetSelectedOrganization();
   const {
-    data: userData,
-    isLoading: isUserLoading,
-    isError: isUserError,
-  } = useGetLoggedInUserQuery();
-
-  const currentOrgWithRoles = selectedOrganization?.id
-    ? userData?.organizations?.organizationsWithRoles?.find(
-        (org) => org.id === selectedOrganization.id,
-      )
-    : null;
-  const userRoles = currentOrgWithRoles?.roleNames || [];
-
-  const {
-    data: providerRolesRes,
-    // isSuccess: isProviderRolesSuccess,
-    // isError: isProviderRolesError,
-    // error: providerRolesError,
-  } = useGetUserProviderRolesQuery();
+    orgRoles,
+    providerRoles,
+    isLoading: isRolesLoading,
+    isError: isRolesError,
+  } = useGetCurrentUserRoles();
 
   const theme = useTheme();
 
@@ -71,12 +57,12 @@ const CurrentSessionInfo = () => {
           </CustomTooltip>
         </HeaderContainer>
         <StyledBox>
-          {isLoadingSelectedOrg || isUserLoading
+          {isLoadingSelectedOrg || isRolesLoading
             ? 'Loading roles…'
-            : isUserError
+            : isRolesError
               ? 'Unable to load roles'
-              : userRoles.length > 0
-                ? userRoles.map((role) => <StyledChip key={role} label={role} />)
+              : orgRoles.length > 0
+                ? orgRoles.map((role) => <StyledChip key={role} label={role} />)
                 : 'No roles found'}
         </StyledBox>
       </div>
@@ -96,11 +82,13 @@ const CurrentSessionInfo = () => {
           </CustomTooltip>
         </HeaderContainer>
         <StyledBox>
-          {providerRolesRes
-            ? providerRolesRes?.roleNames?.map?.((role, index) => (
-                <StyledChip key={index} label={role} />
-              ))
-            : 'No roles found'}
+          {isLoadingSelectedOrg || isRolesLoading
+            ? 'Loading roles…'
+            : isRolesError
+              ? 'Unable to load roles'
+              : providerRoles.length > 0
+                ? providerRoles.map((role, index) => <StyledChip key={index} label={role} />)
+                : 'No roles found'}
         </StyledBox>
       </div>
     </ErrorSectionContent>

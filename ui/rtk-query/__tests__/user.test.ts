@@ -569,4 +569,49 @@ describe('user endpoints', () => {
       { skip: false },
     );
   });
+
+  it('useGetCurrentUserRoles hook extracts organization and provider roles correctly', async () => {
+    const { renderHook, waitFor } = await import('@testing-library/react');
+    const React = await import('react');
+    const { Provider } = await import('react-redux');
+    const { store, userMod } = await setupStore();
+
+    fetchMock.mockImplementation((req) => {
+      const url = typeof req === 'string' ? req : req.url;
+      if (url.includes('/api/user/prefs')) {
+        return Promise.resolve(okResponse({ selectedOrganizationID: 'org-1' }));
+      }
+      if (url.includes('/api/identity/orgs')) {
+        return Promise.resolve(okResponse({ organizations: [{ id: 'org-1', name: 'Org 1' }] }));
+      }
+      if (url.includes('/api/user')) {
+        return Promise.resolve(
+          okResponse({
+            id: 'user-1',
+            roleNames: ['meshmap', 'curator'],
+            organizations: {
+              organizationsWithRoles: [
+                {
+                  id: 'org-1',
+                  roleNames: ['organization admin'],
+                },
+              ],
+            },
+          }),
+        );
+      }
+      return Promise.resolve(okResponse({}));
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) =>
+      React.createElement(Provider, { store, children });
+
+    const { result } = renderHook(() => userMod.useGetCurrentUserRoles(), { wrapper });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.orgRoles).toEqual(['organization admin']);
+    expect(result.current.providerRoles).toEqual(['meshmap', 'curator']);
+    expect(result.current.isError).toBeFalsy();
+  });
 });

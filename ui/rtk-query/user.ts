@@ -469,3 +469,29 @@ export const useUpdateSelectedWorkspaceMutation = () => {
 
   return [updateSelectedWorkspace, response];
 };
+
+export const useGetCurrentUserRoles = () => {
+  const { selectedOrganization, isLoading: isLoadingSelectedOrg } = useGetSelectedOrganization();
+  const {
+    data: userData,
+    isLoading: isUserLoading,
+    isError: isUserError,
+    error: userError,
+  } = useGetLoggedInUserQuery();
+
+  const currentOrgWithRoles = selectedOrganization?.id
+    ? userData?.organizations?.organizationsWithRoles?.find(
+        (org: any) => org.id === selectedOrganization.id,
+      )
+    : null;
+  const orgRoles = currentOrgWithRoles?.roleNames || [];
+  const providerRoles = userData?.roleNames || [];
+
+  return {
+    orgRoles,
+    providerRoles,
+    isLoading: isLoadingSelectedOrg || isUserLoading,
+    isError: isUserError,
+    error: userError,
+  };
+};
