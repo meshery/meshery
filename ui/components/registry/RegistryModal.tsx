@@ -188,11 +188,9 @@ interface NavItemProps {
 }
 
 const NavItem: FC<NavItemProps> = ({ item, open, selectedId, onSelect }) => {
-  const theme = useTheme();
-  const isSelected = selectedId === item.id;
-    const iconFill = isSelected
-    ? theme.palette.icon.brand || theme.palette.icon.default
-    : theme.palette.icon.default;
+const theme = useTheme();
+const isSelected = selectedId === item.id;
+const iconFill = isSelected? theme.palette.icon.brand || theme.palette.icon.default: theme.palette.icon.default;
 
   return (
     <CustomTooltip title={item.label} disableHoverListener={open} placement="right">
