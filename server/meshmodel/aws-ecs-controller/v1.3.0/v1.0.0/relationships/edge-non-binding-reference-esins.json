@@ -75,16 +75,7 @@
               },
               "version": "v1.13.1"
             },
-            "patch": {
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "name"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
+            "patch": {}
           }
         ]
       },
