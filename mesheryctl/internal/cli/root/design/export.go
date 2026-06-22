@@ -29,7 +29,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	encoding "github.com/meshery/meshkit/encoding"
-	meshkitutils "github.com/meshery/meshkit/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -87,6 +86,8 @@ mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exp
 		}
 
 		designType, _ := cmd.Flags().GetString("type")
+		designType = strings.ToLower(strings.TrimSpace(designType))
+
 		if designType == "" {
 			designType = "current"
 		}
@@ -140,7 +141,6 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 	}
 	return selectedPattern.ID.String(), nil
 }
-
 func exportDesign(baseUrl, design, designType string) error {
 	dataURL := fmt.Sprintf("%s/api/pattern/%s", baseUrl, design)
 	pattern, err := fetchPatternData(dataURL)
@@ -155,7 +155,6 @@ func exportDesign(baseUrl, design, designType string) error {
 	case "original":
 		url += fmt.Sprintf("/%s", pattern.Type.String)
 	}
-
 	resp, err := makeRequest(http.MethodGet, url)
 	if err != nil {
 		return err
@@ -215,11 +214,18 @@ func makeRequest(method, url string) (*http.Response, error) {
 }
 
 func generateFilename(patternName, design, designType string) string {
-	lastPartOfID := strings.Split(design, "-")[len(strings.Split(design, "-"))-1]
+	parts := strings.Split(design, "-")
+	lastPartOfID := parts[len(parts)-1]
+
+	// remove extension if present
+	patternName = strings.TrimSuffix(patternName, filepath.Ext(patternName))
+
+	// make filename safe
+	patternName = strings.ReplaceAll(patternName, " ", "_")
+
 	filename := fmt.Sprintf("%s_%s", patternName, lastPartOfID)
 	switch designType {
-	case "oci":
-	case "original":
+	case "oci", "original":
 		filename += ".tar.gz"
 	default:
 		filename += ".yaml"
@@ -228,7 +234,7 @@ func generateFilename(patternName, design, designType string) string {
 }
 
 func writeToFile(outputFilePath string, buf *bytes.Buffer) error {
-	err := meshkitutils.WriteToFile(outputFilePath, buf.String())
+	err := os.WriteFile(outputFilePath, buf.Bytes(), 0644)
 	if err != nil {
 		return err
 	}
@@ -337,14 +343,27 @@ func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) (mode
 }
 
 func getUniqueFilename(filename string) string {
-	base, ext := filepath.Split(strings.TrimSuffix(filename, filepath.Ext(filename)))
-	for i := 1; ; i++ {
-		if _, err := os.Stat(filename); os.IsNotExist(err) {
-			break
-		}
-		filename = fmt.Sprintf("%s(%d)%s", base, i, ext)
+	dir := filepath.Dir(filename)
+	base := filepath.Base(filename)
+
+	var name, ext string
+
+	// handle .tar.gz properly
+	if strings.HasSuffix(base, ".tar.gz") {
+		ext = ".tar.gz"
+		name = strings.TrimSuffix(base, ext)
+	} else {
+		ext = filepath.Ext(base)
+		name = strings.TrimSuffix(base, ext)
 	}
-	return filename
+
+	for i := 1; ; i++ {
+		fullPath := filepath.Join(dir, name+ext)
+		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
+			return fullPath
+		}
+		name = fmt.Sprintf("%s(%d)", name, i)
+	}
 }
 
 func init() {
