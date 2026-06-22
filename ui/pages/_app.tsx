@@ -101,6 +101,7 @@ import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
 import RegistryModalContextProvider from '@/utils/context/RegistryModalContextProvider';
 import { DynamicFullScreenLoader } from '@/components/shared/LoadingState/DynamicFullscreenLoader';
+import SessionAuthModals from '@/components/General/SessionAuthModals';
 
 export const mesheryExtensionRoute = '/extension/meshmap';
 function isMesheryUIRestrictedAndThePageIsNotPlayground(providerCapabilities) {
@@ -607,6 +608,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                                   providerCapabilities={providerCapabilities}
                                 />
                               </StyledContentWrapper>
+                              <SessionAuthModals />
                             </NotificationCenterProvider>
                           </SnackbarProvider>
                         </StyledAppContent>
