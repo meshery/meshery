@@ -11,6 +11,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
@@ -241,7 +242,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 // PrometheusPingHandler - fetches server version to simulate ping
 func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	connectionID := parseUUIDOrNil(mux.Vars(req)["connectionID"])
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
@@ -300,7 +301,7 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 // PrometheusQueryHandler handles prometheus queries
 func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	connectionID := parseUUIDOrNil(mux.Vars(req)["connectionID"])
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
 	connection, statusCode, err := p.GetConnectionByID(token, connectionID)
 	if err != nil {
@@ -332,7 +333,7 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 // PrometheusQueryRangeHandler handles prometheus range queries
 func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	connectionID := parseUUIDOrNil(mux.Vars(req)["connectionID"])
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
 	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
@@ -368,7 +369,7 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 // PrometheusStaticBoardHandler returns the static board
 func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, provider models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	connectionID := parseUUIDOrNil(mux.Vars(req)["connectionID"])
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
 	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
@@ -445,7 +446,7 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	}
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	connectionID := parseUUIDOrNil(mux.Vars(req)["connectionID"])
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		writeMeshkitError(w, err, statusCode)

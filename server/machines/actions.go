@@ -6,7 +6,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/events"
@@ -78,7 +78,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 				WithSeverity(events.Error).
 				WithMetadata(map[string]interface{}{"error": parseErr}).Build(), _err
 		}
-		parsed, parseErr := uuid.Parse(idStr)
+		parsed, parseErr := uuid.FromString(idStr)
 		if parseErr != nil {
 			_err := models.ErrPersistCredential(parseErr)
 			return NoOp, eventBuilder.

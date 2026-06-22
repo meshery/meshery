@@ -8,7 +8,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 )
 
@@ -132,13 +132,19 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, sear
 // CloneMesheryFilter clones meshery filter to private
 func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error) {
 	var mesheryFilter MesheryFilter
-	filterUUID, _ := uuid.Parse(filterID)
-	err := mfp.DB.First(&mesheryFilter, filterUUID).Error
+	filterUUID, err := uuid.FromString(filterID)
+	if err != nil {
+		return nil, ErrInvalidUUID(err)
+	}
+	err = mfp.DB.First(&mesheryFilter, filterUUID).Error
 	if err != nil || *mesheryFilter.ID == uuid.Nil {
 		return nil, fmt.Errorf("unable to get filter: %w", err)
 	}
 
-	id := uuid.New()
+	id, err := uuid.NewV4()
+	if err != nil {
+		return nil, err
+	}
 
 	mesheryFilter.Visibility = Private
 	mesheryFilter.ID = &id
@@ -160,7 +166,10 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilter(filter *MesheryFilter) ([]b
 		filter.Visibility = Private
 	}
 	if filter.ID == nil {
-		id := uuid.New()
+		id, err := uuid.NewV4()
+		if err != nil {
+			return nil, ErrGenerateUUID(err)
+		}
 
 		filter.ID = &id
 	}
@@ -178,7 +187,10 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilters(filters []MesheryFilter) (
 		}
 		filter.Owner = &nilOwner
 		if filter.ID == nil {
-			id := uuid.New()
+			id, err := uuid.NewV4()
+			if err != nil {
+				return nil, ErrGenerateUUID(err)
+			}
 
 			filter.ID = &id
 		}

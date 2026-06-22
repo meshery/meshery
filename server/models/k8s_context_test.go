@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 )
 
 // TestFlushMeshSyncDataNilKubernetesServerIDNoPanic verifies that FlushMeshSyncData
@@ -31,7 +31,10 @@ func TestFlushMeshSyncDataNilKubernetesServerIDNoPanic(t *testing.T) {
 // correctly skips nil entries while still counting non-nil ones, and that no panic
 // occurs when both nil and populated KubernetesServerID values are present.
 func TestFlushMeshSyncDataMixedNilAndPopulatedServerIDs(t *testing.T) {
-	serverID := uuid.New()
+	serverID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate UUID: %v", err)
+	}
 
 	k8sctxs := []*K8sContext{
 		{ID: "ctx-1", Name: "cluster-a", KubernetesServerID: nil},

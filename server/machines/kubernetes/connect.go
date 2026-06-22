@@ -6,7 +6,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
@@ -42,7 +42,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		return machines.NoOp, eventBuilder.Build(), errToken
 
 	}
-	connectionID := parseUUIDOrNil(machinectx.K8sContext.ConnectionID)
+	connectionID := uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID)
 	if connectionID == uuid.Nil {
 		errConnection := ErrConnectAction(fmt.Errorf("k8sCtx.ConnectionID is empty or invalid"))
 		eventBuilder.WithMetadata(map[string]interface{}{"error": errConnection})

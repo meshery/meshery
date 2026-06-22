@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/machines"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
@@ -70,7 +71,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	userID := user.ID
 	contextID := mux.Vars(req)["id"]
 
-	eventBuilder := events.NewEvent().ActedUpon(parseUUIDOrNil(contextID)).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+	eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(contextID)).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
 
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
@@ -101,7 +102,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		RegistryManager:    h.registryManager,
 	}
 
-	connectionUUID := parseUUIDOrNil(contextID)
+	connectionUUID := uuid.FromStringOrNil(contextID)
 
 	inst, err := mhelpers.InitializeMachineWithContext(
 		machineCtx,
