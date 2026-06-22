@@ -69,13 +69,7 @@
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "model": {
-                "version": ""
-              },
-              "name": "aws-load-balancer-controller",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
+              "name": "cluster-essentials",
             },
             "patch": {
               "mutatorRef": [
