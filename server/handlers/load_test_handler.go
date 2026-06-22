@@ -173,9 +173,12 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	 When "cert" query param is set the body contains self-signed certs
 	 and not the SMP config, hence we shouldn't use SMP Handler,
 	 if query param is unset/not present presence of body
-	 if values have been passed as body we run test using SMP Handler
+	 if values have been passed as body we run test using SMP Handler.
+	 A whitespace-only body (e.g. a trailing newline) is treated as empty
+	 so the handler continues with the regular query-parameter flow
+	 instead of attempting to parse it as an SMP document.
 	*/
-	if !isSSLCertificateProvided && string(body) != "" {
+	if !isSSLCertificateProvided && strings.TrimSpace(string(body)) != "" {
 		h.log.Info("Running test with SMP config")
 		req.Body = io.NopCloser(strings.NewReader(string(body)))
 		h.LoadTestUsingSMPHandler(w, req, prefObj, user, provider)
