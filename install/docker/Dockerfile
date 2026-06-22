@@ -104,6 +104,7 @@ RUN if [ -d /meshery-context/.meshery ]; then \
 
 FROM debian:bookworm-slim
 ENV DEBIAN_FRONTEND=noninteractive
+ENV USE_GO_POLICY_ENGINE=true
 
 RUN apt-get update && apt-get install -y ca-certificates && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN update-ca-certificates
