@@ -1,5 +1,5 @@
 {
-  "id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+  "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "edge_binding_network_relationship",
   "kind": "edge",
   "metadata": {
@@ -21,7 +21,7 @@
     "registrant": {
       "kind": "github"
     },
-    "version": "v1.2.2"
+    "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
@@ -43,7 +43,7 @@
               "registrant": {
                 "kind": "github"
               },
-              "version": "v1.2.2"
+              "version": ""
             },
             "patch": {
               "mutatedRef": [
