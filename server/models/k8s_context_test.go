@@ -97,6 +97,8 @@ func TestGetKubeNamespace_SAFileEmpty(t *testing.T) {
 	if err := os.WriteFile(nsFile, []byte("  \n"), 0644); err != nil {
 		t.Fatal(err)
 	}
+	old := saNamespaceFile
+	t.Cleanup(func() { saNamespaceFile = old })
 	saNamespaceFile = nsFile
 	t.Setenv("KUBERNETES_TARGET_NAMESPACE", "")
 
