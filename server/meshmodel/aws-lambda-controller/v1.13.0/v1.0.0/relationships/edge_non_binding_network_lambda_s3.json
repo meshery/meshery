@@ -1,5 +1,5 @@
 {
-  "id": "462d2fca-c2ce-41f8-b6b7-ffa045f8f2de",
+  "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
@@ -19,7 +19,7 @@
     },
     "name": "aws-lambda-controller",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "version": ""
   },
@@ -37,13 +37,13 @@
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "model": {
-                "version": "v1.13.0"
+                "version": ""
               },
               "name": "aws-lambda-controller",
               "registrant": {
                 "kind": "github"
               },
-              "version": "v1.13.0"
+              "version": ""
             },
             "patch": null
           }
@@ -58,13 +58,13 @@
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "model": {
-                "version": "v1.6.0"
+                "version": ""
               },
               "name": "aws-s3-controller",
               "registrant": {
                 "kind": "github"
               },
-              "version": "v1.6.0"
+              "version": ""
             },
             "patch": null
           }

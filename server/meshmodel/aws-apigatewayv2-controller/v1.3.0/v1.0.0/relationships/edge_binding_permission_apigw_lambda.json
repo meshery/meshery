@@ -1,5 +1,5 @@
 {
-  "id": "69cf61a7-55df-4a5c-85f0-408424715df1",
+  "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
@@ -19,7 +19,7 @@
     },
     "name": "aws-apigatewayv2-controller",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
     "version": ""
   },
@@ -37,13 +37,13 @@
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "model": {
-                "version": "v1.3.0"
+                "version": ""
               },
               "name": "aws-apigatewayv2-controller",
               "registrant": {
                 "kind": "github"
               },
-              "version": "v1.3.0"
+              "version": ""
             },
             "patch": {
               "mutatedRef": [

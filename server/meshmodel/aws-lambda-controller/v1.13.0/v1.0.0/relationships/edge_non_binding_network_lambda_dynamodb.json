@@ -1,5 +1,5 @@
 {
-  "id": "0002e8aa-5978-422f-b1e1-c1e9e03da18c",
+  "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
@@ -21,7 +21,7 @@
     "registrant": {
       "kind": "github"
     },
-    "version": "v1.13.0"
+    "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
@@ -37,13 +37,13 @@
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "model": {
-                "version": "v1.13.0"
+                "version": ""
               },
               "name": "aws-lambda-controller",
               "registrant": {
                 "kind": "github"
               },
-              "version": "v1.13.0"
+              "version": ""
             },
             "patch": null
           }
@@ -58,13 +58,13 @@
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "model": {
-                "version": "v1.9.0"
+                "version": ""
               },
               "name": "aws-dynamodb-controller",
               "registrant": {
                 "kind": "github"
               },
-              "version": "v1.9.0"
+              "version": ""
             },
             "patch": null
           }

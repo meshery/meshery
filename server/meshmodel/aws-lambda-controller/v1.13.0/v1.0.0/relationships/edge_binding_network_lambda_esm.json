@@ -1,5 +1,5 @@
 {
-  "id": "150df316-e63b-45d5-aff3-f8caa33bf7ee",
+  "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
@@ -21,7 +21,7 @@
     "registrant": {
       "kind": "github"
     },
-    "version": "v1.13.0"
+    "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
@@ -43,7 +43,7 @@
               "registrant": {
                 "kind": "github"
               },
-              "version": "v1.13.0"
+              "version": ""
             },
             "patch": {
               "patchStrategy": "replace",
@@ -73,7 +73,7 @@
               "registrant": {
                 "kind": "github"
               },
-              "version": "v1.13.0"
+              "version": ""
             },
             "patch": {
               "patchStrategy": "replace",
