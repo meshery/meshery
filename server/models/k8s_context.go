@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/meshery/schemas/models/core"
@@ -169,8 +170,8 @@ func NewK8sContextWithServerID(
 		return nil, err
 	}
 
-	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
-	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
+	// Get Kubernetes API server ID by querying a namespace uuid
+	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), getKubeNamespace(), v1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -478,11 +479,29 @@ func (kc K8sContext) PingTest() error {
 	return nil
 }
 
+// getKubeNamespace returns the namespace to use when deriving the cluster server ID.
+// Resolution order:
+//  1. KUBERNETES_TARGET_NAMESPACE environment variable
+//  2. In-cluster service-account namespace file
+//  3. "kube-system" (default/fallback)
+func getKubeNamespace() string {
+	if ns := os.Getenv("KUBERNETES_TARGET_NAMESPACE"); ns != "" {
+		return ns
+	}
+
+	nsBytes, err := os.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace")
+	if err == nil && len(nsBytes) > 0 {
+		return strings.TrimSpace(string(nsBytes))
+	}
+
+	return "kube-system"
+}
+
 // AssignServerID will attempt to assign kubernetes
 // server ID to the kubernetes context
 func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
-	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
-	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
+	// Get Kubernetes API server ID by querying a namespace uuid
+	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), getKubeNamespace(), v1.GetOptions{})
 	if err != nil {
 		return ErrUnreachableKubeAPI(err, kc.Server)
 	}
