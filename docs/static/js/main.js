@@ -73,19 +73,25 @@ var clipboard = new Clipboard('.clipbtn');
 
 /* Change copy icon to check icon when successfully copied*/
 clipboard.on("success", (e) => {
-    console.info(e.trigger);
-    console.info(e.trigger.childNodes[0]);
-    let originalIcon = e.trigger.childNodes[0].cloneNode(true);
+    const button = e.trigger;
+    if (button.dataset.isCopying === "true") {
+        return;
+    }
+    button.dataset.isCopying = "true";
 
-    var icon = e.trigger.childNodes[0];
-    var text = document.createElement('span');
+    const icon = button.querySelector('i');
+    if (!icon) return;
+
+    const originalIcon = icon.cloneNode(true);
+    const text = document.createElement('span');
     text.innerHTML = '<i class="fas fa-check"></i> Copied!';
     text.style.color = "#00b39f";
 
-    e.trigger.replaceChild(text, icon);
+    button.replaceChild(text, icon);
 
     setTimeout(() => {
-        e.trigger.replaceChild(originalIcon, text);
+        button.replaceChild(originalIcon, text);
+        delete button.dataset.isCopying;
     }, 2000)
 })
 
