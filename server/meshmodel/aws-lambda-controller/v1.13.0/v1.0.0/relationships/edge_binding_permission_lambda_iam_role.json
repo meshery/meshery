@@ -50,7 +50,9 @@
                 [
                   "configuration",
                   "spec",
-                  "role"
+                  "roleRef",
+                  "from",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"
