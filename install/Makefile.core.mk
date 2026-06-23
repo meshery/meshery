@@ -20,10 +20,13 @@ GIT_COMMITSHA = $(shell git rev-list -1 HEAD)
 GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
 
 # Extension Point for remote provider . Add your provider here.
-REMOTE_PROVIDER="Layer5"
+# Empty by default so installs do not enforce a specific provider; users see
+# the provider-selection UI on first launch. Set to e.g. "Meshery" 
+# to enforce a single provider via the PROVIDER env var.
+REMOTE_PROVIDER=""
 
-LOCAL_PROVIDER="None"
-GOVERSION = 1.25
+LOCAL_PROVIDER="Local"
+GOVERSION = 1.26
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
 KEYS_PATH="../../server/permissions/keys.csv"
@@ -33,10 +36,13 @@ SHELL := /usr/bin/env bash -o pipefail
 #-----------------------------------------------------------------------------
 # Components
 #-----------------------------------------------------------------------------
-# All Adapters
-# ADAPTER_URLS := "localhost:10000 localhost:10001 localhost:10002 localhost:10004 localhost:10005 localhost:10006 localhost:10007 localhost:10009 localhost:10010 localhost:10012"
-# No Adapters
-ADAPTER_URLS := "localhost:10000 localhost:10001 localhost:10012 localhost:10013"
+# Adapters to dial on start. Default is empty so developers who do not run
+# adapters locally don't see meshery-server-1047 "connection refused" errors
+# every sync tick. To use adapters, export ADAPTER_URLS in your shell, e.g.:
+#   export ADAPTER_URLS='localhost:10000 localhost:10001 localhost:10012 localhost:10013'
+# or override on the make command line:
+#   make server-local ADAPTER_URLS='localhost:10000 localhost:10001'
+ADAPTER_URLS ?= ""
 
 #-----------------------------------------------------------------------------
 # Providers (Add your provider here. See https://docs.meshery.io/extensibility/providers)
@@ -45,21 +51,38 @@ REMOTE_PROVIDER_LOCAL="http://localhost:9876"
 EQUINIX_DEV="http://meshery.console.equinix.com"
 EQUINIX_DEV2="http://meshery-2.console.equinix.com"
 MESHERY_CLOUD_DEV="http://localhost:9876"
-MESHERY_CLOUD_PROD="https://cloud.layer5.io"
-MESHERY_CLOUD_STAGING="https://staging-cloud.layer5.io"
+MESHERY_CLOUD_STAGING="https://staging-cloud.meshery.io"
 EXOSCALE_PROD="https://sks.exoscale.com"
 EXOSCALE_STG="https://stg-sks.exoscale.com"
 EXOSCALE_DEV="https://dev-sks.exoscale.com"
 PROVIDER_CAPABILITIES_FILEPATH="" # Path to capabilities file for remote provider. If empty, capabilities will be fetched from remote provider.
+
+# REMOTE_PROVIDER_URLS is the comma-joined list of Meshery's production remote
+# providers, derived from the single canonical source install/providers.env. Edit
+# providers.env (not this line) and run `make providers-propagate` to propagate the change
+# to every install artifact.
+# The `\#` is escaped so Make passes a literal `#` to awk instead of treating the rest
+# of the line as a Make comment. awk skips comment/blank lines, requires an `=`, and
+# prints everything after the first `=` (the URL), so quoted names like "TCS Labs" work.
+# Support invoking make from subdirectories (e.g., mesheryctl); prefer local install/
+# and fall back to parent dirs' install/ if needed.
+PROVIDERS_ENV := $(firstword $(wildcard install/providers.env ../install/providers.env ../../install/providers.env))
+REMOTE_PROVIDER_URLS := $(shell [ -n "$(PROVIDERS_ENV)" ] && awk '!/^[[:space:]]*\#/ && /=/ { sub(/^[^=]*=/, ""); print }' $(PROVIDERS_ENV) | paste -sd, - || echo "")
 
 #-----------------------------------------------------------------------------
 # Server
 #-----------------------------------------------------------------------------
 MESHERY_K8S_SKIP_COMP_GEN ?= TRUE
 APPLICATIONCONFIGPATH="./apps.json"
-PORT:=9081
-# OpenTelemetry Config (Ansi-C string format)
-OTEL_CONFIG=$$'service_name: meshery-server\nservice_version: 1.0.0\nendpoint: localhost:4317\ninsecure: true'
+PORT ?= 9081
+USE_GO_POLICY_ENGINE ?= true
+# OpenTelemetry Config (Ansi-C string format). Defaults to empty so tracing
+# is disabled unless a developer explicitly points it at a live collector.
+# Previously this defaulted to localhost:4317 which floods logs with
+# "traces export: ... connection refused" every ~10s when no collector is
+# running. To enable tracing from bash, override on the command line, e.g.:
+#   make server-local OTEL_CONFIG=$'service_name: meshery-server\nservice_version: 1.0.0\nendpoint: localhost:4317\ninsecure: true'
+OTEL_CONFIG ?=
 #-----------------------------------------------------------------------------
 # Build
 #-----------------------------------------------------------------------------

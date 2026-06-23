@@ -5,13 +5,14 @@ import (
 	"strings"
 
 	"github.com/meshery/meshery/server/models/pattern/planner"
+	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/orchestration"
 
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
-	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/component"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 )
 
 type CompConfigPair struct {
@@ -49,7 +50,13 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 		_ = plan.Execute(func(name string, component component.ComponentDefinition) bool {
 			ccp := CompConfigPair{}
 
-			err := orchestration.EnrichComponentWithMesheryMetadata(&component, data.Pattern.Id.String(), data.Pattern.Version)
+			// meshkit's orchestration.EnrichComponentWithMesheryMetadata operates
+			// on *v1beta3/component.ComponentDefinition; bridge to that type,
+			// then copy mutations back onto the v1beta2 value held by the
+			// pattern so the plan sees the enriched Configuration/Metadata.
+			v1beta3Comp := patternutils.ComponentV1beta2ToV1beta3(&component)
+			err := orchestration.EnrichComponentWithMesheryMetadata(v1beta3Comp, data.Pattern.ID.String(), string(data.Pattern.Version))
+			patternutils.ApplyV1beta3MetadataChanges(v1beta3Comp, &component)
 
 			if err != nil {
 				fmt.Println("Err while assigning labels", err)
@@ -59,7 +66,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 
 			// Generate hosts list
 			ccp.Hosts = generateHosts(
-				data.DeclartionToDefinitionMapping[component.Id],
+				data.DeclartionToDefinitionMapping[component.ID],
 				act.GetRegistry(),
 			)
 
@@ -95,7 +102,12 @@ func processAnnotations(pattern *pattern.PatternFile) {
 }
 
 func generateHosts(cd component.ComponentDefinition, reg *meshmodel.RegistryManager) []connection.Connection {
-	_connection := reg.GetRegistrant(&cd)
+	// registry.GetRegistrant expects an entity.Entity; v1beta3/component is
+	// the canonical-casing version that implements that interface. Bridge
+	// just for the registry lookup — the enclosing pattern continues to
+	// hold the component in its native v1beta2 representation.
+	v1beta3Cd := patternutils.ComponentV1beta2ToV1beta3(&cd)
+	_connection := reg.GetRegistrant(v1beta3Cd)
 	return []connection.Connection{_connection}
 }
 

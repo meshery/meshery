@@ -1,116 +1,117 @@
-import { api } from './index';
+import {
+  useAddConnectionToEnvironmentMutation as useSchemasAddConnectionToEnvironmentMutation,
+  useCreateEnvironmentMutation as useSchemasCreateEnvironmentMutation,
+  useDeleteEnvironmentMutation as useSchemasDeleteEnvironmentMutation,
+  useGetEnvironmentConnectionsQuery as useSchemasGetEnvironmentConnectionsQuery,
+  useGetEnvironmentsQuery as useSchemasGetEnvironmentsQuery,
+  useRemoveConnectionFromEnvironmentMutation as useSchemasRemoveConnectionFromEnvironmentMutation,
+  useUpdateEnvironmentMutation as useSchemasUpdateEnvironmentMutation,
+} from '@meshery/schemas/mesheryApi';
 
-const TAGS = {
-  ENVIRONMENT_CONNECTIONS: 'enivroment_connections',
+export const useGetEnvironmentsQuery = (queryArg, options) =>
+  useSchemasGetEnvironmentsQuery(
+    {
+      search: queryArg?.search,
+      order: queryArg?.order,
+      page: queryArg?.page?.toString(),
+      pagesize: queryArg?.pagesize?.toString(),
+      orgId: queryArg?.orgId,
+    },
+    options,
+  );
+
+export const useGetEnvironmentConnectionsQuery = (queryArg, options) =>
+  useSchemasGetEnvironmentConnectionsQuery(
+    {
+      environmentId: queryArg?.environmentId,
+      search: queryArg?.search,
+      order: queryArg?.order,
+      page: queryArg?.page?.toString(),
+      pagesize: queryArg?.pagesize?.toString(),
+      filter: queryArg?.filter,
+    },
+    options,
+  );
+
+export const useCreateEnvironmentMutation = () => {
+  const [trigger, result] = useSchemasCreateEnvironmentMutation();
+
+  const wrappedTrigger = (queryArg) =>
+    trigger({
+      body: {
+        name: queryArg.environmentPayload?.name,
+        description: queryArg.environmentPayload?.description,
+        organizationId:
+          queryArg.environmentPayload?.organizationId ||
+          queryArg.environmentPayload?.organization_id ||
+          queryArg.environmentPayload?.OrganizationID,
+      },
+    });
+
+  return [wrappedTrigger, result] as const;
 };
-const connectionsApi = api
-  .enhanceEndpoints({
-    addTagTypes: [TAGS.ENVIRONMENT_CONNECTIONS],
-  })
-  .injectEndpoints({
-    endpoints: (builder) => ({
-      getEnvironments: builder.query({
-        query: (queryArg) => ({
-          url: `environments`,
-          params: {
-            search: queryArg.search,
-            order: queryArg.order,
-            page: queryArg.page || 0,
-            pagesize: queryArg.pagesize || 'all',
-            orgID: queryArg.orgId,
-          },
-          method: 'GET',
-        }),
-        providesTags: () => [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
-      }),
 
-      createEnvironment: builder.mutation({
-        query: (queryArg) => ({
-          url: `environments`,
-          method: 'POST',
-          body: queryArg.environmentPayload,
-        }),
+export const useSaveEnvironmentMutation = () => {
+  const [trigger, result] = useSchemasCreateEnvironmentMutation();
 
-        invalidatesTags: () => [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
-      }),
+  const wrappedTrigger = (queryArg) =>
+    trigger({
+      body: queryArg.body,
+    });
 
-      updateEnvironment: builder.mutation({
-        query: (queryArg) => ({
-          url: `environments/${queryArg.environmentId}`,
-          method: 'PUT',
-          body: queryArg.environmentPayload,
-        }),
+  return [wrappedTrigger, result] as const;
+};
 
-        invalidatesTags: () => [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
-      }),
+export const useUpdateEnvironmentMutation = () => {
+  const [trigger, result] = useSchemasUpdateEnvironmentMutation();
 
-      deleteEnvironment: builder.mutation({
-        query: (queryArg) => ({
-          url: `environments/${queryArg.environmentId}`,
-          method: 'DELETE',
-        }),
+  const wrappedTrigger = (queryArg) =>
+    trigger({
+      environmentId: queryArg.environmentId,
+      body: {
+        name: queryArg.environmentPayload?.name,
+        description: queryArg.environmentPayload?.description,
+        organizationId:
+          queryArg.environmentPayload?.organizationId ||
+          queryArg.environmentPayload?.organization_id ||
+          queryArg.environmentPayload?.OrganizationID,
+      },
+    });
 
-        invalidatesTags: () => [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
-      }),
+  return [wrappedTrigger, result] as const;
+};
 
-      getEnvironmentConnections: builder.query({
-        query: (queryArg) => ({
-          url: `environments/${queryArg.environmentId}/connections`,
-          params: {
-            page: queryArg.page || 0,
-            per_page: queryArg.per_page,
-            pagesize: queryArg.pagesize || 'all',
-            filter: queryArg.filter,
-          },
-          method: 'GET',
-        }),
-        providesTags: (_result, _error, arg) => [
-          { type: TAGS.ENVIRONMENT_CONNECTIONS, id: arg.environmentId },
-        ],
-      }),
+export const useDeleteEnvironmentMutation = () => {
+  const [trigger, result] = useSchemasDeleteEnvironmentMutation();
 
-      addConnectionToEnvironment: builder.mutation({
-        query: (queryArg) => ({
-          url: `environments/${queryArg.environmentId}/connections/${queryArg.connectionId}`,
-          method: 'POST',
-          body: {},
-        }),
+  const wrappedTrigger = (queryArg) =>
+    trigger({
+      environmentId: queryArg.environmentId,
+    });
 
-        invalidatesTags: (_result, _error, arg) => [
-          { type: TAGS.ENVIRONMENT_CONNECTIONS, id: arg.environmentId },
-        ],
-      }),
+  return [wrappedTrigger, result] as const;
+};
 
-      removeConnectionFromEnvironment: builder.mutation({
-        query: (queryArg) => ({
-          url: `environments/${queryArg.environmentId}/connections/${queryArg.connectionId}`,
-          method: 'DELETE',
-          body: {},
-        }),
+export const useAddConnectionToEnvironmentMutation = () => {
+  const [trigger, result] = useSchemasAddConnectionToEnvironmentMutation();
 
-        invalidatesTags: (_result, _error, arg) => [
-          { type: TAGS.ENVIRONMENT_CONNECTIONS, id: arg.environmentId },
-        ],
-      }),
+  const wrappedTrigger = (queryArg) =>
+    trigger({
+      environmentId: queryArg.environmentId,
+      connectionId: queryArg.connectionId,
+    });
 
-      saveEnvironment: builder.mutation({
-        query: (queryArg) => ({
-          url: `environments`,
-          method: 'POST',
-          body: queryArg.body,
-        }),
-        invalidatesTags: [{ type: TAGS.ENVIRONMENT_CONNECTIONS }],
-      }),
-    }),
-  });
+  return [wrappedTrigger, result] as const;
+};
 
-export const {
-  useGetEnvironmentsQuery,
-  useCreateEnvironmentMutation,
-  useUpdateEnvironmentMutation,
-  useDeleteEnvironmentMutation,
-  useGetEnvironmentConnectionsQuery,
-  useAddConnectionToEnvironmentMutation,
-  useRemoveConnectionFromEnvironmentMutation,
-  useSaveEnvironmentMutation,
-} = connectionsApi;
+export const useRemoveConnectionFromEnvironmentMutation = () => {
+  const [trigger, result] = useSchemasRemoveConnectionFromEnvironmentMutation();
+
+  const wrappedTrigger = (queryArg) =>
+    trigger({
+      environmentId: queryArg.environmentId,
+      connectionId: queryArg.connectionId,
+    });
+
+  return [wrappedTrigger, result] as const;
+};

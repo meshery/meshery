@@ -1,6 +1,4 @@
-import fetch from "isomorphic-unfetch";
-
-export const PROVIDER_URL = "https://cloud.layer5.io";
+export const PROVIDER_URL = "https://cloud.meshery.io"; // AUTO-GENERATED from install/providers.env - run `make providers-propagate`
 
 // This can be migrated as a custom hook in React
 const dataFetch = (url, options = {}, successFn, errorFn) => {

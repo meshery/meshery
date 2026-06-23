@@ -15,9 +15,8 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",
@@ -54,16 +53,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#009639",
@@ -205,6 +204,7 @@
     "kind": "APDosPolicy",
     "schema": "{\n \"description\": \"APDosPolicy is the Schema for the APDosPolicy API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"APDosPolicySpec defines the desired state of APDosPolicy\",\n   \"properties\": {\n    \"automation_tools_detection\": {\n     \"default\": \"on\",\n     \"enum\": [\n      \"on\",\n      \"off\"\n     ],\n     \"type\": \"string\"\n    },\n    \"bad_actors\": {\n     \"default\": \"on\",\n     \"enum\": [\n      \"on\",\n      \"off\"\n     ],\n     \"type\": \"string\"\n    },\n    \"mitigation_mode\": {\n     \"default\": \"standard\",\n     \"enum\": [\n      \"standard\",\n      \"conservative\",\n      \"none\"\n     ],\n     \"type\": \"string\"\n    },\n    \"signatures\": {\n     \"default\": \"on\",\n     \"enum\": [\n      \"on\",\n      \"off\"\n     ],\n     \"type\": \"string\"\n    },\n    \"tls_fingerprint\": {\n     \"default\": \"on\",\n     \"enum\": [\n      \"on\",\n      \"off\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"AP Dos Policy\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

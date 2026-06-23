@@ -3,8 +3,8 @@ package planner
 import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/utils"
-	"github.com/meshery/schemas/models/v1beta1/component"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/component"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	"github.com/pkg/errors"
 )
 
@@ -32,7 +32,7 @@ func CreatePlan(pattern pattern.PatternFile, invert bool) (*Plan, error) {
 	g := NewGraph()
 
 	for _, component := range pattern.Components {
-		g.AddNode(component.Id.String(), *component)
+		g.AddNode(component.ID.String(), *component)
 	}
 
 	for _, component := range pattern.Components {

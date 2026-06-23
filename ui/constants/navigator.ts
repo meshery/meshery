@@ -12,6 +12,7 @@ export const SECURITY = 'security';
 export const CONFIG = 'config';
 
 export const CONNECTION = 'connection';
+export const CREDENTIAL = 'credential';
 export const ENVIRONMENT = 'environment';
 export const WORKSPACE = 'Workspace';
 export const SERVICE_MESH = 'service_mesh';
@@ -26,7 +27,6 @@ export const NGINX = 'nginx_service_mesh';
 export const APP_MESH = 'app_mesh';
 export const CITRIX_SM = 'citrix_Service_mesh';
 export const NETWORK_SM = 'network_service_mesh';
-export const NIGHTHAWK = 'nighthawk';
 
 export const FILTER = 'filter';
 export const APPLICATION = 'application';
@@ -52,6 +52,7 @@ export const COMPONENTS = 'Components';
 export const RELATIONSHIPS = 'Relationships';
 export const POLICIES = 'Policies';
 export const REGISTRANTS = 'Registrants';
+export const CONNECTIONS = 'Connections';
 export const REGISTRY = 'Registry';
 export const ADAPTERS = 'Adapters';
 export const RESET = 'Reset';

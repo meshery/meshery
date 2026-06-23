@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"reflect"
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
@@ -89,6 +88,7 @@ func TestModelBuild(t *testing.T) {
 
 		// Use the shared helper for ModelCmd
 		cmd := createFreshModelCmd()
+		mesheryctlflags.InitValidators(freshBuildCmd)
 		cmd.AddCommand(freshBuildCmd)
 		return cmd
 	}
@@ -98,6 +98,7 @@ func TestModelBuild(t *testing.T) {
 			// Use the shared helper to create a fresh ModelCmd
 			cmd := createFreshModelCmd()
 			cmd.AddCommand(initModelCmd)
+			mesheryctlflags.InitValidators(initModelCmd)
 			cmd.SetArgs(modelInitArgs)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
 			cmd.SetOut(buff)
@@ -125,7 +126,7 @@ func TestModelBuild(t *testing.T) {
 		ExpectedError    error
 	}{
 		{
-			Name:             "model build from model name and version",
+			Name:             "given name and version when model build then model is built",
 			Args:             []string{"build", "test-case-model-build-aws-lambda-controller/v0.1.0"},
 			ExpectError:      false,
 			ExpectedResponse: "model.build.from-model-name-version.golden",
@@ -143,7 +144,7 @@ func TestModelBuild(t *testing.T) {
 			},
 		},
 		{
-			Name:             "model build from model name only (no version)",
+			Name:             "given name only when model build then model is built",
 			Args:             []string{"build", buildTestDynamoController},
 			ExpectError:      false,
 			ExpectedResponse: "model.build.from-model-name-only.golden",
@@ -161,7 +162,7 @@ func TestModelBuild(t *testing.T) {
 			},
 		},
 		{
-			Name:             "model build from model name only (no version) with slash in the end",
+			Name:             "given name only when model build then model is built",
 			Args:             []string{"build", buildTestDynamoController + "/"},
 			ExpectError:      false,
 			ExpectedResponse: "model.build.from-model-name-only.golden",
@@ -179,7 +180,7 @@ func TestModelBuild(t *testing.T) {
 			},
 		},
 		{
-			Name:             "model build no params",
+			Name:             "given no params when model build then throw error",
 			Args:             []string{"build"},
 			ExpectError:      true,
 			ExpectedResponse: "",
@@ -187,7 +188,7 @@ func TestModelBuild(t *testing.T) {
 			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage),
 		},
 		{
-			Name:             "model build wrong input param format",
+			Name:             "given wrong input param format when model build then throw error",
 			Args:             []string{"build", buildTestEC2Controller + "/" + buildTestVersion + "/smthelse"},
 			ExpectError:      true,
 			ExpectedResponse: "",
@@ -195,7 +196,7 @@ func TestModelBuild(t *testing.T) {
 			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage),
 		},
 		{
-			Name:             "model build from model name only (no version) not supporting multiple versions",
+			Name:             "given name and multiple versions when model build then throw error",
 			Args:             []string{"build", buildTestDynamoControllerGbx},
 			ExpectError:      true,
 			ExpectedResponse: "",
@@ -213,12 +214,12 @@ func TestModelBuild(t *testing.T) {
 			ExpectedError:  ErrModelBuildFromStrings(errBuildUsage, errBuildMultiVersionNotSupported),
 		},
 		{
-			Name:             "model build folder does not exist",
+			Name:             "given folder does not exist when model build then throw error",
 			Args:             []string{"build", buildTestEC2Controller + "/" + buildTestVersion, "--path", "./" + buildTestNonExistentFolder},
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage, fmt.Sprintf(errBuildFolderNotFound, filepath.Join(buildTestNonExistentFolder, buildTestEC2Controller, buildTestVersion))),
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --path './%s': directory does not exist", buildTestNonExistentFolder)),
 		},
 	}
 	for _, tc := range tests {
@@ -254,9 +255,7 @@ func TestModelBuild(t *testing.T) {
 						utils.Equals(t, expectedResponse, err.Error())
 						return
 					}
-					assert.Equal(t, reflect.TypeOf(err), reflect.TypeOf(tc.ExpectedError))
-					assert.Equal(t, errors.GetCode(err), errors.GetCode(tc.ExpectedError))
-					assert.Equal(t, errors.GetLDescription(err), errors.GetLDescription(tc.ExpectedError))
+					utils.AssertMeshkitErrorsEqual(t, err, tc.ExpectedError)
 					return
 
 				}

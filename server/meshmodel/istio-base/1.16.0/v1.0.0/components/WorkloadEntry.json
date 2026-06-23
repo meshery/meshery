@@ -15,9 +15,8 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",
@@ -54,16 +53,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#466BB0",
@@ -205,6 +204,7 @@
     "kind": "WorkloadEntry",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Configuration affecting VMs onboarded into the mesh. See more details at: https://istio.io/docs/reference/config/networking/workload-entry.html\",\n   \"properties\": {\n    \"address\": {\n     \"type\": \"string\"\n    },\n    \"labels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"One or more labels associated with the endpoint.\",\n     \"type\": \"object\"\n    },\n    \"locality\": {\n     \"description\": \"The locality associated with the endpoint.\",\n     \"type\": \"string\"\n    },\n    \"network\": {\n     \"type\": \"string\"\n    },\n    \"ports\": {\n     \"additionalProperties\": {\n      \"type\": \"integer\"\n     },\n     \"description\": \"Set of ports associated with the endpoint.\",\n     \"type\": \"object\"\n    },\n    \"serviceAccount\": {\n     \"type\": \"string\"\n    },\n    \"weight\": {\n     \"description\": \"The load balancing weight associated with the endpoint.\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Workload Entry\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

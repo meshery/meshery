@@ -1,0 +1,19 @@
+---
+timestamp: "2022-05-06 15:14:13 UTC Fri"
+meshery-component: meshery-istio
+meshery-component-version: edge
+meshery-server-version: "v0.6.0-rc.5p"
+k8s-distro: minikube
+k8s-version: "v1.20.1"
+service-mesh: istio
+service-mesh-version: "1.13.3"
+tests:
+  istiod: "Running"
+  details: "Running"
+  productpage: "Running"
+  ratings: "Running"
+  reviews-v1: "Running"
+  reviews-v2: "Running"
+  reviews-v3: "Running"
+overall-status: "passing"
+---

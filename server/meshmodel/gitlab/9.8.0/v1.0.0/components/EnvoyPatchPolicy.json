@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#1988d9",
@@ -71,7 +71,50 @@
     "svgComplete": "",
     "svgWhite": "\u003csvg width=\"380\" height=\"380\" viewBox=\"0 0 380 380\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\r\u003cpath d=\"M334.548 160L334.128 158.926L293.425 52.6998C292.597 50.6179 291.131 48.8517 289.237 47.6548C287.341 46.4782 285.131 45.9116 282.903 46.0313C280.675 46.151 278.538 46.9514 276.78 48.3244C275.041 49.7367 273.78 51.6506 273.167 53.8054L245.684 137.889H134.398L106.915 53.8054C106.319 51.6388 105.055 49.7154 103.303 48.3088C101.544 46.9358 99.4072 46.1355 97.1795 46.0157C94.9519 45.896 92.7412 46.4627 90.8458 47.6392C88.9559 48.841 87.4909 50.6056 86.6572 52.6842L45.8766 158.863L45.4718 159.938C39.6124 175.247 38.8892 192.047 43.4111 207.803C47.933 223.56 57.4549 237.419 70.5412 247.291L70.6813 247.4L71.055 247.665L133.059 294.098L163.734 317.314L182.419 331.422C184.605 333.081 187.274 333.98 190.018 333.98C192.762 333.98 195.431 333.081 197.617 331.422L216.302 317.314L246.977 294.098L309.355 247.385L309.51 247.26C322.567 237.386 332.067 223.541 336.582 207.806C341.097 192.071 340.383 175.295 334.548 160Z\" fill=\"white\"/\u003e\r\u003c/svg\u003e"
   },
-  "capabilities": null,
+  "capabilities": [
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1beta1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1beta1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1beta1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
   "metadata": {
     "configurationUISchema": "",
@@ -88,6 +131,7 @@
     "kind": "EnvoyPatchPolicy",
     "schema": "{\n \"description\": \"EnvoyPatchPolicy allows the user to modify the generated Envoy xDS\\nresources by Envoy Gateway using this patch API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec defines the desired state of EnvoyPatchPolicy.\",\n   \"properties\": {\n    \"jsonPatches\": {\n     \"description\": \"JSONPatch defines the JSONPatch configuration.\",\n     \"items\": {\n      \"description\": \"EnvoyJSONPatchConfig defines the configuration for patching a Envoy xDS Resource\\nusing JSONPatch semantic\",\n      \"properties\": {\n       \"name\": {\n        \"description\": \"Name is the name of the resource\",\n        \"type\": \"string\"\n       },\n       \"operation\": {\n        \"description\": \"Patch defines the JSON Patch Operation\",\n        \"properties\": {\n         \"from\": {\n          \"description\": \"From is the source location of the value to be copied or moved. Only valid\\nfor move or copy operations\\nRefer to https://datatracker.ietf.org/doc/html/rfc6901 for more details.\",\n          \"type\": \"string\"\n         },\n         \"jsonPath\": {\n          \"description\": \"JSONPath is a JSONPath expression. Refer to https://datatracker.ietf.org/doc/rfc9535/ for more details.\\nIt produces one or more JSONPointer expressions based on the given JSON document.\\nIf no JSONPointer is found, it will result in an error.\\nIf the 'Path' property is also set, it will be appended to the resulting JSONPointer expressions from the JSONPath evaluation.\\nThis is useful when creating a property that does not yet exist in the JSON document.\\nThe final JSONPointer expressions specifies the locations in the target document/field where the operation will be applied.\",\n          \"type\": \"string\"\n         },\n         \"op\": {\n          \"description\": \"Op is the type of operation to perform\",\n          \"enum\": [\n           \"add\",\n           \"remove\",\n           \"replace\",\n           \"move\",\n           \"copy\",\n           \"test\"\n          ],\n          \"type\": \"string\"\n         },\n         \"path\": {\n          \"description\": \"Path is a JSONPointer expression. Refer to https://datatracker.ietf.org/doc/html/rfc6901 for more details.\\nIt specifies the location of the target document/field where the operation will be performed\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Value is the new value of the path location. The value is only used by\\nthe `add` and `replace` operations.\",\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"op\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": {\n        \"description\": \"Type is the typed URL of the Envoy xDS Resource\",\n        \"enum\": [\n         \"type.googleapis.com/envoy.config.listener.v3.Listener\",\n         \"type.googleapis.com/envoy.config.route.v3.RouteConfiguration\",\n         \"type.googleapis.com/envoy.config.cluster.v3.Cluster\",\n         \"type.googleapis.com/envoy.config.endpoint.v3.ClusterLoadAssignment\",\n         \"type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.Secret\"\n        ],\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"operation\",\n       \"type\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"priority\": {\n     \"description\": \"Priority of the EnvoyPatchPolicy.\\nIf multiple EnvoyPatchPolicies are applied to the same\\nTargetRef, they will be applied in the ascending order of\\nthe priority i.e. int32.min has the highest priority and\\nint32.max has the lowest priority.\\nDefaults to 0.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"targetRef\": {\n     \"description\": \"TargetRef is the name of the Gateway API resource this policy\\nis being attached to.\\nBy default, attaching to Gateway is supported and\\nwhen mergeGateways is enabled it should attach to GatewayClass.\\nThis Policy and the TargetRef MUST be in the same namespace\\nfor this Policy to have effect and be applied to the Gateway\\nTargetRef\",\n     \"properties\": {\n      \"group\": {\n       \"description\": \"Group is the group of the target resource.\",\n       \"maxLength\": 253,\n       \"pattern\": \"^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind is kind of the target resource.\",\n       \"maxLength\": 63,\n       \"minLength\": 1,\n       \"pattern\": \"^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the name of the target resource.\",\n       \"maxLength\": 253,\n       \"minLength\": 1,\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"group\",\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"type\": {\n     \"description\": \"Type decides the type of patch.\\nValid EnvoyPatchType values are \\\"JSONPatch\\\".\",\n     \"enum\": [\n      \"JSONPatch\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"targetRef\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Envoy Patch Policy\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -203,6 +203,7 @@
     "kind": "OrgUser",
     "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"avatarURL\": {\n     \"type\": \"string\"\n    },\n    \"email\": {\n     \"type\": \"string\"\n    },\n    \"fullName\": {\n     \"type\": \"string\"\n    },\n    \"isPublic\": {\n     \"type\": \"boolean\"\n    },\n    \"orgID\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"orgName\": {\n     \"type\": \"string\"\n    },\n    \"teamName\": {\n     \"type\": \"string\"\n    },\n    \"userID\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"userName\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"isPublic\",\n    \"orgID\",\n    \"userID\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Org User\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

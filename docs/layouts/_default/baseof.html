@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}" class="no-js">
+  <head>
+    {{ partial "head.html" (dict "Title" .Title "Description" .Params.abstract "Kind" .Kind "Permalink" .Permalink "Site" .Site) }}
+    {{ partialCached "header.html" . .RelPermalink }}
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <script src="{{ "js/error-code-handler.js" | relURL }}"></script>
+    
+  </head>
+
+  <body class="td-{{ .Kind }}{{ with .Params.body_class }} {{ . }}{{ end }}{{ block "body_class" . }}{{ end }}">
+    <script>
+      (function() {
+        const savedMode = localStorage.getItem("mode");
+        const isLight = savedMode === "light-mode";
+        if (isLight) {
+          document.body.classList.remove("dark-mode");
+        } else {
+          document.body.classList.add("dark-mode");
+        }
+        // Update logos immediately
+        document.querySelectorAll(".logo-dark-light").forEach(logo => {
+          if (isLight) {
+            logo.src = logo.dataset.logoForLight;
+          } else {
+            logo.src = logo.dataset.logoForDark;
+          }
+          logo.style.visibility = "visible";
+        });
+      })();
+    </script>
+
+    {{ partialCached "scripts/google-tagmanager-body.html" . }}
+
+    <div class="flex-container">
+      <div class="left-container">
+        <script>
+          (function () {
+            const leftContainer = document.querySelector(".left-container");
+                
+            if (!leftContainer) return
+
+            let state = localStorage.getItem('leftContainer-state');
+
+            if (!state) {  
+              const isDesktop = window.matchMedia("(min-width: 75em)").matches;
+              state =  isDesktop ? 'active' : 'inactive';
+              localStorage.setItem('leftContainer-state', state);
+            }
+                
+            leftContainer.classList.toggle('left-container--active', state === 'active')
+          })();
+        </script>
+        <div class="sidebar-container-wrapper">
+          <div class="sidebar-container">
+            {{ partial "sidebar.html" . }}
+          </div>
+        </div>
+
+        <div class="icon-container">
+          {{ partial "nav-toggle.html" . }}
+        </div>
+      </div>
+
+      <main class="main-container{{ block "main_class" . }}{{ end }}" role="main">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb spb-1">
+            <li class="breadcrumb-item active" aria-current="page">
+              {{ partial "breadcrumbs.html" . }}
+            </li>
+          </ol>
+        </nav>
+        <div class="td-content{{ block "td_content_class" . }}{{ end }}">
+          {{ if ne (.Params.display_title | default true) false }}
+            <h1>{{ .Title }}</h1>
+          {{ end }}
+          {{ block "main" . }}{{ end }}
+          <div class="related-reading">
+            {{ partial "related-reading.html" . -}}
+          </div>
+        </div>
+        {{ if or .IsPage .IsSection }}
+          {{ partial "pagination.html" . }}
+        {{ end }}
+      </main>
+
+      {{ if ne (.Params.display_toc | default true) false }}
+        <div class="content-table-wrapper">
+          <div class="content-table" data-proofer-ignore>
+            {{ partial "page-meta-links.html" . }}
+            {{ partial "toc.html" . }}
+          </div>
+        </div>
+      {{ end }}
+    </div>
+
+    {{ partialCached "footer.html" . }}
+    {{ partialCached "scripts.html" . }}
+    {{ partialCached "scripts/google-analytics.html" . }}
+
+  </body>
+</html>

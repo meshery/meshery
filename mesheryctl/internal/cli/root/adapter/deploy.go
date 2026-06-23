@@ -25,7 +25,7 @@ import (
 )
 
 var linkDocMeshDeploy = map[string]string{
-	"link":    "![mesh-deploy-usage](/assets/img/mesheryctl/deploy-mesh.png)",
+	"link":    "![mesh-deploy-usage](../../../images/deploy-mesh.png)",
 	"caption": "Usage of mesheryctl adapter deploy",
 }
 
@@ -64,15 +64,14 @@ mesheryctl adapter deploy linkerd --watch
 		RunE: func(cmd *cobra.Command, args []string) error {
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			s := utils.CreateDefaultSpinner(fmt.Sprintf("Deploying %s", meshName), fmt.Sprintf("\n%s infrastructure deployed", meshName))
 			s.Start()
 			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), false, "null")
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				s.Stop()
+				return err
 			}
 			s.Stop()
 
@@ -80,8 +79,7 @@ mesheryctl adapter deploy linkerd --watch
 				utils.Log.Info("Verifying Operation")
 				_, err = waitForDeployResponse(mctlCfg, "mesh is now installed")
 				if err != nil {
-					utils.Log.Error(err)
-					return nil
+					return err
 				}
 			}
 

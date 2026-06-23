@@ -1,11 +1,6 @@
-import { DashboardPage } from './DashboardPage';
-import { DesignPage } from './DesignPage/DesignPage';
-
 export class DesignConfiguratorPage {
   constructor(page) {
     this.page = page;
-    this.DashboardPage = new DashboardPage(page);
-    this.DesignPage = new DesignPage(page);
 
     this.appBar = page.getByTestId('design-configurator-app-bar');
     this.codeEditor = page.getByTestId('design-configurator-code-editor');
@@ -18,10 +13,9 @@ export class DesignConfiguratorPage {
     this.updateButton = page.getByTestId('design-configurator-update-design-btn');
   }
 
-  async navigateTo() {
-    await this.DashboardPage.navigateToDashboard();
-    await this.DashboardPage.navigateToDesigns();
-    await this.DesignPage.navigateToDesignConfigurator();
+  async navigateTo(designId) {
+    const query = designId ? `?design_id=${designId}` : '';
+    await this.page.goto(`/configuration/designs/configurator${query}`);
   }
 
   async saveDesign() {

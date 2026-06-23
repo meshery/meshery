@@ -4,7 +4,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta2/component"
 )
 
 // Graph represents the graph data structure

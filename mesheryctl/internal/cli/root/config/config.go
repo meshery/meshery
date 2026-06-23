@@ -1,17 +1,3 @@
-// Copyright Meshery Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package config
 
 import (
@@ -19,15 +5,20 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
+	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 
 	"net/http"
 )
+
+// legacyProviderConfigWarnOnce gates the one-shot deprecation warning emitted
+// when GetMesheryCtl rewrites a legacy "None" provider entry to "Local".
+var legacyProviderConfigWarnOnce sync.Once
 
 // Version unmarshals the json response from the server's version api
 type Version struct {
@@ -70,6 +61,24 @@ func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 	if err != nil {
 		return nil, ErrInvalidMeshConfig(err)
 	}
+	// In-memory migration: the built-in local provider was renamed
+	// "None" -> "Local". Rewrite legacy values so commands behave consistently
+	// against post-rename servers. The on-disk config is only updated the next
+	// time something else calls viper.WriteConfig. A one-shot Warn is emitted
+	// so users see the deprecation when running any mesheryctl command against
+	// a legacy meshconfig — visible without --verbose, but only once per
+	// process to avoid spam.
+	for name, ctx := range c.Contexts {
+		if strings.EqualFold(ctx.Provider, "None") {
+			ctx.Provider = "Local"
+			c.Contexts[name] = ctx
+			legacyProviderConfigWarnOnce.Do(func() {
+				if mesheryctllogger.Log != nil {
+					mesheryctllogger.Log.Warnf("DEPRECATION: provider %q in ~/.meshery/config.yaml is the legacy alias for %q and will be removed in a future Meshery release. Run 'mesheryctl system context view' and update affected contexts. This warning is logged once per process.", "None", "Local")
+				}
+			})
+		}
+	}
 	return c, nil
 }
 
@@ -110,7 +119,7 @@ func (mc *MesheryCtlConfig) CheckIfGivenContextIsValid(name string) (*Context, e
 func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
 	currentContext, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		log.Fatal(err)
+		mesheryctllogger.Log.Fatal(err)
 	}
 
 	return currentContext.Endpoint
@@ -124,7 +133,7 @@ func (mc *MesheryCtlConfig) GetCurrentContextName() string {
 func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
 	currentContext, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		log.Fatal(err)
+		mesheryctllogger.Log.Fatal(err)
 	}
 
 	return currentContext, err
@@ -134,7 +143,7 @@ func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
 func (mc *MesheryCtlConfig) GetContext(name string) (*Context, error) {
 	context, err := mc.CheckIfGivenContextIsValid(name)
 	if err != nil {
-		log.Fatal(err)
+		mesheryctllogger.Log.Fatal(err)
 	}
 
 	return context, err
@@ -147,7 +156,7 @@ func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) error {
 	}
 	_, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		log.Errorf("Error: %v", err.Error())
+		mesheryctllogger.Log.Errorf("Error: %v", err.Error())
 
 	}
 
@@ -255,16 +264,16 @@ func (ctx *Context) ValidateVersion() error {
 
 	defer func() {
 		if cerr := resp.Body.Close(); cerr != nil {
-			log.Error(cerr)
+			mesheryctllogger.Log.Error(cerr)
 		}
 	}()
 
 	if resp.StatusCode == 404 {
-		log.Fatal("version '" + ctx.Version + "' is not a valid Meshery release.")
+		mesheryctllogger.Log.Fatal(fmt.Errorf("version '%s' is not a valid Meshery release", ctx.Version))
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		log.Fatal("failed to validate Meshery release version " + ctx.Version)
+		mesheryctllogger.Log.Fatal(fmt.Errorf("failed to validate Meshery release version %s", ctx.Version))
 	}
 
 	return nil
@@ -315,7 +324,7 @@ func (t *Token) GetLocation() string {
 	if strings.HasPrefix(t.Location, "~/") {
 		usr, err := os.UserHomeDir()
 		if err != nil {
-			log.Warn("failed to get user home directory")
+			mesheryctllogger.Log.Warn(fmt.Errorf("failed to get user home directory: %w", err))
 		}
 		return filepath.Join(usr, t.Location[2:])
 	}
@@ -324,7 +333,7 @@ func (t *Token) GetLocation() string {
 	// is in the .meshery directory
 	home, err := os.UserHomeDir()
 	if err != nil {
-		log.Warn("failed to get user home directory")
+		mesheryctllogger.Log.Warn(fmt.Errorf("failed to get user home directory: %w", err))
 	}
 
 	return filepath.Join(home, ".meshery", t.Location)
@@ -466,12 +475,12 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 	viper.SetConfigFile(configPath)
 	err := viper.ReadInConfig()
 	if err != nil {
-		return err
+		return ErrReadMesheryConfig(err)
 	}
 
 	mctlCfg, err := GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return errors.Wrap(err, "error processing config")
+		return err
 	}
 
 	if mctlCfg.Contexts == nil {
@@ -480,7 +489,7 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 
 	_, exists := mctlCfg.Contexts[contextName]
 	if exists && !overwrite {
-		return errors.New("error adding context: a context with same name already exists")
+		return ErrDuplicateContext(errors.New("error adding context: a context with same name already exists"))
 	}
 
 	mctlCfg.Contexts[contextName] = context
@@ -494,7 +503,7 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 
 	err = viper.WriteConfig()
 	if err != nil {
-		return err
+		return ErrWriteMeshConfig(err)
 	}
 
 	return nil

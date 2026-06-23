@@ -1,18 +1,23 @@
 package models
 
 import (
+	"context"
 	"net/http"
+	"net/url"
+	"strings"
+	"sync"
+	"time"
 
-	"github.com/gofrs/uuid"
-	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
+	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/environment"
-	"github.com/meshery/schemas/models/v1beta1/workspace"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
+	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 )
 
 // ContextKey is a custom type for setting context key
@@ -42,12 +47,12 @@ type ProviderType string
 
 // ProviderProperties represents the structure of properties that a provider has
 type ProviderProperties struct {
-	ProviderType        ProviderType      `json:"provider_type,omitempty"`
-	PackageVersion      string            `json:"package_version,omitempty"`
-	PackageURL          string            `json:"package_url,omitempty"`
-	ProviderName        string            `json:"provider_name,omitempty"`
-	ProviderDescription []string          `json:"provider_description,omitempty"`
-	ProviderURL         string            `json:"provider_url,omitempty"`
+	ProviderType        ProviderType      `json:"providerType,omitempty"`
+	PackageVersion      string            `json:"packageVersion,omitempty"`
+	PackageURL          string            `json:"packageUrl,omitempty"`
+	ProviderName        string            `json:"providerName,omitempty"`
+	ProviderDescription []string          `json:"providerDescription,omitempty"`
+	ProviderURL         string            `json:"providerUrl,omitempty"`
 	Extensions          Extensions        `json:"extensions,omitempty"`
 	Capabilities        Capabilities      `json:"capabilities,omitempty"`
 	RestrictedAccess    RestrictedAccess  `json:"restrictedAccess,omitempty"`
@@ -96,14 +101,14 @@ type MesheryUICapabilities struct {
 }
 
 type RestrictedAccess struct {
-	IsMesheryUIRestricted bool                  `json:"isMesheryUiRestricted"`
+	IsMesheryUIRestricted bool                  `json:"isMesheryUIRestricted"`
 	AllowedComponents     MesheryUICapabilities `json:"allowedComponents,omitempty"`
 }
 
 // Extensions defines the UI extension points
 type Extensions struct {
 	Navigator    NavigatorExtensions    `json:"navigator,omitempty"`
-	UserPrefs    UserPrefsExtensions    `json:"user_prefs,omitempty"`
+	UserPrefs    UserPrefsExtensions    `json:"userPrefs,omitempty"`
 	GraphQL      GraphQLExtensions      `json:"graphql,omitempty"`
 	Acccount     AccountExtensions      `json:"account,omitempty"`
 	Collaborator CollaboratorExtensions `json:"collaborator,omitempty"`
@@ -151,7 +156,7 @@ type MeshMapComponentSet struct {
 // NavigatorExtension describes the Navigator extension point in the UI
 type NavigatorExtension struct {
 	Title           string              `json:"title,omitempty"`
-	OnClickCallback int                 `json:"on_click_callback,omitempty"`
+	OnClickCallback int                 `json:"onClickCallback,omitempty"`
 	Href            Href                `json:"href,omitempty"`
 	Component       string              `json:"component,omitempty"`
 	Icon            string              `json:"icon,omitempty"`
@@ -166,7 +171,7 @@ type NavigatorExtension struct {
 // AccountExtension describes the Account extension point in the UI
 type AccountExtension struct {
 	Title           string            `json:"title,omitempty"`
-	OnClickCallback int               `json:"on_click_callback,omitempty"`
+	OnClickCallback int               `json:"onClickCallback,omitempty"`
 	Href            Href              `json:"href,omitempty"`
 	Component       string            `json:"component,omitempty"`
 	Link            *bool             `json:"link,omitempty"`
@@ -204,13 +209,13 @@ type Capability struct {
 
 // K8sContextResponse - struct of response sent by provider when requested to persist k8s config
 type K8sContextPersistResponse struct {
-	K8sContext K8sContext `json:"k8s_context,omitempty"`
+	K8sContext K8sContext `json:"k8sContext,omitempty"`
 	Inserted   bool       `json:"inserted,omitempty"`
 }
 
 type ExtensionProxyResponse struct {
 	Body       []byte `json:"body,omitempty"`
-	StatusCode int    `json:"status_code,omitempty"`
+	StatusCode int    `json:"statusCode,omitempty"`
 }
 
 // Feature is a type to store the features of the provider
@@ -279,6 +284,36 @@ const (
 	PersistAnonymousUser Feature = "persist-anonymous-user"
 )
 
+// ProviderStatusKind reports the availability of a provider as observed by
+// the server-side availability checker. It is emitted as the `status` field of
+// ProviderStatusEvent on the /api/providers/stream SSE channel so the UI can
+// distinguish "probe in flight" from "remote is unreachable".
+type ProviderStatusKind string
+
+const (
+	// ProviderStatusChecking - availability probe is in flight; the UI should
+	// render the entry but defer interaction until a terminal status arrives.
+	ProviderStatusChecking ProviderStatusKind = "checking"
+	// ProviderStatusOnline - the provider responded successfully to its
+	// capability probe (or, for the local provider, is implicitly available).
+	ProviderStatusOnline ProviderStatusKind = "online"
+	// ProviderStatusOffline - the provider's capability probe failed after
+	// the bounded retries; the entry should render in the offline section.
+	ProviderStatusOffline ProviderStatusKind = "offline"
+)
+
+// ProviderStatusEvent is the per-provider availability snapshot broadcast by
+// ProviderTracker. It carries the same ProviderProperties shape the legacy
+// /api/providers endpoint returns so existing UI fields keep working, plus
+// the registration Key and the new Status / Error markers required for the
+// streaming chooser.
+type ProviderStatusEvent struct {
+	Key        string             `json:"key"`
+	Status     ProviderStatusKind `json:"status"`
+	Properties ProviderProperties `json:"properties"`
+	Error      string             `json:"error,omitempty"`
+}
+
 const (
 	// LocalProviderType - represents local providers
 	LocalProviderType ProviderType = "local"
@@ -341,13 +376,156 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 	return "", false
 }
 
-func VerifyMesheryProvider(provider string, supportedProviders map[string]Provider) bool {
-	for prov := range supportedProviders {
-		if prov == provider {
+// NormalizeProviderName collapses casing variants of the built-in local
+// provider to its canonical name. Both the canonical name ("Local") and the
+// legacy alias ("None") are matched case-insensitively, so "local", "LOCAL",
+// "none", "NONE", and stale "None" cookies all resolve to "Local". Any other
+// input — including remote provider names like "Meshery" or "Digital Ocean", whose
+// canonical casing originates from the remote /capabilities response — is
+// returned unchanged. This is the single source of truth for the rename;
+// call it once at the request edge (resolveProviderName) rather than
+// scattering equivalent checks across handlers.
+func NormalizeProviderName(name string) string {
+	if strings.EqualFold(name, LocalProviderName) ||
+		strings.EqualFold(name, LocalProviderLegacyAlias) {
+		return LocalProviderName
+	}
+	return name
+}
+
+func matchesProviderAddress(candidate string, addresses ...string) bool {
+	// Normalize away surrounding whitespace and a trailing slash so a
+	// configured "https://cloud.meshery.io/" still matches a stored
+	// ProviderURL of "https://cloud.meshery.io" (and vice versa).
+	candidate = strings.TrimRight(strings.TrimSpace(candidate), "/")
+	if candidate == "" {
+		return false
+	}
+	for _, address := range addresses {
+		address = strings.TrimRight(strings.TrimSpace(address), "/")
+		if address == "" {
+			continue
+		}
+		if strings.EqualFold(candidate, address) {
+			return true
+		}
+		parsed, err := url.Parse(address)
+		if err == nil && parsed.Host != "" && strings.EqualFold(candidate, parsed.Host) {
 			return true
 		}
 	}
 	return false
+}
+
+// ResolveProviderKey maps a caller-facing provider identifier to the
+// registration-map key Meshery uses internally for routing. It accepts the
+// canonical local name/legacy alias, an existing map key, a remote
+// providerName published from /capabilities, or the remote URL/host.
+func ResolveProviderKey(provider string, supportedProviders map[string]Provider) (string, bool) {
+	provider = NormalizeProviderName(strings.TrimSpace(provider))
+	if provider == "" {
+		return "", false
+	}
+	if _, ok := supportedProviders[provider]; ok {
+		return provider, true
+	}
+	for key, p := range supportedProviders {
+		if strings.EqualFold(provider, key) {
+			return key, true
+		}
+		props := p.GetProviderProperties()
+		if strings.EqualFold(provider, props.ProviderName) ||
+			strings.EqualFold(provider, p.Name()) ||
+			matchesProviderAddress(provider, props.ProviderURL, p.GetProviderURL()) {
+			return key, true
+		}
+	}
+	return "", false
+}
+
+// ResolveProviderKeyWithProbe is the boot-time recovery path for canonical
+// remote names such as "Meshery". Remotes are registered under a stable
+// internal key (usually URL host) before their /capabilities probe lands, so
+// a configured PROVIDER may need one bounded probe round to discover which key
+// currently publishes the requested providerName.
+//
+// It first tries the probe-less ResolveProviderKey and only fans out when that
+// misses, so the common case (the tracker has already published properties)
+// returns immediately and never probes. When a probe is required, every
+// registered remote is probed in parallel with a per-remote 15s timeout, so
+// this adds at most ~15s of startup latency before the server starts serving
+// — e.g. when a configured remote is unreachable in an air-gapped deployment.
+// The boot caller (main) logs when this probe meaningfully delays startup.
+func ResolveProviderKeyWithProbe(ctx context.Context, provider string, supportedProviders map[string]Provider) (string, bool) {
+	if key, ok := ResolveProviderKey(provider, supportedProviders); ok {
+		return key, true
+	}
+
+	provider = NormalizeProviderName(strings.TrimSpace(provider))
+	if provider == "" {
+		return "", false
+	}
+
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	type result struct {
+		key   string
+		props ProviderProperties
+		err   error
+	}
+
+	results := make(chan result, len(supportedProviders))
+	var wg sync.WaitGroup
+	launched := 0
+
+	for key, p := range supportedProviders {
+		// A non-nil interface can still wrap a typed nil pointer; guard
+		// against it so the probe goroutine cannot panic on rp.VerifyAvailability.
+		rp, ok := p.(*RemoteProvider)
+		if !ok || rp == nil {
+			continue
+		}
+		launched++
+		wg.Add(1)
+		go func(key string, rp *RemoteProvider) {
+			defer wg.Done()
+			probeCtx, probeCancel := context.WithTimeout(ctx, 15*time.Second)
+			defer probeCancel()
+			props, err := rp.VerifyAvailability(probeCtx)
+			select {
+			case results <- result{key: key, props: props, err: err}:
+			case <-ctx.Done():
+			}
+		}(key, rp)
+	}
+
+	if launched == 0 {
+		return "", false
+	}
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	for res := range results {
+		if res.err != nil {
+			continue
+		}
+		if strings.EqualFold(provider, res.props.ProviderName) ||
+			matchesProviderAddress(provider, res.props.ProviderURL) {
+			cancel()
+			return res.key, true
+		}
+	}
+
+	return "", false
+}
+
+func VerifyMesheryProvider(provider string, supportedProviders map[string]Provider) bool {
+	_, ok := ResolveProviderKey(provider, supportedProviders)
+	return ok
 }
 
 // Provider - interface for providers
@@ -391,15 +569,19 @@ type Provider interface {
 	FetchAllResults(tokenVal string, page, pageSize, search, order, from, to string) ([]byte, error)
 	PublishResults(req *http.Request, result *MesheryResult, profileID string) (string, error)
 	FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
-	FetchSmiResult(req *http.Request, page, pageSize, search, order string, resultID uuid.UUID) ([]byte, error)
+	FetchSmiResult(req *http.Request, page, pageSize, search, order string, resultID core.Uuid) ([]byte, error)
 	PublishSmiResults(result *SmiResult) (string, error)
 	PublishMetrics(tokenVal string, data *MesheryResult) error
-	GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error)
+	GetResult(tokenVal string, resultID core.Uuid) (*MesheryResult, error)
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
-	// in case of a provider that does not support persisting results, it should return an error
-	// if the token is null then then a safe pass is used if the provider supports it else an error is returned
-	PersistEvent(event events.Event, token *string) error
+	// PersistEvent persists a user-initiated event to the remote provider using the given auth token.
+	PersistEvent(event events.Event, token string) error
+
+	// PersistSystemEvent persists a system-initiated event (e.g. MeshSync updates, registry seeding,
+	// auto-registration) that occurs outside of a user request context and has no auth token.
+	// These events are persisted to the local database.
+	PersistSystemEvent(event events.Event) error
 
 	SaveK8sContext(token string, k8sContext K8sContext, metadata map[string]any) (connections.Connection, error)
 	GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error)
@@ -409,8 +591,8 @@ type Provider interface {
 	// SetCurrentContext(token, id string) (K8sContext, error)
 	// GetCurrentContext(token string) (K8sContext, error)
 
-	SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error)
-	SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error)
+	SMPTestConfigStore(req *http.Request, perfConfig *perfprofile.PerformanceTestConfig) (string, error)
+	SMPTestConfigGet(req *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error)
 	SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	SMPTestConfigDelete(req *http.Request, testUUID string) error
 
@@ -447,8 +629,6 @@ type Provider interface {
 	GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error)
 	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool, resource string) ([]byte, error)
 
-	SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error)
-	SaveApplicationSourceContent(token string, applicationID string, sourceContent []byte) error
 	GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplications(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
@@ -470,18 +650,22 @@ type Provider interface {
 
 	SaveConnection(conn *connections.ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error)
 	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error)
-	GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error)
+	GetConnectionByID(token string, connectionID core.Uuid) (*connections.Connection, int, error)
 	UpdateConnection(req *http.Request, conn *connections.Connection) (*connections.Connection, error)
 	UpdateConnectionById(token string, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error)
-	UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error)
-	DeleteConnection(req *http.Request, connID uuid.UUID) (*connections.Connection, error)
+	UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error)
+	DeleteConnection(req *http.Request, connID core.Uuid) (*connections.Connection, error)
 	DeleteMesheryConnection() error
+	// LogoutMesheryServer revokes the server-cached user session against the
+	// provider. Called at shutdown after DeleteMesheryConnection so that
+	// logout occurs post-deregistration.
+	LogoutMesheryServer() error
 
 	SaveUserCredential(token string, credential *Credential) (*Credential, error)
 	GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
-	GetCredentialByID(token string, credentialID uuid.UUID) (*Credential, int, error)
+	GetCredentialByID(token string, credentialID core.Uuid) (*Credential, int, error)
 	UpdateUserCredential(req *http.Request, credential *Credential) (*Credential, error)
-	DeleteUserCredential(req *http.Request, credentialID uuid.UUID) (*Credential, error)
+	DeleteUserCredential(req *http.Request, credentialID core.Uuid) (*Credential, error)
 
 	GetEnvironments(token, page, pageSize, search, order, filter, orgID string) ([]byte, error)
 	GetEnvironmentByID(req *http.Request, environmentID, orgID string) ([]byte, error)
@@ -498,18 +682,25 @@ type Provider interface {
 	GetWorkspaceByID(req *http.Request, workspaceID, orgID string) ([]byte, error)
 	SaveWorkspace(req *http.Request, workspace *workspace.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error)
 	DeleteWorkspace(req *http.Request, workspaceID string) ([]byte, error)
-	UpdateWorkspace(req *http.Request, workspace *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error)
+	UpdateWorkspace(req *http.Request, workspace *workspace.WorkspaceUpdatePayload, workspaceID string) (*workspace.Workspace, error)
 	GetEnvironmentsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string) ([]byte, error)
 	AddEnvironmentToWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)
 	RemoveEnvironmentFromWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)
 	GetDesignsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string, visibility []string) ([]byte, error)
 	AddDesignToWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error)
+	RemoveDesignFromWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error)
+	GetViewsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string) ([]byte, error)
+	AddViewToWorkspace(req *http.Request, workspaceID string, viewID string) ([]byte, error)
+	RemoveViewFromWorkspace(req *http.Request, workspaceID string, viewID string) ([]byte, error)
+	GetTeamsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string) ([]byte, error)
+	AddTeamToWorkspace(req *http.Request, workspaceID string, teamID string) ([]byte, error)
+	RemoveTeamFromWorkspace(req *http.Request, workspaceID string, teamID string) ([]byte, error)
 
 	// events
-	GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID uuid.UUID, sysID uuid.UUID) (*EventsResponse, error)
-	GetEventTypes(token string, userID uuid.UUID, sysID uuid.UUID) (EventTypesResponse, error)
-	UpdateEventStatus(token string, eventID uuid.UUID, status string) error
-	BulkUpdateEventStatus(token string, eventIDs []*uuid.UUID, status string) error
-	DeleteEvent(token string, eventID uuid.UUID) error
-	BulkDeleteEvent(token string, eventIDs []*uuid.UUID) error
+	GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error)
+	GetEventTypes(token string, userID core.Uuid, sysID core.Uuid) (EventTypesResponse, error)
+	UpdateEventStatus(token string, eventID core.Uuid, status string) error
+	BulkUpdateEventStatus(token string, eventIDs []*core.Uuid, status string) error
+	DeleteEvent(token string, eventID core.Uuid) error
+	BulkDeleteEvent(token string, eventIDs []*core.Uuid) error
 }

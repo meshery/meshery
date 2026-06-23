@@ -1,87 +1,63 @@
 package system
 
 import (
-	"bytes"
-	"os"
+	"slices"
+	"strings"
 	"testing"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
-var b *bytes.Buffer
-
-func SetupContextEnv(t *testing.T) {
-	path, err := os.Getwd()
-	if err != nil {
-		t.Error("unable to locate meshery directory")
-	}
-	viper.Reset()
-	viper.SetConfigFile(path + "/../../../../pkg/utils/TestConfig.yaml")
-	//fmt.Println(viper.ConfigFileUsed())
-	err = viper.ReadInConfig()
-	if err != nil {
-		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
-	}
-
-	mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		t.Error("error processing config", err)
-	}
-}
-
-func SetupFunc() {
-	//fmt.Println(viper.AllKeys())
-	b = bytes.NewBufferString("")
-	logrus.SetOutput(b)
-	utils.SetupLogrusFormatter()
-	SystemCmd.SetOut(b)
-}
-
-func BreakupFunc() {
-	viewCmd.Flags().VisitAll(setFlagValueAsUndefined)
-}
-
-func setFlagValueAsUndefined(flag *pflag.Flag) {
-	_ = flag.Value.Set("")
-}
-
-type CmdTestInput struct {
-	Name             string
-	Args             []string
-	ExpectedResponse string
-	Token            string
-}
-
 func TestViewCmd(t *testing.T) {
-	SetupContextEnv(t)
+	setupContextTestEnv(t)
 	tests := []CmdTestInput{
 		{
-			Name:             "view without any parameter",
+			Name:             "given no argument when view then display current context channel and version",
 			Args:             []string{"channel", "view"},
 			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["local"], "local") + "\n\n",
 		},
 		{
-			Name:             "view with context override",
+			Name:             "given context override when view then display specified context channel and version",
 			Args:             []string{"channel", "view", "-c", "gke"},
 			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
+		},
+		{
+			Name: "given --all flag when view then display all contexts channel and version",
+			Args: []string{"channel", "view", "--all"},
+			ExpectedResponse: func() string {
+				output := strings.Builder{}
+				keys := make([]string, 0, len(mctlCfg.Contexts))
+				for k := range mctlCfg.Contexts {
+					keys = append(keys, k)
+				}
+
+				// 2. Sort the slice alphabetically
+				slices.Sort(keys)
+
+				for _, contextName := range keys {
+					context := mctlCfg.Contexts[contextName]
+					output.WriteString(PrintChannelAndVersionToStdout(context, contextName) + "\n\n")
+				}
+
+				output.WriteString("Current Context: local\n")
+				return output.String()
+			}(),
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc()
+			buf := utils.SetupMeshkitLoggerTesting(t, false)
+			defer buf.Reset()
+			SystemCmd.SetOut(buf)
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
 			if err != nil {
 				t.Error(err)
 			}
 
-			actualResponse := b.String()
+			actualResponse := buf.String()
 			expectedResponse := tt.ExpectedResponse
 			assert.Equal(t, expectedResponse, actualResponse)
 			BreakupFunc()
@@ -90,7 +66,7 @@ func TestViewCmd(t *testing.T) {
 }
 
 func TestSetCmd(t *testing.T) {
-	SetupContextEnv(t)
+	setupContextTestEnv(t)
 	tests := []CmdTestInput{
 		{
 			Name:             "Set Docker Platform  Channel",
@@ -105,13 +81,17 @@ func TestSetCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc()
+			buf := setupSystemOutCmdTest(t)
+			defer func() {
+				buf.Reset()
+				// resetCmdFlags(SystemCmd, t)
+			}()
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
 			if err != nil {
 				t.Error(err)
 			}
-			actualResponse := b.String()
+			actualResponse := buf.String()
 			expectedResponse := tt.ExpectedResponse
 			assert.Equal(t, expectedResponse, actualResponse)
 			BreakupFunc()
