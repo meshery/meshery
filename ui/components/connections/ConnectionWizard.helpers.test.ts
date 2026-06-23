@@ -88,6 +88,8 @@ describe('ConnectionWizard.helpers', () => {
         name: 'Kubernetes',
         description: 'Import clusters from a kubeconfig.',
         metadata: { docsURL: 'https://docs.meshery.io/installation/kubernetes' },
+        connectionSchema: { type: 'object' },
+        credentialSchema: { type: 'object' },
       },
     ]);
 
@@ -113,8 +115,8 @@ describe('ConnectionWizard.helpers', () => {
         description: 'Import clusters from a kubeconfig.',
         flow: 'kubernetes',
         docsUrl: 'https://docs.meshery.io/installation/kubernetes',
-        connectionSchema: null,
-        credentialSchema: null,
+        connectionSchema: { type: 'object' },
+        credentialSchema: { type: 'object' },
         svgColor: null,
         svgWhite: null,
       },
@@ -127,6 +129,7 @@ describe('ConnectionWizard.helpers', () => {
         kind: CONNECTION_KINDS.KUBERNETES,
         name: 'Kubernetes',
         styles: { svgColor: '<svg>color</svg>', svgWhite: '<svg>white</svg>' },
+        connectionSchema: { type: 'object' },
       },
     ]);
 
@@ -151,8 +154,8 @@ describe('ConnectionWizard.helpers', () => {
   it('skips definitions without a kind and de-duplicates by kind', () => {
     const configs = buildConnectionWizardKindConfigs([
       { name: 'Missing kind' },
-      { kind: CONNECTION_KINDS.GRAFANA, name: 'Grafana' },
-      { kind: CONNECTION_KINDS.GRAFANA, name: 'Grafana duplicate' },
+      { kind: CONNECTION_KINDS.GRAFANA, name: 'Grafana', connectionSchema: { type: 'object' } },
+      { kind: CONNECTION_KINDS.GRAFANA, name: 'Grafana duplicate', connectionSchema: { type: 'object' } },
     ]);
 
     expect(configs).toHaveLength(1);

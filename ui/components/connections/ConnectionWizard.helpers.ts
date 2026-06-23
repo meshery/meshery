@@ -85,20 +85,33 @@ export const buildConnectionWizardKindConfigs = (
     return [];
   }
 
-  const seen = new Set<string>();
+  const configMap = new Map<string, ConnectionWizardKindConfig>();
 
-  return definitions.reduce<ConnectionWizardKindConfig[]>((configs, definition) => {
+  definitions.forEach((definition) => {
     const kind = definition?.kind;
     if (!kind) {
-      return configs;
+      return;
     }
 
-    const dedupeKey = [kind, definition.type || '', definition.subType || ''].join('|');
-    if (seen.has(dedupeKey)) {
-      return configs;
+    // Architectural Fix: Ignore internal/auto-generated definitions from the backend.
+    // A legitimate wizard card MUST have a schema to generate a configuration form.
+    if (!definition.connectionSchema && !definition.credentialSchema) {
+      return;
     }
-    seen.add(dedupeKey);
-    configs.push({
+
+    // Maintain the original architectural intent: Unique identity is Kind + Type + SubType
+    // We keep the .toLowerCase() to ensure accidental casing differences don't break it.
+    const dedupeKey = [
+      kind.toLowerCase(),
+      (definition.type || '').toLowerCase(),
+      (definition.subType || '').toLowerCase(),
+    ].join('|');
+
+    if (configMap.has(dedupeKey)) {
+      return;
+    }
+
+    configMap.set(dedupeKey, {
       kind,
       type: definition.type || '',
       subType: definition.subType || '',
@@ -113,9 +126,9 @@ export const buildConnectionWizardKindConfigs = (
       svgColor: definition.styles?.svgColor || null,
       svgWhite: definition.styles?.svgWhite || null,
     });
+  });
 
-    return configs;
-  }, []);
+  return Array.from(configMap.values());
 };
 
 export type CredentialRecord = {
