@@ -46,14 +46,14 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "patchStrategy": "replace",
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
                   "integrationURI"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ],
@@ -76,15 +76,15 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
+              "patchStrategy": "replace",
+              "mutatedRef": [
                 [
                   "configuration",
                   "status",
                   "ackResourceMetadata",
                   "arn"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ]
