@@ -59,17 +59,21 @@ const ConnectionWizardModal = ({ isOpen, onClose }: ConnectionWizardModalProps) 
     // wizard.reset is stable; avoid re-running on every render.
   }, [isOpen]);
 
-  const steps = wizard.steps.map((step, index) => ({
-    label: step.label,
-    icon:
-      step.icon ||
-      (index === 0
-        ? StepConnectionIcon
-        : index === wizard.steps.length - 1
-          ? CheckIcon
-          : DescriptionIcon),
-    component: <></>,
-  }));
+  const steps = useMemo(
+    () =>
+      wizard.steps.map((step, index) => ({
+        label: step.label,
+        icon:
+          step.icon ||
+          (index === 0
+            ? StepConnectionIcon
+            : index === wizard.steps.length - 1
+              ? CheckIcon
+              : DescriptionIcon),
+        component: <></>,
+      })),
+    [wizard.steps],
+  );
 
   const ActiveBody = wizard.activeStep?.Component;
 
