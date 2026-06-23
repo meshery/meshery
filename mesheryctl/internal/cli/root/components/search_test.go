@@ -74,6 +74,22 @@ func TestSearchComponent(t *testing.T) {
 			ExpectedResponse: "components.search.success.output.golden",
 			ExpectError:      false,
 		},
+		{
+			Name:             "given valid name provided when component search with json output then display json",
+			Args:             []string{"search", "Test", "-o", "json"},
+			URL:              fmt.Sprintf("/%s?search=Test&pagesize=all", componentApiPath),
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.search.json.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "given model flag provided when component search with yaml output then display yaml",
+			Args:             []string{"search", "--model", "component-test-0", "-o", "yaml"},
+			URL:              "/api/meshmodels/models/component-test-0/components?pagesize=all",
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.search.yaml.output.golden",
+			ExpectError:      false,
+		},
 	}
 
 	mesheryctlflags.InitValidators(ComponentCmd)
