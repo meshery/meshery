@@ -121,6 +121,7 @@ const BoardLibrary: React.FC<BoardLibraryProps> = ({
                   <Tooltip title="Open in Grafana">
                     <IconButton
                       size="small"
+                      aria-label="Open dashboard in Grafana"
                       component="a"
                       href={`${baseURL.replace(/\/$/, '')}${board.url}`}
                       target="_blank"
