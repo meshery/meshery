@@ -144,7 +144,7 @@ const (
 	ErrConvertingK8sManifestToDesignCode   = "meshery-server-1133"
 	ErrConvertingDockerComposeToDesignCode = "meshery-server-1134"
 	ErrConvertingHelmChartToDesignCode     = "meshery-server-1136"
-	ErrInvalidUUIDCode                     = "meshery-server-1137"
+	ErrInvalidUUIDHandlerCode              = "meshery-server-1137"
 	ErrPersistEventToRemoteProviderCode    = "meshery-server-1320"
 	ErrEventStreamingNotSupportedCode      = "meshery-server-1324"
 	ErrGenerateClusterContextCode          = "meshery-server-1325"
@@ -762,7 +762,7 @@ func ErrConvertingHelmChartToDesign(err error) error {
 }
 
 func ErrInvalidUUID(err error) error {
-	return errors.New(ErrInvalidUUIDCode, errors.Alert, []string{"invalid or empty uuid"}, []string{err.Error()}, []string{"provided id is not a valid uuid"}, []string{"provide a valid uuid"})
+	return errors.New(ErrInvalidUUIDHandlerCode, errors.Alert, []string{"invalid or empty uuid"}, []string{err.Error()}, []string{"provided id is not a valid uuid"}, []string{"provide a valid uuid"})
 }
 
 func ErrPersistEventToRemoteProvider(err error) error {

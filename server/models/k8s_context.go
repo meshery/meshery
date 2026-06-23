@@ -479,19 +479,25 @@ func (kc K8sContext) PingTest() error {
 	return nil
 }
 
+// saNamespaceFile is the path to the in-cluster service-account namespace file.
+// Exposed as a variable so tests can override it.
+var saNamespaceFile = "/var/run/secrets/kubernetes.io/serviceaccount/namespace"
+
 // getKubeNamespace returns the namespace to use when deriving the cluster server ID.
 // Resolution order:
 //  1. KUBERNETES_TARGET_NAMESPACE environment variable
 //  2. In-cluster service-account namespace file
 //  3. "kube-system" (default/fallback)
 func getKubeNamespace() string {
-	if ns := os.Getenv("KUBERNETES_TARGET_NAMESPACE"); ns != "" {
+	if ns := strings.TrimSpace(os.Getenv("KUBERNETES_TARGET_NAMESPACE")); ns != "" {
 		return ns
 	}
 
-	nsBytes, err := os.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace")
-	if err == nil && len(nsBytes) > 0 {
-		return strings.TrimSpace(string(nsBytes))
+	nsBytes, err := os.ReadFile(saNamespaceFile)
+	if err == nil {
+		if ns := strings.TrimSpace(string(nsBytes)); ns != "" {
+			return ns
+		}
 	}
 
 	return "kube-system"

@@ -2,6 +2,8 @@ package models
 
 import (
 	"context"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -30,6 +32,90 @@ func TestFlushMeshSyncDataNilKubernetesServerIDNoPanic(t *testing.T) {
 // TestFlushMeshSyncDataMixedNilAndPopulatedServerIDs verifies that the refcount loop
 // correctly skips nil entries while still counting non-nil ones, and that no panic
 // occurs when both nil and populated KubernetesServerID values are present.
+func TestGetKubeNamespace_EnvVar(t *testing.T) {
+	const want = "custom-ns"
+	t.Setenv("KUBERNETES_TARGET_NAMESPACE", want)
+	got := getKubeNamespace()
+	if got != want {
+		t.Errorf("getKubeNamespace() = %q, want %q", got, want)
+	}
+}
+
+func TestGetKubeNamespace_EnvVarWhitespace(t *testing.T) {
+	const want = "custom-ns"
+	t.Setenv("KUBERNETES_TARGET_NAMESPACE", "  "+want+"\n")
+	got := getKubeNamespace()
+	if got != want {
+		t.Errorf("getKubeNamespace() = %q, want %q", got, want)
+	}
+}
+
+func TestGetKubeNamespace_EnvVarEmpty(t *testing.T) {
+	t.Setenv("KUBERNETES_TARGET_NAMESPACE", "")
+	saNamespaceFile = filepath.Join(t.TempDir(), "namespace")
+	got := getKubeNamespace()
+	if got != "kube-system" {
+		t.Errorf("getKubeNamespace() = %q, want %q", got, "kube-system")
+	}
+}
+
+func TestGetKubeNamespace_SAFile(t *testing.T) {
+	const want = "sa-ns"
+	dir := t.TempDir()
+	nsFile := filepath.Join(dir, "namespace")
+	if err := os.WriteFile(nsFile, []byte(want), 0644); err != nil {
+		t.Fatal(err)
+	}
+	saNamespaceFile = nsFile
+	t.Setenv("KUBERNETES_TARGET_NAMESPACE", "")
+
+	got := getKubeNamespace()
+	if got != want {
+		t.Errorf("getKubeNamespace() = %q, want %q", got, want)
+	}
+}
+
+func TestGetKubeNamespace_SAFileWhitespace(t *testing.T) {
+	const want = "sa-ns"
+	dir := t.TempDir()
+	nsFile := filepath.Join(dir, "namespace")
+	if err := os.WriteFile(nsFile, []byte("  "+want+"\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	saNamespaceFile = nsFile
+	t.Setenv("KUBERNETES_TARGET_NAMESPACE", "")
+
+	got := getKubeNamespace()
+	if got != want {
+		t.Errorf("getKubeNamespace() = %q, want %q", got, want)
+	}
+}
+
+func TestGetKubeNamespace_SAFileEmpty(t *testing.T) {
+	dir := t.TempDir()
+	nsFile := filepath.Join(dir, "namespace")
+	if err := os.WriteFile(nsFile, []byte("  \n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	saNamespaceFile = nsFile
+	t.Setenv("KUBERNETES_TARGET_NAMESPACE", "")
+
+	got := getKubeNamespace()
+	if got != "kube-system" {
+		t.Errorf("getKubeNamespace() = %q, want %q", got, "kube-system")
+	}
+}
+
+func TestGetKubeNamespace_Fallback(t *testing.T) {
+	saNamespaceFile = filepath.Join(t.TempDir(), "nonexistent")
+	t.Setenv("KUBERNETES_TARGET_NAMESPACE", "")
+
+	got := getKubeNamespace()
+	if got != "kube-system" {
+		t.Errorf("getKubeNamespace() = %q, want %q", got, "kube-system")
+	}
+}
+
 func TestFlushMeshSyncDataMixedNilAndPopulatedServerIDs(t *testing.T) {
 	serverID, err := uuid.NewV4()
 	if err != nil {
