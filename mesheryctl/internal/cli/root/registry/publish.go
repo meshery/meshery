@@ -187,8 +187,29 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 	},
 }
 
-// TODO
 func mesherySystem() error {
+	modelDir := modelsOutputPath
+	totalModelsPublished := 0
+	for _, model := range models {
+		comps, ok := components[model.Registrant][model.Model]
+		if !ok {
+			utils.Log.Debug("no components found for ", model.Model)
+			comps = []meshkitRegistryUtils.ComponentCSV{}
+		}
+
+		err := utils.GenerateIcons(model, comps, imgsOutputPath)
+		if err != nil {
+			utils.Log.Debug(utils.ErrGeneratingIcons(err, imgsOutputPath))
+			utils.Log.Fatalf("Error generating icons for model %s: %v", model.Model, err.Error())
+		}
+
+		_, _, err = WriteModelDefToFileSystem(&model, "", modelDir)
+		if err != nil {
+			return ErrGenerateModel(err, model.Model)
+		}
+		totalModelsPublished++
+	}
+	utils.Log.Info("Total model published: ", totalModelsPublished)
 	return nil
 }
 
