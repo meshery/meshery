@@ -137,8 +137,8 @@ describe('ConnectionWizard.helpers', () => {
     expect(config.svgWhite).toBe('<svg>white</svg>');
   });
 
-  it('treats empty connection/credential schema objects as absent', () => {
-    const [config] = buildConnectionWizardKindConfigs([
+  it('discards definitions with empty connection/credential schema objects', () => {
+    const configs = buildConnectionWizardKindConfigs([
       {
         kind: CONNECTION_KINDS.PROMETHEUS,
         name: 'Prometheus',
@@ -147,8 +147,7 @@ describe('ConnectionWizard.helpers', () => {
       },
     ]);
 
-    expect(config.connectionSchema).toBeNull();
-    expect(config.credentialSchema).toBeNull();
+    expect(configs).toHaveLength(0);
   });
 
   it('skips definitions without a kind and de-duplicates by kind', () => {
