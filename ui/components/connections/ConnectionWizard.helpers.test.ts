@@ -155,7 +155,11 @@ describe('ConnectionWizard.helpers', () => {
     const configs = buildConnectionWizardKindConfigs([
       { name: 'Missing kind' },
       { kind: CONNECTION_KINDS.GRAFANA, name: 'Grafana', connectionSchema: { type: 'object' } },
-      { kind: CONNECTION_KINDS.GRAFANA, name: 'Grafana duplicate', connectionSchema: { type: 'object' } },
+      {
+        kind: CONNECTION_KINDS.GRAFANA,
+        name: 'Grafana duplicate',
+        connectionSchema: { type: 'object' },
+      },
     ]);
 
     expect(configs).toHaveLength(1);
