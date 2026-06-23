@@ -142,7 +142,7 @@ const TelemetryDashboards: React.FC = () => {
 
   if (connections.length === 0) {
     return (
-      <Centered>
+      <Centered data-testid="telemetry-grafana-empty">
         <InsertChartIcon style={{ width: 56, height: 56, fill: theme.palette.icon.secondary }} />
         <Box>
           <Typography variant="h6" gutterBottom>
@@ -166,7 +166,7 @@ const TelemetryDashboards: React.FC = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Toolbar>
+      <Toolbar data-testid="telemetry-grafana-toolbar">
         <ConnectionPicker
           connections={connections}
           value={connectionID}

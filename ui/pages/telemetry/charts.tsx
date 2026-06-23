@@ -7,7 +7,10 @@ const TelemetryCharts = () => {
   return (
     <MesheryPage title="Charts" headTitle="Telemetry Charts">
       <PageContainer>
-        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <Box
+          data-testid="telemetry-charts"
+          sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+        >
           <Box sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
             <TelemetryDashboards />
           </Box>
