@@ -1,7 +1,7 @@
 ---
 title: Altinity ClickHouse
 subtitle: Collaborative and visual infrastructure as design for Altinity ClickHouse
-image: /extensions/models/altinity-clickhouse-operator/icons/color/altinity-clickhouse-operator-color.svg
+image: extensions/models/altinity-clickhouse-operator/icons/color/altinity-clickhouse-operator-color.svg
 aliases: /extensibility/integrations/altinity-clickhouse-operator
 docURL: https://docs.meshery.io/extensibility/integrations/altinity-clickhouse-operator
 description: 

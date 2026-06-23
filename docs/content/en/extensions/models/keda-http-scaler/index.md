@@ -1,7 +1,7 @@
 ---
 title: KEDA HTTP Scaler
 subtitle: Collaborative and visual infrastructure as design for KEDA HTTP Scaler
-image: /extensions/models/keda-http-scaler/icons/color/keda-http-scaler-color.svg
+image: extensions/models/keda-http-scaler/icons/color/keda-http-scaler-color.svg
 aliases: /extensibility/integrations/keda-http-scaler
 docURL: https://docs.meshery.io/extensibility/integrations/keda-http-scaler
 description: 

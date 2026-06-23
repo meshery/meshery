@@ -15,7 +15,6 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
-	guid "github.com/google/uuid"
 	"github.com/gorilla/mux"
 	helpers "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/meshes"
@@ -1772,7 +1771,7 @@ func (h *Handler) handlePatternUpdate(
 	res := meshes.EventsResponse{
 		Component:     "core",
 		ComponentName: "Design",
-		OperationId:   guid.NewString(),
+		OperationId:   uuid.Must(uuid.NewV4()).String(),
 		EventType:     meshes.EventType_INFO,
 	}
 

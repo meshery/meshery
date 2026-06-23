@@ -1,7 +1,7 @@
 ---
 title: Velero
 subtitle: Collaborative and visual infrastructure as design for Velero
-image: /extensions/models/velero/icons/color/velero-color.svg
+image: extensions/models/velero/icons/color/velero-color.svg
 aliases: /extensibility/integrations/velero
 docURL: https://docs.meshery.io/extensibility/integrations/velero
 description: 

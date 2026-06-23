@@ -1,7 +1,7 @@
 ---
 title: Kubedb Grafana Dashboards
 subtitle: Collaborative and visual infrastructure as design for Kubedb Grafana Dashboards
-image: /extensions/models/kubedb-grafana-dashboards/icons/color/kubedb-grafana-dashboards-color.svg
+image: extensions/models/kubedb-grafana-dashboards/icons/color/kubedb-grafana-dashboards-color.svg
 aliases: /extensibility/integrations/kubedb-grafana-dashboards
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-grafana-dashboards
 description: 

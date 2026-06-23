@@ -1,7 +1,7 @@
 ---
 title: Kubesphere
 subtitle: Collaborative and visual infrastructure as design for Kubesphere
-image: /extensions/models/kubesphere/icons/color/kubesphere-color.svg
+image: extensions/models/kubesphere/icons/color/kubesphere-color.svg
 aliases: /extensibility/integrations/kubesphere
 docURL: https://docs.meshery.io/installation/kubernetes/kubesphere
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Amazon Web Services
 subtitle: Collaborative and visual infrastructure as design for Amazon Web Services
-image: /extensions/models/aws/icons/color/aws-color.svg
+image: extensions/models/aws/icons/color/aws-color.svg
 aliases: /extensibility/integrations/aws
 docURL: https://docs.meshery.io/extensibility/integrations/aws
 description: 

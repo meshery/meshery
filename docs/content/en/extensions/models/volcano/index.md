@@ -1,7 +1,7 @@
 ---
 title: Volcano
 subtitle: Collaborative and visual infrastructure as design for Volcano
-image: /extensions/models/volcano/icons/color/volcano-color.svg
+image: extensions/models/volcano/icons/color/volcano-color.svg
 aliases: /extensibility/integrations/volcano
 docURL: https://docs.meshery.io/extensibility/integrations/volcano
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Vald Helm Operator
 subtitle: Collaborative and visual infrastructure as design for Vald Helm Operator
-image: /extensions/models/vald-helm-operator/icons/color/vald-helm-operator-color.svg
+image: extensions/models/vald-helm-operator/icons/color/vald-helm-operator-color.svg
 aliases: /extensibility/integrations/vald-helm-operator
 docURL: https://docs.meshery.io/extensibility/integrations/vald-helm-operator
 description: 

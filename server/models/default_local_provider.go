@@ -424,7 +424,10 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 }
 
 func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
-	id, _ := uuid.FromString(environmentID)
+	id, err := uuid.FromString(environmentID)
+	if err != nil {
+		return nil, ErrInvalidUUID(err)
+	}
 	orgId := core.Uuid(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		ID:             id,
@@ -439,19 +442,34 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 }
 
 func (l *DefaultLocalProvider) AddConnectionToEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
-	envId, _ := uuid.FromString(environmentID)
-	conId, _ := uuid.FromString(connectionID)
+	envId, err := uuid.FromString(environmentID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid environment ID: %w", err))
+	}
+	conId, err := uuid.FromString(connectionID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid connection ID: %w", err))
+	}
 	return l.EnvironmentPersister.AddConnectionToEnvironment(envId, conId)
 }
 
 func (l *DefaultLocalProvider) RemoveConnectionFromEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
-	envId, _ := uuid.FromString(environmentID)
-	conId, _ := uuid.FromString(connectionID)
+	envId, err := uuid.FromString(environmentID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid environment ID: %w", err))
+	}
+	conId, err := uuid.FromString(connectionID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid connection ID: %w", err))
+	}
 	return l.EnvironmentPersister.DeleteConnectionFromEnvironment(envId, conId)
 }
 
 func (l *DefaultLocalProvider) GetConnectionsOfEnvironment(_ *http.Request, environmentID, page, pageSize, search, order, filter string) ([]byte, error) {
-	envId, _ := uuid.FromString(environmentID)
+	envId, err := uuid.FromString(environmentID)
+	if err != nil {
+		return nil, ErrInvalidUUID(err)
+	}
 	return l.EnvironmentPersister.GetEnvironmentConnections(envId, search, order, page, pageSize, filter)
 }
 
@@ -482,7 +500,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 	var connID core.Uuid
 	id, err := K8sContextGenerateID(k8sContext)
 	if err == nil {
-		connID, _ = uuid.FromString(id)
+		connID = uuid.FromStringOrNil(id)
 	}
 
 	_metadata := map[string]string{
@@ -679,7 +697,7 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 	key := uuid.FromStringOrNil(resultID)
 	l.Log.Debug(fmt.Sprintf("key: %s, is nil: %t", key.String(), (key == uuid.Nil)))
 	if key == uuid.Nil {
-		key, _ = uuid.NewV4()
+		key = uuid.Must(uuid.NewV4())
 		result.ID = key
 		data, err = json.Marshal(result)
 		if err != nil {
@@ -713,7 +731,7 @@ func (l *DefaultLocalProvider) FetchSmiResult(_ *http.Request, _, _, _, _ string
 
 // PublishSmiResults - publishes results to the provider backend synchronously
 func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, error) {
-	key, _ := uuid.NewV4()
+	key := uuid.Must(uuid.NewV4())
 	result.ID = key
 	data, err := json.Marshal(result)
 	if err != nil {
@@ -1489,7 +1507,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 		}
 	}
 	// Seed default organization before the UI requests organizations.
-	id, _ := uuid.NewV4()
+	id := uuid.Must(uuid.NewV4())
 	org := &organization.Organization{
 		ID:          id,
 		Name:        "My Org",
@@ -1680,30 +1698,54 @@ func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload
 }
 
 func (l *DefaultLocalProvider) AddEnvironmentToWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	envId, _ := uuid.FromString(environmentID)
+	workspaceId, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid workspace ID: %w", err))
+	}
+	envId, err := uuid.FromString(environmentID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid environment ID: %w", err))
+	}
 	return l.WorkspacePersister.AddEnvironmentToWorkspace(workspaceId, envId)
 }
 
 func (l *DefaultLocalProvider) RemoveEnvironmentFromWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	envId, _ := uuid.FromString(environmentID)
+	workspaceId, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid workspace ID: %w", err))
+	}
+	envId, err := uuid.FromString(environmentID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid environment ID: %w", err))
+	}
 	return l.WorkspacePersister.DeleteEnvironmentFromWorkspace(workspaceId, envId)
 }
 
 func (l *DefaultLocalProvider) GetEnvironmentsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
+	workspaceId, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, ErrInvalidUUID(err)
+	}
 	return l.WorkspacePersister.GetWorkspaceEnvironments(workspaceId, search, order, page, pageSize, filter)
 }
 
 func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	designId, _ := uuid.FromString(designID)
+	workspaceId, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid workspace ID: %w", err))
+	}
+	designId, err := uuid.FromString(designID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid design ID: %w", err))
+	}
 	return l.WorkspacePersister.AddDesignToWorkspace(workspaceId, designId)
 }
 
 func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string, visibility []string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
+	workspaceId, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, ErrInvalidUUID(err)
+	}
 	return l.WorkspacePersister.GetWorkspaceDesigns(workspaceId, search, order, page, pageSize, filter, visibility)
 }
 
@@ -1983,7 +2025,7 @@ func (e *EventsPersister) PersistSystemEvent(event events.Event) error {
 func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {
 	e := l.EventsPersister
 	eventsDB := []*events.Event{}
-	finder := e.DB.Model(&events.Event{}).Where("user_id = ? OR user_id = ?", userID, sysID)
+	finder := e.DB.Model(&events.Event{}).Where("owner = ? OR owner = ?", userID, sysID)
 
 	if len(eventsFilter.Category) != 0 {
 		finder = finder.Where("category IN ?", eventsFilter.Category)
@@ -2046,12 +2088,12 @@ func (l *DefaultLocalProvider) GetEventTypes(token string, userID core.Uuid, sys
 	eventTypes := EventTypesResponse{}
 
 	var categories, actions []string
-	err := e.DB.Table("events").Distinct("category").Where("user_id = ? OR user_id = ?", userID, sysID).Find(&categories).Error
+	err := e.DB.Table("events").Distinct("category").Where("owner = ? OR owner = ?", userID, sysID).Find(&categories).Error
 	if err != nil {
 		return eventTypes, err
 	}
 
-	err = e.DB.Table("events").Distinct("action").Where("user_id = ?", userID).Find(&actions).Error
+	err = e.DB.Table("events").Distinct("action").Where("owner = ?", userID).Find(&actions).Error
 	if err != nil {
 		return eventTypes, err
 	}

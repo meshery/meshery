@@ -1,7 +1,7 @@
 ---
 title: Azure App Configuration
 subtitle: Collaborative and visual infrastructure as design for Azure App Configuration
-image: /extensions/models/azure-app-configuration/icons/color/azure-app-configuration-color.svg
+image: extensions/models/azure-app-configuration/icons/color/azure-app-configuration-color.svg
 aliases: /extensibility/integrations/azure-app-configuration
 docURL: https://docs.meshery.io/extensibility/integrations/azure-app-configuration
 description: 

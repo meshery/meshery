@@ -94,11 +94,17 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		return
 	}
 
-	userUUID, _ := uuid.FromString(userID)
+	userUUID, err := uuid.FromString(userID)
+	if err != nil {
+		// Every event below is attributed FromOwner(userUUID) and broadcast to the
+		// user key; a nil owner would mis-attribute the whole registration. Bail.
+		cg.log.Error(ErrInvalidUUID(fmt.Errorf("invalid user id %q: %w", userID, err)))
+		return
+	}
 
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
-		connectionID, _ := uuid.FromString(ctx.ConnectionID)
+		connectionID := uuid.FromStringOrNil(ctx.ConnectionID)
 		ctxName := ctx.Name
 
 		cg.mx.Lock()

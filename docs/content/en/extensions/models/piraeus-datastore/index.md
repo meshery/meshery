@@ -1,7 +1,7 @@
 ---
 title: Piraeus Datastore
 subtitle: Collaborative and visual infrastructure as design for Piraeus Datastore
-image: /extensions/models/piraeus-datastore/icons/color/piraeus-datastore-color.svg
+image: extensions/models/piraeus-datastore/icons/color/piraeus-datastore-color.svg
 aliases: /extensibility/integrations/piraeus-datastore
 docURL: https://docs.meshery.io/extensibility/integrations/piraeus datastore
 description: 
