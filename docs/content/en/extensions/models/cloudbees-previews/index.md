@@ -1,7 +1,7 @@
 ---
 title: Cloudbees Previews
 subtitle: Collaborative and visual infrastructure as design for Cloudbees Previews
-image: /extensions/models/cloudbees-previews/icons/color/cloudbees-previews-color.svg
+image: extensions/models/cloudbees-previews/icons/color/cloudbees-previews-color.svg
 aliases: /extensibility/integrations/cloudbees-previews
 docURL: https://docs.meshery.io/extensibility/integrations/cloudbees-previews
 description: 

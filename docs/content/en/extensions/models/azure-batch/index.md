@@ -1,7 +1,7 @@
 ---
 title: Azure Batch
 subtitle: Collaborative and visual infrastructure as design for Azure Batch
-image: /extensions/models/azure-batch/icons/color/azure-batch-color.svg
+image: extensions/models/azure-batch/icons/color/azure-batch-color.svg
 aliases: /extensibility/integrations/azure-batch
 docURL: https://docs.meshery.io/extensibility/integrations/azure-batch
 description: 

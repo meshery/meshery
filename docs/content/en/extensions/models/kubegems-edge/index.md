@@ -1,7 +1,7 @@
 ---
 title: Kubegems Edge
 subtitle: Collaborative and visual infrastructure as design for Kubegems Edge
-image: /extensions/models/kubegems-edge/icons/color/kubegems-edge-color.svg
+image: extensions/models/kubegems-edge/icons/color/kubegems-edge-color.svg
 aliases: /extensibility/integrations/kubegems-edge
 docURL: https://docs.meshery.io/extensibility/integrations/kubegems-edge
 description: 

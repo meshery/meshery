@@ -1,7 +1,7 @@
 ---
 title: Gitlab Runner Operator
 subtitle: Collaborative and visual infrastructure as design for Gitlab Runner Operator
-image: /extensions/models/gitlab-runner-operator/icons/color/gitlab-runner-operator-color.svg
+image: extensions/models/gitlab-runner-operator/icons/color/gitlab-runner-operator-color.svg
 aliases: /extensibility/integrations/gitlab-runner-operator
 docURL: https://docs.meshery.io/extensibility/integrations/gitlab-runner-operator
 description: 

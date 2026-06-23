@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
+import {
+  MODELS,
+  COMPONENTS,
+  RELATIONSHIPS,
+  REGISTRANTS,
+  CONNECTIONS,
+} from '../../constants/navigator';
 import {
   MeshModelToolbar,
   MainContainer,
@@ -7,6 +13,7 @@ import {
   DetailsContainer,
   InnerContainer,
   CardStyle,
+  WorkloadsContainer,
 } from '@/assets/styles/general/tool.styles';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
@@ -17,6 +24,7 @@ import {
   useLazyGetComponentsQuery,
   useLazyGetRelationshipsQuery,
   useLazyGetRegistrantsQuery,
+  useLazyGetConnectionDefinitionsQuery,
   useGetMeshModelsQuery,
   useGetComponentsQuery,
   useGetRelationshipsQuery,
@@ -63,6 +71,7 @@ const MeshModelComponent_ = ({
     Components: 0,
     Relationships: 0,
     Registrants: 0,
+    Connections: 0,
   });
 
   // Use external search text if provided, otherwise use query from router
@@ -82,6 +91,7 @@ const MeshModelComponent_ = ({
   const [registrantFilters, setRegistrantsFilters] = useState<{ page: number }>({ page: 0 });
   const [componentsFilters, setComponentsFilters] = useState<{ page: number }>({ page: 0 });
   const [relationshipsFilters, setRelationshipsFilters] = useState<{ page: number }>({ page: 0 });
+  const [connectionsFilters, setConnectionsFilters] = useState<{ page: number }>({ page: 0 });
 
   /**
    * RTK Lazy Queries
@@ -90,6 +100,7 @@ const MeshModelComponent_ = ({
   const [getComponentsData, componentsRes] = useLazyGetComponentsQuery();
   const [getRelationshipsData, relationshipsRes] = useLazyGetRelationshipsQuery();
   const [getRegistrantsData, registrantsRes] = useLazyGetRegistrantsQuery();
+  const [getConnectionDefinitionsData, connectionsRes] = useLazyGetConnectionDefinitionsQuery();
 
   /**
    * RTK Queries for counts
@@ -111,6 +122,7 @@ const MeshModelComponent_ = ({
   const registrantsData = registrantsRes.data;
   const componentsData = componentsRes.data;
   const relationshipsData = relationshipsRes.data;
+  const connectionsData = connectionsRes.data;
 
   const hasMoreModels = modelsData?.totalCount > modelsData?.pageSize * modelsData?.page;
   const hasMoreRegistrants =
@@ -118,7 +130,9 @@ const MeshModelComponent_ = ({
   const hasMoreComponents =
     componentsData?.totalCount > componentsData?.pageSize * componentsData?.page;
   const hasMoreRelationships =
-    componentsData?.totalCount > relationshipsData?.pageSize * relationshipsData?.page;
+    relationshipsData?.totalCount > relationshipsData?.pageSize * relationshipsData?.page;
+  const hasMoreConnections =
+    connectionsData?.totalCount > connectionsData?.pageSize * connectionsData?.page;
 
   const loadNextModelsPage = useCallback(() => {
     if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
@@ -147,6 +161,13 @@ const MeshModelComponent_ = ({
     }
     setRelationshipsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
   }, [relationshipsRes, hasMoreRelationships]);
+
+  const loadNextConnectionsPage = useCallback(() => {
+    if (connectionsRes.isLoading || connectionsRes.isFetching || !hasMoreConnections) {
+      return;
+    }
+    setConnectionsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
+  }, [connectionsRes, hasMoreConnections]);
   /**
    * IntersectionObservers
    */
@@ -154,6 +175,7 @@ const MeshModelComponent_ = ({
   const lastComponentRef = useInfiniteScrollRef(loadNextComponentsPage);
   const lastRelationshipRef = useInfiniteScrollRef(loadNextRelationshipsPage);
   const lastRegistrantRef = useInfiniteScrollRef(loadNextRegistrantsPage);
+  const lastConnectionRef = useInfiniteScrollRef(loadNextConnectionsPage);
 
   const fetchData = useCallback(async () => {
     try {
@@ -202,6 +224,24 @@ const MeshModelComponent_ = ({
           response = await getRegistrants();
 
           break;
+        case CONNECTIONS: {
+          const res = await getConnectionDefinitionsData(
+            {
+              params: {
+                page: searchText ? 0 : connectionsFilters.page,
+                pagesize: searchText ? 'all' : rowsPerPage,
+                search: searchText || '',
+              },
+            },
+            true,
+          );
+          // The endpoint returns the page under `connectionDefinitions`; normalize
+          // it to the view key (`connections`) the generic handler below expects.
+          response = res?.data
+            ? { ...res, data: { ...res.data, connections: res.data.connectionDefinitions || [] } }
+            : res;
+          break;
+        }
         default:
           break;
       }
@@ -238,8 +278,10 @@ const MeshModelComponent_ = ({
     getComponentsData,
     getRelationshipsData,
     getRegistrantsData,
+    getConnectionDefinitionsData,
     modelFilters,
     registrantFilters,
+    connectionsFilters,
     view,
     page,
     rowsPerPage,
@@ -311,6 +353,7 @@ const MeshModelComponent_ = ({
     setRegistrantsFilters({ page: 0 });
     setComponentsFilters({ page: 0 });
     setRelationshipsFilters({ page: 0 });
+    setConnectionsFilters({ page: 0 });
     setPage({
       Models: 0,
       Components: 0,
@@ -356,12 +399,23 @@ const MeshModelComponent_ = ({
 
   useEffect(() => {
     fetchData();
-  }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
+  }, [
+    view,
+    page,
+    rowsPerPage,
+    checked,
+    searchText,
+    modelFilters,
+    registrantFilters,
+    connectionsFilters,
+  ]);
 
-  // Update view when external view changes (for modal usage)
+  // Sync view state with externalView or selectedTab (for modal or route usage)
   useEffect(() => {
-    if (externalView && externalView !== view) {
-      setView(externalView);
+    const newView =
+      externalView ?? (typeof selectedTab === 'string' ? selectedTab : selectedTab?.[0]);
+    if (newView && newView !== view) {
+      setView(newView);
       setResourcesDetail([]);
       setSearchText(externalSearchText || null);
       setModelsFilters({ page: 0 });
@@ -379,7 +433,7 @@ const MeshModelComponent_ = ({
         data: {},
       });
     }
-  }, [externalView, externalSearchText]);
+  }, [externalView, selectedTab, externalSearchText]);
 
   useEffect(() => {
     if (externalSearchText !== null && externalSearchText !== searchText) {
@@ -388,7 +442,7 @@ const MeshModelComponent_ = ({
   }, [externalSearchText]);
 
   return (
-    <div data-test="workloads">
+    <WorkloadsContainer data-test="workloads">
       <ImportModelModal
         isImportModalOpen={isImportModalOpen}
         setIsImportModalOpen={setIsImportModalOpen}
@@ -437,6 +491,12 @@ const MeshModelComponent_ = ({
               active={view === REGISTRANTS}
               onClick={() => handleTabClick(REGISTRANTS)}
             />
+            <TabCard
+              label="Connections"
+              count={connectionsData?.totalCount || 0}
+              active={view === CONNECTIONS}
+              onClick={() => handleTabClick(CONNECTIONS)}
+            />
           </InnerContainer>
         )}
 
@@ -471,18 +531,21 @@ const MeshModelComponent_ = ({
                 [REGISTRANTS]: lastRegistrantRef,
                 [COMPONENTS]: lastComponentRef,
                 [RELATIONSHIPS]: lastRelationshipRef,
+                [CONNECTIONS]: lastConnectionRef,
               }}
               isFetching={{
                 [MODELS]: modelsRes.isFetching,
                 [REGISTRANTS]: registrantsRes.isFetching,
                 [COMPONENTS]: componentsRes.isFetching,
                 [RELATIONSHIPS]: relationshipsRes.isFetching,
+                [CONNECTIONS]: connectionsRes.isFetching,
               }}
               isLoading={{
                 [MODELS]: modelsRes.isLoading,
                 [REGISTRANTS]: registrantsRes.isLoading,
                 [COMPONENTS]: componentsRes.isLoading,
                 [RELATIONSHIPS]: relationshipsRes.isLoading,
+                [CONNECTIONS]: connectionsRes.isLoading,
               }}
             />
           </DetailsContainer>
@@ -493,7 +556,7 @@ const MeshModelComponent_ = ({
           />
         </TreeWrapper>
       </MainContainer>
-    </div>
+    </WorkloadsContainer>
   );
 };
 

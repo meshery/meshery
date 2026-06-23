@@ -1,4 +1,4 @@
-createdAt: "2023-07-31T16:22:41+01:00"
+created_at: "2023-07-31T16:22:41+01:00"
 id: 957fbc9b-708d-4396-84b8-e2ba37c1adcc
 location:
     branch: ""
@@ -6,7 +6,8 @@ location:
     path: ""
     type: local
 name: kumatest
-patternFile: |
+owner: 990f779c-708d-4396-84b8-e2ba37c1adcc
+pattern_file: |
     name: MesheryGeneratedPatternFile
     services:
       VirtualService-0.4157272729581598:
@@ -17,5 +18,4 @@ patternFile: |
             position:
               posX: 313
               posY: 173
-updatedAt: "2023-07-31T16:22:41+01:00"
-userId: 990f779c-708d-4396-84b8-e2ba37c1adcc
+updated_at: "2023-07-31T16:22:41+01:00"

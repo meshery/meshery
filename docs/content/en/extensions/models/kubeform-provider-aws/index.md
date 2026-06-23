@@ -1,7 +1,7 @@
 ---
 title: Kubeform Provider AWS
 subtitle: Collaborative and visual infrastructure as design for Kubeform Provider AWS
-image: /extensions/models/kubeform-provider-aws/icons/color/kubeform-provider-aws-color.svg
+image: extensions/models/kubeform-provider-aws/icons/color/kubeform-provider-aws-color.svg
 aliases: /extensibility/integrations/kubeform-provider-aws
 docURL: https://docs.meshery.io/extensibility/integrations/kubeform-provider-aws
 description: 

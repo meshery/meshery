@@ -1,7 +1,7 @@
 ---
 title: Azure Kubernetes Configuration
 subtitle: Collaborative and visual infrastructure as design for Azure Kubernetes Configuration
-image: /extensions/models/azure-kubernetes-configuration/icons/color/azure-kubernetes-configuration-color.svg
+image: extensions/models/azure-kubernetes-configuration/icons/color/azure-kubernetes-configuration-color.svg
 aliases: /extensibility/integrations/azure-kubernetes-configuration
 docURL: https://docs.meshery.io/extensibility/integrations/azure-kubernetes-configuration
 description: 

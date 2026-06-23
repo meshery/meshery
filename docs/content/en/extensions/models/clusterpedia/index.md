@@ -1,7 +1,7 @@
 ---
 title: Clusterpedia
 subtitle: Collaborative and visual infrastructure as design for Clusterpedia
-image: /extensions/models/clusterpedia/icons/color/clusterpedia-color.svg
+image: extensions/models/clusterpedia/icons/color/clusterpedia-color.svg
 aliases: /extensibility/integrations/clusterpedia
 docURL: https://docs.meshery.io/extensibility/integrations/clusterpedia
 description: 

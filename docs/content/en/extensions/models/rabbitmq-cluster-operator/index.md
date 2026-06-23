@@ -1,7 +1,7 @@
 ---
 title: RabbitMQ Cluster Operator
 subtitle: Collaborative and visual infrastructure as design for RabbitMQ Cluster Operator
-image: /extensions/models/rabbitmq-cluster-operator/icons/color/rabbitmq-cluster-operator-color.svg
+image: extensions/models/rabbitmq-cluster-operator/icons/color/rabbitmq-cluster-operator-color.svg
 aliases: /extensibility/integrations/rabbitmq-cluster-operator
 docURL: https://docs.meshery.io/extensibility/integrations/rabbitmq-cluster-operator
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Kubevault Catalog
 subtitle: Collaborative and visual infrastructure as design for Kubevault Catalog
-image: /extensions/models/kubevault-catalog/icons/color/kubevault-catalog-color.svg
+image: extensions/models/kubevault-catalog/icons/color/kubevault-catalog-color.svg
 aliases: /extensibility/integrations/kubevault-catalog
 docURL: https://docs.meshery.io/extensibility/integrations/kubevault-catalog
 description: 
