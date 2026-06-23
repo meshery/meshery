@@ -197,7 +197,7 @@ func mesherySystem() error {
 		err := utils.GenerateIcons(model, comps, imgsOutputPath)
 		if err != nil {
 			utils.Log.Debug(utils.ErrGeneratingIcons(err, imgsOutputPath))
-			utils.Log.Fatalf("Error generating icons for model %s: %v", model.Model, err.Error())
+			return fmt.Errorf("error generating icons for model %s: %w", model.Model, err)
 		}
 
 		_, _, err = WriteModelDefToFileSystem(&model, "", modelDir)
