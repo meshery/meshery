@@ -1,45 +1,58 @@
 .left-container {
   position: sticky;
   z-index: 9;
+  flex-shrink: 0;
+
+  width: var(--sidebar-width);
   height: calc(100vh - var(--navbar-height));
-  transition: all 0.5s ease-in-out;
-  margin-top: calc(var(--navbar-height));
+
   top: calc(var(--navbar-height));
+  margin-top: calc(var(--navbar-height));
+  margin-right: calc(-1 * (var(--sidebar-width)));
+  
+  transform: translateX(calc(-1 * var(--sidebar-wrapper-width)));
+  transition: 0.5s ease-in-out, margin-right 0.5s ease-in-out;
+
+  @media (max-width: 75em) {
+    position: fixed;
+
+    margin-top: 0;
+    margin-right: 0;
+  }
+
+  @media (max-width: 37.5em) {
+    top: calc(var(--navbar-height) - 10);
+    height: 100vh;
+  }
+
+  &--active {
+      transform: translateX(0);
+      margin-right: 0;
+    
+    & .nav-toggle-btn--document svg {
+      transform: rotate(180deg);
+    }
+  }
+
   & .sidebar-container-wrapper {
     height: 100%;
     padding: 0.5rem;
+
+    width: var(--sidebar-wrapper-width);
     background: var(--background-grey);
     box-shadow: var(--box-shadow-primary);
   }
   & .icon-container {
     height: fit-content;
     z-index: 9;
-    display: none;
-    @media (max-width: 75em) {
-      margin-top: 3rem;
-      position: absolute;
-      right: -3rem;
-      display: block;
+    display: block;
+    position: absolute;
+    right: -3rem;
+    bottom: 3rem;
+    
+    @media (max-width: 37.5em) {
+      bottom: 7rem;
     }
-  }
-  @media (max-width: 75em) {
-    margin-top: 0;
-    transform: translateX(-100%);
-    position: fixed;
-    display: flex;
-    width: 320px;
-    left: -1rem;
-  }
-  &--active {
-    transform: translateX(0%);
-    & .nav-toggle-btn--document svg {
-      transform: rotate(180deg);
-    }
-  }
-
-  @media (max-width: 37.5em) {
-    top: calc(var(--navbar-height) - 10);
-    height: 100vh;
   }
 }
 
@@ -62,44 +75,34 @@
 }
 
 .sidebar-container {
+  padding: .25rem min(1vh, 1vw);
   overscroll-behavior: contain;
-  padding: .25rem min(2vh, 2vw);
   overflow-y: scroll;
-  height: calc(100vh - var(--navbar-height));
+  scrollbar-gutter: stable;
+  height: calc(100vh - var(--navbar-height) - 3vh);
   transition: all 0.5s ease-in-out;
   font-size: 1.5rem;
-  width: 320px;
-  max-width: 320px;
-  min-width: 320px;
-  height: 100%;
+  width: var(--sidebar-width);
+  max-width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
 
   &::-webkit-scrollbar {
-    overscroll-behavior: contain;
     width: 5px;
-    padding: 6px;
   }
 
-  &::-webkit-scrollbar-track {
-    width: 0.5rem;
-    border-radius: 11px;
-    overflow: hidden;
-    padding: 6px;
-  }
   &::-webkit-scrollbar-thumb {
     background: #868e96;
-    width: 0.2rem;
     border-radius: 11px;
-    margin: 5px;
   }
 
+ 
   @media (max-width: 75em) {
     // position: fixed;
     top: var(--navbar-height);
     left: 0;
     width: 100%;
-    height: calc(100vh - var(--navbar-height));
     z-index: 9;
-    transition: all 0.5s ease-in-out;
+    transition: 0.5s ease-in-out;
     padding: 1rem 2rem;
   }
 
@@ -197,16 +200,31 @@
   }
 
   & .sidebar-section-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: none;
     border: none;
     color: var(--color-secondary-medium);
     cursor: pointer;
     font-size: 1rem;
-    padding: 0 0.5rem 0 0;
+    padding: 0 0.4rem 0 0;
     line-height: 1;
     opacity: 0.7;
     flex-shrink: 0;
-    transition: opacity 0.2s, color 0.2s, transform 0.2s ease-in-out;
+    transition: opacity 0.2s, color 0.2s;
+
+    // Caret/chevron disclosure indicator. Points right when collapsed and
+    // rotates to point down when the section is expanded (see .active-path
+    // rule below) to convey expanded vs. collapsed state.
+    .caret-icon {
+      display: block;
+      width: 0.85em;
+      height: 0.85em;
+      transform: rotate(0deg);
+      transform-origin: center;
+      transition: transform 0.25s ease-in-out;
+    }
 
     &:hover {
       opacity: 1;
@@ -217,9 +235,17 @@
       font-size: 0.75rem;
       padding: 0;
       width: 1.5rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    }
+  }
+
+  // When a section is expanded, its <li> carries the `active-path` class.
+  // Rotate the caret 90deg (right -> down) and bring the toggle to full
+  // opacity so the expanded state reads clearly.
+  & li.active-path > .sidebar-section-flex-wrapper > .sidebar-section-toggle {
+    opacity: 1;
+
+    .caret-icon {
+      transform: rotate(90deg);
     }
   }
 
@@ -293,6 +319,17 @@
   & .td-sidebar-link.td-sidebar-link__page {
     font-weight: 400;
     font-size: 1rem;
+  }
+
+  // Sections that contain child pages are emphasised over leaf pages so the
+  // navigation hierarchy reads clearly at a glance.
+  & .td-sidebar-nav__section.with-child > a.td-sidebar-link,
+  & .td-sidebar-nav__section.with-child > .sidebar-section-flex-wrapper > a.td-sidebar-link {
+    font-weight: 800;
+  }
+
+  & .td-sidebar-nav__section.without-child > a.td-sidebar-link {
+    font-weight: 600;
   }
 
   & .td-sidebar-link:hover,

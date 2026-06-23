@@ -2,6 +2,7 @@ import React from 'react';
 import { CatalogIcon, TachographDigitalIcon } from '@sistent/sistent';
 import ConfigurationIcon from '../../../assets/icons/ConfigurationIcon';
 import ConnectionIcon from '../../../assets/icons/Connection';
+import CredentialIcon from '../../../assets/icons/CredentialIcon';
 import DashboardIcon from '@/assets/icons/DashboardIcon';
 import EnvironmentIcon from '../../../assets/icons/Environment';
 import ServiceMeshIcon from '../../../assets/icons/ServiceMeshIcon';
@@ -17,6 +18,7 @@ import {
   CATALOG,
   CONFIGURATION,
   CONNECTION,
+  CREDENTIAL,
   DASHBOARD,
   DESIGN,
   ENVIRONMENT,
@@ -71,6 +73,18 @@ export const getNavigatorComponents = (
         permission: {
           action: keys.VIEW_CONNECTIONS.action,
           subject: keys.VIEW_CONNECTIONS.subject,
+        },
+      },
+      {
+        id: CREDENTIAL,
+        icon: <CredentialIcon style={{ ...drawerIconsStyle }} />,
+        href: '/management/credentials',
+        title: 'Credentials',
+        show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, CREDENTIAL]),
+        link: true,
+        permission: {
+          action: keys.VIEW_CREDENTIALS.action,
+          subject: keys.VIEW_CREDENTIALS.subject,
         },
       },
       {

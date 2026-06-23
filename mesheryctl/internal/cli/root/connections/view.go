@@ -138,7 +138,7 @@ func selectConnectionPrompt(connectionsList []*connection.Connection) (*connecti
 	connectionNames := make([]string, len(connectionsList))
 
 	for i, conn := range connectionsList {
-		connectionNames[i] = fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn.ID.String(), conn.Name, conn.Type)
+		connectionNames[i] = fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn.ID.String(), conn.Name, conn.ConnectionType)
 	}
 
 	i, err := utils.RunSelectPrompt("Select connection", connectionNames)

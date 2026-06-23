@@ -259,6 +259,7 @@ func main() {
 		models.K8sContext{},
 		schemasOrganization.Organization{},
 		models.Key{},
+		&models.Credential{},
 		connections.Connection{},
 		environment.Environment{},
 		environment.EnvironmentConnectionMapping{},
@@ -313,9 +314,13 @@ func main() {
 		Providers:              provs,
 		ProviderCookieName:     "meshery-provider",
 		ProviderCookieDuration: 30 * 24 * time.Hour,
-		PlaygroundBuild:        viper.GetBool("PLAYGROUND"),
-		AdapterTracker:         adapterTracker,
-		QueryTracker:           queryTracker,
+		// ProviderTracker is set below, once provider registration is
+		// complete and the tracker has been built around the final
+		// `provs` map. The handlers must not access it before that
+		// assignment, but every route is registered after.
+		PlaygroundBuild: viper.GetBool("PLAYGROUND"),
+		AdapterTracker:  adapterTracker,
+		QueryTracker:    queryTracker,
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
 
@@ -384,31 +389,38 @@ func main() {
 			MeshsyncDefaultDeploymentMode: meshsyncDefaultDeploymentMode,
 		}
 
+		// Initialize stamps the minimum addressable metadata
+		// (ProviderType, ProviderURL, fallback ProviderName=host) so the
+		// provider is renderable in /api/providers immediately. The
+		// capabilities HTTP probe runs later, concurrently, via
+		// ProviderTracker.VerifyAll - a single unreachable remote can no
+		// longer block server startup or the provider chooser.
 		cp.Initialize()
 
-		cp.SyncPreferences()
-		defer cp.StopSyncPreferences()
-
 		// Pick a registration key that survives two failure modes:
-		//   1. /capabilities was unreachable or returned no providerName, leaving
-		//      cp.Name() == "". Without disambiguation, every such provider
-		//      collides at provs[""].
-		//   2. Two configured URLs report the SAME name from /capabilities (for
-		//      example, both cloud.meshery.io and cloud.acme.io currently
-		//      return "Meshery"). The later iteration silently overwrites the
-		//      earlier and operators see one provider in /api/providers when
-		//      they configured two.
-		// On collision we re-key the EARLIER entry by its URL host and let the
-		// new entry claim the canonical name. This preserves the historical
-		// "last URL wins the canonical name" routing that integrations rely
-		// on (e.g. tokens minted against cloud.acme.io expect the cookie
-		// value "Meshery" to resolve to cloud.acme.io regardless of the
+		//   1. /capabilities has not been probed yet (or will fail at
+		//      probe time), so cp.Name() is the URL host fallback that
+		//      Initialize stamps. Two remotes sharing the same host
+		//      would collide - the parsed URL keeps each addressable.
+		//   2. Two configured URLs report the SAME canonical name from
+		//      /capabilities once the probe lands (for example, both
+		//      cloud.meshery.io and cloud.acme.io currently return
+		//      "Meshery"). Since we now key by the host-fallback name
+		//      before the probe, the name collision shows up later, in
+		//      VerifyAll; but at registration time we already disambiguate
+		//      by URL host so both entries reach the tracker.
+		// On collision (same host or same fallback name) we re-key the
+		// earlier entry by its URL host and let the new entry claim the
+		// canonical name. This preserves the historical "last URL wins
+		// the canonical name" routing that integrations rely on (e.g.
+		// tokens minted against cloud.acme.io expect the cookie value
+		// "Meshery" to resolve to cloud.acme.io regardless of the
 		// iteration order of PROVIDER_BASE_URLS), while still giving the
 		// re-keyed provider an addressable home in /api/providers.
 		key := cp.Name()
 		if key == "" {
 			key = parsedURL.Host
-			log.Warnf("remote provider at %q returned an empty providerName from /capabilities; registering it under host %q so it remains addressable. Verify the remote is reachable and returns a providerName.", providerurl, key)
+			log.Warnf("remote provider at %q produced an empty Name() after Initialize; registering it under host %q so it remains addressable.", providerurl, key)
 		}
 		if existing, ok := provs[key]; ok {
 			existingHost := existing.GetProviderURL()
@@ -422,11 +434,66 @@ func main() {
 		provs[key] = cp
 	}
 
-	// verifies if the provider specified in the "PROVIDER" environment variable is from one of the supported providers.
-	// If it is one of the supported providers, the server gets configured to auto select the specified provider,
-	// else the provider specified in the environment variable is ignored and  each time user logs in they need to select a provider.
-	isProviderEnvVarValid := models.VerifyMesheryProvider(providerEnvVar, provs)
-	if !isProviderEnvVarValid {
+	// All providers are registered. Build the tracker now and kick off
+	// the boot-time availability probe + post-probe SyncPreferences
+	// activation in a background goroutine, so a slow remote cannot
+	// delay server startup. The probe publishes status events as each
+	// remote settles, so the chooser shows the local provider (and any
+	// already-reachable remotes) immediately and updates each remote
+	// entry independently as its probe completes.
+	providerTracker := models.NewProviderTracker(provs, log)
+	hc.ProviderTracker = providerTracker
+	go func() {
+		providerTracker.VerifyAll(ctx)
+		// SyncPreferences requires capabilities to have been loaded
+		// (the SyncPrefs entry is what tells the goroutine the remote
+		// accepts preference sync). Activate it AFTER the boot probe
+		// so the in-loop call doesn't no-op on still-empty caps.
+		for _, p := range provs {
+			rp, ok := p.(*models.RemoteProvider)
+			if !ok {
+				continue
+			}
+			rp.SyncPreferences()
+		}
+	}()
+
+	// Defer StopSyncPreferences for every remote, regardless of whether
+	// SyncPreferences ever started. The Stop call is internally guarded
+	// so it is a safe no-op when sync was never activated (probe failed,
+	// shutdown ran before activation, or the remote does not advertise
+	// SyncPrefs).
+	for _, p := range provs {
+		rp, ok := p.(*models.RemoteProvider)
+		if !ok {
+			continue
+		}
+		defer rp.StopSyncPreferences()
+	}
+
+	// Resolve the configured PROVIDER to Meshery's internal registration key.
+	// Remote providers are registered under a stable key (typically URL host)
+	// before their async /capabilities probe reveals the canonical
+	// providerName, so a pre-selected remote such as PROVIDER=Meshery may need
+	// one bounded probe here to avoid falling back to the chooser.
+	resolveStart := time.Now()
+	resolvedProviderKey, providerResolved := models.ResolveProviderKeyWithProbe(ctx, providerEnvVar, provs)
+	if probeElapsed := time.Since(resolveStart); providerEnvVar != "" && probeElapsed > time.Second {
+		// Surface the boot-time remote /capabilities probe so operators can
+		// see why startup paused (each parallel probe waits up to 15s on an
+		// unreachable configured remote before timing out).
+		log.Infof("resolving configured PROVIDER %q required a remote capability probe that took %s", providerEnvVar, probeElapsed.Round(time.Millisecond))
+	}
+	if providerResolved {
+		providerEnvVar = resolvedProviderKey
+	} else {
+		if providerEnvVar != "" {
+			// Informational, not an error: a configured PROVIDER that
+			// matches no registered provider is a valid fallback to the
+			// chooser, but operators should be able to see why auto-select
+			// did not engage.
+			log.Infof("configured PROVIDER %q could not be resolved to any registered provider; falling back to the provider chooser", providerEnvVar)
+		}
 		providerEnvVar = ""
 	}
 

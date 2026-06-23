@@ -1,7 +1,7 @@
 ---
 title: Rook Ceph Cluster
 subtitle: Collaborative and visual infrastructure as design for Rook Ceph Cluster
-image: /extensions/models/rook-ceph-cluster/icons/color/rook-ceph-cluster-color.svg
+image: extensions/models/rook-ceph-cluster/icons/color/rook-ceph-cluster-color.svg
 aliases: /extensibility/integrations/rook-ceph-cluster
 docURL: https://docs.meshery.io/extensibility/integrations/rook-ceph-cluster
 description: 

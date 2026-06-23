@@ -25,11 +25,11 @@ vi.mock('./cronjob-columns', () => ({
   buildCronJobColumns: () => ({ name: 'CronJob', columns: [] }),
 }));
 
-import { WorkloadTableConfig } from './config';
+import { useWorkloadTableConfig } from './config';
 
-describe('WorkloadTableConfig', () => {
+describe('useWorkloadTableConfig', () => {
   it('aggregates all the workload column builders into a kind-keyed object', () => {
-    const result = WorkloadTableConfig(vi.fn(), [], {}, {}, 'Pod');
+    const result = useWorkloadTableConfig(vi.fn(), [], {}, {}, 'Pod');
 
     expect(Object.keys(result)).toEqual([
       'Pod',

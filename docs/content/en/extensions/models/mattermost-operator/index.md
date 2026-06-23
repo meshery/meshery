@@ -1,7 +1,7 @@
 ---
 title: Mattermost Operator
 subtitle: Collaborative and visual infrastructure as design for Mattermost Operator
-image: /extensions/models/mattermost-operator/icons/color/mattermost-operator-color.svg
+image: extensions/models/mattermost-operator/icons/color/mattermost-operator-color.svg
 aliases: /extensibility/integrations/mattermost-operator
 docURL: https://docs.meshery.io/extensibility/integrations/mattermost-operator
 description: 
@@ -10,16 +10,16 @@ integrations-subcategory: Uncategorized
 registrant: Artifact Hub
 components: 
 - name: cluster-installation
-  colorIcon: content/en/extensions/models/mattermost-operator/components/cluster-installation/icons/color/cluster-installation-color.svg
-  whiteIcon: content/en/extensions/models/mattermost-operator/components/cluster-installation/icons/white/cluster-installation-white.svg
+  colorIcon: extensions/models/mattermost-operator/components/cluster-installation/icons/color/cluster-installation-color.svg
+  whiteIcon: extensions/models/mattermost-operator/components/cluster-installation/icons/white/cluster-installation-white.svg
   description: 
 - name: mattermost-restore-db
-  colorIcon: content/en/extensions/models/mattermost-operator/components/mattermost-restore-db/icons/color/mattermost-restore-db-color.svg
-  whiteIcon: content/en/extensions/models/mattermost-operator/components/mattermost-restore-db/icons/white/mattermost-restore-db-white.svg
+  colorIcon: extensions/models/mattermost-operator/components/mattermost-restore-db/icons/color/mattermost-restore-db-color.svg
+  whiteIcon: extensions/models/mattermost-operator/components/mattermost-restore-db/icons/white/mattermost-restore-db-white.svg
   description: 
 - name: mattermost
-  colorIcon: content/en/extensions/models/mattermost-operator/components/mattermost/icons/color/mattermost-color.svg
-  whiteIcon: content/en/extensions/models/mattermost-operator/components/mattermost/icons/white/mattermost-white.svg
+  colorIcon: extensions/models/mattermost-operator/components/mattermost/icons/color/mattermost-color.svg
+  whiteIcon: extensions/models/mattermost-operator/components/mattermost/icons/white/mattermost-white.svg
   description: 
 components-count: 3
 relationships: 
