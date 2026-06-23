@@ -19,7 +19,7 @@
     },
     "name": "aws-ecs-controller",
     "registrant": {
-      "kind": "github"
+      "kind": ""
     },
     "version": ""
   },
@@ -46,7 +46,8 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "patchStrategy": "replace",
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
@@ -55,8 +56,7 @@
                   "subnets",
                   "0"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ],
@@ -80,7 +80,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "status",
