@@ -3,9 +3,6 @@ title: mesheryctl-version
 display_title: false
 command: version
 subcommand: nil
-no_list: true
-hide_section_list: true 
-categories: [mesheryctl-ref]
 ---
 
 # mesheryctl version
@@ -20,17 +17,17 @@ Version of Meshery command line client - mesheryctl.
 mesheryctl version [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
-To view the current version and SHA of release binary of mesheryctl client 
+To view the current version and SHA of release binary of mesheryctl client
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl version
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

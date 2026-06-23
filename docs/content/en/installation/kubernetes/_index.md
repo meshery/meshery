@@ -7,7 +7,7 @@ display_title: false
 image: installation/kubernetes/images/kubernetes.svg
 description: Install Meshery on Kubernetes. Deploy Meshery in Kubernetes in-cluster or outside of Kubernetes out-of-cluster.
 weight: 15
-no_list: true 
+no_list: true
 hide_section_list: true
 ---
 
@@ -35,7 +35,6 @@ Manage your Kubernetes clusters with Meshery. Deploy Meshery in Kubernetes [in-c
 - [Out-of-cluster Installation](#out-of-cluster-installation)
   - [Set up Ingress on Minikube with the NGINX Ingress Controller](#set-up-ingress-on-minikube-with-the-nginx-ingress-controller)
   - [Installing cert-manager with kubectl](#installing-cert-manager-with-kubectl)
-    - [See Also](#see-also)
 
 # In-cluster Installation
 
