@@ -161,6 +161,13 @@ const ImportModelModal = memo<ImportModelModalProps>(
     const { operationsCenterActorRef } = useContext(NotificationCenterContext);
     const [isDeploying, setIsDeploying] = useState(true);
     const [deployEvent, setDeployEvent] = useState<any>();
+    const subscriptionRef = useRef<{ unsubscribe: () => void } | null>(null);
+
+    useEffect(() => {
+      return () => {
+        subscriptionRef.current?.unsubscribe();
+      };
+    }, []);
 
     const subscriptionRef = useRef<{ unsubscribe: () => void } | null>(null);
 
@@ -309,25 +316,22 @@ useEffect(() => {
       );
 
       subscriptionRef.current = subscription;
-      updateProgress({ showProgress: true });
-      setActiveStep(1);
 
-      (async () => {
-        try {
-          await importModelReq({ importBody: requestBody }).unwrap();
-        } catch (err) {
- subscriptionRef.current?.unsubscribe();
-  subscriptionRef.current = null;
-  console.error('Failed to import model:', err);
-  notify({
-    message: 'Model import failed. Please verify the file or URL and try again.',
-    event_type: EVENT_TYPES.ERROR,
-  });
-  setActiveStep(0);
-        } finally {
-          updateProgress({ showProgress: false });
-        }
-      })();
+      updateProgress({ showProgress: true });
+      try {
+        await importModelReq({ importBody: requestBody }).unwrap();
+        setActiveStep(1);
+      } catch (err) {
+        subscriptionRef.current?.unsubscribe();
+        subscriptionRef.current = null;
+        console.error('Failed to import model:', err);
+        notify({
+          message: 'Model import failed. Please verify the file or URL and try again.',
+          event_type: EVENT_TYPES.ERROR,
+        });
+      } finally {
+        updateProgress({ showProgress: false });
+      }
     };
 
     const helpText = (
