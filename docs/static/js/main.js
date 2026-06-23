@@ -1,6 +1,6 @@
-(function($) {
+(function ($) {
     'use strict';
-    $(function() {
+    $(function () {
         $('[data-toggle="tooltip"]').tooltip();
         $('[data-toggle="popover"]').popover();
         $('.popover-dismiss').popover({
@@ -11,7 +11,7 @@
     function bottomPos(element) {
         return element.offset().top + element.outerHeight();
     }
-    $(function() {
+    $(function () {
         var promo = $(".js-td-cover");
         if (!promo.length) {
             return
@@ -22,7 +22,7 @@
         if ((promoOffset - navbarOffset) < threshold) {
             $('.js-navbar-scroll').addClass('navbar-bg-onscroll');
         }
-        $(window).on('scroll', function() {
+        $(window).on('scroll', function () {
             var navtop = $('.js-navbar-scroll').offset().top - $(window).scrollTop();
             var promoOffset = bottomPos($('.js-td-cover'));
             var navbarOffset = $('.js-navbar-scroll').offset().top;
@@ -42,17 +42,17 @@
 function HideToggleFunction() {
     var hide = document.getElementById("hiddendiv");
     if (hide.style.display === "block") {
-      hide.style.display = "none";
+        hide.style.display = "none";
     } else {
-      hide.style.display = "block";
+        hide.style.display = "block";
     }
-  }
+}
 
 /*clipboard*/
 
 var getcodeelement = $('.clipboardjs'); /*create custom id*/
 
-getcodeelement.each(function(i) {  
+getcodeelement.each(function (i) {
     /*target*/
     var currentId = 'codeblock' + (i + 1);
     $(this).attr('id', currentId);
@@ -60,54 +60,54 @@ getcodeelement.each(function(i) {
     /*trigger*/
     var text = $(this).text();
     text = text.replace(/\$ /gi, '')
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/'/g, "&#39;")
-    .replace(/"/g, "&quot;");
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/'/g, "&#39;")
+        .replace(/"/g, "&quot;");
     var clipButton = '<div class="btn-copy-wrap"><button class="clipbtn" data-clipboard-text="' + text + '" data-clipboard-target="#' + currentId + '"><i class="far fa-copy"></i></button></div>';
-       $(this).after(clipButton);
+    $(this).after(clipButton);
 });
 
 var clipboard = new Clipboard('.clipbtn');
 
-/* Change copy icon to text when successfully copied*/
-clipboard.on("success", (e)=>{
+/* Change copy icon to check icon when successfully copied*/
+clipboard.on("success", (e) => {
     console.info(e.trigger);
     console.info(e.trigger.childNodes[0]);
-    let originalIcon = e.trigger.childNodes[0];
+    let originalIcon = e.trigger.childNodes[0].cloneNode(true);
 
     var icon = e.trigger.childNodes[0];
     var text = document.createElement('span');
-    text.textContent = "Copied!";
-    text.style.color = "white";
+    text.innerHTML = '<i class="fas fa-check"></i> Copied!';
+    text.style.color = "#00b39f";
 
     e.trigger.replaceChild(text, icon);
 
-    setTimeout(()=>{
+    setTimeout(() => {
         e.trigger.replaceChild(originalIcon, text);
-    },2000)
+    }, 2000)
 })
 
-const toggleBtnSidebarNav=document.querySelector(".nav-toggle-btn--document");
+const toggleBtnSidebarNav = document.querySelector(".nav-toggle-btn--document");
 
-toggleBtnSidebarNav.addEventListener("click",()=>{
+toggleBtnSidebarNav.addEventListener("click", () => {
     const leftContainer = document.querySelector(".left-container");
 
-    if(leftContainer){
+    if (leftContainer) {
         const isActive = leftContainer.classList.toggle('left-container--active');
 
         const newState = isActive ? 'active' : 'inactive';
-        localStorage.setItem('leftContainer-state', newState);   
+        localStorage.setItem('leftContainer-state', newState);
     }
 })
 
-const toggleBtnMainNav=document.querySelector(".nav-toggle-btn--main");
+const toggleBtnMainNav = document.querySelector(".nav-toggle-btn--main");
 
 if (toggleBtnMainNav) {
-    toggleBtnMainNav.addEventListener("click",()=>{
-        let sidebarNav=document.getElementById("main_navbar")
-        if(sidebarNav){
+    toggleBtnMainNav.addEventListener("click", () => {
+        let sidebarNav = document.getElementById("main_navbar")
+        if (sidebarNav) {
             sidebarNav.classList.toggle("main-navbar--active")
         }
     })

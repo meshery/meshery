@@ -2,16 +2,20 @@ code {
   font-size: 95%;
   color: var(--code);
   word-break: break-word;
+
   & ::-webkit-scrollbar {
     display: none;
   }
 }
+
 code::-webkit-scrollbar {
   display: none;
 }
+
 .td-content {
+
   p code,
-  li > code,
+  li>code,
   table code {
     color: inherit;
     padding: 0.2em 0.4em;
@@ -22,6 +26,7 @@ code::-webkit-scrollbar {
     border-radius: 0.25rem;
   }
 }
+
 .card,
 .td-content .highlight {
   position: relative;
@@ -41,13 +46,15 @@ code::-webkit-scrollbar {
   border: 1px solid var(--color-grey-light);
   border-radius: 0.25rem;
 }
+
 .td-content .highlight {
-  margin: 2rem 0;
-  padding: 1rem;
+  margin: 1rem 0;
+  padding: 0.75rem;
   background-color: var(--color-primary-medium);
   overflow: hidden;
 }
-.td-content pre > code {
+
+.td-content pre>code {
   padding: 10px 0;
   margin: 0;
   font-size: 100%;
@@ -64,10 +71,12 @@ code::-webkit-scrollbar {
 pre {
   display: block;
   color: var(--color-grey-medium);
+
   & ::-webkit-scrollbar {
     display: none;
   }
 }
+
 pre::-webkit-scrollbar {
   display: none;
 }
@@ -81,15 +90,15 @@ pre::-webkit-scrollbar {
     margin: 0;
     padding: 0;
   }
+
   pre {
     word-wrap: normal;
     background-color: var(--color-primary-medium);
-    padding: 1rem;
+    padding: 0.75rem;
     overflow: hidden;
-    
+
     & ::-webkit-scrollbar {
       display: none;
     }
   }
 }
-
