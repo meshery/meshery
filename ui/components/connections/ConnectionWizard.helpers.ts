@@ -93,9 +93,12 @@ export const buildConnectionWizardKindConfigs = (
       return;
     }
 
+    const connectionSchema = asSchema(definition.connectionSchema);
+    const credentialSchema = asSchema(definition.credentialSchema);
+
     // Architectural Fix: Ignore internal/auto-generated definitions from the backend.
     // A legitimate wizard card MUST have a schema to generate a configuration form.
-    if (!definition.connectionSchema && !definition.credentialSchema) {
+    if (!connectionSchema && !credentialSchema) {
       return;
     }
 
@@ -121,8 +124,8 @@ export const buildConnectionWizardKindConfigs = (
       docsUrl:
         (typeof definition.metadata?.docsURL === 'string' && definition.metadata.docsURL) ||
         DEFAULT_CONNECTION_DOCS_URL,
-      connectionSchema: asSchema(definition.connectionSchema),
-      credentialSchema: asSchema(definition.credentialSchema),
+      connectionSchema,
+      credentialSchema,
       svgColor: definition.styles?.svgColor || null,
       svgWhite: definition.styles?.svgWhite || null,
     });
