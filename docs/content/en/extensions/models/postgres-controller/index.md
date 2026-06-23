@@ -1,7 +1,7 @@
 ---
 title: Postgres Controller
 subtitle: Collaborative and visual infrastructure as design for Postgres Controller
-image: /extensions/models/postgres-controller/icons/color/postgres-controller-color.svg
+image: extensions/models/postgres-controller/icons/color/postgres-controller-color.svg
 aliases: /extensibility/integrations/postgres-controller
 docURL: https://docs.meshery.io/extensibility/integrations/postgres-controller
 description: 

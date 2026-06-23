@@ -1,7 +1,7 @@
 ---
 title: NGINX Ingress Controller
 subtitle: Collaborative and visual infrastructure as design for NGINX Ingress Controller
-image: /extensions/models/nginx-ingress/icons/color/nginx-ingress-color.svg
+image: extensions/models/nginx-ingress/icons/color/nginx-ingress-color.svg
 aliases: /extensibility/integrations/nginx-ingress
 docURL: https://docs.meshery.io/extensibility/integrations/nginx-ingress
 description: 

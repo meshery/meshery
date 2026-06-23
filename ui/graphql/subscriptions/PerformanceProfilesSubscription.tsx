@@ -19,7 +19,7 @@ const performanceProfilesSubscription = graphql`
         qps
         total_results
         updated_at
-        user_id
+        owner
         request_body
         request_cookies
         request_headers

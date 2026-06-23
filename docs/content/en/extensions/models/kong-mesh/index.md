@@ -1,7 +1,7 @@
 ---
 title: Kong Mesh
 subtitle: Collaborative and visual infrastructure as design for Kong Mesh
-image: /extensions/models/kong-mesh/icons/color/kong-mesh-color.svg
+image: extensions/models/kong-mesh/icons/color/kong-mesh-color.svg
 aliases: /extensibility/integrations/kong-mesh
 docURL: https://docs.meshery.io/extensibility/integrations/kong-mesh
 description: 

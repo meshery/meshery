@@ -1,7 +1,7 @@
 ---
 title: AWS DocumentDB
 subtitle: Collaborative and visual infrastructure as design for AWS DocumentDB
-image: /extensions/models/aws-documentdb-controller/icons/color/aws-documentdb-controller-color.svg
+image: extensions/models/aws-documentdb-controller/icons/color/aws-documentdb-controller-color.svg
 aliases: /extensibility/integrations/aws-documentdb-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-documentdb-controller
 description: 

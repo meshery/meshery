@@ -1,7 +1,7 @@
 ---
 title: Crossplane
 subtitle: Collaborative and visual infrastructure as design for Crossplane
-image: /extensions/models/crossplane/icons/color/crossplane-color.svg
+image: extensions/models/crossplane/icons/color/crossplane-color.svg
 aliases: /extensibility/integrations/crossplane
 docURL: https://docs.meshery.io/extensibility/integrations/crossplane
 description: 

@@ -1,7 +1,7 @@
 ---
 title: NGINX Service Mesh
 subtitle: Collaborative and visual infrastructure as design for NGINX Service Mesh
-image: /extensions/models/nginx-service-mesh/icons/color/nginx-service-mesh-color.svg
+image: extensions/models/nginx-service-mesh/icons/color/nginx-service-mesh-color.svg
 aliases: /extensibility/integrations/nginx-service-mesh
 docURL: https://docs.meshery.io/extensibility/adapters/nginx-sm
 description: 

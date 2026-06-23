@@ -497,8 +497,14 @@ func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 // FlushMeshSyncData will flush the meshsync data for the passed kubernetes contextID
 func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Provider, eventsChan *Broadcast, userID string, mesheryInstanceID *core.Uuid, log logger.Handler) {
 	ctxID := k8sContext.ID
-	ctxUUID, _ := uuid.FromString(ctxID)
-	userUUID, _ := uuid.FromString(userID)
+	ctxUUID := uuid.FromStringOrNil(ctxID)
+	userUUID, err := uuid.FromString(userID)
+	if err != nil {
+		// A nil user key would persist and broadcast events under no owner; bail
+		// rather than attribute the flush to uuid.Nil.
+		log.Error(ErrInvalidUUID(fmt.Errorf("invalid user id %q: %w", userID, err)))
+		return
+	}
 	// Gets all the available kubernetes contexts
 
 	ctxName := k8sContext.Name
