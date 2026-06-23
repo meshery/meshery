@@ -96,13 +96,11 @@ export const buildConnectionWizardKindConfigs = (
     const connectionSchema = asSchema(definition.connectionSchema);
     const credentialSchema = asSchema(definition.credentialSchema);
 
-    // Architectural Fix: Ignore internal/auto-generated definitions from the backend.
     // A legitimate wizard card MUST have a schema to generate a configuration form.
     if (!connectionSchema && !credentialSchema) {
       return;
     }
 
-    // Maintain the original architectural intent: Unique identity is Kind + Type + SubType
     // We keep the .toLowerCase() to ensure accidental casing differences don't break it.
     const dedupeKey = [
       kind.toLowerCase(),
