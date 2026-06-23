@@ -1,3 +1,3 @@
-module github.com/layer5io/docs
+module github.com/meshery/meshery/docs
 
-go 1.25.5
+go 1.26.4

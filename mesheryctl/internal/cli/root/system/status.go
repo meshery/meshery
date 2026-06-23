@@ -38,7 +38,7 @@ type cmdSystemStatusFlags struct {
 var systemStatusFlags cmdSystemStatusFlags
 
 var linkDocStatus = map[string]string{
-	"link":    "![status-usage](/reference/images/status.png)",
+	"link":    "![status-usage](../../../images/status.png)",
 	"caption": "Usage of mesheryctl system status",
 }
 

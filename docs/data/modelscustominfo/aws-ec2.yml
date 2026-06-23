@@ -1,8 +1,7 @@
 content: |
   <h1>How to Deploy AWS EC2 Instances with Meshery</h1>
   <p>
-    Learn how to configure, deploy, and manage AWS EC2 instances using Meshery's
-    intuitive <a href="https://meshery.io/extensions/kanvas">Kanvas</a> extension.
+    Learn how to configure, deploy, and manage AWS EC2 instances using Meshery.
     In order to manage AWS resources, Meshery uses
     <a
       href="https://aws.amazon.com/blogs/containers/aws-controllers-for-kubernetes-ack/"
@@ -17,13 +16,13 @@ content: |
     pre-configured designs available in the
     <a href="https://meshery.io/catalog">Meshery Catalog</a>, you'll then
     configure the EC2 controller with AWS credentials, deploy essential resources
-    (like VPCs, subnets, and security groups) to create the network topology for
+    (li`e VPCs, subnets, and security groups) to create the network topology for
     your EC2 instance. Finally, you'll deploy the instance itself and verify its
-    status through the AWS Management Console or Meshery's Kanvas operator mode.
+    status through the AWS Management Console or Meshery.
   </p>
 
   <p>
-    <a href="/guides/tutorials/deploy-aws-ec2-instances-with-meshery"
+    <a href="https://docs.meshery.io/guides/tutorials/aws/deploy-aws-ec2-instances-with-meshery"
       >Read the full guide on deploying AWS EC2 instances with Meshery ➔</a
     >
   </p>

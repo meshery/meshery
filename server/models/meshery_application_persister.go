@@ -19,8 +19,8 @@ type MesheryApplicationPersister struct {
 // MesheryApplicationPage represents a page of applications
 type MesheryApplicationPage struct {
 	Page         uint64                `json:"page"`
-	PageSize     uint64                `json:"page_size"`
-	TotalCount   int                   `json:"total_count"`
+	PageSize     uint64                `json:"pageSize"`
+	TotalCount   int                   `json:"totalCount"`
 	Applications []*MesheryApplication `json:"applications"`
 }
 

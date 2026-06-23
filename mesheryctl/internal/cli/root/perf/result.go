@@ -39,7 +39,7 @@ type resultStruct struct {
 	LatenciesMs   *models.LatenciesMs
 	QPS           int
 	URL           string
-	UserID        *core.Uuid
+	Owner         *core.Uuid
 	Duration      string
 	MesheryID     *core.Uuid
 	LoadGenerator string
@@ -51,7 +51,7 @@ var (
 )
 
 var linkDocPerfResult = map[string]string{
-	"link":    "![perf-result-usage](/reference/images/perf-result.png)",
+	"link":    "![perf-result-usage](../../../images/perf-result.png)",
 	"caption": "Usage of mesheryctl perf result",
 }
 
@@ -166,7 +166,7 @@ mesheryctl perf result saturday-profile --view
 			}
 			a := expandedData[index]
 			fmt.Printf("Name: %v\n", a.Name)
-			fmt.Printf("UserID: %s\n", a.UserID.String())
+			fmt.Printf("Owner: %s\n", a.Owner.String())
 			fmt.Printf("Endpoint: %v\n", a.URL)
 			fmt.Printf("QPS: %v\n", a.QPS)
 			fmt.Printf("Test run duration: %v\n", a.Duration)
@@ -241,13 +241,13 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 
 		// append data for extended output
 		name := "None"
-		userid := uuid.Nil
+		owner := uuid.Nil
 		mesheryid := uuid.Nil
 		url := "None"
 		loadGenerator := "None"
 
-		if result.UserID != nil {
-			userid = *result.UserID
+		if result.Owner != nil {
+			owner = *result.Owner
 		}
 
 		if result.MesheryID != nil {
@@ -268,7 +268,7 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 
 		a := resultStruct{
 			Name:     name,
-			UserID:   &userid,
+			Owner:    &owner,
 			URL:      url,
 			QPS:      int(result.RunnerResults.QPS),
 			Duration: result.RunnerResults.RequestedDuration,

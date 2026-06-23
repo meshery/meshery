@@ -107,9 +107,9 @@ func TestWriteMeshkitError_SerializesMeshKitStructure(t *testing.T) {
 		Error                string   `json:"error"`
 		Code                 string   `json:"code"`
 		Severity             string   `json:"severity"`
-		ProbableCause        []string `json:"probable_cause"`
-		SuggestedRemediation []string `json:"suggested_remediation"`
-		LongDescription      []string `json:"long_description"`
+		ProbableCause        []string `json:"probableCause"`
+		SuggestedRemediation []string `json:"suggestedRemediation"`
+		LongDescription      []string `json:"longDescription"`
 	}
 	if decodeErr := json.NewDecoder(resp.Body).Decode(&decoded); decodeErr != nil {
 		t.Fatalf("body did not parse as JSON: %v", decodeErr)
@@ -379,7 +379,7 @@ func TestBufferEncodePattern_PartialFailureDoesNotCorruptResponse(t *testing.T) 
 // WriteJSONEmptyObject and is covered by tests for those helpers above.
 func TestBufferEncodePattern_SuccessPathWritesAtomicResponse(t *testing.T) {
 	payload := map[string]interface{}{
-		"meshery-provider": "None",
+		"meshery-provider": "Local",
 		"token":            "",
 	}
 
@@ -413,8 +413,8 @@ func TestBufferEncodePattern_SuccessPathWritesAtomicResponse(t *testing.T) {
 	if err := json.Unmarshal(bodyBytes, &decoded); err != nil {
 		t.Fatalf("body did not parse as JSON: %v\nbody=%q", err, string(bodyBytes))
 	}
-	if decoded["meshery-provider"] != "None" {
-		t.Errorf("expected payload field meshery-provider=None, got %v", decoded["meshery-provider"])
+	if decoded["meshery-provider"] != "Local" {
+		t.Errorf("expected payload field meshery-provider=Local, got %v", decoded["meshery-provider"])
 	}
 	// The success body must be just the payload — no leaked error field
 	// from a stray WriteMeshkitError, which would indicate the pattern
@@ -497,7 +497,7 @@ func (f *flakyResponseWriter) Write(p []byte) (int, error) {
 // well-formed JSON object.
 func TestEncodeIntoResponseWriter_DemonstratesLatentBug(t *testing.T) {
 	payload := map[string]string{
-		"meshery-provider": "None",
+		"meshery-provider": "Local",
 		"token":            "this-payload-leaks-onto-the-wire",
 	}
 

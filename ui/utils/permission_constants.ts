@@ -244,6 +244,10 @@ export const keys = {
     subject: 'Delete a design',
     action: 'f024fcf7-3c3d-4521-b83e-6d659353ca0e',
   },
+  EVALUATE_RELATIONSHIPS: {
+    subject: 'Evaluate Relationships',
+    action: 'c7752be7-5c0f-465d-a8ba-5594acd08b93',
+  },
   EXPORT_DESIGN: {
     subject: 'Export Design',
     action: '9a783f51-3b4a-47a6-a02e-b0db9e78cd85',

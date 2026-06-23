@@ -1,7 +1,7 @@
 ---
 title: Rook
 subtitle: Collaborative and visual infrastructure as design for Rook
-image: /extensions/models/rook/icons/color/rook-color.svg
+image: extensions/models/rook/icons/color/rook-color.svg
 aliases: /extensibility/integrations/rook
 docURL: https://docs.meshery.io/extensibility/integrations/rook
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Cloud Native Storage
 registrant: Github
 components: 
 - name: ceph-connection
-  colorIcon: content/en/extensions/models/rook/components/ceph-connection/icons/color/ceph-connection-color.svg
-  whiteIcon: content/en/extensions/models/rook/components/ceph-connection/icons/white/ceph-connection-white.svg
+  colorIcon: extensions/models/rook/components/ceph-connection/icons/color/ceph-connection-color.svg
+  whiteIcon: extensions/models/rook/components/ceph-connection/icons/white/ceph-connection-white.svg
   description: 
 components-count: 1
 relationships: 

@@ -6,7 +6,7 @@ categories: [contributing]
 
 Meshery pervasively uses MeshKit as a golang and infrastructure management-specific library in all of its components. MeshKit helps populate error messages with a uniform and useful set of informative attributes.
 
-To help with creating error codes, MeshKit contains a tool that analyzes, verifies and updates error codes in Meshery source code trees. It extracts error details into a file that can be used for publishing all error code references on the Meshery [error codes reference page](/reference/error-codes). The objective to create this was to avoid centralized handling of error codes and automating everything
+To help with creating error codes, MeshKit contains a tool that analyzes, verifies and updates error codes in Meshery source code trees. It extracts error details into a file that can be used for publishing all error code references on the Meshery [error codes reference page]({{< ref "reference/references/error-codes.md" >}}). The objective to create this was to avoid centralized handling of error codes and automating everything
 
 In order to create a Meshery error object, you will need to create a custom wrapper object for the native golang error. This can be done from the <a href="https://github.com/meshery/meshkit/tree/master/errors">MeshKit Error</a> package.
 

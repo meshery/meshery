@@ -1,25 +1,11 @@
-import { NoSsr } from '@sistent/sistent';
-import Head from 'next/head';
-import React, { useEffect } from 'react';
+import React from 'react';
 import MesheryPlayComponent from '../../components/MesheryPlayComponent';
-import { useDispatch } from 'react-redux';
-import { updatePage } from '@/store/slices/mesheryUi';
-import { getPath } from 'lib/path';
+import { MesheryPage } from '../../components/MesheryPage';
 
-const Manage = () => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(updatePage({ path: getPath(), title: 'Adapter' }));
-  }, []);
-
-  return (
-    <NoSsr>
-      <Head>
-        <title>Adapter | Meshery </title>
-      </Head>
-      <MesheryPlayComponent />
-    </NoSsr>
-  );
-};
+const Manage = () => (
+  <MesheryPage title="Adapter">
+    <MesheryPlayComponent />
+  </MesheryPage>
+);
 
 export default Manage;

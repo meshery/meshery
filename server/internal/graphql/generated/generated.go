@@ -67,9 +67,9 @@ type ComplexityRoot struct {
 		ID              func(childComplexity int) int
 		Location        func(childComplexity int) int
 		Name            func(childComplexity int) int
+		Owner           func(childComplexity int) int
 		Type            func(childComplexity int) int
 		UpdatedAt       func(childComplexity int) int
-		UserID          func(childComplexity int) int
 		Visibility      func(childComplexity int) int
 	}
 
@@ -81,8 +81,8 @@ type ComplexityRoot struct {
 		ID             func(childComplexity int) int
 		Location       func(childComplexity int) int
 		Name           func(childComplexity int) int
+		Owner          func(childComplexity int) int
 		UpdatedAt      func(childComplexity int) int
-		UserID         func(childComplexity int) int
 		Visibility     func(childComplexity int) int
 	}
 
@@ -92,9 +92,9 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		Location    func(childComplexity int) int
 		Name        func(childComplexity int) int
+		Owner       func(childComplexity int) int
 		PatternFile func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
 		Visibility  func(childComplexity int) int
 	}
 
@@ -168,11 +168,11 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		Metadata    func(childComplexity int) int
 		OperationID func(childComplexity int) int
+		Owner       func(childComplexity int) int
 		Severity    func(childComplexity int) int
 		Status      func(childComplexity int) int
 		SystemID    func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
 	}
 
 	FilterPage struct {
@@ -190,8 +190,8 @@ type ComplexityRoot struct {
 		ID             func(childComplexity int) int
 		Location       func(childComplexity int) int
 		Name           func(childComplexity int) int
+		Owner          func(childComplexity int) int
 		UpdatedAt      func(childComplexity int) int
-		UserID         func(childComplexity int) int
 		Visibility     func(childComplexity int) int
 	}
 
@@ -260,6 +260,7 @@ type ComplexityRoot struct {
 		Mesh               func(childComplexity int) int
 		MesheryID          func(childComplexity int) int
 		Name               func(childComplexity int) int
+		Owner              func(childComplexity int) int
 		PerformanceProfile func(childComplexity int) int
 		RunnerResults      func(childComplexity int) int
 		ServerBoardConfig  func(childComplexity int) int
@@ -267,7 +268,6 @@ type ComplexityRoot struct {
 		TestID             func(childComplexity int) int
 		TestStartTime      func(childComplexity int) int
 		UpdatedAt          func(childComplexity int) int
-		UserID             func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -307,10 +307,10 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		Location    func(childComplexity int) int
 		Name        func(childComplexity int) int
+		Owner       func(childComplexity int) int
 		PatternFile func(childComplexity int) int
 		Type        func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
 		Visibility  func(childComplexity int) int
 	}
 
@@ -339,6 +339,7 @@ type ComplexityRoot struct {
 		LoadGenerators    func(childComplexity int) int
 		Metadata          func(childComplexity int) int
 		Name              func(childComplexity int) int
+		Owner             func(childComplexity int) int
 		QPS               func(childComplexity int) int
 		RequestBody       func(childComplexity int) int
 		RequestCookies    func(childComplexity int) int
@@ -346,7 +347,6 @@ type ComplexityRoot struct {
 		ServiceMesh       func(childComplexity int) int
 		TotalResults      func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
-		UserID            func(childComplexity int) int
 	}
 
 	Query struct {
@@ -515,6 +515,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.ApplicationResult.Name(childComplexity), true
+	case "ApplicationResult.owner":
+		if e.complexity.ApplicationResult.Owner == nil {
+			break
+		}
+
+		return e.complexity.ApplicationResult.Owner(childComplexity), true
 	case "ApplicationResult.type":
 		if e.complexity.ApplicationResult.Type == nil {
 			break
@@ -527,12 +533,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.ApplicationResult.UpdatedAt(childComplexity), true
-	case "ApplicationResult.user_id":
-		if e.complexity.ApplicationResult.UserID == nil {
-			break
-		}
-
-		return e.complexity.ApplicationResult.UserID(childComplexity), true
 	case "ApplicationResult.visibility":
 		if e.complexity.ApplicationResult.Visibility == nil {
 			break
@@ -582,18 +582,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.CatalogFilter.Name(childComplexity), true
+	case "CatalogFilter.owner":
+		if e.complexity.CatalogFilter.Owner == nil {
+			break
+		}
+
+		return e.complexity.CatalogFilter.Owner(childComplexity), true
 	case "CatalogFilter.updated_at":
 		if e.complexity.CatalogFilter.UpdatedAt == nil {
 			break
 		}
 
 		return e.complexity.CatalogFilter.UpdatedAt(childComplexity), true
-	case "CatalogFilter.user_id":
-		if e.complexity.CatalogFilter.UserID == nil {
-			break
-		}
-
-		return e.complexity.CatalogFilter.UserID(childComplexity), true
 	case "CatalogFilter.visibility":
 		if e.complexity.CatalogFilter.Visibility == nil {
 			break
@@ -631,6 +631,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.CatalogPattern.Name(childComplexity), true
+	case "CatalogPattern.owner":
+		if e.complexity.CatalogPattern.Owner == nil {
+			break
+		}
+
+		return e.complexity.CatalogPattern.Owner(childComplexity), true
 	case "CatalogPattern.pattern_file":
 		if e.complexity.CatalogPattern.PatternFile == nil {
 			break
@@ -643,12 +649,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.CatalogPattern.UpdatedAt(childComplexity), true
-	case "CatalogPattern.user_id":
-		if e.complexity.CatalogPattern.UserID == nil {
-			break
-		}
-
-		return e.complexity.CatalogPattern.UserID(childComplexity), true
 	case "CatalogPattern.visibility":
 		if e.complexity.CatalogPattern.Visibility == nil {
 			break
@@ -917,6 +917,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Event.OperationID(childComplexity), true
+	case "Event.owner":
+		if e.complexity.Event.Owner == nil {
+			break
+		}
+
+		return e.complexity.Event.Owner(childComplexity), true
 	case "Event.severity":
 		if e.complexity.Event.Severity == nil {
 			break
@@ -941,12 +947,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Event.UpdatedAt(childComplexity), true
-	case "Event.userID":
-		if e.complexity.Event.UserID == nil {
-			break
-		}
-
-		return e.complexity.Event.UserID(childComplexity), true
 
 	case "FilterPage.filters":
 		if e.complexity.FilterPage.Filters == nil {
@@ -1015,18 +1015,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.FilterResult.Name(childComplexity), true
+	case "FilterResult.owner":
+		if e.complexity.FilterResult.Owner == nil {
+			break
+		}
+
+		return e.complexity.FilterResult.Owner(childComplexity), true
 	case "FilterResult.updated_at":
 		if e.complexity.FilterResult.UpdatedAt == nil {
 			break
 		}
 
 		return e.complexity.FilterResult.UpdatedAt(childComplexity), true
-	case "FilterResult.user_id":
-		if e.complexity.FilterResult.UserID == nil {
-			break
-		}
-
-		return e.complexity.FilterResult.UserID(childComplexity), true
 	case "FilterResult.visibility":
 		if e.complexity.FilterResult.Visibility == nil {
 			break
@@ -1034,25 +1034,25 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.FilterResult.Visibility(childComplexity), true
 
-	case "K8sContext.connection_id":
+	case "K8sContext.connectionId":
 		if e.complexity.K8sContext.ConnectionID == nil {
 			break
 		}
 
 		return e.complexity.K8sContext.ConnectionID(childComplexity), true
-	case "K8sContext.created_at":
+	case "K8sContext.createdAt":
 		if e.complexity.K8sContext.CreatedAt == nil {
 			break
 		}
 
 		return e.complexity.K8sContext.CreatedAt(childComplexity), true
-	case "K8sContext.created_by":
+	case "K8sContext.createdBy":
 		if e.complexity.K8sContext.CreatedBy == nil {
 			break
 		}
 
 		return e.complexity.K8sContext.CreatedBy(childComplexity), true
-	case "K8sContext.deployment_type":
+	case "K8sContext.deploymentType":
 		if e.complexity.K8sContext.DeploymentType == nil {
 			break
 		}
@@ -1064,13 +1064,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.K8sContext.ID(childComplexity), true
-	case "K8sContext.kubernetes_server_id":
+	case "K8sContext.kubernetesServerId":
 		if e.complexity.K8sContext.KubernetesServerID == nil {
 			break
 		}
 
 		return e.complexity.K8sContext.KubernetesServerID(childComplexity), true
-	case "K8sContext.meshery_instance_id":
+	case "K8sContext.mesheryInstanceId":
 		if e.complexity.K8sContext.MesheryInstanceID == nil {
 			break
 		}
@@ -1094,7 +1094,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.K8sContext.Server(childComplexity), true
-	case "K8sContext.updated_at":
+	case "K8sContext.updatedAt":
 		if e.complexity.K8sContext.UpdatedAt == nil {
 			break
 		}
@@ -1265,6 +1265,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.MesheryResult.Name(childComplexity), true
+	case "MesheryResult.owner":
+		if e.complexity.MesheryResult.Owner == nil {
+			break
+		}
+
+		return e.complexity.MesheryResult.Owner(childComplexity), true
 	case "MesheryResult.performance_profile":
 		if e.complexity.MesheryResult.PerformanceProfile == nil {
 			break
@@ -1307,12 +1313,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.MesheryResult.UpdatedAt(childComplexity), true
-	case "MesheryResult.user_id":
-		if e.complexity.MesheryResult.UserID == nil {
-			break
-		}
-
-		return e.complexity.MesheryResult.UserID(childComplexity), true
 
 	case "Mutation.changeAdapterStatus":
 		if e.complexity.Mutation.ChangeAdapterStatus == nil {
@@ -1455,6 +1455,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PatternResult.Name(childComplexity), true
+	case "PatternResult.owner":
+		if e.complexity.PatternResult.Owner == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.Owner(childComplexity), true
 	case "PatternResult.pattern_file":
 		if e.complexity.PatternResult.PatternFile == nil {
 			break
@@ -1473,12 +1479,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PatternResult.UpdatedAt(childComplexity), true
-	case "PatternResult.user_id":
-		if e.complexity.PatternResult.UserID == nil {
-			break
-		}
-
-		return e.complexity.PatternResult.UserID(childComplexity), true
 	case "PatternResult.visibility":
 		if e.complexity.PatternResult.Visibility == nil {
 			break
@@ -1596,6 +1596,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PerfProfile.Name(childComplexity), true
+	case "PerfProfile.owner":
+		if e.complexity.PerfProfile.Owner == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.Owner(childComplexity), true
 	case "PerfProfile.qps":
 		if e.complexity.PerfProfile.QPS == nil {
 			break
@@ -1638,12 +1644,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PerfProfile.UpdatedAt(childComplexity), true
-	case "PerfProfile.user_id":
-		if e.complexity.PerfProfile.UserID == nil {
-			break
-		}
-
-		return e.complexity.PerfProfile.UserID(childComplexity), true
 
 	case "Query.fetchAllResults":
 		if e.complexity.Query.FetchAllResults == nil {
@@ -2209,7 +2209,7 @@ type Error {
 
 type Event {
   id: ID!,
-  userID: ID!,
+  owner: ID!,
   actedUpon: ID!,
   operationID: ID!,
   systemID: ID!,
@@ -2399,14 +2399,14 @@ type K8sContext {
   name: String!,
   server: String!,
   owner: ID!,
-  created_by: ID!,
-  meshery_instance_id: ID!,
-  kubernetes_server_id: ID!,
-  deployment_type: String!,
+  createdBy: ID!,
+  mesheryInstanceId: ID!,
+  kubernetesServerId: ID!,
+  deploymentType: String!,
   version: String!,
-  updated_at: String!,
-  created_at: String!,
-  connection_id: String!
+  updatedAt: String!,
+  createdAt: String!,
+  connectionId: String!
 }
 
 type K8sContextsPage {
@@ -2436,7 +2436,7 @@ type ApplicationResult {
   name: String!
   application_file: String!
   type: NullString!
-  user_id: String!
+  owner: String!
   location: Location!
   visibility: String!
   created_at: String
@@ -2462,7 +2462,7 @@ type FilterResult {
   name: String!
   filter_file: String!
   filter_resource: String!
-  user_id: String!
+  owner: String!
   location: Location!
   visibility: String!
   catalog_data: Map
@@ -2474,7 +2474,7 @@ type CatalogFilter {
   id: ID!
   name: String!
   filter_file: String!
-  user_id: String!
+  owner: String!
   location: Location!
   filter_resource: String!
   visibility: String!
@@ -2495,7 +2495,7 @@ type PatternPageResult {
 type PatternResult {
   id: ID!
   name: String!
-  user_id: String!
+  owner: String!
   location: Location!
   pattern_file: String!
   visibility: String!
@@ -2517,7 +2517,7 @@ type Location {
 type CatalogPattern {
   id: ID!
   name: String!
-  user_id: String!
+  owner: String!
   pattern_file: String!
   location: Location!
   visibility: String!
@@ -2556,7 +2556,7 @@ type PerfProfile {
   qps: Int
   total_results: Int
   updated_at: String
-  user_id: String!
+  owner: String!
   request_headers: String
   request_cookies: String
   request_body: String
@@ -2575,7 +2575,7 @@ type MesheryResult {
   server_metrics: String
   server_board_config: String
   test_start_time: String
-  user_id: String
+  owner: String
   updated_at: String
   created_at: String
 }
@@ -3143,6 +3143,28 @@ func (ec *executionContext) field_Subscription_subscribePerfResults_args(ctx con
 	return args, nil
 }
 
+func (ec *executionContext) field___Directive_args_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "includeDeprecated", ec.unmarshalOBoolean2ᚖbool)
+	if err != nil {
+		return nil, err
+	}
+	args["includeDeprecated"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field___Field_args_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "includeDeprecated", ec.unmarshalOBoolean2ᚖbool)
+	if err != nil {
+		return nil, err
+	}
+	args["includeDeprecated"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field___Type_enumValues_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -3350,8 +3372,8 @@ func (ec *executionContext) fieldContext_ApplicationPage_applications(_ context.
 				return ec.fieldContext_ApplicationResult_application_file(ctx, field)
 			case "type":
 				return ec.fieldContext_ApplicationResult_type(ctx, field)
-			case "user_id":
-				return ec.fieldContext_ApplicationResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_ApplicationResult_owner(ctx, field)
 			case "location":
 				return ec.fieldContext_ApplicationResult_location(ctx, field)
 			case "visibility":
@@ -3489,14 +3511,14 @@ func (ec *executionContext) fieldContext_ApplicationResult_type(_ context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _ApplicationResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _ApplicationResult_owner(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_ApplicationResult_user_id,
+		ec.fieldContext_ApplicationResult_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -3505,7 +3527,7 @@ func (ec *executionContext) _ApplicationResult_user_id(ctx context.Context, fiel
 	)
 }
 
-func (ec *executionContext) fieldContext_ApplicationResult_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ApplicationResult_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ApplicationResult",
 		Field:      field,
@@ -3731,14 +3753,14 @@ func (ec *executionContext) fieldContext_CatalogFilter_filter_file(_ context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _CatalogFilter_user_id(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
+func (ec *executionContext) _CatalogFilter_owner(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_CatalogFilter_user_id,
+		ec.fieldContext_CatalogFilter_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -3747,7 +3769,7 @@ func (ec *executionContext) _CatalogFilter_user_id(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_CatalogFilter_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_CatalogFilter_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CatalogFilter",
 		Field:      field,
@@ -4002,14 +4024,14 @@ func (ec *executionContext) fieldContext_CatalogPattern_name(_ context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _CatalogPattern_user_id(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
+func (ec *executionContext) _CatalogPattern_owner(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_CatalogPattern_user_id,
+		ec.fieldContext_CatalogPattern_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -4018,7 +4040,7 @@ func (ec *executionContext) _CatalogPattern_user_id(ctx context.Context, field g
 	)
 }
 
-func (ec *executionContext) fieldContext_CatalogPattern_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_CatalogPattern_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CatalogPattern",
 		Field:      field,
@@ -5305,14 +5327,14 @@ func (ec *executionContext) fieldContext_Event_id(_ context.Context, field graph
 	return fc, nil
 }
 
-func (ec *executionContext) _Event_userID(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
+func (ec *executionContext) _Event_owner(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Event_userID,
+		ec.fieldContext_Event_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNID2string,
@@ -5321,7 +5343,7 @@ func (ec *executionContext) _Event_userID(ctx context.Context, field graphql.Col
 	)
 }
 
-func (ec *executionContext) fieldContext_Event_userID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Event_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Event",
 		Field:      field,
@@ -5801,8 +5823,8 @@ func (ec *executionContext) fieldContext_FilterPage_filters(_ context.Context, f
 				return ec.fieldContext_FilterResult_filter_file(ctx, field)
 			case "filter_resource":
 				return ec.fieldContext_FilterResult_filter_resource(ctx, field)
-			case "user_id":
-				return ec.fieldContext_FilterResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_FilterResult_owner(ctx, field)
 			case "location":
 				return ec.fieldContext_FilterResult_location(ctx, field)
 			case "visibility":
@@ -5936,14 +5958,14 @@ func (ec *executionContext) fieldContext_FilterResult_filter_resource(_ context.
 	return fc, nil
 }
 
-func (ec *executionContext) _FilterResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _FilterResult_owner(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_FilterResult_user_id,
+		ec.fieldContext_FilterResult_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -5952,7 +5974,7 @@ func (ec *executionContext) _FilterResult_user_id(ctx context.Context, field gra
 	)
 }
 
-func (ec *executionContext) fieldContext_FilterResult_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_FilterResult_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "FilterResult",
 		Field:      field,
@@ -6236,12 +6258,12 @@ func (ec *executionContext) fieldContext_K8sContext_owner(_ context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _K8sContext_created_by(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+func (ec *executionContext) _K8sContext_createdBy(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_K8sContext_created_by,
+		ec.fieldContext_K8sContext_createdBy,
 		func(ctx context.Context) (any, error) {
 			return obj.CreatedBy, nil
 		},
@@ -6252,7 +6274,7 @@ func (ec *executionContext) _K8sContext_created_by(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_K8sContext_created_by(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8sContext_createdBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8sContext",
 		Field:      field,
@@ -6265,12 +6287,12 @@ func (ec *executionContext) fieldContext_K8sContext_created_by(_ context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _K8sContext_meshery_instance_id(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+func (ec *executionContext) _K8sContext_mesheryInstanceId(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_K8sContext_meshery_instance_id,
+		ec.fieldContext_K8sContext_mesheryInstanceId,
 		func(ctx context.Context) (any, error) {
 			return obj.MesheryInstanceID, nil
 		},
@@ -6281,7 +6303,7 @@ func (ec *executionContext) _K8sContext_meshery_instance_id(ctx context.Context,
 	)
 }
 
-func (ec *executionContext) fieldContext_K8sContext_meshery_instance_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8sContext_mesheryInstanceId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8sContext",
 		Field:      field,
@@ -6294,12 +6316,12 @@ func (ec *executionContext) fieldContext_K8sContext_meshery_instance_id(_ contex
 	return fc, nil
 }
 
-func (ec *executionContext) _K8sContext_kubernetes_server_id(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+func (ec *executionContext) _K8sContext_kubernetesServerId(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_K8sContext_kubernetes_server_id,
+		ec.fieldContext_K8sContext_kubernetesServerId,
 		func(ctx context.Context) (any, error) {
 			return obj.KubernetesServerID, nil
 		},
@@ -6310,7 +6332,7 @@ func (ec *executionContext) _K8sContext_kubernetes_server_id(ctx context.Context
 	)
 }
 
-func (ec *executionContext) fieldContext_K8sContext_kubernetes_server_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8sContext_kubernetesServerId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8sContext",
 		Field:      field,
@@ -6323,12 +6345,12 @@ func (ec *executionContext) fieldContext_K8sContext_kubernetes_server_id(_ conte
 	return fc, nil
 }
 
-func (ec *executionContext) _K8sContext_deployment_type(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+func (ec *executionContext) _K8sContext_deploymentType(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_K8sContext_deployment_type,
+		ec.fieldContext_K8sContext_deploymentType,
 		func(ctx context.Context) (any, error) {
 			return obj.DeploymentType, nil
 		},
@@ -6339,7 +6361,7 @@ func (ec *executionContext) _K8sContext_deployment_type(ctx context.Context, fie
 	)
 }
 
-func (ec *executionContext) fieldContext_K8sContext_deployment_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8sContext_deploymentType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8sContext",
 		Field:      field,
@@ -6381,12 +6403,12 @@ func (ec *executionContext) fieldContext_K8sContext_version(_ context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _K8sContext_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+func (ec *executionContext) _K8sContext_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_K8sContext_updated_at,
+		ec.fieldContext_K8sContext_updatedAt,
 		func(ctx context.Context) (any, error) {
 			return obj.UpdatedAt, nil
 		},
@@ -6397,7 +6419,7 @@ func (ec *executionContext) _K8sContext_updated_at(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_K8sContext_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8sContext_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8sContext",
 		Field:      field,
@@ -6410,12 +6432,12 @@ func (ec *executionContext) fieldContext_K8sContext_updated_at(_ context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _K8sContext_created_at(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+func (ec *executionContext) _K8sContext_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_K8sContext_created_at,
+		ec.fieldContext_K8sContext_createdAt,
 		func(ctx context.Context) (any, error) {
 			return obj.CreatedAt, nil
 		},
@@ -6426,7 +6448,7 @@ func (ec *executionContext) _K8sContext_created_at(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_K8sContext_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8sContext_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8sContext",
 		Field:      field,
@@ -6439,12 +6461,12 @@ func (ec *executionContext) fieldContext_K8sContext_created_at(_ context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _K8sContext_connection_id(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+func (ec *executionContext) _K8sContext_connectionId(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_K8sContext_connection_id,
+		ec.fieldContext_K8sContext_connectionId,
 		func(ctx context.Context) (any, error) {
 			return obj.ConnectionID, nil
 		},
@@ -6455,7 +6477,7 @@ func (ec *executionContext) _K8sContext_connection_id(ctx context.Context, field
 	)
 }
 
-func (ec *executionContext) fieldContext_K8sContext_connection_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_K8sContext_connectionId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "K8sContext",
 		Field:      field,
@@ -6529,22 +6551,22 @@ func (ec *executionContext) fieldContext_K8sContextsPage_contexts(_ context.Cont
 				return ec.fieldContext_K8sContext_server(ctx, field)
 			case "owner":
 				return ec.fieldContext_K8sContext_owner(ctx, field)
-			case "created_by":
-				return ec.fieldContext_K8sContext_created_by(ctx, field)
-			case "meshery_instance_id":
-				return ec.fieldContext_K8sContext_meshery_instance_id(ctx, field)
-			case "kubernetes_server_id":
-				return ec.fieldContext_K8sContext_kubernetes_server_id(ctx, field)
-			case "deployment_type":
-				return ec.fieldContext_K8sContext_deployment_type(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_K8sContext_createdBy(ctx, field)
+			case "mesheryInstanceId":
+				return ec.fieldContext_K8sContext_mesheryInstanceId(ctx, field)
+			case "kubernetesServerId":
+				return ec.fieldContext_K8sContext_kubernetesServerId(ctx, field)
+			case "deploymentType":
+				return ec.fieldContext_K8sContext_deploymentType(ctx, field)
 			case "version":
 				return ec.fieldContext_K8sContext_version(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_K8sContext_updated_at(ctx, field)
-			case "created_at":
-				return ec.fieldContext_K8sContext_created_at(ctx, field)
-			case "connection_id":
-				return ec.fieldContext_K8sContext_connection_id(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_K8sContext_updatedAt(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_K8sContext_createdAt(ctx, field)
+			case "connectionId":
+				return ec.fieldContext_K8sContext_connectionId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type K8sContext", field.Name)
 		},
@@ -7376,14 +7398,14 @@ func (ec *executionContext) fieldContext_MesheryResult_test_start_time(_ context
 	return fc, nil
 }
 
-func (ec *executionContext) _MesheryResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.MesheryResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _MesheryResult_owner(ctx context.Context, field graphql.CollectedField, obj *model.MesheryResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_MesheryResult_user_id,
+		ec.fieldContext_MesheryResult_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalOString2ᚖstring,
@@ -7392,7 +7414,7 @@ func (ec *executionContext) _MesheryResult_user_id(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_MesheryResult_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_MesheryResult_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "MesheryResult",
 		Field:      field,
@@ -7924,8 +7946,8 @@ func (ec *executionContext) fieldContext_PatternPageResult_patterns(_ context.Co
 				return ec.fieldContext_PatternResult_id(ctx, field)
 			case "name":
 				return ec.fieldContext_PatternResult_name(ctx, field)
-			case "user_id":
-				return ec.fieldContext_PatternResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_PatternResult_owner(ctx, field)
 			case "location":
 				return ec.fieldContext_PatternResult_location(ctx, field)
 			case "pattern_file":
@@ -8009,14 +8031,14 @@ func (ec *executionContext) fieldContext_PatternResult_name(_ context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _PatternResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _PatternResult_owner(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PatternResult_user_id,
+		ec.fieldContext_PatternResult_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -8025,7 +8047,7 @@ func (ec *executionContext) _PatternResult_user_id(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_PatternResult_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PatternResult_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PatternResult",
 		Field:      field,
@@ -8448,8 +8470,8 @@ func (ec *executionContext) fieldContext_PerfPageProfiles_profiles(_ context.Con
 				return ec.fieldContext_PerfProfile_total_results(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_PerfProfile_updated_at(ctx, field)
-			case "user_id":
-				return ec.fieldContext_PerfProfile_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_PerfProfile_owner(ctx, field)
 			case "request_headers":
 				return ec.fieldContext_PerfProfile_request_headers(ctx, field)
 			case "request_cookies":
@@ -8598,8 +8620,8 @@ func (ec *executionContext) fieldContext_PerfPageResult_results(_ context.Contex
 				return ec.fieldContext_MesheryResult_server_board_config(ctx, field)
 			case "test_start_time":
 				return ec.fieldContext_MesheryResult_test_start_time(ctx, field)
-			case "user_id":
-				return ec.fieldContext_MesheryResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_MesheryResult_owner(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_MesheryResult_updated_at(ctx, field)
 			case "created_at":
@@ -8930,14 +8952,14 @@ func (ec *executionContext) fieldContext_PerfProfile_updated_at(_ context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _PerfProfile_user_id(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+func (ec *executionContext) _PerfProfile_owner(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PerfProfile_user_id,
+		ec.fieldContext_PerfProfile_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -8946,7 +8968,7 @@ func (ec *executionContext) _PerfProfile_user_id(ctx context.Context, field grap
 	)
 }
 
-func (ec *executionContext) fieldContext_PerfProfile_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PerfProfile_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PerfProfile",
 		Field:      field,
@@ -9586,8 +9608,8 @@ func (ec *executionContext) fieldContext_Query_getPerfResult(ctx context.Context
 				return ec.fieldContext_MesheryResult_server_board_config(ctx, field)
 			case "test_start_time":
 				return ec.fieldContext_MesheryResult_test_start_time(ctx, field)
-			case "user_id":
-				return ec.fieldContext_MesheryResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_MesheryResult_owner(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_MesheryResult_updated_at(ctx, field)
 			case "created_at":
@@ -9890,8 +9912,8 @@ func (ec *executionContext) fieldContext_Query_fetchPatternCatalogContent(ctx co
 				return ec.fieldContext_CatalogPattern_id(ctx, field)
 			case "name":
 				return ec.fieldContext_CatalogPattern_name(ctx, field)
-			case "user_id":
-				return ec.fieldContext_CatalogPattern_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_CatalogPattern_owner(ctx, field)
 			case "pattern_file":
 				return ec.fieldContext_CatalogPattern_pattern_file(ctx, field)
 			case "location":
@@ -9953,8 +9975,8 @@ func (ec *executionContext) fieldContext_Query_fetchFilterCatalogContent(ctx con
 				return ec.fieldContext_CatalogFilter_name(ctx, field)
 			case "filter_file":
 				return ec.fieldContext_CatalogFilter_filter_file(ctx, field)
-			case "user_id":
-				return ec.fieldContext_CatalogFilter_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_CatalogFilter_owner(ctx, field)
 			case "location":
 				return ec.fieldContext_CatalogFilter_location(ctx, field)
 			case "filter_resource":
@@ -10112,6 +10134,8 @@ func (ec *executionContext) fieldContext_Query___type(ctx context.Context, field
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -10124,8 +10148,8 @@ func (ec *executionContext) fieldContext_Query___type(ctx context.Context, field
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -10625,8 +10649,8 @@ func (ec *executionContext) fieldContext_Subscription_subscribeEvents(_ context.
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Event_id(ctx, field)
-			case "userID":
-				return ec.fieldContext_Event_userID(ctx, field)
+			case "owner":
+				return ec.fieldContext_Event_owner(ctx, field)
 			case "actedUpon":
 				return ec.fieldContext_Event_actedUpon(ctx, field)
 			case "operationID":
@@ -10803,6 +10827,35 @@ func (ec *executionContext) fieldContext___Directive_description(_ context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) ___Directive_isRepeatable(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext___Directive_isRepeatable,
+		func(ctx context.Context) (any, error) {
+			return obj.IsRepeatable, nil
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext___Directive_isRepeatable(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "__Directive",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) ___Directive_locations(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -10848,7 +10901,7 @@ func (ec *executionContext) ___Directive_args(ctx context.Context, field graphql
 	)
 }
 
-func (ec *executionContext) fieldContext___Directive_args(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Directive_args(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Directive",
 		Field:      field,
@@ -10864,38 +10917,24 @@ func (ec *executionContext) fieldContext___Directive_args(_ context.Context, fie
 				return ec.fieldContext___InputValue_type(ctx, field)
 			case "defaultValue":
 				return ec.fieldContext___InputValue_defaultValue(ctx, field)
+			case "isDeprecated":
+				return ec.fieldContext___InputValue_isDeprecated(ctx, field)
+			case "deprecationReason":
+				return ec.fieldContext___InputValue_deprecationReason(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __InputValue", field.Name)
 		},
 	}
-	return fc, nil
-}
-
-func (ec *executionContext) ___Directive_isRepeatable(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext___Directive_isRepeatable,
-		func(ctx context.Context) (any, error) {
-			return obj.IsRepeatable, nil
-		},
-		nil,
-		ec.marshalNBoolean2bool,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext___Directive_isRepeatable(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "__Directive",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field___Directive_args_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -11090,7 +11129,7 @@ func (ec *executionContext) ___Field_args(ctx context.Context, field graphql.Col
 	)
 }
 
-func (ec *executionContext) fieldContext___Field_args(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Field_args(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Field",
 		Field:      field,
@@ -11106,9 +11145,24 @@ func (ec *executionContext) fieldContext___Field_args(_ context.Context, field g
 				return ec.fieldContext___InputValue_type(ctx, field)
 			case "defaultValue":
 				return ec.fieldContext___InputValue_defaultValue(ctx, field)
+			case "isDeprecated":
+				return ec.fieldContext___InputValue_isDeprecated(ctx, field)
+			case "deprecationReason":
+				return ec.fieldContext___InputValue_deprecationReason(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __InputValue", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field___Field_args_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -11143,6 +11197,8 @@ func (ec *executionContext) fieldContext___Field_type(_ context.Context, field g
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -11155,8 +11211,8 @@ func (ec *executionContext) fieldContext___Field_type(_ context.Context, field g
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -11310,6 +11366,8 @@ func (ec *executionContext) fieldContext___InputValue_type(_ context.Context, fi
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -11322,8 +11380,8 @@ func (ec *executionContext) fieldContext___InputValue_type(_ context.Context, fi
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -11352,6 +11410,64 @@ func (ec *executionContext) fieldContext___InputValue_defaultValue(_ context.Con
 		Object:     "__InputValue",
 		Field:      field,
 		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) ___InputValue_isDeprecated(ctx context.Context, field graphql.CollectedField, obj *introspection.InputValue) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext___InputValue_isDeprecated,
+		func(ctx context.Context) (any, error) {
+			return obj.IsDeprecated(), nil
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext___InputValue_isDeprecated(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "__InputValue",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) ___InputValue_deprecationReason(ctx context.Context, field graphql.CollectedField, obj *introspection.InputValue) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext___InputValue_deprecationReason,
+		func(ctx context.Context) (any, error) {
+			return obj.DeprecationReason(), nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext___InputValue_deprecationReason(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "__InputValue",
+		Field:      field,
+		IsMethod:   true,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
@@ -11419,6 +11535,8 @@ func (ec *executionContext) fieldContext___Schema_types(_ context.Context, field
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -11431,8 +11549,8 @@ func (ec *executionContext) fieldContext___Schema_types(_ context.Context, field
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -11470,6 +11588,8 @@ func (ec *executionContext) fieldContext___Schema_queryType(_ context.Context, f
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -11482,8 +11602,8 @@ func (ec *executionContext) fieldContext___Schema_queryType(_ context.Context, f
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -11521,6 +11641,8 @@ func (ec *executionContext) fieldContext___Schema_mutationType(_ context.Context
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -11533,8 +11655,8 @@ func (ec *executionContext) fieldContext___Schema_mutationType(_ context.Context
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -11572,6 +11694,8 @@ func (ec *executionContext) fieldContext___Schema_subscriptionType(_ context.Con
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -11584,8 +11708,8 @@ func (ec *executionContext) fieldContext___Schema_subscriptionType(_ context.Con
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -11621,12 +11745,12 @@ func (ec *executionContext) fieldContext___Schema_directives(_ context.Context, 
 				return ec.fieldContext___Directive_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Directive_description(ctx, field)
+			case "isRepeatable":
+				return ec.fieldContext___Directive_isRepeatable(ctx, field)
 			case "locations":
 				return ec.fieldContext___Directive_locations(ctx, field)
 			case "args":
 				return ec.fieldContext___Directive_args(ctx, field)
-			case "isRepeatable":
-				return ec.fieldContext___Directive_isRepeatable(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Directive", field.Name)
 		},
@@ -11709,6 +11833,35 @@ func (ec *executionContext) ___Type_description(ctx context.Context, field graph
 }
 
 func (ec *executionContext) fieldContext___Type_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "__Type",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) ___Type_specifiedByURL(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext___Type_specifiedByURL,
+		func(ctx context.Context) (any, error) {
+			return obj.SpecifiedByURL(), nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext___Type_specifiedByURL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
@@ -11806,6 +11959,8 @@ func (ec *executionContext) fieldContext___Type_interfaces(_ context.Context, fi
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -11818,8 +11973,8 @@ func (ec *executionContext) fieldContext___Type_interfaces(_ context.Context, fi
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -11857,6 +12012,8 @@ func (ec *executionContext) fieldContext___Type_possibleTypes(_ context.Context,
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -11869,8 +12026,8 @@ func (ec *executionContext) fieldContext___Type_possibleTypes(_ context.Context,
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -11961,6 +12118,10 @@ func (ec *executionContext) fieldContext___Type_inputFields(_ context.Context, f
 				return ec.fieldContext___InputValue_type(ctx, field)
 			case "defaultValue":
 				return ec.fieldContext___InputValue_defaultValue(ctx, field)
+			case "isDeprecated":
+				return ec.fieldContext___InputValue_isDeprecated(ctx, field)
+			case "deprecationReason":
+				return ec.fieldContext___InputValue_deprecationReason(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __InputValue", field.Name)
 		},
@@ -11998,6 +12159,8 @@ func (ec *executionContext) fieldContext___Type_ofType(_ context.Context, field 
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -12010,8 +12173,8 @@ func (ec *executionContext) fieldContext___Type_ofType(_ context.Context, field 
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
+			case "isOneOf":
+				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
 		},
@@ -12019,30 +12182,30 @@ func (ec *executionContext) fieldContext___Type_ofType(_ context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) ___Type_specifiedByURL(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) (ret graphql.Marshaler) {
+func (ec *executionContext) ___Type_isOneOf(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext___Type_specifiedByURL,
+		ec.fieldContext___Type_isOneOf,
 		func(ctx context.Context) (any, error) {
-			return obj.SpecifiedByURL(), nil
+			return obj.IsOneOf(), nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		ec.marshalOBoolean2bool,
 		true,
 		false,
 	)
 }
 
-func (ec *executionContext) fieldContext___Type_specifiedByURL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext___Type_isOneOf(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "__Type",
 		Field:      field,
 		IsMethod:   true,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -12598,8 +12761,8 @@ func (ec *executionContext) _ApplicationResult(ctx context.Context, sel ast.Sele
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._ApplicationResult_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._ApplicationResult_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -12666,8 +12829,8 @@ func (ec *executionContext) _CatalogFilter(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._CatalogFilter_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._CatalogFilter_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -12736,8 +12899,8 @@ func (ec *executionContext) _CatalogPattern(ctx context.Context, sel ast.Selecti
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._CatalogPattern_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._CatalogPattern_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -13233,8 +13396,8 @@ func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "userID":
-			out.Values[i] = ec._Event_userID(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._Event_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -13397,8 +13560,8 @@ func (ec *executionContext) _FilterResult(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._FilterResult_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._FilterResult_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -13472,23 +13635,23 @@ func (ec *executionContext) _K8sContext(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "created_by":
-			out.Values[i] = ec._K8sContext_created_by(ctx, field, obj)
+		case "createdBy":
+			out.Values[i] = ec._K8sContext_createdBy(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "meshery_instance_id":
-			out.Values[i] = ec._K8sContext_meshery_instance_id(ctx, field, obj)
+		case "mesheryInstanceId":
+			out.Values[i] = ec._K8sContext_mesheryInstanceId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "kubernetes_server_id":
-			out.Values[i] = ec._K8sContext_kubernetes_server_id(ctx, field, obj)
+		case "kubernetesServerId":
+			out.Values[i] = ec._K8sContext_kubernetesServerId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "deployment_type":
-			out.Values[i] = ec._K8sContext_deployment_type(ctx, field, obj)
+		case "deploymentType":
+			out.Values[i] = ec._K8sContext_deploymentType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -13497,18 +13660,18 @@ func (ec *executionContext) _K8sContext(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "updated_at":
-			out.Values[i] = ec._K8sContext_updated_at(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._K8sContext_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "created_at":
-			out.Values[i] = ec._K8sContext_created_at(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._K8sContext_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "connection_id":
-			out.Values[i] = ec._K8sContext_connection_id(ctx, field, obj)
+		case "connectionId":
+			out.Values[i] = ec._K8sContext_connectionId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -13917,8 +14080,8 @@ func (ec *executionContext) _MesheryResult(ctx context.Context, sel ast.Selectio
 			out.Values[i] = ec._MesheryResult_server_board_config(ctx, field, obj)
 		case "test_start_time":
 			out.Values[i] = ec._MesheryResult_test_start_time(ctx, field, obj)
-		case "user_id":
-			out.Values[i] = ec._MesheryResult_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._MesheryResult_owner(ctx, field, obj)
 		case "updated_at":
 			out.Values[i] = ec._MesheryResult_updated_at(ctx, field, obj)
 		case "created_at":
@@ -14213,8 +14376,8 @@ func (ec *executionContext) _PatternResult(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._PatternResult_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._PatternResult_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -14415,8 +14578,8 @@ func (ec *executionContext) _PerfProfile(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._PerfProfile_total_results(ctx, field, obj)
 		case "updated_at":
 			out.Values[i] = ec._PerfProfile_updated_at(ctx, field, obj)
-		case "user_id":
-			out.Values[i] = ec._PerfProfile_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._PerfProfile_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -15040,6 +15203,11 @@ func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionS
 			}
 		case "description":
 			out.Values[i] = ec.___Directive_description(ctx, field, obj)
+		case "isRepeatable":
+			out.Values[i] = ec.___Directive_isRepeatable(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "locations":
 			out.Values[i] = ec.___Directive_locations(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -15047,11 +15215,6 @@ func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionS
 			}
 		case "args":
 			out.Values[i] = ec.___Directive_args(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "isRepeatable":
-			out.Values[i] = ec.___Directive_isRepeatable(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -15209,6 +15372,13 @@ func (ec *executionContext) ___InputValue(ctx context.Context, sel ast.Selection
 			}
 		case "defaultValue":
 			out.Values[i] = ec.___InputValue_defaultValue(ctx, field, obj)
+		case "isDeprecated":
+			out.Values[i] = ec.___InputValue_isDeprecated(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deprecationReason":
+			out.Values[i] = ec.___InputValue_deprecationReason(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -15307,6 +15477,8 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = ec.___Type_name(ctx, field, obj)
 		case "description":
 			out.Values[i] = ec.___Type_description(ctx, field, obj)
+		case "specifiedByURL":
+			out.Values[i] = ec.___Type_specifiedByURL(ctx, field, obj)
 		case "fields":
 			out.Values[i] = ec.___Type_fields(ctx, field, obj)
 		case "interfaces":
@@ -15319,8 +15491,8 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = ec.___Type_inputFields(ctx, field, obj)
 		case "ofType":
 			out.Values[i] = ec.___Type_ofType(ctx, field, obj)
-		case "specifiedByURL":
-			out.Values[i] = ec.___Type_specifiedByURL(ctx, field, obj)
+		case "isOneOf":
+			out.Values[i] = ec.___Type_isOneOf(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

@@ -88,7 +88,7 @@ func (h *Handler) PatternFileHandler(
 	isDesignInAlpha2Format, err := patternutils.IsDesignInAlpha2Format(payload.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)
-		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
+		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		h.log.Error(err)
@@ -97,7 +97,7 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	if isDesignInAlpha2Format {
-		eventBuilder := events.NewEvent().ActedUpon(patternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
+		eventBuilder := events.NewEvent().ActedUpon(patternID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("convert")
 
 		_, patternFileStr, err := h.convertV1alpha2ToV1beta3(&models.MesheryPattern{
 			ID:          &patternID,
@@ -163,7 +163,7 @@ func (h *Handler) PatternFileHandler(
 	}
 	response, err := _processPattern(opts)
 
-	eventBuilder := events.NewEvent().ActedUpon(patternID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
+	eventBuilder := events.NewEvent().ActedUpon(patternID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
 
 	if err != nil {
 		err := ErrPatternDeploy(err, patternFile.Name)
@@ -186,11 +186,16 @@ func (h *Handler) PatternFileHandler(
 
 	serverURL, _ := r.Context().Value(models.MesheryServerURL).(string)
 
+	// NOTE: design_id (snake_case) in this URL is the meshmap extension's URL
+	// query-param contract; flipping it requires a coordinated meshmap-side
+	// change. The metadata map keys below are flipped to canonical camelCase
+	// (event_trackers.metadata wire) but the URL is left as-is until the
+	// extension contract is migrated.
 	viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&design_id=%s", serverURL, patternID)
 	description = fmt.Sprintf("%s.", description)
-	metadata["view_link"] = viewLink
-	metadata["design_name"] = patternFile.Name
-	metadata["design_id"] = patternID
+	metadata["viewLink"] = viewLink
+	metadata["designName"] = patternFile.Name
+	metadata["designId"] = patternID
 
 	var event *events.Event
 	if action == "deploy" || action == "dry-run" {
@@ -514,7 +519,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 	msgs := []patterns.DeploymentMessagePerContext{}
 	for _, host := range ccp.Hosts {
 		// Hack until adapters fix the concurrent client
-		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
+		// creation issue: https://github.com/meshery/meshery-adapter-library/issues/32
 		time.Sleep(50 * time.Microsecond)
 		sap.log.Debug("Execute operations on: ", host.Kind)
 

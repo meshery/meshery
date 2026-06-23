@@ -4,16 +4,16 @@ description: Integrating your CI/CD pipelines with Meshery's GitHub Actions
 categories: [infrastructure]
 ---
 
-## <img style="height: 4rem; width: 4rem;" src="./images/kanvas-icon-color.svg" /> Kanvas Snapshot GitHub Action
+## Meshery Snapshot GitHub Action
 
 - See your deployment before you merge
-- Connect Kanvas to your GitHub repo and see changes pull request-to-pull request
+- Connect Meshery to your GitHub repo and see changes pull request-to-pull request
 - Get snapshots of your infrastructure directly in your PRs
 
 <h3>Using Meshery's SnapShot GitHub Action</h3>
-See your deployment before you merge. Connect Kanvas to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.
+See your deployment before you merge. Connect Meshery to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.
 
-See [Extension: Kanvas Snapshot](/extensions/snapshot) for more details.
+See [Extension: Meshery Snapshot]({{< ref "extensions/extensions/kubectl-meshsync-snapshot/index.md" >}}) for more details.
 
 ## <img src="./images/smp-dark-text-side.svg" className="image-left-no-shadow" alt="Infrastructure fperformance logo" style="width: 60%; max-width: 200px;vertical-align:middle" /> Meshery Performance Analysis GitHub Action
 
@@ -57,7 +57,7 @@ jobs:
           driver: docker
 
       - name: Run Performance Test
-        uses: layer5io/meshery-smp-action@master
+        uses: meshery-extensions/meshery-performance-action@master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: docker
@@ -86,10 +86,10 @@ clients:
 duration: "30m"
 ```
 
-See this sample GitHub workflow (<a href="https://github.com/layer5io/meshery-smp-action/blob/master/action.yml">action.yml</a>) for more configuration details.
+See this sample GitHub workflow (<a href="https://github.com/meshery-extensions/meshery-performance-action/blob/master/action.yml">action.yml</a>) for more configuration details.
 
 <a href="./images/service-mesh-performance-profile-test-results.png"><img src="./images/service-mesh-performance-profile-test-results.png" className="image-center" alt="performance management dashboard" /></a>
 
-The results from the tests are updated on the Performance Management dashboard in Meshery. To learn more about interpreting the test results, check out <a href="/guides/performance-management/interpreting-performance-test-results">this guide</a>. You can always checkout the <a href="/guides">Meshery User Guides</a> to dive deep into these features.
+The results from the tests are updated on the Performance Management dashboard in Meshery. To learn more about interpreting the test results, check out <a href="{{< ref "guides/performance-management/interpreting-performance-test-results/index.md" >}}">this guide</a>. You can always checkout the <a href="{{< ref "guides/_index.md" >}}">Meshery User Guides</a> to dive deep into these features.
 
 <a href="https://smp-spec.io">Cloud Native Performance</a> standardizes infrastructure measurement, characterizing any deployment's performance by capturing the details of infrastructure capacity, configuration and workload metadata.
