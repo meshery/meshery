@@ -22,5 +22,5 @@ on:
 jobs:
   integrations:
     if: github.repository == 'meshery/meshery'
-    uses: meshery-extensions/integrations-workflow/.github/workflows/publish.yml@40f2b0d9cf50193043560ff87a81c4cef1974b0e
+    uses: meshery-extensions/integrations-workflow/.github/workflows/publish.yml@d29a957313963d66beb6aebc3fde199b5c3580aa
     secrets: inherit

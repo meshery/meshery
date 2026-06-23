@@ -106,7 +106,7 @@ func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, provider *
 	}
 	if failedMsg != "" {
 		filePath := viper.GetString("REGISTRY_LOG_FILE")
-		errorEventBuilder := events.NewEvent().FromUser(mesheryInstanceID).FromSystem(mesheryInstanceID).WithCategory("registration").WithAction("get_summary")
+		errorEventBuilder := events.NewEvent().FromOwner(mesheryInstanceID).FromSystem(mesheryInstanceID).WithCategory("registration").WithAction("get_summary")
 		errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMsg)
 		errorEvent := errorEventBuilder.Build()
 		errorEventBuilder.WithMetadata(map[string]interface{}{
@@ -174,7 +174,7 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 	}
 
 	for _, host := range hosts {
-		eventBuilder := events.NewEvent().FromSystem(sysID).FromUser(sysID).WithCategory("entity").WithAction("get_summary")
+		eventBuilder := events.NewEvent().FromSystem(sysID).FromOwner(sysID).WithCategory("entity").WithAction("get_summary")
 		successMessage := fmt.Sprintf("For registrant %s imported", host.Kind)
 		appendIfNonZero := func(value int64, label string) {
 			if value != 0 {

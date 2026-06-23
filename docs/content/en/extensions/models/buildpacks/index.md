@@ -1,7 +1,7 @@
 ---
 title: Buildpacks
 subtitle: Collaborative and visual infrastructure as design for Buildpacks
-image: /extensions/models/buildpacks/icons/color/buildpacks-color.svg
+image: extensions/models/buildpacks/icons/color/buildpacks-color.svg
 aliases: /extensibility/integrations/buildpacks
 docURL: https://docs.meshery.io/extensibility/integrations/buildpacks
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Kuberhealthy
 subtitle: Collaborative and visual infrastructure as design for Kuberhealthy
-image: /extensions/models/kuberhealthy/icons/color/kuberhealthy-color.svg
+image: extensions/models/kuberhealthy/icons/color/kuberhealthy-color.svg
 aliases: /extensibility/integrations/kuberhealthy
 docURL: https://docs.meshery.io/extensibility/integrations/kuberhealthy
 description: 
@@ -10,20 +10,20 @@ integrations-subcategory: Monitoring
 registrant: Github
 components: 
 - name: kuberhealthy-check
-  colorIcon: content/en/extensions/models/kuberhealthy/components/kuberhealthy-check/icons/color/kuberhealthy-check-color.svg
-  whiteIcon: content/en/extensions/models/kuberhealthy/components/kuberhealthy-check/icons/white/kuberhealthy-check-white.svg
+  colorIcon: extensions/models/kuberhealthy/components/kuberhealthy-check/icons/color/kuberhealthy-check-color.svg
+  whiteIcon: extensions/models/kuberhealthy/components/kuberhealthy-check/icons/white/kuberhealthy-check-white.svg
   description: 
 - name: kuberhealthy-job
-  colorIcon: content/en/extensions/models/kuberhealthy/components/kuberhealthy-job/icons/color/kuberhealthy-job-color.svg
-  whiteIcon: content/en/extensions/models/kuberhealthy/components/kuberhealthy-job/icons/white/kuberhealthy-job-white.svg
+  colorIcon: extensions/models/kuberhealthy/components/kuberhealthy-job/icons/color/kuberhealthy-job-color.svg
+  whiteIcon: extensions/models/kuberhealthy/components/kuberhealthy-job/icons/white/kuberhealthy-job-white.svg
   description: 
 - name: kuberhealthy-state
-  colorIcon: content/en/extensions/models/kuberhealthy/components/kuberhealthy-state/icons/color/kuberhealthy-state-color.svg
-  whiteIcon: content/en/extensions/models/kuberhealthy/components/kuberhealthy-state/icons/white/kuberhealthy-state-white.svg
+  colorIcon: extensions/models/kuberhealthy/components/kuberhealthy-state/icons/color/kuberhealthy-state-color.svg
+  whiteIcon: extensions/models/kuberhealthy/components/kuberhealthy-state/icons/white/kuberhealthy-state-white.svg
   description: 
 - name: health-check
-  colorIcon: content/en/extensions/models/kuberhealthy/components/health-check/icons/color/health-check-color.svg
-  whiteIcon: content/en/extensions/models/kuberhealthy/components/health-check/icons/white/health-check-white.svg
+  colorIcon: extensions/models/kuberhealthy/components/health-check/icons/color/health-check-color.svg
+  whiteIcon: extensions/models/kuberhealthy/components/health-check/icons/white/health-check-white.svg
   description: 
 components-count: 4
 relationships: 

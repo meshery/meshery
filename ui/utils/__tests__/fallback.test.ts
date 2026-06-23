@@ -48,6 +48,18 @@ describe('normalizeStaticImagePath', () => {
     expect(normalizeStaticImagePath('blob:something')).toBe('blob:something');
   });
 
+  it('encodes inline SVG markup as a data URI', () => {
+    const svg = '<svg viewBox="0 0 1 1"><path d="M0 0h1v1z"/></svg>';
+    expect(normalizeStaticImagePath(svg)).toBe(
+      `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`,
+    );
+    // Also handles SVGs that open with an XML prolog.
+    const xmlSvg = '<?xml version="1.0"?><svg></svg>';
+    expect(normalizeStaticImagePath(xmlSvg)).toBe(
+      `data:image/svg+xml;charset=utf-8,${encodeURIComponent(xmlSvg)}`,
+    );
+  });
+
   it('prepends a slash to bare static paths', () => {
     expect(normalizeStaticImagePath('static/img/foo.png')).toBe('/static/img/foo.png');
   });
