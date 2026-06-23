@@ -29,9 +29,6 @@ func TestFlushMeshSyncDataNilKubernetesServerIDNoPanic(t *testing.T) {
 	FlushMeshSyncData(ctx, k8sCtx, nil, nil, "00000000-0000-0000-0000-000000000000", nil, nil)
 }
 
-// TestFlushMeshSyncDataMixedNilAndPopulatedServerIDs verifies that the refcount loop
-// correctly skips nil entries while still counting non-nil ones, and that no panic
-// occurs when both nil and populated KubernetesServerID values are present.
 func TestGetKubeNamespace_EnvVar(t *testing.T) {
 	const want = "custom-ns"
 	t.Setenv("KUBERNETES_TARGET_NAMESPACE", want)
@@ -52,6 +49,8 @@ func TestGetKubeNamespace_EnvVarWhitespace(t *testing.T) {
 
 func TestGetKubeNamespace_EnvVarEmpty(t *testing.T) {
 	t.Setenv("KUBERNETES_TARGET_NAMESPACE", "")
+	old := saNamespaceFile
+	t.Cleanup(func() { saNamespaceFile = old })
 	saNamespaceFile = filepath.Join(t.TempDir(), "namespace")
 	got := getKubeNamespace()
 	if got != "kube-system" {
@@ -66,6 +65,8 @@ func TestGetKubeNamespace_SAFile(t *testing.T) {
 	if err := os.WriteFile(nsFile, []byte(want), 0644); err != nil {
 		t.Fatal(err)
 	}
+	old := saNamespaceFile
+	t.Cleanup(func() { saNamespaceFile = old })
 	saNamespaceFile = nsFile
 	t.Setenv("KUBERNETES_TARGET_NAMESPACE", "")
 
@@ -82,6 +83,8 @@ func TestGetKubeNamespace_SAFileWhitespace(t *testing.T) {
 	if err := os.WriteFile(nsFile, []byte("  "+want+"\n"), 0644); err != nil {
 		t.Fatal(err)
 	}
+	old := saNamespaceFile
+	t.Cleanup(func() { saNamespaceFile = old })
 	saNamespaceFile = nsFile
 	t.Setenv("KUBERNETES_TARGET_NAMESPACE", "")
 
@@ -109,6 +112,8 @@ func TestGetKubeNamespace_SAFileEmpty(t *testing.T) {
 }
 
 func TestGetKubeNamespace_Fallback(t *testing.T) {
+	old := saNamespaceFile
+	t.Cleanup(func() { saNamespaceFile = old })
 	saNamespaceFile = filepath.Join(t.TempDir(), "nonexistent")
 	t.Setenv("KUBERNETES_TARGET_NAMESPACE", "")
 
@@ -118,6 +123,9 @@ func TestGetKubeNamespace_Fallback(t *testing.T) {
 	}
 }
 
+// TestFlushMeshSyncDataMixedNilAndPopulatedServerIDs verifies that the refcount loop
+// correctly skips nil entries while still counting non-nil ones, and that no panic
+// occurs when both nil and populated KubernetesServerID values are present.
 func TestFlushMeshSyncDataMixedNilAndPopulatedServerIDs(t *testing.T) {
 	serverID, err := uuid.NewV4()
 	if err != nil {
