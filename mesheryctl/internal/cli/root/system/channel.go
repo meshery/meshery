@@ -159,7 +159,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 		err = ContextContent.ValidateVersion()
 		if err != nil {
 			// TODO: Move to proper meshkit error
-			return err
+			return ErrValidateVersion(err)
 		}
 
 		mctlCfg.Contexts[focusedContext] = ContextContent
