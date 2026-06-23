@@ -3,25 +3,25 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Reference relationship between PersistentVolumeClaim and Pod. Automatically configures the Pod's volumes to reference the PVC's claim name.",
-    "isAnnotation": false,
+    "description": "Mount relationship between Pod and PersistentVolumeClaim. Automatically configures the Pod's volumes to reference the PVC.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    }
+    },
+    "isAnnotation": false
   },
   "model": {
+    "version": "",
+    "name": "kubernetes",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
-    "model": {
-      "version": "v1.37.0-alpha.1"
-    },
-    "name": "kubernetes",
     "registrant": {
       "kind": ""
     },
-    "version": ""
+    "model": {
+      "version": "v1.37.0-alpha.1"
+    }
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
@@ -39,24 +39,24 @@
               ]
             ],
             "model": {
+              "version": "",
+              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "version": ""
+              "model": {
+                "version": ""
+              }
             },
             "patch": {
+              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "displayName"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ],
@@ -67,18 +67,19 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
+              "version": "",
+              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "version": ""
+              "model": {
+                "version": ""
+              }
             },
             "patch": {
+              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "configuration",
@@ -88,8 +89,7 @@
                   "persistentVolumeClaim",
                   "claimName"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ]
