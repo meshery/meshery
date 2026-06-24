@@ -81,7 +81,9 @@ export const resolveConnectionWizardFlow = (
  * Definitions are skipped when they have no `kind`, or when they carry neither a
  * connection nor a credential schema (the wizard has no form to render for them);
  * each skip is logged. Duplicate definitions - matched case-insensitively on
- * kind|type|subType - collapse to the first one seen.
+ * kind|type|subType - collapse to a single card, with the winner chosen
+ * deterministically (richer schema coverage, then lexical identity) so the result
+ * does not depend on registry payload order.
  */
 export const buildConnectionWizardKindConfigs = (
   definitions?: ConnectionDefinition[] | null,
@@ -112,18 +114,14 @@ export const buildConnectionWizardKindConfigs = (
     }
 
     // Dedupe on kind|type|subType, lowercased so accidental casing differences in
-    // the registry payload collapse to a single card. First definition seen wins.
+    // the registry payload collapse to a single card.
     const dedupeKey = [
       kind.toLowerCase(),
       (definition.type || '').toLowerCase(),
       (definition.subType || '').toLowerCase(),
     ].join('|');
 
-    if (configMap.has(dedupeKey)) {
-      return;
-    }
-
-    configMap.set(dedupeKey, {
+    const config: ConnectionWizardKindConfig = {
       kind,
       type: definition.type || '',
       subType: definition.subType || '',
@@ -137,10 +135,45 @@ export const buildConnectionWizardKindConfigs = (
       credentialSchema,
       svgColor: definition.styles?.svgColor || null,
       svgWhite: definition.styles?.svgWhite || null,
-    });
+    };
+
+    // On a dedupe-key collision (e.g. case-only variants of the same kind), pick the
+    // winner deterministically rather than by payload order: prefer the richer schema
+    // coverage, then break remaining ties on the original-cased identity. This keeps
+    // the surviving card stable regardless of how the registry orders the payload.
+    const existing = configMap.get(dedupeKey);
+    if (!existing || prefersCandidateConfig(existing, config)) {
+      configMap.set(dedupeKey, config);
+    }
   });
 
   return Array.from(configMap.values());
+};
+
+// Number of schemas a config can render a form from; higher means a more complete card.
+const configSchemaScore = (config: ConnectionWizardKindConfig): number =>
+  (config.connectionSchema ? 1 : 0) + (config.credentialSchema ? 1 : 0);
+
+// Stable identity used as the final, order-independent tie-break between colliding configs.
+const configIdentity = (config: ConnectionWizardKindConfig): string =>
+  [config.kind, config.type, config.subType, config.label].join('|');
+
+/**
+ * Decides whether `candidate` should replace `existing` when both collapse to the
+ * same dedupe key. Returns a deterministic result independent of insertion order:
+ * the richer schema coverage wins, and equal coverage is broken by the lexically
+ * smaller identity.
+ */
+const prefersCandidateConfig = (
+  existing: ConnectionWizardKindConfig,
+  candidate: ConnectionWizardKindConfig,
+): boolean => {
+  const scoreDelta = configSchemaScore(candidate) - configSchemaScore(existing);
+  if (scoreDelta !== 0) {
+    return scoreDelta > 0;
+  }
+
+  return configIdentity(candidate) < configIdentity(existing);
 };
 
 export type CredentialRecord = {

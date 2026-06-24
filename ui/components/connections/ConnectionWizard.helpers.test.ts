@@ -166,6 +166,30 @@ describe('ConnectionWizard.helpers', () => {
     expect(configs[0].label).toBe('Grafana');
   });
 
+  it('resolves dedupe collisions deterministically regardless of definition order', () => {
+    const richer = {
+      kind: 'MyKind',
+      name: 'Richer',
+      connectionSchema: { type: 'object' },
+      credentialSchema: { type: 'object' },
+    };
+    // Case-only variant of the same kind, carrying less schema coverage.
+    const sparser = {
+      kind: 'mykind',
+      name: 'Sparser',
+      connectionSchema: { type: 'object' },
+    };
+
+    const richerFirst = buildConnectionWizardKindConfigs([richer, sparser]);
+    const sparserFirst = buildConnectionWizardKindConfigs([sparser, richer]);
+
+    expect(richerFirst).toHaveLength(1);
+    expect(sparserFirst).toHaveLength(1);
+    // The richer-coverage definition wins in both orderings: survivor is order-independent.
+    expect(richerFirst[0].label).toBe('Richer');
+    expect(sparserFirst[0].label).toBe('Richer');
+  });
+
   it('returns an empty list when no definitions are provided', () => {
     expect(buildConnectionWizardKindConfigs(undefined)).toEqual([]);
     expect(buildConnectionWizardKindConfigs(null)).toEqual([]);
