@@ -409,7 +409,6 @@ function MesheryFilters() {
 
   useEffect(() => {
     setColumnVisibilityByResponsive(responsiveColDefaults);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [width, setColumnVisibilityByResponsive]);
 
   const filter = {
