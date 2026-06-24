@@ -336,7 +336,7 @@ export const HiddenText = styled(ListItemText, {
   opacity: drawerCollapsed ? 0 : 1,
   color: theme.palette.background.constant.white,
   fontSize: '14px',
-  transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
+  transition: 'opacity 200ms ease-in-out',
 }));
 
 export const LinkContainer = styled('div')(() => ({
