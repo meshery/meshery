@@ -98,6 +98,13 @@ func getUserPrompt(userPrompt userPrompt) (string, error) {
 }
 
 func createAKSConnection() error {
+	fileWritten := false
+	defer func() {
+		if fileWritten {
+			_ = os.Remove(utils.ConfigPath)
+		}
+	}()
+
 	aksCheck := exec.Command("az", "version")
 	aksCheck.Stdout = os.Stdout
 	aksCheck.Stderr = os.Stderr
@@ -128,6 +135,7 @@ func createAKSConnection() error {
 	if err != nil {
 		return errAzureAksGetCredentials(err)
 	}
+	fileWritten = true
 	utils.Log.Debugf("AKS configuration is written to: %s", utils.ConfigPath)
 
 	// set the token in the chosen context
@@ -136,11 +144,19 @@ func createAKSConnection() error {
 		return err
 	}
 
+	fileWritten = false
 	utils.Log.Infof("AKS connection on cluster %s created.", aksName)
 	return nil
 }
 
 func createEKSConnection() error {
+	fileWritten := false
+	defer func() {
+		if fileWritten {
+			_ = os.Remove(utils.ConfigPath)
+		}
+	}()
+
 	eksCheck := exec.Command("aws", "--version")
 	eksCheck.Stdout = os.Stdout
 	eksCheck.Stderr = os.Stderr
@@ -172,6 +188,7 @@ func createEKSConnection() error {
 	if err != nil {
 		return errAwsEksGetCredentials(err)
 	}
+	fileWritten = true
 	utils.Log.Debugf("EKS configuration is written to: %s", utils.ConfigPath)
 
 	// set the token in the chosen context
@@ -180,17 +197,26 @@ func createEKSConnection() error {
 		return err
 	}
 
+	fileWritten = false
 	utils.Log.Infof("EKS connection on cluster %s created.", clusterName)
 	return nil
 }
 
 func createGKEConnection() error {
+	fileWritten := false
+	defer func() {
+		if fileWritten {
+			_ = os.Remove(utils.ConfigPath)
+		}
+	}()
+
 	// TODO: move the GenerateConfigGKE logic to meshkit/client-go
 	utils.Log.Info("Configuring Meshery to access GKE...")
 	SAName := "sa-meshery-" + utils.StringWithCharset(8)
 	if err := utils.GenerateConfigGKE(utils.ConfigPath, SAName, "default"); err != nil {
 		return errGcpGKEGetCredentials(err)
 	}
+	fileWritten = true
 	utils.Log.Debugf("GKE configuration is written to: %s", utils.ConfigPath)
 
 	// set the token in the chosen context
@@ -199,11 +225,19 @@ func createGKEConnection() error {
 		return err
 	}
 
+	fileWritten = false
 	utils.Log.Info("GKE connection created.")
 	return nil
 }
 
 func createMinikubeConnection() error {
+	fileWritten := false
+	defer func() {
+		if fileWritten {
+			_ = os.Remove(utils.ConfigPath)
+		}
+	}()
+
 	utils.Log.Info("Configuring Meshery to access Minikube...")
 	// Get the config from the default config path
 	if _, err := os.Stat(utils.KubeConfig); err != nil {
@@ -223,6 +257,7 @@ func createMinikubeConnection() error {
 	if err != nil {
 		return errWriteKubeConfig(err)
 	}
+	fileWritten = true
 	utils.Log.Debugf("Minikube configuration is written to: %s", utils.ConfigPath)
 
 	// set the token in the chosen context
@@ -231,6 +266,7 @@ func createMinikubeConnection() error {
 		return err
 	}
 
+	fileWritten = false
 	utils.Log.Info("Minikube connection created.")
 	return nil
 }
