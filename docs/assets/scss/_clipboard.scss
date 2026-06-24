@@ -1,9 +1,9 @@
 pre.codeblock-pre {
   display: inline-flex;
-  justify-content: left;
+  justify-content: flex-start;
   text-align: left;
   align-items: center;
-  align-content: left;
+  align-content: flex-start;
   flex-wrap: nowrap;
   flex-direction: row;
   overflow: hidden !important;
@@ -19,7 +19,7 @@ pre.codeblock-pre {
   width: 100%;
   display: inline-flex;
   overflow: auto;
-  justify-content: left;
+  justify-content: flex-start;
   color: #f8f9fa;
   margin: 0px;
   padding: 0px;
@@ -68,6 +68,7 @@ pre.codeblock-pre {
   border: 0px;
   background-color: transparent;
   font-size: 1.05rem;
+
   & i::before {
     color: #f1f3f5 !important;
   }
