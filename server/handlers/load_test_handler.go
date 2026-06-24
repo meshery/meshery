@@ -585,7 +585,7 @@ func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Re
 
 	key := uuid.FromStringOrNil(resultID)
 	if key == uuid.Nil {
-		key, _ = uuid.NewV4()
+		key = uuid.Must(uuid.NewV4())
 	}
 	result.ID = key
 	respChan <- &models.LoadTestResponse{

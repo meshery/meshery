@@ -1,7 +1,7 @@
 ---
 title: Flux
 subtitle: Collaborative and visual infrastructure as design for Flux
-image: /extensions/models/flux/icons/color/flux-color.svg
+image: extensions/models/flux/icons/color/flux-color.svg
 aliases: /extensibility/integrations/flux
 docURL: https://docs.meshery.io/extensibility/integrations/flux
 description: 

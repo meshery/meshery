@@ -1,7 +1,7 @@
 ---
 title: Azure Network
 subtitle: Collaborative and visual infrastructure as design for Azure Network
-image: /extensions/models/azure-network/icons/color/azure-network-color.svg
+image: extensions/models/azure-network/icons/color/azure-network-color.svg
 aliases: /extensibility/integrations/azure-network
 docURL: https://docs.meshery.io/extensibility/integrations/azure-network
 description: 

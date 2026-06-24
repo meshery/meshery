@@ -1,7 +1,7 @@
 ---
 title: Gerrit Operator
 subtitle: Collaborative and visual infrastructure as design for Gerrit Operator
-image: /extensions/models/gerrit-operator/icons/color/gerrit-operator-color.svg
+image: extensions/models/gerrit-operator/icons/color/gerrit-operator-color.svg
 aliases: /extensibility/integrations/gerrit-operator
 docURL: https://docs.meshery.io/extensibility/integrations/gerrit-operator
 description: 

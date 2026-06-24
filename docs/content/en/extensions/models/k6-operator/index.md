@@ -1,7 +1,7 @@
 ---
 title: k6
 subtitle: Collaborative and visual infrastructure as design for k6
-image: /extensions/models/k6-operator/icons/color/k6-operator-color.svg
+image: extensions/models/k6-operator/icons/color/k6-operator-color.svg
 aliases: /extensibility/integrations/k6-operator
 docURL: https://docs.meshery.io/extensibility/integrations/k6-operator
 description: 

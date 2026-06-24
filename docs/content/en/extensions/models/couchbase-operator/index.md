@@ -1,7 +1,7 @@
 ---
 title: Couchbase Operator
 subtitle: Collaborative and visual infrastructure as design for Couchbase Operator
-image: /extensions/models/couchbase-operator/icons/color/couchbase-operator-color.svg
+image: extensions/models/couchbase-operator/icons/color/couchbase-operator-color.svg
 aliases: /extensibility/integrations/couchbase-operator
 docURL: https://docs.meshery.io/extensibility/integrations/couchbase-operator
 description: 

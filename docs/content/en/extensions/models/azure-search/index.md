@@ -1,7 +1,7 @@
 ---
 title: Azure Search
 subtitle: Collaborative and visual infrastructure as design for Azure Search
-image: /extensions/models/azure-search/icons/color/azure-search-color.svg
+image: extensions/models/azure-search/icons/color/azure-search-color.svg
 aliases: /extensibility/integrations/azure-search
 docURL: https://docs.meshery.io/extensibility/integrations/azure-search
 description: 

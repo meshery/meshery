@@ -1,7 +1,7 @@
 ---
 title: Azure Insights
 subtitle: Collaborative and visual infrastructure as design for Azure Insights
-image: /extensions/models/azure-insights/icons/color/azure-insights-color.svg
+image: extensions/models/azure-insights/icons/color/azure-insights-color.svg
 aliases: /extensibility/integrations/azure-insights
 docURL: https://docs.meshery.io/extensibility/integrations/azure-insights
 description: 

@@ -1,7 +1,7 @@
 ---
 title: AppsCode Application
 subtitle: Collaborative and visual infrastructure as design for AppsCode Application
-image: /extensions/models/application-crds/icons/color/application-crds-color.svg
+image: extensions/models/application-crds/icons/color/application-crds-color.svg
 aliases: /extensibility/integrations/application-crds
 docURL: https://docs.meshery.io/extensibility/integrations/application-crds
 description: 

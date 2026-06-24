@@ -214,6 +214,13 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/meshmodels/{entityType}/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateEntityStatus), models.NoAuth))).Methods("POST")
 	gMux.Handle("/api/meshmodels/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelComponents), models.NoAuth))).Methods("GET")
 
+	// Connection definitions are first-class registry entities, authored per-model in a connections/ folder and registered alongside components and relationships.
+	gMux.Handle("/api/meshmodels/connections", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetConnectionDefinitions), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/connections", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.RegisterConnectionDefinition), models.ProviderAuth))).Methods("POST")
+	gMux.Handle("/api/meshmodels/connections/{connectionDefinitionId}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetConnectionDefinitionByID), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/connections/{connectionDefinitionId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateConnectionDefinition), models.ProviderAuth))).Methods("PUT")
+	gMux.Handle("/api/meshmodels/connections/{connectionDefinitionId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteConnectionDefinition), models.ProviderAuth))).Methods("DELETE")
+
 	gMux.Handle("/api/meshmodels/categories", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelCategories), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodels/models", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModels), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodels/models/{model}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModelsByName), models.NoAuth))).Methods("GET")
