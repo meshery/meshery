@@ -114,7 +114,12 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 		Limit: 1,
 	}
 	schema := make(map[string]interface{}, 1)
-	connectionComponent, _, _, _ := h.registryManager.GetEntities(compFilter)
+	connectionComponent, _, _, err := h.registryManager.GetEntities(compFilter)
+	if err != nil {
+		h.log.Error(ErrRegistryLookUp(err, payload.Kind))
+		writeMeshkitError(w, ErrRegistryLookUp(err, payload.Kind), http.StatusInternalServerError)
+		return
+	}
 	if len(connectionComponent) == 0 {
 		writeMeshkitError(w, ErrUnknownConnectionKind(payload.Kind), http.StatusBadRequest)
 		return
@@ -134,7 +139,7 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 	id := uuid.Must(uuid.NewV4())
 	schema["id"] = id
 
-	err := json.NewEncoder(w).Encode(&schema)
+	err = json.NewEncoder(w).Encode(&schema)
 	if err != nil {
 		h.log.Error(ErrWriteResponse(err))
 	}
