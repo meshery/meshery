@@ -1,8 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/meshery/meshery/server/models/httputil"
 )
@@ -94,4 +98,67 @@ func extractBoolQueryParams(r *http.Request, params ...string) (map[string]bool,
 		result[param] = val
 	}
 	return result, nil
+}
+
+// SafeFilePath validates a file path to prevent path traversal attacks.
+// It ensures the path is within allowed directories (e.g., ~/.meshery or os.TempDir()).
+func SafeFilePath(providedPath string) (string, error) {
+	if providedPath == "" {
+		return "", fmt.Errorf("file path cannot be empty")
+	}
+
+	if strings.Contains(providedPath, "..") {
+		return "", fmt.Errorf("path traversal attempts are not allowed")
+	}
+
+	absPath, err := filepath.Abs(providedPath)
+	if err != nil {
+		return "", fmt.Errorf("failed to get absolute path: %v", err)
+	}
+
+	var resolvedPath string
+	if _, err := os.Stat(absPath); err == nil {
+		resolvedPath, err = filepath.EvalSymlinks(absPath)
+		if err != nil {
+			return "", fmt.Errorf("failed to resolve symlinks: %v", err)
+		}
+	} else {
+		dir := filepath.Dir(absPath)
+		resolvedDir, err := filepath.EvalSymlinks(dir)
+		if err != nil {
+			return "", fmt.Errorf("failed to resolve symlinks for directory: %v", err)
+		}
+		resolvedPath = filepath.Join(resolvedDir, filepath.Base(absPath))
+	}
+
+	// Allowed base directories
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("could not determine user home directory")
+	}
+
+	allowedBaseDirs := []string{
+		filepath.Join(home, ".meshery"),
+		os.TempDir(),
+	}
+
+	isAllowed := false
+	for _, baseDir := range allowedBaseDirs {
+		resolvedBase, err := filepath.EvalSymlinks(baseDir)
+		if err != nil {
+			resolvedBase, _ = filepath.Abs(baseDir)
+		}
+
+		rel, err := filepath.Rel(resolvedBase, resolvedPath)
+		if err == nil && !strings.HasPrefix(rel, "..") {
+			isAllowed = true
+			break
+		}
+	}
+
+	if !isAllowed {
+		return "", fmt.Errorf("file path is outside allowed directories")
+	}
+
+	return resolvedPath, nil
 }

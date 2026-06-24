@@ -71,6 +71,12 @@ func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.
 		writeMeshkitError(responseWriter, ErrInvalidFileRequest(err), http.StatusBadRequest)
 		return
 	}
+	filePath, err = SafeFilePath(filePath)
+	if err != nil {
+		writeMeshkitError(responseWriter, ErrUnsafeFilePath(err), http.StatusBadRequest)
+		return
+	}
+
 	file, err := os.Open(filePath)
 	if err != nil {
 		writeMeshkitError(responseWriter, ErrReadFileContent(err, filePath), http.StatusInternalServerError)
@@ -100,6 +106,12 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
 	if err != nil {
 		writeMeshkitError(responseWriter, ErrInvalidFileRequest(err), http.StatusBadRequest)
+		return
+	}
+
+	filePath, err = SafeFilePath(filePath)
+	if err != nil {
+		writeMeshkitError(responseWriter, ErrUnsafeFilePath(err), http.StatusBadRequest)
 		return
 	}
 

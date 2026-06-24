@@ -210,6 +210,7 @@ const (
 	ErrExtensionProxyCode                  = "meshery-server-1427"
 	ErrInitializeMachineCode               = "meshery-server-1428"
 	ErrSendMachineEventCode                = "meshery-server-1429"
+	ErrUnsafeFilePathCode                  = "meshery-server-1430"
 )
 
 var (
@@ -793,6 +794,9 @@ func ErrServeSchema(err error) error {
 }
 func ErrInvalidFileRequest(err error) error {
 	return errors.New(ErrInvalidFileRequestCode, errors.Alert, []string{"Invalid file request"}, []string{err.Error()}, []string{"The provided file query parameter could not be decoded"}, []string{"Ensure the file parameter is a properly URL-encoded path"})
+}
+func ErrUnsafeFilePath(err error) error {
+	return errors.New(ErrUnsafeFilePathCode, errors.Alert, []string{"Unsafe file path requested"}, []string{err.Error()}, []string{"The requested file path is outside allowed directories or contains path traversal attempts"}, []string{"Ensure the file parameter points to an allowed directory (e.g. ~/.meshery) and does not contain path traversal elements"})
 }
 func ErrReadFileContent(err error, file string) error {
 	return errors.New(ErrReadFileContentCode, errors.Alert, []string{"Failed to read file content", file}, []string{err.Error()}, []string{"The file could not be opened or streamed to the response"}, []string{"Verify the file exists and the server has permission to read it"})
