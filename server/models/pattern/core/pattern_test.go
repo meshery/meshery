@@ -186,8 +186,8 @@ metadata:
 			t.Fatalf("expected 1 resolved component, got %d", len(pattern.Components))
 		}
 
-		if pattern.Components[0].DisplayName != "Deployment" {
-			t.Fatalf("expected DisplayName 'Deployment', got %q", pattern.Components[0].DisplayName)
+		if pattern.Components[0].DisplayName != "my-deployment" {
+			t.Fatalf("expected DisplayName 'my-deployment', got %q", pattern.Components[0].DisplayName)
 		}
 	})
 }
