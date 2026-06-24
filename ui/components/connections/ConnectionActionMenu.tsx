@@ -1,5 +1,12 @@
 import React from 'react';
-import { Button, Popover, Typography, SyncAltIcon, SettingsIcon, CopyLinkIcon } from '@sistent/sistent';
+import {
+  Button,
+  Popover,
+  Typography,
+  SyncAltIcon,
+  SettingsIcon,
+  CopyLinkIcon,
+} from '@sistent/sistent';
 import { ActionListItem } from './styles';
 import { iconMedium } from '../../css/icons.styles';
 import CAN from '@/utils/can';

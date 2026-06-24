@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, type SetStateAction } from 'react';
 
 const STORAGE_KEY_PREFIX = 'meshery_cols_';
 
@@ -40,7 +40,7 @@ export function useColumnVisibilityPreference(
   columnVisibility: Record<string, boolean | undefined>;
   /** Call from the column-visibility toolbar. Persists to localStorage. */
   setColumnVisibilityByUser: (
-    updater: React.SetStateAction<Record<string, boolean | undefined>>,
+    updater: SetStateAction<Record<string, boolean | undefined>>,
   ) => void;
   /** Call from width-change effects. Merges responsive defaults with stored user prefs. */
   setColumnVisibilityByResponsive: (next: Record<string, boolean | undefined>) => void;
@@ -53,7 +53,7 @@ export function useColumnVisibilityPreference(
   );
 
   const setColumnVisibilityByUser = useCallback(
-    (updater: React.SetStateAction<Record<string, boolean | undefined>>) => {
+    (updater: SetStateAction<Record<string, boolean | undefined>>) => {
       setColumnVisibility((prev) => {
         const next = typeof updater === 'function' ? updater(prev) : updater;
         // Persist only defined (non-undefined) values.
@@ -69,10 +69,13 @@ export function useColumnVisibilityPreference(
     [tableKey],
   );
 
-  const setColumnVisibilityByResponsive = useCallback((next: Record<string, boolean | undefined>) => {
-    // Re-merge: responsive defaults first, then stored user overrides on top.
-    setColumnVisibility({ ...next, ...storedPrefs.current });
-  }, []);
+  const setColumnVisibilityByResponsive = useCallback(
+    (next: Record<string, boolean | undefined>) => {
+      // Re-merge: responsive defaults first, then stored user overrides on top.
+      setColumnVisibility({ ...next, ...storedPrefs.current });
+    },
+    [],
+  );
 
   return { columnVisibility, setColumnVisibilityByUser, setColumnVisibilityByResponsive };
 }

@@ -85,7 +85,6 @@ export function useTableUrlState<F extends Record<string, string> = Record<strin
     }
 
     return { page, pageSize, sortOrder, search, filters: filters as F };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query, tableKey]);
 
   const updateTableState = useCallback(

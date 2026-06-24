@@ -92,9 +92,18 @@ const ConnectionTable = ({
 
   const { page, pageSize, sortOrder, search } = tableState;
   const setPage = useCallback((p: number) => updateTableState({ page: p }), [updateTableState]);
-  const setPageSize = useCallback((ps: number) => updateTableState({ pageSize: ps }), [updateTableState]);
-  const setSortOrder = useCallback((so: string) => updateTableState({ sortOrder: so }), [updateTableState]);
-  const setSearch = useCallback((s: string) => updateTableState({ search: s, page: 0 }), [updateTableState]);
+  const setPageSize = useCallback(
+    (ps: number) => updateTableState({ pageSize: ps }),
+    [updateTableState],
+  );
+  const setSortOrder = useCallback(
+    (so: string) => updateTableState({ sortOrder: so }),
+    [updateTableState],
+  );
+  const setSearch = useCallback(
+    (s: string) => updateTableState({ search: s, page: 0 }),
+    [updateTableState],
+  );
 
   // Applied filters come from URL state so they survive navigation.
   const statusFilter = tableState.filters.status || null;
