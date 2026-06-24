@@ -13,128 +13,212 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
+	corev1 "k8s.io/api/core/v1"
 )
 
 func init() {
 	gob.Register(&models.PrometheusClient{})
 }
 
-// ScanPromGrafanaHandler - fetches  Prometheus and Grafana
-// func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-// 	errs := []string{}
-// 	var wg sync.WaitGroup
-// 	customK8scontexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
-// 	if ok && len(customK8scontexts) > 0 {
-// 		for _, mk8scontext := range customK8scontexts {
-// 			wg.Add(1)
-// 			go func(mk8scontext models.K8sContext) {
-// 				defer wg.Done()
-// 				k8sconfig, err := mk8scontext.GenerateKubeConfig()
-// 				if err != nil {
-// 					errs = append(errs, err.Error())
-// 					h.log.Error(err)
-// 					return
-// 				}
-// 				availablePromGrafana, err := helpers.ScanPromGrafana(k8sconfig, mk8scontext.Name)
-// 				if err != nil {
-// 					errs = append(errs, err.Error())
-// 					h.log.Error(err)
-// 					return
-// 				}
-// 				if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
-// 					obj := "payloads"
-// 					h.log.Error(ErrMarshal(err, obj))
-// 					errs = append(errs, ErrMarshal(err, obj).Error())
-// 					return
-// 				}
-// 			}(mk8scontext)
-// 		}
-// 	}
-// 	if len(errs) != 0 {
-// 		http.Error(w, mergeMsgs(errs), http.StatusInternalServerError)
-// 	}
-// 	wg.Wait()
-// }
+// mergeMsgs combines multiple error messages into a single string
+func mergeMsgs(strs []string) string {
+	return strings.Join(strs, "\n")
+}
 
-// ScanPrometheusHandler - fetches  Prometheus
-// func (h *Handler) ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-// 	errs := []string{}
-// 	var wg sync.WaitGroup
-// 	customK8scontexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
-// 	if ok && len(customK8scontexts) > 0 {
-// 		for _, mk8scontext := range customK8scontexts {
-// 			wg.Add(1)
-// 			go func(mk8scontext models.K8sContext) {
-// 				defer wg.Done()
-// 				k8sconfig, err := mk8scontext.GenerateKubeConfig()
-// 				if err != nil {
-// 					errs = append(errs, err.Error())
-// 					h.log.Error(err)
-// 					return
-// 				}
-// 				availablePromGrafana, err := helpers.ScanPrometheus(k8sconfig, mk8scontext.Name)
-// 				if err != nil {
-// 					errs = append(errs, err.Error())
-// 					h.log.Error(err)
-// 					return
-// 				}
-// 				if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
-// 					obj := "payloads"
-// 					h.log.Error(ErrMarshal(err, obj))
-// 					errs = append(errs, ErrMarshal(err, obj).Error())
-// 					return
-// 				}
-// 			}(mk8scontext)
-// 		}
-// 	}
-// 	if len(errs) != 0 {
-// 		http.Error(w, mergeMsgs(errs), http.StatusInternalServerError)
-// 	}
-// 	wg.Wait()
-// }
+// ScanPromGrafanaHandler - fetches Prometheus and Grafana
+func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	customK8scontexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
+	if !ok || len(customK8scontexts) == 0 {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("[]"))
+		return
+	}
 
-// ScanGrafanaHandler - fetches  Grafana
-// func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-// 	errs := []string{}
-// 	var wg sync.WaitGroup
-// 	customK8scontexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
-// 	if ok && len(customK8scontexts) > 0 {
-// 		for _, mk8scontext := range customK8scontexts {
-// 			wg.Add(1)
-// 			go func(mk8scontext models.K8sContext) {
-// 				defer wg.Done()
-// 				k8sconfig, err := mk8scontext.GenerateKubeConfig()
-// 				if err != nil {
-// 					errs = append(errs, err.Error())
-// 					h.log.Error(err)
-// 					return
-// 				}
-// 				availablePromGrafana, err := helpers.ScanGrafana(k8sconfig, mk8scontext.Name)
-// 				if err != nil {
-// 					errs = append(errs, err.Error())
-// 					h.log.Error(err)
-// 					return
-// 				}
-// 				if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
-// 					obj := "payloads"
-// 					h.log.Error(ErrMarshal(err, obj))
-// 					errs = append(errs, ErrMarshal(err, obj).Error())
-// 					return
-// 				}
-// 			}(mk8scontext)
-// 		}
-// 	}
-// 	if len(errs) != 0 {
-// 		http.Error(w, mergeMsgs(errs), http.StatusInternalServerError)
-// 	}
-// 	wg.Wait()
-// }
+	numContexts := len(customK8scontexts)
+	errCh := make(chan error, numContexts)
+	resultCh := make(chan map[string][]corev1.Service, numContexts)
+	var wg sync.WaitGroup
 
+	for _, mk8scontext := range customK8scontexts {
+		wg.Add(1)
+		go func(mk8scontext models.K8sContext) {
+			defer wg.Done()
+			k8sconfig, err := mk8scontext.GenerateKubeConfig()
+			if err != nil {
+				h.log.Error(err)
+				errCh <- err
+				return
+			}
+			availablePromGrafana, err := helpers.ScanPromGrafana(k8sconfig, mk8scontext.Name)
+			if err != nil {
+				h.log.Error(err)
+				errCh <- err
+				return
+			}
+			resultCh <- availablePromGrafana
+		}(mk8scontext)
+	}
+
+	wg.Wait()
+	close(errCh)
+	close(resultCh)
+
+	if len(errCh) > 0 {
+		errs := []string{}
+		for err := range errCh {
+			errs = append(errs, err.Error())
+		}
+		http.Error(w, mergeMsgs(errs), http.StatusInternalServerError)
+		return
+	}
+
+	final := make(map[string][]corev1.Service)
+	for res := range resultCh {
+		for k, v := range res {
+			final[k] = append(final[k], v...)
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(final); err != nil {
+		obj := "payloads"
+		h.log.Error(models.ErrMarshal(err, obj))
+		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+	}
+}
+
+// ScanPrometheusHandler - fetches Prometheus
+func (h *Handler) ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	customK8scontexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
+	if !ok || len(customK8scontexts) == 0 {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("[]"))
+		return
+	}
+
+	numContexts := len(customK8scontexts)
+	errCh := make(chan error, numContexts)
+	resultCh := make(chan map[string][]corev1.Service, numContexts)
+	var wg sync.WaitGroup
+
+	for _, mk8scontext := range customK8scontexts {
+		wg.Add(1)
+		go func(mk8scontext models.K8sContext) {
+			defer wg.Done()
+			k8sconfig, err := mk8scontext.GenerateKubeConfig()
+			if err != nil {
+				h.log.Error(err)
+				errCh <- err
+				return
+			}
+			availablePrometheus, err := helpers.ScanPrometheus(k8sconfig, mk8scontext.Name)
+			if err != nil {
+				h.log.Error(err)
+				errCh <- err
+				return
+			}
+			resultCh <- availablePrometheus
+		}(mk8scontext)
+	}
+
+	wg.Wait()
+	close(errCh)
+	close(resultCh)
+
+	if len(errCh) > 0 {
+		errs := []string{}
+		for err := range errCh {
+			errs = append(errs, err.Error())
+		}
+		http.Error(w, mergeMsgs(errs), http.StatusInternalServerError)
+		return
+	}
+
+	final := make(map[string][]corev1.Service)
+	for res := range resultCh {
+		for k, v := range res {
+			final[k] = append(final[k], v...)
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(final); err != nil {
+		obj := "payloads"
+		h.log.Error(models.ErrMarshal(err, obj))
+		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+	}
+}
+
+// ScanGrafanaHandler - fetches Grafana
+func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	customK8scontexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
+	if !ok || len(customK8scontexts) == 0 {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("[]"))
+		return
+	}
+
+	numContexts := len(customK8scontexts)
+	errCh := make(chan error, numContexts)
+	resultCh := make(chan map[string][]corev1.Service, numContexts)
+	var wg sync.WaitGroup
+
+	for _, mk8scontext := range customK8scontexts {
+		wg.Add(1)
+		go func(mk8scontext models.K8sContext) {
+			defer wg.Done()
+			k8sconfig, err := mk8scontext.GenerateKubeConfig()
+			if err != nil {
+				h.log.Error(err)
+				errCh <- err
+				return
+			}
+			availableGrafana, err := helpers.ScanGrafana(k8sconfig, mk8scontext.Name)
+			if err != nil {
+				h.log.Error(err)
+				errCh <- err
+				return
+			}
+			resultCh <- availableGrafana
+		}(mk8scontext)
+	}
+
+	wg.Wait()
+	close(errCh)
+	close(resultCh)
+
+	if len(errCh) > 0 {
+		errs := []string{}
+		for err := range errCh {
+			errs = append(errs, err.Error())
+		}
+		http.Error(w, mergeMsgs(errs), http.StatusInternalServerError)
+		return
+	}
+
+	final := make(map[string][]corev1.Service)
+	for res := range resultCh {
+		for k, v := range res {
+			final[k] = append(final[k], v...)
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(final); err != nil {
+		obj := "payloads"
+		h.log.Error(models.ErrMarshal(err, obj))
+		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+	}
+}
 // PrometheusConfigHandler is used for persisting prometheus configuration
 func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	// if req.Method != http.MethodPost && req.Method != http.MethodDelete {
@@ -471,3 +555,4 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	h.log.Debug("Board selection updated", updatedConnection.Metadata)
 	writeJSONEmptyObject(w, http.StatusOK)
 }
+
