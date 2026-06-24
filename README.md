@@ -24,12 +24,16 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
   <img src="https://img.shields.io/discourse/users?label=discuss&logo=discourse&server=https%3A%2F%2Fmeshery.io/community" /></a> -->
 <a href="https://slack.meshery.io" alt="Join Slack">
   <img src="https://img.shields.io/badge/Slack-@meshery.svg?logo=slack" /></a>
+<a href="https://bsky.app/profile/mesheryio.bsky.social" alt="Bluesky Follow">
+  <img src="https://img.shields.io/badge/Bluesky-@mesheryio-0285FF?logo=bluesky&logoColor=white" />
+</a>
 <a href="https://x.com/intent/follow?screen_name=mesheryio" alt="X Follow">
   <img src="https://img.shields.io/twitter/follow/mesheryio.svg?label=Follow+Meshery&style=social" /></a>
 <a href="https://github.com/meshery/meshery/releases" alt="Meshery Downloads">
   <img src="https://img.shields.io/github/downloads/meshery/meshery/total" /></a>
 <a href="https://scorecard.dev/viewer/?uri=github.com/meshery/meshery" alt="OpenSSF Scorecard">
   <img src="https://api.scorecard.dev/projects/github.com/meshery/meshery/badge" /></a> 
+</br>
 <a href="https://trendshift.io/repositories/888" target="_blank"><img src="https://trendshift.io/api/badge/repositories/888" alt="meshery%2Fmeshery | Trendshift" style="width: 150px;" width="150px" /></a>
 <!-- <a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fmeshery%2Fmeshery?ref=badge_shield" alt="License Scan Report">
   <img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmeshery%2Fmeshery.svg?type=shield"/></a>  
