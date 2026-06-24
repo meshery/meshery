@@ -143,6 +143,7 @@ function K8sContextMenu({
   searchContexts = () => {},
 }) {
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
+  const anchorRef = React.useRef(null);
   // The dropdown slides up from below; its translate distance scales with the
   // number of context rows it will render so it ends up flush against the badge.
   const deleteCtxtRef = React.createRef();
@@ -170,7 +171,7 @@ function K8sContextMenu({
     position: 'absolute',
     left: '-7rem',
     zIndex: '-1',
-    top: showFullContextMenu ? '60px' : '-2000px',
+    top: '60px',
   };
 
   const StateTransitionDetails = styled(Box)(({ theme }) => ({
@@ -251,13 +252,14 @@ function K8sContextMenu({
       <div>
         <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS}>
           <IconButton
+            ref={anchorRef}
             aria-label="contexts"
             className="k8s-icon-button"
             onClick={(e) => {
               e.preventDefault();
               setShowFullContextMenu((prev) => !prev);
             }}
-            aria-owns={showFullContextMenu ? 'menu-list-grow' : undefined}
+            aria-controls={showFullContextMenu ? 'menu-list-grow' : undefined}
             aria-haspopup="true"
             style={{
               marginRight: '0.5rem',
@@ -302,17 +304,13 @@ function K8sContextMenu({
             <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS} invert_action={['hide']}>
               <ClickAwayListener
                 onClickAway={(e) => {
-                  if (
-                    typeof e.target.className == 'string' &&
-                    !e.target.className?.includes('cbadge') &&
-                    e.target?.className != 'k8s-image' &&
-                    !e.target.className.includes('k8s-icon-button')
-                  ) {
-                    setShowFullContextMenu(false);
+                  if (anchorRef.current && anchorRef.current.contains(e.target as Node)) {
+                    return;
                   }
+                  setShowFullContextMenu(false);
                 }}
               >
-                <CMenuContainer>
+                <CMenuContainer id="menu-list-grow">
                   <div>
                     <TextField
                       id="search-ctx"
