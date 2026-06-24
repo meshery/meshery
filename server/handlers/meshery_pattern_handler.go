@@ -370,6 +370,10 @@ func (h *Handler) handlePatternPOST(
 
 	// Dehydrate the pattern before saving to the database to reduce size
 	meshkitPatternHelpers.DehydratePattern(&requestPayload.DesignFile)
+	// Sanitize the pattern to strip leading/trailing whitespace from all string
+	// keys and values in component configurations, preventing yaml.v3 from
+	// quoting them (e.g. 'storage ': 2Gi) in Kubernetes manifest export.
+	meshkitPatternHelpers.SanitizePattern(&requestPayload.DesignFile)
 
 	designFileBytes, err := encoding.Marshal(requestPayload.DesignFile)
 
