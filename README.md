@@ -26,6 +26,8 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
   <img src="https://img.shields.io/badge/Slack-@meshery.svg?logo=slack" /></a>
 <a href="https://x.com/intent/follow?screen_name=mesheryio" alt="X Follow">
   <img src="https://img.shields.io/twitter/follow/mesheryio.svg?label=Follow+Meshery&style=social" /></a>
+<a href="https://bsky.app/profile/meshery.io" alt="Bluesky Follow">
+  <img src="https://img.shields.io/badge/Bluesky-@meshery.io?style=social&logo=bluesky" /></a>
 <a href="https://github.com/meshery/meshery/releases" alt="Meshery Downloads">
   <img src="https://img.shields.io/github/downloads/meshery/meshery/total" /></a>
 <a href="https://scorecard.dev/viewer/?uri=github.com/meshery/meshery" alt="OpenSSF Scorecard">
