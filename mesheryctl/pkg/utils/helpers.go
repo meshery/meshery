@@ -264,6 +264,15 @@ var (
 
 var CfgFile string
 
+// IsLocalProvider reports whether the given provider name refers to the
+// built-in local provider. Accepts both the canonical name ("Local") and the
+// legacy alias ("None") so client commands keep working against older Meshery
+// servers and pre-rename ~/.meshery/config.yaml entries.
+func IsLocalProvider(name string) bool {
+	return strings.EqualFold(name, models.LocalProviderName) ||
+		strings.EqualFold(name, models.LocalProviderLegacyAlias)
+}
+
 // GetActiveConfigPath returns the meshconfig path selected for the current command.
 // Prefer the explicit CLI flag value, then the config file Viper has already loaded,
 // and finally fall back to the default meshconfig path.
@@ -294,12 +303,18 @@ var TemplateContext = config.Context{
 	Version:    "latest",
 }
 
+// Services is the built-in fallback docker-compose definition used when the install
+// docker-compose file cannot be downloaded. The provider list is sourced from the
+// canonical install/providers.env via DefaultProviderBaseURLs (see providers_gen.go);
+// edit providers.env and run `make providers-propagate` rather than hardcoding URLs here.
+//
+//go:generate python3 ../../../install/scripts/sync-provider-urls.py
 var Services = map[string]Service{
 	"meshery": {
 		Image:  "meshery/meshery:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Environment: []string{
-			"PROVIDER_BASE_URLS=https://cloud.layer5.io",
+			"PROVIDER_BASE_URLS=" + DefaultProviderBaseURLs,
 			"ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012",
 			"EVENT=mesheryLocal",
 			"PORT=9081",
@@ -790,7 +805,6 @@ func RunSelectPrompt(label string, items []string) (int, error) {
 func ParseURLGithub(URL string) (string, string, error) {
 	// GitHub URL:
 	// - https://github.com/meshery/meshery/blob/master/.goreleaser.yml
-	// - https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml
 	parsedURL, err := url.Parse(URL)
 	if err != nil {
 		return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))

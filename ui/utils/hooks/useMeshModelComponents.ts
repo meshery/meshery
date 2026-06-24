@@ -16,7 +16,7 @@ import getMostRecentVersion, {
 } from '../versionSort';
 
 const handleError = (e) => {
-  console.error('MeshModel axios error ocurred', e);
+  console.error('MeshModel error occurred', e);
 };
 
 function componentToLatestApiVersion(components) {

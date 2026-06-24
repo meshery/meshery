@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Box, styled, Step } from '@sistent/sistent';
-import TipsCarousel from '../../../General/TipsCarousel';
+import TipsCarousel from '../../../general/TipsCarousel';
 import {
   ConnectionStepperTips,
   registerConnectionContent,
@@ -9,7 +9,12 @@ import {
 } from './constants';
 import { ColorlibConnector, CustomLabelStyle, StepperContainer } from '../../styles';
 
-const StepIconWrapper = styled('div')(({ theme, active, completed }) => ({
+interface StepIconWrapperProps {
+  active?: boolean;
+  completed?: boolean;
+}
+
+const StepIconWrapper = styled('div')<StepIconWrapperProps>(({ theme, active, completed }) => ({
   backgroundColor: theme.palette.background.card,
   zIndex: 1,
   color: '#fff',
@@ -56,7 +61,15 @@ const StepperContent = styled(Box)({
   width: '100%',
 });
 
-function StepperIcon({ active, completed, stepIcons, icon }) {
+function StepperIcon({
+  active,
+  completed,
+  stepIcons,
+  icon,
+}: StepIconWrapperProps & {
+  stepIcons: Record<string, React.ReactElement>;
+  icon: React.ReactNode;
+}) {
   const iconComponent = stepIcons[String(icon)];
   const additionalProps = {
     fill: completed ? 'white' : 'currentColor',
@@ -69,7 +82,19 @@ function StepperIcon({ active, completed, stepIcons, icon }) {
   );
 }
 
-export default function CustomizedSteppers({ sharedData, setSharedData, connectionData, onClose }) {
+export default function CustomizedSteppers({
+  sharedData,
+  setSharedData,
+  connectionData,
+  onClose,
+  handleRegistrationComplete,
+}: {
+  sharedData: any;
+  setSharedData: (data: any) => void;
+  connectionData: any;
+  onClose: () => void;
+  handleRegistrationComplete: () => void;
+}) {
   const [activeStep, setActiveStep] = React.useState(0);
   const stepData = {
     stepContent: registerConnectionContent,
@@ -91,16 +116,33 @@ export default function CustomizedSteppers({ sharedData, setSharedData, connecti
       ...prevState,
       onClose: onClose,
     }));
-  }, [sharedData]);
+    // Depend on `onClose` (the actual input we mirror into shared state) and
+    // `setSharedData` (a stable functional setter). Previously this effect
+    // listed `sharedData` in its deps and called `setSharedData(prev => ...)`
+    // — a guaranteed self-feeding loop: every commit replaced `sharedData`
+    // with a new object reference, which retriggered the effect, which
+    // produced another new reference, etc.
+  }, [onClose, setSharedData]);
 
-  const ActiveStepContent = stepContent[String(activeStep + 1)].component;
+  // Guard against an out-of-range step: if `activeStep` ever points past the
+  // last entry (e.g. a stray increment, or a re-render while the modal is
+  // tearing down), `stepContent[...]` is undefined — reading `.component`
+  // unguarded throws "can't access property 'component', ... is undefined".
+  const ActiveStepContent = stepContent[String(activeStep + 1)]?.component;
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
+  const propHandlerMap = {
+    handleNext,
+    sharedData,
+    setSharedData,
+    handleRegistrationComplete,
+  };
+
   const stepProps = stepContent[String(activeStep + 1)]?.props?.reduce((props, propName) => {
-    props[propName] = propName === 'handleNext' ? handleNext : eval(propName);
+    props[propName] = propHandlerMap[propName];
     return props;
   }, {});
 
@@ -125,7 +167,7 @@ export default function CustomizedSteppers({ sharedData, setSharedData, connecti
       </StepperHeader>
       <StepperContent>
         <TipsCarousel tips={ConnectionStepperTips} />
-        {React.cloneElement(ActiveStepContent, stepProps)}
+        {ActiveStepContent ? React.cloneElement(ActiveStepContent, stepProps) : null}
       </StepperContent>
     </StepperLayout>
   );

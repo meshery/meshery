@@ -1,10 +1,5 @@
 import { promisifiedDataFetch } from '../lib/data-fetch';
-import {
-  MESHMODEL_COMPONENT_ENDPOINT,
-  MESHMODEL_ENDPOINT,
-  MESHMODEL_RELATIONSHIPS_ENDPOINT,
-  SORT,
-} from '../constants/endpoints';
+import { MESHMODEL_COMPONENT_ENDPOINT, MESHMODEL_ENDPOINT } from '../constants/endpoints';
 
 const COMPONENTS_ENDPOINT = '/api/meshmodels/components';
 const CATEGORIES_ENDPOINT = '/api/meshmodels/categories';
@@ -24,18 +19,8 @@ const defaultOptions = {
   trim: true,
 };
 
-/**
- * Fetches the Relationships from the server
- *
- * @returns
- */
-export async function fetchRelationships() {
-  return await promisifiedDataFetch(`${MESHMODEL_RELATIONSHIPS_ENDPOINT}`);
-}
-
-export async function getAllComponents(page = 1, pageSize = 'all') {
-  return await promisifiedDataFetch(`${COMPONENTS_ENDPOINT}?page=${page}&pagesize=${pageSize}`);
-}
+// TODO: Migrate consumers to RTK Query hooks from rtk-query/meshModel.ts
+// Each function below has an RTK Query equivalent. Consumer migration tracked separately.
 
 export async function getMeshModels(page = 1, pageSize = 'all', options = defaultOptions) {
   return await promisifiedDataFetch(
@@ -52,26 +37,13 @@ export async function getComponentFromModelApi(model, pageSize = 'all', trim = t
   );
 }
 
-export async function getMeshModelsByRegistrants(page = 1, pageSize = 'all', registrant) {
-  return await promisifiedDataFetch(
-    `${MESHMODEL_ENDPOINT}?page=${page}&pagesize=${pageSize}&registrant=${registrant}`,
-  );
-}
-
-export async function getRelationshipFromModelApi(model, pageSize = 'all', trim = true) {
-  return await promisifiedDataFetch(
-    `${MESHMODEL_ENDPOINT}/${model}/relationships?pagesize=${pageSize}&trim=${trim}`,
-  );
-}
-
 export async function getDuplicateModels(model, version) {
   return await promisifiedDataFetch(`${MESHMODEL_ENDPOINT}/${model}?version=${version}      `);
 }
 
 export async function getDuplicateComponents(componentKind, apiVersion, modelName) {
-  return await promisifiedDataFetch(
-    `${COMPONENTS_ENDPOINT}/${componentKind}?apiVersion=${apiVersion}&?model=${modelName}`,
-  );
+  const query = new URLSearchParams({ apiVersion, model: modelName }).toString();
+  return await promisifiedDataFetch(`${COMPONENTS_ENDPOINT}/${componentKind}?${query}`);
 }
 
 export async function getMeshModelRegistrants(page = 1, pageSize = 'all') {
@@ -91,42 +63,12 @@ export async function getVersionedComponentFromModel(
   );
 }
 
-export async function getComponentsDetailWithPageSize(
-  page = 1,
-  pageSize = 'all',
-  sort = SORT.ASCENDING,
-  order = '',
-) {
-  return await promisifiedDataFetch(
-    `api/meshmodels/components?page=${page}&pagesize=${pageSize}&order=${encodeURIComponent(
-      order,
-    )}&sort=${sort}`,
-  );
-}
-
 export async function getComponentsDetail(page) {
-  return await promisifiedDataFetch(`api/meshmodels/components?page=${page}`);
-}
-
-export async function getModelsDetail(page) {
-  return await promisifiedDataFetch(`${MESHMODEL_ENDPOINT}?page=${page}`);
-}
-
-export async function getRelationshipsDetailWithPageSize(
-  page = 1,
-  pageSize = 'all',
-  sort = SORT.ASCENDING,
-  order = '',
-) {
-  return await promisifiedDataFetch(
-    `api/meshmodels/relationships?page=${page}&pagesize=${pageSize}&sort=${sort}&order=${encodeURIComponent(
-      order,
-    )}`,
-  );
+  return await promisifiedDataFetch(`/api/meshmodels/components?page=${page}`);
 }
 
 export async function getRelationshipsDetail(page) {
-  return await promisifiedDataFetch(`api/meshmodels/relationships?page=${page}`);
+  return await promisifiedDataFetch(`/api/meshmodels/relationships?page=${page}`);
 }
 
 export async function getMeshModelComponent(model, component, version, apiVersion) {
@@ -146,6 +88,10 @@ export async function getMeshModelComponentByName(component) {
   return promisifiedDataFetch(`${MESHMODEL_COMPONENT_ENDPOINT}/components/${component}`);
 }
 
+export async function getConnectionDefinitions() {
+  return promisifiedDataFetch(`/api/meshmodels/connections?pagesize=all`);
+}
+
 export async function fetchCategories() {
   return promisifiedDataFetch(`${CATEGORIES_ENDPOINT}`);
 }
@@ -154,33 +100,12 @@ export async function getModelFromCategoryApi(category) {
   return promisifiedDataFetch(`${CATEGORIES_ENDPOINT}/${category}/models?pagesize=all`);
 }
 
-/**
- *
- * @param {string} queryString
- * @param {pageOptions} options
- */
-export async function searchModels(queryString, options = defaultOptions) {
-  return promisifiedDataFetch(
-    `${MESHMODEL_ENDPOINT}?search=${encodeURI(queryString)}&${optionToQueryConvertor({
-      ...defaultOptions,
-      ...options,
-    })}`,
-  );
-}
-
-export async function searchComponents(queryString, options = defaultOptions) {
-  return promisifiedDataFetch(
-    `/api/meshmodels/components?search=${encodeURI(queryString)}&${optionToQueryConvertor(
-      options,
-    )}`,
-  );
-}
-
 export async function getModelByName(modelName, options = defaultOptions) {
   return promisifiedDataFetch(
     `${MESHMODEL_ENDPOINT}/${modelName}?${optionToQueryConvertor(options)}`,
   );
 }
+
 /**
  *
  * @param {pageOptions} options

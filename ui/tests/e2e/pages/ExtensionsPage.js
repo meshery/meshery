@@ -4,17 +4,12 @@ import { DashboardPage } from './DashboardPage';
 export class ExtensionsPage {
   constructor(page) {
     this.page = page;
-
-    this.kanvasSnapshotHeading = page.getByTestId('kanvas-snapshot-heading');
-    this.kanvasSnapshotDescription = page.getByTestId('kanvas-snapshot-description');
-    this.kanvasSnapshotEnableBtn = page.getByTestId('kanvas-snapshot-enable-btn');
-    this.kanvasSnapshotImage = page.getByTestId('kanvas-snapshot-image');
+    this.extensionNavRegion = page.getByTestId('extension-navigation-region');
+    this.extensionRootNavItems = page.getByTestId('extension-nav-root-item');
+    this.extensionRegionTopLevelLists = this.extensionNavRegion.locator(':scope > ul');
 
     this.performanceHeading = page.getByTestId('performance-analysis-heading');
     this.performanceEnableBtn = page.getByTestId('performance-analysis-enable-btn');
-
-    this.kanvasSignupHeading = page.getByTestId('kanvas-signup-heading');
-    this.kanvasSignupBtn = page.getByTestId('kanvas-signup-btn');
 
     this.dockerExtensionHeading = page.getByTestId('docker-extension-heading');
     this.dockerExtensionDownloadBtn = page.getByTestId('docker-extension-download-btn');
@@ -34,12 +29,30 @@ export class ExtensionsPage {
     await dashboardPage.navigateToExtensions();
   }
 
-  async verifyKanvasSnapshotDetails() {
-    await expect(this.kanvasSnapshotHeading).toBeVisible();
-    await expect(this.kanvasSnapshotDescription).toBeVisible();
-    await expect(this.kanvasSnapshotEnableBtn).toBeVisible();
-    await expect(this.kanvasSnapshotEnableBtn).toBeEnabled();
-    await expect(this.kanvasSnapshotImage).toBeVisible();
+  async hasExtensionNavigation() {
+    return (
+      (await this.extensionNavRegion.count()) > 0 && (await this.extensionRootNavItems.count()) > 0
+    );
+  }
+
+  async hasPerformanceAnalysis() {
+    return (await this.performanceHeading.count()) > 0;
+  }
+
+  async hasDockerExtension() {
+    return (await this.dockerExtensionHeading.count()) > 0;
+  }
+
+  async hasDesignEmbed() {
+    return (await this.designEmbedLearnMoreBtn.count()) > 0;
+  }
+
+  async hasIstioAdapterDocs() {
+    return (await this.adapterDocsIstioLink.count()) > 0;
+  }
+
+  async hasCatalogSection() {
+    return (await this.catalogSectionHeading.count()) > 0;
   }
 
   async verifyPerformanceAnalysisDetails() {
@@ -48,14 +61,14 @@ export class ExtensionsPage {
     await expect(this.performanceEnableBtn).toBeEnabled();
   }
 
-  async verifyKanvasSignupUI() {
-    await expect(this.kanvasSignupHeading).toBeVisible();
-    await expect(this.kanvasSignupBtn).toBeVisible();
-    await expect(this.kanvasSignupBtn).toBeEnabled();
-  }
-
   async toggleCatalog() {
     await this.catalogToggleSwitch.click();
+  }
+
+  async verifyExtensionNavItemsUseTopLevelLayout() {
+    await expect(this.extensionNavRegion).toBeVisible();
+    await expect(this.extensionRootNavItems.first()).toBeVisible();
+    await expect(this.extensionRegionTopLevelLists).toHaveCount(0);
   }
 
   normalizeUrl(url) {

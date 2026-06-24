@@ -1,7 +1,9 @@
 import { urlEncodeParams } from '@/utils/utils';
-import { mesheryApi } from '@meshery/schemas/dist/mesheryApi';
-import { api } from './index';
+import { mesheryApi } from '@meshery/schemas/mesheryApi';
+import { api, mesheryApiPath } from './index';
 import _ from 'lodash';
+import { normalizePaginatedCollectionResponse } from './transforms';
+import { normalizeUserProfileSummary } from './userProfile';
 
 const TAGS = {
   WORKSPACES: 'workspaces',
@@ -22,7 +24,7 @@ const workspacesApi = api
           const { expandInfo, ...otherArgs } = queryArgs;
           const params = urlEncodeParams(otherArgs);
           const workspaces = await baseQuery({
-            url: `workspaces?${params}`,
+            url: mesheryApiPath(`workspaces?${params}`),
             method: 'GET',
           });
 
@@ -64,10 +66,11 @@ const workspacesApi = api
 
                 return {
                   ...workspace,
-                  designCount: designs.data?.total_count || 0,
-                  environmentCount: environments.data?.total_count || 0,
-                  viewCount: views.data?.total_count || 0,
-                  teamCount: teams.data?.total_count || 0,
+                  designCount: designs.data?.totalCount ?? designs.data?.total_count ?? 0,
+                  environmentCount:
+                    environments.data?.totalCount ?? environments.data?.total_count ?? 0,
+                  viewCount: views.data?.totalCount ?? views.data?.total_count ?? 0,
+                  teamCount: teams.data?.totalCount ?? teams.data?.total_count ?? 0,
                 };
               }),
             );
@@ -81,7 +84,7 @@ const workspacesApi = api
 
       getEnvironmentsOfWorkspace: builder.query({
         query: (queryArg) => ({
-          url: `workspaces/${queryArg.workspaceId}/environments`,
+          url: mesheryApiPath(`workspaces/${queryArg.workspaceId}/environments`),
           params: {
             search: queryArg.search,
             order: queryArg.order,
@@ -96,7 +99,9 @@ const workspacesApi = api
 
       assignEnvironmentToWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `workspaces/${queryArg.workspaceId}/environments/${queryArg.environmentId}`,
+          url: mesheryApiPath(
+            `workspaces/${queryArg.workspaceId}/environments/${queryArg.environmentId}`,
+          ),
           method: 'POST',
         }),
 
@@ -105,7 +110,9 @@ const workspacesApi = api
 
       unassignEnvironmentFromWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `workspaces/${queryArg.workspaceId}/environments/${queryArg.environmentId}`,
+          url: mesheryApiPath(
+            `workspaces/${queryArg.workspaceId}/environments/${queryArg.environmentId}`,
+          ),
           method: 'DELETE',
         }),
 
@@ -117,29 +124,36 @@ const workspacesApi = api
           const { expandUser, infiniteScroll: _infiniteScroll, ...otherArgs } = queryArgs;
           const params = urlEncodeParams(otherArgs);
           const designs = await baseQuery({
-            url: `workspaces/${queryArgs.workspaceId}/designs?${params}`,
+            url: mesheryApiPath(`workspaces/${queryArgs.workspaceId}/designs?${params}`),
             method: 'GET',
           });
-          if (expandUser && designs.data && !designs.error) {
-            const withUsersPromises = designs.data.designs.map(async (design) => {
+          const normalizedDesigns =
+            designs.data && !designs.error
+              ? { ...designs, data: normalizePaginatedCollectionResponse(designs.data, 'designs') }
+              : designs;
+          if (expandUser && normalizedDesigns.data && !normalizedDesigns.error) {
+            const withUsersPromises = normalizedDesigns.data.designs.map(async (design) => {
               const user = await dispatch(
-                mesheryApi.endpoints.getUserProfileById.initiate({ id: design.user_id }),
+                mesheryApi.endpoints.getUserProfileById.initiate({
+                  id: design.userId ?? design.user_id,
+                }),
               );
+              const normalizedUser = normalizeUserProfileSummary(user.data);
               return {
                 ...design,
-                first_name: user.data?.first_name || '[deleted]',
-                last_name: user.data?.last_name || '',
-                avatar_url: user.data?.avatar_url || '',
-                user_id: user.data?.id || '',
-                email: user.data?.email || '',
+                firstName: normalizedUser?.firstName || '[deleted]',
+                lastName: normalizedUser?.lastName || '',
+                avatarUrl: normalizedUser?.avatarUrl || '',
+                userId: normalizedUser?.id || design.userId || design.user_id || '',
+                email: normalizedUser?.email || '',
               };
             });
 
             const modifiedDesigns = await Promise.all(withUsersPromises);
-            return _.merge({}, designs, { data: { designs: modifiedDesigns } });
+            return _.merge({}, normalizedDesigns, { data: { designs: modifiedDesigns } });
           }
 
-          return designs;
+          return normalizedDesigns;
         },
         serializeQueryArgs: ({ endpointName, queryArgs }) => {
           if (queryArgs?.infiniteScroll) {
@@ -171,44 +185,55 @@ const workspacesApi = api
       }),
       assignDesignToWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `workspaces/${queryArg.workspaceId}/designs/${queryArg.designId}`,
+          url: mesheryApiPath(`workspaces/${queryArg.workspaceId}/designs/${queryArg.designId}`),
           method: 'POST',
         }),
+        invalidatesTags: () => [{ type: TAGS.DESIGNS }],
       }),
 
       unassignDesignFromWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `workspaces/${queryArg.workspaceId}/designs/${queryArg.designId}`,
+          url: mesheryApiPath(`workspaces/${queryArg.workspaceId}/designs/${queryArg.designId}`),
           method: 'DELETE',
         }),
+        invalidatesTags: () => [{ type: TAGS.DESIGNS }],
       }),
       getViewsOfWorkspace: builder.query({
         queryFn: async (queryArg, { dispatch }, _extraOptions, baseQuery) => {
           const { expandUser, infiniteScroll: _infiniteScroll, ...otherArgs } = queryArg;
           const params = urlEncodeParams(otherArgs);
           const views = await baseQuery({
-            url: `extensions/api/workspaces/${queryArg.workspaceId}/views?${params}`,
+            url: mesheryApiPath(
+              `extensions/api/workspaces/${queryArg.workspaceId}/views?${params}`,
+            ),
             method: 'GET',
           });
-          if (expandUser && views.data && !views.error) {
-            const withUsersPromises = views.data.views.map(async (view) => {
+          const normalizedViews =
+            views.data && !views.error
+              ? { ...views, data: normalizePaginatedCollectionResponse(views.data, 'views') }
+              : views;
+          if (expandUser && normalizedViews.data && !normalizedViews.error) {
+            const withUsersPromises = normalizedViews.data.views.map(async (view) => {
               const user = await dispatch(
-                mesheryApi.endpoints.getUserProfileById.initiate({ id: view.user_id }),
+                mesheryApi.endpoints.getUserProfileById.initiate({
+                  id: view.userId ?? view.user_id,
+                }),
               );
+              const normalizedUser = normalizeUserProfileSummary(user.data);
               return {
                 ...view,
-                first_name: user.data?.first_name || '[deleted]',
-                last_name: user.data?.last_name || '',
-                avatar_url: user.data?.avatar_url || '',
-                user_id: user.data?.id || '',
-                email: user.data?.email || '',
+                firstName: normalizedUser?.firstName || '[deleted]',
+                lastName: normalizedUser?.lastName || '',
+                avatarUrl: normalizedUser?.avatarUrl || '',
+                userId: normalizedUser?.id || view.userId || view.user_id || '',
+                email: normalizedUser?.email || '',
               };
             });
             const modifiedViews = await Promise.all(withUsersPromises);
-            return _.merge({}, views, { data: { views: modifiedViews } });
+            return _.merge({}, normalizedViews, { data: { views: modifiedViews } });
           }
 
-          return views;
+          return normalizedViews;
         },
         serializeQueryArgs: ({ endpointName, queryArgs }) => {
           if (queryArgs?.infiniteScroll) {
@@ -237,25 +262,30 @@ const workspacesApi = api
           return !_.eq(currentArg, previousArg);
         },
         providesTags: () => [{ type: TAGS.VIEWS }],
-        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
       assignViewToWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `extensions/api/workspaces/${queryArg.workspaceId}/views/${queryArg.viewId}`,
+          url: mesheryApiPath(
+            `extensions/api/workspaces/${queryArg.workspaceId}/views/${queryArg.viewId}`,
+          ),
           method: 'POST',
         }),
+        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
 
       unassignViewFromWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `extensions/api/workspaces/${queryArg.workspaceId}/views/${queryArg.viewId}`,
+          url: mesheryApiPath(
+            `extensions/api/workspaces/${queryArg.workspaceId}/views/${queryArg.viewId}`,
+          ),
           method: 'DELETE',
         }),
+        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
 
       getTeamsOfWorkspace: builder.query({
         query: (queryArg) => ({
-          url: `extensions/api/workspaces/${queryArg.workspaceId}/teams`,
+          url: mesheryApiPath(`extensions/api/workspaces/${queryArg.workspaceId}/teams`),
           params: {
             search: queryArg.search,
             order: queryArg.order,
@@ -270,7 +300,9 @@ const workspacesApi = api
 
       assignTeamToWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `extensions/api/workspaces/${queryArg.workspaceId}/teams/${queryArg.teamId}`,
+          url: mesheryApiPath(
+            `extensions/api/workspaces/${queryArg.workspaceId}/teams/${queryArg.teamId}`,
+          ),
           method: 'POST',
         }),
         invalidatesTags: () => [{ type: TAGS.TEAMS }],
@@ -278,7 +310,9 @@ const workspacesApi = api
 
       unassignTeamFromWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `extensions/api/workspaces/${queryArg.workspaceId}/teams/${queryArg.teamId}`,
+          url: mesheryApiPath(
+            `extensions/api/workspaces/${queryArg.workspaceId}/teams/${queryArg.teamId}`,
+          ),
           method: 'DELETE',
         }),
         invalidatesTags: () => [{ type: TAGS.TEAMS }],
@@ -286,7 +320,7 @@ const workspacesApi = api
 
       getEventsOfWorkspace: builder.query({
         query: (queryArg) => ({
-          url: `extensions/api/workspaces/${queryArg.workspaceId}/events`,
+          url: mesheryApiPath(`extensions/api/workspaces/${queryArg.workspaceId}/events`),
           params: {
             page: queryArg.page,
             pagesize: queryArg.pagesize,
@@ -299,12 +333,12 @@ const workspacesApi = api
 
       createWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `workspaces`,
+          url: mesheryApiPath(`workspaces`),
           method: 'POST',
           body: {
             name: queryArg.name,
             description: queryArg.description,
-            organization_id: queryArg.organization_id,
+            organizationId: queryArg.organizationId || queryArg.organization_id,
           },
         }),
         invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
@@ -312,12 +346,12 @@ const workspacesApi = api
 
       updateWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `workspaces/${queryArg.id}`,
+          url: mesheryApiPath(`workspaces/${queryArg.id}`),
           method: 'PUT',
           body: {
             name: queryArg.name,
             description: queryArg.description,
-            organization_id: queryArg.organization_id,
+            organizationId: queryArg.organizationId || queryArg.organization_id,
           },
         }),
         invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
@@ -325,7 +359,7 @@ const workspacesApi = api
 
       deleteWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: `workspaces/${queryArg.id}`,
+          url: mesheryApiPath(`workspaces/${queryArg.id}`),
           method: 'DELETE',
         }),
         invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
@@ -358,7 +392,8 @@ export const useCreateWorkspaceMutation = () => {
     trigger({
       name: queryArg.workspacePayload?.name,
       description: queryArg.workspacePayload?.description,
-      organization_id: queryArg.workspacePayload?.organization_id,
+      organizationId:
+        queryArg.workspacePayload?.organizationId || queryArg.workspacePayload?.organization_id,
     });
 
   return [wrappedTrigger, result] as const;
@@ -372,7 +407,8 @@ export const useUpdateWorkspaceMutation = () => {
       id: queryArg.workspaceId,
       name: queryArg.workspacePayload?.name,
       description: queryArg.workspacePayload?.description,
-      organization_id: queryArg.workspacePayload?.organization_id,
+      organizationId:
+        queryArg.workspacePayload?.organizationId || queryArg.workspacePayload?.organization_id,
     });
 
   return [wrappedTrigger, result] as const;

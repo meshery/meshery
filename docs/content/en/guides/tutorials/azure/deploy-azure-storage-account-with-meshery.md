@@ -107,7 +107,7 @@ Azure Service Operator requires a Kubernetes secret with your Azure identity:
 
 ### 4. Design and Deploy an Azure Storage Account
 
-1. In the Meshery UI, navigate to **Kanvas**.
+1. In the Meshery UI, navigate to **Designer**.
 2. Click **Catalog**, filter by **Azure**, and select the **StorageAccount** design.
 3. Click **Clone** to add it to your canvas.
 4. Configure the following properties:
@@ -134,7 +134,7 @@ You have successfully:
 * Connected your Kubernetes cluster to Meshery
 * Installed the Azure Service Operator (Meshery managed CRDs)
 * Created a Kubernetes secret for Azure credentials
-* Designed and deployed an Azure Storage Account using Meshery’s Kanvas
+* Designed and deployed an Azure Storage Account using Meshery's Design Configurator
 
 ---
 

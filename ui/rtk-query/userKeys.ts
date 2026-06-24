@@ -1,7 +1,7 @@
 import {
   mesheryApi,
   useGetUserKeysQuery as useSchemasGetUserKeysQuery,
-} from '@meshery/schemas/dist/mesheryApi';
+} from '@meshery/schemas/mesheryApi';
 
 export const useGetUserKeysQuery = (queryArgs, options) =>
   useSchemasGetUserKeysQuery(

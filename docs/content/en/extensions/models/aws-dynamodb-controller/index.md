@@ -1,7 +1,7 @@
 ---
 title: AWS DynamoDB
 subtitle: Collaborative and visual infrastructure as design for AWS DynamoDB
-image: /extensions/models/aws-dynamodb-controller/icons/color/aws-dynamodb-controller-color.svg
+image: extensions/models/aws-dynamodb-controller/icons/color/aws-dynamodb-controller-color.svg
 aliases: /extensibility/integrations/aws-dynamodb-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-dynamodb-controller
 description: 
@@ -10,28 +10,28 @@ integrations-subcategory: Database
 registrant: GitHub
 components: 
 - name: field-export
-  colorIcon: content/en/extensions/models/aws-dynamodb-controller/components/field-export/icons/color/field-export-color.svg
-  whiteIcon: content/en/extensions/models/aws-dynamodb-controller/components/field-export/icons/white/field-export-white.svg
+  colorIcon: extensions/models/aws-dynamodb-controller/components/field-export/icons/color/field-export-color.svg
+  whiteIcon: extensions/models/aws-dynamodb-controller/components/field-export/icons/white/field-export-white.svg
   description: 
 - name: adopted-resource
-  colorIcon: content/en/extensions/models/aws-dynamodb-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
-  whiteIcon: content/en/extensions/models/aws-dynamodb-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+  colorIcon: extensions/models/aws-dynamodb-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+  whiteIcon: extensions/models/aws-dynamodb-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
 - name: backup
-  colorIcon: content/en/extensions/models/aws-dynamodb-controller/components/backup/icons/color/backup-color.svg
-  whiteIcon: content/en/extensions/models/aws-dynamodb-controller/components/backup/icons/white/backup-white.svg
+  colorIcon: extensions/models/aws-dynamodb-controller/components/backup/icons/color/backup-color.svg
+  whiteIcon: extensions/models/aws-dynamodb-controller/components/backup/icons/white/backup-white.svg
   description: 
 - name: table
-  colorIcon: content/en/extensions/models/aws-dynamodb-controller/components/table/icons/color/table-color.svg
-  whiteIcon: content/en/extensions/models/aws-dynamodb-controller/components/table/icons/white/table-white.svg
+  colorIcon: extensions/models/aws-dynamodb-controller/components/table/icons/color/table-color.svg
+  whiteIcon: extensions/models/aws-dynamodb-controller/components/table/icons/white/table-white.svg
   description: 
 - name: global-table
-  colorIcon: content/en/extensions/models/aws-dynamodb-controller/components/global-table/icons/color/global-table-color.svg
-  whiteIcon: content/en/extensions/models/aws-dynamodb-controller/components/global-table/icons/white/global-table-white.svg
+  colorIcon: extensions/models/aws-dynamodb-controller/components/global-table/icons/color/global-table-color.svg
+  whiteIcon: extensions/models/aws-dynamodb-controller/components/global-table/icons/white/global-table-white.svg
   description: 
 - name: iam-role-selector
-  colorIcon: content/en/extensions/models/aws-dynamodb-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
-  whiteIcon: content/en/extensions/models/aws-dynamodb-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
+  colorIcon: extensions/models/aws-dynamodb-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
+  whiteIcon: extensions/models/aws-dynamodb-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
 components-count: 6
 relationships: 

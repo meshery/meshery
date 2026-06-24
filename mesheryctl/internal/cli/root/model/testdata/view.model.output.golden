@@ -7,9 +7,9 @@ status: enabled
 registrant:
     id: cf1d6acd-4509-e589-1c1e-3f20f8aaf715
     name: Artifact Hub
-    credential_id: null
+    credentialId: null
     type: registry
-    sub_type: ""
+    subType: ""
     kind: artifacthub
     metadata: {}
     status: registered

@@ -1,13 +1,12 @@
-// @ts-nocheck
 import { LinearProgress } from '@sistent/sistent';
 import { useEffect, useRef } from 'react';
-import { useSnackbar } from 'notistack';
+import { useSnackbar, SnackbarKey } from 'notistack';
 import { useSelector } from 'react-redux';
 
 const MesheryProgressBar = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { showProgress } = useSelector((state) => state.ui);
-  const snackbarKey = useRef(null);
+  const snackbarKey = useRef<SnackbarKey | null>(null);
 
   useEffect(() => {
     if (showProgress) {

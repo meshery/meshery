@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@sistent/sistent';
 import moment from 'moment';
-import OpenInNewIcon from '@mui/icons-material/OpenInNewOutlined';
-import WarningIcon from '@mui/icons-material/Warning';
-import CachedIcon from '@mui/icons-material/Cached';
-import dataFetch from '../../../lib/data-fetch';
+import {
+  Cached as CachedIcon,
+  OpenInNewOutlined as OpenInNewIcon,
+  Warning as WarningIcon,
+} from '@/assets/icons';
+import { useLazyQueryRangeQuery } from '@/rtk-query/telemetry';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 import bb, { area, line } from 'billboard.js';
 import {
@@ -71,6 +73,7 @@ function GrafanaCustomChart(props) {
     sparkline,
   } = props;
 
+  const [triggerQueryRange] = useLazyQueryRangeQuery();
   const chartRef = useRef(null);
   const [chart, setChart] = useState(null);
   const timeFormat = 'MM/DD/YYYY HH:mm:ss';
@@ -405,16 +408,16 @@ function GrafanaCustomChart(props) {
   const getData = async (ind, target, chartInst, datasource) => {
     let { xAxis: currentXAxis, chartData: currentChartData } = { xAxis, chartData };
 
-    let queryRangeURL = '';
+    let queryRangeType = '';
     let endpointURL = '';
     let endpointAPIKey = '';
     if (prometheusURL && prometheusURL !== '') {
       endpointURL = prometheusURL;
-      queryRangeURL = `/api/prometheus/query_range/${connectionID}`;
+      queryRangeType = 'prometheus';
     } else if (grafanaURL && grafanaURL !== '') {
       endpointURL = grafanaURL;
       endpointAPIKey = grafanaAPIKey;
-      queryRangeURL = `/api/grafana/query_range/${connectionID}`;
+      queryRangeType = 'grafana';
     }
 
     let { expr } = target;
@@ -532,16 +535,10 @@ function GrafanaCustomChart(props) {
       queryParams += `&url=${encodeURIComponent(endpointURL)}&api-key=${encodeURIComponent(
         endpointAPIKey,
       )}`;
-      dataFetch(
-        `${queryRangeURL}?${queryParams}`,
-        {
-          method: 'GET',
-          credentials: 'include',
-          // headers: headers,
-        },
-        processReceivedData,
-        handleError,
-      );
+      triggerQueryRange({ type: queryRangeType, connectionID, queryParams })
+        .unwrap()
+        .then(processReceivedData)
+        .catch(handleError);
     }
   };
 

@@ -1,7 +1,7 @@
 ---
 title: Parsec
 subtitle: Collaborative and visual infrastructure as design for Parsec
-image: /extensions/models/parsec/icons/color/parsec-color.svg
+image: extensions/models/parsec/icons/color/parsec-color.svg
 aliases: /extensibility/integrations/parsec
 docURL: https://docs.meshery.io/extensibility/integrations/parsec
 description: 

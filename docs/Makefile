@@ -18,18 +18,40 @@
 setup:
 	npm install
 
+## Verify required commands and local dependencies are present.
+check-deps:
+	@echo "Checking if 'npm' and local 'hugo' binary are present..."
+	@command -v npm > /dev/null || { echo "Error: 'npm' not found. Please install Node.js and npm."; exit 1; }
+	@test -x node_modules/.bin/hugo || { echo "Error: Hugo binary not found in node_modules. Please run 'make setup' first."; exit 1; }
+	@echo "Dependencies check passed."
+
 ## Run docs.meshery.io on your local machine with draft and future content enabled.
-site: check-go
-	hugo server -D -F
+site: check-deps check-go
+	npm run dev:site
+
+## Run docs.meshery.io on your local machine in serve mode (without file watching).
+serve: check-deps check-go
+	npm run dev:serve
 
 ## Build docs.meshery.io on your local machine.
-build:
-	hugo
+build: check-deps check-go
+	npm run dev:build
+
+## Build docs.meshery.io for production with optional base URL.
+build-production: check-deps
+	set -e; \
+	if [ -n "$(BASE_URL)" ]; then \
+		base_url="$(BASE_URL)"; \
+		base_url="$${base_url%/}/"; \
+		npm run build:production -- --gc --baseURL "$$base_url"; \
+	else \
+		npm run build:production -- --gc; \
+	fi
 
 ## Empty build cache and run docs.meshery.io on your local machine.
-clean: 
-	hugo --cleanDestinationDir
-	make site
+clean: check-deps
+	npm run dev:clean
+	$(MAKE) site
 
 ## Validate Go is installed by delegating to the root Makefile check.
 check-go:
@@ -110,10 +132,12 @@ docker:
 
 .PHONY: \
 	setup \
+	check-deps \
 	build \
+	build-production \
 	site \
+	serve \
 	clean \
-	site-fast \
 	check-go \
 	docker \
 	docker-install-base-deps \
