@@ -6,7 +6,7 @@ description: Collaborative cloud native visual designer to design and manage inf
 display_title: false
 ---
 
-# <img style="height: 18px; width: 18px; vertical-align: middle;" src="images/icon-color.svg" /> Kanvas
+# <img style="height: 4rem; width: 4rem; vertical-align: middle;" src="images/icon-color.svg" /> Kanvas
 
 Kanvas is a GitOps-infused cloud native <b>visual designer</b> for Kubernetes and cloud native applications. This extension works with your Kubernetes clusters so that you design and manage your infrastructure and applications between members of your team. This extension has two modes: Designer and Operator. Create and share your own Kubernetes deployments and patterns in Designer. Deploy your designs and manage your infrastructure using Operator. It includes multi-user collaboration features that allow teams to work together seamlessly towards achieving their goals in a more timely manner. This extension aims at removing all the challenging aspects of collaboration from the equation so that everyone on your team can be on the same page when it comes to managing cloud-native infrastructure projects.
 
