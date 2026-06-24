@@ -95,7 +95,7 @@ clipboard.on("success", (e) => {
 
     setTimeout(() => {
         button.replaceChild(originalIcon, text);
-        delete button.dataset.isCopying;
+        button.removeAttribute("data-is-copying");
     }, 2000)
 })
 
