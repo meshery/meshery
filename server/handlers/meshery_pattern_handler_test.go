@@ -2,9 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
 	component "github.com/meshery/schemas/models/v1beta2/component"
@@ -641,4 +644,26 @@ func TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) 
 	require.True(t, ok, "design field should be a map")
 	assert.Equal(t, "test-design", designSub["name"])
 	assert.Equal(t, id.String(), designSub["id"])
+}
+
+// TestDeleteMesheryPatternHandler_InvalidIDReturnsBadRequest locks in the
+// early validation guard so empty, "undefined", and nil UUID design IDs are
+// rejected before downstream delete logic runs.
+func TestDeleteMesheryPatternHandler_InvalidIDReturnsBadRequest(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	for _, patternID := range []string{"", "undefined", uuid.Nil.String()} {
+		t.Run(patternID, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodDelete, "/api/pattern/"+patternID, nil)
+			req = mux.SetURLVars(req, map[string]string{"id": patternID})
+			rec := httptest.NewRecorder()
+
+			h.DeleteMesheryPatternHandler(rec, req, nil, nil, nil)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("expected 400, got %d (body=%q)", rec.Code, rec.Body.String())
+			}
+			assertJSONErrorEnvelope(t, rec.Result())
+		})
+	}
 }
