@@ -136,6 +136,34 @@ func TestServeUI_ProviderBasePathStripped(t *testing.T) {
 	}
 }
 
+// TestServeUI_MissingAssetDoesNotCache404 guards against caching error responses:
+// a request for a content-hashed asset that does not exist on disk must 404
+// WITHOUT any Cache-Control/ETag header. Otherwise a transient 404 (e.g. an old
+// hash requested mid-deploy against a pod that doesn't have it) would be cached
+// "immutable" for a year and permanently break the URL until a manual CDN purge.
+func TestServeUI_MissingAssetDoesNotCache404(t *testing.T) {
+	dir := newUITestDir(t)
+	viper.Set("BUILD", "v0.8.999")
+	t.Cleanup(func() { viper.Set("BUILD", "") })
+
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	req := httptest.NewRequest(http.MethodGet, "/_next/static/chunks/missing.js", nil)
+	rec := httptest.NewRecorder()
+
+	h.ServeUI(rec, req, "", dir)
+
+	if got := rec.Code; got != http.StatusNotFound {
+		t.Fatalf("expected 404 for missing asset, got %d", got)
+	}
+	if got := rec.Header().Get("Cache-Control"); got != "" {
+		t.Errorf("404 must not carry a Cache-Control header, got %q", got)
+	}
+	if got := rec.Header().Get("ETag"); got != "" {
+		t.Errorf("404 must not carry an ETag header, got %q", got)
+	}
+}
+
 // TestUICacheHeaders unit-tests the pure decision helper directly across the
 // full prefix/HTML/version matrix, including the dev-mode BUILD sentinels that
 // must suppress the ETag.

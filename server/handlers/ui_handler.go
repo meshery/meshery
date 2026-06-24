@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -25,10 +26,9 @@ var immutableAssetPrefixes = []string{
 
 // uiCacheHeaders computes the release-scoped caching headers for a UI response.
 //
-// It implements a two-tier scheme that lets a CDN (e.g. Cloudflare in
-// respect-origin mode, which is how kanvas.new is fronted) cache UI content for
-// the lifetime of a release and auto-bust it on the next deploy WITHOUT any CDN
-// purge API call:
+// It implements a two-tier scheme that lets a CDN or caching reverse proxy in
+// front of Meshery cache UI content for the lifetime of a release and auto-bust
+// it on the next deploy WITHOUT any CDN purge API call:
 //
 //   - Tier A - immutable versioned assets: requests under
 //     /_next/static/{chunks,css,media}/ carry a content hash in the URL, so they
@@ -127,16 +127,25 @@ func (h *Handler) ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, b
 	}
 	finalPath := filepath.Join(baseFolderPath, filePath.String())
 
-	// Apply release-scoped caching headers BEFORE http.ServeFile. This is
-	// load-bearing for ordering: http.ServeFile -> http.ServeContent reads the
-	// ETag header to emit conditional 304 responses and then writes the body, so
-	// the headers must already be present on w.Header() at call time. See
-	// uiCacheHeaders for the two-tier (immutable assets vs. version-validated
-	// HTML) cache-busting scheme.
-	if cacheControl, etag := uiCacheHeaders(reqURL, filePath.String()); cacheControl != "" {
-		w.Header().Set("Cache-Control", cacheControl)
-		if etag != "" {
-			w.Header().Set("ETag", etag)
+	// Apply release-scoped caching headers BEFORE http.ServeFile, but ONLY when
+	// the target is an existing regular file. If it is missing, http.ServeFile
+	// responds 404; setting long-lived/immutable headers first would let a CDN or
+	// browser cache that 404 - e.g. a content-hashed asset requested mid-deploy
+	// against a pod that doesn't have it yet would be pinned as "immutable" for a
+	// year, breaking the URL until a manual purge: the exact failure this scheme
+	// exists to avoid. Skipping the headers leaves the 404 uncacheable.
+	//
+	// Ordering is load-bearing for the success path: http.ServeFile ->
+	// http.ServeContent reads the ETag header to emit conditional 304 responses
+	// and then writes the body, so the headers must already be present on
+	// w.Header() at call time. See uiCacheHeaders for the two-tier (immutable
+	// assets vs. version-validated HTML) cache-busting scheme.
+	if stat, err := os.Stat(finalPath); err == nil && !stat.IsDir() {
+		if cacheControl, etag := uiCacheHeaders(reqURL, filePath.String()); cacheControl != "" {
+			w.Header().Set("Cache-Control", cacheControl)
+			if etag != "" {
+				w.Header().Set("ETag", etag)
+			}
 		}
 	}
 
