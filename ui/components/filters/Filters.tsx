@@ -61,18 +61,19 @@ import {
   createUploadHandler,
 } from './Filters.fileActions';
 import type { TypeView } from './Filters.types';
+import { useTableState } from '../../utils/hooks/useTableState';
 
 function resetSelectedFilter() {
   return { show: false, filter: null };
 }
 
 function MesheryFilters() {
-  const [page, setPage] = useState(0);
-  const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('');
+  const [page, setPage] = useTableState('filters', 'page', 0);
+  const [search, setSearch] = useTableState('filters', 'search', '');
+  const [sortOrder, setSortOrder] = useTableState('filters', 'sortOrder', '');
   const [count, setCount] = useState(0);
   const modalRef = useRef<{ show: (_args: any) => Promise<string> } | null>(null);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useTableState('filters', 'pageSize', 10);
   const [filters, setFilters] = useState<any[]>([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState<any | null>(null);

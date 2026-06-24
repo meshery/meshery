@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTableState } from '../../utils/hooks/useTableState';
 import { useRouter } from 'next/router';
 import { PROMPT_VARIANTS, ResponsiveDataTable } from '@sistent/sistent';
 import LoadingScreen from '../shared/LoadingState/LoadingComponent';
@@ -63,9 +64,9 @@ const ConnectionTable = ({
   );
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  const [sortOrder, setSortOrder] = useState('created_at desc');
+  const [page, setPage] = useTableState('connections', 'page', 0);
+  const [pageSize, setPageSize] = useTableState('connections', 'pageSize', 10);
+  const [sortOrder, setSortOrder] = useTableState('connections', 'sortOrder', 'created_at desc');
   const [rowData, setRowData] = useState<RowData | null>(null);
   const [rowsExpanded, setRowsExpanded] = useState<number[]>([]);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -73,9 +74,17 @@ const ConnectionTable = ({
     status: 'All',
     kind: 'All',
   });
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string | null>(null);
-  const [kindFilter, setKindFilter] = useState<string | null>(null);
+  const [search, setSearch] = useTableState('connections', 'search', '');
+  const [statusFilter, setStatusFilter] = useTableState<string | null>(
+    'connections',
+    'statusFilter',
+    null,
+  );
+  const [kindFilter, setKindFilter] = useTableState<string | null>(
+    'connections',
+    'kindFilter',
+    null,
+  );
   const {
     notify,
     updateConnectionByIdMutator,
