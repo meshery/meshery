@@ -22,7 +22,7 @@ const WrapIfAdditionalTemplate = ({
   if (!additional) {
     return <div className={classNames}>{children}</div>;
   }
-  const handleChange = ({ target }) => onKeyChange(target.value);
+  const handleChange = ({ target }) => onKeyChange(target.value.trim());
 
   return (
     <Grid2

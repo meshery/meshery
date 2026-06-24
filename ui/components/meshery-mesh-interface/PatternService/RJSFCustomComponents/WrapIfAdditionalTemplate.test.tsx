@@ -98,6 +98,23 @@ describe('WrapIfAdditionalTemplate', () => {
     expect(onKeyChange).toHaveBeenCalledWith('newKey');
   });
 
+  it('trims leading and trailing whitespace from key edits before forwarding to onKeyChange', () => {
+    const onKeyChange = vi.fn();
+    render(
+      <WrapIfAdditionalTemplate
+        children={<div>child</div>}
+        classNames="cls"
+        id="id1"
+        label="key1"
+        onDropPropertyClick={() => vi.fn()}
+        onKeyChange={onKeyChange}
+        schema={{ __ADDITIONAL_PROPERTY__: true }}
+      />,
+    );
+    fireEvent.change(screen.getByTestId('key-input'), { target: { value: '  storage  ' } });
+    expect(onKeyChange).toHaveBeenCalledWith('storage');
+  });
+
   it('disables the input and delete button when readonly is true', () => {
     render(
       <WrapIfAdditionalTemplate
