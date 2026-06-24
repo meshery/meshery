@@ -12,6 +12,28 @@ const TAGS = {
   VIEWS: 'workspaces_views',
   TEAMS: 'workspaces_teams',
 };
+
+const EXPAND_INFO_CONCURRENCY_LIMIT = 3;
+
+const mapWithConcurrency = async <T, R>(
+  items: T[],
+  limit: number,
+  mapper: (item: T, index: number) => Promise<R>,
+): Promise<R[]> => {
+  const results: R[] = [];
+  let nextIndex = 0;
+
+  const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (nextIndex < items.length) {
+      const currentIndex = nextIndex++;
+      results[currentIndex] = await mapper(items[currentIndex], currentIndex);
+    }
+  });
+
+  await Promise.all(workers);
+  return results;
+};
+
 const workspacesApi = api
   .enhanceEndpoints({
     addTagTypes: [TAGS.WORKSPACES, TAGS.DESIGNS, TAGS.ENVIRONMENTS, TAGS.VIEWS, TAGS.TEAMS],
@@ -21,7 +43,7 @@ const workspacesApi = api
     endpoints: (builder) => ({
       getWorkspaces: builder.query({
         keepUnusedDataFor: 0,
-        queryFn: async (queryArgs, { dispatch }, _extraOptions, baseQuery) => {
+        queryFn: async (queryArgs = {}, { dispatch }, _extraOptions, baseQuery) => {
           const { expandInfo, ...otherArgs } = queryArgs;
           const params = urlEncodeParams(otherArgs);
           const workspaces = await baseQuery({
@@ -30,8 +52,12 @@ const workspacesApi = api
           });
 
           if (expandInfo && workspaces.data && !workspaces.error) {
-            const modifiedWorkspaces = await Promise.all(
-              workspaces.data.workspaces.map(async (workspace) => {
+            const workspaceList = workspaces.data.workspaces || [];
+
+            const modifiedWorkspaces = await mapWithConcurrency(
+              workspaceList,
+              EXPAND_INFO_CONCURRENCY_LIMIT,
+              async (workspace) => {
                 const [designs, environments, views, teams] = await Promise.all([
                   dispatch(
                     workspacesApi.endpoints.getDesignsOfWorkspace.initiate({
@@ -73,7 +99,7 @@ const workspacesApi = api
                   viewCount: views.data?.totalCount ?? views.data?.total_count ?? 0,
                   teamCount: teams.data?.totalCount ?? teams.data?.total_count ?? 0,
                 };
-              }),
+              },
             );
 
             return _.merge({}, workspaces, { data: { workspaces: modifiedWorkspaces } });
