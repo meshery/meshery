@@ -109,6 +109,7 @@ export const useConnectionTableOptions = ({
 
             if (order && order !== sortOrder) {
               setSortOrder(order);
+              setPage(0);
             }
             break;
         }

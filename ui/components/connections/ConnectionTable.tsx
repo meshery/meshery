@@ -85,6 +85,13 @@ const ConnectionTable = ({
     'kindFilter',
     null,
   );
+
+  useEffect(() => {
+    setSelectedFilters({
+      status: statusFilter || 'All',
+      kind: kindFilter || 'All',
+    });
+  }, [statusFilter, kindFilter]);
   const {
     notify,
     updateConnectionByIdMutator,
@@ -103,11 +110,6 @@ const ConnectionTable = ({
     connections: '',
   });
 
-  useEffect(() => {
-    if (typeof router.query.searchText === 'string') {
-      setSearch(router.query.searchText);
-    }
-  }, [router.query.searchText]);
 
   const filters = useMemo(
     () => ({
@@ -138,6 +140,7 @@ const ConnectionTable = ({
 
     setKindFilter(kindFilter);
     setStatusFilter(statusFilter);
+    setPage(0);
   };
   // lock for not allowing multiple updates at the same time
   // needs to be a ref because it needs to be shared between renders

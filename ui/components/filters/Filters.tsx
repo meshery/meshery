@@ -110,11 +110,17 @@ function MesheryFilters() {
   const catalogContentRef = useRef<any[]>([]);
   const catalogVisibilityRef = useRef<boolean>(false);
   const disposeConfSubscriptionRef = useRef<{ dispose: () => void } | null>(null);
-  const [visibilityFilter, setVisibilityFilter] = useState<string | null>(null);
+  const [visibilityFilter, setVisibilityFilter] = useTableState<string | null>('filters', 'visibilityFilter', null);
 
   const [selectedFilters, setSelectedFilters] = useState<{ visibility: string }>({
     visibility: 'All',
   });
+
+  useEffect(() => {
+    setSelectedFilters({
+      visibility: visibilityFilter || 'All',
+    });
+  }, [visibilityFilter]);
 
   const {
     data: filtersData,
@@ -203,6 +209,7 @@ function MesheryFilters() {
     const visibilityFilter =
       selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
     setVisibilityFilter(visibilityFilter);
+    setPage(0);
   };
 
   function resetSelectedRowData() {

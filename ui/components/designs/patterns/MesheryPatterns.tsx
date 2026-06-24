@@ -6,6 +6,7 @@ import {
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTableState } from '../../../utils/hooks/useTableState';
 import MesheryPatternGrid from './MesheryPatternGridView';
 import _PromptComponent from '../../PromptComponent';
 import LoadingScreen from '../../shared/LoadingState/LoadingComponent';
@@ -65,11 +66,11 @@ function MesheryPatterns({
   pageTitle = 'Designs',
   arePatternsReadOnly = false,
 }) {
-  const [page, setPage] = useState(0);
-  const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('updated_at desc');
+  const [page, setPage] = useTableState('patterns', 'page', 0);
+  const [search, setSearch] = useTableState('patterns', 'search', '');
+  const [sortOrder, setSortOrder] = useTableState('patterns', 'sortOrder', 'updated_at desc');
   const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useTableState('patterns', 'pageSize', 10);
   const modalRef = useRef();
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -88,8 +89,16 @@ function MesheryPatterns({
   const { view } = router.query;
   const [viewType, setViewType] = useState(view === 'table' ? 'table' : 'grid');
   const { notify } = useNotification();
-  const [visibilityFilter, setVisibilityFilter] = useState(null);
+  const [visibilityFilter, setVisibilityFilter] = useTableState('patterns', 'visibilityFilter', null);
   const { selectedK8sContexts, catalogVisibility, user } = useSelector((state) => state.ui);
+
+  // Sync selectedFilters UI state when visibilityFilter is rehydrated from URL
+  useEffect(() => {
+    setSelectedFilters((prev) => ({
+      ...prev,
+      visibility: visibilityFilter || 'All',
+    }));
+  }, [visibilityFilter]);
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
   const {
@@ -244,11 +253,8 @@ function MesheryPatterns({
   // @ts-ignore
   useEffect(() => {
     document.body.style.overflowX = 'hidden';
-    const visibilityFilter =
-      selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
-    setVisibilityFilter(visibilityFilter);
     return () => (document.body.style.overflowX = 'auto');
-  }, [visibilityFilter]);
+  }, []);
 
   useEffect(() => {
     if (viewType === 'grid') {
@@ -490,6 +496,7 @@ function MesheryPatterns({
     const visibilityFilter =
       selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
     setVisibilityFilter(visibilityFilter);
+    setPage(0);
   };
 
   return (
