@@ -76,7 +76,7 @@ pre.codeblock-pre {
   background-color: transparent;
   font-size: 1.05rem;
 
-  & i::before {
+  & .fa-copy::before {
     color: #f1f3f5 !important;
   }
 }
