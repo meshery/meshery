@@ -461,6 +461,11 @@ function MesheryPatterns({
   const { columnVisibility, setColumnVisibilityByUser, setColumnVisibilityByResponsive } =
     useColumnVisibilityPreference('designs', responsiveColDefaults);
 
+  useEffect(() => {
+    setColumnVisibilityByResponsive(responsiveColDefaults);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [width, setColumnVisibilityByResponsive]);
+
   const options = buildPatternsTableOptions({
     patterns,
     columns,

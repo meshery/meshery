@@ -1,5 +1,7 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/router';
+import { useNotification } from './useNotification';
+import { EVENT_TYPES } from '../../lib/event-types';
 
 /**
  * Persistent table state backed by URL query parameters.
@@ -60,6 +62,7 @@ export function useTableUrlState<F extends Record<string, string> = Record<strin
   options: UseTableUrlStateOptions<F>,
 ) {
   const router = useRouter();
+  const { notify } = useNotification();
   const { tableKey, defaults, rowParam } = options;
   const prefix = `${tableKey}_`;
   const resolvedRowParam = rowParam ?? `${prefix}row`;
@@ -130,7 +133,11 @@ export function useTableUrlState<F extends Record<string, string> = Record<strin
         Object.entries(next).filter(([, v]) => v !== undefined),
       );
 
-      routerRef.current.replace({ query: cleanQuery }, undefined, { shallow: true });
+      routerRef.current.replace(
+        { pathname: routerRef.current.pathname, query: cleanQuery },
+        undefined,
+        { shallow: true },
+      );
     },
     [prefix, defaults],
   );
@@ -143,15 +150,20 @@ export function useTableUrlState<F extends Record<string, string> = Record<strin
   const buildRowDeepLink = useCallback(
     (rowId: string): string => {
       const { query } = routerRef.current;
-      const next: Record<string, string> = {};
+      const params = new URLSearchParams();
       for (const [k, v] of Object.entries(query)) {
-        if (typeof v === 'string') next[k] = v;
+        if (v === undefined) continue;
+        if (Array.isArray(v)) {
+          v.forEach((val) => params.append(k, val));
+        } else {
+          params.set(k, v);
+        }
       }
-      if (rowId) next[resolvedRowParam] = rowId;
-      else delete next[resolvedRowParam];
+      if (rowId) params.set(resolvedRowParam, rowId);
+      else params.delete(resolvedRowParam);
 
       const url = new URL(window.location.href);
-      url.search = new URLSearchParams(next).toString();
+      url.search = params.toString();
       return url.toString();
     },
     [resolvedRowParam],
@@ -161,19 +173,27 @@ export function useTableUrlState<F extends Record<string, string> = Record<strin
    * Copies a deeplink for the given row to the clipboard.
    */
   const copyRowDeepLink = useCallback(
-    (rowId: string) => {
+    async (rowId: string) => {
       const url = buildRowDeepLink(rowId);
-      navigator.clipboard.writeText(url).catch(() => {
+      try {
+        await navigator.clipboard.writeText(url);
+        notify({ message: 'Link copied to clipboard', event_type: EVENT_TYPES.SUCCESS });
+      } catch (err: unknown) {
         // Fallback for non-secure contexts (http in dev)
-        const ta = document.createElement('textarea');
-        ta.value = url;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-      });
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = url;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          notify({ message: 'Link copied to clipboard', event_type: EVENT_TYPES.SUCCESS });
+        } catch (fallbackErr: unknown) {
+          notify({ message: 'Failed to copy link', event_type: EVENT_TYPES.ERROR });
+        }
+      }
     },
-    [buildRowDeepLink],
+    [buildRowDeepLink, notify],
   );
 
   return { tableState, updateTableState, copyRowDeepLink, buildRowDeepLink };

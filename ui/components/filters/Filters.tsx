@@ -401,8 +401,16 @@ function MesheryFilters() {
     return initialVisibility;
   })();
 
-  const { columnVisibility, setColumnVisibilityByUser: setColumnVisibility } =
-    useColumnVisibilityPreference('filters', responsiveColDefaults);
+  const {
+    columnVisibility,
+    setColumnVisibilityByUser: setColumnVisibility,
+    setColumnVisibilityByResponsive,
+  } = useColumnVisibilityPreference('filters', responsiveColDefaults);
+
+  useEffect(() => {
+    setColumnVisibilityByResponsive(responsiveColDefaults);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [width, setColumnVisibilityByResponsive]);
 
   const filter = {
     visibility: {

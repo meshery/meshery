@@ -71,8 +71,14 @@ export function useColumnVisibilityPreference(
 
   const setColumnVisibilityByResponsive = useCallback(
     (next: Record<string, boolean | undefined>) => {
-      // Re-merge: responsive defaults first, then stored user overrides on top.
-      setColumnVisibility({ ...next, ...storedPrefs.current });
+      setColumnVisibility((prev) => {
+        const merged = { ...next, ...storedPrefs.current };
+        const keys = new Set([...Object.keys(prev), ...Object.keys(merged)]);
+        for (const key of keys) {
+          if (prev[key] !== merged[key]) return merged;
+        }
+        return prev;
+      });
     },
     [],
   );
