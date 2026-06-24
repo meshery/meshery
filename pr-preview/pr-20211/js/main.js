@@ -94,9 +94,13 @@ clipboard.on("success", (e) => {
     button.replaceChild(text, icon);
 
     setTimeout(() => {
+        if (!button.isConnected || !button.contains(text)) {
+            button.removeAttribute("data-is-copying");
+            return;
+        }
         button.replaceChild(originalIcon, text);
         button.removeAttribute("data-is-copying");
-    }, 2000)
+    }, 2000);
 })
 
 const toggleBtnSidebarNav = document.querySelector(".nav-toggle-btn--document");
