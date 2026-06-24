@@ -28,7 +28,7 @@ aliases:
 
 - [Bookinfo]({{< ref "guides/infrastructure-management/sample-apps/index.md#bookinfo" >}})
 
-  - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
+  - The sample Bookinfo application displays information about a book, similar to a single catalog entry of an online book store.
 
 - [Httpbin]({{< ref "guides/infrastructure-management/sample-apps/index.md#httpbin" >}})
 
@@ -42,3 +42,4 @@ Identify overhead involved in running the App Mesh, various App Mesh configurati
 1. Grafana integration
 
 The [Meshery Adapter for App Mesh](https://github.com/meshery-extensions/meshery-app-mesh) will connect to App Mesh’s Prometheus and Grafana instances running in the control plane.
+
