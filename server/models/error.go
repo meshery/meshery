@@ -151,7 +151,7 @@ const (
 	ErrMeshsyncStoreUpdatesCode           = "meshery-server-1380"
 	ErrRemoteProviderCapabilitiesCode     = "meshery-server-1420"
 	ErrRemoteProviderAuthExhaustedCode    = "meshery-server-1421"
-	ErrInvalidUUIDCode                    = "meshery-server-1432"
+	ErrInvalidUUIDValueCode               = "meshery-server-1432"
 )
 
 var (
@@ -368,7 +368,7 @@ func ErrGenerateUUID(err error) error {
 }
 
 func ErrInvalidUUID(err error) error {
-	return errors.New(ErrInvalidUUIDCode, errors.Alert, []string{"Invalid UUID"}, []string{err.Error()}, []string{"The provided identifier is not a valid UUID"}, []string{"Provide a valid UUID"})
+	return errors.New(ErrInvalidUUIDValueCode, errors.Alert, []string{"Invalid UUID"}, []string{err.Error()}, []string{"The provided identifier is not a valid UUID"}, []string{"Provide a valid UUID"})
 }
 
 func ErrGrafanaOrg(err error) error {

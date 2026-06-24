@@ -3845,6 +3845,15 @@
         "short_description": "failed to parse YAML configuration",
         "probable_cause": "malformed YAML in component configuration",
         "suggested_remediation": "verify the YAML syntax in your design configuration"
+      },
+      "1432": {
+        "name": "ErrInvalidUUIDValueCode",
+        "code": "1432",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid UUID",
+        "probable_cause": "The provided identifier is not a valid UUID",
+        "suggested_remediation": "Provide a valid UUID"
       }
     }
   }
