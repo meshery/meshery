@@ -112,24 +112,24 @@ export const MainLogoText = styled('img')(({ theme }) => ({
 }));
 
 export const ExpandMoreIcon = styled('svg', {
-  shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
-})(({ isCollapsed, hasChildren, theme }) => ({
+  shouldForwardProp: (prop) =>
+    prop !== 'isCollapsed' && prop !== 'hasChildren' && prop !== 'isDrawerCollapsed',
+})(({ isCollapsed, hasChildren, isDrawerCollapsed, theme }) => ({
   opacity: 0, // Initially hidden
   visibility: 'hidden',
   cursor: 'pointer',
-  display: hasChildren ? 'inline-block' : 'none',
+  display: hasChildren && !isDrawerCollapsed ? 'inline-block' : 'none',
   transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
   transition:
     'transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out',
-  outline: 'none',
 
   // Show icon when the parent element is hovered
-  '&:hover, *:hover > &': {
+  '&:hover, *:hover > &, &:focus, &:focus-visible, *:focus > &, *:focus-visible > &': {
     opacity: 1,
     visibility: 'visible',
   },
 
-  '&:hover': {
+  '&:hover, &:focus, &:focus-visible': {
     fill: theme?.palette?.background?.brand?.default || 'black',
   },
   '&:focus, &:focus-visible': {
@@ -240,7 +240,7 @@ export const SideBarListItem = styled(ListItemButton, {
     color: 'inherit',
     textDecoration: 'none',
   },
-  '&:hover': {
+  '&:hover, &:focus, &:focus-visible, &:focus-within': {
     ...(link && {
       backgroundColor: alpha(theme.palette.navigation.hover, 0.14),
     }),
@@ -250,6 +250,12 @@ export const SideBarListItem = styled(ListItemButton, {
     '.svg-inline--fa': {
       opacity: 1,
       visibility: 'visible',
+    },
+
+    '& $expandMoreIcon': {
+      opacity: 1,
+      visibility: 'visible',
+      transition: 'opacity 200ms ease-in',
     },
   },
   paddingTop: theme.spacing(1.25),

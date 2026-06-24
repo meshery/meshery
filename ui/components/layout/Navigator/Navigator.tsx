@@ -759,14 +759,15 @@ const NavigatorContent = () => {
                       toggleItemCollapse(childId);
                     }}
                     onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
-                      if (e.key === 'Enter') {
+                      if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
                         e.stopPropagation();
                         toggleItemCollapse(childId);
                       }
                     }}
                     role="button"
-                    tabIndex={0}
+                    tabIndex={isDrawerCollapsed ? -1 : 0}
+                    aria-hidden={isDrawerCollapsed}
                     aria-label={`Toggle ${title} menu`}
                     aria-expanded={openItems.includes(childId)}
                     isCollapsed={openItems.includes(childId)}
