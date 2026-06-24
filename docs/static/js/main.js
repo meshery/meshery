@@ -77,14 +77,18 @@ clipboard.on("success", (e) => {
     if (button.dataset.isCopying === "true") {
         return;
     }
-    button.dataset.isCopying = "true";
 
     const icon = button.querySelector('i');
     if (!icon) return;
 
+    button.dataset.isCopying = "true";
+
     const originalIcon = icon.cloneNode(true);
     const text = document.createElement('span');
-    text.innerHTML = '<i class="fas fa-check"></i> Copied!';
+    const checkIcon = document.createElement('i');
+    checkIcon.className = 'fas fa-check';
+    text.appendChild(checkIcon);
+    text.appendChild(document.createTextNode(' Copied!'));
     text.style.color = "#00b39f";
 
     button.replaceChild(text, icon);
@@ -97,16 +101,18 @@ clipboard.on("success", (e) => {
 
 const toggleBtnSidebarNav = document.querySelector(".nav-toggle-btn--document");
 
-toggleBtnSidebarNav.addEventListener("click", () => {
-    const leftContainer = document.querySelector(".left-container");
+if (toggleBtnSidebarNav) {
+    toggleBtnSidebarNav.addEventListener("click", () => {
+        const leftContainer = document.querySelector(".left-container");
 
-    if (leftContainer) {
-        const isActive = leftContainer.classList.toggle('left-container--active');
+        if (leftContainer) {
+            const isActive = leftContainer.classList.toggle('left-container--active');
 
-        const newState = isActive ? 'active' : 'inactive';
-        localStorage.setItem('leftContainer-state', newState);
-    }
-})
+            const newState = isActive ? 'active' : 'inactive';
+            localStorage.setItem('leftContainer-state', newState);
+        }
+    })
+}
 
 const toggleBtnMainNav = document.querySelector(".nav-toggle-btn--main");
 
@@ -123,7 +129,7 @@ document.addEventListener("click", (event) => {
     let sidebarNav = document.getElementById("main_navbar")
     if (sidebarNav) {
         let isClickInsideSidebar = sidebarNav.contains(event.target)
-        let isClickOnToggleButton = toggleBtnMainNav.contains(event.target)
+        let isClickOnToggleButton = toggleBtnMainNav && toggleBtnMainNav.contains(event.target)
 
         if (!isClickInsideSidebar && !isClickOnToggleButton) {
             sidebarNav.classList.remove("main-navbar--active")
