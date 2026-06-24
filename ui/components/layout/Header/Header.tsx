@@ -142,11 +142,9 @@ function K8sContextMenu({
   setActiveContexts = () => {},
   searchContexts = () => {},
 }) {
-  const [anchorEl, setAnchorEl] = useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
   // The dropdown slides up from below; its translate distance scales with the
   // number of context rows it will render so it ends up flush against the badge.
-  const transformProperty = 100 + (contexts?.contexts?.length || 0) * 3.125;
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
@@ -172,8 +170,7 @@ function K8sContextMenu({
     position: 'absolute',
     left: '-7rem',
     zIndex: '-1',
-    bottom: showFullContextMenu ? '40%' : '-110%',
-    transform: showFullContextMenu ? `translateY(${transformProperty}%)` : 'translateY(0)',
+    top: showFullContextMenu ? '60px' : '-2000px',
   };
 
   const StateTransitionDetails = styled(Box)(({ theme }) => ({
@@ -247,11 +244,6 @@ function K8sContextMenu({
     }
   };
 
-  let open = Boolean(anchorEl);
-  if (showFullContextMenu) {
-    open = showFullContextMenu;
-  }
-
   const [isConnectionOpenModal, setIsConnectionOpenModal] = useState(false);
 
   return (
@@ -265,15 +257,7 @@ function K8sContextMenu({
               e.preventDefault();
               setShowFullContextMenu((prev) => !prev);
             }}
-            onMouseOver={(e) => {
-              e.preventDefault();
-              setAnchorEl(true);
-            }}
-            onMouseLeave={(e) => {
-              e.preventDefault();
-              setAnchorEl(false);
-            }}
-            aria-owns={open ? 'menu-list-grow' : undefined}
+            aria-owns={showFullContextMenu ? 'menu-list-grow' : undefined}
             aria-haspopup="true"
             style={{
               marginRight: '0.5rem',
@@ -299,14 +283,6 @@ function K8sContextMenu({
                   e.stopPropagation();
                   setShowFullContextMenu((prev) => !prev);
                 }}
-                onMouseOver={(e) => {
-                  e.stopPropagation();
-                  setAnchorEl(true);
-                }}
-                onMouseLeave={(e) => {
-                  e.stopPropagation();
-                  setAnchorEl(false);
-                }}
               >
                 {contexts?.totalCount || 0}
               </CBadge>
@@ -318,7 +294,7 @@ function K8sContextMenu({
           direction="down"
           style={styleSlider}
           timeout={400}
-          in={open}
+          in={showFullContextMenu}
           mountOnEnter
           unmountOnExit
         >
@@ -332,7 +308,6 @@ function K8sContextMenu({
                     e.target?.className != 'k8s-image' &&
                     !e.target.className.includes('k8s-icon-button')
                   ) {
-                    setAnchorEl(false);
                     setShowFullContextMenu(false);
                   }
                 }}
