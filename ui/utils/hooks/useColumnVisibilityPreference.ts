@@ -39,9 +39,7 @@ export function useColumnVisibilityPreference(
 ): {
   columnVisibility: Record<string, boolean | undefined>;
   /** Call from the column-visibility toolbar. Persists to localStorage. */
-  setColumnVisibilityByUser: (
-    updater: SetStateAction<Record<string, boolean | undefined>>,
-  ) => void;
+  setColumnVisibilityByUser: (updater: SetStateAction<Record<string, boolean | undefined>>) => void;
   /** Call from width-change effects. Merges responsive defaults with stored user prefs. */
   setColumnVisibilityByResponsive: (next: Record<string, boolean | undefined>) => void;
 } {

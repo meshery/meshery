@@ -67,9 +67,11 @@ export function useTableUrlState<F extends Record<string, string> = Record<strin
   const prefix = `${tableKey}_`;
   const resolvedRowParam = rowParam ?? `${prefix}row`;
 
-  // Keep a stable ref of the router so callbacks don't re-create on every render.
+  // Keep stable refs so callbacks don't re-create when router or defaults change.
   const routerRef = useRef(router);
   routerRef.current = router;
+  const defaultsRef = useRef(defaults);
+  defaultsRef.current = defaults;
 
   const tableState = useMemo<TableUrlState<F>>(() => {
     const { query } = router;
@@ -104,12 +106,12 @@ export function useTableUrlState<F extends Record<string, string> = Record<strin
       }
 
       if (updates.pageSize !== undefined) {
-        if (updates.pageSize === (defaults.pageSize ?? 10)) delete next[`${prefix}ps`];
+        if (updates.pageSize === (defaultsRef.current.pageSize ?? 10)) delete next[`${prefix}ps`];
         else next[`${prefix}ps`] = String(updates.pageSize);
       }
 
       if (updates.sortOrder !== undefined) {
-        if (!updates.sortOrder || updates.sortOrder === defaults.sortOrder)
+        if (!updates.sortOrder || updates.sortOrder === defaultsRef.current.sortOrder)
           delete next[`${prefix}sort`];
         else next[`${prefix}sort`] = updates.sortOrder;
       }
@@ -122,7 +124,7 @@ export function useTableUrlState<F extends Record<string, string> = Record<strin
       if (updates.filters) {
         for (const [key, value] of Object.entries(updates.filters)) {
           const paramKey = `${prefix}${key}`;
-          if (!value || value === (defaults.filters as Record<string, string>)?.[key])
+          if (!value || value === (defaultsRef.current.filters as Record<string, string>)?.[key])
             delete next[paramKey];
           else next[paramKey] = value;
         }
@@ -139,7 +141,7 @@ export function useTableUrlState<F extends Record<string, string> = Record<strin
         { shallow: true },
       );
     },
-    [prefix, defaults],
+    [prefix],
   );
 
   /**
