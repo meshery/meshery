@@ -2,19 +2,15 @@ code {
   font-size: 95%;
   color: var(--code);
   word-break: break-word;
-
-  & ::-webkit-scrollbar {
+ & ::-webkit-scrollbar {
     display: none;
   }
 }
-
 code::-webkit-scrollbar {
   display: none;
 }
-
 .td-content {
-
-  p code,
+p code,
   li>code,
   table code {
     color: inherit;
@@ -26,7 +22,6 @@ code::-webkit-scrollbar {
     border-radius: 0.25rem;
   }
 }
-
 .card,
 .td-content .highlight {
   position: relative;
