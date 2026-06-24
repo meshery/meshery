@@ -76,7 +76,12 @@ export const resolveConnectionWizardFlow = (
  * Maps the connection definitions returned by the registry endpoint into the
  * config the wizard renders. Replaces the previously hardcoded kind list so the
  * set of registerable connections is driven by what is registered in the
- * registry. Definitions without a `kind` are skipped.
+ * registry.
+ *
+ * Definitions are skipped when they have no `kind`, or when they carry neither a
+ * connection nor a credential schema (the wizard has no form to render for them);
+ * each skip is logged. Duplicate definitions - matched case-insensitively on
+ * kind|type|subType - collapse to the first one seen.
  */
 export const buildConnectionWizardKindConfigs = (
   definitions?: ConnectionDefinition[] | null,
@@ -96,12 +101,18 @@ export const buildConnectionWizardKindConfigs = (
     const connectionSchema = asSchema(definition.connectionSchema);
     const credentialSchema = asSchema(definition.credentialSchema);
 
-    // A legitimate wizard card MUST have a schema to generate a configuration form.
+    // Skip definitions with no schema - the wizard has no form to render for them.
+    // Note: kinds whose flow does not render a generated form (e.g. the Kubernetes
+    // kubeconfig import) still need a schema to surface here; the registry ships one.
     if (!connectionSchema && !credentialSchema) {
+      console.warn(
+        `[ConnectionWizard] Skipping connection definition "${kind}" - it carries neither a connection nor a credential schema.`,
+      );
       return;
     }
 
-    // We keep the .toLowerCase() to ensure accidental casing differences don't break it.
+    // Dedupe on kind|type|subType, lowercased so accidental casing differences in
+    // the registry payload collapse to a single card. First definition seen wins.
     const dedupeKey = [
       kind.toLowerCase(),
       (definition.type || '').toLowerCase(),
