@@ -34776,7 +34776,7 @@ A &lt;strong&gt;&lt;a href="/pr-preview/pr-20228/concepts/logical/designs/"&gt;d
 &lt;li&gt;
 &lt;p&gt;&lt;a href="/pr-preview/pr-20228/guides/infrastructure-management/sample-apps/#bookinfo"&gt;Bookinfo&lt;/a&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
+&lt;li&gt;The sample Bookinfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;
@@ -34855,7 +34855,7 @@ A &lt;strong&gt;&lt;a href="/pr-preview/pr-20228/concepts/logical/designs/"&gt;d
 &lt;ul&gt;
 &lt;li&gt;&lt;a href="/pr-preview/pr-20228/guides/infrastructure-management/sample-apps/#bookinfo"&gt;Bookinfo&lt;/a&gt;
 &lt;ul&gt;
-&lt;li&gt;The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
+&lt;li&gt;The sample Bookinfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;&lt;a href="/pr-preview/pr-20228/guides/infrastructure-management/sample-apps/#httpbin"&gt;Httpbin&lt;/a&gt;
@@ -34960,7 +34960,7 @@ A &lt;strong&gt;&lt;a href="/pr-preview/pr-20228/concepts/logical/designs/"&gt;d
 &lt;ul&gt;
 &lt;li&gt;&lt;a href="/pr-preview/pr-20228/guides/infrastructure-management/sample-apps/"&gt;Bookinfo&lt;/a&gt;
 &lt;ul&gt;
-&lt;li&gt;The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
+&lt;li&gt;The sample Bookinfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;&lt;a href="/pr-preview/pr-20228/guides/infrastructure-management/sample-apps/"&gt;Httpbin&lt;/a&gt;
