@@ -353,6 +353,52 @@ The following events will trigger one or more workflows:
 1. PR opened or commit pushed to PR branch
 1. PR merged to the master branch
 
+### Workflow Classification System
+
+Meshery workflows are classified by workflow type, security level, trigger model, and CI-gating behavior to help standardize workflow design, security posture, and contributor expectations across the repository.
+
+#### Workflow Types
+
+| Type | Description |
+|---|---|
+| validation-only | Executes linting, testing, schema validation, or policy checks |
+| artifact-producing | Builds or publishes artifacts such as images, binaries, or reports |
+| deployment | Deploys infrastructure or applications |
+| self-mutating | Modifies repository state through automated commits or synchronization |
+| reusable | Shared workflows invoked through workflow_call |
+| scheduled-maintenance | Cron-triggered maintenance or cleanup workflows |
+| orchestration | Coordinates multiple workflows, artifacts, or environments |
+| reporting | Publishes comments, summaries, notifications, or audit results |
+| security | Performs vulnerability, supply-chain, or security posture analysis |
+
+#### Security Levels
+
+| Level | Description |
+|---|---|
+| S0 | Read-only validation workflows with no repository mutation or privileged secrets |
+| S1 | Artifact generation or reporting workflows with limited write access |
+| S2 | Repository-mutating workflows that commit, push, or synchronize repository state |
+| S3 | Deployment or infrastructure workflows using deployment credentials, SSH access, or privileged secrets |
+| S4 | Workflows executing untrusted or externally controlled code under privileged execution contexts such as `pull_request_target` |
+
+#### Trigger Models
+
+| Trigger Model | Description |
+|---|---|
+| event-driven | Triggered automatically by repository events such as `push`, `pull_request`, or `release` |
+| workflow-call | Triggered through `workflow_call` by upstream workflows |
+| manual | Triggered explicitly through `workflow_dispatch` |
+| scheduled | Triggered by cron schedules for recurring automation |
+| hybrid | Combines multiple trigger mechanisms within a single workflow |
+
+#### CI-Gating Behavior
+
+| Value | Description |
+|---|---|
+| required | Must pass before pull requests can merge |
+| optional | Runs automatically but does not block merges |
+| informational | Provides visibility or reporting without affecting mergeability |
+
 ### Release Notes
 
 While use of GitHub Actions facilitates automated builds, ReleaseDrafter is helping with facilitating automated release notes and versioning.
