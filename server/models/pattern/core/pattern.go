@@ -413,7 +413,8 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 			return pattern, err
 		}
 		resolvedCount++
-		pattern.Components = append(pattern.Components, &declaration)
+		decl := declaration
+		pattern.Components = append(pattern.Components, &decl)
 	}
 
 	if totalDecoded == 0 {
