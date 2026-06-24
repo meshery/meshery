@@ -41,14 +41,12 @@ p code,
   border: 1px solid var(--color-grey-light);
   border-radius: 0.25rem;
 }
-
 .td-content .highlight {
   margin: 1rem 0;
   padding: 0.75rem;
   background-color: var(--color-primary-medium);
   overflow: hidden;
 }
-
 .td-content pre>code {
   padding: 10px 0;
   margin: 0;
@@ -62,30 +60,24 @@ p code,
   overflow: auto;
   color: var(--color-secondary-dark);
 }
-
 pre {
   display: block;
   color: var(--color-grey-medium);
-
   & ::-webkit-scrollbar {
     display: none;
   }
 }
-
 pre::-webkit-scrollbar {
   display: none;
 }
-
 .highlight pre {
   border: none !important;
 }
-
 .td-content {
   .highlight pre {
     margin: 0;
     padding: 0;
   }
-
   pre {
     word-wrap: normal;
     background-color: var(--color-primary-medium);
@@ -96,4 +88,4 @@ pre::-webkit-scrollbar {
       display: none;
     }
   }
-}
+}  
