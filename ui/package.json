@@ -148,7 +148,6 @@
     "eslint-plugin-unused-imports": "^4.4.1",
     "http-proxy": "^1.18.1",
     "husky": "^9.1.7",
-    "js-yaml": "^5.1.0",
     "jsdom": "^29.1.1",
     "lint-staged": "^17.0.8",
     "node-polyfill-webpack-plugin": "^4.1.0",
