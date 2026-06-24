@@ -32,7 +32,7 @@ The Meshery Adapter for NGINX Service Mesh includes a handful of sample applicat
 
 - [Bookinfo]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
 
-  - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
+  - The sample Bookinfo application displays information about a book, similar to a single catalog entry of an online book store.
 
 - [Httpbin]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
 
