@@ -113,19 +113,12 @@ ol {
   list-style-type: decimal;
 }
 
-li:has(> a[href*="/installation/quick-start"]) {
+.td-sidebar-nav li:has(> a[href*="/installation/quick-start"]) {
   list-style-type: none;
-  margin-left: -2rem;
-  
-  @media (max-width: 1200px) {
-    margin-left: 0rem;
-  }
-  
 }
 
-li:has(> a[href*="/extensions"]) {
+.td-sidebar-nav li:has(> a[href*="/extensions"]) {
   list-style-type: none;
-  margin-left: -2rem;
 }
 
 dt {
@@ -150,3 +143,24 @@ button {
   border: 1px solid var(--color-secondary-light);
 }
 
+.related-models-list {
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  li {
+    flex: 1 1 30%;
+    max-width: 33%;
+    box-sizing: border-box;
+    padding-right: 1rem;
+
+    @media (max-width: 900px) {
+      flex: 1 1 45%;
+      max-width: 50%;
+    }
+
+    @media (max-width: 480px) {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+  }
+}
