@@ -5,7 +5,7 @@ import {
   useGetUsersForOrgQuery as useSchemasGetUsersForOrgQuery,
 } from '@meshery/schemas/mesheryApi';
 import { api, mesheryApiPath } from './index';
-import { initiateQuery } from './utils';
+import { initiateQuery, shouldOverrideExisting } from './utils';
 import { useGetOrgsQuery } from './organization';
 import { useGetWorkspacesQuery } from './workspace';
 import { normalizeLoadTestPrefs } from '../lib/load-test-prefs';
@@ -258,7 +258,7 @@ export const userApi = api
         },
       }),
     }),
-    overrideExisting: true,
+    overrideExisting: shouldOverrideExisting,
   });
 
 export const {

@@ -4,6 +4,7 @@ import { api, mesheryApiPath } from './index';
 import _ from 'lodash';
 import { normalizePaginatedCollectionResponse } from './transforms';
 import { normalizeUserProfileSummary } from './userProfile';
+import { shouldOverrideExisting } from './utils';
 
 const TAGS = {
   WORKSPACES: 'workspaces',
@@ -17,6 +18,7 @@ const workspacesApi = api
     addTagTypes: [TAGS.WORKSPACES, TAGS.DESIGNS, TAGS.ENVIRONMENTS, TAGS.VIEWS, TAGS.TEAMS],
   })
   .injectEndpoints({
+    overrideExisting: shouldOverrideExisting,
     endpoints: (builder) => ({
       getWorkspaces: builder.query({
         keepUnusedDataFor: 0,

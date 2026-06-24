@@ -1,4 +1,5 @@
 import { api, mesheryApiPath } from './index';
+import { shouldOverrideExisting } from './utils';
 
 const TAGS = {
   FILTERS: 'filters',
@@ -8,6 +9,7 @@ const filters = api
     addTagTypes: [TAGS.FILTERS],
   })
   .injectEndpoints({
+    overrideExisting: shouldOverrideExisting,
     endpoints: (builder) => ({
       getFilters: builder.query({
         query: (queryArg) => ({

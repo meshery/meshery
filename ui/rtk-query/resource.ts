@@ -1,6 +1,8 @@
 import { api, mesheryApiPath } from '.';
+import { shouldOverrideExisting } from './utils';
 
 const resourceApi = api.injectEndpoints({
+  overrideExisting: shouldOverrideExisting,
   endpoints: (builder) => ({
     getAccessActorsInfoOfResource: builder.query({
       query: (queryArg) => ({

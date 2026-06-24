@@ -1,6 +1,8 @@
 import { api, mesheryApiPath } from './index';
+import { shouldOverrideExisting } from './utils';
 
 const userOrgRolesApi = api.injectEndpoints({
+  overrideExisting: shouldOverrideExisting,
   endpoints: (builder) => ({
     getUserOrgRoles: builder.query({
       query: (queryArgs) => ({

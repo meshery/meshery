@@ -1,4 +1,8 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+
+vi.unmock('../utils');
+vi.unmock('@/rtk-query/utils');
+
 import { mesheryApiPath } from '../index';
 
 // meshModel.ts imports from ../utils which depends on ../../store. Mock the

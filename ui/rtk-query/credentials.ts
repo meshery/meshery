@@ -1,4 +1,5 @@
 import { api, mesheryApiPath } from './index';
+import { shouldOverrideExisting } from './utils';
 
 const TAGS = {
   CREDENTIALS: 'credentials',
@@ -40,7 +41,7 @@ const credentialsApi = api.injectEndpoints({
       invalidatesTags: [TAGS.CREDENTIALS],
     }),
   }),
-  overrideExisting: true,
+  overrideExisting: shouldOverrideExisting,
 });
 
 export const {

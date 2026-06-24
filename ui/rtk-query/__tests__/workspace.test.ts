@@ -16,21 +16,22 @@ vi.mock('@/utils/utils', () => ({
   },
 }));
 
+vi.mock('../utils', () => ({
+  shouldOverrideExisting: false,
+  initiateQuery: vi.fn(
+    async (
+      query: { initiate: (variables: unknown, options?: unknown) => unknown },
+      variables?: unknown,
+      options?: unknown,
+    ) => ({
+      data: { stubbed: true, variables, options },
+    }),
+  ),
+}));
+
 beforeAll(() => {
   process.env.RTK_MESHERY_ENDPOINT_PREFIX = 'http://localhost';
 });
-
-// ---------------------------------------------------------------------------
-// workspace.ts re-`injectEndpoints` into the shared `api` defined by
-// @meshery/schemas. Because the file does NOT pass `overrideExisting: true`,
-// any endpoint with a name already defined in the schemas package is ignored
-// (with a console warning). The endpoint definitions in workspace.ts that
-// share names with the schemas — e.g. getWorkspaces, getDesignsOfWorkspace —
-// never take effect at runtime; the schemas' simpler `query` definitions
-// run instead. The tests below assert the URLs/methods that REALLY run.
-// `getEventsOfWorkspace` is unique to workspace.ts, so its definition does
-// take effect — that one is asserted in full.
-// ---------------------------------------------------------------------------
 
 const okResponse = (body: unknown = {}) => ({
   ok: true,

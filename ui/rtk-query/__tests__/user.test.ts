@@ -24,6 +24,7 @@ vi.mock('@/utils/utils', () => ({
 // Mock the rtk-query helper `initiateQuery` so we don't transitively pull
 // `../store` into the test environment.
 vi.mock('../utils', () => ({
+  shouldOverrideExisting: false,
   initiateQuery: vi.fn(
     async (
       query: { initiate: (variables: unknown, options?: unknown) => unknown },
@@ -432,7 +433,7 @@ describe('user endpoints', () => {
     expect(req.url).toContain('filter=role%3Dadmin');
   });
 
-  it('removeUserFromTeam DELETEs the extensions team-user URL', async () => {
+  it('removeUserFromTeam DELETEs the team-user URL', async () => {
     fetchMock.mockResolvedValue(okResponse({}));
     const { api, store } = await setupStore();
     await store.dispatch(
@@ -444,7 +445,7 @@ describe('user endpoints', () => {
     );
     const req = fetchMock.mock.calls[0][0] as Request;
     expect(req.method).toBe('DELETE');
-    expect(req.url).toContain('/api/extensions/api/identity/orgs/org/teams/team/users/user');
+    expect(req.url).toContain('/api/identity/orgs/org/teams/team/users/user');
   });
 
   it('handleUserInvite POSTs to the extensions invite URL', async () => {

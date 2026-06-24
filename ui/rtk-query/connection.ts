@@ -3,6 +3,7 @@ import {
   useGetConnectionsQuery as useSchemasGetConnectionsQuery,
 } from '@meshery/schemas/mesheryApi';
 import { api, mesheryApiPath } from './index';
+import { shouldOverrideExisting } from './utils';
 
 // These must match the tag types declared on the shared `mesheryApi`
 // (see @meshery/schemas/mesheryApi) — the connections list query
@@ -15,7 +16,7 @@ const TAGS = {
 };
 
 const connectionsApi = api.injectEndpoints({
-  overrideExisting: true,
+  overrideExisting: shouldOverrideExisting,
   endpoints: (builder) => ({
     getCredentials: builder.query({
       query: () => ({
