@@ -13,10 +13,11 @@ Meshery uses a logical object model to describe the infrastructure and capabilit
 
 #### What Are Meshery Models?
 
-At the core of this system are **Meshery Models** — packages that define a specific type of infrastructure, application, or capability. These models include:
+At the core of this system are **Meshery Models** - packages that define a specific type of infrastructure, application, or capability. These models include:
 
 - **[Components]({{< ref "concepts/logical/components.md" >}})**: Individual parts of a system (e.g., services, databases).
 - **[Relationships]({{< ref "concepts/logical/relationships/index.md" >}})**: How those parts interact.
+- **[Connections]({{< ref "concepts/logical/connections/index.md" >}})**: How Meshery reaches and manages the resource a model represents. See [Contributing to Connections]({{< ref "project/contributing/contributing-connections.md" >}}).
 - **Metadata**: Visual and behavioral traits, such as icons or capabilities.
 
 Models can describe traditional technologies (like Kubernetes workloads), or more abstract entities (like annotations or diagrams).
@@ -187,7 +188,7 @@ Meshery automatically generates models and components by parsing schemas from va
 When generating components, Meshery processes input schemas and automatically organizes them into **Models**. This grouping process logically binds related components together based on their source.
 
 **Source-Based Grouping:**  
-Components are grouped based on their origin—such as a specific GitHub repository, Helm chart, or Kubernetes cluster. For example:
+Components are grouped based on their origin - such as a specific GitHub repository, Helm chart, or Kubernetes cluster. For example:
 
 - Importing a Helm chart for Prometheus from ArtifactHub creates a "Prometheus" Model containing all resources defined in that chart (Services, Deployments, ConfigMaps, etc.) as components
 - Connecting to a Kubernetes cluster creates a "Kubernetes" Model containing all discovered CRDs as components

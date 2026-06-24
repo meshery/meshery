@@ -9,7 +9,7 @@ description: Manage the lifecycle of your infrastructure by registering each inf
 
 <a name="lifecycle-management"></a>
 
-Meshery manages hundreds of different types of cloud native infrastructure. See the [full set of integrations]({{< ref "reference/extensibility/api.md" >}}).
+Meshery manages hundreds of different types of cloud native infrastructure. See the [full set of integrations]({{< ref "extensions/models/_index.md" >}}).
 
 ## Cloud Native Infrastructure Lifecycle Management
 

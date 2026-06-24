@@ -1,7 +1,7 @@
 ---
 title: Meshery Core
 subtitle: Collaborative and visual infrastructure as design for Meshery Core
-image: /extensions/models/meshery-core/icons/color/meshery-core-color.svg
+image: extensions/models/meshery-core/icons/color/meshery-core-color.svg
 aliases: /extensibility/integrations/meshery-core
 docURL: https://docs.meshery.io/extensibility/integrations/meshery-core
 description: 

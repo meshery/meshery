@@ -132,8 +132,11 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, sear
 // CloneMesheryFilter clones meshery filter to private
 func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error) {
 	var mesheryFilter MesheryFilter
-	filterUUID, _ := uuid.FromString(filterID)
-	err := mfp.DB.First(&mesheryFilter, filterUUID).Error
+	filterUUID, err := uuid.FromString(filterID)
+	if err != nil {
+		return nil, ErrInvalidUUID(err)
+	}
+	err = mfp.DB.First(&mesheryFilter, filterUUID).Error
 	if err != nil || *mesheryFilter.ID == uuid.Nil {
 		return nil, fmt.Errorf("unable to get filter: %w", err)
 	}
@@ -177,12 +180,12 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilter(filter *MesheryFilter) ([]b
 // SaveMesheryFilters batch inserts the given filters
 func (mfp *MesheryFilterPersister) SaveMesheryFilters(filters []MesheryFilter) ([]byte, error) {
 	finalFilters := []MesheryFilter{}
-	nilUserID := ""
+	nilOwner := ""
 	for _, filter := range filters {
 		if filter.Visibility == "" {
 			filter.Visibility = Private
 		}
-		filter.UserID = &nilUserID
+		filter.Owner = &nilOwner
 		if filter.ID == nil {
 			id, err := uuid.NewV4()
 			if err != nil {

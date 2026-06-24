@@ -1,7 +1,7 @@
 ---
 title: Victoria Metrics K8S Stack
 subtitle: Collaborative and visual infrastructure as design for Victoria Metrics K8S Stack
-image: /extensions/models/victoria-metrics-k8s-stack/icons/color/victoria-metrics-k8s-stack-color.svg
+image: extensions/models/victoria-metrics-k8s-stack/icons/color/victoria-metrics-k8s-stack-color.svg
 aliases: /extensibility/integrations/victoria-metrics-k8s-stack
 docURL: https://docs.meshery.io/extensibility/integrations/victoria-metrics-k8s-stack
 description: 
