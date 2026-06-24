@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Performance Management Guides on Documentation</title><link>/pr-preview/pr-20235/guides/performance-management/</link><description>Recent content in Performance Management Guides on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/pr-preview/pr-20235/guides/performance-management/index.xml" rel="self" type="application/rss+xml"/><item><title>Interpreting Performance Test Results</title><link>/pr-preview/pr-20235/guides/performance-management/interpreting-performance-test-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20235/guides/performance-management/interpreting-performance-test-results/</guid><description>&lt;p&gt;Once a performance tests and run, it&amp;rsquo;s disco analysis is performed and test results persisted. Results or downloadable and persisted in the &lt;a href="https://smp-spec.io/"&gt;Cloud Native Performance&lt;/a&gt; format.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Performance Management on Documentation</title><link>/pr-preview/pr-20235/guides/performance-management/</link><description>Recent content in Performance Management on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/pr-preview/pr-20235/guides/performance-management/index.xml" rel="self" type="application/rss+xml"/><item><title>Interpreting Performance Test Results</title><link>/pr-preview/pr-20235/guides/performance-management/interpreting-performance-test-results/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20235/guides/performance-management/interpreting-performance-test-results/</guid><description>&lt;p&gt;Once a performance tests and run, it&amp;rsquo;s disco analysis is performed and test results persisted. Results or downloadable and persisted in the &lt;a href="https://smp-spec.io/"&gt;Cloud Native Performance&lt;/a&gt; format.&lt;/p&gt;
 &lt;h2 id="graphical-view"&gt;
 	Graphical View
 &lt;/h2&gt;
-&lt;img src="../../guides/performance-management/images/performance-dashboard.png" /&gt;
-&lt;img src="../../guides/performance-management/images/chart.png" /&gt;
+&lt;img src="images/performance-dashboard.png" /&gt;
+&lt;img src="images/chart.png" /&gt;
 &lt;h2 id="tests"&gt;
 	Tests
 &lt;/h2&gt;
@@ -30,9 +30,9 @@
 &lt;h2 id="installing-meshery"&gt;
 	Installing Meshery
 &lt;/h2&gt;
-&lt;p&gt;Install and login to Meshery to start running performance benchmarks. See &lt;a href="../../pr-preview/pr-20235/installation/"&gt;Installation&lt;/a&gt; documentation for detailed steps on how to install Meshery.&lt;/p&gt;
+&lt;p&gt;Install and login to Meshery to start running performance benchmarks. See &lt;a href="/pr-preview/pr-20235/installation/"&gt;Installation&lt;/a&gt; documentation for detailed steps on how to install Meshery.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Meshery dashboard&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;a href="../../guides/performance-management/images/smi-dashboard.png"&gt;&lt;img alt="Meshery Dashboard" src="../../guides/performance-management/images/smi-dashboard.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="images/smi-dashboard.png"&gt;&lt;img alt="Meshery Dashboard" src="images/smi-dashboard.png" /&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;If you are looking to run performance benchmarks on cloud native infrastructur, you can use Meshery&amp;rsquo;s cloud native infrastructurelifecycle management capabilities to deploy all kinds of cloud native infrastructure on Kubernets. With Meshery&amp;rsquo;s performance benchmarking feature, you can also deploy you application off the mesh and compare the performance and determine the overhead when the app runs on the mesh.&lt;/p&gt;</description></item><item><title>Using Metrics in Meshery</title><link>/pr-preview/pr-20235/guides/performance-management/meshery-metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20235/guides/performance-management/meshery-metrics/</guid><description>&lt;h2 id="connect-and-use-metrics-in-meshery"&gt;
 	Connect and use metrics in Meshery
 &lt;/h2&gt;
