@@ -52,6 +52,11 @@ independently. For Kubernetes production deployments:
 - **Rehearse and roll back.** Because durable state lives with the Remote
   Provider and the local database is a cache, rolling back the deployment is
   low-risk for data—validate the rollback path anyway.
+- **Edge caches need no purge.** If a CDN or caching reverse proxy fronts
+  Meshery, its UI cache busts itself on upgrade—hashed asset URLs change and the
+  HTML `ETag` follows the build/release version—so no purge step belongs in your
+  upgrade pipeline
+  ([networking]({{< ref "installation/production/networking-and-connectivity.md" >}})).
 
 {{% alert title="Upgrades and the cache" color="info" %}}
 An upgrade that recreates the Server pod discards the local cache; this is
@@ -135,6 +140,8 @@ Work through these before going live. Each group links to its source page.
 - [ ] Broker endpoint reachable from the Server and restricted to its origin.
 - [ ] Egress to the Remote Provider and registries allowed; network policies
       applied.
+- [ ] Any fronting CDN/caching proxy honors origin cache headers (immutable
+      assets, `no-cache` HTML) and never caches `/api/*` or the WebSocket.
 
 ### Security & identity
 
