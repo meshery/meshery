@@ -127,8 +127,8 @@ data and events between each cluster and the Server. Production guidance:
   [High Availability & Resiliency]({{< ref "installation/production/high-availability-and-resiliency.md" >}}).
 - **Static UI assets** are served by the Server with release-scoped cache
   headers, so a CDN or caching reverse proxy in front of Meshery can offload
-  virtually all repeat static-asset requests—worthwhile under many concurrent UI
-  users. See
+  virtually all repeat static-asset requests—worthwhile when serving many
+  concurrent UI users. See
   [Networking & Connectivity]({{< ref "installation/production/networking-and-connectivity.md" >}}).
 - **Registry and models** are held to serve design and relationship operations;
   larger registries increase baseline memory.

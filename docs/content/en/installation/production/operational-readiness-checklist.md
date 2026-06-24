@@ -54,8 +54,8 @@ independently. For Kubernetes production deployments:
   low-risk for data—validate the rollback path anyway.
 - **Edge caches need no purge.** If a CDN or caching reverse proxy fronts
   Meshery, its UI cache busts itself on upgrade—hashed asset URLs change and the
-  HTML `ETag` follows the build/release version—so no purge step belongs in your
-  upgrade pipeline
+  HTML `ETag` follows the build/release version—so a manual cache purge is not
+  required in your upgrade pipeline
   ([networking]({{< ref "installation/production/networking-and-connectivity.md" >}})).
 
 {{% alert title="Upgrades and the cache" color="info" %}}

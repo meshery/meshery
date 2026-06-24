@@ -122,7 +122,7 @@ Two tiers of response are handled differently:
 
 | Response | `Cache-Control` | Validator | Why |
 | :--- | :--- | :--- | :--- |
-| **Immutable versioned assets** under `/_next/static/{chunks,css,media}/…` | `public, max-age=31536000, immutable` | — | The build content hash is in the URL, so the bytes at a given URL never change. A new release ships new hashes (new URLs); old entries simply fall out of use—no purge. |
+| **Immutable versioned assets** under `/_next/static/{chunks,css,media}/...` | `public, max-age=31536000, immutable` | — | The build content hash is in the URL, so the bytes at a given URL never change. A new release ships new hashes (new URLs); old entries simply fall out of use—no purge. |
 | **HTML documents** (`/` → `index.html`, `<route>.html`) | `public, no-cache` | `ETag: "<build version>"` | HTML lives at stable URLs, so it must always be revalidated. While the release is unchanged the origin answers `If-None-Match` with `304`; a new release changes the build version → changes the `ETag` → the next revalidation returns fresh HTML. |
 
 Because browser caches cannot be purged, HTML is never given a positive
