@@ -316,7 +316,7 @@ describe('ConnectionTable', () => {
   });
 
   it('hydrates search from a string router query and passes it to the connections query', async () => {
-    router.query = { searchText: 'cluster-a' };
+    router.query = { con_q: 'cluster-a' };
 
     render(<ConnectionTable />);
 
