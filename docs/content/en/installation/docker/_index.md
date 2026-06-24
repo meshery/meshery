@@ -1,11 +1,12 @@
 ---
-title: Docker
+title: Install on Docker
 categories: [docker]
 aliases:
 - /installation/platforms/docker
 display_title: false
-image: /installation/docker/images/docker.svg
+image: installation/docker/images/docker.svg
 description: Install Meshery on Docker
+weight: 10
 ---
 
 {{< installation/installation_prerequisites >}}
@@ -13,7 +14,6 @@ description: Install Meshery on Docker
 ## Deploying Meshery on Docker
 
 Follow these installation steps to use Docker and Docker Compose to run Meshery. Users often choose this installation approach in order to run Meshery on their local machine. If you need to install *Docker*, see [Getting Started with Docker](https://docs.docker.com/get-started/), and if you need to install *Docker Compose*, see [Installing Docker Compose](https://docs.docker.com/compose/install/).
-
 
 Start Meshery by executing the following command:
 
@@ -35,13 +35,14 @@ To use a custom kubeconfig location with Docker Compose, modify your `docker-com
       - /custom/path/to/.kube:/custom/path/to/.kube:ro` >}}
 
 This is useful when:
+
 - Providing a Meshery deployment with a predefined Kubernetes context
 - Running Meshery in containerized environments with custom kubeconfig paths
 - Managing multiple Kubernetes configurations
 
 ## Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
+Optionally, you can verify the health of your Meshery deployment using [mesheryctl system check]({{< ref "reference/references/mesheryctl/system/check.md" >}}).
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 

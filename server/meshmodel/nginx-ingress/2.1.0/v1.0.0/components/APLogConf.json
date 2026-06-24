@@ -15,9 +15,8 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",
@@ -54,16 +53,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#009639",
@@ -205,6 +204,7 @@
     "kind": "APLogConf",
     "schema": "{\n \"description\": \"APLogConf is the Schema for the APLogConfs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"APLogConfSpec defines the desired state of APLogConf\",\n   \"properties\": {\n    \"content\": {\n     \"properties\": {\n      \"escaping_characters\": {\n       \"items\": {\n        \"properties\": {\n         \"from\": {\n          \"type\": \"string\"\n         },\n         \"to\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"format\": {\n       \"enum\": [\n        \"splunk\",\n        \"arcsight\",\n        \"default\",\n        \"user-defined\",\n        \"grpc\"\n       ],\n       \"type\": \"string\"\n      },\n      \"format_string\": {\n       \"type\": \"string\"\n      },\n      \"list_delimiter\": {\n       \"type\": \"string\"\n      },\n      \"list_prefix\": {\n       \"type\": \"string\"\n      },\n      \"list_suffix\": {\n       \"type\": \"string\"\n      },\n      \"max_message_size\": {\n       \"pattern\": \"^([1-9]|[1-5][0-9]|6[0-4])k$\",\n       \"type\": \"string\"\n      },\n      \"max_request_size\": {\n       \"pattern\": \"^([1-9]|[1-9][0-9]|[1-9][0-9]{2}|[1-9][0-9]{3}|10[0-2][0-9][0-9]|[1-9]k|10k|any)$\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"filter\": {\n     \"properties\": {\n      \"request_type\": {\n       \"enum\": [\n        \"all\",\n        \"illegal\",\n        \"blocked\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"AP Log Conf\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

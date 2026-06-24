@@ -92,20 +92,26 @@ clipboard.on("success", (e)=>{
 const toggleBtnSidebarNav=document.querySelector(".nav-toggle-btn--document");
 
 toggleBtnSidebarNav.addEventListener("click",()=>{
-    let sidebarNav=document.querySelector(".left-container")
-    if(sidebarNav){
-        sidebarNav.classList.toggle("left-container--active")
+    const leftContainer = document.querySelector(".left-container");
+
+    if(leftContainer){
+        const isActive = leftContainer.classList.toggle('left-container--active');
+
+        const newState = isActive ? 'active' : 'inactive';
+        localStorage.setItem('leftContainer-state', newState);   
     }
 })
 
 const toggleBtnMainNav=document.querySelector(".nav-toggle-btn--main");
 
-toggleBtnMainNav.addEventListener("click",()=>{
-    let sidebarNav=document.getElementById("main_navbar")
-    if(sidebarNav){
-        sidebarNav.classList.toggle("main-navbar--active")
-    }
-})
+if (toggleBtnMainNav) {
+    toggleBtnMainNav.addEventListener("click",()=>{
+        let sidebarNav=document.getElementById("main_navbar")
+        if(sidebarNav){
+            sidebarNav.classList.toggle("main-navbar--active")
+        }
+    })
+}
 
 document.addEventListener("click", (event) => {
     let sidebarNav = document.getElementById("main_navbar")

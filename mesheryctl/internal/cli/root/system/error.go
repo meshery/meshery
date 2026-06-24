@@ -25,35 +25,55 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrHealthCheckFailedCode             = "mesheryctl-1060"
-	ErrStopMesheryCode                   = "mesheryctl-1062"
-	ErrResetMeshconfigCode               = "mesheryctl-1063"
-	ErrApplyManifestCode                 = "mesheryctl-1064"
-	ErrApplyOperatorManifestCode         = "mesheryctl-1065"
-	ErrCreateDirCode                     = "mesheryctl-1066"
-	ErrUnsupportedPlatformCode           = "mesheryctl-1067"
-	ErrRetrievingCurrentContextCode      = "mesheryctl-1068"
-	ErrSettingDefaultContextToConfigCode = "mesheryctl-1069"
-	ErrSettingTemporaryContextCode       = "mesheryctl-1070"
-	ErrRestartMesheryCode                = "mesheryctl-1072"
-	ErrK8sQueryCode                      = "mesheryctl-1073"
-	ErrK8sConfigCode                     = "mesheryctl-1074"
-	ErrInitPortForwardCode               = "mesheryctl-1075"
-	ErrRunPortForwardCode                = "mesheryctl-1076"
-	ErrFailedGetEphemeralPortCode        = "mesheryctl-1077"
-	ErrUnmarshalDockerComposeCode        = "mesheryctl-1078"
-	ErrCreatingDockerClientCode          = "mesheryctl-1079"
-	ErrWriteConfigCode                   = "mesheryctl-1080"
-	ErrContextContentCode                = "mesheryctl-1081"
-	ErrSwitchChannelResponseCode         = "mesheryctl-1082"
-	ErrGetCurrentContextCode             = "mesheryctl-1083"
-	ErrSetCurrentContextCode             = "mesheryctl-1084"
-	ErrTokenContextCode                  = "mesheryctl-1085"
-	ErrProviderInfoCode                  = "mesheryctl-1086"
-	ErrValidProviderCode                 = "mesheryctl-1087"
-	ErrUnmarshallConfigCode              = "mesheryctl-1088"
-	ErrUploadFileParamsCode              = "mesheryctl-1089"
-	ErrContextNotExistsCode              = "mesheryctl-1196"
+	ErrHealthCheckFailedCode              = "mesheryctl-1060"
+	ErrStopMesheryCode                    = "mesheryctl-1062"
+	ErrResetMeshconfigCode                = "mesheryctl-1063"
+	ErrApplyManifestCode                  = "mesheryctl-1064"
+	ErrApplyOperatorManifestCode          = "mesheryctl-1065"
+	ErrCreateDirCode                      = "mesheryctl-1066"
+	ErrUnsupportedPlatformCode            = "mesheryctl-1067"
+	ErrRetrievingCurrentContextCode       = "mesheryctl-1068"
+	ErrSettingDefaultContextToConfigCode  = "mesheryctl-1069"
+	ErrSettingTemporaryContextCode        = "mesheryctl-1070"
+	ErrRestartMesheryCode                 = "mesheryctl-1072"
+	ErrK8sQueryCode                       = "mesheryctl-1073"
+	ErrK8sConfigCode                      = "mesheryctl-1074"
+	ErrInitPortForwardCode                = "mesheryctl-1075"
+	ErrRunPortForwardCode                 = "mesheryctl-1076"
+	ErrFailedGetEphemeralPortCode         = "mesheryctl-1077"
+	ErrUnmarshalDockerComposeCode         = "mesheryctl-1078"
+	ErrCreatingDockerClientCode           = "mesheryctl-1079"
+	ErrWriteConfigCode                    = "mesheryctl-1080"
+	ErrContextContentCode                 = "mesheryctl-1081"
+	ErrSwitchChannelResponseCode          = "mesheryctl-1082"
+	ErrGetCurrentContextCode              = "mesheryctl-1083"
+	ErrSetCurrentContextCode              = "mesheryctl-1084"
+	ErrTokenContextCode                   = "mesheryctl-1085"
+	ErrProviderInfoCode                   = "mesheryctl-1086"
+	ErrValidProviderCode                  = "mesheryctl-1087"
+	ErrUnmarshallConfigCode               = "mesheryctl-1088"
+	ErrUploadFileParamsCode               = "mesheryctl-1089"
+	ErrContextNotExistsCode               = "mesheryctl-1196"
+	ErrSystemSetInvalidReleaseChannelCode = "mesheryctl-1205"
+	ErrSystemSetInvalidEdgeReleaseCode    = "mesheryctl-1206"
+	ErrSystemCheckInvalidCliVersionCode   = "mesheryctl-1207"
+	ErrDockerNotRunningCode               = "mesheryctl-1208"
+	ErrDockerContextCode                  = "mesheryctl-1209"
+	ErrDockerStartCode                    = "mesheryctl-1210"
+	ErrDockerUnknownCode                  = "mesheryctl-1211"
+	ErrOperatorUnsupportedPlatformCode    = "mesheryctl-1219"
+	ErrLogoutCode                         = "mesheryctl-1229"
+	ErrSystemAzureAksGetCredentialsCode   = "mesheryctl-1234"
+	ErrSystemAzureCliNotFoundCode         = "mesheryctl-1235"
+	ErrSystemAwsCliNotFoundCode           = "mesheryctl-1236"
+	ErrSystemGkeGenerateConfigCode        = "mesheryctl-1237"
+	ErrSystemEksGetCredentialsCode        = "mesheryctl-1238"
+	ErrSystemMinikubeKubeconfigCode       = "mesheryctl-1239"
+	ErrValidateVersionCode                = "mesheryctl-1240"
+	ErrUpdateContainersCode               = "mesheryctl-1241"
+	ErrFetchContainersCode                = "mesheryctl-1242"
+	ErrInvalidComponentCode               = "mesheryctl-1243"
+	ErrMesheryEndpointNotAccessibleCode   = "mesheryctl-1244"
 )
 
 var (
@@ -112,6 +132,22 @@ func ErrHealthCheckFailed(err error) error {
 		[]string{"Ensure Mesheryctl is running and has the right configurations."})
 }
 
+func ErrSystemAwsCliNotFound(err error) error {
+	return errors.New(ErrSystemAwsCliNotFoundCode, errors.Alert, []string{"[System] AWS CLI not found"}, []string{"The AWS CLI is required to configure an EKS connection but was not found on your system"}, []string{err.Error()}, []string{"Please install the AWS CLI from https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html and ensure it is accessible in your system's PATH"})
+}
+
+func ErrSystemGkeGenerateConfig(err error) error {
+	return errors.New(ErrSystemGkeGenerateConfigCode, errors.Alert, []string{"[System] Failed to generate GKE config"}, []string{"There was an error while generating the GKE cluster configuration"}, []string{err.Error()}, []string{"Ensure you have the necessary Google Cloud permissions and that your gcloud CLI is authenticated properly"})
+}
+
+func ErrSystemMinikubeKubeconfig(err error) error {
+	return errors.New(ErrSystemMinikubeKubeconfigCode, errors.Alert, []string{"[System] Minikube kubeconfig error"}, []string{"There was an error reading or processing the default minikube kubeconfig"}, []string{err.Error()}, []string{"Ensure minikube is running and that your local kubeconfig file is accessible at the default location"})
+}
+
+func ErrSystemEksGetCredentials(err error) error {
+	return errors.New(ErrSystemEksGetCredentialsCode, errors.Alert, []string{"[System] Unable to get EKS cluster credentials"}, []string{"There was an error while fetching the EKS cluster credentials or reading inputs"}, []string{err.Error()}, []string{"Ensure that the EKS cluster name and region are correct, and that you have the necessary AWS permissions"})
+}
+
 func ErrStopMeshery(err error) error {
 	return errors.New(ErrStopMesheryCode, errors.Alert, []string{"Error stopping Meshery"}, []string{err.Error()}, []string{"Meshery server is not stopped, some of the docker containers are still running"}, []string{"Verify all docker containers of Meshery server are stopped"})
 }
@@ -138,6 +174,14 @@ func ErrCreateDir(err error, obj string) error {
 	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error creating directory ", obj}, []string{err.Error()}, []string{}, []string{})
 }
 
+func ErrSystemAzureCliNotFound(err error) error {
+	return errors.New(ErrSystemAzureCliNotFoundCode, errors.Alert, []string{"[System] Azure CLI not found"}, []string{"The Azure CLI is required but was not found on your system"}, []string{err.Error()}, []string{"Please install the Azure CLI from https://learn.microsoft.com/en-us/cli/azure/install-azure-cli and ensure it is accessible in your system's PATH"})
+}
+
+func ErrSystemAzureAksGetCredentials(err error) error {
+	return errors.New(ErrSystemAzureAksGetCredentialsCode, errors.Alert, []string{"[System] Unable to get AKS cluster credentials"}, []string{"There was an error while fetching the AKS cluster credentials"}, []string{err.Error()}, []string{"Ensure that the AKS cluster name and resource group are correct, and that you have the necessary permissions to access the cluster"})
+}
+
 func ErrUnmarshalDockerCompose(err error, obj string) error {
 	return errors.New(
 		ErrUnmarshalDockerComposeCode,
@@ -145,7 +189,7 @@ func ErrUnmarshalDockerCompose(err error, obj string) error {
 		[]string{"Error processing JSON response from Meshery Server", obj},
 		[]string{err.Error()},
 		[]string{"Either the JSON response is invalid or the Response is distorted"},
-		[]string{"Ensure Meshery Server is running and you have a strong newtwork connection"})
+		[]string{"Ensure Meshery Server is running and you have a strong network connection"})
 }
 
 func ErrUnsupportedPlatform(platform string, config string) error {
@@ -339,4 +383,142 @@ func ErrUploadFileParams(err error) error {
 		[]string{err.Error()},
 		[]string{"Unable to upload parameters from config file with provided context"},
 		[]string{"Ensure you have a strong network connection and the right configuration set in your Meshconfig file." + FormatErrorReference()})
+}
+
+func ErrSystemSetInvalidReleaseChannel(channel string) error {
+	return errors.New(
+		ErrSystemSetInvalidReleaseChannelCode,
+		errors.Fatal,
+		[]string{"Invalid release channel"},
+		[]string{fmt.Sprintf("Unable to set release channel to %s", channel)},
+		[]string{"A wrong release channel was specified"},
+		[]string{"Specify a valid release channel. Valid channels are 'stable' and 'edge'. "})
+}
+
+func ErrSystemSetInvalidEdgeRelease(channel string) error {
+	return errors.New(
+		ErrSystemSetInvalidEdgeReleaseCode,
+		errors.Fatal,
+		[]string{"Invalid edge release version"},
+		[]string{fmt.Sprintf("Unable to set edge release channel to %s", channel)},
+		[]string{"A wrong edge release version was specified"},
+		[]string{"The edge release channel only supports 'latest' as version argument. "})
+}
+
+func ErrSystemCheckInvalidCliVersion(version string) error {
+	return errors.New(
+		ErrSystemCheckInvalidCliVersionCode,
+		errors.Fatal,
+		[]string{"Invalid CLI version"},
+		[]string{fmt.Sprintf("The CLI version %s is not supported", version)},
+		[]string{"The CLI version is incompatible with the Meshery Server version"},
+		[]string{"Please upgrade your CLI to the latest version or to a version compatible with your Meshery Server. "})
+}
+
+func ErrDockerNotRunning(err error) error {
+	return errors.New(
+		ErrDockerNotRunningCode,
+		errors.Fatal,
+		[]string{"Docker is not running"},
+		[]string{err.Error()},
+		[]string{"Docker daemon is not running"},
+		[]string{"Please start Docker and run the command again. "})
+}
+
+func ErrDockerContext(err error) error {
+	return errors.New(
+		ErrDockerContextCode,
+		errors.Fatal,
+		[]string{"Docker context issue"},
+		[]string{err.Error()},
+		[]string{"The Docker context selected is not configured properly to connect to the Docker daemon"},
+		[]string{"Please ensure that the correct Docker context is selected and configured properly to connect to the Docker daemon. Use `docker context ls` to list all available contexts and `docker context inspect [context-name]` to inspect the configuration of a specific context."})
+}
+
+func ErrDockerStart(err error) error {
+	return errors.New(
+		ErrDockerStartCode,
+		errors.Fatal,
+		[]string{"Failed to start Docker"},
+		[]string{err.Error()},
+		[]string{"Docker daemon failed to start"},
+		[]string{"Please check the Docker installation and try starting Docker manually. If the issue persists, refer to Docker's documentation or support for troubleshooting steps."})
+}
+
+func ErrDockerUnknown(err error) error {
+	return errors.New(
+		ErrDockerUnknownCode,
+		errors.Fatal,
+		[]string{"Docker error"},
+		[]string{err.Error()},
+		[]string{"An unknown error occurred while trying to connect / interact with Docker"},
+		[]string{"Please ensure Docker is installed and running. If the issue persists, check the Docker configuration and logs for more details."})
+}
+
+func ErrOperatorUnsupportedPlatform(platform string) error {
+	return errors.New(
+		ErrOperatorUnsupportedPlatformCode,
+		errors.Fatal,
+		[]string{"Operator unsupported platform"},
+		[]string{fmt.Sprintf("The platform %s is not supported for operator health checks", platform)},
+		[]string{"The operator health checks can only be run on Kubernetes platform"},
+		[]string{"Please switch to a Kubernetes context to run operator health checks. "})
+}
+
+func ErrLogout(err error) error {
+	return errors.New(ErrLogoutCode, errors.Fatal,
+		[]string{"Logout failed"},
+		[]string{err.Error()},
+		[]string{"Unable to complete the logout operation"},
+		[]string{"Check the token file path and permissions. The underlying error will provide more details."})
+}
+
+func ErrValidateVersion(err error) error {
+	return errors.New(
+		ErrValidateVersionCode,
+		errors.Alert,
+		[]string{"Error validating Meshery version"},
+		[]string{err.Error()},
+		[]string{"The version in the context is invalid or unsupported"},
+		[]string{"Verify the version in your context is valid. " + FormatErrorReference()})
+}
+
+func ErrUpdateContainers(err error) error {
+	return errors.New(
+		ErrUpdateContainersCode,
+		errors.Alert,
+		[]string{"Error updating Meshery containers"},
+		[]string{err.Error()},
+		[]string{"Failed to update Meshery container images"},
+		[]string{"Ensure Docker is running and you have a stable network connection"})
+}
+
+func ErrFetchContainers(err error) error {
+	return errors.New(
+		ErrFetchContainersCode,
+		errors.Alert,
+		[]string{"Error fetching container status"},
+		[]string{err.Error()},
+		[]string{"Failed to fetch the list of running containers"},
+		[]string{"Ensure Docker is running and docker-compose is available"})
+}
+
+func ErrInvalidComponent(component string) error {
+	return errors.New(
+		ErrInvalidComponentCode,
+		errors.Alert,
+		[]string{"Invalid component specified"},
+		[]string{fmt.Sprintf("The component '%s' is not a valid Meshery component", component)},
+		[]string{"An invalid or unsupported component name was provided in the context"},
+		[]string{"Verify the component name in your meshconfig context. Run `mesheryctl system context view` to check configured components."})
+}
+
+func ErrMesheryEndpointNotAccessible() error {
+	return errors.New(
+		ErrMesheryEndpointNotAccessibleCode,
+		errors.Alert,
+		[]string{"Meshery endpoint is not yet accessible"},
+		[]string{"Meshery endpoint did not become accessible within the expected time"},
+		[]string{"Meshery server may still be initializing or failed to start"},
+		[]string{"Check the status later with `mesheryctl system status`"})
 }

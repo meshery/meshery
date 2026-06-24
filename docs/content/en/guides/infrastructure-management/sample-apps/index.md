@@ -22,7 +22,7 @@ A popular way of exposing your cluster is by using [Ingress](https://kubernetes.
 1. Click on the sample application you want to deploy. This might take up to a minute. You will be notified when the sample application has been deployed.
 <a href="./images/consul-imagehub-success.png"><img alt="ImageHub deployed" style="width:500px;height:auto;display:flex;padding-top:10px;" src="./images/consul-imagehub-success.png" /></a>
 
-### [BookInfo](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md#what-is-the-bookinfo-application)
+### BookInfo
 
 Originally built by Istio, BookInfo is a sample application which on deployment displays information about a book, similar to a single catalog entry of an online book store. Displayed on the page is a description of the book, book details (ISBN, number of pages, and so on), and a few book reviews. The application comprises of four microservices:
 
@@ -45,10 +45,9 @@ Emojivoto is a microservice application, originally built by Linkerd that allows
 
 <a href="./images/emojivoto.png"><img alt="Emojivoto" style="width:500px;height:auto;" src="./images/emojivoto.png" /></a>
 
-### [ImageHub](https://layer5.io/projects/image-hub)
+### ImageHub
 
 Image Hub is a sample application for exploring WebAssembly modules used as Envoy filters. The application was originally written to run on Consul. However, it doesn't have any dependency on Consul and can be deployed on any infrastructure. These modules can be used to implement multi-tenancy or to implement per user rate limiting in your application’s endpoints, without messing with your application infrastructure. 
-Follow this tutorial to set up [ImageHub with Ingress](https://github.com/layer5io/image-hub#use-image-hub)
 
 <a href="./images/imagehub-on-consul.png"><img alt="Imagehub-on-Consul" style="width:500px;height:auto;" src="./images/imagehub-on-consul.png" /></a>
 

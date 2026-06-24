@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -203,6 +203,7 @@
     "kind": "ApprovalPolicy",
     "schema": "{\n \"description\": \"ApprovalPolicy is the Schema for the approvalpolicies API\",\n \"properties\": {\n  \"maintenanceWindowRef\": {\n   \"description\": \"Specifies MaintenanceWindow reference for ApprovalPolicy. Recommendation will be executed in this MaintenanceWindow without manual approval.\",\n   \"properties\": {\n    \"apiGroup\": {\n     \"type\": \"string\"\n    },\n    \"kind\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n     \"type\": \"string\"\n    },\n    \"namespace\": {\n     \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  },\n  \"targets\": {\n   \"description\": \"Specifies the list of TargetRef for which the ApprovalPolicy will be effective for.\",\n   \"items\": {\n    \"properties\": {\n     \"group\": {\n      \"type\": \"string\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"operations\": {\n      \"items\": {\n       \"properties\": {\n        \"group\": {\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"group\",\n        \"kind\"\n       ],\n       \"type\": \"object\"\n      },\n      \"type\": \"array\"\n     }\n    },\n    \"required\": [\n     \"group\",\n     \"kind\"\n    ],\n    \"type\": \"object\"\n   },\n   \"type\": \"array\"\n  }\n },\n \"required\": [\n  \"maintenanceWindowRef\"\n ],\n \"title\": \"Approval Policy\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

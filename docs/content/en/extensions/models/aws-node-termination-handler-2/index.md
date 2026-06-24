@@ -1,7 +1,7 @@
 ---
 title: AWS Node Termination Handler
 subtitle: Collaborative and visual infrastructure as design for AWS Node Termination Handler
-image: /extensions/models/aws-node-termination-handler-2/icons/color/aws-node-termination-handler-2-color.svg
+image: extensions/models/aws-node-termination-handler-2/icons/color/aws-node-termination-handler-2-color.svg
 aliases: /extensibility/integrations/aws-node-termination-handler-2
 docURL: https://docs.meshery.io/extensibility/integrations/aws-node-termination-handler-2
 description: 
@@ -10,15 +10,15 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: terminator
-  colorIcon: content/en/extensions/models/aws-node-termination-handler-2/components/terminator/icons/color/terminator-color.svg
-  whiteIcon: content/en/extensions/models/aws-node-termination-handler-2/components/terminator/icons/white/terminator-white.svg
+  colorIcon: extensions/models/aws-node-termination-handler-2/components/terminator/icons/color/terminator-color.svg
+  whiteIcon: extensions/models/aws-node-termination-handler-2/components/terminator/icons/white/terminator-white.svg
   description: 
 components-count: 1
 relationships: 
 relationship-count: 0
 featureList: [
   "Keep revision history and audit trail of all configuration changes",
-  "Use Kanvas&lsquo;s visual designer to explore your App Mesh configuration",
+  "Use Meshery to explore your App Mesh configuration",
   "Deploy Meshery on your EKS clusters for App Mesh management"
 ]
 howItWorks: "Collaborative Infrastructure as Design"

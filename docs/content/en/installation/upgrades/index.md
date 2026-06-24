@@ -1,8 +1,9 @@
 ---
-title: Upgrading Meshery and all of its components
+title: Upgrading
 display_title: false
 categories: [installation]
-description: How to upgrade Meshery and all of its components
+description: How to upgrade Meshery and each of its components
+weight: 30
 ---
 
 # Upgrade Guide
@@ -19,7 +20,7 @@ Various components of Meshery will need to be upgraded as new releases become av
 
 Some of the components must be upgraded simultaneously, while others may be upgraded independently. The following table depicts components, their versions, and deployment units (deployment groups).
 
-### Versioning of Meshery components
+### Versioning of Meshery Components
 
 <table class="mesherycomponents">
     <tr>
@@ -68,7 +69,7 @@ Docker Deployment: Watchtower updates this component in accordance with the user
         </td>
     </tr>
     <tr>
-        <td rowspan="2" class="childcomponent"><a style="color:white;" href="/extensibility/providers">Remote Providers</a></td>
+        <td rowspan="2" class="childcomponent"><a style="color:white;" href="{{< ref "reference/extensibility/providers/index.md" >}}">Remote Providers</a></td>
         <td>Meshery Cloud</td>
         <td>Process Extension: Integrators manage the lifecycle of their Remote Providers. The process is unique per provider.</td>
     </tr>

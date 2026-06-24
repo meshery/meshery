@@ -16,8 +16,8 @@ import (
 	"time"
 
 	"github.com/jarcoal/httpmock"
+	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshkit/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -186,7 +186,14 @@ func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
 // setup meshkit logger for testing and return the buffer in which commands output is to be set.
 func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
-	Log = SetupMeshkitLogger("mesheryctl", verbose, b)
+	logLevel := logrus.InfoLevel
+	if verbose {
+		logLevel = logrus.DebugLevel
+	}
+	logger := mesheryctllogger.GetMeshkitLogger(logLevel)
+	logger.SetLevel(logLevel)
+	logger.UpdateLogOutput(b)
+	Log = logger
 	return b
 }
 
@@ -198,6 +205,7 @@ func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 
 	viper.SetConfigFile(pathToContext)
 	DefaultConfigPath = pathToContext
+	CfgFile = pathToContext
 	err := viper.ReadInConfig()
 	if err != nil {
 		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
@@ -213,21 +221,6 @@ func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 func StartMockery(t *testing.T) {
 	// activate http mocking
 	httpmock.Activate()
-
-	// get current directory
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
-	}
-	currDir := filepath.Dir(filename)
-	fixturesDir := filepath.Join(currDir, "fixtures")
-
-	apiResponse := NewGoldenFile(t, "validate.version.github.golden", fixturesDir).Load()
-
-	// For validate version requests
-	url1 := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/tag/" + "v0.5.54"
-	httpmock.RegisterResponder("GET", url1,
-		httpmock.NewStringResponder(200, apiResponse))
 }
 
 // stop HTTP mock client
@@ -337,7 +330,7 @@ func formatToTabs(data string) string {
 	return s
 }
 
-// AssertMeshkitErrorsEqual compares  relevant fields of two meshkit errors
+// AssertMeshkitErrorsEqual compares relevant fields of two meshkit errors
 func AssertMeshkitErrorsEqual(t *testing.T, got, expected error) {
 	t.Helper()
 	assert.Equal(t, reflect.TypeOf(got), reflect.TypeOf(expected), "error type mismatch")
@@ -398,7 +391,6 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			}()
 
 			_ = SetupMeshkitLoggerTesting(t, false)
-
 			cmd.SetArgs(tt.Args)
 			cmd.SetOut(w)
 			err := cmd.Execute()
@@ -500,7 +492,7 @@ func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobr
 			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			originalStdout := os.Stdout
-			b := SetupMeshkitLoggerTesting(t, true)
+			b := SetupMeshkitLoggerTesting(t, false)
 			defer func() {
 				os.Stdout = originalStdout
 			}()
@@ -589,24 +581,11 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 			testdataDir := filepath.Join(commandDir, "testdata")
 			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			// Properly save and restore stdout using defer
-			originalStdout := os.Stdout
-			r, w, _ := os.Pipe()
-			os.Stdout = w
-
-			// Ensure stdout is always restored
-			defer func() {
-				os.Stdout = originalStdout
-			}()
-
-			Log = SetupMeshkitLogger("mesheryctl", true, w)
+			buf := SetupMeshkitLoggerTesting(t, false)
 
 			cmd.SetArgs(tt.Args)
-			cmd.SetOut(w)
+			cmd.SetOut(buf)
 			err := cmd.Execute()
-
-			// Close write end before reading
-			_ = w.Close()
 
 			if err != nil {
 				// if we're supposed to get an error
@@ -627,16 +606,6 @@ func RunMesheryctlMultiURLTests(t *testing.T, updateGoldenFile *bool, cmd *cobra
 				}
 				// Unexpected error - fail immediately
 				t.Fatalf("unexpected error: %v", err)
-			}
-
-			if tt.ExpectError {
-				t.Fatalf("expected an error but command succeeded")
-			}
-
-			var buf bytes.Buffer
-			_, errCopy := io.Copy(&buf, r)
-			if errCopy != nil {
-				t.Fatal(errCopy)
 			}
 
 			if tt.ExpectError {
@@ -761,6 +730,13 @@ func ResetCommandFlags(c *cobra.Command, t *testing.T) {
 		if err := f.Value.Set(f.DefValue); err != nil {
 			t.Fatalf("failed to reset flag %q: %v", f.Name, err)
 		}
+		f.Changed = false
+	})
+	c.PersistentFlags().VisitAll(func(f *pflag.Flag) {
+		if err := f.Value.Set(f.DefValue); err != nil {
+			t.Fatalf("failed to reset persistent flag %q: %v", f.Name, err)
+		}
+		f.Changed = false
 	})
 	for _, sub := range c.Commands() {
 		ResetCommandFlags(sub, t)

@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#336699",
@@ -203,6 +203,7 @@
     "kind": "TricksterTracingConfig",
     "schema": "{\n \"description\": \"TricksterTracingConfig is the Schema for the trickstertracingconfigs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TricksterTracingConfigSpec defines the desired state of TricksterTracingConfig\",\n   \"properties\": {\n    \"collector_pass\": {\n     \"type\": \"string\"\n    },\n    \"collector_url\": {\n     \"type\": \"string\"\n    },\n    \"collector_user\": {\n     \"type\": \"string\"\n    },\n    \"jaeger\": {\n     \"description\": \"Options is a collection of Jaeger-specific options\",\n     \"properties\": {\n      \"endpoint_type\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"omit_tags\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"provider\": {\n     \"type\": \"string\"\n    },\n    \"sample_rate\": {\n     \"type\": \"number\"\n    },\n    \"secret\": {\n     \"description\": \"secret information about the secret data to project\",\n     \"properties\": {\n      \"items\": {\n       \"description\": \"items if unspecified, each key-value pair in the Data field of the referenced\\nSecret will be projected into the volume as a file whose name is the\\nkey and content is the value. If specified, the listed keys will be\\nprojected into the specified paths, and unlisted keys will not be\\npresent. If a key is specified which is not present in the Secret,\\nthe volume setup will error unless it is marked optional. Paths must be\\nrelative and may not contain the '..' path or start with '..'.\",\n       \"items\": {\n        \"description\": \"Maps a string key to a path within a volume.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the key to project.\",\n          \"type\": \"string\"\n         },\n         \"mode\": {\n          \"description\": \"mode is Optional: mode bits used to set permissions on this file.\\nMust be an octal value between 0000 and 0777 or a decimal value between 0 and 511.\\nYAML accepts both octal and decimal values, JSON requires decimal values for mode bits.\\nIf not specified, the volume defaultMode will be used.\\nThis might be in conflict with other options that affect the file\\nmode, like fsGroup, and the result can be other mode bits set.\",\n          \"format\": \"int32\",\n          \"type\": \"integer\"\n         },\n         \"path\": {\n          \"description\": \"path is the relative path of the file to map the key to.\\nMay not be an absolute path.\\nMay not contain the path element '..'.\\nMay not start with the string '..'.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"path\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-type\": \"atomic\"\n      },\n      \"name\": {\n       \"default\": \"\",\n       \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"description\": \"optional field specify whether the Secret or its key must be defined\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"service_name\": {\n     \"type\": \"string\"\n    },\n    \"stdout\": {\n     \"description\": \"Options is a collection of Stdout-specific options\",\n     \"properties\": {\n      \"pretty_print\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Trickster Tracing Config\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

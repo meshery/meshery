@@ -15,9 +15,8 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",
@@ -54,16 +53,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -205,6 +204,7 @@
     "kind": "CouchbaseAutoscaler",
     "schema": "{\n \"description\": \"CouchbaseAutoscaler provides an interface for the Kubernetes Horizontal Pod Autoscaler\\nto interact with the Couchbase cluster and provide autoscaling.  This resource is\\nnot defined by the end user, and is managed by the Operator.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CouchbaseAutoscalerSpec allows control over an autoscaling group.\",\n   \"properties\": {\n    \"servers\": {\n     \"description\": \"Servers specifies the server group that this autoscaler belongs to.\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"size\": {\n     \"description\": \"Size allows the server group to be dynamically scaled.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"servers\",\n    \"size\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Couchbase Autoscaler\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Extensibility on Documentation</title>
+    <link>/v0.9/extensibility/</link>
+    <description>Recent content in Extensibility on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/extensibility/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Ensuring Extension Compatibility with Meshery</title>
+      <link>/v0.9/extensibility/verify-compatibility/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensibility/verify-compatibility/</guid>
+      <description>&lt;p&gt;The Meshery ecosystem is designed for extensibility, with the core platform (&lt;code&gt;meshery/meshery&lt;/code&gt;) providing extension points for a variety of plugins, collectively managed in the &lt;code&gt;meshery-extensions&lt;/code&gt; GitHub organization. To ensure a stable and seamless user experience, it is critical that extensions remain compatible with the Meshery platform, especially when shared frameworks or dependencies are updated.&lt;/p&gt;&#xA;&lt;p&gt;This guide outlines the key areas of compatibility and provides a general process for extension developers to follow when Meshery&amp;rsquo;s underlying frameworks are updated.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Extensibility: APIs</title>
+      <link>/v0.9/extensibility/api/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensibility/api/</guid>
+      <description>&lt;h2 id=&#34;mesherys-apis&#34;&gt;&#xA;&#x9;Meshery&amp;rsquo;s APIs&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Each of Meshery&amp;rsquo;s APIs are subject to the following authentication and authorization system. The REST and GraphQL APIs are available on the same network port you use to connect to Meshery UI, which is &lt;code&gt;9081/tcp&lt;/code&gt; by default. Each of the API endpoints are exposed through &lt;a href=&#34;https://github.com/meshery/meshery/blob/master/server/router/server.go&#34;&gt;server.go&lt;/a&gt;. Endpoints are grouped by function (e.g. &lt;code&gt;/api/system/version&lt;/code&gt;). Additionally, &lt;a href=&#34;/v0.9/extensibility/providers/&#34;&gt;Remote Providers&lt;/a&gt; can extend Meshery&amp;rsquo;s endpoints behind the &lt;code&gt;/api/extensions/&lt;/code&gt; endpoint.&lt;/p&gt;&#xA;&lt;h3 id=&#34;api-reference&#34;&gt;&#xA;&#x9;API Reference&#xA;&lt;/h3&gt;&#xA;&lt;div class=&#34;tab-container&#34;&gt;&#xA;  &lt;!-- Tab 1: REST API --&gt;&#xA;  &lt;input id=&#34;tab1&#34; type=&#34;radio&#34; name=&#34;tabs&#34; checked&gt;&#xA;  &lt;label for=&#34;tab1&#34; data-icon=&#34;&amp;#xf1cb;&#34;&gt;REST API&lt;/label&gt;&#xA;  &lt;section class=&#34;tabbed&#34; id=&#34;content1&#34;&gt;&#xA;    &lt;p&gt;Meshery Server&#39;s REST API is available at &lt;code&gt;[hostname]:[port]/api/&lt;/code&gt;.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Extensibility: Authorization</title>
+      <link>/v0.9/extensibility/authorization/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensibility/authorization/</guid>
+      <description>&lt;p&gt;Meshery features an extensible authorization system that offers the ability to deliver fine-grained access control across it&amp;rsquo;s web-based user interface, &lt;a href=&#34;/v0.9/concepts/architecture/&#34;&gt;Meshery UI&lt;/a&gt;.&lt;/p&gt;&#xA;&lt;h2 id=&#34;authorization-keys&#34;&gt;&#xA;&#x9;Authorization Keys&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;The extensible authorization system consists of a large set of keys. Each key uniquely represents a specific capability, for example, the ability to view a &lt;a href=&#34;/v0.9/concepts/logical/connections/&#34;&gt;Connection&lt;/a&gt;, edit or delete a Connection. With the help of these keys, the system evaluates the permissions during runtime and renders UI both helping offer a secure management system and a customizable user experience.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Extensibility: Build-time</title>
+      <link>/v0.9/extensibility/build-time/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensibility/build-time/</guid>
+      <description>&lt;p&gt;Meshery supports build-time extensibility, allowing system integrators to customize the Meshery container image during the Docker build process. This extension point enables organizations to inject custom configurations, data, provider extensions, and other resources directly into the Meshery container image at build-time.&lt;/p&gt;&#xA;&lt;h2 id=&#34;build-time-extension-point&#34;&gt;&#xA;&#x9;Build-time Extension Point&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;The build-time extension point allows you to supply custom content by placing a &lt;code&gt;.meshery&lt;/code&gt; directory at the root of the Meshery repository before building the Docker image. The contents of this directory will be copied into the container image and made available to Meshery at runtime.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Extensibility: Load Generators</title>
+      <link>/v0.9/extensibility/load-generators/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensibility/load-generators/</guid>
+      <description>&lt;p&gt;Users may prefer to use one load generator over the next given the difference of capabilities between load generators, so Meshery provides a &lt;code&gt;load generator interface&lt;/code&gt; (a gRPC interface) behind which a load generator can be implemented. Meshery provides users with choice of which load generator they prefer to use for a given performance test. Users may configure their own preference for the load generator, different from the default load generator.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Extensibility: Providers</title>
+      <link>/v0.9/extensibility/providers/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensibility/providers/</guid>
+      <description>&lt;p&gt;Meshery offers &lt;em&gt;Providers&lt;/em&gt; as a point of extensibility. It has a built-in Local Provider, named &lt;strong&gt;&amp;ldquo;None&amp;rdquo;&lt;/strong&gt; and supports &lt;em&gt;Remote Providers&lt;/em&gt; that are designed to be pluggable. &lt;em&gt;Remote Providers&lt;/em&gt; offer a point of extension to users / integrators to deliver enhanced functionality such as authentication and authorization, using Meshery as a platform.&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;&lt;strong&gt;Extensibility points offer clean separation of Meshery&amp;rsquo;s core functionality versus plugin functionality.&lt;/strong&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;See a list of &lt;a href=&#34;https://meshery.io/extensions&#34;&gt;Meshery&amp;rsquo;s extensions&lt;/a&gt;.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Remote Providers should be able to offer custom RBAC, custom UI components, and custom backend components&lt;/strong&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Dynamically loadable frameworks need to be identified or created to serve each of these purposes.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;h3 id=&#34;what-functionality-do-providers-offer&#34;&gt;&#xA;&#x9;What functionality do Providers offer?&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;The functionalities offerred by a &lt;em&gt;Remote Provider&lt;/em&gt; may vary broadly between providers. Meshery offers extension points that Remote Providers are able to use to inject various functionalities, functionalities that are specific to that provider.&#xA;Some examples include:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Extensibility: UI</title>
+      <link>/v0.9/extensibility/ui/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/extensibility/ui/</guid>
+      <description>&lt;p&gt;Meshery UI has a number of extension points that allow you to greatly customize both its functional behavior and visual appearance. These extension points come in different types, and this document describes each type, its example use, best practices to consider, and caveats of which to be aware.&lt;/p&gt;&#xA;&lt;h3 id=&#34;extensibility-customizing-text-based-forms-using-rjsf-custom-component&#34;&gt;&#xA;&#x9;Extensibility: Customizing Text-based Forms using RJSF Custom Component&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;RJSFWrapperComponent provides customizations for RJSF forms, overriding the default behavior of meshery-ui rjsf forms. The &lt;a href=&#34;https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L66&#34;&gt;Rjsf forms are wrapped&lt;/a&gt; in this component to receive custom props from a Meshery extension.&#xA;&#xA;&#xA;&lt;pre class=&#34;codeblock-pre&#34;&gt;&#xA;&#x9;&lt;div class=&#34;codeblock&#34;&gt;&#xA;&#x9;&#x9;&lt;code class=&#34;clipboardjs&#34;&gt;&amp;lt;RJSFWrapperComponent {...props}&amp;gt;&#xA;  &amp;lt;RJSFForm&#xA;    isLoading={isLoading}&#xA;    schema={schema}&#xA;    data={data}&#xA;    onChange={(e) =&amp;gt; {&#xA;      setData(e.formData)&#xA;    }}&#xA;    jsonSchema={jsonSchema}&#xA;  /&amp;gt;&#xA;&amp;lt;/RJSFWrapperComponent&amp;gt;&lt;/code&gt;&#xA;&#x9;&lt;/div&gt;&#xA;&lt;/pre&gt;&#xA;&#xA;See this &lt;a href=&#34;https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L91&#34;&gt;RJSF Component&lt;/a&gt; as an example of how these properties are received.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

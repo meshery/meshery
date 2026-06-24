@@ -12,18 +12,18 @@
     }
   },
   "model": {
-    "version": "",
-    "name": "aws-apigatewayv2-controller",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.1.0"
+    },
+    "name": "aws-apigatewayv2-controller",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": "v1.1.0"
-    }
+    "version": ""
   },
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
@@ -63,16 +63,16 @@
               ]
             ],
             "model": {
-              "version": "",
-              "name": "aws-apigatewayv2-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-apigatewayv2-controller",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
               "mutatedRef": [
@@ -120,16 +120,16 @@
               ]
             ],
             "model": {
-              "version": "",
-              "name": "aws-apigatewayv2-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-apigatewayv2-controller",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
               "mutatorRef": [

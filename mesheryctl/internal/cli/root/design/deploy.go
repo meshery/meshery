@@ -33,7 +33,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/patterns"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -48,7 +48,7 @@ type cmdDesignDeployFlags struct {
 var designDeployFlags cmdDesignDeployFlags
 
 var linkDocDesignDeploy = map[string]string{
-	"link":    "![pattern-onboard-usage](/reference/images/pattern-onboard.png)",
+	"link":    "![pattern-onboard-usage](../../../images/app-onboard.png)",
 	"caption": "Usage of mesheryctl design deploy",
 }
 
@@ -126,6 +126,11 @@ mesheryctl design deploy -f [filepath] -s [source type]
 				// Multiple patterns with same name
 				index = multiplepatternsConfirmation(response.Patterns)
 				patternFile, _ = patterns.GetPatternFormat(response.Patterns[index].PatternFile)
+			}
+		} else if designDeployFlags.SkipSave {
+			patternFile, err = readPatternFromFile(designDeployFlags.File)
+			if err != nil {
+				return err
 			}
 		} else {
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())

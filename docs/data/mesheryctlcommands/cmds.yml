@@ -404,7 +404,7 @@ system-provider:
 perf:
   name: perf
   description: Performance Management and Benchmarking using Meshery CLI
-  usage: mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Layer5"
+  usage: mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Meshery"
 
   flags:
     output-format:
@@ -457,9 +457,9 @@ perf:
         load-generator:
           name: --load-generator
           arg: apply
-          description: "Choice of load generator - fortio (OR) wrk2 (default: fortio)."
-          usage: mesheryctl perf apply [profile-name] --url [URL] --load-generator [fortio/wrk2]
-          example: mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --load-generator wrk2
+          description: "Choice of load generator - fortio (default: fortio)."
+          usage: mesheryctl perf apply [profile-name] --url [URL] --load-generator [fortio]
+          example: mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --load-generator fortio
 
         mesh:
           name: --mesh
@@ -909,9 +909,9 @@ model:
         template:
           name: --template, -t
           description: Specify the path to the template JSON file (only required for URLs).
-        register:
-          name: --register, -r
-          description: Skip model registration (default is true).    
+        skip-registration:
+          name: --skip-registration
+          description: Skip registration of the model (default is false).    
     import:
       name: import
       description: Import models using a file or filepath directly to the meshery registry
@@ -1208,33 +1208,48 @@ relationship:
           name: -t, --type
           description: type of relationships
 
+workspace:
+  name: workspace
+  description: View list of workspaces and detail of workspaces
+  usage: mesheryctl workspace [command] [flags]
+  flags:
+  subcommands:
+    create:
+      name: create
+      description: create a new workspace by providing the name, description, and organization ID
+      usage: mesheryctl workspace create [flags]
+      flags:
+        description:
+          name: -d, --description
+          description: description of the workspace
+        name:
+          name: -n, --name
+          description: name of the workspace
+        org:
+          name: -o, --orgId
+          description: organization id
+          usage: mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
+    list:
+      name: list
+      description: list name of all registered workspaces
+      usage: mesheryctl workspace list [flags]
+      flags:
+        org:
+          name: -o, --orgId
+          description: organization id
+    view:
+      name: view
+      description: view a workspace by its ID or name
+      usage: mesheryctl workspace view [workspace-name|workspace-id] [flags]
+      flags:
+        output-format:
+          name: -o, --output-format
+          description: (optional) format to display in [json|yaml] (default "yaml")
+        save:
+          name: -s, --save
+          description: (optional) save output as a JSON/YAML file
+        orgId:
+          name: --orgId
+          description: (optional) organization ID to search workspace by name
+
 exp:
-  workspace:
-    name: workspace
-    description: View list of workspaces and detail of workspaces
-    usage: mesheryctl exp workspace [command] [flags]
-    flags:
-    subcommands:
-      create:
-        name: create
-        description: create a new workspace by providing the name, description, and organization ID
-        usage: mesheryctl exp workspace create [flags]
-        flags:
-          description:
-            name: -d, --description
-            description: description of the workspace
-          name:
-            name: -n, --name
-            description: name of the workspace
-          org:
-            name: -o, --orgId
-            description: organization id
-            usage: mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
-      list:
-        name: list
-        description: list name of all registered workspaces
-        usage: mesheryctl exp workspace list [flags]
-        flags:
-          org:
-            name: -o, -orgId
-            description: organization id 

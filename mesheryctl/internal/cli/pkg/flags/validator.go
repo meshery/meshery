@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"path/filepath"
 	"reflect"
 	"regexp"
 	"strings"
@@ -50,14 +51,38 @@ func (fv *FlagValidator) Validate(s interface{}) error {
 	return nil
 }
 
-func validateSemver(fl validator.FieldLevel) bool {
+func isSemver(fl validator.FieldLevel) bool {
 	return vSemverRegex.MatchString(fl.Field().String())
 }
 
-// validateBoolean is a custom validation function that checks if a field is a boolean value (true or false)
+func isRelativePath(fl validator.FieldLevel) bool {
+	path := fl.Field().String()
+	if path == "" {
+		return true // Omit empty check should be handled by 'omitempty' tag
+	}
+	return !filepath.IsAbs(path)
+}
+
+func isAbsolutePath(fl validator.FieldLevel) bool {
+	path := fl.Field().String()
+	if path == "" {
+		return true // Omit empty check should be handled by 'omitempty' tag
+	}
+	return filepath.IsAbs(path)
+}
+
+func isRelativeOrAbsolutePath(fl validator.FieldLevel) bool {
+	path := fl.Field().String()
+	if path == "" {
+		return true // Omit empty check should be handled by 'omitempty' tag
+	}
+	return isRelativePath(fl) || isAbsolutePath(fl)
+}
+
+// isBoolean is a custom validation function that checks if a field is a boolean value (true or false)
 // This is necessary because the default validator does not have a built-in validation behaving as expected for boolean fields,
 // especially when using flags in cobra
-func validateBoolean(fl validator.FieldLevel) bool {
+func isBoolean(fl validator.FieldLevel) bool {
 	if _, ok := fl.Field().Interface().(bool); ok {
 		return true
 	}
@@ -77,9 +102,17 @@ func (fv *FlagValidator) ReadValidationErrorMessages(err validator.ValidationErr
 		case "semver":
 			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': version must be in format vX.X.X", e.Field(), e.Value()))
 		case "oneof":
-			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': valid values are %s", e.Field(), e.Value(), e.Param()))
+			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': valid values are %s", strings.ToLower(e.Field()), e.Value(), e.Param()))
+		case "uuid":
+			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': must be a valid UUID", strings.ToLower(e.Field()), e.Value()))
 		case "dir", "dirpath":
 			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': directory does not exist", e.Field(), e.Value()))
+		case "relpath":
+			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': path must be a relative path", e.Field(), e.Value()))
+		case "abspath":
+			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': path must be an absolute path", e.Field(), e.Value()))
+		case "relabspath":
+			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': path must be a relative or absolute path", e.Field(), e.Value()))
 		default:
 			if customErr, exists := fv.CustomErrors[e.Tag()]; exists {
 				errorMessages = append(errorMessages, customErr)
@@ -98,13 +131,31 @@ func GetFlagValidator() *FlagValidator {
 		validate := validator.New()
 
 		// Register the custom validation function with a tag name "semver"
-		err := validate.RegisterValidation("semver", validateSemver)
+		err := validate.RegisterValidation("semver", isSemver)
 		if err != nil {
 			log.Fatalf("Error registering validation: %v", err)
 		}
 
-		// Register a custom validation function for boolean values that accepts "true", "false"
-		err = validate.RegisterValidation("boolean", validateBoolean)
+		// Register a custom validation function for boolean values that accepts "true", "false" with tag name "boolean"
+		err = validate.RegisterValidation("boolean", isBoolean)
+		if err != nil {
+			log.Fatalf("Error registering validation: %v", err)
+		}
+
+		// Register a custom validation function for relative file paths with a tag name "relpath"
+		err = validate.RegisterValidation("relpath", isRelativePath)
+		if err != nil {
+			log.Fatalf("Error registering validation: %v", err)
+		}
+
+		// Register a custom validation function for absolute file paths with a tag name "abspath"
+		err = validate.RegisterValidation("abspath", isAbsolutePath)
+		if err != nil {
+			log.Fatalf("Error registering validation: %v", err)
+		}
+
+		// Register a custom validation function for relative or absolute file paths with a tag name "relabspath"
+		err = validate.RegisterValidation("relabspath", isRelativeOrAbsolutePath)
 		if err != nil {
 			log.Fatalf("Error registering validation: %v", err)
 		}

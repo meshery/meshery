@@ -13,7 +13,7 @@ Please do! Thanks for your help! 🎈 Meshery is community-built and welcomes co
 
 Meshery and it's various architectural components are written in different languages, including Golang, Javascript (React.js and Next.js) To make building, testing, and the experience of contributing consistent across all Meshery components, a `Makefile` is included in the every repository. These `make` targets are what you will use to build, run, test, and document.
 
-To contribute to Meshery, please follow this basic fork-and-pull request [gitflow]({{site.baseurl}}/project/contributing/contributing-gitflow).
+To contribute to Meshery, please follow this basic fork-and-pull request [gitflow]({{< ref "project/contributing/contributing-gitflow.md" >}}).
 
 <details>
 <summary>Adding your sign-off on commits (Developer Certificate of Origin)</summary>
@@ -67,7 +67,7 @@ Or you may configure your IDE, for example, VSCode to automatically sign-off com
 <ol>
   <li>See the <a href="https://meshery.io/community">Newcomers Guide</a> for how, where, and why to contribute.</li>
   <li>Sign up for a <a href="https://meshery.io/community#meshmates"><em>MeshMate</em></a> to find the perfect Mentor to help you explore the projects and find your place in the community.</li>
-  <li><strong>Familiarize</strong> yourself with the broader set of projects in Meshery's ecosystem, including the <a href="https://github.com/meshery-extensions">meshery-extensions</a> repositories (this <a href="https://layer5.io/community/handbook/repository-overview">Repository Overview</a> is a helpful resource): Spend time understanding each of the initiatives through high-level overviews available in the community drive and through discussions with your MeshMate.</li>
+  <li><strong>Familiarize</strong> yourself with the broader set of projects in Meshery's ecosystem, including the <a href="https://github.com/meshery-extensions">meshery-extensions</a> repositories (the <a href="https://meshery.io/community">community handbook</a> is a helpful resource): Spend time understanding each of the initiatives through high-level overviews available in the community drive and through discussions with your MeshMate.</li>
   <li><strong>Identify</strong> your area of interest: Use the time with your MeshMate to familiarize yourself with the architecture and technologies used in the projects. Inform your MeshMate of your current skills and what skills you aim to develop.</li>
   <li><strong><a href="https://play.meshery.io">Play with Meshery</a></strong>: Put on your user hat and walk-through all of Meshery’s features and functions as a user.</li>
   <li><strong>Build Meshery Server and UI</strong>: Confirm that you have a usable development environment. See <a href="#contributing-guides">Guides</a> below.</li>

@@ -1,0 +1,32 @@
+{{ $content := . }}
+{{ $example := "" }}
+
+{{ if $content }}
+  {{ if isset $content "example" }}
+    {{ $example = index $content "example" }}
+  {{ else }}
+    {{ $examples := index $content "examples" }}
+    {{ if and $examples (reflect.IsMap $examples) }}
+      {{ range $name, $item := $examples }}
+        {{ if not $example }}
+          {{ if and (reflect.IsMap $item) (isset $item "value") }}
+            {{ $example = index $item "value" }}
+          {{ else if and (reflect.IsMap $item) (isset $item "externalValue") }}
+            {{ $example = index $item "externalValue" }}
+          {{ else }}
+            {{ $example = $item }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+
+    {{ if not $example }}
+      {{ $schema := index $content "schema" }}
+      {{ if and $schema (isset $schema "example") }}
+        {{ $example = index $schema "example" }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ return $example }}

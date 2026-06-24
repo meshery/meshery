@@ -1,5 +1,7 @@
-<pre class="codeblock-pre" style="font-size: 1.75rem !important;">
-<div class="codeblock">
-<code class="clipboardjs">{{ .Get "code" | html }}</code>
-</div>
+{{ $code := .Get "code" }}
+
+<pre class="codeblock-pre">
+	<div class="codeblock">
+		<code class="clipboardjs">{{ $code | html }}</code>
+	</div>
 </pre>

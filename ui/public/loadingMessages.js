@@ -79,37 +79,121 @@ function PersistedRandomLoadingMessage(){
 };
 
 
-const PRE_REACT_NEXTJS_LOADER_ID = 'prereact-next-js-loader'
+const PRE_REACT_NEXTJS_LOADER_ID = 'prereact-next-js-loader';
+const PRE_REACT_LOADER_ID = 'PRE_REACT_LOADER';
+const PRE_REACT_LOADER_MESSAGE_ID = `${PRE_REACT_LOADER_ID}-text-message`;
 
-var _hidingTimeout = null
+var _hidingTimeout = null;
+var _preReactAnimationInterval = null;
 
-function show() {
-  if (_hidingTimeout){
-    clearTimeout(_hidingTimeout)
-  }
-  const loader = document.getElementById('PRE_REACT_LOADER');
-  if (loader && loader?.style?.display != 'flex') {
-    loader.style.display = 'flex'
+function getLoader() {
+  return document.getElementById(PRE_REACT_LOADER_ID);
+}
+
+function getLoaderMessageNode() {
+  return document.getElementById(PRE_REACT_LOADER_MESSAGE_ID);
+}
+
+function setMessage(message) {
+  const loaderMessage = getLoaderMessageNode();
+  if (loaderMessage && typeof message === 'string') {
+    loaderMessage.textContent = message;
   }
 }
 
+function resetMessage() {
+  setMessage(PersistedRandomLoadingMessage());
+}
+
+function show() {
+  if (_hidingTimeout) {
+    clearTimeout(_hidingTimeout);
+  }
+  const loader = getLoader();
+  if (loader && loader?.style?.display != 'flex') {
+    loader.style.display = 'flex';
+  }
+}
 
 function hide() {
-
   _hidingTimeout = setTimeout(() => {
-    const loader = document.getElementById('PRE_REACT_LOADER');
+    const loader = getLoader();
     if (loader) {
-      loader.style.display = 'none'
+      loader.style.display = 'none';
+      stopPreReactAnimation();
+      resetMessage();
     }
-  },1000)
+  }, 1000);
+}
+
+function stopPreReactAnimation() {
+  if (_preReactAnimationInterval) {
+    clearInterval(_preReactAnimationInterval);
+    _preReactAnimationInterval = null;
+  }
+}
+
+function initializePreReactLoader() {
+  try {
+    const loaderMessage = getLoaderMessageNode();
+    if (loaderMessage) {
+      loaderMessage.textContent = PersistedRandomLoadingMessage();
+    }
+  } catch (e) {
+    console.log('Failed to set loading message', e);
+  }
+
+  // Keep pre-hydration logo animation in sync with legacy behavior:
+  // active -> inactive after 100ms, then toggle every 4s.
+  try {
+    const prerenderLoader = getLoader();
+    if (!prerenderLoader) return;
+
+    const parts = prerenderLoader.querySelectorAll(
+      '[class^="svg-meshery-"], [class*=" svg-meshery-"]',
+    );
+    if (!parts.length) return;
+
+    let isActive = true;
+    const setActive = function (nextActive) {
+      for (let i = 0; i < parts.length; i++) {
+        parts[i].classList.toggle('active', nextActive);
+      }
+    };
+
+    setTimeout(function () {
+      isActive = false;
+      setActive(isActive);
+    }, 100);
+
+    stopPreReactAnimation();
+    _preReactAnimationInterval = setInterval(function () {
+      // Stop work once loader is hidden by window.Loader.hide().
+      if (!prerenderLoader.isConnected || prerenderLoader.style.display === 'none') {
+        stopPreReactAnimation();
+        return;
+      }
+      isActive = !isActive;
+      setActive(isActive);
+    }, 4000);
+
+    window.addEventListener('beforeunload', stopPreReactAnimation, { once: true });
+  } catch (e) {
+    console.log('Failed to initialize pre-react logo animation', e);
+  }
 }
 
 // export globals
 window.Loader = {
   LOADING_MESSAGES: LoadingMessages,
   PRE_REACT_NEXTJS_LOADER_ID,
+  PRE_REACT_LOADER_ID,
   PersistedRandomLoadingMessage,
   RandomLoadingMessage: getRandomLoadingMessage,
   show,
-  hide
-}
+  hide,
+  initializePreReactLoader,
+  stopPreReactAnimation,
+  setMessage,
+  resetMessage,
+};

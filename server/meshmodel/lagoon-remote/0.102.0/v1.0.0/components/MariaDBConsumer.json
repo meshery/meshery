@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -203,6 +203,7 @@
     "kind": "MariaDBConsumer",
     "schema": "{\n \"description\": \"MariaDBConsumer is the Schema for the mariadbconsumers API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MariaDBConsumerSpec defines the desired state of MariaDBConsumer\",\n   \"properties\": {\n    \"consumer\": {\n     \"description\": \"MariaDBConsumerData defines the provider link for this consumer\",\n     \"properties\": {\n      \"database\": {\n       \"type\": \"string\"\n      },\n      \"password\": {\n       \"type\": \"string\"\n      },\n      \"services\": {\n       \"description\": \"MariaDBConsumerServices defines the provider link for this consumer\",\n       \"properties\": {\n        \"primary\": {\n         \"type\": \"string\"\n        },\n        \"replicas\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"username\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"environment\": {\n     \"description\": \"These are the spec options for consumers\",\n     \"type\": \"string\"\n    },\n    \"provider\": {\n     \"description\": \"MariaDBConsumerProvider defines the provider link for this consumer\",\n     \"properties\": {\n      \"hostname\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"type\": \"string\"\n      },\n      \"readReplicas\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"type\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Maria DB Consumer\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

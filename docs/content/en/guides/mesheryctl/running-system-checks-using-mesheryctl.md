@@ -87,11 +87,11 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 ##### Question: I ran a preflight check to see if I satisfy all requirements for Meshery in my system. It returned positive results but I couldn't start Meshery. What to do?
 
-**Answer**: _Make sure if you've configured your system to run Meshery in smooth manner. For configuration, do check out the docs site and [this page](/installation) to see instructions related to the platform you use._
+**Answer**: _Make sure if you've configured your system to run Meshery in smooth manner. For configuration, do check out the docs site and [this page]({{< ref "installation/_index.md" >}}) to see instructions related to the platform you use._
 
 ##### Question: Do I need a Kubernetes cluster or will a Docker host suffice for Meshery deployments?
 
-**Answer**: _Meshery's [performance management](/guides/performance-management/managing-performance) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
+**Answer**: _Meshery's [performance management]({{< ref "guides/performance-management/managing-performance/index.md" >}}) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
 
 ##### Question: What are Meshery's production deployment requirements?
 
@@ -119,7 +119,7 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 ##### Question: What is the minimum version of k8s cluster and kubectl required to run Meshery?
 
-**Answer**: _For Kubernetes, version >=1.12.0 is recommended. For kubectl version >=1.12 is recommended._
+**Answer**: _For current Meshery deployments, prefer one of the Kubernetes upstream-supported minor releases and keep `kubectl` aligned with your cluster under the Kubernetes version skew policy. See the [Kubernetes release history](https://kubernetes.io/releases/) for actively maintained minors._
 
 ##### Question: In the "Meshery Adapter" section of check, I could see only some Meshery adapters up and running and not all. Is this fine?
 
@@ -133,7 +133,7 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 For an exhaustive list of `mesheryctl` commands and syntax:
 
-- See [`mesheryctl` Command Reference](/reference/mesheryctl).
+- See [`mesheryctl` Command Reference]({{< ref "reference/references/mesheryctl/_index.md" >}}).
 
 Guides to using Meshery's various features and components.
 

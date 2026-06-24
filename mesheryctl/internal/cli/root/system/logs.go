@@ -24,11 +24,11 @@ import (
 
 	"github.com/pkg/errors"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
-	log "github.com/sirupsen/logrus"
 	apiCorev1 "k8s.io/api/core/v1"
 
 	"github.com/spf13/cobra"
@@ -49,13 +49,15 @@ func printLogs(logs string, podName string) {
 	for _, logMsg := range strings.Split(logs, "\n") {
 		logStr := fmt.Sprintf("%s\t|\t%s", podName, logMsg)
 
-		log.Print(logStr)
+		utils.Log.Info(logStr)
 	}
 }
 
-var (
-	follow bool
-)
+type cmdSystemLogsFlags struct {
+	Follow bool `json:"follow" validate:"boolean"`
+}
+
+var systemLogsFlags cmdSystemLogsFlags
 
 const BYTE_SIZE = 2000
 
@@ -76,6 +78,10 @@ mesheryctl system logs --follow
 mesheryctl system logs meshery-istio
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+
+		if err := mesheryctlflags.ValidateCmdFlags(cmd, &systemLogsFlags); err != nil {
+			return err
+		}
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
 			IsPreRunE:  true,
@@ -84,7 +90,7 @@ mesheryctl system logs meshery-istio
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			utils.Log.Error(err)
+			return ErrHealthCheckFailed(err)
 		}
 		// execute healthchecks
 		err = hc.RunPreflightHealthChecks()
@@ -99,23 +105,20 @@ mesheryctl system logs meshery-istio
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		// get the platform, channel and the version of the current context
 		// if a temp context is set using the -c flag, use it as the current context
 		if tempContext != "" {
 			err = mctlCfg.SetCurrentContext(tempContext)
 			if err != nil {
-				utils.Log.Error(ErrSetCurrentContext(err))
-				return nil
+				return ErrSetCurrentContext(err)
 			}
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(ErrGetCurrentContext(err))
-			return nil
+			return ErrGetCurrentContext(err)
 		}
 
 		currPlatform := currCtx.GetPlatform()
@@ -125,25 +128,21 @@ mesheryctl system logs meshery-istio
 		case platformDocker:
 			ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			if !ok {
-				utils.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
-				return nil
+				return utils.ErrMesheryServerNotRunning(currPlatform)
 			}
-			log.Info("Starting Meshery logging...")
+			utils.Log.Info("Starting Meshery logging...")
 
 			if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
-				log.Errorf("%s does not exists", utils.DockerComposeFile)
-				log.Info("run \"mesheryctl system start\" again to download and generate docker-compose based on your context")
-				return nil
+				return utils.ErrDockerComposeFileMissing(err)
 			}
 
 			// Use compose library instead of exec.Command
 			composeClient, err := utils.NewComposeClient()
 			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to create compose client"))
+				return utils.ErrDockerComposeClient(err)
 			}
 
 			if err := composeClient.Logs(context.Background(), utils.DockerComposeFile, true, os.Stdout); err != nil {
@@ -155,12 +154,10 @@ mesheryctl system logs meshery-istio
 
 			ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 			if !ok {
-				utils.Log.Error(utils.ErrMesheryServerNotRunning(currPlatform))
-				return nil
+				return utils.ErrMesheryServerNotRunning(currPlatform)
 			}
 
 			// create an kubernetes client
@@ -173,18 +170,18 @@ mesheryctl system logs meshery-istio
 			// Get and display current context
 			currentContext, err := utils.GetCurrentK8sContext(client)
 			if err != nil {
-				log.Warn("Unable to determine current Kubernetes context: ", err)
+				utils.Log.Warn(err)
 			} else {
-				log.Info("Using Kubernetes context: ", currentContext)
+				utils.Log.Info("Using Kubernetes context: ", currentContext)
 			}
 
 			// List the pods in the MesheryNamespace
 			podList, err := utils.GetPodList(client, utils.MesheryNamespace)
-			availablePods := podList.Items
-
 			if err != nil {
 				return err
 			}
+
+			availablePods := podList.Items
 
 			requiredPodsMap := make(map[string]string)
 
@@ -198,7 +195,7 @@ mesheryctl system logs meshery-istio
 				}
 			}
 
-			log.Info("Starting Meshery logging...")
+			utils.Log.Info("Starting Meshery logging...")
 			wg := &sync.WaitGroup{}
 
 			// List all the pods similar to kubectl get pods -n MesheryNamespace
@@ -222,7 +219,7 @@ mesheryctl system logs meshery-istio
 					// Get the logs from a container within the pod
 					podLogOpts := apiCorev1.PodLogOptions{
 						Container: containerName,
-						Follow:    follow,
+						Follow:    systemLogsFlags.Follow,
 					}
 
 					req := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).GetLogs(name, &podLogOpts)
@@ -233,10 +230,10 @@ mesheryctl system logs meshery-istio
 					}
 					defer func() { _ = logs.Close() }()
 					var logBuf []byte
-					if !follow {
+					if !systemLogsFlags.Follow {
 						logBuf, err = io.ReadAll(logs)
 						if err != nil {
-							return fmt.Errorf("error occurred while processing logs")
+							return utils.ErrReadResponseBody(err)
 						}
 						printLogs(string(logBuf), name)
 					} else {
@@ -253,7 +250,7 @@ mesheryctl system logs meshery-istio
 									break
 								}
 								if err != nil {
-									log.Println("error occurred while processing logs", err)
+									utils.Log.Errorf("error occurred while processing logs %v", err)
 									break
 								}
 								logBuf = buf[0:numBytes]
@@ -270,5 +267,5 @@ mesheryctl system logs meshery-istio
 }
 
 func init() {
-	logsCmd.Flags().BoolVarP(&follow, "follow", "f", false, "(Optional) Follow the stream of the Meshery's logs. Defaults to false.")
+	logsCmd.Flags().BoolVarP(&systemLogsFlags.Follow, "follow", "f", false, "(Optional) Follow the stream of the Meshery's logs. Defaults to false.")
 }

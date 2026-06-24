@@ -12,7 +12,7 @@ import (
 	"github.com/meshery/meshkit/generators/artifacthub"
 
 	meshkitmodels "github.com/meshery/meshkit/generators/models"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 )
 
@@ -31,13 +31,6 @@ type componentGenerationResponseDataItem struct {
 	Errors     []string                        `json:"errors"`
 }
 
-// swagger:route POST /api/meshmodel/generate MeshmodelComponentGenerate idPostMeshModelComponentGenerate
-// Handle POST request for component generation
-//
-// Generates Meshery Components for the given payload
-// responses:
-// 	200:
-
 // request body should be json
 // request body should be of format - {data: [{name: string, register: boolean}]}
 // response format - {data: [{name: string, components: [component], errors: [string] }]}
@@ -46,7 +39,7 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 	// Unmarshal request body
@@ -54,7 +47,7 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 	err = json.Unmarshal(body, &pld)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 	// Generate Components
@@ -105,8 +98,10 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 	rw.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(rw).Encode(response)
 	if err != nil {
+		// Response body has already started streaming via json.Encoder —
+		// a partial JSON envelope is on the wire and a fresh error
+		// response would corrupt it, so log only.
 		h.log.Error(ErrGenerateComponents(err))
-		http.Error(rw, ErrGenerateComponents(err).Error(), http.StatusInternalServerError)
 		return
 	}
 }

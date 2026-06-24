@@ -1,12 +1,15 @@
 {{ $ctx := . }}
-{{ $page := $ }}
+{{ $currentPage := $ctx.currentPage }}
 
 {{ if ne $ctx.section_title "false" }}
 
-    {{ if eq $page.Layout "models" }}
-        <h2>
-            Related Models in <b>{{ index $page.Params "integrations-category" }}</b>
-        </h2>
+    {{ if $currentPage }}
+        {{ $category := index $currentPage.Params "integrations-category" }}
+        {{ if $category }}
+            <h2>Related Models in <b>{{ $category }}</b></h2>
+        {{ else }}
+            <h2>{{ $ctx.h2_text | default "Related Models" }}</h2>
+        {{ end }}
     {{ else }}
 
         {{ $h2Text := $ctx.h2_text | default "Suggested Reading" }}
@@ -24,14 +27,7 @@
 <ul>
 {{ range $reading }}
 
-    {{ if and
-        (eq .Type $ctx.type)
-        (eq .Params.category $ctx.category)
-        (ne .Params.list "exclude")
-        (ne .RelPermalink $ctx.url)
-        (eq .Lang $ctx.language)
-        (.Params.display_suggested_reading)
-    }}
+    {{ if ne .RelPermalink $ctx.url }}
 
         <li>
             <a href="{{ .RelPermalink }}">{{ .Title }}</a>
