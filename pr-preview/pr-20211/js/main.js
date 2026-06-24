@@ -65,7 +65,7 @@ getcodeelement.each(function (i) {
         .replace(/>/g, "&gt;")
         .replace(/'/g, "&#39;")
         .replace(/"/g, "&quot;");
-    var clipButton = '<div class="btn-copy-wrap"><button class="clipbtn" data-clipboard-text="' + text + '" data-clipboard-target="#' + currentId + '"><i class="far fa-copy"></i></button></div>';
+    var clipButton = '<div class="btn-copy-wrap"><button type="button" class="clipbtn" aria-label="Copy code to clipboard" data-clipboard-text="' + text + '" data-clipboard-target="#' + currentId + '"><i class="far fa-copy" aria-hidden="true"></i></button></div>';
     $(this).after(clipButton);
 });
 
