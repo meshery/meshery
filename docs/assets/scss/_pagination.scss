@@ -14,17 +14,32 @@
   padding: 1rem;
   background: transparent;
   text-decoration: none;
-  transition: border-color 200ms cubic-bezier(.08,.52,.52,1);
+  transition: border-color 200ms cubic-bezier(.08,.52,.52,1), background-color 200ms cubic-bezier(.08,.52,.52,1);
 
   &:hover {
     border-color: var(--brand-color-secondary);
+    background-color: var(--brand-color-secondary);
+
+    .toc-label {
+      color: var(--color-white);
+    }
+
+    .toc-title {
+      color: var(--color-white);
+
+      .fa-chevron-right::before,
+      .fa-chevron-left::before {
+        color: var(--color-white);
+      }
+    }
   }
 }
 
 .toc-label {
-  color: var(--color-white);
+  color: var(--color-secondary-medium);
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
+  transition: color 200ms cubic-bezier(.08,.52,.52,1);
 }
 
 .toc-title {
@@ -34,15 +49,13 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  .fa-chevron-right::before, .fa-chevron-left::before {
+  transition: color 200ms cubic-bezier(.08,.52,.52,1);
+
+  .fa-chevron-right::before,
+  .fa-chevron-left::before {
     color: var(--brand-color-secondary);
     font-size: 1rem;
-  }
-  &:hover {
-    .fa-chevron-right::before, .fa-chevron-left::before {
-        color: var(--color-white);
-    }
-    color: var(--color-white);
+    transition: color 200ms cubic-bezier(.08,.52,.52,1);
   }
 }
 
