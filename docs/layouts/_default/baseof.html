@@ -11,6 +11,7 @@
   </head>
 
   <body class="td-{{ .Kind }}{{ with .Params.body_class }} {{ . }}{{ end }}{{ block "body_class" . }}{{ end }}">
+    {{ partial "version-banner.html" . }}
     <script>
       (function() {
         const savedMode = localStorage.getItem("mode");
