@@ -575,10 +575,6 @@ func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order s
 	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
 }
 
-func (l *DefaultLocalProvider) DeleteK8sContext(_, id string) (K8sContext, error) {
-	return l.MesheryK8sContextPersister.DeleteMesheryK8sContext(id)
-}
-
 func (l *DefaultLocalProvider) GetK8sContext(_, id string) (K8sContext, error) {
 	idStrWithoutDashes := strings.ReplaceAll(id, "-", "")
 	return l.MesheryK8sContextPersister.GetMesheryK8sContext(idStrWithoutDashes)
@@ -612,18 +608,6 @@ func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, e
 
 	return results, nil
 }
-
-// func (l *DefaultLocalProvider) SetCurrentContext(token, id string) (K8sContext, error) {
-// 	if err := l.MesheryK8sContextPersister.SetMesheryK8sCurrentContext(id); err != nil {
-// 		return K8sContext{}, err
-// 	}
-
-// 	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
-// }
-
-// func (l *DefaultLocalProvider) GetCurrentContext(token string) (K8sContext, error) {
-// 	return l.MesheryK8sContextPersister.GetMesheryK8sCurrentContext()
-// }
 
 // FetchResults - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, _, _, profileID string) ([]byte, error) {
