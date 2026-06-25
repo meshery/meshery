@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Configures an association between an ECS Service and EC2 Security Group, establishing firewall rule references for the service tasks.",
+    "description": "Configures an association between an ECS Service and EC2 Subnet, referencing network subnets used for task ENI provisioning.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -15,7 +15,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.4.0"
+      "version": "v1.4.1"
     },
     "name": "aws-ecs-controller",
     "registrant": {
@@ -53,7 +53,7 @@
                   "spec",
                   "networkConfiguration",
                   "awsVPCConfiguration",
-                  "securityGroups",
+                  "subnets",
                   "0"
                 ]
               ]
@@ -63,7 +63,7 @@
         "to": [
           {
             "id": null,
-            "kind": "SecurityGroup",
+            "kind": "Subnet",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -97,7 +97,7 @@
       }
     }
   ],
-  "subType": "firewall",
+  "subType": "network",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"

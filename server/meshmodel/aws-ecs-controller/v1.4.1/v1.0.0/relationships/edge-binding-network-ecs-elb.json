@@ -1,9 +1,9 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "",
+  "evaluationQuery": "edge_binding_network_relationship",
   "kind": "edge",
   "metadata": {
-    "description": "Establishes a compute hosting reference between an ECS Cluster and host EC2 Instances running the ECS container agent.",
+    "description": "Establishes a network edge between an AWS ECS Service and a TargetGroupBinding by patching Service.spec.loadBalancers[0].targetGroupARN from TargetGroupBinding.spec.targetGroupARN.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -15,7 +15,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.4.0"
+      "version": "v1.4.1"
     },
     "name": "aws-ecs-controller",
     "registrant": {
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "Cluster",
+            "kind": "Service",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -45,13 +45,24 @@
               },
               "version": ""
             },
-            "patch": {}
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "loadBalancers",
+                  "0",
+                  "targetGroupARN"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
           }
         ],
         "to": [
           {
             "id": null,
-            "kind": "Instance",
+            "kind": "TargetGroupBinding",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -60,13 +71,22 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-ec2-controller",
+              "name": "cluster-essentials",
               "registrant": {
                 "kind": "github"
               },
               "version": ""
             },
-            "patch": {}
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "targetGroupARN"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
           }
         ]
       },
@@ -76,8 +96,8 @@
       }
     }
   ],
-  "subType": "reference",
+  "subType": "network",
   "status": "enabled",
-  "type": "non-binding",
+  "type": "binding",
   "version": "v1.0.0"
 }

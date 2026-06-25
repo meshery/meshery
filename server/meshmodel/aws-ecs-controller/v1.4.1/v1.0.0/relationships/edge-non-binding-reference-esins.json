@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Configures an association between an ECS Service and EC2 Subnet, referencing network subnets used for task ENI provisioning.",
+    "description": "Establishes a compute hosting reference between an ECS Cluster and host EC2 Instances running the ECS container agent.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -15,7 +15,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.4.0"
+      "version": "v1.4.1"
     },
     "name": "aws-ecs-controller",
     "registrant": {
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "Service",
+            "kind": "Cluster",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -45,25 +45,13 @@
               },
               "version": ""
             },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "networkConfiguration",
-                  "awsVPCConfiguration",
-                  "subnets",
-                  "0"
-                ]
-              ]
-            }
+            "patch": {}
           }
         ],
         "to": [
           {
             "id": null,
-            "kind": "Subnet",
+            "kind": "Instance",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -78,16 +66,7 @@
               },
               "version": ""
             },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "status",
-                  "id"
-                ]
-              ]
-            }
+            "patch": {}
           }
         ]
       },
@@ -97,7 +76,7 @@
       }
     }
   ],
-  "subType": "network",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"

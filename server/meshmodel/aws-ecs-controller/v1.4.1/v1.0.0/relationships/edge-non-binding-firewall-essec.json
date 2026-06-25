@@ -1,9 +1,9 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "edge_binding_network_relationship",
+  "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Establishes a network edge between an AWS ECS Service and a TargetGroupBinding by patching Service.spec.loadBalancers[0].targetGroupARN from TargetGroupBinding.spec.targetGroupARN.",
+    "description": "Configures an association between an ECS Service and EC2 Security Group, establishing firewall rule references for the service tasks.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -15,7 +15,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.4.0"
+      "version": "v1.4.1"
     },
     "name": "aws-ecs-controller",
     "registrant": {
@@ -46,23 +46,24 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "patchStrategy": "replace",
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
-                  "loadBalancers",
-                  "0",
-                  "targetGroupARN"
+                  "networkConfiguration",
+                  "awsVPCConfiguration",
+                  "securityGroups",
+                  "0"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ],
         "to": [
           {
             "id": null,
-            "kind": "TargetGroupBinding",
+            "kind": "SecurityGroup",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -71,21 +72,21 @@
               "model": {
                 "version": ""
               },
-              "name": "cluster-essentials",
+              "name": "aws-ec2-controller",
               "registrant": {
                 "kind": "github"
               },
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
+              "patchStrategy": "replace",
+              "mutatedRef": [
                 [
                   "configuration",
-                  "spec",
-                  "targetGroupARN"
+                  "status",
+                  "id"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ]
@@ -96,8 +97,8 @@
       }
     }
   ],
-  "subType": "network",
+  "subType": "firewall",
   "status": "enabled",
-  "type": "binding",
+  "type": "non-binding",
   "version": "v1.0.0"
 }
