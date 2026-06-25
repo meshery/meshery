@@ -3,7 +3,7 @@
   "evaluationQuery": "edge_binding_network_relationship",
   "kind": "edge",
   "metadata": {
-    "description": "Binds an AWS EKS Cluster to a VPC Subnet to define the network subnets for Kubernetes control plane and node communication. The Cluster's resourcesVPCConfig.subnetRefs[0].from.name field is populated with the Subnet name.",
+    "description": "Binds an AWS EKS Cluster to a VPC Subnet to define the network subnets for Kubernetes control plane and node communication. The Cluster's resourcesVPCConfig.subnetIDs[0] field is populated with the Subnet id.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
