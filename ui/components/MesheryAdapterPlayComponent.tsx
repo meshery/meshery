@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Grid, NoSsr } from '@sistent/sistent';
 import { useRouter } from 'next/router';
-import yaml from 'js-yaml';
+import * as yaml from 'js-yaml';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
 import {
   useAdapterOperationMutation,
