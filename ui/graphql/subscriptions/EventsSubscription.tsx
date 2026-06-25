@@ -5,7 +5,7 @@ const eventsSubscription = graphql`
   subscription EventsSubscription {
     event: subscribeEvents {
       id
-      userID
+      owner
       actedUpon
       operationID
       systemID

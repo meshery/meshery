@@ -1,7 +1,7 @@
 ---
 title: Kubedb Grafana Dashboards
 subtitle: Collaborative and visual infrastructure as design for Kubedb Grafana Dashboards
-image: /extensions/models/kubedb-grafana-dashboards/icons/color/kubedb-grafana-dashboards-color.svg
+image: extensions/models/kubedb-grafana-dashboards/icons/color/kubedb-grafana-dashboards-color.svg
 aliases: /extensibility/integrations/kubedb-grafana-dashboards
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-grafana-dashboards
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 - name: grafana-dashboard
-  colorIcon: content/en/extensions/models/kubedb-grafana-dashboards/components/grafana-dashboard/icons/color/grafana-dashboard-color.svg
-  whiteIcon: content/en/extensions/models/kubedb-grafana-dashboards/components/grafana-dashboard/icons/white/grafana-dashboard-white.svg
+  colorIcon: extensions/models/kubedb-grafana-dashboards/components/grafana-dashboard/icons/color/grafana-dashboard-color.svg
+  whiteIcon: extensions/models/kubedb-grafana-dashboards/components/grafana-dashboard/icons/white/grafana-dashboard-white.svg
   description: 
 components-count: 1
 relationships: 

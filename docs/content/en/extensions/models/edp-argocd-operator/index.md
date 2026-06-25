@@ -1,7 +1,7 @@
 ---
 title: EDP Argocd Operator
 subtitle: Collaborative and visual infrastructure as design for EDP Argocd Operator
-image: /extensions/models/edp-argocd-operator/icons/color/edp-argocd-operator-color.svg
+image: extensions/models/edp-argocd-operator/icons/color/edp-argocd-operator-color.svg
 aliases: /extensibility/integrations/edp-argocd-operator
 docURL: https://docs.meshery.io/extensibility/integrations/edp-argocd-operator
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: argo-application
-  colorIcon: content/en/extensions/models/edp-argocd-operator/components/argo-application/icons/color/argo-application-color.svg
-  whiteIcon: content/en/extensions/models/edp-argocd-operator/components/argo-application/icons/white/argo-application-white.svg
+  colorIcon: extensions/models/edp-argocd-operator/components/argo-application/icons/color/argo-application-color.svg
+  whiteIcon: extensions/models/edp-argocd-operator/components/argo-application/icons/white/argo-application-white.svg
   description: 
 components-count: 1
 relationships: 

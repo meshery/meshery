@@ -875,7 +875,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 		return
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory(entityType).WithAction("update")
+	eventBuilder := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory(entityType).WithAction("update")
 	err = h.registryManager.UpdateEntityStatus(updateData.ID, updateData.Status, entityType)
 	if err != nil {
 		wrappedErr := ErrUpdateEntityStatus(err)
@@ -1506,8 +1506,8 @@ func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models
 	modelID := mux.Vars(r)["id"]
 	modelUUID, err := uuid.FromString(modelID)
 	if err != nil {
-		h.log.Error(ErrInvalidUUID(err))
-		writeMeshkitError(rw, ErrInvalidUUID(err), http.StatusBadRequest)
+		h.log.Error(models.ErrInvalidUUID(err))
+		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
 		return
 	}
 

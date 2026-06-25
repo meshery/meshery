@@ -42,13 +42,19 @@ mesheryctl design undeploy -f [filepath]
 	`,
 
 	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 && file == "" {
+			return ErrUndeployDesign(
+				fmt.Errorf("provide either a design ID or -f [filepath]"),
+			)
+		}
+
 		if cmd.Flags().Changed("file") && file == "" {
 			errMsg := `Usage: mesheryctl design undeploy -f [filepath]`
 			return ErrUndeployDesign(fmt.Errorf("%s", errMsg))
 		}
+
 		return nil
 	},
-
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error

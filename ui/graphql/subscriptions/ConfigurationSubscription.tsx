@@ -17,7 +17,7 @@ const configurationSubscription = graphql`
         patterns {
           id
           name
-          user_id
+          owner
           pattern_file
           visibility
           catalog_data
@@ -42,7 +42,7 @@ const configurationSubscription = graphql`
           filter_resource
           visibility
           catalog_data
-          user_id
+          owner
           created_at
           updated_at
         }
