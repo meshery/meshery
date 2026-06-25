@@ -69,7 +69,7 @@ pre.codeblock-pre {
   background-color: transparent;
   font-size: 1.05rem;
   & i::before {
-    color: #f1f3f5 !important;
+    color: currentColor !important;
   }
 }
 .clipbtn:hover {
