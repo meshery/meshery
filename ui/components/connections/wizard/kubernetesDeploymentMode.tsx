@@ -1,4 +1,4 @@
-import { Alert, Box, Radio, Typography } from '@sistent/sistent';
+import { Alert, Box, Radio, Typography, SettingsIcon } from '@sistent/sistent';
 import { alpha, styled } from '@/theme';
 import { EVENT_TYPES } from 'lib/event-types';
 import { MESHSYNC_DEPLOYMENT_TYPE } from '@/utils/Enum';
@@ -148,6 +148,7 @@ const DeploymentModeStepBody = ({ ctx }: { ctx: WizardContext }) => (
 export const kubernetesDeploymentModeStep: WizardStep = {
   id: 'kubernetes-meshsync-mode',
   label: 'MeshSync Mode',
+  icon: SettingsIcon,
   Component: DeploymentModeStepBody,
   // Operates on a single already-registered connection; only meaningful when
   // (re)configuring an existing kubernetes connection.
