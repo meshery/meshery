@@ -259,6 +259,7 @@ func main() {
 		models.K8sContext{},
 		schemasOrganization.Organization{},
 		models.Key{},
+		&models.Credential{},
 		connections.Connection{},
 		environment.Environment{},
 		environment.EnvironmentConnectionMapping{},

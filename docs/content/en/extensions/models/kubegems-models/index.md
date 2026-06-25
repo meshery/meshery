@@ -1,7 +1,7 @@
 ---
 title: Kubegems Models
 subtitle: Collaborative and visual infrastructure as design for Kubegems Models
-image: /extensions/models/kubegems-models/icons/color/kubegems-models-color.svg
+image: extensions/models/kubegems-models/icons/color/kubegems-models-color.svg
 aliases: /extensibility/integrations/kubegems-models
 docURL: https://docs.meshery.io/extensibility/integrations/kubegems-models
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
 - name: model-deployment
-  colorIcon: content/en/extensions/models/kubegems-models/components/model-deployment/icons/color/model-deployment-color.svg
-  whiteIcon: content/en/extensions/models/kubegems-models/components/model-deployment/icons/white/model-deployment-white.svg
+  colorIcon: extensions/models/kubegems-models/components/model-deployment/icons/color/model-deployment-color.svg
+  whiteIcon: extensions/models/kubegems-models/components/model-deployment/icons/white/model-deployment-white.svg
   description: 
 components-count: 1
 relationships: 

@@ -76,7 +76,7 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 	key := uuid.FromStringOrNil(id)
 	if key == uuid.Nil {
 		h.log.Error(ErrQueryGet("key"))
-		writeMeshkitError(w, ErrInvalidUUID(fmt.Errorf("invalid result id: %q", id)), http.StatusBadRequest)
+		writeMeshkitError(w, models.ErrInvalidUUID(fmt.Errorf("invalid result id: %q", id)), http.StatusBadRequest)
 		return
 	}
 
@@ -141,7 +141,7 @@ func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.R
 	key := uuid.FromStringOrNil(id)
 	if key == uuid.Nil {
 		h.log.Error(ErrQueryGet("key"))
-		writeMeshkitError(w, ErrInvalidUUID(fmt.Errorf("invalid result id: %q", id)), http.StatusBadRequest)
+		writeMeshkitError(w, models.ErrInvalidUUID(fmt.Errorf("invalid result id: %q", id)), http.StatusBadRequest)
 		return
 	}
 	bdr, err := p.FetchSmiResult(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), key)

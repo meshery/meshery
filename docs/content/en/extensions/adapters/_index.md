@@ -12,7 +12,7 @@ aliases:
 
 ## Guiding Principles of Adapter Design
 
-Adapters allow Meshery to interface with the different cloud native infrastructure. Review the list of all available [Meshery Adapters](/concepts/architecture/adapters). See the [Meshery Architecture](/concepts/architecture) diagrams for visuals on how adapters relate to other Meshery components.
+Adapters allow Meshery to interface with the different cloud native infrastructure. Review the list of all available [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}}). See the [Meshery Architecture]({{< ref "concepts/architecture/_index.md" >}}) diagrams for visuals on how adapters relate to other Meshery components.
 Meshery upholds the following guiding principles for adapter design:
 
 1. **Adapters allow Meshery to interface with the different cloud native infrastructure, exposing their differentiated value to users.**
@@ -56,8 +56,8 @@ The main purpose of the meshery-adapter-library is to:
 - provide a mini framework implementing the gRPC server that allows plugging in the mesh specific configuration and - operations implemented in the adapters.
 - provide middleware extension points
 
-[![Meshery Adapter Library](/extensions/adapters/images/meshery-adapter-library.svg
-)](/extensions/adapters/images/meshery-adapter-library.svg)
+[![Meshery Adapter Library](images/meshery-adapter-library.svg
+)](images/meshery-adapter-library.svg)
 
 _Figure: Displaying Meshery Adapter library architecture along with an example of integration_
 

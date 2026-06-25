@@ -33,6 +33,8 @@ type HandlerInterface interface {
 	ProviderUIHandler(w http.ResponseWriter, r *http.Request)
 	ProviderCapabilityHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProviderComponentsHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	InstallExtensionHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	RemoveExtensionHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	TokenHandler(w http.ResponseWriter, r *http.Request, provider Provider, fromMiddleWare bool)
 	LoginHandler(w http.ResponseWriter, r *http.Request, provider Provider, fromMiddleWare bool)
@@ -141,6 +143,12 @@ type HandlerInterface interface {
 	GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
+
+	GetConnectionDefinitions(rw http.ResponseWriter, r *http.Request)
+	GetConnectionDefinitionByID(rw http.ResponseWriter, r *http.Request)
+	RegisterConnectionDefinition(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	DeleteConnectionDefinition(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Request)

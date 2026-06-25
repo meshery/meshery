@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import yaml from 'js-yaml';
+import * as yaml from 'js-yaml';
 import { PROMPT_VARIANTS } from '@sistent/sistent';
 import { encodeDesignFile, getUnit8ArrayDecodedFile } from '../../../utils/utils';
 import { FILE_OPS } from '../../../utils/Enum';

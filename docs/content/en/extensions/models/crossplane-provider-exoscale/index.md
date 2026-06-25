@@ -1,7 +1,7 @@
 ---
 title: Exoscale (Crossplane)
 subtitle: Collaborative and visual infrastructure as design for Exoscale (Crossplane)
-image: /extensions/models/crossplane-provider-exoscale/icons/color/crossplane-provider-exoscale-color.svg
+image: extensions/models/crossplane-provider-exoscale/icons/color/crossplane-provider-exoscale-color.svg
 aliases: /extensibility/integrations/crossplane-provider-exoscale
 docURL: https://docs.meshery.io/extensibility/integrations/crossplane-provider-exoscale
 description: 
@@ -10,40 +10,40 @@ integrations-subcategory: Cloud Provider
 registrant: GitHub
 components: 
 - name: bucket
-  colorIcon: content/en/extensions/models/crossplane-provider-exoscale/components/bucket/icons/color/bucket-color.svg
-  whiteIcon: content/en/extensions/models/crossplane-provider-exoscale/components/bucket/icons/white/bucket-white.svg
+  colorIcon: extensions/models/crossplane-provider-exoscale/components/bucket/icons/color/bucket-color.svg
+  whiteIcon: extensions/models/crossplane-provider-exoscale/components/bucket/icons/white/bucket-white.svg
   description: 
 - name: iam-key
-  colorIcon: content/en/extensions/models/crossplane-provider-exoscale/components/iam-key/icons/color/iam-key-color.svg
-  whiteIcon: content/en/extensions/models/crossplane-provider-exoscale/components/iam-key/icons/white/iam-key-white.svg
+  colorIcon: extensions/models/crossplane-provider-exoscale/components/iam-key/icons/color/iam-key-color.svg
+  whiteIcon: extensions/models/crossplane-provider-exoscale/components/iam-key/icons/white/iam-key-white.svg
   description: 
 - name: kafka
-  colorIcon: content/en/extensions/models/crossplane-provider-exoscale/components/kafka/icons/color/kafka-color.svg
-  whiteIcon: content/en/extensions/models/crossplane-provider-exoscale/components/kafka/icons/white/kafka-white.svg
+  colorIcon: extensions/models/crossplane-provider-exoscale/components/kafka/icons/color/kafka-color.svg
+  whiteIcon: extensions/models/crossplane-provider-exoscale/components/kafka/icons/white/kafka-white.svg
   description: 
 - name: my-sql
-  colorIcon: content/en/extensions/models/crossplane-provider-exoscale/components/my-sql/icons/color/my-sql-color.svg
-  whiteIcon: content/en/extensions/models/crossplane-provider-exoscale/components/my-sql/icons/white/my-sql-white.svg
+  colorIcon: extensions/models/crossplane-provider-exoscale/components/my-sql/icons/color/my-sql-color.svg
+  whiteIcon: extensions/models/crossplane-provider-exoscale/components/my-sql/icons/white/my-sql-white.svg
   description: 
 - name: open-search
-  colorIcon: content/en/extensions/models/crossplane-provider-exoscale/components/open-search/icons/color/open-search-color.svg
-  whiteIcon: content/en/extensions/models/crossplane-provider-exoscale/components/open-search/icons/white/open-search-white.svg
+  colorIcon: extensions/models/crossplane-provider-exoscale/components/open-search/icons/color/open-search-color.svg
+  whiteIcon: extensions/models/crossplane-provider-exoscale/components/open-search/icons/white/open-search-white.svg
   description: 
 - name: postgre-sql
-  colorIcon: content/en/extensions/models/crossplane-provider-exoscale/components/postgre-sql/icons/color/postgre-sql-color.svg
-  whiteIcon: content/en/extensions/models/crossplane-provider-exoscale/components/postgre-sql/icons/white/postgre-sql-white.svg
+  colorIcon: extensions/models/crossplane-provider-exoscale/components/postgre-sql/icons/color/postgre-sql-color.svg
+  whiteIcon: extensions/models/crossplane-provider-exoscale/components/postgre-sql/icons/white/postgre-sql-white.svg
   description: 
 - name: provider-config
-  colorIcon: content/en/extensions/models/crossplane-provider-exoscale/components/provider-config/icons/color/provider-config-color.svg
-  whiteIcon: content/en/extensions/models/crossplane-provider-exoscale/components/provider-config/icons/white/provider-config-white.svg
+  colorIcon: extensions/models/crossplane-provider-exoscale/components/provider-config/icons/color/provider-config-color.svg
+  whiteIcon: extensions/models/crossplane-provider-exoscale/components/provider-config/icons/white/provider-config-white.svg
   description: 
 - name: provider-config-usage
-  colorIcon: content/en/extensions/models/crossplane-provider-exoscale/components/provider-config-usage/icons/color/provider-config-usage-color.svg
-  whiteIcon: content/en/extensions/models/crossplane-provider-exoscale/components/provider-config-usage/icons/white/provider-config-usage-white.svg
+  colorIcon: extensions/models/crossplane-provider-exoscale/components/provider-config-usage/icons/color/provider-config-usage-color.svg
+  whiteIcon: extensions/models/crossplane-provider-exoscale/components/provider-config-usage/icons/white/provider-config-usage-white.svg
   description: 
 - name: redis
-  colorIcon: content/en/extensions/models/crossplane-provider-exoscale/components/redis/icons/color/redis-color.svg
-  whiteIcon: content/en/extensions/models/crossplane-provider-exoscale/components/redis/icons/white/redis-white.svg
+  colorIcon: extensions/models/crossplane-provider-exoscale/components/redis/icons/color/redis-color.svg
+  whiteIcon: extensions/models/crossplane-provider-exoscale/components/redis/icons/white/redis-white.svg
   description: 
 components-count: 9
 relationships: 

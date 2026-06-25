@@ -9,7 +9,7 @@ description: Manage the lifecycle of your infrastructure by registering each inf
 
 <a name="lifecycle-management"></a>
 
-Meshery manages hundreds of different types of cloud native infrastructure. See the [full set of integrations](/extensibility/integrations).
+Meshery manages hundreds of different types of cloud native infrastructure. See the [full set of integrations]({{< ref "extensions/models/_index.md" >}}).
 
 ## Cloud Native Infrastructure Lifecycle Management
 
@@ -29,7 +29,7 @@ Just as Meshery automates the provisioning of various cloud native infrastructur
 
 Users may bring their applications (perform workload onboarding) on the infrastructure using the Custom Configuration operation.
 
-Commonly adjoining each infrastructure is a sample application that facilitates demonstration of the value of the given infrastructure. Meshery allows you to efficiently [install sample applications](/guides/infrastructure-management/sample-apps) across different infrastructurees.
+Commonly adjoining each infrastructure is a sample application that facilitates demonstration of the value of the given infrastructure. Meshery allows you to efficiently [install sample applications]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}}) across different infrastructurees.
 
 ## Configuration Management
 
@@ -41,7 +41,7 @@ Meshery tracks operations that you perform on infrastructurees and their workloa
 
 #### Acknowledging and dismissing notifications
 
-Depending upon the severity of the notification, many notifications are informational and can readily be dismissed after reading. Some notifications include actionable alerts. Learn more in "[Managing Events with Notification Center](/guides/infrastructure-management/notification-management)".
+Depending upon the severity of the notification, many notifications are informational and can readily be dismissed after reading. Some notifications include actionable alerts. Learn more in "[Managing Events with Notification Center]({{< ref "guides/infrastructure-management/notification-management/index.md" >}})".
 
 ## Lifecycle FAQs
 
@@ -54,7 +54,7 @@ Depending upon the severity of the notification, many notifications are informat
 <p><b>3. Connectivity:</b> those individuals will have to be afforded network connectivity to that cluster (in whatever fashion you deem appropriate). Grossly, there are two ways in which this can occur:</p>
 <p>3.a) The other user runs their own copy of Meshery (or signs into a shared instance like the Playground) and will see the connection as being available when they sign in. Their Meshery Server will need to be able to reach your Kube API over the network. How that is done can be any number of ways and is left unto your own devices.</p>
 <p>3.b.) The other user signs into your Meshery Server instance, which has network access to your Kubernetes cluster. In order for the other user to sign into your Meshery Server, you would have to expose it to the Internet or VPN or… one of the many other ways to all them access to your Meshery Server.</p>
-<p>So, in short, yes, you can share access to your Kubernetes cluster with other users, but you have to explicitly grant them access to do so. For more information please visit <a href="/extensibility/authorization">Remote Provider Permissions</a>.</p>
+<p>So, in short, yes, you can share access to your Kubernetes cluster with other users, but you have to explicitly grant them access to do so. For more information please visit <a href="{{< ref "reference/extensibility/authorization/index.md" >}}">Remote Provider Permissions</a>.</p>
 </details>
 
 {{< discuss >}}

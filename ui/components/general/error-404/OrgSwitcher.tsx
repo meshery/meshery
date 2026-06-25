@@ -64,6 +64,10 @@ const OrgSwitcher = () => {
     try {
       await updateSelectedOrg(id).unwrap();
       dispatchSetOrganization({ organization: selected });
+      if (typeof window !== 'undefined' && window.sessionStorage) {
+        sessionStorage.removeItem('keys');
+        sessionStorage.removeItem('currentWorkspace');
+      }
       window.location.reload();
     } catch (err) {
       notify({
