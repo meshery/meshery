@@ -1506,8 +1506,8 @@ func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models
 	modelID := mux.Vars(r)["id"]
 	modelUUID, err := uuid.FromString(modelID)
 	if err != nil {
-		h.log.Error(ErrInvalidUUID(err))
-		writeMeshkitError(rw, ErrInvalidUUID(err), http.StatusBadRequest)
+		h.log.Error(models.ErrInvalidUUID(err))
+		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
 		return
 	}
 
