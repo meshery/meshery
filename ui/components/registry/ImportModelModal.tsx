@@ -118,13 +118,13 @@ const CustomRadioWidget = (props: CustomRadioWidgetProps) => {
 
   return (
     <FormControl component="fieldset">
-      <Typography fontWeight={'bold'} fontSize={'1rem'}>
+      <Typography fontWeight={'bold'} fontSize={'1rem'} sx={{ marginBottom: '0.5rem' }}>
         {label}
       </Typography>
       <RadioGroup
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        sx={{ marginBottom: '0.5rem' }}
+        aria-label="Upload Method"
       >
         {enumOptions.map((option, index) => (
           <FormControlLabel
