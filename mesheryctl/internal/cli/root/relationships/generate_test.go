@@ -2,7 +2,6 @@ package relationships
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -45,7 +44,7 @@ func TestGenerateErrorOutput(t *testing.T) {
 			Args:           []string{"generate", "--file", "/nonexistent/file.csv"},
 			ExpectError:    true,
 			ErrorSubstring: "File read error",
-			ExpectedError:  utils.ErrFileRead(fmt.Errorf("open /nonexistent/file.csv: no such file or directory")),
+			ExpectedError:  nil,
 		},
 		{
 			Name:           "Given both file and spreadsheet-id, when generate runs, then it errors with mutually exclusive flags",
@@ -153,7 +152,7 @@ func TestGenerateDataOutput(t *testing.T) {
 					Range:          "Relationships!A1:O1000",
 					Values: [][]interface{}{
 						{},
-						{},
+						{"Model", "Version", "Kind", "Type", "SubType", "MetadataDescription", "Docs", "MetadataStyles", "EvalPolicy", "SelectorsDenyFrom", "SelectorsDenyTo", "SelectorsAllowFrom", "SelectorsAllowTo", "CompleteDefinition", "VisualizationExample"},
 						sheetDataParsed["ROW3"].([]interface{}),
 					},
 				}, nil

@@ -1,14 +1,14 @@
 package relationships
 
 import (
-	"encoding/csv"
 	"fmt"
-	"os"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkit "github.com/meshery/meshkit/utils"
+	meshkitcsv "github.com/meshery/meshkit/utils/csv"
+
 	"github.com/spf13/cobra"
 	"google.golang.org/api/sheets/v4"
 )
@@ -19,12 +19,6 @@ type cmdRelationshipGenerateFlag struct {
 	File            string `json:"file" validate:"omitempty,filepath"`
 	Output          string `json:"output" validate:"omitempty"`
 }
-
-// minRelationshipCSVColumns defines the minimum number of columns required in a CSV row
-// to be considered a valid relationship entry.
-// Refer to the Meshery relationship CSV template:
-// https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv
-const minRelationshipCSVColumns = 15
 
 var relationshipGenerateFlag cmdRelationshipGenerateFlag
 
@@ -39,21 +33,21 @@ var fetchSheetValues = func(id, cred string) (*sheets.ValueRange, error) {
 var relationshipsOutputPath = "../docs/data/RelationshipsData.json"
 
 type CustomValueRange struct {
-	Model                string `json:"Model"`
-	Version              string `json:"Version"`
-	Kind                 string `json:"kind"`
-	Type                 string `json:"type"`
-	SubType              string `json:"subType"`
-	MetadataDescription  string `json:"metadataDescription"`
-	Docs                 string `json:"docs"`
-	MetadataStyles       string `json:"metadataStyles"`
-	EvalPolicy           string `json:"evalPolicy"`
-	SelectorsDenyFrom    string `json:"selectorsDenyFrom"`
-	SelectorsDenyTo      string `json:"selectorsDenyTo"`
-	SelectorsAllowFrom   string `json:"selectorsAllowFrom"`
-	SelectorsAllowTo     string `json:"selectorsAllowTo"`
-	CompleteDefinition   string `json:"CompleteDefinition"`
-	VisualizationExample string `json:"VisualizationExample"`
+	Model                string `json:"Model" csv:"Model"`
+	Version              string `json:"Version" csv:"Version"`
+	Kind                 string `json:"kind" csv:"Kind"`
+	Type                 string `json:"type" csv:"Type"`
+	SubType              string `json:"subType" csv:"SubType"`
+	MetadataDescription  string `json:"metadataDescription" csv:"MetadataDescription"`
+	Docs                 string `json:"docs" csv:"Docs"`
+	MetadataStyles       string `json:"metadataStyles" csv:"MetadataStyles"`
+	EvalPolicy           string `json:"evalPolicy" csv:"EvalPolicy"`
+	SelectorsDenyFrom    string `json:"selectorsDenyFrom" csv:"SelectorsDenyFrom"`
+	SelectorsDenyTo      string `json:"selectorsDenyTo" csv:"SelectorsDenyTo"`
+	SelectorsAllowFrom   string `json:"selectorsAllowFrom" csv:"SelectorsAllowFrom"`
+	SelectorsAllowTo     string `json:"selectorsAllowTo" csv:"SelectorsAllowTo"`
+	CompleteDefinition   string `json:"CompleteDefinition" csv:"CompleteDefinition"`
+	VisualizationExample string `json:"VisualizationExample" csv:"VisualizationExample"`
 }
 
 var generateCmd = &cobra.Command{
@@ -112,79 +106,95 @@ func init() {
 }
 
 func generateRelationshipsFromCSV(filePath string) ([]CustomValueRange, error) {
-	f, err := os.Open(filePath)
+	ch := make(chan CustomValueRange, 1)
+	errCh := make(chan error, 1)
+
+	colMapping := map[string]string{
+		"Model":                "Model",
+		"Version":              "Version",
+		"Kind":                 "kind",
+		"Type":                 "type",
+		"SubType":              "subType",
+		"MetadataDescription":  "metadataDescription",
+		"Docs":                 "docs",
+		"MetadataStyles":       "metadataStyles",
+		"EvalPolicy":           "evalPolicy",
+		"SelectorsDenyFrom":    "selectorsDenyFrom",
+		"SelectorsDenyTo":      "selectorsDenyTo",
+		"SelectorsAllowFrom":   "selectorsAllowFrom",
+		"SelectorsAllowTo":     "selectorsAllowTo",
+		"CompleteDefinition":   "CompleteDefinition",
+		"VisualizationExample": "VisualizationExample",
+	}
+
+	parser, err := meshkitcsv.NewCSVParser[CustomValueRange](filePath, 1, colMapping, func(_ []string, row []string) bool {
+		return len(row) > 0 && row[0] != ""
+	})
 	if err != nil {
 		return nil, utils.ErrFileRead(err)
 	}
-	defer func() {
-		_ = f.Close()
+
+	go func() {
+		if err := parser.Parse(ch, errCh); err != nil {
+			errCh <- err
+		}
 	}()
 
-	reader := csv.NewReader(f)
-	reader.FieldsPerRecord = -1
-	records, err := reader.ReadAll()
-	if err != nil {
-		return nil, utils.ErrFileRead(err)
-	}
-
-	// First two rows are headers, data starts at row 3
-	if len(records) <= 2 {
-		return nil, ErrEmptyCSVData(fmt.Errorf("no relationship data found in CSV file: %s. CSV must contain two header rows followed by at least one data row with a minimum of 15 columns", filePath))
-	}
-
-	var customResp []CustomValueRange
-	for _, row := range records[2:] {
-		if len(row) >= minRelationshipCSVColumns && row[0] != "" {
-			customResp = append(customResp, CustomValueRange{
-				Model:                row[0],
-				Version:              row[1],
-				Kind:                 row[2],
-				Type:                 row[3],
-				SubType:              row[4],
-				MetadataDescription:  row[5],
-				Docs:                 row[6],
-				MetadataStyles:       row[7],
-				EvalPolicy:           row[8],
-				SelectorsDenyFrom:    row[9],
-				SelectorsDenyTo:      row[10],
-				SelectorsAllowFrom:   row[11],
-				SelectorsAllowTo:     row[12],
-				CompleteDefinition:   row[13],
-				VisualizationExample: row[14],
-			})
+	var results []CustomValueRange
+	for {
+		select {
+		case row := <-ch:
+			results = append(results, row)
+		case err := <-errCh:
+			utils.Log.Error(err)
+		case <-parser.Context.Done():
+			if len(results) == 0 {
+				return nil, ErrEmptyCSVData(fmt.Errorf("no valid rows found in: %s", filePath))
+			}
+			return results, nil
 		}
 	}
-
-	if len(customResp) == 0 {
-		return nil, ErrEmptyCSVData(fmt.Errorf("no valid relationship rows found in CSV file: %s", filePath))
-	}
-
-	return customResp, nil
 }
 
 func processSheetData(resp *sheets.ValueRange, jsonFilePath string) error {
 	var customResp []CustomValueRange
 
-	for _, row := range resp.Values[2:] {
-		if len(row) >= minRelationshipCSVColumns && row[0] != "" {
-			customResp = append(customResp, CustomValueRange{
-				Model:                row[0].(string),
-				Version:              row[1].(string),
-				Kind:                 row[2].(string),
-				Type:                 row[3].(string),
-				SubType:              row[4].(string),
-				MetadataDescription:  row[5].(string),
-				Docs:                 row[6].(string),
-				MetadataStyles:       row[7].(string),
-				EvalPolicy:           row[8].(string),
-				SelectorsDenyFrom:    row[9].(string),
-				SelectorsDenyTo:      row[10].(string),
-				SelectorsAllowFrom:   row[11].(string),
-				SelectorsAllowTo:     row[12].(string),
-				CompleteDefinition:   row[13].(string),
-				VisualizationExample: row[14].(string),
-			})
+	// Row index 1 = headers
+	headers := resp.Values[1]
+	colIndex := map[string]int{}
+	for i, h := range headers {
+		colIndex[fmt.Sprintf("%v", h)] = i
+	}
+
+	getCol := func(row []interface{}, name string) string {
+		idx, ok := colIndex[name]
+		if !ok || idx >= len(row) {
+			return ""
 		}
+		return fmt.Sprintf("%v", row[idx])
+	}
+
+	for _, row := range resp.Values[2:] {
+		if getCol(row, "Model") == "" {
+			continue
+		}
+		customResp = append(customResp, CustomValueRange{
+			Model:                getCol(row, "Model"),
+			Version:              getCol(row, "Version"),
+			Kind:                 getCol(row, "Kind"),
+			Type:                 getCol(row, "Type"),
+			SubType:              getCol(row, "SubType"),
+			MetadataDescription:  getCol(row, "MetadataDescription"),
+			Docs:                 getCol(row, "Docs"),
+			MetadataStyles:       getCol(row, "MetadataStyles"),
+			EvalPolicy:           getCol(row, "EvalPolicy"),
+			SelectorsDenyFrom:    getCol(row, "SelectorsDenyFrom"),
+			SelectorsDenyTo:      getCol(row, "SelectorsDenyTo"),
+			SelectorsAllowFrom:   getCol(row, "SelectorsAllowFrom"),
+			SelectorsAllowTo:     getCol(row, "SelectorsAllowTo"),
+			CompleteDefinition:   getCol(row, "CompleteDefinition"),
+			VisualizationExample: getCol(row, "VisualizationExample"),
+		})
 	}
 
 	return saveRelationshipsJSON(customResp, jsonFilePath)
