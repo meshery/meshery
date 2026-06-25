@@ -7,6 +7,7 @@ import resetDatabase from '@/graphql/queries/ResetDatabaseQuery';
 
 import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
+import useGrafanaPingHook from '@/utils/hooks/useGrafanaPingHook';
 import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
@@ -74,6 +75,7 @@ const ConnectionTable = ({
     }) => state.ui,
   );
   const ping = useKubernetesHook();
+  const pingGrafana = useGrafanaPingHook();
   const { width } = useWindowDimensions();
 
   const { tableState, updateTableState, copyRowDeepLink } = useTableUrlState({
@@ -660,6 +662,7 @@ const ConnectionTable = ({
     handleStatusChange,
     handleActionMenuOpen,
     ping,
+    pingGrafana,
     transitionMapByKind,
   });
   const columnNames = useMemo(
