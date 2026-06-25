@@ -25473,7 +25473,7 @@ paths:
                         `connections/` folder) and registered into the registry alongside components and relationships.
                         It conforms to the connection schema; the dynamic, kind-specific shape is carried in `metadata`.
                         The `model` association scopes the definition to its owning model.
-                      x-go-type: Connection
+                      x-go-type: ConnectionDefinition
                     x-order: 1
                   totalCount:
                     type: integer
@@ -25525,7 +25525,7 @@ paths:
                 folder) and registered into the registry alongside components and relationships. It conforms to the
                 connection schema; the dynamic, kind-specific shape is carried in `metadata`. The `model` association
                 scopes the definition to its owning model.
-              x-go-type: Connection
+              x-go-type: ConnectionDefinition
       responses:
         '201':
           description: Connection definition registered
@@ -25537,7 +25537,7 @@ paths:
                   `connections/` folder) and registered into the registry alongside components and relationships. It
                   conforms to the connection schema; the dynamic, kind-specific shape is carried in `metadata`. The
                   `model` association scopes the definition to its owning model.
-                x-go-type: Connection
+                x-go-type: ConnectionDefinition
         '400':
           description: Invalid request body or request param
           content:
@@ -25585,7 +25585,7 @@ paths:
                   `connections/` folder) and registered into the registry alongside components and relationships. It
                   conforms to the connection schema; the dynamic, kind-specific shape is carried in `metadata`. The
                   `model` association scopes the definition to its owning model.
-                x-go-type: Connection
+                x-go-type: ConnectionDefinition
         '401':
           description: Expired JWT token used or insufficient privilege
           content:
@@ -25631,7 +25631,7 @@ paths:
                 folder) and registered into the registry alongside components and relationships. It conforms to the
                 connection schema; the dynamic, kind-specific shape is carried in `metadata`. The `model` association
                 scopes the definition to its owning model.
-              x-go-type: Connection
+              x-go-type: ConnectionDefinition
       responses:
         '200':
           description: Connection definition updated
@@ -25643,7 +25643,7 @@ paths:
                   `connections/` folder) and registered into the registry alongside components and relationships. It
                   conforms to the connection schema; the dynamic, kind-specific shape is carried in `metadata`. The
                   `model` association scopes the definition to its owning model.
-                x-go-type: Connection
+                x-go-type: ConnectionDefinition
         '400':
           description: Invalid request body or request param
           content:
