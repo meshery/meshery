@@ -48,8 +48,8 @@ export const useThemePreference = () => {
   }, []);
 
   const mode = isLoading
-    ? storedMode || systemPref || 'dark'
-    : data?.remoteProviderPreferences?.theme || storedMode || systemPref || 'dark';
+    ? storedMode || systemPref
+    : data?.remoteProviderPreferences?.theme || storedMode || systemPref;
 
   useEffect(() => {
     const remoteTheme = data?.remoteProviderPreferences?.theme;
