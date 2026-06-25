@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Extensions on Documentation</title><link>/extensions/extensions/</link><description>Recent content in Extensions on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/extensions/extensions/index.xml" rel="self" type="application/rss+xml"/><item><title>Helm Snapshot</title><link>/extensions/extensions/helm-snapshot/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/extensions/helm-snapshot/</guid><description>&lt;h1 id="helm-snapshot"&gt;
-	&lt;img style="height: 4rem; width: 4rem;" src="images/helm-chart-color.svg" /&gt; Helm Snapshot
+	&lt;img style="height: 4rem; width: 4rem; vertical-align: middle;" src="images/helm-chart-color.svg" alt="" /&gt; Helm Snapshot
 &lt;/h1&gt;
 &lt;h2 id="extension-overview"&gt;
 	Extension Overview
@@ -8,7 +8,7 @@
 	&lt;img style="height: 4rem; width: 4rem; vertical-align: middle;" src="images/icon-color.svg" alt="" /&gt; Kanvas
 &lt;/h1&gt;
 &lt;p&gt;Kanvas is a GitOps-infused cloud native &lt;b&gt;visual designer&lt;/b&gt; for Kubernetes and cloud native applications. This extension works with your Kubernetes clusters so that you design and manage your infrastructure and applications between members of your team. This extension has two modes: Designer and Operator. Create and share your own Kubernetes deployments and patterns in Designer. Deploy your designs and manage your infrastructure using Operator. It includes multi-user collaboration features that allow teams to work together seamlessly towards achieving their goals in a more timely manner. This extension aims at removing all the challenging aspects of collaboration from the equation so that everyone on your team can be on the same page when it comes to managing cloud-native infrastructure projects.&lt;/p&gt;</description></item><item><title>kubectl MeshSync Snapshot</title><link>/extensions/extensions/kubectl-meshsync-snapshot/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/extensions/kubectl-meshsync-snapshot/</guid><description>&lt;h1 id="kubectl-meshsync-snapshot"&gt;
-	&lt;img style="height: 4rem; width: 4rem;" src="images/meshsync.svg" /&gt; kubectl MeshSync Snapshot
+	&lt;img style="height: 4rem; width: 4rem; vertical-align: middle;" src="images/meshsync.svg" alt="" /&gt; kubectl MeshSync Snapshot
 &lt;/h1&gt;
 &lt;p&gt;A &lt;code&gt;kubectl&lt;/code&gt; plugin for performing an ad hoc collection of resource information from a Kubernetes cluster and sending the cluster resources details to a Meshery Server. &lt;code&gt;kubectl meshsync snapshot&lt;/code&gt; is a native kubectl plugin for conveniently synchronizing the state of your cluster with Meshery Server.&lt;/p&gt;
 &lt;hr /&gt;
