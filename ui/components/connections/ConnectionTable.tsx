@@ -263,8 +263,12 @@ const ConnectionTable = ({
     // only populated after `_app.tsx`'s async `loadMeshModelComponent`
     // completes. The pages-router routes to /management/connections before
     // that promise resolves, so this memo must tolerate a null map.
+    // A connection only needs a kind and a status to render; the display name
+    // falls back to `metadata.name`/kind in the Name column. Requiring a
+    // top-level `name` here wrongly hid connections (e.g. kubernetes, grafana)
+    // whose name lives only in `metadata.name`.
     return connectionData.connections
-      .filter((conn) => conn.name && conn.kind && conn.status)
+      .filter((conn) => conn.kind && conn.status)
       .map((connection) => ({
         ...connection,
         nextStatus:

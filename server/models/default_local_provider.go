@@ -1574,11 +1574,19 @@ func (l *DefaultLocalProvider) SaveUserCredential(token string, credential *Cred
 }
 
 func (l *DefaultLocalProvider) GetCredentialByID(token string, credentialID core.Uuid) (*Credential, int, error) {
-	return nil, http.StatusForbidden, ErrLocalProviderSupport
+	credential := &Credential{}
+	result := l.GetGenericPersister().Model(&Credential{}).Where("id = ? AND deleted_at is NULL", credentialID).First(credential)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, http.StatusNotFound, fmt.Errorf("credential with id %s not found", credentialID)
+		}
+		return nil, http.StatusInternalServerError, fmt.Errorf("error retrieving credential with id %s: %v", credentialID, result.Error)
+	}
+	return credential, http.StatusOK, nil
 }
 
 func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error) {
-	result := l.GetGenericPersister().Select("*").Where("user_id=? and deleted_at is NULL", userID)
+	result := l.GetGenericPersister().Model(&Credential{}).Select("*").Where("user_id=? and deleted_at is NULL", userID)
 	if result.Error != nil {
 		return nil, result.Error
 	}
