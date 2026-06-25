@@ -135,7 +135,7 @@ func (h *Handler) RegisterConnectionDefinition(rw http.ResponseWriter, r *http.R
 		return
 	}
 
-	if def.ModelReference == nil {
+	if def.ModelReference == nil || def.ModelReference.Registrant == nil {
 		err := ErrFailToSave(fmt.Errorf("a modelReference (with registrant) is required to register a connection definition"), obj)
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusBadRequest)
