@@ -2,6 +2,8 @@
 package handlers
 
 import (
+	"time"
+
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
@@ -79,6 +81,16 @@ func NewHandlerInstance(
 		Name:    "submitMetrics",
 		Handler: h.CollectStaticMetrics,
 	})
+
+	// Background routine to get tables stat
+	h.dbHandler.Exec("Analyze")
+	ticker := time.NewTicker(10 * time.Minute)
+	go func() {
+		for {
+			<-ticker.C
+			h.dbHandler.Exec("Analyze")
+		}
+	}()
 
 	return h
 }
