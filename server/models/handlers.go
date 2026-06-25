@@ -54,7 +54,6 @@ type HandlerInterface interface {
 
 	LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	CollectStaticMetrics(config *SubmitMetricsConfig) error
 	FetchResultsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	FetchAllResultsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetResultHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -85,23 +84,24 @@ type HandlerInterface interface {
 	DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	BulkDeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
-	GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GrafanaPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	// Telemetry (v2) — connection-driven Grafana dashboard browsing & rendering.
+	GrafanaTelemetryPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GrafanaTelemetryBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GrafanaTelemetryBoardHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GrafanaTelemetryDatasourcesHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GrafanaTelemetryQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GrafanaTelemetryQueryRangeBatchHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GrafanaTelemetryPinnedBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
-	// ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	// ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	// ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	PrometheusQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	PrometheusPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryMetricsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryLabelsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryLabelValuesHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryMetadataHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryQueryRangeBatchHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryPanelsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	UserPrefsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
@@ -263,15 +263,8 @@ type HandlerConfig struct {
 	// SessionStore sessions.Store
 
 	AdapterTracker AdaptersTrackerInterface
-	QueryTracker   QueryTrackerInterface
 
 	KubeConfigFolder string
-
-	GrafanaClient         *GrafanaClient
-	GrafanaClientForQuery *GrafanaClient
-
-	PrometheusClient         *PrometheusClient
-	PrometheusClientForQuery *PrometheusClient
 
 	// GraphQLHandler           http.Handler
 	// GraphQLPlaygroundHandler http.Handler
@@ -302,15 +295,6 @@ type HandlerConfig struct {
 	K8scontextChannel *K8scontextChan
 	EventsBuffer      *events.EventStreamer
 	OperatorTracker   *OperatorTracker
-}
-
-// SubmitMetricsConfig is used to store config used for submitting metrics
-type SubmitMetricsConfig struct {
-	TestUUID, ResultID, PromURL string
-	StartTime, EndTime          time.Time
-	// TokenKey,
-	TokenVal string
-	Provider Provider
 }
 
 type AuthenticationMechanism int
