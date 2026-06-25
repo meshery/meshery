@@ -5,7 +5,7 @@ import { json } from '@codemirror/lang-json';
 import { yaml } from '@codemirror/lang-yaml';
 import { EditorView } from '@codemirror/view';
 import { lintGutter, linter } from '@codemirror/lint';
-import jsyaml from 'js-yaml';
+import * as jsyaml from 'js-yaml';
 
 const ReactCodeMirror = dynamic(() => import('@uiw/react-codemirror').then((mod) => mod.default), {
   ssr: false,
