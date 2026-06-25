@@ -1,4 +1,52 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Mon, 22 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.45</title><link>/project/releases/v1.0.45/</link><pubDate>Mon, 22 Jun 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.45/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Thu, 25 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.46</title><link>/project/releases/v1.0.46/</link><pubDate>Thu, 25 Jun 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.46/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Update to Meshery Schemas v1.3.16 @jamieplu (#20247)&lt;/li&gt;
+&lt;li&gt;[Server] Fix duplicate ErrInvalidUUID causing &amp;ldquo;Error codes utility&amp;rdquo; CI failure @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#20245)&lt;/li&gt;
+&lt;li&gt;feat(ui): release-scoped cache headers for the served UI @leecalcote (#20239)&lt;/li&gt;
+&lt;li&gt;[Server] fix(errors): dedupe ErrInvalidUUIDCode to unblock Error Codes Utility @leecalcote (#20240)&lt;/li&gt;
+&lt;li&gt;docs: add Bluesky social shield to README.md @KumarNirupam1 (#20220)&lt;/li&gt;
+&lt;li&gt;fix(uuid): harden ignored UUID errors after the gofrs revert @ritzorama (#20181)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;chore(ui): bump @meshery/schemas to 1.3.16 @leecalcote (#20249)&lt;/li&gt;
+&lt;li&gt;UI: Dependencies upgrades @leecalcote (#20238)&lt;/li&gt;
+&lt;li&gt;feat(table): persist table state in URL and add row deeplinks @hortison (#20237)&lt;/li&gt;
+&lt;li&gt;[UI] Polish context switcher layout and hover interactions @chaitanyamedidar (#20217)&lt;/li&gt;
+&lt;li&gt;[UI] Fix Connection Wizard missing fallback icons using native Sistent components @chaitanyamedidar (#20202)&lt;/li&gt;
+&lt;li&gt;fix(error-404): show the user&amp;rsquo;s assigned organization roles in Current Session @leecalcote (#20205)&lt;/li&gt;
+&lt;li&gt;[Chore]: Update to Sistent v0.21.22 @rishiraj38 (#20190)&lt;/li&gt;
+&lt;li&gt;[Chore] Bump @meshery/schemas to 1.3.13 in UI packages (ui, provider-ui, docker-extension) @ritzorama (#20180)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;UI: Dependencies upgrades @leecalcote (#20238)&lt;/li&gt;
+&lt;li&gt;fix(install): repair broken provider-drift CI gate (check-install -&amp;gt; providers-check) + resync stale k8s manifest @ritzorama (#20182)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Delete docs/meetings/2026/week-of-06-18-2026/pragalva.md @yi-nuo426 (#20246)&lt;/li&gt;
+&lt;li&gt;docs(production): cover CDN and edge caching of the served UI @leecalcote (#20243)&lt;/li&gt;
+&lt;li&gt;[Docs] fix: add missing extension icon before Kanvas title @smishraa30 (#20210)&lt;/li&gt;
+&lt;li&gt;[Docs] Remove extra empty column from Meshery Connections table @YASHMAHAKAL (#17994)&lt;/li&gt;
+&lt;li&gt;[Docs] Add Connection Wizard user and contributor guides @leecalcote (#20192)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Copilot, @KumarNirupam1, @YASHMAHAKAL, @chaitanyamedidar, @fitzergerald, @hamza-mohd, @hortison, @jamieplu, @leecalcote, @meshery-ci, @miacycle, @rishiraj38, @ritzorama, @saurabhraghuvanshii, @smishraa30, @winkletinkle, @yi-nuo426, Kumar and [copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.45</title><link>/project/releases/v1.0.45/</link><pubDate>Mon, 22 Jun 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.45/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -33723,7 +33771,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.45&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.46&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
