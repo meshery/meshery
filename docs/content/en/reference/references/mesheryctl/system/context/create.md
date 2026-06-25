@@ -3,6 +3,9 @@ title: mesheryctl-system-context-create
 display_title: false
 command: system
 subcommand: context
+no_list: true 
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys, mesheryctl-ctx]
 ---
 
 # mesheryctl system context create
@@ -68,7 +71,5 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
 
 Usage of mesheryctl context create
 ![context-create-usage](../../../../images/newcontext.png)
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/contributing-cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -17,17 +17,17 @@ Version of Meshery command line client - mesheryctl.
 mesheryctl version [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
-To view the current version and SHA of release binary of mesheryctl client 
+To view the current version and SHA of release binary of mesheryctl client
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl version
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -52,7 +52,5 @@ mesheryctl version
 
 Usage of mesheryctl version
 ![version-usage](../../images/version.png)
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/contributing-cli.md#preserving-manually-added-documentation" >}}) for guidance.

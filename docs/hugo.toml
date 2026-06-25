@@ -38,6 +38,23 @@ taxonomyCloudTitle = ["Tags", "Categories"]
 # set taxonomyPageHeader = [] to hide taxonomies on the page headers
 taxonomyPageHeader = ["tags", "categories"]
 
+[related]
+  threshold = 70
+  includeNewer = true
+  toLower = true
+
+  [[related.indices]]
+    name = "section"
+    weight = 10
+
+  [[related.indices]]
+    name = "tags"
+    weight = 50
+
+  [[related.indices]]
+    name = "categories"
+    weight = 70
+
 
 staticDir = ['static']
 

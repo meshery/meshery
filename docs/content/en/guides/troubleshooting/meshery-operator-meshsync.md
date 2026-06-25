@@ -1,6 +1,8 @@
 ---
 title: Meshery Operator, MeshSync, Broker Troubleshooting Guide
 description: Comprehensive guidance for troubleshooting Meshery Operator, MeshSync and Broker deployments under various scenarios.
+no_list: true 
+hide_section_list: true
 categories: [troubleshooting]
 ---
 
@@ -116,11 +118,4 @@ Future Enhancements for Troubleshooting:
 - NATS/MeshSync not running prompts a review of available operations in the Settings panel.
 
 </div>
-
-## See Also
-
-- [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation.md" >}})
-- [Troubleshooting Errors while running Meshery]({{< ref "guides/troubleshooting/meshery-server.md" >}})
-
-{{< related-discussions tag="meshery" >}}
 

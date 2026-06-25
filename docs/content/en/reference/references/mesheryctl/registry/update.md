@@ -3,6 +3,9 @@ title: mesheryctl-registry-update
 display_title: false
 command: registry
 subcommand: update
+no_list: true 
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-reg]
 ---
 
 # mesheryctl registry update
@@ -68,7 +71,5 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/contributing-cli.md#preserving-manually-added-documentation" >}}) for guidance.

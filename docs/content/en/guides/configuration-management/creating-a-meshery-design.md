@@ -117,11 +117,3 @@ You can also import community designs from the [Meshery Catalog](https://meshery
 <img src="../images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" />
 
 ---
-
-## Related
-
-- [Meshery Designs concept]({{< ref "concepts/logical/designs.md" >}})
-- [Importing Designs]({{< ref "guides/configuration-management/importing-models/index.md" >}})
-- [Deploying a Design]({{< ref "guides/configuration-management/working-with-designs/index.md" >}})
-- [`mesheryctl design` reference]({{< ref "reference/references/mesheryctl/design/_index.md" >}})
-- [Meshery Catalog](https://meshery.io/catalog)

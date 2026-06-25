@@ -3,6 +3,9 @@ title: mesheryctl-component-search
 display_title: false
 command: component
 subcommand: search
+no_list: true 
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-component]
 ---
 
 # mesheryctl component search
@@ -66,7 +69,5 @@ mesheryctl component search [query-text] [--page 1]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/contributing-cli.md#preserving-manually-added-documentation" >}}) for guidance.

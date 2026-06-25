@@ -1,6 +1,8 @@
 ---
 title: Troubleshooting Extensions for Local Development
 categories: [troubleshooting]
+no_list: true 
+hide_section_list: true
 description: A guide to troubleshooting Meshery extensions in a local development environment.
 ---
 
