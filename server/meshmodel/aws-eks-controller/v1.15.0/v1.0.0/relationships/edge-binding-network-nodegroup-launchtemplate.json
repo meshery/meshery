@@ -15,7 +15,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.9.3"
+      "version": "v1.15.0"
     },
     "name": "aws-eks-controller",
     "registrant": {
