@@ -1,5 +1,12 @@
 import React from 'react';
-import { Button, Popover, Typography, SyncAltIcon, SettingsIcon } from '@sistent/sistent';
+import {
+  Button,
+  Popover,
+  Typography,
+  SyncAltIcon,
+  SettingsIcon,
+  CopyLinkIcon,
+} from '@sistent/sistent';
 import { ActionListItem } from './styles';
 import { iconMedium } from '../../css/icons.styles';
 import CAN from '@/utils/can';
@@ -13,6 +20,7 @@ type ConnectionActionMenuProps = {
   onFlushMeshSync: () => void;
   onDeploymentModeAnchor: (event: React.MouseEvent<HTMLElement>) => void;
   onConfigure?: () => void;
+  onCopyLink?: () => void;
 };
 
 export const ConnectionActionMenu = ({
@@ -22,6 +30,7 @@ export const ConnectionActionMenu = ({
   onFlushMeshSync,
   onDeploymentModeAnchor,
   onConfigure,
+  onCopyLink,
 }: ConnectionActionMenuProps) => {
   return (
     <Popover
@@ -39,6 +48,23 @@ export const ConnectionActionMenu = ({
             <SettingsIcon {...iconMedium} />
             <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
               Configure
+            </Typography>
+          </Button>
+        </ActionListItem>
+      )}
+      {onCopyLink && (
+        <ActionListItem>
+          <Button
+            type="button"
+            onClick={() => {
+              onCopyLink();
+              onClose();
+            }}
+            data-cy="btnCopyConnectionLink"
+          >
+            <CopyLinkIcon {...iconMedium} />
+            <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+              Copy link
             </Typography>
           </Button>
         </ActionListItem>

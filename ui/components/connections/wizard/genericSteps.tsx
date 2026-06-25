@@ -1,6 +1,14 @@
 import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Alert, Box, CheckCircleIcon, Typography } from '@sistent/sistent';
+import {
+  Alert,
+  Box,
+  CheckCircleIcon,
+  Typography,
+  SettingsIcon,
+  LockIcon,
+  AssignmentTurnedInIcon,
+} from '@sistent/sistent';
 import { alpha, styled } from '@/theme';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
@@ -101,6 +109,7 @@ const DetailsStepBody = ({ ctx }: { ctx: WizardContext }) => (
 export const genericDetailsStep: WizardStep = {
   id: 'details',
   label: 'Configure Connection',
+  icon: SettingsIcon,
   Component: DetailsStepBody,
   canProceed: (ctx) => Boolean(ctx.data.kindConfig?.connectionSchema),
   onNext: (ctx) => Boolean(ctx.formRefs.connection.current?.validateForm()),
@@ -152,6 +161,7 @@ const CredentialStepBody = ({ ctx }: { ctx: WizardContext }) => {
 export const genericCredentialStep: WizardStep = {
   id: 'credential',
   label: 'Associate Credential',
+  icon: LockIcon,
   Component: CredentialStepBody,
   hidden: (ctx) => !ctx.data.kindConfig?.credentialSchema,
   canProceed: (ctx) => {
@@ -242,6 +252,7 @@ const buildGenericPayload = (ctx: WizardContext) => {
 export const genericRegisterStep: WizardStep = {
   id: 'register',
   label: 'Review & Create',
+  icon: AssignmentTurnedInIcon,
   Component: RegisterStepBody,
   nextLabel: () => 'Create Connection',
   onNext: async (ctx) => {
