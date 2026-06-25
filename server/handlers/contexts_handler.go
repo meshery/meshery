@@ -44,7 +44,8 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	}
 }
 
-// not being used....
+// GetContext serves GET /api/system/kubernetes/contexts/{id}, returning the
+// single Kubernetes context for the given connection id.
 func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
