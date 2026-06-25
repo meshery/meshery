@@ -94,7 +94,7 @@ clipboard.on("success", (e) => {
     button.replaceChild(text, icon);
 
     setTimeout(() => {
-        if (!button.isConnected || !button.contains(text)) {
+        if (button.isConnected === false || !button.contains(text)) {
             button.removeAttribute("data-is-copying");
             return;
         }
