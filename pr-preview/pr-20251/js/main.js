@@ -65,7 +65,7 @@ getcodeelement.each(function (i) {
         .replace(/>/g, "&gt;")
         .replace(/'/g, "&#39;")
         .replace(/"/g, "&quot;");
-    var clipButton = '<div class="btn-copy-wrap"><button type="button" class="clipbtn" aria-label="Copy code to clipboard" data-clipboard-text="' + text + '"><i class="far fa-copy" aria-hidden="true"></i></button></div>';
+    var clipButton = '<div class="btn-copy-wrap"><button type="button" class="clipbtn" aria-label="Copy code to clipboard" data-clipboard-text="' + text + '" data-clipboard-target="#' + currentId + '"><i class="far fa-copy" aria-hidden="true"></i></button></div>';
     $(this).after(clipButton);
 });
 
@@ -94,7 +94,7 @@ clipboard.on("success", (e) => {
     button.replaceChild(text, icon);
 
     setTimeout(() => {
-        if (button.isConnected === false || !button.contains(text)) {
+        if (!button.isConnected || !button.contains(text)) {
             button.removeAttribute("data-is-copying");
             return;
         }
@@ -139,4 +139,3 @@ document.addEventListener("click", (event) => {
             sidebarNav.classList.remove("main-navbar--active")
         }
     }
-})
