@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <script src="{{ "js/error-code-handler.js" | relURL }}"></script>
-    
+    {{ partialCached "load-sidebars-width.html" . }}
   </head>
 
   <body class="td-{{ .Kind }}{{ with .Params.body_class }} {{ . }}{{ end }}{{ block "body_class" . }}{{ end }}">
@@ -34,71 +34,76 @@
 
     {{ partialCached "scripts/google-tagmanager-body.html" . }}
 
-    <div class="flex-container">
-      <div class="left-container">
-        <script>
-          (function () {
-            const leftContainer = document.querySelector(".left-container");
-                
-            if (!leftContainer) return
+    <div class="container-fluid td-outer td-resizable-grid">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
 
-            let state = localStorage.getItem('leftContainer-state');
+          <aside class="left-container">
+            <script>
+              (function () {
+                const leftContainer = document.querySelector(".left-container");
+                if (!leftContainer) return;
 
-            if (!state) {  
-              const isDesktop = window.matchMedia("(min-width: 75em)").matches;
-              state =  isDesktop ? 'active' : 'inactive';
-              localStorage.setItem('leftContainer-state', state);
-            }
-                
-            leftContainer.classList.toggle('left-container--active', state === 'active')
-          })();
-        </script>
-        <div class="sidebar-container-wrapper">
-          <div class="sidebar-container">
-            {{ partial "sidebar.html" . }}
-          </div>
-        </div>
+                let state = localStorage.getItem('leftContainer-state');
+                if (!state) {
+                  const isDesktop = window.matchMedia("(min-width: 75em)").matches;
+                  state = isDesktop ? 'active' : 'inactive';
+                  localStorage.setItem('leftContainer-state', state);
+                }
 
-        <div class="icon-container">
-          {{ partial "nav-toggle.html" . }}
-        </div>
-      </div>
+                leftContainer.classList.toggle('left-container--active', state === 'active');
+              })();
+            </script>
+            <div class="sidebar-container-wrapper">
+              <div class="sidebar-container">
+                {{ partial "sidebar.html" . }}
+              </div>
+            </div>
 
-      <main class="main-container{{ block "main_class" . }}{{ end }}" role="main">
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb spb-1">
-            <li class="breadcrumb-item active" aria-current="page">
-              {{ partial "breadcrumbs.html" . }}
-            </li>
-          </ol>
-        </nav>
-        <div class="td-content{{ block "td_content_class" . }}{{ end }}">
-          {{ if ne (.Params.display_title | default true) false }}
-            <h1>{{ .Title }}</h1>
+            <div class="icon-container">
+              {{ partial "nav-toggle.html" . }}
+            </div>
+            <div class="layout-resizer d-none d-md-block" id="left-resizer"></div>
+          </aside>
+
+          <main class="main-container{{ block "main_class" . }}{{ end }}" role="main">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb spb-1">
+                <li class="breadcrumb-item active" aria-current="page">
+                  {{ partial "breadcrumbs.html" . }}
+                </li>
+              </ol>
+            </nav>
+            <div class="td-content{{ block "td_content_class" . }}{{ end }}">
+              {{ if ne (.Params.display_title | default true) false }}
+                <h1>{{ .Title }}</h1>
+              {{ end }}
+              {{ block "main" . }}{{ end }}
+              <div class="related-reading">
+                {{ partial "related-reading.html" . -}}
+              </div>
+            </div>
+            {{ if or .IsPage .IsSection }}
+              {{ partial "pagination.html" . }}
+            {{ end }}
+          </main>
+
+          {{ if ne (.Params.display_toc | default true) false }}
+            <div class="content-table-wrapper">
+              <div class="layout-resizer d-none d-xl-block" id="right-resizer"></div>
+              <div class="content-table" data-proofer-ignore>
+                {{ partial "page-meta-links.html" . }}
+                {{ partial "toc.html" . }}
+              </div>
+            </div>
           {{ end }}
-          {{ block "main" . }}{{ end }}
-          <div class="related-reading">
-            {{ partial "related-reading.html" . -}}
-          </div>
-        </div>
-        {{ if or .IsPage .IsSection }}
-          {{ partial "pagination.html" . }}
-        {{ end }}
-      </main>
 
-      {{ if ne (.Params.display_toc | default true) false }}
-        <div class="content-table-wrapper">
-          <div class="content-table" data-proofer-ignore>
-            {{ partial "page-meta-links.html" . }}
-            {{ partial "toc.html" . }}
-          </div>
-        </div>
-      {{ end }}
+        </div> </div>
+      {{ partialCached "footer.html" . }}
     </div>
 
-    {{ partialCached "footer.html" . }}
     {{ partialCached "scripts.html" . }}
     {{ partialCached "scripts/google-analytics.html" . }}
-
+    {{ partialCached "sidebar-resize-script.html" . }}
   </body>
 </html>

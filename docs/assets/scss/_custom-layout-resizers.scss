@@ -1,0 +1,36 @@
+@use "layout-resizers";
+
+@media (min-width: 768px) {
+  main[role="main"] {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+
+@media (min-width: 1200px) {
+  .sidebar-container-wrapper {
+    grid-column: 1 / 3;
+    grid-row: 1;
+  }
+
+  .content-table-wrapper {
+    grid-column: 4 / 6;
+    grid-row: 1;
+  }
+
+  #left-resizer{
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+  }
+
+  #right-resizer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+  }
+}
