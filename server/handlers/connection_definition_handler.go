@@ -91,8 +91,8 @@ func (h *Handler) GetConnectionDefinitionByID(rw http.ResponseWriter, r *http.Re
 	rw.Header().Add("Content-Type", "application/json")
 	connectionDefinitionID := mux.Vars(r)["connectionDefinitionId"]
 	if _, err := uuid.FromString(connectionDefinitionID); err != nil {
-		h.log.Error(ErrInvalidUUID(err))
-		writeMeshkitError(rw, ErrInvalidUUID(err), http.StatusBadRequest)
+		h.log.Error(models.ErrInvalidUUID(err))
+		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
 		return
 	}
 
@@ -166,8 +166,8 @@ func (h *Handler) UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Req
 	connectionDefinitionID := mux.Vars(r)["connectionDefinitionId"]
 	id, err := uuid.FromString(connectionDefinitionID)
 	if err != nil {
-		h.log.Error(ErrInvalidUUID(err))
-		writeMeshkitError(rw, ErrInvalidUUID(err), http.StatusBadRequest)
+		h.log.Error(models.ErrInvalidUUID(err))
+		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
 		return
 	}
 
@@ -205,8 +205,8 @@ func (h *Handler) DeleteConnectionDefinition(rw http.ResponseWriter, r *http.Req
 	connectionDefinitionID := mux.Vars(r)["connectionDefinitionId"]
 	id, err := uuid.FromString(connectionDefinitionID)
 	if err != nil {
-		h.log.Error(ErrInvalidUUID(err))
-		writeMeshkitError(rw, ErrInvalidUUID(err), http.StatusBadRequest)
+		h.log.Error(models.ErrInvalidUUID(err))
+		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
 		return
 	}
 

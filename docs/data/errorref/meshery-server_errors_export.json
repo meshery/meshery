@@ -1227,15 +1227,6 @@
         "probable_cause": "unable to convert helm chart to design\nhelm chart may be corrupted\nincorrect source type selected",
         "suggested_remediation": "check if the helm chart is valid and not corrupted\ncheck if the source type selected is Helm Chart"
       },
-      "1137": {
-        "name": "ErrInvalidUUIDCode",
-        "code": "1137",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "invalid or empty uuid",
-        "probable_cause": "provided id is not a valid uuid",
-        "suggested_remediation": "provide a valid uuid"
-      },
       "1138": {
         "name": "ErrErrNewDynamicClientGeneratorCode",
         "code": "1138",
@@ -3845,6 +3836,15 @@
         "short_description": "failed to parse YAML configuration",
         "probable_cause": "malformed YAML in component configuration",
         "suggested_remediation": "verify the YAML syntax in your design configuration"
+      },
+      "1432": {
+        "name": "ErrInvalidUUIDValueCode",
+        "code": "1432",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid UUID",
+        "probable_cause": "The provided identifier is not a valid UUID",
+        "suggested_remediation": "Provide a valid UUID"
       }
     }
   }
