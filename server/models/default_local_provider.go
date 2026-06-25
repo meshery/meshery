@@ -495,7 +495,14 @@ func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req 
 
 func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, additionalMetadata map[string]any) (connections.Connection, error) {
 
-	k8sServerID := *k8sContext.KubernetesServerID
+	// KubernetesServerID is only populated when the cluster is reachable (it is
+	// derived from the kube-system namespace UID). Unreachable contexts are still
+	// saved as DISCOVERED connections, so guard against a nil pointer here and
+	// leave the server ID empty rather than panicking.
+	var k8sServerID string
+	if k8sContext.KubernetesServerID != nil {
+		k8sServerID = k8sContext.KubernetesServerID.String()
+	}
 
 	var connID core.Uuid
 	id, err := K8sContextGenerateID(k8sContext)
@@ -510,7 +517,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 		"deploymentType":     k8sContext.DeploymentType,
 		"version":            k8sContext.Version,
 		"name":               k8sContext.Name,
-		"kubernetesServerId": k8sServerID.String(),
+		"kubernetesServerId": k8sServerID,
 	}
 	metadata := make(map[string]interface{}, len(_metadata)+len(additionalMetadata))
 	for k, v := range _metadata {
@@ -1547,6 +1554,18 @@ func (l *DefaultLocalProvider) Cleanup() error {
 }
 
 func (l *DefaultLocalProvider) SaveUserCredential(token string, credential *Credential) (*Credential, error) {
+	// The Credential schema has no primary-key default, so a credential created
+	// without an explicit ID would be persisted with the nil UUID
+	// (00000000-0000-0000-0000-000000000000). The first such insert succeeds and
+	// every subsequent one fails with "UNIQUE constraint failed: credentials.id".
+	// Mint a fresh UUID whenever one is not already supplied.
+	if credential.ID.IsNil() {
+		newID, err := uuid.NewV4()
+		if err != nil {
+			return nil, fmt.Errorf("error saving user credentials: unable to generate credential id: %w", err)
+		}
+		credential.ID = newID
+	}
 	result := l.GetGenericPersister().Table("credentials").Create(&credential)
 	if result.Error != nil {
 		return nil, fmt.Errorf("error saving user credentials: %v", result.Error)
