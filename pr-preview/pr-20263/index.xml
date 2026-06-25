@@ -35086,7 +35086,7 @@ A &lt;strong&gt;&lt;a href="/pr-preview/pr-20263/concepts/logical/designs/"&gt;d
 &lt;/h3&gt;
 &lt;p&gt;The Meshery Adapter for Traefik Mesh includes some sample applications operations. Meshery can be used to deploy any of these sample applications.&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="/pr-preview/pr-20263/guides/infrastructure-management/sample-apps/"&gt;Bookinfo&lt;/a&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20263/guides/infrastructure-management/sample-apps/#bookinfo"&gt;Bookinfo&lt;/a&gt;
 &lt;ul&gt;
 &lt;li&gt;The sample Bookinfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
 &lt;/ul&gt;
