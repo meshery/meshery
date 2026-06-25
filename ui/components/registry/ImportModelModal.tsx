@@ -164,10 +164,15 @@ const ImportModelModal = memo<ImportModelModalProps>(
     const subscriptionRef = useRef<{ unsubscribe: () => void } | null>(null);
 
     useEffect(() => {
+      if (!isImportModalOpen) {
+        subscriptionRef.current?.unsubscribe();
+        subscriptionRef.current = null;
+      }
       return () => {
         subscriptionRef.current?.unsubscribe();
+        subscriptionRef.current = null;
       };
-    }, []);
+    }, [isImportModalOpen]);
 
     const handleClose = () => {
       setIsImportModalOpen(false);
@@ -285,8 +290,12 @@ const ImportModelModal = memo<ImportModelModalProps>(
       const subscription = operationsCenterActorRef.on(
         OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
         (event) => {
-          const serverEvent = event.data.event;
-          if (serverEvent.action === 'register') {
+          const serverEvent = event?.data?.event;
+          if (
+            serverEvent?.action === 'register' &&
+            (serverEvent?.metadata?.ModelImportMessage !== undefined ||
+              serverEvent?.metadata?.ModelDetails !== undefined)
+          ) {
             setIsDeploying(false);
             setDeployEvent(serverEvent);
             subscription.unsubscribe();
