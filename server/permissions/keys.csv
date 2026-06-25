@@ -78,6 +78,10 @@ Cloud native infrastructure lifecycle,Deploy cloud native infrastructure,"This p
 Cloud native infrastructure lifecycle,Undeploy cloud native infrastructure,"This permission grants the user the ability to undeploy their infrastructure from a cluster through Meshery. Meshery allows users to visualize, work on and manage various cloud native technologies",,,,,,,X,X,Infrastructure Management,6e7f6f4f-4321-4e42-9eff-6a8323f32e84,X,TRUE
 Cloud native infrastructure lifecycle,View cloud native infrastructure,"This permission grants the user the ability to view all cloud native infrastructure in Meshery. Meshery allows users to visualize, work on and manage various cloud native technologies.",X,X,,,X,,X,X,Infrastructure Management,fdc485dc-f68b-405c-9e54-7b9a7254c282,X,TRUE
 Connections,View Connections,View all connections within an environment,X,X,,,X,,X,X,Lifecycle management,b35c9ce0-e787-4de6-8560-631007b0b947,X,TRUE
+Credentials,View Credentials,View all credentials,X,X,,,X,,X,X,Lifecycle Management,96759f76-4add-45f8-b4ef-d4ace5ab1bc4,X,TRUE
+Credentials,Create Credential,Create a credential,X,X,,,X,,X,X,Lifecycle Management,30023b1b-01a7-4613-8364-38d3487d1789,X,TRUE
+Credentials,Edit Credential,Edit a credential,X,X,,,X,,X,X,Lifecycle Management,e4cd5bb0-8afb-4b35-8716-0e2ead13c9b7,X,TRUE
+Credentials,Delete Credential,Delete a credential,X,X,,,X,,X,X,Lifecycle Management,cb09f530-aa87-4a18-b3d3-bbcc2d6ca1a6,X,TRUE
 Environments,View Environment,See all environments within an workspace.,X,X,,,X,,X,X,Organization Management,e3656bbc-fba2-483d-9996-34f8614cd21b,X,TRUE
 Environments,Create Environment,Create a new environment,,,,,X,,X,X,Organization Management,a97b7f3b-3349-4a86-b917-2ce0b64a540b,X,TRUE
 Environments,Delete Environment,Dissolve environment and all connection memberships. Leave associated resources intact.,,,,,X,,X,X,Organization Management,70747966-dfad-4523-93ce-bd7421258955,X,TRUE

@@ -125,7 +125,7 @@ export const useConnectionColumns = ({
               <>
                 <TooltipWrappedConnectionChip
                   tooltip={server ? `Server: ${server}` : ''}
-                  title={kind === CONNECTION_KINDS.KUBERNETES ? name : value}
+                  title={kind === CONNECTION_KINDS.KUBERNETES ? name : value || name || kind}
                   status={getColumnValue(tableMeta.rowData, 'status', nextColumns)}
                   onDelete={() =>
                     handleDeleteConnection(getColumnValue(tableMeta.rowData, 'id', nextColumns))
