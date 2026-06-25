@@ -7,8 +7,8 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	openapi_types "github.com/oapi-codegen/runtime/types"
 
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta1/environment"
@@ -33,13 +33,13 @@ func (p *environmentPayloadWire) UnmarshalJSON(data []byte) error {
 	type alias environment.EnvironmentPayload
 	aux := struct {
 		*alias
-		OrgIdCamel  *openapi_types.UUID `json:"organizationId,omitempty"`
-		OrgIdSnake  *openapi_types.UUID `json:"organization_id,omitempty"`
+		OrgIdCamel  *uuid.UUID `json:"organizationId,omitempty"`
+		OrgIdSnake  *uuid.UUID `json:"organization_id,omitempty"`
 	}{alias: (*alias)(&p.EnvironmentPayload)}
 
 	// Zero OrgId so a reused receiver does not carry stale data when the
 	// next payload omits both spellings.
-	p.OrgId = openapi_types.UUID{}
+	p.OrgId = uuid.UUID{}
 
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
