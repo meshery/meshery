@@ -333,7 +333,7 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	if connectionID == uuid.Nil {
-		invalidIDErr := ErrInvalidUUID(fmt.Errorf("invalid connection ID"))
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID"))
 		h.log.Error(invalidIDErr)
 		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
