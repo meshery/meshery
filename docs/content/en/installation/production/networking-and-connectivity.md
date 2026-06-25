@@ -3,8 +3,9 @@ title: Networking & Connectivity
 linkTitle: Networking
 description: >-
   Network ports and directional flows, ingress and Emissary configuration,
-  secure WebSocket support, Broker exposure, egress to Remote Providers, the
-  OAuth callback URL, and network policies for production Meshery.
+  secure WebSocket support, CDN and edge caching of the UI, Broker exposure,
+  egress to Remote Providers, the OAuth callback URL, and network policies for
+  production Meshery.
 categories: [installation]
 weight: 40
 aliases:
@@ -106,6 +107,60 @@ load but fail to receive real-time updates.
 A common production misconfiguration is an ingress that proxies HTTP but drops
 WebSocket upgrades. The symptom is a UI that loads but never updates in real
 time. Validate WebSocket upgrade support explicitly during rollout.
+{{% /alert %}}
+
+## Caching the UI at the edge (CDN or caching reverse proxy)
+
+Meshery Server serves its web UI—a static [Next.js](https://nextjs.org/)
+export—directly. To make that UI safely cacheable by a CDN or caching reverse
+proxy placed in front of Meshery, the Server emits **release-scoped cache
+headers**: the edge can serve UI content for the lifetime of a release and pick
+up new content automatically after an upgrade, **without any cache purge**. The
+build/release version is the only control point.
+
+Two tiers of response are handled differently:
+
+| Response | `Cache-Control` | Validator | Why |
+| :--- | :--- | :--- | :--- |
+| **Immutable versioned assets** under `/_next/static/{chunks,css,media}/...` | `public, max-age=31536000, immutable` | — | The build content hash is in the URL, so the bytes at a given URL never change. A new release ships new hashes (new URLs); old entries simply fall out of use—no purge. |
+| **HTML documents** (`/` → `index.html`, `<route>.html`) | `public, no-cache` | `ETag: "<build version>"` | HTML lives at stable URLs, so it must always be revalidated. While the release is unchanged the origin answers `If-None-Match` with `304`; a new release changes the build version → changes the `ETag` → the next revalidation returns fresh HTML. |
+
+Because browser caches cannot be purged, HTML is never given a positive
+`max-age`; it is always revalidated against the build-version `ETag`. And only
+existing files receive these headers—a transient `404` (for example, a
+content-hashed asset requested mid-deploy against a pod that does not have it
+yet) is returned **without** cache headers, so it is never pinned as `immutable`
+and cached for a year.
+
+### Configuring the CDN or proxy
+
+Whatever you place in front of Meshery—a cloud CDN (CloudFront, Cloudflare,
+Fastly), an NGINX or Varnish caching proxy, or your ingress controller's
+cache—configure it to **respect the origin's caching semantics** rather than
+impose its own:
+
+- **Honor the origin `Cache-Control` and `ETag`.** Do not strip or rewrite them,
+  and do not apply a blanket TTL that overrides `no-cache` on HTML—doing so risks
+  serving a stale HTML shell across an upgrade.
+- **Forward conditional requests.** Pass `If-None-Match` through to the origin so
+  HTML can revalidate and the Server can answer `304 Not Modified`.
+- **Never cache the API or WebSocket.** Only the static UI layer carries these
+  headers. API traffic (`/api/*`) and the WebSocket/event stream must pass
+  through to the origin uncached; caching them breaks live updates and
+  authentication.
+- **Do not cache negative responses.** The Server deliberately leaves transient
+  `404`s uncacheable; ensure your edge does not cache `404`s for hashed-asset
+  URLs requested mid-deploy.
+
+The headers are computed against the base-path-stripped request URL, so they
+apply correctly when Meshery is served under a sub-path as well.
+
+{{% alert title="No cache purge on upgrade" color="info" %}}
+Because immutable asset URLs change on every build and the HTML `ETag` is the
+build/release version, a Meshery upgrade is reflected at the edge
+**automatically**. You do not need to wire a CDN purge into your upgrade
+pipeline—see the
+[upgrade strategy]({{< ref "installation/production/operational-readiness-checklist.md" >}}).
 {{% /alert %}}
 
 ## The OAuth callback URL
