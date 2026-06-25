@@ -6,7 +6,7 @@ aliases:
 - /extensions/kubectl-meshsync-snapshot
 ---
 
-# <img style="height: 4rem; width: 4rem;" src="images/meshsync.svg" /> kubectl MeshSync Snapshot
+# <img style="height: 4rem; width: 4rem; vertical-align: middle;" src="images/meshsync.svg" alt="" /> kubectl MeshSync Snapshot
 
 A `kubectl` plugin for performing an ad hoc collection of resource information from a Kubernetes cluster and sending the cluster resources details to a Meshery Server. `kubectl meshsync snapshot` is a native kubectl plugin for conveniently synchronizing the state of your cluster with Meshery Server.
 
