@@ -57,7 +57,6 @@ func (h *Handler) GetConnectionDefinitions(rw http.ResponseWriter, r *http.Reque
 		Limit:     limit,
 		Offset:    offset,
 	})
-
 	if err != nil {
 		h.log.Error(ErrQueryGet("connection definitions"))
 		writeMeshkitError(rw, ErrQueryGet("connection definitions"), http.StatusInternalServerError)
@@ -135,7 +134,7 @@ func (h *Handler) RegisterConnectionDefinition(rw http.ResponseWriter, r *http.R
 		return
 	}
 
-	if def.ModelReference == nil || def.ModelReference.Registrant == nil {
+	if def.ModelReference == nil {
 		err := ErrFailToSave(fmt.Errorf("a modelReference (with registrant) is required to register a connection definition"), obj)
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusBadRequest)
