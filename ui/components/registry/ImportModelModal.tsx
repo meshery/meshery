@@ -164,10 +164,15 @@ const ImportModelModal = memo<ImportModelModalProps>(
     const subscriptionRef = useRef<{ unsubscribe: () => void } | null>(null);
 
     useEffect(() => {
+      if (!isImportModalOpen) {
+        subscriptionRef.current?.unsubscribe();
+        subscriptionRef.current = null;
+      }
       return () => {
         subscriptionRef.current?.unsubscribe();
+        subscriptionRef.current = null;
       };
-    }, []);
+    }, [isImportModalOpen]);
 
     const subscriptionRef = useRef<{ unsubscribe: () => void } | null>(null);
 
