@@ -63,7 +63,6 @@ code::-webkit-scrollbar {
 pre {
   display: block;
   color: var(--color-grey-medium);
-
   & ::-webkit-scrollbar {
     display: none;
   }
