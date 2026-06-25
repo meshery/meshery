@@ -120,14 +120,15 @@ if (toggleBtnSidebarNav) {
 
 const toggleBtnMainNav = document.querySelector(".nav-toggle-btn--main");
 
-if (toggleBtnMainNav) { 
+if (toggleBtnMainNav) {
     toggleBtnMainNav.addEventListener("click", () => {
         let sidebarNav = document.getElementById("main_navbar")
         if (sidebarNav) {
             sidebarNav.classList.toggle("main-navbar--active")
-        }
+        }      
     })
 }
+
 document.addEventListener("click", (event) => {
     let sidebarNav = document.getElementById("main_navbar")
     if (sidebarNav) {
