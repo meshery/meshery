@@ -268,7 +268,7 @@ const ConnectionTable = ({
     // top-level `name` here wrongly hid connections (e.g. kubernetes, grafana)
     // whose name lives only in `metadata.name`.
     return connectionData.connections
-      .filter((conn) => conn.kind && conn.status)
+      .filter((conn) => conn && conn.kind && conn.status)
       .map((connection) => ({
         ...connection,
         nextStatus:
