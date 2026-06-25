@@ -1,9 +1,9 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "edge_binding_network_relationship",
+  "evaluationQuery": "edge_binding_permission_relationship",
   "kind": "edge",
   "metadata": {
-    "description": "LaunchTemplate to EKS Nodegroup network binding. A Nodegroup references a LaunchTemplate by name to define the EC2 instance configuration (AMI, instance type, user data) for its worker nodes. This relationship represents the second link in the EKS compute stack.",
+    "description": "Binds an EKS Nodegroup to an IAM Role for node instance permissions. The Nodegroup's nodeRoleRef.from.name field is populated with the IAM Role name to grant worker nodes permission to make AWS API calls via the node instance profile.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -15,7 +15,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.15.0"
+      "version": "v1.15.1"
     },
     "name": "aws-eks-controller",
     "registrant": {
@@ -47,11 +47,12 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
-                  "launchTemplate",
+                  "nodeRoleRef",
+                  "from",
                   "name"
                 ]
               ]
@@ -61,7 +62,7 @@
         "to": [
           {
             "id": null,
-            "kind": "LaunchTemplate",
+            "kind": "Role",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -70,7 +71,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-ec2-controller",
+              "name": "aws-iam-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -78,7 +79,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "configuration",
                   "metadata",
@@ -95,7 +96,7 @@
       }
     }
   ],
-  "subType": "network",
+  "subType": "permission",
   "status": "enabled",
   "type": "binding",
   "version": "v1.0.0"

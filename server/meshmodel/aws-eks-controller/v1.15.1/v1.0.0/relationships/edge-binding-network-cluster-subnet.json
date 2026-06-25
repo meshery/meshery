@@ -1,9 +1,9 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "edge_binding_firewall_relationship",
+  "evaluationQuery": "edge_binding_network_relationship",
   "kind": "edge",
   "metadata": {
-    "description": "Binds an EKS Cluster to an EC2 SecurityGroup for control plane security. The Cluster's resourcesVPCConfig.securityGroupRefs[0].from.name field is populated with the SecurityGroup name to control traffic to the Kubernetes API server endpoint.",
+    "description": "Binds an AWS EKS Cluster to a VPC Subnet to define the network subnets for Kubernetes control plane and node communication. The Cluster's resourcesVPCConfig.subnetIDs[0] field is populated with the Subnet id.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -15,7 +15,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.15.0"
+      "version": "v1.15.1"
     },
     "name": "aws-eks-controller",
     "registrant": {
@@ -47,15 +47,13 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
                   "resourcesVPCConfig",
-                  "securityGroupRefs",
-                  "0",
-                  "from",
-                  "name"
+                  "subnetIDs",
+                  "0"
                 ]
               ]
             }
@@ -64,7 +62,7 @@
         "to": [
           {
             "id": null,
-            "kind": "SecurityGroup",
+            "kind": "Subnet",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -81,11 +79,11 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
-                  "metadata",
-                  "name"
+                  "status",
+                  "id"
                 ]
               ]
             }
@@ -98,7 +96,7 @@
       }
     }
   ],
-  "subType": "firewall",
+  "subType": "network",
   "status": "enabled",
   "type": "binding",
   "version": "v1.0.0"

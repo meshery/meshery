@@ -1,9 +1,9 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "edge_binding_network_relationship",
+  "evaluationQuery": "edge_binding_firewall_relationship",
   "kind": "edge",
   "metadata": {
-    "description": "Binds an EKS Nodegroup to a VPC Subnet for worker node placement. The Nodegroup's subnetRefs[0].from.name field is populated with the Subnet name to determine which AZs worker nodes are launched in.",
+    "description": "Binds an EKS Cluster to an EC2 SecurityGroup for control plane security. The Cluster's resourcesVPCConfig.securityGroupRefs[0].from.name field is populated with the SecurityGroup name to control traffic to the Kubernetes API server endpoint.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -15,7 +15,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.15.0"
+      "version": "v1.15.1"
     },
     "name": "aws-eks-controller",
     "registrant": {
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "Nodegroup",
+            "kind": "Cluster",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -51,7 +51,8 @@
                 [
                   "configuration",
                   "spec",
-                  "subnetRefs",
+                  "resourcesVPCConfig",
+                  "securityGroupRefs",
                   "0",
                   "from",
                   "name"
@@ -63,7 +64,7 @@
         "to": [
           {
             "id": null,
-            "kind": "Subnet",
+            "kind": "SecurityGroup",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -97,7 +98,7 @@
       }
     }
   ],
-  "subType": "network",
+  "subType": "firewall",
   "status": "enabled",
   "type": "binding",
   "version": "v1.0.0"

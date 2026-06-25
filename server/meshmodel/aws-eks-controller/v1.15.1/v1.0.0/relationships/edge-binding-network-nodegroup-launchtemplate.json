@@ -3,7 +3,7 @@
   "evaluationQuery": "edge_binding_network_relationship",
   "kind": "edge",
   "metadata": {
-    "description": "Binds an AWS EKS Cluster to a VPC Subnet to define the network subnets for Kubernetes control plane and node communication. The Cluster's resourcesVPCConfig.subnetIDs[0] field is populated with the Subnet id.",
+    "description": "LaunchTemplate to EKS Nodegroup network binding. A Nodegroup references a LaunchTemplate by name to define the EC2 instance configuration (AMI, instance type, user data) for its worker nodes. This relationship represents the second link in the EKS compute stack.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -15,7 +15,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.15.0"
+      "version": "v1.15.1"
     },
     "name": "aws-eks-controller",
     "registrant": {
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "Cluster",
+            "kind": "Nodegroup",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -51,9 +51,8 @@
                 [
                   "configuration",
                   "spec",
-                  "resourcesVPCConfig",
-                  "subnetIDs",
-                  "0"
+                  "launchTemplate",
+                  "name"
                 ]
               ]
             }
@@ -62,7 +61,7 @@
         "to": [
           {
             "id": null,
-            "kind": "Subnet",
+            "kind": "LaunchTemplate",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -82,8 +81,8 @@
               "mutatedRef": [
                 [
                   "configuration",
-                  "status",
-                  "id"
+                  "metadata",
+                  "name"
                 ]
               ]
             }
