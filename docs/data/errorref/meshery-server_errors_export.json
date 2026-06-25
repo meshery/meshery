@@ -1227,15 +1227,6 @@
         "probable_cause": "unable to convert helm chart to design\nhelm chart may be corrupted\nincorrect source type selected",
         "suggested_remediation": "check if the helm chart is valid and not corrupted\ncheck if the source type selected is Helm Chart"
       },
-      "1137": {
-        "name": "ErrInvalidUUIDCode",
-        "code": "1137",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "invalid or empty uuid",
-        "probable_cause": "provided id is not a valid uuid",
-        "suggested_remediation": "provide a valid uuid"
-      },
       "1138": {
         "name": "ErrErrNewDynamicClientGeneratorCode",
         "code": "1138",
