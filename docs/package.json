@@ -31,12 +31,14 @@
     "postbuild:production": "npm run _check:links",
     "serve": "npm run _serve",
     "test": "npm run check:links",
+    "format": "npx prettier --write \"**/*.{js,json,md,css,scss,yml,yaml,html}\"",
     "update:pkg:dep": "npm install --save-dev autoprefixer@latest postcss-cli@latest",
     "update:pkg:hugo": "npm install --save-dev --save-exact hugo-extended@latest"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.19",
     "hugo-extended": "0.157.0",
-    "postcss-cli": "^11.0.0"
+    "postcss-cli": "^11.0.0",
+    "prettier": "^3.8.4"
   }
 }
