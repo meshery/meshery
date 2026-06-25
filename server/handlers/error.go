@@ -211,6 +211,9 @@ const (
 	ErrSendMachineEventCode                = "meshery-server-1429"
 	ErrTelemetryGrafanaCode                = "meshery-server-1430"
 	ErrTelemetryPrometheusCode             = "meshery-server-1431"
+	ErrTelemetryGrafanaDatasourceCode      = "meshery-server-1433"
+	ErrTelemetryGrafanaAuthCode            = "meshery-server-1434"
+	ErrTelemetryPrometheusAuthCode         = "meshery-server-1435"
 )
 
 var (
@@ -935,9 +938,7 @@ func ErrTelemetryGrafana(err error, op string) error {
 }
 
 // ErrTelemetryGrafanaDatasource reports that a panel referenced a datasource the
-// Grafana instance could not resolve (by uid or name). Emitted with HTTP 404. It
-// shares the Grafana telemetry error code but carries a specific, actionable
-// message naming the unresolved datasource.
+// Grafana instance could not resolve (by uid or name). Emitted with HTTP 404.
 func ErrTelemetryGrafanaDatasource(ref string, available []string) error {
 	longDesc := fmt.Sprintf("Grafana could not resolve a datasource identified by %q to a known datasource.", ref)
 	if len(available) > 0 {
@@ -945,14 +946,13 @@ func ErrTelemetryGrafanaDatasource(ref string, available []string) error {
 	} else {
 		longDesc = fmt.Sprintf("%s No datasources were listable, so the credential may lack permission to read datasources.", longDesc)
 	}
-	return errors.New(ErrTelemetryGrafanaCode, errors.Alert, []string{fmt.Sprintf("Datasource %q used by this panel was not found in Grafana", ref)}, []string{longDesc}, []string{"The dashboard references a datasource by a name or uid that does not exist in this Grafana instance.", "The datasource is provisioned only in a different environment.", "The connection's credential cannot list datasources, so a name could not be resolved to a uid."}, []string{"Confirm the datasource exists in this Grafana instance and that the connection's credential has permission to read datasources."})
+	return errors.New(ErrTelemetryGrafanaDatasourceCode, errors.Alert, []string{fmt.Sprintf("Datasource %q used by this panel was not found in Grafana", ref)}, []string{longDesc}, []string{"The dashboard references a datasource by a name or uid that does not exist in this Grafana instance.", "The datasource is provisioned only in a different environment.", "The connection's credential cannot list datasources, so a name could not be resolved to a uid."}, []string{"Confirm the datasource exists in this Grafana instance and that the connection's credential has permission to read datasources."})
 }
 
 // ErrTelemetryGrafanaAuth reports that Grafana rejected the connection's
-// credential (HTTP 401/403). Emitted with HTTP 502. Shares the Grafana telemetry
-// error code with a credential-specific message.
+// credential (HTTP 401/403). Emitted with HTTP 502.
 func ErrTelemetryGrafanaAuth(err error) error {
-	return errors.New(ErrTelemetryGrafanaCode, errors.Alert, []string{"Grafana rejected the connection's credential"}, []string{err.Error()}, []string{"The API key / token is missing, expired, or invalid.", "The credential lacks permission for this operation."}, []string{"Update the connection with a valid Grafana credential that has the required permissions, then retry."})
+	return errors.New(ErrTelemetryGrafanaAuthCode, errors.Alert, []string{"Grafana rejected the connection's credential"}, []string{err.Error()}, []string{"The API key / token is missing, expired, or invalid.", "The credential lacks permission for this operation."}, []string{"Update the connection with a valid Grafana credential that has the required permissions, then retry."})
 }
 
 // ErrTelemetryPrometheus wraps failures talking to a Prometheus telemetry
@@ -963,10 +963,9 @@ func ErrTelemetryPrometheus(err error, op string) error {
 }
 
 // ErrTelemetryPrometheusAuth reports that Prometheus rejected the connection's
-// credential (HTTP 401/403). Emitted with HTTP 502. Shares the Prometheus
-// telemetry error code with a credential-specific message.
+// credential (HTTP 401/403). Emitted with HTTP 502.
 func ErrTelemetryPrometheusAuth(err error) error {
-	return errors.New(ErrTelemetryPrometheusCode, errors.Alert, []string{"Prometheus rejected the connection's credential"}, []string{err.Error()}, []string{"The API key / token is missing, expired, or invalid.", "The credential lacks permission for this operation."}, []string{"Update the connection with a valid Prometheus credential that has the required permissions, then retry."})
+	return errors.New(ErrTelemetryPrometheusAuthCode, errors.Alert, []string{"Prometheus rejected the connection's credential"}, []string{err.Error()}, []string{"The API key / token is missing, expired, or invalid.", "The credential lacks permission for this operation."}, []string{"Update the connection with a valid Prometheus credential that has the required permissions, then retry."})
 }
 
 // ErrExportModel wraps failures in the ExportModel pipeline — building the
