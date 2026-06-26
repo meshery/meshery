@@ -1,7 +1,7 @@
 ---
 title: Fluentd Operator
 subtitle: Collaborative and visual infrastructure as design for Fluentd Operator
-image: /extensions/models/fluentd-operator/icons/color/fluentd-operator-color.svg
+image: extensions/models/fluentd-operator/icons/color/fluentd-operator-color.svg
 aliases: /extensibility/integrations/fluentd-operator
 docURL: https://docs.meshery.io/extensibility/integrations/fluentd-operator
 description: 

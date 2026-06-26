@@ -1,7 +1,7 @@
 ---
 title: Chaos Mesh
 subtitle: Collaborative and visual infrastructure as design for Chaos Mesh
-image: /extensions/models/chaos-mesh/icons/color/chaos-mesh-color.svg
+image: extensions/models/chaos-mesh/icons/color/chaos-mesh-color.svg
 aliases: /extensibility/integrations/chaos-mesh
 docURL: https://docs.meshery.io/extensibility/integrations/chaos-mesh
 description: 

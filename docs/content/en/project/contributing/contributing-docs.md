@@ -37,7 +37,7 @@ The following tools are required to build and run the Meshery documentation site
 - [Go](https://go.dev/dl/) (required for Hugo modules)
 
 {{% alert color="light" title="Note" %}}
-In case of any installation issues, use the [discussion forum](https://meshery.io/community#discussion-forums).
+In case of any installation issues, use the [discussion forum](https://discuss.meshery.io/).
 {{% /alert %}}
 
 ### Get the code

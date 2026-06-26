@@ -1,7 +1,7 @@
 ---
 title: Ingress Azure
 subtitle: Collaborative and visual infrastructure as design for Ingress Azure
-image: /extensions/models/ingress-azure/icons/color/ingress-azure-color.svg
+image: extensions/models/ingress-azure/icons/color/ingress-azure-color.svg
 aliases: /extensibility/integrations/ingress-azure
 docURL: https://docs.meshery.io/extensibility/integrations/ingress-azure
 description: 

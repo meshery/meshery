@@ -1,7 +1,7 @@
 ---
 title: EDP Install
 subtitle: Collaborative and visual infrastructure as design for EDP Install
-image: /extensions/models/edp-install/icons/color/edp-install-color.svg
+image: extensions/models/edp-install/icons/color/edp-install-color.svg
 aliases: /extensibility/integrations/edp-install
 docURL: https://docs.meshery.io/extensibility/integrations/edp-install
 description: 

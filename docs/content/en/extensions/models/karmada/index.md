@@ -1,7 +1,7 @@
 ---
 title: Karmada
 subtitle: Collaborative and visual infrastructure as design for Karmada
-image: /extensions/models/karmada/icons/color/karmada-color.svg
+image: extensions/models/karmada/icons/color/karmada-color.svg
 aliases: /extensibility/integrations/karmada
 docURL: https://docs.meshery.io/extensibility/integrations/karmada
 description: 

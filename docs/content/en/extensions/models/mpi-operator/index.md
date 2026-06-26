@@ -1,7 +1,7 @@
 ---
 title: Kubeflow MPI Operator
 subtitle: Collaborative and visual infrastructure as design for Kubeflow MPI Operator
-image: /extensions/models/mpi-operator/icons/color/mpi-operator-color.svg
+image: extensions/models/mpi-operator/icons/color/mpi-operator-color.svg
 aliases: /extensibility/integrations/mpi-operator
 docURL: https://docs.meshery.io/extensibility/integrations/mpi-operator
 description: 

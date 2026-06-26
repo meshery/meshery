@@ -21,6 +21,12 @@ export const ToolWrapper = styled(Box)(({ theme }) => ({
   },
 }));
 
+export const WorkloadsContainer = styled('div')(() => ({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+}));
+
 export const MeshModelToolbar = styled(Box)(() => ({
   display: 'flex',
   justifyContent: 'space-between',
@@ -37,6 +43,9 @@ export const MainContainer = styled(Box)(() => ({
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
+  flex: 1,
+  minHeight: 0,
+  overflow: 'hidden',
 }));
 
 export const InnerContainer = styled(Box)(({ theme }) => ({
@@ -137,14 +146,20 @@ export const TreeWrapper = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: '1rem',
   paddingTop: '0.5rem',
+  paddingBottom: '0.5rem',
   paddingLeft: '1rem',
   paddingRight: '1rem',
   flexDirection: 'row',
   width: '100%',
+  flex: 1,
+  minHeight: 0,
+  overflow: 'hidden',
   borderBottomLeftRadius: '0.5rem',
   borderBottomRightRadius: '0.5rem',
   [theme.breakpoints.down('sm')]: {
     flexDirection: 'column-reverse',
+    overflow: 'unset',
+    flex: 'none',
   },
 }));
 

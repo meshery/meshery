@@ -1,7 +1,7 @@
 ---
 title: AWS Elastic File System
 subtitle: Collaborative and visual infrastructure as design for AWS Elastic File System
-image: /extensions/models/aws-efs-controller/icons/color/aws-efs-controller-color.svg
+image: extensions/models/aws-efs-controller/icons/color/aws-efs-controller-color.svg
 aliases: /extensibility/integrations/aws-efs-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-efs-controller
 description: 
