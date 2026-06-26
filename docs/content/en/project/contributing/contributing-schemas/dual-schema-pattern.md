@@ -11,7 +11,7 @@ Every persisted entity in Meshery follows a strict two-schema contract. Violatin
 
 The `<construct>.yaml` file represents the **full server-side object** as returned in API responses. It must:
 
-- Include **all** server-generated fields: `id`, `created_at`, `updated_at`, `deleted_at`
+- Include **all** server-generated fields: `id`, `createdAt`, `updatedAt`, `deletedAt`
 - List server-generated required fields in `required` (they are always present in responses)
 - Have `additionalProperties: false` at the top level
 
@@ -23,8 +23,8 @@ required:
   - id
   - name
   - owner
-  - created_at
-  - updated_at
+  - createdAt
+  - updatedAt
 properties:
   id:
     $ref: ../../v1alpha1/core/api.yml#/components/schemas/uuid
@@ -32,11 +32,11 @@ properties:
     type: string
   owner:
     $ref: ../../v1alpha1/core/api.yml#/components/schemas/uuid
-  created_at:
+  createdAt:
     $ref: ../../v1alpha1/core/api.yml#/components/schemas/created_at
-  updated_at:
+  updatedAt:
     $ref: ../../v1alpha1/core/api.yml#/components/schemas/updated_at
-  deleted_at:
+  deletedAt:
     $ref: ../../v1alpha1/core/api.yml#/components/schemas/nullTime
 ```
 
@@ -44,7 +44,7 @@ properties:
 
 Every entity that supports `POST` or `PUT` must define a dedicated `{Entity}Payload` schema in `api.yml`. The payload schema:
 
-- Contains **only client-settable fields** (no `created_at`, `updated_at`, `deleted_at`)
+- Contains **only client-settable fields** (no `createdAt`, `updatedAt`, `deletedAt`)
 - Makes `id` optional with `omitempty` for upsert patterns, or omits it entirely for create-only
 - Is referenced by `requestBody` in `POST`/`PUT` operations
 - Is **never** reused as a response body
@@ -92,7 +92,7 @@ paths:
 
 ### Rule 3 — Never use the entity schema as a POST/PUT request body
 
-Using the full entity schema as a `requestBody` forces clients to supply server-generated fields (`id`, `created_at`, `updated_at`) and produces incorrect generated client code.
+Using the full entity schema as a `requestBody` forces clients to supply server-generated fields (`id`, `createdAt`, `updatedAt`) and produces incorrect generated client code.
 
 ```yaml
 # ❌ Wrong — exposes server-generated required fields to clients

@@ -261,7 +261,7 @@ components:
 
 ### DB-Mirrored Fields
 
-DB-mirrored fields such as `created_at`, `updated_at`, and `user_id` intentionally remain **snake_case** to mirror existing database columns. Do not rename these to camelCase.
+DB column names and `db:` tags remain **snake_case** (e.g., `created_at`, `updated_at`, `user_id`), but API/wire properties and JSON tags should remain **camelCase** (e.g., `createdAt`, `updatedAt`, `userId`).
 
 ---
 
@@ -310,7 +310,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/MyPackage"
+              $ref: "#/components/schemas/MyPackagePayload"
       responses:
         "201":
           description: Created
@@ -319,6 +319,9 @@ components:
   schemas:
     MyPackage:
       $ref: "./mypackage.yaml#/MyPackage"
+    
+    MyPackagePayload:
+      $ref: "./mypackage.yaml#/MyPackagePayload"
 ```
 
 ### Step 3: Create Subschema Files (Optional)
