@@ -3,7 +3,7 @@ package policies
 import (
 	"testing"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -17,8 +17,8 @@ import (
 func TestWalletPatching(t *testing.T) {
 	p := &HierarchicalWalletPolicy{}
 
-	deployID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	podTplID, _ := uuid.Parse("00000000-0000-0000-0000-000000000002")
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
 
 	deploy := &component.ComponentDefinition{
 		Component:      component.Component{Kind: "Deployment"},
@@ -90,7 +90,7 @@ func TestWalletPatching(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.Parse("00000000-0000-0000-0000-000000000010")
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
 
 	actions := p.SideEffects(rel, design)
 	if len(actions) == 0 {
@@ -118,8 +118,8 @@ func TestWalletPatching(t *testing.T) {
 
 // TestWalletPatchingFullPipeline tests wallet patching through the full evaluation pipeline.
 func TestWalletPatchingFullPipeline(t *testing.T) {
-	deployID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	podTplID, _ := uuid.Parse("00000000-0000-0000-0000-000000000002")
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
 
 	deploy := &component.ComponentDefinition{
 		Component:      component.Component{Kind: "Deployment"},
@@ -151,7 +151,7 @@ func TestWalletPatchingFullPipeline(t *testing.T) {
 	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "serviceAccountName"}}
 	mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "serviceAccountName"}}
 	relStatus := relationship.RelationshipDefinitionStatus("approved")
-	relID, _ := uuid.Parse("00000000-0000-0000-0000-000000000010")
+	relID, _ := uuid.FromString("00000000-0000-0000-0000-000000000010")
 	selectorSet := relationship.SelectorSet{
 		relationship.SelectorSetItem{
 			Allow: relationship.Selector{
@@ -222,9 +222,9 @@ func TestWalletPatchingFullPipeline(t *testing.T) {
 func TestBindingPatching(t *testing.T) {
 	p := &EdgeBindingPolicy{}
 
-	roleID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	saID, _ := uuid.Parse("00000000-0000-0000-0000-000000000002")
-	rbID, _ := uuid.Parse("00000000-0000-0000-0000-000000000003")
+	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	saID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
 
 	role := &component.ComponentDefinition{
 		Component:      component.Component{Kind: "ClusterRole"},
@@ -325,7 +325,7 @@ func TestBindingPatching(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.Parse("00000000-0000-0000-0000-000000000020")
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000020")
 
 	actions := p.SideEffects(rel, design)
 
@@ -359,8 +359,8 @@ func TestBindingPatching(t *testing.T) {
 func TestAliasSideEffects(t *testing.T) {
 	p := &AliasPolicy{}
 
-	deployID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	aliasID, _ := uuid.Parse("00000000-0000-0000-0000-000000000099")
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	aliasID, _ := uuid.FromString("00000000-0000-0000-0000-000000000099")
 
 	deploy := &component.ComponentDefinition{
 		Component:      component.Component{Kind: "Deployment"},
@@ -420,7 +420,7 @@ func TestAliasSideEffects(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "meshery-core"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.Parse("00000000-0000-0000-0000-000000000030")
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000030")
 
 	actions := p.SideEffects(rel, design)
 	if len(actions) == 0 {
@@ -445,9 +445,9 @@ func TestAliasSideEffects(t *testing.T) {
 func TestBindingIdentification(t *testing.T) {
 	p := &EdgeBindingPolicy{}
 
-	roleID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	rbID, _ := uuid.Parse("00000000-0000-0000-0000-000000000002")
-	saID, _ := uuid.Parse("00000000-0000-0000-0000-000000000003")
+	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	saID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
 
 	role := &component.ComponentDefinition{
 		Component:      component.Component{Kind: "Role"},
@@ -533,7 +533,7 @@ func TestBindingIdentification(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	relDef.ID, _ = uuid.Parse("00000000-0000-0000-0000-000000000050")
+	relDef.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000050")
 
 	// Debug: check isValidBinding manually.
 	fromSel := selectorSet[0].Allow.From[0]
@@ -563,9 +563,9 @@ func TestBindingIdentification(t *testing.T) {
 func TestBindingIdentificationEmptyValues(t *testing.T) {
 	p := &EdgeBindingPolicy{}
 
-	roleID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	rbID, _ := uuid.Parse("00000000-0000-0000-0000-000000000002")
-	saID, _ := uuid.Parse("00000000-0000-0000-0000-000000000003")
+	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	saID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
 
 	role := &component.ComponentDefinition{
 		Component:      component.Component{Kind: "Role"},
@@ -627,7 +627,7 @@ func TestBindingIdentificationEmptyValues(t *testing.T) {
 		Kind: relationship.Edge, RelationshipType: "binding", SubType: "permission",
 		Model: modelv1beta1.ModelReference{Name: "kubernetes"}, Selectors: &selectorSet,
 	}
-	relDef.ID, _ = uuid.Parse("00000000-0000-0000-0000-000000000060")
+	relDef.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000060")
 
 	identified := p.IdentifyRelationship(relDef, design)
 	if len(identified) == 0 {
@@ -638,9 +638,9 @@ func TestBindingIdentificationEmptyValues(t *testing.T) {
 // TestBindingIdentificationFullPipeline tests binding identification through the full engine,
 // simulating the e2e flow where relationships are stripped and re-evaluated.
 func TestBindingIdentificationFullPipeline(t *testing.T) {
-	roleID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	rbID, _ := uuid.Parse("00000000-0000-0000-0000-000000000002")
-	saID, _ := uuid.Parse("00000000-0000-0000-0000-000000000003")
+	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	saID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
 
 	role := &component.ComponentDefinition{
 		Component:      component.Component{Kind: "Role"},
@@ -703,7 +703,7 @@ func TestBindingIdentificationFullPipeline(t *testing.T) {
 		Kind: relationship.Edge, RelationshipType: "binding", SubType: "permission",
 		Model: modelv1beta1.ModelReference{Name: "kubernetes"}, Selectors: &selectorSet,
 	}
-	relDef.ID, _ = uuid.Parse("00000000-0000-0000-0000-000000000070")
+	relDef.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000070")
 
 	log, _ := logger.New("test", logger.Options{Format: logger.SyslogLogFormat})
 	engine := NewGoEngine(log)
@@ -731,9 +731,9 @@ func TestBindingIdentificationFullPipeline(t *testing.T) {
 func TestInventoryNamespaceIdentification(t *testing.T) {
 	p := &HierarchicalParentChildPolicy{}
 
-	nsID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	deployID, _ := uuid.Parse("00000000-0000-0000-0000-000000000002")
-	svcID, _ := uuid.Parse("00000000-0000-0000-0000-000000000003")
+	nsID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	svcID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
 
 	ns := &component.ComponentDefinition{
 		Component:      component.Component{Kind: "Namespace"},
@@ -802,7 +802,7 @@ func TestInventoryNamespaceIdentification(t *testing.T) {
 		Kind: relationship.Hierarchical, RelationshipType: "parent", SubType: "inventory",
 		Model: modelv1beta1.ModelReference{Name: "kubernetes"}, Selectors: &selectorSet,
 	}
-	relDef.ID, _ = uuid.Parse("00000000-0000-0000-0000-000000000080")
+	relDef.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000080")
 
 	identified := p.IdentifyRelationship(relDef, design)
 	t.Logf("Identified: %d relationships", len(identified))
@@ -823,8 +823,8 @@ func TestInventoryNamespaceIdentification(t *testing.T) {
 // The relationship is pre-existing (approved) in the design, and the mutator value
 // differs from the mutated value, so patching should update it.
 func TestInventoryPatchingFullPipeline(t *testing.T) {
-	nsID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	deployID, _ := uuid.Parse("00000000-0000-0000-0000-000000000002")
+	nsID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
 
 	ns := &component.ComponentDefinition{
 		Component:      component.Component{Kind: "Namespace"},
@@ -877,7 +877,7 @@ func TestInventoryPatchingFullPipeline(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	existingRel.ID, _ = uuid.Parse("00000000-0000-0000-0000-000000000040")
+	existingRel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000040")
 
 	design := makePatternFile(
 		[]*component.ComponentDefinition{ns, deploy},
@@ -910,8 +910,8 @@ func TestInventoryPatchingFullPipeline(t *testing.T) {
 func TestWalletPatchingCleanupOnDelete(t *testing.T) {
 	p := &HierarchicalWalletPolicy{}
 
-	deployID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	podTplID, _ := uuid.Parse("00000000-0000-0000-0000-000000000002")
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
 
 	// Both components already hold the mutator value (simulating a prior patch
 	// that has been applied and persisted).
@@ -979,7 +979,7 @@ func TestWalletPatchingCleanupOnDelete(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.Parse("00000000-0000-0000-0000-000000000010")
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
 
 	actions := p.SideEffects(rel, design)
 	if len(actions) == 0 {
@@ -1003,8 +1003,8 @@ func TestWalletPatchingCleanupOnDelete(t *testing.T) {
 func TestWalletPatchingCleanupUsesSchemaDefault(t *testing.T) {
 	p := &HierarchicalWalletPolicy{}
 
-	deployID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	podTplID, _ := uuid.Parse("00000000-0000-0000-0000-000000000002")
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
 
 	deploy := &component.ComponentDefinition{
 		Component:      component.Component{Kind: "Deployment"},
@@ -1081,7 +1081,7 @@ func TestWalletPatchingCleanupUsesSchemaDefault(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.Parse("00000000-0000-0000-0000-000000000010")
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
 
 	actions := p.SideEffects(rel, design)
 	found := false
@@ -1098,8 +1098,8 @@ func TestWalletPatchingCleanupUsesSchemaDefault(t *testing.T) {
 // TestWalletCleanupOnDeleteFullPipeline verifies that a deleted wallet relationship
 // restores the mutated field through the full evaluation pipeline.
 func TestWalletCleanupOnDeleteFullPipeline(t *testing.T) {
-	deployID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	podTplID, _ := uuid.Parse("00000000-0000-0000-0000-000000000002")
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
 
 	deploy := &component.ComponentDefinition{
 		Component:      component.Component{Kind: "Deployment"},
@@ -1132,7 +1132,7 @@ func TestWalletCleanupOnDeleteFullPipeline(t *testing.T) {
 	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "serviceAccountName"}}
 	mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "serviceAccountName"}}
 	relStatus := relationship.RelationshipDefinitionStatus("deleted")
-	relID, _ := uuid.Parse("00000000-0000-0000-0000-000000000010")
+	relID, _ := uuid.FromString("00000000-0000-0000-0000-000000000010")
 	selectorSet := relationship.SelectorSet{
 		relationship.SelectorSetItem{
 			Allow: relationship.Selector{
@@ -1201,8 +1201,8 @@ func TestWalletCleanupOnDeleteFullPipeline(t *testing.T) {
 func TestWalletPatchingSkipsWhenValueDiverged(t *testing.T) {
 	p := &HierarchicalWalletPolicy{}
 
-	deployID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	podTplID, _ := uuid.Parse("00000000-0000-0000-0000-000000000002")
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
 
 	deploy := &component.ComponentDefinition{
 		Component:      component.Component{Kind: "Deployment"},
@@ -1269,7 +1269,7 @@ func TestWalletPatchingSkipsWhenValueDiverged(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.Parse("00000000-0000-0000-0000-000000000010")
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
 
 	actions := p.SideEffects(rel, design)
 	if len(actions) != 0 {
@@ -1283,8 +1283,8 @@ func TestWalletPatchingSkipsWhenValueDiverged(t *testing.T) {
 func TestInventoryPatchingCleanupOnDelete(t *testing.T) {
 	p := &HierarchicalParentChildPolicy{}
 
-	nsID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	deployID, _ := uuid.Parse("00000000-0000-0000-0000-000000000002")
+	nsID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
 
 	ns := &component.ComponentDefinition{
 		Component:      component.Component{Kind: "Namespace"},
@@ -1340,7 +1340,7 @@ func TestInventoryPatchingCleanupOnDelete(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.Parse("00000000-0000-0000-0000-000000000010")
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
 
 	actions := p.SideEffects(rel, design)
 	found := false
@@ -1359,8 +1359,8 @@ func TestInventoryPatchingCleanupOnDelete(t *testing.T) {
 func TestEdgeNetworkPatchingCleanupOnDelete(t *testing.T) {
 	p := &EdgeNonBindingPolicy{}
 
-	svcID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	podID, _ := uuid.Parse("00000000-0000-0000-0000-000000000002")
+	svcID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	podID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
 
 	svc := &component.ComponentDefinition{
 		Component:      component.Component{Kind: "Service"},
@@ -1423,7 +1423,7 @@ func TestEdgeNetworkPatchingCleanupOnDelete(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.Parse("00000000-0000-0000-0000-000000000010")
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
 
 	actions := p.SideEffects(rel, design)
 	found := false
@@ -1443,9 +1443,9 @@ func TestEdgeNetworkPatchingCleanupOnDelete(t *testing.T) {
 func TestBindingPatchingCleanupOnDelete(t *testing.T) {
 	p := &EdgeBindingPolicy{}
 
-	roleID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	saID, _ := uuid.Parse("00000000-0000-0000-0000-000000000002")
-	rbID, _ := uuid.Parse("00000000-0000-0000-0000-000000000003")
+	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	saID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
 
 	role := &component.ComponentDefinition{
 		Component:      component.Component{Kind: "ClusterRole"},
@@ -1537,7 +1537,7 @@ func TestBindingPatchingCleanupOnDelete(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.Parse("00000000-0000-0000-0000-000000000020")
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000020")
 
 	actions := p.SideEffects(rel, design)
 	found := false
@@ -1562,9 +1562,9 @@ func TestBindingPatchingCleanupOnDelete(t *testing.T) {
 // (see PR #18885 review). The test pins current behavior so a future fix is
 // visible as a diff.
 func TestCleanupConcurrentRelationshipsSameField(t *testing.T) {
-	deployAID, _ := uuid.Parse("00000000-0000-0000-0000-000000000001")
-	deployBID, _ := uuid.Parse("00000000-0000-0000-0000-000000000002")
-	podTplID, _ := uuid.Parse("00000000-0000-0000-0000-000000000003")
+	deployAID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	deployBID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
 
 	// Two Deployments both hold the same serviceAccountName; PodTemplate
 	// already holds that value (simulating prior patches from both rels).
@@ -1640,7 +1640,7 @@ func TestCleanupConcurrentRelationshipsSameField(t *testing.T) {
 			Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 			Selectors:        &selectorSet,
 		}
-		rel.ID, _ = uuid.Parse(relID)
+		rel.ID, _ = uuid.FromString(relID)
 		return rel
 	}
 

@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
@@ -219,7 +219,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (pattern.Pattern
 		name = "MesheryGeneratedPattern"
 	}
 
-	id := uuid.New()
+	id := uuid.Must(uuid.NewV4())
 	// Convert cytoscape struct to patternfile
 	pf := pattern.PatternFile{
 		ID:         id,
@@ -467,7 +467,7 @@ func createPatternDeclarationFromK8s(manifest map[string]interface{}, regManager
 	}
 
 	rest = Format.Prettify(rest, false)
-	uuidV4 := uuid.New()
+	uuidV4 := uuid.Must(uuid.NewV4())
 	defaultCapabilities := []capability.Capability{} // only assign empty capabilities for component declarations
 	status := (*component.ComponentDefinitionStatus)(nil)
 	if comp.Status != nil {

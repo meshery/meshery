@@ -14,7 +14,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshery/server/models/connections"
@@ -175,7 +175,7 @@ func NewK8sContextWithServerID(
 		return nil, err
 	}
 	uid := ksns.GetUID()
-	ksUUID := parseUUIDOrNil(string(uid))
+	ksUUID := uuid.FromStringOrNil(string(uid))
 
 	ctx.KubernetesServerID = &ksUUID
 
@@ -203,7 +203,7 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 		return kcs
 	}
 
-	userUUID := parseUUIDOrNil(userID)
+	userUUID := uuid.FromStringOrNil(userID)
 
 	kcfg := InternalKubeConfig{}
 	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
@@ -213,7 +213,7 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 	for name := range parsed.Contexts {
 		metadata := map[string]interface{}{}
 		kc, _ := kcfg.K8sContext(name, instanceID, log)
-		eventBuilder := events.NewEvent().ActedUpon(parseUUIDOrNil(kc.ConnectionID)).WithCategory("connection").WithAction("register").FromSystem(*instanceID).FromOwner(userUUID)
+		eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(kc.ConnectionID)).WithCategory("connection").WithAction("register").FromSystem(*instanceID).FromOwner(userUUID)
 
 		metadata["context"] = RedactCredentialsForContext(&kc)
 
@@ -238,26 +238,6 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 			// regardless of includeUnreachable.
 			continue
 		}
-
-		// // Perform Ping test on the cluster
-		// if err := kc.PingTest(); err != nil {
-		// 	msg = fmt.Sprintf("unable to ping kubernetes context at %s, skipping context %s %v \n", kc.Server, kc.Name, err)
-		// 	_ = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to ping kubernetes context at %s, skipping %s", kc.Server, kc.Name)).WithMetadata(map[string]interface{}{
-		// 		"error": err,
-		// 	}).Build()
-
-		// 	metadata["error"] = err
-		// 	metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
-		// 	eventMetadata[name] = metadata
-
-		// 	// Preventing the publishing of event as the event details would be present in the reciept.
-		// 	// Publishing again would lead to duplicate events and confusion to the user.
-		// 	// _ = provider.PersistEvent(token,*event)
-		// 	// eventChan.Publish(userUUID, event)
-
-		// 	logrus.Warn(msg)
-		// 	continue
-		// }
 
 		if err := kc.AssignServerID(handler); err != nil {
 
@@ -487,7 +467,7 @@ func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 		return ErrUnreachableKubeAPI(err, kc.Server)
 	}
 	uid := ksns.GetUID()
-	ksUUID := parseUUIDOrNil(string(uid))
+	ksUUID := uuid.FromStringOrNil(string(uid))
 
 	kc.KubernetesServerID = &ksUUID
 
@@ -497,8 +477,14 @@ func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 // FlushMeshSyncData will flush the meshsync data for the passed kubernetes contextID
 func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Provider, eventsChan *Broadcast, userID string, mesheryInstanceID *core.Uuid, log logger.Handler) {
 	ctxID := k8sContext.ID
-	ctxUUID, _ := uuid.Parse(ctxID)
-	userUUID, _ := uuid.Parse(userID)
+	ctxUUID := uuid.FromStringOrNil(ctxID)
+	userUUID, err := uuid.FromString(userID)
+	if err != nil {
+		// A nil user key would persist and broadcast events under no owner; bail
+		// rather than attribute the flush to uuid.Nil.
+		log.Error(ErrInvalidUUID(fmt.Errorf("invalid user id %q: %w", userID, err)))
+		return
+	}
 	// Gets all the available kubernetes contexts
 
 	ctxName := k8sContext.Name

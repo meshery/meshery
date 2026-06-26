@@ -25,7 +25,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	servercore "github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/httputil"
@@ -1041,7 +1041,7 @@ func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.
 
 func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, additionalMetadata map[string]any) (connections.Connection, error) {
 	if k8sContext.ConnectionID != "" {
-		connectionID := parseUUIDOrNil(k8sContext.ConnectionID)
+		connectionID := uuid.FromStringOrNil(k8sContext.ConnectionID)
 		if connectionID != uuid.Nil {
 			conn, status, _ := l.GetConnectionByID(token, connectionID)
 			if status >= http.StatusOK && status < http.StatusMultipleChoices && conn != nil && conn.Kind == "kubernetes" {
@@ -1099,13 +1099,21 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 	}
 
 	connection, err := l.SaveConnection(conn, token, true)
-
-	l.Log.Infof("Persisting k8s context to remote_provider, %v %v", connection, err)
-
 	if err != nil {
 		l.Log.Error(ErrPersistConnection(err))
 		return connections.Connection{}, err
 	}
+	if connection == nil {
+		// SaveConnection can return (nil, nil) when the remote provider answers
+		// 2xx but the connection page is empty or carries a null element. Guard
+		// the dereference below so a malformed response is a structured error,
+		// not a panic.
+		err := ErrPersistConnection(fmt.Errorf("remote provider returned a nil connection for kubernetes context %q", conn.Name))
+		l.Log.Error(err)
+		return connections.Connection{}, err
+	}
+
+	l.Log.Infof("persisted kubernetes context %q to remote provider as connection %s", connection.Name, connection.ID)
 
 	return *connection, nil
 }
@@ -1221,42 +1229,6 @@ func (l *RemoteProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) 
 	return results, nil
 }
 
-func (l *RemoteProvider) DeleteK8sContext(token, id string) (K8sContext, error) {
-	l.Log.Info("attempting to delete kubernetes context from cloud for id: ", id)
-	if !l.Capabilities.IsSupported(PersistConnection) {
-		l.Log.Error(ErrOperationNotAvailable)
-		return K8sContext{}, ErrInvalidCapability("PersistConnection", l.ProviderName)
-	}
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, id))
-	l.Log.Debug("constructed kubernetes contexts url: ", remoteProviderURL.String())
-	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
-
-	resp, err := l.DoRequest(cReq, token)
-	if err != nil {
-		if resp == nil {
-			return K8sContext{}, ErrUnreachableRemoteProvider(err)
-		}
-		err = ErrDelete(err, "Kubernetes Context", resp.StatusCode)
-		l.Log.Error(err)
-		return K8sContext{}, err
-	}
-
-	if resp.StatusCode == http.StatusOK {
-		defer func() {
-			_ = resp.Body.Close()
-		}()
-
-		deletedContext := K8sContext{}
-		_ = json.NewDecoder(resp.Body).Decode(&deletedContext)
-		l.Log.Info("kubernetes deleted from remote provider")
-		return deletedContext, nil
-	}
-	err = ErrDelete(fmt.Errorf("unable to delete kubernetes context with id: %s", id), "Kubernetes Context", resp.StatusCode)
-	l.Log.Error(err)
-	return K8sContext{}, err
-}
-
 func (l *RemoteProvider) GetK8sContext(token, connectionID string) (K8sContext, error) {
 	l.Log.Info("attempting to fetch kubernetes context from cloud for connection id: ", connectionID)
 
@@ -1265,7 +1237,7 @@ func (l *RemoteProvider) GetK8sContext(token, connectionID string) (K8sContext, 
 		return K8sContext{}, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 
-	connID := parseUUIDOrNil(connectionID)
+	connID := uuid.FromStringOrNil(connectionID)
 	if connID == uuid.Nil {
 		return K8sContext{}, fmt.Errorf("invalid connection id: %s", connectionID)
 	}

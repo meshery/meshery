@@ -12,6 +12,7 @@ import (
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
 	cueJson "cuelang.org/go/encoding/json"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers"
 
 	"github.com/meshery/meshery/server/models"
@@ -51,8 +52,8 @@ type names struct {
 }
 
 func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context, config []byte, ctxID string, connectionID string, userID string, mesheryInstanceID core.Uuid, reg *registry.RegistryManager, ec *models.Broadcast, log logger.Handler, ctxName string) (err error) {
-	connectionUUID := parseUUIDOrNil(connectionID)
-	userUUID := parseUUIDOrNil(userID)
+	connectionUUID := uuid.FromStringOrNil(connectionID)
+	userUUID := uuid.FromStringOrNil(userID)
 
 	man, err := GetK8sMeshModelComponents(config)
 	eventMetadata := make(map[string]interface{}, 0)
@@ -75,11 +76,11 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 		if models.K8sMeshModelMetadata.Capabilities != nil {
 			c.Capabilities = models.K8sMeshModelMetadata.Capabilities
 		}
-		isRegistranError, isModelError, err = reg.RegisterEntity(connection.Connection{
+		isRegistranError, isModelError, err = reg.RegisterEntity(registry.RegistrantHostToV1beta3(connection.Connection{
 			Kind:     "kubernetes",
 			Type:     "registry",
 			Metadata: k8sContext,
-		}, &c)
+		}), &c)
 		helpers.HandleError(connection.Connection{
 			Kind: "kubernetes"}, &c, err, isModelError, isRegistranError)
 		count++

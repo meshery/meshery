@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 )
@@ -49,7 +50,7 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 }
 
 func (h *Handler) GetUserCredentialByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	credentialID := parseUUIDOrNil(mux.Vars(req)["credentialID"])
+	credentialID := uuid.FromStringOrNil(mux.Vars(req)["credentialID"])
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	credential, statusCode, err := provider.GetCredentialByID(token, credentialID)
 	if err != nil {
@@ -141,7 +142,7 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	q := req.URL.Query()
 
-	credentialID := parseUUIDOrNil(q.Get("credential_id"))
+	credentialID := uuid.FromStringOrNil(q.Get("credential_id"))
 	_, err := provider.DeleteUserCredential(req, credentialID)
 	if err != nil {
 		h.log.Error(ErrDeleteUserCredential(err))

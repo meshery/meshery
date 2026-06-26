@@ -3,7 +3,7 @@ package resolver
 import (
 	"context"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/internal/graphql/model"
 	"github.com/meshery/meshery/server/machines/kubernetes"
@@ -180,7 +180,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, con
 		return unknowStatus, nil
 	}
 
-	inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(parseUUIDOrNil(connectionID))
+	inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
 	// If machine instance is not present or points to nil, return unknown status
 	if !ok || inst == nil {
 		return unknowStatus, nil
@@ -216,7 +216,7 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 		return unknowStatus, nil
 	}
 
-	inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(parseUUIDOrNil(connectionID))
+	inst, ok := handler.ConnectionToStateMachineInstanceTracker.Get(uuid.FromStringOrNil(connectionID))
 	// If machine instance is not present or points to nil, return unknown status
 	if !ok || inst == nil {
 		return unknowStatus, nil
@@ -250,7 +250,7 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, 
 		return unknowStatus, nil
 	}
 
-	connectionUUID := parseUUIDOrNil(connectionID)
+	connectionUUID := uuid.FromStringOrNil(connectionID)
 	if connectionUUID == uuid.Nil {
 		return unknowStatus, nil
 	}
