@@ -443,7 +443,6 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                       </Typography>
                     </GridCapabilityHeader>
                     <GridCapabilityHeader
-                      key={`${index}-${capability.endpoint}`}
                       size={{ xs: 6 }}
                       style={{
                         padding: '20px 20px',

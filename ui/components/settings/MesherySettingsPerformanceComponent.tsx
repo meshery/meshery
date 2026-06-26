@@ -139,9 +139,9 @@ const MesherySettingsPerformanceComponent = () => {
     <NoSsr>
       <React.Fragment>
         <Box sx={{ p: { xs: 2, md: 10 } }}>
-          <label>
-            <strong>Performance Load Test Defaults</strong>
-          </label>
+          <Box component="h2" sx={{ m: 0, fontSize: '1.25rem', fontWeight: 600 }}>
+            Performance Load Test Defaults
+          </Box>
           <Grid2 container spacing={3} size="grow">
             <Grid2 size={{ xs: 12, lg: 4 }}>
               <TextField
