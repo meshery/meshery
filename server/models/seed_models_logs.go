@@ -177,6 +177,11 @@ func aggregateSummariesByKind(hosts []v1beta1.MeshModelHostsWithEntitySummary) (
 	orderedKinds = make([]string, 0, len(hosts))
 	summaries = make(map[string]v1beta1.EntitySummary)
 	for _, host := range hosts {
+		// A registrant with no Kind cannot be meaningfully named in the summary,
+		// so skip it rather than emit a "For registrant  imported" line.
+		if host.Kind == "" {
+			continue
+		}
 		current, exists := summaries[host.Kind]
 		if !exists {
 			orderedKinds = append(orderedKinds, host.Kind)
@@ -188,6 +193,29 @@ func aggregateSummariesByKind(hosts []v1beta1.MeshModelHostsWithEntitySummary) (
 		summaries[host.Kind] = current
 	}
 	return orderedKinds, summaries
+}
+
+// formatRegistrantSummary renders the one-line import summary for a registrant
+// Kind, e.g. "For registrant artifacthub imported 150 models, 1326 components.".
+// GetRegistrants only returns registrants with at least one model, so the
+// all-zero branch is a defensive fallback: it keeps the line grammatical (by
+// emitting "... imported 0 entities.") if that contract ever changes, instead
+// of leaving a dangling "For registrant <kind> imported.".
+func formatRegistrantSummary(kind string, summary v1beta1.EntitySummary) string {
+	message := fmt.Sprintf("For registrant %s imported", kind)
+	appendIfNonZero := func(value int64, label string) {
+		if value != 0 {
+			message += fmt.Sprintf(" %d %s,", value, label)
+		}
+	}
+	appendIfNonZero(summary.Models, "models")
+	appendIfNonZero(summary.Components, "components")
+	appendIfNonZero(summary.Relationships, "relationships")
+	appendIfNonZero(summary.Policies, "policies")
+	if !strings.HasSuffix(message, ",") {
+		message += " 0 entities,"
+	}
+	return strings.TrimSuffix(message, ",") + "."
 }
 
 func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *meshmodel.RegistryManager, regErrorStore *RegistrationFailureLog) {
@@ -208,18 +236,7 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 	for _, kind := range orderedKinds {
 		summary := kindSummaries[kind]
 		eventBuilder := events.NewEvent().FromSystem(sysID).FromOwner(sysID).WithCategory("entity").WithAction("get_summary")
-		successMessage := fmt.Sprintf("For registrant %s imported", kind)
-		appendIfNonZero := func(value int64, label string) {
-			if value != 0 {
-				successMessage += fmt.Sprintf(" %d %s,", value, label)
-			}
-		}
-		appendIfNonZero(summary.Models, "models")
-		appendIfNonZero(summary.Components, "components")
-		appendIfNonZero(summary.Relationships, "relationships")
-		appendIfNonZero(summary.Policies, "policies")
-
-		successMessage = strings.TrimSuffix(successMessage, ",") + "."
+		successMessage := formatRegistrantSummary(kind, summary)
 
 		log.Info(successMessage)
 		eventBuilder.WithMetadata(map[string]interface{}{
