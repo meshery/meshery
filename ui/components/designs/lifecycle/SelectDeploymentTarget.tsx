@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   useGetEnvironmentConnectionsQuery,
   useGetEnvironmentsQuery,
@@ -26,7 +27,7 @@ import {
   selectSelectedK8sConnections,
 } from '@/store/slices/globalEnvironmentContext';
 import { Button } from '@sistent/sistent';
-import { AddIcon } from '@sistent/sistent';
+import { AddIcon, AddCircleIcon } from '@sistent/sistent';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const DeploymentTargetContext = createContext({
@@ -34,6 +35,12 @@ export const DeploymentTargetContext = createContext({
   connectionMetadataState: null,
   organization: null,
 });
+
+const InlineButton = styled(Button)(() => ({
+  textTransform: 'none',
+  minHeight: 'unset',
+  padding: '2px 4.5px',
+}));
 
 const StyledEnvironmentCard = styled(Box)(({ theme }) => ({
   borderRadius: '0.5rem',
@@ -70,16 +77,35 @@ const K8sContextConnection = ({ connection, environment }) => {
   );
 };
 
-const EnvironmentConnections = ({ environment, connections }) => {
+const EnvironmentConnections = ({ environment, connections, onAddConnection }) => {
   if (!connections || connections.length === 0) {
     return (
-      <Box display="flex" alignItems="center" justifyContent="center" width="100%" py={2}>
-        No connections configured. Add a connection to get started.
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          py: 2,
+        }}
+      >
+        <Typography variant="textB1Regular" component="div">
+          No connections configured.{' '}
+          <InlineButton
+            variant="contained"
+            color="primary"
+            onClick={onAddConnection}
+            startIcon={<AddCircleIcon />}
+          >
+            Add a connection
+          </InlineButton>{' '}
+          to get started.
+        </Typography>
       </Box>
     );
   }
   return (
-    <Box display="flex" gap={1} flexWrap={'wrap'} justifyContent="flex-start">
+    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'flex-start' }}>
       {connections.map((connection) => (
         <K8sContextConnection
           key={connection.id}
@@ -91,7 +117,7 @@ const EnvironmentConnections = ({ environment, connections }) => {
   );
 };
 
-const EnvironmentCard = ({ environment }) => {
+const EnvironmentCard = ({ environment, onAddConnection }) => {
   const theme = useTheme();
   const { data, isLoading } = useGetEnvironmentConnectionsQuery({
     environmentId: environment.id,
@@ -111,7 +137,7 @@ const EnvironmentCard = ({ environment }) => {
   return (
     <StyledEnvironmentCard>
       <StyledEnvironmentHeader>
-        <Box gap={0.5} display="flex" alignItems="center">
+        <Box sx={{ gap: 0.5, display: 'flex', alignItems: 'center' }}>
           <Checkbox
             data-testid={`env-${environment.name}`}
             checked={isEnvSelected}
@@ -125,11 +151,15 @@ const EnvironmentCard = ({ environment }) => {
           ({selectedConnectionsCount}/{connections.length})
         </Typography>
       </StyledEnvironmentHeader>
-      <Box p={2}>
+      <Box sx={{ p: 2 }}>
         {isLoading ? (
           <Loading />
         ) : (
-          <EnvironmentConnections environment={environment} connections={connections} />
+          <EnvironmentConnections
+            environment={environment}
+            connections={connections}
+            onAddConnection={onAddConnection}
+          />
         )}
       </Box>
     </StyledEnvironmentCard>
@@ -139,7 +169,14 @@ const EnvironmentCard = ({ environment }) => {
 export const EnvironmentsEmptyState = ({ message, onButtonClick }) => {
   const theme = useTheme();
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <EnvironmentIcon height={100} width={100} fill={theme.palette.icon.default} />
       <Typography color={theme.palette.text.neutral.default} variant="textB2SemiBold">
         {message || 'No environments found'}
@@ -160,6 +197,7 @@ export const EnvironmentsEmptyState = ({ message, onButtonClick }) => {
 };
 
 export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
+  const theme = useTheme();
   const organization = useContext(DeploymentTargetContext).organization;
   const { data, isLoading, isError } = useGetEnvironmentsQuery({ orgId: organization.id });
   const environments = data?.environments || [];
@@ -173,7 +211,7 @@ export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
 
   return (
     <Stack gap={2}>
-      <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <StepHeading>Identify Deployment Targets</StepHeading>
         {environments.length > 0 && (
           <CustomTooltip title="Configure Environments">
@@ -182,7 +220,7 @@ export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
                 onClick={() => setIsEnvrionmentModalOpen(true)}
                 aria-label="edit-environments"
               >
-                <Edit />
+                <Edit fill={theme.palette.icon.default} />
               </IconButton>
             </div>
           </CustomTooltip>
@@ -197,7 +235,11 @@ export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
 
       <Stack spacing={2}>
         {environments.map((env) => (
-          <EnvironmentCard key={env.id} environment={env} />
+          <EnvironmentCard
+            key={env.id}
+            environment={env}
+            onAddConnection={() => setIsEnvrionmentModalOpen(true)}
+          />
         ))}
       </Stack>
     </Stack>

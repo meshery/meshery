@@ -1,25 +1,31 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme, Box } from '@sistent/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
-import { Adapters } from '../components/extensions';
+import { Adapters, KanvasExtension } from '../components/extensions';
 import DefaultError from '@/components/general/error-404';
 import { EVENT_TYPES } from '../lib/event-types';
-import { EXTENSION_NAMES } from '../utils/Enum';
 import { useNotification, usePageTitle } from '@/utils/hooks';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CardContainer, FrontSideDescription } from '../css/icons.styles';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { toggleCatalogContent } from '@/store/slices/mesheryUi';
 
 type ChildrenProps = {
   children: React.ReactNode;
 };
+// Meshery Extension Point
+// ---
+// Purpose: Notify Remote Providers of changes in Golang dependencies
+// Learn more: See https://docs.meshery.io/extensibility
+// Add your repository to the list: https://github.com/meshery/meshery/issues/new/choose
+// ---
 
 const UnifiedCardContainer = ({ children, sx = {} }: ChildrenProps & { sx?: object }) => (
   <CardContainer
     sx={{
+      height: '100%',
       minHeight: { xs: '280px', sm: '260px', lg: '280px' },
       display: 'flex',
       flexDirection: 'column',
@@ -82,8 +88,6 @@ const ResponsiveImage = ({ src, alt, testId }: ResponsiveImageProps) => (
       width: 'auto',
       maxWidth: '140px',
       maxHeight: '85px',
-      minWidth: '100px',
-      minHeight: '60px',
       flexShrink: 0,
     }}
     data-testid={testId}
@@ -103,39 +107,46 @@ const MeshMapSnapShotCard = ({
   githubActionEnabled = false,
 }: {
   githubActionEnabled?: boolean;
-}) => (
-  <Grid2 size={GRID_SIZE}>
-    <UnifiedCardContainer>
-      <Typography data-testid="snapshot-heading" variant="h5" component="div">
-        GitHub Action: Snapshot
-      </Typography>
+}) => {
+  const theme = useTheme();
+  return (
+    <Grid2 size={GRID_SIZE}>
+      <UnifiedCardContainer>
+        <Typography data-testid="snapshot-heading" variant="h5" component="div">
+          GitHub Action: Snapshot
+        </Typography>
 
-      <UnifiedDescription data-testid="snapshot-description" hasIcon>
-        <ResponsiveImage
-          src="/static/img/extensions/meshmap-snapshot-logo.svg"
-          alt="Snapshot Logo"
-          testId="snapshot-image"
-        />
-        <div>
-          Connect to your GitHub repo and see changes pull request-to-pull request. Get snapshots of
-          your infrastructure directly in your PRs.
-        </div>
-      </UnifiedDescription>
+        <UnifiedDescription data-testid="snapshot-description" hasIcon>
+          <ResponsiveImage
+            src={
+              theme.palette.mode === 'dark'
+                ? '/static/img/extensions/github-white.svg'
+                : '/static/img/extensions/github.svg'
+            }
+            alt="GitHub Logo"
+            testId="snapshot-image"
+          />
+          <div>
+            Connect to your GitHub repo and see changes pull request-to-pull request. Get snapshots
+            of your infrastructure directly in your PRs.
+          </div>
+        </UnifiedDescription>
 
-      <UnifiedButtonContainer>
-        <Button
-          variant="contained"
-          color="primary"
-          data-testid="snapshot-enable-btn"
-          disabled={githubActionEnabled}
-          onClick={openExternal('https://cloud.meshery.io/connect/github/new/')}
-        >
-          {githubActionEnabled ? 'Remove' : 'Enable'}
-        </Button>
-      </UnifiedButtonContainer>
-    </UnifiedCardContainer>
-  </Grid2>
-);
+        <UnifiedButtonContainer>
+          <Button
+            variant="contained"
+            color="primary"
+            data-testid="snapshot-enable-btn"
+            disabled={githubActionEnabled}
+            onClick={openExternal('https://cloud.meshery.io/connect/github/new/')}
+          >
+            {githubActionEnabled ? 'Remove' : 'Enable'}
+          </Button>
+        </UnifiedButtonContainer>
+      </UnifiedCardContainer>
+    </Grid2>
+  );
+};
 
 const MesheryPerformanceAction = ({
   githubActionEnabled = false,
@@ -212,23 +223,22 @@ const MesheryDockerExtension = () => (
   </Grid2>
 );
 
-const MesheryHelmExtension = () => (
+const MesheryAcademyExtension = () => (
   <Grid2 size={GRID_SIZE}>
     <UnifiedCardContainer>
-      <Typography variant="h5" component="div">
-        Snapshot Helm Plugin
+      <Typography data-testid="meshery-academy-heading" variant="h5" component="div">
+        Meshery Academy
       </Typography>
 
       <UnifiedDescription hasIcon>
         <ResponsiveImage
-          src="/static/img/extensions/helm_chart.svg"
-          alt="Helm Chart Logo"
-          testId="helm-icon"
+          src="/static/img/extensions/meshery-academy.svg"
+          alt="Meshery Academy Logo"
+          testId="meshery-academy-icon"
         />
         <div>
-          The Snapshot Helm Plugin allows you to generate a visual snapshot of your Helm charts
-          directly from the command line. It simplifies the process of creating Meshery Snapshots,
-          providing a visual representation of packaged Helm charts.
+          Meshery Academy is a platform that provides a comprehensive learning experience for anyone
+          beginning their journey into Meshery and cloud native infrastructure.
         </div>
       </UnifiedDescription>
 
@@ -236,8 +246,8 @@ const MesheryHelmExtension = () => (
         <Button
           variant="contained"
           color="primary"
-          data-testid="helm-learn-more-btn"
-          onClick={openExternal('https://docs.meshery.io/extensions/helm-kanvas-snapshot')}
+          data-testid="meshery-academy-learn-more-btn"
+          onClick={openExternal('https://cloud.meshery.io/academy')}
         >
           Learn More
         </Button>
@@ -245,6 +255,117 @@ const MesheryHelmExtension = () => (
     </UnifiedCardContainer>
   </Grid2>
 );
+
+const DigitalOceanAcademyExtension = () => {
+  const theme = useTheme();
+  return (
+    <Grid2 size={GRID_SIZE}>
+      <UnifiedCardContainer>
+        <Typography data-testid="digitalocean-academy-heading" variant="h5" component="div">
+          DigitalOcean Academy
+        </Typography>
+
+        <UnifiedDescription hasIcon>
+          <ResponsiveImage
+            src={
+              theme.palette.mode === 'dark'
+                ? '/static/img/extensions/do-vertical-white.png'
+                : '/static/img/extensions/do-vertical-blue.png'
+            }
+            alt="DigitalOcean Academy Logo"
+            testId="digitalocean-academy-icon"
+          />
+          <div>
+            DigitalOcean Academy is a platform that provides a comprehensive learning experience for
+            anyone beginning their journey into DigitalOcean and cloud native infrastructure.
+          </div>
+        </UnifiedDescription>
+
+        <UnifiedButtonContainer>
+          <Button
+            variant="contained"
+            color="primary"
+            data-testid="digitalocean-academy-learn-more-btn"
+            onClick={openExternal('https://docs.meshery.io/extensions/academies/')}
+          >
+            Learn More
+          </Button>
+        </UnifiedButtonContainer>
+      </UnifiedCardContainer>
+    </Grid2>
+  );
+};
+
+const ShapeBuilderExtension = () => (
+  <Grid2 size={GRID_SIZE}>
+    <UnifiedCardContainer>
+      <Typography data-testid="shape-builder-heading" variant="h5" component="div">
+        Shape Builder
+      </Typography>
+
+      <UnifiedDescription hasIcon>
+        <ResponsiveImage
+          src="/static/img/extensions/shape-builder.svg"
+          alt="Shape Builder Logo"
+          testId="shape-builder-icon"
+        />
+        <div>A Meshery extension for creating custom polygon shapes for Meshery components.</div>
+      </UnifiedDescription>
+
+      <UnifiedButtonContainer>
+        <Button
+          variant="contained"
+          color="primary"
+          data-testid="shape-builder-learn-more-btn"
+          onClick={openExternal('https://shapes.meshery.io/')}
+        >
+          Learn More
+        </Button>
+      </UnifiedButtonContainer>
+    </UnifiedCardContainer>
+  </Grid2>
+);
+
+const MesheryHelmExtension = () => {
+  const theme = useTheme();
+  return (
+    <Grid2 size={GRID_SIZE}>
+      <UnifiedCardContainer>
+        <Typography data-testid="helm-heading" variant="h5" component="div">
+          Snapshot Helm Plugin
+        </Typography>
+
+        <UnifiedDescription hasIcon>
+          <ResponsiveImage
+            src={
+              theme.palette.mode === 'dark'
+                ? '/static/img/extensions/helm_chart-white.svg'
+                : '/static/img/extensions/helm_chart.svg'
+            }
+            alt="Helm Chart Logo"
+            testId="helm-icon"
+          />
+          <div>
+            The Snapshot Helm Plugin allows you to generate a visual snapshot of your Helm charts
+            directly from the command line. It simplifies the process of creating Meshery Snapshots,
+            providing a visual representation of packaged Helm charts.
+          </div>
+        </UnifiedDescription>
+
+        <UnifiedButtonContainer>
+          <Button
+            variant="contained"
+            color="primary"
+            data-testid="helm-learn-more-btn"
+            onClick={openExternal('https://docs.meshery.io/extensions/extensions/helm-snapshot/')}
+          >
+            Learn More
+          </Button>
+        </UnifiedButtonContainer>
+      </UnifiedCardContainer>
+    </Grid2>
+  );
+};
 
 const MesheryDesignEmbedExtension = () => (
   <Grid2 size={GRID_SIZE}>
@@ -255,7 +376,7 @@ const MesheryDesignEmbedExtension = () => (
 
       <UnifiedDescription hasIcon>
         <ResponsiveImage
-          src="/static/img/extensions/meshmap.svg"
+          src="/static/img/meshery-logo/meshery-logo.svg"
           alt="Meshery Design Logo"
           testId="design-embed-icon"
         />
@@ -271,7 +392,7 @@ const MesheryDesignEmbedExtension = () => (
           variant="contained"
           color="primary"
           data-testid="design-embed-learn-more-btn"
-          onClick={openExternal('https://meshery.io/extensions/meshery-design-embed/')}
+          onClick={openExternal('https://meshery.io/extensions/meshery-design-embed')}
         >
           Learn More
         </Button>
@@ -304,7 +425,7 @@ const CloudExtension = () => (
         <Button
           variant="contained"
           color="primary"
-          data-testid="layer5-cloud-learn-more-btn"
+          data-testid="cloud-learn-more-btn"
           onClick={openExternal('https://meshery.io/extensions/layer5-cloud')}
         >
           Learn More
@@ -339,7 +460,7 @@ const KubectlPluginExtension = () => (
           variant="contained"
           color="primary"
           data-testid="kubectl-plugin-learn-more-btn"
-          onClick={openExternal('https://docs.meshery.io/extensions/kubectl-kanvas-snapshot')}
+          onClick={openExternal('https://meshery.io/extensions/kubectl-kanvas-snapshot')}
         >
           Learn More
         </Button>
@@ -373,7 +494,9 @@ const KubectlMeshSyncExtension = () => (
           variant="contained"
           color="primary"
           data-testid="kubectl-meshsync-learn-more-btn"
-          onClick={openExternal('https://docs.meshery.io/extensions/kubectl-meshsync-snapshot')}
+          onClick={openExternal(
+            'https://docs.meshery.io/extensions/extensions/kubectl-meshsync-snapshot/',
+          )}
         >
           Learn More
         </Button>
@@ -451,6 +574,9 @@ export const WrappedMesheryPerformanceAction = MesheryPerformanceAction;
 export const WrappedMesheryDockerExtension = MesheryDockerExtension;
 export const WrappedMesheryEmbedDesignExtension = MesheryDesignEmbedExtension;
 export const WrappedMesheryHelmExtension = MesheryHelmExtension;
+export const WrappedMesheryAcademyExtension = MesheryAcademyExtension;
+export const WrappedDigitalOceanAcademyExtension = DigitalOceanAcademyExtension;
+export const WrappedShapeBuilderExtension = ShapeBuilderExtension;
 
 const Extensions = () => {
   usePageTitle('Extensions');
@@ -458,7 +584,6 @@ const Extensions = () => {
   const [updateUserPref] = useUpdateUserPrefMutation();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { providerCapabilities } = useSelector((state) => state.ui);
   const { data: userData } = useGetUserPrefQuery();
 
   const serverCatalogContent = userData?.usersExtensionPreferences?.catalogContent;
@@ -470,14 +595,6 @@ const Extensions = () => {
   useEffect(() => {
     setCatalogContentOverride(null);
   }, [serverCatalogContent]);
-
-  const hasAccessToMeshMap = useMemo(
-    () =>
-      !!providerCapabilities?.extensions?.navigator?.some(
-        (val: { title: string }) => val.title.toLowerCase() === EXTENSION_NAMES.KANVAS,
-      ),
-    [providerCapabilities],
-  );
 
   const handleToggle = () => {
     const next = !catalogContent;
@@ -508,6 +625,7 @@ const Extensions = () => {
       </Head>
       {CAN(keys.VIEW_EXTENSIONS.action, keys.VIEW_EXTENSIONS.subject) ? (
         <Grid2 container spacing={2} size="grow">
+          <KanvasExtension />
           <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
           <WrappedMesheryPerformanceAction githubActionEnabled={false} />
           <WrappedMesheryHelmExtension />
@@ -516,6 +634,9 @@ const Extensions = () => {
           <WrappedCloudExtension />
           <WrappedKubectlPluginExtension />
           <WrappedKubectlMeshSyncExtension />
+          <WrappedMesheryAcademyExtension />
+          <WrappedDigitalOceanAcademyExtension />
+          <WrappedShapeBuilderExtension />
           <CatalogCard catalogContent={catalogContent} handleToggle={handleToggle} theme={theme} />
           <Adapters />
         </Grid2>

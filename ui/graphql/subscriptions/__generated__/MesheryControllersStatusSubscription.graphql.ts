@@ -1,7 +1,6 @@
 /**
- * @generated SignedSource<<3d0a5f39aed11ffb58ed017a5e4aa0a1>>
+ * @generated SignedSource<<a78340b6e85371d1661042de36ecf59e>>
  * @lightSyntaxTransform
- * @nogrep
  */
 
 /* tslint:disable */
@@ -84,20 +83,20 @@ v1 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": (v0/*:: as any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "MesheryControllersStatusSubscription",
-    "selections": (v1/*: any*/),
+    "selections": (v1/*:: as any*/),
     "type": "Subscription",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": (v0/*:: as any*/),
     "kind": "Operation",
     "name": "MesheryControllersStatusSubscription",
-    "selections": (v1/*: any*/)
+    "selections": (v1/*:: as any*/)
   },
   "params": {
     "cacheID": "534d4b9391826e634ad2ab05b1a30e75",

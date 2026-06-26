@@ -19,7 +19,6 @@ import (
 	yaml "github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
@@ -60,6 +59,15 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 		return
 	}
 
+	// Guard against a missing/empty "test" config before dereferencing it
+	// below (name, id, duration, clients[0]); a malformed body must not panic.
+	if perfTest == nil || perfTest.Config == nil || len(perfTest.Config.Clients) == 0 {
+		err := fmt.Errorf("request body is missing the required \"test\" performance configuration or load-test clients")
+		h.log.Error(models.ErrUnmarshal(err, "performance test config"))
+		writeMeshkitError(w, models.ErrUnmarshal(err, "performance test config"), http.StatusBadRequest)
+		return
+	}
+
 	// testName - should be loaded from the file and updated with a random string appended to the end of the name
 	testName := perfTest.Config.Name
 	if testName == "" {
@@ -68,10 +76,11 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 		return
 	}
 
-	meshType := perfTest.ServiceMesh.Type
-	meshName := SMP.ServiceMesh_Type_name[int32(meshType)]
+	// The technology under test is identified by a Meshery Registry model
+	// name (free-form string), replacing the constraining SMP service-mesh enum.
+	meshName := perfTest.ServiceMesh
 
-	profileID := perfTest.Config.Id
+	profileID := perfTest.Config.ID
 
 	loadTestOptions := &models.LoadTestOptions{}
 
@@ -88,6 +97,12 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 
 	// TODO: check multiple clients in case of distributed perf test
 	testClient := perfTest.Config.Clients[0]
+	if len(testClient.EndpointUrls) == 0 {
+		err := fmt.Errorf("request body is missing load-test endpoint URLs")
+		h.log.Error(models.ErrUnmarshal(err, "performance test config"))
+		writeMeshkitError(w, models.ErrUnmarshal(err, "performance test config"), http.StatusBadRequest)
+		return
+	}
 
 	// TODO: consider the multiple endpoints
 	loadTestOptions.URL = testClient.EndpointUrls[0]
@@ -546,31 +561,9 @@ func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Re
 		Message: "Done persisting the load test results.",
 	}
 
-	var promURL string
-	if prefObj.Prometheus != nil {
-		promURL = prefObj.Prometheus.PrometheusURL
-	}
-
-	tokenVal, _ := provider.GetProviderToken(req)
-
-	h.log.Debug("promURL: , testUUID: , resultID: ", promURL, testUUID, resultID)
-	if promURL != "" && testUUID != "" && resultID != "" &&
-		(provider.GetProviderType() == models.RemoteProviderType ||
-			(provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
-		_ = h.task.WithArgs(ctx, &models.SubmitMetricsConfig{
-			TestUUID:  testUUID,
-			ResultID:  resultID,
-			PromURL:   promURL,
-			StartTime: resultInst.StartTime,
-			EndTime:   resultInst.StartTime.Add(resultInst.ActualDuration),
-			TokenVal:  tokenVal,
-			Provider:  provider,
-		})
-	}
-
 	key := uuid.FromStringOrNil(resultID)
 	if key == uuid.Nil {
-		key, _ = uuid.NewV4()
+		key = uuid.Must(uuid.NewV4())
 	}
 	result.ID = key
 	respChan <- &models.LoadTestResponse{
@@ -585,56 +578,6 @@ func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Re
 	if h.config.PerformanceResultChannel != nil {
 		h.config.PerformanceResultChannel <- struct{}{}
 	}
-}
-
-// CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to Remote Provider
-func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error {
-	h.log.Debug("initiating collecting prometheus static board metrics for test id: ", config.TestUUID)
-	ctx := context.Background()
-	queries := h.config.QueryTracker.GetQueriesForUUID(ctx, config.TestUUID)
-	queryResults := map[string]map[string]interface{}{}
-	step := h.config.PrometheusClient.ComputeStep(ctx, config.StartTime, config.EndTime)
-	for query, flag := range queries {
-		if !flag {
-			seriesData, err := h.config.PrometheusClient.QueryRangeUsingClient(ctx, config.PromURL, query, config.StartTime, config.EndTime, step)
-			if err != nil {
-				return err
-			}
-			queryResults[query] = map[string]interface{}{
-				"status": "success",
-				"data": map[string]interface{}{
-					"resultType": seriesData.Type(),
-					"result":     seriesData,
-				},
-			}
-			h.config.QueryTracker.AddOrFlagQuery(ctx, config.TestUUID, query, true)
-		}
-	}
-
-	board, err := h.config.PrometheusClient.GetClusterStaticBoard(ctx, config.PromURL)
-	if err != nil {
-		return err
-	}
-	// TODO: we are NOT persisting the Node metrics for now
-
-	resultUUID, err := uuid.FromString(config.ResultID)
-	if err != nil {
-		h.log.Error(ErrParseBool(err, "result uuid"))
-		return err
-	}
-	result := &models.MesheryResult{
-		ID:                resultUUID,
-		TestID:            config.TestUUID,
-		ServerMetrics:     queryResults,
-		ServerBoardConfig: board,
-	}
-
-	if err = config.Provider.PublishMetrics(config.TokenVal, result); err != nil {
-		return err
-	}
-	// now to remove all the queries for the uuid
-	h.config.QueryTracker.RemoveUUID(ctx, config.TestUUID)
-	return nil
 }
 
 func assignCertificatePath(key, path string, loadTestOptions *models.LoadTestOptions) {

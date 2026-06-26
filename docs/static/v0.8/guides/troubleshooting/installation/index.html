@@ -178,34 +178,10 @@
           >
             <span>v0.8</span>
           </option>
-           <!-- we get the version selected, and put it to the right option  --><option
-            
-            value="/v0.7"
-            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
-          >
-            <span>v0.7</span>
-          </option>
-           <!-- we get the version selected, and put it to the right option  --><option
-            
-            value="/v0.6"
-            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
-          >
-            <span>v0.6</span>
-          </option>
-           <!-- we get the version selected, and put it to the right option  --><option
-            
-            value="/v0.5"
-            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
-          >
-            <span>v0.5</span>
-          </option>
-           <!-- we get the version selected, and put it to the right option  --><option
-            
-            value="/v0.4"
-            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
-          >
-            <span>v0.4</span>
-          </option>
+           
+           
+           
+           
           
         </select>
       </ul>
@@ -231,8 +207,8 @@
       </button>
       <button class="nav-mode-icon" id="mode-toggle-btn" style="text-align: center">
         <img class="nav-text" id="logo-dark-light" src="/v0.8/assets/img/nav-icons/mode-toggle-icon-moon.png" 
-        data-logo-for-dark="/assets/img/nav-icons/mode-toggle-icon-moon.png"
-        data-logo-for-light="/assets/img/nav-icons/mode-toggle-icon-sun.png"
+        data-logo-for-dark="/v0.8/assets/img/nav-icons/mode-toggle-icon-moon.png"
+        data-logo-for-light="/v0.8/assets/img/nav-icons/mode-toggle-icon-sun.png"
         />
       </button>
     </div>
@@ -1071,9 +1047,9 @@ Use the arrow keys to navigate: ↓ ↑ → ←
     None
 </code></pre></div></div>
 
-<p>If you cannot see “Meshery” Remote Provider and find such error logs in Meshery Server’s logs (<code class="language-plaintext highlighter-rouge">mesheryctl system logs</code>), please make sure that Meshery Server is able to reach “https://cloud.layer5.io” in order to initialize the “Meshery” Remote Provider.</p>
+<p>If you cannot see “Meshery” Remote Provider and find such error logs in Meshery Server’s logs (<code class="language-plaintext highlighter-rouge">mesheryctl system logs</code>), please make sure that Meshery Server is able to reach “https://cloud.meshery.io” in order to initialize the “Meshery” Remote Provider.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">time</span><span class="o">=</span><span class="s2">"2021-11-10T11:05:30Z"</span> <span class="nv">level</span><span class="o">=</span>error <span class="nv">msg</span><span class="o">=</span><span class="s2">"[Initialize Provider]: Failed to get capabilities Get </span><span class="se">\"</span><span class="s2">https://cloud.layer5.io/v0.5.71/capabilities?os=meshery</span><span class="se">\"</span><span class="s2">: dial tcp 3.140.89.205:443: i/o timeout"</span>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">time</span><span class="o">=</span><span class="s2">"2021-11-10T11:05:30Z"</span> <span class="nv">level</span><span class="o">=</span>error <span class="nv">msg</span><span class="o">=</span><span class="s2">"[Initialize Provider]: Failed to get capabilities Get </span><span class="se">\"</span><span class="s2">https://cloud.meshery.io/v0.5.71/capabilities?os=meshery</span><span class="se">\"</span><span class="s2">: dial tcp 3.140.89.205:443: i/o timeout"</span>
 </code></pre></div></div>
 
 <p>For more details about Meshery Providers:</p>

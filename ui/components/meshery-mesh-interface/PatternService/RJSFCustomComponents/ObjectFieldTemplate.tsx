@@ -4,7 +4,7 @@ import AddIcon from '../../../../assets/icons/AddIcon';
 import { Grid2, Box, IconButton, Typography, useTheme, CssBaseline } from '@sistent/sistent';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
-import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
+import { ExpandMoreIcon } from '@sistent/sistent';
 import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';
@@ -62,9 +62,9 @@ const ObjectFieldTemplate = ({
   const CustomTitleField = ({ title: titleProp, id, description: descProp, properties }) => {
     const titleStr = safeStringTitle(titleProp ?? safeTitleStr);
     return (
-      <Box mb={1} mt={1} id={id}>
+      <Box sx={{ mb: 1, mt: 1 }} id={id}>
         <CssBaseline />
-        <Grid2 container justify="flex-start" alignItems="center" size="grow">
+        <Grid2 container size="grow" sx={{ justifyContent: 'flex-start', alignItems: 'center' }}>
           {canExpand(schema, uiSchema, formData) ? (
             <Grid2
               onClick={() => {

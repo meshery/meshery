@@ -9,8 +9,11 @@ import {
   Link,
   Avatar,
   useTheme,
+  InfoOutlinedIcon,
+  FullScreenIcon,
+  FullScreenExitIcon,
 } from '@sistent/sistent';
-import { Delete as DeleteIcon, Fullscreen, Save, FullscreenExit } from '@/assets/icons';
+import { Delete as DeleteIcon, Save } from '@/assets/icons';
 import Moment from 'react-moment';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from '../CodeMirror';
@@ -27,13 +30,7 @@ import {
 } from '../designs/patterns/Cards.styles';
 import YAMLDialog from '../YamlDialog';
 import CloneIcon from '../../public/static/img/CloneIcon';
-import {
-  Public as PublicIcon,
-  GetApp as GetAppIcon,
-  InfoOutlined as InfoOutlinedIcon,
-  Public,
-  Lock,
-} from '@/assets/icons';
+import { Public as PublicIcon, GetApp as GetAppIcon, Public, Lock } from '@/assets/icons';
 import TooltipButton from '../../utils/TooltipButton';
 import { VISIBILITY } from '../../utils/Enum';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
@@ -263,7 +260,7 @@ function FiltersCard_({
                       })
                     }
                   >
-                    {fullScreen ? <FullscreenExit /> : <Fullscreen />}
+                    {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
                   </IconButton>
                 </Tooltip>
               </CardHeaderRight>

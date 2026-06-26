@@ -178,34 +178,10 @@
           >
             <span>v0.8</span>
           </option>
-           <!-- we get the version selected, and put it to the right option  --><option
-            
-            value="/v0.7"
-            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
-          >
-            <span>v0.7</span>
-          </option>
-           <!-- we get the version selected, and put it to the right option  --><option
-            
-            value="/v0.6"
-            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
-          >
-            <span>v0.6</span>
-          </option>
-           <!-- we get the version selected, and put it to the right option  --><option
-            
-            value="/v0.5"
-            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
-          >
-            <span>v0.5</span>
-          </option>
-           <!-- we get the version selected, and put it to the right option  --><option
-            
-            value="/v0.4"
-            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
-          >
-            <span>v0.4</span>
-          </option>
+           
+           
+           
+           
           
         </select>
       </ul>
@@ -231,8 +207,8 @@
       </button>
       <button class="nav-mode-icon" id="mode-toggle-btn" style="text-align: center">
         <img class="nav-text" id="logo-dark-light" src="/v0.8/assets/img/nav-icons/mode-toggle-icon-moon.png" 
-        data-logo-for-dark="/assets/img/nav-icons/mode-toggle-icon-moon.png"
-        data-logo-for-light="/assets/img/nav-icons/mode-toggle-icon-sun.png"
+        data-logo-for-dark="/v0.8/assets/img/nav-icons/mode-toggle-icon-moon.png"
+        data-logo-for-light="/v0.8/assets/img/nav-icons/mode-toggle-icon-sun.png"
         />
       </button>
     </div>
@@ -782,18 +758,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="td-content">
           
           <h1>GitOps with Meshery</h1>
-           <h2 id="-kanvas-snapshot-github-action"><img style="height: 4rem; width: 4rem;" src="/v0.8/assets/img/kanvas-icon-color.svg" /> Kanvas Snapshot GitHub Action</h2>
+           <h2 id="--snapshot-github-action"><img style="height: 4rem; width: 4rem;" src="/v0.8/assets/img/-icon-color.svg" />  Snapshot GitHub Action</h2>
 
 <ul>
   <li>See your deployment before you merge</li>
-  <li>Connect Kanvas to your GitHub repo and see changes pull request-to-pull request</li>
+  <li>Connect  to your GitHub repo and see changes pull request-to-pull request</li>
   <li>Get snapshots of your infrastructure directly in your PRs</li>
 </ul>
 
 <h3>Using Meshery's SnapShot GitHub Action</h3>
-<p>See your deployment before you merge. Connect Kanvas to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.</p>
+<p>See your deployment before you merge. Connect  to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.</p>
 
-<p>See <a href="/v0.8/extensions/snapshot">Extension: Kanvas Snapshot</a> for more details.</p>
+<p>See <a href="/v0.8/extensions/snapshot">Extension:  Snapshot</a> for more details.</p>
 
 <h2 id="-meshery-performance-analysis-github-action"><img src="/v0.8/assets/img/smp-dark-text-side.svg" classname="image-left-no-shadow" alt="Infrastructure fperformance logo" style="width: 60%; max-width: 200px;vertical-align:middle" /> Meshery Performance Analysis GitHub Action</h2>
 
@@ -841,7 +817,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span class="na">driver</span><span class="pi">:</span> <span class="s">docker</span>
 
       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run Performance Test</span>
-        <span class="na">uses</span><span class="pi">:</span> <span class="s">layer5io/meshery-smp-action@master</span>
         <span class="na">with</span><span class="pi">:</span>
           <span class="na">provider_token</span><span class="pi">:</span> <span class="s">$</span>
           <span class="na">platform</span><span class="pi">:</span> <span class="s">docker</span>
