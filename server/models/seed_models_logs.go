@@ -162,6 +162,34 @@ func writeLogsToFiles(regLog *RegistrationFailureLog) error {
 	return nil
 }
 
+// aggregateSummariesByKind merges the per-connection entity summaries returned
+// by GetRegistrants into a single summary per registrant Kind, preserving the
+// order in which each Kind is first encountered.
+//
+// A registrant is identified here by Kind (for example "artifacthub", "github",
+// "meshery") rather than by connection, because the startup summary reports per
+// Kind and registration failures are already tracked per Kind upstream - see
+// meshkit's registration handler, which keys failures with
+// InsertEntityRegError(model.Registrant.Kind, ...). When a single Kind is backed
+// by more than one connection, GetRegistrants returns a row per connection;
+// folding their counts together yields exactly one summary line per Kind.
+func aggregateSummariesByKind(hosts []v1beta1.MeshModelHostsWithEntitySummary) (orderedKinds []string, summaries map[string]v1beta1.EntitySummary) {
+	orderedKinds = make([]string, 0, len(hosts))
+	summaries = make(map[string]v1beta1.EntitySummary)
+	for _, host := range hosts {
+		current, exists := summaries[host.Kind]
+		if !exists {
+			orderedKinds = append(orderedKinds, host.Kind)
+		}
+		current.Models += host.Summary.Models
+		current.Components += host.Summary.Components
+		current.Relationships += host.Summary.Relationships
+		current.Policies += host.Summary.Policies
+		summaries[host.Kind] = current
+	}
+	return orderedKinds, summaries
+}
+
 func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *meshmodel.RegistryManager, regErrorStore *RegistrationFailureLog) {
 	provider := handlerConfig.Providers[LocalProviderName]
 
@@ -173,20 +201,10 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		log.Error(err)
 	}
 
-	kindSummaries := make(map[string]v1beta1.EntitySummary)
-	orderedKinds := make([]string, 0, len(hosts))
-	for _, host := range hosts {
-		current, exists := kindSummaries[host.Kind]
-		if !exists {
-			orderedKinds = append(orderedKinds, host.Kind)
-		}
-		current.Models += host.Summary.Models
-		current.Components += host.Summary.Components
-		current.Relationships += host.Summary.Relationships
-		current.Policies += host.Summary.Policies
-		kindSummaries[host.Kind] = current
-	}
-
+	// GetRegistrants returns one row per registrant connection, so a Kind backed
+	// by more than one connection would emit a duplicate summary line. Aggregate
+	// by Kind so each registrant is reported exactly once in the startup logs.
+	orderedKinds, kindSummaries := aggregateSummariesByKind(hosts)
 	for _, kind := range orderedKinds {
 		summary := kindSummaries[kind]
 		eventBuilder := events.NewEvent().FromSystem(sysID).FromOwner(sysID).WithCategory("entity").WithAction("get_summary")
