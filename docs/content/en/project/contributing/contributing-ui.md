@@ -26,7 +26,7 @@ Meshery UI and Provider UI use [Next.js](https://nextjs.org/) with [SWC](https:/
 
 Meshery UI uses a schema-driven approach where components and forms are generated from JSON schemas. This enables dynamic UI adaptation, consistent validation, and type-safety across the application.
 
-**⚠️ Required Reading:** Before contributing, you must read the [Schema-Driven UI Development Guide]({{< ref "project/contributing/contributing-ui-schemas.md" >}}) to understand how Meshery's UI components are generated and maintained using schemas.
+**⚠️ Required Reading:** Before contributing, you must read the [Schema-Driven UI Development Guide]({{< ref "project/contributing/contributing-schemas/ui-schemas.md" >}}) to understand how Meshery's UI components are generated and maintained using schemas.
 
 ## Meshery Server APIs
 

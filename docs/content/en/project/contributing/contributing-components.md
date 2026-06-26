@@ -3,7 +3,7 @@ title: Contributing to Model Components
 description: How to contribute to Meshery Model Components
 categories: [contributing]
 ---
-**Components are defined by schemas.** Each component's structure, capabilities, and metadata follow the [Component schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/component) in `meshery/schemas`. When creating or modifying components, ensure they conform to the schema specification. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.
+**Components are defined by schemas.** Each component's structure, capabilities, and metadata follow the [Component schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/component) in `meshery/schemas`. When creating or modifying components, ensure they conform to the schema specification. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas/_index.md" >}}) for details.
 
 In Meshery, a [Components]({{< ref "concepts/logical/components.md" >}}) is a fundamental building block used to represent and define the infrastructure under management. Each component provides granular and specific support for your infrastructure and applications. Once registered with Meshery Server (in the [Registry]({{< ref "concepts/logical/registry.md" >}})), components are available for inclusion in [Designs]({{< ref "concepts/logical/designs.md" >}}) that you create. Components can be created and published by anyone, allowing you to share you custom extensions with the community.
 
