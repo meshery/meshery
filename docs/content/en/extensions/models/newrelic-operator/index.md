@@ -1,7 +1,7 @@
 ---
 title: New Relic Operator
 subtitle: Collaborative and visual infrastructure as design for New Relic Operator
-image: /extensions/models/newrelic-operator/icons/color/newrelic-operator-color.svg
+image: extensions/models/newrelic-operator/icons/color/newrelic-operator-color.svg
 aliases: /extensibility/integrations/newrelic-operator
 docURL: https://docs.meshery.io/extensibility/integrations/newrelic-operator
 description: 

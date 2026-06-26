@@ -1,7 +1,7 @@
 ---
 title: K8s Vault Controller
 subtitle: Collaborative and visual infrastructure as design for K8s Vault Controller
-image: /extensions/models/k8svault-controller/icons/color/k8svault-controller-color.svg
+image: extensions/models/k8svault-controller/icons/color/k8svault-controller-color.svg
 aliases: /extensibility/integrations/k8svault-controller
 docURL: https://docs.meshery.io/extensibility/integrations/k8svault-controller
 description: 

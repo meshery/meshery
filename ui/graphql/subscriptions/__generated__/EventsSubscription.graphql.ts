@@ -1,7 +1,6 @@
 /**
- * @generated SignedSource<<64a6e2242e655d185ae16b2fb0efa9fb>>
+ * @generated SignedSource<<4156a3806335259d89f78a0ecba53d0b>>
  * @lightSyntaxTransform
- * @nogrep
  */
 
 /* tslint:disable */
@@ -22,11 +21,11 @@ export type EventsSubscription$data = {
     readonly id: string;
     readonly metadata: any | null | undefined;
     readonly operationID: string;
+    readonly owner: string;
     readonly severity: Severity;
     readonly status: string;
     readonly systemID: string;
     readonly updatedAt: any;
-    readonly userID: string;
   };
 };
 export type EventsSubscription = {
@@ -55,7 +54,7 @@ var v0 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "userID",
+        "name": "owner",
         "storageKey": null
       },
       {
@@ -152,7 +151,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "EventsSubscription",
-    "selections": (v0/*: any*/),
+    "selections": (v0/*:: as any*/),
     "type": "Subscription",
     "abstractKey": null
   },
@@ -161,19 +160,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "EventsSubscription",
-    "selections": (v0/*: any*/)
+    "selections": (v0/*:: as any*/)
   },
   "params": {
-    "cacheID": "dfb0d28db01886a2b8877f52db0fd0c6",
+    "cacheID": "1dd0f3928f73d92756772fd4c7093c31",
     "id": null,
     "metadata": {},
     "name": "EventsSubscription",
     "operationKind": "subscription",
-    "text": "subscription EventsSubscription {\n  event: subscribeEvents {\n    id\n    userID\n    actedUpon\n    operationID\n    systemID\n    status\n    severity\n    action\n    category\n    description\n    metadata\n    createdAt\n    updatedAt\n    deletedAt\n  }\n}\n"
+    "text": "subscription EventsSubscription {\n  event: subscribeEvents {\n    id\n    owner\n    actedUpon\n    operationID\n    systemID\n    status\n    severity\n    action\n    category\n    description\n    metadata\n    createdAt\n    updatedAt\n    deletedAt\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b6a9380e1fcb5b6b417ef482bb98ab7b";
+(node as any).hash = "a46175bd2d4f20226c798fe5c98548fc";
 
 export default node;

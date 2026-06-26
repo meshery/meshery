@@ -1,7 +1,7 @@
 ---
 title: Dapr
 subtitle: Collaborative and visual infrastructure as design for Dapr
-image: /extensions/models/dapr/icons/color/dapr-color.svg
+image: extensions/models/dapr/icons/color/dapr-color.svg
 aliases: /extensibility/integrations/dapr
 docURL: https://docs.meshery.io/extensibility/integrations/dapr
 description: 

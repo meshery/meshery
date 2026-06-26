@@ -377,11 +377,11 @@ func buildIdentifiedRelationship(
 	relDef *relationship.RelationshipDefinition,
 ) *relationship.RelationshipDefinition {
 	newFromSel := fromSel
-	fromUUID, _ := uuid.FromString(compFromID)
+	fromUUID := uuid.FromStringOrNil(compFromID)
 	newFromSel.ID = &fromUUID
 
 	newToSel := toSel
-	toUUID, _ := uuid.FromString(compToID)
+	toUUID := uuid.FromStringOrNil(compToID)
 	newToSel.ID = &toUUID
 
 	selectorSet := relationship.SelectorSetItem{

@@ -1,7 +1,7 @@
 ---
 title: Fluid
 subtitle: Collaborative and visual infrastructure as design for Fluid
-image: /extensions/models/fluid/icons/color/fluid-color.svg
+image: extensions/models/fluid/icons/color/fluid-color.svg
 aliases: /extensibility/integrations/fluid
 docURL: https://docs.meshery.io/extensibility/integrations/fluid
 description: 

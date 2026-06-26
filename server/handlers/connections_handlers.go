@@ -131,7 +131,7 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 	}
 	// id act as a connection registration process tracker.
 	// The clients should always include this "id" in the subsequent API calls until the process is completed or terminated.
-	id, _ := uuid.NewV4()
+	id := uuid.Must(uuid.NewV4())
 	schema["id"] = id
 
 	err := json.NewEncoder(w).Encode(&schema)
@@ -333,7 +333,7 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	if connectionID == uuid.Nil {
-		invalidIDErr := ErrInvalidUUID(fmt.Errorf("invalid connection ID"))
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID"))
 		h.log.Error(invalidIDErr)
 		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return

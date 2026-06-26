@@ -135,8 +135,11 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(page, pageSize, se
 // CloneMesheryPattern clones meshery pattern to private
 func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error) {
 	var mesheryPattern MesheryPattern
-	patternUUID, _ := uuid.FromString(patternID)
-	err := mpp.DB.First(&mesheryPattern, patternUUID).Error
+	patternUUID, err := uuid.FromString(patternID)
+	if err != nil {
+		return nil, ErrInvalidUUID(err)
+	}
+	err = mpp.DB.First(&mesheryPattern, patternUUID).Error
 	if err != nil || *mesheryPattern.ID == uuid.Nil {
 		return nil, fmt.Errorf("unable to get design: %w", err)
 	}

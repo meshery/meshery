@@ -531,6 +531,22 @@ directly with Meshery Server APIs and can manage local Docker containers or Kube
 ### UI Extensions
 
 - **Remote Components**: Load React components from URLs at runtime via `@paciolan/remote-component`.
+  - **Export contract**: the host evaluates the fetched bundle as a CommonJS module
+    and reads `module.exports.default` (the loader's `imports` arg defaults to
+    `"default"`). The remote bundle **must** expose the component as a CommonJS
+    default export — i.e. `module.exports = { default: Component, __esModule: true }`.
+    A bundle built as ESM-only, as a bare IIFE, or with the component on a named
+    export will not be found.
+  - **Silent-undefined gotcha**: `useRemoteComponent` does **not** throw when
+    `module.exports.default` is missing — it returns `[loading=false, err=undefined,
+    Component=undefined]`. So a mis-built bundle renders as `undefined` with **no
+    console error** from the loader (React then throws "Element type is invalid …
+    got: undefined" at render). When debugging "extension is undefined, no error",
+    check the bundle's export shape first: it should end with a `module.exports = …`
+    assignment exposing `.default`. See `ui/components/layout/Navigator/NavigatorExtension.tsx`.
+  - On the extension-author side this is a real footgun under bundler upgrades; see
+    `meshery-extensions/docs/troubleshoot.md` ("Extension loads as `undefined` with
+    no error").
 - **Provider UI**: `provider-ui/` directory for provider-specific UI extensions.
 
 ### GraphQL Subscriptions
