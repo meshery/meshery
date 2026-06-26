@@ -5,5 +5,5 @@ go 1.26.4
 require (
 	github.com/google/docsy v0.15.0 // indirect
 	github.com/google/docsy/dependencies v0.7.2 // indirect
-	github.com/layer5io/docs v0.0.0-20260625130624-b35dadbb47bd // indirect
+	github.com/layer5io/docs v0.0.0-20260626124258-7d161b76f4d2 // indirect
 )
