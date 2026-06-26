@@ -263,7 +263,7 @@ func catalogDesigns() []catalogEntry {
 		{"8b3a14d0-b822-4c0d-8051-571032558408", "0.0.28", "hello-nginx-design"},
 		{"8b646678-95c0-42ec-b5c5-42f7b88a7791", "0.0.80", "fluentbit-log-pipeline"},
 		{"8ba4a8da-9455-4079-a771-388eb5a14a21", "0.0.1", "Load-Balanced-AWS-Architecture"},
-		{"8ba59757-4ae6-4568-be5c-32e32fe51031", "0.0.1", "Pod-Priviledged-Simple"},
+		{"8ba59757-4ae6-4568-be5c-32e32fe51031", "0.0.1", "Pod-Privileged-Simple"},
 		{"8ce06bfa-a917-44e5-b670-15c74ec177c0", "0.0.1", "marblerun"},
 		{"8cff4bae-818f-4c9b-8511-a6feaabf6b1e", "0.0.1", "aspnet-core-6.0.0.tgz"},
 		{"8d6526e4-3c85-44c4-bf2b-b45592fd880d", "0.0.3", "understanding-persistent-storage-in-kubernetes"},
