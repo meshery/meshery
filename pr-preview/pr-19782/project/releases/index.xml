@@ -1,4 +1,49 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/pr-preview/pr-19782/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Thu, 25 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="/pr-preview/pr-19782/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.46</title><link>/pr-preview/pr-19782/project/releases/v1.0.46/</link><pubDate>Thu, 25 Jun 2026 00:00:00 +0000</pubDate><guid>/pr-preview/pr-19782/project/releases/v1.0.46/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/pr-preview/pr-19782/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 26 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="/pr-preview/pr-19782/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.48</title><link>/pr-preview/pr-19782/project/releases/v1.0.48/</link><pubDate>Fri, 26 Jun 2026 00:00:00 +0000</pubDate><guid>/pr-preview/pr-19782/project/releases/v1.0.48/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Remove unused context handler methods @yi-nuo426 (#20267)&lt;/li&gt;
+&lt;li&gt;Refactor GetContext function documentation @yi-nuo426 (#20266)&lt;/li&gt;
+&lt;li&gt;Remove unused methods from DefaultLocalProvider @yi-nuo426 (#20268)&lt;/li&gt;
+&lt;li&gt;Remove commented-out Ping test code @yi-nuo426 (#20269)&lt;/li&gt;
+&lt;li&gt;Improve connection persistence logging and error handling @yi-nuo426 (#20270)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix(mesheryctl): fix broken error handling in TestSetContext @Harishrs2006 (#19853)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;chore(k8s-context): remove dead context code and fix persist logging @leecalcote (#20260)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;ci: remove duplicate CodeQL Advanced workflow @MrDadhich456 (#20248)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Update overview.md @marblom007 (#20279)&lt;/li&gt;
+&lt;li&gt;[Docs] Sidebar TOC: render leaf pages with normal font weight @jamieplu (#20276)&lt;/li&gt;
+&lt;li&gt;Update overview.md @simihablo (#20277)&lt;/li&gt;
+&lt;li&gt;[Docs] TOC Sidebar uplift @jamieplu (#20275)&lt;/li&gt;
+&lt;li&gt;Fix v0.8 light/dark mode icon display @Katotodan (#20258)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Harishrs2006, @Katotodan, @MrDadhich456, @aabidsofi19, @carlosriosilva, @fitzergerald, @jamieplu, @leecalcote, @marblom007, @pontusringblom, @ritzorama, @simihablo, @winkletinkle and @yi-nuo426&lt;/p&gt;</description></item><item><title>v1.0.46</title><link>/pr-preview/pr-19782/project/releases/v1.0.46/</link><pubDate>Thu, 25 Jun 2026 00:00:00 +0000</pubDate><guid>/pr-preview/pr-19782/project/releases/v1.0.46/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -46,7 +91,42 @@
 	👨🏽‍💻 Contributors
 &lt;/h2&gt;
 &lt;p&gt;Thank you to our contributors for making this release possible:
-@Copilot, @KumarNirupam1, @YASHMAHAKAL, @chaitanyamedidar, @fitzergerald, @hamza-mohd, @hortison, @jamieplu, @leecalcote, @meshery-ci, @miacycle, @rishiraj38, @ritzorama, @saurabhraghuvanshii, @smishraa30, @winkletinkle, @yi-nuo426, Kumar and [copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.45</title><link>/pr-preview/pr-19782/project/releases/v1.0.45/</link><pubDate>Mon, 22 Jun 2026 00:00:00 +0000</pubDate><guid>/pr-preview/pr-19782/project/releases/v1.0.45/</guid><description>&lt;h2 id="whats-new"&gt;
+@Copilot, @KumarNirupam1, @YASHMAHAKAL, @chaitanyamedidar, @fitzergerald, @hamza-mohd, @hortison, @jamieplu, @leecalcote, @meshery-ci, @miacycle, @rishiraj38, @ritzorama, @saurabhraghuvanshii, @smishraa30, @winkletinkle, @yi-nuo426, Kumar and [copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.47</title><link>/pr-preview/pr-19782/project/releases/v1.0.47/</link><pubDate>Thu, 25 Jun 2026 00:00:00 +0000</pubDate><guid>/pr-preview/pr-19782/project/releases/v1.0.47/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix ui build . due to mui-tree esm mismatch @aabidsofi19 (#20262)&lt;/li&gt;
+&lt;li&gt;Get rid of model and model id from connections and link using model reference @aabidsofi19 (#20261)&lt;/li&gt;
+&lt;li&gt;Fix Connection and credential creation and retrieval for local provider @aabidsofi19 (#20259)&lt;/li&gt;
+&lt;li&gt;[Docs] Update discussion forum link @iyush05 (#20235)&lt;/li&gt;
+&lt;li&gt;Add Telemetry support with Grafana dashboards and Prometheus metrics @aabidsofi19 (#20161)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Add Telemetry support with Grafana dashboards and Prometheus metrics @aabidsofi19 (#20161)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Docs] Update discussion forum link @iyush05 (#20235)&lt;/li&gt;
+&lt;li&gt;Add Telemetry support with Grafana dashboards and Prometheus metrics @aabidsofi19 (#20161)&lt;/li&gt;
+&lt;li&gt;[Docs] Align extension header icons across documentation pages @vedant21-ctr (#20255)&lt;/li&gt;
+&lt;li&gt;Create index.md @YASHMAHAKAL (#20254)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@YASHMAHAKAL, @aabidsofi19, @alexquincy, @iyush05, @leecalcote, @sangramrath, @saurabhraghuvanshii and @vedant21-ctr&lt;/p&gt;</description></item><item><title>v1.0.45</title><link>/pr-preview/pr-19782/project/releases/v1.0.45/</link><pubDate>Mon, 22 Jun 2026 00:00:00 +0000</pubDate><guid>/pr-preview/pr-19782/project/releases/v1.0.45/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -33771,7 +33851,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/pr-preview/pr-19782/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-19782/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.46&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/pr-preview/pr-19782/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-19782/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/pr-preview/pr-19782/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-19782/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.48&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/pr-preview/pr-19782/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-19782/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
