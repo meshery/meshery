@@ -3,14 +3,12 @@ package models
 import (
 	"sync"
 
-	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/schemas/models/core"
-	"github.com/sirupsen/logrus"
 )
 
 type clients struct {
 	listeners []chan interface{}
-	mu        *sync.Mutex
+	mu        sync.Mutex
 }
 
 type Broadcast struct {
@@ -19,63 +17,66 @@ type Broadcast struct {
 }
 
 func (c *Broadcast) Subscribe(id core.Uuid) (chan interface{}, func()) {
-	clientMap, err := c.clients.LoadOrStore(id, clients{mu: &sync.Mutex{}})
-	if err {
-		logrus.Infof("Client for id %s does not exist in clients map", id)
-	}
+	actual, _ := c.clients.LoadOrStore(id, &clients{})
+	cc := actual.(*clients)
+
 	ch := make(chan interface{}, 1)
-	connectedClient, err := clientMap.(clients)
 
-	if err {
-		logrus.Infof("Client for id %s is not connected. Attempting to connect to client %s.", id, id)
-	}
+	cc.mu.Lock()
+	cc.listeners = append(cc.listeners, ch)
+	cc.mu.Unlock()
 
-	connectedClient.mu.Lock()
-	connectedClient.listeners = append(connectedClient.listeners, ch)
-	connectedClient.mu.Unlock()
-
-	c.clients.Store(id, connectedClient)
 	unsubscribe := func() {
-		cclient, ok := c.clients.Load(id)
-		var client clients
-		if ok {
-			client, ok = cclient.(clients)
-			if !ok {
-				return
-			}
+		v, ok := c.clients.Load(id)
+		if !ok {
+			return
 		}
-		client.mu.Lock()
-		defer client.mu.Unlock()
+		cc, ok := v.(*clients)
+		if !ok {
+			return
+		}
 
-		listeners := client.listeners
-		updatedListeners := []chan interface{}{}
-		for _, client := range listeners {
-			if client == ch {
-				close(client)
-				// break
-			} else {
-				updatedListeners = append(updatedListeners, client)
+		cc.mu.Lock()
+		found := false
+		updated := make([]chan interface{}, 0, len(cc.listeners))
+		for _, l := range cc.listeners {
+			if l == ch {
+				found = true
+				continue
 			}
+			updated = append(updated, l)
 		}
-		client.listeners = updatedListeners
-		c.clients.Store(id, client)
+		cc.listeners = updated
+		cc.mu.Unlock()
+
+		if found {
+			close(ch)
+		}
 	}
 	return ch, unsubscribe
 }
 
+// Publish delivers data to every subscriber for id. Delivery is
+// best-effort: each listener channel has a buffer of 1, and a non-blocking
+// send is used so a slow subscriber cannot block other subscribers or the
+// publisher. If the listener buffer is full, the event is dropped for that
+// subscriber.
 func (c *Broadcast) Publish(id core.Uuid, data interface{}) {
-	clientMap, ok := c.clients.Load(id)
+	v, ok := c.clients.Load(id)
+	if !ok {
+		return
+	}
+	cc, ok := v.(*clients)
 	if !ok {
 		return
 	}
 
-	clientToPublish, ok := clientMap.(clients)
-	if !ok {
-		return
-	}
-	for _, client := range clientToPublish.listeners {
-		if !utils.IsClosed(client) {
-			client <- data
+	cc.mu.Lock()
+	defer cc.mu.Unlock()
+	for _, client := range cc.listeners {
+		select {
+		case client <- data:
+		default:
 		}
 	}
 }
