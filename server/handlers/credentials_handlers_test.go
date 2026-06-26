@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"sync/atomic"
 	"testing"
 
@@ -72,6 +73,105 @@ func TestSaveUserCredential_ClientSuppliedUserIdCannotOverride(t *testing.T) {
 	}
 	if saved.UserId == attacker {
 		t.Fatalf("credential.UserId matches attacker-supplied value %v — authorization bypass", attacker)
+	}
+}
+
+func TestSaveUserCredentialAcceptsModelProviderSecretShapes(t *testing.T) {
+	authUser := &models.User{ID: uuid.Must(uuid.FromString("11111111-1111-1111-1111-111111111111"))}
+	tests := []struct {
+		name       string
+		body       string
+		wantType   string
+		wantSecret map[string]interface{}
+	}{
+		{
+			name:     "api key provider",
+			body:     `{"name":"OpenAI API Key","type":"openai","secret":{"apiKey":"test-key"}}`,
+			wantType: "openai",
+			wantSecret: map[string]interface{}{
+				"apiKey": "test-key",
+			},
+		},
+		{
+			name:     "aws bedrock multi field credentials",
+			body:     `{"name":"AWS Bedrock","type":"aws-bedrock","secret":{"accessKeyId":"AKIA_TEST","secretAccessKey":"secret","sessionToken":"optional"}}`,
+			wantType: "aws-bedrock",
+			wantSecret: map[string]interface{}{
+				"accessKeyId":     "AKIA_TEST",
+				"secretAccessKey": "secret",
+				"sessionToken":    "optional",
+			},
+		},
+		{
+			name:     "vertex service account json",
+			body:     `{"name":"Vertex AI","type":"vertex-ai","secret":{"serviceAccountJson":{"project_id":"meshery-test","client_email":"svc@example.com"}}}`,
+			wantType: "vertex-ai",
+			wantSecret: map[string]interface{}{
+				"serviceAccountJson": map[string]interface{}{
+					"project_id":   "meshery-test",
+					"client_email": "svc@example.com",
+				},
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			p := newCredentialSpyProvider()
+
+			req := httptest.NewRequest(http.MethodPost, "/api/integrations/credentials", bytes.NewBufferString(tc.body))
+			req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+			rec := httptest.NewRecorder()
+
+			h.SaveUserCredential(rec, req, nil, authUser, p)
+
+			if rec.Code != http.StatusCreated {
+				t.Fatalf("expected 201, got %d (body=%q)", rec.Code, rec.Body.String())
+			}
+			saved := p.observedSave.Load()
+			if saved == nil {
+				t.Fatal("provider SaveUserCredential was not invoked")
+			}
+			if saved.Type != tc.wantType {
+				t.Fatalf("got type %q, want %q", saved.Type, tc.wantType)
+			}
+			if !reflect.DeepEqual(map[string]interface{}(saved.Secret), tc.wantSecret) {
+				t.Fatalf("got secret %#v, want %#v", saved.Secret, tc.wantSecret)
+			}
+		})
+	}
+}
+
+func TestUpdateUserCredentialAcceptsModelProviderSecretShape(t *testing.T) {
+	credentialID := uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+	authUser := &models.User{ID: uuid.Must(uuid.FromString("11111111-1111-1111-1111-111111111111"))}
+	body := `{"id":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa","name":"AWS Bedrock","type":"aws-bedrock","secret":{"accessKeyId":"AKIA_TEST","secretAccessKey":"secret"}}`
+
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := newCredentialSpyProvider()
+
+	req := httptest.NewRequest(http.MethodPut, "/api/integrations/credentials", bytes.NewBufferString(body))
+	rec := httptest.NewRecorder()
+
+	h.UpdateUserCredential(rec, req, nil, authUser, p)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+	updated := p.observedUpdate.Load()
+	if updated == nil {
+		t.Fatal("provider UpdateUserCredential was not invoked")
+	}
+	if updated.ID != credentialID || updated.Type != "aws-bedrock" {
+		t.Fatalf("unexpected updated credential: id=%s type=%q", updated.ID.String(), updated.Type)
+	}
+	wantSecret := map[string]interface{}{
+		"accessKeyId":     "AKIA_TEST",
+		"secretAccessKey": "secret",
+	}
+	if !reflect.DeepEqual(map[string]interface{}(updated.Secret), wantSecret) {
+		t.Fatalf("got secret %#v, want %#v", updated.Secret, wantSecret)
 	}
 }
 
