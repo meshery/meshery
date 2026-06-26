@@ -2,7 +2,7 @@
 title: Overview
 display_title: false
 categories: [project]
-description: Meshery is the open source, cloud native manager for collaboratively designing, operating, and characterizing Kubernetes-based infrastructure across every cluster and cloud you run.
+description: Meshery is the self-service engineering platform, enabling collaborative design and operation of cloud and cloud native infrastructure.
 aliases:
 - /project/overview/
 - /project/meshery-overview/
