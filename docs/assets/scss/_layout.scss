@@ -33,7 +33,7 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-primary-light);
+  background: var(--background-light);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -42,7 +42,7 @@ html {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--color-secondary-medium);
 }
 
 body {
