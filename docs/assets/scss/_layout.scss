@@ -30,10 +30,11 @@ html {
 
 ::-webkit-scrollbar {
   width: 0.5rem;
+  height: 0.5rem;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background-light);
+  background: var(--color-primary-light);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -42,7 +43,7 @@ html {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-secondary-medium);
+  background: var(--brand-color-primary);
 }
 
 body {
