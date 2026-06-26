@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
@@ -120,6 +121,7 @@ func TestModelBuild(t *testing.T) {
 		SetupHooks       []func()
 		ExpectError      bool
 		ExpectedResponse string
+		ExpectedContains []string
 		ExpectedFiles    []string
 		CleanupHooks     []func()
 		IsOutputGolden   bool
@@ -129,7 +131,13 @@ func TestModelBuild(t *testing.T) {
 			Name:             "given name and version when model build then model is built",
 			Args:             []string{"build", "test-case-model-build-aws-lambda-controller/v0.1.0"},
 			ExpectError:      false,
-			ExpectedResponse: "model.build.from-model-name-version.golden",
+			ExpectedResponse: "",
+			ExpectedContains: []string{
+				"Building meshery model from path test-case-model-build-aws-lambda-controller",
+				"Saving OCI artifact as test-case-model-build-aws-lambda-controller-v0-1-0.tar",
+				"Successfully built OCI artifact: test-case-model-build-aws-lambda-controller-v0-1-0.tar",
+				"mesheryctl model import --file test-case-model-build-aws-lambda-controller-v0-1-0.tar",
+			},
 			ExpectedFiles: []string{
 				"test-case-model-build-aws-lambda-controller-v0-1-0.tar",
 			},
@@ -147,7 +155,13 @@ func TestModelBuild(t *testing.T) {
 			Name:             "given name only when model build then model is built",
 			Args:             []string{"build", buildTestDynamoController},
 			ExpectError:      false,
-			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedResponse: "",
+			ExpectedContains: []string{
+				"Building meshery model from path " + buildTestDynamoController,
+				"Saving OCI artifact as " + buildTestDynamoController + ".tar",
+				"Successfully built OCI artifact: " + buildTestDynamoController + ".tar",
+				"mesheryctl model import --file " + buildTestDynamoController + ".tar",
+			},
 			ExpectedFiles: []string{
 				buildTestDynamoController + ".tar",
 			},
@@ -162,10 +176,14 @@ func TestModelBuild(t *testing.T) {
 			},
 		},
 		{
-			Name:             "given name only when model build then model is built",
+			Name:             "given name with trailing slash when model build then model is built",
 			Args:             []string{"build", buildTestDynamoController + "/"},
 			ExpectError:      false,
-			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedResponse: "",
+			ExpectedContains: []string{
+				"Building meshery model from path " + buildTestDynamoController,
+				"Successfully built OCI artifact: " + buildTestDynamoController + ".tar",
+			},
 			ExpectedFiles: []string{
 				buildTestDynamoController + ".tar",
 			},
@@ -264,8 +282,16 @@ func TestModelBuild(t *testing.T) {
 			// response being printed in console
 			actualResponse := buff.String()
 
-			expectedResponse := golden.Load()
-			assert.Equal(t, expectedResponse, actualResponse)
+			// Use Contains-based assertions when output has dynamic content (e.g., file size)
+			if len(tc.ExpectedContains) > 0 {
+				for _, expected := range tc.ExpectedContains {
+					assert.True(t, strings.Contains(actualResponse, expected),
+						"expected output to contain %q, got:\n%s", expected, actualResponse)
+				}
+			} else {
+				expectedResponse := golden.Load()
+				assert.Equal(t, expectedResponse, actualResponse)
+			}
 
 			if len(tc.ExpectedFiles) > 0 {
 				for _, file := range tc.ExpectedFiles {
