@@ -13,9 +13,9 @@ This quick start guide enables you to download, install, and run Meshery in a si
 {{% /alert %}}
 
 ## Prerequisites
- 
+
 Before running the Quick Start command, ensure you have the following:
- 
+
 - **macOS or Linux** (Windows users: see [Install Meshery CLI on Windows]({{< ref "installation/mesheryctl/windows/_index.md" >}})).
 - **curl** and **bash** available in your terminal.
 
@@ -53,11 +53,11 @@ If you are on a macOS or Linux system, you can download, install, and run both `
 <!-- <script src="../../assets/js/terminal.js" data-termynal-container="#termynal0"></script> -->
 
 **Docker (recommended for first-time users):**
- 
+
 {{< code code=`curl -L https://meshery.io/install | PLATFORM=docker bash -` >}}
- 
+
 **Kubernetes (if you have an existing cluster):**
- 
+
 {{< code code=`curl -L https://meshery.io/install | PLATFORM=kubernetes bash -` >}}
 
 {{% alert color="info" title="Meshery CLI" %}}
