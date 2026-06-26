@@ -85,11 +85,12 @@ clipboard.on("success", (e) => {
 
     const originalIcon = icon.cloneNode(true);
     const text = document.createElement('span');
-    const checkIcon = document.createElement('i');
-    checkIcon.className = 'fas fa-check';
-    checkIcon.setAttribute('aria-hidden', 'true');
-    text.appendChild(document.createTextNode(' Copied!'));
-    text.style.color = "#00b39f";
+const checkIcon = document.createElement('i');
+checkIcon.className = 'fas fa-check';
+checkIcon.setAttribute('aria-hidden', 'true');
+text.appendChild(checkIcon);
+text.appendChild(document.createTextNode(' Copied!'));
+text.style.color = "#00b39f";
 
     button.replaceChild(text, icon);
 
