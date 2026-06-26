@@ -116,6 +116,7 @@
     "react-relay": "^21.0.1",
     "react-select": "^5.10.2",
     "react-share": "^5.3.0",
+    "recharts": "^3.8.1",
     "redux": "^5.0.1",
     "rehype-sanitize": "^6.0.0",
     "relay-runtime": "^21.0.1",

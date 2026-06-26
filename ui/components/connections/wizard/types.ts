@@ -44,7 +44,6 @@ export type WizardData = {
 
   // registration outcome
   registrationId: string | null;
-  connectionModel: GenericRecord | null;
   registrationResult: GenericRecord | null;
   registrationError: unknown;
 
