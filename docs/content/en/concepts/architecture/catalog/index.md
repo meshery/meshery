@@ -68,5 +68,5 @@ It also supports a collaborative environment, where DevOps engineers can share t
 </details>
 
 {{% alert color="info" title="Help with Meshery Catalog" %}}
-If you have any questions or need assistance, reach out on the [discussion forum](https://meshery.io/community#discussion-forums).
+If you have any questions or need assistance, reach out on the [discussion forum](https://discuss.meshery.io/).
 {{% /alert %}}
