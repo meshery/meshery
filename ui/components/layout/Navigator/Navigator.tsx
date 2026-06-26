@@ -711,6 +711,7 @@ const NavigatorContent = () => {
                   isActive={currentPath === href}
                   isShow={!show}
                   onClick={() => {
+                    if (link && openItems.includes(childId)) return;
                     toggleItemCollapse(childId);
                   }}
                   onMouseOver={() => (isDrawerCollapsed ? setHoveredId(childId) : null)}
