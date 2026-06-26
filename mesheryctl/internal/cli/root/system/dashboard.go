@@ -159,12 +159,19 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 				// ticker for keeping connection alive with pod each 10 seconds
 				ticker := time.NewTicker(10 * time.Second)
+				ctxDone := cmd.Context().Done()
+				stopCh := portforward.GetStop()
 				go func() {
+					defer ticker.Stop()
 					for {
 						select {
 						case <-signals:
 							portforward.Stop()
-							ticker.Stop()
+							return
+						case <-ctxDone:
+							portforward.Stop()
+							return
+						case <-stopCh:
 							return
 						case <-ticker.C:
 							keepConnectionAlive(mesheryURL)
@@ -179,7 +186,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 					utils.Log.Warnf("Opening Meshery UI in browser at %s.", currCtx.GetEndpoint())
 				}
 
-				<-portforward.GetStop()
+				<-stopCh
 				return nil
 			}
 
@@ -238,10 +245,26 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 // keepConnectionAlive to stop being timed out with port forwarding
 func keepConnectionAlive(url string) {
-	_, err := http.Get(url)
-	if err != nil {
-		utils.Log.Debugf("connection request failed %v", err)
+	client := &http.Client{
+		Timeout: 10 * time.Second,
 	}
+
+	resp, err := client.Get(url)
+	if err != nil {
+		utils.Log.Debugf("connection request failed: %v", err)
+		return
+	}
+	defer func() {
+		if cerr := resp.Body.Close(); cerr != nil {
+			utils.Log.Debugf("failed to close response body: %v", cerr)
+		}
+	}()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		utils.Log.Debugf("connection request returned non-2xx status: %d", resp.StatusCode)
+		return
+	}
+
 	utils.Log.Debug("connection request success")
 }
 
