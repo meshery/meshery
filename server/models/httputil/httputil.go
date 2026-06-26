@@ -139,3 +139,17 @@ func WriteJSONEmptyObject(w http.ResponseWriter, status int) {
 	w.WriteHeader(status)
 	_, _ = w.Write([]byte("{}"))
 }
+
+// WriteJSONBytes writes pre-encoded JSON bytes with the given status code.
+// Unlike WriteJSONMessage which would marshal the data a second time (causing
+// double-encoding for already-serialized payloads), this helper writes the bytes
+// directly after setting the correct Content-Type header and status code.
+// Use this when the payload is already serialized (e.g. returned from a
+// provider method) to avoid the unnecessary marshal-then-unmarshal cycle of
+// decoding and re-encoding through WriteJSONMessage.
+func WriteJSONBytes(w http.ResponseWriter, data []byte, status int) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(status)
+	_, _ = w.Write(data)
+}
