@@ -142,7 +142,7 @@ func (h *Handler) RegisterConnectionDefinition(rw http.ResponseWriter, r *http.R
 	}
 
 	registrant := connectionv1beta1.Connection{Kind: def.ModelReference.Registrant.Kind}
-	if _, _, err := h.registryManager.RegisterEntity(registrant, &def); err != nil {
+	if _, _, err := h.registryManager.RegisterEntity(registry.RegistrantHostToV1beta3(registrant), &def); err != nil {
 		_err := ErrFailToSave(err, obj)
 		h.log.Error(_err)
 		writeMeshkitError(rw, _err, http.StatusInternalServerError)
