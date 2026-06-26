@@ -2,7 +2,7 @@
 title: Overview
 display_title: false
 categories: [project]
-description: Meshery is the open source, cloud native manager for collaboratively designing, operating, and characterizing Kubernetes-based infrastructure across every cluster and cloud you run.
+description: Meshery is the self-service engineering platform, enabling collaborative design and operation of cloud and cloud native infrastructure.
 aliases:
 - /project/overview/
 - /project/meshery-overview/
@@ -45,7 +45,7 @@ Plenty of tools cover one slice of this. Meshery's value is in combining them on
 - **A semantic, model-driven core.** Meshery does not just template manifests. Its registry of Models, Relationships, and Policies lets it reason about how components fit together, infer relationships, and apply context-aware guardrails as designs are built.
 - **Design, operate, and characterize in one platform.** Meshery spans Day 0 through Day 2. You can adopt, design, provision, discover, operate, and benchmark from one place, with load generation and metrics through Prometheus and Grafana, rather than stitching a separate tool to each step.
 - **Breadth without the glue.** 300+ integrations across cloud and cloud native technologies, managed through one consistent model.
-- **Open source and vendor-neutral.** As a CNCF project, Meshery is a composable building block for your platform, not a point of lock-in. Open source extension points let you build it into your own internal developer platform.
+- **Open source, customizable, and vendor-neutral.** As a CNCF project, Meshery is a composable building block, not a point of lock-in. It is deeply customizable across branding, identity providers, multi-tenancy, and deployment model, and adapts to internal platforms, branded service-provider offerings, and multi-tenant enterprise deployments alike.
 
 ## What is in scope, and what is not
 
@@ -65,17 +65,24 @@ A clear boundary is part of the value, and it follows the same director-level lo
 ### Out of scope
 
 - **A runtime.** Meshery directs and orchestrates work through its Policy Engine and, in the future, a Workflow Engine, then delegates execution to the underlying system, such as Kubernetes. It does not run your workloads or serve traffic itself, it is not a Kubernetes distribution, and it does not install your clusters for you.
-- **A data plane.** Meshery is a manager, not a proxy. It is not itself a service mesh, ingress, or load balancer; it designs, deploys, and operates the ones you run and so much more.
+- **A data plane.** Meshery is a manager, not a proxy. It is not itself a service mesh, ingress, or load balancer; it designs, deploys, and operates the ones you run.
 - **A CI/CD or source-control system.** Meshery complements your pipelines and GitOps workflow. It is not a build, test, or version-control system.
 - **An observability backend.** Meshery integrates with Prometheus and Grafana rather than replacing your metrics store, logging, or tracing stack.
 
-## Extensibility
+## Extensions and customization
 
-Meshery is built to be extended, and a broad ecosystem already builds on it: adapters for service meshes, a large catalog of models spanning cloud and cloud native technologies, integrated learning academies, and more. Its extension points are open source, so you can tailor the platform to your workflows, integrate additional technologies, and build your own experiences on top of Meshery. Meshery also includes its own UI and design configurator for visually designing and managing your infrastructure. The breadth of these extension points makes Meshery well suited as the foundation for an internal developer platform.
+Meshery is built to be extended, and its extension points are open source, spanning the UI, APIs, authorization, providers, and schemas. Meshery ships with its own UI and design configurator, and a broad ecosystem of extensions, adapters, and models builds on top of it. The extensions available on Meshery take the platform well beyond its core:
+
+- **Visual, collaborative design and operations.** A visual designer lets teams build infrastructure by dragging from a palette of thousands of versioned Kubernetes and cloud components, with context-aware relationships, freestyle whiteboarding, real-time multi-user collaboration, inline comments and design reviews, and sharing, embedding, and publishing of designs. An operations mode brings every cluster under one roof: validate, dry-run, deploy, clone, and undeploy designs, apply patterns, stream logs, inspect live resources, and open an interactive terminal into pods and containers to debug in real time. Work stays Git-connected, with GitHub Actions and snapshots that turn changes into human-verifiable visual diffs.
+- **Identity, access, and multi-tenancy.** A centralized console and identity provider adds a flexible authorization framework with granular role-based access control across organizations, teams, and users, tenant entitlement, and a service-provider-grade organizational hierarchy that scales from a single team to many tenants.
+- **A content catalog.** Publish, discover, and reuse cloud native architectures and design patterns, either publicly or privately within your organization.
+- **Complete customization.** Meshery is far more than a foundation for an internal developer platform. It can be white-labeled and rebranded with your own identity and custom domain, connected to your own identity providers, tailored through customizable webhooks and a flexible authorization model, and run either as a managed service or fully self-hosted with Helm. Branding, identity, tenancy, and deployment are yours to control, which is what lets service providers and enterprises run Meshery as a branded, multi-tenant platform of their own.
+
+Together, these let you run Meshery not only as an internal platform, but as a branded, multi-tenant offering that you operate as your own.
 
 ## Learn Meshery
 
-Meshery includes academies, a hands-on learning platform built into the project. Academies organize material into learning paths such as Mastering Meshery, scenario-based challenges where you deploy and configure real infrastructure, and certifications like the [Certified Meshery Contributor](https://meshery.io/community/certifications) (CMC) program, complete with badges and shareable credentials. Because courses embed live Meshery designs, you practice on real workflows rather than only reading about them. Academies are open source and extensible, so your organization can publish branded learning paths of its own. See the [academies documentation](https://docs.meshery.io/extensions/academies/) to get started.
+Meshery includes academies, a hands-on learning platform built into the project. Academies organize material into learning paths such as Mastering Meshery, scenario-based challenges where you deploy and configure real infrastructure, and certifications like the [Certified Meshery Contributor](https://meshery.io/community/certifications) (CMC) program, complete with badges and shareable credentials. Because courses embed live Meshery designs, you practice on real workflows rather than only reading about them. Academies are open source, extensible, and white-labelable, so your organization can publish branded learning paths of its own. See the [academies documentation](https://docs.meshery.io/extensions/academies/) to get started.
 
 ## Try Meshery and join the community
 

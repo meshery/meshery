@@ -16,17 +16,17 @@ All data tables in Meshery UI persist their navigation state (page, page size, s
 
 Located at `utils/hooks/useTableUrlState.ts`. Each table gets a short, stable key (e.g. `"con"` for Connections, `"des"` for Designs, `"fil"` for Filters). State is serialised as prefixed query parameters:
 
-| Param | Description |
-|---|---|
-| `<key>_page` | Current page (omitted when 0) |
-| `<key>_ps` | Page size (omitted when equal to the default) |
-| `<key>_sort` | Sort string, e.g. `"name asc"` |
-| `<key>_q` | Search query |
+| Param           | Description                                         |
+| --------------- | --------------------------------------------------- |
+| `<key>_page`    | Current page (omitted when 0)                       |
+| `<key>_ps`      | Page size (omitted when equal to the default)       |
+| `<key>_sort`    | Sort string, e.g. `"name asc"`                      |
+| `<key>_q`       | Search query                                        |
 | `<key>_<field>` | Custom filter fields declared in `defaults.filters` |
 
 ```tsx
 const { tableState, updateTableState, copyRowDeepLink } = useTableUrlState({
-  tableKey: 'con',          // short stable prefix — never change once deployed
+  tableKey: 'con', // short stable prefix — never change once deployed
   rowParam: 'connectionId', // URL param for row deep-links (default: <key>_row)
   defaults: {
     page: 0,
