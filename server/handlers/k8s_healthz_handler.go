@@ -14,11 +14,36 @@ import (
 // - HTTP 503 with plain text error details when unhealthy
 // - Supports ?verbose=1 query parameter for detailed check results
 func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
+	// Differentiate between live and ready checks
+	// /healthz/live is a simple ping to ensure the server HTTP listener is responsive.
+	// We return 200 OK immediately to prevent Kubernetes from restarting a pod that is initializing.
+	if strings.HasSuffix(r.URL.Path, "/live") {
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
+		return
+	}
+
 	// Parse verbose flag from query parameters
 	verbose := r.URL.Query().Get("verbose") == "1"
 
 	// Collect check results
 	checks := []healthCheck{}
+
+	// Check: Seeding Complete
+	if h.config.StartupStatus.SeedingComplete.Load() {
+		checks = append(checks, healthCheck{name: "seeding", status: checkOK, reason: "component seeding complete"})
+	} else {
+		checks = append(checks, healthCheck{name: "seeding", status: checkFailed, reason: "component seeding in progress"})
+	}
+
+	// Check: Provider Capabilities Verification Complete
+	if h.config.StartupStatus.ProviderTrackerComplete.Load() {
+		checks = append(checks, healthCheck{name: "provider_verification", status: checkOK, reason: "provider verification complete"})
+	} else {
+		checks = append(checks, healthCheck{name: "provider_verification", status: checkFailed, reason: "provider capabilities verification in progress"})
+	}
 
 	// Check 1: Verify capabilities are loaded by checking provider properties
 	capabilitiesLoaded := false
