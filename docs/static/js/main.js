@@ -52,7 +52,7 @@ function HideToggleFunction() {
 
 var getcodeelement = $('.clipboardjs'); /*create custom id*/
 
-getcodeelement.each(function(i) {  
+getcodeelement.each(function(i) {
     /*target*/
     var currentId = 'codeblock' + (i + 1);
     $(this).attr('id', currentId);
@@ -93,12 +93,11 @@ const toggleBtnSidebarNav=document.querySelector(".nav-toggle-btn--document");
 
 toggleBtnSidebarNav.addEventListener("click",()=>{
     const leftContainer = document.querySelector(".left-container");
-
     if(leftContainer){
         const isActive = leftContainer.classList.toggle('left-container--active');
 
         const newState = isActive ? 'active' : 'inactive';
-        localStorage.setItem('leftContainer-state', newState);   
+        localStorage.setItem('leftContainer-state', newState);
     }
 })
 

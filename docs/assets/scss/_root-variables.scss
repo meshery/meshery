@@ -2,18 +2,6 @@
   --navbar-height: 6.5rem;
   --footer-height: 8.0rem;
 
-  //sidebar variables needed for js calculations
-  --left-sidebar-width: 320px;
-  --left-sidebar-extra-wrapper-width: 15px; //used for calculations. the total width of the left-sidebar is --left-sidebar-width + left-sidebar-extra-wrapper-width
-  --left-sidebar-min-width: 180px;
-  --left-sidebar-max-width: 500px;
-
-  --toc-width: 240px;
-  --toc-min-width: 180px;
-  --toc-max-width: 400px;
-
-  --sidebar-resize-width: 5px;
-
   // Colors that will not change in the dark mode.
   --brand-color-primary: #00d3a9;
   --brand-color-secondary: #00b39f;

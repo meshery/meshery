@@ -1,11 +1,10 @@
 @use "layout-resizers";
 
-@media (min-width: 768px) {
-  main[role="main"] {
-    grid-column: 3;
-    grid-row: 1;
-  }
+:root{
+  --left-sidebar-width: 320px; //sidebar variable rewrite
+  --left-sidebar-extra-wrapper-width: 15px; //used for calculations. the total width of the left-sidebar is --left-sidebar-width + left-sidebar-extra-wrapper-width
 }
+
 
 @media (min-width: 1200px) {
   .sidebar-container-wrapper {
