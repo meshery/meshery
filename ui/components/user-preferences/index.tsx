@@ -384,16 +384,14 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                 }
               />
               <CardContent>
-                <Typography>
-                  <ul>
-                    {providerInfo.providerDescription &&
-                      providerInfo.providerDescription.map((desc, index) => (
-                        <li key={index}>
-                          <Typography>{desc}</Typography>
-                        </li>
-                      ))}
-                  </ul>
-                </Typography>
+                <ul>
+                  {providerInfo.providerDescription &&
+                    providerInfo.providerDescription.map((desc, index) => (
+                      <li key={index}>
+                        <Typography>{desc}</Typography>
+                      </li>
+                    ))}
+                </ul>
               </CardContent>
             </ProviderCard>
 
@@ -425,9 +423,8 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
               </GridCapabilityHeader>
               {providerInfo.capabilities &&
                 providerInfo.capabilities.map((capability, index) => (
-                  <>
+                  <React.Fragment key={`${index}-${capability.feature}`}>
                     <GridCapabilityHeader
-                      key={`${index}-${capability.feature}`}
                       size={{ xs: 6 }}
                       style={{
                         padding: '20px 20px',
@@ -441,7 +438,9 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                               : '#C9DBE3',
                       }}
                     >
-                      <Typography variant="body1">{capability.feature}</Typography>
+                      <Typography variant="body1" style={{ overflowWrap: 'anywhere' }}>
+                        {capability.feature}
+                      </Typography>
                     </GridCapabilityHeader>
                     <GridCapabilityHeader
                       key={`${index}-${capability.endpoint}`}
@@ -458,9 +457,11 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                               : '#C9DBE3',
                       }}
                     >
-                      <Typography variant="body1">{capability.endpoint}</Typography>
+                      <Typography variant="body1" style={{ overflowWrap: 'anywhere' }}>
+                        {capability.endpoint}
+                      </Typography>
                     </GridCapabilityHeader>
-                  </>
+                  </React.Fragment>
                 ))}
             </Grid2>
             <Divider />
@@ -502,7 +503,9 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                         padding: '20px 20px',
                       }}
                     >
-                      <Typography variant="body1">{extension[0].component}</Typography>
+                      <Typography variant="body1" style={{ overflowWrap: 'anywhere' }}>
+                        {extension[0]?.component || ''}
+                      </Typography>
                     </GridExtensionItem>
                     <GridExtensionItem
                       size={{ xs: 6 }}
@@ -511,8 +514,8 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                         padding: '20px 20px',
                       }}
                     >
-                      <Typography variant="body1">
-                        {convertToTitleCase(extension[0].type)}
+                      <Typography variant="body1" style={{ overflowWrap: 'anywhere' }}>
+                        {extension[0]?.type ? convertToTitleCase(extension[0].type) : ''}
                       </Typography>
                     </GridExtensionItem>
                   </Grid2>
@@ -540,7 +543,6 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
             allowScrollButtonsMobile={true}
             indicatorColor="primary"
             textColor="primary"
-            centered
           >
             <CustomTooltip title="General preferences" placement="top">
               <Tab
@@ -646,7 +648,6 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                 allowScrollButtonsMobile={true}
                 indicatorColor="primary"
                 textColor="primary"
-                centered
               >
                 <CustomTooltip title="Details" placement="top">
                   <SecondaryTab label={<TabLabel>Details</TabLabel>} />
