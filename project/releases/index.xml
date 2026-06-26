@@ -43,7 +43,24 @@
 	👨🏽‍💻 Contributors
 &lt;/h2&gt;
 &lt;p&gt;Thank you to our contributors for making this release possible:
-@Harishrs2006, @Katotodan, @MrDadhich456, @aabidsofi19, @carlosriosilva, @fitzergerald, @jamieplu, @leecalcote, @marblom007, @pontusringblom, @ritzorama, @simihablo, @winkletinkle and @yi-nuo426&lt;/p&gt;</description></item><item><title>v1.0.46</title><link>/project/releases/v1.0.46/</link><pubDate>Thu, 25 Jun 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.46/</guid><description>&lt;h2 id="whats-new"&gt;
+@Harishrs2006, @Katotodan, @MrDadhich456, @aabidsofi19, @carlosriosilva, @fitzergerald, @jamieplu, @leecalcote, @marblom007, @pontusringblom, @ritzorama, @simihablo, @winkletinkle and @yi-nuo426&lt;/p&gt;</description></item><item><title>v1.0.49</title><link>/project/releases/v1.0.49/</link><pubDate>Fri, 26 Jun 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.49/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;add telemtry routes to nextjs and update extension doc comments @aabidsofi19 (#20287)&lt;/li&gt;
+&lt;li&gt;fix: De-duplicate Artifact Hub registrant summary in startup logs @icoderarely (#19591)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@aabidsofi19, @fitzergerald, @icoderarely and @leecalcote&lt;/p&gt;</description></item><item><title>v1.0.46</title><link>/project/releases/v1.0.46/</link><pubDate>Thu, 25 Jun 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.46/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -33851,7 +33868,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.48&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.49&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
