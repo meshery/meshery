@@ -6,50 +6,13 @@ categories: [contributing]
 
 This comprehensive guide covers everything you need to know to contribute to the Meshery Schemas repository. Meshery follows **Schema-Driven Development (SDD)**, where the structure of data is centrally defined using schemas that power consistency, validation, and code generation across the platform.
 
----
 
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Prerequisites](#prerequisites)
-3. [Quick Start](#quick-start)
-4. [Schema Directory Structure](#schema-directory-structure)
-5. [Understanding `api.yml` - The Construct Index File](#understanding-apiyml---the-construct-index-file)
-6. [Schema File Roles](#schema-file-roles)
-7. [Naming Conventions](#naming-conventions)
-8. [Adding a New Schema](#adding-a-new-schema)
-9. [Modifying Existing Schemas](#modifying-existing-schemas)
-10. [The Dual-Schema Pattern]({{< ref "project/contributing/contributing-schemas/dual-schema-pattern.md" >}})
-11. [Build and Generation]({{< ref "project/contributing/contributing-schemas/build-and-generation.md" >}})
-12. [Schema-Driven UI Development]({{< ref "project/contributing/contributing-schemas/ui-schemas.md" >}})
-13. [Getting Help](#getting-help)
-
----
-
-## Overview
-
-Meshery schemas offer a powerful system designed for:
-
-- **Model-Driven Management**: Meshery uses explicit models for describing infrastructure and applications.
-- **Dynamic Discovery**: Process different kinds of relationships and styles for adaptive configurations.
-- **Lifecycle Management**: Track status and lifecycle of resources via schema properties.
-- **Extensibility**: Open-ended metadata and modular schema components enable expansion.
-- **Visual Representation**: Properties for styling edges and nodes create user-friendly visuals.
-- **Automated Operations**: Support validation, automated configuration, and patching.
-
-Meshery uses the **OpenAPI v3** specification with a **modular, versioned, and extensible** schema strategy:
-
-- ✅ **Versioned schemas** for backward compatibility
-- 🧩 **Modular constructs** for maintainability and reuse
-- 🧪 **Schemas are used** for validation, API documentation, and automatic code generation
-
----
 
 ## Prerequisites
 
 Before contributing, ensure you have the following installed:
 
-### 1. Go (v1.24.0+)
+### 1. Go
 
 ```bash
 # Verify installation
