@@ -87,7 +87,7 @@ clipboard.on("success", (e) => {
     const text = document.createElement('span');
     const checkIcon = document.createElement('i');
     checkIcon.className = 'fas fa-check';
-    text.appendChild(checkIcon);
+    checkIcon.setAttribute('aria-hidden', 'true');
     text.appendChild(document.createTextNode(' Copied!'));
     text.style.color = "#00b39f";
 
