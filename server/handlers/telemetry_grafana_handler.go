@@ -225,7 +225,7 @@ func (h *Handler) GrafanaTelemetryQueryRangeHandler(w http.ResponseWriter, req *
 		// broadcast notification events: a single unreachable connection or bad
 		// credential would otherwise spawn one notification per panel/target and
 		// bury the user. The message is classified so the inline error is precise.
-		merr, status := grafanaQueryError(err, dsUID)
+		status, merr := grafanaQueryError(err, dsUID)
 		writeMeshkitError(w, merr, status)
 		return
 	}
@@ -313,7 +313,7 @@ func (h *Handler) GrafanaTelemetryQueryRangeBatchHandler(w http.ResponseWriter, 
 	for i, r := range results {
 		item := grafanaBatchResultItem{ID: r.ID}
 		if r.Err != nil {
-			merr, _ := grafanaQueryError(r.Err, request.Queries[i].DS)
+			_, merr := grafanaQueryError(r.Err, request.Queries[i].DS)
 			item.Error = merr.Error()
 		} else {
 			item.Response = r.Body
@@ -325,16 +325,16 @@ func (h *Handler) GrafanaTelemetryQueryRangeBatchHandler(w http.ResponseWriter, 
 
 // grafanaQueryError classifies a datasource-query failure into a specific,
 // user-facing error and the HTTP status to return with it.
-func grafanaQueryError(err error, dsRef string) (error, int) {
+func grafanaQueryError(err error, dsRef string) (int, error) {
 	var dsErr *grafana.DatasourceNotFoundError
 	if errors.As(err, &dsErr) {
-		return ErrTelemetryGrafanaDatasource(dsErr.Ref, dsErr.Available), http.StatusNotFound
+		return http.StatusNotFound, ErrTelemetryGrafanaDatasource(dsErr.Ref, dsErr.Available)
 	}
 	switch grafana.StatusCode(err) {
 	case http.StatusUnauthorized, http.StatusForbidden:
-		return ErrTelemetryGrafanaAuth(err), http.StatusBadGateway
+		return http.StatusBadGateway, ErrTelemetryGrafanaAuth(err)
 	}
-	return ErrTelemetryGrafana(err, "datasource query"), http.StatusBadGateway
+	return http.StatusBadGateway, ErrTelemetryGrafana(err, "datasource query")
 }
 
 // GrafanaTelemetryPinnedBoardsHandler reads (GET) or replaces (POST) the set of
