@@ -19,7 +19,7 @@
     $("#td-section-nav #{{ $mid }}").parents("li").siblings("li").addClass("show");
     $("#td-section-nav #{{ $mid }}-li").siblings("li").addClass("show");
     $("#td-section-nav #{{ $mid }}-li").children("ul").children("li").addClass("show");
-    $("#td-sidebar-menu").removeClass("d-none"); 
+    $("#td-sidebar-menu").removeClass("d-none");
     });
   </script>
   {{ partialCached "sidebar-tree.html" $args $sidebarRootID }}
@@ -33,27 +33,27 @@
       var ul = li.querySelector(":scope > ul");
       var a = li.querySelector(":scope > a.td-sidebar-link");
       if (!a || !ul) return;
-      
+
       if (li.querySelector(':scope > .sidebar-section-flex-wrapper')) return;
-      
+
       var btn = document.createElement("button");
       btn.className = "sidebar-section-toggle " + (extraClass || "");
       btn.setAttribute("aria-label", "Toggle section");
       btn.innerHTML = icon;
       btn.onclick = function(e) {
         e.preventDefault();
-        
+
         var $ul = $(ul);
         var childLis = ul.querySelectorAll(":scope > li");
         var isClosed = childLis.length > 0 && !childLis[0].classList.contains("show");
-        
+
         if (isClosed) {
           $ul.hide();
           childLis.forEach(function(childLi) {
             childLi.classList.add("show");
           });
         }
-        
+
         $ul.slideToggle(400, function() {
           if ($ul.css("display") === "none") {
             childLis.forEach(function(childLi) {
@@ -65,11 +65,11 @@
 
         li.classList.toggle("active-path");
       };
-      
+
       var wrapper = document.createElement("div");
       wrapper.className = "sidebar-section-flex-wrapper";
       a.parentNode.insertBefore(wrapper, a);
-      
+
       if (position === "after") {
         wrapper.style.justifyContent = "space-between";
         wrapper.appendChild(a);
@@ -144,7 +144,7 @@
 
       event.preventDefault();
       if (window.matchMedia("(max-width: 37.5em)").matches &&
-          document.querySelector(".left-container.left-container--active")) {
+          document.querySelector(".left-container.left-container--collapsed")) {
         const toggle = document.getElementById("toggleBtnSidebarNav");
         if (toggle) toggle.click();
       }
@@ -155,7 +155,7 @@
     document.addEventListener("click", function(event) {
       if (
         window.matchMedia("(max-width: 37.5em)").matches &&
-        document.querySelector(".left-container.left-container--active") &&
+        document.querySelector(".left-container.left-container--collapsed") &&
         (event.target.closest("#td-sidebar-menu a") || event.target.closest("#td-sidebar-menu button"))
       ) {
         const toggle = document.getElementById("toggleBtnSidebarNav");

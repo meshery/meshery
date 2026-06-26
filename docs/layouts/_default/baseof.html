@@ -34,7 +34,7 @@
 
     {{ partialCached "scripts/google-tagmanager-body.html" . }}
 
-    <div class="r-grid-container {{ if eq (.Params.display_toc | default true) false }} r-grid-container--without-toc {{ end }}">
+    <div class="r-grid-container{{ if eq (.Params.display_toc | default true) false }} r-grid-container--without-toc{{ end }}">
       <aside class="left-container">
         <script>
           (function () {
@@ -50,7 +50,8 @@
               localStorage.setItem('leftContainer-state', state);
             }
 
-            leftContainer.classList.toggle('left-container--active', state === 'active');
+            leftContainer.classList.toggle('left-container--collapsed', state === 'active');
+
           })();
         </script>
         <div class="sidebar-container-wrapper">

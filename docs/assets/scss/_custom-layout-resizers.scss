@@ -5,6 +5,44 @@
   --left-sidebar-extra-wrapper-width: 15px; //used for calculations. the total width of the left-sidebar is --left-sidebar-width + left-sidebar-extra-wrapper-width
 }
 
+.r-grid-container {
+  @media (min-width: 768px) {
+    &:has(.left-container--collapsed) {
+      grid-template-columns: 0px 0px 1fr;
+
+      .sidebar-container-wrapper {
+        display: none;
+      }
+
+      .icon-container {
+        left: 0rem;
+      }
+
+      .nav-toggle-btn--document svg {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  @media (min-width: 1200px) {
+    &:has(.left-container--collapsed) {
+      grid-template-columns: 0px 0px 1fr var(--sidebar-resize-width) var(--toc-width);
+    }
+
+    &--without-toc {
+      display: grid;
+      grid-template-columns: var(--left-sidebar-width) var(--sidebar-resize-width) 1fr;
+
+      #right-resizer {
+        display: none;
+      }
+
+      &:has(.left-container--collapsed) {
+        grid-template-columns: 0px 0px 1fr;
+      }
+    }
+  }
+}
 
 @media (min-width: 1200px) {
   .sidebar-container-wrapper {

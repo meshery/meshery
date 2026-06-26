@@ -91,15 +91,31 @@ clipboard.on("success", (e)=>{
 
 const toggleBtnSidebarNav=document.querySelector(".nav-toggle-btn--document");
 
-toggleBtnSidebarNav.addEventListener("click",()=>{
-    const leftContainer = document.querySelector(".left-container");
-    if(leftContainer){
-        const isActive = leftContainer.classList.toggle('left-container--active');
+toggleBtnSidebarNav.addEventListener("click", () => {
+  const leftContainer = document.querySelector(".left-container");
+  if (leftContainer) {
+    const grid = document.querySelector('.r-grid-container');
+    const isCollapsed = leftContainer.classList.contains('left-container--collapsed');
 
-        const newState = isActive ? 'active' : 'inactive';
-        localStorage.setItem('leftContainer-state', newState);
+    if (isCollapsed) {
+      grid.classList.add('is-expanding');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          leftContainer.classList.remove('left-container--collapsed');
+        });
+      });
+
+      grid.addEventListener('transitionend', () => {
+        grid.classList.remove('is-expanding');
+      }, { once: true });
+    } else {
+      leftContainer.classList.add('left-container--collapsed');
     }
-})
+
+    const newState = isCollapsed ? 'inactive' : 'active';
+    localStorage.setItem('leftContainer-state', newState);
+  }
+});
 
 const toggleBtnMainNav=document.querySelector(".nav-toggle-btn--main");
 
