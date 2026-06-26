@@ -91,9 +91,9 @@ For detailed instructions on port forwarding, refer to the [port-forwarding]({{<
 
 By default, Meshery auto-detects your Minikube cluster and establishes a connection. However, if this doesn’t happen, you can connect by running the following command:
 
-{{< code code="mesheryctl system config minikube" >}}
+{{< code code="mesheryctl connection create --type minikube" >}}
 
-The `mesheryctl system config minikube` command properly configures and uploads your kubeconfig file to the Meshery UI.
+The `mesheryctl connection create --type minikube` command properly configures and uploads your kubeconfig file to the Meshery UI.
 
 <a href="images/minikube-upload.png"><img alt="Minikube KubeConfig Upload" style="width:500px;height:auto;" src="images/minikube-upload.png" /></a>
 
@@ -119,7 +119,7 @@ Meshery UI will be accessible on your local machine on port 9081. Open your brow
 
 Configure Meshery to connect with your minikube cluster by running the command:
 
-{{< code code="mesheryctl system config minikube" >}}
+{{< code code="mesheryctl connection create --type minikube" >}}
 
 ### Minikube Docker Driver Users
 
@@ -137,7 +137,7 @@ To configure this, run the following commands:
  <div class="clipboardjs">docker network connect minikube meshery-meshery-1</div></div>
 </pre>
 
-Next, update the Kubernetes API server address in your kubeconfig file before running the `mesheryctl system config minikube` command. The steps to do this are outlined below.
+Next, update the Kubernetes API server address in your kubeconfig file before running the `mesheryctl connection create --type minikube` command. The steps to do this are outlined below.
 
 #### Next Step: Update the Kubernetes API Server Address for Meshery Access
 
@@ -157,9 +157,9 @@ server: https://{minikubeIP}:{port}` >}}
 
 Next, run the following command to configure Meshery to access your cluster.
 
-{{< code code="mesheryctl system config minikube" >}}
+{{< code code="mesheryctl connection create --type minikube" >}}
 
-**Note**: An alternative to running the mesheryctl system config minikube command for Meshery to discover your cluster is manually uploading your config file to the UI.
+**Note**: An alternative to running the mesheryctl connection create --type minikube command for Meshery to discover your cluster is manually uploading your config file to the UI.
 
 # Uploading Configuration File in the Meshery Web UI
 

@@ -1,5 +1,5 @@
 ---
-title: Upgrading
+title: Upgrades
 display_title: false
 categories: [installation]
 description: How to upgrade Meshery and each of its components

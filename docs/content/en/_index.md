@@ -16,7 +16,7 @@ linkTitle: Documentation
 <div class="flex container">
   <!-- OVERVIEW -->
   <div class="section">
-    <a href="{{< ref "project/_index.md" >}}">
+    <a href="{{< ref "installation/_index.md" >}}">
         <div class="btn-primary">Overview & Installation</div>
     </a>
     <ul>
