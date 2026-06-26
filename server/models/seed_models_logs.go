@@ -198,24 +198,26 @@ func aggregateSummariesByKind(hosts []v1beta1.MeshModelHostsWithEntitySummary) (
 // formatRegistrantSummary renders the one-line import summary for a registrant
 // Kind, e.g. "For registrant artifacthub imported 150 models, 1326 components.".
 // GetRegistrants only returns registrants with at least one model, so the
-// all-zero branch is a defensive fallback: it keeps the line grammatical (by
-// emitting "... imported 0 entities.") if that contract ever changes, instead
-// of leaving a dangling "For registrant <kind> imported.".
+// "0 entities" fallback is defensive: it keeps the line grammatical if that
+// contract ever changes, instead of leaving a dangling "imported.".
 func formatRegistrantSummary(kind string, summary v1beta1.EntitySummary) string {
-	message := fmt.Sprintf("For registrant %s imported", kind)
-	appendIfNonZero := func(value int64, label string) {
-		if value != 0 {
-			message += fmt.Sprintf(" %d %s,", value, label)
-		}
+	var parts []string
+	if summary.Models != 0 {
+		parts = append(parts, fmt.Sprintf("%d models", summary.Models))
 	}
-	appendIfNonZero(summary.Models, "models")
-	appendIfNonZero(summary.Components, "components")
-	appendIfNonZero(summary.Relationships, "relationships")
-	appendIfNonZero(summary.Policies, "policies")
-	if !strings.HasSuffix(message, ",") {
-		message += " 0 entities,"
+	if summary.Components != 0 {
+		parts = append(parts, fmt.Sprintf("%d components", summary.Components))
 	}
-	return strings.TrimSuffix(message, ",") + "."
+	if summary.Relationships != 0 {
+		parts = append(parts, fmt.Sprintf("%d relationships", summary.Relationships))
+	}
+	if summary.Policies != 0 {
+		parts = append(parts, fmt.Sprintf("%d policies", summary.Policies))
+	}
+	if len(parts) == 0 {
+		parts = append(parts, "0 entities")
+	}
+	return fmt.Sprintf("For registrant %s imported %s.", kind, strings.Join(parts, ", "))
 }
 
 func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *meshmodel.RegistryManager, regErrorStore *RegistrationFailureLog) {
