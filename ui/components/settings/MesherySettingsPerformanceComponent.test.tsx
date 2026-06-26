@@ -89,7 +89,7 @@ vi.mock('@sistent/sistent', () => ({
   NoSsr: ({ children }: any) => <>{children}</>,
   Radio: () => <input type="radio" />,
   Box: ({ children, sx, ...rest }: any) => (
-    <div style={sx} {...rest}>
+    <div data-sx={JSON.stringify(sx || {})} {...rest}>
       {children}
     </div>
   ),
