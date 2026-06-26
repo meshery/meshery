@@ -84,6 +84,7 @@
 
   
   --code:#952a1e;
+  --sidebar-text-color: var(--color-white);
 }
 
 .dark-mode {
@@ -181,6 +182,7 @@
   
   
     --code:#bf3526;
+  --sidebar-text-color: var(--color-secondary-light);
 }
 
 @media (max-width: 600px) {

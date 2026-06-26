@@ -226,7 +226,7 @@
     justify-content: center;
     background: none;
     border: none;
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-text-color);
     cursor: pointer;
     font-size: 1rem;
     padding: 0 0.4rem 0 0;
@@ -284,7 +284,7 @@
 
   & .td-sidebar-nav .ul-1 ul>li>a.td-sidebar-link::before {
     content: "•";
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-text-color);
     font-size: 1.25rem;
     font-weight: 900;
     display: inline-flex;
@@ -304,12 +304,12 @@
   }
 
   & .td-sidebar-nav__section-title {
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-text-color);
     font-weight: 400;
   }
 
   & .td-sidebar-link {
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-text-color);
     letter-spacing: 0;
     padding-bottom: 0.15rem;
     text-decoration: none;
@@ -323,7 +323,7 @@
     width: fit-content;
 
     &>span {
-      color: var(--color-secondary-medium);
+      color: var(--sidebar-text-color);
     }
   }
 
