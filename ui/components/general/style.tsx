@@ -141,8 +141,8 @@ export const ExpandMore = ({ isCollapsed, hasChildren, theme, ...props }) => (
     height="20"
     isCollapsed={isCollapsed}
     hasChildren={hasChildren}
-    aria-expanded={!isCollapsed}
-    aria-label={isCollapsed ? 'Expand' : 'Collapse'}
+    aria-expanded={isCollapsed}
+    aria-label={isCollapsed ? 'Collapse' : 'Expand'}
     {...props}
   >
     <CaretDownIcon fill={theme.palette.icon.brand} />
