@@ -1115,18 +1115,6 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 
 	l.Log.Infof("persisted kubernetes context %q to remote provider as connection %s", connection.Name, connection.ID)
 
-	if connection == nil {
-		// SaveConnection can return (nil, nil) when the remote provider answers
-		// 2xx but the connection page is empty or carries a null element. Guard
-		// the dereference below so a malformed response is a structured error,
-		// not a panic.
-		err := ErrPersistConnection(fmt.Errorf("remote provider returned a nil connection for kubernetes context %q", conn.Name))
-		l.Log.Error(err)
-		return connections.Connection{}, err
-	}
-
-	l.Log.Infof("persisted kubernetes context %q to remote provider as connection %s", connection.Name, connection.ID)
-
 	return *connection, nil
 }
 func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error) {
