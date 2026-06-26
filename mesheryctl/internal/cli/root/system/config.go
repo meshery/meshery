@@ -397,6 +397,12 @@ func setToken() error {
 		if err != nil {
 			return ErrSetCurrentContext(fmt.Errorf("error reading input: %s", err.Error()))
 		}
+
+		// validate choice is in valid range
+		if choice < 1 || choice > len(contexts) {
+			return ErrSetCurrentContext(fmt.Errorf("invalid choice: must be between 1 and %d", len(contexts)))
+		}
+
 		choosenCtx = contexts[choice-1]
 	}
 
