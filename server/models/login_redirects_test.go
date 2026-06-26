@@ -77,6 +77,21 @@ func TestResolvePostLoginRedirect(t *testing.T) {
 			rawRef:   "/provider?ref=xyz",
 			expected: fallback,
 		},
+		{
+			name:     "plain /login ref falls back",
+			rawRef:   "/login",
+			expected: fallback,
+		},
+		{
+			name:     "/login with query falls back",
+			rawRef:   "/login?orgId=abc&return_to=&source=xyz",
+			expected: fallback,
+		},
+		{
+			name:     "encoded /login ref falls back",
+			rawRef:   base64.RawURLEncoding.EncodeToString([]byte("/login?orgId=abc")),
+			expected: fallback,
+		},
 	}
 
 	for _, tc := range tests {
