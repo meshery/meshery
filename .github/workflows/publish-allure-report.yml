@@ -32,18 +32,18 @@ jobs:
     runs-on: ubuntu-24.04
     
     steps:
-      - name: Download Allure Artifact 
-        uses: actions/download-artifact@v6
-        with: 
-            path: ./qa/allure-results
-            name: ${{ inputs.allure-results-artifact }}  
-
       - name: Checkout QA
         uses: actions/checkout@v6
         with: 
             repository: meshery/qa
             path: ./qa
             token: ${{ secrets.GH_ACCESS_TOKEN }}
+
+      - name: Download Allure Artifact 
+        uses: actions/download-artifact@v6
+        with: 
+            path: ./qa/allure-results
+            name: ${{ inputs.allure-results-artifact }}  
 
       - name: Sync results with qa
         working-directory: qa

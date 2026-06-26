@@ -9,13 +9,11 @@ import {
   Link,
   Avatar,
   useTheme,
-  // Sistent re-exports InfoOutlinedIcon under the canonical name
-  // `InfoOutlined`; the original symbol is not on the bundle, so a
-  // direct InfoOutlinedIcon import resolves to undefined and crashes
-  // at render. Alias on import keeps all JSX call sites unchanged.
-  InfoOutlined as InfoOutlinedIcon,
+  InfoOutlinedIcon,
+  FullScreenIcon,
+  FullScreenExitIcon,
 } from '@sistent/sistent';
-import { Delete as DeleteIcon, Fullscreen, Save, FullscreenExit } from '@/assets/icons';
+import { Delete as DeleteIcon, Save } from '@/assets/icons';
 import Moment from 'react-moment';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from '../CodeMirror';
@@ -262,7 +260,7 @@ function FiltersCard_({
                       })
                     }
                   >
-                    {fullScreen ? <FullscreenExit /> : <Fullscreen />}
+                    {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
                   </IconButton>
                 </Tooltip>
               </CardHeaderRight>

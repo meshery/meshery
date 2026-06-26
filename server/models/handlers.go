@@ -33,6 +33,8 @@ type HandlerInterface interface {
 	ProviderUIHandler(w http.ResponseWriter, r *http.Request)
 	ProviderCapabilityHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProviderComponentsHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	InstallExtensionHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	RemoveExtensionHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	TokenHandler(w http.ResponseWriter, r *http.Request, provider Provider, fromMiddleWare bool)
 	LoginHandler(w http.ResponseWriter, r *http.Request, provider Provider, fromMiddleWare bool)
@@ -49,12 +51,9 @@ type HandlerInterface interface {
 	GetAllContexts(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetContext(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteContext(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	// GetCurrentContextHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	// SetCurrentContextHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	CollectStaticMetrics(config *SubmitMetricsConfig) error
 	FetchResultsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	FetchAllResultsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetResultHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -85,23 +84,24 @@ type HandlerInterface interface {
 	DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	BulkDeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
-	GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GrafanaPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	// Telemetry (v2) — connection-driven Grafana dashboard browsing & rendering.
+	GrafanaTelemetryPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GrafanaTelemetryBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GrafanaTelemetryBoardHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GrafanaTelemetryDatasourcesHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GrafanaTelemetryQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GrafanaTelemetryQueryRangeBatchHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GrafanaTelemetryPinnedBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
-	// ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	// ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	// ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	PrometheusQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	PrometheusPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryMetricsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryLabelsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryLabelValuesHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryMetadataHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryQueryRangeBatchHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PrometheusTelemetryPanelsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	UserPrefsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
@@ -141,6 +141,12 @@ type HandlerInterface interface {
 	GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
+
+	GetConnectionDefinitions(rw http.ResponseWriter, r *http.Request)
+	GetConnectionDefinitionByID(rw http.ResponseWriter, r *http.Request)
+	RegisterConnectionDefinition(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	DeleteConnectionDefinition(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Request)
@@ -257,20 +263,13 @@ type HandlerConfig struct {
 	// SessionStore sessions.Store
 
 	AdapterTracker AdaptersTrackerInterface
-	QueryTracker   QueryTrackerInterface
 
 	KubeConfigFolder string
 
-	GrafanaClient         *GrafanaClient
-	GrafanaClientForQuery *GrafanaClient
-
-	PrometheusClient         *PrometheusClient
-	PrometheusClientForQuery *PrometheusClient
-
 	// GraphQLHandler           http.Handler
 	// GraphQLPlaygroundHandler http.Handler
-	PlaygroundBuild        bool
-	Providers              map[string]Provider
+	PlaygroundBuild bool
+	Providers       map[string]Provider
 	// ProviderTracker is the authoritative availability state for
 	// Providers. /api/providers reads its snapshot and
 	// /api/providers/stream subscribes to its updates so the provider
@@ -296,15 +295,6 @@ type HandlerConfig struct {
 	K8scontextChannel *K8scontextChan
 	EventsBuffer      *events.EventStreamer
 	OperatorTracker   *OperatorTracker
-}
-
-// SubmitMetricsConfig is used to store config used for submitting metrics
-type SubmitMetricsConfig struct {
-	TestUUID, ResultID, PromURL string
-	StartTime, EndTime          time.Time
-	// TokenKey,
-	TokenVal string
-	Provider Provider
 }
 
 type AuthenticationMechanism int

@@ -27,12 +27,7 @@ import {
   CustomTooltip,
   IconButton,
   CircularProgress,
-  // Sistent re-exports the underlying InfoOutlinedIcon as InfoOutlined;
-  // the bundle does NOT export the original name, so importing it
-  // directly resolves to undefined and crashes at render with
-  // "Element type is invalid". Alias on import to keep the rest of the
-  // JSX untouched.
-  InfoOutlined as InfoOutlinedIcon,
+  InfoOutlinedIcon,
   Box,
   Chip,
   Link,
@@ -692,24 +687,6 @@ export default function Provider() {
         onError={(e) => (e.target.src = PROVIDER_LOGO_FALLBACK_SRC)}
         alt="logo"
       />
-      {Object.keys(availableProviders).length > 0 && (
-        // LearnMore is a sibling of (not a child of) CustomDiv so the
-        // logo -> link -> dropdown layout stacks as three blocks with
-        // balanced vertical spacing; LearnMore's own marginTop/marginBottom
-        // centers it within the gap between the logo and the dropdown.
-        <LearnMore
-          href="#provider-guidance-dialog"
-          onClick={(e) => {
-            e.preventDefault();
-            handleModalOpen();
-          }}
-          aria-haspopup="dialog"
-          aria-controls="provider-guidance-dialog"
-          data-cy="providers-learn-more"
-        >
-          Learn more about providers
-        </LearnMore>
-      )}
       <CustomDiv>
         {Object.keys(availableProviders).length > 0 && (
           <Fragment>
@@ -1041,6 +1018,24 @@ export default function Provider() {
           </Fragment>
         )}
       </CustomDiv>
+      {Object.keys(availableProviders).length > 0 && (
+        // LearnMore is a sibling of (not a child of) CustomDiv so the
+        // logo -> link -> dropdown layout stacks as three blocks with
+        // balanced vertical spacing; LearnMore's own marginTop/marginBottom
+        // centers it within the gap between the logo and the dropdown.
+        <LearnMore
+          href="#provider-guidance-dialog"
+          onClick={(e) => {
+            e.preventDefault();
+            handleModalOpen();
+          }}
+          aria-haspopup="dialog"
+          aria-controls="provider-guidance-dialog"
+          data-cy="providers-learn-more"
+        >
+          Learn more about providers
+        </LearnMore>
+      )}
       <CustomDialog
         onClose={handleModalClose}
         aria-labelledby="customized-dialog-title"

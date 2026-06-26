@@ -99,7 +99,7 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
   return (
     <Container>
       <Paper>
-        <Box padding={'1rem 1.5rem'}>
+        <Box sx={{ padding: '1rem 1.5rem' }}>
           <Header>
             <HeaderLeft>
               <TooltipIconButton
