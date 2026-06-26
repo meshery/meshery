@@ -1,12 +1,10 @@
+---
 name: Udaybir Singh
-
 github: Uday9909
-
 linkedin: https://www.linkedin.com/in/udaybir-singh9909
-
 location: Ludhiana, Punjab, India
-
 bio: A full-stack developer currently participating in GSoC, with a passion for building collaborative canvas UIs and learning about cloud-native infrastructure.
+---
 
 
 Hello, I'm Udaybir 👋
