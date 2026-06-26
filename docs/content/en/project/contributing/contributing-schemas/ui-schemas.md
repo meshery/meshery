@@ -2,7 +2,6 @@
 title: UI Schemas
 description: How to contribute to Meshery Schemas for UI
 weight: 3
-description: How to contribute to Meshery Schemas for UI
 categories: [contributing]
 ---
 

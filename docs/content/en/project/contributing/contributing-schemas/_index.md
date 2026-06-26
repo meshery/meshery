@@ -19,9 +19,9 @@ This comprehensive guide covers everything you need to know to contribute to the
 7. [Naming Conventions](#naming-conventions)
 8. [Adding a New Schema](#adding-a-new-schema)
 9. [Modifying Existing Schemas](#modifying-existing-schemas)
-10. [The Dual-Schema Pattern]({{< ref "dual-schema-pattern.md" >}})
-11. [Build and Generation]({{< ref "build-and-generation.md" >}})
-12. [Schema-Driven UI Development]({{< ref "ui-schemas.md" >}})
+10. [The Dual-Schema Pattern]({{< ref "project/contributing/contributing-schemas/dual-schema-pattern.md" >}})
+11. [Build and Generation]({{< ref "project/contributing/contributing-schemas/build-and-generation.md" >}})
+12. [Schema-Driven UI Development]({{< ref "project/contributing/contributing-schemas/ui-schemas.md" >}})
 13. [Getting Help](#getting-help)
 
 ---

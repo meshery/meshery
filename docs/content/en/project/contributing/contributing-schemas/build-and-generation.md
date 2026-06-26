@@ -4,7 +4,7 @@ description: Code generation workflow and vendor extensions for Meshery schemas
 weight: 2
 ---
 
-Code Generation
+## Code Generation
 
 The build system generates code from your schemas automatically.
 
