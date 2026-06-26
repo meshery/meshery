@@ -12,7 +12,7 @@ replace github.com/compose-spec/compose-go/v2 => github.com/compose-spec/compose
 
 // replace github.com/meshery/schemas => ../schemas
 
-replace github.com/meshery/meshkit => ../meshkit
+// replace github.com/meshery/meshkit => ../meshkit
 
 // replace github.com/meshery/meshsync v0.8.26 => ../meshsync
 
@@ -43,7 +43,7 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v0.8.11
-	github.com/meshery/meshkit v1.0.17
+	github.com/meshery/meshkit v1.0.18
 	github.com/meshery/meshsync v1.0.0
 	github.com/meshery/schemas v1.3.17
 	github.com/nsf/termbox-go v1.1.1
