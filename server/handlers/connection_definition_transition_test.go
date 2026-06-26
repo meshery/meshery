@@ -5,6 +5,7 @@ import (
 
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	hostconn "github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta1/model"
 	connectionv1beta3 "github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/stretchr/testify/require"
 )
@@ -42,6 +43,10 @@ func TestConnectionDefinitionTransitionMapRoundTrips(t *testing.T) {
 			"disconnected": {
 				{NextState: connectionv1beta3.ConnectionStatusValueConnected, Description: &desc},
 			},
+		},
+		ModelReference: &model.ModelReference{
+			Name:    "kubernetes",
+			Version: "v1.25.0",
 		},
 	}
 	id, err := def.GenerateID()
