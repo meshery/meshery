@@ -375,11 +375,11 @@
   }
 
   & .td-sidebar-nav__section-title.active-path>.td-sidebar-link {
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-active-text-color);
     text-decoration: none;
 
     &>span {
-      color: var(--color-secondary-medium);
+      color: var(--sidebar-active-text-color);
     }
   }
 
@@ -436,7 +436,7 @@
   & .td-sidebar-nav__section-title.active-path>.td-sidebar-link,
   & .td-sidebar-nav__section-title.active-path>.td-sidebar-link span {
     scroll-margin-bottom: 8rem;
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-active-text-color);
   }
 }
 .dark-mode .sidebar-container {
