@@ -56,14 +56,6 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order stri
 	return resp, nil
 }
 
-// DeleteMesheryK8sContext takes in an application id and delete it if it already exists
-func (mkcp *MesheryK8sContextPersister) DeleteMesheryK8sContext(id string) (K8sContext, error) {
-	context := K8sContext{ID: id}
-	mkcp.DB.Delete(&context)
-
-	return context, nil
-}
-
 func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (connections.Connection, error) {
 	conn := connections.Connection{}
 	if mkc.ID == "" {
@@ -96,35 +88,3 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContext(id string) (K8sCont
 	err := mkcp.DB.First(&mesheryK8sContext, "id = ?", id).Error
 	return mesheryK8sContext, err
 }
-
-// func (mkcp *MesheryK8sContextPersister) SetMesheryK8sCurrentContext(id string) error {
-// 	// Perform the operation in a transaction
-// 	return mkcp.DB.Transaction(func(tx *gorm.DB) error {
-// 		var mesheryK8sContext K8sContext
-
-// 		// Get context which is currently in use
-// 		if err := tx.First(&mesheryK8sContext, "is_current_context = true").Error; err != nil {
-// 			return err
-// 		}
-
-// 		// If the context id matches with the provided id then skip the next steps
-// 		if mesheryK8sContext.ID == id {
-// 			return nil
-// 		}
-
-// 		if err := tx.Save(&mesheryK8sContext).Error; err != nil {
-// 			return err
-// 		}
-
-// 		// Set the specified context as active
-// 		return tx.Model(K8sContext{}).Where("id = ?", id).Update("is_current_context", true).Error
-// 	})
-// }
-
-// func (mkcp *MesheryK8sContextPersister) GetMesheryK8sCurrentContext() (K8sContext, error) {
-// 	var mesheryK8sContext K8sContext
-
-// 	err := mkcp.DB.First(&mesheryK8sContext, "is_current_context = true").Error
-
-// 	return mesheryK8sContext, err
-// }
