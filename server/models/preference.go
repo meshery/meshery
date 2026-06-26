@@ -3,8 +3,6 @@ package models
 import (
 	"encoding/gob"
 	"time"
-
-	"github.com/grafana-tools/sdk"
 )
 
 // K8SNode - represents a kubernetes node
@@ -21,27 +19,6 @@ type K8SNode struct {
 	KubeProxyVersion        string `json:"kubeproxyVersion,omitempty"`
 	ContainerRuntimeVersion string `json:"containerRuntimeVersion,omitempty"`
 	Architecture            string `json:"architecture,omitempty"`
-}
-
-// Grafana represents the Grafana session config
-type Grafana struct {
-	GrafanaURL    string `json:"grafanaURL,omitempty"`
-	GrafanaAPIKey string `json:"grafanaAPIKey,omitempty"`
-	// GrafanaBoardSearch string          `json:"grafanaBoardSearch,omitempty"`
-	GrafanaBoards []*SelectedGrafanaConfig `json:"selectedBoardsConfigs,omitempty"`
-}
-
-// SelectedGrafanaConfig represents the selected boards, panels, and template variables
-type SelectedGrafanaConfig struct {
-	GrafanaBoard         *GrafanaBoard `json:"board,omitempty"`
-	GrafanaPanels        []*sdk.Panel  `json:"panels,omitempty"`
-	SelectedTemplateVars []string      `json:"templateVars,omitempty"`
-}
-
-// Prometheus represents the prometheus session config
-type Prometheus struct {
-	PrometheusURL                   string                   `json:"prometheusURL,omitempty"`
-	SelectedPrometheusBoardsConfigs []*SelectedGrafanaConfig `json:"selectedPrometheusBoardsConfigs,omitempty"`
 }
 
 // LoadTestPreferences represents the load test preferences
@@ -61,8 +38,6 @@ type PreferenceParams struct {
 // Preference represents the data stored in session / local DB
 type Preference struct {
 	MeshAdapters                      []*Adapter             `json:"meshAdapters,omitempty"`
-	Grafana                           *Grafana               `json:"grafana,omitempty"`
-	Prometheus                        *Prometheus            `json:"prometheus,omitempty"`
 	LoadTestPreferences               *LoadTestPreferences   `json:"loadTestPrefs,omitempty"`
 	AnonymousUsageStats               bool                   `json:"anonymousUsageStats"`
 	AnonymousPerfResults              bool                   `json:"anonymousPerfResults"`
@@ -105,8 +80,3 @@ type CapabilitiesPersister interface {
 	DeleteCapabilitiesForUser(userID string) error
 }
 
-// Parameters to save Grafana configuration
-type GrafanaConfigParams struct {
-	GrafanaURL    string `json:"grafanaURL,omitempty"`
-	GrafanaAPIKey string `json:"grafanaAPIKey,omitempty"`
-}
