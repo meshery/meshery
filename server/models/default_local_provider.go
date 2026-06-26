@@ -495,7 +495,14 @@ func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req 
 
 func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, additionalMetadata map[string]any) (connections.Connection, error) {
 
-	k8sServerID := *k8sContext.KubernetesServerID
+	// KubernetesServerID is only populated when the cluster is reachable (it is
+	// derived from the kube-system namespace UID). Unreachable contexts are still
+	// saved as DISCOVERED connections, so guard against a nil pointer here and
+	// leave the server ID empty rather than panicking.
+	var k8sServerID string
+	if k8sContext.KubernetesServerID != nil {
+		k8sServerID = k8sContext.KubernetesServerID.String()
+	}
 
 	var connID core.Uuid
 	id, err := K8sContextGenerateID(k8sContext)
@@ -510,7 +517,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 		"deploymentType":     k8sContext.DeploymentType,
 		"version":            k8sContext.Version,
 		"name":               k8sContext.Name,
-		"kubernetesServerId": k8sServerID.String(),
+		"kubernetesServerId": k8sServerID,
 	}
 	metadata := make(map[string]interface{}, len(_metadata)+len(additionalMetadata))
 	for k, v := range _metadata {
@@ -575,10 +582,6 @@ func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order s
 	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
 }
 
-func (l *DefaultLocalProvider) DeleteK8sContext(_, id string) (K8sContext, error) {
-	return l.MesheryK8sContextPersister.DeleteMesheryK8sContext(id)
-}
-
 func (l *DefaultLocalProvider) GetK8sContext(_, id string) (K8sContext, error) {
 	idStrWithoutDashes := strings.ReplaceAll(id, "-", "")
 	return l.MesheryK8sContextPersister.GetMesheryK8sContext(idStrWithoutDashes)
@@ -612,18 +615,6 @@ func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, e
 
 	return results, nil
 }
-
-// func (l *DefaultLocalProvider) SetCurrentContext(token, id string) (K8sContext, error) {
-// 	if err := l.MesheryK8sContextPersister.SetMesheryK8sCurrentContext(id); err != nil {
-// 		return K8sContext{}, err
-// 	}
-
-// 	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
-// }
-
-// func (l *DefaultLocalProvider) GetCurrentContext(token string) (K8sContext, error) {
-// 	return l.MesheryK8sContextPersister.GetMesheryK8sCurrentContext()
-// }
 
 // FetchResults - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, _, _, profileID string) ([]byte, error) {
@@ -1547,6 +1538,18 @@ func (l *DefaultLocalProvider) Cleanup() error {
 }
 
 func (l *DefaultLocalProvider) SaveUserCredential(token string, credential *Credential) (*Credential, error) {
+	// The Credential schema has no primary-key default, so a credential created
+	// without an explicit ID would be persisted with the nil UUID
+	// (00000000-0000-0000-0000-000000000000). The first such insert succeeds and
+	// every subsequent one fails with "UNIQUE constraint failed: credentials.id".
+	// Mint a fresh UUID whenever one is not already supplied.
+	if credential.ID.IsNil() {
+		newID, err := uuid.NewV4()
+		if err != nil {
+			return nil, fmt.Errorf("error saving user credentials: unable to generate credential id: %w", err)
+		}
+		credential.ID = newID
+	}
 	result := l.GetGenericPersister().Table("credentials").Create(&credential)
 	if result.Error != nil {
 		return nil, fmt.Errorf("error saving user credentials: %v", result.Error)
@@ -1555,11 +1558,19 @@ func (l *DefaultLocalProvider) SaveUserCredential(token string, credential *Cred
 }
 
 func (l *DefaultLocalProvider) GetCredentialByID(token string, credentialID core.Uuid) (*Credential, int, error) {
-	return nil, http.StatusForbidden, ErrLocalProviderSupport
+	credential := &Credential{}
+	result := l.GetGenericPersister().Model(&Credential{}).Where("id = ? AND deleted_at is NULL", credentialID).First(credential)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, http.StatusNotFound, fmt.Errorf("credential with id %s not found", credentialID)
+		}
+		return nil, http.StatusInternalServerError, fmt.Errorf("error retrieving credential with id %s: %v", credentialID, result.Error)
+	}
+	return credential, http.StatusOK, nil
 }
 
 func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error) {
-	result := l.GetGenericPersister().Select("*").Where("user_id=? and deleted_at is NULL", userID)
+	result := l.GetGenericPersister().Model(&Credential{}).Select("*").Where("user_id=? and deleted_at is NULL", userID)
 	if result.Error != nil {
 		return nil, result.Error
 	}
