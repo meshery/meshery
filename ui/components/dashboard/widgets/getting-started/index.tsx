@@ -24,7 +24,7 @@ const GetStarted = (props: { iconsProps?: object }) => {
     skip: !currentUser?.id,
   });
   const { organization: currentOrg } = useSelector((state) => state.ui);
-  const { id: org_id } = currentOrg;
+  const { id: org_id } = currentOrg ?? {};
   return (
     <>
       <ActionButtonCard
