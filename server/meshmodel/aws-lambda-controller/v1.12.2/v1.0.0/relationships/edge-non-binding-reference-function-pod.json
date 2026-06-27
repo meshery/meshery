@@ -1,0 +1,103 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "An edge relationship between a Lambda Function and a Kubernetes Pod, representing a Pod whose containers invoke or are triggered by the Lambda function.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "AWS Lambda",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.12.2"
+    },
+    "name": "aws-lambda-controller",
+    "registrant": {
+      "kind": "github"
+    },
+    "version": ""
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Function",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "AWS Lambda",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-lambda-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Pod",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "Kubernetes",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": "*"
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "containers",
+                  "_",
+                  "env"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "reference",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}

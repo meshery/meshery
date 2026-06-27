@@ -22,13 +22,16 @@ const PerformanceTestResults: React.FC<PerformanceTestResultsProps> = ({
   chartStyle,
   onBack,
 }) => {
-  if (!testResult || !testResult.runner_results) {
+  const runnerResults = testResult?.runnerResults ?? testResult?.runner_results;
+  const mesheryId = testResult?.mesheryId ?? testResult?.meshery_id;
+
+  if (!runnerResults) {
     return null;
   }
 
   return (
     <div>
-      <Box display="flex" justifyContent="space-between" alignItems="center">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <IconButton onClick={onBack}>
           <ArrowBack />
         </IconButton>
@@ -39,16 +42,13 @@ const PerformanceTestResults: React.FC<PerformanceTestResultsProps> = ({
           key="download"
           aria-label="download"
           color="inherit"
-          href={`/api/perf/profile/result/${encodeURIComponent(testResult.meshery_id)}`}
+          href={`/api/perf/profile/result/${encodeURIComponent(mesheryId ?? '')}`}
         >
           <GetAppIcon style={iconMedium} />
         </IconButton>
       </Box>
       <div style={chartStyle}>
-        <MesheryChart
-          rawdata={[testResult && testResult.runner_results ? testResult : {}]}
-          data={[testResult && testResult.runner_results ? testResult.runner_results : {}]}
-        />
+        <MesheryChart rawdata={[testResult]} data={[runnerResults]} />
       </div>
     </div>
   );

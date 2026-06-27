@@ -10,7 +10,7 @@ import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
 import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
 
-export const CustomResourceConfig = (
+export const useCustomResourceConfig = (
   switchView,
   meshSyncResources,
   k8sConfig,

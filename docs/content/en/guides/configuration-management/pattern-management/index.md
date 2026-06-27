@@ -14,7 +14,7 @@ Patterns are essentially atomic designs with one or more components made in comp
 
 ## Use Meshery to Deploy a Cloud Native Pattern
 
-Use Meshery to deploy a cloud native pattern. Cloud native patterns are detailed as a YAML file. See the [Configuration Management](/guides/configuration-management) guide.
+Use Meshery to deploy a cloud native pattern. Cloud native patterns are detailed as a YAML file. See the [Configuration Management]({{< ref "guides/configuration-management/_index.md" >}}) guide.
 
 ### Pattern Repository
 
@@ -23,7 +23,7 @@ _See [Meshery Catalog](https://meshery.io/catalog)_.
 You may bring your own patterns or find them available through your chosen provider. Each cloud native pattern carries a unique identifier for reference. The patterns in this repository serve in an educational capacity, facilitating learning, and also serve in an operational capacity, facilitating implementation and validation of your cloud native deployment’s adherence to a pattern.
 
 {{% alert color="info" title="Repository of Cloud Native Patterns" %}}
-A central set of design patterns is available in Meshery Catalog (<a href='/concepts/catalog'>concept</a>, <a href='https://meshery.io/catalog'>site</a>).
+A central set of design patterns is available in Meshery Catalog (<a href='{{< ref "concepts/architecture/catalog/index.md" >}}'>concept</a>, <a href='https://meshery.io/catalog'>site</a>).
 {{% /alert %}}
 
 
@@ -78,4 +78,4 @@ Deployed. Endpoint(s) available at: http://localhost:8000/catalog
 
 ## Related Reading
 
-- [`mesheryctl design`](/reference/mesheryctl/design)
+- [`mesheryctl design`]({{< ref "reference/references/mesheryctl/design/_index.md" >}})

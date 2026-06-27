@@ -1,7 +1,7 @@
 ---
 title: Operator Framework
 subtitle: Collaborative and visual infrastructure as design for Operator Framework
-image: /extensions/models/operator-framework/icons/color/operator-framework-color.svg
+image: extensions/models/operator-framework/icons/color/operator-framework-color.svg
 aliases: /extensibility/integrations/operator-framework
 docURL: https://docs.meshery.io/extensibility/integrations/operator framework
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Application Definition & Image Build
 registrant: Github
 components: 
 - name: cluster-extension
-  colorIcon: content/en/extensions/models/operator-framework/components/cluster-extension/icons/color/cluster-extension-color.svg
-  whiteIcon: content/en/extensions/models/operator-framework/components/cluster-extension/icons/white/cluster-extension-white.svg
+  colorIcon: extensions/models/operator-framework/components/cluster-extension/icons/color/cluster-extension-color.svg
+  whiteIcon: extensions/models/operator-framework/components/cluster-extension/icons/white/cluster-extension-white.svg
   description: 
 components-count: 1
 relationships: 

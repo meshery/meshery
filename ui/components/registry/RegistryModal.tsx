@@ -14,9 +14,7 @@ import { useContext, useState, useEffect, ReactNode, FC } from 'react';
 import {
   ModalBody,
   List,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  IconButton,
+  LeftArrowIcon,
   ListItem,
   ListItemButton,
   ListItemIcon,
@@ -31,6 +29,7 @@ import {
 } from '@sistent/sistent';
 import { styled, useTheme } from '@/theme';
 import { Modal } from '@/components/shared/Modal';
+import { ChevronButtonWrapper } from '../general/style';
 import ConnectionIcon from '@/assets/icons/Connection';
 import ComponentIcon from '@/assets/icons/Component';
 import MeshModelComponent from './MeshModelComponent';
@@ -46,17 +45,6 @@ import {
 import { removeDuplicateVersions } from './helper';
 
 const DRAWER_WIDTH = 250;
-
-const DrawerHeader = styled('div', {
-  shouldForwardProp: (prop) => prop !== 'open',
-})<{ open?: boolean }>(({ theme, open }) => ({
-  display: 'flex',
-  alignItems: 'flex-end',
-  justifyContent: open ? 'flex-end' : 'center',
-  marginBottom: '1rem',
-  height: '100%',
-  ...theme.mixins.toolbar,
-}));
 
 const StyledDrawer = styled(Drawer, { shouldForwardProp: (prop) => prop !== 'open' })<{
   open?: boolean;
@@ -170,17 +158,17 @@ interface CountSummary {
 const getNavItems = (theme: ReturnType<typeof useTheme>, counts: CountSummary): NavItemDef[] => [
   {
     id: MODELS,
-    label: `Models (${counts.models})`,
+    label: `Models (${counts.models?.toLocaleString() || 0})`,
     icon: <FileIcon {...iconSmall} fill={theme.palette.icon.default} />,
   },
   {
     id: COMPONENTS,
-    label: `Components (${counts.components})`,
+    label: `Components (${counts.components?.toLocaleString() || 0})`,
     icon: <ComponentIcon {...iconSmall} fill={theme.palette.icon.default} />,
   },
   {
     id: RELATIONSHIPS,
-    label: `Relationships (${counts.relationships})`,
+    label: `Relationships (${counts.relationships?.toLocaleString() || 0})`,
     icon: (
       <ConnectionIcon
         {...iconSmall}
@@ -192,7 +180,7 @@ const getNavItems = (theme: ReturnType<typeof useTheme>, counts: CountSummary): 
   },
   {
     id: REGISTRANTS,
-    label: `Registrants (${counts.registrants})`,
+    label: `Registrants (${counts.registrants?.toLocaleString() || 0})`,
     icon: <DatabaseIcon {...iconSmall} fill={theme.palette.icon.default} />,
   },
 ];
@@ -329,11 +317,6 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
             />
           ))}
         </List>
-        <DrawerHeader open={open}>
-          <IconButton onClick={handleDrawerToggle}>
-            {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
-        </DrawerHeader>
       </StyledDrawer>
       <StyledMainContent>
         <RegistryContentWrapper
@@ -342,6 +325,35 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
           selectedItemUUID={selectedItemUUID}
         />
       </StyledMainContent>
+      <ChevronButtonWrapper
+        isCollapsed={!open}
+        onClick={handleDrawerToggle}
+        sx={{
+          position: 'absolute',
+          bottom: '12%',
+          left: open
+            ? `${DRAWER_WIDTH}px`
+            : {
+                xs: `calc(${theme.spacing(7)} + 1px - 1.2rem)`,
+                sm: `calc(${theme.spacing(8)} + 1px - 1.2rem)`,
+              },
+          right: 'auto',
+          top: 'auto',
+          zIndex: 1400,
+        }}
+      >
+        <LeftArrowIcon
+          aria-label="Sidebar collapse toggle"
+          style={{
+            cursor: 'pointer',
+            verticalAlign: 'middle',
+          }}
+          fill={theme.palette.icon.default}
+          stroke={theme.palette.icon.default}
+          width="1.2rem"
+          height="2.8rem"
+        />
+      </ChevronButtonWrapper>
     </Box>
   );
 };

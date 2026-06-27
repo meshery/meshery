@@ -1,0 +1,50 @@
+{
+  "id": "a80cbbcc-553c-4609-861e-67590ddfe7d3",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "network",
+  "status": "enabled",
+  "evaluationQuery": "edge_network_relationship",
+  "metadata": {
+    "description": "AWS EventBridge Rule routes matched events to an AWS SQS Queue."
+  },
+  "model": {
+    "name": "aws-eventbridge-controller",
+    "version": "v1.0.23",
+    "displayName": "AWS EventBridge Controller",
+    "registrant": {
+      "kind": "github"
+    }
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Rule",
+            "model": {
+              "name": "aws-eventbridge-controller",
+              "version": "v1.0.23",
+              "displayName": "AWS EventBridge Controller",
+              "registrant": { "kind": "github" }
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Queue",
+            "model": {
+              "name": "aws-sqs-controller",
+              "version": "v1.0.0",
+              "displayName": "AWS SQS Controller",
+              "registrant": { "kind": "github" }
+            }
+          }
+        ]
+      },
+      "deny": { "from": [], "to": [] }
+    }
+  ]
+}

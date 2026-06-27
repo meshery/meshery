@@ -4,7 +4,6 @@ import Moment from 'react-moment';
 import { MoreHoriz as MoreHorizIcon } from '@/assets/icons';
 import CustomToolbarSelect from '../CustomToolbarSelect';
 import MesheryChart from '../MesheryChart';
-import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import MesheryResultDialog from '../MesheryResultDialog';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -344,10 +343,6 @@ const MesheryResults = () => {
       expandableRows: true,
       renderExpandableRow: (rowData, rowMeta) => {
         const row = results[rowMeta.dataIndex].runner_results;
-        const boardConfig = results[rowMeta.dataIndex].server_board_config;
-        const serverMetrics = results[rowMeta.dataIndex].server_metrics;
-        const startTime = new Date(row.StartTime);
-        const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
         const colSpan = rowData.length + 1;
 
         return (
@@ -356,19 +351,6 @@ const MesheryResults = () => {
               <div>
                 <MesheryChart rawdata={[results[rowMeta.dataIndex]]} data={[row]} hideTitle />
               </div>
-              {boardConfig && Object.keys(boardConfig).length > 0 && (
-                <div>
-                  <GrafanaCustomCharts
-                    boardPanelConfigs={[boardConfig]}
-                    boardPanelData={[serverMetrics]}
-                    startDate={startTime}
-                    from={startTime.getTime().toString()}
-                    endDate={endTime}
-                    to={endTime.getTime().toString()}
-                    liveTail={false}
-                  />
-                </div>
-              )}
             </TableCell>
           </TableRow>
         );
@@ -392,11 +374,7 @@ const MesheryResults = () => {
         <MesheryResultDialog rowData={selectedRowData} close={resetSelectedRowData} />
       )}
       <MUIDataTable
-        title={
-          <Box fontWeight="bolder" fontSize="18">
-            Performance Test Results
-          </Box>
-        }
+        title={<Box sx={{ fontWeight: 'bolder', fontSize: '18' }}>Performance Test Results</Box>}
         data={resultsForDisplay}
         columns={columns}
         options={options}

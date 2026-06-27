@@ -1,0 +1,81 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "You are binding an Authorizer to a specific Route to enforce security and access control on the API endpoint.",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+  "model": {
+    "version": "",
+    "name": "aws-apigatewayv2-controller",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": "github"
+    },
+    "model": {
+      "version": "v1.2.1"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Route",
+            "model": {
+              "name": "aws-apigatewayv2-controller",
+              "version": ""
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "authorizerID"
+                ]
+              ],
+              "description": "The Route is mutated to include the Authorizer's identifier."
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Authorizer",
+            "model": {
+              "name": "aws-apigatewayv2-controller",
+              "version": ""
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "description": "The Authorizer acts as the mutator, providing its identity to secure the Route."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "reference",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}

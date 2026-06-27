@@ -1,0 +1,99 @@
+{
+  "id": "fe2d1235-31de-43c1-a6c3-eeb9443779b9",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "SNS topics fan out messages to SQS queues in publish-subscribe architectures. When an SNS topic receives a message, it delivers copies to all subscribed SQS queues, enabling decoupled, scalable event distribution across multiple downstream consumers.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "version": "",
+    "name": "aws-sns-controller",
+    "displayName": "AWS SNS Controller",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": "github"
+    },
+    "model": {
+      "version": "v1.3.2"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Topic",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-sns-controller",
+              "displayName": "AWS SNS Controller",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "topicARN"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Queue",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-sqs-controller",
+              "displayName": "AWS SQS Controller",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "network",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}

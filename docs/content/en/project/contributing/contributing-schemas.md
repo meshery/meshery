@@ -635,7 +635,7 @@ metadata:
 
 The extensions above are all consumed by Meshery's internal build pipeline. `x-annotations` is different — it is the designated extension point for **remote providers** to attach provider-specific metadata to Meshery schemas at runtime. Meshery core does not read, validate, or act on `x-annotations`; only your provider-side code does.
 
-For full documentation including usage boundaries and a concrete example, see [Extensibility: Schemas](/reference/extensibility/schemas/).
+For full documentation including usage boundaries and a concrete example, see [Extensibility: Schemas]({{< ref "reference/extensibility/schemas.md" >}}).
 
 ---
 

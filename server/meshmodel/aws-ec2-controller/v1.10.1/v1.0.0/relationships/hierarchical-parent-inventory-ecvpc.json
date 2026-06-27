@@ -1,0 +1,99 @@
+{
+  "id": "5c58aff9-56f3-4163-b5ff-1ff6e612c373",
+  "evaluationQuery": "",
+  "kind": "hierarchical",
+  "metadata": {
+    "description": "EC2 instances must be launched within a VPC, which provides the foundational network isolation layer. The VPC defines the IP address range, subnets, route tables, and network gateways that govern all network traffic to and from the instance.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "version": "",
+    "name": "aws-ec2-controller",
+    "displayName": "AWS EC2 Controller",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": "github"
+    },
+    "model": {
+      "version": "v1.10.1"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Instance",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-ec2-controller",
+              "displayName": "AWS EC2 Controller",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "subnetID"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "VPC",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-ec2-controller",
+              "displayName": "AWS EC2 Controller",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "inventory",
+  "status": "enabled",
+  "type": "parent",
+  "version": "v1.0.0"
+}

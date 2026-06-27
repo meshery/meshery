@@ -2,40 +2,161 @@ name: Release Notes Publisher
 
 on:
   release:
-    types: 'published'
+    types:
+      - published
+  workflow_dispatch:
+    inputs:
+      debug_mode:
+        description: Enable debug logging
+        required: false
+        default: false
+        type: boolean
+      release-tag:
+        description: Release tag to publish into docs
+        required: true
+        type: string
+      prerelease:
+        description: Whether this release is a prerelease
+        required: false
+        default: false
+        type: boolean
+      release-body:
+        description: Release notes markdown body to publish into docs
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-notes-publisher
+  cancel-in-progress: false
 
 jobs:
   update_release_notes_docs:
-      runs-on: ubuntu-24.04
-      steps:
-        - name: Checkout
-          uses: actions/checkout@master
-          with:
-            token: ${{ secrets.RELEASE_NOTES_PAT }}
-            ref: 'master'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: 🔍 Introspect Inputs
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || false }}"
+          echo "Release Tag Input: ${{ inputs['release-tag'] || '' }}"
+          echo "Prerelease Input: ${{ inputs.prerelease || false }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Release Tag From Event: ${{ github.event.release.tag_name || '' }}"
+          echo "Release Prerelease From Event: ${{ github.event.release.prerelease || false }}"
+          echo "::endgroup::"
 
-        - name: Get Release Info
-          run: |
-            curl -s https://api.github.com/repos/meshery/meshery/releases/latest > latest_release.json
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.RELEASE_NOTES_PAT }}
+          ref: master
+          fetch-depth: 0
 
-            export RELEASE_TAG=$( cat latest_release.json | jq '.["tag_name"]' | tr -d '"')
-            export PRERELEASE=$( cat latest_release.json | jq '.["prerelease"]' | tr -d '"')
-            export RELEASE_BODY=$( cat latest_release.json | jq '.["body"]' | tr -d '"')
+      - name: Prepare release notes file
+        id: prepare_release_notes
+        uses: actions/github-script@v8
+        env:
+          MANUAL_RELEASE_TAG: ${{ inputs['release-tag'] || '' }}
+          MANUAL_RELEASE_BODY: ${{ inputs['release-body'] || '' }}
+          MANUAL_PRERELEASE: ${{ inputs.prerelease || false }}
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
 
-            PROCESSED_BODY=$(echo "$RELEASE_BODY" | sed -E 's|(\[)|\\\1|g; s|(\])|\\\1|g')
+            const isManual = context.eventName === 'workflow_dispatch';
+            const tag = (isManual ? process.env.MANUAL_RELEASE_TAG : context.payload.release?.tag_name || '').trim();
+            const prerelease = isManual
+              ? `${process.env.MANUAL_PRERELEASE}`.toLowerCase() === 'true'
+              : Boolean(context.payload.release?.prerelease);
+            const body = isManual ? process.env.MANUAL_RELEASE_BODY : (context.payload.release?.body || '');
 
-            printf '%b\n' "---\ntitle: $RELEASE_TAG\ndate: $(date +'%Y-%m-%d')\ntag: $RELEASE_TAG\nprerelease: $PRERELEASE\n---\n\n$PROCESSED_BODY" > ./docs/content/en/project/releases/$RELEASE_TAG.md
+            if (!tag) {
+              core.setFailed('Unable to determine the release tag for the docs update.');
+              return;
+            }
 
-        - name: Pull changes from remote
-          run: git pull origin master
+            const processedBody = body.replace(/\[/g, '\\[').replace(/\]/g, '\\]');
+            const content = [
+              '---',
+              `title: ${tag}`,
+              `date: ${new Date().toISOString().slice(0, 10)}`,
+              `tag: ${tag}`,
+              `prerelease: ${prerelease}`,
+              '---',
+              '',
+              processedBody,
+              '',
+            ].join('\n');
 
-        - name: Commit
-          uses: stefanzweifel/git-auto-commit-action@v7
-          with:
-            file_pattern: docs
-            commit_user_name: l5io
-            commit_user_email: ci@meshery.io
-            commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-            commit_options: '--signoff'
-            commit_message: '[Docs] Release Notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}'
-            branch: master
+            const releaseFile = path.join(process.env.GITHUB_WORKSPACE, 'docs', 'content', 'en', 'project', 'releases', `${tag}.md`);
+            const tempFile = path.join(process.env.RUNNER_TEMP, `release-notes-${tag}.md`);
+
+            fs.writeFileSync(releaseFile, content, 'utf8');
+            fs.writeFileSync(tempFile, content, 'utf8');
+
+            core.info(`Prepared release notes for ${tag} at ${releaseFile}`);
+            core.setOutput('release_tag', tag);
+            core.setOutput('release_file', releaseFile);
+            core.setOutput('temp_file', tempFile);
+
+      - name: Commit and push release notes
+        env:
+          RELEASE_FILE: ${{ steps.prepare_release_notes.outputs.release_file }}
+          RELEASE_TAG: ${{ steps.prepare_release_notes.outputs.release_tag }}
+          TEMP_FILE: ${{ steps.prepare_release_notes.outputs.temp_file }}
+        run: |
+          git config user.name l5io
+          git config user.email ci@meshery.io
+
+          for attempt in 1 2 3; do
+            echo "Attempt ${attempt}: syncing release notes on top of origin/master"
+            git fetch origin master
+            git checkout master
+            git reset --hard origin/master
+
+            cp "$TEMP_FILE" "$RELEASE_FILE"
+            git add "$RELEASE_FILE"
+
+            if git diff --cached --quiet; then
+              echo "Release notes for ${RELEASE_TAG} are already up to date."
+              exit 0
+            fi
+
+            git commit --signoff -m "[Docs] Release Notes for Meshery ${RELEASE_TAG}" --author="${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
+
+            if git push origin HEAD:master; then
+              exit 0
+            fi
+
+            git reset --hard origin/master
+            sleep $((attempt * 10))
+          done
+
+          echo "Failed to publish release notes for ${RELEASE_TAG} after repeated push retries."
+          exit 1
+
+      - name: 🚨 Email Alert on Failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v7
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "Workflow Failed: ${{ github.workflow }}"
+          to: maintainers@meshery.io
+          from: support@meshery.io
+          secure: true
+          body: |
+            The release notes publishing workflow failed.
+            Repository: ${{ github.repository }}
+            Workflow: ${{ github.workflow }}
+            Run URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Event: ${{ github.event_name }}
+            Release Tag: ${{ steps.prepare_release_notes.outputs.release_tag || github.event.release.tag_name || inputs['release-tag'] || 'unknown' }}

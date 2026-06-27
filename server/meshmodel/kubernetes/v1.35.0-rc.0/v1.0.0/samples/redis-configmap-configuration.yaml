@@ -1,0 +1,78 @@
+name: Redis Configuration with ConfigMap
+metadata:
+  complexity: basic
+  category: App-Database
+  sub-category: Redis
+  description: "A production-ready Kubernetes design pattern for deploying Redis with externalized configuration using ConfigMaps. This design includes health probes, resource limits, and security best practices."
+services:
+  redis-config:
+    type: ConfigMap
+    apiVersion: v1
+    namespace: default
+    model: kubernetes
+    settings:
+      data:
+        redis.conf: |
+          maxmemory 96mb
+          maxmemory-policy allkeys-lru
+  redis-server:
+    type: Deployment
+    apiVersion: apps/v1
+    namespace: default
+    model: kubernetes
+    settings:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: redis
+      template:
+        metadata:
+          labels:
+            app: redis
+        spec:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            fsGroup: 999
+          containers:
+            - name: redis
+              image: redis:7.0-alpine
+              command:
+                - redis-server
+                - "/redis-master/redis.conf"
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+              resources:
+                requests:
+                  memory: "64Mi"
+                  cpu: "100m"
+                limits:
+                  memory: "128Mi"
+                  cpu: "250m"
+              readinessProbe:
+                exec:
+                  command:
+                    - redis-cli
+                    - ping
+                initialDelaySeconds: 5
+                periodSeconds: 10
+              livenessProbe:
+                exec:
+                  command:
+                    - redis-cli
+                    - ping
+                initialDelaySeconds: 15
+                periodSeconds: 20
+              volumeMounts:
+                - name: config
+                  mountPath: /redis-master
+          volumes:
+            - name: config
+              configMap:
+                name: redis-config
+                items:
+                  - key: redis.conf
+                    path: redis.conf
