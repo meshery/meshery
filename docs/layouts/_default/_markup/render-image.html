@@ -1,2 +1,2 @@
-<img class="content-image" src="{{ .Destination | safeURL }}" alt="{{ .Text }}" {{ with .Title }}title="{{ . }}" {{ end
+<img class="content-image" src="{{ cond (hasPrefix .Destination "/") (.Destination | relURL) (.Destination | safeURL) }}" alt="{{ .Text }}" {{ with .Title }}title="{{ . }}" {{ end
     }} />

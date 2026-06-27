@@ -8,8 +8,8 @@ port: 10000/gRPC
 project_status: stable
 lab: istio-meshery-adapter
 github_link: https://github.com/meshery/meshery-istio
-image: /extensions/adapters/istio/images/istio.svg
-white_image: /extensions/adapters/istio/images/istio-white.svg
+image: extensions/adapters/istio/images/istio.svg
+white_image: extensions/adapters/istio/images/istio-white.svg
 aliases: 
 - /service-meshes/adapters/istio
 - /extensibility/adapters/istio
@@ -28,12 +28,12 @@ aliases:
 
 The Meshery Adapter for Istio includes a handful of sample applications. Use Meshery to deploy any of these sample applications:
 
-- [Bookinfo](/guides/infrastructure-management/sample-apps#bookinfo)
-- [Httpbin](/guides/infrastructure-management/sample-apps#httpbin)
+- [Bookinfo]({{< ref "guides/infrastructure-management/sample-apps/index.md#bookinfo" >}})
+- [Httpbin]({{< ref "guides/infrastructure-management/sample-apps/index.md#httpbin" >}})
   - Httpbin is a simple HTTP request and response service.
-- [Online Boutique](/guides/infrastructure-management/sample-apps#online-boutique)
+- [Online Boutique]({{< ref "guides/infrastructure-management/sample-apps/index.md#online-boutique" >}})
   - Online Boutique Application is a web-based, e-commerce demo application from the Google Cloud Platform.
-- [Image Hub](/guides/infrastructure-management/sample-apps#imagehub)
+- [Image Hub]({{< ref "guides/infrastructure-management/sample-apps/index.md#imagehub" >}})
   - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.
 
 ## Using Cloud Native Standards
@@ -60,14 +60,13 @@ On demand, the Meshery Adapter for Istio will parse all of Istio's configuration
 
 Meshery allows you to apply configuration to your infrastructure deployment. You can paste (or type in) any Kubernetes manifest that you would like to have applied to your infrastructure, in fact, you can apply any configuration that you would like to your Kubernetes cluster. This configuration may be VirtualServices, DestinationRules or any other custom Istio resource.
 
-<a href="/extensions/adapters/istio/images/istio-adapter-custom-configuration.png">
-  <img style="width:500px;" src="/extensions/adapters/istio/images/istio-adapter-custom-configuration.png" />
+<a href="images/istio-adapter-custom-configuration.png">
+  <img style="width:500px;" src="images/istio-adapter-custom-configuration.png" />
 </a>
 
 Add-on resources can be applied **or** deleted using this custom configuration operation.
 
 ### Suggested Topics
 
-- Examine [Meshery's architecture](/architecture) and how adapters fit in as a component.
-- Learn more about [Meshery Adapters](/architecture/adapters).
-
+- Examine [Meshery's architecture]({{< ref "concepts/architecture/_index.md" >}}) and how adapters fit in as a component.
+- Learn more about [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}}).

@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"net/url"
 	"os"
 	"os/signal"
@@ -60,7 +59,7 @@ const (
 	// primary provider host (install/providers.env) so it cannot drift from the
 	// PROVIDER_BASE_URLS default seeded into viper below.
 	DefaultProviderURL = models.PrimaryProviderURL
-	RelationshipsPath  = "../meshmodel/kubernetes/"
+	RelationshipsPath  = "../../models/kubernetes/"
 )
 
 func main() {
@@ -215,7 +214,6 @@ func main() {
 	adapterURLs := utils.SplitAndTrim(viper.GetString("ADAPTER_URLS"), ", \t\n\r")
 
 	adapterTracker := helpers.NewAdaptersTracker(adapterURLs)
-	queryTracker := helpers.NewUUIDQueryTracker()
 
 	// Uncomment line below to generate a new UUID and force the user to login every time Meshery is started.
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.NewV4().Bytes()))
@@ -259,6 +257,7 @@ func main() {
 		models.K8sContext{},
 		schemasOrganization.Organization{},
 		models.Key{},
+		&models.Credential{},
 		connections.Connection{},
 		environment.Environment{},
 		environment.EnvironmentConnectionMapping{},
@@ -317,17 +316,10 @@ func main() {
 		// complete and the tracker has been built around the final
 		// `provs` map. The handlers must not access it before that
 		// assignment, but every route is registered after.
-		PlaygroundBuild:        viper.GetBool("PLAYGROUND"),
-		AdapterTracker:         adapterTracker,
-		QueryTracker:           queryTracker,
+		PlaygroundBuild: viper.GetBool("PLAYGROUND"),
+		AdapterTracker:  adapterTracker,
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
-
-		GrafanaClient:         models.NewGrafanaClient(&log),
-		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}, &log),
-
-		PrometheusClient:         models.NewPrometheusClient(&log),
-		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}, &log),
 
 		PatternChannel:            models.NewBroadcaster("Patterns"),
 		FilterChannel:             models.NewBroadcaster("Filters"),
@@ -470,11 +462,29 @@ func main() {
 		defer rp.StopSyncPreferences()
 	}
 
-	// verifies if the provider specified in the "PROVIDER" environment variable is from one of the supported providers.
-	// If it is one of the supported providers, the server gets configured to auto select the specified provider,
-	// else the provider specified in the environment variable is ignored and  each time user logs in they need to select a provider.
-	isProviderEnvVarValid := models.VerifyMesheryProvider(providerEnvVar, provs)
-	if !isProviderEnvVarValid {
+	// Resolve the configured PROVIDER to Meshery's internal registration key.
+	// Remote providers are registered under a stable key (typically URL host)
+	// before their async /capabilities probe reveals the canonical
+	// providerName, so a pre-selected remote such as PROVIDER=Meshery may need
+	// one bounded probe here to avoid falling back to the chooser.
+	resolveStart := time.Now()
+	resolvedProviderKey, providerResolved := models.ResolveProviderKeyWithProbe(ctx, providerEnvVar, provs)
+	if probeElapsed := time.Since(resolveStart); providerEnvVar != "" && probeElapsed > time.Second {
+		// Surface the boot-time remote /capabilities probe so operators can
+		// see why startup paused (each parallel probe waits up to 15s on an
+		// unreachable configured remote before timing out).
+		log.Infof("resolving configured PROVIDER %q required a remote capability probe that took %s", providerEnvVar, probeElapsed.Round(time.Millisecond))
+	}
+	if providerResolved {
+		providerEnvVar = resolvedProviderKey
+	} else {
+		if providerEnvVar != "" {
+			// Informational, not an error: a configured PROVIDER that
+			// matches no registered provider is a valid fallback to the
+			// chooser, but operators should be able to see why auto-select
+			// did not engage.
+			log.Infof("configured PROVIDER %q could not be resolved to any registered provider; falling back to the provider chooser", providerEnvVar)
+		}
 		providerEnvVar = ""
 	}
 

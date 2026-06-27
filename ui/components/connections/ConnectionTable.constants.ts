@@ -51,59 +51,38 @@ export const ACTION_TYPES = {
   },
 };
 
-const kubernetesConnectionTransitions = {
-  connected: {
-    disconnected:
-      'Are you sure you want to transition from CONNECTED to DISCONNECTED? This will perform planned maintenance by removing the operator but keeping the cluster registered.',
-    ignored:
-      'Are you sure you want to transition from CONNECTED to IGNORED? This will mark the connection as ignored due to unplanned maintenance, without deleting the registration.',
-    deleted:
-      'Are you sure you want to transition from CONNECTED to DELETED? This will undeploy the operator and unregister the cluster completely.',
-    'not found':
-      'Are you sure you want to transition from CONNECTED to NOT FOUND? Meshery could not connect to the cluster or it is currently unavailable. You can either delete the connection or try re-registering.',
-  },
-  disconnected: {
-    connected:
-      'Are you sure you want to transition from DISCONNECTED to CONNECTED? This will reconnect the cluster and redeploy the operator after maintenance.',
-    deleted:
-      'Are you sure you want to transition from DISCONNECTED to DELETED? This will remove the cluster completely by undeploying the operator and unregistering.',
-  },
-  ignored: {
-    deleted:
-      'Are you sure you want to transition from IGNORED to DELETED? This will completely remove the ignored cluster by undeploying the operator and unregistering.',
-    registered:
-      'Are you sure you want to transition from IGNORED to REGISTER? This will reinitiate the registration process for the ignored connection and attempt to connect it again.',
-  },
-  'not found': {
-    discovered:
-      'Are you sure you want to transition from NOT FOUND to DISCOVERED? You are trying to re-register the cluster. Meshery will attempt to reconnect to the cluster.',
-    deleted:
-      'Are you sure you want to transition from NOT FOUND to DELETED? This will remove the unreachable connection completely by unregistering it.',
-  },
+// A single permissible state transition for a connection, mirroring the
+// `ConnectionStateTransition` schema (meshery/schemas v1beta3/connection).
+export type ConnectionStateTransition = {
+  nextState: string;
+  description?: string;
 };
 
-// <connection-kind>: TransitionMap (status:{status:description})
-export const CONNECTION_STATE_TRANSITIONS = {
-  kubernetes: kubernetesConnectionTransitions,
-};
+// `transitionMap` from a connection definition: keyed by current status, each
+// value is the list of states reachable from that status. Authored per-kind in
+// meshery core (models/.../connections/*.json) and surfaced to the UI
+// via the connection definitions, replacing the previously hardcoded map.
+export type ConnectionTransitionMap = Record<string, ConnectionStateTransition[]>;
 
+// The states a connection may transition to from its current status.
+export const getNextStates = (
+  transitionMap: ConnectionTransitionMap | undefined,
+  currentStatus: string,
+): string[] => (transitionMap?.[currentStatus] ?? []).map((transition) => transition.nextState);
+
+// The human-readable description for a specific transition, falling back to a
+// generic prompt when the definition does not describe it.
 export const getStatusTransition = (
-  connectionKind: string,
+  transitionMap: ConnectionTransitionMap | undefined,
   connectionState: string,
   transitionState: string,
 ) => {
-  // This is for one connection kind that is kubernetes, and adding other connection kinds
-  // here will make it more complex.
-  // This issue can be resolved if we add the transition messages in the connection schemas
-  // and use the same schema to get the transition messages.
-  // Github issue: https://github.com/meshery/schemas/issues/303
+  const transition = transitionMap?.[connectionState]?.find((t) => t.nextState === transitionState);
 
-  switch (connectionKind) {
-    case 'kubernetes':
-      return kubernetesConnectionTransitions[connectionState][transitionState];
-    default:
-      return `Are you sure you want to transition from ${connectionState} to ${transitionState}?`;
-  }
+  return (
+    transition?.description ||
+    `Are you sure you want to transition from ${connectionState.toUpperCase()} to ${transitionState.toUpperCase()}?`
+  );
 };
 
 export const CONNECTION_DOCS_URL = `https://docs.meshery.io/concepts/logical/connections#states-and-the-lifecycle-of-connections`;

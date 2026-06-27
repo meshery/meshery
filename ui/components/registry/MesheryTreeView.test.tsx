@@ -32,7 +32,7 @@ vi.mock('@sistent/sistent', () => ({
   ),
   CircularProgress: () => <div data-testid="loading-spinner" />,
   Typography: ({ children }: any) => <span>{children}</span>,
-  InfoOutlined: () => <svg data-testid="info-icon" />,
+  InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
 }));
 
 vi.mock('../../constants/navigator', () => ({
@@ -40,6 +40,7 @@ vi.mock('../../constants/navigator', () => ({
   COMPONENTS: 'Components',
   RELATIONSHIPS: 'Relationships',
   REGISTRANTS: 'Registrants',
+  CONNECTIONS: 'Connections',
 }));
 
 vi.mock('@/utils/custom-search', () => ({
@@ -112,6 +113,10 @@ vi.mock('./ComponentTree', () => ({
 
 vi.mock('./RelationshipTree', () => ({
   default: (props: any) => <div data-testid="relationships-tree" data-len={props.data.length} />,
+}));
+
+vi.mock('./ConnectionDefinitionTree', () => ({
+  default: (props: any) => <div data-testid="connections-tree" data-len={props.data.length} />,
 }));
 
 import MesheryTreeView from './MesheryTreeView';

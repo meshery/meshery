@@ -7,9 +7,7 @@ import {
   Grid2,
   FormControl,
   TableCell,
-  // Sistent re-exports InfoOutlinedIcon as `InfoOutlined`; alias on
-  // import so call sites stay unchanged.
-  InfoOutlined as InfoOutlinedIcon,
+  InfoOutlinedIcon,
 } from '@sistent/sistent';
 import { ConnectionStyledSelect } from './styles';
 import { FormatId } from '../data-formatter';
@@ -25,7 +23,8 @@ import { keys } from '@/utils/permission_constants';
 import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { formatDate } from '../data-formatter';
 import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
-import { CONNECTION_STATE_TRANSITIONS } from './ConnectionTable.constants';
+import { getNextStates } from './ConnectionTable.constants';
+import type { ConnectionTransitionMap } from './ConnectionTable.constants';
 import type { EnvironmentOption, RowData } from './ConnectionTable.types';
 
 type UseConnectionColumnsArgs = {
@@ -50,6 +49,10 @@ type UseConnectionColumnsArgs = {
   ) => void | Promise<void>;
   handleActionMenuOpen: (event: any, tableMeta: RowData) => void;
   ping: (name: string, server: string, id: string) => void;
+  pingGrafana: (connectionID: string, name?: string) => void;
+  // Per-kind connection state machine, keyed by connection kind. Sourced from
+  // the connection definitions' `transitionMap` (see `_app.tsx`).
+  transitionMapByKind: Record<string, ConnectionTransitionMap | undefined> | null;
 };
 
 export const useConnectionColumns = ({
@@ -63,6 +66,8 @@ export const useConnectionColumns = ({
   handleStatusChange,
   handleActionMenuOpen,
   ping,
+  pingGrafana,
+  transitionMapByKind,
 }: UseConnectionColumnsArgs) => {
   return useMemo(() => {
     const nextColumns = [
@@ -120,17 +125,23 @@ export const useConnectionColumns = ({
               <>
                 <TooltipWrappedConnectionChip
                   tooltip={server ? `Server: ${server}` : ''}
-                  title={kind === CONNECTION_KINDS.KUBERNETES ? name : value}
+                  title={kind === CONNECTION_KINDS.KUBERNETES ? name : value || name || kind}
                   status={getColumnValue(tableMeta.rowData, 'status', nextColumns)}
                   onDelete={() =>
                     handleDeleteConnection(getColumnValue(tableMeta.rowData, 'id', nextColumns))
                   }
                   handlePing={() => {
-                    if (getColumnValue(tableMeta.rowData, 'kind', nextColumns) === 'kubernetes') {
+                    const rowKind = getColumnValue(tableMeta.rowData, 'kind', nextColumns);
+                    if (rowKind === CONNECTION_KINDS.KUBERNETES) {
                       ping(
                         getColumnValue(tableMeta.rowData, 'metadata.name', nextColumns),
                         getColumnValue(tableMeta.rowData, 'metadata.server', nextColumns),
                         getColumnValue(tableMeta.rowData, 'id', nextColumns),
+                      );
+                    } else if (rowKind === CONNECTION_KINDS.GRAFANA) {
+                      pingGrafana(
+                        getColumnValue(tableMeta.rowData, 'id', nextColumns),
+                        getColumnValue(tableMeta.rowData, 'name', nextColumns),
                       );
                     }
                   }}
@@ -405,9 +416,7 @@ export const useConnectionColumns = ({
             const currentStatus = value;
             const kind = getColumnValue(tableMeta.rowData, 'kind', nextColumns);
 
-            const nextStatus = Object.keys(
-              CONNECTION_STATE_TRANSITIONS?.[kind]?.[currentStatus] ?? {},
-            );
+            const nextStatus = getNextStates(transitionMapByKind?.[kind], currentStatus);
             nextStatus.push(currentStatus);
 
             const disabled =
@@ -486,7 +495,7 @@ export const useConnectionColumns = ({
           },
           customBodyRender: function CustomBody(_, tableMeta) {
             return (
-              <Box display={'flex'} justifyContent={'center'}>
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 {getColumnValue(tableMeta.rowData, 'kind', nextColumns) ===
                 CONNECTION_KINDS.KUBERNETES ? (
                   <IconButton
@@ -538,6 +547,8 @@ export const useConnectionColumns = ({
     handleStatusChange,
     isEnvironmentsSuccess,
     ping,
+    pingGrafana,
+    transitionMapByKind,
     updatingConnection,
     url,
   ]);
