@@ -757,13 +757,13 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	patternUUID := uuid.FromStringOrNil(patternID)
 	if patternID == "" || patternID == "undefined" || patternUUID == uuid.Nil {
-		err := ErrGetPattern(fmt.Errorf("invalid design ID: %s", patternID))
+		err := ErrDeletePattern(fmt.Errorf("invalid design ID: %s", patternID))
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusBadRequest)
 		return
 	}
 	userID := user.ID
-	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("delete").ActedUpon(uuid.FromStringOrNil(patternID))
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("delete").ActedUpon(patternUUID)
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
