@@ -11,10 +11,11 @@
 {{ if gt (len $models) 0 }}
 <div class="models-list">
   {{ range ($models.GroupByParam "integrations-category") }}
-    <h3 id="{{ replace .Key " " "-" }}">{{ .Key | default "Other Integrations" }}</h3>
+    {{- $categoryName := .Key | default "Other Integrations" -}}
+    <h3 id="{{ $categoryName | urlize }}">{{ $categoryName }}</h3>
     <ul>
-      {{ range .Pages }}
-        {{ if and (ne .Kind "section") (strings.Contains .File.Dir "/models/") }}
+      {{ range sort .Pages "Title" }}
+        {{ if ne .Kind "section" }}
         <li style="list-style-type: disc !important; margin: 2px 0 !important">
           <a href="{{ .RelPermalink }}">{{ .Title }}</a>
         </li>
