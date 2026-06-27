@@ -20,6 +20,13 @@ const LEFT_NAV = {
       DESIGNS: 'design',
     },
   },
+  TELEMETRY: {
+    name: 'telemetry',
+    NAV_ITEMS: {
+      CHARTS: 'Grafana',
+      METRICS: 'Prometheus',
+    },
+  },
   PERFORMANCE: {
     name: 'performance',
     NAV_ITEMS: {
@@ -76,6 +83,18 @@ export class DashboardPage {
 
   async navigateToExtensions() {
     await this.navigateToMenu(LEFT_NAV.EXTENSIONS.name);
+  }
+
+  async navigateToTelemetry() {
+    await this.navigateToMenu(LEFT_NAV.TELEMETRY.name);
+  }
+
+  async navigateToTelemetryCharts() {
+    await this.navigateToSubMenuItem(LEFT_NAV.TELEMETRY.name, LEFT_NAV.TELEMETRY.NAV_ITEMS.CHARTS);
+  }
+
+  async navigateToTelemetryMetrics() {
+    await this.navigateToSubMenuItem(LEFT_NAV.TELEMETRY.name, LEFT_NAV.TELEMETRY.NAV_ITEMS.METRICS);
   }
 
   async navigateToLifecycle() {

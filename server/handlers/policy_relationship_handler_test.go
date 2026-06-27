@@ -209,7 +209,7 @@ func seedTestComponent(t *testing.T, rm *registry.RegistryManager) {
 	id, err := comp.GenerateID()
 	require.NoError(t, err)
 	comp.ID = id
-	_, _, err = rm.RegisterEntity(conn, &comp)
+	_, _, err = rm.RegisterEntity(registry.RegistrantHostToV1beta3(conn), &comp)
 	require.NoError(t, err, "seedTestComponent: RegisterEntity failed")
 }
 
@@ -432,7 +432,7 @@ func seedNamespaceComponent(t *testing.T, rm *registry.RegistryManager) {
 	id, err := comp.GenerateID()
 	require.NoError(t, err)
 	comp.ID = id
-	_, _, err = rm.RegisterEntity(conn, &comp)
+	_, _, err = rm.RegisterEntity(registry.RegistrantHostToV1beta3(conn), &comp)
 	require.NoError(t, err, "seedNamespaceComponent: RegisterEntity failed")
 }
 
