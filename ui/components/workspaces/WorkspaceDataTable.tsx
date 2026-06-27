@@ -119,7 +119,7 @@ const WorkspaceDataTable = ({
         sort: true,
         customBodyRender: (value) => {
           return (
-            <Box display="flex" gap={'0.5rem'}>
+            <Box sx={{ display: 'flex', gap: '0.5rem' }}>
               <WorkspaceIcon {...iconSmall} fill={theme.palette.icon.default} />
               {value}
             </Box>

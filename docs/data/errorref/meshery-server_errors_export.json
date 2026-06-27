@@ -289,7 +289,7 @@
         "long_description": "",
         "short_description": "unable to get: ",
         "probable_cause": "Query parameter is not a part of the request",
-        "suggested_remediation": "Make sure to pass the query paramater in the request"
+        "suggested_remediation": "Make sure to pass the query parameter in the request"
       },
       "1033": {
         "name": "ErrGetResultCode",
@@ -712,7 +712,7 @@
         "long_description": "",
         "short_description": "Error failed to save filter",
         "probable_cause": "Cannot save the Filter due to wrong path or URL\nFilter is corrupted.",
-        "suggested_remediation": "Check if the given path or URL of the filter is correct\nTry uplaoding a different filter"
+        "suggested_remediation": "Check if the given path or URL of the filter is correct\nTry uploading a different filter"
       },
       "1080": {
         "name": "ErrDecodeFilterCode",
@@ -953,7 +953,7 @@
         "code": "1106",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "could not get meshmodel entitities",
+        "short_description": "could not get meshmodel entities",
         "probable_cause": "Meshmodel entity could not be converted into valid json\ndata in the registry was inconsistent",
         "suggested_remediation": "make sure correct and consistent data is present inside the registry\ndrop the Meshmodel tables and restart Meshery server"
       },
@@ -973,7 +973,7 @@
         "long_description": "",
         "short_description": "could not resolve rego relationship",
         "probable_cause": "The rego evaluation engine failed to resolve policies\nDesign-File/Application-File is in incorrect format\nThe policy query is invalid\nThe evaluation engine response is unexpected for the code written",
-        "suggested_remediation": "Make sure the design-file/application-file is a valid yaml\nMake sure you're proving correct rego query\nMake sure the server is evaluating the query correctly, add some logs"
+        "suggested_remediation": "Make sure the design-file/application-file is a valid yaml\nMake sure you're providing correct rego query\nMake sure the server is evaluating the query correctly, add some logs"
       },
       "1109": {
         "name": "ErrGetLatestVersionCode",
@@ -1144,7 +1144,7 @@
         "long_description": "",
         "short_description": "",
         "probable_cause": "Insufficient permissions to write into file\nfile might be corrupted",
-        "suggested_remediation": "check if sufficient permissions are givent to the file\ncheck if the file is corrupted"
+        "suggested_remediation": "check if sufficient permissions are given to the file\ncheck if the file is corrupted"
       },
       "1128": {
         "name": "ErrBuildOCIImgCode",
@@ -1226,15 +1226,6 @@
         "short_description": "Failed to convert helm chart to design",
         "probable_cause": "unable to convert helm chart to design\nhelm chart may be corrupted\nincorrect source type selected",
         "suggested_remediation": "check if the helm chart is valid and not corrupted\ncheck if the source type selected is Helm Chart"
-      },
-      "1137": {
-        "name": "ErrInvalidUUIDCode",
-        "code": "1137",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "invalid or empty uuid",
-        "probable_cause": "provided id is not a valid uuid",
-        "suggested_remediation": "provide a valid uuid"
       },
       "1138": {
         "name": "ErrErrNewDynamicClientGeneratorCode",
@@ -3258,8 +3249,8 @@
         "severity": "Alert",
         "long_description": "Unable to locate the compressed file(.tar.gz) inside the OCI image.",
         "short_description": "No tar file found inside OCI image",
-        "probable_cause": "The OCI image does not contain a ziped file.",
-        "suggested_remediation": "Verify that the OCI image contains a ziped file."
+        "probable_cause": "The OCI image does not contain a zipped file.",
+        "suggested_remediation": "Verify that the OCI image contains a zipped file."
       },
       "1366": {
         "name": "ErrFileTypeCode",
@@ -3837,9 +3828,63 @@
         "probable_cause": "The requested event is not valid from the connection's current state.\nA side-effect action attached to the transition (e.g. provisioning, discovery) returned an error.",
         "suggested_remediation": "Inspect the connection's current status before retrying. If the failure originates from a side-effect action, address the underlying cause (e.g. cluster reachability, credential validity) and retry."
       },
+      "1430": {
+        "name": "ErrTelemetryGrafanaCode",
+        "code": "1430",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The Grafana instance is unreachable or returned an error.\nThe stored credential (API key / basic auth) is missing, expired, or lacks permission.\nThe connection's URL is incorrect.",
+        "suggested_remediation": "Verify the Grafana URL is reachable from the Meshery server and that the connection's credential is valid, then retry."
+      },
       "1431": {
-        "name": "ErrYAMLUnmarshalCode",
+        "name": "ErrTelemetryPrometheusCode",
         "code": "1431",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The Prometheus instance is unreachable or returned an error.\nThe stored credential (API key / basic auth) is missing, expired, or lacks permission.\nThe connection's URL is incorrect.",
+        "suggested_remediation": "Verify the Prometheus URL is reachable from the Meshery server and that the connection's credential is valid, then retry."
+      },
+      "1432": {
+        "name": "ErrInvalidUUIDValueCode",
+        "code": "1432",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid UUID",
+        "probable_cause": "The provided identifier is not a valid UUID",
+        "suggested_remediation": "Provide a valid UUID"
+      },
+      "1433": {
+        "name": "ErrTelemetryGrafanaDatasourceCode",
+        "code": "1433",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The dashboard references a datasource by a name or uid that does not exist in this Grafana instance.\nThe datasource is provisioned only in a different environment.\nThe connection's credential cannot list datasources, so a name could not be resolved to a uid.",
+        "suggested_remediation": "Confirm the datasource exists in this Grafana instance and that the connection's credential has permission to read datasources."
+      },
+      "1434": {
+        "name": "ErrTelemetryGrafanaAuthCode",
+        "code": "1434",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Grafana rejected the connection's credential",
+        "probable_cause": "The API key / token is missing, expired, or invalid.\nThe credential lacks permission for this operation.",
+        "suggested_remediation": "Update the connection with a valid Grafana credential that has the required permissions, then retry."
+      },
+      "1435": {
+        "name": "ErrTelemetryPrometheusAuthCode",
+        "code": "1435",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Prometheus rejected the connection's credential",
+        "probable_cause": "The API key / token is missing, expired, or invalid.\nThe credential lacks permission for this operation.",
+        "suggested_remediation": "Update the connection with a valid Prometheus credential that has the required permissions, then retry."
+      },
+      "1436": {
+        "name": "ErrYAMLUnmarshalCode",
+        "code": "1436",
         "severity": "Alert",
         "long_description": "",
         "short_description": "failed to parse YAML configuration",

@@ -1,0 +1,121 @@
+{
+  "id": "00000000-0000-0000-0000-000000000001",
+  "evaluationQuery": "edge_non_binding_reference_relationship",
+  "kind": "edge",
+  "metadata": {
+    "description": "Deployment monitored by CloudWatch MetricStream",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+  "model": {
+    "version": "",
+    "name": "aws-cloudwatch-controller",
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000001",
+    "registrant": {
+      "kind": "github"
+    },
+    "model": {
+      "version": "v1.4.1"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "MetricStream",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "aws-cloudwatch-controller",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000001",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": "v1.4.1"
+              }
+            },
+            "patch": {
+              "patchStrategy": "add",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "includeFilters"
+                ]
+              ],
+              "value": {
+                "Namespace": "ContainerInsights",
+                "MetricNames": [
+                  "pod_cpu_utilization",
+                  "pod_memory_utilization"
+                ],
+                "Dimensions": [
+                  {
+                    "Name": "Namespace",
+                    "Value": "{{ .mutatedRef.namespace }}"
+                  },
+                  {
+                    "Name": "Service",
+                    "Value": "{{ .mutatedRef.name }}"
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Deployment",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000001",
+              "registrant": {
+                "kind": "github"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "metadata",
+                  "name"
+                ],
+                [
+                  "metadata",
+                  "namespace"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "reference",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}

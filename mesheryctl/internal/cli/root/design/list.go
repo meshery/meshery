@@ -33,7 +33,7 @@ var (
 )
 
 var linkDocPatternList = map[string]string{
-	"link":    "![pattern-list-usage](/reference/images/patternList.png)",
+	"link":    "![pattern-list-usage](../../../images/patternList.png)",
 	"caption": "Usage of mesheryctl design list",
 }
 
@@ -84,7 +84,7 @@ mesheryctl design list --count
 			if utils.IsLocalProvider(provider) {
 				return []string{"DESIGN ID", "NAME", "CREATED", "UPDATED"}
 			}
-			return []string{"DESIGN ID", "USER ID", "NAME", "CREATED", "UPDATED"}
+			return []string{"DESIGN ID", "OWNER", "NAME", "CREATED", "UPDATED"}
 		}(provider)
 
 		designData := display.DisplayDataAsync{
@@ -111,16 +111,16 @@ func processDesignData(data *models.PatternsAPIResponse) ([][]string, int64) {
 		updatedAt := formatTimeToString(v.UpdatedAt, verbose)
 
 		if !utils.IsLocalProvider(provider) {
-			userID := func(userID *string) string {
-				if userID != nil {
+			owner := func(owner *string) string {
+				if owner != nil {
 					if verbose {
-						return *userID
+						return *owner
 					}
-					return utils.TruncateID(*userID)
+					return utils.TruncateID(*owner)
 				}
 				return "null"
-			}(v.UserID)
-			displayData = append(displayData, []string{designId, userID, designName, createdAt, updatedAt})
+			}(v.Owner)
+			displayData = append(displayData, []string{designId, owner, designName, createdAt, updatedAt})
 		} else {
 			displayData = append(displayData, []string{designId, designName, createdAt, updatedAt})
 		}
@@ -136,7 +136,7 @@ func formatTimeToString(t *time.Time, isVerbose bool) string {
 }
 
 func init() {
-	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "(optional) Display full length user identifiers and detailed timestamps")
+	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "(optional) Display full length owner identifiers and detailed timestamps")
 	listCmd.Flags().IntVarP(&page, "page", "p", 1, "(optional) List next set of designs with --page")
 	listCmd.Flags().IntVarP(&pageSize, "pagesize", "", 10, "(optional) Number of designs to be displayed per page")
 	listCmd.Flags().BoolP("count", "c", false, "(optional) Display count only")

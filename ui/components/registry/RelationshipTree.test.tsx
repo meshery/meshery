@@ -29,11 +29,9 @@ vi.mock('../../assets/icons/DotSquare', () => ({
 }));
 
 vi.mock('./StyledTreeItem', () => ({
-  default: ({ itemId, labelText, onClick, children }: any) => (
-    <div data-testid={`tree-item-${itemId}`}>
-      <button onClick={onClick} data-testid={`tree-item-button-${itemId}`}>
-        {labelText}
-      </button>
+  default: ({ itemId, labelText, onClick, children, 'data-id': dataId }: any) => (
+    <div data-testid={`tree-item-${itemId}`} data-id={dataId} onClick={onClick}>
+      <button data-testid={`tree-item-button-${itemId}`}>{labelText}</button>
       {children}
     </div>
   ),
@@ -106,6 +104,7 @@ describe('RelationshipTree', () => {
 
     await user.click(screen.getByTestId('tree-item-button-r1.r2'));
 
+    expect(setShowDetailsData).toHaveBeenCalledTimes(1);
     expect(setShowDetailsData).toHaveBeenCalledWith({
       type: 'Relationships',
       data: sampleData[0].relationships[1],

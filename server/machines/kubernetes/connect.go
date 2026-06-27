@@ -27,7 +27,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 	userUUID := user.ID
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {

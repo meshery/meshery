@@ -6,8 +6,8 @@ import React, { useContext, useState, useEffect, FC } from 'react';
 import {
   AccessTimeFilledIcon,
   Box,
-  ChevronLeft,
-  ChevronRight,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   DesignIcon,
   Divider,
   ErrorBoundary,
@@ -237,7 +237,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
 
           <DrawerHeader open={open}>
             <IconButton onClick={handleDrawerToggle}>
-              {open ? <ChevronLeft /> : <ChevronRight />}
+              {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
           </DrawerHeader>
         </StyledDrawer>
