@@ -255,7 +255,7 @@ func init() {
 	updateCmd.PersistentFlags().StringVarP(&modelLocation, "input", "i", "./models", "relative or absolute input path to the models directory; when unset, the repo-root models directory is auto-detected (./models from the repo root, ../models from a subdirectory)")
 	_ = updateCmd.MarkPersistentFlagRequired("path")
 
-	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet it for the integration spreadsheet")
+	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 	updateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
 
