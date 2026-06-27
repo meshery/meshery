@@ -88,10 +88,13 @@ export const notificationCenterApi = api
         query: ({ page = 0, filters = {} }) => {
           const parsedFilters = parseFilters(filters);
           return {
-            url: `system/events`,
+            url: `/api/system/events`,
             params: {
               ...parsedFilters,
               page: page,
+              // `sort` here is the SQL column name, not a JSON field — the
+              // server passes it through to GORM via SanitizeOrderInput which
+              // whitelists DB column names (created_at, updated_at, name).
               sort: 'created_at',
               order: 'desc',
               pagesize: 15,
@@ -104,14 +107,19 @@ export const notificationCenterApi = api
       getEventsSummary: builder.query({
         query: ({ status }) => {
           return {
-            url: `system/events?page=0&pagesize=1&status=${status}`,
+            url: '/api/system/events',
+            params: {
+              page: 0,
+              pagesize: 1,
+              status,
+            },
           };
         },
         transformResponse: (response) => {
           return {
-            count_by_severity_level: response.count_by_severity_level,
-            total_count: response.total_count,
-            read_count: response.read_count || 0,
+            countBySeverityLevel: response.countBySeverityLevel,
+            totalCount: response.totalCount,
+            readCount: response.readCount || 0,
           };
         },
         providesTags: [PROVIDER_TAGS.EVENT],
@@ -119,7 +127,7 @@ export const notificationCenterApi = api
 
       updateStatus: builder.mutation({
         query: ({ id, status }) => ({
-          url: `system/events/status/${id}`,
+          url: `/api/system/events/status/${id}`,
           method: 'PUT',
           body: {
             status: status,
@@ -134,7 +142,7 @@ export const notificationCenterApi = api
 
       deleteEvent: builder.mutation({
         query: ({ id }) => ({
-          url: `system/events/${id}`,
+          url: `/api/system/events/${id}`,
           method: 'DELETE',
         }),
         async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
@@ -145,13 +153,13 @@ export const notificationCenterApi = api
       }),
 
       getEventFilters: builder.query({
-        query: () => `system/events/types`,
+        query: () => `/api/system/events/types`,
       }),
 
       //Bulk Operations
       updateEvents: builder.mutation({
         query: ({ ids, updatedFields }) => ({
-          url: `system/events/status/bulk`,
+          url: `/api/system/events/status/bulk`,
           method: 'PUT',
           body: {
             ids,
@@ -179,7 +187,7 @@ export const notificationCenterApi = api
 
       deleteEvents: builder.mutation({
         query: ({ ids }) => ({
-          url: `system/events/bulk`,
+          url: `/api/system/events/bulk`,
           method: 'DELETE',
           body: {
             ids,
@@ -196,22 +204,22 @@ export const notificationCenterApi = api
       // TODO: yet to be integrated
       getEventConfig: builder.query({
         query: () => ({
-          url: `system/events/config`,
+          url: `/api/system/events/config`,
           method: 'GET',
         }),
         transformResponse: (response) => ({
-          logLevel: response.event_log_level,
-          availableLevels: response.available_levels,
+          logLevel: response.eventLogLevel,
+          availableLevels: response.availableLevels,
         }),
         providesTags: [PROVIDER_TAGS.EVENT],
       }),
 
       updateEventConfig: builder.mutation({
         query: (logLevel) => ({
-          url: `system/events/config`,
+          url: `/api/system/events/config`,
           method: 'PUT',
           body: {
-            event_log_level: logLevel,
+            eventLogLevel: logLevel,
           },
         }),
         onQueryStarted: async (logLevel, { dispatch, queryFulfilled }) => {

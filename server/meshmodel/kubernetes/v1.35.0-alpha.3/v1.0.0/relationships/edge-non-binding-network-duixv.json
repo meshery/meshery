@@ -4,26 +4,26 @@
   "kind": "edge",
   "metadata": {
     "description": "",
+    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    },
-    "isAnnotation": false
+    }
   },
   "model": {
-    "version": "",
-    "name": "kubernetes",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.35.0-alpha.3"
+    },
+    "name": "kubernetes",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": "v1.35.0-alpha.3"
-    }
+    "version": ""
   },
-  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
@@ -46,19 +46,18 @@
               ]
             ],
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
@@ -79,7 +78,8 @@
                   "0",
                   "protocol"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -90,19 +90,18 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "configuration",
@@ -132,7 +131,8 @@
                   "0",
                   "protocol"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]
@@ -145,16 +145,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": null
           }
@@ -166,16 +166,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": null
           },
@@ -185,16 +185,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": null
           }
@@ -222,19 +222,18 @@
               ]
             ],
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
@@ -255,7 +254,8 @@
                   "0",
                   "protocol"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -266,19 +266,18 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "configuration",
@@ -308,7 +307,8 @@
                   "0",
                   "protocol"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]
@@ -321,16 +321,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": null
           }
@@ -342,16 +342,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": null
           },
@@ -361,16 +361,16 @@
             "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": null
           }
@@ -383,27 +383,26 @@
           {
             "id": null,
             "kind": "Service",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "displayName"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -411,29 +410,28 @@
           {
             "id": null,
             "kind": "EndpointSlice",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "metadata",
                   "labels",
                   "kubernetes.io/service-name"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]
@@ -449,22 +447,20 @@
           {
             "id": null,
             "kind": "Service",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatorRef": [
                 [
                   "configuration",
@@ -485,7 +481,8 @@
                   "0",
                   "protocol"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ],
@@ -493,22 +490,20 @@
           {
             "id": null,
             "kind": "Pod",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
-              "version": "",
-              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
-              "model": {
-                "version": ""
-              }
+              "version": ""
             },
             "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "metadata",
@@ -532,7 +527,8 @@
                   "0",
                   "protocol"
                 ]
-              ]
+              ],
+              "patchStrategy": "replace"
             }
           }
         ]

@@ -15,9 +15,8 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",
@@ -54,16 +53,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -205,6 +204,7 @@
     "kind": "ClusterPropagatedVersion",
     "schema": "{\n \"description\": \"ClusterPropagatedVersion holds version information about the state propagated from KubeFed APIs (configured by FederatedTypeConfig resources) to member clusters. The name of a ClusterPropagatedVersion encodes the kind and name of the resource it stores information for (i.e. \\u003clower-case kind\\u003e-\\u003cresource name\\u003e). If a target resource has a populated metadata.Generation field, the generation will be stored with a prefix of `gen:` as the version for the cluster.  If metadata.Generation is not available, metadata.ResourceVersion will be stored with a prefix of `rv:` as the version for the cluster.\",\n \"properties\": {},\n \"title\": \"Cluster Propagated Version\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

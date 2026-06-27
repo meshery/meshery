@@ -1,0 +1,296 @@
+{
+  "errors_export": {
+    "component_name": "meshery-linkerd",
+    "component_type": "adapter",
+    "errors": {
+      "1000": {
+        "name": "ErrEmptyConfigCode",
+        "code": "1000",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Config is empty",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1001": {
+        "name": "ErrGetLatestReleasesCode",
+        "code": "1001",
+        "severity": "Alert",
+        "long_description": "Unable to get the latest release info from the GithubAPI",
+        "short_description": "unable to fetch release info",
+        "probable_cause": "Checkout https://docs.github.com/en/rest/reference/repos#releases for more info",
+        "suggested_remediation": ""
+      },
+      "1002": {
+        "name": "ErrGetLatestReleaseNamesCode",
+        "code": "1002",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to extract release names",
+        "probable_cause": "Invalid release format",
+        "suggested_remediation": ""
+      },
+      "1003": {
+        "name": "ErrInstallLinkerdCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with Linkerd operation: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1004": {
+        "name": "ErrMeshConfigCode",
+        "code": "1004",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error configuration mesh: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1005": {
+        "name": "ErrFetchManifestCode",
+        "code": "1005",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error fetching mesh manifest: %s",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1006": {
+        "name": "ErrDownloadBinaryCode",
+        "code": "1006",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error downloading Linkerd binary: ",
+        "probable_cause": "Checkout https://docs.github.com/en/rest/reference/repos#releases for more details",
+        "suggested_remediation": ""
+      },
+      "1007": {
+        "name": "ErrInstallBinaryCode",
+        "code": "1007",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error installing Linkerd binary: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1008": {
+        "name": "ErrClientConfigCode",
+        "code": "1008",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error setting client config: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1009": {
+        "name": "ErrClientSetCode",
+        "code": "1009",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error setting clientset: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1011": {
+        "name": "ErrSampleAppCode",
+        "code": "1011",
+        "severity": "Alert",
+        "long_description": "Error occurred while trying to install a sample application using manifests",
+        "short_description": "Error with sample app operation",
+        "probable_cause": "Invalid kubeclient config\nInvalid manifest",
+        "suggested_remediation": "Reconnect your adapter to meshery server to refresh the kubeclient"
+      },
+      "1012": {
+        "name": "ErrCustomOperationCode",
+        "code": "1012",
+        "severity": "Alert",
+        "long_description": "Error occurred while applying custom manifest to the cluster",
+        "short_description": "Error with custom operation",
+        "probable_cause": "Invalid kubeclient config\nInvalid manifest",
+        "suggested_remediation": "Make sure to apply a valid Kubernetes manifest"
+      },
+      "1013": {
+        "name": "ErrOpInvalidCode",
+        "code": "1013",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1014": {
+        "name": "ErrInvalidOAMComponentTypeCode",
+        "code": "1014",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid OAM component name: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1015": {
+        "name": "ErrLinkerdCoreComponentFailCode",
+        "code": "1015",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error in linkerd core component",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1016": {
+        "name": "ErrProcessOAMCode",
+        "code": "1016",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error performing OAM operations",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1017": {
+        "name": "ErrParseLinkerdCoreComponentCode",
+        "code": "1017",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "linkerd core component manifest parsing failing",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1018": {
+        "name": "ErrParseOAMComponentCode",
+        "code": "1018",
+        "severity": "Alert",
+        "long_description": "Error occurred while parsing application component in the OAM request made by Meshery server",
+        "short_description": "error parsing the component",
+        "probable_cause": "Could not unmarshall configuration component received via ProcessOAM gRPC call into a valid Component struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid component for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also check if Meshery Server and adapters are referring to same component struct provided in MeshKit."
+      },
+      "1019": {
+        "name": "ErrParseOAMConfigCode",
+        "code": "1019",
+        "severity": "Alert",
+        "long_description": "Error occurred while parsing configuration in the request made by Meshery Server",
+        "short_description": "error parsing the configuration",
+        "probable_cause": "Could not unmarshall OAM config received via ProcessOAM gRPC call into a valid Config struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid config for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, confirm that Meshery Server and Adapters are referring to same config struct provided in MeshKit"
+      },
+      "1020": {
+        "name": "ErrApplyHelmChartCode",
+        "code": "1020",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error applying helm chart",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1021": {
+        "name": "ErrNilClientCode",
+        "code": "1021",
+        "severity": "Alert",
+        "long_description": "Kubernetes client is nil",
+        "short_description": "Kubernetes client not initialized",
+        "probable_cause": "Kubernetes client not initialized",
+        "suggested_remediation": "Reconnect the Meshery Adapter to Meshery Server"
+      },
+      "1022": {
+        "name": "ErrAddonFromHelmCode",
+        "code": "1022",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with addon install operation by helm chart",
+        "probable_cause": "The helm chart URL in additional properties of addon operation might be incorrect\nCould not apply service patch file for the given addon",
+        "suggested_remediation": ""
+      },
+      "1023": {
+        "name": "ErrInvalidVersionForMeshInstallationCode",
+        "code": "1023",
+        "severity": "Alert",
+        "long_description": "Version passed is invalid",
+        "short_description": "Invalid version passed for helm based installation",
+        "probable_cause": "Version might not be prefixed with \\\"stable-\\\" or \\\"edge-\\",
+        "suggested_remediation": "Version should be prefixed with \\\"stable-\\\" or \\\"edge-\\\nVersion might be empty"
+      },
+      "1024": {
+        "name": "ErrAnnotatingNamespaceCode",
+        "code": "1024",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with annotating namespace",
+        "probable_cause": "Could not get the namespace in cluster\nCould not update namespace in cluster",
+        "suggested_remediation": "Make sure the cluster is reachable"
+      },
+      "1033": {
+        "name": "ErrFetchLinkerdVersionsCode",
+        "code": "1033",
+        "severity": "Alert",
+        "long_description": "versions for linkerd could not be fetched",
+        "short_description": "could not get any linkerd versions",
+        "probable_cause": "could not reach github.com/linkerd/linkerd2\nno versions could be fetched from linkerd release page",
+        "suggested_remediation": "make sure adapter is reachable to github"
+      },
+      "1101": {
+        "name": "ErrCertEncodeCode",
+        "code": "1101",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Failed to encode: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1102": {
+        "name": "ErrEncodeCertificatesPEMCode",
+        "code": "1102",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Failed to encode certificate PEM: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1103": {
+        "name": "ErrEncodePrivateKeyPEMCode",
+        "code": "1103",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Failed to encode private key PEM: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1104": {
+        "name": "ErrCreateRootCACode",
+        "code": "1104",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to create Root CA: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1105": {
+        "name": "ErrGeneratePKCode",
+        "code": "1105",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to create Private Key: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1106": {
+        "name": "ErrGenerateDefaultRootCACode",
+        "code": "1106",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to create default Root CA: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1107": {
+        "name": "ErrGetFileNamesCode",
+        "code": "1107",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to get filenames for dynamic component generation",
+        "probable_cause": "The repository could not be cloned or reached\nThe repository url is invalid\nCould not reach the remote git repository",
+        "suggested_remediation": "Make sure the owner, repo and path is correct for fetching crd names"
+      }
+    }
+  }
+}

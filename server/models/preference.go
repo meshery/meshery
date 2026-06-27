@@ -3,45 +3,22 @@ package models
 import (
 	"encoding/gob"
 	"time"
-
-	"github.com/grafana-tools/sdk"
 )
 
 // K8SNode - represents a kubernetes node
 type K8SNode struct {
-	InternalIP              string `json:"internal_ip,omitempty"`
+	InternalIP              string `json:"internalIp,omitempty"`
 	HostName                string `json:"hostname,omitempty"`
-	AllocatableCPU          string `json:"allocatable_cpu,omitempty"`
-	AllocatableMemory       string `json:"allocatable_memory,omitempty"`
-	CapacityCPU             string `json:"capacity_cpu,omitempty"`
-	CapacityMemory          string `json:"capacity_memory,omitempty"`
-	OSImage                 string `json:"os_image,omitempty"`
-	OperatingSystem         string `json:"operating_system,omitempty"`
-	KubeletVersion          string `json:"kubelet_version,omitempty"`
-	KubeProxyVersion        string `json:"kubeproxy_version,omitempty"`
-	ContainerRuntimeVersion string `json:"container_runtime_version,omitempty"`
+	AllocatableCPU          string `json:"allocatableCpu,omitempty"`
+	AllocatableMemory       string `json:"allocatableMemory,omitempty"`
+	CapacityCPU             string `json:"capacityCpu,omitempty"`
+	CapacityMemory          string `json:"capacityMemory,omitempty"`
+	OSImage                 string `json:"osImage,omitempty"`
+	OperatingSystem         string `json:"operatingSystem,omitempty"`
+	KubeletVersion          string `json:"kubeletVersion,omitempty"`
+	KubeProxyVersion        string `json:"kubeproxyVersion,omitempty"`
+	ContainerRuntimeVersion string `json:"containerRuntimeVersion,omitempty"`
 	Architecture            string `json:"architecture,omitempty"`
-}
-
-// Grafana represents the Grafana session config
-type Grafana struct {
-	GrafanaURL    string `json:"grafanaURL,omitempty"`
-	GrafanaAPIKey string `json:"grafanaAPIKey,omitempty"`
-	// GrafanaBoardSearch string          `json:"grafanaBoardSearch,omitempty"`
-	GrafanaBoards []*SelectedGrafanaConfig `json:"selectedBoardsConfigs,omitempty"`
-}
-
-// SelectedGrafanaConfig represents the selected boards, panels, and template variables
-type SelectedGrafanaConfig struct {
-	GrafanaBoard         *GrafanaBoard `json:"board,omitempty"`
-	GrafanaPanels        []*sdk.Panel  `json:"panels,omitempty"`
-	SelectedTemplateVars []string      `json:"templateVars,omitempty"`
-}
-
-// Prometheus represents the prometheus session config
-type Prometheus struct {
-	PrometheusURL                   string                   `json:"prometheusURL,omitempty"`
-	SelectedPrometheusBoardsConfigs []*SelectedGrafanaConfig `json:"selectedPrometheusBoardsConfigs,omitempty"`
 }
 
 // LoadTestPreferences represents the load test preferences
@@ -61,17 +38,23 @@ type PreferenceParams struct {
 // Preference represents the data stored in session / local DB
 type Preference struct {
 	MeshAdapters                      []*Adapter             `json:"meshAdapters,omitempty"`
-	Grafana                           *Grafana               `json:"grafana,omitempty"`
-	Prometheus                        *Prometheus            `json:"prometheus,omitempty"`
 	LoadTestPreferences               *LoadTestPreferences   `json:"loadTestPrefs,omitempty"`
 	AnonymousUsageStats               bool                   `json:"anonymousUsageStats"`
 	AnonymousPerfResults              bool                   `json:"anonymousPerfResults"`
-	UpdatedAt                         time.Time              `json:"updated_at,omitempty"`
+	UpdatedAt                         time.Time              `json:"updatedAt,omitempty"`
 	DashboardPreferences              map[string]interface{} `json:"dashboardPreferences,omitempty"`
 	SelectedOrganizationID            string                 `json:"selectedOrganizationID,omitempty"`
 	SelectedWorkspaceForOrganizations map[string]string      `json:"selectedWorkspaceForOrganizations,omitempty"` // map[orgID]workspaceID
 	UsersExtensionPreferences         map[string]interface{} `json:"usersExtensionPreferences,omitempty"`
 	RemoteProviderPreferences         map[string]interface{} `json:"remoteProviderPreferences,omitempty"`
+}
+
+// NewDefaultPreference returns a preference initialized with Meshery's default opt-in values.
+func NewDefaultPreference() *Preference {
+	return &Preference{
+		AnonymousUsageStats:  true,
+		AnonymousPerfResults: true,
+	}
 }
 
 func init() {
@@ -97,8 +80,3 @@ type CapabilitiesPersister interface {
 	DeleteCapabilitiesForUser(userID string) error
 }
 
-// Parameters to save Grafana configuration
-type GrafanaConfigParams struct {
-	GrafanaURL    string `json:"grafanaURL,omitempty"`
-	GrafanaAPIKey string `json:"grafanaAPIKey,omitempty"`
-}

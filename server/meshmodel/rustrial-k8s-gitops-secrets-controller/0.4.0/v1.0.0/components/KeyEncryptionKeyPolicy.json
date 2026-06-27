@@ -16,7 +16,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "created_at": "0001-01-01T00:00:00Z",
@@ -52,16 +52,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -203,6 +203,7 @@
     "kind": "KeyEncryptionKeyPolicy",
     "schema": "{\n \"description\": \"KeyEncryptionKeyPolicy is the Schema for the keyencryptionkeypolicies API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KeyEncryptionKeyPolicySpec defines the desired state of KeyEncryptionKeyPolicy\",\n   \"properties\": {\n    \"keyEncryptionKeyId\": {\n     \"description\": \"KeyEncryptionKeyId is the provider specific unique ID of\\nthe Key Encryption Key (KEK) use to encrypt/decrypt the\\nData Encryption Key (DEK).\\n\\nThis ID must uniquely identify the KEK and provider and\\nis used in authorization rules to decide which namespaces\\ncan access which KEKs.\",\n     \"type\": \"string\"\n    },\n    \"namespaces\": {\n     \"description\": \"White-list of namespaces, which are entitled to use this KEK\\nto decrypt DataEncrpytionKeys.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"keyEncryptionKeyId\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Key Encryption Key Policy\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

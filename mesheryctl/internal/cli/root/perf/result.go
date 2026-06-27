@@ -27,6 +27,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	core "github.com/meshery/schemas/models/core"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -38,9 +39,9 @@ type resultStruct struct {
 	LatenciesMs   *models.LatenciesMs
 	QPS           int
 	URL           string
-	UserID        *uuid.UUID
+	Owner         *core.Uuid
 	Duration      string
-	MesheryID     *uuid.UUID
+	MesheryID     *core.Uuid
 	LoadGenerator string
 }
 
@@ -50,7 +51,7 @@ var (
 )
 
 var linkDocPerfResult = map[string]string{
-	"link":    "![perf-result-usage](/assets/img/mesheryctl/perf-result.png)",
+	"link":    "![perf-result-usage](../../../images/perf-result.png)",
 	"caption": "Usage of mesheryctl perf result",
 }
 
@@ -149,7 +150,9 @@ mesheryctl perf result saturday-profile --view
 				return err
 			}
 
-			outputFormatter.Display()
+			if err := outputFormatter.Display(); err != nil {
+				return err
+			}
 		} else if !viewSingleResult { // print all results
 			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data, nil)
 		} else {
@@ -163,7 +166,7 @@ mesheryctl perf result saturday-profile --view
 			}
 			a := expandedData[index]
 			fmt.Printf("Name: %v\n", a.Name)
-			fmt.Printf("UserID: %s\n", a.UserID.String())
+			fmt.Printf("Owner: %s\n", a.Owner.String())
 			fmt.Printf("Endpoint: %v\n", a.URL)
 			fmt.Printf("QPS: %v\n", a.QPS)
 			fmt.Printf("Test run duration: %v\n", a.Duration)
@@ -238,13 +241,13 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 
 		// append data for extended output
 		name := "None"
-		userid := uuid.Nil
+		owner := uuid.Nil
 		mesheryid := uuid.Nil
 		url := "None"
 		loadGenerator := "None"
 
-		if result.UserID != nil {
-			userid = *result.UserID
+		if result.Owner != nil {
+			owner = *result.Owner
 		}
 
 		if result.MesheryID != nil {
@@ -265,7 +268,7 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 
 		a := resultStruct{
 			Name:     name,
-			UserID:   (*uuid.UUID)(userid.Bytes()),
+			Owner:    &owner,
 			URL:      url,
 			QPS:      int(result.RunnerResults.QPS),
 			Duration: result.RunnerResults.RequestedDuration,
@@ -278,7 +281,7 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 				P99:     P99,
 			},
 			StartTime:     result.TestStartTime,
-			MesheryID:     (*uuid.UUID)(mesheryid.Bytes()),
+			MesheryID:     &mesheryid,
 			LoadGenerator: loadGenerator,
 		}
 

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/schemas/models/core"
 )
 
 // PerformanceProfilePersister is the persister for persisting
@@ -14,31 +14,43 @@ type PerformanceProfilePersister struct {
 	DB *database.Handler
 }
 
-// PerformanceProfilePage represents a page of performance profiles
-type PerformanceProfilePage struct {
-	Page       uint64                `json:"page"`
-	PageSize   uint64                `json:"page_size"`
-	TotalCount int                   `json:"total_count"`
-	Profiles   []*PerformanceProfile `json:"profiles"`
-}
+// nilUUIDString keeps reads backward-compatible with local databases created
+// before performance_profiles had a user_id column/value. The schema-native
+// model uses a non-null UUID, so NULL user_id values need a scan-safe fallback.
+const nilUUIDString = "00000000-0000-0000-0000-000000000000"
 
 // GetPerformanceProfiles returns all of the performance profiles
 func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order string, page, pageSize uint64) ([]byte, error) {
-	order = SanitizeOrderInput(order, []string{"updated_at", "created_at", "name", "last_run"})
+	// Sort-input whitelist dual-accepts the canonical camelCase key
+	// (`lastRun`) and the legacy snake_case key (`last_run`) for the
+	// Phase 2.K cascade deprecation window. Once all UI callers emit
+	// `lastRun` exclusively, drop the snake_case entry.
+	order = SanitizeOrderInput(order, []string{"updated_at", "created_at", "name", "last_run", "lastRun"})
 	if order == "" {
-		order = "updated_at desc"
+		order = defaultOrderUpdatedAtDesc
+	}
+	// Translate the canonical camelCase sort key to the SQL column
+	// alias (`last_run`) below, where the SELECT aliases the
+	// aggregated subquery back to snake_case. The wire contract is
+	// camelCase; the DB column layout stays snake_case per the
+	// identifier-naming migration (wire vs. DB are distinct layers).
+	if strings.HasPrefix(order, "lastRun") {
+		order = "last_run" + strings.TrimPrefix(order, "lastRun")
 	}
 
 	count := int64(0)
-	profiles := []*PerformanceProfile{}
+	profiles := []PerformanceProfile{}
 
 	query := ppp.DB.
+		// COALESCE(user_id, nilUUIDString) preserves old local rows that were
+		// saved before the schema-native PerformanceProfile introduced userId.
 		Select(`
-		id, name, load_generators,
-		endpoints, qps, service_mesh,
-		duration, request_headers, request_cookies,
-		request_body, content_type, created_at,
-		updated_at, (?) as last_run, (?) as total_results`,
+			id, name, COALESCE(user_id, ?) as user_id, load_generators,
+			endpoints, qps, service_mesh,
+			duration, request_headers, request_cookies,
+			request_body, content_type, created_at,
+			updated_at, (?) as last_run, (?) as total_results`,
+			nilUUIDString,
 			ppp.DB.Table("meshery_results").Select("DATETIME(MAX(meshery_results.test_start_time))").Where("performance_profile = performance_profiles.id"),
 			ppp.DB.Table("meshery_results").Select("COUNT(meshery_results.name)").Where("performance_profile = performance_profiles.id"),
 		).
@@ -54,8 +66,8 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 	Paginate(uint(page), uint(pageSize))(query).Find(&profiles)
 
 	performanceProfilePage := &PerformanceProfilePage{
-		Page:       page,
-		PageSize:   pageSize,
+		Page:       int(page),
+		PageSize:   int(pageSize),
 		TotalCount: int(count),
 		Profiles:   profiles,
 	}
@@ -64,21 +76,33 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 }
 
 // DeletePerformanceProfile takes in a profile id and delete it if it already exists
-func (ppp *PerformanceProfilePersister) DeletePerformanceProfile(id uuid.UUID) ([]byte, error) {
-	profile := PerformanceProfile{ID: &id}
-	ppp.DB.Delete(profile)
+func (ppp *PerformanceProfilePersister) DeletePerformanceProfile(id core.Uuid) ([]byte, error) {
+	profile := PerformanceProfile{ID: id}
+	ppp.DB.Delete(&profile)
 
 	return marshalPerformanceProfile(&profile), nil
 }
 
-func (ppp *PerformanceProfilePersister) SavePerformanceProfile(_ uuid.UUID, profile *PerformanceProfile) error {
+func (ppp *PerformanceProfilePersister) SavePerformanceProfile(_ core.Uuid, profile *PerformanceProfile) error {
 	return ppp.DB.Save(profile).Error
 }
 
-func (ppp *PerformanceProfilePersister) GetPerformanceProfile(id uuid.UUID) (*PerformanceProfile, error) {
+func (ppp *PerformanceProfilePersister) GetPerformanceProfile(id core.Uuid) (*PerformanceProfile, error) {
 	var performanceProfile PerformanceProfile
 
-	err := ppp.DB.First(&performanceProfile, id).Error
+	err := ppp.DB.
+		Table("performance_profiles").
+		// Keep single-profile reads compatible with old rows whose user_id is
+		// absent/NULL after AutoMigrate adds the column.
+		Select(`
+			id, name, COALESCE(user_id, ?) as user_id, schedule, load_generators,
+			endpoints, service_mesh, concurrent_request, qps, duration,
+			request_headers, request_cookies, request_body, content_type,
+			metadata, last_run, total_results, created_at, updated_at`,
+			nilUUIDString,
+		).
+		Where("id = ?", id).
+		First(&performanceProfile).Error
 	return &performanceProfile, err
 }
 

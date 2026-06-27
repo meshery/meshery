@@ -15,9 +15,8 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",
@@ -54,16 +53,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -205,6 +204,7 @@
     "kind": "AzureIdentityBinding",
     "schema": "{\n \"description\": \"AzureIdentityBinding brings together the spec of matching pods and the identity which they can use.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AzureIdentityBindingSpec matches the pod with the Identity. Used to indicate the potential matches to look for between the pod/deployment and the identities present.\",\n   \"properties\": {\n    \"azureIdentity\": {\n     \"type\": \"string\"\n    },\n    \"metadata\": {\n     \"type\": \"object\"\n    },\n    \"selector\": {\n     \"type\": \"string\"\n    },\n    \"weight\": {\n     \"description\": \"Weight is used to figure out which of the matching identities would be selected.\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Azure Identity Binding\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

@@ -15,9 +15,8 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Artifact Hub",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "registry",
-      "sub_type": "",
+      "subType": "",
       "kind": "artifacthub",
       "status": "discovered",
       "user_id": "00000000-0000-0000-0000-000000000000",
@@ -54,16 +53,16 @@
     "relationships": null
   },
   "modelReference": {
-    "version": "",
-    "name": "",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": ""
+    },
+    "name": "",
     "registrant": {
       "kind": ""
     },
-    "model": {
-      "version": ""
-    }
+    "version": ""
   },
   "styles": {
     "primaryColor": "#00B39F",
@@ -205,6 +204,7 @@
     "kind": "ManualScalerTrait",
     "schema": "{\n \"description\": \"A ManualScalerTrait determines how many replicas a workload should have.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"A ManualScalerTraitSpec defines the desired state of a ManualScalerTrait.\",\n   \"properties\": {\n    \"replicaCount\": {\n     \"description\": \"ReplicaCount of the workload this trait applies to.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"workloadRef\": {\n     \"description\": \"WorkloadReference to the workload this trait applies to.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"APIVersion of the referenced object.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referenced object.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referenced object.\",\n       \"type\": \"string\"\n      },\n      \"uid\": {\n       \"description\": \"UID of the referenced object.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"apiVersion\",\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"replicaCount\",\n    \"workloadRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Manual Scaler Trait\",\n \"type\": \"object\"\n}"
   },
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z"
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
 }

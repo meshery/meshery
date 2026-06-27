@@ -2,7 +2,7 @@
   name: istio_1630091576784
   mesh: istio
   performanceprofile: 303c3586-fd65-4846-91de-0c67b9b152a5
-  userid: 4ea5c578-1cd4-4078-a08d-fbe1ca553663
+  owner: 4ea5c578-1cd4-4078-a08d-fbe1ca553663
   runnerresults:
     url: https://github.com
     loadgenerator: fortio
@@ -25,14 +25,14 @@
               value: 0.1628860776
             - percentile: 99.9
               value: 0.16399927896000002
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-27T19:12:58.295332Z
 - mesheryid: c8e67a8a-258e-49d6-8e28-20adb61081c9
   name: istio_1630011460550
   mesh: istio
   performanceprofile: a947dff3-1415-4ca6-8922-e35b3232bd78
-  userid: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
+  owner: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
   runnerresults:
     url: https://localhost:10000
     loadgenerator: fortio
@@ -55,14 +55,14 @@
               value: 0.0115441604
             - percentile: 99.9
               value: 0.01175405084
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-27T02:27:41.155598Z
 - mesheryid: d2cf975b-272e-484f-aba3-3a022ee2a540
   name: istio_1630008597557
   mesh: istio
   performanceprofile: f331c784-aba0-4944-8d7d-ae264221bcbf
-  userid: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
+  owner: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
   runnerresults:
     url: https://localhost:10001
     loadgenerator: fortio
@@ -85,14 +85,14 @@
               value: 0.0016486696730552367
             - percentile: 99.9
               value: 0.008277952380952401
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-27T01:39:59.14584Z
 - mesheryid: dd9fb290-5a69-46a8-badc-0b1ba3dc855e
   name: istio_1629986124516
   mesh: istio
   performanceprofile: null
-  userid: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
+  owner: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
   runnerresults:
     url: https://localhost:10000
     loadgenerator: fortio
@@ -115,14 +115,14 @@
               value: 0.0009999532397700294
             - percentile: 99.9
               value: 0.00580280769230801
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-26T19:26:25.959847Z
 - mesheryid: 0f5f3bdd-54ab-4a27-926d-abbe4fc87643
   name: istio_1629986124516
   mesh: istio
   performanceprofile: null
-  userid: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
+  owner: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
   runnerresults:
     url: https://localhost:10000
     loadgenerator: fortio
@@ -145,14 +145,14 @@
               value: 0.001216453124999995
             - percentile: 99.9
               value: 0.007562750000000279
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-26T19:25:25.124595Z
 - mesheryid: ac3d9763-fa50-457e-9790-c873ad8f2ac5
   name: octarine_1629905150548
   mesh: octarine
   performanceprofile: null
-  userid: 145496f6-f5d2-40b9-841e-1b5471b60411
+  owner: 145496f6-f5d2-40b9-841e-1b5471b60411
   runnerresults:
     url: https://www.youtube.com/watch?v=-f16Qlg8v6Q&ab_channel=StudyMD
     loadgenerator: fortio
@@ -175,14 +175,14 @@
               value: 0.8443155019999999
             - percentile: 99.9
               value: 0.8648617802000002
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-25T15:25:51.399348Z
 - mesheryid: a4f7b101-c9b7-43da-8195-d7c7598881a1
   name: kuma_1629905088843
   mesh: kuma
   performanceprofile: null
-  userid: 145496f6-f5d2-40b9-841e-1b5471b60411
+  owner: 145496f6-f5d2-40b9-841e-1b5471b60411
   runnerresults:
     url: https://www.youtube.com:443/watch?v=-f16Qlg8v6Q&ab_channel=StudyMD
     loadgenerator: wrk2
@@ -207,14 +207,14 @@
               value: 19.922943
             - percentile: 99.999
               value: 19.922943
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-25T15:24:49.772682Z
 - mesheryid: 2df2f40c-8296-4ca1-862b-e31c5b5f368b
   name: istio_1629903571922
   mesh: istio
   performanceprofile: 0bc8f57c-38a5-415d-a994-87a3791a931e
-  userid: 145496f6-f5d2-40b9-841e-1b5471b60411
+  owner: 145496f6-f5d2-40b9-841e-1b5471b60411
   runnerresults:
     url: https://www.youtube.com/watch?v=-f16Qlg8v6Q&ab_channel=StudyMD
     loadgenerator: fortio
@@ -237,14 +237,14 @@
               value: 3.000872945
             - percentile: 99.9
               value: 3.0011938445
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-25T14:59:33.533Z
 - mesheryid: 8e15c1bc-84d7-40fa-b7a6-1bd18c2f844d
   name: linkerd_1629903535068
   mesh: linkerd
   performanceprofile: null
-  userid: 145496f6-f5d2-40b9-841e-1b5471b60411
+  owner: 145496f6-f5d2-40b9-841e-1b5471b60411
   runnerresults:
     url: https://www.youtube.com/watch?v=-f16Qlg8v6Q&ab_channel=StudyMD
     loadgenerator: fortio
@@ -267,14 +267,14 @@
               value: 0.6754602476666667
             - percentile: 99.9
               value: 0.6810993347666667
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-25T14:58:56.192014Z
 - mesheryid: 9fb03799-045a-4b64-9017-d4fd1d17d5ac
   name: consul_1629903480840
   mesh: consul
   performanceprofile: null
-  userid: 145496f6-f5d2-40b9-841e-1b5471b60411
+  owner: 145496f6-f5d2-40b9-841e-1b5471b60411
   runnerresults:
     url: https://guides.github.com/features/mastering-markdown/
     loadgenerator: fortio
@@ -297,14 +297,14 @@
               value: 0.08279999999999987
             - percentile: 99.9
               value: 1.92800000000009
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-25T14:58:01.391148Z
 - mesheryid: e6df1bc4-5f09-475c-b818-b09c625e180d
   name: consul_1629903024533
   mesh: consul
   performanceprofile: null
-  userid: 145496f6-f5d2-40b9-841e-1b5471b60411
+  owner: 145496f6-f5d2-40b9-841e-1b5471b60411
   runnerresults:
     url: https://guides.github.com/features/mastering-markdown/
     loadgenerator: fortio
@@ -327,14 +327,14 @@
               value: 0.06245000000000002
             - percentile: 99.9
               value: 1.9490000000000116
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-25T14:50:25.402335Z
 - mesheryid: 73428715-e40a-43a1-a0bc-ed7d58a2832b
   name: istio_1629902923911
   mesh: istio
   performanceprofile: null
-  userid: 145496f6-f5d2-40b9-841e-1b5471b60411
+  owner: 145496f6-f5d2-40b9-841e-1b5471b60411
   runnerresults:
     url: https://github.com/meshery/meshery/issues/3972
     loadgenerator: fortio
@@ -357,14 +357,14 @@
               value: 0.07229999999999999
             - percentile: 99.9
               value: 0.25260920050000213
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-25T14:48:45.0421Z
 - mesheryid: ec91b448-6234-4d9e-b1be-59dd8f9223c2
   name: No mesh_1629812585899
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -387,14 +387,14 @@
               value: 0.10205124
             - percentile: 99.9
               value: 0.10214840400000001
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-24T21:43:05.670523Z
 - mesheryid: fdf39ac7-a8f1-4a88-85e4-0ebeb4a0e9bf
   name: No mesh_1629812560411
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -417,14 +417,14 @@
               value: 1.37785775
             - percentile: 99.9
               value: 1.395756275
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-24T21:42:40.789443Z
 - mesheryid: 03b331d6-f838-4d9f-8f3f-f9c372993380
   name: No mesh_1629785430145
   mesh: ""
   performanceprofile: null
-  userid: 24187768-ce8a-41f0-be74-c537c8e41adc
+  owner: 24187768-ce8a-41f0-be74-c537c8e41adc
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -447,14 +447,14 @@
               value: 2.775857663675
             - percentile: 99.9
               value: 2.7864912458675
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-24T11:40:32.122358Z
 - mesheryid: c5497cf8-13b8-4468-b776-cfe2c03105b2
   name: No mesh_1629699211991
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -477,14 +477,14 @@
               value: 0.52302876
             - percentile: 99.9
               value: 0.5241195959999999
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-23T14:15:48.239279Z
 - mesheryid: 956a2074-5975-4250-aff6-334345daeac6
   name: No mesh_1629699211991
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -507,14 +507,14 @@
               value: 0.508937125
             - percentile: 99.9
               value: 0.5093604625
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-23T14:15:35.745148Z
 - mesheryid: 68cf3a7a-ebd9-434e-bddd-703fee5d732a
   name: No mesh_1629699211991
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -537,14 +537,14 @@
               value: 0.51648155
             - percentile: 99.9
               value: 0.517262255
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-23T14:15:21.874222Z
 - mesheryid: 9d06c7e6-18bc-4cab-b7f1-5d48375a993e
   name: No mesh_1629699211991
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -567,14 +567,14 @@
               value: 0.5315495
             - percentile: 99.9
               value: 0.5330439499999999
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-23T14:14:57.746444Z
 - mesheryid: 83775082-52a2-4f91-a7b9-c7eb2157c6b3
   name: No mesh_1629699211991
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -597,14 +597,14 @@
               value: 0.48783774
             - percentile: 99.9
               value: 0.48963005400000004
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-23T14:13:32.277429Z
 - mesheryid: f22cdd21-d1ac-49cd-97c1-134a243fa4da
   name: No mesh_1629698942959
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -627,14 +627,14 @@
               value: 0.5049655550000001
             - percentile: 99.9
               value: 0.5052007655
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-23T14:13:21.626586Z
 - mesheryid: 055338a4-f041-4b18-9c6d-d1bb6c750736
   name: No mesh_1629698942959
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -657,14 +657,14 @@
               value: 0.49637402249999996
             - percentile: 99.9
               value: 0.49744419225
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-23T14:13:13.399304Z
 - mesheryid: a88dbb71-777a-44b0-a19f-4a4eca99261c
   name: No mesh_1629698942959
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -687,14 +687,14 @@
               value: 0.363774905
             - percentile: 99.9
               value: 0.3644274005
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-23T14:12:58.438274Z
 - mesheryid: 1b6fd362-d925-4138-a410-1e31ed5489eb
   name: No mesh_1629698942959
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -717,14 +717,14 @@
               value: 1.173505435
             - percentile: 99.9
               value: 1.1817241135
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-23T14:09:03.480043Z
 - mesheryid: 089c159f-3e58-481c-b4ae-e92497bff5c1
   name: No mesh_1629698569178
   mesh: ""
   performanceprofile: null
-  userid: 862b94d4-e210-4a1c-b58e-32f93be806f6
+  owner: 862b94d4-e210-4a1c-b58e-32f93be806f6
   runnerresults:
     url: https://google.com
     loadgenerator: fortio
@@ -747,6 +747,6 @@
               value: 0.30625556
             - percentile: 99.9
               value: 0.306551876
-  servermatrics: null
+  servermetrics: null
   serverboardconfig: null
   teststarttime: 2021-08-23T14:04:44.592265Z

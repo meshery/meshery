@@ -144,9 +144,14 @@ func (r *Resolver) getClusterResources(ctx context.Context, provider models.Prov
 
 	if err != nil {
 		r.Log.Error(ErrGettingClusterResources(err))
+		return nil, err
 	}
 
-	defer rows.Close()
+	defer func() {
+		if closeErr := rows.Close(); closeErr != nil {
+			r.Log.Error(closeErr)
+		}
+	}()
 
 	resources := make([]*model.Resource, 0)
 	for rows.Next() {
@@ -216,11 +221,36 @@ func (r *Resolver) getK8sContexts(ctx context.Context, provider models.Provider,
 	if err != nil {
 		return nil, err
 	}
-	var k8sContext model.K8sContextsPage
-	err = json.Unmarshal(resp, &k8sContext)
+	k8sContext, err := decodeK8sContextsPage(resp)
 	if err != nil {
 		obj := "k8s context"
 		return nil, models.ErrEncoding(err, obj)
 	}
-	return &k8sContext, nil
+	return k8sContext, nil
+}
+
+func decodeK8sContextsPage(resp []byte) (*model.K8sContextsPage, error) {
+	var page struct {
+		TotalCount       *int                `json:"totalCount"`
+		TotalCountLegacy *int                `json:"total_count"`
+		Contexts         []*model.K8sContext `json:"contexts"`
+	}
+	if err := json.Unmarshal(resp, &page); err != nil {
+		return nil, err
+	}
+
+	totalCount := 0
+	switch {
+	case page.TotalCount != nil:
+		totalCount = *page.TotalCount
+	case page.TotalCountLegacy != nil:
+		totalCount = *page.TotalCountLegacy
+	case len(page.Contexts) > 0:
+		totalCount = len(page.Contexts)
+	}
+
+	return &model.K8sContextsPage{
+		TotalCount: totalCount,
+		Contexts:   page.Contexts,
+	}, nil
 }

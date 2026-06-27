@@ -1,13 +1,15 @@
 import { test as base, expect } from '@playwright/test';
 import fs from 'fs';
 import os from 'os';
-import yaml from 'js-yaml';
+import * as yaml from 'js-yaml';
+
+/* eslint-disable react-hooks/rules-of-hooks */
 
 export const test = base.extend({
   // Define an option and provide a default value.
   // We can later override it in the config.
-  provider: ['None', { option: true }],
-  // eslint-disable-next-line no-empty-pattern
+  provider: ['Local', { option: true }],
+
   clusterMetaData: async ({}, use) => {
     const kubeConfigPath = `${os.homedir()}/.kube/config`;
     const kubeConfigRaw = fs.readFileSync(kubeConfigPath, 'utf8');

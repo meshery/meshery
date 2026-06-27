@@ -2,9 +2,11 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"time"
 
 	"github.com/meshery/meshkit/database"
+	"gorm.io/gorm"
 )
 
 // PreferencePersister assists with persisting session in store
@@ -12,7 +14,7 @@ type SessionPreferencePersister struct {
 	DB *database.Handler
 }
 type UserPreference struct {
-	ID              string `json:"user_id"`
+	ID              string `json:"userId"`
 	PreferenceBytes []byte `json:"preference"`
 }
 
@@ -26,16 +28,16 @@ func (s *SessionPreferencePersister) ReadFromPersister(userID string) (*Preferen
 		return nil, ErrUserID
 	}
 
-	data := &Preference{
-		AnonymousUsageStats:  true,
-		AnonymousPerfResults: true,
-	}
+	data := NewDefaultPreference()
 	var u UserPreference
 	err := s.DB.Model(&UserPreference{}).Where("id = ?", userID).First(&u).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return data, nil
+		}
 		return nil, err
 	}
-	err = json.Unmarshal(u.PreferenceBytes, &data)
+	err = json.Unmarshal(u.PreferenceBytes, data)
 	if err != nil {
 		return nil, err
 	}

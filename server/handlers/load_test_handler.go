@@ -19,7 +19,6 @@ import (
 	yaml "github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
@@ -38,10 +37,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
-
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "failed to read request body: %s", err)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
@@ -49,7 +45,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 		body, err = yaml.JSONToYAML(body)
 		if err != nil {
 			h.log.Error(ErrPatternFile(err))
-			http.Error(w, ErrPatternFile(err).Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, ErrPatternFile(err), http.StatusInternalServerError)
 			return
 		}
 	}
@@ -59,7 +55,16 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	perfTest := &models.PerformanceTestConfigFile{}
 	if err := json.Unmarshal(jsonBytes, perfTest); err != nil {
 		h.log.Error(ErrParseBool(err, "provided input"))
-		http.Error(w, ErrParseBool(err, "provided input").Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrParseBool(err, "provided input"), http.StatusBadRequest)
+		return
+	}
+
+	// Guard against a missing/empty "test" config before dereferencing it
+	// below (name, id, duration, clients[0]); a malformed body must not panic.
+	if perfTest == nil || perfTest.Config == nil || len(perfTest.Config.Clients) == 0 {
+		err := fmt.Errorf("request body is missing the required \"test\" performance configuration or load-test clients")
+		h.log.Error(models.ErrUnmarshal(err, "performance test config"))
+		writeMeshkitError(w, models.ErrUnmarshal(err, "performance test config"), http.StatusBadRequest)
 		return
 	}
 
@@ -67,21 +72,22 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	testName := perfTest.Config.Name
 	if testName == "" {
 		h.log.Error(ErrBlankName(err))
-		http.Error(w, ErrBlankName(err).Error(), http.StatusForbidden)
+		writeMeshkitError(w, ErrBlankName(err), http.StatusForbidden)
 		return
 	}
 
-	meshType := perfTest.ServiceMesh.Type
-	meshName := SMP.ServiceMesh_Type_name[int32(meshType)]
+	// The technology under test is identified by a Meshery Registry model
+	// name (free-form string), replacing the constraining SMP service-mesh enum.
+	meshName := perfTest.ServiceMesh
 
-	profileID := perfTest.Config.Id
+	profileID := perfTest.Config.ID
 
 	loadTestOptions := &models.LoadTestOptions{}
 
 	testDuration, err := time.ParseDuration(perfTest.Config.Duration)
 	if err != nil {
 		h.log.Error(ErrParseDuration)
-		http.Error(w, ErrParseDuration.Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrParseDuration, http.StatusBadRequest)
 		return
 	}
 	loadTestOptions.Duration = testDuration
@@ -91,6 +97,12 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 
 	// TODO: check multiple clients in case of distributed perf test
 	testClient := perfTest.Config.Clients[0]
+	if len(testClient.EndpointUrls) == 0 {
+		err := fmt.Errorf("request body is missing load-test endpoint URLs")
+		h.log.Error(models.ErrUnmarshal(err, "performance test config"))
+		writeMeshkitError(w, models.ErrUnmarshal(err, "performance test config"), http.StatusBadRequest)
+		return
+	}
 
 	// TODO: consider the multiple endpoints
 	loadTestOptions.URL = testClient.EndpointUrls[0]
@@ -105,12 +117,12 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	if err != nil {
 		obj := "the provided load test"
 		h.log.Error(ErrParseBool(err, obj))
-		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrParseBool(err, obj), http.StatusBadRequest)
 		return
 	}
 	if !ltURL.IsAbs() {
 		h.log.Error(ErrInvalidLTURL(ltURL.String()))
-		http.Error(w, ErrInvalidLTURL(ltURL.String()).Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrInvalidLTURL(ltURL.String()), http.StatusBadRequest)
 		return
 	}
 	loadTestOptions.Name = testName
@@ -119,16 +131,9 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 		loadTestOptions.HTTPQPS = 0
 	}
 
-	loadGenerator := testClient.LoadGenerator
-
-	switch loadGenerator {
-	case models.Wrk2LG.Name():
-		loadTestOptions.LoadGenerator = models.Wrk2LG
-	case models.NighthawkLG.Name():
-		loadTestOptions.LoadGenerator = models.NighthawkLG
-	default:
-		loadTestOptions.LoadGenerator = models.FortioLG
-	}
+	// fortio is the only supported load generator. Any generator carried by
+	// an existing profile (including the removed "wrk2") runs on fortio.
+	loadTestOptions.LoadGenerator = models.FortioLG
 	loadTestOptions.AllowInitialErrors = true
 
 	h.loadTestHelperHandler(w, req, profileID, testName, meshName, "", prefObj, loadTestOptions, provider)
@@ -142,20 +147,6 @@ func (h *Handler) jsonToMap(headersString string) *map[string]string {
 	}
 	return &headers
 }
-
-// swagger:route GET /api/perf/profile PerfAPI idRunPerfTest
-// Handle GET request to run a test
-//
-// Runs the load test with the given parameters
-// responses:
-// 	200:
-
-// swagger:route GET /api/user/performance/profiles/{id}/run PerformanceAPI idRunPerformanceTest
-// Handle GET request to run a performance test
-//
-// Runs the load test with the given parameters
-// responses:
-// 	200:
 
 // LoadTestHandler runs the load test with the given parameters
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -172,11 +163,11 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
-	isSSLCertificateProvided := req.URL.Query().Get("cert") == "true"
+	isSSLCertificateProvided := req.URL.Query().Get("cert") == queryParamTrue
 
 	/*
 	 When "cert" query param is set the body contains self-signed certs
@@ -198,7 +189,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	performanceProfileData, err := provider.GetPerformanceProfile(req, profileID)
 	if err != nil {
 		h.log.Error(err)
-		http.Error(w, ErrFetchProfile(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrFetchProfile(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -206,7 +197,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	err = json.Unmarshal(performanceProfileData, &performanceProfile)
 	if err != nil {
 		h.log.Error(models.ErrUnmarshal(err, "performance profile"))
-		http.Error(w, models.ErrUnmarshal(err, "performance profile").Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrUnmarshal(err, "performance profile"), http.StatusBadRequest)
 		return
 	}
 
@@ -228,7 +219,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 				file, err := os.CreateTemp(os.TempDir(), filePath)
 				if err != nil {
 					h.log.Error(ErrCreateFile(err, certificateName))
-					http.Error(w, ErrCreateFile(err, certificateName).Error(), http.StatusInternalServerError)
+					writeMeshkitError(w, ErrCreateFile(err, certificateName), http.StatusInternalServerError)
 					return
 				}
 				cleanUpFiles = append(cleanUpFiles, file.Name())
@@ -237,7 +228,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 				_, err = file.Write([]byte(certificateData))
 				if err != nil {
 					h.log.Error(ErrCreateFile(err, certificateName))
-					http.Error(w, ErrCreateFile(err, certificateName).Error(), http.StatusInternalServerError)
+					writeMeshkitError(w, ErrCreateFile(err, certificateName), http.StatusInternalServerError)
 					return
 				}
 				assignCertificatePath("ca_certificate", file.Name(), loadTestOptions)
@@ -258,7 +249,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	if err != nil {
 		obj := "form"
 		h.log.Error(ErrParseBool(err, obj))
-		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusForbidden)
+		writeMeshkitError(w, ErrParseBool(err, obj), http.StatusForbidden)
 		return
 	}
 	q := req.URL.Query()
@@ -266,7 +257,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	testName := q.Get("name")
 	if testName == "" {
 		h.log.Error(ErrBlankName(err))
-		http.Error(w, ErrBlankName(err).Error(), http.StatusForbidden)
+		writeMeshkitError(w, ErrBlankName(err), http.StatusForbidden)
 		return
 	}
 	meshName := q.Get("mesh")
@@ -306,7 +297,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	if err != nil {
 		obj := "load test duration"
 		h.log.Error(ErrParseBool(err, obj))
-		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusForbidden)
+		writeMeshkitError(w, ErrParseBool(err, obj), http.StatusForbidden)
 		return
 	}
 
@@ -321,7 +312,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	if err != nil || !ltURL.IsAbs() {
 		obj := "the provided load test url"
 		h.log.Error(ErrParseBool(err, obj))
-		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusBadRequest)
+		writeMeshkitError(w, ErrParseBool(err, obj), http.StatusBadRequest)
 		return
 	}
 	loadTestOptions.URL = loadTestURL
@@ -334,16 +325,9 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	}
 	loadTestOptions.HTTPQPS = qps
 
-	loadGenerator := q.Get("loadGenerator")
-
-	switch loadGenerator {
-	case models.Wrk2LG.Name():
-		loadTestOptions.LoadGenerator = models.Wrk2LG
-	case models.NighthawkLG.Name():
-		loadTestOptions.LoadGenerator = models.NighthawkLG
-	default:
-		loadTestOptions.LoadGenerator = models.FortioLG
-	}
+	// fortio is the only supported load generator. Any generator passed by
+	// the client (including the removed "wrk2") runs on fortio.
+	loadTestOptions.LoadGenerator = models.FortioLG
 	h.log.Info("perf test with config: ", loadTestOptions)
 	h.loadTestHelperHandler(w, req, profileID, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
 }
@@ -354,7 +338,7 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	flusher, ok := w.(http.Flusher)
 	if !ok {
 		h.log.Error(ErrEventStreamingNotSupported)
-		http.Error(w, ErrEventStreamingNotSupported.Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrEventStreamingNotSupported, http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "text/event-stream")
@@ -377,17 +361,39 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 		for data := range respChan {
 			bd, err := json.Marshal(data)
 			if err != nil {
+				// We are inside an active SSE connection — Content-Type:
+				// text/event-stream has already been committed above. Calling
+				// http.Error here would silently corrupt the stream (it tries
+				// to set text/plain after headers are flushed, then writes a
+				// trailing newline that breaks SSE framing). Instead, emit an
+				// in-protocol error event using the same LoadTestResponse
+				// envelope the client already understands (status="error" is
+				// handled by the EventSource onmessage consumer in the UI).
+				//
+				// We deliberately do NOT return here: the worker goroutine
+				// will keep writing into respChan until executeLoadTest
+				// exits, and an early return would block the worker once
+				// the buffered slots fill. Continue draining so the worker
+				// can finish and close(respChan) terminates this loop.
 				h.log.Error(models.ErrMarshal(err, "meshery result for shipping"))
-				http.Error(w, models.ErrMarshal(err, "meshery result for shipping").Error(), http.StatusInternalServerError)
-				return
+				errPayload, mErr := json.Marshal(&models.LoadTestResponse{
+					Status:  models.LoadTestError,
+					Message: models.ErrMarshal(err, "meshery result for shipping").Error(),
+				})
+				if mErr != nil {
+					// Last-resort: a static, hand-rolled JSON literal so the
+					// stream stays well-formed even if envelope marshal fails.
+					errPayload = []byte(`{"status":"error","message":"failed to marshal load test result"}`)
+				}
+				_, _ = fmt.Fprintf(w, "data: %s\n\n", errPayload)
+				flusher.Flush()
+				continue
 			}
 
 			h.log.Debug("received new data on response channel")
 			_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
-			if flusher != nil {
-				flusher.Flush()
-				h.log.Debug("Flushed the messages on the wire...")
-			}
+			flusher.Flush()
+			h.log.Debug("Flushed the messages on the wire...")
 		}
 		endChan <- struct{}{}
 		h.log.Debug("response channel closed")
@@ -417,16 +423,8 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 		resultInst *periodic.RunnerResults
 		err        error
 	)
-	switch loadTestOptions.LoadGenerator {
-	case models.Wrk2LG:
-		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions, h.log)
-
-	case models.NighthawkLG:
-		resultsMap, resultInst, err = helpers.NighthawkLoadTest(loadTestOptions, h.log)
-
-	default:
-		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions, h.log)
-	}
+	// fortio is the only supported load generator.
+	resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions, h.log)
 	if err != nil {
 		h.log.Error(ErrLoadTest(err, "unable to perform"))
 		respChan <- &models.LoadTestResponse{
@@ -563,31 +561,9 @@ func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Re
 		Message: "Done persisting the load test results.",
 	}
 
-	var promURL string
-	if prefObj.Prometheus != nil {
-		promURL = prefObj.Prometheus.PrometheusURL
-	}
-
-	tokenVal, _ := provider.GetProviderToken(req)
-
-	h.log.Debug("promURL: , testUUID: , resultID: ", promURL, testUUID, resultID)
-	if promURL != "" && testUUID != "" && resultID != "" &&
-		(provider.GetProviderType() == models.RemoteProviderType ||
-			(provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
-		_ = h.task.WithArgs(ctx, &models.SubmitMetricsConfig{
-			TestUUID:  testUUID,
-			ResultID:  resultID,
-			PromURL:   promURL,
-			StartTime: resultInst.StartTime,
-			EndTime:   resultInst.StartTime.Add(resultInst.ActualDuration),
-			TokenVal:  tokenVal,
-			Provider:  provider,
-		})
-	}
-
 	key := uuid.FromStringOrNil(resultID)
 	if key == uuid.Nil {
-		key, _ = uuid.NewV4()
+		key = uuid.Must(uuid.NewV4())
 	}
 	result.ID = key
 	respChan <- &models.LoadTestResponse{
@@ -602,56 +578,6 @@ func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Re
 	if h.config.PerformanceResultChannel != nil {
 		h.config.PerformanceResultChannel <- struct{}{}
 	}
-}
-
-// CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to Remote Provider
-func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error {
-	h.log.Debug("initiating collecting prometheus static board metrics for test id: ", config.TestUUID)
-	ctx := context.Background()
-	queries := h.config.QueryTracker.GetQueriesForUUID(ctx, config.TestUUID)
-	queryResults := map[string]map[string]interface{}{}
-	step := h.config.PrometheusClient.ComputeStep(ctx, config.StartTime, config.EndTime)
-	for query, flag := range queries {
-		if !flag {
-			seriesData, err := h.config.PrometheusClient.QueryRangeUsingClient(ctx, config.PromURL, query, config.StartTime, config.EndTime, step)
-			if err != nil {
-				return err
-			}
-			queryResults[query] = map[string]interface{}{
-				"status": "success",
-				"data": map[string]interface{}{
-					"resultType": seriesData.Type(),
-					"result":     seriesData,
-				},
-			}
-			h.config.QueryTracker.AddOrFlagQuery(ctx, config.TestUUID, query, true)
-		}
-	}
-
-	board, err := h.config.PrometheusClient.GetClusterStaticBoard(ctx, config.PromURL)
-	if err != nil {
-		return err
-	}
-	// TODO: we are NOT persisting the Node metrics for now
-
-	resultUUID, err := uuid.FromString(config.ResultID)
-	if err != nil {
-		h.log.Error(ErrParseBool(err, "result uuid"))
-		return err
-	}
-	result := &models.MesheryResult{
-		ID:                resultUUID,
-		TestID:            config.TestUUID,
-		ServerMetrics:     queryResults,
-		ServerBoardConfig: board,
-	}
-
-	if err = config.Provider.PublishMetrics(config.TokenVal, result); err != nil {
-		return err
-	}
-	// now to remove all the queries for the uuid
-	h.config.QueryTracker.RemoveUUID(ctx, config.TestUUID)
-	return nil
 }
 
 func assignCertificatePath(key, path string, loadTestOptions *models.LoadTestOptions) {

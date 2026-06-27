@@ -25,8 +25,8 @@ import (
 const (
 	ErrImportDesignCode               = "mesheryctl-1001"
 	ErrInValidSourceCode              = "mesheryctl-1002"
-	ErrOnboardDesignCode              = "mesheryctl-1003"
-	ErrOffboardDesignCode             = "mesheryctl-1005"
+	ErrDeployDesignCode               = "mesheryctl-1003"
+	ErrUndeployDesignCode             = "mesheryctl-1005"
 	ErrDesignFlagCode                 = "mesheryctl-1006"
 	ErrDesignManifestCode             = "mesheryctl-1007"
 	ErrDesignFileNotProvidedCode      = "mesheryctl-1140"
@@ -38,15 +38,17 @@ const (
 	ErrInvalidCommandCode             = "mesheryctl-1191"
 	ErrDesignNameOrIDNotSpecifiedCode = "mesheryctl-1192"
 	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
+	ErrEvaluateDesignCode             = "mesheryctl-1247"
+	ErrEvaluateDesignResponseCode     = "mesheryctl-1248"
 )
 
 const (
 	errPatternMsg = `Usage: mesheryctl design import -f [file/url] -s [source-type]
 Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`
 
-	errOnboardMsg = `Usage: mesheryctl design onboard -f [filepath] -s [source type]
-Example: mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
-Description: Onboard pattern`
+	errUndeployMsg = `Usage: mesheryctl design undeploy -f [filepath]
+Example: mesheryctl design undeploy -f ./pattern.yml
+Description: Undeploy design`
 	errInvalidPathMsg = "file path %s is invalid. Enter a valid path"
 )
 
@@ -92,12 +94,13 @@ func ErrDesignFileNotProvided() error {
 		[]string{"Provide the path to the design file using the '-f' flag. Ensure that the file path or URL is correctly specified and accessible. \n\n%v", errPatternMsg})
 }
 
-func ErrOnboardDesign() error {
-	return errors.New(ErrOnboardDesignCode, errors.Alert,
-		[]string{"Error Onboarding design"},
-		[]string{"Unable to onboard design due to empty path"},
-		[]string{"File path or design name not provided."},
-		[]string{"Provide a file path/design name. \n\n%v", errOnboardMsg})
+func ErrDeployDesign() error {
+	return errors.New(ErrDeployDesignCode, errors.Alert,
+		[]string{"Deploying design failed"},
+		[]string{"Unable to deploy design due to error during the processing"},
+		[]string{"File path or design name not provided. ", "Meshery server failed to interact with the Kubernetes cluster. ",
+			"There was an error connecting to the selected target platform (i.e. Kubernetes cluster(s))..This connection might not be assigned to the selected environment."},
+		[]string{"Provide a valid file path/design name. ", "Ensure the Meshery server can interact with the Kubernetes cluster. ", "Check if the selected target platform is assigned to the current environment.\n"})
 }
 
 func ErrDesignSourceType() error {
@@ -116,12 +119,12 @@ func ErrViewDesignFlag() error {
 		[]string{"-a/-all cannot be used when [design name|id] is specified"})
 }
 
-func ErrOffboardDesign(err error) error {
-	return errors.New(ErrOffboardDesignCode, errors.Alert,
-		[]string{"Error Offboarding design"},
-		[]string{"Unable to offboard design due to empty path"},
+func ErrUndeployDesign(err error) error {
+	return errors.New(ErrUndeployDesignCode, errors.Alert,
+		[]string{"Undeploying design failed"},
+		[]string{"Unable to undeploy design due to empty path"},
 		[]string{"File path or design name not provided."},
-		[]string{"Provide a file path/design name. \n\n%v", errOnboardMsg})
+		[]string{"Provide a file path/design name. \n\n%v", errUndeployMsg})
 }
 
 func ErrParseDesignFile(err error) error {
@@ -170,4 +173,20 @@ func ErrDesignInvalidApiResponse(message string) error {
 		[]string{message},
 		[]string{"The API response is missing expected fields or has an unexpected format"},
 		[]string{"Ensure the Meshery server is running a compatible version", "Check for any issues with the Meshery server that may cause it to return malformed responses"})
+}
+
+func ErrEvaluateDesign() error {
+	return errors.New(ErrEvaluateDesignCode, errors.Alert,
+		[]string{"Design not specified for evaluation"},
+		[]string{"Exactly one of a design file path (-f) or a design ID must be provided, not both"},
+		[]string{"A design must be specified either by file path (-f) or by ID as an argument, but not both simultaneously"},
+		[]string{"Provide a design file using '-f' flag or pass a design ID as an argument (not both).\n\nUsage: mesheryctl design evaluate [ID] -o [output-file]\n       mesheryctl design evaluate -f [file] -o [output-file]"})
+}
+
+func ErrEvaluateDesignResponse(err error) error {
+	return errors.New(ErrEvaluateDesignResponseCode, errors.Alert,
+		[]string{"Failed to evaluate design"},
+		[]string{err.Error()},
+		[]string{"The Meshery server returned an error while evaluating the design", "The design file may be invalid or the server may be experiencing issues"},
+		[]string{"Ensure the design file is valid", "Check that the Meshery server is running and accessible", "Verify that the server has the required policies loaded"})
 }

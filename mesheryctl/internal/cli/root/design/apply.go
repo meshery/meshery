@@ -30,18 +30,17 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/core"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	skipSave    bool // skip saving a design
-	patternFile string
+	skipSave   bool // skip saving a design
+	designFile string
 )
 
 var linkDocPatternApply = map[string]string{
-	"link":    "![pattern-apply-usage](/assets/img/mesheryctl/patternApply.png)",
+	"link":    "![pattern-apply-usage](../../../images/patternApply.png)",
 	"caption": "Usage of mesheryctl design apply",
 }
 
@@ -99,14 +98,13 @@ mesheryctl design apply [design-name]
 
 			index := 0
 			if len(response.Patterns) == 0 {
-				utils.Log.Error(ErrDesignNotFound(patternName))
-				return nil
+				return ErrDesignNotFound(patternName)
 			} else if len(response.Patterns) == 1 {
-				patternFile = response.Patterns[0].PatternFile
+				designFile = response.Patterns[0].PatternFile
 			} else {
 				// Multiple patterns with same name
 				index = multiplePatternsConfirmation(response.Patterns)
-				patternFile = response.Patterns[index].PatternFile
+				designFile = response.Patterns[index].PatternFile
 			}
 		} else {
 			// Method to check if the entered file is a URL or not
@@ -153,7 +151,7 @@ mesheryctl design apply [design-name]
 				}
 
 				// setup pattern file
-				patternFile = string(content)
+				designFile = string(content)
 			} else {
 				var jsonValues []byte
 				url, path, err := utils.ParseURLGithub(file)
@@ -211,17 +209,17 @@ mesheryctl design apply [design-name]
 				}
 				err = json.Unmarshal(body, &response)
 				if err != nil {
-					return utils.ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
+					return utils.ErrUnmarshal(err)
 				}
 
 				// setup pattern file here
-				patternFile = response[0].PatternFile
+				designFile = response[0].PatternFile
 			}
 
 		}
 
 		payload := models.MesheryPatternFileDeployPayload{
-			PatternFile: patternFile,
+			PatternFile: designFile,
 		}
 
 		payloadBytes, err := json.Marshal(payload)
@@ -234,7 +232,7 @@ mesheryctl design apply [design-name]
 			return err
 		}
 
-		pf, err := core.NewPatternFile([]byte(patternFile))
+		pf, err := core.NewPatternFile([]byte(designFile))
 		if err != nil {
 			return ErrParseDesignFile(err)
 		}

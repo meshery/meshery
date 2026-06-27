@@ -1,15 +1,19 @@
 package relationships
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 func TestView(t *testing.T) {
+	mesheryctlflags.InitValidators(RelationshipCmd)
+
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -27,7 +31,7 @@ func TestView(t *testing.T) {
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
 			ExpectError:      true,
-			ExpectedError:    utils.ErrInvalidArgument(errNoModelNameProvided),
+			ExpectedError:    utils.ErrInvalidArgument(errors.New(errInvalidArg)),
 		},
 		{
 			Name:             "given model name provided when running relationship view then display registered relationship",

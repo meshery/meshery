@@ -96,10 +96,14 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 					_, _ = fmt.Fprintf(w, "[i]%s %s\n", check.name, check.reason)
 				}
 			}
-			fmt.Fprint(w, "healthz check passed\n")
+			if _, err := fmt.Fprint(w, "healthz check passed\n"); err != nil {
+				h.log.Error(err)
+			}
 		} else {
 			// Simple "ok" response
-			fmt.Fprint(w, "ok")
+			if _, err := fmt.Fprint(w, "ok"); err != nil {
+				h.log.Error(err)
+			}
 		}
 	} else {
 		w.WriteHeader(http.StatusServiceUnavailable)

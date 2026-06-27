@@ -13,29 +13,13 @@ import (
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
+	system "github.com/meshery/schemas/models/v1beta1/system"
 	"github.com/spf13/viper"
 	"gorm.io/gorm/clause"
 )
 
-// swagger:route GET /api/system/database GetSystemDatabase idGetSystemDatabase
-// Handle GET request for getting summary about the system database.
-//
-// # Tables can be further filtered through query parameter
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10. To return all results: ```pagesize=all```
-//
-// ```?search={tablename}``` If search is non empty then a greedy search is performed
-// responses:
-//
-//	200: systemDatabaseResponseWrapper
 func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	var tables []*models.SqliteSchema
+	var tables []system.SystemDatabaseTable
 	var recordCount int
 	var totalTables int64
 	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
@@ -66,12 +50,12 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 
 	tableFinder.Find(&tables)
 
-	for _, table := range tables {
-		h.dbHandler.DB.Table(table.Name).Count(&table.Count)
-		recordCount += int(table.Count)
+	for i := range tables {
+		h.dbHandler.DB.Table(tables[i].Name).Count(&tables[i].Count)
+		recordCount += int(tables[i].Count)
 	}
 
-	databaseSummary := &models.DatabaseSummary{
+	databaseSummary := &system.SystemDatabaseSummary{
 		Page:        page,
 		PageSize:    limit,
 		TotalTables: int(totalTables),
@@ -85,20 +69,10 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Fprint(w, string(val))
+	if _, err := fmt.Fprint(w, string(val)); err != nil {
+		h.log.Error(err)
+	}
 }
-
-// swagger:route DELETE /api/system/database/reset ResetSystemDatabase
-// Reset the system database to its initial state.
-//
-// This endpoint resets the system database to its initial state by performing the following steps:
-// - Creates an archive of the current database contents.
-// - Drops all existing tables in the database.
-// - Applies auto migration to recreate the necessary tables.
-//
-// responses:
-//   200:
-//   500:
 
 // Reset the system database to its initial state.
 func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -106,7 +80,7 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 	mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
 	err := os.Mkdir(path.Join(mesherydbPath, ".archive"), os.ModePerm)
 	if err != nil && os.IsNotExist(err) {
-		http.Error(w, "Directory could not be created due to a non-existent path.", http.StatusInternalServerError)
+		writeMeshkitError(w, ErrCreateDatabaseArchiveDir(err), http.StatusInternalServerError)
 		return
 	}
 	src := path.Join(mesherydbPath, "mesherydb.sql")
@@ -116,27 +90,35 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 
 	fin, err := os.Open(src)
 	if err != nil {
-		http.Error(w, "The database does not exist or you don't have enough permission to access it", http.StatusInternalServerError)
+		writeMeshkitError(w, ErrOpenDatabaseFile(err), http.StatusInternalServerError)
 		return
 	}
-	defer fin.Close()
+	defer func() {
+		if err := fin.Close(); err != nil {
+			h.log.Error(err)
+		}
+	}()
 
 	fout, err := os.Create(dst)
 	if err != nil {
-		http.Error(w, "Destination file can not be created", http.StatusInternalServerError)
+		writeMeshkitError(w, ErrCreateDatabaseArchiveFile(err), http.StatusInternalServerError)
 		return
 	}
-	defer fout.Close()
+	defer func() {
+		if err := fout.Close(); err != nil {
+			h.log.Error(err)
+		}
+	}()
 
 	_, err = io.Copy(fout, fin)
 	if err != nil {
-		http.Error(w, "Can not copy file from source to destination", http.StatusInternalServerError)
+		writeMeshkitError(w, ErrCopyDatabaseFile(err), http.StatusInternalServerError)
 		return
 	}
 
 	dbHandler := provider.GetGenericPersister()
 	if dbHandler == nil {
-		http.Error(w, "Failed to obtain database handler", http.StatusInternalServerError)
+		writeMeshkitError(w, ErrObtainDatabaseHandler(), http.StatusInternalServerError)
 		return
 	} else {
 		dbHandler.Lock()
@@ -144,14 +126,14 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 
 		tables, err := dbHandler.Migrator().GetTables()
 		if err != nil {
-			http.Error(w, "Can not access database tables", http.StatusInternalServerError)
+			writeMeshkitError(w, ErrAccessDatabaseTables(err), http.StatusInternalServerError)
 			return
 		}
 
 		for _, table := range tables {
 			err = dbHandler.Migrator().DropTable(table)
 			if err != nil {
-				http.Error(w, "Cannot drop table from database", http.StatusInternalServerError)
+				writeMeshkitError(w, ErrDropDatabaseTable(err), http.StatusInternalServerError)
 				return
 			}
 		}
@@ -175,27 +157,26 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 		)
 
 		if err != nil {
-			http.Error(w, "Can not migrate tables to database", http.StatusInternalServerError)
+			writeMeshkitError(w, ErrMigrateDatabaseTables(err), http.StatusInternalServerError)
 			return
 		}
 
 		rm, err := registry.NewRegistryManager(dbHandler)
 		if err != nil {
-			http.Error(w, "Can not migrate tables to database", http.StatusInternalServerError)
+			writeMeshkitError(w, ErrMigrateDatabaseTables(err), http.StatusInternalServerError)
 			return
 		}
 		h.registryManager = rm
 
 		krh, err := models.NewKeysRegistrationHelper(dbHandler, h.log)
 		if err != nil {
-			http.Error(w, "Can not migrate tables to database", http.StatusInternalServerError)
+			writeMeshkitError(w, ErrMigrateDatabaseTables(err), http.StatusInternalServerError)
 			return
 		}
 		go func() {
 			models.SeedComponents(h.log, h.config, h.registryManager)
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		}()
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprint(w, "Database reset successful")
+		writeJSONMessage(w, system.SystemMessageResponse{Message: "Database reset successful"}, http.StatusOK)
 	}
 }

@@ -1,0 +1,101 @@
+{{ $linkUrlSelected := "" }}
+{{ $current := .RelPermalink }}
+{{ range .Site.Data.versions }}
+  {{ $linkUrl := cond (ne .url "") (printf "/%s/" .url) "/" }}
+  {{ if or (eq $current $linkUrl) (strings.HasPrefix $current $linkUrl) }}
+    {{ $linkUrlSelected = cond (ne .url "") (printf "%s/" .url) "" }}
+  {{ end }}
+{{ end }}
+
+<header>
+  <nav class="js-navbar-scroll navbar">
+    <a class="navbar-brand" href="{{ $linkUrlSelected | relURL }}">
+      <div class="navbar-logo">
+        {{ partial "svg/meshery-docs.html" . }}
+      </div>
+      <div class="mobile">
+        {{ partial "svg/meshery-logo.html" . }}
+      </div>
+    </a>
+
+    <div id="main_navbar">
+      <ul class="navbar-nav">
+
+        <!-- Internal links -->
+        {{ range .Site.Data.navigation }}
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="{{ if .url }}{{ (printf "%s/" .url) | relURL }}{{ else }}{{ .external_url }}{{ end }}">
+            <span>{{ .title }}</span>
+          </a>
+        </li>
+        {{ end }}
+
+        <a href="https://play.meshery.io">
+          <div class="nav-btn">Playground</div>
+        </a>
+
+        <!-- Version Selector -->
+        <select
+          onchange="window.location=this.value"
+          class="appearance-none flex-1 w-full px-0 py-1 tracking-wide focus:outline-none version-selector"
+          name="versioningSelection"
+          id="versioningSelection"
+        >
+
+          {{ $current := .RelPermalink }}
+          {{ range .Site.Data.versions }}
+            {{ $linkUrl := cond (ne .url "") (printf "/%s/" .url) "/" }}
+            {{ $optionUrl := cond (ne .url "") ((printf "%s/" .url) | relURL) ("" | relURL) }}
+
+            {{ if or (eq $current $linkUrl) (strings.HasPrefix $current $linkUrl) }}
+            <option
+              selected
+              value="{{ $optionUrl }}"
+              class="nav-item mr-4 mb-2 text-black">
+              {{ .version }}
+            </option>
+            {{ else }}
+            <option
+              value="{{ $optionUrl }}"
+              class="nav-item mr-4 mb-2 text-black">
+              {{ .version }}
+            </option>
+            {{ end }}
+          {{ end }}
+        </select>
+      </ul>
+    </div>
+
+    <div class="icon-container">
+      <button class="nav-toggle-btn nav-toggle-btn--main">
+        <svg
+          id="menu-nav-toggle-btn"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-menu"
+        >
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <button class="nav-mode-icon" id="mode-toggle-btn">
+        <img
+          class="logo-dark-light"
+          style="visibility: hidden;"
+          src="{{ "images/nav-icons/mode-toggle-icon-moon.png" | relURL }}"
+          data-logo-for-dark="{{ "images/nav-icons/mode-toggle-icon-moon.png" | relURL }}"
+          data-logo-for-light="{{ "images/nav-icons/mode-toggle-icon-sun.png" | relURL }}"
+        />
+      </button>
+    </div>
+  </nav>
+</header>

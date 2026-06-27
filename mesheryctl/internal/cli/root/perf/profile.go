@@ -28,7 +28,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -95,13 +95,15 @@ mesheryctl perf profile test --view
 
 		// print in json/yaml format
 		if outputFormatFlag != "" {
-			outputFormatterFactory := display.OutputFormatterFactory[[]models.PerformanceProfile]{}
+			outputFormatterFactory := display.OutputFormatterFactory[[]perfprofile.PerformanceProfile]{}
 			outputFormatter, err := outputFormatterFactory.New(strings.ToLower(outputFormatFlag), profiles)
 			if err != nil {
 				return err
 			}
 
-			outputFormatter.Display()
+			if err := outputFormatter.Display(); err != nil {
+				return err
+			}
 		} else if !viewSingleProfile { // print all profiles
 			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data, nil)
 		} else { // print single profile
@@ -119,12 +121,12 @@ mesheryctl perf profile test --view
 			fmt.Printf("Name: %v\n", a.Name)
 			fmt.Printf("ID: %s\n", a.ID.String())
 			fmt.Printf("Total Results: %d\n", a.TotalResults)
-			fmt.Printf("Endpoint: %v\n", a.Endpoints[0])
-			fmt.Printf("Load Generators: %v\n", a.LoadGenerators[0])
+			fmt.Printf("Endpoint: %v\n", firstString(a.Endpoints))
+			fmt.Printf("Load Generators: %v\n", firstString(a.LoadGenerators))
 			fmt.Printf("Test run duration: %v\n", a.Duration)
 			fmt.Printf("QPS: %d\n", a.QPS)
 			fmt.Printf("Infrastructure: %v\n", a.ServiceMesh)
-			if a.LastRun != nil {
+			if a.LastRun.Valid {
 				fmt.Printf("Last Run: %v\n", a.LastRun.Time.Format("2006-01-02 15:04:05"))
 			} else {
 				fmt.Printf("Last Run: %v\n", "nil")
@@ -145,10 +147,10 @@ mesheryctl perf profile test --view
 }
 
 // Fetch performance profiles
-func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber int) ([]models.PerformanceProfile, []byte, error) {
-	var response *models.PerformanceProfilesAPIResponse
+func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber int) ([]perfprofile.PerformanceProfile, []byte, error) {
+	var response *perfprofile.PerformanceProfilePage
 
-	url := baseURL + "/api/user/performance/profiles"
+	url := baseURL + "/api/performance/profiles"
 
 	// update the url
 	url = fmt.Sprintf("%s?pagesize=%d&page=%d", url, pageSize, pageNumber)
@@ -182,19 +184,28 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 }
 
 // add profiles as string arrays to print in a tabular format
-func profilesToStringArrays(profiles []models.PerformanceProfile) [][]string {
+func profilesToStringArrays(profiles []perfprofile.PerformanceProfile) [][]string {
 	var data [][]string
 
 	for _, profile := range profiles {
+		loadGenerator := firstString(profile.LoadGenerators)
 		// adding profile to data for list output
-		if profile.LastRun != nil {
-			data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), profile.LoadGenerators[0], profile.LastRun.Time.Format("2006-01-02 15:04:05")})
+		if profile.LastRun.Valid {
+			data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), loadGenerator, profile.LastRun.Time.Format("2006-01-02 15:04:05")})
 		} else {
-			data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), profile.LoadGenerators[0], ""})
+			data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), loadGenerator, ""})
 		}
 	}
 
 	return data
+}
+
+func firstString[S ~[]string](values S) string {
+	if len(values) == 0 {
+		return ""
+	}
+
+	return values[0]
 }
 
 func userPrompt(key string, label string, data [][]string) (int, error) {

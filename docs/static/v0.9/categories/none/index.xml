@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>None on Documentation</title>
+    <link>/v0.9/categories/none/</link>
+    <description>Recent content in None on Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="/v0.9/categories/none/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Latest Release</title>
+      <link>/v0.9/project/releases/latest/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/v0.9/project/releases/latest/</guid>
+      <description>&lt;h2&gt;v0.9.2&lt;/h2&gt;</description>
+    </item>
+  </channel>
+</rss>

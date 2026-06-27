@@ -1,0 +1,56 @@
+@use "project-variables" as project;
+@use "adapters" as adapters;
+
+/* COMMAND REFERENCE */
+table.mesherycomponents {
+  th {
+    background-color: project.$charcoal;
+    color: white;
+  }
+  td.childcomponent {
+    color: white;
+    background-color: adapters.$tealblue;
+  }
+}
+
+.cmd-caption {
+  margin-bottom: 2rem;
+}
+
+.mesheryctl-reference-page {
+  .td-content > table,
+  .td-content table.mesheryctl-reference-table {
+    display: table;
+    width: max-content;
+    min-width: 100%;
+    table-layout: auto;
+    overflow-x: visible;
+  }
+
+  .td-content > table th,
+  .td-content > table td,
+  .td-content table.mesheryctl-reference-table th,
+  .td-content table.mesheryctl-reference-table td {
+    max-width: none;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+}
+
+/* INSTALLATION */
+div.prereqs {
+  background-color: project.$charcoal;
+  font-size: 1.5rem;
+  color: #ddd;
+  margin: 0.5rem;
+  padding: 15px;
+  border-radius: 0.3rem;
+  & > *,
+  & > * > * {
+    color: #ddd;
+    margin-top: 0;
+  }
+}
+a.meshery-light {
+  color: project.$keppel;
+}

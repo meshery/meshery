@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -38,6 +39,7 @@ func TestModelInit(t *testing.T) {
 		return cmd
 	}
 
+	mesheryctlflags.InitValidators(initModelCmd)
 	// Helper function to create fresh commands for init tests
 	createFreshCommands := func() *cobra.Command {
 		cmd := createFreshModelCmd()
@@ -82,16 +84,12 @@ func TestModelInit(t *testing.T) {
 		ExpectedDirs       []string
 		ExpectedFiles      []string
 		AfterTestRemoveDir string
-		ExpectedError      error `default:"nil"`
-		IsOutputGolden     bool  `default:"true"`
+		ExpectedError      error
+		IsOutputGolden     bool
 	}{
-		// NOTE:
-		// we need this test with full params on the first place,
-		// to prevent side effects of using same command object in model build test.
-		//
-		// TODO: think about how to fix this.
+		// NOTE: Test with full params provided explicitly.
 		{
-			Name:             "model init with all default params",
+			Name:             "given all default parameters when model init model is initialized",
 			Args:             []string{"init", initTestEC2Controller, "--version", initTestVersion, "--path", ".", "--output-format", "json"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.aws-ec2-controller.output.golden",
@@ -111,7 +109,7 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: initTestEC2Controller,
 		},
 		{
-			Name:             "model init with default params",
+			Name:             "given default parameters when model init model is initialized",
 			Args:             []string{"init", initTestEC2Controller},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.aws-ec2-controller.output.golden",
@@ -131,7 +129,7 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: initTestEC2Controller,
 		},
 		{
-			Name:             "model init with yaml output format",
+			Name:             "given output format yaml when model init model is initialized in yaml format",
 			Args:             []string{"init", initTestDynamoController, "--output-format", "yaml"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.aws-dynamodb-controller-in-yaml.output.golden",
@@ -150,13 +148,11 @@ func TestModelInit(t *testing.T) {
 			},
 			AfterTestRemoveDir: initTestDynamoController,
 		},
-		// Added --output-format json in this test because somehow
-		// the --output-format yaml from the previous test case is propagated to this test case
-		// which is only the behaviour inside the test.
-		// TODO think about how to reset the flags between the test cases.
+		// Test case with custom path and version specified.
+		// Flag leakage was fixed, so --output-format yaml from previous test case won't bleed here.
 		{
-			Name:             "model init with custom path and version",
-			Args:             []string{"init", initTestEC2Controller, "--path", "test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
+			Name:             "given custom path and version when model init model is initialized with custom path and version specified",
+			Args:             []string{"init", initTestEC2Controller, "--path", "test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-dir.aws-ec2-controller.output.golden",
 			ExpectedDirs: []string{
@@ -175,7 +171,7 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "test_case_some_custom_dir",
 		},
 		{
-			Name:             "model init with custom relative to current directory path",
+			Name:             "given custom relative to current directory path when model init then model is initialized in custom relative path",
 			Args:             []string{"init", initTestEC2Controller, "--path", "./test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-dir.aws-ec2-controller.output.golden",
@@ -187,7 +183,7 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "./test_case_some_custom_dir",
 		},
 		{
-			Name:             "model init with custom relative to parent directory path",
+			Name:             "given custom relative to parent directory path when model init then model is initialized in custom relative to parent directory path",
 			Args:             []string{"init", initTestEC2Controller, "--path", "../test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-relative-parent-dir.aws-ec2-controller.output.golden",
@@ -199,8 +195,8 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "../test_case_some_custom_dir",
 		},
 		{
-			Name:             "model init with trailing folder separator in the path",
-			Args:             []string{"init", initTestEC2Controller, "--path", "test_case_some_other_custom_dir/with/trailing/separator////"},
+			Name:             "given trailing folder separator in the path when model init then model is initialized in the path without trailing separator",
+			Args:             []string{"init", initTestEC2Controller, "--path", "test_case_some_other_custom_dir/with/trailing/separator////", "--version", "v1.2.3"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-dir-2.aws-ec2-controller.output.golden",
 			// do not need to check all dirs and files here, as we tested it in previous test case,
@@ -211,7 +207,7 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "test_case_some_other_custom_dir",
 		},
 		{
-			Name: "model init fail if model/version folder esists",
+			Name: "given existing model/version folder when model init then throw error",
 			Args: []string{"init", initTestEC2Controller, "--path", ".", "--version", initTestInvalidVersion},
 			SetupHook: func() {
 				err := os.MkdirAll(filepath.Join(initTestEC2Controller, initTestInvalidVersion), initModelDirPerm)
@@ -226,46 +222,47 @@ func TestModelInit(t *testing.T) {
 			ExpectedError:      ErrModelInitFromString(fmt.Sprintf(errInitFolderExists, filepath.Join(initTestEC2Controller, initTestInvalidVersion))),
 		},
 		{
-			Name:             "model init with invalid version format",
+			Name:             "given invalid version format when model init then throw error",
 			Args:             []string{"init", initTestEC2Controller, "--version", "1.2"},
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelUnsupportedVersion(errInitInvalidVersion),
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --version '1.2': version must be in format vX.X.X")),
 		},
 		{
-			Name:             "model init with invalid output format",
+			Name:             "given invalid output format when model init then throw error",
 			Args:             []string{"init", "test-case-aws-ec2-controller", "--output-format", "protobuf"},
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelUnsupportedOutputFormat(fmt.Sprintf(errInitUnsupportedFormat, "json, yaml")),
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --output-format 'protobuf': valid values are json yaml")),
 		},
 		{
-			Name:             "model init no model name",
+			Name:             "given no model name provided when model init then throw error",
 			Args:             []string{"init", "--output-format", "json", "--version", "v0.1.0"},
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInitFromString(errInitOneArg),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%s", errInitOneArg)),
 		},
 		{
-			Name:             "model init too many arguments",
+			Name:             "given too many arguments when model init then throw error",
 			Args:             []string{"init", "test-case-aws-ec2-controller", "test-case-aws-dynamodb-controller", "--output-format", "json", "--version", "v0.1.0"},
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInitFromString(errInitOneArg),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%s", errInitOneArg)),
 		},
 		{
-			Name:             "model init invalid model name (underscore)",
+			Name:             "given invalid model name when model init then throw error",
 			Args:             []string{"init", "test-case_aws-ec2-controller", "--output-format", "json", "--version", "v0.1.0"},
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInit(fmt.Errorf("invalid model name: name must match pattern ^[a-z0-9-]+$")),
+			ExpectedError:    ErrModelInit(fmt.Errorf("%s", "invalid model name: name must match pattern ^[a-z0-9-]+$")),
 		},
 	}
+
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
 			// Clean up any lingering test artifacts before this subtest starts
@@ -287,8 +284,12 @@ func TestModelInit(t *testing.T) {
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
 			// Create fresh commands using helper function
 			cmd := createFreshCommands()
+			defer utils.ResetCommandFlags(cmd, t)
+			defer utils.ResetCommandFlags(initModelCmd, t)
+
 			cmd.SetArgs(tc.Args)
 			cmd.SetOut(buff)
+
 			err := cmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error

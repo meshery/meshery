@@ -22,8 +22,33 @@ import (
 )
 
 type Provider struct {
-	ProviderURL  string `json:"provider_url,omitempty"`
-	ProviderName string `json:"provider_name,omitempty"`
+	ProviderURL  string `json:"providerUrl,omitempty"`
+	ProviderName string `json:"providerName,omitempty"`
+}
+
+func (p *Provider) UnmarshalJSON(data []byte) error {
+	type providerAlias Provider
+	aux := struct {
+		providerAlias
+		ProviderURLLegacy  string `json:"provider_url,omitempty"`
+		ProviderNameLegacy string `json:"provider_name,omitempty"`
+	}{}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return ErrUnmarshal(err)
+	}
+
+	p.ProviderURL = aux.ProviderURL
+	if p.ProviderURL == "" {
+		p.ProviderURL = aux.ProviderURLLegacy
+	}
+
+	p.ProviderName = aux.ProviderName
+	if p.ProviderName == "" {
+		p.ProviderName = aux.ProviderNameLegacy
+	}
+
+	return nil
 }
 
 // NewRequest creates *http.Request and handles adding authentication for Meshery itself
@@ -85,12 +110,22 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 
 	// failsafe for data not found on the server
 	if resp.StatusCode == http.StatusNotFound {
-		bodyBytes, err := io.ReadAll(resp.Body)
 		defer func() { _ = resp.Body.Close() }()
+		bodyBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, ErrReadResponseBody(err)
 		}
+		Log.Debugf("Response body for 404 Not Found: %s", string(bodyBytes))
 		return nil, ErrNotFound(errors.New(string(bodyBytes)))
+	}
+
+	if resp.StatusCode == http.StatusInternalServerError {
+		defer func() { _ = resp.Body.Close() }()
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, ErrReadResponseBody(err)
+		}
+		return nil, ErrMesheryServerInternalError(errors.New(string(bodyBytes)))
 	}
 
 	// failsafe for bad api call
@@ -98,8 +133,8 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 		resp.StatusCode != http.StatusCreated &&
 		resp.StatusCode != http.StatusNoContent
 	if isNotSuccess {
-		bodyBytes, err := io.ReadAll(resp.Body)
 		defer func() { _ = resp.Body.Close() }()
+		bodyBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, ErrReadResponseBody(err)
 		}

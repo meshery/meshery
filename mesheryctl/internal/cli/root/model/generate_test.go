@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"net/http"
 	"path/filepath"
 	"runtime"
@@ -8,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -37,6 +39,7 @@ func TestModelGenerate(t *testing.T) {
 		ExpectedResponse string
 		ExpectHelp       bool
 		ExpectErr        bool
+		RaisedError      error
 		HttpCode         int
 	}
 
@@ -47,21 +50,22 @@ func TestModelGenerate(t *testing.T) {
 			ExpectedResponse: "generate.no-args.output.golden",
 			ExpectHelp:       true,
 			ExpectErr:        true,
+			RaisedError:      utils.ErrInvalidArgument(fmt.Errorf(errGenerateMissingArgsMsg, errGenerateUsageMsg)),
 		},
 		{
 			Name:             "model generate: from CSV directory",
 			Args:             []string{"generate", "--file", filepath.Join(fixturesDir, "templates", "template-csvs")},
-			ExpectedResponse: "generate.dir.skip-register.output.golden",
+			ExpectedResponse: "generate.dir.registered.output.golden",
 			URL:              apiURL,
 			Fixture:          "generate.api.ok.response.golden",
 			HttpCode:         200,
 		},
 		{
 			Name:             "model generate: from URL with template",
-			Args:             []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template.json"), "--register=true"},
+			Args:             []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template.json"), "--skip-registration=true"},
 			URL:              apiURL,
 			Fixture:          "generate.api.ok.response.golden",
-			ExpectedResponse: "generate.dir.register.output.golden",
+			ExpectedResponse: "generate.dir.skipped.output.golden",
 			HttpCode:         200,
 		},
 	}
@@ -99,6 +103,7 @@ func TestModelGenerate(t *testing.T) {
 			b := utils.SetupMeshkitLoggerTesting(t, false)
 			ModelCmd.SetOut(b)
 			ModelCmd.SetArgs(tt.Args)
+			mesheryctlflags.InitValidators(ModelCmd)
 			err := ModelCmd.Execute()
 
 			if tt.ExpectHelp || tt.ExpectErr {
@@ -106,8 +111,7 @@ func TestModelGenerate(t *testing.T) {
 					t.Fatal("expected an error, but got nil")
 				}
 				t.Logf("[%s] stderr (error):\n%s", tt.Name, err.Error())
-				expectedResponse := golden.Load()
-				utils.Equals(t, expectedResponse, err.Error())
+				utils.AssertMeshkitErrorsEqual(t, tt.RaisedError, err)
 				return
 			}
 

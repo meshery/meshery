@@ -15,12 +15,17 @@
 package design
 
 import (
+	"errors"
+	"fmt"
 	"slices"
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/pattern/core"
+	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/spf13/cobra"
 )
 
@@ -71,7 +76,7 @@ mesheryctl design list
 func init() {
 	DesignCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
-	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, onboardCmd, exportCmd, offboardCmd}
+	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, deployDesignCmd, exportCmd, designUndeployCmd, evaluateCmd}
 	DesignCmd.AddCommand(availableSubcommands...)
 }
 
@@ -95,4 +100,29 @@ func retrieveProvidedSourceType(sType string, validDesignSourceTypes []string) (
 		return sType, nil
 	}
 	return "", ErrInValidSource(sType, validDesignSourceTypes)
+}
+
+// fetchDesignByID fetches a design from the server by ID and parses it into a PatternFile.
+func fetchDesignByID(baseUrl, designID string) (pattern.PatternFile, error) {
+	dataURL := fmt.Sprintf("%s/api/pattern/%s", baseUrl, designID)
+	patternData, err := fetchPatternData(dataURL)
+	if err != nil {
+		return pattern.PatternFile{}, err
+	}
+
+	pf, err := core.NewPatternFile([]byte(patternData.PatternFile))
+	if err != nil {
+		return pattern.PatternFile{}, ErrParseDesignFile(err)
+	}
+	// core.NewPatternFile returns a v1beta3/design.PatternFile, but the
+	// evaluation engine (EvaluationRequest/EvaluationResponse) is a documented
+	// v1beta1/pattern carve-out, so bridge it back to v1beta1.
+	bridged, err := patternutils.PatternV1beta3ToV1beta1(&pf)
+	if err != nil {
+		return pattern.PatternFile{}, ErrParseDesignFile(err)
+	}
+	if bridged == nil {
+		return pattern.PatternFile{}, ErrParseDesignFile(errors.New("bridged pattern file is nil"))
+	}
+	return *bridged, nil
 }

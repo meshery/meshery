@@ -1,422 +1,278 @@
 # Project Overview
 
-Meshery is a self-service engineering platform and the open source, cloud native manager enabling the
-design and management of all Kubernetes-based infrastructure and applications. As a CNCF project, 
-Meshery offers visual and collaborative GitOps, freeing you from the chains of YAML while managing 
-Kubernetes multi-cluster deployments. With support for 300+ integrations, Meshery provides 
-infrastructure lifecycle management, workspaces for team collaboration, design pattern catalogs,
-performance management, and multi-tenancy capabilities across any cloud or on-premises environment.
+Meshery is a self-service engineering platform and open source cloud native manager for Kubernetes infrastructure. A CNCF project supporting 300+ integrations with visual GitOps, multi-cluster management, and workspace collaboration.
 
 ## Repository Structure
 
-- **/server** – Meshery Server backend written in Go; handles REST/GraphQL APIs, Kubernetes cluster
-  management, adapter orchestration, and database operations (PostgreSQL).
-- **/ui** – Meshery UI built with Next.js and React; includes Material UI components, Redux Toolkit
-  state management, and Relay for GraphQL queries.
-- **/mesheryctl** – Meshery CLI built with Go and Cobra framework; provides commands for installation,
-  lifecycle management, pattern deployment, and system validation.
-- **/docs** – Documentation site powered by Jekyll; contains user guides, concepts, contributing
-  guides, and API references.
-- **/install** – Installation artifacts including Dockerfiles, Kubernetes manifests, Helm charts,
-  Docker Compose files, and platform-specific deployment scripts.
-- **/provider-ui** – Provider-specific UI extensions; isolated React application for remote provider
-  integrations.
-- **/policies** – Open Policy Agent (OPA) Rego policies for relationship evaluation and design
-  validation.
-- **/.github** – GitHub Actions workflows, issue templates, Copilot agent definitions, and community
-  health files.
+| Directory | Purpose |
+|-----------|---------|
+| `/server` | Go backend — REST/GraphQL APIs, Kubernetes management, PostgreSQL |
+| `/ui` | Next.js/React frontend — MUI, Redux Toolkit, Relay GraphQL |
+| `/mesheryctl` | Go CLI with Cobra — install, lifecycle, pattern deployment |
+| `/docs` | Hugo documentation site |
+| `/install` | Dockerfiles, Kubernetes manifests, Helm charts |
+| `/provider-ui` | Provider-specific React UI extensions |
+| `/policies` | OPA Rego policies for relationship evaluation |
+| `/.github` | GitHub Actions, issue templates, Copilot agent definitions |
+
+## Identifier Naming Conventions — MANDATORY
+
+Authoritative guide: <https://github.com/meshery/schemas/blob/master/docs/identifier-naming-contributor-guide.md>
+
+**Wire is camelCase; DB is snake_case; Go fields follow Go idiom; the ORM layer is the sole translation boundary.**
+
+### Per-layer canonical forms
+
+| Layer | Form |
+|---|---|
+| DB column / `db:` tag | `snake_case` — `user_id`, `org_id`, `created_at` |
+| Go struct field | `PascalCase` with Go initialisms — `UserID`, `OrgID`, `CreatedAt` |
+| JSON tag | `camelCase` — `json:"userId"`, `json:"orgId"` |
+| URL query/path param | `camelCase` — `{orgId}`, `?userId=...` |
+| TypeScript property | `camelCase` — `response.userId` |
+| OpenAPI schema property | `camelCase` |
+| OpenAPI `operationId` | `lower camelCase verbNoun` — `getWorkspaces` |
+| `components/schemas` type name | `PascalCase` — `WorkspacePayload` |
+
+### Forbidden (MUST NOT)
+
+- MUST NOT use a `json:` tag matching the `db:` tag — wire is camel, DB is snake.
+- MUST NOT hand-roll an RTK query endpoint when `@meshery/schemas/{mesheryApi,cloudApi}` provides one.
+- MUST NOT locally redeclare a Go type with an equivalent in `github.com/meshery/schemas/models/...`.
+- MUST NOT use `ID` (ALL CAPS) in URL params, JSON tags, or TypeScript properties — use `Id`.
+- MUST NOT mix casing within a single resource; introduce a new API version to change wire format.
+- MUST NOT import deprecated `v1beta1` in new code; use `v1beta3` (or `v1beta2` where v1beta3 absent).
+
+### Required on every PR
+
+- Run schemas validator: `cd ../schemas && make validate-schemas && make consumer-audit`
+- Include test updates for casing/tag changes.
+- Include doc updates for user-visible API changes.
+- Sign off commits: `git commit -s`
+
+> `meshery/schemas/AGENTS.md` is authoritative. On conflicts, schemas wins.
 
 ## Build & Development Commands
 
 ### Server (Go)
 
 ```bash
-# Run Meshery Server locally (port 9081)
-make server
-
-# Run with local provider for testing
-make server-local
-
-# Build server binary
-make build-server
-
-# Run server binary
-make server-binary
-
-# Lint Go code
-make golangci
-
-# Run server without Kubernetes components
-make server-skip-compgen
-
-# Run server without operator deployment
-make server-without-operator
-
-# Generate error codes and update helpers
-make error
+make server                    # Run server locally (port 9081)
+make server-local              # Run with local provider
+make build-server              # Build binary
+make golangci                  # Lint Go code
+make server-skip-compgen       # Run without Kubernetes components
+make server-without-operator   # Run without operator deployment
+make error                     # Generate error codes
 ```
 
 ### UI (Next.js/React)
 
 ```bash
-# Install UI dependencies
-make ui-setup
-
-# Run UI development server (port 3000)
-make ui
-
-# Build and export UI
-make ui-build
-
-# Build only Meshery UI
-make ui-meshery-build
-
-# Lint UI code
-make ui-lint
-
-# Run end-to-end tests
-make ui-integration-tests
+make ui-setup              # Install dependencies
+make ui                    # Dev server (port 3000)
+make ui-build              # Build and export
+make ui-lint               # Lint UI code
+make ui-integration-tests  # Run E2E tests
 ```
 
 ### CLI (mesheryctl)
 
 ```bash
-# Build mesheryctl binary
-cd mesheryctl && make
-
-# Run unit tests
-cd mesheryctl && go test --short ./...
-
-# Run integration tests
-cd mesheryctl && go test -run Integration ./...
-
-# Generate CLI documentation
-make docs-mesheryctl
+cd mesheryctl && make                       # Build binary
+cd mesheryctl && go test --short ./...      # Unit tests
+cd mesheryctl && go test -run Integration ./...  # Integration tests
+make docs-mesheryctl                        # Generate CLI docs
 ```
 
 ### Docker
 
 ```bash
-# Build Meshery container
-make docker-build
-
-# Build playground mode container
-make docker-playground-build
-
-# Run Meshery with Docker pointing to production Remote Provider
-make docker-cloud
-
-# Run Meshery with Docker pointing to local Remote Provider
-make docker-local-cloud
+make docker-build           # Build container
+make docker-cloud           # Run with production Remote Provider
+make docker-local-cloud     # Run with local Remote Provider
 ```
 
 ### Documentation
 
 ```bash
-# Run docs site with live reload (port 4000)
-make docs
-
-# Build docs site
-make docs-build
-
-# Run docs in Docker container
-make docs-docker
+make docs        # Run docs site (port 1313)
+make docs-build  # Build docs site
 ```
 
-### API Specifications
+### API & Helm
 
 ```bash
-# Build Swagger/OpenAPI specs
-make swagger-build
-
-# Serve Swagger UI
-make swagger
-
-# Build GraphQL schema
-make graphql-build
-
-# Generate GraphQL documentation
-make graphql-docs-build
-```
-
-### Helm Charts
-
-```bash
-# Lint all Helm charts
-make helm-lint
-
-# Generate Helm chart documentation
-make helm-docs
+make graphql-build  # Build GraphQL schema
+make helm-lint      # Lint Helm charts
+make helm-docs      # Generate Helm chart docs
 ```
 
 ## Code Style & Conventions
 
-### Go Code
+### Go
 
-- **Formatting**: Use `gofmt` and `goimports`; enforced via `golangci-lint`.
-- **Linting**: Run `make golangci` before committing; config in `.golangci.yml`.
-- **Error Handling**: Use MeshKit's error utilities (`github.com/meshery/meshkit/errors`); run
-  `make error` to analyze error codes.
-- **Package Structure**: Follow Go project layout standards; keep packages focused and cohesive.
-- **Testing**: Use Go's standard testing library; place tests in `*_test.go` files; run with 
-  `go test`.
-- **Dependencies**: Manage with Go modules; run `go mod tidy` regularly.
+- Format with `gofmt`/`goimports`; lint with `make golangci` (config: `.golangci.yml`).
+- Use MeshKit error utilities (`github.com/meshery/meshkit/errors`); run `make error` for codes.
+- Tests in `*_test.go`; manage deps with `go mod tidy`.
 
-### JavaScript/React Code
+### JavaScript/React
 
-- **Formatting**: ESLint with Prettier; config in `ui/.eslintrc.js`.
-- **Component Style**: Use functional components with React hooks; avoid class components.
-- **Styling**: Prefer Sistent design system components (`@sistent/sistent`); fall back to Material
-  UI (MUI) when components unavailable.
-- **State Management**: Redux Toolkit for global state; local state with `useState`/`useReducer`.
-- **API Integration**: GraphQL via Relay; REST via Axios.
-- **Testing**: Playwright for E2E tests; run with `make ui-integration-tests`.
-- **Schema-Driven Development**: Use JSON schemas to define component props and validation.
+- ESLint + Prettier (config: `ui/.eslintrc.js`).
+- Functional components with hooks; no class components.
+- Use `@sistent/sistent` design system; fall back to MUI.
+- Redux Toolkit for global state; GraphQL via Relay; REST via Axios.
+- Playwright for E2E tests.
 
-### Commit Messages
+### Commits
 
-- **Format**: `[component] descriptive message` (e.g., `[UI] Add workspace filter dropdown`).
-- **Sign-Off**: All commits must be signed with DCO (`git commit -s`).
-- **References**: Link to issues/PRs when applicable (`Fixes #1234`, `Relates to #5678`).
+- Format: `[component] descriptive message` (e.g., `[UI] Add workspace filter dropdown`)
+- Sign off: `git commit -s`
+- Reference issues: `Fixes #1234`
 
-### Git Workflow
-
-- Fork the repository and create feature branches from `master`.
-- Keep commits atomic and focused on single changes.
-- Squash commits before merging unless history provides value.
-
-## Architecture Notes
+## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         Meshery UI (Next.js)                        │
-│  ┌───────────────┐  ┌──────────────┐  ┌──────────────────────────┐ │
-│  │   Material UI │  │ Redux Toolkit│  │  Relay (GraphQL Client)  │ │
-│  │   Components  │  │  State Mgmt  │  │  + REST (Axios)          │ │
-│  └───────────────┘  └──────────────┘  └──────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-                              │
-                         HTTP/WebSocket
-                              │
-┌─────────────────────────────────────────────────────────────────────┐
-│                      Meshery Server (Go)                            │
-│  ┌─────────────┐  ┌──────────────┐  ┌────────────┐ ┌────────────┐ │
-│  │  REST API   │  │  GraphQL API │  │ PostgreSQL │ │   NATS     │ │
-│  │  (Gorilla)  │  │   (gqlgen)   │  │     DB     │ │  Messaging │ │
-│  └─────────────┘  └──────────────┘  └────────────┘ └────────────┘ │
-│  ┌──────────────────────────────────────────────────────────────┐ │
-│  │           Provider Plugins (gRPC/Remote Providers)           │ │
-│  └──────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-                              │
-                    gRPC / Kubernetes API
-                              │
-┌─────────────────────────────────────────────────────────────────────┐
-│                     Kubernetes Clusters                             │
-│  ┌─────────────┐  ┌──────────────┐  ┌────────────────────────────┐ │
-│  │   Meshery   │  │   MeshSync   │  │  Adapters (Istio, Linkerd, │ │
-│  │  Operator   │  │ (Discovery)  │  │   Consul, NSM, etc.)       │ │
-│  └─────────────┘  └──────────────┘  └────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│                  Meshery UI (Next.js)                │
+│   MUI Components │ Redux Toolkit │ Relay + Axios     │
+└──────────────────────────┬───────────────────────────┘
+                     HTTP/WebSocket
+┌──────────────────────────┴───────────────────────────┐
+│                 Meshery Server (Go)                  │
+│   REST (9081) │ GraphQL │ PostgreSQL │ NATS          │
+│         Provider Plugins (gRPC/Remote)               │
+└──────────────────────────┬───────────────────────────┘
+                  gRPC / Kubernetes API
+┌──────────────────────────┴───────────────────────────┐
+│              Kubernetes Clusters                     │
+│  Meshery Operator │ MeshSync │ Adapters (gRPC)       │
+└──────────────────────────────────────────────────────┘
 ```
 
-### Component Interactions
+**Data flow**: UI → REST/GraphQL → Server → PostgreSQL + Kubernetes API → NATS → MeshSync → GraphQL subscriptions → UI.
 
-**Meshery UI** serves as the primary user interface, communicating with Meshery Server via REST and
-GraphQL APIs. The UI uses Relay for GraphQL subscriptions (real-time updates) and Axios for REST
-endpoints. Redux Toolkit manages application state including user sessions, workspace data, and
-connection configurations.
+## Testing
 
-**Meshery Server** is the core orchestration engine written in Go. It exposes REST (port 9081) and
-GraphQL APIs, manages connections to Kubernetes clusters, handles user authentication via provider
-plugins, stores data in PostgreSQL, and publishes events to NATS. The server uses MeshKit for common
-utilities, error handling, and database abstractions.
+### Go
 
-**Meshery Operator** runs inside Kubernetes clusters to manage lifecycle of Meshery components
-including MeshSync (for cluster discovery and state synchronization) and Meshery Broker (NATS for
-event streaming).
+- Unit: `go test ./...` or `go test --short ./...`
+- Integration setup: `make server-integration-tests-meshsync-setup` (requires Docker, kind, kubectl, helm)
+- Integration run: `make server-integration-tests-meshsync-run`
+- Target ≥70% coverage on business logic.
 
-**Adapters** are gRPC services that provide integration with specific service meshes and cloud native
-infrastructure. They run as separate containers and communicate with Meshery Server over gRPC.
+### UI
 
-**mesheryctl** is the CLI tool for local development, deployment, and operations. It communicates
-directly with Meshery Server APIs and can manage local Docker containers or Kubernetes deployments.
+- E2E (Playwright): `make ui-integration-tests` or `npm run test:e2e` in `ui/`
+- Setup: `make test-setup-ui`
 
-### Data Flow
+### Local Validation
 
-1. User interacts with Meshery UI (design canvas, configuration forms, performance tests).
-2. UI sends GraphQL mutations/queries or REST requests to Meshery Server.
-3. Server processes requests, applies business logic, and persists to PostgreSQL.
-4. Server communicates with Kubernetes API or adapter gRPC endpoints to deploy resources.
-5. MeshSync discovers cluster state changes and publishes to NATS.
-6. Server receives NATS events and updates database.
-7. UI receives real-time updates via GraphQL subscriptions.
-
-## Testing Strategy
-
-### Unit Tests (Go)
-
-- **Location**: `*_test.go` files alongside source code.
-- **Framework**: Go standard library `testing` package.
-- **Run**: `go test ./...` or `go test --short ./...` (skip integration tests).
-- **Coverage**: Aim for ≥ 70% coverage on business logic.
-
-### Unit Tests (JavaScript)
-
-> TODO: Expand JavaScript unit testing infrastructure.
-
-### Integration Tests (Go)
-
-- **Location**: `server/integration-tests/`
-- **Setup**: `make server-integration-tests-meshsync-setup` (creates kind cluster, deploys
-  operator).
-- **Run**: `make server-integration-tests-meshsync-run`
-- **Cleanup**: `make server-integration-tests-meshsync-cleanup`
-- **Requirements**: Docker, kind, kubectl, helm.
-
-### End-to-End Tests (UI)
-
-- **Location**: `ui/` (Playwright tests).
-- **Framework**: Playwright.
-- **Setup**: `make test-setup-ui` (installs Playwright browsers with dependencies).
-- **Run**: `make ui-integration-tests` or `npm run test:e2e` in `ui/`.
-- **CI**: `make test-e2e-ci` runs in non-interactive mode.
-
-### CI/CD Testing
-
-- **Workflows**: `.github/workflows/` contains GitHub Actions for PR checks, release builds, and
-  deployments.
-- **Automated Tests**: `build-ui-and-server.yml` runs on PRs; includes linting, builds, and test
-  execution.
-- **CodeQL**: `codeql-analysis.yml` performs security scanning.
-
-### Local Testing Best Practices
-
-- Run `make golangci` before committing Go code.
-- Run `make ui-lint` before committing UI code.
-- Test server changes with `make server` and verify on `http://localhost:9081`.
-- Test UI changes with `make ui` and verify on `http://localhost:3000`.
-- Run integration tests when modifying Kubernetes or MeshSync interactions.
+```bash
+make golangci    # before Go commits
+make ui-lint     # before UI commits
+```
 
 ## Security & Compliance
 
-### Reporting Vulnerabilities
-
-- **Email**: [security@meshery.dev](mailto:security@meshery.dev)
-- **Response Time**: Acknowledged within 10 business days.
-- **Full Policy**: [SECURITY.md](./SECURITY.md)
-
-### Secrets Management
-
-- **Never commit secrets**: API keys, tokens, passwords, certificates.
-- **Use environment variables**: Server accepts secrets via env vars (e.g., `PROVIDER_BASE_URLS`,
-  `KEYS_PATH`).
-- **GitHub Secrets**: Store in repository secrets for CI/CD; access via `${{ secrets.VAR_NAME }}`.
-
-### Dependency Scanning
-
-- **Go**: Dependabot enabled; monitors `go.mod` and `go.sum`.
-- **JavaScript**: Dependabot monitors `ui/package.json` and `provider-ui/package.json`.
-- **SBOM**: Software Bill of Materials generated via `.github/workflows/bom.yaml`.
-
-### Security Scanning
-
-- **CodeQL**: Automated security analysis runs on every PR and push to `master`.
-- **OpenSSF Scorecard**: Tracks security posture; badge in README.
-- **License Compliance**: Apache 2.0; verify dependencies are compatible.
-
-### Best Practices
-
-- Run `make golangci` to catch security lints (e.g., SQL injection, command injection).
-- Validate all user inputs; sanitize data before rendering in UI.
-- Use parameterized queries for database operations.
-- Limit permissions on Kubernetes service accounts and RBAC roles.
+- Report vulnerabilities: [security@meshery.dev](mailto:security@meshery.dev) — acknowledged in 10 business days.
+- Never commit secrets; use env vars (`PROVIDER_BASE_URLS`, `KEYS_PATH`) and GitHub Secrets.
+- CodeQL runs on every PR; OpenSSF Scorecard tracks security posture.
+- Apache 2.0 license — verify dependency compatibility.
+- Use parameterized queries; validate/sanitize all user inputs.
 
 ## Agent Guardrails
 
-### Files That Should Not Be Modified by Agents
+### Do Not Modify
 
-- **LICENSE** – Apache 2.0 license text; do not edit.
-- **CODE_OF_CONDUCT.md** – Community standards; changes require human review.
-- **GOVERNANCE.md** – Project governance; changes require maintainer consensus.
-- **MAINTAINERS.md** – Maintainer list; requires verification of identity.
-- **.github/copilot-instructions.md** – Base Copilot instructions; changes require careful review.
-- **.github/agents/** – Agent definition files; self-modification risks infinite loops.
-- **go.sum**, **ui/package-lock.json**, **provider-ui/package-lock.json** – Lock files; only update
-  via package managers.
+`LICENSE`, `CODE_OF_CONDUCT.md`, `GOVERNANCE.md`, `MAINTAINERS.md`, `.github/copilot-instructions.md`, `.github/agents/`, `go.sum`, `ui/package-lock.json`, `provider-ui/package-lock.json`
 
-### Required Human Reviews
+### Require Human Review
 
-- **Security changes**: All changes touching authentication, authorization, secrets, or encryption.
-- **Database migrations**: Schema changes require careful review to avoid data loss.
-- **API breaking changes**: REST/GraphQL API modifications that break backward compatibility.
-- **Helm chart templates**: Changes to `install/kubernetes/helm/` require validation in test clusters.
-- **CI/CD workflows**: `.github/workflows/` changes may affect release process.
+- Security changes (auth, secrets, encryption)
+- Database migrations
+- API breaking changes
+- Helm chart templates (`install/kubernetes/helm/`)
+- CI/CD workflows (`.github/workflows/`)
 
-### Rate Limits & Constraints
+### Quality Gates
 
-- **PR size**: Keep PRs focused and under 500 lines changed when possible.
-- **Commit frequency**: Batch related changes; avoid excessive micro-commits.
-- **Build failures**: Do not merge if CI checks fail; investigate and fix root cause.
+- Go: `make golangci` must pass
+- JS: `make ui-lint` must pass
+- New features need docs; breaking changes need deprecation notices
+- Keep PRs under 500 lines; don't merge on CI failure
 
-### Quality Standards
-
-- All Go code must pass `make golangci`.
-- All JavaScript code must pass `make ui-lint`.
-- New features require corresponding documentation updates.
-- Breaking changes require deprecation notices and migration guides.
-
-## Extensibility Hooks
+## Extensibility
 
 ### Provider Plugins
 
-- **Interface**: `server/models/provider.go` defines the provider contract.
-- **Remote Providers**: Implement authentication, preferences, and sync logic externally.
-- **Example**: Meshery Cloud provider integrates via HTTPS/gRPC.
+Interface: `server/models/provider.go` — implement auth, preferences, and sync externally.
 
 ### Adapters (gRPC)
 
-- **Protocol**: Defined in `server/meshes/meshops.proto`.
-- **Examples**: meshery-istio, meshery-linkerd, meshery-consul (separate repositories).
-- **Registration**: Adapters self-register with Meshery Server on startup.
+Protocol: `server/meshes/meshops.proto` — adapters self-register on startup. Examples: meshery-istio, meshery-linkerd, meshery-consul.
 
 ### UI Extensions
 
-- **Remote Components**: Load React components from URLs at runtime via `@paciolan/remote-component`.
-- **Provider UI**: `provider-ui/` directory for provider-specific UI extensions.
+Remote Components loaded via `@paciolan/remote-component`. Bundle **must** expose `module.exports = { default: Component, __esModule: true }`. Silent-undefined gotcha: a mis-built bundle renders as `undefined` with no loader error — React throws "Element type is invalid" at render. Check bundle export shape first. See `ui/components/layout/Navigator/NavigatorExtension.tsx`.
 
-### GraphQL Subscriptions
+### GraphQL
 
-- **Location**: `server/internal/graphql/schema.graphql`
-- **Extend**: Add new queries, mutations, or subscriptions; run `make graphql-build`.
+Schema: `server/internal/graphql/schema.graphql`. Add queries/mutations/subscriptions then run `make graphql-build`.
 
 ### Feature Flags
 
-- **Environment Variables**: Control behavior via env vars (e.g., `PLAYGROUND`, `DEBUG`,
-  `SKIP_COMP_GEN`).
-- **Runtime Config**: Server reads config from `~/.meshery/config.yaml`.
+Env vars: `PLAYGROUND`, `DEBUG`, `SKIP_COMP_GEN`. Runtime config: `~/.meshery/config.yaml`.
 
 ### Event System
 
-- **NATS Topics**: Publish/subscribe to topics like `meshsync.request`, `meshery.broker`.
-- **MeshSync Events**: Listen for cluster state changes and trigger workflows.
+NATS topics: `meshsync.request`, `meshery.broker`. MeshSync publishes cluster state changes.
 
 ### Hooks & Scripts
 
-- **Pre-commit**: Husky hooks in `ui/.husky/` run linting before commits.
-- **Makefile Targets**: Extend `Makefile` or `install/Makefile.core.mk` for custom build steps.
+- Pre-commit: Husky hooks in `ui/.husky/`
+- Build: extend `Makefile` or `install/Makefile.core.mk`
+
+## Coding Agents
+
+Agent definitions in `.agents/` (LLM-agnostic):
+
+| Agent | File | Purpose |
+|-------|------|---------|
+| Code Reviewer | `.agents/code-reviewer.md` | Parallel review across Go + frontend |
+| Security Reviewer | `.agents/security-reviewer.md` | Security audit |
+| Meshery Code Contributor | `.agents/meshery-code-contributor.md` | Full-stack contributions |
+| Meshery Docs Contributor | `.agents/meshery-docs-contributor.md` | Hugo docs contributions |
+| GitHub Actions Engineer | `.agents/github-actions-engineer.md` | CI/CD design and debugging |
+| Relationship Fixture Agent | `.agents/relationship-fixture-agent.md` | Relationship test fixtures |
+
+## Skills
+
+Packaged workflows in `.agents/skills/`:
+
+| Skill | Directory | Purpose |
+|-------|-----------|---------|
+| gen-test | `.agents/skills/gen-test/` | Generate idiomatic Go tests |
+| api-doc | `.agents/skills/api-doc/` | Document REST/GraphQL endpoints |
+| gen-relationship | `.agents/skills/gen-relationship/` | Generate schema-backed relationships |
+
+## Automation Hooks
+
+Scripts in `.agents/hooks/`:
+
+| Hook | Script | Trigger | Purpose |
+|------|--------|---------|---------|
+| Format Frontend | `.agents/hooks/format-frontend.sh` | Post-edit | Auto-format JS/TS with Prettier |
+| Block Lock Files | `.agents/hooks/block-lockfiles.sh` | Pre-edit | Prevent direct edits to lock files |
 
 ## Further Reading
 
-- [Contributing Guide](./CONTRIBUTING.md) – Start here for onboarding.
-- [Meshery Documentation](https://docs.meshery.io) – Full user and contributor guides.
-- [Architecture Overview](https://docs.meshery.io/concepts/architecture) – Detailed component
-  diagrams and explanations.
-- [API Documentation](https://docs.meshery.io/extensibility/api) – REST and GraphQL API references.
-- [CLI Guide](https://docs.meshery.io/guides/mesheryctl) – mesheryctl command reference.
-- [Extensibility](https://docs.meshery.io/extensibility) – Provider plugins, adapters, and extension
-  points.
-- [Community Handbook](https://meshery.io/community#handbook) – Community processes and resources.
-- [Roadmap](./ROADMAP.md) – Upcoming features and milestones.
-- [Security Policy](./SECURITY.md) – Vulnerability reporting and disclosure process.
-- [Governance](./GOVERNANCE.md) – Project decision-making and maintainer responsibilities.
+- [Contributing Guide](./CONTRIBUTING.md)
+- [Meshery Documentation](https://docs.meshery.io)
+- [Architecture Overview](https://docs.meshery.io/concepts/architecture)
+- [API Documentation](https://docs.meshery.io/extensibility/api)
+- [CLI Guide](https://docs.meshery.io/guides/mesheryctl)
+- [Extensibility](https://docs.meshery.io/extensibility)
+- [Community Handbook](https://meshery.io/community#handbook)
+- [Security Policy](./SECURITY.md)
+- [Governance](./GOVERNANCE.md)

@@ -1,6 +1,22 @@
 name: Docker Extension for Meshery
 on:
   workflow_call:
+    inputs:
+      release-ver:
+        description: "Stable Release Version"
+        required: false
+        type: string
+        default: "v"
+      stripped-release-ver:
+        description: "Stripped Stable Release Version"
+        required: false
+        type: string
+        default: ""
+      release-channel:
+        description: "Release Channel"
+        required: false
+        type: string
+        default: "edge"
   # push:
   #   tags:
   #     - "v*"
@@ -20,9 +36,9 @@ on:
         default: "edge"
 
 env:
-  GIT_VERSION: ${{github.event.inputs.release-ver}}
-  GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}
-  RELEASE_CHANNEL: ${{github.event.inputs.release-channel}}
+  GIT_VERSION: ${{ inputs.release-ver }}
+  GIT_STRIPPED_VERSION: ${{ inputs.stripped-release-ver }}
+  RELEASE_CHANNEL: ${{ inputs.release-channel }}
   GIT_TAG: ${{ github.event.release.tag_name }}
 
 jobs:
@@ -30,11 +46,11 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - run: |
-          echo "Dispatched GIT_VERSION: ${{github.event.inputs.release-ver}}"
-          echo " Dispatched GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}"
-          echo "Env RELEASE_CHANNEL: ${{env.RELEASE_CHANNEL}}"
-          echo "Env GIT_VERSION: ${{env.GIT_VERSION}}"
-          echo "Env GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
+          echo "Dispatched GIT_VERSION: ${{ inputs.release-ver }}"
+          echo "Dispatched GIT_STRIPPED_VERSION: ${{ inputs.stripped-release-ver }}"
+          echo "Env RELEASE_CHANNEL: ${{ env.RELEASE_CHANNEL }}"
+          echo "Env GIT_VERSION: ${{ env.GIT_VERSION }}"
+          echo "Env GIT_STRIPPED_VERSION: ${{ env.GIT_STRIPPED_VERSION }}"
           echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
 
   docker-extension:
@@ -43,7 +59,7 @@ jobs:
       - name: Checkout 🛎️ repo
         uses: actions/checkout@v6
       - name: Identify Release Values
-        if: "${{ github.event.inputs.release-ver}} != 'v' }}"
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.release-ver == 'v' }}
         run: |
           # GIT_TAG=`git symbolic-ref HEAD`
           if [[ ${GITHUB_REF} = refs/tags* ]]
@@ -64,7 +80,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Docker Meta
         id: meta
         uses: docker/metadata-action@v5
@@ -79,7 +95,7 @@ jobs:
             type=raw,value=${{env.RELEASE_CHANNEL}}-latest
             type=raw,value=${{env.RELEASE_CHANNEL}}-${{env.GIT_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
       - name: Login to DockerHub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
