@@ -34347,7 +34347,7 @@ mesheryctl completion bash &gt; $(brew --prefix)/etc/bash_completion.d/mesheryct
 &lt;h2 id="components-of-meshery-policy-engine"&gt;
 	Components of Meshery Policy Engine
 &lt;/h2&gt;
-&lt;p&gt;Rego policies are the declarative logic behind the policy engine. These policies define how the underlying engine understands relationships within Meshery Designs. Rego policies can be found &lt;a href="https://github.com/meshery/meshery/tree/master/server/meshmodel/meshery-core/0.7.2/v1.0.0/policies"&gt;here&lt;/a&gt; in the Meshery Github repository.&lt;/p&gt;</description></item><item><title>Contributing to Meshery Schemas</title><link>/project/contributing/contributing-schemas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-schemas/</guid><description>&lt;p&gt;This comprehensive guide covers everything you need to know to contribute to the Meshery Schemas repository. Meshery follows &lt;strong&gt;Schema-Driven Development (SDD)&lt;/strong&gt;, where the structure of data is centrally defined using schemas that power consistency, validation, and code generation across the platform.&lt;/p&gt;
+&lt;p&gt;Rego policies are the declarative logic behind the policy engine. These policies define how the underlying engine understands relationships within Meshery Designs. Rego policies can be found &lt;a href="https://github.com/meshery/meshery/tree/master/models/meshery-core/0.7.2/v1.0.0/policies"&gt;here&lt;/a&gt; in the Meshery GitHub repository.&lt;/p&gt;</description></item><item><title>Contributing to Meshery Schemas</title><link>/project/contributing/contributing-schemas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-schemas/</guid><description>&lt;p&gt;This comprehensive guide covers everything you need to know to contribute to the Meshery Schemas repository. Meshery follows &lt;strong&gt;Schema-Driven Development (SDD)&lt;/strong&gt;, where the structure of data is centrally defined using schemas that power consistency, validation, and code generation across the platform.&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="table-of-contents"&gt;
 	Table of Contents
@@ -37180,7 +37180,7 @@ mesheryctl perf result saturday-profile --view
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under &amp;ldquo;/server/models/&lt;model-name&gt;&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;Prerequisite: Execute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components from any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under &amp;ldquo;models/&lt;model-name&gt;&amp;rdquo; at the repo root.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl registry generate [flags]
