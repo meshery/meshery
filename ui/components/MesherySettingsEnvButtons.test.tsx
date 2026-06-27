@@ -12,6 +12,9 @@ const h = vi.hoisted(() => ({
   // pending so the test can pick a file before "IMPORT" is confirmed — mirroring
   // the real user flow.
   resolveUploadModal: { current: undefined as undefined | ((value: string) => void) },
+  // Counts show() calls so only the first (upload) modal stays pending. Held in
+  // hoisted state (not a factory-local) so beforeEach can reset it per test.
+  showCount: { current: 0 },
 }));
 
 vi.mock('../utils/hooks/useNotification', () => ({
@@ -41,14 +44,13 @@ vi.mock('./connections/ConnectionChip', () => ({
 // passed subtitle so the hidden <input id="k8sfile"> mounts and can be driven.
 vi.mock('./PromptComponent', async () => {
   const { forwardRef, useState, useImperativeHandle } = await import('react');
-  let showCount = 0;
   const PromptComponent = forwardRef((_props: unknown, ref: React.Ref<unknown>) => {
     const [content, setContent] = useState<React.ReactNode>(null);
     useImperativeHandle(ref, () => ({
       show: (args: { subtitle?: React.ReactNode }) => {
         setContent(args?.subtitle ?? null);
-        showCount += 1;
-        if (showCount === 1) {
+        h.showCount.current += 1;
+        if (h.showCount.current === 1) {
           return new Promise<string>((resolve) => {
             h.resolveUploadModal.current = resolve;
           });
@@ -93,6 +95,7 @@ describe('MesherySettingsEnvButtons – kubeconfig upload', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     h.resolveUploadModal.current = undefined;
+    h.showCount.current = 0;
     h.addTriggerMock.mockReturnValue({ unwrap: h.unwrapMock });
   });
 
