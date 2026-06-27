@@ -150,7 +150,7 @@ Create a relationship definition as a JSON file, placing this new definition fil
 - `description`: A characterization of the relationship, its purpose, and any constraints or considerations of its application.
 
 {{% alert title="Use Existing Relationships as Examples" color="info" %}}
-Browse the <a href='https://github.com/meshery/meshery/tree/master/models'>existing relationships in the Meshery repository</a> to find examples of how to existing relationships, using them as a template. Alternatively, you can review a prior pull request as an example as well, for example <a href='https://github.com/meshery/meshery/pull/9880/files'>PR #9880</a>.
+Browse the <a href='https://github.com/meshery/meshery/tree/master/models'>existing relationships in the Meshery repository</a> to find examples of existing relationships, using them as a template. Alternatively, you can review a prior pull request as an example as well, for example <a href='https://github.com/meshery/meshery/pull/9880/files'>PR #9880</a>.
 {{% /alert %}}
 
 <a class="anchorjs-link" id="relationship-scopes"></a>

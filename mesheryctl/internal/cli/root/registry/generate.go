@@ -259,7 +259,7 @@ func init() {
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-id", "registrant-def")
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-cred", "registrant-cred")
 	generateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
-	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "./models", "location to output generated models; when unset, the repo-root models directory is auto-detected (./models from the repo root, ../models from a subdirectory)")
+	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "./models", "location to output generated models; when unset, the repo-root models directory is auto-detected (models from the repo root, ../models from a subdirectory)")
 
 	generateCmd.PersistentFlags().StringVarP(&csvDirectory, "directory", "d", "", "Directory containing the Model and Component CSV files")
 
