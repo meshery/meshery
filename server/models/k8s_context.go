@@ -467,11 +467,13 @@ func (kc K8sContext) PingTest() error {
 // and MUST NOT set t.Parallel().
 var saNamespaceFile = "/var/run/secrets/kubernetes.io/serviceaccount/namespace"
 
-// getKubeNamespace returns the namespace to use when deriving the cluster server ID.
+// getKubeNamespace returns the namespace whose UID is used to derive the cluster server ID.
 // Resolution order:
 //  1. KUBERNETES_TARGET_NAMESPACE environment variable
 //  2. In-cluster service-account namespace file
 //  3. "kube-system" (default/fallback)
+//
+// Note: changing the resolved namespace will change KubernetesServerID; keep it stable per deployment.
 func getKubeNamespace() string {
 	if ns := strings.TrimSpace(os.Getenv("KUBERNETES_TARGET_NAMESPACE")); ns != "" {
 		return ns
