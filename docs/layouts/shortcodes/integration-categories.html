@@ -7,6 +7,6 @@
 {{- end -}}
 {{- $sortedCategories := sort $categoryList "count" "desc" -}}
 {{- range $sortedCategories -}}
-{{- $anchor := replace .name " " "-" -}}
+{{- $anchor := .name | urlize -}}
 <li style="list-style-type: disc; margin: 2px 0 2px 20px;"><a href="/extensions/models#{{ $anchor }}">{{ .name }}</a> ({{ .count }})</li>
 {{- end -}}
