@@ -755,11 +755,11 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
-	patternUUID := uuid.FromStringOrNil(patternID)
-	if patternID == "" || patternID == "undefined" || patternUUID == uuid.Nil {
-		err := ErrDeletePattern(fmt.Errorf("invalid design ID: %s", patternID))
-		h.log.Error(err)
-		writeMeshkitError(rw, err, http.StatusBadRequest)
+	patternUUID, err := uuid.FromString(patternID)
+	if err != nil {
+		deleteErr := ErrDeletePattern(fmt.Errorf("invalid design ID: %s", patternID))
+		h.log.Error(deleteErr)
+		writeMeshkitError(rw, deleteErr, http.StatusBadRequest)
 		return
 	}
 	userID := user.ID
