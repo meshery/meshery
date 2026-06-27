@@ -127,10 +127,10 @@ Two optional `metadata` keys tune wizard behavior:
 Place the definition as a JSON file in a `connections/` folder inside its Model, alongside that Model's `components/` and `relationships/`:
 
 ```
-server/meshmodel/<model>/<version>/connections/<Name>Connection.json
+models/<model>/<version>/connections/<Name>Connection.json
 ```
 
-For example, the shipped definitions live under [`server/meshmodel/meshery-core/.../connections/`](https://github.com/meshery/meshery/tree/master/server/meshmodel) as `KubernetesConnection.json`, `GrafanaConnection.json`, and `PrometheusConnection.json`. A Model may include any number of connection definitions. Use these existing files as templates.
+For example, the shipped definitions live under [`models/meshery-core/.../connections/`](https://github.com/meshery/meshery/tree/master/models) as `KubernetesConnection.json`, `GrafanaConnection.json`, and `PrometheusConnection.json`. A Model may include any number of connection definitions. Use these existing files as templates.
 
 ## How the definition is registered and consumed
 
@@ -170,7 +170,7 @@ Reach for a custom extension only when the generic, schema-driven flow genuinely
 1. Use `camelCase` for property names, matching the rest of Meshery's schemas.
 2. Keep the `transitionMap` consistent with the [documented Connection states]({{< ref "concepts/logical/connections/index.md#states-and-the-lifecycle-of-connections" >}}); do not invent states.
 3. Mark only genuinely required fields as `required` in `connectionSchema`, and omit `credentialSchema` when no secret is needed.
-4. Start from a [shipped definition](https://github.com/meshery/meshery/tree/master/server/meshmodel) rather than from scratch.
+4. Start from a [shipped definition](https://github.com/meshery/meshery/tree/master/models) rather than from scratch.
 5. Provide both `svgColor` and `svgWhite` icons so the kind renders well on light and dark backgrounds.
 
 ## Contribute your Connection
