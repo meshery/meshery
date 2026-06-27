@@ -105,7 +105,7 @@ Create a relationship definition as a JSON file, placing this new definition fil
 - `version`: The version of the component definition (e.g., `v1.0.0`).
 - `description`: A characterization of the component, its purpose and behavior.
 
-{{% alert color="info" title="Use Existing Components as Examples" %}}Browse the <a href='https://github.com/meshery/meshery/tree/master/server/meshmodel'>existing components in the Meshery repository</a> to find examples of how to existing component, using them as a template.{{% /alert %}}
+{{% alert color="info" title="Use Existing Components as Examples" %}}Browse the <a href='https://github.com/meshery/meshery/tree/master/models'>existing components in the Meshery repository</a> to find examples of existing components, using them as a template.{{% /alert %}}
 
 ## Postwork
 
