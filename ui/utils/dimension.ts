@@ -47,7 +47,9 @@ export function useWindowDimensions() {
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
-      clearTimeout(searchTimeout);
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
     };
   }, []);
 
