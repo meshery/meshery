@@ -23,7 +23,6 @@ import (
 	"strings"
 	"time"
 
-	smp "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -54,8 +53,7 @@ var (
 			// get the meshery config
 			mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return err
 			}
 
 			if len(args) > 0 {
@@ -77,12 +75,12 @@ var (
 			// if no mesh was specified, the user will be prompted to select one
 			meshName, err = validateMesh(mctlCfg, meshName)
 			if err != nil {
-				utils.Log.Error(err)
+				return err
 			}
 
 			// ensure the mesh's adapter is available and update adapterURL if so
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
-				utils.Log.Error(err)
+				return err
 			}
 			return nil
 		},
@@ -118,15 +116,12 @@ func validateAdapter(mctlCfg *config.MesheryCtlConfig, meshName string) error {
 }
 
 func validateMesh(mctlCfg *config.MesheryCtlConfig, meshName string) (string, error) {
-	// if a mesh name is provided, verify it is valid
+	// A mesh/technology is now identified by a Meshery Registry model name
+	// (free-form) rather than a fixed service-mesh enum, so any explicitly
+	// provided name is accepted as-is. This also avoids dropping into
+	// interactive mode when the command is run by automation.
 	if meshName != "" {
-		if _, ok := smp.ServiceMesh_Type_value[meshName]; ok {
-			return meshName, nil
-		}
-		// return an error if the provided mesh name is invalid
-		// this prevents it from dropping into interactive mode
-		// in case the command is being ran by automation
-		return "", ErrValidMeshName(meshName)
+		return meshName, nil
 	}
 
 	// get details about the current meshery session

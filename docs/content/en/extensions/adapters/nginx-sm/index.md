@@ -7,8 +7,8 @@ adapter_version: v0.8.1
 port: 10010/gRPC
 project_status: stable
 github_link: https://github.com/meshery/meshery-nginx-sm
-image: /extensions/adapters/nginx-sm/images/nginx-sm.svg
-white_image: /extensions/adapters/nginx-sm/images/nginx-sm-white.svg
+image: extensions/adapters/nginx-sm/images/nginx-sm.svg
+white_image: extensions/adapters/nginx-sm/images/nginx-sm-white.svg
 aliases: 
 - /service-meshes/adapters/nginx-sm
 - /extensibility/adapters/nginx-sm
@@ -26,13 +26,13 @@ The Meshery Adapter for NGINX Service Mesh is currently under construction (stab
 
 The Meshery Adapter for NGINX Service Mesh includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
 
-- [Emojivoto](/guides/infrastructure-management/sample-apps)
+- [Emojivoto]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
 
   - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
 
-- [Bookinfo](/guides/infrastructure-management/sample-apps)
+- [Bookinfo]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
 
-- [Httpbin](/guides/infrastructure-management/sample-apps)
+- [Httpbin]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
 
   - Httpbin is a simple HTTP request and response service.
 

@@ -19,7 +19,7 @@ var modelListFlags cmdModelListFlags
 var listModelCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered models",
-	Long: `List all registered models by pagingation (10 models per page)
+	Long: `List all registered models by pagination (10 models per page)
 Find more information at: https://docs.meshery.io/reference/mesheryctl/model/list`,
 	Example: `
 // List of models

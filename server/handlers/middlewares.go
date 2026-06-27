@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
@@ -35,25 +36,56 @@ func isTransientProviderError(err error) bool {
 
 const providerQParamName = "provider"
 
+// legacyProviderAliasWarnOnce ensures the "None"->"Local" deprecation warning
+// fires at most once per process lifetime, regardless of how many requests
+// arrive with the legacy alias.
+var legacyProviderAliasWarnOnce sync.Once
+
+// resolveProviderName returns the provider name for a request based on, in
+// order: the provider cookie, the provider header, the ?provider= query
+// param, and finally the enforced default. Returns "" only in
+// multi-provider mode when the client supplied no hint. The returned name is
+// passed through models.NormalizeProviderName so the legacy "None" alias
+// resolves to "Local"; the second return value indicates whether the raw
+// input was a casing of the legacy alias so the caller can log a one-shot
+// deprecation warning.
+//
+// Falling through to enforcedProvider here is what removes the need for a
+// cookie round-trip via /provider, which is fragile across SameSite/popup/CDN
+// boundaries and was the trigger for an observed /user/login ⇄ /provider
+// redirect loop on enforced-provider hosts.
+func resolveProviderName(req *http.Request, cookieName, enforcedProvider string) (string, bool) {
+	var name string
+	if ck, err := req.Cookie(cookieName); err == nil && ck.Value != "" {
+		name = ck.Value
+	} else if hdr := req.Header.Get(cookieName); hdr != "" {
+		name = hdr
+	} else if q := req.URL.Query().Get(providerQParamName); q != "" {
+		name = q
+	} else {
+		name = enforcedProvider
+	}
+	usedLegacyAlias := strings.EqualFold(name, models.LocalProviderLegacyAlias)
+	return models.NormalizeProviderName(name), usedLegacyAlias
+}
+
 // ProviderMiddleware is a middleware to validate if a provider is set
 func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
-		var providerName string
 		var provider models.Provider
-		ck, err := req.Cookie(h.config.ProviderCookieName)
-		if err == nil {
-			providerName = ck.Value
-		} else {
-			providerName = req.Header.Get(h.config.ProviderCookieName)
-			// allow provider to be set using query parameter
-			// this is OK since provider information is not sensitive
-
-			if providerName == "" {
-				providerName = req.URL.Query().Get(providerQParamName)
-			}
+		providerName, usedLegacyAlias := resolveProviderName(req, h.config.ProviderCookieName, h.Provider)
+		if usedLegacyAlias {
+			legacyProviderAliasWarnOnce.Do(func() {
+				h.log.Warnf("DEPRECATION: the local provider name %q is the legacy alias for %q and will be removed in a future Meshery release. Update meshery-provider cookies, the PROVIDER environment variable, and ~/.meshery/config.yaml to use %q. This warning is logged once per server process.", models.LocalProviderLegacyAlias, models.LocalProviderName, models.LocalProviderName)
+			})
 		}
 		if providerName != "" {
-			provider = h.config.Providers[providerName]
+			if providerKey, ok := models.ResolveProviderKey(providerName, h.config.Providers); ok {
+				provider = h.config.Providers[providerKey]
+			}
+			if provider == nil && h.Provider != "" && providerName == models.NormalizeProviderName(h.Provider) {
+				h.log.Errorf("enforced provider %q is not registered in h.config.Providers; ProviderUIHandler will degrade to serving the provider-selection UI instead of auto-login. Register %q in PROVIDERS or unset PROVIDER on this deployment.", h.Provider, h.Provider)
+			}
 		}
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
 
@@ -160,7 +192,7 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 		ctx := req.Context()
 		ctx, err := KubernetesMiddleware(ctx, h, provider, user, req.URL.Query()["contexts"])
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, err, http.StatusInternalServerError)
 			return
 		}
 
@@ -195,12 +227,21 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		user, err := provider.GetUserDetails(req)
 		if err != nil {
 			h.log.Error(ErrGetUserDetails(err))
-			// Distinguish auth failures from transient provider errors.
-			// If the token cookie is missing/invalid, the user genuinely needs to re-authenticate.
-			// But if Cloud is temporarily unreachable, we must NOT destroy the user's session
-			// by logging them out — that would cause a redirect loop when Cloud recovers.
+			// INTENTIONAL log/wire divergence. We log ErrGetUserDetails so the
+			// operational trail captures *what* failed (the get-user call), but
+			// we surface ErrTransientProvider on the wire so the client can
+			// distinguish between a transient failure (e.g., Cloud unreachable)
+			// and a genuine auth failure. Conflating the two would either flood
+			// logs with misleading transient classifications or hide the
+			// auth-vs-network distinction from clients. Don't "fix" this to
+			// match without reading PR #18919.
+			//
+			// Behavioral consequence: on a transient provider error we must NOT
+			// destroy the user's session by logging them out — that would cause
+			// a redirect loop when Cloud recovers. A missing/invalid token
+			// cookie still falls through to the genuine auth-failure path below.
 			if isTransientProviderError(err) {
-				http.Error(w, "Remote provider temporarily unavailable. Please try again.", http.StatusServiceUnavailable)
+				writeMeshkitError(w, ErrTransientProvider(err), http.StatusServiceUnavailable)
 				return
 			}
 			// Genuine auth failure — logout and redirect to login
@@ -210,7 +251,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 				provider.HandleUnAuthenticated(w, req)
 				return
 			}
-			http.Error(w, ErrGetUserDetails(err).Error(), http.StatusUnauthorized)
+			writeMeshkitError(w, ErrGetUserDetails(err), http.StatusUnauthorized)
 			return
 		}
 		prefObj, err := provider.ReadFromPersister(user.UserId)
@@ -317,7 +358,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
 			if err != nil {
-				_ = provider.PersistEvent(*event, nil)
+				_ = provider.PersistEvent(*event, token)
 				go h.config.EventBroadcaster.Publish(userUUID, event)
 			}
 		}(inst)
@@ -338,6 +379,7 @@ type dataHandlerToClusterID struct {
 }
 
 func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider, user *models.User) {
+	token, _ := ctx.Value(models.TokenCtxKey).(string)
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	connectedK8sContexts := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
 	userUUID := user.ID
@@ -375,7 +417,7 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
 			if err != nil {
-				_ = provider.PersistEvent(*event, nil)
+				_ = provider.PersistEvent(*event, token)
 				go h.config.EventBroadcaster.Publish(userUUID, event)
 			}
 		}(inst)
@@ -386,6 +428,9 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		}
 		mdh := kubernesMachineCtx.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
 		if mdh != nil {
+			if k8sContext.KubernetesServerID == nil {
+				continue
+			}
 			dataHandlers = append(dataHandlers, &dataHandlerToClusterID{
 				mdh:       *mdh,
 				clusterID: k8sContext.KubernetesServerID.String(),

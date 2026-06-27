@@ -33,7 +33,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/patterns"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -48,7 +48,7 @@ type cmdDesignDeployFlags struct {
 var designDeployFlags cmdDesignDeployFlags
 
 var linkDocDesignDeploy = map[string]string{
-	"link":    "![pattern-onboard-usage](/reference/images/pattern-onboard.png)",
+	"link":    "![pattern-onboard-usage](../../../images/app-onboard.png)",
 	"caption": "Usage of mesheryctl design deploy",
 }
 

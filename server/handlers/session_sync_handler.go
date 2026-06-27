@@ -19,17 +19,10 @@ type SessionSyncDataK8sConfig struct {
 	ContextName       string     `json:"name,omitempty"`
 	ClusterConfigured bool       `json:"clusterConfigured,omitempty"`
 	ConfiguredServer  string     `json:"server,omitempty"`
-	ClusterID         string     `json:"clusterID,omitempty"`
-	CreatedAt         *time.Time `json:"created_at,omitempty"`
-	UpdatedAt         *time.Time `json:"updated_at,omitempty"`
+	ClusterID         string     `json:"clusterId,omitempty"`
+	CreatedAt         *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt         *time.Time `json:"updatedAt,omitempty"`
 }
-
-// swagger:route GET /api/system/sync SystemAPI idSystemSync
-// Handle GET request for config sync
-//
-// Used to send session data to the UI for initial sync
-// responses:
-// 	200: userLoadTestPrefsRespWrapper
 
 // SessionSyncHandler is used to send session data to the UI for initial sync
 func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -85,7 +78,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	if err != nil {
 		obj := "user config data"
 		h.log.Error(models.ErrMarshal(err, obj))
-		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrMarshal(err, obj), http.StatusInternalServerError)
 		return
 	}
 }

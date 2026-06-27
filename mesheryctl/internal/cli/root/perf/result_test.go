@@ -7,15 +7,22 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	core "github.com/meshery/schemas/models/core"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 )
 
 var tempProfileID = "a2a555cf-ae16-479c-b5d2-a35656ba741e"
 
 // PerformanceResultsAPIResponse is a local struct for testing unmarshal errors.
+//
+// The JSON tag mirrors the real perfprofile.PerformanceResultPage.PageSize
+// tag (`pageSize`) so the error message produced by json.Unmarshal references
+// the same field name the production code would surface.
 type PerformanceResultsAPIResponse struct {
-	PageSize uint `json:"page_size"`
+	PageSize uint `json:"pageSize"`
 }
 
 func TestResultCmd(t *testing.T) {
@@ -29,7 +36,7 @@ func TestResultCmd(t *testing.T) {
 	currDir := filepath.Dir(filename)
 	testToken := filepath.Join(currDir, "fixtures", "auth.json")
 
-	profileURL := testContext.BaseURL + "/api/user/performance/profiles"
+	profileURL := testContext.BaseURL + "/api/performance/profiles"
 	resultURL := testContext.BaseURL + "/api/user/performance/profiles/" + tempProfileID + "/results"
 
 	listTests := []utils.MesheryMultiURLCommamdTest{
@@ -63,6 +70,16 @@ func TestResultCmd(t *testing.T) {
 			ExpectedResponse: "result.yaml.output.golden",
 			ExpectError:      false,
 		},
+		{
+			Name: "result output tolerates empty load generators",
+			Args: []string{"result", "John Doe"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: "result.profile.emptyLoadGenerators.response.golden", ResponseCode: 200},
+				{Method: "GET", URL: resultURL, Response: "result.list.response.golden", ResponseCode: 200},
+			},
+			ExpectedResponse: "result.list.output.golden",
+			ExpectError:      false,
+		},
 	}
 
 	loggerTests := []utils.MesheryMultiURLCommamdTest{
@@ -88,9 +105,12 @@ func TestResultCmd(t *testing.T) {
 			ExpectedError: func() error {
 				cmdUsed = "result"
 
-				// Replicate the exact JSON unmarshal error
+				// Replicate the exact JSON unmarshal error. Body matches the
+				// canonical camelCase wire form in the
+				// `result.invalidJSON.response.golden` fixture so the inner
+				// json.Unmarshal error references `pageSize`, not `page_size`.
 				var response PerformanceResultsAPIResponse
-				innerErr := json.Unmarshal([]byte(`{"page_size": "25"}`), &response)
+				innerErr := json.Unmarshal([]byte(`{"pageSize": "25"}`), &response)
 
 				return ErrPerformanceProfileResult(ErrFailUnmarshal(innerErr))
 			}(),
@@ -143,4 +163,30 @@ func TestResultCmd(t *testing.T) {
 
 	// Run tests in logger format
 	utils.RunMesheryctlMultiURLTests(t, update, PerfCmd, loggerTests, currDir, "perf", resetVariables)
+}
+
+func TestProfilesToStringArraysHandlesMissingLoadGenerators(t *testing.T) {
+	t.Parallel()
+
+	id := core.Uuid(uuid.Nil)
+	data := profilesToStringArrays([]perfprofile.PerformanceProfile{
+		{
+			ID:             id,
+			Name:           "test-profile",
+			TotalResults:   3,
+			LoadGenerators: nil,
+		},
+	})
+
+	if len(data) != 1 {
+		t.Fatalf("expected 1 row, got %d", len(data))
+	}
+
+	if len(data[0]) != 5 {
+		t.Fatalf("expected 5 columns, got %d", len(data[0]))
+	}
+
+	if data[0][3] != "" {
+		t.Fatalf("expected empty load generator cell, got %q", data[0][3])
+	}
 }

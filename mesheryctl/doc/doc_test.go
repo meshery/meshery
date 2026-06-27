@@ -34,7 +34,7 @@ subcommand: nil
 ---
 
 `
-		filename := "docs/content/en/reference/mesheryctl/_index.md"
+		filename := "docs/content/en/reference/references/mesheryctl/_index.md"
 		assert.Equal(t, expected, prepender(filename))
 	})
 
@@ -47,7 +47,7 @@ subcommand: nil
 ---
 
 `
-		filename := "docs/content/en/reference/mesheryctl/adapter/_index.md"
+		filename := "docs/content/en/reference/references/mesheryctl/adapter/_index.md"
 		assert.Equal(t, expected, prepender(filename))
 	})
 
@@ -60,7 +60,7 @@ subcommand: deploy
 ---
 
 `
-		filename := "docs/content/en/reference/mesheryctl/adapter/deploy.md"
+		filename := "docs/content/en/reference/references/mesheryctl/adapter/deploy.md"
 		assert.Equal(t, expected, prepender(filename))
 	})
 
@@ -73,7 +73,7 @@ subcommand: relationship
 ---
 
 `
-		filename := "docs/content/en/reference/mesheryctl/exp/relationship/generate.md"
+		filename := "docs/content/en/reference/references/mesheryctl/exp/relationship/generate.md"
 		assert.Equal(t, expected, prepender(filename))
 	})
 }
@@ -85,23 +85,23 @@ func TestDoc(t *testing.T) {
 
 	t.Run("Test linkHandler function (directory structure)", func(t *testing.T) {
 		assert.Equal(t,
-			"/reference/mesheryctl",
-			linkHandler("docs/content/en/reference/mesheryctl/_index.md"),
+			"/reference/references/mesheryctl",
+			linkHandler("docs/content/en/reference/references/mesheryctl/_index.md"),
 		)
 
 		assert.Equal(t,
-			"/reference/mesheryctl/adapter",
-			linkHandler("docs/content/en/reference/mesheryctl/adapter/_index.md"),
+			"/reference/references/mesheryctl/adapter",
+			linkHandler("docs/content/en/reference/references/mesheryctl/adapter/_index.md"),
 		)
 
 		assert.Equal(t,
-			"/reference/mesheryctl/adapter/deploy",
-			linkHandler("docs/content/en/reference/mesheryctl/adapter/deploy.md"),
+			"/reference/references/mesheryctl/adapter/deploy",
+			linkHandler("docs/content/en/reference/references/mesheryctl/adapter/deploy.md"),
 		)
 
 		assert.Equal(t,
-			"/reference/mesheryctl/exp/relationship/generate",
-			linkHandler("docs/content/en/reference/mesheryctl/exp/relationship/generate.md"),
+			"/reference/references/mesheryctl/exp/relationship/generate",
+			linkHandler("docs/content/en/reference/references/mesheryctl/exp/relationship/generate.md"),
 		)
 	})
 
@@ -165,15 +165,6 @@ func TestDoc(t *testing.T) {
 		assert.Contains(t, output, "See Also")
 		assert.Contains(t, output, "preserving-manually-added-documentation")
 	})
-	t.Run("Test GenYamlTreeCustom function", func(t *testing.T) {
-		cmd.AddCommand(&cobra.Command{
-			Use: "sub",
-		})
-		yamlPath := t.TempDir()
-		err := GenYamlTreeCustom(cmd, yamlPath, prepender, linkHandler)
-		assert.NoError(t, err)
-	})
-
 	t.Run("Test getManuallyAddedContentMap function", func(t *testing.T) {
 		_, err := getManuallyAddedContentMap("test.md")
 		assert.NoError(t, err)
@@ -190,15 +181,6 @@ func TestDoc(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Contains(t, contentMap, 0)
 		assert.Equal(t, "example", contentMap[0])
-	})
-
-	t.Run("Test GenYamlCustom function", func(t *testing.T) {
-		cmd.Example = "test_example"
-		buf := &bytes.Buffer{}
-		err := GenYamlCustom(cmd, buf)
-		assert.NoError(t, err)
-		output := buf.String()
-		assert.Contains(t, output, "test_example")
 	})
 
 	t.Run("Test printOptions function", func(t *testing.T) {

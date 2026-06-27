@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <meta name="generator" content="Hugo 0.55.6" />
 
-  <meta name="ROBOTS" content="INDEX, FOLLOW" />
+  <meta name="robots" content="noindex, follow" />
 
   <link rel="alternate" type="application/rss&#43;xml" href="/index.xml" />
 
@@ -178,34 +178,10 @@
           >
             <span>v0.8</span>
           </option>
-           <!-- we get the version selected, and put it to the right option  --><option
-            
-            value="/v0.7"
-            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
-          >
-            <span>v0.7</span>
-          </option>
-           <!-- we get the version selected, and put it to the right option  --><option
-            
-            value="/v0.6"
-            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
-          >
-            <span>v0.6</span>
-          </option>
-           <!-- we get the version selected, and put it to the right option  --><option
-            
-            value="/v0.5"
-            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
-          >
-            <span>v0.5</span>
-          </option>
-           <!-- we get the version selected, and put it to the right option  --><option
-            
-            value="/v0.4"
-            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
-          >
-            <span>v0.4</span>
-          </option>
+           
+           
+           
+           
           
         </select>
       </ul>
@@ -231,8 +207,8 @@
       </button>
       <button class="nav-mode-icon" id="mode-toggle-btn" style="text-align: center">
         <img class="nav-text" id="logo-dark-light" src="/v0.8/assets/img/nav-icons/mode-toggle-icon-moon.png" 
-        data-logo-for-dark="/assets/img/nav-icons/mode-toggle-icon-moon.png"
-        data-logo-for-light="/assets/img/nav-icons/mode-toggle-icon-sun.png"
+        data-logo-for-dark="/v0.8/assets/img/nav-icons/mode-toggle-icon-moon.png"
+        data-logo-for-light="/v0.8/assets/img/nav-icons/mode-toggle-icon-sun.png"
         />
       </button>
     </div>
@@ -859,7 +835,7 @@ mesh:
 
 <h2 id="running-performance-benchmarks-in-your-pipelines">Running Performance Benchmarks in your Pipelines</h2>
 
-<p>Meshery also has a <a href="https://github.com/layer5io/meshery-smp-action">meshery-smp-action</a> which is a GitHub action that can be used to run performance tests in your CI/CD pipelines.</p>
+<p>Meshery also has a <a href="https://github.com/meshery-extensions/meshery-smp-action">meshery-smp-action</a> which is a GitHub action that can be used to run performance tests in your CI/CD pipelines.</p>
 
 <p>Download the token from the Meshery Dashboard by clicking on the profile icon on the top-right corner.</p>
 
@@ -874,7 +850,7 @@ mesh:
 You can use the <a href="https://docs.github.com/en/actions/reference/encrypted-secrets">secrets feature in GitHub</a> to store the token.
 </div>
 
-<p>The action can be used by defining your test configuration in a performance profile in Meshery or by writing your test configuration in <a href="https://github.com/layer5io/meshery-smp-action#smp-compatible-test-configuration-file">SMP compatible format</a>.</p>
+<p>The action can be used by defining your test configuration in a performance profile in Meshery or by writing your test configuration in <a href="https://github.com/meshery-extensions/meshery-smp-action#smp-compatible-test-configuration-file">SMP compatible format</a>.</p>
 
 <p>The action can then be configured as shown below:</p>
 
@@ -902,16 +878,16 @@ jobs:
           driver: docker
 
       - name: Run Performance Test
-        uses: layer5io/meshery-smp-action@master
+        uses: Meshery/meshery-smp-action@master
         with:
           provider_token: $
           platform: docker
           profile_name: soak-test
 </code></pre></div></div>
 
-<p>More configuration details of the action can be found <a href="https://github.com/layer5io/meshery-smp-action/blob/master/action.yml">here</a>.</p>
+<p>More configuration details of the action can be found <a href="https://github.com/meshery-extensions/meshery-smp-action/blob/master/action.yml">here</a>.</p>
 
-<p>See <a href="https://github.com/layer5io/meshery-smp-action#sample-configuration">sample configurations</a> for more workflow examples using this action.</p>
+<p>See <a href="https://github.com/meshery-extensions/meshery-smp-action#sample-configuration">sample configurations</a> for more workflow examples using this action.</p>
    
   
   
