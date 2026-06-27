@@ -70,7 +70,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-iam-controller",
+              "name": "aws-memorydb-controller",
               "registrant": {
                 "kind": "github"
               },
