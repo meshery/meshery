@@ -1,14 +1,7 @@
-name: Build and Preview Docs
+name: Build Docs Preview
 
 on:
-  workflow_dispatch:
-    inputs:
-      debug_mode:
-        description: 'Enable extra workflow context logging'
-        required: false
-        default: false
-        type: boolean
-  pull_request_target:
+  pull_request:
     branches: [master]
     types: [opened, synchronize, reopened, closed]
     paths:
@@ -16,13 +9,19 @@ on:
       - 'docs/**'
       - '.github/workflows/build-and-preview-docs.yml'
       - 'mesheryctl/doc/**'
+  workflow_dispatch:
+    inputs:
+      debug_mode:
+        description: 'Enable extra workflow context logging'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
-  group: preview-${{ github.event.pull_request.number || github.run_id }}
+  group: preview-build-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 defaults:
@@ -30,13 +29,10 @@ defaults:
     shell: bash
 
 jobs:
-  build-and-deploy-preview:
+  build-preview:
     runs-on: ubuntu-24.04
-    outputs:
-      removed_prs_json: ${{ steps.prune-previews.outputs.removed_prs_json }}
     env:
       HUGO_VERSION: 0.157.0
-      PREVIEW_RETENTION_LIMIT: 6
 
     steps:
       - name: 🔍 Introspect Inputs
@@ -58,57 +54,25 @@ jobs:
           egress-policy: audit
 
       - name: Checkout PR docs source
-        if: github.event_name == 'pull_request_target' && github.event.action != 'closed'
         uses: actions/checkout@v6
         with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.sha }}
-          persist-credentials: false
-          fetch-depth: 1
-          # Sparse checkout keeps the preview build focused on the Hugo site input
-          # instead of cloning the full repository, which materially reduces IO for
-          # docs-only previews triggered from pull_request_target.
-          filter: blob:none
-          sparse-checkout: |
-            docs
-            pr-preview
-          sparse-checkout-cone-mode: true
-
-      - name: Checkout docs source for manual validation
-        if: github.event_name == 'workflow_dispatch'
-        uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-          fetch-depth: 1
-          # Manual dispatch stays aligned with PR behavior so maintainers can test
-          # the docs preview build path without paying the cost of a full clone.
-          filter: blob:none
-          sparse-checkout: |
-            docs
-            pr-preview
-          sparse-checkout-cone-mode: true
-
-      - name: Checkout for cleanup
-        if: github.event_name == 'pull_request_target' && github.event.action == 'closed'
-        uses: actions/checkout@v6
-        with:
-          ref: gh-pages
+          submodules: recursive
           fetch-depth: 0
+          persist-credentials: false
+          filter: blob:none
+          sparse-checkout: |
+            docs
+            pr-preview
+          sparse-checkout-cone-mode: true
 
       - name: Install Hugo CLI
-        if: github.event_name != 'pull_request_target' || github.event.action != 'closed'
+        if: github.event.action != 'closed'
         run: |
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
 
       - name: Install Dart Sass
-        # Direct download from the dart-sass GitHub release rather than
-        # `sudo snap install dart-sass` (snap.io's storeserver was flaky
-        # in GitHub-hosted runners and broke this workflow on unrelated
-        # PRs, see #19574). Hugo Extended ships embedded Dart Sass as of
-        # v0.114+ but having the standalone binary on PATH is the most
-        # reliable path through `resources.toCSS` with transpiler "dartsass".
-        if: github.event_name != 'pull_request_target' || github.event.action != 'closed'
+        if: github.event.action != 'closed'
         env:
           DART_SASS_VERSION: 1.79.5
         run: |
@@ -121,19 +85,19 @@ jobs:
           dart-sass --version
 
       - name: Setup Node
-        if: github.event_name != 'pull_request_target' || github.event.action != 'closed'
+        if: github.event.action != 'closed'
         uses: actions/setup-node@v6
         with:
           node-version: "22"
 
       - name: Install dependencies
-        if: github.event_name != 'pull_request_target' || github.event.action != 'closed'
+        if: github.event.action != 'closed'
         run: |
           cd docs
           [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true
 
       - name: Build PR preview
-        if: github.event_name != 'pull_request_target' || github.event.action != 'closed'
+        if: github.event.action != 'closed'
         env:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
@@ -148,209 +112,18 @@ jobs:
           Disallow: /
           ROBOTS
 
-      - name: Deploy PR preview
-        if: github.event_name == 'pull_request_target' && github.event.action != 'closed'
-        uses: rossjrw/pr-preview-action@v1.6.3
-        with:
-          source-dir: ./docs/public
-          preview-branch: gh-pages
-          umbrella-dir: pr-preview
-          action: auto
-          comment: false
-
-      - name: Checkout gh-pages for preview retention
-        if: github.event_name == 'pull_request_target' && github.event.action != 'closed'
-        uses: actions/checkout@v6
-        with:
-          ref: gh-pages
-          fetch-depth: 0
-          # Retention pruning only reads and writes the preview umbrella
-          # directory, so avoid materializing the rest of gh-pages.
-          filter: blob:none
-          sparse-checkout: |
-            pr-preview
-          sparse-checkout-cone-mode: true
-          path: gh-pages-maintenance
-
-      - name: Prune old PR previews
-        id: prune-previews
-        if: github.event_name == 'pull_request_target' && github.event.action != 'closed'
-        # Pruning is best-effort housekeeping on the shared gh-pages branch.
-        # Many docs preview runs write to gh-pages at once, so it must never be
-        # the reason a preview is reported as failed: the push is retried against
-        # the freshest state, and the step is continue-on-error as a backstop.
-        continue-on-error: true
+      - name: Prepare Artifact Payload
         run: |
-          cd gh-pages-maintenance
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Write safe defaults first. $GITHUB_OUTPUT is last-write-wins, so even
-          # if this step is interrupted, the downstream "Comment on pruned
-          # previews" job sees a valid empty list rather than an empty string.
-          {
-            echo "removed_prs="
-            echo "removed_prs_json=[]"
-          } >> "$GITHUB_OUTPUT"
-
-          # A naive push to the shared gh-pages branch loses the race with other
-          # concurrent preview runs ("! [rejected] (fetch first)"). Re-derive the
-          # prune from the freshest remote state on every attempt and retry with
-          # backoff so a lost race self-heals instead of failing the workflow.
-          removed_prs=()
-          outcome=""
-          attempts=5
-
-          for attempt in $(seq 1 "$attempts"); do
-            git fetch --quiet origin gh-pages
-            git reset --quiet --hard FETCH_HEAD
-            mkdir -p pr-preview
-
-            mapfile -t previews < <(
-              while IFS= read -r preview; do
-                timestamp="$(git log -1 --format=%ct -- "pr-preview/$preview" 2>/dev/null || echo 0)"
-                printf '%s %s\n' "$timestamp" "$preview"
-              done < <(find pr-preview -mindepth 1 -maxdepth 1 -type d -name 'pr-*' -printf '%f\n') \
-                | sort -nr \
-                | awk '{print $2}'
-            )
-
-            removed_prs=()
-            if (( ${#previews[@]} > PREVIEW_RETENTION_LIMIT )); then
-              for preview in "${previews[@]:PREVIEW_RETENTION_LIMIT}"; do
-                rm -rf "pr-preview/$preview"
-                removed_prs+=("${preview#pr-}")
-              done
-            fi
-
-            # Within the retention limit, or another run already pruned: done.
-            if git diff --quiet -- pr-preview; then
-              outcome="noop"
-              break
-            fi
-
-            git add pr-preview
-            git commit --quiet -m "Prune old PR previews"
-
-            if git push origin HEAD:gh-pages; then
-              outcome="pushed"
-              break
-            fi
-
-            echo "Prune push lost the race (attempt ${attempt}/${attempts}); re-syncing gh-pages and retrying..."
-            sleep "$(( attempt * 5 + RANDOM % 5 ))"
-          done
-
-          if [ -z "$outcome" ]; then
-            echo "::warning::Could not prune old PR previews after ${attempts} attempts due to concurrent gh-pages updates; a later run will retry. Not failing the preview."
-            removed_prs=()
+          mkdir -p pr_payload
+          echo "${{ github.event.pull_request.number }}" > pr_payload/pr_number.txt
+          echo "${{ github.event.action }}" > pr_payload/pr_action.txt
+          if [ "${{ github.event.action }}" != "closed" ]; then
+            cp -r docs/public pr_payload/public
           fi
 
-          if [ "${#removed_prs[@]}" -eq 0 ]; then
-            {
-              echo "removed_prs="
-              echo "removed_prs_json=[]"
-            } >> "$GITHUB_OUTPUT"
-          else
-            {
-              echo "removed_prs=$(IFS=,; echo "${removed_prs[*]}")"
-              echo "removed_prs_json=$(printf '%s\n' "${removed_prs[@]}" | jq -R . | jq -sc .)"
-            } >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Comment PR with Preview URL
-        if: github.event_name == 'pull_request_target' && github.event.action != 'closed'
-        uses: marocchino/sticky-pull-request-comment@v2
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
-          header: pr-preview
-          message: |
-            🚀 Preview deployment: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-preview/pr-${{ github.event.pull_request.number }}/
-            > *Note: Preview may take a moment (GitHub Pages deployment in progress). Please wait and refresh. Track deployment [here](https://github.com/${{ github.repository }}/actions/workflows/pages/pages-build-deployment)*
-
-      - name: Comment on pruned previews
-        if: github.event_name == 'pull_request_target' && github.event.action != 'closed' && steps.prune-previews.outputs.removed_prs_json != '[]'
-        uses: actions/github-script@v8
-        env:
-          REMOVED_PRS_JSON: ${{ steps.prune-previews.outputs.removed_prs_json }}
-          PREVIEW_RETENTION_LIMIT: ${{ env.PREVIEW_RETENTION_LIMIT }}
-        with:
-          script: |
-            const removedPrs = JSON.parse(process.env.REMOVED_PRS_JSON);
-            const retentionLimit = process.env.PREVIEW_RETENTION_LIMIT;
-            const header = "pr-preview";
-            const marker = `<!-- Sticky Pull Request Comment${header} -->`;
-
-            for (const prNumber of removedPrs) {
-              const body =
-                `Preview deployment for PR #${prNumber} removed.\n\n` +
-                `This PR preview was automatically pruned because we keep only the ${retentionLimit} most recently updated previews on GitHub Pages to stay within deployment size limits.\n\n` +
-                `If needed, push a new commit to this PR to generate a fresh preview.\n` +
-                `${marker}`;
-
-              const { data: comments } = await github.rest.issues.listComments({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: Number(prNumber),
-                per_page: 100,
-              });
-
-              const existingComment = [...comments].reverse().find((comment) =>
-                comment.user?.login === "github-actions[bot]" &&
-                comment.body?.includes(marker)
-              );
-
-              if (existingComment) {
-                await github.rest.issues.updateComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  comment_id: existingComment.id,
-                  body,
-                });
-                continue;
-              }
-
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: Number(prNumber),
-                body,
-              });
-            }
-
-      - name: Comment PR on preview failure
-        if: failure() && github.event_name == 'pull_request_target' && github.event.action != 'closed'
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: pr-preview-status
-          message: |
-            ❌ Docs preview build failed for `${{ github.workflow }}`.
-            Please review the [workflow logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for remediation details.
-
-      # - name: 🚨 Email Alert on Failure
-      #   # Note: secrets context is not available in `if:` expressions; guard via `continue-on-error`
-      #   # and rely on the action itself to handle missing/empty secrets gracefully.
-      #   if: failure()
-      #   continue-on-error: true
-      #   uses: dawidd6/action-send-mail@v7
-      #   with:
-      #     connection_url: ${{ secrets.DOCS_PREVIEW_SMTP_CONNECTION_URL }}
-      #     from: ${{ secrets.DOCS_PREVIEW_ALERT_FROM }}
-      #     to: ${{ secrets.DOCS_PREVIEW_ALERT_TO }}
-      #     subject: "Workflow Failed: ${{ github.workflow }}"
-      #     body: |
-      #       Repository: ${{ github.repository }}
-      #       Workflow: ${{ github.workflow }}
-      #       Run ID: ${{ github.run_id }}
-      #       Event: ${{ github.event_name }}
-      #       Action: ${{ github.event.action || 'n/a' }}
-      #       Ref: ${{ github.ref }}
-      #       Commit: ${{ github.sha }}
-      #       Logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-      - name: Cleanup PR preview on close
-        if: github.event_name == 'pull_request_target' && github.event.action == 'closed'
-        uses: rossjrw/pr-preview-action@v1.6.3
-        with:
-          preview-branch: gh-pages
-          umbrella-dir: pr-preview
-          action: remove
+          name: docs-preview-payload
+          path: pr_payload
+          retention-days: 1
