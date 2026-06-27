@@ -490,9 +490,9 @@ func getKubeNamespace() string {
 // AssignServerID will attempt to assign kubernetes
 // server ID to the kubernetes context
 func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
-	// Skip assignment if a server ID is already set to avoid silently
+	// Skip assignment if a non-empty server ID is already set to avoid silently
 	// overwriting the identity of an existing deployment on re-discovery.
-	if kc.KubernetesServerID != nil {
+	if kc.KubernetesServerID != nil && *kc.KubernetesServerID != uuid.Nil {
 		return nil
 	}
 	// Get Kubernetes API server ID by querying a namespace uuid
