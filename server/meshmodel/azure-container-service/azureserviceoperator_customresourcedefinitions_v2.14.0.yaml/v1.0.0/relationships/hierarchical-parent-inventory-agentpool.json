@@ -1,71 +1,60 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
-  "kind": "edge",
+  "kind": "hierarchical",
   "metadata": {
-    "description": "",
-    "isAnnotation": false,
+    "description": "A hierarchical inventory relationship in which ManagedClustersAgentPool (child) belongs to a ManagedCluster (parent).",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    }
+    },
+    "isAnnotation": false
   },
   "model": {
+    "version": "",
+    "name": "azure-container-service",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
-    "model": {
-      "version": "azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
-    },
-    "name": "azure-container-service",
     "registrant": {
       "kind": ""
     },
-    "version": ""
+    "model": {
+      "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
+    }
   },
-  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
     {
       "allow": {
         "from": [
           {
             "id": null,
-            "kind": "FleetsMember",
+            "kind": "ManagedClustersAgentPool",
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
+              "version": "",
+              "name": "azure-container-service",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "azure-container-service",
               "registrant": {
                 "kind": "github"
               },
-              "version": ""
+              "model": {
+                "version": ""
+              }
             },
             "patch": {
+              "patchStrategy": "replace",
               "mutatedRef": [
                 [
                   "configuration",
                   "spec",
-                  "clusterResourceReference",
-                  "group"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "clusterResourceReference",
-                  "kind"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "clusterResourceReference",
+                  "owner",
                   "name"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ],
@@ -73,36 +62,27 @@
           {
             "id": null,
             "kind": "ManagedCluster",
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
+              "version": "",
+              "name": "azure-container-service",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "azure-container-service",
               "registrant": {
                 "kind": "github"
               },
-              "version": ""
+              "model": {
+                "version": ""
+              }
             },
             "patch": {
+              "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "configuration",
-                  "group"
-                ],
-                [
-                  "configuration",
-                  "kind"
-                ],
-                [
-                  "configuration",
-                  "metadata",
-                  "name"
+                  "displayName"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ]
@@ -113,8 +93,8 @@
       }
     }
   ],
-  "subType": "reference",
+  "subType": "inventory",
   "status": "enabled",
-  "type": "non-binding",
+  "type": "parent",
   "version": "v1.0.0"
 }
