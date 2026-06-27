@@ -1,9 +1,9 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
-  "kind": "edge",
+  "kind": "hierarchical",
   "metadata": {
-    "description": "",
+    "description": "ManagedEnvironment is the parent of ContainerApp. ContainerApps are deployed and run within a ManagedEnvironment, which provides the shared infrastructure including networking and logging.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -12,64 +12,22 @@
     }
   },
   "model": {
-    "displayName": "",
+    "displayName": "Azure App Service",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
       "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
     },
     "name": "azure-app-service",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
-    "version": ""
+    "version": "v1.0.0"
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
         "from": [
-          {
-            "id": null,
-            "kind": "ContainerApp",
-            "match_strategy_matrix": null,
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "azure-app-service",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
-            },
-            "patch": {
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "environmentReference",
-                  "group"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "environmentReference",
-                  "kind"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "environmentReference",
-                  "name"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
-          }
-        ],
-        "to": [
           {
             "id": null,
             "kind": "ManagedEnvironment",
@@ -87,21 +45,28 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "group"
-                ],
-                [
-                  "configuration",
-                  "kind"
-                ],
-                [
-                  "configuration",
-                  "metadata",
-                  "name"
-                ]
-              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "ContainerApp",
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "azure-app-service",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
               "patchStrategy": "replace"
             }
           }
@@ -113,8 +78,8 @@
       }
     }
   ],
-  "subType": "reference",
+  "subType": "inventory",
   "status": "enabled",
-  "type": "non-binding",
+  "type": "parent",
   "version": "v1.0.0"
 }
