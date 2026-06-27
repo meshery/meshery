@@ -1,0 +1,100 @@
+{
+    "id": "2b660ee1-29cd-4132-9324-764f8232f80f",
+    "evaluationQuery": "",
+    "kind": "edge",
+    "metadata": {
+        "description": "AWS API Gateway V2 integrates with AWS Lambda to handle incoming HTTP requests",
+        "isAnnotation": false,
+        "styles": {
+            "primaryColor": "",
+            "svgColor": "",
+            "svgWhite": ""
+        }
+    },
+    "model": {
+        "displayName": "API Gateway V2 to Lambda Relationship",
+        "id": "53a892d2-377e-43ca-9b6b-55a86efe9218",
+        "model": {
+            "version": "v1.0.25"
+        },
+        "name": "aws-apigatewayv2-controller",
+        "registrant": {
+            "kind": "artifacthub"
+        },
+        "version": "v1.0.0"
+    },
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "selectors": [
+        {
+            "allow": {
+                "from": [
+                    {
+                        "id": null,
+                        "kind": "Integration",
+                        "match": {},
+                        "match_strategy_matrix": null,
+                        "model": {
+                            "displayName": "API Gateway Integration",
+                            "id": "53a892d2-377e-43ca-9b6b-55a86efe9218",
+                            "model": {
+                                "version": "v1.0.25"
+                            },
+                            "name": "aws-apigatewayv2-controller",
+                            "registrant": {
+                                "kind": "artifacthub"
+                            },
+                            "version": "v1.0.0"
+                        },
+                        "patch": {
+                            "mutatedRef": [
+                                [
+                                    "displayName"
+                                ]
+                            ],
+                            "patchStrategy": "replace"
+                        }
+                    }
+                ],
+                "to": [
+                    {
+                        "id": null,
+                        "kind": "Function",
+                        "match": {},
+                        "match_strategy_matrix": null,
+                        "model": {
+                            "displayName": "Lambda Function",
+                            "id": "a9f1ee45-b0f8-4dce-a6a5-a1567079313b",
+                            "model": {
+                                "version": "v1.7.1"
+                            },
+                            "name": "aws-lambda-controller",
+                            "registrant": {
+                                "kind": "artifacthub"
+                            },
+                            "version": "v1.0.0"
+                        },
+                        "patch": {
+                            "mutatorRef": [
+                                [
+                                    "configuration",
+                                    "status",
+                                    "ackResourceMetadata",
+                                    "arn"
+                                ]
+                            ],
+                            "patchStrategy": "replace"
+                        }
+                    }
+                ]
+            },
+            "deny": {
+                "from": [],
+                "to": []
+            }
+        }
+    ],
+    "subType": "integration",
+    "status": "enabled",
+    "type": "non-binding",
+    "version": "v1.0.0"
+}

@@ -28,7 +28,7 @@
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
       "id": "00000000-0000-0000-0000-000000000000",
-      "name": "Orchestration \u0026 Management"
+      "name": "Orchestration & Management"
     },
     "subCategory": "Cloud Provider",
     "metadata": {
@@ -38,9 +38,9 @@
       "shape": "circle",
       "source_uri": "git://github.com/vshn/provider-exoscale/master/package/crds",
       "styleOverrides": "",
-      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" version=\"1.1\" viewBox=\"0 0 64 55.4\" height=\"20\" width=\"20\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M32,0L0,55.4h4.4L32,8v7.8L9,55.4h4.6l18.4-31.7v8l-13.8,23.7h4.6l9.2-15.8v7.8l-4.6,8h36.6L32,0Z\" fill=\"#da291c\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
-      "svgComplete": "",
-      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" version=\"1.1\" viewBox=\"0 0 64 55.4\" height=\"20\" width=\"20\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M32,0L0,55.4h4.4L32,8v7.8L9,55.4h4.6l18.4-31.7v8l-13.8,23.7h4.6l9.2-15.8v7.8l-4.6,8h36.6L32,0Z\" fill=\"#ffffff\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+      "svgColor": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg><svg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" version=\"1.1\" viewBox=\"0 0 64 55.4\" height=\"20\" width=\"20\">\n<path xmlns=\"http://www.w3.org/2000/svg\" d=\"M32,0L0,55.4h4.4L32,8v7.8L9,55.4h4.6l18.4-31.7v8l-13.8,23.7h4.6l9.2-15.8v7.8l-4.6,8h36.6L32,0Z\" fill=\"#da291c\"></path>\n</svg>",
+      "svgComplete": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 62.362 62.362\"><path d=\"M31.315 62.362C13.483 62.362 0 47.59 0 31.315 0 12.633 15.557 0 31.08 0c18.602 0 31.282 15.34 31.282 30.947 0 19.05-15.657 31.415-31.047 31.415\" style=\"fill:#da291c\"/><path d=\"M31.183 42.52h-2.387l2.387-4.096v-4.03l-4.709 8.093h-2.354l11.739-20.22v-4.095L17.122 42.487h-2.354l16.414-28.314L47.534 42.52z\" style=\"fill:#fff\"/></svg>",
+      "svgWhite": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg><svg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" version=\"1.1\" viewBox=\"0 0 64 55.4\" height=\"20\" width=\"20\">\n<path xmlns=\"http://www.w3.org/2000/svg\" d=\"M32,0L0,55.4h4.4L32,8v7.8L9,55.4h4.6l18.4-31.7v8l-13.8,23.7h4.6l9.2-15.8v7.8l-4.6,8h36.6L32,0Z\" fill=\"#ffffff\"></path>\n</svg>"
     },
     "model": {
       "version": "v1.0.0"
@@ -68,9 +68,9 @@
     "primaryColor": "#DA291C",
     "secondaryColor": "#000000",
     "shape": "circle",
-    "svgColor": "\u003csvg id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" viewBox=\"0 0 64 55.4\"\u003e\n\u003cpath d=\"M32,0L0,55.4h4.4L32,8v7.8L9,55.4h4.6l18.4-31.7v8l-13.8,23.7h4.6l9.2-15.8v7.8l-4.6,8h36.6L32,0Z\" fill=\"#da291c\"/\u003e\n\u003c/svg\u003e",
-    "svgComplete": "",
-    "svgWhite": "\u003csvg id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" viewBox=\"0 0 64 55.4\"\u003e\n\u003cpath d=\"M32,0L0,55.4h4.4L32,8v7.8L9,55.4h4.6l18.4-31.7v8l-13.8,23.7h4.6l9.2-15.8v7.8l-4.6,8h36.6L32,0Z\" fill=\"#ffffff\"/\u003e\n\u003c/svg\u003e"
+    "svgColor": "<svg id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" viewBox=\"0 0 64 55.4\">\n<path d=\"M32,0L0,55.4h4.4L32,8v7.8L9,55.4h4.6l18.4-31.7v8l-13.8,23.7h4.6l9.2-15.8v7.8l-4.6,8h36.6L32,0Z\" fill=\"#da291c\"/>\n</svg>",
+    "svgComplete": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 62.362 62.362\"><path d=\"M31.315 62.362C13.483 62.362 0 47.59 0 31.315 0 12.633 15.557 0 31.08 0c18.602 0 31.282 15.34 31.282 30.947 0 19.05-15.657 31.415-31.047 31.415\" style=\"fill:#da291c\"/><path d=\"M31.183 42.52h-2.387l2.387-4.096v-4.03l-4.709 8.093h-2.354l11.739-20.22v-4.095L17.122 42.487h-2.354l16.414-28.314L47.534 42.52z\" style=\"fill:#fff\"/></svg>",
+    "svgWhite": "<svg id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" viewBox=\"0 0 64 55.4\">\n<path d=\"M32,0L0,55.4h4.4L32,8v7.8L9,55.4h4.6l18.4-31.7v8l-13.8,23.7h4.6l9.2-15.8v7.8l-4.6,8h36.6L32,0Z\" fill=\"#ffffff\"/>\n</svg>"
   },
   "capabilities": [
     {

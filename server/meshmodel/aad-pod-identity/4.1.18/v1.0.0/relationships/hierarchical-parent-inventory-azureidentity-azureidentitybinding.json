@@ -1,0 +1,93 @@
+{
+  "id": "a494a0ac-3bf5-4457-b910-8cda63bcd3f8",
+  "evaluationQuery": "",
+  "kind": "hierarchical",
+  "metadata": {
+    "description": "AzureIdentityBinding references an AzureIdentity by name through spec.azureIdentity. This relationship models the ownership link between the identity and its binding resource in the aad-pod-identity controller.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "Azure Active Directory (AAD)",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "4.1.18"
+    },
+    "name": "aad-pod-identity",
+    "registrant": {
+      "kind": "artifacthub"
+    },
+    "version": "v1.0.0"
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "AzureIdentity",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "Azure Active Directory (AAD)",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": "4.1.18"
+              },
+              "name": "aad-pod-identity",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "version": "v1.0.0"
+            },
+            "patch": {
+              "mutatorRef": [
+                ["configuration", "metadata", "name"]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "AzureIdentityBinding",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "Azure Active Directory (AAD)",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": "4.1.18"
+              },
+              "name": "aad-pod-identity",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "version": "v1.0.0"
+            },
+            "patch": {
+              "mutatedRef": [
+                ["configuration", "spec", "azureIdentity"]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "inventory",
+  "status": "enabled",
+  "type": "parent",
+  "version": "v1.0.0"
+}
