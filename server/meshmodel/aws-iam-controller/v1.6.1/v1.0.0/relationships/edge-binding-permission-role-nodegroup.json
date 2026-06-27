@@ -1,0 +1,98 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "edge_binding_permission_relationship",
+  "kind": "edge",
+  "metadata": {
+    "description": "Defines the permission relationship between an AWS IAM Role and an Amazon EKS NodeGroup. The IAM Role must be attached to the NodeGroup as its node IAM role (nodeRole ARN), granting worker nodes the permissions required to register with the cluster and make AWS API calls via the kubelet.",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+  "model": {
+    "version": "",
+    "name": "aws-iam-controller",
+    "displayName": "AWS IAM Controller",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "registrant": {
+      "kind": "artifacthub"
+    },
+    "model": {
+      "version": "v1.6.1"
+    }
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Role",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "name": "aws-iam-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
+                ]
+              ],
+              "description": "The IAM Role whose ARN will be assigned to the EKS NodeGroup as its node instance role. This grants worker nodes the permissions needed to register with the cluster and make AWS API calls via the kubelet daemon."
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Nodegroup",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "name": "aws-eks-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "nodeRole"
+                ]
+              ],
+              "description": "The EKS NodeGroup that receives the IAM Role ARN in its spec.nodeRole field (or the role name in spec.nodeRoleRef.from.name), authorising the worker nodes to make AWS API calls."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "permission",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}
