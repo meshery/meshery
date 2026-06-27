@@ -88,7 +88,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
       --latest-only               generate only the latest version of each model
   -m, --model string              specific model name to be generated
       --model-csv string          path to the model CSV file
-  -o, --output string             location to output generated models, defaults to ../server/meshmodels (default "../server/meshmodel")
+  -o, --output string             location to output generated models, defaults to ../models (default "../models")
       --registrant-cred string    path pointing to the registrant credential definition
       --registrant-def string     path pointing to the registrant connection definition
       --relationship-csv string   path to the relationship CSV file (optional)
