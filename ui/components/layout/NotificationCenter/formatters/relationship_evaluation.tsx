@@ -3,7 +3,7 @@ import { Box, Typography, styled, CustomTooltip, Collapse, ErrorBoundary } from 
 import { ComponentIcon } from '@/components/designs/lifecycle/common';
 import { InfoIcon } from '@sistent/sistent'; // Assuming MUI icons are available
 import ExpandLessIcon from '@/assets/icons/ExpandLessIcon';
-import ExpandMoreIcon from '@/assets/icons/ExpandMoreIcon';
+import { ExpandMoreIcon } from '@sistent/sistent';
 
 // Styled components
 const SectionContainer = styled(Box)(({ theme }) => ({
@@ -67,7 +67,7 @@ const TraceSection = ({ title, items, children, emptyMessage = 'No changes' }) =
           <Typography variant="subtitle1">{title}</Typography>
         </SectionTitle>
 
-        <Box display={'flex'} alignItems={'center'} gap={2}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <span> ( {items.length} )</span>
 
           {expanded ? (
@@ -116,14 +116,15 @@ const ComponentAction = ({ action, componentMapping }) => {
 
   return (
     <ItemRow>
-      <Box display="flex" alignItems="center" gap={2} flex={1}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
         <ComponentIcon iconSrc={'/' + component?.styles?.svgColor} />
         <Box
-          display={'flex'}
-          justifyItems={'space-between'}
-          justifyContent={'space-between'}
-          width={'100%'}
-          alignItems={'center'}
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            width: '100%',
+            alignItems: 'center',
+          }}
         >
           <Typography variant="body2" fontWeight={500}>
             {component?.component?.kind} <strong> &quot;{component.displayName}&quot; </strong>
@@ -172,12 +173,13 @@ const RelationshipAction = ({ action, relationshipMapping }) => {
       {relationship.selectors.map((selector, index) => (
         <ItemRow key={index}>
           <Box
-            flex={1}
-            display={'flex'}
-            justifyItems={'space-between'}
-            justifyContent={'space-between'}
-            width={'100%'}
-            alignItems={'center'}
+            sx={{
+              flex: 1,
+              display: 'flex',
+              justifyContent: 'space-between',
+              width: '100%',
+              alignItems: 'center',
+            }}
           >
             <Typography variant="body2">
               <span style={{ fontWeight: 500 }}>
@@ -253,14 +255,14 @@ export const RelationshipEvaluationTraceFormatter = ({ actions, design }) => {
   const relationshipsUpdated = actions?.filter?.((a) => a.op == 'update_relationship');
 
   return (
-    <Box mt={2}>
+    <Box sx={{ mt: 2 }}>
       {!hasChanges ? (
         <EmptyState>
           <InfoIcon />
           <Typography ml={1}>No changes detected in this evaluation</Typography>
         </EmptyState>
       ) : (
-        <Box flexDirection="column" display="flex">
+        <Box sx={{ flexDirection: 'column', display: 'flex' }}>
           <TraceSection title="Components Added" items={componentsAdded}>
             {componentsAdded.map((action, index) => (
               <ComponentAction
@@ -333,13 +335,15 @@ export const RelationshipEvaluationTraceFormatter = ({ actions, design }) => {
 };
 
 export const RelationshipEvaluationEventFormatter = ({ event }) => {
+  const evaluationResponse =
+    event?.metadata?.evaluationResponse || event?.metadata?.evaluation_response;
   return (
     <ErrorBoundary>
-      <Box mt={2}>
+      <Box sx={{ mt: 2 }}>
         <Typography variant="body1">{event.description}</Typography>
         <RelationshipEvaluationTraceFormatter
-          actions={event?.metadata?.evaluation_response?.actions || []}
-          design={event?.metadata?.evaluation_response?.design || {}}
+          actions={evaluationResponse?.actions || []}
+          design={evaluationResponse?.design || {}}
         />
       </Box>
     </ErrorBoundary>

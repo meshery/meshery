@@ -9,6 +9,13 @@ on:
       - 'docs/**'
       - '.github/workflows/build-and-preview-docs.yml'
       - 'mesheryctl/doc/**'
+  workflow_dispatch:
+    inputs:
+      debug_mode:
+        description: 'Enable extra workflow context logging'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -28,12 +35,35 @@ jobs:
       HUGO_VERSION: 0.157.0
 
     steps:
-      - name: Checkout PR code
-        if: github.event.action != 'closed'
+      - name: 🔍 Introspect Inputs
+        run: |
+          echo "::group::Workflow Inputs"
+          echo "Debug Mode: ${{ inputs.debug_mode || 'false' }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Action: ${{ github.event.action || 'n/a' }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "SHA: ${{ github.sha }}"
+          echo "PR Number: ${{ github.event.pull_request.number || 'n/a' }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "::endgroup::"
+
+      - name: Harden Runner
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        with:
+          egress-policy: audit
+
+      - name: Checkout PR docs source
         uses: actions/checkout@v6
         with:
           submodules: recursive
           fetch-depth: 0
+          persist-credentials: false
+          filter: blob:none
+          sparse-checkout: |
+            docs
+            pr-preview
+          sparse-checkout-cone-mode: true
 
       - name: Install Hugo CLI
         if: github.event.action != 'closed'
@@ -41,10 +71,18 @@ jobs:
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
 
-      - name: Install dart-sass
+      - name: Install Dart Sass
         if: github.event.action != 'closed'
+        env:
+          DART_SASS_VERSION: 1.79.5
         run: |
-          sudo snap install dart-sass
+          set -eu
+          cd "${RUNNER_TEMP}"
+          curl -fsSL -o dart-sass.tar.gz "https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz"
+          sudo tar -xzf dart-sass.tar.gz -C /usr/local/lib
+          sudo ln -sf /usr/local/lib/dart-sass/sass /usr/local/bin/sass
+          sudo ln -sf /usr/local/lib/dart-sass/sass /usr/local/bin/dart-sass
+          dart-sass --version
 
       - name: Setup Node
         if: github.event.action != 'closed'
@@ -64,13 +102,15 @@ jobs:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
           HUGO_PREVIEW: "true"
+          PREVIEW_BASE_URL: "/pr-preview/pr-${{ github.event.pull_request.number }}/"
         run: |
-          make docs-build-production BASE_URL="/"
-          find docs/public -maxdepth 1 -type d -name 'v0.*' -exec rm -rf {} +
-          cat > docs/public/robots.txt <<'INNER_EOF'
+          cd docs
+          npm run build:production -- --gc --baseURL "${PREVIEW_BASE_URL}"
+          find public -maxdepth 1 -type d -name 'v0.*' -exec rm -rf {} +
+          cat > public/robots.txt <<'ROBOTS'
           User-agent: *
           Disallow: /
-          INNER_EOF
+          ROBOTS
 
       - name: Prepare Artifact Payload
         run: |

@@ -88,9 +88,9 @@ type MesheryPattern struct {
 
 	Name        string `json:"name,omitempty"`
 	PatternFile string `json:"patternFile"`
-	// Meshery doesn't have the user id fields
+	// Meshery doesn't have the owner field
 	// but the remote provider is allowed to provide one
-	UserID *string `json:"userId"`
+	Owner *string `json:"owner" gorm:"-"`
 
 	Location      isql.Map             `json:"location"`
 	Visibility    string               `json:"visibility"`
@@ -126,7 +126,7 @@ type MesheryPattern struct {
 // stale counts when the next payload omits both spellings.
 //
 // Remove once every known upstream producer (meshery-cloud remote
-// provider, Kanvas catalog API) has migrated off the snake_case
+// provider, catalog API) has migrated off the snake_case
 // spellings.
 func (m *MesheryPattern) UnmarshalJSON(data []byte) error {
 	type alias MesheryPattern

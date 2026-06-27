@@ -1,4 +1,4 @@
-FROM golang:1.25.5 AS meshery-server
+FROM golang:1.26.4 AS meshery-server
 ARG GIT_VERSION
 
 RUN adduser --disabled-login appuser
@@ -18,7 +18,7 @@ WORKDIR /app
 
 COPY ui/package.json ui/package-lock.json ./
 ENV HUSKY=0
-RUN npm ci --omit=dev --legacy-peer-deps --ignore-scripts
+RUN npm ci --legacy-peer-deps --ignore-scripts
 
 FROM base-node AS ui-builder
 WORKDIR /app
@@ -37,7 +37,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 # Install dependencies based on the preferred package manager
 COPY provider-ui/package.json provider-ui/package-lock.json ./
-RUN npm ci --omit=dev --legacy-peer-deps
+RUN npm ci --legacy-peer-deps
 
 FROM base-node AS ui-provider-builder
 WORKDIR /app
@@ -51,15 +51,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY provider-ui .
 RUN npm run build
 
-# This image will be reuse for wrk2, seed content and the last built
+# This image is reused for seed content and the last built
 FROM alpine:3.23.2 AS base-alpine
-
-FROM base-alpine AS wrk2
-RUN apk update \
-    && apk --no-cache --update add alpine-sdk zlib-dev openssl-dev wget git/
-RUN git config --global user.email "meshery@meshery.io"
-RUN git config --global user.name "meshery"
-RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 
 FROM base-alpine AS seed_content
 RUN apk add --no-cache curl
@@ -69,7 +62,7 @@ WORKDIR /
 RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/tarball/master -o service-mesh-patterns.tgz \
     && mkdir service-mesh-patterns \
     && mkdir -p /seed_content/patterns \
-    && tar xzf service-mesh-patterns.tgz --directclauory=service-mesh-patterns \
+    && tar xzf service-mesh-patterns.tgz --directory=service-mesh-patterns \
     && mv service-mesh-patterns/*/samples/* /seed_content/patterns/
 
 # bundling applications
@@ -102,15 +95,13 @@ RUN update-ca-certificates
 #     apk add --no-cache libstdc++
 
 COPY ./server/cmd/server-config.env /app/server/cmd/server-config.env
-COPY ./server/meshmodel /app/server/meshmodel
+COPY ./models /app/models
 COPY ./server/permissions /app/server/permissions/
 COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=ui-builder /app/out /app/ui/out
 COPY --from=ui-builder /app/public /app/ui/public
 COPY --from=ui-provider-builder /app/out /app/provider-ui/out
-COPY --from=wrk2 /wrk2 /app/server/cmd/wrk2
-COPY --from=wrk2 /wrk2/wrk /usr/local/bin
 COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
 
 RUN addgroup docker

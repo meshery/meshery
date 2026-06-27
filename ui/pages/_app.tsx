@@ -23,7 +23,6 @@ import { GQLSubscription } from '../components/subscription/subscriptionhandler'
 import { useLazyGetSystemSyncQuery, useLazyGetKubernetesContextsQuery } from '../rtk-query/system';
 import { useGetUserPrefQuery } from '../rtk-query/user';
 import { api } from '../rtk-query';
-import { useLazyGetConnectionsQuery } from '../rtk-query/connection';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 // Host-side CSS for packages shared with extensions via remote-component.
@@ -66,10 +65,9 @@ import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
 import uiConfig from '../ui.config';
 import { NotificationCenterProvider } from '../components/layout/NotificationCenter';
-import { getMeshModelComponentByName } from '../api/meshmodel';
-import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../utils/Enum';
+import { getConnectionDefinitions, getMeshModelComponentByName } from '../api/meshmodel';
+import { CONNECTION_KINDS, CONNECTION_KINDS_DEF } from '../utils/Enum';
 import { ability } from '../utils/can';
-import { useLazyGetCredentialByIdQuery } from '@/rtk-query/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
@@ -95,7 +93,6 @@ import {
   updateExtensionType,
 } from '@/store/slices/mesheryUi';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
-import { updateGrafanaConfig, updatePrometheusConfig } from '@/store/slices/telemetry';
 import { updateAdaptersInfo } from '@/store/slices/adapter';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
@@ -119,12 +116,10 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   const { k8sConfig } = useSelector((state) => state.ui);
   const { providerCapabilities } = useSelector((state) => state.ui);
   const { isDrawerCollapsed } = useSelector((state) => state.ui);
-  const [fetchCredentialById] = useLazyGetCredentialByIdQuery();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
   const [fetchKubernetesContexts] = useLazyGetKubernetesContextsQuery();
   const [fetchOrganizations] = api.endpoints.getOrgs.useLazyQuery();
   const [fetchUserKeys] = api.endpoints.getUserKeys.useLazyQuery();
-  const [fetchConnections] = useLazyGetConnectionsQuery();
   const { data: userPrefData } = useGetUserPrefQuery();
   const dispatch = useDispatch();
   const [state, setState] = useState({
@@ -163,47 +158,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     });
   }, []);
 
-  const loadPromGrafanaConnection = useCallback(async () => {
-    try {
-      const res = await fetchConnections({
-        page: 0,
-        pagesize: 2,
-        status: JSON.stringify([CONNECTION_STATES.CONNECTED, CONNECTION_STATES.REGISTERED]),
-        kind: JSON.stringify([CONNECTION_KINDS.PROMETHEUS, CONNECTION_KINDS.GRAFANA]),
-      }).unwrap();
-
-      res?.connections?.forEach((connection) => {
-        if (connection.kind == CONNECTION_KINDS.PROMETHEUS) {
-          const promCfg = {
-            prometheusURL: connection?.metadata?.url || '',
-            selectedPrometheusBoardsConfigs: connection?.metadata['prometheus_boards'] || [],
-            connectionID: connection?.id,
-            connectionName: connection?.name,
-          };
-          dispatch(updatePrometheusConfig(promCfg));
-        } else {
-          const credentialID = connection?.credentialId;
-          fetchCredentialById(credentialID)
-            .unwrap()
-            .then((credRes) => {
-              const grafanaCfg = {
-                grafanaURL: connection?.metadata?.url || '',
-                grafanaAPIKey: credRes?.secret?.secret || '',
-                grafanaBoardSearch: '',
-                grafanaBoards: connection?.metadata['grafana_boards'] || [],
-                selectedBoardsConfigs: [],
-                connectionID: connection?.id,
-                connectionName: connection?.name,
-              };
-              dispatch(updateGrafanaConfig(grafanaCfg));
-            });
-        }
-      });
-    } catch (err) {
-      console.error('Failed to load telemetry connections:', err);
-    }
-  }, [dispatch, fetchConnections, fetchCredentialById]);
-
   const fullScreenChanged = useCallback(() => {
     setState((prevState) => {
       return { ...prevState, isFullScreenMode: !prevState.isFullScreenMode };
@@ -213,13 +167,39 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   const loadMeshModelComponent = useCallback(async () => {
     const connectionDef = {};
 
+    // Connection definitions are the source of truth for a kind's icon
+    // (styles.svgColor) and its state machine (transitionMap). Seed the metadata
+    // from them — these entries must survive even when the legacy
+    // `<Kind>Connection` *component* no longer exists (connection definitions
+    // replaced those components), otherwise the kind has no transitionMap and
+    // the status dropdown shows "No transitions Available".
+    try {
+      const res = await getConnectionDefinitions();
+      (res?.connectionDefinitions || []).forEach((definition) => {
+        if (definition?.kind) {
+          connectionDef[definition.kind] = {
+            transitionMap: definition.transitionMap,
+            icon: definition.styles?.svgColor,
+          };
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching connection definitions:', error);
+    }
+
+    // Fall back to the legacy `<Kind>Connection` component for kinds without a
+    // first-class connection definition yet (e.g. meshery, github), and to
+    // backfill the flat `transitions` list / icon the definition did not provide.
     const promises = CONNECTION_KINDS_DEF.map(async (kind) => {
       try {
         const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
-        if (res?.components) {
-          connectionDef[CONNECTION_KINDS[kind]] = {
-            transitions: res?.components[0].metadata.transitions,
-            icon: res?.components[0].styles.svgColor,
+        if (res?.components?.length) {
+          const kindKey = CONNECTION_KINDS[kind];
+          const existing = connectionDef[kindKey] || {};
+          connectionDef[kindKey] = {
+            ...existing,
+            transitions: existing.transitions ?? res.components[0].metadata?.transitions,
+            icon: existing.icon || res.components[0].styles?.svgColor,
           };
         }
       } catch (error) {
@@ -442,7 +422,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     const loadAll = async () => {
       try {
         loadConfigFromServer();
-        loadPromGrafanaConnection();
         await loadOrg();
 
         initSubscriptions([]);

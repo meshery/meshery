@@ -1,7 +1,7 @@
 ---
 title: Azure Container Registry
 subtitle: Collaborative and visual infrastructure as design for Azure Container Registry
-image: /extensions/models/azure-container-registry/icons/color/azure-container-registry-color.svg
+image: extensions/models/azure-container-registry/icons/color/azure-container-registry-color.svg
 aliases: /extensibility/integrations/azure-container-registry
 docURL: https://docs.meshery.io/extensibility/integrations/azure-container-registry
 description: 
@@ -10,12 +10,12 @@ integrations-subcategory: Container Registry
 registrant: GitHub
 components: 
 - name: registry
-  colorIcon: content/en/extensions/models/azure-container-registry/components/registry/icons/color/registry-color.svg
-  whiteIcon: content/en/extensions/models/azure-container-registry/components/registry/icons/white/registry-white.svg
+  colorIcon: extensions/models/azure-container-registry/components/registry/icons/color/registry-color.svg
+  whiteIcon: extensions/models/azure-container-registry/components/registry/icons/white/registry-white.svg
   description: 
 - name: registry-replication
-  colorIcon: content/en/extensions/models/azure-container-registry/components/registry-replication/icons/color/registry-replication-color.svg
-  whiteIcon: content/en/extensions/models/azure-container-registry/components/registry-replication/icons/white/registry-replication-white.svg
+  colorIcon: extensions/models/azure-container-registry/components/registry-replication/icons/color/registry-replication-color.svg
+  whiteIcon: extensions/models/azure-container-registry/components/registry-replication/icons/white/registry-replication-white.svg
   description: 
 components-count: 2
 relationships: 

@@ -17,7 +17,8 @@ import {
   Autocomplete,
   NoSsr,
   Radio,
-  SaveOutlinedIcon,
+  SaveIcon,
+  Box,
 } from '@sistent/sistent';
 import { useGetLoadTestPrefsQuery, useUpdateLoadTestPrefsMutation } from '@/rtk-query/user';
 import { useSelector, useDispatch } from 'react-redux';
@@ -25,7 +26,7 @@ import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
 import { normalizeLoadTestPrefs } from '../../lib/load-test-prefs';
 
-const loadGenerators = ['fortio', 'wrk2'];
+const loadGenerators = ['fortio'];
 
 const FormControlWrapper = styled(FormControl)({
   minWidth: 180,
@@ -137,10 +138,10 @@ const MesherySettingsPerformanceComponent = () => {
   return (
     <NoSsr>
       <React.Fragment>
-        <div style={{ padding: theme.spacing(10) }}>
-          <label>
-            <strong>Performance Load Test Defaults</strong>
-          </label>
+        <Box sx={{ p: { xs: 2, md: 10 } }}>
+          <Box component="h2" sx={{ m: 0, fontSize: '1.25rem', fontWeight: 600 }}>
+            Performance Load Test Defaults
+          </Box>
           <Grid2 container spacing={3} size="grow">
             <Grid2 size={{ xs: 12, lg: 4 }}>
               <TextField
@@ -215,11 +216,11 @@ const MesherySettingsPerformanceComponent = () => {
                 >
                   {loadGenerators.map((lg) => (
                     <FormControlLabel
+                      key={lg}
                       value={lg}
                       control={
                         <Radio
                           color="primary"
-                          disabled={lg === 'wrk2'}
                           sx={{
                             '&.Mui-checked': {
                               color:
@@ -246,11 +247,11 @@ const MesherySettingsPerformanceComponent = () => {
               onClick={handleSubmit}
               disabled={isSaving}
             >
-              <SaveOutlinedIcon style={{ marginRight: '3px' }} />
+              <SaveIcon style={{ marginRight: '3px' }} />
               {isSaving ? <CircularProgress size={30} /> : 'Save'}
             </Button>
           </div>
-        </div>
+        </Box>
       </React.Fragment>
     </NoSsr>
   );

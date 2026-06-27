@@ -35,7 +35,7 @@ type designViewFlags struct {
 var designViewFlagsProvided designViewFlags
 
 var linkDocPatternView = map[string]string{
-	"link":    "![pattern-view-usage](/reference/images/patternView.png)",
+	"link":    "![pattern-view-usage](../../../images/patternView.png)",
 	"caption": "Usage of mesheryctl design view",
 }
 

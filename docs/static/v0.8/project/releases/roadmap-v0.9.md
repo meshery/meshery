@@ -63,12 +63,12 @@ Stretch
 [/details]
 
 ## Extensibility & Extensions [:meshery: @theBeginner86]
-  - Helm Kanvas Snapshot [@Ijeoma.Eti @theBeginner86]
+  - Helm  Snapshot [@Ijeoma.Eti @theBeginner86]
   - Kubectl Meshsync Snapshot [ @devhindo ]
 
 [details="Roadmap v0.9.0 (stretch goal)"]
 Stretch
-  - Kubectl Kanvas Snapshot [?]
+  - Kubectl  Snapshot [?]
 [/details]
 
 ## Adapters & Performance Management [:meshery:?]

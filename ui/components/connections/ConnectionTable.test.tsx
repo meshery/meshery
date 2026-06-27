@@ -7,6 +7,7 @@ import ConnectionTable from './ConnectionTable';
 const notify = vi.fn();
 const push = vi.fn();
 const ping = vi.fn();
+const pingGrafana = vi.fn();
 const modalShow = vi.fn();
 const updateConnectionByIdMutator = vi.fn();
 const addConnectionToEnvironmentMutator = vi.fn();
@@ -44,7 +45,9 @@ vi.mock('@sistent/sistent', () => ({
   MenuItem: ({ children }) => <div>{children}</div>,
   Box: ({ children }) => <div>{children}</div>,
   SyncAltIcon: () => <svg data-testid="sync-alt-icon" />,
+  SettingsIcon: () => <svg data-testid="settings-icon" />,
   MoreVertIcon: () => <svg data-testid="more-vert-icon" />,
+  InfoOutlinedIcon: () => <svg data-testid="info-outlined-icon" />,
   IconButton: ({ children, onClick, ...props }) => (
     <button onClick={onClick} type="button" {...props}>
       {children}
@@ -107,8 +110,8 @@ vi.mock('@/assets/styles/general/tool.styles', () => ({
   ToolWrapper: ({ children }) => <div>{children}</div>,
 }));
 
-vi.mock('../MesherySettingsEnvButtons', () => ({
-  default: () => <div data-testid="settings-buttons" />,
+vi.mock('./ConnectionWizardLauncher', () => ({
+  default: () => <div data-testid="connection-wizard-launcher" />,
 }));
 
 vi.mock('../../utils/utils', () => ({
@@ -125,6 +128,10 @@ vi.mock('@/graphql/queries/ResetDatabaseQuery', () => ({
 
 vi.mock('@/utils/hooks/useKubernetesHook', () => ({
   default: () => ping,
+}));
+
+vi.mock('@/utils/hooks/useGrafanaPingHook', () => ({
+  default: () => pingGrafana,
 }));
 
 vi.mock('./ConnectionChip', () => ({
@@ -186,10 +193,6 @@ vi.mock('@/rtk-query/connection', () => ({
   useUpdateConnectionByIdMutation: () => [updateConnectionByIdMutator],
 }));
 
-vi.mock('../../assets/icons/InfoOutlined', () => ({
-  default: () => <svg />,
-}));
-
 vi.mock('../../assets/icons/disconnect', () => ({
   default: () => <svg />,
 }));
@@ -203,20 +206,26 @@ vi.mock('../PromptComponent', () => ({
   }),
 }));
 
+// Mutable container so individual tests can flip `connectionMetadataState`
+// (e.g., simulate the pre-hydration `null` state) without re-defining the
+// mock between tests.
+const uiState: {
+  organization: { id: string };
+  connectionMetadataState: Record<string, { transitions?: string[]; icon?: string }> | null;
+  controllerState: Record<string, unknown> | null;
+} = {
+  organization: { id: 'org-1' },
+  connectionMetadataState: {
+    kubernetes: {
+      transitions: ['connected'],
+      icon: '/static/img/integrations/kubernetes.svg',
+    },
+  },
+  controllerState: {},
+};
+
 vi.mock('react-redux', () => ({
-  useSelector: (selector) =>
-    selector({
-      ui: {
-        organization: { id: 'org-1' },
-        connectionMetadataState: {
-          kubernetes: {
-            transitions: ['connected'],
-            icon: '/static/img/integrations/kubernetes.svg',
-          },
-        },
-        controllerState: {},
-      },
-    }),
+  useSelector: (selector) => selector({ ui: uiState }),
 }));
 
 const makeConnection = (overrides = {}) => ({
@@ -252,6 +261,17 @@ describe('ConnectionTable', () => {
     getEnvironmentsQuery.mockReset();
     updateVisibleColumns.mockReset();
     windowWidth = 1280;
+
+    // Restore the populated Redux state — individual tests below flip
+    // `connectionMetadataState` to `null` to exercise the pre-hydration path.
+    uiState.organization = { id: 'org-1' };
+    uiState.connectionMetadataState = {
+      kubernetes: {
+        transitions: ['connected'],
+        icon: '/static/img/integrations/kubernetes.svg',
+      },
+    };
+    uiState.controllerState = {};
 
     updateConnectionByIdMutator.mockImplementation(({ connectionId, body }) => ({
       unwrap: () => Promise.resolve({ connectionId, body }),
@@ -301,7 +321,7 @@ describe('ConnectionTable', () => {
   });
 
   it('hydrates search from a string router query and passes it to the connections query', async () => {
-    router.query = { searchText: 'cluster-a' };
+    router.query = { con_q: 'cluster-a' };
 
     render(<ConnectionTable />);
 
@@ -382,5 +402,183 @@ describe('ConnectionTable', () => {
     await waitFor(() => {
       expect(dataTableProps.columnVisibility.kind).toBe(false);
     });
+  });
+
+  // Regression: the Environments select disappeared from the table. The cells
+  // come from a memoized `columns` whose `customBodyRender` closes over
+  // `isEnvironmentsSuccess` at definition time, and ResponsiveDataTable renders
+  // from a `tableCols` *snapshot* that it only re-syncs to the live `columns`
+  // when `columnVisibility` identity changes. On first render the environments
+  // query is still pending (isEnvironmentsSuccess=false), so the snapshot froze
+  // a cell that renders nothing; once the query resolved the snapshot was never
+  // refreshed and the select never reappeared. ConnectionTable now keeps
+  // `tableCols` following `columns`, so the resolved cell reaches the table.
+  it('re-renders the Environments select once the environments query resolves', async () => {
+    getEnvironmentsQuery.mockReturnValue({
+      data: { environments: [] },
+      isSuccess: false,
+      isError: false,
+      error: undefined,
+    });
+
+    const { rerender } = render(<ConnectionTable />);
+
+    // Render the snapshot's environments cell and report whether the select
+    // (mocked as `multi-select-wrapper`) is present.
+    const environmentsSelectIsRendered = () => {
+      const envColumn = dataTableProps.tableCols.find((col) => col.name === 'environments');
+      const { container, unmount } = render(
+        <>{envColumn.options.customBodyRender([], { rowData: [] })}</>,
+      );
+      const present = !!container.querySelector('[data-testid="multi-select-wrapper"]');
+      unmount();
+      return present;
+    };
+
+    expect(environmentsSelectIsRendered()).toBe(false);
+
+    getEnvironmentsQuery.mockReturnValue({
+      data: { environments: [{ id: 'env-1', name: 'dev' }] },
+      isSuccess: true,
+      isError: false,
+      error: undefined,
+    });
+    // Re-render under act() so the tableCols-sync effect flushes; then assert
+    // once (no render() inside waitFor, so a regression fails fast instead of
+    // looping the snapshot render until timeout).
+    rerender(<ConnectionTable />);
+
+    expect(environmentsSelectIsRendered()).toBe(true);
+  });
+
+  // Regression for issue #19405 — `/management/connections` crashes with
+  // "React error #185" / a `TypeError: Cannot read properties of null` in
+  // production. The Redux slice (`store/slices/mesheryUi.ts`) initialises
+  // `connectionMetadataState` to `null` and `_app.tsx` only populates it after
+  // `getMeshModelComponentByName` resolves. The pages-router renders the
+  // connections page before that promise settles, so the `enhancedConnections`
+  // memo must tolerate a null map. The pre-fix code wrote
+  // `connectionMetadataState[connection.kind]?.transitions` which protected
+  // the property access but not the lookup itself.
+  it('renders without throwing when connectionMetadataState is null (pre-hydration state)', () => {
+    uiState.connectionMetadataState = null;
+
+    expect(() => render(<ConnectionTable />)).not.toThrow();
+  });
+
+  it('falls back to undefined nextStatus/kindLogo when metadata is null', async () => {
+    uiState.connectionMetadataState = null;
+
+    render(<ConnectionTable />);
+
+    await waitFor(() => {
+      expect(dataTableProps).toBeDefined();
+    });
+    // The rows still render even though metadata is unavailable. Downstream
+    // columns/cells handle the missing transitions gracefully.
+    expect(dataTableProps.data).toHaveLength(2);
+  });
+
+  // Regression for the URL-clear loop described in issue #19405. The
+  // pre-fix effect listed `filteredConnections` in its deps and called
+  // `updateUrlWithConnectionId('')` when the selected id wasn't on the
+  // current page. RTK Query returns a fresh array reference on every cache
+  // hit, so this fired on every refetch, pushing a new URL, re-rendering the
+  // parent, minting another RTK array — a textbook React #185 update-depth
+  // loop. The effect now reads `filteredConnections` via a ref and never
+  // clears the URL.
+  it('does not clear the connectionId URL param when the connection is not on the current page', async () => {
+    const updateUrlWithConnectionId = vi.fn();
+
+    render(
+      <ConnectionTable
+        selectedConnectionId="connection-not-on-this-page"
+        updateUrlWithConnectionId={updateUrlWithConnectionId}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(dataTableProps).toBeDefined();
+    });
+
+    // Wait an extra tick to make sure no deferred call clears the URL.
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(updateUrlWithConnectionId).not.toHaveBeenCalledWith('');
+  });
+
+  // Regression for the Copilot review feedback on PR #19544: the prior shape
+  // of this effect listed `filteredConnections` in its deps (loop-prone, was
+  // the cause of issue #19405) and the intermediate fix moved it to a ref
+  // and dropped the dep entirely, but set `lastProcessedId` *before*
+  // confirming the row was found — locking the effect out for the rest of
+  // the session whenever the user landed on a page that didn't contain the
+  // deep-linked id (slow network, page 2, filtered view).
+  it('still expands the row when the deep-linked id arrives on a later page', async () => {
+    const setRowsExpandedSpy = vi.fn();
+
+    // First load: deep-linked id is NOT in the visible page.
+    getConnectionsQuery.mockReturnValue({
+      data: {
+        connections: [
+          makeConnection({ id: 'page-1-conn-a' }),
+          makeConnection({ id: 'page-1-conn-b' }),
+        ],
+        totalCount: 4,
+      },
+      isError: false,
+      error: undefined,
+      refetch: refetchConnections,
+      isLoading: false,
+    });
+
+    const { rerender } = render(<ConnectionTable selectedConnectionId="deep-link-target" />);
+
+    await waitFor(() => {
+      expect(dataTableProps).toBeDefined();
+    });
+
+    // The row isn't on this page, so nothing should be expanded yet.
+    const initialRowsExpanded = dataTableProps.options.rowsExpanded;
+    expect(initialRowsExpanded).toEqual([]);
+
+    // User paginates and the deep-linked id is now in the visible set.
+    getConnectionsQuery.mockReturnValue({
+      data: {
+        connections: [
+          makeConnection({ id: 'page-2-conn-a' }),
+          makeConnection({ id: 'deep-link-target', name: 'cluster-deep' }),
+        ],
+        totalCount: 4,
+      },
+      isError: false,
+      error: undefined,
+      refetch: refetchConnections,
+      isLoading: false,
+    });
+
+    rerender(<ConnectionTable selectedConnectionId="deep-link-target" />);
+
+    // The effect must re-fire and expand index 1 now that the id is visible.
+    await waitFor(() => {
+      expect(dataTableProps.options.rowsExpanded).toEqual([1]);
+    });
+
+    // Sanity check that the linter isn't optimizing the spy away.
+    expect(setRowsExpandedSpy).not.toHaveBeenCalled();
+  });
+
+  it('reuses the same onFlushMeshSync callback across rerenders so children are not invalidated', () => {
+    const { rerender } = render(<ConnectionTable />);
+
+    // The action menu only renders when an anchor is set. Capture the
+    // identity of the JSX-bound `onFlushMeshSync` by re-rendering with the
+    // same props and asserting the prop bag handed to ResponsiveDataTable
+    // (the only render-time reflection of `handleFlushMeshSync` available
+    // here) is referentially stable across renders.
+    const firstOptions = dataTableProps.options;
+
+    rerender(<ConnectionTable />);
+
+    expect(dataTableProps.options).toBe(firstOptions);
   });
 });

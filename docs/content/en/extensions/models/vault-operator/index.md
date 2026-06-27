@@ -1,7 +1,7 @@
 ---
 title: Vault Operator
 subtitle: Collaborative and visual infrastructure as design for Vault Operator
-image: /extensions/models/vault-operator/icons/color/vault-operator-color.svg
+image: extensions/models/vault-operator/icons/color/vault-operator-color.svg
 aliases: /extensibility/integrations/vault-operator
 docURL: https://docs.meshery.io/extensibility/integrations/vault-operator
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Key Management
 registrant: Artifact Hub
 components: 
 - name: vault
-  colorIcon: content/en/extensions/models/vault-operator/components/vault/icons/color/vault-color.svg
-  whiteIcon: content/en/extensions/models/vault-operator/components/vault/icons/white/vault-white.svg
+  colorIcon: extensions/models/vault-operator/components/vault/icons/color/vault-color.svg
+  whiteIcon: extensions/models/vault-operator/components/vault/icons/white/vault-white.svg
   description: 
 components-count: 1
 relationships: 
