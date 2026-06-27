@@ -71,6 +71,7 @@
                                     "type"      $catalogType
                                     "image"     (index $meta "image")
                                     "userName"  (index $meta "userName")
+                                    "permalink" (index $meta "permalink")
                                 ) }}
                             {{ end }}
                         {{ end }}
@@ -97,7 +98,7 @@
         <div class="designs-grid">
             {{ range $matchedDesigns }}
             <a class="design-card"
-               href="https://meshery.io/catalog/{{ .type }}/{{ replace .name "." "-" | urlize }}-{{ .patternId }}"
+               href="https://meshery.io/{{ .permalink }}"
                target="_blank"
                rel="noopener noreferrer">
                 <div class="design-card__img-wrap">
