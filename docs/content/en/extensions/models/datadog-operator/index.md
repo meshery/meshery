@@ -1,7 +1,7 @@
 ---
 title: Datadog Operator
 subtitle: Collaborative and visual infrastructure as design for Datadog Operator
-image: /extensions/models/datadog-operator/icons/color/datadog-operator-color.svg
+image: extensions/models/datadog-operator/icons/color/datadog-operator-color.svg
 aliases: /extensibility/integrations/datadog-operator
 docURL: https://docs.meshery.io/extensibility/integrations/datadog-operator
 description: 

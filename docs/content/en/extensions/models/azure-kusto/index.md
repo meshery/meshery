@@ -1,7 +1,7 @@
 ---
 title: Azure Kusto
 subtitle: Collaborative and visual infrastructure as design for Azure Kusto
-image: /extensions/models/azure-kusto/icons/color/azure-kusto-color.svg
+image: extensions/models/azure-kusto/icons/color/azure-kusto-color.svg
 aliases: /extensibility/integrations/azure-kusto
 docURL: https://docs.meshery.io/extensibility/integrations/azure-kusto
 description: 

@@ -1,7 +1,7 @@
 ---
 title: OpenStack (Crossplane)
 subtitle: Collaborative and visual infrastructure as design for OpenStack (Crossplane)
-image: /extensions/models/crossplane-provider-openstack/icons/color/crossplane-provider-openstack-color.svg
+image: extensions/models/crossplane-provider-openstack/icons/color/crossplane-provider-openstack-color.svg
 aliases: /extensibility/integrations/crossplane-provider-openstack
 docURL: https://docs.meshery.io/extensibility/integrations/crossplane-provider-openstack
 description: 

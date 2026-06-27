@@ -561,31 +561,9 @@ func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Re
 		Message: "Done persisting the load test results.",
 	}
 
-	var promURL string
-	if prefObj.Prometheus != nil {
-		promURL = prefObj.Prometheus.PrometheusURL
-	}
-
-	tokenVal, _ := provider.GetProviderToken(req)
-
-	h.log.Debug("promURL: , testUUID: , resultID: ", promURL, testUUID, resultID)
-	if promURL != "" && testUUID != "" && resultID != "" &&
-		(provider.GetProviderType() == models.RemoteProviderType ||
-			(provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
-		_ = h.task.WithArgs(ctx, &models.SubmitMetricsConfig{
-			TestUUID:  testUUID,
-			ResultID:  resultID,
-			PromURL:   promURL,
-			StartTime: resultInst.StartTime,
-			EndTime:   resultInst.StartTime.Add(resultInst.ActualDuration),
-			TokenVal:  tokenVal,
-			Provider:  provider,
-		})
-	}
-
 	key := uuid.FromStringOrNil(resultID)
 	if key == uuid.Nil {
-		key, _ = uuid.NewV4()
+		key = uuid.Must(uuid.NewV4())
 	}
 	result.ID = key
 	respChan <- &models.LoadTestResponse{
@@ -600,56 +578,6 @@ func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Re
 	if h.config.PerformanceResultChannel != nil {
 		h.config.PerformanceResultChannel <- struct{}{}
 	}
-}
-
-// CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to Remote Provider
-func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error {
-	h.log.Debug("initiating collecting prometheus static board metrics for test id: ", config.TestUUID)
-	ctx := context.Background()
-	queries := h.config.QueryTracker.GetQueriesForUUID(ctx, config.TestUUID)
-	queryResults := map[string]map[string]interface{}{}
-	step := h.config.PrometheusClient.ComputeStep(ctx, config.StartTime, config.EndTime)
-	for query, flag := range queries {
-		if !flag {
-			seriesData, err := h.config.PrometheusClient.QueryRangeUsingClient(ctx, config.PromURL, query, config.StartTime, config.EndTime, step)
-			if err != nil {
-				return err
-			}
-			queryResults[query] = map[string]interface{}{
-				"status": "success",
-				"data": map[string]interface{}{
-					"resultType": seriesData.Type(),
-					"result":     seriesData,
-				},
-			}
-			h.config.QueryTracker.AddOrFlagQuery(ctx, config.TestUUID, query, true)
-		}
-	}
-
-	board, err := h.config.PrometheusClient.GetClusterStaticBoard(ctx, config.PromURL)
-	if err != nil {
-		return err
-	}
-	// TODO: we are NOT persisting the Node metrics for now
-
-	resultUUID, err := uuid.FromString(config.ResultID)
-	if err != nil {
-		h.log.Error(ErrParseBool(err, "result uuid"))
-		return err
-	}
-	result := &models.MesheryResult{
-		ID:                resultUUID,
-		TestID:            config.TestUUID,
-		ServerMetrics:     queryResults,
-		ServerBoardConfig: board,
-	}
-
-	if err = config.Provider.PublishMetrics(config.TokenVal, result); err != nil {
-		return err
-	}
-	// now to remove all the queries for the uuid
-	h.config.QueryTracker.RemoveUUID(ctx, config.TestUUID)
-	return nil
 }
 
 func assignCertificatePath(key, path string, loadTestOptions *models.LoadTestOptions) {

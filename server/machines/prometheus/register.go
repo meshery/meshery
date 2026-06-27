@@ -7,6 +7,7 @@ import (
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
+	prometheustelemetry "github.com/meshery/meshery/server/models/telemetry/prometheus"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/utils"
@@ -64,9 +65,9 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
-	promClient := models.NewPrometheusClient(&log)
+	promClient := prometheustelemetry.New(promConn.URL, promCred.APIKeyOrBasicAuth, log)
 
-	err = promClient.Validate(ctx, promConn.URL, promCred.APIKeyOrBasicAuth)
+	_, err = promClient.Health(ctx)
 
 	if err != nil && !connPayload.SkipCredentialVerification {
 		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrPrometheusScan(err)}).Build(), models.ErrPrometheusScan(err)

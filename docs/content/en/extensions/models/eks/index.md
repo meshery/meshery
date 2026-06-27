@@ -1,7 +1,7 @@
 ---
 title: AWS Elastic Kubernetes Service
 subtitle: Diagram and configure your Azure Kubernetes Service clusters
-image: /extensions/models/eks/icons/color/eks-color.svg
+image: extensions/models/eks/icons/color/eks-color.svg
 aliases: /extensibility/integrations/eks
 docURL: https://docs.meshery.io/installation/kubernetes/eks
 description: 

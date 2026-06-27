@@ -1,7 +1,7 @@
 ---
 title: ChaosBlade
 subtitle: Collaborative and visual infrastructure as design for ChaosBlade
-image: /extensions/models/chaosblade-operator/icons/color/chaosblade-operator-color.svg
+image: extensions/models/chaosblade-operator/icons/color/chaosblade-operator-color.svg
 aliases: /extensibility/integrations/chaosblade-operator
 docURL: https://docs.meshery.io/extensibility/integrations/chaosblade-operator
 description: 

@@ -1,7 +1,7 @@
 ---
 title: AWS Route 53
 subtitle: Collaborative and visual infrastructure as design for AWS Route 53
-image: /extensions/models/aws-route53-controller/icons/color/aws-route53-controller-color.svg
+image: extensions/models/aws-route53-controller/icons/color/aws-route53-controller-color.svg
 aliases: /extensibility/integrations/aws-route53-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-route53-controller
 description: 

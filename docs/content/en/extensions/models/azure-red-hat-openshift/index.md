@@ -1,7 +1,7 @@
 ---
 title: Azure Red Hat OpenShift
 subtitle: Collaborative and visual infrastructure as design for Azure Red Hat OpenShift
-image: /extensions/models/azure-red-hat-openshift/icons/color/azure-red-hat-openshift-color.svg
+image: extensions/models/azure-red-hat-openshift/icons/color/azure-red-hat-openshift-color.svg
 aliases: /extensibility/integrations/azure-red-hat-openshift
 docURL: https://docs.meshery.io/extensibility/integrations/azure-red-hat-openshift
 description: 
