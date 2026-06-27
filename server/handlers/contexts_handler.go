@@ -53,7 +53,6 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 		return
 	}
 
-	h.log.Info("this is being used\n\n\n")
 	val, err := provider.GetK8sContext(token, mux.Vars(req)["id"])
 	if err != nil {
 		h.log.Error(ErrGetK8sContexts(err))

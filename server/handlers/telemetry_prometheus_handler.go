@@ -233,7 +233,7 @@ func (h *Handler) PrometheusTelemetryQueryHandler(w http.ResponseWriter, req *ht
 		// broadcast notification events: a single unreachable connection or bad
 		// credential would otherwise spawn one notification per panel and bury the
 		// user.
-		merr, status := prometheusQueryError(err)
+		status, merr := prometheusQueryError(err)
 		writeMeshkitError(w, merr, status)
 		return
 	}
@@ -259,7 +259,7 @@ func (h *Handler) PrometheusTelemetryQueryRangeHandler(w http.ResponseWriter, re
 	if err != nil {
 		// See PrometheusTelemetryQueryHandler: per-panel query failures are surfaced
 		// inline as the HTTP response, never as broadcast notification events.
-		merr, status := prometheusQueryError(err)
+		status, merr := prometheusQueryError(err)
 		writeMeshkitError(w, merr, status)
 		return
 	}
@@ -357,12 +357,12 @@ func (h *Handler) PrometheusTelemetryQueryRangeBatchHandler(w http.ResponseWrite
 
 // prometheusQueryError classifies a query failure into a specific, user-facing
 // error and the HTTP status to return with it.
-func prometheusQueryError(err error) (error, int) {
+func prometheusQueryError(err error) (int, error) {
 	switch prometheus.StatusCode(err) {
 	case http.StatusUnauthorized, http.StatusForbidden:
-		return ErrTelemetryPrometheusAuth(err), http.StatusBadGateway
+		return http.StatusBadGateway, ErrTelemetryPrometheusAuth(err)
 	}
-	return ErrTelemetryPrometheus(err, "datasource query"), http.StatusBadGateway
+	return http.StatusBadGateway, ErrTelemetryPrometheus(err, "datasource query")
 }
 
 // PrometheusTelemetryPanelsHandler reads (GET) or replaces (POST) the set of

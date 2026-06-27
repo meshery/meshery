@@ -1099,12 +1099,10 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 	}
 
 	connection, err := l.SaveConnection(conn, token, true)
-
 	if err != nil {
 		l.Log.Error(ErrPersistConnection(err))
 		return connections.Connection{}, err
 	}
-
 	if connection == nil {
 		// SaveConnection can return (nil, nil) when the remote provider answers
 		// 2xx but the connection page is empty or carries a null element. Guard
