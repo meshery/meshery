@@ -33,7 +33,7 @@ mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [model
 Publish To Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/server/meshmodel
+mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/models
 
 </div>
 </pre> 
