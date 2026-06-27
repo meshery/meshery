@@ -155,7 +155,7 @@ Using CSV | fa fa-list
 <code>mesheryctl registry generate --directory templates-csvs --model "YOUR_MODEL_NAME"</code>
 
 <h4>4. Locating Generated Files</h4>
-<p>After successful generation, your model's files will be created in the Meshery server's model directory. You can find these files at <code>meshery/models/[YOUR_MODEL_NAME]/</code>. Take time to review these generated files to ensure they accurately reflect your intended model structure.</p>
+<p>After successful generation, your model's files will be created in the repository's <code>models/</code> directory. You can find these files at <code>meshery/models/[YOUR_MODEL_NAME]/</code>. Take time to review these generated files to ensure they accurately reflect your intended model structure.</p>
 
 <h4>5. Troubleshooting</h4>
 <p>If you encounter issues during the generation process, you can use these diagnostic approaches to identify and resolve problems:</p>

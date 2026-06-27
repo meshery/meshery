@@ -12,7 +12,7 @@ To start contributing to Meshery Policy Engine, make sure you have [OPA CLI](htt
 
 ## Components of Meshery Policy Engine
 
-Rego policies are the declarative logic behind the policy engine. These policies define how the underlying engine understands relationships within Meshery Designs. Rego policies can be found [here](https://github.com/meshery/meshery/tree/master/models/meshery-core/0.7.2/v1.0.0/policies) in the Meshery Github repository.
+Rego policies are the declarative logic behind the policy engine. These policies define how the underlying engine understands relationships within Meshery Designs. Rego policies can be found [here](https://github.com/meshery/meshery/tree/master/models/meshery-core/0.7.2/v1.0.0/policies) in the Meshery GitHub repository.
 
 Currently the Rego policies are invoked from the Go code in Meshery Server. This requires configuring the OPA context as seen [here](https://github.com/meshery/meshkit/blob/master/models/meshmodel/core/policies/rego_policy_relationship.go).
 
