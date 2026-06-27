@@ -252,7 +252,7 @@ func logModelUpdateSummary(modelToCompUpdateTracker *store.GenerticThreadSafeSto
 }
 
 func init() {
-	updateCmd.PersistentFlags().StringVarP(&modelLocation, "input", "i", "./models", "relative or absolute input path to the models directory; when unset, the repo-root models directory is auto-detected (./models from the repo root, ../models from a subdirectory)")
+	updateCmd.PersistentFlags().StringVarP(&modelLocation, "input", "i", "./models", "relative or absolute input path to the models directory; when unset, the repo-root models directory is auto-detected (models from the repo root, ../models from a subdirectory)")
 	_ = updateCmd.MarkPersistentFlagRequired("path")
 
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
