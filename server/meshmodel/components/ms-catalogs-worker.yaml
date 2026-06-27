@@ -37,4 +37,29 @@ components:
       selector:
         app: ms-catalogs-worker
 
-relationships: []
+relationships:
+  - kind: Edge
+    type: "exposes"
+    from:
+      kind: Deployment
+      name: ms-catalogs-worker
+    to:
+      kind: Service
+      name: ms-catalogs-worker-service
+
+  - kind: Edge
+    type: "selects"
+    from:
+      kind: Service
+      name: ms-catalogs-worker-service
+    to:
+      kind: Pod
+      name: ms-catalogs-worker
+
+  - kind: Edge
+    type: "runs"
+    from:
+      kind: Pod
+      name: ms-catalogs-worker
+    to:
+      kind: Node
