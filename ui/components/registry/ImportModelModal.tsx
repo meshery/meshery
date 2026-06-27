@@ -309,7 +309,6 @@ const ImportModelModal = memo<ImportModelModalProps>(
       updateProgress({ showProgress: true });
       try {
         await importModelReq({ importBody: requestBody }).unwrap();
-        setIsDeploying(true);
         setActiveStep(1);
       } catch (err) {
         subscriptionRef.current?.unsubscribe();
