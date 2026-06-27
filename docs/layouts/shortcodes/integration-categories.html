@@ -2,9 +2,8 @@
 {{- $grouped := $models.GroupByParam "integrations-category" -}}
 {{- $categoryList := slice -}}
 {{- range $group := $grouped -}}
-  {{- if $group.Key -}}
-    {{- $categoryList = $categoryList | append (dict "name" $group.Key "count" (len $group.Pages)) -}}
-  {{- end -}}
+  {{- $categoryName := $group.Key | default "Other Integrations" -}}
+  {{- $categoryList = $categoryList | append (dict "name" $categoryName "count" (len $group.Pages)) -}}
 {{- end -}}
 {{- $sortedCategories := sort $categoryList "count" "desc" -}}
 {{- range $sortedCategories -}}
