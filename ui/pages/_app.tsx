@@ -1,16 +1,21 @@
-import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
+import {
+  CheckCircleIcon as CheckCircle,
+  ErrorIcon as Error,
+  InfoIcon as Info,
+  WarningIcon as Warning,
+} from '@sistent/sistent';
 import { Footer, KubernetesSubscription, NavigationBar } from '../components/AppComponents';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { AdapterMoment, LocalizationProvider } from '@/components/shared/DatePicker';
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
 import 'billboard.js/dist/theme/dark.min.css';
 import _ from 'lodash';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
-import React, { useEffect, useMemo, useCallback, useState } from 'react';
+import React, { useEffect, useMemo, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Header from '../components/Header';
+import { startSessionTimer } from '../lib/sessionTimer';
+import Header from '../components/layout/Header/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import getPageContext from '../components/PageContext';
 import { MESHERY_CONTROLLER_SUBSCRIPTION } from '../components/subscription/helpers';
@@ -18,32 +23,59 @@ import { GQLSubscription } from '../components/subscription/subscriptionhandler'
 import { useLazyGetSystemSyncQuery, useLazyGetKubernetesContextsQuery } from '../rtk-query/system';
 import { useGetUserPrefQuery } from '../rtk-query/user';
 import { api } from '../rtk-query';
-import { useLazyGetConnectionsQuery } from '../rtk-query/connection';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+// Host-side CSS for packages shared with extensions via remote-component.
+// Next.js (pages router) only permits global CSS imports from _app; remote
+// plugins cannot inject their own global stylesheets through the bundler
+// pipeline. Import the full set of tippy.js themes/animations and xterm CSS
+// here so any extension that references them via remote-component-stubbed
+// subpaths (see remote-component.config.js) has the styles already on-page.
+import 'tippy.js/dist/tippy.css';
+import 'tippy.js/dist/svg-arrow.css';
+import 'tippy.js/dist/border.css';
+import 'tippy.js/dist/backdrop.css';
+import 'tippy.js/themes/light.css';
+import 'tippy.js/themes/light-border.css';
+import 'tippy.js/themes/material.css';
+import 'tippy.js/themes/translucent.css';
+import 'tippy.js/animations/shift-away.css';
+import 'tippy.js/animations/shift-away-subtle.css';
+import 'tippy.js/animations/shift-away-extreme.css';
+import 'tippy.js/animations/shift-toward.css';
+import 'tippy.js/animations/shift-toward-subtle.css';
+import 'tippy.js/animations/shift-toward-extreme.css';
+import 'tippy.js/animations/scale.css';
+import 'tippy.js/animations/scale-subtle.css';
+import 'tippy.js/animations/scale-extreme.css';
+import 'tippy.js/animations/perspective.css';
+import 'tippy.js/animations/perspective-subtle.css';
+import 'tippy.js/animations/perspective-extreme.css';
+import '@xterm/xterm/css/xterm.css';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import './styles/AnimatedFilter.css';
 import './styles/AnimatedMeshery.css';
 import './styles/AnimatedMeshPattern.css';
 import './styles/AnimatedMeshSync.css';
-import PlaygroundMeshDeploy from './extension/AccessMesheryModal';
+import PlaygroundMeshDeploy from '../components/layout/AccessMesheryModal';
 import Router from 'next/router';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
 import uiConfig from '../ui.config';
-import { NotificationCenterProvider } from '../components/NotificationCenter';
-import { getMeshModelComponentByName } from '../api/meshmodel';
-import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../utils/Enum';
+import { NotificationCenterProvider } from '../components/layout/NotificationCenter';
+import { getConnectionDefinitions, getMeshModelComponentByName } from '../api/meshmodel';
+import { CONNECTION_KINDS, CONNECTION_KINDS_DEF } from '../utils/Enum';
 import { ability } from '../utils/can';
-import { useLazyGetCredentialByIdQuery } from '@/rtk-query/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
-import { ErrorBoundary, SistentThemeProvider, CssBaseline, NoSsr } from '@sistent/sistent';
+import { CssBaseline, NoSsr, SistentThemeProvider } from '@/theme';
+import { ErrorBoundary } from '@sistent/sistent';
 import { LoadSessionGuard } from '@/rtk-query/ability';
-import CustomErrorFallback from '@/components/General/ErrorBoundary';
+import CustomErrorFallback from '@/components/shared/ErrorBoundary/ErrorBoundary';
+import { normalizeLoadTestPrefs } from '../lib/load-test-prefs';
 import {
   StyledAppContent,
   StyledMainContent,
@@ -61,18 +93,17 @@ import {
   updateExtensionType,
 } from '@/store/slices/mesheryUi';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
-import { updateGrafanaConfig, updatePrometheusConfig } from '@/store/slices/telemetry';
 import { updateAdaptersInfo } from '@/store/slices/adapter';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
 import RegistryModalContextProvider from '@/utils/context/RegistryModalContextProvider';
-import { DynamicFullScreenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
+import { DynamicFullScreenLoader } from '@/components/shared/LoadingState/DynamicFullscreenLoader';
 
 export const mesheryExtensionRoute = '/extension/meshmap';
-function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
+function isMesheryUIRestrictedAndThePageIsNotPlayground(providerCapabilities) {
   return (
     !window.location.pathname.startsWith(mesheryExtensionRoute) &&
-    capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
+    providerCapabilities?.restrictedAccess?.isMesheryUIRestricted
   );
 }
 
@@ -83,14 +114,12 @@ export function isExtensionOpen() {
 const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) => {
   const pageContext = useMemo(() => getPageContext(), []);
   const { k8sConfig } = useSelector((state) => state.ui);
-  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
   const { isDrawerCollapsed } = useSelector((state) => state.ui);
-  const [fetchCredentialById] = useLazyGetCredentialByIdQuery();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
   const [fetchKubernetesContexts] = useLazyGetKubernetesContextsQuery();
   const [fetchOrganizations] = api.endpoints.getOrgs.useLazyQuery();
   const [fetchUserKeys] = api.endpoints.getUserKeys.useLazyQuery();
-  const [fetchConnections] = useLazyGetConnectionsQuery();
   const { data: userPrefData } = useGetUserPrefQuery();
   const dispatch = useDispatch();
   const [state, setState] = useState({
@@ -98,7 +127,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     isDrawerCollapsed: false,
     isFullScreenMode: false,
     isLoading: true,
-    k8sContexts: [],
+    k8sContexts: { totalCount: 0, contexts: [] },
     activeK8sContexts: [],
     mesheryControllerSubscription: null,
     disposeK8sContextSubscription: null,
@@ -111,6 +140,14 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     abilityUpdated: false,
   });
 
+  // Mirror the dispose callback into a ref so the bootstrap effect's cleanup
+  // can call the latest value rather than the (always-null) initial-mount
+  // closure of `state.disposeK8sContextSubscription`.
+  const disposeK8sContextSubscriptionRef = useRef<null | (() => void)>(null);
+  useEffect(() => {
+    disposeK8sContextSubscriptionRef.current = state.disposeK8sContextSubscription;
+  }, [state.disposeK8sContextSubscription]);
+
   const setAppState = useCallback((partialState, callback) => {
     setState((prevState) => {
       const newState = { ...prevState, ...partialState };
@@ -121,47 +158,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     });
   }, []);
 
-  const loadPromGrafanaConnection = useCallback(async () => {
-    try {
-      const res = await fetchConnections({
-        page: 0,
-        pagesize: 2,
-        status: JSON.stringify([CONNECTION_STATES.CONNECTED, CONNECTION_STATES.REGISTERED]),
-        kind: JSON.stringify([CONNECTION_KINDS.PROMETHEUS, CONNECTION_KINDS.GRAFANA]),
-      }).unwrap();
-
-      res?.connections?.forEach((connection) => {
-        if (connection.kind == CONNECTION_KINDS.PROMETHEUS) {
-          const promCfg = {
-            prometheusURL: connection?.metadata?.url || '',
-            selectedPrometheusBoardsConfigs: connection?.metadata['prometheus_boards'] || [],
-            connectionID: connection?.id,
-            connectionName: connection?.name,
-          };
-          dispatch(updatePrometheusConfig(promCfg));
-        } else {
-          const credentialID = connection?.credential_id;
-          fetchCredentialById(credentialID)
-            .unwrap()
-            .then((credRes) => {
-              const grafanaCfg = {
-                grafanaURL: connection?.metadata?.url || '',
-                grafanaAPIKey: credRes?.secret?.secret || '',
-                grafanaBoardSearch: '',
-                grafanaBoards: connection?.metadata['grafana_boards'] || [],
-                selectedBoardsConfigs: [],
-                connectionID: connection?.id,
-                connectionName: connection?.name,
-              };
-              dispatch(updateGrafanaConfig(grafanaCfg));
-            });
-        }
-      });
-    } catch (err) {
-      console.error('Failed to load telemetry connections:', err);
-    }
-  }, [dispatch, fetchConnections, fetchCredentialById]);
-
   const fullScreenChanged = useCallback(() => {
     setState((prevState) => {
       return { ...prevState, isFullScreenMode: !prevState.isFullScreenMode };
@@ -171,13 +167,39 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   const loadMeshModelComponent = useCallback(async () => {
     const connectionDef = {};
 
+    // Connection definitions are the source of truth for a kind's icon
+    // (styles.svgColor) and its state machine (transitionMap). Seed the metadata
+    // from them — these entries must survive even when the legacy
+    // `<Kind>Connection` *component* no longer exists (connection definitions
+    // replaced those components), otherwise the kind has no transitionMap and
+    // the status dropdown shows "No transitions Available".
+    try {
+      const res = await getConnectionDefinitions();
+      (res?.connectionDefinitions || []).forEach((definition) => {
+        if (definition?.kind) {
+          connectionDef[definition.kind] = {
+            transitionMap: definition.transitionMap,
+            icon: definition.styles?.svgColor,
+          };
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching connection definitions:', error);
+    }
+
+    // Fall back to the legacy `<Kind>Connection` component for kinds without a
+    // first-class connection definition yet (e.g. meshery, github), and to
+    // backfill the flat `transitions` list / icon the definition did not provide.
     const promises = CONNECTION_KINDS_DEF.map(async (kind) => {
       try {
         const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
-        if (res?.components) {
-          connectionDef[CONNECTION_KINDS[kind]] = {
-            transitions: res?.components[0].metadata.transitions,
-            icon: res?.components[0].styles.svgColor,
+        if (res?.components?.length) {
+          const kindKey = CONNECTION_KINDS[kind];
+          const existing = connectionDef[kindKey] || {};
+          connectionDef[kindKey] = {
+            ...existing,
+            transitions: existing.transitions ?? res.components[0].metadata?.transitions,
+            icon: existing.icon || res.components[0].styles?.svgColor,
           };
         }
       } catch (error) {
@@ -289,7 +311,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
       try {
         const ctx = await fetchKubernetesContexts({ pagesize: 10, search }).unwrap();
         setState((prevState) => ({ ...prevState, k8sContexts: ctx }));
-        const active = ctx?.contexts?.find((c) => c.is_current_context === true);
+        const active = ctx?.contexts?.find((c) => c.isCurrentContext === true);
         if (active) {
           setState((prevState) => ({ ...prevState, activeK8sContexts: [active?.id] }));
           activeContextChangeCallback([active?.id]);
@@ -385,15 +407,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
           dispatch(updateAdaptersInfo({ meshAdapters: result.meshAdapters }));
         }
         if (result.loadTestPrefs) {
-          const loadTestPref = Object.assign(
-            {
-              c: 0,
-              qps: 0,
-              t: 0,
-              gen: 0,
-            },
-            result.loadTestPrefs,
-          );
+          const loadTestPref = normalizeLoadTestPrefs(result.loadTestPrefs);
           dispatch(updateLoadTestPref({ loadTestPref }));
         }
       }
@@ -403,13 +417,11 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   }, [dispatch, fetchSystemSync]);
 
   useEffect(() => {
-    const { startSessionTimer } = require('../lib/sessionTimer');
     startSessionTimer();
 
     const loadAll = async () => {
       try {
         loadConfigFromServer();
-        loadPromGrafanaConnection();
         await loadOrg();
 
         initSubscriptions([]);
@@ -435,9 +447,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
 
     return () => {
       document.removeEventListener('fullscreenchange', fullScreenChanged);
-      if (state.disposeK8sContextSubscription) {
-        state.disposeK8sContextSubscription();
-      }
+      disposeK8sContextSubscriptionRef.current?.();
     };
   }, []);
 
@@ -446,7 +456,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
     if (
       typeof window !== 'undefined' &&
-      isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)
+      isMesheryUIRestrictedAndThePageIsNotPlayground(providerCapabilities)
     ) {
       Router.push(mesheryExtensionRoute);
     }
@@ -462,7 +472,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
         initSubscriptions(ids);
       }
     }
-  }, [k8sConfig, capabilitiesRegistry]);
+  }, [k8sConfig, providerCapabilities]);
 
   const canShowNav = !state.isFullScreenMode && uiConfig?.components?.navigator !== false;
   const { extensionType } = useSelector((state) => state.ui);
@@ -547,7 +557,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                                 </StyledMainContent>
                                 <Footer
                                   handleMesheryCommunityClick={handleMesheryCommunityClick}
-                                  capabilitiesRegistry={capabilitiesRegistry}
+                                  providerCapabilities={providerCapabilities}
                                 />
                               </StyledContentWrapper>
                             </NotificationCenterProvider>

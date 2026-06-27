@@ -14,7 +14,7 @@ For a quick introduction to `mesheryctl`, checkout [Beginner's guide to contribu
 
 The [`/mesheryctl`](https://github.com/meshery/meshery/tree/master/mesheryctl) folder contains the complete code for `mesheryctl`.
 
-`mesheryctl` is written in Golang or the Go Programming Language. For development use [Go version 1.25+](https://go.dev/dl/).
+`mesheryctl` is written in Golang or the Go Programming Language. For development use [Go version 1.26+](https://go.dev/dl/).
 
 After making changes, run `make` in the `mesheryctl` folder to build the binary. You can then use the binary by, say, `./mesheryctl system start`.
 
@@ -47,4 +47,4 @@ For logs, `mesheryctl` uses [Logrus](https://github.com/sirupsen/logrus). Going 
 
 `mesheryctl` uses [golangci-lint](https://github.com/golangci/golangci-lint). Refer it for lint checks.
 
-All contributors are invited to review [pull requests](https://github.com/meshery/meshery/pulls) on `mesheryctl` as on other Layer5 projects.
+All contributors are invited to review [pull requests](https://github.com/meshery/meshery/pulls) on `mesheryctl` as on other projects.

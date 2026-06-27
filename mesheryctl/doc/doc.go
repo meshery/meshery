@@ -26,10 +26,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v2"
-
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root"
+	"github.com/spf13/cobra"
 )
 
 // GenMarkdownTreeCustom is a modified version of GenMarkdownTree from spf13/cobra
@@ -41,14 +39,6 @@ subcommand: %s
 ---
 
 `
-
-// cmdDoc is a struct to hold the data for a command
-type cmdDoc struct {
-	Name        string `yaml:"name"`
-	Description string `yaml:"description"`
-	Usage       string `yaml:"usage"`
-	Example     string `yaml:"example"`
-}
 
 // prepender is a function to prepend the frontmatter to the markdown file
 func prepender(filename string) string {
@@ -96,12 +86,12 @@ func linkHandler(name string) string {
 	name = filepath.ToSlash(name)
 
 	// Find the reference root
-	idx := strings.Index(name, "reference/mesheryctl")
+	idx := strings.Index(name, "reference/references/mesheryctl")
 	if idx == -1 {
 		return ""
 	}
 
-	// Trim everything before reference/mesheryctl
+	// Trim everything before reference/references/mesheryctl
 	trimmed := name[idx:]
 
 	// Remove file extension
@@ -120,7 +110,7 @@ func linkHandler(name string) string {
 
 // docs is a function to generate the markdown docs for mesheryctl
 func doc() {
-	markDownPath := "../../docs/content/en/reference/mesheryctl/" // Path for docs
+	markDownPath := "../../docs/content/en/reference/references/mesheryctl/" // Path for docs
 	//yamlPath := "./internal/cli/root/testDoc/"
 
 	fmt.Println("Scanning available commands...")
@@ -250,7 +240,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 				}
 			})
 		}
-		buf.WriteString("Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.")
+		buf.WriteString(`Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/contributing-cli.md#preserving-manually-added-documentation" >}}) for guidance.`)
 		buf.WriteString("\n")
 	}
 
@@ -366,77 +356,21 @@ func getManuallyAddedContentMap(filename string) (map[int]string, error) {
 	shortcodePattern := regexp.MustCompile(`\{\{<\s*([^>]+)\s*>\}\}`)
 	shortcodeMatches := shortcodePattern.FindAllStringSubmatch(content, -1)
 	for i, match := range shortcodeMatches {
+		shortcodeContent := strings.TrimSpace(match[1])
+		if isGeneratedShortcode(shortcodeContent) {
+			continue
+		}
 		// Store the shortcode content in the map with order as the key
-		manuallyAddedContentMap[i] = strings.TrimSpace(match[1])
+		manuallyAddedContentMap[i] = shortcodeContent
 	}
 	return manuallyAddedContentMap, nil
 }
 
-// GenYamlTreeCustom creates custom yaml output.
-func GenYamlTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHandler func(string) string) error {
-	for _, c := range cmd.Commands() {
-		if !c.IsAvailableCommand() || c.IsAdditionalHelpTopicCommand() {
-			continue
-		}
-		if err := GenYamlTreeCustom(c, dir, filePrepender, linkHandler); err != nil {
-			return err
-		}
-	}
-
-	basename := "cmds.yml"
-	filename := filepath.Join(dir, basename)
-	f, err := os.OpenFile(basename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return err
-	}
-
-	_, err = io.WriteString(f, filePrepender(filename))
-	if err != nil {
-		return err
-	}
-
-	err = GenYamlCustom(cmd, f)
-	if err != nil {
-		return err
-	}
-
-	// check error before closing
-	if err = f.Close(); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// GenYamlCustom generates yaml docs for the command
-func GenYamlCustom(cmd *cobra.Command, w io.Writer) error {
-	// init default help command and flag
-	cmd.InitDefaultHelpCmd()
-	cmd.InitDefaultHelpFlag()
-	yamlDoc := cmdDoc{}
-
-	yamlDoc.Name = cmd.CommandPath()
-	// cmd.Short is the short description of the command
-	yamlDoc.Description = cmd.Short
-	yamlDoc.Usage = cmd.UseLine()
-	if len(cmd.Example) > 0 {
-		yamlDoc.Example = cmd.Example
-	}
-
-	fmt.Println(yamlDoc)
-	final, err := yaml.Marshal(&yamlDoc)
-
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	_, err = w.Write(final)
-	if err != nil {
-		return err
-	}
-
-	return nil
+func isGeneratedShortcode(shortcodeContent string) bool {
+	return shortcodeContent == `ref "reference/references/mesheryctl/_index.md"` ||
+		shortcodeContent == `ref "reference/reference/mesheryctl/_index.md"` ||
+		shortcodeContent == `ref "project/contributing/contributing-cli.md#preserving-manually-added-documentation"` ||
+		shortcodeContent == `ref "project/contributing/contributing-cli/index.md#preserving-manually-added-documentation"`
 }
 
 func main() {

@@ -1,6 +1,8 @@
 :root {
   --navbar-height: 6.5rem;
   --footer-height: 8.0rem;
+  --sidebar-width: 320px;
+  --sidebar-wrapper-width: 335px;
 
   // Colors that will not change in the dark mode.
   --brand-color-primary: #00d3a9;
@@ -10,6 +12,7 @@
   // #EBC017;
   // ////////////////////////////////////////////
   --brand-color: #00b39f;
+  --brand-color-tertiary: #ABC3CC;
   --color-primary-light: #fff;
   --color-primary-medium: #f8f9fa;
   --color-primary-dark: #f1f3f5;
@@ -73,12 +76,20 @@
 
   // --section-button: linear-gradient(to right top, #00b39f, #00b09d, #00ae9b, #00ab99, #00a997, #00ac98, #00ae99, #00b19a, #00b99e, #00c2a2, #00caa6, #00d3a9);;
   // --section-button-hover:linear-gradient(to left bottom, #007a6c, #00b09d, #00ae9b, #00ab99, #00a997, #00ac98, #00ae99, #00b19a, #00b99e, #00c2a2, #00caa6, #00d3a9);
+
+  // Sidebar
+  --sidebar-background-start: #121212;
+  --sidebar-background-end: #3C494F;
   --sidenav-hover: #009c89;
+
+  
   --code:#952a1e;
 }
 
 .dark-mode {
   --brand-color: #00d3a9;
+  --brand-color-secondary: #00b39f;
+  --brand-color-tertiary: #3C494F;
   --color-primary-light: #212529;
   --color-primary-medium: #343a40;
   --color-primary-dark: #495057;
@@ -162,8 +173,14 @@
 
   --integrations-bg: #676e76;
   --integrations-box-shadow: 4px 4px 14px #41454a, -4px -4px 10px #78808a;
+  
+    // Sidebar
+  --sidebar-background-start: #477E96; //RGB(71, 126, 150)
+  --sidebar-background-end: #3C494F; // rgb(60, 73, 79)
   --sidenav-hover: #00d3a9;
-  --code:#bf3526;
+  
+  
+    --code:#bf3526;
 }
 
 @media (max-width: 600px) {

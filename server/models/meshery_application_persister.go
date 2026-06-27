@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 )
@@ -17,8 +19,8 @@ type MesheryApplicationPersister struct {
 // MesheryApplicationPage represents a page of applications
 type MesheryApplicationPage struct {
 	Page         uint64                `json:"page"`
-	PageSize     uint64                `json:"page_size"`
-	TotalCount   int                   `json:"total_count"`
+	PageSize     uint64                `json:"pageSize"`
+	TotalCount   int                   `json:"totalCount"`
 	Applications []*MesheryApplication `json:"applications"`
 }
 
@@ -55,24 +57,11 @@ func (maap *MesheryApplicationPersister) GetMesheryApplications(search, order st
 }
 
 // DeleteMesheryApplication takes in an application id and delete it if it already exists
-func (maap *MesheryApplicationPersister) DeleteMesheryApplication(id uuid.UUID) ([]byte, error) {
+func (maap *MesheryApplicationPersister) DeleteMesheryApplication(id core.Uuid) ([]byte, error) {
 	application := MesheryApplication{ID: &id}
 	err := maap.DB.Delete(&application).Error
 
 	return marshalMesheryApplication(&application), err
-}
-
-func (maap *MesheryApplicationPersister) SaveMesheryApplication(application *MesheryApplication) ([]byte, error) {
-	if application.ID == nil {
-		id, err := uuid.NewV4()
-		if err != nil {
-			return nil, ErrGenerateUUID(err)
-		}
-
-		application.ID = &id
-	}
-
-	return marshalMesheryApplications([]MesheryApplication{*application}), maap.DB.Save(application).Error
 }
 
 // SaveMesheryApplications batch inserts the given applications
@@ -94,13 +83,13 @@ func (maap *MesheryApplicationPersister) SaveMesheryApplications(applications []
 	return marshalMesheryApplications(finalApplications), maap.DB.Create(finalApplications).Error
 }
 
-func (maap *MesheryApplicationPersister) GetMesheryApplication(id uuid.UUID) ([]byte, error) {
+func (maap *MesheryApplicationPersister) GetMesheryApplication(id core.Uuid) ([]byte, error) {
 	var mesheryApplication MesheryApplication
 	err := maap.DB.First(&mesheryApplication, id).Error
 	return marshalMesheryApplication(&mesheryApplication), err
 }
 
-func (maap *MesheryApplicationPersister) GetMesheryApplicationSource(id uuid.UUID) ([]byte, error) {
+func (maap *MesheryApplicationPersister) GetMesheryApplicationSource(id core.Uuid) ([]byte, error) {
 	var mesheryApplication MesheryApplication
 	err := maap.DB.First(&mesheryApplication, id).Error
 	return mesheryApplication.SourceContent, err

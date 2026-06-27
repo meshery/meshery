@@ -25,7 +25,7 @@ import (
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	mutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshkit/utils/store"
-	comp "github.com/meshery/schemas/models/v1beta1/component"
+	comp "github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -71,6 +71,14 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		// When the user did not pass --input explicitly, auto-detect the
+		// repo-root models directory so the command works whether it is run
+		// from the repository root (the documented prerequisite) or from a
+		// subdirectory such as mesheryctl/.
+		if !cmd.Flags().Changed("input") {
+			modelLocation = defaultModelsLocation()
+		}
 
 		srv, err := mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
@@ -244,10 +252,10 @@ func logModelUpdateSummary(modelToCompUpdateTracker *store.GenerticThreadSafeSto
 }
 
 func init() {
-	updateCmd.PersistentFlags().StringVarP(&modelLocation, "input", "i", "../server/meshmodel", "relative or absolute input path to the models directory")
+	updateCmd.PersistentFlags().StringVarP(&modelLocation, "input", "i", "./models", "relative or absolute input path to the models directory; when unset, the repo-root models directory is auto-detected (models from the repo root, ../models from a subdirectory)")
 	_ = updateCmd.MarkPersistentFlagRequired("path")
 
-	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet it for the integration spreadsheet")
+	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 	updateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
 
