@@ -1,0 +1,101 @@
+{
+    "id": "6e07f450-24b8-4d42-a34e-4adcb68cf62c",
+    "evaluationQuery": "",
+    "kind": "edge",
+    "metadata": {
+        "description": "Defines relationship where an AWS Lambda function interacts with a DynamoDB table for data operations such as read, write, query, and scan",
+        "isAnnotation": false,
+        "styles": {
+            "primaryColor": "",
+            "svgColor": "",
+            "svgWhite": ""
+        }
+    },
+    "model": {
+        "displayName": "AWS Lambda to DynamoDB Table Relationship",
+        "id": "d62e96e5-629a-45ae-9064-b8661ecfb679",
+        "model": {
+            "version": "v1.7.1"
+        },
+        "name": "aws-lambda-controller",
+        "registrant": {
+            "kind": "artifacthub"
+        },
+        "version": "v1.0.0"
+    },
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "selectors": [
+        {
+            "allow": {
+                "from": [
+                    {
+                        "id": null,
+                        "kind": "Function",
+                        "match": {},
+                        "match_strategy_matrix": null,
+                        "model": {
+                            "displayName": "AWS Lambda Function",
+                            "id": "bb12dc30-859e-43f8-949c-315dbb4d0f8f",
+                            "model": {
+                                "version": "v1.7.1"
+                            },
+                            "name": "aws-lambda-controller",
+                            "registrant": {
+                                "kind": "artifacthub"
+                            },
+                            "version": "v1.0.0"
+                        },
+                        "patch": {
+                            "mutatorRef": [
+                                [
+                                    "configuration",
+                                    "spec",
+                                    "name"
+                                ]
+                            ],
+                            "patchStrategy": "replace"
+                        }
+                    }
+                ],
+                "to": [
+                    {
+                        "id": null,
+                        "kind": "Table",
+                        "match": {},
+                        "match_strategy_matrix": null,
+                        "model": {
+                            "displayName": "DynamoDB Table",
+                            "id": "acbcc0a2-f3d4-4c93-950a-a1ee568377c2",
+                            "model": {
+                                "version": "v1.7.1"
+                            },
+                            "name": "dynamodb-controller",
+                            "registrant": {
+                                "kind": "artifacthub"
+                            },
+                            "version": "v1.0.0"
+                        },
+                        "patch": {
+                            "mutatedRef": [
+                                [
+                                    "configuration",
+                                    "spec",
+                                    "name"
+                                ]
+                            ],
+                            "patchStrategy": "replace"
+                        }
+                    }
+                ]
+            },
+            "deny": {
+                "from": [],
+                "to": []
+            }
+        }
+    ],
+    "subType": "binding",
+    "status": "enabled",
+    "type": "non-binding",
+    "version": "v1.0.0"
+}
