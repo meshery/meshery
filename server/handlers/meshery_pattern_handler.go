@@ -756,7 +756,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 ) {
 	patternID := mux.Vars(r)["id"]
 	patternUUID, err := uuid.FromString(patternID)
-	if err != nil {
+	if err != nil || patternUUID == uuid.Nil {
 		deleteErr := ErrDeletePattern(fmt.Errorf("invalid design ID: %s", patternID))
 		h.log.Error(deleteErr)
 		writeMeshkitError(rw, deleteErr, http.StatusBadRequest)
