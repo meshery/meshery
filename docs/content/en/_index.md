@@ -154,7 +154,7 @@ linkTitle: Documentation
       </summary>
       <ul class="section-title">
         {{< integration-categories >}}
-        <li>See all <a href="/extensions/models">{{< model-count >}} integrations</a></li>
+        <li>See all <a href="{{< ref \"extensions/models/_index.md\" >}}">{{< model-count >}} integrations</a></li>
       </ul>
     </details>
   </div>
