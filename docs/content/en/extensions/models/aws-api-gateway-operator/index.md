@@ -1,7 +1,7 @@
 ---
 title: AWS API Gateway
 subtitle: Collaborative and visual infrastructure as design for AWS API Gateway
-image: /extensions/models/aws-api-gateway-operator/icons/color/aws-api-gateway-operator-color.svg
+image: extensions/models/aws-api-gateway-operator/icons/color/aws-api-gateway-operator-color.svg
 aliases: /extensibility/integrations/aws-api-gateway-operator
 docURL: https://docs.meshery.io/extensibility/integrations/aws-api-gateway-operator
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Service Proxy
 registrant: Artifact Hub
 components: 
 - name: awsapi-gateway
-  colorIcon: content/en/extensions/models/aws-api-gateway-operator/components/awsapi-gateway/icons/color/awsapi-gateway-color.svg
-  whiteIcon: content/en/extensions/models/aws-api-gateway-operator/components/awsapi-gateway/icons/white/awsapi-gateway-white.svg
+  colorIcon: extensions/models/aws-api-gateway-operator/components/awsapi-gateway/icons/color/awsapi-gateway-color.svg
+  whiteIcon: extensions/models/aws-api-gateway-operator/components/awsapi-gateway/icons/white/awsapi-gateway-white.svg
   description: 
 components-count: 1
 relationships: 

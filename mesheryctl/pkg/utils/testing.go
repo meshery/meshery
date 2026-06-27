@@ -18,7 +18,6 @@ import (
 	"github.com/jarcoal/httpmock"
 	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshkit/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -206,6 +205,7 @@ func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 
 	viper.SetConfigFile(pathToContext)
 	DefaultConfigPath = pathToContext
+	CfgFile = pathToContext
 	err := viper.ReadInConfig()
 	if err != nil {
 		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
@@ -221,21 +221,6 @@ func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 func StartMockery(t *testing.T) {
 	// activate http mocking
 	httpmock.Activate()
-
-	// get current directory
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
-	}
-	currDir := filepath.Dir(filename)
-	fixturesDir := filepath.Join(currDir, "fixtures")
-
-	apiResponse := NewGoldenFile(t, "validate.version.github.golden", fixturesDir).Load()
-
-	// For validate version requests
-	url1 := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/tag/" + "v0.5.54"
-	httpmock.RegisterResponder("GET", url1,
-		httpmock.NewStringResponder(200, apiResponse))
 }
 
 // stop HTTP mock client
@@ -345,7 +330,7 @@ func formatToTabs(data string) string {
 	return s
 }
 
-// AssertMeshkitErrorsEqual compares  relevant fields of two meshkit errors
+// AssertMeshkitErrorsEqual compares relevant fields of two meshkit errors
 func AssertMeshkitErrorsEqual(t *testing.T, got, expected error) {
 	t.Helper()
 	assert.Equal(t, reflect.TypeOf(got), reflect.TypeOf(expected), "error type mismatch")
@@ -745,6 +730,13 @@ func ResetCommandFlags(c *cobra.Command, t *testing.T) {
 		if err := f.Value.Set(f.DefValue); err != nil {
 			t.Fatalf("failed to reset flag %q: %v", f.Name, err)
 		}
+		f.Changed = false
+	})
+	c.PersistentFlags().VisitAll(func(f *pflag.Flag) {
+		if err := f.Value.Set(f.DefValue); err != nil {
+			t.Fatalf("failed to reset persistent flag %q: %v", f.Name, err)
+		}
+		f.Changed = false
 	})
 	for _, sub := range c.Commands() {
 		ResetCommandFlags(sub, t)

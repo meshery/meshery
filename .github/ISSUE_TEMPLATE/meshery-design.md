@@ -17,7 +17,7 @@ assignees: ''
 
 ### Implementation
 <!-- Add your design instructions -->
-- Open [Kanvas](https://kanvas.new/extension/meshmap) in your browser.
+- Open [Meshery](https://play.meshery.io) in your browser.
 - Navigate to components in the panel, where you can browse for components and define your design.
 
 
@@ -44,5 +44,5 @@ meshery/hacktoberfest_contributions/<design-name>/<design.yaml>
 
 - 📚 [Components](https://docs.meshery.io/concepts/logical/components)
 - 📚 [Relationships](https://docs.meshery.io/concepts/logical/relationships)
-- 👨‍💻 [Models Repository](https://github.com/meshery/meshery/tree/master/server/meshmodel)
+- 👨‍💻 [Models Repository](https://github.com/meshery/meshery/tree/master/models)
 - 📺 [Self-paced Contributor Trainings](https://meshery.io/talks-and-trainings#trainings)

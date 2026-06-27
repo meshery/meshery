@@ -96,9 +96,9 @@ const (
 	relationshipUsageURL           = docsBaseURL + "reference/mesheryctl/relationships"
 	cmdRelationshipGenerateDocsURL = docsBaseURL + "reference/mesheryctl/relationships/generate"
 	relationshipViewURL            = docsBaseURL + "reference/mesheryctl/relationships/view"
-	workspaceUsageURL              = docsBaseURL + "reference/mesheryctl/exp/workspace"
-	workspaceCreateURL             = docsBaseURL + "reference/mesheryctl/exp/workspace/create"
-	workspaceListURL               = docsBaseURL + "reference/mesheryctl/exp/workspace/list"
+	workspaceUsageURL              = docsBaseURL + "reference/mesheryctl/workspace"
+	workspaceCreateURL             = docsBaseURL + "reference/mesheryctl/workspace/create"
+	workspaceListURL               = docsBaseURL + "reference/mesheryctl/workspace/list"
 	environmentUsageURL            = docsBaseURL + "reference/mesheryctl/exp/environment"
 	environmentCreateURL           = docsBaseURL + "reference/mesheryctl/exp/environment/create"
 	environmentDeleteURL           = docsBaseURL + "reference/mesheryctl/exp/environment/delete"
@@ -172,9 +172,9 @@ const (
 	cmdRelationshipView         cmdType = "relationship view"
 	cmdRelationshipSearch       cmdType = "relationship search"
 	cmdRelationshipList         cmdType = "relationship list"
-	cmdExpWorkspace             cmdType = "exp workspace"
-	cmdExpWorkspaceList         cmdType = "exp workspace list"
-	cmdExpWorkspaceCreate       cmdType = "exp workspace create"
+	cmdWorkspace                cmdType = "workspace"
+	cmdWorkspaceList            cmdType = "workspace list"
+	cmdWorkspaceCreate          cmdType = "workspace create"
 	cmdEnvironment              cmdType = "environment"
 	cmdEnvironmentCreate        cmdType = "environment create"
 	cmdEnvironmentDelete        cmdType = "environment delete"
@@ -264,6 +264,30 @@ var (
 
 var CfgFile string
 
+// IsLocalProvider reports whether the given provider name refers to the
+// built-in local provider. Accepts both the canonical name ("Local") and the
+// legacy alias ("None") so client commands keep working against older Meshery
+// servers and pre-rename ~/.meshery/config.yaml entries.
+func IsLocalProvider(name string) bool {
+	return strings.EqualFold(name, models.LocalProviderName) ||
+		strings.EqualFold(name, models.LocalProviderLegacyAlias)
+}
+
+// GetActiveConfigPath returns the meshconfig path selected for the current command.
+// Prefer the explicit CLI flag value, then the config file Viper has already loaded,
+// and finally fall back to the default meshconfig path.
+func GetActiveConfigPath() string {
+	if CfgFile != "" {
+		return CfgFile
+	}
+
+	if configPath := viper.ConfigFileUsed(); configPath != "" {
+		return configPath
+	}
+
+	return DefaultConfigPath
+}
+
 // TODO: add "meshery-perf" as a component
 
 // ListOfComponents returns the list of components available
@@ -279,12 +303,18 @@ var TemplateContext = config.Context{
 	Version:    "latest",
 }
 
+// Services is the built-in fallback docker-compose definition used when the install
+// docker-compose file cannot be downloaded. The provider list is sourced from the
+// canonical install/providers.env via DefaultProviderBaseURLs (see providers_gen.go);
+// edit providers.env and run `make providers-propagate` rather than hardcoding URLs here.
+//
+//go:generate python3 ../../../install/scripts/sync-provider-urls.py
 var Services = map[string]Service{
 	"meshery": {
 		Image:  "meshery/meshery:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Environment: []string{
-			"PROVIDER_BASE_URLS=https://cloud.layer5.io",
+			"PROVIDER_BASE_URLS=" + DefaultProviderBaseURLs,
 			"ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012",
 			"EVENT=mesheryLocal",
 			"PORT=9081",
@@ -550,10 +580,10 @@ func CreateConfigFile() error {
 func ValidateURL(URL string) error {
 	ParsedURL, err := url.ParseRequestURI(URL)
 	if err != nil {
-		return err
+		return ErrParsingUrl(err)
 	}
 	if ParsedURL.Scheme != "http" && ParsedURL.Scheme != "https" {
-		return fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme)
+		return ErrParsingUrl(fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme))
 	}
 	return nil
 }
@@ -775,7 +805,6 @@ func RunSelectPrompt(label string, items []string) (int, error) {
 func ParseURLGithub(URL string) (string, string, error) {
 	// GitHub URL:
 	// - https://github.com/meshery/meshery/blob/master/.goreleaser.yml
-	// - https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml
 	parsedURL, err := url.Parse(URL)
 	if err != nil {
 		return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
@@ -814,15 +843,14 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
 	method := "GET"
-	client := &http.Client{}
 	req, err := NewRequest(method, path, nil)
 	if err != nil {
 		return nil, ErrCreatingRequest(err)
 	}
 
-	res, err := client.Do(req)
+	res, err := MakeRequest(req)
 	if err != nil {
-		return nil, ErrRequestResponse(err)
+		return nil, err
 	}
 	defer func() { _ = res.Body.Close() }()
 
@@ -834,7 +862,7 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error
 	prefs := &models.Preference{}
 	err = encoding.Unmarshal(body, prefs)
 	if err != nil {
-		return nil, errors.New("Failed to process JSON data. Please sign into Meshery")
+		return nil, ErrUnmarshal(err)
 	}
 
 	return prefs, nil

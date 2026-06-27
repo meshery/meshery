@@ -25,8 +25,10 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/patterns"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 
-	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
+	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -85,13 +87,13 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 		switch sourceType {
 		case "Helm Chart":
-			sourceType = string(coreV1.HelmChart)
+			sourceType = string(core.HelmChart)
 		case "Kubernetes Manifest":
-			sourceType = string(coreV1.K8sManifest)
+			sourceType = string(core.K8sManifest)
 		case "Meshery Design":
-			sourceType = string(coreV1.MesheryDesign)
+			sourceType = string(core.MesheryDesign)
 		case "Docker Compose":
-			sourceType = string(coreV1.DockerCompose)
+			sourceType = string(core.DockerCompose)
 		}
 
 		pattern, err := importPattern(sourceType, file, patternURL, true)
@@ -131,6 +133,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 			"name":      patternName,
 			"file":      content,
 			"file_name": fileName,
+			"save":      save,
 		})
 		if err != nil {
 			return nil, utils.ErrMarshal(err)
@@ -163,10 +166,14 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 	} else {
 		var jsonValues []byte
 
-		jsonValues, _ = json.Marshal(map[string]interface{}{
+		jsonValues, err := json.Marshal(map[string]interface{}{
 			"url":  file,
 			"name": patternName,
+			"save": save,
 		})
+		if err != nil {
+			return nil, utils.ErrMarshal(err)
+		}
 
 		req, err := utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 		if err != nil {
@@ -203,4 +210,18 @@ func init() {
 	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to design file")
 	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm / design)")
 	importCmd.Flags().StringVarP(&name, "name", "n", "", "Name for the design file")
+}
+
+func readPatternFromFile(filePath string) (*pattern.PatternFile, error) {
+	fileContent, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, utils.ErrFileRead(err)
+	}
+
+	patternFile, err := patterns.GetPatternFormat(string(fileContent))
+	if err != nil {
+		return nil, err
+	}
+
+	return patternFile, nil
 }

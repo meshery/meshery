@@ -4,6 +4,9 @@
 
 {{ $currentSection := .Section }}
 {{ $models := where site.RegularPages "Section" $currentSection }}
+{{ $modelPages := slice }}
+{{ $modelGroups := newScratch }}
+{{ $groupOrder := slice "#" "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z" }}
 
 {{ if gt (len $models) 0 }}
 <div class="models-list">

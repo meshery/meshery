@@ -18,7 +18,7 @@ func TestPreflightCmdIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	SetupContextEnv(t)
+	setupContextTestEnv(t)
 	tests := []utils.CmdTestInput{
 		{
 			Name:             "Run preflight check",
@@ -35,8 +35,12 @@ func TestPreflightCmdIntegration(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			// setting up log to grab logs
-			buf := utils.SetupMeshkitLoggerTesting(t, true)
-			SystemCmd.SetOut(buf)
+			buf := setupSystemOutCmdTest(t)
+			defer func() {
+				buf.Reset()
+				// resetCmdFlags(SystemCmd, t)
+			}()
+
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {

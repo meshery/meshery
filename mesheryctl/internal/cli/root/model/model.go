@@ -6,7 +6,7 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
-// Unless required by a, filepath.Dir(${1:}modelDefPathpplicable law or agreed to in writing, software
+// Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
@@ -42,7 +42,7 @@ var (
 // ModelCmd represents the mesheryctl model command
 var ModelCmd = &cobra.Command{
 	Use:   "model",
-	Short: "Manage models in the registery",
+	Short: "Manage models in the registry",
 	Long: `Export, generate, import, list, search and view model(s) and detailed informations
 Find more information at: https://docs.meshery.io/reference/mesheryctl/model`,
 	Example: `
@@ -102,7 +102,7 @@ mesheryctl model build [model-name]/[model-version]
 				return err
 			}
 
-			utils.DisplayCount("models", models.Count)
+			utils.DisplayCount("models", models.TotalCount)
 
 			return nil
 		}
@@ -139,5 +139,5 @@ func generateModelDataToDisplay(modelsResponse *models.MeshmodelsAPIResponse) ([
 		rows = append(rows, []string{model.ID.String(), modelName, string(model.Category.Name), model.Version})
 	}
 
-	return rows, int64(modelsResponse.Count)
+	return rows, modelsResponse.TotalCount
 }

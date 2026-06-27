@@ -1,1 +1,0 @@
-Lee Calcote attended today.

@@ -1,7 +1,7 @@
 ---
 title: Ngrok Operator
 subtitle: Collaborative and visual infrastructure as design for Ngrok Operator
-image: /extensions/models/ngrok-operator/icons/color/ngrok-operator-color.svg
+image: extensions/models/ngrok-operator/icons/color/ngrok-operator-color.svg
 aliases: /extensibility/integrations/ngrok-operator
 docURL: https://docs.meshery.io/extensibility/integrations/ngrok-operator
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Service Proxy
 registrant: Artifact Hub
 components: 
 - name: ngrok
-  colorIcon: content/en/extensions/models/ngrok-operator/components/ngrok/icons/color/ngrok-color.svg
-  whiteIcon: content/en/extensions/models/ngrok-operator/components/ngrok/icons/white/ngrok-white.svg
+  colorIcon: extensions/models/ngrok-operator/components/ngrok/icons/color/ngrok-color.svg
+  whiteIcon: extensions/models/ngrok-operator/components/ngrok/icons/white/ngrok-white.svg
   description: 
 components-count: 1
 relationships: 

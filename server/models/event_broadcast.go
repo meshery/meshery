@@ -3,8 +3,8 @@ package models
 import (
 	"sync"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/schemas/models/core"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,7 +18,7 @@ type Broadcast struct {
 	Name    string
 }
 
-func (c *Broadcast) Subscribe(id uuid.UUID) (chan interface{}, func()) {
+func (c *Broadcast) Subscribe(id core.Uuid) (chan interface{}, func()) {
 	clientMap, err := c.clients.LoadOrStore(id, clients{mu: &sync.Mutex{}})
 	if err {
 		logrus.Infof("Client for id %s does not exist in clients map", id)
@@ -63,7 +63,7 @@ func (c *Broadcast) Subscribe(id uuid.UUID) (chan interface{}, func()) {
 	return ch, unsubscribe
 }
 
-func (c *Broadcast) Publish(id uuid.UUID, data interface{}) {
+func (c *Broadcast) Publish(id core.Uuid, data interface{}) {
 	clientMap, ok := c.clients.Load(id)
 	if !ok {
 		return

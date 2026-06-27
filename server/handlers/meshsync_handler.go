@@ -6,14 +6,23 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/meshkit/models/patterns"
 	"github.com/meshery/meshsync/pkg/model"
-	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	// NOTE: meshsync_handler retains v1beta1/pattern + v1beta1/component
+	// because it calls EvaluateDesign, which consumes
+	// pattern.EvaluationRequest / pattern.EvaluationResponse. Those eval
+	// types live only in v1beta1/pattern. When the handler needs to call
+	// meshkit's patterns.DehydratePattern (which only accepts
+	// v1beta3/design.PatternFile) it bridges via patternutils.
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"gorm.io/gorm"
 )
 
@@ -136,7 +145,7 @@ func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool
 		components = append(components, componentDef)
 	}
 
-	var emptyUUID uuid.UUID
+	var emptyUUID core.Uuid
 
 	return pattern.PatternFile{
 		Name:          "ClusterSnapshot",
@@ -230,37 +239,6 @@ func selectDistinctKeyValues(db *gorm.DB, kind string) *gorm.DB {
 		Where("kubernetes_key_values.kind = ?", kind)
 }
 
-// swagger:route GET /api/system/meshsync/resources GetMeshSyncResources idGetMeshSyncResources
-// Handle GET request for meshsync discovered resources
-//
-// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
-//
-// ```?search={componentname}``` If search is non empty then a greedy search is performed
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-//
-// ```?annotation={annotaion}``` annotation is a boolean value. If true then annotations are returned
-//
-// ```?labels={labels}``` labels is a boolean value. If true then labels are returned
-//
-// ```?spec={spec}``` spec is a boolean value. If true then spec is returned
-//
-// ```?model={[model]}``` model is an array of string values to filter the resources
-//
-// ```?status={status}``` status is a boolean value. If true then status is returned
-//
-// ```?clusterId={[clusterId]}``` clusterId is array of string values. Required.
-//
-// ```?asDesign={bool}``` asDesign is a boolean value. If true then the response is returned as a design and resources are omitted
-//
-// responses:
-// 200: []meshsyncResourcesResponseWrapper
 func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -290,8 +268,9 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	if clusterIds != "" {
 		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
 		if err != nil {
-			h.log.Error(ErrFetchMeshSyncResources(err))
-			http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+			// Client-side payload parse — 400.
+			h.log.Error(ErrRequestBody(err))
+			writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 			return
 		}
 	} else {
@@ -345,7 +324,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	err := query.Find(&resources).Error
 	if err != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err))
-		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrFetchMeshSyncResources(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -390,7 +369,24 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	// 	comp.Configuration["spec"] = map[string]interface{}{}
 	// }
 
-	patterns.DehydratePattern(&design)
+	// meshkit's patterns.DehydratePattern operates on v1beta3/design.PatternFile;
+	// this handler still produces a v1beta1/pattern.PatternFile (the
+	// evaluation engine carve-out). Bridge via a typed shallow copy just for
+	// the dehydrate call, then fold the dehydrated fields back onto the
+	// v1beta1 value so the response envelope keeps its existing wire shape.
+	// Log bridge/round-trip errors instead of silently swallowing them —
+	// a failure here means the response goes out un-dehydrated (potentially
+	// carrying extra configuration payload) and that is worth observing.
+	if bridged, bridgeErr := patternutils.PatternV1beta1ToV1beta3(&design); bridgeErr == nil && bridged != nil {
+		patterns.DehydratePattern(bridged)
+		if roundtripped, rtErr := patternutils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
+			design = *roundtripped
+		} else if rtErr != nil {
+			h.log.Warn(fmt.Errorf("meshsync: v1beta3→v1beta1 dehydrate round-trip failed: %w; response will not be dehydrated", rtErr))
+		}
+	} else if bridgeErr != nil {
+		h.log.Warn(fmt.Errorf("meshsync: v1beta1→v1beta3 dehydrate bridge failed: %w; response will not be dehydrated", bridgeErr))
+	}
 
 	response := &models.MeshSyncResourcesAPIResponse{
 		Page:       page,
@@ -411,10 +407,6 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 }
 
-// swagger:route GET /api/system/meshsync/resources/{id} GetMeshSyncResourceByID idGetMeshSyncResourceByID
-// Handle GET request for meshsync discovered resource by ID ( returns the resource in v1beta1 component format )
-// responses:
-// 200: meshsyncResourceByIDResponseWrapper
 func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -436,7 +428,7 @@ func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Reques
 
 	if err != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err))
-		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrFetchMeshSyncResources(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -444,7 +436,7 @@ func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Reques
 
 	if err != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err))
-		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrFetchMeshSyncResources(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -457,15 +449,6 @@ func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Reques
 	}
 }
 
-// swagger:route GET /api/system/meshsync/resources/summary GetMeshSyncResourcesSummary idGetMeshSyncResourcesSummary
-// Handle GET request for meshsync discovered resources
-//
-// ```?clusterId={clusterId}``` clusterId is id of the cluster to get resources for ( multiple supported)
-//
-//
-// responses:
-// 200: []meshsyncResourcesSummaryResponseWrapper
-
 func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -476,7 +459,8 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	h.log.Info("Fetching meshsync resources summary", "clusterIds", clusterIds)
 
 	if len(clusterIds) == 0 {
-		http.Error(rw, "clusterIds is required", http.StatusBadRequest)
+		h.log.Error(ErrQueryGet("clusterIds"))
+		writeMeshkitError(rw, ErrQueryGet("clusterIds"), http.StatusBadRequest)
 		return
 	}
 
@@ -532,7 +516,7 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	// only return error if both queries failed
 	if err1 != nil && err2 != nil {
 		combinedErr := fmt.Errorf("error fetching meshsync resources summary: %v, %v", err1, err2)
-		http.Error(rw, ErrFetchMeshSyncResources(combinedErr).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrFetchMeshSyncResources(combinedErr), http.StatusInternalServerError)
 		return
 	}
 
@@ -556,6 +540,21 @@ func (h *Handler) DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request
 	db := provider.GetGenericPersister()
 	err := db.Model(&model.KubernetesResource{}).Delete(&model.KubernetesResource{ID: resourceID}).Error
 	if err != nil {
-		h.log.Error(models.ErrDelete(err, "meshsync data", http.StatusInternalServerError))
+		deleteErr := ErrFailToDelete(err, "meshsync resource")
+		h.log.Error(deleteErr)
+		writeMeshkitError(rw, deleteErr, http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(rw).Encode(struct {
+		Deleted bool `json:"deleted"`
+	}{Deleted: true}); err != nil {
+		if isClientDisconnect(err) {
+			h.log.Debug(ErrEncodeResponse(err))
+		} else {
+			h.log.Error(ErrEncodeResponse(err))
+		}
 	}
 }
