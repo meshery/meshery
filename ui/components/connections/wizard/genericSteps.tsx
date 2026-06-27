@@ -1,6 +1,14 @@
 import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Alert, Box, CheckCircleIcon, Typography } from '@sistent/sistent';
+import {
+  Alert,
+  Box,
+  CheckCircleIcon,
+  Typography,
+  SettingsIcon,
+  LockIcon,
+  AssignmentTurnedInIcon,
+} from '@sistent/sistent';
 import { alpha, styled } from '@/theme';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
@@ -18,7 +26,7 @@ import {
   CredentialAssociationStep,
   GenericConnectionDetailsStep,
 } from '../ConnectionWizardStepContent';
-import type { GenericRecord, WizardContext, WizardStep } from './types';
+import type { WizardContext, WizardStep } from './types';
 
 export const kindPermission = (config?: ConnectionWizardKindConfig | null) => {
   if (!config) {
@@ -29,14 +37,6 @@ export const kindPermission = (config?: ConnectionWizardKindConfig | null) => {
     ? CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject)
     : CAN(keys.CONNECT_METRICS.action, keys.CONNECT_METRICS.subject);
 };
-
-const readPath = (source: unknown, path: string[]): unknown =>
-  path.reduce<unknown>((value, key) => {
-    if (!value || typeof value !== 'object') {
-      return undefined;
-    }
-    return (value as GenericRecord)[key];
-  }, source);
 
 const existingCredentialsFor = (ctx: WizardContext) =>
   filterCredentialsForKind(ctx.services.credentials, ctx.data.kindConfig?.kind);
@@ -66,7 +66,6 @@ const SelectStepBody = ({ ctx }: { ctx: WizardContext }) => (
         skipCredentialVerification: false,
         kubeconfigFile: null,
         registrationId: null,
-        connectionModel: null,
         registrationResult: null,
         registrationError: null,
         postConfig: {},
@@ -101,6 +100,7 @@ const DetailsStepBody = ({ ctx }: { ctx: WizardContext }) => (
 export const genericDetailsStep: WizardStep = {
   id: 'details',
   label: 'Configure Connection',
+  icon: SettingsIcon,
   Component: DetailsStepBody,
   canProceed: (ctx) => Boolean(ctx.data.kindConfig?.connectionSchema),
   onNext: (ctx) => Boolean(ctx.formRefs.connection.current?.validateForm()),
@@ -152,6 +152,7 @@ const CredentialStepBody = ({ ctx }: { ctx: WizardContext }) => {
 export const genericCredentialStep: WizardStep = {
   id: 'credential',
   label: 'Associate Credential',
+  icon: LockIcon,
   Component: CredentialStepBody,
   hidden: (ctx) => !ctx.data.kindConfig?.credentialSchema,
   canProceed: (ctx) => {
@@ -207,10 +208,10 @@ const RegisterStepBody = ({ ctx }: { ctx: WizardContext }) => {
 
 const buildGenericPayload = (ctx: WizardContext) => {
   const { kindConfig } = ctx.data;
-  const connectionType =
-    readPath(ctx.data.connectionModel, ['category', 'name']) ?? kindConfig?.type;
-  const connectionSubType =
-    readPath(ctx.data.connectionModel, ['subCategory']) ?? kindConfig?.subType;
+  // A connection carries its own kind/type/subType; use them directly rather
+  // than deriving type/subType from a model's category/subCategory.
+  const connectionType = kindConfig?.type;
+  const connectionSubType = kindConfig?.subType;
   const selectedCredential = existingCredentialsFor(ctx).find(
     (credential) => credential.id === ctx.data.selectedCredentialId,
   );
@@ -242,6 +243,7 @@ const buildGenericPayload = (ctx: WizardContext) => {
 export const genericRegisterStep: WizardStep = {
   id: 'register',
   label: 'Review & Create',
+  icon: AssignmentTurnedInIcon,
   Component: RegisterStepBody,
   nextLabel: () => 'Create Connection',
   onNext: async (ctx) => {

@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"net/url"
 	"os"
 	"os/signal"
@@ -60,7 +59,7 @@ const (
 	// primary provider host (install/providers.env) so it cannot drift from the
 	// PROVIDER_BASE_URLS default seeded into viper below.
 	DefaultProviderURL = models.PrimaryProviderURL
-	RelationshipsPath  = "../meshmodel/kubernetes/"
+	RelationshipsPath  = "../../models/kubernetes/"
 )
 
 func main() {
@@ -215,7 +214,6 @@ func main() {
 	adapterURLs := utils.SplitAndTrim(viper.GetString("ADAPTER_URLS"), ", \t\n\r")
 
 	adapterTracker := helpers.NewAdaptersTracker(adapterURLs)
-	queryTracker := helpers.NewUUIDQueryTracker()
 
 	// Uncomment line below to generate a new UUID and force the user to login every time Meshery is started.
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.NewV4().Bytes()))
@@ -320,15 +318,8 @@ func main() {
 		// assignment, but every route is registered after.
 		PlaygroundBuild: viper.GetBool("PLAYGROUND"),
 		AdapterTracker:  adapterTracker,
-		QueryTracker:    queryTracker,
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
-
-		GrafanaClient:         models.NewGrafanaClient(&log),
-		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}, &log),
-
-		PrometheusClient:         models.NewPrometheusClient(&log),
-		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}, &log),
 
 		PatternChannel:            models.NewBroadcaster("Patterns"),
 		FilterChannel:             models.NewBroadcaster("Filters"),

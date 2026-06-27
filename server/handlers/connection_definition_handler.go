@@ -14,6 +14,7 @@ import (
 	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
+	connectionv1beta1 "github.com/meshery/schemas/models/v1beta1/connection"
 	connectionv1beta3 "github.com/meshery/schemas/models/v1beta3/connection"
 )
 
@@ -56,7 +57,6 @@ func (h *Handler) GetConnectionDefinitions(rw http.ResponseWriter, r *http.Reque
 		Limit:     limit,
 		Offset:    offset,
 	})
-
 	if err != nil {
 		h.log.Error(ErrQueryGet("connection definitions"))
 		writeMeshkitError(rw, ErrQueryGet("connection definitions"), http.StatusInternalServerError)
@@ -91,8 +91,8 @@ func (h *Handler) GetConnectionDefinitionByID(rw http.ResponseWriter, r *http.Re
 	rw.Header().Add("Content-Type", "application/json")
 	connectionDefinitionID := mux.Vars(r)["connectionDefinitionId"]
 	if _, err := uuid.FromString(connectionDefinitionID); err != nil {
-		h.log.Error(ErrInvalidUUID(err))
-		writeMeshkitError(rw, ErrInvalidUUID(err), http.StatusBadRequest)
+		h.log.Error(models.ErrInvalidUUID(err))
+		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
 		return
 	}
 
@@ -134,14 +134,15 @@ func (h *Handler) RegisterConnectionDefinition(rw http.ResponseWriter, r *http.R
 		return
 	}
 
-	if def.Model == nil {
-		err := ErrFailToSave(fmt.Errorf("a model (with registrant) is required to register a connection definition"), obj)
+	if def.ModelReference == nil {
+		err := ErrFailToSave(fmt.Errorf("a modelReference (with registrant) is required to register a connection definition"), obj)
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusBadRequest)
 		return
 	}
 
-	if _, _, err := h.registryManager.RegisterEntity(def.Model.Registrant, &def); err != nil {
+	registrant := connectionv1beta1.Connection{Kind: def.ModelReference.Registrant.Kind}
+	if _, _, err := h.registryManager.RegisterEntity(registry.RegistrantHostToV1beta3(registrant), &def); err != nil {
 		_err := ErrFailToSave(err, obj)
 		h.log.Error(_err)
 		writeMeshkitError(rw, _err, http.StatusInternalServerError)
@@ -166,8 +167,8 @@ func (h *Handler) UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Req
 	connectionDefinitionID := mux.Vars(r)["connectionDefinitionId"]
 	id, err := uuid.FromString(connectionDefinitionID)
 	if err != nil {
-		h.log.Error(ErrInvalidUUID(err))
-		writeMeshkitError(rw, ErrInvalidUUID(err), http.StatusBadRequest)
+		h.log.Error(models.ErrInvalidUUID(err))
+		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
 		return
 	}
 
@@ -205,8 +206,8 @@ func (h *Handler) DeleteConnectionDefinition(rw http.ResponseWriter, r *http.Req
 	connectionDefinitionID := mux.Vars(r)["connectionDefinitionId"]
 	id, err := uuid.FromString(connectionDefinitionID)
 	if err != nil {
-		h.log.Error(ErrInvalidUUID(err))
-		writeMeshkitError(rw, ErrInvalidUUID(err), http.StatusBadRequest)
+		h.log.Error(models.ErrInvalidUUID(err))
+		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
 		return
 	}
 

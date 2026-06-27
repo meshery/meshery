@@ -789,7 +789,7 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		}
 		utils.WriteSVGsOnFileSystem(&c)
 		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &c)
-		helpers.HandleError(cc.Connection, &c, err, isModelError, isRegistranError)
+		helpers.HandleError(registry.RegistrantHostToV1beta1(cc.Connection), &c, err, isModelError, isRegistranError)
 	}
 	err = helpers.WriteLogsToFiles()
 	if err != nil {
@@ -1478,9 +1478,9 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 		if err != nil {
 			return meshkitutils.ErrUnmarshal(err)
 		}
-		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(connection.Connection{
+		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(registry.RegistrantHostToV1beta3(connection.Connection{
 			Kind: c.Model.Registrant.Kind,
-		}, &c)
+		}), &c)
 		helpers.HandleError(connection.Connection{
 			Kind: c.Model.Registrant.Kind,
 		}, &c, err, isModelError, isRegistrantError)
@@ -1491,9 +1491,9 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 		if err != nil {
 			return meshkitutils.ErrUnmarshal(err)
 		}
-		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(connection.Connection{
+		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(registry.RegistrantHostToV1beta3(connection.Connection{
 			Kind: r.Model.Registrant.Kind,
-		}, &r)
+		}), &r)
 		helpers.HandleError(connection.Connection{
 			Kind: r.Model.Registrant.Kind,
 		}, &r, err, isModelError, isRegistrantError)
@@ -1506,8 +1506,8 @@ func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models
 	modelID := mux.Vars(r)["id"]
 	modelUUID, err := uuid.FromString(modelID)
 	if err != nil {
-		h.log.Error(ErrInvalidUUID(err))
-		writeMeshkitError(rw, ErrInvalidUUID(err), http.StatusBadRequest)
+		h.log.Error(models.ErrInvalidUUID(err))
+		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
 		return
 	}
 

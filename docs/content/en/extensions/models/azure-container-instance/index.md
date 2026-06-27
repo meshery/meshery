@@ -1,7 +1,7 @@
 ---
 title: Azure Container Instance
 subtitle: Collaborative and visual infrastructure as design for Azure Container Instance
-image: /extensions/models/azure-container-instance/icons/color/azure-container-instance-color.svg
+image: extensions/models/azure-container-instance/icons/color/azure-container-instance-color.svg
 aliases: /extensibility/integrations/azure-container-instance
 docURL: https://docs.meshery.io/extensibility/integrations/azure-container-instance
 description: 

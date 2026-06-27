@@ -1,7 +1,7 @@
 ---
 title: AWS App Mesh
 subtitle: Collaborative and visual infrastructure as design for AWS App Mesh
-image: /extensions/models/appmesh-controller/icons/color/appmesh-controller-color.svg
+image: extensions/models/appmesh-controller/icons/color/appmesh-controller-color.svg
 aliases: /extensibility/integrations/appmesh-controller
 docURL: https://docs.meshery.io/extensibility/integrations/appmesh-controller
 description: 

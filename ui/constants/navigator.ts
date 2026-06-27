@@ -57,6 +57,7 @@ export const REGISTRY = 'Registry';
 export const ADAPTERS = 'Adapters';
 export const RESET = 'Reset';
 export const METRICS = 'Metrics';
+export const TELEMETRY = 'telemetry';
 export const GRAFANA = 'Grafana';
 export const PROMETHEUS = 'Prometheus';
 export const INCLUSTER_CONFIG = 'Inclusterconfig';

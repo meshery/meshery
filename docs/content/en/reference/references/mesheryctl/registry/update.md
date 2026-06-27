@@ -51,10 +51,10 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help                      help for update
-  -i, --input string              relative or absolute input path to the models directory (default "../server/meshmodel")
+  -i, --input string              relative or absolute input path to the models directory; when unset, the repo-root models directory is auto-detected (models from the repo root, ../models from a subdirectory) (default "./models")
   -m, --model string              specific model name to be generated
       --spreadsheet-cred string   base64 encoded credential to download the spreadsheet
-      --spreadsheet-id string     spreadsheet it for the integration spreadsheet
+      --spreadsheet-id string     spreadsheet ID for the integration spreadsheet
 
 </div>
 </pre>

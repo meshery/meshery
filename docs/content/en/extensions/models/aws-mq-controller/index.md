@@ -1,7 +1,7 @@
 ---
 title: AWS MQ
 subtitle: Collaborative and visual infrastructure as design for AWS MQ
-image: /extensions/models/aws-mq-controller/icons/color/aws-mq-controller-color.svg
+image: extensions/models/aws-mq-controller/icons/color/aws-mq-controller-color.svg
 aliases: /extensibility/integrations/aws-mq-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-mq-controller
 description: 

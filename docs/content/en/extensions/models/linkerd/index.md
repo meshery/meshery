@@ -1,7 +1,7 @@
 ---
 title: Linkerd
 subtitle: Collaborative and visual infrastructure as design for Linkerd
-image: /extensions/models/linkerd/icons/color/linkerd-color.svg
+image: extensions/models/linkerd/icons/color/linkerd-color.svg
 aliases: /extensibility/integrations/linkerd
 docURL: https://docs.meshery.io/extensibility/adapters/linkerd
 description: git://github.com/meshery/meshery-linkerd/master/templates/meshmodel/components/stable-2.9.5

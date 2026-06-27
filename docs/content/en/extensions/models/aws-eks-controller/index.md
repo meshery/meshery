@@ -1,7 +1,7 @@
 ---
 title: AWS Elastic Kubernetes Service
 subtitle: Collaborative and visual infrastructure as design for AWS Elastic Kubernetes Service
-image: /extensions/models/aws-eks-controller/icons/color/aws-eks-controller-color.svg
+image: extensions/models/aws-eks-controller/icons/color/aws-eks-controller-color.svg
 aliases: /extensibility/integrations/aws-eks-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-eks-controller
 description: 

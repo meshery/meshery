@@ -585,11 +585,8 @@ type Provider interface {
 
 	SaveK8sContext(token string, k8sContext K8sContext, metadata map[string]any) (connections.Connection, error)
 	GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error)
-	DeleteK8sContext(token, id string) (K8sContext, error)
 	GetK8sContext(token, connectionID string) (K8sContext, error)
 	LoadAllK8sContext(token string) ([]*K8sContext, error)
-	// SetCurrentContext(token, id string) (K8sContext, error)
-	// GetCurrentContext(token string) (K8sContext, error)
 
 	SMPTestConfigStore(req *http.Request, perfConfig *perfprofile.PerformanceTestConfig) (string, error)
 	SMPTestConfigGet(req *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error)

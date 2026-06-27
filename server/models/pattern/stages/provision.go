@@ -108,7 +108,7 @@ func generateHosts(cd component.ComponentDefinition, reg *meshmodel.RegistryMana
 	// hold the component in its native v1beta2 representation.
 	v1beta3Cd := patternutils.ComponentV1beta2ToV1beta3(&cd)
 	_connection := reg.GetRegistrant(v1beta3Cd)
-	return []connection.Connection{_connection}
+	return []connection.Connection{meshmodel.RegistrantHostToV1beta1(_connection)}
 }
 
 func mergeErrors(errs []error) error {

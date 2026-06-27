@@ -1,7 +1,7 @@
 ---
 title: Devfile
 subtitle: Collaborative and visual infrastructure as design for Devfile
-image: /extensions/models/devfile/icons/color/devfile-color.svg
+image: extensions/models/devfile/icons/color/devfile-color.svg
 aliases: /extensibility/integrations/devfile
 docURL: https://docs.meshery.io/extensibility/integrations/devfile
 description: 
