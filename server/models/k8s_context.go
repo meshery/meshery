@@ -461,6 +461,10 @@ func (kc K8sContext) PingTest() error {
 
 // saNamespaceFile is the path to the in-cluster service-account namespace file.
 // Exposed as a variable so tests can override it.
+//
+// WARNING: This is a package-level global and is NOT safe for t.Parallel()
+// tests. Any test that mutates this variable must restore it via t.Cleanup
+// and MUST NOT set t.Parallel().
 var saNamespaceFile = "/var/run/secrets/kubernetes.io/serviceaccount/namespace"
 
 // getKubeNamespace returns the namespace to use when deriving the cluster server ID.
@@ -486,6 +490,11 @@ func getKubeNamespace() string {
 // AssignServerID will attempt to assign kubernetes
 // server ID to the kubernetes context
 func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
+	// Skip assignment if a server ID is already set to avoid silently
+	// overwriting the identity of an existing deployment on re-discovery.
+	if kc.KubernetesServerID != nil {
+		return nil
+	}
 	// Get Kubernetes API server ID by querying a namespace uuid
 	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), getKubeNamespace(), v1.GetOptions{})
 	if err != nil {
