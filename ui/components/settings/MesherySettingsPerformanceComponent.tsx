@@ -18,6 +18,7 @@ import {
   NoSsr,
   Radio,
   SaveIcon,
+  Box,
 } from '@sistent/sistent';
 import { useGetLoadTestPrefsQuery, useUpdateLoadTestPrefsMutation } from '@/rtk-query/user';
 import { useSelector, useDispatch } from 'react-redux';
@@ -137,10 +138,10 @@ const MesherySettingsPerformanceComponent = () => {
   return (
     <NoSsr>
       <React.Fragment>
-        <div style={{ padding: theme.spacing(10) }}>
-          <label>
-            <strong>Performance Load Test Defaults</strong>
-          </label>
+        <Box sx={{ p: { xs: 2, md: 10 } }}>
+          <Box component="h2" sx={{ m: 0, fontSize: '1.25rem', fontWeight: 600 }}>
+            Performance Load Test Defaults
+          </Box>
           <Grid2 container spacing={3} size="grow">
             <Grid2 size={{ xs: 12, lg: 4 }}>
               <TextField
@@ -250,7 +251,7 @@ const MesherySettingsPerformanceComponent = () => {
               {isSaving ? <CircularProgress size={30} /> : 'Save'}
             </Button>
           </div>
-        </div>
+        </Box>
       </React.Fragment>
     </NoSsr>
   );

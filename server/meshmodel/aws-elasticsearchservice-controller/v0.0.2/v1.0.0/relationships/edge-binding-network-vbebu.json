@@ -45,17 +45,7 @@
               },
               "version": ""
             },
-            "patch": {
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "vpcOptions",
-                  "vpcID"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
+            "patch": null
           }
         ],
         "to": [
@@ -76,14 +66,7 @@
               },
               "version": ""
             },
-            "patch": {
-              "mutatedRef": [
-                [
-                  "displayName"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
+            "patch": null
           }
         ]
       },

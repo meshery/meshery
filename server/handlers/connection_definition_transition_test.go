@@ -3,8 +3,8 @@ package handlers
 import (
 	"testing"
 
+	"github.com/meshery/meshkit/models/meshmodel/registry"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
-	"github.com/meshery/schemas/models/v1beta1/category"
 	hostconn "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	connectionv1beta3 "github.com/meshery/schemas/models/v1beta3/connection"
@@ -45,21 +45,16 @@ func TestConnectionDefinitionTransitionMapRoundTrips(t *testing.T) {
 				{NextState: connectionv1beta3.ConnectionStatusValueConnected, Description: &desc},
 			},
 		},
-		Model: &model.ModelDefinition{
-			Name:          "kubernetes",
-			DisplayName:   "Kubernetes",
-			SchemaVersion: "models.meshery.io/v1beta1",
-			Version:       "v1.25.0",
-			Model:         model.Model{Version: "v1.25.0"},
-			Category:      category.CategoryDefinition{Name: "Orchestration"},
-			Status:        model.Enabled,
+		ModelReference: &model.ModelReference{
+			Name:    "kubernetes",
+			Version: "v1.25.0",
 		},
 	}
 	id, err := def.GenerateID()
 	require.NoError(t, err)
 	def.ID = id
 
-	_, _, err = rm.RegisterEntity(registrant, &def)
+	_, _, err = rm.RegisterEntity(registry.RegistrantHostToV1beta3(registrant), &def)
 	require.NoError(t, err, "RegisterEntity failed")
 
 	entities, count, _, err := rm.GetEntities(&regv1beta1.ConnectionFilter{Kind: "kubernetes"})
@@ -77,4 +72,18 @@ func TestConnectionDefinitionTransitionMapRoundTrips(t *testing.T) {
 	)
 	require.NotNil(t, got.TransitionMap["disconnected"][0].Description)
 	require.Equal(t, desc, *got.TransitionMap["disconnected"][0].Description)
+
+	// The model-name filter resolves through the serialized model_reference
+	// column (v1beta3 ConnectionDefinition has no model_id FK column). Confirm a
+	// definition is findable by its ModelReference.Name and that an unknown model
+	// matches nothing.
+	byModel, mCount, _, err := rm.GetEntities(&regv1beta1.ConnectionFilter{ModelName: "kubernetes"})
+	require.NoError(t, err)
+	require.EqualValues(t, 1, mCount, "expected the definition to be found by model name")
+	require.Len(t, byModel, 1)
+
+	none, nCount, _, err := rm.GetEntities(&regv1beta1.ConnectionFilter{ModelName: "no-such-model"})
+	require.NoError(t, err)
+	require.EqualValues(t, 0, nCount, "unknown model name should match no connection definitions")
+	require.Empty(t, none)
 }

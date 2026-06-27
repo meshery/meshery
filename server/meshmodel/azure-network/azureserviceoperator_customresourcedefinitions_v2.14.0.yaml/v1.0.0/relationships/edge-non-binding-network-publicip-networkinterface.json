@@ -1,0 +1,105 @@
+{
+    "id": "00000000-0000-0000-0000-000000000000",
+    "evaluationQuery": "",
+    "kind": "edge",
+    "metadata": {
+        "description": "Azure Public IP Address is associated with a Network Interface via ipConfigurations",
+        "isAnnotation": false,
+        "styles": {
+            "primaryColor": "",
+            "svgColor": "",
+            "svgWhite": ""
+        }
+    },
+    "model": {
+        "displayName": "Azure Network",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+            "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
+        },
+        "name": "azure-network",
+        "registrant": {
+            "kind": "github"
+        },
+        "version": "v1.0.0"
+    },
+    "schemaVersion": "relationships.meshery.io/v1beta2",
+    "selectors": [
+        {
+            "allow": {
+                "from": [
+                    {
+                        "id": null,
+                        "kind": "PublicIPAddress",
+                        "match": {},
+                        "match_strategy_matrix": null,
+                        "model": {
+                            "displayName": "",
+                            "id": "00000000-0000-0000-0000-000000000000",
+                            "model": {
+                                "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
+                            },
+                            "name": "azure-network",
+                            "registrant": {
+                                "kind": "github"
+                            },
+                            "version": ""
+                        },
+                        "patch": {
+                            "patchStrategy": "replace",
+                            "mutatorRef": [
+                                [
+                                    "configuration",
+                                    "status",
+                                    "id"
+                                ]
+                            ]
+                        }
+                    }
+                ],
+                "to": [
+                    {
+                        "id": null,
+                        "kind": "NetworkInterface",
+                        "match": {},
+                        "match_strategy_matrix": null,
+                        "model": {
+                            "displayName": "",
+                            "id": "00000000-0000-0000-0000-000000000000",
+                            "model": {
+                                "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
+                            },
+                            "name": "azure-network",
+                            "registrant": {
+                                "kind": "github"
+                            },
+                            "version": ""
+                        },
+                        "patch": {
+                            "patchStrategy": "replace",
+                            "mutatedRef": [
+                                [
+                                    "configuration",
+                                    "spec",
+                                    "ipConfigurations",
+                                    "0",
+                                    "publicIPAddress",
+                                    "reference",
+                                    "armId"
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            },
+            "deny": {
+                "from": [],
+                "to": []
+            }
+        }
+    ],
+    "subType": "network",
+    "status": "enabled",
+    "type": "non-binding",
+    "version": "v1.0.0"
+}

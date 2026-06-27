@@ -44,7 +44,6 @@ const makeInitialData = (params: UseConnectionWizardParams): WizardData => ({
   skipCredentialVerification: false,
   kubeconfigFile: null,
   registrationId: null,
-  connectionModel: null,
   registrationResult: params.initialRegistrationResult ?? null,
   registrationError: null,
   postConfig: {},

@@ -89,14 +89,7 @@
               "components": null,
               "relationships": null
             },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "displayName"
-                ]
-              ]
-            }
+            "patch": null
           }
         ],
         "to": [
@@ -139,17 +132,7 @@
               "components": null,
               "relationships": null
             },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "vpcOptions",
-                  "vpcID"
-                ]
-              ]
-            }
+            "patch": null
           }
         ]
       }
