@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "inventory",
+  "metadata": {
+    "description": "A Flux HelmChart that references a HelmRepository as its source."
+  },
+  "model": {
+    "name": "flux"
+  },
+  "id": "00000000-0000-0000-0000-000000000000",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "HelmChart",
+            "model": "flux",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["configuration", "spec", "sourceRef", "name"]],
+              "description": "HelmChart references the HelmRepository as its source."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "HelmRepository",
+            "model": "flux",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["displayName"]],
+              "description": "HelmRepository is the source for the HelmChart."
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ]
+}

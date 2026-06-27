@@ -4,105 +4,90 @@
   "kind": "edge",
   "metadata": {
     "description": "",
-    "isAnnotation": false,
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    }
+    },
+    "isAnnotation": false
   },
   "model": {
+    "version": "",
+    "name": "aws-ecr-controller",
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
-    "model": {
-      "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
-    },
-    "name": "azure-app-service",
     "registrant": {
       "kind": ""
     },
-    "version": ""
+    "model": {
+      "version": "v1.5.1"
+    }
   },
-  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
     {
       "allow": {
         "from": [
           {
             "id": null,
-            "kind": "ContainerApp",
+            "kind": "Repository",
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
+              "version": "",
+              "name": "aws-ecr-controller",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "azure-app-service",
               "registrant": {
                 "kind": "github"
               },
-              "version": ""
+              "model": {
+                "version": ""
+              }
             },
             "patch": {
-              "mutatedRef": [
+              "patchStrategy": "replace",
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
-                  "environmentReference",
-                  "group"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "environmentReference",
-                  "kind"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "environmentReference",
                   "name"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ],
         "to": [
           {
             "id": null,
-            "kind": "ManagedEnvironment",
+            "kind": "ReplicaSet",
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
+              "version": "",
+              "name": "kubernetes",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "azure-app-service",
               "registrant": {
                 "kind": "github"
               },
-              "version": ""
+              "model": {
+                "version": ""
+              }
             },
             "patch": {
-              "mutatorRef": [
+              "patchStrategy": "replace",
+              "mutatedRef": [
                 [
                   "configuration",
-                  "group"
-                ],
-                [
-                  "configuration",
-                  "kind"
-                ],
-                [
-                  "configuration",
-                  "metadata",
-                  "name"
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "_",
+                  "image"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ]
