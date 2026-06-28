@@ -3,11 +3,13 @@
   <head>
     {{ partial "head.html" (dict "Title" .Title "Description" .Params.abstract "Kind" .Kind "Permalink" .Permalink "Site" .Site) }}
     {{ partialCached "header.html" . .RelPermalink }}
+    {{ partialCached "resizable-head-script.html" . }}
+
     <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <script src="{{ "js/error-code-handler.js" | relURL }}"></script>
-    
+
   </head>
 
   <body class="td-{{ .Kind }}{{ with .Params.body_class }} {{ . }}{{ end }}{{ block "body_class" . }}{{ end }}">
@@ -39,25 +41,28 @@
         <script>
           (function () {
             const leftContainer = document.querySelector(".left-container");
-                
+
             if (!leftContainer) return
 
             let state = localStorage.getItem('leftContainer-state');
 
-            if (!state) {  
+            if (!state) {
               const isDesktop = window.matchMedia("(min-width: 75em)").matches;
               state =  isDesktop ? 'active' : 'inactive';
               localStorage.setItem('leftContainer-state', state);
             }
-                
+
             leftContainer.classList.toggle('left-container--active', state === 'active')
           })();
         </script>
-        <div class="sidebar-container-wrapper">
-          <div class="sidebar-container">
-            {{ partial "sidebar.html" . }}
+
+        {{ partial "resizable-start.html" (dict "side" "right" "key" "sidebar" "min" 200 "max" 480 "default" 260) }}
+          <div class="sidebar-container-wrapper">
+            <div class="sidebar-container">
+              {{ partial "sidebar.html" . }}
+            </div>
           </div>
-        </div>
+        {{ partial "resizable-end.html" . }}
 
         <div class="icon-container">
           {{ partial "nav-toggle.html" . }}
@@ -87,18 +92,19 @@
       </main>
 
       {{ if ne (.Params.display_toc | default true) false }}
-        <div class="content-table-wrapper">
+        {{ partial "resizable-start.html" (dict "side" "left" "key" "toc" "min" 200 "max" 420 "default" 240 "class" "content-table-wrapper") }}
           <div class="content-table" data-proofer-ignore>
             {{ partial "page-meta-links.html" . }}
             {{ partial "toc.html" . }}
           </div>
-        </div>
+        {{ partial "resizable-end.html" . }}
       {{ end }}
     </div>
 
     {{ partialCached "footer.html" . }}
     {{ partialCached "scripts.html" . }}
     {{ partialCached "scripts/google-analytics.html" . }}
+    {{ partialCached "resizable-script.html" . }}
 
   </body>
 </html>

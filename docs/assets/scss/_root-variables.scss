@@ -2,7 +2,6 @@
   --navbar-height: 6.5rem;
   --footer-height: 8.0rem;
   --sidebar-width: 320px;
-  --sidebar-wrapper-width: 335px;
 
   // Colors that will not change in the dark mode.
   --brand-color-primary: #00d3a9;
@@ -71,7 +70,7 @@
 
   // Gradients
   --section-button: linear-gradient(315deg, #3C494F 0%, rgba(70, 86, 93, 1) 87%);
-  
+
   --section-button-hover: linear-gradient(135deg, #607680 0%, rgba(0, 179, 159, 0.8617822129) 87%);
 
   // --section-button: linear-gradient(to right top, #00b39f, #00b09d, #00ae9b, #00ab99, #00a997, #00ac98, #00ae99, #00b19a, #00b99e, #00c2a2, #00caa6, #00d3a9);;
@@ -82,7 +81,7 @@
   --sidebar-background-end: #3C494F;
   --sidenav-hover: #009c89;
 
-  
+
   --code:#952a1e;
 }
 
@@ -93,7 +92,7 @@
   --color-primary-light: #212529;
   --color-primary-medium: #343a40;
   --color-primary-dark: #495057;
-  --color-secondary-light: #f1f3f5;   
+  --color-secondary-light: #f1f3f5;
   --color-secondary-medium: #dadddf;
   --color-secondary-dark: #eee;
   --color-primary-blonde: #eeF3C5;
@@ -173,13 +172,13 @@
 
   --integrations-bg: #676e76;
   --integrations-box-shadow: 4px 4px 14px #41454a, -4px -4px 10px #78808a;
-  
+
     // Sidebar
   --sidebar-background-start: #477E96; //RGB(71, 126, 150)
   --sidebar-background-end: #3C494F; // rgb(60, 73, 79)
   --sidenav-hover: #00d3a9;
-  
-  
+
+
     --code:#bf3526;
 }
 

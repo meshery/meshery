@@ -91,7 +91,7 @@ As a self-service engineering platform, Meshery enables collaborative design and
     # Uncomment if you want your chosen highlight style used for code blocks without a specified language
     # guessSyntax = "true"
     noClasses = false
-    
+
 # Everything below this are Site Params
 
 # Comment out if you don't want the "print entire section" link enabled.
@@ -214,6 +214,24 @@ enable = false
     [[module.imports.mounts]]
       source = "layouts/partials/related-reading.html"
       target = "layouts/partials/related-reading.html"
+    [[module.imports.mounts]]
+      source = "layouts/partials/resizable-start.html"
+      target = "layouts/partials/resizable-start.html"
+    [[module.imports.mounts]]
+      source = "layouts/partials/resizable-end.html"
+      target = "layouts/partials/resizable-end.html"
+    [[module.imports.mounts]]
+      source = "layouts/partials/resizable-script.html"
+      target = "layouts/partials/resizable-script.html"
+    [[module.imports.mounts]]
+      source = "layouts/partials/resizable-head-script.html"
+      target = "layouts/partials/resizable-head-script.html"
+    [[module.imports.mounts]]
+      source = "assets/js/resizable.js"
+      target = "assets/js/resizable.js"
+    [[module.imports.mounts]]
+      source = "assets/scss/_resizable.scss"
+      target = "assets/scss/_resizable.scss"
   [[module.mounts]]
     source = "static"
     target = "static"

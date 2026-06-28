@@ -66,6 +66,11 @@ ol {
 .flex-container {
   display: flex;
 
+  > .content-table-wrapper.resizable {
+    position: sticky;
+    top: calc(var(--navbar-height) + 5rem);
+  } // TOC-sidebar is now being wrapped around a parent element so the level of specifity was needed to be increased
+
   @media (max-width: 81.25em) {
     // grid-template-columns: 2.2fr 5.8fr 2fr;
   }
