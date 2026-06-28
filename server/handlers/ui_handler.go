@@ -121,7 +121,7 @@ func (h *Handler) ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, b
 		filePath.Reset()
 		filePath.WriteString(getDynamicUIEndpoint(reqURL))
 
-		log.Println("generated path:", filePath.String())
+        h.log.Infof("generated path: %s", filePath.String())
 	} else if filepath.Ext(reqURL) == "" {
 		filePath.WriteString(".html")
 	}
