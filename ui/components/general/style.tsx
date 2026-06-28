@@ -134,19 +134,26 @@ export const ExpandMoreIcon = styled('svg', {
 }));
 
 export const ExpandMore = ({ isCollapsed, hasChildren, theme, ...props }) => (
-  <ExpandMoreIcon
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    width="20"
-    height="20"
-    isCollapsed={isCollapsed}
-    hasChildren={hasChildren}
-    aria-expanded={isCollapsed}
-    aria-label={isCollapsed ? 'Collapse' : 'Expand'}
+  <IconButton
+    aria-expanded={!isCollapsed}
+    aria-label={isCollapsed ? 'Expand' : 'Collapse'}
+    style={{
+      padding: 0,
+      display: hasChildren ? 'inline-block' : 'none',
+    }}
     {...props}
   >
-    <CaretDownIcon fill={theme.palette.icon.brand} />
-  </ExpandMoreIcon>
+    <ExpandMoreIcon
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width="20"
+      height="20"
+      isCollapsed={isCollapsed}
+      hasChildren={hasChildren}
+    >
+      <CaretDownIcon fill={theme.palette.icon.brand} />
+    </ExpandMoreIcon>
+  </IconButton>
 );
 
 export const NavigatorList = styled(List)({
