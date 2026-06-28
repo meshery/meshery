@@ -1,8 +1,9 @@
 ---
-title: Contributing to Model Relationships
+title: Contributing to Relationships
 description: How to contribute to Meshery Models Relationships, Policies...
 categories: [contributing]
 aliases: [/project/contributing/contributing-relationships]
+weight: 20
 ---
 
 **Relationships follow a schema-defined structure.** The [Relationship schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1alpha3/relationship) specifies how relationships between components are expressed. Refer to the schema when defining new relationship types or selectors. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.

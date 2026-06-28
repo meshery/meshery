@@ -240,6 +240,7 @@
     // rule below) to convey expanded vs. collapsed state.
     .caret-icon {
       display: block;
+      font-size: 1.45rem;
       width: 0.85em;
       height: 0.85em;
       transform: rotate(0deg);
@@ -267,6 +268,7 @@
     color: var(--brand-color); /* Highlight caret on active path */
 
     .caret-icon {
+      font-size: 1.35rem;
       transform: rotate(90deg);
       transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother rotation */
     }
@@ -326,21 +328,30 @@
       color: var(--color-secondary-medium);
     }
   }
+  // The last item in each list should have some breathing room at the top.
+  ul > ul:first-of-type {
+    padding-top: 1rem;
+  }
 
+  // The last item in each list should have some breathing room at the bottom.
+  ul > li:last-of-type {
+    padding-bottom: 1rem;
+  }
   & .td-sidebar-nav .ul-1>li>a.td-sidebar-link,
   & .td-sidebar-nav .ul-1>li>.sidebar-section-flex-wrapper>a.td-sidebar-link {
     font-weight: 600;
+    font-size: 1.30rem;
   }
 
+  // Second level leaf pages
   & .td-sidebar-nav ul:not(.ul-1) .td-sidebar-link,
-  & .td-sidebar-nav ul:not(.ul-1) .td-sidebar-link.td-sidebar-link__section {
+  & .td-sidebar-nav ul:not(.ul-2) .td-sidebar-link.td-sidebar-link__section {
     font-weight: 400;
-    font-size: 1rem;
   }
 
+  // Third level leaf pages
   & .td-sidebar-link.td-sidebar-link__page {
     font-weight: 400;
-    font-size: 1rem;
   }
 
   // Sections that contain child pages are emphasised over leaf pages so the
@@ -348,6 +359,7 @@
   & .td-sidebar-nav__section.with-child > a.td-sidebar-link,
   & .td-sidebar-nav__section.with-child > .sidebar-section-flex-wrapper > a.td-sidebar-link {
     font-weight: 800;
+    font-size: 1.2rem;
   }
 
   & .td-sidebar-nav__section.without-child > a.td-sidebar-link {
