@@ -198,7 +198,7 @@
   & .td-sidebar-nav .ul-1>li {
     border-bottom: 1px solid rgba(134, 142, 150, 0.15); /* Softer divider */        
     margin-bottom: 0.9rem;
-    padding-bottom: 0.9rem;
+    // padding-bottom: 0.9rem;
 
     &:last-child {
       border-bottom: none;
@@ -328,30 +328,31 @@
       color: var(--color-secondary-medium);
     }
   }
-  // The last item in each list should have some breathing room at the top.
-  ul > ul:first-of-type {
+  // Breathing room between lists
+  & .td-sidebar-nav ul > li > ul:first-of-type {
     padding-top: 1rem;
+    // background-color: purple;
   }
 
   // The last item in each list should have some breathing room at the bottom.
-  ul > li:last-of-type {
+   & .td-sidebar-nav ul:has(.with-child) > li:last-of-type {
     padding-bottom: 1rem;
+    // background-color: orange;
+
   }
+  // Root level sections
   & .td-sidebar-nav .ul-1>li>a.td-sidebar-link,
   & .td-sidebar-nav .ul-1>li>.sidebar-section-flex-wrapper>a.td-sidebar-link {
     font-weight: 600;
     font-size: 1.30rem;
+    // background-color: red;
+
   }
 
-  // Second level leaf pages
-  & .td-sidebar-nav ul:not(.ul-1) .td-sidebar-link,
-  & .td-sidebar-nav ul:not(.ul-2) .td-sidebar-link.td-sidebar-link__section {
+  // Leaf pages
+  & .td-sidebar-nav ul:not(.with-child) > li > a.td-sidebar-link {
     font-weight: 400;
-  }
-
-  // Third level leaf pages
-  & .td-sidebar-link.td-sidebar-link__page {
-    font-weight: 400;
+    // background-color: green;
   }
 
   // Sections that contain child pages are emphasised over leaf pages so the
@@ -364,6 +365,7 @@
 
   & .td-sidebar-nav__section.without-child > a.td-sidebar-link {
     font-weight: 400;
+    
   }
 
   & .td-sidebar-link:hover,
