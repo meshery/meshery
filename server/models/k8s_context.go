@@ -494,7 +494,12 @@ func getKubeNamespace() string {
 func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 	// Skip assignment if a non-empty server ID is already set to avoid silently
 	// overwriting the identity of an existing deployment on re-discovery.
+	// Still verify API reachability because callers use AssignServerID as a connectivity gate.
 	if kc.KubernetesServerID != nil && *kc.KubernetesServerID != uuid.Nil {
+		res := handler.KubeClient.DiscoveryClient.RESTClient().Get().RequestURI("/livez").Timeout(1 * time.Second).Do(context.TODO())
+		if res.Error() != nil {
+			return ErrUnreachableKubeAPI(res.Error(), kc.Server)
+		}
 		return nil
 	}
 	// Get Kubernetes API server ID by querying a namespace uuid
