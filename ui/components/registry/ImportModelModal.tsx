@@ -167,6 +167,10 @@ const ImportModelModal = memo<ImportModelModalProps>(
       if (!isImportModalOpen) {
         subscriptionRef.current?.unsubscribe();
         subscriptionRef.current = null;
+        setIsCsvModalOpen(false);
+        setActiveStep(0);
+        setIsDeploying(true);
+        setDeployEvent(undefined);
       }
       return () => {
         subscriptionRef.current?.unsubscribe();

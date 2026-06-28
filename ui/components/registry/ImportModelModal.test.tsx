@@ -1,9 +1,11 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const importModelReq = vi.fn();
-const mockOn = vi.fn().mockReturnValue({ unsubscribe: vi.fn() });
+const { importModelReq, mockOn } = vi.hoisted(() => ({
+  importModelReq: vi.fn(),
+  mockOn: vi.fn().mockReturnValue({ unsubscribe: vi.fn() }),
+}));
 
 vi.mock('@sistent/sistent', () => ({
   FormControlLabel: ({ label, control }: any) => (
@@ -237,10 +239,9 @@ describe('ImportModelModal', () => {
     mockOn.mockReturnValue({ unsubscribe });
     render(<ImportModelModal isImportModalOpen={true} setIsImportModalOpen={vi.fn()} />);
     fireEvent.click(screen.getByTestId('submit-url'));
-    await Promise.resolve();
+    await waitFor(() => expect(screen.getByTestId('loading')).toBeInTheDocument());
 
     const handler = mockOn.mock.calls[0][1];
-    expect(screen.getByTestId('loading')).toBeInTheDocument();
 
     handler({
       data: {
@@ -250,8 +251,8 @@ describe('ImportModelModal', () => {
         },
       },
     });
+    await waitFor(() => expect(screen.queryByTestId('loading')).not.toBeInTheDocument());
 
-    expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
     expect(screen.getByTestId('import-messages')).toBeInTheDocument();
     expect(screen.getByTestId('imported-section')).toBeInTheDocument();
     expect(unsubscribe).toHaveBeenCalled();
@@ -262,10 +263,9 @@ describe('ImportModelModal', () => {
     mockOn.mockReturnValue({ unsubscribe });
     render(<ImportModelModal isImportModalOpen={true} setIsImportModalOpen={vi.fn()} />);
     fireEvent.click(screen.getByTestId('submit-file'));
-    await Promise.resolve();
+    await waitFor(() => expect(screen.getByTestId('loading')).toBeInTheDocument());
 
     const handler = mockOn.mock.calls[0][1];
-    expect(screen.getByTestId('loading')).toBeInTheDocument();
 
     handler({
       data: {
@@ -276,7 +276,7 @@ describe('ImportModelModal', () => {
       },
     });
 
-    expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByTestId('loading')).not.toBeInTheDocument());
     expect(screen.getByTestId('import-messages')).toBeInTheDocument();
     expect(screen.getByTestId('imported-section')).toBeInTheDocument();
     expect(unsubscribe).toHaveBeenCalled();
