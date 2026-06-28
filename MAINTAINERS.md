@@ -76,7 +76,6 @@ Repositories:
 | ---------------- | ---------------- | ----------- |
 | Adithya Krishna  | @adithyaakrishna | Red Hat     |
 | Lee Calcote      | @leecalcote      | Layer5      |
-| Raunak Madan     | @codexraunak     | Layer5      |
 | Mia Grenell      | @miacycle        | USyd        |
 | Carlos Rio Silva | @carlosriosilva  | IesBrazil   |
 
