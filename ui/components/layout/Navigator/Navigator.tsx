@@ -701,6 +701,7 @@ const NavigatorContent = () => {
             submenu,
             permission,
           }) => {
+            const hasChildren = Array.isArray(children) && children.length > 0;
             return (
               <RootDiv key={childId}>
                 {/* Row wraps the navigable anchor and the expand/collapse caret as
@@ -716,7 +717,7 @@ const NavigatorContent = () => {
                       // Leaf items navigate via their link; there is nothing to expand/collapse,
                       // so never add them to openItems (doing so would strand them there and break
                       // the submenu-aware onMouseLeave below).
-                      if (!children) return;
+                      if (!hasChildren) return;
                       // Keep an already-open link submenu open when its row is clicked again.
                       if (link && openItems.includes(childId)) return;
                       toggleItemCollapse(childId);
@@ -758,7 +759,7 @@ const NavigatorContent = () => {
                       <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>
                     </NavigatorLink>
                   </SideBarListItem>
-                  {!!children && (
+                  {hasChildren && (
                     <ExpandMore
                       onClick={(e) => {
                         e.preventDefault();
@@ -767,7 +768,7 @@ const NavigatorContent = () => {
                       }}
                       isExpanded={openItems.includes(childId)}
                       theme={theme}
-                      hasChildren={!!children}
+                      hasChildren={hasChildren}
                     />
                   )}
                 </div>
