@@ -260,7 +260,11 @@ function FiltersCard_({
                       })
                     }
                   >
-                    {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
+                    {fullScreen ? (
+                      <FullScreenExitIcon fill={theme.palette.icon.default} />
+                    ) : (
+                      <FullScreenIcon fill={theme.palette.icon.default} />
+                    )}
                   </IconButton>
                 </Tooltip>
               </CardHeaderRight>

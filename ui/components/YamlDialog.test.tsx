@@ -31,6 +31,11 @@ vi.mock('@sistent/sistent', () => ({
       {children}
     </div>
   ),
+  useTheme: () => ({
+    palette: {
+      icon: { default: '#000' },
+    },
+  }),
 }));
 
 vi.mock('./CodeMirror', () => ({

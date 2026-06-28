@@ -8,6 +8,7 @@ import {
   Divider,
   IconButton,
   styled,
+  useTheme,
   FullScreenIcon,
   FullScreenExitIcon,
 } from '@sistent/sistent';
@@ -22,6 +23,7 @@ import type { YAMLEditorProps } from './Filters.types';
 
 function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
   const [fullScreen, setFullScreen] = useState(false);
+  const theme = useTheme();
 
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
@@ -68,9 +70,9 @@ function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
             onClick={toggleFullScreen}
           >
             {fullScreen ? (
-              <FullScreenExitIcon style={iconMedium} />
+              <FullScreenExitIcon style={iconMedium} fill={theme.palette.icon.default} />
             ) : (
-              <FullScreenIcon style={iconMedium} />
+              <FullScreenIcon style={iconMedium} fill={theme.palette.icon.default} />
             )}
           </TooltipIcon>
           <TooltipIcon title="Exit" onClick={onClose}>
