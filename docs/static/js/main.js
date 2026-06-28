@@ -96,13 +96,17 @@ clipboard.on("success", (e) => {
     button.replaceChild(text, icon);
 
     setTimeout(() => {
-        if (!button.isConnected || !button.contains(text)) {
-            button.removeAttribute("data-is-copying");
+        if (!button.isConnected) {
             return;
         }
-        button.replaceChild(originalIcon, text);
-        button.setAttribute('aria-label', 'Copy code to clipboard'); 
+
+        // Always reset accessible name/state, even if the DOM changed.
+        button.setAttribute('aria-label', 'Copy code to clipboard');
         button.removeAttribute("data-is-copying");
+
+        if (button.contains(text)) {
+            button.replaceChild(originalIcon, text);
+        }
     }, 2000);
 })
 
