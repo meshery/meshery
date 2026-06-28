@@ -2,10 +2,11 @@
 title: Contributing to Meshery UI - Dashboard Widgets
 description: Guide to extending Meshery dashboards with custom widgets.
 categories: [contributing]
+aliases: [/project/contributing/contributing-ui-widgets]
 ---
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisite Reading</strong></p>
-  <ol><li><a href="{{< ref "project/contributing/contributing-ui.md" >}}">Contributing to Meshery UI</a></li></ol>
+  <ol><li><a href="{{< ref "project/contributing/ui/ui" >}}">Contributing to Meshery UI</a></li></ol>
 </div>
 
 Meshery's dashboard is a composable and extensible interface made up of individual widgets. These widgets allow contributors to surface specific Meshery data or capabilities within a modular layout system.

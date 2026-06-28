@@ -2,6 +2,7 @@
 title: Contributing to Models Quick Start
 description: A no-fluff guide to creating your own Meshery Models quickly.
 categories: [contributing]
+aliases: [project/contributing/contributing-models-quick-start]
 ---
 
 **Models follow Meshery's schema-driven development approach.** Model, Component, and Relationship definitions are validated against schemas in [`Model schema`](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/model). See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.
@@ -24,7 +25,7 @@ To get started quickly, check out the [Creating Models]({{< ref "guides/configur
 
 ### Next Steps
 
-To learn more about how to contribute and customize your models, check out the full [Contributing to Models]({{< ref "project/contributing/contributing-models.md" >}}) documentation. We encourage you to get involved in the development of Meshery Models and to share your feedback!
+To learn more about how to contribute and customize your models, check out the full [Contributing to Models]({{< ref "project/contributing/models" >}}) documentation. We encourage you to get involved in the development of Meshery Models and to share your feedback!
 
 {{% alert color="info" title="Meshery Models are Extensible" %}}
 Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community.
