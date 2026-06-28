@@ -23,6 +23,15 @@ import {
   useTheme,
   ErrorBoundary,
 } from '@sistent/sistent';
+
+import NodeIcon from '../../assets/icons/kubernetes-node.svg';
+import NamespaceIcon from '../../assets/icons/kubernetes-ns.svg';
+import WorkloadIcon from '../../assets/icons/kubernetes-deploy.svg';
+import ConfigurationIconSVG from '../../assets/icons/kubernetes-cm.svg';
+import NetworkIcon from '../../assets/icons/kubernetes-svc.svg';
+import SecurityIcon from '../../assets/icons/kubernetes-secret.svg';
+import StorageIcon from '../../assets/icons/kubernetes-pv.svg';
+import CrdIcon from '../../assets/icons/kubernetes-crd.svg';
 import { WrapperPaper } from './style';
 import _ from 'lodash';
 import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
@@ -83,6 +92,35 @@ const useDashboardRouter = () => {
 };
 
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
+
+interface ResourceIconProps {
+  resource: string;
+}
+
+const ResourceIcon: React.FC<ResourceIconProps> = ({ resource }) => {
+  switch (resource) {
+    case 'Overview':
+      return <MesheryIcon style={iconLarge} />;
+    case 'Node':
+      return <img src={NodeIcon?.src || NodeIcon} style={iconLarge} />;
+    case 'Namespace':
+      return <img src={NamespaceIcon?.src || NamespaceIcon} style={iconLarge} />;
+    case 'Workload':
+      return <img src={WorkloadIcon?.src || WorkloadIcon} style={iconLarge} />;
+    case 'Configuration':
+      return <img src={ConfigurationIconSVG?.src || ConfigurationIconSVG} style={iconLarge} />;
+    case 'Network':
+      return <img src={NetworkIcon?.src || NetworkIcon} style={iconLarge} />;
+    case 'Security':
+      return <img src={SecurityIcon?.src || SecurityIcon} style={iconLarge} />;
+    case 'Storage':
+      return <img src={StorageIcon?.src || StorageIcon} style={iconLarge} />;
+    case 'CRDS':
+      return <img src={CrdIcon?.src || CrdIcon} style={iconLarge} />;
+    default:
+      return <KubernetesIcon style={iconLarge} />;
+  }
+};
 
 const Dashboard = () => {
   const { data: userData, isLoading } = useGetUserPrefQuery();
@@ -370,13 +408,7 @@ const Dashboard = () => {
                       gap: '0.4rem',
                     }}
                     key={resource}
-                    icon={
-                      resource === 'Overview' ? (
-                        <MesheryIcon style={iconLarge} />
-                      ) : (
-                        <KubernetesIcon style={iconLarge} />
-                      )
-                    }
+                    icon={<ResourceIcon resource={resource} />}
                     label={resource}
                   />
                 </CustomTooltip>
