@@ -1,8 +1,9 @@
 ---
-title: Contributing to Model Components
+title: Contributing to Components
 description: How to contribute to Meshery Model Components
 categories: [contributing]
 aliases: [/project/contributing/contributing-components]
+weight: 10
 ---
 **Components are defined by schemas.** Each component's structure, capabilities, and metadata follow the [Component schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/component) in `meshery/schemas`. When creating or modifying components, ensure they conform to the schema specification. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.
 
