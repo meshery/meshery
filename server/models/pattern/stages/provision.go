@@ -60,7 +60,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 			patternutils.ApplyV1beta3MetadataChanges(v1beta3Comp, &component)
 
 			if err != nil {
-				log.Printf("error assigning labels: %v", err)
+                log.Error(fmt.Errorf("error assigning labels: %w", err))
 				errs = append(errs, err)
 				return false
 			}
