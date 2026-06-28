@@ -8,7 +8,7 @@ import (
 
 	"encoding/json"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	pkgerrors "github.com/pkg/errors"
 
@@ -28,9 +28,9 @@ func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.
 
 func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	userID := mux.Vars(r)["id"]
-	_, err := uuid.Parse(userID)
+	_, err := uuid.FromString(userID)
 	if err != nil {
-		writeMeshkitError(w, ErrInvalidUUID(err), http.StatusBadRequest)
+		writeMeshkitError(w, models.ErrInvalidUUID(err), http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetUserByID(r, userID)

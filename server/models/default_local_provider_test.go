@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
@@ -72,8 +72,14 @@ func TestEventsPersisterPersistEventAcceptsStructValue(t *testing.T) {
 
 	persister := &EventsPersister{DB: &database.Handler{DB: db}}
 
-	eventID := uuid.New()
-	systemID := uuid.New()
+	eventID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate event id: %v", err)
+	}
+	systemID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate system id: %v", err)
+	}
 
 	built := events.NewEvent().
 		FromSystem(systemID).
@@ -112,8 +118,14 @@ func TestEventsPersisterPersistSystemEventAcceptsStructValue(t *testing.T) {
 
 	persister := &EventsPersister{DB: &database.Handler{DB: db}}
 
-	systemID := uuid.New()
-	eventID := uuid.New()
+	systemID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate system id: %v", err)
+	}
+	eventID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate event id: %v", err)
+	}
 
 	built := events.NewEvent().
 		FromSystem(systemID).

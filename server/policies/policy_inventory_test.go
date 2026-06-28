@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -99,7 +99,8 @@ func crossModelInventoryRelationship() *relationship.RelationshipDefinition {
 // referencing a Namespace that does not yet exist.
 func makePodWithNamespace(t *testing.T, ns string) (*pattern.PatternFile, *component.ComponentDefinition) {
 	t.Helper()
-	id := uuid.New()
+	id, err := uuid.NewV4()
+	require.NoError(t, err)
 	pod := &component.ComponentDefinition{
 		ID:        id,
 		Component: component.Component{Kind: "Pod", Version: "v1"},
@@ -147,7 +148,8 @@ func TestIdentifyInventoryAdditions_PodImpliesNamespace(t *testing.T) {
 func TestIdentifyInventoryAdditions_SkipsWhenParentAlreadyPresent(t *testing.T) {
 	t.Parallel()
 	design, pod := makePodWithNamespace(t, "default")
-	nsID := uuid.New()
+	nsID, err := uuid.NewV4()
+	require.NoError(t, err)
 	ns := &component.ComponentDefinition{
 		ID:             nsID,
 		Component:      component.Component{Kind: "Namespace", Version: "v1"},
@@ -170,7 +172,8 @@ func TestIdentifyInventoryAdditions_SkipsWhenParentAlreadyPresent(t *testing.T) 
 // test pins the correct contract.
 func TestIdentifyInventoryAdditions_PreservesToSideModelForCrossModelRelationships(t *testing.T) {
 	t.Parallel()
-	id := uuid.New()
+	id, err := uuid.NewV4()
+	require.NoError(t, err)
 	sub := &component.ComponentDefinition{
 		ID:        id,
 		Component: component.Component{Kind: "EventSubscription", Version: "v1"},
@@ -234,7 +237,7 @@ func TestParity_RegoAndGoEngineEmitEquivalentInventoryAdditions(t *testing.T) {
 	goNew := goActions[0].Component
 
 	// --- Rego engine ---
-	policiesDir := "../meshmodel/meshery-core/0.7.2/v1.0.0/policies"
+	policiesDir := "../../models/meshery-core/0.7.2/v1.0.0/policies"
 	files, err := collectRegoFiles(policiesDir)
 	require.NoError(t, err)
 	var modules []func(*rego.Rego)

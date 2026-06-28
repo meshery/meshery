@@ -12,7 +12,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/meshes"
 	"github.com/meshery/meshery/server/models"
 	patterncore "github.com/meshery/meshery/server/models/pattern/core"

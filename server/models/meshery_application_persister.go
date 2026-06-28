@@ -6,7 +6,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 )
 
@@ -69,7 +69,10 @@ func (maap *MesheryApplicationPersister) SaveMesheryApplications(applications []
 	finalApplications := []MesheryApplication{}
 	for _, application := range applications {
 		if application.ID == nil {
-			id := uuid.New()
+			id, err := uuid.NewV4()
+			if err != nil {
+				return nil, ErrGenerateUUID(err)
+			}
 
 			application.ID = &id
 		}

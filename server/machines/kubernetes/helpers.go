@@ -6,6 +6,7 @@ import (
 
 	"github.com/meshery/schemas/models/core"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/machines"
@@ -34,7 +35,7 @@ func getAdapterTracker() *helpers.AdaptersTracker {
 }
 
 func GenerateClientSetAction(k8sContext *models.K8sContext, eventBuilder *events.EventBuilder, log logger.Handler) (*kubernetes.Client, error) {
-	eventBuilder.ActedUpon(parseUUIDOrNil(k8sContext.ConnectionID))
+	eventBuilder.ActedUpon(uuid.FromStringOrNil(k8sContext.ConnectionID))
 
 	eventMetadata := map[string]interface{}{}
 
@@ -66,7 +67,7 @@ func AssignClientSetToContext(machinectx *MachineCtx, eventBuilder *events.Event
 	}
 
 	k8sContext := machinectx.K8sContext
-	eventBuilder.ActedUpon(parseUUIDOrNil(k8sContext.ConnectionID))
+	eventBuilder.ActedUpon(uuid.FromStringOrNil(k8sContext.ConnectionID))
 
 	handler, err := GenerateClientSetAction(&k8sContext, eventBuilder, machinectx.log)
 	if err != nil {

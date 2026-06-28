@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	helpers "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/meshes"
@@ -755,8 +755,15 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
+	patternUUID, err := uuid.FromString(patternID)
+	if err != nil || patternUUID == uuid.Nil {
+		deleteErr := ErrDeletePattern(fmt.Errorf("invalid design ID: %s", patternID))
+		h.log.Error(deleteErr)
+		writeMeshkitError(rw, deleteErr, http.StatusBadRequest)
+		return
+	}
 	userID := user.ID
-	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("delete").ActedUpon(parseUUIDOrNil(patternID))
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("delete").ActedUpon(patternUUID)
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
@@ -1250,7 +1257,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
-	patternUUID := parseUUIDOrNil(patternID)
+	patternUUID := uuid.FromStringOrNil(patternID)
 
 	userID := user.ID
 	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("clone").ActedUpon(patternUUID).WithSeverity(events.Informational)
@@ -1565,7 +1572,7 @@ func (h *Handler) GetMesheryPatternHandler(
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
-	patternUUID := parseUUIDOrNil(patternID)
+	patternUUID := uuid.FromStringOrNil(patternID)
 	userID := user.ID
 	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("view").ActedUpon(patternUUID)
 
@@ -1771,7 +1778,7 @@ func (h *Handler) handlePatternUpdate(
 	res := meshes.EventsResponse{
 		Component:     "core",
 		ComponentName: "Design",
-		OperationId:   uuid.NewString(),
+		OperationId:   uuid.Must(uuid.NewV4()).String(),
 		EventType:     meshes.EventType_INFO,
 	}
 

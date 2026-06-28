@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	meshkitBroker "github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/database"
 	meshkitErrors "github.com/meshery/meshkit/errors"
@@ -220,8 +220,8 @@ func TestGetComponentMetadataReturnsAssociatedModelName(t *testing.T) {
 		t.Fatalf("Failed to migrate schema: %v", err)
 	}
 
-	modelID := parseUUIDOrNil("11111111-1111-1111-1111-111111111111")
-	componentID := parseUUIDOrNil("22222222-2222-2222-2222-222222222222")
+	modelID := uuid.FromStringOrNil("11111111-1111-1111-1111-111111111111")
+	componentID := uuid.FromStringOrNil("22222222-2222-2222-2222-222222222222")
 
 	modelDef := modelv1beta1.ModelDefinition{
 		ID:   modelID,

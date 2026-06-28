@@ -18,7 +18,7 @@ import (
 	"github.com/meshery/schemas/models/core"
 	"k8s.io/client-go/util/homedir"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
@@ -401,12 +401,12 @@ func (l *DefaultLocalProvider) GetEnvironments(_, page, pageSize, search, order,
 }
 
 func (l *DefaultLocalProvider) GetEnvironmentByID(_ *http.Request, environmentID string, _ string) ([]byte, error) {
-	id := parseUUIDOrNil(environmentID)
+	id := uuid.FromStringOrNil(environmentID)
 	return l.EnvironmentPersister.GetEnvironmentByID(id)
 }
 
 func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID string) ([]byte, error) {
-	id := parseUUIDOrNil(environmentID)
+	id := uuid.FromStringOrNil(environmentID)
 	return l.EnvironmentPersister.DeleteEnvironmentByID(id)
 }
 
@@ -424,7 +424,10 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 }
 
 func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
-	id, _ := uuid.Parse(environmentID)
+	id, err := uuid.FromString(environmentID)
+	if err != nil {
+		return nil, ErrInvalidUUID(err)
+	}
 	orgId := core.Uuid(environmentPayload.OrgId)
 	environment := &environment.Environment{
 		ID:             id,
@@ -439,19 +442,34 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 }
 
 func (l *DefaultLocalProvider) AddConnectionToEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
-	envId, _ := uuid.Parse(environmentID)
-	conId, _ := uuid.Parse(connectionID)
+	envId, err := uuid.FromString(environmentID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid environment ID: %w", err))
+	}
+	conId, err := uuid.FromString(connectionID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid connection ID: %w", err))
+	}
 	return l.EnvironmentPersister.AddConnectionToEnvironment(envId, conId)
 }
 
 func (l *DefaultLocalProvider) RemoveConnectionFromEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
-	envId, _ := uuid.Parse(environmentID)
-	conId, _ := uuid.Parse(connectionID)
+	envId, err := uuid.FromString(environmentID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid environment ID: %w", err))
+	}
+	conId, err := uuid.FromString(connectionID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid connection ID: %w", err))
+	}
 	return l.EnvironmentPersister.DeleteConnectionFromEnvironment(envId, conId)
 }
 
 func (l *DefaultLocalProvider) GetConnectionsOfEnvironment(_ *http.Request, environmentID, page, pageSize, search, order, filter string) ([]byte, error) {
-	envId, _ := uuid.Parse(environmentID)
+	envId, err := uuid.FromString(environmentID)
+	if err != nil {
+		return nil, ErrInvalidUUID(err)
+	}
 	return l.EnvironmentPersister.GetEnvironmentConnections(envId, search, order, page, pageSize, filter)
 }
 
@@ -477,12 +495,19 @@ func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req 
 
 func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, additionalMetadata map[string]any) (connections.Connection, error) {
 
-	k8sServerID := *k8sContext.KubernetesServerID
+	// KubernetesServerID is only populated when the cluster is reachable (it is
+	// derived from the kube-system namespace UID). Unreachable contexts are still
+	// saved as DISCOVERED connections, so guard against a nil pointer here and
+	// leave the server ID empty rather than panicking.
+	var k8sServerID string
+	if k8sContext.KubernetesServerID != nil {
+		k8sServerID = k8sContext.KubernetesServerID.String()
+	}
 
 	var connID core.Uuid
 	id, err := K8sContextGenerateID(k8sContext)
 	if err == nil {
-		connID, _ = uuid.Parse(id)
+		connID = uuid.FromStringOrNil(id)
 	}
 
 	_metadata := map[string]string{
@@ -492,7 +517,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 		"deploymentType":     k8sContext.DeploymentType,
 		"version":            k8sContext.Version,
 		"name":               k8sContext.Name,
-		"kubernetesServerId": k8sServerID.String(),
+		"kubernetesServerId": k8sServerID,
 	}
 	metadata := make(map[string]interface{}, len(_metadata)+len(additionalMetadata))
 	for k, v := range _metadata {
@@ -557,10 +582,6 @@ func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order s
 	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
 }
 
-func (l *DefaultLocalProvider) DeleteK8sContext(_, id string) (K8sContext, error) {
-	return l.MesheryK8sContextPersister.DeleteMesheryK8sContext(id)
-}
-
 func (l *DefaultLocalProvider) GetK8sContext(_, id string) (K8sContext, error) {
 	idStrWithoutDashes := strings.ReplaceAll(id, "-", "")
 	return l.MesheryK8sContextPersister.GetMesheryK8sContext(idStrWithoutDashes)
@@ -594,18 +615,6 @@ func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, e
 
 	return results, nil
 }
-
-// func (l *DefaultLocalProvider) SetCurrentContext(token, id string) (K8sContext, error) {
-// 	if err := l.MesheryK8sContextPersister.SetMesheryK8sCurrentContext(id); err != nil {
-// 		return K8sContext{}, err
-// 	}
-
-// 	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
-// }
-
-// func (l *DefaultLocalProvider) GetCurrentContext(token string) (K8sContext, error) {
-// 	return l.MesheryK8sContextPersister.GetMesheryK8sCurrentContext()
-// }
 
 // FetchResults - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, _, _, profileID string) ([]byte, error) {
@@ -648,7 +657,7 @@ func (l *DefaultLocalProvider) FetchAllResults(_, page, pageSize, _, _, _, _ str
 
 // GetResult - fetches result from provider backend for the given result id
 func (l *DefaultLocalProvider) GetResult(_ string, resultID core.Uuid) (*MesheryResult, error) {
-	// key := parseUUIDOrNil(resultID)
+	// key := uuid.FromStringOrNil(resultID)
 	if resultID == uuid.Nil {
 		return nil, ErrResultID
 	}
@@ -657,7 +666,7 @@ func (l *DefaultLocalProvider) GetResult(_ string, resultID core.Uuid) (*Meshery
 
 // PublishResults - publishes results to the provider backend synchronously
 func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *MesheryResult, profileID string) (string, error) {
-	profileUUID, err := uuid.Parse(profileID)
+	profileUUID, err := uuid.FromString(profileID)
 	if err != nil {
 		return "", ErrPerfID(err)
 	}
@@ -676,10 +685,10 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 	l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
 	resultID, _ := l.shipResults(req, data)
 
-	key := parseUUIDOrNil(resultID)
+	key := uuid.FromStringOrNil(resultID)
 	l.Log.Debug(fmt.Sprintf("key: %s, is nil: %t", key.String(), (key == uuid.Nil)))
 	if key == uuid.Nil {
-		key = uuid.New()
+		key = uuid.Must(uuid.NewV4())
 		result.ID = key
 		data, err = json.Marshal(result)
 		if err != nil {
@@ -713,7 +722,7 @@ func (l *DefaultLocalProvider) FetchSmiResult(_ *http.Request, _, _, _, _ string
 
 // PublishSmiResults - publishes results to the provider backend synchronously
 func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, error) {
-	key := uuid.New()
+	key := uuid.Must(uuid.NewV4())
 	result.ID = key
 	data, err := json.Marshal(result)
 	if err != nil {
@@ -843,7 +852,10 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, _ *http.Reque
 
 // SMPTestConfigStore Stores the given PerformanceTestConfig into local datastore
 func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *perfprofile.PerformanceTestConfig) (string, error) {
-	uid := uuid.New()
+	uid, err := uuid.NewV4()
+	if err != nil {
+		return "", ErrGenerateUUID(err)
+	}
 	perfConfig.ID = uid.String()
 	data, err := json.Marshal(perfConfig)
 	if err != nil {
@@ -854,7 +866,7 @@ func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *p
 
 // SMPTestConfigGet gets the given PerformanceTestConfig from the local datastore
 func (l *DefaultLocalProvider) SMPTestConfigGet(_ *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error) {
-	uid, err := uuid.Parse(testUUID)
+	uid, err := uuid.FromString(testUUID)
 	if err != nil {
 		return nil, ErrGenerateUUID(err)
 	}
@@ -876,7 +888,7 @@ func (l *DefaultLocalProvider) SMPTestConfigFetch(_ *http.Request, page, pageSiz
 
 // SMPTestConfigDelete deletes the given PerformanceTestConfig from the local datastore
 func (l *DefaultLocalProvider) SMPTestConfigDelete(_ *http.Request, testUUID string) error {
-	uid, err := uuid.Parse(testUUID)
+	uid, err := uuid.FromString(testUUID)
 	if err != nil {
 		return ErrGenerateUUID(err)
 	}
@@ -893,7 +905,7 @@ func (l *DefaultLocalProvider) SaveMesheryPatternResource(_ string, resource *Pa
 }
 
 func (l *DefaultLocalProvider) GetMesheryPatternResource(_, resourceID string) (*PatternResource, error) {
-	id := parseUUIDOrNil(resourceID)
+	id := uuid.FromStringOrNil(resourceID)
 	return l.MesheryPatternResourcePersister.GetPatternResource(id)
 }
 
@@ -931,7 +943,7 @@ func (l *DefaultLocalProvider) GetMesheryPatternResources(
 }
 
 func (l *DefaultLocalProvider) DeleteMesheryPatternResource(_, resourceID string) error {
-	id := parseUUIDOrNil(resourceID)
+	id := uuid.FromStringOrNil(resourceID)
 	return l.MesheryPatternResourcePersister.DeletePatternResource(id)
 }
 
@@ -978,13 +990,13 @@ func (l *DefaultLocalProvider) UnPublishCatalogPattern(_ *http.Request, _ *Meshe
 
 // GetMesheryPattern gets pattern for the given patternID
 func (l *DefaultLocalProvider) GetMesheryPattern(_ *http.Request, patternID, _ string) ([]byte, error) {
-	id := parseUUIDOrNil(patternID)
+	id := uuid.FromStringOrNil(patternID)
 	return l.MesheryPatternPersister.GetMesheryPattern(id)
 }
 
 // DeleteMesheryPattern deletes a meshery pattern with the given id
 func (l *DefaultLocalProvider) DeleteMesheryPattern(_ *http.Request, patternID string) ([]byte, error) {
-	id := parseUUIDOrNil(patternID)
+	id := uuid.FromStringOrNil(patternID)
 	return l.MesheryPatternPersister.DeleteMesheryPattern(id)
 }
 
@@ -1000,7 +1012,7 @@ func (l *DefaultLocalProvider) CloneMesheryPattern(_ *http.Request, patternID st
 
 // GetDesignSourceContent returns design source-content from provider
 func (l *DefaultLocalProvider) GetDesignSourceContent(_, designID string) ([]byte, error) {
-	id := parseUUIDOrNil(designID)
+	id := uuid.FromStringOrNil(designID)
 	return l.MesheryPatternPersister.GetMesheryPatternSource(id)
 }
 
@@ -1100,19 +1112,19 @@ func (l *DefaultLocalProvider) UnPublishCatalogFilter(_ *http.Request, _ *Mesher
 
 // GetMesheryFilterFile gets filter for the given filterID without the metadata
 func (l *DefaultLocalProvider) GetMesheryFilterFile(_ *http.Request, filterID string) ([]byte, error) {
-	id := parseUUIDOrNil(filterID)
+	id := uuid.FromStringOrNil(filterID)
 	return l.MesheryFilterPersister.GetMesheryFilterFile(id)
 }
 
 // GetMesheryFilter gets filter for the given filterID
 func (l *DefaultLocalProvider) GetMesheryFilter(_ *http.Request, filterID string) ([]byte, error) {
-	id := parseUUIDOrNil(filterID)
+	id := uuid.FromStringOrNil(filterID)
 	return l.MesheryFilterPersister.GetMesheryFilter(id)
 }
 
 // DeleteMesheryFilter deletes a meshery filter with the given id
 func (l *DefaultLocalProvider) DeleteMesheryFilter(_ *http.Request, filterID string) ([]byte, error) {
-	id := parseUUIDOrNil(filterID)
+	id := uuid.FromStringOrNil(filterID)
 	return l.MesheryFilterPersister.DeleteMesheryFilter(id)
 }
 
@@ -1174,7 +1186,7 @@ func (l *DefaultLocalProvider) RemoteFilterFile(_ *http.Request, resourceURL, pa
 
 // GetApplicationSourceContent returns application source-content from provider
 func (l *DefaultLocalProvider) GetApplicationSourceContent(_ *http.Request, applicationID string) ([]byte, error) {
-	id := parseUUIDOrNil(applicationID)
+	id := uuid.FromStringOrNil(applicationID)
 	return l.MesheryApplicationPersister.GetMesheryApplicationSource(id)
 }
 
@@ -1202,13 +1214,13 @@ func (l *DefaultLocalProvider) GetMesheryApplications(_, page, pageSize, search,
 
 // GetMesheryApplication gets application for the given applicationID
 func (l *DefaultLocalProvider) GetMesheryApplication(_ *http.Request, applicationID string) ([]byte, error) {
-	id := parseUUIDOrNil(applicationID)
+	id := uuid.FromStringOrNil(applicationID)
 	return l.MesheryApplicationPersister.GetMesheryApplication(id)
 }
 
 // DeleteMesheryApplication deletes a meshery application with the given id
 func (l *DefaultLocalProvider) DeleteMesheryApplication(_ *http.Request, applicationID string) ([]byte, error) {
-	id := parseUUIDOrNil(applicationID)
+	id := uuid.FromStringOrNil(applicationID)
 	return l.MesheryApplicationPersister.DeleteMesheryApplication(id)
 }
 
@@ -1227,7 +1239,10 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfi
 	}
 
 	if performanceProfile.ID == (core.Uuid{}) {
-		uid := uuid.New()
+		uid, err := uuid.NewV4()
+		if err != nil {
+			return nil, ErrGenerateUUID(err)
+		}
 		performanceProfile.ID = uid
 	}
 
@@ -1267,7 +1282,7 @@ func (l *DefaultLocalProvider) GetPerformanceProfiles(_, page, pageSize, _, _ st
 
 // GetPerformanceProfile gets performance profile for the given performance profileID
 func (l *DefaultLocalProvider) GetPerformanceProfile(_ *http.Request, performanceProfileID string) ([]byte, error) {
-	uid, err := uuid.Parse(performanceProfileID)
+	uid, err := uuid.FromString(performanceProfileID)
 	if err != nil {
 		return nil, ErrPerfID(err)
 	}
@@ -1287,7 +1302,7 @@ func (l *DefaultLocalProvider) GetPerformanceProfile(_ *http.Request, performanc
 
 // DeletePerformanceProfile deletes a meshery performance profile with the given id
 func (l *DefaultLocalProvider) DeletePerformanceProfile(_ *http.Request, performanceProfileID string) ([]byte, error) {
-	uid, err := uuid.Parse(performanceProfileID)
+	uid, err := uuid.FromString(performanceProfileID)
 	if err != nil {
 		return nil, ErrPerfID(err)
 	}
@@ -1403,7 +1418,7 @@ func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, connectionID co
 }
 
 func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
-	mesheryConnectionID := parseUUIDOrNil(viper.GetString("INSTANCE_ID"))
+	mesheryConnectionID := uuid.FromStringOrNil(viper.GetString("INSTANCE_ID"))
 	_, err := l.DeleteConnection(nil, mesheryConnectionID)
 	return err
 }
@@ -1450,7 +1465,11 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 					continue
 				}
 
-				id := uuid.New()
+				id, err := uuid.NewV4()
+				if err != nil {
+					log.Error(err)
+					continue
+				}
 
 				patternName, err := GetPatternName(file.Content)
 				if err != nil {
@@ -1479,7 +1498,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 		}
 	}
 	// Seed default organization before the UI requests organizations.
-	id := uuid.New()
+	id := uuid.Must(uuid.NewV4())
 	org := &organization.Organization{
 		ID:          id,
 		Name:        "My Org",
@@ -1519,6 +1538,18 @@ func (l *DefaultLocalProvider) Cleanup() error {
 }
 
 func (l *DefaultLocalProvider) SaveUserCredential(token string, credential *Credential) (*Credential, error) {
+	// The Credential schema has no primary-key default, so a credential created
+	// without an explicit ID would be persisted with the nil UUID
+	// (00000000-0000-0000-0000-000000000000). The first such insert succeeds and
+	// every subsequent one fails with "UNIQUE constraint failed: credentials.id".
+	// Mint a fresh UUID whenever one is not already supplied.
+	if credential.ID.IsNil() {
+		newID, err := uuid.NewV4()
+		if err != nil {
+			return nil, fmt.Errorf("error saving user credentials: unable to generate credential id: %w", err)
+		}
+		credential.ID = newID
+	}
 	result := l.GetGenericPersister().Table("credentials").Create(&credential)
 	if result.Error != nil {
 		return nil, fmt.Errorf("error saving user credentials: %v", result.Error)
@@ -1527,11 +1558,19 @@ func (l *DefaultLocalProvider) SaveUserCredential(token string, credential *Cred
 }
 
 func (l *DefaultLocalProvider) GetCredentialByID(token string, credentialID core.Uuid) (*Credential, int, error) {
-	return nil, http.StatusForbidden, ErrLocalProviderSupport
+	credential := &Credential{}
+	result := l.GetGenericPersister().Model(&Credential{}).Where("id = ? AND deleted_at is NULL", credentialID).First(credential)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, http.StatusNotFound, fmt.Errorf("credential with id %s not found", credentialID)
+		}
+		return nil, http.StatusInternalServerError, fmt.Errorf("error retrieving credential with id %s: %v", credentialID, result.Error)
+	}
+	return credential, http.StatusOK, nil
 }
 
 func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error) {
-	result := l.GetGenericPersister().Select("*").Where("user_id=? and deleted_at is NULL", userID)
+	result := l.GetGenericPersister().Model(&Credential{}).Select("*").Where("user_id=? and deleted_at is NULL", userID)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -1626,7 +1665,7 @@ func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, search, order, updatedAfter
 
 // GetKey returns the key for the given keyID
 func (l *DefaultLocalProvider) GetUsersKey(_ *http.Request, keyID string) ([]byte, error) {
-	id := parseUUIDOrNil(keyID)
+	id := uuid.FromStringOrNil(keyID)
 	return l.KeyPersister.GetUsersKey(id)
 }
 
@@ -1640,12 +1679,12 @@ func (l *DefaultLocalProvider) GetWorkspaces(_, page, pageSize, search, order, f
 }
 
 func (l *DefaultLocalProvider) GetWorkspaceByID(_ *http.Request, workspaceID string, _ string) ([]byte, error) {
-	id := parseUUIDOrNil(workspaceID)
+	id := uuid.FromStringOrNil(workspaceID)
 	return l.WorkspacePersister.GetWorkspaceByID(id)
 }
 
 func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID string) ([]byte, error) {
-	id := parseUUIDOrNil(workspaceID)
+	id := uuid.FromStringOrNil(workspaceID)
 	return l.WorkspacePersister.DeleteWorkspaceByID(id)
 }
 
@@ -1662,7 +1701,7 @@ func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *
 }
 
 func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspaceUpdatePayload, workspaceID string) (*workspace.Workspace, error) {
-	id, err := uuid.Parse(workspaceID)
+	id, err := uuid.FromString(workspaceID)
 	if err != nil {
 		return nil, err
 	}
@@ -1670,39 +1709,63 @@ func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload
 }
 
 func (l *DefaultLocalProvider) AddEnvironmentToWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
-	workspaceId, _ := uuid.Parse(workspaceID)
-	envId, _ := uuid.Parse(environmentID)
+	workspaceId, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid workspace ID: %w", err))
+	}
+	envId, err := uuid.FromString(environmentID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid environment ID: %w", err))
+	}
 	return l.WorkspacePersister.AddEnvironmentToWorkspace(workspaceId, envId)
 }
 
 func (l *DefaultLocalProvider) RemoveEnvironmentFromWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
-	workspaceId, _ := uuid.Parse(workspaceID)
-	envId, _ := uuid.Parse(environmentID)
+	workspaceId, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid workspace ID: %w", err))
+	}
+	envId, err := uuid.FromString(environmentID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid environment ID: %w", err))
+	}
 	return l.WorkspacePersister.DeleteEnvironmentFromWorkspace(workspaceId, envId)
 }
 
 func (l *DefaultLocalProvider) GetEnvironmentsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
-	workspaceId, _ := uuid.Parse(workspaceID)
+	workspaceId, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, ErrInvalidUUID(err)
+	}
 	return l.WorkspacePersister.GetWorkspaceEnvironments(workspaceId, search, order, page, pageSize, filter)
 }
 
 func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
-	workspaceId, _ := uuid.Parse(workspaceID)
-	designId, _ := uuid.Parse(designID)
+	workspaceId, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid workspace ID: %w", err))
+	}
+	designId, err := uuid.FromString(designID)
+	if err != nil {
+		return nil, ErrInvalidUUID(fmt.Errorf("invalid design ID: %w", err))
+	}
 	return l.WorkspacePersister.AddDesignToWorkspace(workspaceId, designId)
 }
 
 func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string, visibility []string) ([]byte, error) {
-	workspaceId, _ := uuid.Parse(workspaceID)
+	workspaceId, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, ErrInvalidUUID(err)
+	}
 	return l.WorkspacePersister.GetWorkspaceDesigns(workspaceId, search, order, page, pageSize, filter, visibility)
 }
 
 func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
-	wsID, err := uuid.Parse(workspaceID)
+	wsID, err := uuid.FromString(workspaceID)
 	if err != nil {
 		return nil, err
 	}
-	dID, err := uuid.Parse(designID)
+	dID, err := uuid.FromString(designID)
 	if err != nil {
 		return nil, err
 	}
@@ -1710,7 +1773,7 @@ func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, worksp
 }
 
 func (l *DefaultLocalProvider) GetViewsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
-	wsID, err := uuid.Parse(workspaceID)
+	wsID, err := uuid.FromString(workspaceID)
 	if err != nil {
 		return nil, err
 	}
@@ -1718,11 +1781,11 @@ func (l *DefaultLocalProvider) GetViewsOfWorkspace(_ *http.Request, workspaceID,
 }
 
 func (l *DefaultLocalProvider) AddViewToWorkspace(_ *http.Request, workspaceID string, viewID string) ([]byte, error) {
-	wsID, err := uuid.Parse(workspaceID)
+	wsID, err := uuid.FromString(workspaceID)
 	if err != nil {
 		return nil, err
 	}
-	vID, err := uuid.Parse(viewID)
+	vID, err := uuid.FromString(viewID)
 	if err != nil {
 		return nil, err
 	}
@@ -1730,11 +1793,11 @@ func (l *DefaultLocalProvider) AddViewToWorkspace(_ *http.Request, workspaceID s
 }
 
 func (l *DefaultLocalProvider) RemoveViewFromWorkspace(_ *http.Request, workspaceID string, viewID string) ([]byte, error) {
-	wsID, err := uuid.Parse(workspaceID)
+	wsID, err := uuid.FromString(workspaceID)
 	if err != nil {
 		return nil, err
 	}
-	vID, err := uuid.Parse(viewID)
+	vID, err := uuid.FromString(viewID)
 	if err != nil {
 		return nil, err
 	}
@@ -1742,7 +1805,7 @@ func (l *DefaultLocalProvider) RemoveViewFromWorkspace(_ *http.Request, workspac
 }
 
 func (l *DefaultLocalProvider) GetTeamsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
-	wsID, err := uuid.Parse(workspaceID)
+	wsID, err := uuid.FromString(workspaceID)
 	if err != nil {
 		return nil, err
 	}
@@ -1750,11 +1813,11 @@ func (l *DefaultLocalProvider) GetTeamsOfWorkspace(_ *http.Request, workspaceID,
 }
 
 func (l *DefaultLocalProvider) AddTeamToWorkspace(_ *http.Request, workspaceID string, teamID string) ([]byte, error) {
-	wsID, err := uuid.Parse(workspaceID)
+	wsID, err := uuid.FromString(workspaceID)
 	if err != nil {
 		return nil, err
 	}
-	tID, err := uuid.Parse(teamID)
+	tID, err := uuid.FromString(teamID)
 	if err != nil {
 		return nil, err
 	}
@@ -1762,11 +1825,11 @@ func (l *DefaultLocalProvider) AddTeamToWorkspace(_ *http.Request, workspaceID s
 }
 
 func (l *DefaultLocalProvider) RemoveTeamFromWorkspace(_ *http.Request, workspaceID string, teamID string) ([]byte, error) {
-	wsID, err := uuid.Parse(workspaceID)
+	wsID, err := uuid.FromString(workspaceID)
 	if err != nil {
 		return nil, err
 	}
-	tID, err := uuid.Parse(teamID)
+	tID, err := uuid.FromString(teamID)
 	if err != nil {
 		return nil, err
 	}
@@ -1775,7 +1838,7 @@ func (l *DefaultLocalProvider) RemoveTeamFromWorkspace(_ *http.Request, workspac
 
 // GetOrganization returns the organization for the given organizationID
 func (l *DefaultLocalProvider) GetOrganization(_ *http.Request, organizationId string) ([]byte, error) {
-	id := parseUUIDOrNil(organizationId)
+	id := uuid.FromStringOrNil(organizationId)
 	return l.OrganizationPersister.GetOrganzation(id)
 }
 
