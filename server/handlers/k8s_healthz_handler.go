@@ -17,7 +17,7 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 	// Differentiate between live and ready checks
 	// /healthz/live is a simple ping to ensure the server HTTP listener is responsive.
 	// We return 200 OK immediately to prevent Kubernetes from restarting a pod that is initializing.
-	if strings.HasSuffix(r.URL.Path, "/live") {
+	if strings.HasSuffix(strings.TrimSuffix(r.URL.Path, "/"), "/live") {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.WriteHeader(http.StatusOK)
