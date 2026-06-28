@@ -1,6 +1,9 @@
 package modeloci
 
-import "testing"
+import (
+	"path/filepath"
+	"testing"
+)
 
 func TestCompileImageName(t *testing.T) {
 	tests := []struct {
@@ -39,8 +42,9 @@ func TestCompileImageName(t *testing.T) {
 }
 
 func TestCompileFolderName(t *testing.T) {
-	actual := CompileFolderName("/tmp/models", "exoscale-icons", "0.1.0")
-	expected := "/tmp/models/exoscale-icons/0.1.0"
+	base := filepath.Join(string(filepath.Separator), "tmp", "models")
+	actual := CompileFolderName(base, "exoscale-icons", "0.1.0")
+	expected := filepath.Join(base, "exoscale-icons", "0.1.0")
 	if actual != expected {
 		t.Fatalf("expected %q, got %q", expected, actual)
 	}
