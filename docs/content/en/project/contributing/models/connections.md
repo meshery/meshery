@@ -4,6 +4,7 @@ description: How to define a new Connection and register it so Meshery understan
 categories: [contributing]
 aliases:
 - /project/contributing/contributing-connection-definitions
+- /project/contributing/contributing-connections
 ---
 
 **Connections are schema-driven.** A Connection's structure, identity, lifecycle, and the forms Meshery renders for it are declared in a **connection definition** that conforms to the [Connection schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta3/connection) (`connections.meshery.io/v1beta3`) in [`meshery/schemas`](https://github.com/meshery/schemas). Before contributing, familiarize yourself with that schema and read [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for the development workflow.
@@ -12,7 +13,7 @@ This guide explains how to author a connection definition so that Meshery unders
 
 ## What is a connection definition?
 
-A connection definition is a first-class [Registry]({{< ref "concepts/logical/registry.md" >}}) entity, authored per [Model]({{< ref "concepts/logical/models/index.md" >}}) - exactly like [Components]({{< ref "project/contributing/contributing-components.md" >}}) and [Relationships]({{< ref "project/contributing/contributing-relationships.md" >}}). It declares everything Meshery needs to register, render, and manage a kind of Connection:
+A connection definition is a first-class [Registry]({{< ref "concepts/logical/registry.md" >}}) entity, authored per [Model]({{< ref "concepts/logical/models/index.md" >}}) - exactly like [Components]({{< ref "project/contributing/models/components" >}}) and [Relationships]({{< ref "project/contributing/models/relationships" >}}). It declares everything Meshery needs to register, render, and manage a kind of Connection:
 
 - its **identity** (`kind`, `type`, `subType`),
 - its **lifecycle** (initial `status` and a `transitionMap` of allowed [state transitions]({{< ref "concepts/logical/connections/index.md#states-and-the-lifecycle-of-connections" >}})),
@@ -20,7 +21,7 @@ A connection definition is a first-class [Registry]({{< ref "concepts/logical/re
 - its **visual identity** (`styles`).
 
 {{% alert color="warning" title="Prerequisite reading" %}}
-Connection definitions are packaged in the context of a Model. Be sure you understand <a href='{{< ref "project/contributing/contributing-models.md" >}}'>how Models are created and packaged</a> first - without a Model to belong to, your connection definition is homeless.
+Connection definitions are packaged in the context of a Model. Be sure you understand <a href='{{< ref "project/contributing/models/models" >}}'>how Models are created and packaged</a> first - without a Model to belong to, your connection definition is homeless.
 {{% /alert %}}
 
 ## Anatomy of a connection definition
@@ -104,7 +105,7 @@ The set of transitions Meshery offers a user for a given Connection comes direct
 
 ### Forms: `connectionSchema` and `credentialSchema`
 
-Both are [JSON Schemas](https://json-schema.org/). The Connection Wizard renders them directly with [`react-jsonschema-form`](https://rjsf-team.github.io/react-jsonschema-form/docs/) - the same library used for [Component]({{< ref "project/contributing/contributing-components.md" >}}) forms:
+Both are [JSON Schemas](https://json-schema.org/). The Connection Wizard renders them directly with [`react-jsonschema-form`](https://rjsf-team.github.io/react-jsonschema-form/docs/) - the same library used for [Component]({{< ref "project/contributing/models/components" >}}) forms:
 
 - **`connectionSchema`** becomes the **Configure Connection** step. Mark the fields a Connection cannot exist without (such as `url`) as `required`. A `name` property, if present, is used as the Connection's display name.
 - **`credentialSchema`** becomes the **Associate Credential** step. **Omit it** for a Connection that needs no secret - the wizard then skips the credential step entirely.
@@ -113,7 +114,7 @@ Because these schemas live on the definition, the wizard needs no per-kind UI co
 
 ### Visual identity: `styles`
 
-`styles` carries inline SVG markup for the kind's icon: `svgColor` (for light backgrounds), `svgWhite` (for dark backgrounds), and optionally `svgComplete`. Follow the same icon conventions as [Components]({{< ref "project/contributing/contributing-components.md" >}}).
+`styles` carries inline SVG markup for the kind's icon: `svgColor` (for light backgrounds), `svgWhite` (for dark backgrounds), and optionally `svgComplete`. Follow the same icon conventions as [Components]({{< ref "project/contributing/models/components" >}}).
 
 ### Optional `metadata`
 
@@ -159,7 +160,7 @@ An extension matches a Connection by `kind` (optionally narrowed by `type`/`subT
 - `detailsStep`, `credentialStep`, `registerStep`, `receiptStep` - override individual steps. Set `credentialStep: null` to remove the credential step (Kubernetes carries its credential inline as a kubeconfig).
 - `postConfigSteps` - extra steps appended after registration; these also drive the wizard's **configure** mode for an already-registered Connection.
 
-Each step implements a small contract - an `id` and `label`, a `Component` to render, and optional `canProceed`, `onNext`, `nextLabel`, and `hidden` hooks. Use the existing `kubernetesExtension` as a worked example, and see [Contributing to the Meshery UI]({{< ref "project/contributing/contributing-ui.md" >}}) for building and testing UI changes.
+Each step implements a small contract - an `id` and `label`, a `Component` to render, and optional `canProceed`, `onNext`, `nextLabel`, and `hidden` hooks. Use the existing `kubernetesExtension` as a worked example, and see [Contributing to the Meshery UI]({{< ref "project/contributing/ui" >}}) for building and testing UI changes.
 
 {{% alert color="warning" title="Prefer schemas over code" %}}
 Reach for a custom extension only when the generic, schema-driven flow genuinely cannot express what your Connection needs. A definition-only contribution is easier to review, ships without a UI release, and stays consistent with every other Connection in the wizard.

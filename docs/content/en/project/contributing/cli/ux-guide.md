@@ -2,6 +2,7 @@
 title: Meshery CLI Style Guide
 description: Design principles and code conventions.
 categories: [contributing]
+aliases: [project/contributing/contributing-cli-guide]
 ---
 
 These guidelines are a collection of principles and conventions that need to be followed while designing mesheryctl commands.

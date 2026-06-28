@@ -2,6 +2,7 @@
 title: Contributing to Meshery UI End-to-End Tests
 description: How to contribute to end-to-end testing in Meshery UI using Playwright.
 categories: [contributing]
+aliases: [/project/contributing/contributing-ui-tests]
 ---
 
 To automate functional integration and end-to-end testing Meshery uses [Playwright](https://playwright.dev/) as one of the tools to automate browser testing. End-to-end tests run with each pull request to ensure that the changes do not break the existing functionality.
@@ -59,7 +60,7 @@ This approach is very quick to build, but also dependent on your operating syste
 
 ### Meshery CLI
 
-There is also Meshery CLI which can help you run the UI and Server, for more detail, you go to [Meshery CLI documentation](https://docs.meshery.io/project/contributing/contributing-cli-guide#process)
+There is also Meshery CLI which can help you run the UI and Server, for more detail, you go to [Meshery CLI documentation](https://docs.meshery.io/project/contributing/cli/ux-guide#process)
 
 ### Docker Based Build
 

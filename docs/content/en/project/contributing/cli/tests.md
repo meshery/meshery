@@ -2,6 +2,7 @@
 title: Contributing to Meshery CLI End-to-End Tests
 description: How to contribute to Meshery Command Line Interface end-to-end testing with BATS.
 categories: [contributing]
+aliases: [project/contributing/contributing-cli-tests]
 ---
 
 Meshery CLI is the command line interface for Meshery. Meshery CLI, otherwise known as `mesheryctl`, is a client of Meshery Server's [REST API]({{< ref "reference/extensibility/api.md" >}}). It provides a way to interact with Meshery and perform various operations such as installing, configuring, and managing cloud native infrastructure.
@@ -10,7 +11,7 @@ This document is intended to help you contribute to the end-to-end tests for `me
 
 The end-to-end tests for `mesheryctl` are designed to ensure that the CLI is working as expected and that it is compatible with the various cloud native infrastructure and public cloud services that Meshery supports. These tests are run automatically on every pull request to ensure that any changes made to the code do not break the existing functionality of the CLI.
 
-{{% alert color="info" title="Meshery CLI Reference Documents" %}}<ul><li><a href="{{< ref "project/contributing/contributing-cli.md" >}}">Contributing to Meshery CLI</a></li><li><a href="https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0">Meshery Command Tracker</a>: Status of mesheryctl command implementation and platform compatibility.</li>
+{{% alert color="info" title="Meshery CLI Reference Documents" %}}<ul><li><a href="{{< ref "project/contributing/cli" >}}">Contributing to Meshery CLI</a></li><li><a href="https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0">Meshery Command Tracker</a>: Status of mesheryctl command implementation and platform compatibility.</li>
     <li><a href="https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#">Meshery CLI Commands and Documentation</a>: Detailed documentation of the `mesheryctl` commands.</li>
 	<li><a href="https://github.com/meshery/meshery/labels/component%2Fmesheryctl">mesheryctl open issues and pull requests</a>: Matching the "component/mesheryctl" label.</li></ul>{{% /alert %}}
 

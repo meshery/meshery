@@ -2,6 +2,7 @@
 title: Contributing to Model Components
 description: How to contribute to Meshery Model Components
 categories: [contributing]
+aliases: [/project/contributing/contributing-model-components]
 ---
 **Components are defined by schemas.** Each component's structure, capabilities, and metadata follow the [Component schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/component) in `meshery/schemas`. When creating or modifying components, ensure they conform to the schema specification. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.
 
@@ -28,7 +29,7 @@ In Meshery, a [Components]({{< ref "concepts/logical/components.md" >}}) is a fu
 
 ### 1. Understand Model Generation and Packaging
 
-{{% alert color="warning" title="Prerequisite Reading" %}}Components are defined and packaged in context of a Model. Be sure to first read and understand <a href='{{< ref "project/contributing/contributing-models.md" >}}'>how models are created and packaged</a> before attempting to create a new component. Without a model defined first, they component will be homeless.{{% /alert %}}
+{{% alert color="warning" title="Prerequisite Reading" %}}Components are defined and packaged in context of a Model. Be sure to first read and understand <a href='{{< ref "project/contributing/models/models" >}}'>how models are created and packaged</a> before attempting to create a new component. Without a model defined first, they component will be homeless.{{% /alert %}}
 
 <a id="component-customization"></a>
 
@@ -98,7 +99,7 @@ Component icons will be written to the `/meshmodel/components/<model-name>/icon/
 
 ### 3. Create a Component Definition as a JSON file
 
-Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models]({{< ref "project/contributing/contributing-models.md" >}})). Relationship definition files are commonly named  `relationships.yaml` as a convention, however, this name is not required. A model may include any number of relationship definitions. Include the following attributes in your relationship definition:
+Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models]({{< ref "project/contributing/models/models" >}})). Relationship definition files are commonly named  `relationships.yaml` as a convention, however, this name is not required. A model may include any number of relationship definitions. Include the following attributes in your relationship definition:
 
 - `kind`: The genre of component (e.g., `Pod`).
 - `model`: The model to which the component belongs (e.g., `kubernetes`).

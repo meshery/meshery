@@ -2,6 +2,7 @@
 title: Contributing to Models
 description: How to contribute to Meshery Models, Components, Relationships, Policies...
 categories: [contributing]
+aliases: [/project/contributing/contributing-models]
 ---
 
 **Meshery Models are schema-driven.** Model definitions, including their structure, metadata, and versioning, are defined by JSON Schemas in the [`meshery/schemas`](https://github.com/meshery/schemas) repository. Before contributing to models, familiarize yourself with the [Model schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/model) and see [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for the development workflow.
@@ -17,7 +18,7 @@ At the core of this system are **Meshery Models** - packages that define a speci
 
 - **[Components]({{< ref "concepts/logical/components.md" >}})**: Individual parts of a system (e.g., services, databases).
 - **[Relationships]({{< ref "concepts/logical/relationships/index.md" >}})**: How those parts interact.
-- **[Connections]({{< ref "concepts/logical/connections/index.md" >}})**: How Meshery reaches and manages the resource a model represents. See [Contributing to Connections]({{< ref "project/contributing/contributing-connections.md" >}}).
+- **[Connections]({{< ref "concepts/logical/connections/index.md" >}})**: How Meshery reaches and manages the resource a model represents. See [Contributing to Connections]({{< ref "project/contributing/models/connections" >}}).
 - **Metadata**: Visual and behavioral traits, such as icons or capabilities.
 
 Models can describe traditional technologies (like Kubernetes workloads), or more abstract entities (like annotations or diagrams).
@@ -32,7 +33,7 @@ The schema defines the structure of the model, including the entities it contain
 
 > See [Registry]({{< ref "concepts/logical/registry.md" >}}) to learn more about Meshery's internal registry and how to use it.
 
-[![Model Entity Classification](../images/meshmodel-architecture.svg)](../images/meshery-models.png)
+[![Model Entity Classification](../images/ß∑model-architecture.svg)](../images/meshery-models.png)
 _Figure: Model Entity Classification_
 
 ## Meshery Entities and their Lifecycle
@@ -293,7 +294,7 @@ During model generation, corresponding components are created. Next step is to e
      - Review and confirm assigned capabilities
      - Modify capabilities as needed
 
-   See the [Contributing to Components]({{< ref "project/contributing/contributing-components.md" >}}) for detailed instructions.
+   See the [Contributing to Components]({{< ref "project/contributing/models/components" >}}) for detailed instructions.
 
 2. **Identify Relationships**
 
@@ -309,7 +310,7 @@ During model generation, corresponding components are created. Next step is to e
    - **2.3. Create Definitions**
      Codify the relationships you have identified into a Relationship Definition
 
-   See the [Contributing to Relationships]({{< ref "project/contributing/contributing-relationships.md" >}}) for detailed instructions.
+   See the [Contributing to Relationships]({{< ref "project/contributing/models/relationships" >}}) for detailed instructions.
 
 ## Next Steps
 

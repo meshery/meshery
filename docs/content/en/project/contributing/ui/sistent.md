@@ -2,10 +2,11 @@
 title: Contributing to Meshery UI - Sistent
 description: How to contribute to the Meshery's web-based UI using sistent design system.
 categories: [contributing]
+aliases: [project/contributing/contributing-ui-sistent]
 ---
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisite Reading</strong></p>
-  <ol><li><a href="{{< ref "project/contributing/contributing-ui.md" >}}">Contributing to Meshery UI</a></li></ol>
+  <ol><li><a href="{{< ref "project/contributing/ui/ui" >}}">Contributing to Meshery UI</a></li></ol>
 </div>
 
 ## <a name="contributing-ui-sistent">Contributing to Meshery UI - Sistent</a>

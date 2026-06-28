@@ -2,25 +2,48 @@
 title: Contributing to Meshery UI - Notification Center
 description: How to contribute to the Notification Center in Meshery's web-based UI.
 categories: [contributing]
+aliases: [project/contributing/contributing-ui-notification-center]
 ---
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisite Reading</strong></p>
-  <ol><li><a href="{{< ref "project/contributing/contributing-ui.md" >}}">Contributing to Meshery UI</a></li></ol>
+  <ol><li><a href="{{< ref "project/contributing/ui/ui" >}}">Contributing to Meshery UI</a></li></ol>
 </div>
 
 ## Table of Contents
 
+- [Table of Contents](#table-of-contents)
 - [What is the Notification Center?](#what-is-the-notification-center)
+  - [User-facing Features](#user-facing-features)
+  - [State Management and Internal Details](#state-management-and-internal-details)
+  - [Bulk Operations](#bulk-operations)
+  - [Initiating a Bulk Operation](#initiating-a-bulk-operation)
 - [Metadata Formatter](#metadata-formatter)
+  - [BodySectionRenderer](#bodysectionrenderer)
+  - [ArrayRenderer](#arrayrenderer)
+  - [KeyValueRenderer](#keyvaluerenderer)
+  - [The Metadata Specific Formatter](#the-metadata-specific-formatter)
+  - [Reusability](#reusability)
 - [How Notification Metadata is Rendered](#how-notification-metadata-is-rendered)
+  - [Key Files and Directories](#key-files-and-directories)
+    - [`NotificationCenter/` _(Root Directory)_](#notificationcenter-root-directory)
+    - [`formatters/` _(NotificationCenter/formatters)_](#formatters-notificationcenterformatters)
 - [Types of Event Specific Notification Formatters](#types-of-event-specific-notification-formatters)
   - [Common Formatter](#common-formatter)
   - [Error Formatter](#error-formatter)
   - [Model Registration Formatter](#model-registration-formatter)
   - [Relationship Evaluation Formatter](#relationship-evaluation-formatter)
+    - [Key Components](#key-components)
+    - [When to Use](#when-to-use)
+    - [User Experience: Relationship Evaluation Notification](#user-experience-relationship-evaluation-notification)
   - [Dry Run Formatter](#dry-run-formatter)
-  - [Deployment Summary Formatter](#deployment-summary-formatter)
+    - [Key Components](#key-components-1)
+    - [When to Use](#when-to-use-1)
+- [Deployment Summary Formatter](#deployment-summary-formatter)
+    - [Key Components](#key-components-2)
+    - [When to Use](#when-to-use-2)
   - [PropertyFormatters and PropertyLinkFormatters](#propertyformatters-and-propertylinkformatters)
+    - [Examples of Property Formatters](#examples-of-property-formatters)
+    - [When to Use](#when-to-use-3)
 
 <video style="width:min(100%,750px)" height="auto" autoplay muted loop>
   <source src="https://github.com/meshery/meshery/assets/65964225/345672de-3f61-4be0-b3c8-0e7480cc496c" type="video/mp4">

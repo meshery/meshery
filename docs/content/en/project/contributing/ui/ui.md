@@ -2,6 +2,7 @@
 title: Contributing to Meshery UI
 description: How to contribute to Meshery UI (web-based user interface).
 categories: [contributing]
+aliases: [/project/contributing/contributing-ui]
 ---
 
 ## <a name="contributing-ui">UI Contribution Flow</a>
@@ -26,7 +27,7 @@ Meshery UI and Provider UI use [Next.js](https://nextjs.org/) with [SWC](https:/
 
 Meshery UI uses a schema-driven approach where components and forms are generated from JSON schemas. This enables dynamic UI adaptation, consistent validation, and type-safety across the application.
 
-**⚠️ Required Reading:** Before contributing, you must read the [Schema-Driven UI Development Guide]({{< ref "project/contributing/contributing-ui-schemas.md" >}}) to understand how Meshery's UI components are generated and maintained using schemas.
+**⚠️ Required Reading:** Before contributing, you must read the [Schema-Driven UI Development Guide]({{< ref "project/contributing/ui/schemas" >}}) to understand how Meshery's UI components are generated and maintained using schemas.
 
 ## Meshery Server APIs
 
