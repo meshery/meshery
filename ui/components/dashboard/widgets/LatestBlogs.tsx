@@ -69,7 +69,14 @@ const LatestBlogs = ({ iconsProps }: LatestBlogsProps) => {
     () =>
       resources.map((resource) => ({
         ...resource,
-        icon: <DesignIcon width="15px" height="15px" fill="currentColor" />,
+        icon: (
+          <DesignIcon
+            width="15px"
+            height="15px"
+            primaryFill="currentColor"
+            secondaryFill="currentColor"
+          />
+        ),
       })),
     [resources],
   );

@@ -57,7 +57,13 @@ const getNavItem = (theme: Theme): NavConfigItem[] => {
     {
       id: 'My-Designs',
       label: 'My Designs',
-      icon: <DesignIcon fill={theme.palette.icon.default} {...iconSmall} />,
+      icon: (
+        <DesignIcon
+          primaryFill={theme.palette.icon.default}
+          secondaryFill={theme.palette.icon.default}
+          {...iconSmall}
+        />
+      ),
       content: <MyDesignsContent />,
     },
     {
