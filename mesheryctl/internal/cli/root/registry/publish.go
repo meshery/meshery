@@ -16,6 +16,7 @@ package registry
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -38,6 +39,10 @@ var (
 	components            = map[string]map[string][]meshkitRegistryUtils.ComponentCSV{}
 	relationships         = []meshkitRegistryUtils.RelationshipCSV{}
 	outputFormat          string
+	publishOCI            bool
+	ociSourcePath         string
+	ociOutputPath         string
+	ociFailFast           bool
 )
 
 // Example publishing to meshery docs
@@ -69,6 +74,9 @@ mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo
 // Publish To Website
 mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/img/meshmodels
 
+// Publish To Website with model OCI artifacts
+mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/img/meshmodels -o js --oci --oci-source-path [meshery-repo]/server/meshmodel --oci-output-path [meshery.io-repo]/assets/modelsFiles
+
 // Publishing to meshery docs
 cd docs;
 mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
@@ -83,6 +91,28 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 		if len(args) != 5 {
 			return errors.New(utils.RegistryError("[ system, google sheet credential, sheet-id, models output path, imgs output path] are required\n\nUsage: \nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]\nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]\nRun 'mesheryctl registry publish --help'", "publish"))
+		}
+
+		if publishOCI {
+			if args[0] != "website" {
+				return errors.New(utils.RegistryError("--oci is only supported when publishing to website", "publish"))
+			}
+			if ociSourcePath == "" {
+				return errors.New(utils.RegistryError("--oci-source-path is required when --oci is set", "publish"))
+			}
+			if ociOutputPath == "" {
+				return errors.New(utils.RegistryError("--oci-output-path is required when --oci is set", "publish"))
+			}
+			info, err := os.Stat(ociSourcePath)
+			if err != nil {
+				return errors.New(utils.RegistryError(fmt.Sprintf("invalid --oci-source-path %q: %v", ociSourcePath, err), "publish"))
+			}
+			if !info.IsDir() {
+				return errors.New(utils.RegistryError(fmt.Sprintf("invalid --oci-source-path %q: not a directory", ociSourcePath), "publish"))
+			}
+			if err := os.MkdirAll(ociOutputPath, 0o750); err != nil {
+				return errors.New(utils.RegistryError(fmt.Sprintf("invalid --oci-output-path %q: %v", ociOutputPath, err), "publish"))
+			}
 		}
 
 		return nil
@@ -162,6 +192,9 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 				return errors.New(utils.RegistryError(fmt.Sprintf("invalid output format: %s", outputFormat), "publish"))
 			}
 			err = websiteSystem()
+			if err == nil && publishOCI {
+				err = publishModelOCIArtifacts()
+			}
 		default:
 			return ErrPublish(fmt.Errorf("invalid system: %s", system), system)
 		}
@@ -282,6 +315,10 @@ func init() {
 	// publishCmd.Flags().StringVarP(&imgsOutputPath, "imgs-output-path", "p", "", "images output path")
 
 	publishCmd.Flags().StringVarP(&outputFormat, "output-format", "o", "", "output format [md | mdx | js]")
+	publishCmd.Flags().BoolVar(&publishOCI, "oci", false, "publish model OCI artifacts")
+	publishCmd.Flags().StringVar(&ociSourcePath, "oci-source-path", "", "path to source Meshery model folders")
+	publishCmd.Flags().StringVar(&ociOutputPath, "oci-output-path", "", "path to write generated model OCI artifacts")
+	publishCmd.Flags().BoolVar(&ociFailFast, "oci-fail-fast", true, "stop publishing when an OCI artifact fails to build")
 
 	// publishCmd.MarkFlagRequired("system")
 	// publishCmd.MarkFlagRequired("google-sheet-credential")

@@ -3,12 +3,11 @@ package model
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/modeloci"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	meshkitOci "github.com/meshery/meshkit/models/oci"
 	"github.com/spf13/cobra"
 )
 
@@ -53,7 +52,7 @@ mesheryctl model build [model-name]/[model-version]
 			if len(parts) > 2 {
 				return ErrModelBuildFromStrings(errBuildUsage)
 			}
-			name, version = buildModelParseModelInput(inputParam)
+			name, version = modeloci.ParseModelInput(inputParam)
 		}
 
 		// do not validate model name, path and version,
@@ -65,7 +64,7 @@ mesheryctl model build [model-name]/[model-version]
 			return ErrModelBuildFromStrings(errBuildUsage)
 		}
 
-		folder := buildModelCompileFolderName(cmdModelBuildFlagsProvided.Path, name, version)
+		folder := modeloci.CompileFolderName(cmdModelBuildFlagsProvided.Path, name, version)
 		// check if combined folder exists
 		{
 			// if folder does not exist return with error
@@ -114,24 +113,15 @@ mesheryctl model build [model-name]/[model-version]
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// validation (if any) is done in PreRunE (so args certainly has one element)
-		name, version := buildModelParseModelInput(args[0])
-
-		// validation done above that args contains exactly one argument
-		folder := buildModelCompileFolderName(cmdModelBuildFlagsProvided.Path, name, version)
+		name, version := modeloci.ParseModelInput(args[0])
+		folder := modeloci.CompileFolderName(cmdModelBuildFlagsProvided.Path, name, version)
 
 		utils.Log.Infof("Building meshery model from path %s", folder)
-		img, errBuildImage := meshkitOci.BuildImage(folder)
-		if errBuildImage != nil {
-			return ErrModelBuild(errBuildImage)
-		}
-
-		// Save OCI artifact into a tar file under current folder
-		imageName := buildModelCompileImageName(name, version, "tar")
-
-		utils.Log.Infof("Saving OCI artifact as %s", imageName)
-		if err := meshkitOci.SaveOCIArtifact(img, imageName, name); err != nil {
+		artifactPath, err := modeloci.BuildModelOCIArtifact(cmdModelBuildFlagsProvided.Path, "", name, version)
+		if err != nil {
 			return ErrModelBuild(err)
 		}
+		utils.Log.Infof("Saving OCI artifact as %s", artifactPath)
 
 		return nil
 	},
@@ -139,43 +129,4 @@ mesheryctl model build [model-name]/[model-version]
 
 func init() {
 	buildModelCmd.Flags().StringVarP(&cmdModelBuildFlagsProvided.Path, "path", "p", ".", "(optional) target directory to get model from (default: current dir)")
-}
-
-// parseModelInput parses the user input into model name and version.
-// The input can be `model-name` or `model-name/version`.
-func buildModelParseModelInput(input string) (name, version string) {
-	parts := strings.Split(input, "/")
-	name = parts[0]
-	if len(parts) > 1 {
-		version = parts[1]
-	}
-	return
-}
-
-func buildModelCompileFolderName(path string, name string, version string) string {
-	dirParts := make([]string, 0, 3)
-	if path != "" {
-		dirParts = append(dirParts, path)
-	}
-	dirParts = append(dirParts, name)
-	if version != "" {
-		dirParts = append(dirParts, version)
-	}
-	return filepath.Join(dirParts...)
-}
-
-func buildModelCompileImageName(name string, version string, extension string) string {
-	if version != "" {
-		return fmt.Sprintf(
-			"%s-%s.%s",
-			name,
-			strings.ReplaceAll(version, ".", "-"),
-			extension,
-		)
-	}
-	return fmt.Sprintf(
-		"%s.%s",
-		name,
-		extension,
-	)
 }
