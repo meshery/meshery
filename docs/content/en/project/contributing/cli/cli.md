@@ -2,7 +2,7 @@
 title: Contributing to Meshery CLI
 description: How to contribute to Meshery Command Line Interface.
 categories: [contributing]
-alias: /project/contributing/cli/
+aliases: [/project/contributing/contributing-cli]
 ---
 
 `mesheryctl` is written in Golang or the Go Programming Language. For development use [Go version 1.26+](https://go.dev/dl/). `mesheryctl` uses the [Cobra](https://github.com/spf13/cobra) framework. A good first-step towards contributing to `mesheryctl` would be to familiarize yourself with the [Cobra concepts](https://github.com/spf13/cobra#concepts). For manipulating config files, `mesheryctl` uses [Viper](https://github.com/spf13/viper).

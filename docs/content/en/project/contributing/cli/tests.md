@@ -2,7 +2,7 @@
 title: Contributing to Meshery CLI End-to-End Tests
 description: How to contribute to Meshery Command Line Interface end-to-end testing with BATS.
 categories: [contributing]
-aliases: [project/contributing/contributing-cli-tests]
+aliases: [/project/contributing/contributing-cli-tests]
 ---
 
 Meshery CLI is the command line interface for Meshery. Meshery CLI, otherwise known as `mesheryctl`, is a client of Meshery Server's [REST API]({{< ref "reference/extensibility/api.md" >}}). It provides a way to interact with Meshery and perform various operations such as installing, configuring, and managing cloud native infrastructure.

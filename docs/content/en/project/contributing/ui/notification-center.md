@@ -2,7 +2,7 @@
 title: Contributing to Meshery UI - Notification Center
 description: How to contribute to the Notification Center in Meshery's web-based UI.
 categories: [contributing]
-aliases: [project/contributing/contributing-ui-notification-center]
+aliases: [/project/contributing/contributing-ui-notification-center]
 ---
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisite Reading</strong></p>
