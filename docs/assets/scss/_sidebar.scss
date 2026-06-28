@@ -487,3 +487,8 @@
     -ms-transform: rotate(45deg);
   }
 }
+
+/* Sidebar toggle button arrows - white color */
+#td-sidebar-menu .sidebar-section-toggle .caret-icon path {
+  stroke: var(--sidebar-text-color);
+}
