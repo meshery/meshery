@@ -105,13 +105,13 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 			}
 			info, err := os.Stat(ociSourcePath)
 			if err != nil {
-				return errors.New(utils.RegistryError(fmt.Sprintf("invalid --oci-source-path %q: %s", ociSourcePath, err), "publish"))
+				return errors.New(utils.RegistryError(fmt.Sprintf("invalid --oci-source-path %q: %v", ociSourcePath, err), "publish"))
 			}
 			if !info.IsDir() {
 				return errors.New(utils.RegistryError(fmt.Sprintf("invalid --oci-source-path %q: not a directory", ociSourcePath), "publish"))
 			}
-			if err := os.MkdirAll(ociOutputPath, 0o755); err != nil {
-				return errors.New(utils.RegistryError(fmt.Sprintf("invalid --oci-output-path %q: %s", ociOutputPath, err), "publish"))
+			if err := os.MkdirAll(ociOutputPath, 0o750); err != nil {
+				return errors.New(utils.RegistryError(fmt.Sprintf("invalid --oci-output-path %q: %v", ociOutputPath, err), "publish"))
 			}
 		}
 

@@ -29,6 +29,11 @@ func TestResolveModelOCIVersion(t *testing.T) {
 			versions: []string{"v1.0.0", "v1.2.0", "v1.1.9"},
 			expected: "v1.2.0",
 		},
+		{
+			name:     "stable version preferred over pre-release",
+			versions: []string{"v1.20.0-beta.0", "v1.20.0"},
+			expected: "v1.20.0",
+		},
 	}
 
 	for _, tt := range tests {

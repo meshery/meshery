@@ -51,8 +51,12 @@ func BuildModelOCIArtifact(sourcePath, outputPath, name, version string) (string
 }
 
 func BuildModelOCIArtifactFromFolder(folder, outputPath, name, version string) (string, error) {
-	if _, err := os.Stat(folder); err != nil {
+	info, err := os.Stat(folder)
+	if err != nil {
 		return "", err
+	}
+	if !info.IsDir() {
+		return "", fmt.Errorf("expected directory but got file: %s", folder)
 	}
 
 	if outputPath != "" {

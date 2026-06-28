@@ -122,7 +122,16 @@ func readModelVersionDirectories(modelDir string) ([]string, error) {
 	versions := []string{}
 	for _, entry := range entries {
 		if entry.IsDir() {
-			versions = append(versions, entry.Name())
+			containsDigit := false
+			for _, r := range entry.Name() {
+				if unicode.IsDigit(r) {
+					containsDigit = true
+					break
+				}
+			}
+			if containsDigit {
+				versions = append(versions, entry.Name())
+			}
 		}
 	}
 
@@ -154,11 +163,22 @@ func compareVersionStrings(left, right string) int {
 		}
 	}
 
+	leftHasDash := strings.Contains(left, "-")
+	rightHasDash := strings.Contains(right, "-")
+	if leftHasDash && !rightHasDash {
+		return -1
+	}
+	if !leftHasDash && rightHasDash {
+		return 1
+	}
 	return strings.Compare(left, right)
 }
 
 func versionNumberParts(version string) []int {
 	version = strings.TrimPrefix(version, "v")
+	if idx := strings.IndexAny(version, "-+"); idx != -1 {
+		version = version[:idx]
+	}
 	fields := strings.FieldsFunc(version, func(r rune) bool {
 		return !unicode.IsDigit(r)
 	})
