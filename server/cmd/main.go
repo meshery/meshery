@@ -59,7 +59,7 @@ const (
 	// primary provider host (install/providers.env) so it cannot drift from the
 	// PROVIDER_BASE_URLS default seeded into viper below.
 	DefaultProviderURL = models.PrimaryProviderURL
-	RelationshipsPath  = "../meshmodel/kubernetes/"
+	RelationshipsPath  = "../../models/kubernetes/"
 )
 
 func main() {

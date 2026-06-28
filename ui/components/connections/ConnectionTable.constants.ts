@@ -60,7 +60,7 @@ export type ConnectionStateTransition = {
 
 // `transitionMap` from a connection definition: keyed by current status, each
 // value is the list of states reachable from that status. Authored per-kind in
-// meshery core (server/meshmodel/.../connections/*.json) and surfaced to the UI
+// meshery core (models/.../connections/*.json) and surfaced to the UI
 // via the connection definitions, replacing the previously hardcoded map.
 export type ConnectionTransitionMap = Record<string, ConnectionStateTransition[]>;
 

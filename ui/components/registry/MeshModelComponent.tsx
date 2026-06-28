@@ -38,12 +38,15 @@ import {
   AddCircleIcon as AddIcon,
   ExternalLinkIcon as LinkIcon,
   FileUploadIcon as UploadIcon,
+  useMediaQuery,
 } from '@sistent/sistent';
+import { useTheme } from '@/theme';
 import { iconSmall } from 'css/icons.styles';
 import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
 import ImportModelModal from './ImportModelModal';
 import CreateModelModal from './CreateModelModal';
 import CreateRelationshipModal from './CreateRelationshipModal';
+import MeshModelMobileDetails from './MeshModelMobileDetails';
 
 type MeshModelComponentProps = {
   settingsRouter?: (_router: any) => { handleChangeSelectedTab?: (_tab: string) => void };
@@ -58,6 +61,8 @@ const MeshModelComponent_ = ({
   externalSearchText = null, // External search text from modal
   externalSelectedItemUUID = null, // External selected item UUID from modal
 }: MeshModelComponentProps) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
   // -> use settingsRouter when not in modal mode (Settings page)
   const { handleChangeSelectedTab } =
@@ -549,11 +554,15 @@ const MeshModelComponent_ = ({
               }}
             />
           </DetailsContainer>
-          <MeshModelDetails
-            view={view}
-            setShowDetailsData={setShowDetailsData}
-            showDetailsData={showDetailsData}
-          />
+          {isMobile ? (
+            <MeshModelMobileDetails
+              view={view}
+              showDetailsData={showDetailsData}
+              setShowDetailsData={setShowDetailsData}
+            />
+          ) : (
+            <MeshModelDetails view={view} showDetailsData={showDetailsData} />
+          )}
         </TreeWrapper>
       </MainContainer>
     </WorkloadsContainer>
@@ -566,9 +575,10 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
       <div
         style={{
           display: 'flex',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-start',
           alignItems: 'center',
-          gap: '1rem', // Add some space between buttons
+          gap: '0.75rem',
+          flexWrap: 'wrap',
         }}
       >
         {view === MODELS && (
