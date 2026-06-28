@@ -117,7 +117,7 @@ func (h *Handler) ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, b
 	if reqURL == "/" || reqURL == "" {
 		filePath.WriteString("index.html")
 	} else if isDynamicUIEndpoint(reqURL) {
-		log.Println("serving dynamic ui endpoint:", r.URL.Path, reqURL)
+        h.log.Infof("serving dynamic ui endpoint: %s %s", r.URL.Path, reqURL)
 		filePath.Reset()
 		filePath.WriteString(getDynamicUIEndpoint(reqURL))
 
