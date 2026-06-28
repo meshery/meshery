@@ -82,6 +82,7 @@ clipboard.on("success", (e) => {
     if (!icon) return;
 
     button.dataset.isCopying = "true";
+    button.setAttribute('aria-label', 'Copied to clipboard');
 
     const originalIcon = icon.cloneNode(true);
     const text = document.createElement('span');
@@ -100,6 +101,7 @@ clipboard.on("success", (e) => {
             return;
         }
         button.replaceChild(originalIcon, text);
+        button.setAttribute('aria-label', 'Copy code to clipboard'); 
         button.removeAttribute("data-is-copying");
     }, 2000);
 })
