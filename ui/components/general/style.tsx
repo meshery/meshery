@@ -112,13 +112,13 @@ export const MainLogoText = styled('img')(({ theme }) => ({
 }));
 
 export const ExpandMoreIcon = styled('svg', {
-  shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
-})(({ isCollapsed, hasChildren, theme }) => ({
+  shouldForwardProp: (prop) => prop !== 'isExpanded' && prop !== 'hasChildren',
+})(({ isExpanded, hasChildren, theme }) => ({
   opacity: 0, // Initially hidden
   visibility: 'hidden',
   cursor: 'pointer',
   display: hasChildren ? 'inline-block' : 'none',
-  transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
+  transform: isExpanded ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
   transition:
     'transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out',
 
@@ -133,10 +133,10 @@ export const ExpandMoreIcon = styled('svg', {
   },
 }));
 
-export const ExpandMore = ({ isCollapsed, hasChildren, theme, ...props }) => (
+export const ExpandMore = ({ isExpanded, hasChildren, theme, ...props }) => (
   <IconButton
-    aria-expanded={!isCollapsed}
-    aria-label={isCollapsed ? 'Expand' : 'Collapse'}
+    aria-expanded={!!isExpanded}
+    aria-label={isExpanded ? 'Collapse' : 'Expand'}
     style={{
       padding: 0,
       display: hasChildren ? 'inline-block' : 'none',
@@ -148,7 +148,7 @@ export const ExpandMore = ({ isCollapsed, hasChildren, theme, ...props }) => (
       viewBox="0 0 24 24"
       width="20"
       height="20"
-      isCollapsed={isCollapsed}
+      isExpanded={isExpanded}
       hasChildren={hasChildren}
     >
       <CaretDownIcon fill={theme.palette.icon.brand} />

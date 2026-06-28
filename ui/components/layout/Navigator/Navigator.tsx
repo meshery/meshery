@@ -711,6 +711,11 @@ const NavigatorContent = () => {
                   isActive={currentPath === href}
                   isShow={!show}
                   onClick={() => {
+                    // Leaf items navigate via their link; there is nothing to expand/collapse,
+                    // so never add them to openItems (doing so would strand them there and break
+                    // the submenu-aware onMouseLeave below).
+                    if (!children) return;
+                    // Keep an already-open link submenu open when its row is clicked again.
                     if (link && openItems.includes(childId)) return;
                     toggleItemCollapse(childId);
                   }}
@@ -751,8 +756,7 @@ const NavigatorContent = () => {
                       e.stopPropagation();
                       toggleItemCollapse(childId);
                     }}
-                    isCollapsed={openItems.includes(childId)}
-                    isDrawerCollapsed={isDrawerCollapsed}
+                    isExpanded={openItems.includes(childId)}
                     theme={theme}
                     hasChildren={!!children}
                   />
