@@ -52,7 +52,14 @@ const HelpCenterWidget = ({ iconsProps }: HelpCenterWidgetProps) => {
     () =>
       HELP_CENTER_RESOURCES.map((resource) => ({
         ...resource,
-        icon: <DesignIcon width="15px" height="15px" fill="currentColor" />,
+        icon: (
+          <DesignIcon
+            width="15px"
+            height="15px"
+            primaryFill="currentColor"
+            secondaryFill="currentColor"
+          />
+        ),
       })),
     [],
   );
@@ -60,7 +67,14 @@ const HelpCenterWidget = ({ iconsProps }: HelpCenterWidgetProps) => {
   return (
     <PlainCard
       resources={resources}
-      icon={<DocumentIcon {...iconsProps} fill={theme.palette.icon.default} {...iconMedium} />}
+      icon={
+        <DocumentIcon
+          {...iconsProps}
+          primaryFill={theme.palette.icon.default}
+          secondaryFill={theme.palette.icon.default}
+          {...iconMedium}
+        />
+      }
       title="HELP CENTER"
     />
   );
