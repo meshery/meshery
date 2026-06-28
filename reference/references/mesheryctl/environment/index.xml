@@ -47,7 +47,7 @@ mesheryctl environment create --orgId [orgId] --name [name] --description [descr
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-environment-delete</title><link>/reference/references/mesheryctl/environment/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/environment/delete/</guid><description>&lt;h1 id="mesheryctl-environment-delete"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-environment-delete</title><link>/reference/references/mesheryctl/environment/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/environment/delete/</guid><description>&lt;h1 id="mesheryctl-environment-delete"&gt;
 	mesheryctl environment delete
 &lt;/h1&gt;
 &lt;p&gt;Delete an environment&lt;/p&gt;
@@ -93,7 +93,7 @@ mesheryctl environment delete [environmentId]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-environment-list</title><link>/reference/references/mesheryctl/environment/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/environment/list/</guid><description>&lt;h1 id="mesheryctl-environment-list"&gt;
+&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-environment-list</title><link>/reference/references/mesheryctl/environment/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/environment/list/</guid><description>&lt;h1 id="mesheryctl-environment-list"&gt;
 	mesheryctl environment list
 &lt;/h1&gt;
 &lt;p&gt;List registered environments&lt;/p&gt;
@@ -180,4 +180,4 @@ mesheryctl environment view --orgId [orgId]
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/contributing-cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item></channel></rss>
