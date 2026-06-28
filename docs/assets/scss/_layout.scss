@@ -2,6 +2,8 @@
 html {
   font-size: 100%;
   box-sizing: border-box;
+  scrollbar-color: var(--brand-color) var(--color-primary-light);
+  scrollbar-width: thin;
 
   @media (max-width: 75em) {
     font-size: 100%;
@@ -24,6 +26,24 @@ html {
   box-sizing: inherit;
   color: var(--color-secondary-dark);
   text-decoration: none;
+}
+
+::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-primary-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--brand-color);
+  border-radius: 0.3rem;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-color-primary);
 }
 
 body {
