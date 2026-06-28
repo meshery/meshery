@@ -231,4 +231,54 @@ describe('ImportModelModal', () => {
 
     expect(unsubscribe).toHaveBeenCalled();
   });
+
+  it('renders the import result when the register event is received for url', async () => {
+    const unsubscribe = vi.fn();
+    mockOn.mockReturnValue({ unsubscribe });
+    render(<ImportModelModal isImportModalOpen={true} setIsImportModalOpen={vi.fn()} />);
+    fireEvent.click(screen.getByTestId('submit-url'));
+    await Promise.resolve();
+
+    const handler = mockOn.mock.calls[0][1];
+    expect(screen.getByTestId('loading')).toBeInTheDocument();
+
+    handler({
+      data: {
+        event: {
+          action: 'register',
+          metadata: { ModelImportMessage: 'ok', ModelDetails: {} },
+        },
+      },
+    });
+
+    expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    expect(screen.getByTestId('import-messages')).toBeInTheDocument();
+    expect(screen.getByTestId('imported-section')).toBeInTheDocument();
+    expect(unsubscribe).toHaveBeenCalled();
+  });
+
+  it('renders the import result when the register event is received for file', async () => {
+    const unsubscribe = vi.fn();
+    mockOn.mockReturnValue({ unsubscribe });
+    render(<ImportModelModal isImportModalOpen={true} setIsImportModalOpen={vi.fn()} />);
+    fireEvent.click(screen.getByTestId('submit-file'));
+    await Promise.resolve();
+
+    const handler = mockOn.mock.calls[0][1];
+    expect(screen.getByTestId('loading')).toBeInTheDocument();
+
+    handler({
+      data: {
+        event: {
+          action: 'register',
+          metadata: { ModelImportMessage: 'ok', ModelDetails: {} },
+        },
+      },
+    });
+
+    expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    expect(screen.getByTestId('import-messages')).toBeInTheDocument();
+    expect(screen.getByTestId('imported-section')).toBeInTheDocument();
+    expect(unsubscribe).toHaveBeenCalled();
+  });
 });
