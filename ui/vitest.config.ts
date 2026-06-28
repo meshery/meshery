@@ -21,7 +21,6 @@ export default defineConfig({
       // in SistentThemeProvider, or (b) exhaustively stubbing the imported
       // exports. Tracked separately from the Nighthawk removal.
       'components/layout/Header/Header.test.tsx',
-      'components/registry/ImportModelModal.test.tsx',
       'components/registry/CreateModelModal.test.tsx',
       'components/registry/MeshModelComponent.test.tsx',
     ],
