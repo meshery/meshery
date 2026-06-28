@@ -2,6 +2,7 @@ package stages
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/meshery/meshery/server/models/pattern/planner"
@@ -59,7 +60,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 			patternutils.ApplyV1beta3MetadataChanges(v1beta3Comp, &component)
 
 			if err != nil {
-				fmt.Println("Err while assigning labels", err)
+				log.Printf("error assigning labels: %v", err)
 				errs = append(errs, err)
 				return false
 			}

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -64,7 +65,7 @@ func RecursiveCastMapStringInterfaceToMapStringInterface(in map[string]interface
 	res := ConvertMapInterfaceMapString(in)
 	out, ok := res.(map[string]interface{})
 	if !ok {
-		fmt.Println("failed to cast")
+		log.Println("warning: failed to cast map interface to map string")
 	}
 
 	return out
@@ -176,19 +177,19 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 		path := filepath.Join(UI, dirname, "color")
 		err := os.MkdirAll(path, 0777)
 		if err != nil {
-			fmt.Println(err)
+			log.Printf("error creating SVG directory: %v", err)
 			return
 		}
 		successCreatingDirectory = true
 
 		f, err := os.Create(filepath.Join(path, filename+"-color.svg"))
 		if err != nil {
-			fmt.Println(err)
+			log.Printf("error creating SVG file: %v", err)
 			return
 		}
 		_, err = f.WriteString(svgColor)
 		if err != nil {
-			fmt.Println(err)
+			log.Printf("error writing SVG color data: %v", err)
 			return
 		}
 		svgColorPath = getRelativePathForAPI(filepath.Join(dirname, "color", filename+"-color.svg")) //Replace the actual SVG with path to SVG
@@ -199,19 +200,19 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 		path := filepath.Join(UI, dirname, "white")
 		err := os.MkdirAll(path, 0777)
 		if err != nil {
-			fmt.Println(err)
+			log.Printf("error creating SVG directory: %v", err)
 			return
 		}
 		successCreatingDirectory = true
 
 		f, err := os.Create(filepath.Join(path, filename+"-white.svg"))
 		if err != nil {
-			fmt.Println(err)
+			log.Printf("error creating SVG file: %v", err)
 			return
 		}
 		_, err = f.WriteString(svgWhite)
 		if err != nil {
-			fmt.Println(err)
+			log.Printf("error writing SVG white data: %v", err)
 			return
 		}
 		svgWhitePath = getRelativePathForAPI(filepath.Join(dirname, "white", filename+"-white.svg")) //Replace the actual SVG with path to SVG
@@ -221,19 +222,19 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 		path := filepath.Join(UI, dirname, "complete")
 		err := os.MkdirAll(path, 0777)
 		if err != nil {
-			fmt.Println(err)
+			log.Printf("error creating SVG directory: %v", err)
 			return
 		}
 		successCreatingDirectory = true
 
 		f, err := os.Create(filepath.Join(path, filename+"-complete.svg"))
 		if err != nil {
-			fmt.Println(err)
+			log.Printf("error creating SVG file: %v", err)
 			return
 		}
 		_, err = f.WriteString(svgComplete)
 		if err != nil {
-			fmt.Println(err)
+			log.Printf("error writing SVG complete data: %v", err)
 			return
 		}
 		svgCompletePath = getRelativePathForAPI(filepath.Join(dirname, "complete", filename+"-complete.svg")) //Replace the actual SVG with path to SVG
@@ -269,7 +270,7 @@ func WriteSVGsOnFileSystem(comp *component.ComponentDefinition) {
 func DeleteSVGsFromFileSystem() {
 	for _, path := range UISVGPaths {
 		if err := os.RemoveAll(path); err != nil && !errors.Is(err, os.ErrNotExist) {
-			fmt.Println(err)
+			log.Printf("error deleting SVG directory: %v", err)
 		}
 	}
 }

@@ -36,7 +36,7 @@ func Filler(skipPrintLogs bool) ChainStageFunction {
 		flattenedComponent := map[string]interface{}{}
 		utils.FlattenMap("", utils.ToMapStringInterface(data.Pattern), flattenedComponent)
 		if !skipPrintLogs {
-			fmt.Printf("%+#v\n", flattenedComponent)
+			log.Printf("flattened component: %+#v", flattenedComponent)
 		}
 		err = fill(data.Pattern, flattenedComponent)
 		if next != nil {
@@ -138,7 +138,7 @@ func fillNamespace(component *component.ComponentDefinition, flattenedPattern ma
 	}
 
 	configurationMetadata, err := mutils.Cast[map[string]interface{}](_metadata)
-	fmt.Println("configurationMetadata: ", configurationMetadata, err)
+
 	if err != nil {
 		return errors.Wrapf(err, "failed to resolve namespace reference for \"%s: %s\"", component.DisplayName, component.Component.Kind)
 	}

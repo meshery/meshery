@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"strconv"
 	"strings"
 	"sync"
@@ -175,7 +176,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		var k8scontext models.K8sContext
 		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
 		if !ok || len(allContexts) == 0 {
-			fmt.Println("No context found")
+			log.Println("No context found")
 			return ErrDeployingAdapterInK8s(fmt.Errorf("no context found"))
 		}
 		for _, k8sctxPtr := range allContexts {
@@ -273,7 +274,7 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 		var k8scontext models.K8sContext
 		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
 		if !ok || len(allContexts) == 0 {
-			fmt.Println("No context found")
+			log.Println("No context found")
 			return ErrUnDeployingAdapterInK8s(fmt.Errorf("no context found"))
 		}
 		for _, k8sctxPtr := range allContexts {

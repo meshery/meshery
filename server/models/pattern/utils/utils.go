@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	mathrand "math/rand"
 	"strconv"
 	"strings"
@@ -16,7 +17,7 @@ func RecursiveCastMapStringInterfaceToMapStringInterface(in map[string]interface
 	res := ConvertMapInterfaceMapString(in)
 	out, ok := res.(map[string]interface{})
 	if !ok {
-		fmt.Println("failed to cast")
+		log.Println("warning: failed to cast map interface to map string")
 	}
 
 	return out

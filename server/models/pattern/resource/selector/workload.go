@@ -18,7 +18,6 @@ import (
 // v1beta3 → v1beta2 bridge happens in FindCompDefinitionWithVersion.
 func (s *Selector) GetDefinition(name string, version string, modelName string, apiVersion string, allowEmptyAPIVersion bool) (componentv1beta2.ComponentDefinition, error) {
 	name = strings.Split(name, ".")[0]
-	fmt.Println(name, modelName, version, apiVersion)
 	if modelName == "" {
 		return componentv1beta2.ComponentDefinition{}, fmt.Errorf("model name is required")
 	}
