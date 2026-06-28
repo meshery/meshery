@@ -72,13 +72,13 @@ jobs:
         if: matrix.language == 'go'
         run: |
           # Build Meshery Server
-          go build -o ./server/cmd/meshery-server ./server/cmd/main.go ./server/cmd/error.go
+          go build -o ./server/cmd/meshery-server ./server/cmd
           
           # Build Meshery CLI
-          go build -o ./mesheryctl/mesheryctl ./mesheryctl/cmd/mesheryctl/main.go
+          go build -o ./mesheryctl/mesheryctl ./mesheryctl/cmd/mesheryctl
           
           # Build WASM Policy Engine
-          GOOS=js GOARCH=wasm go build -o ./server/policies/wasm/policy_engine.wasm ./server/policies/wasm/main.go
+          (cd server/policies/wasm && GOOS=js GOARCH=wasm go build -o policy_engine.wasm .)
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
