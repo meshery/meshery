@@ -73,7 +73,7 @@ These fixtures are used by `ui/tests/e2e/relationship_evaluation.spec.js` to ver
 
 Browse the relationship definitions in:
 ```
-/server/meshmodel/kubernetes/v1.35.0-beta.0/v1.0.0/relationships/
+/models/kubernetes/v1.35.0-beta.0/v1.0.0/relationships/
 ```
 
 Each file defines a relationship with:

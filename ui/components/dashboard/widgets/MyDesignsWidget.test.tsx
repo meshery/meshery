@@ -27,6 +27,13 @@ vi.mock('@/constants/endpoints', () => ({
 }));
 
 vi.mock('@sistent/sistent', () => ({
+  Box: ({
+    children,
+    sx: _sx,
+    ...rest
+  }: { children: React.ReactNode; sx?: unknown } & React.HTMLAttributes<HTMLDivElement>) => (
+    <div {...rest}>{children}</div>
+  ),
   CatalogIcon: () => <svg data-testid="catalog-icon" />,
   DesignIcon: () => <svg data-testid="design-icon" />,
   EditIcon: () => <svg data-testid="edit-icon" />,
