@@ -148,7 +148,6 @@ Create a relationship definition as a YAML file, placing this new definition fil
 - `type`: The augmentative category of the relationship (e.g., binding, non-binding, inventory).
 - `subType`: The specific representative visual paradigm (e.g., parent, mount, network, wallet, badge).
 - `selectors`: The scope of the relationship, including the components involved and any constraints. Selector specify to which component(s) the relationship applies or does not apply (think of in terms of the `AND` operators in a query). Selector Sets are used to combine multiple selectors for more granular control over the logic used when matchmaking (establishing a relationship) between components (think of in terms of the `OR` operators in a query).
-- `match_strategy_matrix`: An optional matrix defining advanced criteria for how the configuration of the `from` component must match the configuration of the `to` component in order for the relationship to be established.
 - `evaluationQuery`: Name of the policy or policies (Open Policy Agent rego file(s)) to invoke for relationship evaluation. Identify an existing OPA policy as the `evaluationQuery` suitable to the relationship. If no policy exists, propose a new policy (rego). *(rarely necessary)* Create a new policy for the evaluation of your relationship using Rego. *This step is only necessary and can typically be skipped. Contact a maintainer if the relationship requires a new policy to evaluate the relationship.*
 - `description`: A characterization of the relationship, its purpose, and any constraints or considerations of its application.
 
@@ -356,13 +355,13 @@ Each policy has a set of evaluation rules defined and the `evaluationQuery` attr
      - `not_null`: Ensures the field is populated (exists and is not empty).
      - `to_contains_from`: Ensures that the value of the `from` component is contained within the `to` component's array or string.
    - **Example:**
-     ```json
-     "match_strategy_matrix": [
-       [ "equal_as_strings", "not_null" ],
-       [ "equal" ]
-     ]
-     ```
-     *In this example, the first pair of properties in the mutator/mutated references must equal each other as strings AND not be null. The second pair must strictly equal each other.*
+```json
+"match_strategy_matrix": [
+  [ "equal_as_strings", "not_null" ],
+  [ "equal" ]
+]
+```
+*In this example, the first pair of properties in the mutator/mutated references must equal each other as strings AND not be null. The second pair must strictly equal each other.*
 
 ##### Conflicts
 

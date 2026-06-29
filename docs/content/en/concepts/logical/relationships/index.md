@@ -352,7 +352,7 @@ Designs are evaluated by the [Policy Engine]({{< ref "concepts/logical/policies/
 
 ### Patch Strategies
 
-Patches in Meshery relationships utilize strategies and references (`mutatorRef`/`mutatedRef`) for the `from` and `to` fields. These convey the property path that will be updated as the relationship is created. Additionally, a `match_strategy_matrix` can be utilized to define advanced structural matching between the references. For more detailed information on configuring these strategies, refer to the [Contributing to Relationships]({{< ref "project/contributing/models/relationships.md#matching" >}}) guide.
+Patches in Meshery relationships utilize strategies and references (`mutatorRef`/`mutatedRef`) for the `from` and `to` fields. These convey the property path that will be updated as the relationship is created. Additionally, a `match_strategy_matrix` can be utilized to define advanced structural matching between the references. For more detailed information on configuring these strategies, refer to the [Contributing to Relationships]({{< ref "project/contributing/models/relationships#matching" >}}) guide.
 
 ### Caveats and Considerations
 
