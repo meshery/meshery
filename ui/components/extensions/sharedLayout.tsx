@@ -7,8 +7,7 @@ type ChildrenProps = {
 };
 
 export const UnifiedCardContainer = ({
-  children,
-  sx = {},
+  children, sx = {},
 }: ChildrenProps & { sx?: object }) => (
   <CardContainer
     sx={{
