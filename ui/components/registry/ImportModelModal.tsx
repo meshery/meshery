@@ -280,19 +280,20 @@ const ImportModelModal = memo<ImportModelModalProps>(
       updateProgress({ showProgress: true });
       setActiveStep(1);
 
-      importModelReq({ importBody: requestBody })
-        .unwrap()
-        .catch((err) => {
+      (async () => {
+        try {
+          await importModelReq({ importBody: requestBody }).unwrap();
+        } catch (err) {
           console.error('Failed to import model:', err);
           notify({
             message: 'Model import failed. Please verify the file or URL and try again.',
             event_type: EVENT_TYPES.ERROR,
           });
           setActiveStep(0); // Move back on failure
-        })
-        .finally(() => {
+        } finally {
           updateProgress({ showProgress: false });
-        });
+        }
+      })();
     };
 
     const helpText = (
