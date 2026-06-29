@@ -166,6 +166,7 @@ const ImportModelModal = memo<ImportModelModalProps>(
     const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
     const [importModelReq] = useImportMeshModelMutation();
     const [activeStep, setActiveStep] = useState(0);
+    const [pendingRequest, setPendingRequest] = useState<any>(null);
     const { notify } = useNotification();
 
     const handleClose = () => {
@@ -278,23 +279,29 @@ const ImportModelModal = memo<ImportModelModalProps>(
       // fast backend fires the WebSocket success event.
       // If it fails, transition back to the form step so the user is not stranded.
       updateProgress({ showProgress: true });
+      setPendingRequest(requestBody);
       setActiveStep(1);
-
-      (async () => {
-        try {
-          await importModelReq({ importBody: requestBody }).unwrap();
-        } catch (err) {
-          console.error('Failed to import model:', err);
-          notify({
-            message: 'Model import failed. Please verify the file or URL and try again.',
-            event_type: EVENT_TYPES.ERROR,
-          });
-          setActiveStep(0); // Move back on failure
-        } finally {
-          updateProgress({ showProgress: false });
-        }
-      })();
     };
+
+    useEffect(() => {
+      if (activeStep === 1 && pendingRequest) {
+        (async () => {
+          try {
+            await importModelReq({ importBody: pendingRequest }).unwrap();
+          } catch (err) {
+            console.error('Failed to import model:', err);
+            notify({
+              message: 'Model import failed. Please verify the file or URL and try again.',
+              event_type: EVENT_TYPES.ERROR,
+            });
+            setActiveStep(0); // Move back on failure
+          } finally {
+            updateProgress({ showProgress: false });
+            setPendingRequest(null);
+          }
+        })();
+      }
+    }, [activeStep, pendingRequest, importModelReq, notify]);
 
     const helpText = (
       <>
