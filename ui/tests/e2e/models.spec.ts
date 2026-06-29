@@ -113,7 +113,9 @@ test.describe.serial('Model Workflow Tests', () => {
     expect(download).toBeDefined();
     await page.getByRole('combobox', { name: 'model-status-select' }).click();
     await page.getByRole('option', { name: 'ignored' }).click();
-    await expect(page.getByRole('combobox', { name: 'model-status-select' })).toBeVisible();
+    await expect(page.getByRole('combobox', { name: 'model-status-select' })).toHaveText(
+      /ignored/i,
+    );
   });
 
   test('Import a Model via File Import', async ({ page }) => {
