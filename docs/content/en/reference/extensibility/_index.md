@@ -1,6 +1,7 @@
 ---
 title: Extensibility
 description: Meshery has an extensible architecture with several different types of extension points.
+categories: [extensibility]
 aliases:
 - /extensibility
 ---
