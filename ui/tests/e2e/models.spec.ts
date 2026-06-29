@@ -111,11 +111,9 @@ test.describe.serial('Model Workflow Tests', () => {
     await page.getByTestId('export-model-button').click();
     const download = await downloadPromise;
     expect(download).toBeDefined();
-    await page.getByRole('combobox', { name: 'model-status-select' }).click();
+    await page.getByRole('combobox', { name: 'Model status' }).click();
     await page.getByRole('option', { name: 'ignored' }).click();
-    await expect(page.getByRole('combobox', { name: 'model-status-select' })).toHaveText(
-      /ignored/i,
-    );
+    await expect(page.getByRole('combobox', { name: 'Model status' })).toHaveText(/ignored/i);
   });
 
   test('Import a Model via File Import', async ({ page }) => {

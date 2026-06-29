@@ -483,7 +483,7 @@ const StatusChip = ({ entityData, entityType }: { entityData: any; entityType: s
           defaultValue={data?.status || REGISTRY_ITEM_STATES.IGNORED}
           onChange={(e) => handleStatusChange(e)}
           SelectDisplayProps={{
-            'aria-label': 'model-status-select',
+            'aria-label': 'Model status',
           }}
           sx={{
             textTransform: 'capitalize',
