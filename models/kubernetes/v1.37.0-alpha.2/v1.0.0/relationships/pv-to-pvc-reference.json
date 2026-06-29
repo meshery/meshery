@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "",
+    "description": "Automatically configures the PersistentVolumeClaim to reference the PersistentVolume by name, and syncs storageClassName and volumeMode when an edge is drawn.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -36,6 +36,12 @@
               [
                 "equal_as_strings",
                 "not_null"
+              ],
+              [
+                "equal_as_strings"
+              ],
+              [
+                "equal"
               ]
             ],
             "model": {
@@ -53,9 +59,17 @@
             "patch": {
               "mutatorRef": [
                 [
+                  "displayName"
+                ],
+                [
                   "configuration",
-                  "metadata",
-                  "name"
+                  "spec",
+                  "storageClassName"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "volumeMode"
                 ]
               ],
               "patchStrategy": "replace"
@@ -86,6 +100,16 @@
                   "configuration",
                   "spec",
                   "volumeName"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "storageClassName"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "volumeMode"
                 ]
               ],
               "patchStrategy": "replace"

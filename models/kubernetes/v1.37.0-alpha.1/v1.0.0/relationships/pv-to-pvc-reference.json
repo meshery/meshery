@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Reference relationship between PersistentVolume and PersistentVolumeClaim. Automatically configures the PVC to reference the PV by name, and syncs storageClassName and volumeMode when an edge is drawn.",
+    "description": "Automatically configures the PersistentVolumeClaim to reference the PersistentVolume by name, and syncs storageClassName and volumeMode when an edge is drawn.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
