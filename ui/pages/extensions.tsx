@@ -1,3 +1,8 @@
+import {
+  UnifiedCardContainer,
+  UnifiedDescription,
+  UnifiedButtonContainer,
+} from '../components/extensions/sharedLayout';
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme, Box } from '@sistent/sistent';
@@ -8,72 +13,15 @@ import { EVENT_TYPES } from '../lib/event-types';
 import { useNotification, usePageTitle } from '@/utils/hooks';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { CardContainer, FrontSideDescription } from '../css/icons.styles';
 import { useDispatch } from 'react-redux';
 import { toggleCatalogContent } from '@/store/slices/mesheryUi';
 
-type ChildrenProps = {
-  children: React.ReactNode;
-};
 // Meshery Extension Point
 // ---
 // Purpose: Notify Remote Providers of changes in Golang dependencies
 // Learn more: See https://docs.meshery.io/extensibility
 // Add your repository to the list: https://github.com/meshery/meshery/issues/new/choose
 // ---
-
-const UnifiedCardContainer = ({ children, sx = {} }: ChildrenProps & { sx?: object }) => (
-  <CardContainer
-    sx={{
-      height: '100%',
-      minHeight: { xs: '280px', sm: '260px', lg: '280px' },
-      display: 'flex',
-      flexDirection: 'column',
-      position: 'relative',
-      ...sx,
-    }}
-  >
-    {children}
-  </CardContainer>
-);
-
-type UnifiedDescriptionProps = ChildrenProps & {
-  hasIcon?: boolean;
-  variant?: string;
-  'data-testid'?: string;
-};
-
-const UnifiedDescription = ({ children, hasIcon = false, ...props }: UnifiedDescriptionProps) => (
-  <FrontSideDescription
-    {...props}
-    sx={{
-      flex: 1,
-      display: 'flex',
-      flexDirection: { xs: hasIcon ? 'column' : 'row', sm: 'row' },
-      alignItems: { xs: hasIcon ? 'center' : 'flex-start', sm: 'flex-start' },
-      textAlign: { xs: hasIcon ? 'center' : 'left', sm: 'left' },
-      gap: { xs: hasIcon ? '12px' : '8px', sm: '8px' },
-      marginBottom: { xs: '50px', sm: '45px', lg: '40px' },
-      overflow: 'hidden',
-      wordWrap: 'break-word',
-      hyphens: 'auto',
-      '& > *:not(img)': {
-        maxWidth: '100%',
-        overflow: 'hidden',
-        wordWrap: 'break-word',
-        hyphens: 'auto',
-      },
-    }}
-  >
-    {children}
-  </FrontSideDescription>
-);
-
-const UnifiedButtonContainer = ({ children }: ChildrenProps) => (
-  <Box sx={{ position: 'absolute', bottom: 12, left: 12, right: 12, textAlign: 'right' }}>
-    {children}
-  </Box>
-);
 
 type ResponsiveImageProps = {
   src: string;
