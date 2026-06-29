@@ -33,7 +33,7 @@ mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [model
 Publish To Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/server/meshmodel
+mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/models
 
 </div>
 </pre> 
@@ -107,4 +107,4 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 ## See Also
 
-Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/contributing-cli.md#preserving-manually-added-documentation" >}}) for guidance.
+Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

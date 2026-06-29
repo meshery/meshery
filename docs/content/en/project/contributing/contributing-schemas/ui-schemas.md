@@ -3,6 +3,7 @@ title: UI Schemas
 description: How to contribute to Meshery Schemas for UI
 weight: 3
 categories: [contributing]
+aliases: [/project/contributing/contributing-ui-schemas]
 ---
 
 Meshery aims to decouple the UI logic from hardcoded structures and become fully schema-driven. This allows the UI to dynamically adapt based on changes in the underlying schema without requiring constant manual updates. This document explains how to integrate schema definitions from the [`meshery/schemas`](https://github.com/meshery/schemas) repository into the Meshery UI using a code-generation approach.
