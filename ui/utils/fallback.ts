@@ -28,7 +28,7 @@ export function normalizeStaticImagePath(path) {
 
   const normalized = trimmed.replace(/^\/+/, '');
 
-  // Meshmodel SVGs are generated under ui/public at runtime and are served by Meshery Server
+  // Model component icon SVGs are generated under ui/public at runtime and are served by Meshery Server
   // through the same ui/public-prefixed path.
   if (normalized.startsWith('ui/public/static/img/meshmodels/')) {
     return `/${normalized}`;
