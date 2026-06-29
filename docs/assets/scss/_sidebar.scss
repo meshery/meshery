@@ -93,21 +93,7 @@
   max-width: var(--sidebar-width);
   min-width: var(--sidebar-width);
 
-  /* Refined, modern scrollbar */
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: rgba(134, 142, 150, 0.3);
-    border-radius: 10px;
-    
-    &:hover {
-      background: rgba(134, 142, 150, 0.6);
-    }
-  }
+
 
  
   @media (max-width: 75em) {

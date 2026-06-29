@@ -150,3 +150,28 @@ button {
   border: 1px solid var(--color-secondary-light);
 }
 
+/* Custom scrollbar styling aligned with Meshery.io */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--brand-color) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--brand-color);
+  border-radius: 0.3rem;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
