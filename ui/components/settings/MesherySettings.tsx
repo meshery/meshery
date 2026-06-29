@@ -12,8 +12,8 @@ import {
   LeftArrowIcon,
   DatabaseIcon,
   MendeleyIcon,
-  FileIcon,
   useTheme,
+  OutlinedResetIcon,
 } from '@sistent/sistent';
 import DashboardMeshModelGraph from '../dashboard/charts/DashboardMeshModelGraph';
 import Link from 'next/link';
@@ -248,7 +248,7 @@ const MesherySettings = () => {
                 </CustomTooltip>
                 <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
                   <Tab
-                    icon={<FileIcon {...iconMedium} fill={theme.palette.icon.default} />}
+                    icon={<DatabaseIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Registry"
                     data-testid="settings-tab-registry"
                     value={REGISTRY}
@@ -258,7 +258,7 @@ const MesherySettings = () => {
 
                 <CustomTooltip title="Reset System" placement="top" value={RESET}>
                   <Tab
-                    icon={<DatabaseIcon {...iconMedium} fill={theme.palette.icon.default} />}
+                    icon={<OutlinedResetIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Reset"
                     data-testid="settings-tab-reset"
                     // tab="systemReset"
