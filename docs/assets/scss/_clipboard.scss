@@ -71,6 +71,9 @@ pre.codeblock-pre {
   & i.fa-copy::before {
     color: #f1f3f5 !important;
   }
+  & i.fa-check::before {
+    color: #00b39f !important;
+  }
 }
 .clipbtn:hover {
   color: #fff;
