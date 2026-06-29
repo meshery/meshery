@@ -3,7 +3,7 @@ html {
   font-size: 100%;
   box-sizing: border-box;
   scrollbar-color: var(--scrollbar-color) var(--background-light);
-  scrollbar-width: thin;
+  scrollbar-width: auto;
 
   @media (max-width: 75em) {
     font-size: 100%;
@@ -16,6 +16,11 @@ html {
   @media (max-width: 37.5em) {
     font-size: 105%;
   }
+}
+
+body {
+  scrollbar-color: var(--scrollbar-color) var(--background-light);
+  scrollbar-width: auto;
 }
 
 *,
@@ -43,6 +48,28 @@ html {
 }
 
 ::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: var(--background-light);
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-color);
+  border-radius: 0.3rem;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
 
