@@ -203,7 +203,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        {{< section-pages section="reference" >}}
+        {{< section-pages section="reference/references" >}}
       </ul>
     </details>
     <!-- Extensibility -->
@@ -214,7 +214,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        {{< section-pages section="extensibility" >}}
+        {{< section-pages section="reference/extensibility" >}}
       </ul>
     </details>
   </div>
