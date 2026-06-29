@@ -1,0 +1,100 @@
+# Meshery Design for ClickHouse
+# Source: https://artifacthub.io/packages/helm/bitnami/clickhouse
+# This design represents a basic ClickHouse deployment using the Bitnami Helm chart.
+
+apiVersion: core.meshery.io/v1alpha1
+kind: MesheryDesign
+metadata:
+  name: clickhouse
+  version: v0.1.0
+  description: ClickHouse deployment using Bitnami Helm chart
+  annotations:
+    source: https://artifacthub.io/packages/helm/bitnami/clickhouse
+spec:
+  components:
+    # ClickHouse StatefulSet with persistent storage, resource limits, and health checks
+    - apiVersion: apps/v1
+      kind: StatefulSet
+      metadata:
+        name: clickhouse
+      spec:
+        serviceName: clickhouse
+        replicas: 3
+        selector:
+          matchLabels:
+            app: clickhouse
+        template:
+          metadata:
+            labels:
+              app: clickhouse
+          spec:
+            containers:
+              - name: clickhouse
+                image: bitnami/clickhouse:24.1.0
+                ports:
+                  - containerPort: 8123
+                  - containerPort: 9000
+                env:
+                  - name: CLICKHOUSE_ADMIN_USER
+                    value: admin
+                  - name: CLICKHOUSE_ADMIN_PASSWORD
+                    valueFrom:
+                      secretKeyRef:
+                        name: clickhouse-secrets
+                        key: admin-password
+                resources:
+                  requests:
+                    cpu: "250m"
+                    memory: "512Mi"
+                  limits:
+                    cpu: "1"
+                    memory: "2Gi"
+                readinessProbe:
+                  tcpSocket:
+                    port: 9000
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                livenessProbe:
+                  exec:
+                    command:
+                      - /bin/sh
+                      - -c
+                      - "echo 'SELECT 1' | clickhouse-client -h localhost -u admin --password=$CLICKHOUSE_ADMIN_PASSWORD"
+                  initialDelaySeconds: 30
+                  periodSeconds: 20
+                volumeMounts:
+                  - name: clickhouse-data
+                    mountPath: /bitnami/clickhouse
+            volumes: []
+        volumeClaimTemplates:
+          - metadata:
+              name: clickhouse-data
+            spec:
+              accessModes: [ "ReadWriteOnce" ]
+              resources:
+                requests:
+                  storage: 50Gi
+    # Service to expose ClickHouse
+    - apiVersion: v1
+      kind: Service
+      metadata:
+        name: clickhouse
+      spec:
+        type: ClusterIP
+        ports:
+          - port: 8123
+            targetPort: 8123
+            name: http
+          - port: 9000
+            targetPort: 9000
+            name: tcp
+        selector:
+          app: clickhouse
+  relationships:
+    - from:
+        kind: Service
+        name: clickhouse
+      to:
+        kind: StatefulSet
+        name: clickhouse
+      type: exposes
