@@ -4,7 +4,6 @@ import { useNotificationHandlers } from '../../utils/hooks/useNotification';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
 import ResourcesSubMenu, { CRDsResourcesSubMenu } from './resources/resources-sub-menu';
-import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 import MesheryIcon from './images/meshery-icon';
 import { TabPanel } from './tabpanel';
 import { iconLarge } from '../../css/icons.styles';
@@ -93,18 +92,17 @@ const useDashboardRouter = () => {
 
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
 
+type ResourceCategory = 'Overview' | keyof typeof ResourcesConfig;
+type SvgAsset = string | { src?: string };
+
 interface ResourceIconProps {
-  resource: string;
+  resource: ResourceCategory;
 }
 
 const ResourceIcon: React.FC<ResourceIconProps> = ({ resource }) => {
-  const renderSvgIcon = (icon: any) => {
+  const renderSvgIcon = (icon: SvgAsset) => {
     const src = typeof icon === 'string' ? icon : icon?.src;
-    return src ? (
-      <img src={src} style={iconLarge} alt="" aria-hidden="true" />
-    ) : (
-      <KubernetesIcon style={iconLarge} />
-    );
+    return src ? <img src={src} style={iconLarge} alt="" aria-hidden="true" /> : null;
   };
   switch (resource) {
     case 'Overview':
@@ -126,7 +124,7 @@ const ResourceIcon: React.FC<ResourceIconProps> = ({ resource }) => {
     case 'CRDS':
       return renderSvgIcon(CrdIcon);
     default:
-      return <KubernetesIcon style={iconLarge} />;
+      return null;
   }
 };
 
