@@ -2,6 +2,7 @@ export function getFallbackImageBasedOnKind(kind) {
   const fallbackComponent = {
     meshery: 'static/img/meshery-logo/meshery-logo.png',
     kubernetes: 'static/img/integrations/kubernetes.svg',
+    github: 'static/img/extensions/github.svg',
   };
   return fallbackComponent[kind];
 }
