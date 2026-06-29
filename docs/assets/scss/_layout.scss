@@ -2,7 +2,7 @@
 html {
   font-size: 100%;
   box-sizing: border-box;
-  scrollbar-color: var(--brand-color) var(--color-primary-light);
+  scrollbar-color: var(--scrollbar-color) var(--background-light);
   scrollbar-width: thin;
 
   @media (max-width: 75em) {
@@ -34,16 +34,16 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-primary-light);
+  background: var(--background-light);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--brand-color);
+  background: var(--scrollbar-color);
   border-radius: 0.3rem;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--brand-color-primary);
+  background: #555;
 }
 
 body {

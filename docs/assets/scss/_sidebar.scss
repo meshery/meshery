@@ -93,19 +93,19 @@
   max-width: var(--sidebar-width);
   min-width: var(--sidebar-width);
 
-  /* Refined, modern scrollbar */
+  /* Sidebar scrollbar aligned with global docs design */
   &::-webkit-scrollbar {
-    width: 4px;
+    width: 0.5rem;
   }
   &::-webkit-scrollbar-track {
-    background: transparent;
+    background: var(--background-light);
   }
   &::-webkit-scrollbar-thumb {
-    background: rgba(134, 142, 150, 0.3);
-    border-radius: 10px;
+    background: var(--scrollbar-color);
+    border-radius: 0.3rem;
     
     &:hover {
-      background: rgba(134, 142, 150, 0.6);
+      background: #555;
     }
   }
 
