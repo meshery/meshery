@@ -98,25 +98,33 @@ interface ResourceIconProps {
 }
 
 const ResourceIcon: React.FC<ResourceIconProps> = ({ resource }) => {
+  const renderSvgIcon = (icon: any) => {
+    const src = typeof icon === 'string' ? icon : icon?.src;
+    return src ? (
+      <img src={src} style={iconLarge} alt="" aria-hidden="true" />
+    ) : (
+      <KubernetesIcon style={iconLarge} />
+    );
+  };
   switch (resource) {
     case 'Overview':
       return <MesheryIcon style={iconLarge} />;
     case 'Node':
-      return <img src={NodeIcon?.src || NodeIcon} style={iconLarge} />;
+      return renderSvgIcon(NodeIcon);
     case 'Namespace':
-      return <img src={NamespaceIcon?.src || NamespaceIcon} style={iconLarge} />;
+      return renderSvgIcon(NamespaceIcon);
     case 'Workload':
-      return <img src={WorkloadIcon?.src || WorkloadIcon} style={iconLarge} />;
+      return renderSvgIcon(WorkloadIcon);
     case 'Configuration':
-      return <img src={ConfigurationIconSVG?.src || ConfigurationIconSVG} style={iconLarge} />;
+      return renderSvgIcon(ConfigurationIconSVG);
     case 'Network':
-      return <img src={NetworkIcon?.src || NetworkIcon} style={iconLarge} />;
+      return renderSvgIcon(NetworkIcon);
     case 'Security':
-      return <img src={SecurityIcon?.src || SecurityIcon} style={iconLarge} />;
+      return renderSvgIcon(SecurityIcon);
     case 'Storage':
-      return <img src={StorageIcon?.src || StorageIcon} style={iconLarge} />;
+      return renderSvgIcon(StorageIcon);
     case 'CRDS':
-      return <img src={CrdIcon?.src || CrdIcon} style={iconLarge} />;
+      return renderSvgIcon(CrdIcon);
     default:
       return <KubernetesIcon style={iconLarge} />;
   }
