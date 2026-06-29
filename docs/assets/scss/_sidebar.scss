@@ -82,7 +82,7 @@
 
 .sidebar-container {
 /* Symmetric, breathable padding replacing the skewed viewport units */
-  padding: 1.25rem 1rem;
+  padding: 0;
   overscroll-behavior: contain;
   overflow-y: auto; /* Swapped scroll for auto to hide inactive scrollbars */
   scrollbar-gutter: stable;
@@ -93,19 +93,19 @@
   max-width: var(--sidebar-width);
   min-width: var(--sidebar-width);
 
-  /* Refined, modern scrollbar */
+  /* Sidebar scrollbar aligned with global docs design */
   &::-webkit-scrollbar {
-    width: 4px;
+    width: 0.5rem;
   }
   &::-webkit-scrollbar-track {
-    background: transparent;
+    background: var(--background-light);
   }
   &::-webkit-scrollbar-thumb {
-    background: rgba(134, 142, 150, 0.3);
-    border-radius: 10px;
+    background: var(--scrollbar-color);
+    border-radius: 0.3rem;
     
     &:hover {
-      background: rgba(134, 142, 150, 0.6);
+      background: #555;
     }
   }
 
@@ -117,11 +117,10 @@
     width: 100%;
     z-index: 9;
     transition: 0.5s ease-in-out;
-    padding: 1rem 2rem;
   }
 
   @media (max-width: 37.5em) {
-    padding: 1rem 1.5rem;
+    width: 100%;
   }
 
   & .td-sidebar__inner {
@@ -130,6 +129,15 @@
     height: 100%;
     position: static;
     top: auto;
+    padding: 1.25rem 1rem;
+
+    @media (max-width: 75em) {
+      padding: 1rem 2rem;
+    }
+
+    @media (max-width: 37.5em) {
+      padding: 1rem 1.5rem;
+    }
   }
 
   & .td-sidebar__search {
