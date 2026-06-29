@@ -1,0 +1,15 @@
+{{- $modelsSection := site.GetPage "section" "extensions/models" -}}
+{{- $modelsURL := "/extensions/models" -}}
+{{- with $modelsSection -}}{{- $modelsURL = .RelPermalink -}}{{- end -}}
+{{- $models := where site.RegularPages ".File.Dir" "like" "^extensions/models/" -}}
+{{- $grouped := $models.GroupByParam "integrations-category" -}}
+{{- $categoryList := slice -}}
+{{- range $group := $grouped -}}
+  {{- $categoryName := $group.Key | default "Other Integrations" -}}
+  {{- $categoryList = $categoryList | append (dict "name" $categoryName "count" (len $group.Pages)) -}}
+{{- end -}}
+{{- $sortedCategories := sort $categoryList "count" "desc" -}}
+{{- range $sortedCategories -}}
+  {{- $anchor := .name | urlize -}}
+<li style="list-style-type: disc; margin: 2px 0 2px 20px;"><a href="{{ $modelsURL }}#{{ $anchor }}">{{ .name }}</a> ({{ .count }})</li>
+{{- end -}}
