@@ -41,20 +41,19 @@
         <script>
           (function () {
             const leftContainer = document.querySelector(".left-container");
-
-            if (!leftContainer) return
+            if (!leftContainer) return;
 
             let state = localStorage.getItem('leftContainer-state');
-
             if (!state) {
               const isDesktop = window.matchMedia("(min-width: 75em)").matches;
-              state =  isDesktop ? 'active' : 'inactive';
+              state = isDesktop ? 'active' : 'inactive';
               localStorage.setItem('leftContainer-state', state);
             }
-
-            leftContainer.classList.toggle('left-container--active', state === 'active')
+            leftContainer.classList.toggle('left-container--active', state === 'active');
           })();
         </script>
+
+        {{ partial "resizable-subscription.html" . }}
 
         {{ partial "resizable-start.html" (dict "side" "right" "key" "sidebar" "min" 200 "max" 480 "default" 260) }}
           <div class="sidebar-container-wrapper">

@@ -1,5 +1,5 @@
 body.is-resizing .left-container { transition: none }
-//There's two different transitions, dragging and toggling from active to not. If dragging, it shouldn't be possible to cause the cause the translate of the other.
+// There are two different transitions: dragging and toggling active/inactive. While dragging, the sidebar shouldn't also translate.
 
 .left-container {
   position: sticky;
