@@ -145,14 +145,13 @@ export const getNavigatorComponents = (
             primaryFill={
               window.location.pathname === '/configuration/catalog'
                 ? theme.palette.background.constant.white
-                : ''
+                : theme.palette.icon.default
             }
             secondaryFill={
               window.location.pathname === '/configuration/catalog'
                 ? theme.palette.background.constant.white
-                : ''
+                : theme.palette.icon.default
             }
-            tertiaryFill="transparent"
             style={{ ...drawerIconsStyle }}
           />
         ),

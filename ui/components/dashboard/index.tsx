@@ -130,11 +130,9 @@ const Dashboard = () => {
   const iconsProps = useMemo(
     () => ({
       fill: theme.palette.icon.default,
-      primaryFill: theme.palette.icon.default,
-      secondaryFill: theme.palette.icon.secondary,
       width: '40',
     }),
-    [theme.palette.icon.default, theme.palette.icon.secondary],
+    [theme.palette.icon.default],
   );
 
   const widgets = useMemo(() => getWidgets({ iconsProps, isEditMode }), [iconsProps, isEditMode]);
@@ -392,8 +390,7 @@ const Dashboard = () => {
                 direction="row"
                 useFlexGap
                 gap="0rem 2rem"
-                justifyContent="end"
-                flexWrap={'wrap-reverse'}
+                sx={{ justifyContent: 'end', flexWrap: 'wrap-reverse' }}
               >
                 {topBarActions.map(({ key, ...layoutAction }) => (
                   <LayoutActionButton {...layoutAction} key={key} />

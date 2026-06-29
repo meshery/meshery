@@ -51,12 +51,12 @@ vi.mock('next/link', () => ({
 }));
 
 vi.mock('@sistent/sistent', () => ({
-  Avatar: ({ src, sx, imgProps }: any) => (
+  Avatar: ({ src, sx, slotProps }: any) => (
     <img
       data-testid="avatar"
       src={src || ''}
       data-size={JSON.stringify(sx || {})}
-      data-referrer={imgProps?.referrerPolicy}
+      data-referrer={slotProps?.img?.referrerPolicy}
     />
   ),
   Button: ({ children, variant, color, ...props }: any) => (

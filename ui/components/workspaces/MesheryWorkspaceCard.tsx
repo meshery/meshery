@@ -220,7 +220,12 @@ const MesheryWorkspaceCard = ({
         onClose={teamAssignment.handleAssignModalClose}
         title={`Assign Teams to ${workspaceDetails.name}`}
         headerIcon={
-          <TeamsIcon height="40" width="40" primaryFill={theme.palette.background.constant.white} />
+          <TeamsIcon
+            height="40"
+            width="40"
+            primaryFill={theme.palette.background.constant.white}
+            secondaryFill={theme.palette.background.constant.white}
+          />
         }
         name="Teams"
         assignableData={teamAssignment.data}
@@ -231,6 +236,7 @@ const MesheryWorkspaceCard = ({
             height="5rem"
             width="5rem"
             primaryFill={theme.palette.background.supplementary}
+            secondaryFill={theme.palette.background.supplementary}
           />
         }
         handleAssignablePage={teamAssignment.handleAssignablePage}

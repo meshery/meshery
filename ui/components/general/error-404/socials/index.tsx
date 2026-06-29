@@ -11,12 +11,15 @@ import {
 } from './styles';
 
 export default function Socials() {
+  const tooltipSlots = { transition: Fade };
+  const tooltipSlotProps = { transition: { timeout: 600 } };
+
   return (
     <SocialMain>
       <SocialContainer>
         <Tooltip
-          TransitionComponent={Fade}
-          TransitionProps={{ timeout: 600 }}
+          slots={tooltipSlots}
+          slotProps={tooltipSlotProps}
           title="Get connected with the Meshery community"
         >
           <a href="mailto:maintainers@meshery.io">
@@ -24,29 +27,21 @@ export default function Socials() {
           </a>
         </Tooltip>
 
-        <Tooltip
-          TransitionComponent={Fade}
-          TransitionProps={{ timeout: 600 }}
-          title="Join the community Slack"
-        >
+        <Tooltip slots={tooltipSlots} slotProps={tooltipSlotProps} title="Join the community Slack">
           <a href="https://slack.meshery.io">
             <SlackIcon height={45} width={45} />
           </a>
         </Tooltip>
 
-        <Tooltip
-          TransitionComponent={Fade}
-          TransitionProps={{ timeout: 600 }}
-          title="Follow Meshery on X"
-        >
+        <Tooltip slots={tooltipSlots} slotProps={tooltipSlotProps} title="Follow Meshery on X">
           <a href="https://x.com/mesheryio">
             <TwitterIcon height={40} width={40} />
           </a>
         </Tooltip>
 
         <Tooltip
-          TransitionComponent={Fade}
-          TransitionProps={{ timeout: 600 }}
+          slots={tooltipSlots}
+          slotProps={tooltipSlotProps}
           title="Contribute to Meshery projects"
         >
           <a href="https://github.com/meshery">
@@ -55,8 +50,8 @@ export default function Socials() {
         </Tooltip>
 
         <Tooltip
-          TransitionComponent={Fade}
-          TransitionProps={{ timeout: 600 }}
+          slots={tooltipSlots}
+          slotProps={tooltipSlotProps}
           title="Watch community meeting recordings"
         >
           <a href="https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0">
@@ -64,11 +59,7 @@ export default function Socials() {
           </a>
         </Tooltip>
 
-        <Tooltip
-          TransitionComponent={Fade}
-          TransitionProps={{ timeout: 600 }}
-          title="Access Docker images"
-        >
+        <Tooltip slots={tooltipSlots} slotProps={tooltipSlotProps} title="Access Docker images">
           <a href="https://hub.docker.com/u/meshery/">
             <DockerIcon height={45} width={45} />
           </a>

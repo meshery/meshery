@@ -255,7 +255,9 @@ export const SideBarListItem = styled(ListItemButton, {
   fontSize: '1rem',
 }));
 
-export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
+export const SideBarText = styled(ListItemText, {
+  shouldForwardProp: (prop) => prop !== 'drawerCollapsed',
+})(({ drawerCollapsed }) => ({
   opacity: drawerCollapsed ? 0 : 1,
   transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
   fontSize: '1rem',
@@ -328,11 +330,13 @@ export const ListIconSide = styled(ListItemIcon)(({ theme }) => ({
   },
 }));
 
-export const HiddenText = styled(ListItemText)(({ drawerCollapsed, theme }) => ({
+export const HiddenText = styled(ListItemText, {
+  shouldForwardProp: (prop) => prop !== 'drawerCollapsed',
+})(({ drawerCollapsed, theme }) => ({
   opacity: drawerCollapsed ? 0 : 1,
   color: theme.palette.background.constant.white,
   fontSize: '14px',
-  transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
+  transition: 'opacity 200ms ease-in-out',
 }));
 
 export const LinkContainer = styled('div')(() => ({

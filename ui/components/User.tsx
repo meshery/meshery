@@ -86,7 +86,7 @@ const User = (props) => {
             <Avatar
               sx={{ height: 36, width: 36 }}
               src={isGetUserSuccess ? userData?.avatarUrl : null}
-              imgProps={{ referrerPolicy: 'no-referrer' }}
+              slotProps={{ img: { referrerPolicy: 'no-referrer' } }}
             />
           </IconButtonAvatar>
         </div>

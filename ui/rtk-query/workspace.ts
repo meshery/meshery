@@ -12,15 +12,38 @@ const TAGS = {
   VIEWS: 'workspaces_views',
   TEAMS: 'workspaces_teams',
 };
+
+const EXPAND_INFO_CONCURRENCY_LIMIT = 3;
+
+const mapWithConcurrency = async <T, R>(
+  items: T[],
+  limit: number,
+  mapper: (item: T, index: number) => Promise<R>,
+): Promise<R[]> => {
+  const results: R[] = [];
+  let nextIndex = 0;
+
+  const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (nextIndex < items.length) {
+      const currentIndex = nextIndex++;
+      results[currentIndex] = await mapper(items[currentIndex], currentIndex);
+    }
+  });
+
+  await Promise.all(workers);
+  return results;
+};
+
 const workspacesApi = api
   .enhanceEndpoints({
     addTagTypes: [TAGS.WORKSPACES, TAGS.DESIGNS, TAGS.ENVIRONMENTS, TAGS.VIEWS, TAGS.TEAMS],
   })
   .injectEndpoints({
+    overrideExisting: true,
     endpoints: (builder) => ({
       getWorkspaces: builder.query({
         keepUnusedDataFor: 0,
-        queryFn: async (queryArgs, { dispatch }, _extraOptions, baseQuery) => {
+        queryFn: async (queryArgs = {}, { dispatch }, _extraOptions, baseQuery) => {
           const { expandInfo, ...otherArgs } = queryArgs;
           const params = urlEncodeParams(otherArgs);
           const workspaces = await baseQuery({
@@ -29,8 +52,12 @@ const workspacesApi = api
           });
 
           if (expandInfo && workspaces.data && !workspaces.error) {
-            const modifiedWorkspaces = await Promise.all(
-              workspaces.data.workspaces.map(async (workspace) => {
+            const workspaceList = workspaces.data.workspaces || [];
+
+            const modifiedWorkspaces = await mapWithConcurrency(
+              workspaceList,
+              EXPAND_INFO_CONCURRENCY_LIMIT,
+              async (workspace) => {
                 const [designs, environments, views, teams] = await Promise.all([
                   dispatch(
                     workspacesApi.endpoints.getDesignsOfWorkspace.initiate({
@@ -72,7 +99,7 @@ const workspacesApi = api
                   viewCount: views.data?.totalCount ?? views.data?.total_count ?? 0,
                   teamCount: teams.data?.totalCount ?? teams.data?.total_count ?? 0,
                 };
-              }),
+              },
             );
 
             return _.merge({}, workspaces, { data: { workspaces: modifiedWorkspaces } });
@@ -345,23 +372,31 @@ const workspacesApi = api
       }),
 
       updateWorkspace: builder.mutation({
-        query: (queryArg) => ({
-          url: mesheryApiPath(`workspaces/${queryArg.id}`),
-          method: 'PUT',
-          body: {
-            name: queryArg.name,
-            description: queryArg.description,
-            organizationId: queryArg.organizationId || queryArg.organization_id,
-          },
-        }),
+        query: (queryArg) => {
+          const workspaceId = queryArg.workspaceId || queryArg.id;
+
+          return {
+            url: mesheryApiPath(`workspaces/${workspaceId}`),
+            method: 'PUT',
+            body: queryArg.body || {
+              name: queryArg.name,
+              description: queryArg.description,
+              organizationId: queryArg.organizationId || queryArg.organization_id,
+            },
+          };
+        },
         invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
       }),
 
       deleteWorkspace: builder.mutation({
-        query: (queryArg) => ({
-          url: mesheryApiPath(`workspaces/${queryArg.id}`),
-          method: 'DELETE',
-        }),
+        query: (queryArg) => {
+          const workspaceId = queryArg.workspaceId || queryArg.id;
+
+          return {
+            url: mesheryApiPath(`workspaces/${workspaceId}`),
+            method: 'DELETE',
+          };
+        },
         invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
       }),
     }),

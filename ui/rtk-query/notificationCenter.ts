@@ -83,6 +83,7 @@ export const notificationCenterApi = api
     addTagTypes: Object.values(PROVIDER_TAGS),
   })
   .injectEndpoints({
+    overrideExisting: true,
     endpoints: (builder) => ({
       getEvents: builder.query({
         query: ({ page = 0, filters = {} }) => {
@@ -229,7 +230,6 @@ export const notificationCenterApi = api
         invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),
     }),
-    overrideExisting: false,
   });
 
 export const {

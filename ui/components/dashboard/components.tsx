@@ -26,7 +26,6 @@ type Widget = {
 
 const layoutIconProps = (theme: Theme) => ({
   fill: theme.palette.background.neutral.default,
-  primaryFill: theme.palette.background.neutral.default,
   width: '30',
   height: '30',
 });
@@ -154,7 +153,6 @@ export const StyledCard = ({ title, icon, children, sx = {}, button }: StyledCar
 type LayoutActionButtonProps = {
   Icon: React.ComponentType<{
     fill?: string;
-    primaryFill?: string;
     width?: string;
     height?: string;
   }>;
