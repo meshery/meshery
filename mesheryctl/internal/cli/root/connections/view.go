@@ -25,7 +25,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -138,7 +138,7 @@ func selectConnectionPrompt(connectionsList []*connection.Connection) (*connecti
 	connectionNames := make([]string, len(connectionsList))
 
 	for i, conn := range connectionsList {
-		connectionNames[i] = fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn.ID.String(), conn.Name, conn.Type)
+		connectionNames[i] = fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn.ID.String(), conn.Name, conn.ConnectionType)
 	}
 
 	i, err := utils.RunSelectPrompt("Select connection", connectionNames)

@@ -1,30 +1,38 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
+	"runtime/debug"
 	"strings"
 	"time"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/utils"
-	"github.com/meshery/schemas/models/v1alpha1/capability"
-	"github.com/meshery/schemas/models/core"
-	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	gopolicies "github.com/meshery/meshery/server/policies"
+	legacycoremodel "github.com/meshery/schemas/models/core"
+	"github.com/meshery/schemas/models/v1beta1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	coremodelv1beta2 "github.com/meshery/schemas/models/v1beta2/core"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
+	componentv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
 
+	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 
 	"github.com/meshery/meshkit/models/meshmodel/registry"
+	regv1alpha3 "github.com/meshery/meshkit/models/meshmodel/registry/v1alpha3"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	patternHelpers "github.com/meshery/meshkit/models/patterns"
 	mutils "github.com/meshery/meshkit/utils"
+	"github.com/spf13/viper"
 )
 
 const (
@@ -36,9 +44,9 @@ const (
 const RELATIONSHIP_SUBTYPE_ALIAS = "alias"
 
 // Aliasses Are not resolved
-func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (core.NonResolvedAlias, bool) {
+func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (coremodelv1beta2.NonResolvedAlias, bool) {
 
-	alias := core.NonResolvedAlias{}
+	alias := coremodelv1beta2.NonResolvedAlias{}
 
 	if relationshipDeclaration.SubType != RELATIONSHIP_SUBTYPE_ALIAS {
 		return alias, false
@@ -63,10 +71,10 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 
 	from := fromSet[0]
 	to := toSet[0]
-	if from.Patch == nil || from.Patch.MutatedRef == nil {
+	if from.RelationshipDefinitionSelectorsPatch == nil || from.RelationshipDefinitionSelectorsPatch.MutatedRef == nil {
 		return alias, false
 	}
-	mutatedRefs := *from.Patch.MutatedRef
+	mutatedRefs := *from.RelationshipDefinitionSelectorsPatch.MutatedRef
 
 	if len(mutatedRefs) == 0 {
 		return alias, false
@@ -85,7 +93,7 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 
 }
 
-func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (core.NonResolvedAlias, bool) {
+func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (coremodelv1beta2.NonResolvedAlias, bool) {
 
 	for _, relationship := range relationships {
 		alias, ok := parseRelationshipToAlias(*relationship)
@@ -98,11 +106,11 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 		}
 	}
 
-	return core.NonResolvedAlias{}, false
+	return coremodelv1beta2.NonResolvedAlias{}, false
 }
 
 // getComponentById retrieves a component from the design by its ID
-func getComponentById(design pattern.PatternFile, id uuid.UUID) *component.ComponentDefinition {
+func getComponentById(design pattern.PatternFile, id legacycoremodel.Uuid) *component.ComponentDefinition {
 	for _, comp := range design.Components {
 		if comp.ID == id {
 			return comp
@@ -111,17 +119,17 @@ func getComponentById(design pattern.PatternFile, id uuid.UUID) *component.Compo
 	return nil
 }
 
-func ResolveAlias(nonResolvedAlias core.NonResolvedAlias, currentNonResolved core.NonResolvedAlias, path []string, design pattern.PatternFile) core.ResolvedAlias {
+func ResolveAlias(nonResolvedAlias coremodelv1beta2.NonResolvedAlias, currentNonResolved coremodelv1beta2.NonResolvedAlias, path []string, design pattern.PatternFile) coremodelv1beta2.ResolvedAlias {
 	parentComponent := getComponentById(design, currentNonResolved.ImmediateParentId)
 	if parentComponent == nil {
-		return core.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
+		return coremodelv1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
 	}
 
 	parentAlias, ok := ParseComponentToAlias(*parentComponent, design.Relationships)
 
 	if !ok {
 
-		return core.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
+		return coremodelv1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
 
 	}
 
@@ -131,9 +139,9 @@ func ResolveAlias(nonResolvedAlias core.NonResolvedAlias, currentNonResolved cor
 	return ResolveAlias(nonResolvedAlias, parentAlias, append(parentAlias.ImmediateRefFieldPath, path[1:]...), design)
 }
 
-func ResolveAliasesInDesign(design pattern.PatternFile) map[string]core.ResolvedAlias {
+func ResolveAliasesInDesign(design pattern.PatternFile) map[string]coremodelv1beta2.ResolvedAlias {
 
-	resolvedAliases := make(map[string]core.ResolvedAlias)
+	resolvedAliases := make(map[string]coremodelv1beta2.ResolvedAlias)
 
 	for _, relationship := range design.Relationships {
 		nonResolvedalias, ok := parseRelationshipToAlias(*relationship)
@@ -145,6 +153,103 @@ func ResolveAliasesInDesign(design pattern.PatternFile) map[string]core.Resolved
 
 	return resolvedAliases
 
+}
+
+// mergeTraceUnique appends trace entries from src into dst, skipping duplicates by ID.
+func mergeTraceUnique(dst, src *pattern.Trace) {
+	compSeen := make(map[legacycoremodel.Uuid]bool)
+	for _, c := range dst.ComponentsAdded {
+		compSeen[c.ID] = true
+	}
+	for _, c := range dst.ComponentsUpdated {
+		compSeen[c.ID] = true
+	}
+	for _, c := range dst.ComponentsRemoved {
+		compSeen[c.ID] = true
+	}
+	relSeen := make(map[legacycoremodel.Uuid]bool)
+	for _, r := range dst.RelationshipsAdded {
+		relSeen[r.ID] = true
+	}
+	for _, r := range dst.RelationshipsUpdated {
+		relSeen[r.ID] = true
+	}
+	for _, r := range dst.RelationshipsRemoved {
+		relSeen[r.ID] = true
+	}
+
+	for _, c := range src.ComponentsAdded {
+		if !compSeen[c.ID] {
+			compSeen[c.ID] = true
+			dst.ComponentsAdded = append(dst.ComponentsAdded, c)
+		}
+	}
+	for _, c := range src.ComponentsRemoved {
+		if !compSeen[c.ID] {
+			compSeen[c.ID] = true
+			dst.ComponentsRemoved = append(dst.ComponentsRemoved, c)
+		}
+	}
+	for _, c := range src.ComponentsUpdated {
+		if !compSeen[c.ID] {
+			compSeen[c.ID] = true
+			dst.ComponentsUpdated = append(dst.ComponentsUpdated, c)
+		}
+	}
+	for _, r := range src.RelationshipsAdded {
+		if !relSeen[r.ID] {
+			relSeen[r.ID] = true
+			dst.RelationshipsAdded = append(dst.RelationshipsAdded, r)
+		}
+	}
+	for _, r := range src.RelationshipsRemoved {
+		if !relSeen[r.ID] {
+			relSeen[r.ID] = true
+			dst.RelationshipsRemoved = append(dst.RelationshipsRemoved, r)
+		}
+	}
+	for _, r := range src.RelationshipsUpdated {
+		if !relSeen[r.ID] {
+			relSeen[r.ID] = true
+			dst.RelationshipsUpdated = append(dst.RelationshipsUpdated, r)
+		}
+	}
+}
+
+// deduplicateActions removes duplicate actions by (op, id) key.
+func deduplicateActions(actions []pattern.Action) []pattern.Action {
+	type key struct {
+		op string
+		id string
+	}
+	seen := make(map[key]bool)
+	var result []pattern.Action
+	for _, a := range actions {
+		id := ""
+		if a.Value != nil {
+			if v, ok := a.Value["id"]; ok {
+				if s, ok := v.(string); ok {
+					id = s
+				}
+			}
+			// For add_component/add_relationship, the id is inside "item"
+			if id == "" {
+				if item, ok := a.Value["item"].(map[string]interface{}); ok {
+					if v, ok := item["id"]; ok {
+						if s, ok := v.(string); ok {
+							id = s
+						}
+					}
+				}
+			}
+		}
+		k := key{op: a.Op, id: id}
+		if !seen[k] {
+			seen[k] = true
+			result = append(result, a)
+		}
+	}
+	return result
 }
 
 func doesntNeedReeval(response pattern.EvaluationResponse) bool {
@@ -161,6 +266,34 @@ func doesntNeedReeval(response pattern.EvaluationResponse) bool {
 // max number of time to keep revaluating the design till there are no reval triggering actions in the response
 const MAX_RE_EVALUATION_DEPTH = 5
 
+// defaultPolicyEvalTimeout bounds a single evaluation. Override via POLICY_EVAL_TIMEOUT.
+const defaultPolicyEvalTimeout = 3 * time.Minute
+
+var errEvalTimeout = errors.New("relationship policy evaluation timed out")
+
+// buildPolicyEvaluationEventMetadata builds the metadata map emitted on
+// the relationship-evaluation success event. Extracted into a named
+// function so the canonical camelCase keys (`historyTitle`, `trace`,
+// `evaluationResponse`, `evaluatedAt`) are pinned by a focused unit test
+// — see TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys.
+// Drift here would silently re-introduce the snake_case keys that
+// production carried for 125,840 rows pre-flip.
+func buildPolicyEvaluationEventMetadata(resp pattern.EvaluationResponse) map[string]interface{} {
+	return map[string]interface{}{
+		"historyTitle":       fmt.Sprintf("%d changes made at version %s", len(resp.Actions), resp.Design.Version),
+		"trace":              resp.Trace,
+		"evaluationResponse": resp,
+		"evaluatedAt":        *resp.Timestamp,
+	}
+}
+
+func policyEvalTimeout() time.Duration {
+	if d := viper.GetDuration("POLICY_EVAL_TIMEOUT"); d > 0 {
+		return d
+	}
+	return defaultPolicyEvalTimeout
+}
+
 // Helper method to make design evaluation based on the relationship policies.
 // evalIterations is num of passes the evaluator needs to go through to do complete evaluation
 func (h *Handler) EvaluateDesign(
@@ -168,9 +301,23 @@ func (h *Handler) EvaluateDesign(
 	evalIterations int,
 ) (pattern.EvaluationResponse, error) {
 
-	// hydrate the design file components from the registry if needed
-	if err := patternHelpers.HydratePattern(&relationshipPolicyEvalPayload.Design, h.registryManager); err != nil {
-		h.log.Warnf("failed to hydrate pattern for evaluation: %v", err)
+	// hydrate the design file components from the registry if needed.
+	// meshkit's patternHelpers.HydratePattern is typed against
+	// v1beta3/design.PatternFile but this evaluation-engine carve-out
+	// still holds the design as v1beta1/pattern.PatternFile, so bridge
+	// via a typed shallow copy and fold the hydrated fields back onto the
+	// v1beta1 design before the policy passes run.
+	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&relationshipPolicyEvalPayload.Design); bridgeErr == nil && bridged != nil {
+		if hydrateErrs := patternHelpers.HydratePattern(bridged, h.registryManager); len(hydrateErrs) > 0 {
+			h.log.Warnf("failed to hydrate pattern for evaluation: %v", hydrateErrs)
+		}
+		if roundtripped, rtErr := utils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
+			relationshipPolicyEvalPayload.Design = *roundtripped
+		} else if rtErr != nil {
+			h.log.Warnf("failed v1beta3→v1beta1 round-trip after Hydrate; evaluation will proceed against the pre-hydration design: %v", rtErr)
+		}
+	} else if bridgeErr != nil {
+		h.log.Warnf("failed to bridge pattern for evaluation: %v", bridgeErr)
 	}
 
 	defer mutils.TrackTime(h.log, time.Now(), "EvaluateDesign")
@@ -178,13 +325,35 @@ func (h *Handler) EvaluateDesign(
 	var lastEvaluationResponse pattern.EvaluationResponse
 	lastEvaluationResponse.Design = relationshipPolicyEvalPayload.Design
 
+	useGoEngine := viper.GetBool("USE_GO_POLICY_ENGINE")
+
+	// Pre-fetch and convert registered relationships once, outside the re-evaluation loop.
+	var convertedRels []*relationship.RelationshipDefinition
+	if useGoEngine && h.GoEngine != nil {
+		registeredRels, _, _, relErr := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
+		if relErr != nil {
+			return lastEvaluationResponse, fmt.Errorf("failed to get relationships for Go engine: %w", relErr)
+		}
+		relInterfaces := make([]interface{}, len(registeredRels))
+		for idx, r := range registeredRels {
+			relInterfaces[idx] = r
+		}
+		convertedRels = gopolicies.ConvertRelationships(relInterfaces)
+	}
+
 	for i := range MAX_RE_EVALUATION_DEPTH {
 
-		// evaluate specified relationship policies
-		// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
-		evaluationResponse, err := h.Rego.RegoPolicyHandler(lastEvaluationResponse.Design,
-			RelationshipPolicyPackageName,
-		)
+		var evaluationResponse pattern.EvaluationResponse
+		var err error
+
+		if useGoEngine && h.GoEngine != nil {
+			evaluationResponse, err = h.GoEngine.EvaluateDesign(lastEvaluationResponse.Design, convertedRels)
+		} else {
+			// Use OPA/Rego policy engine (default)
+			evaluationResponse, err = h.Rego.RegoPolicyHandler(lastEvaluationResponse.Design,
+				RelationshipPolicyPackageName,
+			)
+		}
 
 		if err != nil {
 			h.log.Debug(err)
@@ -192,20 +361,25 @@ func (h *Handler) EvaluateDesign(
 			return pattern.EvaluationResponse{}, err
 		}
 
-		// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
-		now := time.Now()
+		// Save trace and clear it before processEvaluationResponse to prevent
+		// it from replacing components with pre-patch versions from trace.
+		// ComponentsAdded is kept for hydration (styles/icons).
+		savedTrace := evaluationResponse.Trace
+		evaluationResponse.Trace = pattern.Trace{
+			ComponentsAdded: savedTrace.ComponentsAdded,
+		}
 		_ = processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
+		evaluationResponse.Trace = savedTrace
 
 		evaluatedAliases := ResolveAliasesInDesign(evaluationResponse.Design)
 		if evaluationResponse.Design.Metadata == nil {
 			evaluationResponse.Design.Metadata = &pattern.PatternFile_Metadata{}
 		}
-		evaluationResponse.Design.Metadata.ResolvedAliases = &evaluatedAliases
-
-		mutils.TrackTime(h.log, now, "PostProcessEvaluationResponse")
+		evaluationResponse.Design.Metadata.ResolvedAliases = utils.ResolvedAliasesV1beta2ToV1beta1(&evaluatedAliases)
 
 		lastEvaluationResponse.Design = evaluationResponse.Design
 		lastEvaluationResponse.Actions = append(lastEvaluationResponse.Actions, evaluationResponse.Actions...)
+		mergeTraceUnique(&lastEvaluationResponse.Trace, &evaluationResponse.Trace)
 
 		if evalIterations == i+1 || doesntNeedReeval(evaluationResponse) {
 			h.log.Info("Evaluation completed in iteration ", i+1)
@@ -221,13 +395,27 @@ func (h *Handler) EvaluateDesign(
 	currentTime := time.Now()
 	lastEvaluationResponse.Timestamp = &currentTime
 
-	// dehydrate the design file components to remove unnecessary details
-	patternHelpers.DehydratePattern(&lastEvaluationResponse.Design)
+	// Deduplicate actions by (op, id) to avoid duplicates from re-evaluation iterations.
+	lastEvaluationResponse.Actions = deduplicateActions(lastEvaluationResponse.Actions)
+
+	// dehydrate the design file components to remove unnecessary details.
+	// Same v1beta1 ↔ v1beta3 bridge rationale as the HydratePattern call
+	// above: meshkit is v1beta3-only, this carve-out is v1beta1.
+	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&lastEvaluationResponse.Design); bridgeErr == nil && bridged != nil {
+		patternHelpers.DehydratePattern(bridged)
+		if roundtripped, rtErr := utils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
+			lastEvaluationResponse.Design = *roundtripped
+		} else if rtErr != nil {
+			h.log.Warnf("failed v1beta3→v1beta1 round-trip after Dehydrate; response will ship un-dehydrated: %v", rtErr)
+		}
+	} else if bridgeErr != nil {
+		h.log.Warnf("failed to bridge pattern for dehydration: %v", bridgeErr)
+	}
 
 	return lastEvaluationResponse, nil
 }
 
-func processEvaluationResponse(registryManager *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
+func processEvaluationResponse(reg *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
 
 	registryCache := &registry.RegistryEntityCache{}
 
@@ -255,25 +443,32 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 		compFilter := &regv1beta1.ComponentFilter{
 			Name:       _c.Component.Kind,
 			APIVersion: _c.Component.Version,
-			Version:    _c.Model.Model.Version,
-			ModelName:  _c.Model.Name,
 			Limit:      1,
 			Trim:       true,
 		}
 
-		// NOTE: this is not deterministic as any version of the component can be used.
-		// NOTE: Confirm that the registry returns the latest version in case version is not specified.
-		if _c.Model.Model.Version == "*" {
-			compFilter.Version = ""
+		if _c.Model != nil {
+			compFilter.Version = _c.Model.Model.Version
+			compFilter.ModelName = _c.Model.Name
+			if _c.Model.Model.Version == "*" {
+				compFilter.Version = ""
+			}
+		} else {
+			compFilter.ModelName = _c.ModelReference.Name
 		}
 
-		entities, _, _, _ := registryManager.GetEntitiesMemoized(compFilter, registryCache)
+		entities, _, _, _ := reg.GetEntitiesMemoized(compFilter, registryCache)
 		if len(entities) == 0 {
 			unknownComponents = append(unknownComponents, &_c)
 			continue
 		}
-		_component, _ := entities[0].(*component.ComponentDefinition)
+		_component, ok := registryComponentDefinitionToV1beta1(entities[0])
+		if !ok {
+			unknownComponents = append(unknownComponents, &_c)
+			continue
+		}
 
+		originalStyles := _c.Styles
 		_component.ID = _c.ID
 		if _c.DisplayName != "" {
 			_component.DisplayName = _c.DisplayName
@@ -285,6 +480,12 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 		_component.Metadata.IsAnnotation = _c.Metadata.IsAnnotation
 		_component.Configuration = _c.Configuration
 		_component.Capabilities = &defaultCapabilities
+		if originalStyles != nil && originalStyles.Position != nil {
+			if _component.Styles == nil {
+				_component.Styles = &legacycoremodel.ComponentStyles{}
+			}
+			_component.Styles.Position = originalStyles.Position
+		}
 		compsAdded = append(compsAdded, *_component)
 	}
 
@@ -298,6 +499,7 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 	evalResponse.Trace.ComponentsUpdated = compsUpdated
 
 	cmps := append(compsAdded, compsUpdated...)
+	hydrateAddComponentActions(evalResponse.Actions, compsAdded)
 
 	if evalPayload.Options != nil && evalPayload.Options.ReturnDiffOnly != nil && *evalPayload.Options.ReturnDiffOnly {
 		evalResponse.Design.Relationships = []*relationship.RelationshipDefinition{}
@@ -343,11 +545,202 @@ func processEvaluationResponse(registryManager *registry.RegistryManager, evalPa
 	return unknownComponents
 }
 
-// swagger:route POST /api/meshmodels/relationships/evaluate EvaluateRelationshipPolicy relationshipPolicyEvalPayloadWrapper
-// Handle POST request for evaluating relationships in the provided design file by running a set of provided evaluation queries on the design file
+func hydrateAddComponentActions(actions []pattern.Action, compsAdded []component.ComponentDefinition) {
+	if len(actions) == 0 || len(compsAdded) == 0 {
+		return
+	}
+
+	componentsByID := map[string]component.ComponentDefinition{}
+	for _, comp := range compsAdded {
+		componentsByID[comp.ID.String()] = comp
+	}
+	actionItemsByID := map[string]map[string]interface{}{}
+
+	for idx := range actions {
+		if actions[idx].Op != "add_component" {
+			continue
+		}
+		id := actionItemID(actions[idx])
+		if id == "" {
+			continue
+		}
+		comp, ok := componentsByID[id]
+		if !ok {
+			continue
+		}
+		item, ok := actionItemsByID[id]
+		if !ok {
+			item, ok = componentDefinitionToMap(&comp)
+			if !ok {
+				continue
+			}
+			actionItemsByID[id] = item
+		}
+		if actions[idx].Value == nil {
+			actions[idx].Value = map[string]interface{}{}
+		}
+		actions[idx].Value["item"] = item
+	}
+}
+
+func actionItemID(action pattern.Action) string {
+	if action.Value == nil {
+		return ""
+	}
+	item, ok := action.Value["item"].(map[string]interface{})
+	if !ok {
+		return ""
+	}
+	id, ok := item["id"].(string)
+	if !ok {
+		return ""
+	}
+	return id
+}
+
+func componentDefinitionToMap(comp *component.ComponentDefinition) (map[string]interface{}, bool) {
+	raw, err := json.Marshal(comp)
+	if err != nil {
+		return nil, false
+	}
+	var item map[string]interface{}
+	if err := json.Unmarshal(raw, &item); err != nil {
+		return nil, false
+	}
+	return item, true
+}
+
+// registryComponentDefinitionToV1beta1 bridges the v1beta3 ComponentDefinition
+// the meshkit registry returns into the v1beta1 ComponentDefinition that
+// pattern.PatternFile.Components is typed against. This handler — and every
+// caller of processEvaluationResponse — operates on v1beta1; v1beta3 is only
+// the registry's storage representation.
 //
-// responses:
-// 200
+// Mechanism: a shallow field copy that keeps pointer- and reference-typed
+// inner fields (Model, Styles, Capabilities, Configuration,
+// Metadata.AdditionalProperties, ModelID) aliased across both versions, so
+// later in-place mutations meshkit helpers (e.g.
+// orchestration.EnrichComponentWithMesheryMetadata) might make through one
+// of those pointers remain visible from the v1beta1 view. This parallels
+// the existing models/pattern/utils.ComponentV1beta3ToV1beta2 bridge — same
+// pattern, different target version.
+//
+// Why not json.Marshal/json.Unmarshal: a JSON round-trip silently drops
+// fields whose tags differ across versions (already true today —
+// v1beta1 uses `json:"created_at,omitempty"` while v1beta3 uses
+// `json:"createdAt"`) and deep-clones the inner pointer targets, which
+// breaks the alias contract the existing bridge documents. Future tag
+// drift would compound the data loss with no compile-time signal.
+func registryComponentDefinitionToV1beta1(entity interface{}) (*component.ComponentDefinition, bool) {
+	if entity == nil {
+		return nil, false
+	}
+	src, ok := entity.(*componentv1beta3.ComponentDefinition)
+	if !ok || src == nil {
+		return nil, false
+	}
+	if src.Component.Kind == "" {
+		return nil, false
+	}
+	dst := &component.ComponentDefinition{
+		ID:             src.ID,
+		SchemaVersion:  src.SchemaVersion,
+		Version:        src.Version,
+		DisplayName:    src.DisplayName,
+		Description:    src.Description,
+		Format:         component.ComponentDefinitionFormat(src.Format),
+		Model:          src.Model,
+		ModelReference: src.ModelReference,
+		Styles:         src.Styles,
+		Capabilities:   src.Capabilities,
+		Metadata: component.ComponentDefinition_Metadata{
+			Genealogy:             src.Metadata.Genealogy,
+			IsAnnotation:          src.Metadata.IsAnnotation,
+			IsNamespaced:          src.Metadata.IsNamespaced,
+			Published:             src.Metadata.Published,
+			InstanceDetails:       src.Metadata.InstanceDetails,
+			ConfigurationUISchema: src.Metadata.ConfigurationUISchema,
+			AdditionalProperties:  src.Metadata.AdditionalProperties,
+		},
+		Configuration: src.Configuration,
+		Component: component.Component{
+			Kind:    src.Component.Kind,
+			Version: src.Component.Version,
+			Schema:  src.Component.Schema,
+		},
+		CreatedAt: src.CreatedAt,
+		UpdatedAt: src.UpdatedAt,
+		ModelId:   src.ModelID,
+	}
+	if src.Status != nil {
+		st := component.ComponentDefinitionStatus(*src.Status)
+		dst.Status = &st
+	}
+	return dst, true
+}
+
+// runRelationshipEvaluation runs eval behind a panic-recovery boundary and
+// fans the result out to both the per-request channels and the coalescing
+// tracker so coalesced followers unblock on every termination path
+// (success, error, cancellation, panic).
+//
+// A panic inside EvaluateDesign (engine bug, malformed design, nil deref
+// deep in the registry) used to crash the whole Meshery process: an
+// unrecovered panic in a non-handler goroutine is fatal in Go, and
+// gorilla/mux's per-request recovery does not extend to goroutines a
+// handler spawns. In CI this manifested as the e2e suite cascading from
+// one failed /relationships/evaluate call to ECONNREFUSED on every
+// subsequent request. Centralising the recovery here keeps the server
+// alive and lets the requesting client see a 500.
+//
+// Defined at package scope (rather than inlined as an anonymous goroutine)
+// so the panic path is unit-testable without standing up the full HTTP
+// handler dependency tree.
+func runRelationshipEvaluation(
+	ctx context.Context,
+	log logger.Handler,
+	tracker *evaluationTracker,
+	designKey string,
+	eval func() (pattern.EvaluationResponse, error),
+	respCh chan<- pattern.EvaluationResponse,
+	errCh chan<- error,
+) {
+	defer func() {
+		r := recover()
+		if r == nil {
+			return
+		}
+		// Stack stays server-side: ErrPolicyEval flows the inner error
+		// string into the JSON longDescription returned to API clients,
+		// so the full stack is logged here and only the panic value
+		// propagates to errCh / coalesced followers / the response body.
+		panicErr := fmt.Errorf("panic during relationship evaluation: %v", r)
+		log.Error(fmt.Errorf("%s\n%s", panicErr.Error(), debug.Stack()))
+		tracker.publish(designKey, evalResult{err: panicErr})
+		// Non-blocking send: if the leader's select already returned
+		// via ctx.Done() the receiver is gone and a blocking send
+		// would leak this goroutine forever.
+		select {
+		case errCh <- panicErr:
+		default:
+		}
+	}()
+
+	if ctx.Err() != nil {
+		tracker.publish(designKey, evalResult{err: ctx.Err()})
+		return
+	}
+
+	resp, err := eval()
+	if err != nil {
+		tracker.publish(designKey, evalResult{err: err})
+		errCh <- err
+		return
+	}
+	tracker.publish(designKey, evalResult{resp: resp})
+	respCh <- resp
+}
+
 func (h *Handler) EvaluateRelationshipPolicy(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -355,20 +748,24 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	user *models.User,
 	provider models.Provider,
 ) {
-	evalCtx := r.Context()
+	// Wall-clock timeout bounds the HTTP response; the eval goroutine
+	// may still run to completion in the background.
+	evalCtx, cancel := context.WithTimeout(r.Context(), policyEvalTimeout())
+	defer cancel()
+
+	token, _ := evalCtx.Value(models.TokenCtxKey).(string)
 
 	userUUID := user.ID
 	defer func() {
 		_ = r.Body.Close()
 	}()
 
-	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userUUID).WithCategory("relationship").WithAction("evaluation")
+	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromOwner(userUUID).WithCategory("relationship").WithAction("evaluation")
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
-		rw.WriteHeader((http.StatusBadRequest))
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
@@ -376,60 +773,116 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
 
 	if err != nil {
-		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
+		h.log.Error(ErrDecoding(err, "design file"))
+		writeMeshkitError(rw, ErrDecoding(err, "design file"), http.StatusBadRequest)
 		return
 	}
 	// decode the pattern file
 	patternUUID := relationshipPolicyEvalPayload.Design.ID
 	eventBuilder.ActedUpon(patternUUID)
 
-	evalRespChan := make(chan pattern.EvaluationResponse)
-	evalErrChan := make(chan error)
+	// Coalesce concurrent evaluations of the same design (rage-click guard).
+	designKey := patternUUID.String()
+	leader, waitCh := h.evalTracker.acquire(designKey)
 
-	go func() {
-		// Evaluate specified relationship policies
-		// Perform the CPU-intensive work
-		evaluationResponse, err := h.EvaluateDesign(relationshipPolicyEvalPayload, MAX_RE_EVALUATION_DEPTH)
-
-		if err != nil {
-			evalErrChan <- err // Send the error
-		} else {
-			evalRespChan <- evaluationResponse // Send the response
+	if !leader {
+		h.log.Debug("coalescing relationship evaluation request for design ", designKey)
+		select {
+		case result := <-waitCh:
+			h.writeEvaluationResult(rw, result)
+			return
+		case <-evalCtx.Done():
+			h.writeEvalCtxError(rw, evalCtx)
+			return
 		}
-	}()
+	}
+
+	evalRespChan := make(chan pattern.EvaluationResponse, 1)
+	evalErrChan := make(chan error, 1)
+
+	go runRelationshipEvaluation(
+		evalCtx,
+		h.log,
+		h.evalTracker,
+		designKey,
+		func() (pattern.EvaluationResponse, error) {
+			return h.EvaluateDesign(relationshipPolicyEvalPayload, MAX_RE_EVALUATION_DEPTH)
+		},
+		evalRespChan,
+		evalErrChan,
+	)
 
 	select {
 
 	case err := <-evalErrChan:
 		h.log.Debug(err)
 		// log an event
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrPolicyEval(err), http.StatusInternalServerError)
 		return
 
 	case evaluationResponse := <-evalRespChan:
 		// include trace instead of design file in the event
 		description := fmt.Sprintf("Relationship evaluation complete: %d changes in '%s' at version '%s'", len(evaluationResponse.Actions), evaluationResponse.Design.Name, evaluationResponse.Design.Version)
 		event := eventBuilder.WithDescription(description).
-			WithMetadata(map[string]interface{}{
-				"history_title":       fmt.Sprintf("%d changes made at version %s", len(evaluationResponse.Actions), evaluationResponse.Design.Version),
-				"trace":               evaluationResponse.Trace,
-				"evaluation_response": evaluationResponse,
-				"evaluated_at":        *evaluationResponse.Timestamp,
-			}).WithSeverity(events.Informational).Build()
-		_ = provider.PersistEvent(*event, nil)
+			WithMetadata(buildPolicyEvaluationEventMetadata(evaluationResponse)).
+			WithSeverity(events.Informational).Build()
+		go func() {
+			_ = provider.PersistEvent(*event, token)
+		}()
 
-		// write the response
-		ec := json.NewEncoder(rw)
-		err = ec.Encode(evaluationResponse)
-		if err != nil {
-			h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
-			http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
-			return
-		}
+		h.writeEvaluationResult(rw, evalResult{resp: evaluationResponse})
 	case <-evalCtx.Done():
-		h.log.Info("Evaluation terminated: request context closed")
+		// Unblock any followers waiting on this designID.
+		h.evalTracker.publish(designKey, evalResult{err: errEvalTimeout})
+		h.writeEvalCtxError(rw, evalCtx)
 		return
 	}
+}
+
+func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResult) {
+	if result.err != nil {
+		h.log.Debug(result.err)
+		writeMeshkitError(rw, ErrPolicyEval(result.err), http.StatusInternalServerError)
+		return
+	}
+	ec := json.NewEncoder(rw)
+	design := any(result.resp.Design)
+	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&result.resp.Design); bridgeErr == nil && bridged != nil {
+		design = bridged
+	} else if bridgeErr != nil {
+		h.log.Warnf("failed to bridge evaluation response design for canonical wire encoding: %v", bridgeErr)
+	}
+	response := struct {
+		Design         any              `json:"design"`
+		EvaluationHash *string          `json:"evaluationHash,omitempty"`
+		SchemaVersion  any              `json:"schemaVersion"`
+		Timestamp      *time.Time       `json:"timestamp,omitempty"`
+		Trace          pattern.Trace    `json:"trace"`
+		Actions        []pattern.Action `json:"actions"`
+	}{
+		Design:         design,
+		EvaluationHash: result.resp.EvaluationHash,
+		SchemaVersion:  result.resp.SchemaVersion,
+		Timestamp:      result.resp.Timestamp,
+		Trace:          result.resp.Trace,
+		Actions:        result.resp.Actions,
+	}
+	if err := ec.Encode(response); err != nil {
+		// Response body has already started streaming via json.Encoder —
+		// a partial JSON envelope is on the wire and a fresh error
+		// response would corrupt it, so log only.
+		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
+	}
+}
+
+func (h *Handler) writeEvalCtxError(rw http.ResponseWriter, ctx context.Context) {
+	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
+		timeout := policyEvalTimeout()
+		h.log.Warnf("relationship policy evaluation exceeded %s", timeout)
+		writeMeshkitError(rw, ErrPolicyEvalTimeout(timeout), http.StatusGatewayTimeout)
+		return
+	}
+	h.log.Info("Evaluation terminated: request context closed")
 }
 
 // Needs to be reinstiated inorder to load the policies based on the evaluation queries.
@@ -469,23 +922,6 @@ func (h *Handler) EvaluateRelationshipPolicy(
 // 	return
 // }
 
-// swagger:route GET /api/meshmodels/models/{model}/policies/{name} GetMeshmodelPoliciesByName idGetMeshmodelPoliciesByName
-// Handle GET request for getting meshmodel policies of a specific model by name.
-//
-// Example: ```/api/meshmodels/models/kubernetes/policies/{name}```
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?search={[true/false]}``` If search is true then a greedy search is performed
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-// responses:
-//
-//	200: []meshmodelPoliciesResponseWrapper
 func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -514,10 +950,10 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	}
 
 	response := models.MeshmodelPoliciesAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		Count:    0,
-		Policies: entities,
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: 0,
+		Policies:   entities,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -529,23 +965,6 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	}
 }
 
-// swagger:route GET /api/meshmodels/models/{model}/policies/ GetMeshmodelPolicies idGetMeshmodelPolicies
-// Handle GET request for getting meshmodel policies of a specific model by name.
-//
-// Example: ```/api/meshmodels/models/kubernetes/policies```
-//
-// // ```?order={field}``` orders on the passed field
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?search={[true/false]}``` If search is true then a greedy search is performed
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-// responses:
-//
-//	200: []meshmodelPoliciesResponseWrapper
 func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -574,10 +993,10 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	}
 
 	response := models.MeshmodelPoliciesAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		Count:    0,
-		Policies: entities,
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: 0,
+		Policies:   entities,
 	}
 
 	if err := enc.Encode(response); err != nil {

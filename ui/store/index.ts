@@ -4,8 +4,8 @@ import { configureStore } from '@reduxjs/toolkit';
 import { api } from '../rtk-query/index';
 import mesheryUiReducer from './slices/mesheryUi';
 import prefTestReducer from './slices/prefTest';
-import telemetryReducer from './slices/telemetry';
 import adapterReducer from './slices/adapter';
+import { rtkErrorMiddleware } from './middleware/rtkErrorMiddleware';
 import { mesheryEventBus } from '@/utils/eventBus';
 
 export const store = configureStore({
@@ -14,11 +14,11 @@ export const store = configureStore({
     globalEnvironmentContext: globalEnvironmentContextReducer,
     ui: mesheryUiReducer,
     prefTest: prefTestReducer,
-    telemetry: telemetryReducer,
     adapter: adapterReducer,
     [api.reducerPath]: api.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(api.middleware).concat(rtkErrorMiddleware),
 });
 
 mesheryEventBus.on('DISPATCH_TO_MESHERY_STORE').subscribe((event) => {

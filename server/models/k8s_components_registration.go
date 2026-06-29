@@ -9,9 +9,11 @@ import (
 	"path/filepath"
 	"sync"
 
+	"github.com/meshery/schemas/models/core"
+
 	"github.com/gofrs/uuid"
-	"github.com/meshery/schemas/models/v1alpha1/capability"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/capability"
+	"github.com/meshery/schemas/models/v1beta3/component"
 
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
@@ -19,7 +21,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-const k8sMeshModelPath = "../meshmodel/kubernetes/model_template.json"
+const k8sMeshModelPath = "../../models/kubernetes/model_template.json"
 
 type RegistrationStatus int
 
@@ -80,7 +82,7 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 	return cg
 }
 
-type K8sRegistrationFunction func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID uuid.UUID, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error
+type K8sRegistrationFunction func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID core.Uuid, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error
 
 // start registration of components for the contexts
 func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, reg *meshmodel.RegistryManager, eventsBrodcaster *Broadcast, provider Provider, userID string, skip bool) {
@@ -92,11 +94,17 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		return
 	}
 
-	userUUID, _ := uuid.FromString(userID)
+	userUUID, err := uuid.FromString(userID)
+	if err != nil {
+		// Every event below is attributed FromOwner(userUUID) and broadcast to the
+		// user key; a nil owner would mis-attribute the whole registration. Bail.
+		cg.log.Error(ErrInvalidUUID(fmt.Errorf("invalid user id %q: %w", userID, err)))
+		return
+	}
 
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
-		connectionID, _ := uuid.FromString(ctx.ConnectionID)
+		connectionID := uuid.FromStringOrNil(ctx.ConnectionID)
 		ctxName := ctx.Name
 
 		cg.mx.Lock()
@@ -113,8 +121,8 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		cg.mx.Unlock()
 		cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)
 
-		event := events.NewEvent().ActedUpon(connectionID).FromSystem(*ctx.MesheryInstanceID).WithSeverity(events.Informational).WithCategory("connection").WithAction(Registering.String()).FromUser(userUUID).WithDescription(fmt.Sprintf("Registration for Kubernetes context %s started", ctxName)).Build()
-		err := provider.PersistEvent(*event, nil)
+		event := events.NewEvent().ActedUpon(connectionID).FromSystem(*ctx.MesheryInstanceID).WithSeverity(events.Informational).WithCategory("connection").WithAction(Registering.String()).FromOwner(userUUID).WithDescription(fmt.Sprintf("Registration for Kubernetes context %s started", ctxName)).Build()
+		err := provider.PersistSystemEvent(*event)
 		if err != nil {
 			// Even if event was not persisted continue with the operation and publish the event to user.
 			cg.log.Warn(err)

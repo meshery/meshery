@@ -6,6 +6,7 @@ location:
     path: ""
     type: local
 name: kumatest
+owner: 990f779c-708d-4396-84b8-e2ba37c1adcc
 pattern_file: |
     name: MesheryGeneratedPatternFile
     services:
@@ -18,4 +19,3 @@ pattern_file: |
               posX: 313
               posY: 173
 updated_at: "2023-07-31T16:22:41+01:00"
-user_id: 990f779c-708d-4396-84b8-e2ba37c1adcc

@@ -1,5 +1,5 @@
-import { SEVERITY_TO_NOTIFICATION_TYPE_MAPPING } from '@/components/NotificationCenter/constants';
-import subscribeEvents from '@/components/graphql/subscriptions/EventsSubscription';
+import { SEVERITY_TO_NOTIFICATION_TYPE_MAPPING } from '@/components/layout/NotificationCenter/constants';
+import subscribeEvents from '@/graphql/subscriptions/EventsSubscription';
 import { emit, fromCallback, setup, spawnChild, stopChild } from 'xstate';
 import { store } from '../store';
 import { pushEvent } from '@/store/slices/events';
@@ -33,16 +33,10 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
           return;
         }
 
-        const event = {
-          ...result.event,
-          user_id: result.event.userID,
-          system_id: result.event.systemID,
-          updated_at: result.event.updatedAt,
-          created_at: result.event.createdAt,
-          deleted_at: result.event.deletedAt,
-          operation_id: result.event.operationID,
-        };
-        sendBack(events.eventReceivedFromServer(event));
+        // GraphQL Event payload (canonical camelCase) is consumed as-is by
+        // downstream UI; meshkit Event JSON tags also flipped to camelCase in
+        // v1.0.7 so the REST /api/system/events list endpoint matches.
+        sendBack(events.eventReceivedFromServer(result.event));
       } catch (error) {
         console.error('[operationsCenter] An error occurred in processing event', error);
       }

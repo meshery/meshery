@@ -1,7 +1,7 @@
 ---
 title: Flyte Sandbox
 subtitle: Collaborative and visual infrastructure as design for Flyte Sandbox
-image: /extensions/models/flyte-sandbox/icons/color/flyte-sandbox-color.svg
+image: extensions/models/flyte-sandbox/icons/color/flyte-sandbox-color.svg
 aliases: /extensibility/integrations/flyte-sandbox
 docURL: https://docs.meshery.io/extensibility/integrations/flyte-sandbox
 description: 
@@ -10,12 +10,12 @@ integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
 - name: scheduled-spark-application
-  colorIcon: content/en/extensions/models/flyte-sandbox/components/scheduled-spark-application/icons/color/scheduled-spark-application-color.svg
-  whiteIcon: content/en/extensions/models/flyte-sandbox/components/scheduled-spark-application/icons/white/scheduled-spark-application-white.svg
+  colorIcon: extensions/models/flyte-sandbox/components/scheduled-spark-application/icons/color/scheduled-spark-application-color.svg
+  whiteIcon: extensions/models/flyte-sandbox/components/scheduled-spark-application/icons/white/scheduled-spark-application-white.svg
   description: 
 - name: spark-application
-  colorIcon: content/en/extensions/models/flyte-sandbox/components/spark-application/icons/color/spark-application-color.svg
-  whiteIcon: content/en/extensions/models/flyte-sandbox/components/spark-application/icons/white/spark-application-white.svg
+  colorIcon: extensions/models/flyte-sandbox/components/spark-application/icons/color/spark-application-color.svg
+  whiteIcon: extensions/models/flyte-sandbox/components/spark-application/icons/white/spark-application-white.svg
   description: 
 components-count: 2
 relationships: 

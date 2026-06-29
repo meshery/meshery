@@ -10,12 +10,8 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 )
-
-// PerformanceProfilesAPIResponse is a local struct for testing unmarshal errors.
-type PerformanceProfilesAPIResponse struct {
-	PageSize uint `json:"page_size"`
-}
 
 var update = flag.Bool("update", false, "update golden files")
 
@@ -29,11 +25,11 @@ func TestProfileCmd(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 	testToken := filepath.Join(currDir, "fixtures", "auth.json")
-	profileURL := testContext.BaseURL + "/api/user/performance/profiles"
+	profileURL := testContext.BaseURL + "/api/performance/profiles"
 
 	listTests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name: "standard profiles output",
+			Name: "given no argument when profile then display profiles",
 			Args: []string{"profile"},
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: "profile.list.response.golden", ResponseCode: 200},
@@ -42,7 +38,7 @@ func TestProfileCmd(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
-			Name: "profiles searching istio",
+			Name: "given argument istio when profile then display istio profiles",
 			Args: []string{"profile", "istio"},
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: "profile.searchIstio.response.golden", ResponseCode: 200},
@@ -51,7 +47,7 @@ func TestProfileCmd(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
-			Name: "profiles searching test 3",
+			Name: "given argument test 3 when profile then display test 3 profiles",
 			Args: []string{"profile", "test", "3"},
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: "profile.searchTest3.response.golden", ResponseCode: 200},
@@ -60,7 +56,7 @@ func TestProfileCmd(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
-			Name: "standard profiles in json output",
+			Name: "given json output flag when profile then display profiles in json format",
 			Args: []string{"profile", "-o", "json"},
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: "profile.list.response.golden", ResponseCode: 200},
@@ -69,7 +65,7 @@ func TestProfileCmd(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
-			Name: "standard profiles in yaml output",
+			Name: "given yaml output flag when profile then display profiles in yaml format",
 			Args: []string{"profile", "-o", "yaml"},
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: "profile.list.response.golden", ResponseCode: 200},
@@ -81,7 +77,7 @@ func TestProfileCmd(t *testing.T) {
 
 	loggerTests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name: "No profiles found",
+			Name: "given no profiles found when profile then display no profiles message",
 			Args: []string{"profile", "--view"},
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: "profile.empty.response.golden", ResponseCode: 200},
@@ -90,7 +86,7 @@ func TestProfileCmd(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
-			Name: "invalid output format",
+			Name: "given invalid output format when profile then throw error",
 			Args: []string{"profile", "-o", "invalid"},
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: "profile.list.response.golden", ResponseCode: 200},
@@ -101,7 +97,7 @@ func TestProfileCmd(t *testing.T) {
 			ExpectedError:    display.ErrInvalidOutputFormat("invalid"),
 		},
 		{
-			Name: "Unmarshal error",
+			Name: "given invalid API response when profile then throw error",
 			Args: []string{"profile"},
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: "profile.invalidJSON.response.golden", ResponseCode: 200},
@@ -112,15 +108,18 @@ func TestProfileCmd(t *testing.T) {
 			ExpectedError: func() error {
 				cmdUsed = "profile"
 
-				// Replicate the exact JSON unmarshal error using local struct
-				var response PerformanceProfilesAPIResponse
-				innerErr := json.Unmarshal([]byte(`{"page_size": "25"}`), &response)
+				// Replicate the exact JSON unmarshal error using the schema type.
+				// Body matches the canonical camelCase wire form in the
+				// `profile.invalidJSON.response.golden` fixture so the inner
+				// json.Unmarshal error references `pageSize`, not `page_size`.
+				var response perfprofile.PerformanceProfilePage
+				innerErr := json.Unmarshal([]byte(`{"pageSize": "25"}`), &response)
 
 				return utils.ErrLoadConfig(ErrFailUnmarshal(innerErr))
 			}(),
 		},
 		{
-			Name: "Server Error 400",
+			Name: "given server error 400 when profile then throw error",
 			Args: []string{"profile"},
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: "profile.error.response.golden", ResponseCode: 400},
@@ -136,7 +135,7 @@ func TestProfileCmd(t *testing.T) {
 			}(),
 		},
 		{
-			Name:             "failing add authentication test",
+			Name:             "given invalid authentication token when profile then throw error",
 			Args:             []string{"profile"},
 			ExpectedResponse: "",
 			Token:            testToken + "invalid-path",

@@ -1,6 +1,7 @@
 ---
 title: Extensibility
 description: Meshery has an extensible architecture with several different types of extension points.
+categories: [extensibility]
 aliases:
 - /extensibility
 ---
@@ -25,5 +26,5 @@ A browsable collection of various Meshery extensions is available at [https://me
 The following points of extension are currently incorporated into Meshery.
 
 <ul style="margin:0;"> 
-    <li style="list-style-type: inherit; margin: 0"><a href="/extensions/adapters">Extensibility: Meshery Adapters</a> - Meshery architecture is extensible. Meshery provides several extension points for working with different cloud native infrastructure via <a href="/extensions/adapters">adapters</a>, <a href="/extensibility/load-generators">load generators</a> and <a href="/extensibility/providers">providers.</a></li>
+    <li style="list-style-type: inherit; margin: 0"><a href="{{< ref "extensions/adapters/_index.md" >}}">Extensibility: Meshery Adapters</a> - Meshery architecture is extensible. Meshery provides several extension points for working with different cloud native infrastructure via <a href="{{< ref "extensions/adapters/_index.md" >}}">adapters</a>, <a href="{{< ref "reference/extensibility/load-generators.md" >}}">load generators</a> and <a href="{{< ref "reference/extensibility/providers/index.md" >}}">providers.</a></li>
 </ul>

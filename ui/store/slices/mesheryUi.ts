@@ -16,7 +16,7 @@ const initialState = {
   isDrawerCollapsed: false,
   catalogVisibility: true,
   extensionType: '',
-  capabilitiesRegistry: null,
+  providerCapabilities: null,
   controllerState: null,
   connectionMetadataState: null, // store connection definition metadata for state and connection kind management
   organization: null,
@@ -68,8 +68,8 @@ const coreSlice = createSlice({
     updateExtensionType: (state, action) => {
       state.extensionType = action.payload.extensionType;
     },
-    updateCapabilities: (state, action) => {
-      state.capabilitiesRegistry = action.payload.capabilitiesRegistry;
+    updateProviderCapabilities: (state, action) => {
+      state.providerCapabilities = action.payload.providerCapabilities;
     },
     setConnectionMetadata: (state, action) => {
       state.connectionMetadataState = action.payload.connectionMetadataState;
@@ -104,7 +104,7 @@ export const {
   setControllerState,
   setMeshsyncSubscription,
   updateExtensionType,
-  updateCapabilities,
+  updateProviderCapabilities,
   setConnectionMetadata,
   setOrganization,
   setWorkspace,
@@ -130,17 +130,8 @@ export const updateProgress = (progressData) => {
 export const coreMiddleware = (getDefaultMiddleware) =>
   getDefaultMiddleware({
     serializableCheck: {
-      // Ignore these action types
-      ignoredActions: ['core/updateGrafanaConfig', 'core/updatePrometheusConfig'],
-      // Ignore these field paths in all actions
-      ignoredActionPaths: ['payload.grafana.ts', 'payload.prometheus.ts'],
       // Ignore these paths in the state
-      ignoredPaths: [
-        'core.grafana.ts',
-        'core.prometheus.ts',
-        'core.loadTestPref.ts',
-        'core.meshAdaptersts',
-      ],
+      ignoredPaths: ['core.loadTestPref.ts', 'core.meshAdaptersts'],
     },
   });
 

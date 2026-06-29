@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
   <head>
-    <head>
   <meta charset="utf-8" />
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1, shrink-to-fit=no"
   />
   <meta name="generator" content="Hugo 0.154.5" />
-  <meta name="ROBOTS" content="INDEX, FOLLOW" />
+  <meta name="robots" content="noindex, follow" />
 
   <link
     rel="alternate"
@@ -124,8 +123,8 @@
     href="/v0.9/css/lightbox.css"
   />
 
-  
-  
+
+
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -133,7 +132,7 @@
     })(window,document,'script','dataLayer','GTM-PCGTC98C');</script>
 
 
-  
+
 
   <script
     src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -147,18 +146,18 @@
     referrerpolicy="no-referrer"
   ></script>
 
-  
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
   <script>
     $(function () {
-       
+
       anchors.options = {
         visible: "hover",
         placement: "right",
       };
       anchors.add("h1, h2, h3, h4, h5");
     });
-    
+
     document.addEventListener("click", function (event) {
       if (
         event.target.tagName === "A" &&
@@ -170,26 +169,26 @@
   </script>
 </head>
 
-    
 
 
-  
-  
 
-  
-  
 
-  
-  
 
-  
-  
 
-  
-  
 
-  
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 <header>
@@ -206,8 +205,8 @@
     <div id="main_navbar">
       <ul class="navbar-nav">
 
-        
-        
+
+
         <li class="nav-item">
           <a
             class="nav-link"
@@ -215,7 +214,7 @@
             <span>Quick Start</span>
           </a>
         </li>
-        
+
         <li class="nav-item">
           <a
             class="nav-link"
@@ -223,7 +222,7 @@
             <span>Website</span>
           </a>
         </li>
-        
+
         <li class="nav-item">
           <a
             class="nav-link"
@@ -231,7 +230,7 @@
             <span>Discuss</span>
           </a>
         </li>
-        
+
         <li class="nav-item">
           <a
             class="nav-link"
@@ -239,7 +238,7 @@
             <span>Catalog</span>
           </a>
         </li>
-        
+
         <li class="nav-item">
           <a
             class="nav-link"
@@ -247,13 +246,13 @@
             <span>Blog</span>
           </a>
         </li>
-        
+
 
         <a href="https://play.meshery.io">
           <div class="nav-btn">Playground</div>
         </a>
 
-        
+
         <select
           onchange="window.location=this.value"
           class="appearance-none flex-1 w-full px-0 py-1 tracking-wide focus:outline-none version-selector"
@@ -261,86 +260,35 @@
           id="versioningSelection"
         >
 
-          
-          
-            
+
+
+
             <option
-              ZgotmplZ
               value="/"
               class="nav-item mr-4 mb-2 text-black">
               latest
             </option>
 
-            
+
 
             <option
-              ZgotmplZ
               selected
               value="/v0.9/"
               class="nav-item mr-4 mb-2 text-black">
               v0.9
             </option>
-          
-            
-            
 
-            
+
+
+
+
 
             <option
-              ZgotmplZ
               value="/v0.8/"
               class="nav-item mr-4 mb-2 text-black">
               v0.8
             </option>
-          
-            
-            
 
-            
-
-            <option
-              ZgotmplZ
-              value="/v0.7/"
-              class="nav-item mr-4 mb-2 text-black">
-              v0.7
-            </option>
-          
-            
-            
-
-            
-
-            <option
-              ZgotmplZ
-              value="/v0.6/"
-              class="nav-item mr-4 mb-2 text-black">
-              v0.6
-            </option>
-          
-            
-            
-
-            
-
-            <option
-              ZgotmplZ
-              value="/v0.5/"
-              class="nav-item mr-4 mb-2 text-black">
-              v0.5
-            </option>
-          
-            
-            
-
-            
-
-            <option
-              ZgotmplZ
-              value="/v0.4/"
-              class="nav-item mr-4 mb-2 text-black">
-              v0.4
-            </option>
-          
         </select>
       </ul>
     </div>
@@ -366,7 +314,8 @@
 
       <button class="nav-mode-icon" id="mode-toggle-btn">
         <img
-          id="logo-dark-light"
+          class="logo-dark-light"
+          style="visibility: hidden;"
           src="/v0.9/images/nav-icons/mode-toggle-icon-moon.png"
           data-logo-for-dark="/v0.9/images/nav-icons/mode-toggle-icon-moon.png"
           data-logo-for-light="/v0.9/images/nav-icons/mode-toggle-icon-sun.png"
@@ -380,20 +329,32 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <script src="/v0.9/assets/js/error-code-handler.js"></script>
-    
+
   </head>
 
-  <body class="td-home dark-mode ">
+  <body class="td-home ">
     <script>
-      if (localStorage.getItem("mode") === "light-mode") {
-        document.body.classList.remove("dark-mode");
-        document.querySelectorAll("#logo-dark-light").forEach(e => {
-          e.src = e.dataset.logoForLight;
+      (function() {
+        const savedMode = localStorage.getItem("mode");
+        const isLight = savedMode === "light-mode";
+        if (isLight) {
+          document.body.classList.remove("dark-mode");
+        } else {
+          document.body.classList.add("dark-mode");
+        }
+
+        document.querySelectorAll(".logo-dark-light").forEach(logo => {
+          if (isLight) {
+            logo.src = logo.dataset.logoForLight;
+          } else {
+            logo.src = logo.dataset.logoForDark;
+          }
+          logo.style.visibility = "visible";
         });
-      }
+      })();
     </script>
 
-    
+
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PCGTC98C"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
@@ -416,8 +377,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     >
   </form>
   <script type="text/javascript">
-    
-    
+
+
     (() => {
       window.addEventListener("load", function () {
         let scrollElem = document.getElementsByClassName("sidebar-nav__section-link active").item(0);
@@ -436,14 +397,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </script>
 
   <nav class="sidebar-nav" id="td-section-nav">
-    
-    
-    
+
+
+
     <ul class="sidebar-nav__section">
-      
+
 
       <li class="sidebar-nav__section-title">
-        
+
         <div class="toggle" data-toggle="collapse" data-target="#section0" aria-expanded="false" aria-controls="section0"> ⇅ </div>
         <a
           href="/v0.9/project/overview"
@@ -455,38 +416,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         >
           🗺 Overview &amp; Installation
         </a>
-  
-        
+
+
         <ul class="td-sidebar-nav__section collapse" id="section0">
-          
-          
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/installation/quick-start"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >🚀 Quick Start</a>
           </li>
-           
-          
-          
+
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/installation"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Installation ↆ</a>
           </li>
-           
-           
+
+
         </ul>
-         
+
       </li>
-    </ul> 
-    
+    </ul>
+
     <ul class="sidebar-nav__section">
-      
+
 
       <li class="sidebar-nav__section-title">
-        
+
         <div class="toggle" data-toggle="collapse" data-target="#section1" aria-expanded="false" aria-controls="section1"> ⇅ </div>
         <a
           href="/v0.9/concepts"
@@ -498,38 +459,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         >
           🧠 Concepts
         </a>
-  
-        
+
+
         <ul class="td-sidebar-nav__section collapse" id="section1">
-          
-          
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/concepts/architecture"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Architectural ↆ</a>
           </li>
-           
-          
-          
+
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/concepts/logical"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Logical ↆ</a>
           </li>
-           
-           
+
+
         </ul>
-         
+
       </li>
-    </ul> 
-    
+    </ul>
+
     <ul class="sidebar-nav__section">
-      
+
 
       <li class="sidebar-nav__section-title">
-        
+
         <div class="toggle" data-toggle="collapse" data-target="#section2" aria-expanded="false" aria-controls="section2"> ⇅ </div>
         <a
           href="/v0.9/guides"
@@ -541,74 +502,74 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         >
           📚 Guides &amp; Tutorials
         </a>
-  
-        
+
+
         <ul class="td-sidebar-nav__section collapse" id="section2">
-          
-          
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/guides/configuration-management"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Configuration Management ↆ</a>
           </li>
-           
-          
-          
+
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/guides/infrastructure-management"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Infrastructure Management ↆ</a>
           </li>
-           
-          
-          
+
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/guides/performance-management"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Performance Management ↆ</a>
           </li>
-           
-          
-          
+
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/guides/troubleshooting"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Troubleshooting Guides ↆ</a>
           </li>
-           
-          
-          
+
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/guides/mesheryctl"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Using Meshery CLI ↆ</a>
           </li>
-           
-          
-          
+
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/guides/tutorials"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >🧑‍🔬 Tutorials ↆ</a>
           </li>
-           
-           
+
+
         </ul>
-         
+
       </li>
-    </ul> 
-    
+    </ul>
+
     <ul class="sidebar-nav__section">
-      
+
 
       <li class="sidebar-nav__section-title">
-        
+
         <div class="toggle" data-toggle="collapse" data-target="#section3" aria-expanded="false" aria-controls="section3"> ⇅ </div>
         <a
           href="/v0.9/#"
@@ -620,38 +581,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         >
           🛠 Integrations &amp; Extensions
         </a>
-  
-        
+
+
         <ul class="td-sidebar-nav__section collapse" id="section3">
-          
-          
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/extensions"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Extensions ↆ</a>
           </li>
-           
-          
-          
+
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/extensions/integrations"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Integrations</a>
           </li>
-           
-           
+
+
         </ul>
-         
+
       </li>
-    </ul> 
-    
+    </ul>
+
     <ul class="sidebar-nav__section">
-      
+
 
       <li class="sidebar-nav__section-title">
-        
+
         <div class="toggle" data-toggle="collapse" data-target="#section4" aria-expanded="false" aria-controls="section4"> ⇅ </div>
         <a
           href="/v0.9/project"
@@ -663,47 +624,47 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         >
           🧑‍💻 Contributing &amp; Community
         </a>
-  
-        
+
+
         <ul class="td-sidebar-nav__section collapse" id="section4">
-          
-          
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/project/community"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Community</a>
           </li>
-           
-          
-          
+
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/project/contributing"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Contributing Guides ↆ</a>
           </li>
-           
-          
-          
+
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/installation/playground"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Meshery Playground</a>
           </li>
-           
-           
+
+
         </ul>
-         
+
       </li>
-    </ul> 
-    
+    </ul>
+
     <ul class="sidebar-nav__section">
-      
+
 
       <li class="sidebar-nav__section-title">
-        
+
         <div class="toggle" data-toggle="collapse" data-target="#section5" aria-expanded="false" aria-controls="section5"> ⇅ </div>
         <a
           href="/v0.9/reference"
@@ -715,78 +676,78 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         >
           📖 Extensibility &amp; Reference
         </a>
-  
-        
+
+
         <ul class="td-sidebar-nav__section collapse" id="section5">
-          
-          
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/reference/mesheryctl"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >CLI Command</a>
           </li>
-           
-          
-          
+
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/reference/error-codes"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Error Code</a>
           </li>
-           
-          
-          
+
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/extensibility"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Extensibility ↆ</a>
           </li>
-           
-          
-          
+
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/reference/meshery-operator-crds"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Meshery Operator &amp; CRDs</a>
           </li>
-           
-          
-          
+
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/reference/permissions"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Permission Keys</a>
           </li>
-           
-          
-          
+
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/extensibility/api"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >REST &amp; GraphQL API ↆ</a>
           </li>
-           
-          
-          
+
+
+
           <li class="sidebar-nav__section-link ">
             <a
               href="/v0.9/project/security-vulnerabilities"
               class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
             >Security Vulnerabilities</a>
           </li>
-           
-           
+
+
         </ul>
-         
+
       </li>
-    </ul> 
-    
+    </ul>
+
   </nav>
 </div>
           </div>
@@ -818,33 +779,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <ol class="breadcrumb spb-1">
             <li class="breadcrumb-item active" aria-current="page">
               <div id="breadcrumbs">
-  
-  
-  
 
-  
+
+
+
+
     <a href="/v0.9/">home</a>
-  
 
-  
-    
-  
-    
-      
-        
+
+
+
+
+
+
+
         / <a href="/v0.9/">v0.9</a>
-      
-    
-  
-    
-  
+
+
+
+
+
 </div>
             </li>
           </ol>
         </nav>
         <div class="td-content">
-          
-          
+
+
 
 <div style="display:grid; justify-items:center">
   <div style="align-self:center; margin-bottom:0px; margin-top:0px;padding-top:0px; padding-bottom:0px;width:clamp(170px, 50%, 800px);">
@@ -1021,7 +982,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <a href="/v0.9/guides/configuration-management/importing-models/">Importing Models</a><span> - Importing Existing Model and CRD-based Infrastructure Configurations into Meshery as Model</span></li><li>
           <a href="/v0.9/guides/configuration-management/push-pull-model-image/">Push or Pull a Model Image</a><span> - Push or pull a model image to or from an OCI-compatible image repository.</span></li>
       </ul>
-    </details>  
+    </details>
     <details>
       <summary>
         <p style="display:inline">
@@ -1126,7 +1087,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <a href="/v0.9/project/contributing/contributing-relationships/">Contributing to Model Relationships</a><span> - How to contribute to Meshery Models Relationships, Policies...</span></li><li>
           <a href="/v0.9/project/contributing/contributing-models/">Contributing to Models</a><span> - How to contribute to Meshery Models, Components, Relationships, Policies...</span></li><li>
           <a href="/v0.9/project/contributing/contributing-models-quick-start/">Contributing to Models Quick Start</a><span> - A no-fluff guide to creating your own Meshery Models quickly.</span></li><li>
-          <a href="/v0.9/project/contributing/test-status/">End-to-End Test Status</a><span> - Status reports of Meshery&#39;s various test results.</span></li><li>
           <a href="/v0.9/project/contributing/contributing-error/">How to write MeshKit compatible errors</a><span> - How to declare errors in Meshery components.</span></li><li>
           <a href="/v0.9/project/contributing/contributing-cli-guide/">Meshery CLI Style Guide</a><span> - Design principles and code conventions.</span></li><li>
           <a href="/v0.9/project/contributing/contributing-docs-structure/">Meshery Documentation Structure and Organization</a><span> - Audience, high-Level outline &amp; information architecture for Meshery Documentation</span></li><li>
@@ -1184,16 +1144,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 
         </div>
-        
+
       </main>
 
-      
+
     </div>
 
     <footer class="footer">
   <div class="text-white">&copy; 2026 The Meshery Authors</div>
 
-  
+
 
   <div class="footer-icons-list">
     <div class="footer-icons">
@@ -1358,11 +1318,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
     integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
     crossorigin="anonymous"></script>
-<script src="v0.9/js/navbar.js"></script>
-<script src="v0.9/js/lightbox.js"></script>
-<script src="v0.9/js/main.js"></script>
+<script src="/js/navbar.js"></script>
+<script src="/js/lightbox.js"></script>
+<script src="/js/main.js"></script>
 
-    
+
 
   </body>
 </html>

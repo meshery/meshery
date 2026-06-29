@@ -1,4 +1,4 @@
-import React, { forwardRef, Ref, ComponentProps } from 'react';
+import React, { Ref, ComponentProps } from 'react';
 import { PromptComponent } from '@sistent/sistent';
 
 type PromptComponentProps = ComponentProps<typeof PromptComponent>;
@@ -13,10 +13,8 @@ export interface PromptRef {
   }) => Promise<string>;
 }
 
-const _PromptComponent = forwardRef<PromptRef, PromptComponentProps>((props, ref) => {
-  return <PromptComponent {...props} ref={ref as Ref<unknown>} />;
-});
-
-_PromptComponent.displayName = '_PromptComponent';
+const _PromptComponent = ({ ref, ...props }: PromptComponentProps & { ref?: Ref<PromptRef> }) => (
+  <PromptComponent {...props} ref={ref as Ref<unknown>} />
+);
 
 export default _PromptComponent;

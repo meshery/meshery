@@ -48,7 +48,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 
 		// validate model name
 		if len(args) != 1 {
-			return ErrModelInitFromString(errInitOneArg)
+			return utils.ErrInvalidArgument(fmt.Errorf("%s", errInitOneArg))
 		}
 		modelName := args[0]
 		input := map[string]any{"name": modelName}
@@ -161,7 +161,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		if err != nil {
 			utils.Log.Info("Failure, cleaning up...")
 			if !isModelFolderAlreadyExists {
-				// if model folder didn'tv exist before -> delete it
+				// if model folder didn't exist before -> delete it
 				utils.Log.Infof("Removing %s", modelFolder)
 				_ = os.RemoveAll(modelFolder)
 			} else {
@@ -185,10 +185,10 @@ func init() {
 
 const (
 	initModelDirPerm                  = 0o755
-	initModelModelSchema              = "schemas/constructs/v1beta1/model/model.yaml"
-	initModelTemplatePathModel        = "schemas/constructs/v1beta1/model/templates/model_template"
-	initModelTemplatePathComponent    = "schemas/constructs/v1beta1/component/templates/component_template"
-	initModelTemplatePathRelationship = "schemas/constructs/v1alpha3/relationship/templates/relationship_template"
+	initModelModelSchema              = "schemas/constructs/v1beta2/model/model.yaml"
+	initModelTemplatePathModel        = "schemas/constructs/v1beta2/model/templates/model_template"
+	initModelTemplatePathComponent    = "schemas/constructs/v1beta3/component/templates/component_template"
+	initModelTemplatePathRelationship = "schemas/constructs/v1beta3/relationship/templates/relationship_template"
 )
 
 // TODO: Connection templates are temporarily disabled.
@@ -258,7 +258,7 @@ var initModelData = []struct {
 		// map file name to template key
 		files: nil,
 		beforeHook: func() {
-			utils.Log.Info("Adding sample connections...")
+			utils.Log.Info("Creating connections directory...")
 		},
 	},
 	{
@@ -266,7 +266,7 @@ var initModelData = []struct {
 		// map file name to template key
 		files: nil,
 		beforeHook: func() {
-			utils.Log.Info("Creating sample credentials...")
+			utils.Log.Info("Creating credentials directory...")
 		},
 	},
 }
