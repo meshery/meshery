@@ -148,6 +148,7 @@ Create a relationship definition as a YAML file, placing this new definition fil
 - `type`: The augmentative category of the relationship (e.g., binding, non-binding, inventory).
 - `subType`: The specific representative visual paradigm (e.g., parent, mount, network, wallet, badge).
 - `selectors`: The scope of the relationship, including the components involved and any constraints. Selector specify to which component(s) the relationship applies or does not apply (think of in terms of the `AND` operators in a query). Selector Sets are used to combine multiple selectors for more granular control over the logic used when matchmaking (establishing a relationship) between components (think of in terms of the `OR` operators in a query).
+- `match_strategy_matrix`: An optional matrix defining advanced criteria for how the configuration of the `from` component must match the configuration of the `to` component in order for the relationship to be established.
 - `evaluationQuery`: Name of the policy or policies (Open Policy Agent rego file(s)) to invoke for relationship evaluation. Identify an existing OPA policy as the `evaluationQuery` suitable to the relationship. If no policy exists, propose a new policy (rego). *(rarely necessary)* Create a new policy for the evaluation of your relationship using Rego. *This step is only necessary and can typically be skipped. Contact a maintainer if the relationship requires a new policy to evaluate the relationship.*
 - `description`: A characterization of the relationship, its purpose, and any constraints or considerations of its application.
 
@@ -194,6 +195,7 @@ selector: [
             {
                "kind": "WASMFilter",
                "model": "istio-base",
+               "match_strategy_matrix": null,
                "patch": {
                   "patchStrategy": "replace",
                   "mutatorRef": [
@@ -218,6 +220,7 @@ selector: [
             {
                "kind": "EnvoyFilter",
                "model": "istio-base",
+               "match_strategy_matrix": null,
                "patch": {
                   "patchStrategy": "replace",
                   "mutatedRef": [
@@ -249,6 +252,7 @@ selector: [
             {
                "kind": "ConfigMap",
                "model": "kubernetes",
+               "match_strategy_matrix": null,
                "patch": {
                   "patchStrategy": "replace",
                   "mutatorRef": [
@@ -264,6 +268,7 @@ selector: [
             {
                "kind": "Deployment",
                "model": "kubernetes",
+               "match_strategy_matrix": null,
                "patch": {
                   "patchStrategy": "replace",
                   "mutatedRef": [
@@ -344,6 +349,20 @@ Each policy has a set of evaluation rules defined and the `evaluationQuery` attr
    - For example, a selector with `kind: Pod`, `Model: Kubernetes`, and the absence of the `version` property would be interpretted as `version: *`, which
      means that all the versions of the Kubernetes Pod resource (k8s.io/v1/betav2) will match the selector.
 1. The `evaluationQuery` property determines the OPA policy to invoke for relationship evaluation, specify the correct rego query.
+1. The `match_strategy_matrix` allows for advanced structural matching between components based on their configurations. It operates by mapping evaluation strategies against the corresponding property paths defined in your `mutatorRef` and `mutatedRef`. If no structural matching is required, this field can be explicitly set to `null`.
+   - **Supported Strategies:**
+     - `equal`: Strict type and value match.
+     - `equal_as_strings`: Converts values to strings before comparing.
+     - `not_null`: Ensures the field is populated (exists and is not empty).
+     - `to_contains_from`: Ensures that the value of the `from` component is contained within the `to` component's array or string.
+   - **Example:**
+     ```json
+     "match_strategy_matrix": [
+       [ "equal_as_strings", "not_null" ],
+       [ "equal" ]
+     ]
+     ```
+     *In this example, the first pair of properties in the mutator/mutated references must equal each other as strings AND not be null. The second pair must strictly equal each other.*
 
 ##### Conflicts
 
