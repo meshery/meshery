@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Contributing to Meshery Schemas on Documentation</title><link>/pr-preview/pr-20284/project/contributing/contributing-schemas/</link><description>Recent content in Contributing to Meshery Schemas on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/pr-preview/pr-20284/project/contributing/contributing-schemas/index.xml" rel="self" type="application/rss+xml"/><item><title>The Dual-Schema Pattern</title><link>/pr-preview/pr-20284/project/contributing/contributing-schemas/dual-schema-pattern/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20284/project/contributing/contributing-schemas/dual-schema-pattern/</guid><description>&lt;h2 id="schema-design-principles-the-dual-schema-pattern"&gt;
+	Schema Design Principles: The Dual-Schema Pattern
+&lt;/h2&gt;
+&lt;p&gt;Every persisted entity in Meshery follows a strict two-schema contract. Violating this contract causes generated Go structs and API clients to be incorrect.&lt;/p&gt;
+&lt;h3 id="rule-1--entity-schema--response-schema-only"&gt;
+	Rule 1 — Entity schema = response schema only
+&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;&amp;lt;construct&amp;gt;.yaml&lt;/code&gt; file represents the &lt;strong&gt;full server-side object&lt;/strong&gt; as returned in API responses. It must:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Include &lt;strong&gt;all&lt;/strong&gt; server-generated fields: &lt;code&gt;id&lt;/code&gt;, &lt;code&gt;createdAt&lt;/code&gt;, &lt;code&gt;updatedAt&lt;/code&gt;, &lt;code&gt;deletedAt&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;List server-generated required fields in &lt;code&gt;required&lt;/code&gt; (they are always present in responses)&lt;/li&gt;
+&lt;li&gt;Have &lt;code&gt;additionalProperties: false&lt;/code&gt; at the top level&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# keychain.yaml — response schema ✅&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;object&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;additionalProperties&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;required&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;id&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;name&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;owner&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;createdAt&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;updatedAt&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;properties&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;id&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;$ref&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;../../v1alpha1/core/api.yml#/components/schemas/uuid&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;string&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;owner&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;$ref&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;../../v1alpha1/core/api.yml#/components/schemas/uuid&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;createdAt&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;$ref&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;../../v1alpha1/core/api.yml#/components/schemas/created_at&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;updatedAt&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;$ref&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;../../v1alpha1/core/api.yml#/components/schemas/updated_at&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;deletedAt&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;$ref&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;../../v1alpha1/core/api.yml#/components/schemas/nullTime&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="rule-2--write-operations-use-a-separate-payload-schema"&gt;
+	Rule 2 — Write operations use a separate &lt;code&gt;*Payload&lt;/code&gt; schema
+&lt;/h3&gt;
+&lt;p&gt;Every entity that supports &lt;code&gt;POST&lt;/code&gt; or &lt;code&gt;PUT&lt;/code&gt; must define a dedicated &lt;code&gt;{Entity}Payload&lt;/code&gt; schema in &lt;code&gt;api.yml&lt;/code&gt;. The payload schema:&lt;/p&gt;</description></item><item><title>Build and Generation</title><link>/pr-preview/pr-20284/project/contributing/contributing-schemas/build-and-generation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20284/project/contributing/contributing-schemas/build-and-generation/</guid><description>&lt;h2 id="code-generation"&gt;
+	Code Generation
+&lt;/h2&gt;
+&lt;p&gt;The build system generates code from your schemas automatically.&lt;/p&gt;
+&lt;h3 id="build-pipeline"&gt;
+	Build Pipeline
+&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;schemas/constructs/**/*.yml (you write these)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ▼
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;bundle-openapi.js (bundles + dereferences schemas)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ├──▶ generate-golang.js → models/**/*.go (Go structs via oapi-codegen)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ├──▶ generate-typescript.js → typescript/generated/ (TypeScript types)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; └──▶ generate-rtk.js → typescript/rtk/ (RTK Query hooks)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="what-gets-generated"&gt;
+	What Gets Generated
+&lt;/h3&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Output&lt;/th&gt;
+ &lt;th&gt;Location&lt;/th&gt;
+ &lt;th&gt;Description&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Go structs&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;models/&amp;lt;version&amp;gt;/&amp;lt;package&amp;gt;/&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;Strongly-typed models for backend&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;TypeScript types&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;typescript/generated/&amp;lt;version&amp;gt;/&amp;lt;package&amp;gt;/&amp;lt;Package&amp;gt;.d.ts&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;Interface definitions&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;TypeScript schemas&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;typescript/generated/&amp;lt;version&amp;gt;/&amp;lt;package&amp;gt;/&amp;lt;Package&amp;gt;Schema.ts&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;OpenAPI schema as const JS object&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;RTK Query clients&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;typescript/rtk/&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;Auto-generated API hooks for Redux&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Bundled OpenAPI&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;_openapi_build/&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;Merged API specifications&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="build-commands"&gt;
+	Build Commands
+&lt;/h3&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Command&lt;/th&gt;
+ &lt;th&gt;Description&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;make build&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;Full build: bundles OpenAPI + generates Go/TypeScript&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;make bundle-openapi&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;Bundle and merge OpenAPI specs only&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;make generate-golang&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;Generate Go code (requires bundled specs)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;make generate-ts&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;Generate TypeScript types and schemas&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;npm run build&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;Build TypeScript distribution with tsup&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="dynamic-schema-discovery"&gt;
+	Dynamic Schema Discovery
+&lt;/h3&gt;
+&lt;p&gt;Schemas are discovered automatically by scanning &lt;code&gt;schemas/constructs/&lt;/code&gt; for directories containing an &lt;code&gt;api.yml&lt;/code&gt; file. No manual configuration needed!&lt;/p&gt;</description></item><item><title>UI Schemas</title><link>/pr-preview/pr-20284/project/contributing/contributing-schemas/ui-schemas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20284/project/contributing/contributing-schemas/ui-schemas/</guid><description>&lt;p&gt;Meshery aims to decouple the UI logic from hardcoded structures and become fully schema-driven. This allows the UI to dynamically adapt based on changes in the underlying schema without requiring constant manual updates. This document explains how to integrate schema definitions from the &lt;a href="https://github.com/meshery/schemas"&gt;&lt;code&gt;meshery/schemas&lt;/code&gt;&lt;/a&gt; repository into the Meshery UI using a code-generation approach.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="overview"&gt;
+	Overview
+&lt;/h2&gt;
+&lt;p&gt;Meshery’s schemas define the &lt;strong&gt;structure of data (constructs)&lt;/strong&gt; using JSON Schema and &lt;strong&gt;their behavior (API operations)&lt;/strong&gt; using OpenAPI specifications. From these definitions, Meshery auto-generates:&lt;/p&gt;</description></item></channel></rss>
