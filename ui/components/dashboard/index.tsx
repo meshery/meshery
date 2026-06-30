@@ -91,7 +91,12 @@ const useDashboardRouter = () => {
 
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
 
-const RESOURCE_ICONS: Record<string, React.FC<any>> = {
+type ResourceCategoryKey = 'Overview' | keyof typeof ResourcesConfig;
+
+const RESOURCE_ICONS: Record<
+  ResourceCategoryKey,
+  React.FC<{ style?: React.CSSProperties; fill?: string }>
+> = {
   Overview: MesheryIcon,
   Node: ConnectionIcon,
   Namespace: FolderRoundedIcon,
@@ -395,8 +400,12 @@ const Dashboard = () => {
                         ? theme.palette.primary.main
                         : theme.palette.icon.default;
 
-                      const Icon = RESOURCE_ICONS[resource];
-                      return Icon ? <Icon style={iconLarge} fill={fill} /> : null;
+                      const Icon = RESOURCE_ICONS[resource as ResourceCategoryKey];
+                      return Icon ? (
+                        <span aria-hidden="true" style={{ display: 'flex' }}>
+                          <Icon style={iconLarge} fill={fill} />
+                        </span>
+                      ) : null;
                     })()}
                     label={resource}
                   />
