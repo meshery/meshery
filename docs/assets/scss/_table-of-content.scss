@@ -46,12 +46,13 @@
 
   &::-webkit-scrollbar-track {
     width: 0.5rem;
+    background: var(--background-light);
     border-radius: 11px;
     overflow: hidden;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #868e96;
+    background: var(--scrollbar-color);
     width: 0.2rem;
     border-radius: 11px;
   }
