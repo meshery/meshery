@@ -21,19 +21,18 @@ import {
   OutlinedResetIcon,
   useTheme,
   ErrorBoundary,
+  FolderRoundedIcon,
+  ApplicationIcon,
+  ConfigurationIcon,
+  AccountTreeIcon,
+  LockIcon,
+  DatabaseIcon,
+  ExtensionIcon,
 } from '@sistent/sistent';
-
-import NodeIcon from '../../assets/icons/kubernetes-node.svg';
-import NamespaceIcon from '../../assets/icons/kubernetes-ns.svg';
-import WorkloadIcon from '../../assets/icons/kubernetes-deploy.svg';
-import ConfigurationIconSVG from '../../assets/icons/kubernetes-cm.svg';
-import NetworkIcon from '../../assets/icons/kubernetes-svc.svg';
-import SecurityIcon from '../../assets/icons/kubernetes-secret.svg';
-import StorageIcon from '../../assets/icons/kubernetes-pv.svg';
-import CrdIcon from '../../assets/icons/kubernetes-crd.svg';
 import { WrapperPaper } from './style';
 import _ from 'lodash';
 import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
+import ConnectionIcon from '@/assets/icons/Connection';
 import { Responsive } from 'react-grid-layout/legacy';
 import debounceWidthProvider from './debounceWidthProvider';
 import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaultLayout';
@@ -92,40 +91,16 @@ const useDashboardRouter = () => {
 
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
 
-type ResourceCategory = 'Overview' | keyof typeof ResourcesConfig;
-type SvgAsset = string | { src?: string };
-
-interface ResourceIconProps {
-  resource: ResourceCategory;
-}
-
-const ResourceIcon: React.FC<ResourceIconProps> = ({ resource }) => {
-  const renderSvgIcon = (icon: SvgAsset) => {
-    const src = typeof icon === 'string' ? icon : icon?.src;
-    return src ? <img src={src} style={iconLarge} alt="" aria-hidden="true" /> : null;
-  };
-  switch (resource) {
-    case 'Overview':
-      return <MesheryIcon style={iconLarge} />;
-    case 'Node':
-      return renderSvgIcon(NodeIcon);
-    case 'Namespace':
-      return renderSvgIcon(NamespaceIcon);
-    case 'Workload':
-      return renderSvgIcon(WorkloadIcon);
-    case 'Configuration':
-      return renderSvgIcon(ConfigurationIconSVG);
-    case 'Network':
-      return renderSvgIcon(NetworkIcon);
-    case 'Security':
-      return renderSvgIcon(SecurityIcon);
-    case 'Storage':
-      return renderSvgIcon(StorageIcon);
-    case 'CRDS':
-      return renderSvgIcon(CrdIcon);
-    default:
-      return null;
-  }
+const RESOURCE_ICONS: Record<string, React.FC<any>> = {
+  Overview: MesheryIcon,
+  Node: ConnectionIcon,
+  Namespace: FolderRoundedIcon,
+  Workload: ApplicationIcon,
+  Configuration: ConfigurationIcon,
+  Network: AccountTreeIcon,
+  Security: LockIcon,
+  Storage: DatabaseIcon,
+  CRDS: ExtensionIcon,
 };
 
 const Dashboard = () => {
@@ -414,7 +389,15 @@ const Dashboard = () => {
                       gap: '0.4rem',
                     }}
                     key={resource}
-                    icon={<ResourceIcon resource={resource} />}
+                    icon={(() => {
+                      const isActive = resource === resourceCategory;
+                      const fill = isActive
+                        ? theme.palette.primary.main
+                        : theme.palette.icon.default;
+
+                      const Icon = RESOURCE_ICONS[resource];
+                      return Icon ? <Icon style={iconLarge} fill={fill} /> : null;
+                    })()}
                     label={resource}
                   />
                 </CustomTooltip>
