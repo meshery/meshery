@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -14,7 +15,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 
 	"net/http"
-	"time"
 )
 
 const versionCheckTimeout = 10 * time.Second
