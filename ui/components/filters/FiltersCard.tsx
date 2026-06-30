@@ -250,7 +250,12 @@ function FiltersCard_({
                 <Link href={`${MESHERY_CLOUD_PROD}/user/${ownerId}`} target="_blank">
                   <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
                 </Link>
-                <Tooltip title="Enter Fullscreen" arrow interactive placement="top">
+                <Tooltip
+                  title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+                  arrow
+                  interactive
+                  placement="top"
+                >
                   <IconButton
                     onClick={(ev) =>
                       genericClickHandler(ev, () => {

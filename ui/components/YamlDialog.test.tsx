@@ -33,7 +33,7 @@ vi.mock('@sistent/sistent', () => ({
   ),
   useTheme: () => ({
     palette: {
-      icon: { default: '#000' },
+      icon: { default: 'icon-default' },
     },
   }),
 }));

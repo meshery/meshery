@@ -46,7 +46,7 @@ vi.mock('@sistent/sistent', () => {
     FullScreenExitIcon: () => <svg data-testid="fullscreen-exit-icon" />,
     useTheme: () => ({
       palette: {
-        icon: { default: '#000' },
+        icon: { default: 'icon-default' },
       },
     }),
   };

@@ -362,7 +362,12 @@ function MesheryPatternCard_({
                 <Link href={`${MESHERY_CLOUD_PROD}/user/${pattern?.userId}`} target="_blank">
                   <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
                 </Link>
-                <CustomTooltip title="Enter Fullscreen" arrow interactive placement="top">
+                <CustomTooltip
+                  title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+                  arrow
+                  interactive
+                  placement="top"
+                >
                   <IconButton
                     onClick={(ev) =>
                       genericClickHandler(ev, () => {
