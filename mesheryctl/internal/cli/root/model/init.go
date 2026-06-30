@@ -213,7 +213,7 @@ $ mesheryctl model import {modelFolder}
 To export this model as OCI image:
 $ mesheryctl model build {modelName}/{modelVersion} --path {path}
 
-Detailed guide: https://docs.meshery.io/guides/creating-new-model-with-mesheryctl`
+Detailed guide: https://docs.meshery.io/reference/mesheryctl/model/init`
 
 // TODO
 // initModelData fits well for json and yaml format
