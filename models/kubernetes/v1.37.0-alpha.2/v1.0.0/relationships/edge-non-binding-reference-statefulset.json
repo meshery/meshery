@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "",
+    "description": "Defines the non-binding reference from a PriorityClass to a StatefulSet. Evaluates and automatically patches the priorityClassName field within the StatefulSet's configuration.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "",
+    "description": "Defines the non-binding reference from a PriorityClass to a CronJob. Evaluates and automatically patches the priorityClassName field within the CronJob's configuration.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
