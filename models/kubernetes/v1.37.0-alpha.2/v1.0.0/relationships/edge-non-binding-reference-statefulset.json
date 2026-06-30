@@ -31,7 +31,12 @@
           {
             "id": null,
             "kind": "PriorityClass",
-            "match_strategy_matrix": null,
+            "match_strategy_matrix": [
+              [
+                "equal",
+                "not_null"
+              ]
+            ],
             "model": {
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
