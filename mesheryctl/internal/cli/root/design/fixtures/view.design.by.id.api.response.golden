@@ -1,7 +1,7 @@
 {
   "id": "3817ec9a-1d83-4f6f-9154-0fd4408ba9f0",
   "name": "Untitled Design",
-  "userId": "990f779c-708d-4396-84b8-e2ba37c1adcc",
+  "owner": "990f779c-708d-4396-84b8-e2ba37c1adcc",
   "patternFile": "name: MesheryGeneratedPatternFile\n",
   "location": {
     "branch": "",

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Box, styled, Step } from '@sistent/sistent';
-import TipsCarousel from '../../../General/TipsCarousel';
+import TipsCarousel from '../../../general/TipsCarousel';
 import {
   ConnectionStepperTips,
   registerConnectionContent,
@@ -116,9 +116,19 @@ export default function CustomizedSteppers({
       ...prevState,
       onClose: onClose,
     }));
-  }, [sharedData]);
+    // Depend on `onClose` (the actual input we mirror into shared state) and
+    // `setSharedData` (a stable functional setter). Previously this effect
+    // listed `sharedData` in its deps and called `setSharedData(prev => ...)`
+    // — a guaranteed self-feeding loop: every commit replaced `sharedData`
+    // with a new object reference, which retriggered the effect, which
+    // produced another new reference, etc.
+  }, [onClose, setSharedData]);
 
-  const ActiveStepContent = stepContent[String(activeStep + 1)].component;
+  // Guard against an out-of-range step: if `activeStep` ever points past the
+  // last entry (e.g. a stray increment, or a re-render while the modal is
+  // tearing down), `stepContent[...]` is undefined — reading `.component`
+  // unguarded throws "can't access property 'component', ... is undefined".
+  const ActiveStepContent = stepContent[String(activeStep + 1)]?.component;
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -157,7 +167,7 @@ export default function CustomizedSteppers({
       </StepperHeader>
       <StepperContent>
         <TipsCarousel tips={ConnectionStepperTips} />
-        {React.cloneElement(ActiveStepContent, stepProps)}
+        {ActiveStepContent ? React.cloneElement(ActiveStepContent, stepProps) : null}
       </StepperContent>
     </StepperLayout>
   );

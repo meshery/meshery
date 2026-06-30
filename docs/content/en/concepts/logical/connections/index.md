@@ -7,7 +7,7 @@ aliases:
 Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are tracked by Meshery. Connections can be assigned as resources to an Environment. 
 
 {{% alert color="info" title="Connections as resources in Environments" %}}
-Meshery Environments allow you to logically group related [Connections](/concepts/logical/connections) and their associated [Credentials](/concepts/logical/credentials). Environments make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.
+Meshery Environments allow you to logically group related [Connections]({{< ref "concepts/logical/connections/index.md" >}}) and their associated [Credentials]({{< ref "concepts/logical/credentials.md" >}}). Environments make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.
 {{% /alert %}}
 
 {{% alert color="dark" title="Managed vs Unmanaged Connections" %}}
@@ -22,7 +22,7 @@ Meshery tracks the status of each connections throughout the connection's lifecy
 
 ### State: Discovered
 
-All resources discovered by [MeshSync's](/concepts/architecture/meshsync) multi-tier discovery or provided as part of config, and if Meshery can integrate, a connection with state as `Discovered` will be created. Though, the connection/resources are not tested for its reachability/usability i.e. Meshery has not made an attempt to connect or manage the connection.
+All resources discovered by [MeshSync's]({{< ref "concepts/architecture/meshsync.md" >}}) multi-tier discovery or provided as part of config, and if Meshery can integrate, a connection with state as `Discovered` will be created. Though, the connection/resources are not tested for its reachability/usability i.e. Meshery has not made an attempt to connect or manage the connection.
 
 When a connection has been discovered, it will be listed in the MeshSync browser / Connections table in Meshery UI. You can self transition a particular connection to [Register](#state-registered) / [Ignore](#state-ignored) state.
 
@@ -85,6 +85,10 @@ You might attempt to transition to Connected state but the connection is unavaia
 _Connections like **Registration of Meshery server with remote provider** (and few other connection types) can self transtion to the valid states._
 
 ## Registering Connections with Remote Providers
+
+{{% alert color="info" title="Use the Connection Wizard" %}}
+The [Connection Wizard]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}) is the canonical, guided way to register or update any Connection from the Meshery UI. The summary below describes the same flow conceptually.
+{{% /alert %}}
 
 To register a connection with a remote provider, you need to follow these steps:
 

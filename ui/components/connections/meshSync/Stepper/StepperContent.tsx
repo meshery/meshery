@@ -18,8 +18,8 @@ import {
   SelectConnectionTypeContent,
 } from './constants';
 import StepperContent from './StepperContentWrapper';
-import RJSFWrapper from '../../../MesheryMeshInterface/PatternService/RJSF_wrapper';
-import { selectCompSchema } from '../../../RJSFUtils/common';
+import RJSFWrapper from '../../../meshery-mesh-interface/PatternService/RJSF_wrapper';
+import { selectCompSchema } from '@/components/shared/FormFields/rjsf-utils/common';
 import { JsonParse, randomPatternNameGenerator } from '../../../../utils/utils';
 import Notification from './Notification';
 import {
@@ -247,8 +247,8 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
           skip_credential_verification: skipCredentialVerification,
           kind: sharedData?.kind,
           name: sharedData?.componentForm?.name,
-          type: sharedData?.connection?.connection?.model?.category?.name?.toLowerCase(),
-          sub_type: sharedData?.connection?.connection?.model?.subCategory?.toLowerCase(),
+          type: sharedData?.connection?.type?.toLowerCase(),
+          sub_type: sharedData?.connection?.subType?.toLowerCase(),
           metadata: sharedData?.componentForm,
           credential_secret: credential,
           id: sharedData?.connection?.id,
@@ -287,8 +287,8 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
         body: {
           kind: sharedData?.kind,
           name: sharedData?.componentForm?.name,
-          type: sharedData?.connection?.connection?.model?.category?.name?.toLowerCase(),
-          sub_type: sharedData?.connection?.connection?.model?.subCategory?.toLowerCase(),
+          type: sharedData?.connection?.type?.toLowerCase(),
+          sub_type: sharedData?.connection?.subType?.toLowerCase(),
           metadata: sharedData?.componentForm,
           credential_secret: credential,
           id: sharedData?.connection?.id,

@@ -30,7 +30,7 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 	userID := mux.Vars(r)["id"]
 	_, err := uuid.FromString(userID)
 	if err != nil {
-		writeMeshkitError(w, ErrInvalidUUID(err), http.StatusBadRequest)
+		writeMeshkitError(w, models.ErrInvalidUUID(err), http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetUserByID(r, userID)
@@ -130,14 +130,12 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 			return
 		}
 
+		// fortio is the only supported load generator. An empty value
+		// (default) and the removed "wrk2" (legacy preferences) are
+		// tolerated and transparently run on fortio. Any other value is
+		// rejected as an invalid generator.
 		loadGen := prefObj.LoadTestPreferences.LoadGenerator
-		loadGenSupported := false
-		for _, lg := range []models.LoadGenerator{models.FortioLG, models.Wrk2LG, models.NighthawkLG} {
-			if lg.Name() == loadGen {
-				loadGenSupported = true
-			}
-		}
-		if !loadGenSupported {
+		if loadGen != "" && loadGen != models.FortioLG.Name() && loadGen != "wrk2" {
 			err := fmt.Errorf("invalid load generator: %s", loadGen)
 			h.log.Error(ErrSavingUserPreference(err))
 			writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusBadRequest)

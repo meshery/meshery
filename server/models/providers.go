@@ -1,9 +1,13 @@
 package models
 
 import (
+	"context"
 	"net/http"
+	"net/url"
+	"strings"
+	"sync"
+	"time"
 
-	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/database"
@@ -12,6 +16,7 @@ import (
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/environment"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 )
 
@@ -96,7 +101,7 @@ type MesheryUICapabilities struct {
 }
 
 type RestrictedAccess struct {
-	IsMesheryUIRestricted bool                  `json:"isMesheryUiRestricted"`
+	IsMesheryUIRestricted bool                  `json:"isMesheryUIRestricted"`
 	AllowedComponents     MesheryUICapabilities `json:"allowedComponents,omitempty"`
 }
 
@@ -279,6 +284,36 @@ const (
 	PersistAnonymousUser Feature = "persist-anonymous-user"
 )
 
+// ProviderStatusKind reports the availability of a provider as observed by
+// the server-side availability checker. It is emitted as the `status` field of
+// ProviderStatusEvent on the /api/providers/stream SSE channel so the UI can
+// distinguish "probe in flight" from "remote is unreachable".
+type ProviderStatusKind string
+
+const (
+	// ProviderStatusChecking - availability probe is in flight; the UI should
+	// render the entry but defer interaction until a terminal status arrives.
+	ProviderStatusChecking ProviderStatusKind = "checking"
+	// ProviderStatusOnline - the provider responded successfully to its
+	// capability probe (or, for the local provider, is implicitly available).
+	ProviderStatusOnline ProviderStatusKind = "online"
+	// ProviderStatusOffline - the provider's capability probe failed after
+	// the bounded retries; the entry should render in the offline section.
+	ProviderStatusOffline ProviderStatusKind = "offline"
+)
+
+// ProviderStatusEvent is the per-provider availability snapshot broadcast by
+// ProviderTracker. It carries the same ProviderProperties shape the legacy
+// /api/providers endpoint returns so existing UI fields keep working, plus
+// the registration Key and the new Status / Error markers required for the
+// streaming chooser.
+type ProviderStatusEvent struct {
+	Key        string             `json:"key"`
+	Status     ProviderStatusKind `json:"status"`
+	Properties ProviderProperties `json:"properties"`
+	Error      string             `json:"error,omitempty"`
+}
+
 const (
 	// LocalProviderType - represents local providers
 	LocalProviderType ProviderType = "local"
@@ -341,13 +376,156 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 	return "", false
 }
 
-func VerifyMesheryProvider(provider string, supportedProviders map[string]Provider) bool {
-	for prov := range supportedProviders {
-		if prov == provider {
+// NormalizeProviderName collapses casing variants of the built-in local
+// provider to its canonical name. Both the canonical name ("Local") and the
+// legacy alias ("None") are matched case-insensitively, so "local", "LOCAL",
+// "none", "NONE", and stale "None" cookies all resolve to "Local". Any other
+// input — including remote provider names like "Meshery" or "Digital Ocean", whose
+// canonical casing originates from the remote /capabilities response — is
+// returned unchanged. This is the single source of truth for the rename;
+// call it once at the request edge (resolveProviderName) rather than
+// scattering equivalent checks across handlers.
+func NormalizeProviderName(name string) string {
+	if strings.EqualFold(name, LocalProviderName) ||
+		strings.EqualFold(name, LocalProviderLegacyAlias) {
+		return LocalProviderName
+	}
+	return name
+}
+
+func matchesProviderAddress(candidate string, addresses ...string) bool {
+	// Normalize away surrounding whitespace and a trailing slash so a
+	// configured "https://cloud.meshery.io/" still matches a stored
+	// ProviderURL of "https://cloud.meshery.io" (and vice versa).
+	candidate = strings.TrimRight(strings.TrimSpace(candidate), "/")
+	if candidate == "" {
+		return false
+	}
+	for _, address := range addresses {
+		address = strings.TrimRight(strings.TrimSpace(address), "/")
+		if address == "" {
+			continue
+		}
+		if strings.EqualFold(candidate, address) {
+			return true
+		}
+		parsed, err := url.Parse(address)
+		if err == nil && parsed.Host != "" && strings.EqualFold(candidate, parsed.Host) {
 			return true
 		}
 	}
 	return false
+}
+
+// ResolveProviderKey maps a caller-facing provider identifier to the
+// registration-map key Meshery uses internally for routing. It accepts the
+// canonical local name/legacy alias, an existing map key, a remote
+// providerName published from /capabilities, or the remote URL/host.
+func ResolveProviderKey(provider string, supportedProviders map[string]Provider) (string, bool) {
+	provider = NormalizeProviderName(strings.TrimSpace(provider))
+	if provider == "" {
+		return "", false
+	}
+	if _, ok := supportedProviders[provider]; ok {
+		return provider, true
+	}
+	for key, p := range supportedProviders {
+		if strings.EqualFold(provider, key) {
+			return key, true
+		}
+		props := p.GetProviderProperties()
+		if strings.EqualFold(provider, props.ProviderName) ||
+			strings.EqualFold(provider, p.Name()) ||
+			matchesProviderAddress(provider, props.ProviderURL, p.GetProviderURL()) {
+			return key, true
+		}
+	}
+	return "", false
+}
+
+// ResolveProviderKeyWithProbe is the boot-time recovery path for canonical
+// remote names such as "Meshery". Remotes are registered under a stable
+// internal key (usually URL host) before their /capabilities probe lands, so
+// a configured PROVIDER may need one bounded probe round to discover which key
+// currently publishes the requested providerName.
+//
+// It first tries the probe-less ResolveProviderKey and only fans out when that
+// misses, so the common case (the tracker has already published properties)
+// returns immediately and never probes. When a probe is required, every
+// registered remote is probed in parallel with a per-remote 15s timeout, so
+// this adds at most ~15s of startup latency before the server starts serving
+// — e.g. when a configured remote is unreachable in an air-gapped deployment.
+// The boot caller (main) logs when this probe meaningfully delays startup.
+func ResolveProviderKeyWithProbe(ctx context.Context, provider string, supportedProviders map[string]Provider) (string, bool) {
+	if key, ok := ResolveProviderKey(provider, supportedProviders); ok {
+		return key, true
+	}
+
+	provider = NormalizeProviderName(strings.TrimSpace(provider))
+	if provider == "" {
+		return "", false
+	}
+
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	type result struct {
+		key   string
+		props ProviderProperties
+		err   error
+	}
+
+	results := make(chan result, len(supportedProviders))
+	var wg sync.WaitGroup
+	launched := 0
+
+	for key, p := range supportedProviders {
+		// A non-nil interface can still wrap a typed nil pointer; guard
+		// against it so the probe goroutine cannot panic on rp.VerifyAvailability.
+		rp, ok := p.(*RemoteProvider)
+		if !ok || rp == nil {
+			continue
+		}
+		launched++
+		wg.Add(1)
+		go func(key string, rp *RemoteProvider) {
+			defer wg.Done()
+			probeCtx, probeCancel := context.WithTimeout(ctx, 15*time.Second)
+			defer probeCancel()
+			props, err := rp.VerifyAvailability(probeCtx)
+			select {
+			case results <- result{key: key, props: props, err: err}:
+			case <-ctx.Done():
+			}
+		}(key, rp)
+	}
+
+	if launched == 0 {
+		return "", false
+	}
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	for res := range results {
+		if res.err != nil {
+			continue
+		}
+		if strings.EqualFold(provider, res.props.ProviderName) ||
+			matchesProviderAddress(provider, res.props.ProviderURL) {
+			cancel()
+			return res.key, true
+		}
+	}
+
+	return "", false
+}
+
+func VerifyMesheryProvider(provider string, supportedProviders map[string]Provider) bool {
+	_, ok := ResolveProviderKey(provider, supportedProviders)
+	return ok
 }
 
 // Provider - interface for providers
@@ -407,14 +585,11 @@ type Provider interface {
 
 	SaveK8sContext(token string, k8sContext K8sContext, metadata map[string]any) (connections.Connection, error)
 	GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error)
-	DeleteK8sContext(token, id string) (K8sContext, error)
 	GetK8sContext(token, connectionID string) (K8sContext, error)
 	LoadAllK8sContext(token string) ([]*K8sContext, error)
-	// SetCurrentContext(token, id string) (K8sContext, error)
-	// GetCurrentContext(token string) (K8sContext, error)
 
-	SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error)
-	SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error)
+	SMPTestConfigStore(req *http.Request, perfConfig *perfprofile.PerformanceTestConfig) (string, error)
+	SMPTestConfigGet(req *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error)
 	SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	SMPTestConfigDelete(req *http.Request, testUUID string) error
 
@@ -478,6 +653,10 @@ type Provider interface {
 	UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error)
 	DeleteConnection(req *http.Request, connID core.Uuid) (*connections.Connection, error)
 	DeleteMesheryConnection() error
+	// LogoutMesheryServer revokes the server-cached user session against the
+	// provider. Called at shutdown after DeleteMesheryConnection so that
+	// logout occurs post-deregistration.
+	LogoutMesheryServer() error
 
 	SaveUserCredential(token string, credential *Credential) (*Credential, error)
 	GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)

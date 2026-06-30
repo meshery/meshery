@@ -49,6 +49,13 @@ const meshModelApi = api
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
+      getConnectionDefinitions: builder.query({
+        query: (queryArgs) => ({
+          url: mesheryApiPath(`meshmodels/connections`),
+          params: _.merge({}, defaultOptions, queryArgs.params),
+        }),
+        providesTags: () => [{ type: TAGS.MESH_MODELS }],
+      }),
       getComponentsFromModal: builder.query({
         query: (queryArgs) => ({
           url: mesheryApiPath(`meshmodels/models/${queryArgs.model}/components`),
@@ -135,6 +142,8 @@ export const {
   useGetRegistrantsQuery,
   useGetRelationshipsQuery,
   useLazyGetRegistrantsQuery,
+  useGetConnectionDefinitionsQuery,
+  useLazyGetConnectionDefinitionsQuery,
   useGetComponentsFromModalQuery,
   useLazyGetComponentsFromModalQuery,
   useGetRelationshipsFromModalQuery,
@@ -166,7 +175,7 @@ export const useGetCategoriesSummary = () => {
         { category: category.name, params: { page: 1, pagesize: 1 } },
         true,
       );
-      categoryMap[category.name] = data?.total_count || 0;
+      categoryMap[category.name] = data?.totalCount ?? data?.total_count ?? 0;
     });
     await Promise.allSettled(requests);
     return categoryMap;

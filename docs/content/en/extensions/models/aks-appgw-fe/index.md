@@ -1,7 +1,7 @@
 ---
 title: Azure Application Gateway 
 subtitle: Collaborative and visual infrastructure as design for Azure Application Gateway 
-image: /extensions/models/aks-appgw-fe/icons/color/aks-appgw-fe-color.svg
+image: extensions/models/aks-appgw-fe/icons/color/aks-appgw-fe-color.svg
 aliases: /extensibility/integrations/aks-appgw-fe
 docURL: https://docs.meshery.io/extensibility/integrations/aks-appgw-fe
 description: 
@@ -10,20 +10,20 @@ integrations-subcategory: Service Proxy
 registrant: Artifact Hub
 components: 
 - name: azure-assigned-identity
-  colorIcon: content/en/extensions/models/aks-appgw-fe/components/azure-assigned-identity/icons/color/azure-assigned-identity-color.svg
-  whiteIcon: content/en/extensions/models/aks-appgw-fe/components/azure-assigned-identity/icons/white/azure-assigned-identity-white.svg
+  colorIcon: extensions/models/aks-appgw-fe/components/azure-assigned-identity/icons/color/azure-assigned-identity-color.svg
+  whiteIcon: extensions/models/aks-appgw-fe/components/azure-assigned-identity/icons/white/azure-assigned-identity-white.svg
   description: 
 - name: azure-identity
-  colorIcon: content/en/extensions/models/aks-appgw-fe/components/azure-identity/icons/color/azure-identity-color.svg
-  whiteIcon: content/en/extensions/models/aks-appgw-fe/components/azure-identity/icons/white/azure-identity-white.svg
+  colorIcon: extensions/models/aks-appgw-fe/components/azure-identity/icons/color/azure-identity-color.svg
+  whiteIcon: extensions/models/aks-appgw-fe/components/azure-identity/icons/white/azure-identity-white.svg
   description: 
 - name: azure-identity-binding
-  colorIcon: content/en/extensions/models/aks-appgw-fe/components/azure-identity-binding/icons/color/azure-identity-binding-color.svg
-  whiteIcon: content/en/extensions/models/aks-appgw-fe/components/azure-identity-binding/icons/white/azure-identity-binding-white.svg
+  colorIcon: extensions/models/aks-appgw-fe/components/azure-identity-binding/icons/color/azure-identity-binding-color.svg
+  whiteIcon: extensions/models/aks-appgw-fe/components/azure-identity-binding/icons/white/azure-identity-binding-white.svg
   description: 
 - name: azure-pod-identity-exception
-  colorIcon: content/en/extensions/models/aks-appgw-fe/components/azure-pod-identity-exception/icons/color/azure-pod-identity-exception-color.svg
-  whiteIcon: content/en/extensions/models/aks-appgw-fe/components/azure-pod-identity-exception/icons/white/azure-pod-identity-exception-white.svg
+  colorIcon: extensions/models/aks-appgw-fe/components/azure-pod-identity-exception/icons/color/azure-pod-identity-exception-color.svg
+  whiteIcon: extensions/models/aks-appgw-fe/components/azure-pod-identity-exception/icons/white/azure-pod-identity-exception-white.svg
   description: 
 components-count: 4
 relationships: 

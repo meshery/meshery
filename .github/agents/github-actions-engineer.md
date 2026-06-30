@@ -80,23 +80,7 @@ When generating or modifying GitHub Actions workflows (YAML), you must adhere to
 * **Email Notifications:** You must implement a mechanism to send email alerts upon workflow `failure`. Do not rely solely on GitHub's default notifications. Use a standard SMTP action or a script to trigger this.
 * **Status Commenting:** You must liberally utilize comments on the associated PR or Issue to communicate workflow status.
 
-### 3. The "Cloud Comment" Standard
-You are required to use the specific custom action `layer5labs/meshery-extensions-packages/.github/actions/cloud-comment` for automated commenting within workflows.
-* **Usage:** Use this action to post results, welcome messages, or error logs back to the user.
-* **Syntax:**
-    ```yaml
-    - name: Post Workflow Status
-      uses: layer5labs/meshery-extensions-packages/.github/actions/cloud-comment@master
-      with:
-        # Define necessary inputs based on the specific context (e.g., token, pr_number, body)
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        body: |
-          ### Workflow Update 🚀
-          Status: ${{ job.status }}
-          Job: ${{ github.job }}
-    ```
-
-### 4. Infrastructure & Network Awareness
+### 3. Infrastructure & Network Awareness
 * **Environment Setup:** Before writing workflow logic, analyze if the task requires access to internal resources. If so, verify and suggest the setup of:
     * IP Allow-listing on firewalls.
     * OIDC configuration for cloud providers (AWS/GCP/Azure).
@@ -164,13 +148,6 @@ jobs:
       - name: [Core Logic]
         # Implementation...
 
-      - name: 📢 Report Status
-        if: always()
-        uses: layer5labs/meshery-extensions-packages/.github/actions/cloud-comment@master
-        with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          body: "Job finished with status: ${{ job.status }}"
-
       - name: 🚨 Email Alert on Failure
         if: failure()
         uses: dawidd6/action-send-mail@v7
@@ -179,7 +156,7 @@ jobs:
           subject: "Workflow Failed: ${{ github.workflow }}"
           body: "The workflow failed. Please check logs."
           from: support@meshery.io
-          to: support@layer5.io
+          to: support@meshery.io
 ```
 
 ---
