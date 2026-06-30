@@ -2,9 +2,13 @@ package config
 
 import (
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
+	"time"
 )
 
 // var update = flag.Bool("update", false, "update golden files")
@@ -293,174 +297,6 @@ func TestSetOperatorStatus(t *testing.T) {
 	}
 }
 
-// TODO: Shift Testing utility functions to meshkit so import cycle problems can be eliminated in future
-
-// func TestChangePlatform(t *testing.T) {
-// 	type args struct {
-// 		contextName string
-// 		platform    string
-// 	}
-
-// 	currDir := utils.GetBasePath(t)
-// 	fixtureDir := currDir + "/fixtures"
-// 	testConfigPath := fixtureDir + "/TestConfig.yaml"
-
-// 	// Read and write to the test config file
-// 	utils.SetupCustomContextEnv(t, testConfigPath)
-
-// 	mctlCfg, _ := GetMesheryCtl(viper.GetViper())
-
-// 	tests := []struct {
-// 		name    string
-// 		args    args
-// 		wantErr bool
-// 		golden  string
-// 	}{
-// 		{
-// 			name:    "Update platform in gke context (valid context)",
-// 			args:    args{contextName: "gke", platform: "testplatform"},
-// 			wantErr: false,
-// 			golden:  "changeplatform.valid.golden",
-// 		},
-// 		{
-// 			name:    "Update platform in kubernetes context (invalid context)",
-// 			args:    args{contextName: "kubernetes", platform: "testplatform"},
-// 			wantErr: true,
-// 			golden:  "changeplatform.invalid.golden",
-// 		},
-// 	}
-
-// 	for _, tt := range tests {
-// 		t.Run(tt.name, func(t *testing.T) {
-// 			err := mctlCfg.SetCurrentContext(tt.args.contextName)
-// 			if err != nil {
-// 				if !tt.wantErr {
-// 					t.Fatal("Error setting context", err)
-// 				} else {
-// 					// handles the case when an invalid context was intentionally supplied
-// 					return
-// 				}
-// 			}
-
-// 			currCtx, err := mctlCfg.GetCurrentContext()
-// 			if err != nil {
-// 				t.Fatal("Error processing context from config: ", err)
-// 			}
-
-// 			currCtx.SetPlatform(tt.args.platform)
-
-// 			if err := UpdateContextInConfig(tt.args.contextName, currCtx, testConfigPath); err != nil && !tt.wantErr {
-// 				t.Errorf("UpdateContextInConfig() error = %v, wantErr %v", err, tt.wantErr)
-// 			}
-
-// 			// Actual file contents
-// 			actualContent, err := os.ReadFile(testConfigPath)
-// 			if err != nil {
-// 				t.Error("Error reading actual file contents: ", err)
-// 			}
-
-// 			actualFileContent := string(actualContent)
-
-// 			// Expected file contents
-// 			testdataDir := currDir + "/testdata"
-
-// 			golden := utils.NewGoldenFile(t, tt.golden, testdataDir)
-// 			if *update {
-// 				golden.Write(actualFileContent)
-// 			}
-// 			expectedFileContent := golden.Load()
-
-// 			if expectedFileContent != actualFileContent {
-// 				t.Errorf("Expected file content \n[%v]\n and actual file content \n[%v]\n don't match", expectedFileContent, actualFileContent)
-// 			}
-
-// 			// Repopulating Expected yaml
-// 			if err := utils.Populate(currDir+"/fixtures/original/TestConfig.yaml", testConfigPath); err != nil {
-// 				t.Fatal(err, "Could not complete test. Unable to repopulate fixture")
-// 			}
-// 		})
-// 	}
-// }
-
-// func TestChangeConfigEndpoint(t *testing.T) {
-// 	// Setup path to test config file
-// 	currDir := utils.GetBasePath(t)
-// 	testConfigPath := currDir + "/fixtures/TestChangeEndpointConfig.yaml"
-
-// 	utils.SetupCustomContextEnv(t, testConfigPath)
-
-// 	mctlCfg, _ := GetMesheryCtl(viper.GetViper())
-
-// 	tests := []struct {
-// 		name            string
-// 		ctxName         string
-// 		endpointAddress string
-// 		golden          string
-// 		wantErr         bool
-// 	}{
-// 		{
-// 			name:            "ChangeConfigEndpoint with platform docker",
-// 			ctxName:         "local",
-// 			endpointAddress: "http://localhost:55555",
-// 			golden:          "changeconfigendpoint.expect.docker.golden",
-// 			wantErr:         false,
-// 		},
-// 		{
-// 			name:            "ChangeConfigEndpoint with platform kubernetes",
-// 			ctxName:         "local2",
-// 			endpointAddress: "http://localhost:44444",
-// 			golden:          "changeconfigendpoint.expect.kubernetes.golden",
-// 			wantErr:         false,
-// 		},
-// 	}
-
-// 	for _, tt := range tests {
-// 		t.Run(tt.name, func(t *testing.T) {
-// 			err := mctlCfg.SetCurrentContext(tt.ctxName)
-// 			if err != nil {
-// 				t.Fatal("error setting context", err)
-// 			}
-
-// 			currCtx, err := mctlCfg.GetCurrentContext()
-// 			if err != nil {
-// 				t.Fatal("error processing context from config", err)
-// 			}
-
-// 			currCtx.SetEndpoint(tt.endpointAddress)
-
-// 			if err := UpdateContextInConfig(tt.ctxName, currCtx, testConfigPath); (err != nil) != tt.wantErr {
-// 				t.Errorf("UpdateContextInConfig() error = %v, wantErr %v", err, tt.wantErr)
-// 			}
-
-// 			// Actual file contents
-// 			actualContent, err := os.ReadFile(testConfigPath)
-// 			if err != nil {
-// 				t.Error("Error reading actual file contents: ", err)
-// 			}
-
-// 			actualFileContent := string(actualContent)
-
-// 			// Expected file contents
-// 			testdataDir := currDir + "/testdata"
-
-// 			golden := utils.NewGoldenFile(t, tt.golden, testdataDir)
-// 			if *update {
-// 				golden.Write(actualFileContent)
-// 			}
-// 			expectedFileContent := golden.Load()
-
-// 			if expectedFileContent != actualFileContent {
-// 				t.Errorf("Expected file content \n[%v]\n and actual file content \n[%v]\n don't match", expectedFileContent, actualFileContent)
-// 			}
-
-// 			// Repopulating Expected yaml
-// 			if err := utils.Populate(currDir+"/fixtures/platform/original/TestChangeEndpointConfig.yaml", testConfigPath); err != nil {
-// 				t.Fatal(err, "Could not complete test. Unable to repopulate fixture")
-// 			}
-// 		})
-// 	}
-// }
-
 func TestValidateVersion(t *testing.T) {
 	t.Run("empty version defaults to latest", func(t *testing.T) {
 		ctx := &Context{Version: ""}
@@ -476,6 +312,26 @@ func TestValidateVersion(t *testing.T) {
 		ctx := &Context{Version: "latest"}
 		if err := ctx.ValidateVersion(); err != nil {
 			t.Fatalf("expected nil, got %v", err)
+		}
+	})
+
+	t.Run("timeout when server is unreachable", func(t *testing.T) {
+		slow := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			time.Sleep(15 * time.Second)
+		}))
+		defer slow.Close()
+
+		orig := validateVersionURL
+		validateVersionURL = func(_, _, _ string) string { return slow.URL }
+		defer func() { validateVersionURL = orig }()
+
+		ctx := &Context{Version: "v0.7.0-test"}
+		err := ctx.ValidateVersion()
+		if err == nil {
+			t.Fatal("expected timeout error")
+		}
+		if !strings.Contains(err.Error(), "timeout") {
+			t.Fatalf("expected timeout error, got: %v", err)
 		}
 	})
 }
