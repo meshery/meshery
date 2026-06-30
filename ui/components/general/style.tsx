@@ -266,7 +266,17 @@ export const SideBarListItem = styled(ListItemButton, {
 
 export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
   opacity: drawerCollapsed ? 0 : 1,
-  transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
+  // The label is rendered (but invisible) even while collapsed so it can fade
+  // back in smoothly on expand. Left at its natural width, it still occupies
+  // space in the flex row, so the row's center shifts by however long each
+  // item's title happens to be - this is what threw the collapsed icons out
+  // of alignment with one another. Collapsing the width to 0 removes it from
+  // the layout so the icon alone gets centered.
+  width: drawerCollapsed ? 0 : 'auto',
+  margin: drawerCollapsed ? 0 : undefined,
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  transition: 'opacity 200ms ease-in-out, width 200ms ease-in-out',
   fontSize: '1rem',
   color: 'inherit',
   '& .MuiListItemText-primary': {
@@ -309,21 +319,28 @@ export const SecondaryDivider = styled(Divider)(({ theme }) => ({
   borderColor: theme.palette.divider,
 }));
 
-export const MainListIcon = styled(ListItemIcon)(({ theme }) => ({
+export const MainListIcon = styled(ListItemIcon, {
+  shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed',
+})(({ theme, isDrawerCollapsed }) => ({
   minWidth: theme.spacing(3.5),
   paddingTop: theme.spacing(0.5),
   textAlign: 'center',
   display: 'inline-table',
-  paddingRight: theme.spacing(0.5),
-  marginLeft: '8.45px',
+  // The gap to the label and the leftward nudge only make sense when the label
+  // is actually visible next to the icon. In the collapsed state there is no
+  // label, so keeping these would push the icon off-center.
+  paddingRight: isDrawerCollapsed ? 0 : theme.spacing(0.5),
+  marginLeft: isDrawerCollapsed ? 0 : '8.45px',
 }));
 
-export const ListIconSide = styled(ListItemIcon)(({ theme }) => ({
+export const ListIconSide = styled(ListItemIcon, {
+  shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed',
+})(({ theme, isDrawerCollapsed }) => ({
   paddingTop: theme.spacing(0.5),
   textAlign: 'center',
   display: 'inline-table',
-  paddingRight: theme.spacing(0.5),
-  marginLeft: theme.spacing(0.8),
+  paddingRight: isDrawerCollapsed ? 0 : theme.spacing(0.5),
+  marginLeft: isDrawerCollapsed ? 0 : theme.spacing(0.8),
   color: theme.palette.background.constant.white,
   opacity: '0.7',
   transition: 'opacity 200ms linear',

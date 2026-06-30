@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
   CustomTooltip,
-  ListItemIcon,
   Grow,
   ListItem,
   List,
@@ -521,7 +520,7 @@ const NavigatorContent = () => {
             disableFocusListener={!drawerCollapsed}
             disableTouchListener={!drawerCollapsed}
           >
-            <MainListIcon>
+            <MainListIcon isDrawerCollapsed={drawerCollapsed}>
               <img
                 src={icon}
                 style={{
@@ -632,7 +631,7 @@ const NavigatorContent = () => {
             disableHoverListener={!drawerCollapsed}
             disableTouchListener={!drawerCollapsed}
           >
-            <MainListIcon>{updatedIcon}</MainListIcon>
+            <MainListIcon isDrawerCollapsed={drawerCollapsed}>{updatedIcon}</MainListIcon>
           </CustomTooltip>
           <SideBarText drawerCollapsed={drawerCollapsed}>{titlec}</SideBarText>
         </LinkContainer>
@@ -747,21 +746,24 @@ const NavigatorContent = () => {
                               placement="right"
                               TransitionComponent={Zoom}
                             >
-                              <ListItemIcon style={{ marginLeft: '20%', marginBottom: '0.4rem' }}>
+                              <MainListIcon
+                                isDrawerCollapsed={isDrawerCollapsed}
+                                style={{ marginBottom: '0.4rem' }}
+                              >
                                 {hovericon}
-                              </ListItemIcon>
+                              </MainListIcon>
                             </CustomTooltip>
                           </div>
                         ) : (
-                          <MainListIcon>{icon}</MainListIcon>
+                          <MainListIcon isDrawerCollapsed={isDrawerCollapsed}>{icon}</MainListIcon>
                         )}
                       </CustomTooltip>
                       <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>
                     </NavigatorLink>
                   </SideBarListItem>
-                  {hasChildren && (
+                  {hasChildren && !isDrawerCollapsed && (
                     <ExpandMore
-                      onClick={(e) => {
+                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                         e.preventDefault();
                         e.stopPropagation();
                         toggleItemCollapse(childId);
@@ -829,7 +831,9 @@ const NavigatorContent = () => {
                   }
                 >
                   <CustomTextTooltip title={title} placement={isDrawerCollapsed ? 'right' : 'top'}>
-                    <ListIconSide>{isHovered && hovericon ? hovericon : icon}</ListIconSide>
+                    <ListIconSide isDrawerCollapsed={isDrawerCollapsed}>
+                      {isHovered && hovericon ? hovericon : icon}
+                    </ListIconSide>
                   </CustomTextTooltip>
                 </a>
               </Grow>
