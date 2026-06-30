@@ -19,7 +19,23 @@
 &lt;/div&gt;
 &lt;p&gt;Use the following steps to set up your development environment depending on your Operating System of choice, fork the repository, install dependencies and run the site locally. You can then make changes, test locally, sign-off and commit, and push the changes made for review.&lt;/p&gt;
 &lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Meshery Documentation Design Specification&lt;/div&gt;
-&lt;p&gt;See the &lt;a href="https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit"&gt;Meshery Documentation Design Specification&lt;/a&gt; which serves to provide an overview of the tooling and approach used to create Meshery&amp;rsquo;s documentation and its information architecture.&lt;/p&gt;</description></item><item><title>Contributing to Meshery Policies</title><link>/project/contributing/contributing-policies/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-policies/</guid><description>&lt;h2 id="background"&gt;
+&lt;p&gt;See the &lt;a href="https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit"&gt;Meshery Documentation Design Specification&lt;/a&gt; which serves to provide an overview of the tooling and approach used to create Meshery&amp;rsquo;s documentation and its information architecture.&lt;/p&gt;</description></item><item><title>Contributing to Meshery Operator</title><link>/project/contributing/contributing-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-operator/</guid><description>&lt;p&gt;&lt;a href="/concepts/architecture/operator/"&gt;Meshery Operator&lt;/a&gt; is a
+Kubernetes operator that manages the lifecycle of
+&lt;a href="/concepts/architecture/meshsync/"&gt;MeshSync&lt;/a&gt; and the
+&lt;a href="/concepts/architecture/broker/"&gt;Meshery Broker&lt;/a&gt;. It is built with
+&lt;a href="https://book.kubebuilder.io/"&gt;Kubebuilder&lt;/a&gt; and the Operator SDK, and follows the standard
+Kubebuilder &lt;code&gt;go/v4&lt;/code&gt; project layout - the manager entrypoint lives at &lt;code&gt;cmd/main.go&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Development follows the usual fork-and-pull-request workflow. Every commit must be signed
+off; see the &lt;a href="/project/contributing/"&gt;Contributing Overview&lt;/a&gt; and the
+&lt;a href="/project/contributing/contributing-gitflow/"&gt;Git workflow guide&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="prerequisites"&gt;
+	Prerequisites
+&lt;/h2&gt;
+&lt;p&gt;You only need Go and Docker installed locally. The &lt;code&gt;Makefile&lt;/code&gt; downloads its pinned build
+tools into &lt;code&gt;bin/&lt;/code&gt; on demand (kustomize, controller-gen, setup-envtest, kind, operator-sdk,
+opm), so their versions are reproducible and you do not install them globally. A running
+Kubernetes cluster - or &lt;code&gt;make kind&lt;/code&gt; to provision one with kind - is required for the deploy
+and integration-test targets.&lt;/p&gt;</description></item><item><title>Contributing to Meshery Policies</title><link>/project/contributing/contributing-policies/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-policies/</guid><description>&lt;h2 id="background"&gt;
 	Background
 &lt;/h2&gt;
 &lt;p&gt;Meshery has a built-in policy engine, based on &lt;a href="https://www.openpolicyagent.org/docs/latest/"&gt;Open Policy Agent (OPA)&lt;/a&gt;. Meshery uses the &lt;a href="https://www.openpolicyagent.org/docs/latest/policy-language/"&gt;Rego&lt;/a&gt; query language to create these &lt;a href="https://docs.meshery.io/concepts/logical/policies"&gt;policies&lt;/a&gt;.&lt;/p&gt;
