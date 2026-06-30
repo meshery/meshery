@@ -10,7 +10,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/schemas/models/v1beta1/environment"
 )
 
 // environmentSpyProvider embeds DefaultLocalProvider and records the orgID
@@ -39,21 +38,6 @@ func (m *environmentSpyProvider) GetEnvironmentByID(_ *http.Request, _, orgID st
 	m.called = true
 	m.observedOrgID = orgID
 	return []byte(`{}`), nil
-}
-
-func (m *environmentSpyProvider) SaveEnvironment(_ *http.Request, _ *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
-	m.called = true
-	return []byte(`{"id":"env-1"}`), nil
-}
-
-func (m *environmentSpyProvider) DeleteEnvironment(_ *http.Request, _ string) ([]byte, error) {
-	m.called = true
-	return []byte(`{}`), nil
-}
-
-func (m *environmentSpyProvider) UpdateEnvironment(_ *http.Request, _ *environment.EnvironmentPayload, _ string) (*environment.Environment, error) {
-	m.called = true
-	return &environment.Environment{}, nil
 }
 
 // TestGetEnvironmentsHandler_RequiresOrgId asserts that the handler returns
@@ -159,6 +143,12 @@ func TestGetEnvironmentByIDHandler_RequiresOrgId(t *testing.T) {
 
 			if tc.wantProvider && provider.observedOrgID != tc.wantOrgID {
 				t.Fatalf("provider received orgID=%q, want %q", provider.observedOrgID, tc.wantOrgID)
+			}
+
+			if tc.wantStatus == http.StatusBadRequest {
+				if !strings.Contains(rec.Body.String(), "orgId") {
+					t.Errorf("expected 400 body to mention orgId, got %q", rec.Body.String())
+				}
 			}
 		})
 	}
