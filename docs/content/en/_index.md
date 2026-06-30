@@ -203,7 +203,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        {{< section-pages section="reference" >}}
+        {{< section-pages section="reference/references" >}}
       </ul>
     </details>
     <!-- Extensibility -->
@@ -214,11 +214,11 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        {{< section-pages section="extensibility" >}}
+        {{< section-pages section="reference/extensibility" >}}
       </ul>
     </details>
   </div>
 
 </div>
 
-<p width="100%">Follow on <a href="https://x.com/mesheryio">X</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="https://meshery.io/community#discussion-forums">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>
+<p width="100%">Follow on <a href="https://x.com/mesheryio">X</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="https://discuss.meshery.io/">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>

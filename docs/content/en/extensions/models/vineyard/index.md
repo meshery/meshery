@@ -1,7 +1,7 @@
 ---
 title: Vineyard
 subtitle: Collaborative and visual infrastructure as design for Vineyard
-image: /extensions/models/vineyard/icons/color/vineyard-color.svg
+image: extensions/models/vineyard/icons/color/vineyard-color.svg
 aliases: /extensibility/integrations/vineyard
 docURL: https://docs.meshery.io/extensibility/integrations/vineyard
 description: 

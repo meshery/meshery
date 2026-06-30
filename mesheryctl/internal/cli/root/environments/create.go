@@ -18,7 +18,7 @@ import (
 	"bytes"
 	"encoding/json"
 
-	googleUUID "github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -47,7 +47,7 @@ mesheryctl environment create --orgId [orgId] --name [name] --description [descr
 		return mesheryctlflags.ValidateCmdFlags(cmd, &createEnvironmentFlags)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		organizationID, err := googleUUID.Parse(createEnvironmentFlags.OrganizationID)
+		organizationID, err := uuid.FromString(createEnvironmentFlags.OrganizationID)
 		if err != nil {
 			return err
 		}

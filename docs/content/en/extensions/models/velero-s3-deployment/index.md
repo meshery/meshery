@@ -1,7 +1,7 @@
 ---
 title: Velero S3 Deployment
 subtitle: Collaborative and visual infrastructure as design for Velero S3 Deployment
-image: /extensions/models/velero-s3-deployment/icons/color/velero-s3-deployment-color.svg
+image: extensions/models/velero-s3-deployment/icons/color/velero-s3-deployment-color.svg
 aliases: /extensibility/integrations/velero-s3-deployment
 docURL: https://docs.meshery.io/extensibility/integrations/velero-s3-deployment
 description: 

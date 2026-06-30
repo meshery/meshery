@@ -109,7 +109,7 @@ RUN apt-get update && apt-get install -y ca-certificates && apt-get clean && rm 
 RUN update-ca-certificates
 
 COPY ./server/cmd/server-config.env /app/server/cmd/server-config.env
-COPY ./server/meshmodel /app/server/meshmodel
+COPY ./models /app/models
 COPY ./server/permissions /app/server/permissions/
 COPY ./docs/data/catalog /app/docs/data/catalog/
 COPY --from=meshery-server /meshery /app/server/cmd/

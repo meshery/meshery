@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import {
+  Box,
   CatalogIcon,
   DesignIcon,
   EditIcon,
@@ -78,25 +79,34 @@ const MyDesignsWidget = ({ iconsProps }: MyDesignsWidgetProps) => {
   );
 
   return (
-    <DesignCard
-      isPatternsFetching={isPatternsFetching}
-      cardData={cardData}
-      resources={resources}
-      icon={
-        <DesignIcon
-          {...iconsProps}
-          fill={theme.palette.icon.default}
-          primaryFill={theme.palette.icon.default}
-          secondaryFill={theme.palette.icon.default}
-        />
-      }
-      title="MY RECENT DESIGNS"
-      actionButton={true}
-      href={`${MESHERY_CLOUD_PROD}/catalog/content/my-designs`}
-      btnTitle="See All Designs"
-      sortOrder={sortOrder}
-      setSortOrder={setSortOrder}
-    />
+    <Box
+      sx={{
+        height: '100%',
+        '& > .MuiPaper-root': {
+          overflow: 'auto',
+        },
+      }}
+    >
+      <DesignCard
+        isPatternsFetching={isPatternsFetching}
+        cardData={cardData}
+        resources={resources}
+        icon={
+          <DesignIcon
+            {...iconsProps}
+            fill={theme.palette.icon.default}
+            primaryFill={theme.palette.icon.default}
+            secondaryFill={theme.palette.icon.default}
+          />
+        }
+        title="MY RECENT DESIGNS"
+        actionButton={true}
+        href={`${MESHERY_CLOUD_PROD}/catalog/content/my-designs`}
+        btnTitle="See All Designs"
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder}
+      />
+    </Box>
   );
 };
 

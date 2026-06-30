@@ -1,7 +1,7 @@
 ---
 title: Percona Server for MySQL
 subtitle: Collaborative and visual infrastructure as design for Percona Server for MySQL
-image: /extensions/models/ps-db/icons/color/ps-db-color.svg
+image: extensions/models/ps-db/icons/color/ps-db-color.svg
 aliases: /extensibility/integrations/ps-db
 docURL: https://docs.meshery.io/extensibility/integrations/ps-db
 description: 

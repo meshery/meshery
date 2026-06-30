@@ -219,7 +219,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (pattern.Pattern
 		name = "MesheryGeneratedPattern"
 	}
 
-	id, _ := uuid.NewV4()
+	id := uuid.Must(uuid.NewV4())
 	// Convert cytoscape struct to patternfile
 	pf := pattern.PatternFile{
 		ID:         id,
@@ -467,7 +467,7 @@ func createPatternDeclarationFromK8s(manifest map[string]interface{}, regManager
 	}
 
 	rest = Format.Prettify(rest, false)
-	uuidV4, _ := uuid.NewV4()
+	uuidV4 := uuid.Must(uuid.NewV4())
 	defaultCapabilities := []capability.Capability{} // only assign empty capabilities for component declarations
 	status := (*component.ComponentDefinitionStatus)(nil)
 	if comp.Status != nil {

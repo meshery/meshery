@@ -1,7 +1,7 @@
 ---
 title: AWS Kinesis
 subtitle: Collaborative and visual infrastructure as design for AWS Kinesis
-image: /extensions/models/aws-kinesis-controller/icons/color/aws-kinesis-controller-color.svg
+image: extensions/models/aws-kinesis-controller/icons/color/aws-kinesis-controller-color.svg
 aliases: /extensibility/integrations/aws-kinesis-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-kinesis-controller
 description: 

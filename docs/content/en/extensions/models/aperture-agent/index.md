@@ -1,7 +1,7 @@
 ---
 title: Aperture Agent
 subtitle: Collaborative and visual infrastructure as design for Aperture Agent
-image: /extensions/models/aperture-agent/icons/color/aperture-agent-color.svg
+image: extensions/models/aperture-agent/icons/color/aperture-agent-color.svg
 aliases: /extensibility/integrations/aperture-agent
 docURL: https://docs.meshery.io/extensibility/integrations/aperture-agent
 description: 
