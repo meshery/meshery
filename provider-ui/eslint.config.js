@@ -39,7 +39,7 @@ const config = [
   js.configs.recommended,
   ...patchedNextConfig,
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ['**/*.{js,jsx,ts,tsx,mjs}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',

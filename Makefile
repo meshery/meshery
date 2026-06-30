@@ -18,7 +18,7 @@ include install/Makefile.show-help.mk
 #-----------------------------------------------------------------------------
 # Install artifact generation
 #-----------------------------------------------------------------------------
-.PHONY: providers-propagate providers-check
+.PHONY: providers-propagate providers-check check-install
 
 ## Propagate remote providers defined in install/providers.env to every generated install artifact.
 providers-propagate:
@@ -27,6 +27,9 @@ providers-propagate:
 ## Verify that the install artifacts are in sync with the list of remote providers in  install/providers.env.
 providers-check:
 	python3 install/scripts/sync-provider-urls.py --check
+
+## Alias for providers-check; the name referenced by install/providers.env and the check-install CI workflow.
+check-install: providers-check
 
 #-----------------------------------------------------------------------------
 # Docker-based Builds
