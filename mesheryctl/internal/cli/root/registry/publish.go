@@ -188,16 +188,16 @@ func mesherySystem() error {
 	modelDir := modelsOutputPath
 	totalModelsPublished := 0
 	for _, model := range models {
-		comps, ok := components[model.Registrant][model.Model]
-		if !ok {
+		registrantComponents, hasRegistrant := components[model.Registrant]
+		comps, ok := registrantComponents[model.Model]
+		if !hasRegistrant || !ok {
 			utils.Log.Debug("no components found for ", model.Model)
 			comps = []meshkitRegistryUtils.ComponentCSV{}
 		}
 
 		err := utils.GenerateIcons(model, comps, imgsOutputPath)
 		if err != nil {
-			utils.Log.Debug(utils.ErrGeneratingIcons(err, imgsOutputPath))
-			return fmt.Errorf("error generating icons for model %s: %w", model.Model, err)
+			return errors.Wrapf(utils.ErrGeneratingIcons(err, imgsOutputPath), "generating icons for model %s", model.Model)
 		}
 
 		_, _, err = WriteModelDefToFileSystem(&model, "", modelDir)
@@ -206,7 +206,7 @@ func mesherySystem() error {
 		}
 		totalModelsPublished++
 	}
-	utils.Log.Info("Total model published: ", totalModelsPublished)
+	utils.Log.Info("Total models published: ", totalModelsPublished)
 	return nil
 }
 
@@ -218,8 +218,9 @@ func remoteProviderSystem() error {
 	modelDir := filepath.Join(outputPath)
 	totalModelsPublished := 0
 	for _, model := range models {
-		comps, ok := components[model.Registrant][model.Model]
-		if !ok {
+		registrantComponents, hasRegistrant := components[model.Registrant]
+		comps, ok := registrantComponents[model.Model]
+		if !hasRegistrant || !ok {
 			utils.Log.Debug("no components found for ", model.Model)
 			comps = []meshkitRegistryUtils.ComponentCSV{}
 		}
