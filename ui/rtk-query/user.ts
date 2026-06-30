@@ -408,7 +408,7 @@ export const useGetSelectedWorkspace = () => {
   const {
     data: workspacesData,
     isError: isWorkspacesError,
-    isLoading: isLoadingingWorkspaces,
+    isLoading: isLoadingWorkspaces,
     error: errorGetWorkspaces,
   } = useGetWorkspacesQuery(
     {
@@ -438,7 +438,7 @@ export const useGetSelectedWorkspace = () => {
     selectedWorkspace,
     didFallback,
     allWorkspaces: workspacesData?.workspaces,
-    isLoading: isLoadingOrganizations || isLoadingingWorkspaces || isLoadingPrefs,
+    isLoading: isLoadingOrganizations || isLoadingWorkspaces || isLoadingPrefs,
     isError: isWorkspacesError || errorGetSelectedOrg,
     error: errorGetWorkspaces || errorGetSelectedOrg,
   };
