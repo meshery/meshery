@@ -72,4 +72,10 @@ Follow the conventions in
 [How to write MeshKit compatible errors]({{< ref "project/contributing/contributing-error.md" >}}) -
 declare the code constant and factory function in an `error.go` file, and use
 `errors.New(...)` from MeshKit rather than `fmt.Errorf` or the standard-library `errors`
-package.
+package. Error names and codes must be unique across the whole component, so give each
+constructor a distinct name (for example `ErrGettingBrokerResource` and
+`ErrGettingMeshsyncResource`).
+
+After adding or changing an error, run `make error` to validate that codes and names are
+unique and to regenerate the error reference; `make error-util` assigns codes to new
+placeholder constants and bumps `next_error_code` in `helpers/component_info.json`.
