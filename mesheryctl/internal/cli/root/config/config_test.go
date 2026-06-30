@@ -157,18 +157,30 @@ func TestGetCurrentContextName(t *testing.T) {
 	}
 }
 func TestSetContext(t *testing.T) {
-	for _, test := range tests {
-		mesheryctlconfig := MesheryCtlConfig{nil, test, nil}
-		err := UpdateContextInConfig(nil, test)
-		if err != nil {
-			fmt.Print("Fail") //Internal:need to be fixed
-		}
-		got := mesheryctlconfig.GetCurrentContextName()
-		want := test
+	// SetCurrentContext sets CurrentContext and validates it against known contexts.
+	// We test only the setting behavior here using a context name that exists in the map.
+	contextName := "local"
+	ctx := Context{
+		Endpoint: "http://localhost:9081",
+		Platform: "docker",
+		Token:    "Default",
+		Channel:  "stable",
+		Version:  "latest",
+	}
+	mesheryctlconfig := MesheryCtlConfig{
+		Contexts:       map[string]Context{contextName: ctx},
+		CurrentContext: "",
+		Tokens:         nil,
+	}
 
-		if got != want {
-			t.Errorf("got %q want %q", got, want)
-		}
+	err := mesheryctlconfig.SetCurrentContext(contextName)
+	if err != nil {
+		t.Fatalf("SetCurrentContext(%q) returned unexpected error: %v", contextName, err)
+	}
+
+	got := mesheryctlconfig.GetCurrentContextName()
+	if got != contextName {
+		t.Errorf("GetCurrentContextName() = %q, want %q", got, contextName)
 	}
 }
 func TestSetEndpoint(t *testing.T) {
@@ -296,6 +308,174 @@ func TestSetOperatorStatus(t *testing.T) {
 		}
 	}
 }
+
+// TODO: Shift Testing utility functions to meshkit so import cycle problems can be eliminated in future
+
+// func TestChangePlatform(t *testing.T) {
+// 	type args struct {
+// 		contextName string
+// 		platform    string
+// 	}
+
+// 	currDir := utils.GetBasePath(t)
+// 	fixtureDir := currDir + "/fixtures"
+// 	testConfigPath := fixtureDir + "/TestConfig.yaml"
+
+// 	// Read and write to the test config file
+// 	utils.SetupCustomContextEnv(t, testConfigPath)
+
+// 	mctlCfg, _ := GetMesheryCtl(viper.GetViper())
+
+// 	tests := []struct {
+// 		name    string
+// 		args    args
+// 		wantErr bool
+// 		golden  string
+// 	}{
+// 		{
+// 			name:    "Update platform in gke context (valid context)",
+// 			args:    args{contextName: "gke", platform: "testplatform"},
+// 			wantErr: false,
+// 			golden:  "changeplatform.valid.golden",
+// 		},
+// 		{
+// 			name:    "Update platform in kubernetes context (invalid context)",
+// 			args:    args{contextName: "kubernetes", platform: "testplatform"},
+// 			wantErr: true,
+// 			golden:  "changeplatform.invalid.golden",
+// 		},
+// 	}
+
+// 	for _, tt := range tests {
+// 		t.Run(tt.name, func(t *testing.T) {
+// 			err := mctlCfg.SetCurrentContext(tt.args.contextName)
+// 			if err != nil {
+// 				if !tt.wantErr {
+// 					t.Fatal("Error setting context", err)
+// 				} else {
+// 					// handles the case when an invalid context was intentionally supplied
+// 					return
+// 				}
+// 			}
+
+// 			currCtx, err := mctlCfg.GetCurrentContext()
+// 			if err != nil {
+// 				t.Fatal("Error processing context from config: ", err)
+// 			}
+
+// 			currCtx.SetPlatform(tt.args.platform)
+
+// 			if err := UpdateContextInConfig(tt.args.contextName, currCtx, testConfigPath); err != nil && !tt.wantErr {
+// 				t.Errorf("UpdateContextInConfig() error = %v, wantErr %v", err, tt.wantErr)
+// 			}
+
+// 			// Actual file contents
+// 			actualContent, err := os.ReadFile(testConfigPath)
+// 			if err != nil {
+// 				t.Error("Error reading actual file contents: ", err)
+// 			}
+
+// 			actualFileContent := string(actualContent)
+
+// 			// Expected file contents
+// 			testdataDir := currDir + "/testdata"
+
+// 			golden := utils.NewGoldenFile(t, tt.golden, testdataDir)
+// 			if *update {
+// 				golden.Write(actualFileContent)
+// 			}
+// 			expectedFileContent := golden.Load()
+
+// 			if expectedFileContent != actualFileContent {
+// 				t.Errorf("Expected file content \n[%v]\n and actual file content \n[%v]\n don't match", expectedFileContent, actualFileContent)
+// 			}
+
+// 			// Repopulating Expected yaml
+// 			if err := utils.Populate(currDir+"/fixtures/original/TestConfig.yaml", testConfigPath); err != nil {
+// 				t.Fatal(err, "Could not complete test. Unable to repopulate fixture")
+// 			}
+// 		})
+// 	}
+// }
+
+// func TestChangeConfigEndpoint(t *testing.T) {
+// 	// Setup path to test config file
+// 	currDir := utils.GetBasePath(t)
+// 	testConfigPath := currDir + "/fixtures/TestChangeEndpointConfig.yaml"
+
+// 	utils.SetupCustomContextEnv(t, testConfigPath)
+
+// 	mctlCfg, _ := GetMesheryCtl(viper.GetViper())
+
+// 	tests := []struct {
+// 		name            string
+// 		ctxName         string
+// 		endpointAddress string
+// 		golden          string
+// 		wantErr         bool
+// 	}{
+// 		{
+// 			name:            "ChangeConfigEndpoint with platform docker",
+// 			ctxName:         "local",
+// 			endpointAddress: "http://localhost:55555",
+// 			golden:          "changeconfigendpoint.expect.docker.golden",
+// 			wantErr:         false,
+// 		},
+// 		{
+// 			name:            "ChangeConfigEndpoint with platform kubernetes",
+// 			ctxName:         "local2",
+// 			endpointAddress: "http://localhost:44444",
+// 			golden:          "changeconfigendpoint.expect.kubernetes.golden",
+// 			wantErr:         false,
+// 		},
+// 	}
+
+// 	for _, tt := range tests {
+// 		t.Run(tt.name, func(t *testing.T) {
+// 			err := mctlCfg.SetCurrentContext(tt.ctxName)
+// 			if err != nil {
+// 				t.Fatal("error setting context", err)
+// 			}
+
+// 			currCtx, err := mctlCfg.GetCurrentContext()
+// 			if err != nil {
+// 				t.Fatal("error processing context from config", err)
+// 			}
+
+// 			currCtx.SetEndpoint(tt.endpointAddress)
+
+// 			if err := UpdateContextInConfig(tt.ctxName, currCtx, testConfigPath); (err != nil) != tt.wantErr {
+// 				t.Errorf("UpdateContextInConfig() error = %v, wantErr %v", err, tt.wantErr)
+// 			}
+
+// 			// Actual file contents
+// 			actualContent, err := os.ReadFile(testConfigPath)
+// 			if err != nil {
+// 				t.Error("Error reading actual file contents: ", err)
+// 			}
+
+// 			actualFileContent := string(actualContent)
+
+// 			// Expected file contents
+// 			testdataDir := currDir + "/testdata"
+
+// 			golden := utils.NewGoldenFile(t, tt.golden, testdataDir)
+// 			if *update {
+// 				golden.Write(actualFileContent)
+// 			}
+// 			expectedFileContent := golden.Load()
+
+// 			if expectedFileContent != actualFileContent {
+// 				t.Errorf("Expected file content \n[%v]\n and actual file content \n[%v]\n don't match", expectedFileContent, actualFileContent)
+// 			}
+
+// 			// Repopulating Expected yaml
+// 			if err := utils.Populate(currDir+"/fixtures/platform/original/TestChangeEndpointConfig.yaml", testConfigPath); err != nil {
+// 				t.Fatal(err, "Could not complete test. Unable to repopulate fixture")
+// 			}
+// 		})
+// 	}
+// }
 
 func TestValidateVersion(t *testing.T) {
 	t.Run("empty version defaults to latest", func(t *testing.T) {
