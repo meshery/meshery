@@ -4,6 +4,7 @@ import eventsReducer, {
   setEvents,
   toggleNotificationCenter,
   closeNotificationCenter,
+  selectIsEventVisible,
 } from '../events';
 
 const makeEvent = (overrides = {}) => ({
@@ -65,5 +66,15 @@ describe('events slice', () => {
     state = eventsReducer(state, closeNotificationCenter());
     expect(state.isNotificationCenterOpen).toBe(false);
     expect(state.current_view.page).toBe(0);
+  });
+
+  it('initial current_view filters to unread so read events are hidden before first fetch', () => {
+    let state = eventsReducer(undefined, { type: 'unknown' });
+    state = eventsReducer(state, pushEvent(makeEvent({ id: 'r1', status: 'read' })));
+    state = eventsReducer(state, pushEvent(makeEvent({ id: 'u1', status: 'unread' })));
+
+    const storeShape = { events: state };
+    expect(selectIsEventVisible(storeShape, 'r1')).toBe(false);
+    expect(selectIsEventVisible(storeShape, 'u1')).toBe(true);
   });
 });

@@ -359,9 +359,21 @@ function MesheryPatternCard_({
                 {name}
               </Typography>
               <CardHeaderRight>
-                <Link href={`${MESHERY_CLOUD_PROD}/user/${pattern?.userId}`} target="_blank">
-                  <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
-                </Link>
+                <CustomTooltip
+                  title={owner ? [owner.firstName, owner.lastName].filter(Boolean).join(' ') : ''}
+                  placement="top"
+                >
+                  <Link
+                    href={`${MESHERY_CLOUD_PROD}/user/${pattern?.userId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Avatar
+                      alt={owner ? [owner.firstName, owner.lastName].filter(Boolean).join(' ') : ''}
+                      src={owner?.avatarUrl}
+                    />
+                  </Link>
+                </CustomTooltip>
                 <CustomTooltip title="Enter Fullscreen" arrow interactive placement="top">
                   <IconButton
                     onClick={(ev) =>

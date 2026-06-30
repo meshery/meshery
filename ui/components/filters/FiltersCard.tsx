@@ -247,9 +247,21 @@ function FiltersCard_({
             <YamlDialogTitleGrid item xs={12}>
               <Typography variant="h6">{name}</Typography>
               <CardHeaderRight>
-                <Link href={`${MESHERY_CLOUD_PROD}/user/${ownerId}`} target="_blank">
-                  <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
-                </Link>
+                <Tooltip
+                  title={owner ? [owner.firstName, owner.lastName].filter(Boolean).join(' ') : ''}
+                  placement="top"
+                >
+                  <Link
+                    href={`${MESHERY_CLOUD_PROD}/user/${ownerId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Avatar
+                      alt={owner ? [owner.firstName, owner.lastName].filter(Boolean).join(' ') : ''}
+                      src={owner?.avatarUrl}
+                    />
+                  </Link>
+                </Tooltip>
                 <Tooltip title="Enter Fullscreen" arrow interactive placement="top">
                   <IconButton
                     onClick={(ev) =>
