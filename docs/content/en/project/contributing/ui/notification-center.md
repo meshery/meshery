@@ -146,13 +146,13 @@ This section outlines the essential files and folders that you'll interact with 
 
 #### `NotificationCenter/` _(Root Directory)_
 
-- **[index.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/index.tsx)**:  
+- **[index.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/index.tsx)**:  
   Contains the main context provider (`NotificationCenterProvider`), the drawer component (`NotificationCenterDrawer`), and orchestrates the overall structure.
 
-- **[metadata.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/metadata.tsx)**:  
+- **[metadata.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/metadata.tsx)**:  
   Defines `PropertyFormatters`, `LinkFormatters`, `PropertyLinkFormatters`, and `EventTypeFormatters`. Contains the `FormattedMetadata` component which decides how to format metadata based on event type or specific properties.
 
-- **[notification.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/notification.tsx)**:  
+- **[notification.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/notification.tsx)**:  
   Defines how an individual notification is rendered.
 
 
@@ -160,19 +160,19 @@ This section outlines the essential files and folders that you'll interact with 
 
 This directory houses reusable formatter components dedicated to specific types of metadata or event types.
 
-- **[common.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/formatters/common.tsx)**:  
+- **[common.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/formatters/common.tsx)**:  
   Contains shared components like `TitleLink`, `DataToFileLink`, `EmptyState`.
 
-- **[error.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/formatters/error.tsx)**:  
+- **[error.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/formatters/error.tsx)**:  
   Defines `ErrorMetadataFormatter` for displaying structured error details.
 
-- **[model_registration.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/formatters/model_registration.tsx)**:  
+- **[model_registration.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/formatters/model_registration.tsx)**:  
   Contains formatters for model import/registration events (`ModelImportMessages`, `ModelImportedSection`).
 
-- **[pattern_dryrun.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/formatters/pattern_dryrun.tsx)**:  
+- **[pattern_dryrun.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/formatters/pattern_dryrun.tsx)**:  
   Defines `DryRunResponseFormatter` which utilizes components from `DesignLifeCycle`.
 
-- **[relationship_evaluation.tsx](https://github.com/meshery/meshery/blob/master/ui/components/NotificationCenter/formatters/relationship_evaluation.tsx)**:  
+- **[relationship_evaluation.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/formatters/relationship_evaluation.tsx)**:  
   Defines `RelationshipEvaluationEventFormatter` responsible for rendering notifications related to the evaluation of relationships between components in a design.
 
 ## Types of Event Specific Notification Formatters
@@ -213,7 +213,7 @@ The `ErrorMetadataFormatter` is used for formatting error-related notifications 
   - `SuggestedRemediation`: Suggests solutions to fix the error.
 - `event` (object, optional): Contains the notification event data.
 
-**Path:** `ui/components/NotificationCenter/formatters/error.tsx`
+**Path:** `ui/components/layout/NotificationCenter/formatters/error.tsx`
 
 **Example:**
 
@@ -238,7 +238,7 @@ The `ErrorMetadataFormatter` is used when dealing with structured error events t
 
 The `Model Registration Formatter` formats and displays model registration details, including components and relationships, in Meshery UI's Notification Center. It ensures structured representation of imported models and error handling during the import process.
 
-**Path:** `ui/components/NotificationCenter/formatters/model_registration.tsx`
+**Path:** `ui/components/layout/NotificationCenter/formatters/model_registration.tsx`
 
 **Components:**
 
@@ -261,7 +261,7 @@ The `Model Registration Formatter` formats and displays model registration detai
 
 The **Relationship Evaluation Formatter** is responsible for rendering notifications related to the evaluation of relationships between components in a design. It provides a detailed breakdown of changes in components and relationships, such as additions, updates, and removals, during the evaluation process.
 
-**Path:** `ui/components/NotificationCenter/formatters/relationship_evaluation.tsx`
+**Path:** `ui/components/layout/NotificationCenter/formatters/relationship_evaluation.tsx`
 
 #### Key Components
 
@@ -327,7 +327,7 @@ The **Relationship Evaluation Formatter** is specifically designed to handle not
 
 The **Dry Run Formatter** is responsible for rendering notifications related to the dry run validation of a design. A dry run simulates the deployment or undeployment of a design to identify potential errors without actually applying the changes.
 
-**Path:** `ui/components/DesignLifeCycle/DryRun.tsx`
+**Path:** `ui/components/designs/lifecycle/DryRun.tsx`
 
 #### Key Components
 
@@ -359,7 +359,7 @@ The **Dry Run Formatter** is used in the following scenarios:
 
 The **Deployment Summary Formatter** is responsible for rendering notifications related to the deployment or undeployment of components in a design.
 
-**Path:** `ui/components/DesignLifeCycle/DeploymentSummary.tsx`
+**Path:** `ui/components/designs/lifecycle/DeploymentSummary.tsx`
 
 #### Key Components
 
