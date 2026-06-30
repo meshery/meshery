@@ -6,6 +6,14 @@ type ChildrenProps = {
   children: React.ReactNode;
 };
 
+type UnifiedDescriptionProps = Omit<
+  React.ComponentProps<typeof FrontSideDescription>,
+  'children'
+> & {
+  children: React.ReactNode;
+  hasIcon?: boolean;
+};
+
 export const UnifiedCardContainer = ({
   children, sx = {},
 }: ChildrenProps & { sx?: object }) => (
@@ -27,10 +35,7 @@ export const UnifiedDescription = ({
   children,
   hasIcon = false,
   ...props
-}: ChildrenProps & {
-  hasIcon?: boolean;
-  'data-testid'?: string;
-}) => (
+}: UnifiedDescriptionProps) => (
   <FrontSideDescription
     {...props}
     sx={{
