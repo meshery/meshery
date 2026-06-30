@@ -134,7 +134,7 @@ The core logic for rendering metadata is handled by the `FormattedMetadata` comp
    If a formatter exists for the event's type (registered under `EventTypeFormatters`), that dedicated formatter is used to fully control how the metadata is displayed.
 
 2. **Fallback to Property-Based Formatting**  
-   If no event-specific formatter is found, the `FormattedMetadata` component falls back to the `FormatStructuredData` function (also in `metadata.tsx`).
+   If no event-specific formatter is found, the `FormattedMetadata` component falls back to the `FormatStructuredData` component (imported from `ui/components/data-formatter/index.tsx`).
 
    - This function renders each key-value pair from the `metadata` using the mappings defined in:
      - `PropertyFormatters` – for structured or specialized visual formats.
@@ -170,7 +170,7 @@ This directory houses reusable formatter components dedicated to specific types 
   Contains formatters for model import/registration events (`ModelImportMessages`, `ModelImportedSection`).
 
 - **[pattern_dryrun.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/formatters/pattern_dryrun.tsx)**:  
-  Defines `DryRunResponseFormatter` which utilizes components from `DesignLifeCycle`.
+  Defines `DryRunResponseFormatter` which utilizes components from `designs/lifecycle` (for example, `DryRun.tsx` and `ValidateDesign.tsx`).
 
 - **[relationship_evaluation.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/formatters/relationship_evaluation.tsx)**:  
   Defines `RelationshipEvaluationEventFormatter` responsible for rendering notifications related to the evaluation of relationships between components in a design.
@@ -219,12 +219,12 @@ The `ErrorMetadataFormatter` is used for formatting error-related notifications 
 
 ```javascript
 <ErrorMetadataFormatter
-  metadata={
-    LongDescription: "An unexpected error occurred while deploying the mesh.",
-    ProbableCause: "Misconfigured Kubernetes cluster.",
-    SuggestedRemediation: "Check your kubeconfig file and retry deployment.",
-  }
-  event={ description: "Mesh deployment failed" }
+  metadata={{
+    LongDescription: ["An unexpected error occurred while deploying the mesh."],
+    ProbableCause: ["Misconfigured Kubernetes cluster."],
+    SuggestedRemediation: ["Check your kubeconfig file and retry deployment."],
+  }}
+  event={{ description: "Mesh deployment failed" }}
 />
 ```
 
