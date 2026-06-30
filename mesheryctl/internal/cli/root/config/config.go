@@ -19,6 +19,10 @@ import (
 
 const versionCheckTimeout = 10 * time.Second
 
+var validateVersionURL = func(org, repo, version string) string {
+	return "https://github.com/" + org + "/" + repo + "/releases/tag/" + version
+}
+
 // legacyProviderConfigWarnOnce gates the one-shot deprecation warning emitted
 // when GetMesheryCtl rewrites a legacy "None" provider entry to "Local".
 var legacyProviderConfigWarnOnce sync.Once
@@ -254,7 +258,7 @@ func (ctx *Context) ValidateVersion() error {
 		return nil
 	}
 
-	url := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/tag/" + ctx.Version
+	url := validateVersionURL(constants.GetMesheryGitHubOrg(), constants.GetMesheryGitHubRepo(), ctx.Version)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
