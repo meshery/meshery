@@ -263,7 +263,7 @@ mesheryctl system provider switch [provider]
 		if err != nil {
 			return ErrHealthCheckFailed(err)
 		}
-		return hc.RunPreflightHealthChecks()
+		return hc.RunPreflightHealthChecks(cmd.Context())
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		userResponse := false

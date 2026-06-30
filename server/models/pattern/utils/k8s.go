@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/models"
@@ -71,10 +72,13 @@ func CreateK8sResource(
 		}
 	}
 
+	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	defer cancel()
+
 	if _, err := client.
 		Resource(gvr).
 		Namespace(obj.GetNamespace()).
-		Create(context.TODO(), obj, metav1.CreateOptions{
+		Create(ctx, obj, metav1.CreateOptions{
 			FieldManager: "meshery",
 		}); err != nil {
 		if !errors.IsAlreadyExists(err) {
@@ -89,7 +93,7 @@ func CreateK8sResource(
 		prevObj, err := client.
 			Resource(gvr).
 			Namespace(obj.GetNamespace()).
-			Get(context.TODO(), obj.GetName(), metav1.GetOptions{})
+			Get(ctx, obj.GetName(), metav1.GetOptions{})
 		if err != nil {
 			err = models.ErrGetResource(err, obj.GetName(), obj.GetNamespace())
 			log.Error(err)
@@ -103,7 +107,7 @@ func CreateK8sResource(
 				if err := client.
 					Resource(gvr).
 					Namespace(obj.GetNamespace()).
-					Delete(context.TODO(), obj.GetName(), metav1.DeleteOptions{}); err != nil {
+					Delete(ctx, obj.GetName(), metav1.DeleteOptions{}); err != nil {
 					err = models.ErrDeleteResource(err, obj.GetName(), obj.GetNamespace())
 					log.Error(err)
 					return err
@@ -112,7 +116,7 @@ func CreateK8sResource(
 				if _, err := client.
 					Resource(gvr).
 					Namespace(obj.GetNamespace()).
-					Create(context.TODO(), obj, metav1.CreateOptions{
+					Create(ctx, obj, metav1.CreateOptions{
 						FieldManager: "meshery",
 					}); err != nil {
 					err = models.ErrRecreateResource(err, obj.GetName(), obj.GetNamespace())
@@ -129,7 +133,7 @@ func CreateK8sResource(
 		if _, err := client.
 			Resource(gvr).
 			Namespace(obj.GetNamespace()).
-			Patch(context.TODO(), obj.GetName(), types.MergePatchType, resourceByt, metav1.PatchOptions{
+			Patch(ctx, obj.GetName(), types.MergePatchType, resourceByt, metav1.PatchOptions{
 				FieldManager: "meshery",
 			}); err != nil {
 			err = models.ErrUpdateResource(obj.GetName(), obj.GetNamespace())
@@ -150,6 +154,9 @@ func DeleteK8sResource(
 	namespace,
 	name string,
 ) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
 	return client.
 		Resource(schema.GroupVersionResource{
 			Group:    group,
@@ -157,7 +164,7 @@ func DeleteK8sResource(
 			Resource: resource,
 		}).
 		Namespace(namespace).
-		Delete(context.TODO(), name, metav1.DeleteOptions{})
+		Delete(ctx, name, metav1.DeleteOptions{})
 }
 
 // CreateNamespace creates a new Kubernetes namespace with the given name.
@@ -178,11 +185,14 @@ func CreateNamespace(client dynamic.Interface, namespace string) error {
 		return err
 	}
 
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
 	if _, err := client.Resource(schema.GroupVersionResource{
 		Group:    "",
 		Version:  "v1",
 		Resource: "namespaces",
-	}).Patch(context.TODO(), namespace, types.ApplyPatchType, data, metav1.PatchOptions{
+	}).Patch(ctx, namespace, types.ApplyPatchType, data, metav1.PatchOptions{
 		FieldManager: "meshery",
 	}); err != nil {
 		return err

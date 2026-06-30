@@ -93,7 +93,7 @@ mesheryctl system logs meshery-istio
 			return ErrHealthCheckFailed(err)
 		}
 		// execute healthchecks
-		err = hc.RunPreflightHealthChecks()
+		err = hc.RunPreflightHealthChecks(cmd.Context())
 		if err != nil {
 			cmd.SilenceUsage = true
 		}
@@ -224,7 +224,7 @@ mesheryctl system logs meshery-istio
 
 					req := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).GetLogs(name, &podLogOpts)
 
-					logs, err := req.Stream(context.TODO())
+					logs, err := req.Stream(cmd.Context())
 					if err != nil {
 						return err
 					}

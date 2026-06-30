@@ -70,7 +70,7 @@ mesheryctl system status --verbose
 			return ErrHealthCheckFailed(err)
 		}
 		// execute healthchecks
-		err = hc.RunPreflightHealthChecks()
+		err = hc.RunPreflightHealthChecks(cmd.Context())
 		if err != nil {
 			cmd.SilenceUsage = true
 		}
@@ -143,7 +143,7 @@ mesheryctl system status --verbose
 				return ErrHealthCheckFailed(err)
 			}
 			// If k8s is available print the status of pods in the MesheryNamespace
-			if err = hc.Run(); err != nil {
+			if err = hc.Run(cmd.Context()); err != nil {
 				return nil
 			}
 

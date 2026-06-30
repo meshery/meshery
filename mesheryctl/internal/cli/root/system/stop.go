@@ -20,6 +20,7 @@ import (
 	"os"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	apiextension "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
@@ -69,13 +70,13 @@ mesheryctl system stop --force
 		if err != nil {
 			return ErrHealthCheckFailed(err)
 		}
-		return hc.RunPreflightHealthChecks()
+		return hc.RunPreflightHealthChecks(cmd.Context())
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
 			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "stop"))
 		}
-		if err := stop(); err != nil {
+		if err := stop(cmd.Context()); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to stop Meshery"))
 		}
 		return nil
@@ -84,7 +85,7 @@ mesheryctl system stop --force
 
 var userResponse bool
 
-func stop() error {
+func stop(ctx context.Context) error {
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
@@ -162,7 +163,7 @@ func stop() error {
 
 		// Delete the CR instances for brokers and meshsyncs
 		// this needs to be executed before deleting the helm release, or the CR instances cannot be found for some reason
-		if err = invokeDeleteCRs(client); err != nil {
+		if err = invokeDeleteCRs(ctx, client); err != nil {
 			return err
 		}
 
@@ -195,13 +196,13 @@ func stop() error {
 		}
 
 		// Delete the CRDs for brokers and meshsyncs
-		if err = invokeDeleteCRDs(); err != nil {
+		if err = invokeDeleteCRDs(ctx); err != nil {
 			return err
 		}
 
 		if !utils.KeepNamespace {
 			utils.Log.Info("Deleting Meshery Namespace...")
-			if err = deleteNs(utils.MesheryNamespace, client.KubeClient); err != nil {
+			if err = deleteNs(ctx, utils.MesheryNamespace, client.KubeClient); err != nil {
 				return err
 			}
 			// Wait for the namespace to be deleted
@@ -227,7 +228,7 @@ func stop() error {
 }
 
 // invokeDeleteCRs is a wrapper of deleteCR to delete CR instances (brokers and meshsyncs)
-func invokeDeleteCRs(client *meshkitkube.Client) error {
+func invokeDeleteCRs(ctx context.Context, client *meshkitkube.Client) error {
 	const (
 		brokerResourceName   = "brokers"
 		brokerInstanceName   = "meshery-broker"
@@ -235,7 +236,7 @@ func invokeDeleteCRs(client *meshkitkube.Client) error {
 		meshsyncInstanceName = "meshery-meshsync"
 	)
 
-	if err := deleteCR(brokerResourceName, brokerInstanceName, client); err != nil {
+	if err := deleteCR(ctx, brokerResourceName, brokerInstanceName, client); err != nil {
 		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CR "+brokerInstanceName))
 		if !forceDelete {
 			return err
@@ -244,7 +245,7 @@ func invokeDeleteCRs(client *meshkitkube.Client) error {
 		utils.Log.Debug(err)
 	}
 
-	if err := deleteCR(meshsyncResourceName, meshsyncInstanceName, client); err != nil {
+	if err := deleteCR(ctx, meshsyncResourceName, meshsyncInstanceName, client); err != nil {
 		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CR "+meshsyncInstanceName))
 		if !forceDelete {
 			return err
@@ -256,17 +257,18 @@ func invokeDeleteCRs(client *meshkitkube.Client) error {
 	return nil
 }
 
-// deleteCRs delete the specified CR instance in the clusters
-func deleteCR(resourceName, instanceName string, client *meshkitkube.Client) error {
+func deleteCR(ctx context.Context, resourceName, instanceName string, client *meshkitkube.Client) error {
+	timeoutCtx, cancel := context.WithTimeout(ctx, constants.K8sDeleteTimeout)
+	defer cancel()
 	return client.DynamicKubeClient.Resource(schema.GroupVersionResource{
 		Group:    v1alpha1.GroupVersion.Group,
 		Version:  v1alpha1.GroupVersion.Version,
 		Resource: resourceName,
-	}).Namespace(utils.MesheryNamespace).Delete(context.TODO(), instanceName, metav1.DeleteOptions{})
+	}).Namespace(utils.MesheryNamespace).Delete(timeoutCtx, instanceName, metav1.DeleteOptions{})
 }
 
-// invokeDeleteCRs is a wrapper of deleteCRD to delete CRDs (brokers and meshsyncs)
-func invokeDeleteCRDs() error {
+// invokeDeleteCRDs is a wrapper of deleteCRD to delete CRDs (brokers and meshsyncs)
+func invokeDeleteCRDs(ctx context.Context) error {
 	const (
 		brokerCRDName   = "brokers.meshery.io"
 		meshsyncCRDName = "meshsyncs.meshery.io"
@@ -283,7 +285,7 @@ func invokeDeleteCRDs() error {
 		utils.Log.Debug(err)
 	}
 
-	if err = deleteCRD(brokerCRDName, client); err != nil {
+	if err = deleteCRD(ctx, brokerCRDName, client); err != nil {
 		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CRD "+brokerCRDName))
 		if !forceDelete {
 			return err
@@ -292,7 +294,7 @@ func invokeDeleteCRDs() error {
 		utils.Log.Debug(err)
 	}
 
-	if err = deleteCRD(meshsyncCRDName, client); err != nil {
+	if err = deleteCRD(ctx, meshsyncCRDName, client); err != nil {
 		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CRD "+meshsyncCRDName))
 		if !forceDelete {
 			return err
@@ -304,13 +306,17 @@ func invokeDeleteCRDs() error {
 	return nil
 }
 
-// deleteCRs delete the specified CRD in the clusters
-func deleteCRD(name string, client *apiextension.Clientset) error {
-	return client.ApiextensionsV1().CustomResourceDefinitions().Delete(context.TODO(), name, metav1.DeleteOptions{})
+// deleteCRD deletes the specified CRD in the clusters
+func deleteCRD(ctx context.Context, name string, client *apiextension.Clientset) error {
+	timeoutCtx, cancel := context.WithTimeout(ctx, constants.K8sDeleteTimeout)
+	defer cancel()
+	return client.ApiextensionsV1().CustomResourceDefinitions().Delete(timeoutCtx, name, metav1.DeleteOptions{})
 }
 
-func deleteNs(ns string, client *kubernetes.Clientset) error {
-	return client.CoreV1().Namespaces().Delete(context.TODO(), ns, metav1.DeleteOptions{})
+func deleteNs(ctx context.Context, ns string, client *kubernetes.Clientset) error {
+	timeoutCtx, cancel := context.WithTimeout(ctx, constants.K8sDeleteTimeout)
+	defer cancel()
+	return client.CoreV1().Namespaces().Delete(timeoutCtx, ns, metav1.DeleteOptions{})
 }
 
 func init() {

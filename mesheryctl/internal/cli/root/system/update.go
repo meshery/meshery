@@ -56,7 +56,7 @@ mesheryctl system update --skip-reset
 		if err != nil {
 			return err
 		}
-		return hc.RunPreflightHealthChecks()
+		return hc.RunPreflightHealthChecks(cmd.Context())
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
@@ -146,7 +146,7 @@ mesheryctl system update --skip-reset
 				return err
 			}
 			// If k8s is available in case of platform docker than we deploy operator
-			if err = hc.Run(); err != nil {
+			if err = hc.Run(cmd.Context()); err != nil {
 				return ErrHealthCheckFailed(err)
 			}
 

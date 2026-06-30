@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshery/server/models/pattern/jsonschema"
@@ -131,7 +132,9 @@ func validateWorkload(comp map[string]interface{}, wc component.ComponentDefinit
 	}
 
 	// Validate the json against the schema
-	errs, err := rs.ValidateBytes(context.TODO(), jsonSettings)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	errs, err := rs.ValidateBytes(ctx, jsonSettings)
 	if err != nil {
 		return fmt.Errorf("error occurred during schema validation: %s", err)
 	}

@@ -13,6 +13,7 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
@@ -660,11 +661,13 @@ func CreateManifestsFolder() error {
 
 // GetPods lists all the available pods in the MesheryNamespace
 func GetPodList(client *meshkitkube.Client, namespace string) (*v1core.PodList, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 	// Create a pod interface for the given namespace
 	podInterface := client.KubeClient.CoreV1().Pods(namespace)
 
 	// List the pods in the given namespace
-	podList, err := podInterface.List(context.TODO(), metav1.ListOptions{})
+	podList, err := podInterface.List(ctx, metav1.ListOptions{})
 
 	if err != nil {
 		return nil, ErrListMesheryPods(err)
@@ -796,6 +799,9 @@ func SetKubeConfig() {
 }
 
 func ForceCleanupCluster() error {
+	ctx, cancel := context.WithTimeout(context.Background(), constants.K8sDeleteTimeout)
+	defer cancel()
+
 	client, err := meshkitkube.New([]byte(""))
 	if err != nil {
 		return errors.Wrap(err, "failed to create new client")
@@ -817,13 +823,13 @@ func ForceCleanupCluster() error {
 	// RoleBindings
 
 	deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
-	deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
+	deploymentList, err := deploymentInterface.List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
 
 	for _, deployment := range deploymentList.Items {
-		if err := deploymentInterface.Delete(context.TODO(), deployment.GetName(), metav1.DeleteOptions{
+		if err := deploymentInterface.Delete(ctx, deployment.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
 			log.Debug(err)
@@ -831,13 +837,13 @@ func ForceCleanupCluster() error {
 	}
 
 	serviceInterface := client.KubeClient.CoreV1().Services(MesheryNamespace)
-	serviceList, err := serviceInterface.List(context.TODO(), metav1.ListOptions{})
+	serviceList, err := serviceInterface.List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
 
 	for _, service := range serviceList.Items {
-		if err := serviceInterface.Delete(context.TODO(), service.GetName(), metav1.DeleteOptions{
+		if err := serviceInterface.Delete(ctx, service.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
 			log.Debug(err)
@@ -845,13 +851,13 @@ func ForceCleanupCluster() error {
 	}
 
 	statefulSetInterface := client.KubeClient.AppsV1().StatefulSets(MesheryNamespace)
-	statefulSetList, err := statefulSetInterface.List(context.TODO(), metav1.ListOptions{})
+	statefulSetList, err := statefulSetInterface.List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
 
 	for _, statefulSet := range statefulSetList.Items {
-		if err := statefulSetInterface.Delete(context.TODO(), statefulSet.GetName(), metav1.DeleteOptions{
+		if err := statefulSetInterface.Delete(ctx, statefulSet.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
 			log.Debug(err)
@@ -859,7 +865,7 @@ func ForceCleanupCluster() error {
 	}
 
 	clusterRoleBindingInterface := client.KubeClient.RbacV1().ClusterRoleBindings()
-	clusterRoleBindingList, err := clusterRoleBindingInterface.List(context.TODO(), metav1.ListOptions{})
+	clusterRoleBindingList, err := clusterRoleBindingInterface.List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
@@ -868,7 +874,7 @@ func ForceCleanupCluster() error {
 		// clusterrolebindings aren't namespaced so gotta
 		// check if "meshery" is present in the name or not
 		if strings.Contains(string(clusterRoleBinding.GetName()), "meshery") {
-			if err := clusterRoleBindingInterface.Delete(context.TODO(), clusterRoleBinding.GetName(), metav1.DeleteOptions{
+			if err := clusterRoleBindingInterface.Delete(ctx, clusterRoleBinding.GetName(), metav1.DeleteOptions{
 				PropagationPolicy: &deletePolicy,
 			}); err != nil {
 				log.Debug(err)
@@ -877,7 +883,7 @@ func ForceCleanupCluster() error {
 	}
 
 	clusterRoleInterface := client.KubeClient.RbacV1().ClusterRoles()
-	clusterRoleList, err := clusterRoleInterface.List(context.TODO(), metav1.ListOptions{})
+	clusterRoleList, err := clusterRoleInterface.List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
@@ -886,7 +892,7 @@ func ForceCleanupCluster() error {
 		// clusterroles aren't namespaced so gotta
 		// check if "meshery" is present in the name or not
 		if strings.Contains(string(clusterRole.GetName()), "meshery") {
-			if err := clusterRoleInterface.Delete(context.TODO(), clusterRole.GetName(), metav1.DeleteOptions{
+			if err := clusterRoleInterface.Delete(ctx, clusterRole.GetName(), metav1.DeleteOptions{
 				PropagationPolicy: &deletePolicy,
 			}); err != nil {
 				log.Debug(err)
@@ -895,13 +901,13 @@ func ForceCleanupCluster() error {
 	}
 
 	serviceAccountInterface := client.KubeClient.CoreV1().ServiceAccounts(MesheryNamespace)
-	serviceAccountList, err := serviceAccountInterface.List(context.TODO(), metav1.ListOptions{})
+	serviceAccountList, err := serviceAccountInterface.List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
 
 	for _, serviceAccount := range serviceAccountList.Items {
-		if err := serviceAccountInterface.Delete(context.TODO(), serviceAccount.GetName(), metav1.DeleteOptions{
+		if err := serviceAccountInterface.Delete(ctx, serviceAccount.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
 			log.Debug(err)
@@ -909,13 +915,13 @@ func ForceCleanupCluster() error {
 	}
 
 	secretsInterface := client.KubeClient.CoreV1().Secrets(MesheryNamespace)
-	secretsList, err := secretsInterface.List(context.TODO(), metav1.ListOptions{})
+	secretsList, err := secretsInterface.List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
 
 	for _, secrets := range secretsList.Items {
-		if err := secretsInterface.Delete(context.TODO(), secrets.GetName(), metav1.DeleteOptions{
+		if err := secretsInterface.Delete(ctx, secrets.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
 			log.Debug(err)
@@ -923,13 +929,13 @@ func ForceCleanupCluster() error {
 	}
 
 	configMapsInterface := client.KubeClient.CoreV1().ConfigMaps(MesheryNamespace)
-	configMapsList, err := configMapsInterface.List(context.TODO(), metav1.ListOptions{})
+	configMapsList, err := configMapsInterface.List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
 
 	for _, configMap := range configMapsList.Items {
-		if err := configMapsInterface.Delete(context.TODO(), configMap.GetName(), metav1.DeleteOptions{
+		if err := configMapsInterface.Delete(ctx, configMap.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
 			log.Debug(err)
@@ -937,13 +943,13 @@ func ForceCleanupCluster() error {
 	}
 
 	rolesInterface := client.KubeClient.RbacV1().Roles(MesheryNamespace)
-	rolesList, err := rolesInterface.List(context.TODO(), metav1.ListOptions{})
+	rolesList, err := rolesInterface.List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
 
 	for _, role := range rolesList.Items {
-		if err := rolesInterface.Delete(context.TODO(), role.GetName(), metav1.DeleteOptions{
+		if err := rolesInterface.Delete(ctx, role.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
 			log.Debug(err)
@@ -951,13 +957,13 @@ func ForceCleanupCluster() error {
 	}
 
 	roleBindingsInterface := client.KubeClient.RbacV1().RoleBindings(MesheryNamespace)
-	roleBindingsList, err := roleBindingsInterface.List(context.TODO(), metav1.ListOptions{})
+	roleBindingsList, err := roleBindingsInterface.List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
 
 	for _, roleBinding := range roleBindingsList.Items {
-		if err := roleBindingsInterface.Delete(context.TODO(), roleBinding.GetName(), metav1.DeleteOptions{
+		if err := roleBindingsInterface.Delete(ctx, roleBinding.GetName(), metav1.DeleteOptions{
 			PropagationPolicy: &deletePolicy,
 		}); err != nil {
 			log.Debug(err)
