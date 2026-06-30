@@ -39,18 +39,23 @@
     <div class="flex-container">
       <div class="left-container">
         <script>
-          (function () {
-            const leftContainer = document.querySelector(".left-container");
-            if (!leftContainer) return;
-
-            let state = localStorage.getItem('leftContainer-state');
-            if (!state) {
-              const isDesktop = window.matchMedia("(min-width: 75em)").matches;
-              state = isDesktop ? 'active' : 'inactive';
+         (function () {
+          const leftContainer = document.querySelector(".left-container");
+          if (!leftContainer) return;
+          const isDesktop = window.matchMedia("(min-width: 75em)").matches;
+          let state = isDesktop ? 'active' : 'inactive';
+          try {
+            const stored = localStorage.getItem('leftContainer-state');
+            if (stored) {
+              state = stored;
+            } else {
               localStorage.setItem('leftContainer-state', state);
             }
-            leftContainer.classList.toggle('left-container--active', state === 'active');
-          })();
+          } catch (error) {
+            console.error('Error reading/writing left container state:', error);
+          }
+          leftContainer.classList.toggle('left-container--active', state === 'active');
+        })();
         </script>
 
         {{ partial "resizable-subscription.html" . }}

@@ -1,4 +1,4 @@
-body.is-resizing .left-container { transition: none }
+body.is-resizing .left-container { transition: none; }
 // There are two different transitions: dragging and toggling active/inactive. While dragging, the sidebar shouldn't also translate.
 
 .left-container {
@@ -100,7 +100,7 @@ body.is-resizing .left-container { transition: none }
   //width: var(--resizable-w-sidebar, var(--sidebar-width))
   //max-width: var(--sidebar-width);
   //min-width: var(--sidebar-width);
-  width: 100%; //width properties are now being the parent's responsability
+  width: 100%; //The width is now being handled by the parent wrapper.
 
   /* Refined, modern scrollbar */
   &::-webkit-scrollbar {
@@ -110,8 +110,8 @@ body.is-resizing .left-container { transition: none }
     background: transparent;
   }
   &::-webkit-scrollbar-thumb {
-    background: rgba(134, 142, 150, 0.3);
-    border-radius: 10px;
+    background: var(--scrollbar-color);
+    border-radius: 0.3rem;
 
     &:hover {
       background: rgba(134, 142, 150, 0.6);
