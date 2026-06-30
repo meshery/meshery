@@ -72,9 +72,9 @@ The `NotificationCenter` component of Meshery UI uses GraphQL subscriptions and 
 
 ### State Management and Internal Details
 
-- The state on the client is managed using `Redux Toolkit` and `RTK Query`.
+- The State on the client is managed using `Redux Toolkit` and `RTK Query`.
 - Update and Delete operations are optimistically handled.
-- Network requests are cached and invalidated when new events arrive or when events are deleted or updated.
+- Network Requests are cached and invalidated when new events arrive or when events are deleted or updated.
 - Due to need for infinite scroll and optimistic update the events are stored globally in Redux.
 
 ### Bulk Operations
