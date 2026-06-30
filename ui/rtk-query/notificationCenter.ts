@@ -144,6 +144,7 @@ export const notificationCenterApi = api
         query: ({ id }) => ({
           url: `/api/system/events/${id}`,
           method: 'DELETE',
+          responseHandler: 'content-type',
         }),
         async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
           const res = await safeQueryResolve(queryFulfilled);
@@ -192,6 +193,7 @@ export const notificationCenterApi = api
           body: {
             ids,
           },
+          responseHandler: 'content-type',
         }),
         async onQueryStarted({ ids }, { dispatch, queryFulfilled }) {
           const res = await safeQueryResolve(queryFulfilled);
@@ -229,7 +231,7 @@ export const notificationCenterApi = api
         invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),
     }),
-    overrideExisting: false,
+    overrideExisting: true,
   });
 
 export const {
