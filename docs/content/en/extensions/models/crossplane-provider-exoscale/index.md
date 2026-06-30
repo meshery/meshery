@@ -1,7 +1,7 @@
 ---
 title: Exoscale (Crossplane)
 subtitle: Collaborative and visual infrastructure as design for Exoscale (Crossplane)
-image: /extensions/models/crossplane-provider-exoscale/icons/color/crossplane-provider-exoscale-color.svg
+image: extensions/models/crossplane-provider-exoscale/icons/color/crossplane-provider-exoscale-color.svg
 aliases: /extensibility/integrations/crossplane-provider-exoscale
 docURL: https://docs.meshery.io/extensibility/integrations/crossplane-provider-exoscale
 description: 

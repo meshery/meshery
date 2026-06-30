@@ -37,7 +37,7 @@ The following tools are required to build and run the Meshery documentation site
 - [Go](https://go.dev/dl/) (required for Hugo modules)
 
 {{% alert color="light" title="Note" %}}
-In case of any installation issues, use the [discussion forum](https://meshery.io/community#discussion-forums).
+In case of any installation issues, use the [discussion forum](https://discuss.meshery.io/).
 {{% /alert %}}
 
 ### Get the code
@@ -253,7 +253,7 @@ Whenever the code tags are detected, the clipboard javascript file is automatica
 ## Documentation Contribution Flow Summary
 
 {{% alert color="light" title="Note" %}}
-For contributing `mesheryctl` reference section, refer [Contributing CLI]({{< ref "project/contributing/contributing-cli.md" >}})
+For contributing `mesheryctl` reference section, refer [Contributing CLI]({{< ref "project/contributing/cli" >}})
 {{% /alert %}}
 
 

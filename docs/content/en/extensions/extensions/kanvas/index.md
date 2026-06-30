@@ -3,10 +3,12 @@ title: Kanvas
 aliases:
 - /extensions/meshmap
 description: Collaborative cloud native visual designer to design and manage infrastructure and applications.
-display_title: true
+display_title: false
 ---
 
-<img style="height: 18px; width: 18px;" src="images/icon-color.svg" />  Kanvas is a GitOps-infused cloud native <b>visual designer</b> for Kubernetes and cloud native applications. This extension works with your Kubernetes clusters so that you design and manage your infrastructure and applications between members of your team. This extension has two modes: Designer and Operator. Create and share your own Kubernetes deployments and patterns in Designer. Deploy your designs and manage your infrastructure using Operator. It includes multi-user collaboration features that allow teams to work together seamlessly towards achieving their goals in a more timely manner. This extension aims at removing all the challenging aspects of collaboration from the equation so that everyone on your team can be on the same page when it comes to managing cloud-native infrastructure projects.
+# <img style="height: 4rem; width: 4rem; vertical-align: middle;" src="images/icon-color.svg" alt="" /> Kanvas
+
+Kanvas is a GitOps-infused cloud native <b>visual designer</b> for Kubernetes and cloud native applications. This extension works with your Kubernetes clusters so that you design and manage your infrastructure and applications between members of your team. This extension has two modes: Designer and Operator. Create and share your own Kubernetes deployments and patterns in Designer. Deploy your designs and manage your infrastructure using Operator. It includes multi-user collaboration features that allow teams to work together seamlessly towards achieving their goals in a more timely manner. This extension aims at removing all the challenging aspects of collaboration from the equation so that everyone on your team can be on the same page when it comes to managing cloud-native infrastructure projects.
 
 ### Features
 
@@ -35,5 +37,5 @@ See on YouTube: [Designer Walkthrough](https://www.youtube.com/watch?v=qaoYRP3oL
 
 <div class="alert alert-dark" role="alert">
 <h4 class="alert-heading">Discussion Forum</h4>
-Not finding what you're looking for? Ask on the <a href="https://meshery.io/community#discussion-forums">Discussion Forum</a>.
+Not finding what you're looking for? Ask on the <a href="https://discuss.meshery.io">Discussion Forum</a>.
 </div>
