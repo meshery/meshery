@@ -9,7 +9,7 @@
  * the schemas package. Do not hardcode UUIDs here.
  */
 
-import { PermissionDetails } from '@meshery/schemas/permissions';
+import { Keys } from '@meshery/schemas/permissions';
 
 export type { PermissionKey } from '@meshery/schemas/permissions';
 
@@ -112,14 +112,21 @@ const legacyToPascal = {
   INVITE_COLLABORATORS_PUBLIC_DESIGNS: 'CollaborationInviteAnyMesheryCloudUserOrAllMesheryUsers',
   INVITE_COLLABORATORS_PRIVATE_DESIGNS: 'CollaborationInviteAnyMesheryCloudUserToOnAPrivateDesign',
   MESSAGE_IN_REAL_TIME: 'CollaborationMessageInRealTime',
-  DISCUSS_ANY_DESIGN_BY_LEAVING_REVIEW_COMMENTS: 'CollaborationDiscussAnyDesignByLeavingReviewComments',
+  DISCUSS_ANY_DESIGN_BY_LEAVING_REVIEW_COMMENTS:
+    'CollaborationDiscussAnyDesignByLeavingReviewComments',
   MANAGE_ACCESS_TO_DESIGN: 'CollaborationManageAccessToDesigns',
-  CREATE_AND_COLLABORATE_IN_ONLINE_DESIGNS_IN_REAL_TIME: 'CollaborationCreateAndCollaborateInOnlineDesignsInRealTime',
-  MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE: 'InfrastructureManagementManageCloudNativeInfrastructureLifeCycle',
-  MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION: 'InfrastructureManagementManageCloudNativeInfrastructureConfiguration',
-  APPLY_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION: 'InfrastructureManagementApplyCloudNativeInfrastructureConfiguration',
-  VALIDATE_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION: 'InfrastructureManagementValidateCloudNativeInfrastructureConfiguration',
-  APPLY_CUSTOM_CLOUD_NATIVE_CONFIGURATION: 'InfrastructureManagementApplyCustomCloudNativeConfiguration',
+  CREATE_AND_COLLABORATE_IN_ONLINE_DESIGNS_IN_REAL_TIME:
+    'CollaborationCreateAndCollaborateInOnlineDesignsInRealTime',
+  MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE:
+    'InfrastructureManagementManageCloudNativeInfrastructureLifeCycle',
+  MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION:
+    'InfrastructureManagementManageCloudNativeInfrastructureConfiguration',
+  APPLY_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION:
+    'InfrastructureManagementApplyCloudNativeInfrastructureConfiguration',
+  VALIDATE_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION:
+    'InfrastructureManagementValidateCloudNativeInfrastructureConfiguration',
+  APPLY_CUSTOM_CLOUD_NATIVE_CONFIGURATION:
+    'InfrastructureManagementApplyCustomCloudNativeConfiguration',
   DEPLOY_CLOUD_NATIVE_INFRASTRUCTURE: 'InfrastructureManagementDeployCloudNativeInfrastructure',
   UNDEPLOY_CLOUD_NATIVE_INFRASTRUCTURE: 'InfrastructureManagementUndeployCloudNativeInfrastructure',
   VIEW_CLOUD_NATIVE_INFRASTRUCTURE: 'InfrastructureManagementViewCloudNativeInfrastructure',
@@ -128,11 +135,23 @@ const legacyToPascal = {
   RESET_DATABASE: 'MesherySystemResetDatabase',
 } as const;
 
+// Map the new Keys to the legacy action/subject shape for the UI
+const mappedKeys = Object.entries(Keys).reduce((acc, [name, keyObj]) => {
+  acc[name] = {
+    action: keyObj.id,
+    subject: keyObj.function,
+  };
+  return acc;
+}, {} as any);
+
 // Create legacy keys mapped to schema details
 const legacyKeys = Object.entries(legacyToPascal).reduce((acc, [legacy, pascal]) => {
-  const detail = PermissionDetails[pascal as keyof typeof PermissionDetails];
-  if (detail) {
-    acc[legacy] = detail;
+  const keyObj = Keys[pascal as keyof typeof Keys];
+  if (keyObj) {
+    acc[legacy] = {
+      action: keyObj.id,
+      subject: keyObj.function,
+    };
   } else {
     // Fallback block if any key is missing during transition
     acc[legacy] = {
@@ -144,6 +163,6 @@ const legacyKeys = Object.entries(legacyToPascal).reduce((acc, [legacy, pascal])
 }, {} as any);
 
 export const keys = {
-  ...PermissionDetails,
+  ...mappedKeys,
   ...legacyKeys,
 };
