@@ -19,6 +19,9 @@ vi.mock('@sistent/sistent', () => ({
   NoSsr: ({ children }) => <>{children}</>,
   ErrorBoundary: ({ children }) => <>{children}</>,
   AppBar: ({ children }) => <div>{children}</div>,
+  CustomTooltip: ({ children }) => <div>{children}</div>,
+  IconButton: ({ children }) => <button>{children}</button>,
+  InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
 }));
 
 vi.mock('./styles', () => ({
