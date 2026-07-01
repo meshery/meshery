@@ -8,7 +8,7 @@ type ChildrenProps = {
 
 type UnifiedDescriptionProps = Omit<
   React.ComponentProps<typeof FrontSideDescription>,
-  'children'
+  'children' | 'sx'
 > & {
   children: React.ReactNode;
   hasIcon?: boolean;
