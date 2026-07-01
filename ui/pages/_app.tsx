@@ -330,7 +330,8 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
       const removedIds = new Set(
         contexts
           .filter((ctx) => k8sContextMatchesConnectionId(ctx, connectionId))
-          .map((ctx) => ctx.id),
+          .map((ctx) => ctx.id)
+          .filter(Boolean),
       );
 
       if (removedIds.size === 0) {
