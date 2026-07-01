@@ -79,9 +79,10 @@
     });
     // Function to handle anchor links
     document.addEventListener('click', function (event) {
-      if (event.target.tagName === 'A' && event.target.getAttribute('href').startsWith('#')) {
-        window.location.hash = event.target.getAttribute('href');
-      }
+      const href = event.target.getAttribute('href');
+        if (event.target.tagName === 'A' && href && href.startsWith('#')) {
+            window.location.hash = href;
+        }
     });
   </script>
 </head>
@@ -772,15 +773,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <ol>
   <li>
     <p>Go to the management page of any infrastructure and install any of its stable versions.
-<a href="/v0.8/assets/img/adapters/consul/consul-install.png"><img alt="Consul-install" style="width:500px;height:auto;display:flex;padding-top:10px;" src="/assets/img/adapters/consul/consul-install.png" /></a></p>
+      <a href="/v0.8/assets/img/adapters/consul/consul-install.png"><img alt="Consul-install" style="width:500px;height:auto;display:flex;padding-top:10px;" src="/v0.8/assets/img/adapters/consul/consul-install.png" /></a></p>
   </li>
   <li>
     <p>Click (+) on <strong>Manage Sample Application Lifecycle</strong>. You will now be able to see a dropdown menu with the available sample applications.
-<a href="/v0.8/assets/img/adapters/consul/consul-sample-app.png"><img alt="ImageHub sample app" style="width:500px;height:auto;display:flex;padding-top:10px;" src="/assets/img/adapters/consul/consul-sample-app.png" /></a></p>
+      <a href="/v0.8/assets/img/adapters/consul/consul-sample-app.png"><img alt="ImageHub sample app" style="width:500px;height:auto;display:flex;padding-top:10px;" src="/v0.8/assets/img/adapters/consul/consul-sample-app.png" /></a></p>
   </li>
   <li>
     <p>Click on the sample application you want to deploy. This might take up to a minute. You will be notified when the sample application has been deployed.
-<a href="/v0.8/assets/img/adapters/consul/consul-imagehub-success.png"><img alt="ImageHub deployed" style="width:500px;height:auto;display:flex;padding-top:10px;" src="/assets/img/adapters/consul/consul-imagehub-success.png" /></a></p>
+      <a href="/v0.8/assets/img/adapters/consul/consul-imagehub-success.png"><img alt="ImageHub deployed" style="width:500px;height:auto;display:flex;padding-top:10px;" src="/v0.8/assets/img/adapters/consul/consul-imagehub-success.png" /></a></p>
   </li>
 </ol>
 
@@ -797,7 +798,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <p>Once BookInfo is deployed, you can use Meshery to apply custom configurations to control traffic, inject latency, perform context-based routing, and so on.</p>
 
-<p><a href="/v0.8/assets/img/adapters/sample-apps/bookinfo.png"><img alt="BookInfo sample app" style="width:500px;height:auto;" src="/assets/img/adapters/sample-apps/bookinfo.png" /></a></p>
+<p><a href="/v0.8/assets/img/adapters/sample-apps/bookinfo.png"><img alt="BookInfo sample app" style="width:500px;height:auto;" src="/v0.8/assets/img/adapters/sample-apps/bookinfo.png" /></a></p>
 
 <h3 id="emojivoto"><a href="https://github.com/BuoyantIO/emojivoto">Emojivoto</a></h3>
 
@@ -809,31 +810,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <li><strong>emojivoto-voting-svc</strong>: gRPC API for voting and leaderboard</li>
 </ul>
 
-<p><a href="/v0.8/assets/img/adapters/sample-apps/emojivoto.png"><img alt="Emojivoto" style="width:500px;height:auto;" src="/assets/img/adapters/sample-apps/emojivoto.png" /></a></p>
+<p><a href="/v0.8/assets/img/adapters/sample-apps/emojivoto.png"><img alt="Emojivoto" style="width:500px;height:auto;" src="/v0.8/assets/img/adapters/sample-apps/emojivoto.png" /></a></p>
 
 <h3 id="imagehub">ImageHub</h3>
 
 <p>Image Hub is a sample application for exploring WebAssembly modules used as Envoy filters. The application was originally written to run on Consul. However, it doesn’t have any dependency on Consul and can be deployed on any infrastructure. These modules can be used to implement multi-tenancy or to implement per user rate limiting in your application’s endpoints, without messing with your application infrastructure. </p>
 
-<p><a href="/v0.8/assets/img/adapters/sample-apps/imagehub-on-consul.png"><img alt="Imagehub-on-Consul" style="width:500px;height:auto;" src="/assets/img/adapters/sample-apps/imagehub-on-consul.png" /></a></p>
+<p><a href="/v0.8/assets/img/adapters/sample-apps/imagehub-on-consul.png"><img alt="Imagehub-on-Consul" style="width:500px;height:auto;" src="/v0.8/assets/img/adapters/sample-apps/imagehub-on-consul.png" /></a></p>
 
 <h3 id="httpbin"><a href="https://httpbin.org">HTTPBin</a></h3>
 
 <p>HttpBin is a simple HTTP request and response service that responds to many kinds of http/https requests including the standard http request methods (or verbs) used by REST.</p>
 
-<p><a href="/v0.8/assets/img/adapters/sample-apps/httpbin.png"><img alt="httpbin" style="width:500px;height:auto;" src="/assets/img/adapters/sample-apps/httpbin.png" /></a></p>
+<p><a href="/v0.8/assets/img/adapters/sample-apps/httpbin.png"><img alt="httpbin" style="width:500px;height:auto;" src="/v0.8/assets/img/adapters/sample-apps/httpbin.png" /></a></p>
 
 <h3 id="linkerd-books"><a href="https://github.com/BuoyantIO/booksapp">Linkerd Books</a></h3>
 
 <p>Linkerd Books is a sample Ruby based application. It is designed to demonstrate the various value propositions, including debugging, observability, and monitoring of your infrastructure. It can be used to scope out your mesh’s efficiency and for debugging.</p>
 
-<p><a href="/v0.8/assets/img/adapters/sample-apps/linkerd-books.png"><img alt="Linkerd Books" style="width:500px;height:auto;" src="/assets/img/adapters/sample-apps/linkerd-books.png" /></a></p>
+<p><a href="/v0.8/assets/img/adapters/sample-apps/linkerd-books.png"><img alt="Linkerd Books" style="width:500px;height:auto;" src="/v0.8/assets/img/adapters/sample-apps/linkerd-books.png" /></a></p>
 
 <h3 id="online-boutique"><a href="https://github.com/GoogleCloudPlatform/microservices-demo">Online Boutique</a></h3>
 
 <p>Online Boutique is a sample cloud-native application, originally built by Google. It comprises of 10 microservices and can be used to showcase and work with Kubernetes, Istio, gRPC and OpenCensus. On deployment, it runs a web-based e-commerce demo application, an example of which can be seen below:</p>
 
-<p><a href="/v0.8/assets/img/adapters/sample-apps/online-boutique.png"><img alt="Online Boutique" style="width:500px;height:auto;" src="/assets/img/adapters/sample-apps/online-boutique.png" /></a></p>
+<p><a href="/v0.8/assets/img/adapters/sample-apps/online-boutique.png"><img alt="Online Boutique" style="width:500px;height:auto;" src="/v0.8/assets/img/adapters/sample-apps/online-boutique.png" /></a></p>
 
 <!--Sample apps specific to NSM can be found on /service-meshesadapters/nsm/nsm-->
    
