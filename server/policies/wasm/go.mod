@@ -13,7 +13,7 @@ replace github.com/meshery/meshery => ../../../
 
 require (
 	github.com/meshery/meshery v0.0.0-00010101000000-000000000000
-	github.com/meshery/schemas v1.3.20
+	github.com/meshery/schemas v1.3.22
 )
 
 require (
