@@ -21,7 +21,8 @@ const WidgetErrorFallback = ({
         Unable to load {widgetTitle}
       </Typography>
       <Typography variant="body1">
-        {message ?? 'Something went wrong while loading this widget. Please try again.'}
+        {message ??
+          'Unable to load. Confirm your organization selection and role assignments are appropriate and try again.'}
       </Typography>
       {resetErrorBoundary && (
         <Button
