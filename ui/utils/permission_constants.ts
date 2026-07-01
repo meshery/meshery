@@ -91,6 +91,8 @@ const legacyToPascal = {
   REGISTER_DISCOVERED_MESHSYNC_RESOURCE: 'LifecycleManagementRegisterDiscoveredMeshsyncResource',
   DELETE_A_CONNECTION: 'LifecycleManagementDeleteAConnection',
   INSTALL_EXTENSION: 'ExtensibilityInstallExtension',
+  // No separate "uninstall" permission exists in schemas;
+  // ExtensibilityInstallExtension covers install, enable, and disable.
   UNINSTALL_EXTENSION: 'ExtensibilityInstallExtension',
   VIEW_EXTENSIONS: 'ExtensibilityViewExtensions',
   VIEW_MESHERY_USER_PREFERENCES: 'ExtensibilityViewMesheryUserPreferences',
@@ -133,7 +135,7 @@ const legacyToPascal = {
   VIEW_ALL_KUBERNETES_CLUSTERS: 'IdentityAccessManagementViewAllKubernetesClusters',
   VIEW_PERFORMANCE_PROFILES: 'PerformanceManagementViewPerformanceProfiles',
   RESET_DATABASE: 'MesherySystemResetDatabase',
-} as const;
+} as const satisfies Record<string, keyof typeof Keys>;
 
 type UiPermissionKey = { action: string; subject: string };
 type UiPermissionKeyMap = Record<string, UiPermissionKey>;
@@ -150,8 +152,10 @@ const mappedKeys: UiPermissionKeyMap = Object.fromEntries(
 );
 
 // Create legacy keys mapped to schema details
-const legacyKeys = Object.entries(legacyToPascal).reduce((acc, [legacy, pascal]) => {
-  const keyObj = Keys[pascal as keyof typeof Keys];
+const legacyKeys = (
+  Object.entries(legacyToPascal) as Array<[string, keyof typeof Keys]>
+).reduce((acc, [legacy, pascal]) => {
+  const keyObj = Keys[pascal];
   if (!keyObj) {
     const msg = `Unknown permission key mapping: ${legacy} -> ${pascal}`;
     if (process.env.NODE_ENV !== 'production') {
