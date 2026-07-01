@@ -264,14 +264,10 @@ export const SideBarListItem = styled(ListItemButton, {
   fontSize: '1rem',
 }));
 
-export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
+export const SideBarText = styled(ListItemText, {
+  shouldForwardProp: (prop) => prop !== 'drawerCollapsed',
+})(({ drawerCollapsed }: { drawerCollapsed?: boolean }) => ({
   opacity: drawerCollapsed ? 0 : 1,
-  // The label is rendered (but invisible) even while collapsed so it can fade
-  // back in smoothly on expand. Left at its natural width, it still occupies
-  // space in the flex row, so the row's center shifts by however long each
-  // item's title happens to be - this is what threw the collapsed icons out
-  // of alignment with one another. Collapsing the width to 0 removes it from
-  // the layout so the icon alone gets centered.
   width: drawerCollapsed ? 0 : 'auto',
   margin: drawerCollapsed ? 0 : undefined,
   overflow: 'hidden',
@@ -279,16 +275,7 @@ export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
   transition: 'opacity 200ms ease-in-out, width 200ms ease-in-out',
   fontSize: '1rem',
   color: 'inherit',
-  '& .MuiListItemText-primary': {
-    fontSize: '1rem',
-    color: 'inherit',
-  },
-  '& .MuiTypography-root': {
-    fontSize: '1rem',
-    color: 'inherit',
-  },
 }));
-
 export const PrimaryElement = styled(SideBarText)(({ theme }) => ({
   color: 'inherit',
   fontSize: theme.typography.fontSize,
