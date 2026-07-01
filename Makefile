@@ -245,7 +245,7 @@ server-remote-provider: dep-check
 server-local-provider: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER=$(LOCAL_PROVIDER) \
+	PROVIDER=Layer5 \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_DEV) \
 	PORT=9081 \
 	DEBUG=true \
@@ -318,7 +318,7 @@ ui-setup: dep-check-node
 	cd provider-ui; npm i; cd ..
 
 ## Clean Install dependencies for building Meshery UI.
-ui-setup-ci: dep-check-node 
+ui-setup-ci: dep-check-node
 	cd ui; npm ci; cd ..
 
 ## Run Meshery UI on your local machine. Listen for changes.
@@ -351,7 +351,7 @@ ui-meshery-build: dep-check-node wasm-engine
 	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
-ui-provider-build: 
+ui-provider-build:
 	cd provider-ui; npm i; npm run build; cd ..
 
 ## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
