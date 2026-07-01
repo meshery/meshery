@@ -30,7 +30,7 @@ const (
 	MesheryFolder         = ".meshery"
 	ManifestsFolder       = "manifests"
 	RegistryLocation      = ".meshery/models"
-	DefVersion            = "1.0.0"
+	DefVersion            = "v1.0.0"
 )
 
 // SplitAndTrim splits s on any rune that appears in delims, trims whitespace

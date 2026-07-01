@@ -17,6 +17,7 @@ import (
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	meshkitutils "github.com/meshery/meshkit/utils"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
+	schemav1beta1model "github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -35,7 +36,7 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/model/imp
 	Example: `
 // Import model
 mesheryctl model import --file [URI]
- 
+
 // Import model from a URL to a meshery model
 mesheryctl model import --file [URL]
 
@@ -166,10 +167,11 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 		importRequest.ImportBody.ModelFile = data
 	default:
 		if data != nil {
-			err := encoding.Unmarshal(data, &importRequest.ImportBody.Model)
+			model, err := scaffoldToModel(data)
 			if err != nil {
-				return utils.ErrUnmarshal(err)
+				return err
 			}
+			importRequest.ImportBody.Model = model
 		}
 	}
 	importRequest.ImportBody.Url = sourceURI
@@ -196,11 +198,61 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 
 	displayEntities(response)
 
-	if len(response.EntityTypeSummary.SuccessfulModels) == 0 {
+	// Only error on empty result when registration was explicitly requested; generation-only runs don't populate RegisteredModels.
+	if register && len(response.EntityTypeSummary.RegisteredModels) == 0 {
 		return utils.ErrInvalidModel()
 	}
 
 	return nil
+}
+
+// scaffoldToModel converts a model scaffold template (flat or canonical ModelDefinition) into a schemav1beta1.Model.
+func scaffoldToModel(data []byte) (schemav1beta1.Model, error) {
+	var result schemav1beta1.Model
+
+	var modelDef schemav1beta1model.ModelDefinition
+	if err := encoding.Unmarshal(data, &modelDef); err == nil && modelDef.Name != "" {
+		result.Model = modelDef.Name
+		result.ModelDisplayName = modelDef.DisplayName
+		result.Registrant = string(modelDef.Registrant.Kind)
+		result.Category = modelDef.Category.Name
+		result.SubCategory = modelDef.SubCategory
+
+		if modelDef.Metadata != nil {
+			if modelDef.Metadata.PrimaryColor != nil {
+				result.PrimaryColor = *modelDef.Metadata.PrimaryColor
+			}
+			if modelDef.Metadata.SecondaryColor != nil {
+				result.SecondaryColor = *modelDef.Metadata.SecondaryColor
+			}
+			result.SvgColor = modelDef.Metadata.SvgColor
+			result.SvgWhite = modelDef.Metadata.SvgWhite
+			if modelDef.Metadata.SvgComplete != nil {
+				result.SvgComplete = *modelDef.Metadata.SvgComplete
+			}
+			if modelDef.Metadata.IsAnnotation != nil {
+				result.IsAnnotation = *modelDef.Metadata.IsAnnotation
+			}
+			if modelDef.Metadata.Shape != nil {
+				result.Shape = string(*modelDef.Metadata.Shape)
+			}
+		}
+		return result, nil
+	}
+
+	if err := encoding.Unmarshal(data, &result); err != nil {
+		return result, utils.ErrUnmarshal(err)
+	}
+	// Resolve "displayName" → "modelDisplayName" alias; the json tags differ so direct unmarshal leaves it empty.
+	if result.ModelDisplayName == "" {
+		var rawMap map[string]interface{}
+		if err := encoding.Unmarshal(data, &rawMap); err == nil {
+			if v, ok := rawMap["displayName"].(string); ok && v != "" {
+				result.ModelDisplayName = v
+			}
+		}
+	}
+	return result, nil
 }
 
 func displayEntities(response *models.RegistryAPIResponse) {
@@ -247,8 +299,8 @@ func displayEntitiesIfModel(response *models.RegistryAPIResponse) {
 			boldModel := utils.BoldString("MODEL")
 			utils.Log.Infof("\n%s: %s", boldModel, model)
 		}
-		displaySuccessfulComponents(response, model)
-		displaySuccessfulRelationships(response, model)
+		displayRegisteredComponents(response, model)
+		displayRegisteredRelationships(response, model)
 		displayUnsuccessfulEntities(response, model)
 	}
 
@@ -260,12 +312,12 @@ func displayEntitiesIfModel(response *models.RegistryAPIResponse) {
 	}
 }
 
-func displaySuccessfulComponents(response *models.RegistryAPIResponse, modelName string) {
-	if len(response.EntityTypeSummary.SuccessfulComponents) > 0 {
+func displayRegisteredComponents(response *models.RegistryAPIResponse, modelName string) {
+	if len(response.EntityTypeSummary.RegisteredComponents) > 0 {
 		header := []string{"Component", "Version"}
 		rows := [][]string{}
 
-		for _, comp := range response.EntityTypeSummary.SuccessfulComponents {
+		for _, comp := range response.EntityTypeSummary.RegisteredComponents {
 			displayName, _ := comp["DisplayName"].(string)
 			modelDisplayName, _ := comp["Model"].(string)
 			modelVersion, _ := comp["Version"].(string)
@@ -280,13 +332,13 @@ func displaySuccessfulComponents(response *models.RegistryAPIResponse, modelName
 		}
 	}
 }
-func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model string) {
-	if len(response.EntityTypeSummary.SuccessfulRelationships) > 0 {
+func displayRegisteredRelationships(response *models.RegistryAPIResponse, model string) {
+	if len(response.EntityTypeSummary.RegisteredRelationships) > 0 {
 		header := []string{"From", "To"}
 		seen := make(map[string]bool)
 		relationshipMap := make(map[string][][]string)
 
-		for _, rel := range response.EntityTypeSummary.SuccessfulRelationships {
+		for _, rel := range response.EntityTypeSummary.RegisteredRelationships {
 			kind := rel["Kind"].(string)
 			subtype := rel["Subtype"].(string)
 			relationshipType := rel["RelationshipType"].(string)

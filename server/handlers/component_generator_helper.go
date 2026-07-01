@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
 
+	semver "github.com/Masterminds/semver/v3"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/core"
 
@@ -85,7 +87,7 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 				"DisplayName": c.DisplayName,
 				"Version":     c.Model.Version,
 			}
-			response.EntityTypeSummary.SuccessfulComponents = append(response.EntityTypeSummary.SuccessfulComponents, entry)
+			response.EntityTypeSummary.RegisteredComponents = append(response.EntityTypeSummary.RegisteredComponents, entry)
 			if !isDisplayNamePresent(c.Model.Name) {
 				response.ModelName = append(response.ModelName, c.Model.Name)
 			}
@@ -100,7 +102,7 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 				"Selectors":        r.Selectors,
 				"RelationshipType": r.RelationshipType,
 			}
-			response.EntityTypeSummary.SuccessfulRelationships = append(response.EntityTypeSummary.SuccessfulRelationships, entry)
+			response.EntityTypeSummary.RegisteredRelationships = append(response.EntityTypeSummary.RegisteredRelationships, entry)
 			if !isDisplayNamePresent(r.Model.Name) {
 				response.ModelName = append(response.ModelName, r.Model.Name)
 			}
@@ -113,7 +115,7 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 				"DisplayName": m.DisplayName,
 				"Version":     m.Model.Version,
 			}
-			response.EntityTypeSummary.SuccessfulModels = append(response.EntityTypeSummary.SuccessfulModels, entry)
+			response.EntityTypeSummary.RegisteredModels = append(response.EntityTypeSummary.RegisteredModels, entry)
 			if !isDisplayNamePresent(m.Name) {
 				response.ModelName = append(response.ModelName, m.Name)
 			}
@@ -317,13 +319,13 @@ func (h *Handler) sendFileEvent(userID core.Uuid, provider models.Provider, resp
 			"Errors":        []interface{}{},
 		}
 
-		for _, component := range response.EntityTypeSummary.SuccessfulComponents {
+		for _, component := range response.EntityTypeSummary.RegisteredComponents {
 			if component["Model"] == modelName {
 				modelData["Components"] = append(modelData["Components"].([]interface{}), component)
 			}
 		}
 
-		for _, relationship := range response.EntityTypeSummary.SuccessfulRelationships {
+		for _, relationship := range response.EntityTypeSummary.RegisteredRelationships {
 			if relationship["Model"] == modelName {
 				modelData["Relationships"] = append(modelData["Relationships"].([]interface{}), relationship)
 			}
@@ -523,6 +525,168 @@ func setIfEmpty(field *string, defaultValue string) {
 		*field = defaultValue
 	}
 }
+
+
+func isGitHubSourceURL(sourceURL string) bool {
+	parsedURL, err := url.Parse(sourceURL)
+	if err != nil {
+		return false
+	}
+
+	host := strings.ToLower(parsedURL.Hostname())
+	return host == "github.com" || host == "raw.githubusercontent.com"
+}
+
+func isArtifactHubSourceURL(sourceURL string) bool {
+	parsedURL, err := url.Parse(sourceURL)
+	if err != nil {
+		return false
+	}
+
+	host := strings.ToLower(parsedURL.Hostname())
+	return host == "artifacthub.io" || host == "www.artifacthub.io"
+}
+
+func isArtifactHubSearchURL(sourceURL string) bool {
+	if !isArtifactHubSourceURL(sourceURL) {
+		return false
+	}
+
+	parsedURL, err := url.Parse(sourceURL)
+	if err != nil {
+		return false
+	}
+
+	pathParts := strings.Split(strings.Trim(parsedURL.Path, "/"), "/")
+	if len(pathParts) >= 2 && pathParts[0] == "packages" && pathParts[1] == "search" {
+		return true
+	}
+	if len(pathParts) >= 4 && pathParts[0] == "api" && pathParts[1] == "v1" && pathParts[2] == "packages" && pathParts[3] == "search" {
+		return true
+	}
+	return false
+}
+
+func deriveArtifactHubPackageNameFromURL(sourceURL string) string {
+	if !isArtifactHubSourceURL(sourceURL) {
+		return ""
+	}
+
+	parsedURL, err := url.Parse(sourceURL)
+	if err != nil {
+		return ""
+	}
+
+	pathParts := strings.Split(strings.Trim(parsedURL.Path, "/"), "/")
+
+	// UI URL: /packages/helm/{repo}/{package}
+	if len(pathParts) >= 4 && pathParts[0] == "packages" && pathParts[1] == "helm" {
+		return strings.ToLower(strings.TrimSpace(pathParts[3]))
+	}
+	// API URL: /api/v1/packages/helm/{repo}/{package}
+	if len(pathParts) >= 6 && pathParts[0] == "api" && pathParts[1] == "v1" && pathParts[2] == "packages" && pathParts[3] == "helm" {
+		return strings.ToLower(strings.TrimSpace(pathParts[5]))
+	}
+
+	return ""
+}
+
+func normalizeSemVerToken(version string) (string, bool) {
+	cleanedVersion := strings.TrimSpace(strings.Split(strings.Split(version, "?")[0], "#")[0])
+	// Use the server's existing semver library instead of a custom regex.
+	v, err := semver.NewVersion(cleanedVersion)
+	if err != nil {
+		return "", false
+	}
+	// Always return with a lowercase "v" prefix, normalised.
+	return "v" + v.String(), true
+}
+
+var registrantURLParsers = map[string]func(string) string{
+	"github.com":                deriveGitHubPackageNameFromURL,
+	"raw.githubusercontent.com": deriveGitHubPackageNameFromURL,
+	"artifacthub.io":            deriveArtifactHubPackageNameFromURL,
+	"www.artifacthub.io":        deriveArtifactHubPackageNameFromURL,
+}
+
+// deriveModelNameFromURL attempts to extract a meaningful model name from a supported source URL.
+func deriveModelNameFromURL(sourceURL string) string {
+	if sourceURL == "" {
+		return ""
+	}
+
+	parsedURL, err := url.Parse(sourceURL)
+	if err != nil {
+		return ""
+	}
+
+	host := strings.ToLower(parsedURL.Hostname())
+	if parserFunc, exists := registrantURLParsers[host]; exists {
+		return parserFunc(sourceURL)
+	}
+
+	return ""
+}
+
+func deriveGitHubPackageNameFromURL(sourceURL string) string {
+	u, err := url.Parse(sourceURL)
+	if err != nil {
+		return ""
+	}
+
+	parts := strings.Split(strings.Trim(u.Path, "/"), "/")
+	if len(parts) < 2 {
+		return ""
+	}
+
+	repo := strings.TrimSuffix(strings.TrimSpace(parts[1]), ".git")
+	return meshkitutils.FormatName(strings.ReplaceAll(repo, "_", "-"))
+}
+
+// normalizeVersionFromURL returns a proper semantic version string.
+// The GitHub URL downloader uses the last URL path segment as the version,
+// which is often a filename (e.g. "cert-manager.crds.yaml").
+// When that happens, this function walks the URL path backwards to find a semver-like token.
+func normalizeVersionFromURL(version, sourceURL string) string {
+	knownExts := []string{".yaml", ".yml", ".json", ".tar.gz", ".tgz", ".zip"}
+	isFilename := false
+	cleanedVersion := strings.TrimSpace(strings.Split(strings.Split(version, "?")[0], "#")[0])
+	lv := strings.ToLower(cleanedVersion)
+	for _, ext := range knownExts {
+		if strings.HasSuffix(lv, ext) {
+			isFilename = true
+			break
+		}
+	}
+
+	if !isFilename {
+		if normalizedVersion, ok := normalizeSemVerToken(cleanedVersion); ok {
+			return normalizedVersion
+		}
+		return version
+	}
+
+	parsedURL, err := url.Parse(sourceURL)
+	pathToScan := sourceURL
+	if err == nil {
+		pathToScan = parsedURL.Path
+	}
+
+	parts := strings.Split(strings.Trim(pathToScan, "/"), "/")
+	for i := len(parts) - 1; i >= 0; i-- {
+		p := parts[i]
+		if p == "" {
+			continue
+		}
+
+		if normalizedVersion, ok := normalizeSemVerToken(p); ok {
+			return normalizedVersion
+		}
+	}
+
+	return version
+}
+
 func detectFileType(fileData []byte) string {
 	// Extract the first 512 bytes (or fewer if the file is smaller)
 	var bufSize int

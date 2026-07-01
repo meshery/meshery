@@ -23,6 +23,7 @@ import (
 	// "github.com/meshery/meshkit/errors"
 	// "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshkit/utils/manifests"
 
 	meshkitOci "github.com/meshery/meshkit/models/oci"
 	"github.com/meshery/meshkit/models/registration"
@@ -1120,26 +1121,62 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 		setDefaultValues(model)
 		//Model generation strats from here
-		model.Model = strings.ToLower(model.Model)
+		model.Model = meshkitutils.FormatName(strings.ReplaceAll(model.Model, "_", "-"))
 
-		pkg, version, err := meshkitRegistryUtils.GenerateModels(model.Registrant, importRequest.ImportBody.Url, model.Model)
+		// Infer model name from URL if it's the scaffold placeholder
+		if model.Model == "untitled-model" || model.Model == "" {
+			derivedName := deriveModelNameFromURL(importRequest.ImportBody.Url)
+			if derivedName != "" {
+				model.Model = meshkitutils.FormatName(strings.ReplaceAll(derivedName, "_", "-"))
+				// Set display name to a readable format if it was also a placeholder
+				if model.ModelDisplayName == "Untitled Model" || model.ModelDisplayName == "" || model.ModelDisplayName == "untitled-model" {
+					model.ModelDisplayName = manifests.FormatToReadableString(derivedName)
+				}
+			} else if isArtifactHubSearchURL(importRequest.ImportBody.Url) {
+				err := fmt.Errorf("artifacthub search URLs are ambiguous; use a direct package URL (/packages/helm/{repo}/{package}) or set the model name in template")
+				h.handleError(rw, err, err.Error())
+				h.sendErrorEvent(userID, provider, err.Error(), err, token)
+				return
+			}
+		}
+
+		// Auto-detect registrant type from URL
+		if importRequest.ImportBody.Url != "" {
+			if isGitHubSourceURL(importRequest.ImportBody.Url) {
+				model.Registrant = "github"
+			} else if isArtifactHubSourceURL(importRequest.ImportBody.Url) {
+				model.Registrant = "artifacthub"
+			}
+		}
+
+		// Use the AH package name from the URL for lookup; preserve model.Model as the output name.
+		ahLookupName := model.Model
+		if isArtifactHubSourceURL(importRequest.ImportBody.Url) {
+			if derived := deriveArtifactHubPackageNameFromURL(importRequest.ImportBody.Url); derived != "" {
+				ahLookupName = derived
+			}
+		}
+
+		pkg, version, err := meshkitRegistryUtils.GenerateModels(model.Registrant, importRequest.ImportBody.Url, ahLookupName)
 		if err != nil {
 			h.handleError(rw, err, "Error generating model")
 			h.sendErrorEvent(userID, provider, "Error generating model", err, token)
 			return
 		}
+		version = normalizeVersionFromURL(version, importRequest.ImportBody.Url)
 		modelDirPath, compDirPath, err := utils.CreateVersionedDirectoryForModelAndComp(version, model.Model)
 		if err != nil {
-			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
-			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err, token)
+			h.handleError(rw, err, "Error creating versioned directory for model")
+			h.sendErrorEvent(userID, provider, "Error creating versioned directory for model", err, token)
 			return
 		}
-		filePath := filepath.Join(modelDirPath, model.Model+".json")
+		filePath := filepath.Join(modelDirPath, "model.json")
 		modelDef := model.CreateModelDefinition(version, utils.DefVersion)
+		modelDef.Status = _model.Enabled
 		err = modelDef.WriteModelDefinition(filePath, "json")
 		if err != nil {
-			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
-			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err, token)
+			h.handleError(rw, err, "Error writing model definition")
+			h.sendErrorEvent(userID, provider, "Error writing model definition", err, token)
 			return
 		}
 
@@ -1157,6 +1194,16 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			dir = registration.NewDir(modelDirPath)
 			registrationHelper.Register(dir)
 		} else {
+			response.EntityCount.CompCount = lengthofComps
+			response.EntityCount.ModelCount = 1
+			response.ModelName = append(response.ModelName, model.Model)
+			response.EntityTypeSummary.RegisteredModels = append(response.EntityTypeSummary.RegisteredModels, map[string]interface{}{
+				"Model":       model.Model,
+				"DisplayName": model.ModelDisplayName,
+				"Version":     modelDef.Model.Version,
+			})
+			message = fmt.Sprintf("Generated %d components for model %s", lengthofComps, model.Model)
+			h.sendSuccessResponse(rw, userID, provider, message, "", &response, token)
 			return
 		}
 
