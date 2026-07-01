@@ -91,11 +91,11 @@ clipboard.on("success", (e) => {
     const text = document.createElement('span');
     const checkIcon = document.createElement('i');
     checkIcon.className = 'fas fa-check';
-    checkIcon.style.color ="#00b39f";
+    checkIcon.style.color = "var(--brand-color-secondary)";
     checkIcon.setAttribute('aria-hidden', 'true');
     text.appendChild(checkIcon);
     text.appendChild(document.createTextNode(' Copied!'));
-    text.style.color = "#00b39f";
+    text.style.color = "var(--brand-color-secondary)";
 
     button.replaceChild(text, icon);
 
@@ -112,7 +112,7 @@ clipboard.on("success", (e) => {
             button.replaceChild(originalIcon, text);
         }
     }, 2000);
-})
+});
 
 const toggleBtnSidebarNav = document.querySelector(".nav-toggle-btn--document");
 
