@@ -38,7 +38,9 @@ describe('WidgetErrorFallback', () => {
   it('renders a default message when none is provided', () => {
     render(<WidgetErrorFallback widgetTitle="My Designs" />);
     expect(
-      screen.getByText('Something went wrong while loading this widget. Please try again.'),
+      screen.getByText(
+        'Unable to load. Confirm your organization selection and role assignments are appropriate and try again.',
+      ),
     ).toBeInTheDocument();
   });
 

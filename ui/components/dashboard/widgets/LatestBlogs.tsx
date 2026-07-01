@@ -17,8 +17,8 @@ type LatestBlogsProps = {
 type Resource = { name: string; link: string; external: true };
 
 const BLOG_FEED_URL = 'https://meshery.io/feed.xml';
-const LOADING_RESOURCES = [{ name: 'Loading...' }];
-const EMPTY_RESOURCES = [{ name: 'No blog posts found.' }];
+const LOADING_RESOURCES: Resource[] = [{ name: 'Loading...', link: '#', external: true }];
+const EMPTY_RESOURCES: Resource[] = [{ name: 'No blog posts found.', link: '#', external: true }];
 
 const LatestBlogs = ({ iconsProps }: LatestBlogsProps) => {
   const theme = useTheme();
