@@ -141,7 +141,7 @@
     "@vitest/coverage-v8": "^4.1.9",
     "allure-playwright": "^3.10.1",
     "dotenv": "^17.4.2",
-    "eslint": "^10.5.0",
+    "eslint": "^10.6.0",
     "eslint-config-next": "^16.2.9",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
