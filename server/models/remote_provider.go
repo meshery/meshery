@@ -2360,8 +2360,8 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 	if order != "" {
 		q.Set("order", order)
 	}
-	if updatedAfter != "" {
-		q.Set("updated_after", updatedAfter)
+	if strings.TrimSpace(updatedAfter) != "" {
+		q.Set("updated_after", strings.TrimSpace(updatedAfter))
 	}
 
 	q.Set("metrics", includeMetrics)

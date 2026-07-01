@@ -47,7 +47,11 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 		query = query.Where("visibility in (?)", visibility)
 	}
 
-	query = query.Where("updated_at > ?", updatedAfter).Order(order)
+	query = query.Order(order)
+
+	if strings.TrimSpace(updatedAfter) != "" {
+		query = query.Where("updated_at > ?", strings.TrimSpace(updatedAfter))
+	}
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
