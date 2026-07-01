@@ -1,6 +1,7 @@
 ---
 title: "Extensibility: APIs"
 description: Meshery architecture is extensible, offering an array of extension points and REST and GraphQL APIs.
+categories: [extensibility]
 aliases:
 - /extensibility/api
 ---
