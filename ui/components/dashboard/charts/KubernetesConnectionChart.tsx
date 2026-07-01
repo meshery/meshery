@@ -24,7 +24,6 @@ import WidgetErrorFallback from '../widgets/WidgetErrorFallback';
 export default function KubernetesConnectionStatsChart() {
   const {
     data: connectionData,
-    isFetching,
     isLoading,
     isError,
   } = useGetConnectionsQuery({
@@ -120,7 +119,7 @@ export default function KubernetesConnectionStatsChart() {
     </div>
   );
 
-  if (isFetching || isLoading) {
+  if (isLoading) {
     return (
       <DashboardSection>
         {header}

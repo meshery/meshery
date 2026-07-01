@@ -7,7 +7,8 @@ let loggedInReturn: { data?: { id?: string } } = { data: { id: 'user-1' } };
 let patternsReturn: {
   data?: { patterns?: Array<{ name: string; id: string; updatedAt?: string }> };
   isFetching?: boolean;
-} = { data: { patterns: [] }, isFetching: false };
+  isError?: boolean;
+} = { data: { patterns: [] }, isFetching: false, isError: false };
 
 const designCardSpy = vi.fn();
 const useGetUserDesignsQuerySpy = vi.fn();
@@ -85,14 +86,28 @@ vi.mock('@sistent/sistent', () => ({
   },
 }));
 
+const widgetErrorFallbackSpy = vi.fn();
+
+vi.mock('./WidgetErrorFallback', () => ({
+  default: (props: { widgetTitle: string; message?: string }) => {
+    widgetErrorFallbackSpy(props);
+    return (
+      <div data-testid="widget-error-fallback" data-title={props.widgetTitle}>
+        {props.message}
+      </div>
+    );
+  },
+}));
+
 import MyDesignsWidget from './MyDesignsWidget';
 
 describe('MyDesignsWidget', () => {
   beforeEach(() => {
     designCardSpy.mockReset();
     useGetUserDesignsQuerySpy.mockReset();
+    widgetErrorFallbackSpy.mockReset();
     loggedInReturn = { data: { id: 'user-1' } };
-    patternsReturn = { data: { patterns: [] }, isFetching: false };
+    patternsReturn = { data: { patterns: [] }, isFetching: false, isError: false };
   });
 
   it('renders the DesignCard with default props', () => {
@@ -158,5 +173,15 @@ describe('MyDesignsWidget', () => {
     render(<MyDesignsWidget />);
     const [, options] = useGetUserDesignsQuerySpy.mock.calls[0];
     expect(options).toEqual({ skip: false });
+  });
+
+  it('shows the error fallback when the designs query fails', () => {
+    patternsReturn = { isError: true };
+    render(<MyDesignsWidget />);
+    expect(screen.getByTestId('widget-error-fallback')).toHaveAttribute(
+      'data-title',
+      'My Recent Designs',
+    );
+    expect(screen.queryByTestId('design-card')).not.toBeInTheDocument();
   });
 });
