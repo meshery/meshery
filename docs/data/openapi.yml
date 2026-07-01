@@ -9747,9 +9747,18 @@ paths:
           description: Get responses by page
           schema:
             type: string
+        - name: pageSize
+          in: query
+          description: >-
+            Number of responses to return per page. Canonical camelCase pagination parameter; prefer this over the
+            deprecated all-lowercase `pagesize`.
+          schema:
+            type: integer
+            minimum: 1
         - name: pagesize
           in: query
-          description: Get responses by pagesize
+          description: Get responses by pagesize. Deprecated alias of pageSize.
+          deprecated: true
           schema:
             type: string
       responses:
@@ -21432,12 +21441,631 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               description: >-
-                A connection definition is an uninitialized connection, authored per-model (in a model's `connections/`
-                folder) and registered into the registry alongside components and relationships. It conforms to the
-                connection schema; the dynamic, kind-specific shape is carried in `metadata`. The `model` association
-                scopes the definition to its owning model.
-              x-go-type: ConnectionDefinition
+                Payload for registering (creating) or updating a connection definition. Contains only client-settable
+                fields; server-generated fields such as createdAt, updatedAt, and deletedAt are excluded.
+              required:
+                - name
+                - kind
+                - type
+                - subType
+                - status
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                  description: Existing connection definition ID for updates; omit on create.
+                  x-go-name: ID
+                  x-oapi-codegen-extra-tags:
+                    json: id,omitempty
+                schemaVersion:
+                  description: Specifies the version of the schema the definition conforms to.
+                  default: connections.meshery.io/v1beta3
+                  x-oapi-codegen-extra-tags:
+                    json: schemaVersion,omitempty
+                  type: string
+                  minLength: 2
+                  maxLength: 100
+                  pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                  example:
+                    - v1
+                    - v1alpha1
+                    - v2beta3
+                    - v1.custom-suffix
+                    - models.meshery.io/v1beta1
+                    - capability.meshery.io/v1alpha1
+                name:
+                  type: string
+                  description: Connection definition name
+                  minLength: 1
+                  maxLength: 255
+                  x-oapi-codegen-extra-tags:
+                    json: name
+                description:
+                  type: string
+                  description: Human-readable description of the connection definition and its purpose.
+                  maxLength: 1000
+                  x-oapi-codegen-extra-tags:
+                    json: description,omitempty
+                url:
+                  type: string
+                  format: uri
+                  description: URL of the remote resource connections of this kind point to.
+                  maxLength: 2048
+                  x-oapi-codegen-extra-tags:
+                    json: url,omitempty
+                kind:
+                  type: string
+                  description: Connection kind (e.g., kubernetes, prometheus, grafana)
+                  maxLength: 255
+                  x-oapi-codegen-extra-tags:
+                    json: kind
+                type:
+                  type: string
+                  description: Connection type (platform, telemetry, collaboration)
+                  maxLength: 255
+                  x-oapi-codegen-extra-tags:
+                    json: type
+                subType:
+                  type: string
+                  description: Connection sub-type (cloud, identity, metrics, chat, git, orchestration)
+                  maxLength: 255
+                  x-oapi-codegen-extra-tags:
+                    json: subType
+                status:
+                  type: string
+                  description: Connection Status Value
+                  x-go-name: ConnectionStatusValue
+                  enum:
+                    - discovered
+                    - registered
+                    - connected
+                    - ignored
+                    - maintenance
+                    - disconnected
+                    - deleted
+                    - not found
+                  x-oapi-codegen-extra-tags:
+                    json: status
+                modelReference:
+                  x-go-type: modelv1beta1.ModelReference
+                  x-go-type-import:
+                    path: github.com/meshery/schemas/models/v1beta1/model
+                    name: modelv1beta1
+                  description: Reference to the registered model that owns this connection definition.
+                  x-oapi-codegen-extra-tags:
+                    json: modelReference,omitempty
+                  x-generate-db-helpers: true
+                  type: object
+                  required:
+                    - id
+                    - name
+                    - version
+                    - displayName
+                    - model
+                    - registrant
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                      description: >-
+                        A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core
+                        definition is used across different schemas.
+                      x-go-type: uuid.UUID
+                      x-go-type-import:
+                        path: github.com/gofrs/uuid
+                    name:
+                      type: string
+                      description: The unique name for the model within the scope of a registrant.
+                      pattern: ^[a-z0-9-]+$
+                      examples:
+                        - cert-manager
+                    version:
+                      description: Version of the model definition.
+                      type: string
+                      minLength: 5
+                      maxLength: 100
+                      pattern: ^[a-z0-9]+.[0-9]+.[0-9]+(-[0-9A-Za-z-]+(.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$
+                    displayName:
+                      type: string
+                      description: Human-readable name for the model.
+                      minLength: 1
+                      maxLength: 100
+                      pattern: ^[a-zA-Z0-9 ]+$
+                      examples:
+                        - Cert Manager
+                    model:
+                      type: object
+                      description: >-
+                        Registrant-defined data associated with the model. Properties pertain to the software being
+                        managed (e.g. Kubernetes v1.31).
+                      required:
+                        - version
+                      properties:
+                        version:
+                          description: Version of the model as defined by the registrant.
+                          x-oapi-codegen-extra-tags:
+                            json: version
+                          x-order: 1
+                          type: string
+                          minLength: 5
+                          maxLength: 100
+                          pattern: >-
+                            ^[a-z0-9]+.[0-9]+.[0-9]+(-[0-9A-Za-z-]+(.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$
+                    registrant:
+                      x-go-type: RegistrantReference
+                      x-oapi-codegen-extra-tags:
+                        json: registrant
+                      type: object
+                      required:
+                        - kind
+                      properties:
+                        kind:
+                          type: string
+                          description: Kind of the registrant.
+                          maxLength: 255
+                metadata:
+                  type: object
+                  description: Kind-specific connection metadata
+                  x-go-type: core.Map
+                  x-go-type-import:
+                    path: github.com/meshery/schemas/models/core
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: metadata
+                credentialSchema:
+                  type: object
+                  description: Schema for the credential associated with connections of this kind.
+                  x-go-type: core.Map
+                  x-go-type-import:
+                    path: github.com/meshery/schemas/models/core
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: credentialSchema
+                connectionSchema:
+                  type: object
+                  description: Schema for connections of this kind.
+                  x-go-type: core.Map
+                  x-go-type-import:
+                    path: github.com/meshery/schemas/models/core
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: connectionSchema
+                styles:
+                  x-go-type: core.ComponentStyles
+                  x-go-type-import:
+                    path: github.com/meshery/schemas/models/core
+                    name: core
+                  description: Visualization styles for the connection, including svgColor and svgWhite used for UI representation.
+                  x-oapi-codegen-extra-tags:
+                    json: styles,omitempty
+                  type: object
+                  required:
+                    - shape
+                    - primaryColor
+                    - svgColor
+                    - svgWhite
+                    - svgComplete
+                  allOf:
+                    - type: object
+                      description: Common styles for all entities
+                      additionalProperties: true
+                      required:
+                        - primaryColor
+                        - svgColor
+                        - svgWhite
+                        - svgComplete
+                      properties:
+                        primaryColor:
+                          type: string
+                          description: Primary color of the component used for UI representation.
+                          maxLength: 500
+                        secondaryColor:
+                          type: string
+                          description: Secondary color of the entity used for UI representation.
+                          maxLength: 500
+                        svgWhite:
+                          type: string
+                          description: White SVG of the entity used for UI representation on dark background.
+                          maxLength: 500
+                        svgColor:
+                          type: string
+                          description: Colored SVG of the entity used for UI representation on light background.
+                          maxLength: 500
+                        svgComplete:
+                          type: string
+                          description: Complete SVG of the entity used for UI representation, often inclusive of background.
+                          maxLength: 500
+                        color:
+                          type: string
+                          description: The color of the element's label. Colours may be specified by name (e.g. red), hex (e.g.
+                          maxLength: 500
+                        textOpacity:
+                          type: number
+                          description: The opacity of the label text, including its outline.
+                          minimum: 0
+                          maximum: 1
+                        fontFamily:
+                          type: string
+                          description: A comma-separated list of font names to use on the label text.
+                          maxLength: 500
+                        fontSize:
+                          type: string
+                          description: The size of the label text.
+                          maxLength: 500
+                        fontStyle:
+                          type: string
+                          description: A CSS font style to be applied to the label text.
+                          maxLength: 500
+                        fontWeight:
+                          type: string
+                          description: A CSS font weight to be applied to the label text.
+                          maxLength: 500
+                        textTransform:
+                          type: string
+                          description: A transformation to apply to the label text
+                          enum:
+                            - none
+                            - uppercase
+                            - lowercase
+                        opacity:
+                          type: number
+                          description: >-
+                            The opacity of the element, ranging from 0 to 1. Note that the opacity of a compound node
+                            parent affects the effective opacity of its children.
+                          minimum: 0
+                          maximum: 1
+                        zIndex:
+                          type: integer
+                          description: >-
+                            An integer value that affects the relative draw order of elements. In general, an element
+                            with a higher z-index will be drawn on top of an element with a lower z-index. Note that
+                            edges are under nodes despite z-index.
+                          minimum: 0
+                        label:
+                          type: string
+                          description: >-
+                            The text to display for an element's label. Can give a path, e.g. data(id) will label with
+                            the elements id
+                          maxLength: 500
+                        animation:
+                          type: object
+                          description: The animation to apply to the element. example ripple,bounce,etc
+                    - type: object
+                      properties:
+                        shape:
+                          type: string
+                          description: >-
+                            The shape of the node's body. Note that each shape fits within the specified width and
+                            height, and so you may have to adjust width and height if you desire an equilateral shape
+                            (i.e. width !== height for several equilateral shapes)
+                          enum:
+                            - ellipse
+                            - triangle
+                            - round-triangle
+                            - rectangle
+                            - round-rectangle
+                            - bottom-round-rectangle
+                            - cut-rectangle
+                            - barrel
+                            - rhomboid
+                            - diamond
+                            - round-diamond
+                            - pentagon
+                            - round-pentagon
+                            - hexagon
+                            - round-hexagon
+                            - concave-hexagon
+                            - heptagon
+                            - round-heptagon
+                            - octagon
+                            - round-octagon
+                            - star
+                            - tag
+                            - round-tag
+                            - vee
+                            - polygon
+                        position:
+                          type: object
+                          additionalProperties: false
+                          required:
+                            - x
+                            - 'y'
+                          description: >-
+                            The position of the node. If the position is set, the node is drawn at that position in the
+                            given dimensions. If the position is not set, the node is drawn at a random position.
+                          properties:
+                            x:
+                              type: number
+                              description: The x-coordinate of the node.
+                              minimum: -1000000
+                              maximum: 1000000
+                              x-go-type: float64
+                            'y':
+                              type: number
+                              description: The y-coordinate of the node.
+                              minimum: -1000000
+                              maximum: 1000000
+                              x-go-type: float64
+                        bodyText:
+                          type: string
+                          description: >-
+                            The text to display for an element's body. Can give a path, e.g. data(id) will label with
+                            the elements id
+                          maxLength: 500
+                        bodyTextWrap:
+                          type: string
+                          description: How to wrap the text in the node. Can be 'none', 'wrap', or 'ellipsis'.
+                          enum:
+                            - none
+                            - wrap
+                            - ellipsis
+                        bodyTextMaxWidth:
+                          type: string
+                          description: The maximum width for wrapping text in the node.
+                          maxLength: 50
+                        bodyTextOpacity:
+                          type: number
+                          description: The opacity of the node's body text, including its outline.
+                          minimum: 0
+                          maximum: 1
+                        bodyTextBackgroundColor:
+                          type: string
+                          description: >-
+                            The colour of the node's body text background. Colours may be specified by name (e.g. red),
+                            hex (e.g.
+                          maxLength: 100
+                        bodyTextFontSize:
+                          type: number
+                          description: The size of the node's body text.
+                          minimum: 0
+                        bodyTextColor:
+                          type: string
+                          description: The colour of the node's body text. Colours may be specified by name (e.g. red), hex (e.g.
+                          maxLength: 100
+                        bodyTextFontWeight:
+                          type: string
+                          description: A CSS font weight to be applied to the node's body text.
+                          maxLength: 50
+                        bodyTextHorizontalAlign:
+                          type: string
+                          description: A CSS horizontal alignment to be applied to the node's body text.
+                          maxLength: 50
+                        bodyTextDecoration:
+                          type: string
+                          description: A CSS text decoration to be applied to the node's body text.
+                          maxLength: 100
+                        bodyTextVerticalAlign:
+                          type: string
+                          description: A CSS vertical alignment to be applied to the node's body text.
+                          maxLength: 50
+                        width:
+                          type: number
+                          description: The width of the node's body or the width of an edge's line.
+                          minimum: 0
+                        height:
+                          type: number
+                          description: The height of the node's body
+                          minimum: 0
+                        backgroundImage:
+                          type: string
+                          format: uri
+                          description: The URL that points to the image to show in the node.
+                          maxLength: 2048
+                        backgroundColor:
+                          type: string
+                          description: The colour of the node's body. Colours may be specified by name (e.g. red), hex (e.g.
+                          maxLength: 100
+                        backgroundBlacken:
+                          type: number
+                          description: >-
+                            Blackens the node's body for values from 0 to 1; whitens the node's body for values from 0
+                            to -1.
+                          maximum: 1
+                          minimum: -1
+                        backgroundOpacity:
+                          type: number
+                          description: The opacity level of the node's background colour
+                          maximum: 1
+                          minimum: 0
+                        backgroundPositionX:
+                          type: string
+                          description: The x position of the background image, measured in percent (e.g. 50%) or pixels (e.g. 10px)
+                          maxLength: 50
+                        backgroundPositionY:
+                          type: string
+                          description: The y position of the background image, measured in percent (e.g. 50%) or pixels (e.g. 10px)
+                          maxLength: 50
+                        backgroundOffsetX:
+                          type: string
+                          description: The x offset of the background image, measured in percent (e.g. 50%) or pixels (e.g. 10px)
+                          maxLength: 50
+                        backgroundOffsetY:
+                          type: string
+                          description: The y offset of the background image, measured in percent (e.g. 50%) or pixels (e.g. 10px)
+                          maxLength: 50
+                        backgroundFit:
+                          type: string
+                          description: How the background image is fit to the node. Can be 'none', 'contain', or 'cover'.
+                          enum:
+                            - none
+                            - contain
+                            - cover
+                        backgroundClip:
+                          type: string
+                          description: How the background image is clipped to the node. Can be 'none', 'node', or 'node-border'.
+                          enum:
+                            - none
+                            - node
+                            - node-border
+                        backgroundWidthRelativeTo:
+                          type: string
+                          description: How the background image's width is determined. Can be 'none', 'inner', or 'outer'.
+                          enum:
+                            - none
+                            - inner
+                            - outer
+                        backgroundHeightRelativeTo:
+                          type: string
+                          description: How the background image's height is determined. Can be 'none', 'inner', or 'outer'.
+                          enum:
+                            - none
+                            - inner
+                            - outer
+                        borderWidth:
+                          type: number
+                          description: The size of the node's border.
+                          minimum: 0
+                        borderStyle:
+                          type: string
+                          description: The style of the node's border
+                          enum:
+                            - solid
+                            - dotted
+                            - dashed
+                            - double
+                        borderColor:
+                          type: string
+                          description: The colour of the node's border. Colours may be specified by name (e.g. red), hex (e.g.
+                          maxLength: 100
+                        borderOpacity:
+                          type: number
+                          description: The opacity of the node's border
+                          minimum: 0
+                          maximum: 1
+                        padding:
+                          type: number
+                          description: The amount of padding around all sides of the node.
+                          minimum: 0
+                        textHalign:
+                          type: string
+                          description: The horizontal alignment of a node's label
+                          enum:
+                            - left
+                            - center
+                            - right
+                        textValign:
+                          type: string
+                          description: The vertical alignment of a node's label
+                          enum:
+                            - top
+                            - center
+                            - bottom
+                        ghost:
+                          type: string
+                          description: >-
+                            Whether to use the ghost effect, a semitransparent duplicate of the element drawn at an
+                            offset.
+                          default: 'no'
+                          enum:
+                            - 'yes'
+                            - 'no'
+                        activeBgColor:
+                          type: string
+                          description: >-
+                            The colour of the indicator shown when the background is grabbed by the user. Selector needs
+                            to be *core*. Colours may be specified by name (e.g. red), hex (e.g.
+                          maxLength: 100
+                        activeBgOpacity:
+                          type: string
+                          description: The opacity of the active background indicator. Selector needs to be *core*.
+                          maxLength: 50
+                        activeBgSize:
+                          type: string
+                          description: The opacity of the active background indicator. Selector needs to be *core*.
+                          maxLength: 50
+                        selectionBoxColor:
+                          type: string
+                          description: >-
+                            The background colour of the selection box used for drag selection. Selector needs to be
+                            *core*. Colours may be specified by name (e.g. red), hex (e.g.
+                          maxLength: 100
+                        selectionBoxBorderWidth:
+                          type: number
+                          description: The size of the border on the selection box. Selector needs to be *core*
+                          minimum: 0
+                        selectionBoxOpacity:
+                          type: number
+                          description: The opacity of the selection box. Selector needs to be *core*
+                          minimum: 0
+                          maximum: 1
+                        outsideTextureBgColor:
+                          type: string
+                          description: >-
+                            The colour of the area outside the viewport texture when initOptions.textureOnViewport ===
+                            true. Selector needs to be *core*. Colours may be specified by name (e.g. red), hex (e.g.
+                          maxLength: 100
+                        outsideTextureBgOpacity:
+                          type: number
+                          description: The opacity of the area outside the viewport texture. Selector needs to be *core*
+                          minimum: 0
+                          maximum: 1
+                        shapePolygonPoints:
+                          type: string
+                          description: >-
+                            An array (or a space-separated string) of numbers ranging on [-1, 1], representing
+                            alternating x and y values (i.e. x1 y1 x2 y2, x3 y3 ...). This represents the points in the
+                            polygon for the node's shape. The bounding box of the node is given by (-1, -1), (1, -1),
+                            (1, 1), (-1, 1). The node's position is the origin (0, 0 )
+                          maxLength: 2000
+                        menuBackgroundColor:
+                          type: string
+                          description: >-
+                            The colour of the background of the component menu. Colours may be specified by name (e.g.
+                            red), hex (e.g.
+                          maxLength: 100
+                        menuBackgroundOpacity:
+                          type: number
+                          description: The opacity of the background of the component menu.
+                          minimum: 0
+                          maximum: 1
+                        menuForgroundColor:
+                          type: string
+                          description: >-
+                            The colour of the text or icons in the component menu. Colours may be specified by name
+                            (e.g. red), hex (e.g.
+                          maxLength: 100
+                transitionMap:
+                  type: object
+                  description: >-
+                    Map describing the connection state machine. Each key is a current connection status and its value
+                    is the list of states the connection may transition to from that status.
+                  additionalProperties:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: false
+                      description: >-
+                        A single permissible state transition for a connection, describing the next reachable state and
+                        the meaning of that transition.
+                      required:
+                        - nextState
+                      properties:
+                        nextState:
+                          type: string
+                          description: Connection Status Value
+                          x-go-name: ConnectionStatusValue
+                          enum:
+                            - discovered
+                            - registered
+                            - connected
+                            - ignored
+                            - maintenance
+                            - disconnected
+                            - deleted
+                            - not found
+                          x-order: 1
+                        description:
+                          type: string
+                          description: Human-readable explanation of when or why this transition occurs.
+                          maxLength: 1000
+                          x-oapi-codegen-extra-tags:
+                            json: description,omitempty
+                          x-order: 2
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: transitionMap,omitempty
       responses:
         '201':
           description: Connection definition registered
@@ -21538,12 +22166,631 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               description: >-
-                A connection definition is an uninitialized connection, authored per-model (in a model's `connections/`
-                folder) and registered into the registry alongside components and relationships. It conforms to the
-                connection schema; the dynamic, kind-specific shape is carried in `metadata`. The `model` association
-                scopes the definition to its owning model.
-              x-go-type: ConnectionDefinition
+                Payload for registering (creating) or updating a connection definition. Contains only client-settable
+                fields; server-generated fields such as createdAt, updatedAt, and deletedAt are excluded.
+              required:
+                - name
+                - kind
+                - type
+                - subType
+                - status
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                  description: Existing connection definition ID for updates; omit on create.
+                  x-go-name: ID
+                  x-oapi-codegen-extra-tags:
+                    json: id,omitempty
+                schemaVersion:
+                  description: Specifies the version of the schema the definition conforms to.
+                  default: connections.meshery.io/v1beta3
+                  x-oapi-codegen-extra-tags:
+                    json: schemaVersion,omitempty
+                  type: string
+                  minLength: 2
+                  maxLength: 100
+                  pattern: ^([a-z][a-z0-9.-]*\/)?v(alpha|beta|[0-9]+)([.-][a-z0-9]+)*$
+                  example:
+                    - v1
+                    - v1alpha1
+                    - v2beta3
+                    - v1.custom-suffix
+                    - models.meshery.io/v1beta1
+                    - capability.meshery.io/v1alpha1
+                name:
+                  type: string
+                  description: Connection definition name
+                  minLength: 1
+                  maxLength: 255
+                  x-oapi-codegen-extra-tags:
+                    json: name
+                description:
+                  type: string
+                  description: Human-readable description of the connection definition and its purpose.
+                  maxLength: 1000
+                  x-oapi-codegen-extra-tags:
+                    json: description,omitempty
+                url:
+                  type: string
+                  format: uri
+                  description: URL of the remote resource connections of this kind point to.
+                  maxLength: 2048
+                  x-oapi-codegen-extra-tags:
+                    json: url,omitempty
+                kind:
+                  type: string
+                  description: Connection kind (e.g., kubernetes, prometheus, grafana)
+                  maxLength: 255
+                  x-oapi-codegen-extra-tags:
+                    json: kind
+                type:
+                  type: string
+                  description: Connection type (platform, telemetry, collaboration)
+                  maxLength: 255
+                  x-oapi-codegen-extra-tags:
+                    json: type
+                subType:
+                  type: string
+                  description: Connection sub-type (cloud, identity, metrics, chat, git, orchestration)
+                  maxLength: 255
+                  x-oapi-codegen-extra-tags:
+                    json: subType
+                status:
+                  type: string
+                  description: Connection Status Value
+                  x-go-name: ConnectionStatusValue
+                  enum:
+                    - discovered
+                    - registered
+                    - connected
+                    - ignored
+                    - maintenance
+                    - disconnected
+                    - deleted
+                    - not found
+                  x-oapi-codegen-extra-tags:
+                    json: status
+                modelReference:
+                  x-go-type: modelv1beta1.ModelReference
+                  x-go-type-import:
+                    path: github.com/meshery/schemas/models/v1beta1/model
+                    name: modelv1beta1
+                  description: Reference to the registered model that owns this connection definition.
+                  x-oapi-codegen-extra-tags:
+                    json: modelReference,omitempty
+                  x-generate-db-helpers: true
+                  type: object
+                  required:
+                    - id
+                    - name
+                    - version
+                    - displayName
+                    - model
+                    - registrant
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                      description: >-
+                        A Universally Unique Identifier used to uniquely identify entities in Meshery. The UUID core
+                        definition is used across different schemas.
+                      x-go-type: uuid.UUID
+                      x-go-type-import:
+                        path: github.com/gofrs/uuid
+                    name:
+                      type: string
+                      description: The unique name for the model within the scope of a registrant.
+                      pattern: ^[a-z0-9-]+$
+                      examples:
+                        - cert-manager
+                    version:
+                      description: Version of the model definition.
+                      type: string
+                      minLength: 5
+                      maxLength: 100
+                      pattern: ^[a-z0-9]+.[0-9]+.[0-9]+(-[0-9A-Za-z-]+(.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$
+                    displayName:
+                      type: string
+                      description: Human-readable name for the model.
+                      minLength: 1
+                      maxLength: 100
+                      pattern: ^[a-zA-Z0-9 ]+$
+                      examples:
+                        - Cert Manager
+                    model:
+                      type: object
+                      description: >-
+                        Registrant-defined data associated with the model. Properties pertain to the software being
+                        managed (e.g. Kubernetes v1.31).
+                      required:
+                        - version
+                      properties:
+                        version:
+                          description: Version of the model as defined by the registrant.
+                          x-oapi-codegen-extra-tags:
+                            json: version
+                          x-order: 1
+                          type: string
+                          minLength: 5
+                          maxLength: 100
+                          pattern: >-
+                            ^[a-z0-9]+.[0-9]+.[0-9]+(-[0-9A-Za-z-]+(.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$
+                    registrant:
+                      x-go-type: RegistrantReference
+                      x-oapi-codegen-extra-tags:
+                        json: registrant
+                      type: object
+                      required:
+                        - kind
+                      properties:
+                        kind:
+                          type: string
+                          description: Kind of the registrant.
+                          maxLength: 255
+                metadata:
+                  type: object
+                  description: Kind-specific connection metadata
+                  x-go-type: core.Map
+                  x-go-type-import:
+                    path: github.com/meshery/schemas/models/core
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: metadata
+                credentialSchema:
+                  type: object
+                  description: Schema for the credential associated with connections of this kind.
+                  x-go-type: core.Map
+                  x-go-type-import:
+                    path: github.com/meshery/schemas/models/core
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: credentialSchema
+                connectionSchema:
+                  type: object
+                  description: Schema for connections of this kind.
+                  x-go-type: core.Map
+                  x-go-type-import:
+                    path: github.com/meshery/schemas/models/core
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: connectionSchema
+                styles:
+                  x-go-type: core.ComponentStyles
+                  x-go-type-import:
+                    path: github.com/meshery/schemas/models/core
+                    name: core
+                  description: Visualization styles for the connection, including svgColor and svgWhite used for UI representation.
+                  x-oapi-codegen-extra-tags:
+                    json: styles,omitempty
+                  type: object
+                  required:
+                    - shape
+                    - primaryColor
+                    - svgColor
+                    - svgWhite
+                    - svgComplete
+                  allOf:
+                    - type: object
+                      description: Common styles for all entities
+                      additionalProperties: true
+                      required:
+                        - primaryColor
+                        - svgColor
+                        - svgWhite
+                        - svgComplete
+                      properties:
+                        primaryColor:
+                          type: string
+                          description: Primary color of the component used for UI representation.
+                          maxLength: 500
+                        secondaryColor:
+                          type: string
+                          description: Secondary color of the entity used for UI representation.
+                          maxLength: 500
+                        svgWhite:
+                          type: string
+                          description: White SVG of the entity used for UI representation on dark background.
+                          maxLength: 500
+                        svgColor:
+                          type: string
+                          description: Colored SVG of the entity used for UI representation on light background.
+                          maxLength: 500
+                        svgComplete:
+                          type: string
+                          description: Complete SVG of the entity used for UI representation, often inclusive of background.
+                          maxLength: 500
+                        color:
+                          type: string
+                          description: The color of the element's label. Colours may be specified by name (e.g. red), hex (e.g.
+                          maxLength: 500
+                        textOpacity:
+                          type: number
+                          description: The opacity of the label text, including its outline.
+                          minimum: 0
+                          maximum: 1
+                        fontFamily:
+                          type: string
+                          description: A comma-separated list of font names to use on the label text.
+                          maxLength: 500
+                        fontSize:
+                          type: string
+                          description: The size of the label text.
+                          maxLength: 500
+                        fontStyle:
+                          type: string
+                          description: A CSS font style to be applied to the label text.
+                          maxLength: 500
+                        fontWeight:
+                          type: string
+                          description: A CSS font weight to be applied to the label text.
+                          maxLength: 500
+                        textTransform:
+                          type: string
+                          description: A transformation to apply to the label text
+                          enum:
+                            - none
+                            - uppercase
+                            - lowercase
+                        opacity:
+                          type: number
+                          description: >-
+                            The opacity of the element, ranging from 0 to 1. Note that the opacity of a compound node
+                            parent affects the effective opacity of its children.
+                          minimum: 0
+                          maximum: 1
+                        zIndex:
+                          type: integer
+                          description: >-
+                            An integer value that affects the relative draw order of elements. In general, an element
+                            with a higher z-index will be drawn on top of an element with a lower z-index. Note that
+                            edges are under nodes despite z-index.
+                          minimum: 0
+                        label:
+                          type: string
+                          description: >-
+                            The text to display for an element's label. Can give a path, e.g. data(id) will label with
+                            the elements id
+                          maxLength: 500
+                        animation:
+                          type: object
+                          description: The animation to apply to the element. example ripple,bounce,etc
+                    - type: object
+                      properties:
+                        shape:
+                          type: string
+                          description: >-
+                            The shape of the node's body. Note that each shape fits within the specified width and
+                            height, and so you may have to adjust width and height if you desire an equilateral shape
+                            (i.e. width !== height for several equilateral shapes)
+                          enum:
+                            - ellipse
+                            - triangle
+                            - round-triangle
+                            - rectangle
+                            - round-rectangle
+                            - bottom-round-rectangle
+                            - cut-rectangle
+                            - barrel
+                            - rhomboid
+                            - diamond
+                            - round-diamond
+                            - pentagon
+                            - round-pentagon
+                            - hexagon
+                            - round-hexagon
+                            - concave-hexagon
+                            - heptagon
+                            - round-heptagon
+                            - octagon
+                            - round-octagon
+                            - star
+                            - tag
+                            - round-tag
+                            - vee
+                            - polygon
+                        position:
+                          type: object
+                          additionalProperties: false
+                          required:
+                            - x
+                            - 'y'
+                          description: >-
+                            The position of the node. If the position is set, the node is drawn at that position in the
+                            given dimensions. If the position is not set, the node is drawn at a random position.
+                          properties:
+                            x:
+                              type: number
+                              description: The x-coordinate of the node.
+                              minimum: -1000000
+                              maximum: 1000000
+                              x-go-type: float64
+                            'y':
+                              type: number
+                              description: The y-coordinate of the node.
+                              minimum: -1000000
+                              maximum: 1000000
+                              x-go-type: float64
+                        bodyText:
+                          type: string
+                          description: >-
+                            The text to display for an element's body. Can give a path, e.g. data(id) will label with
+                            the elements id
+                          maxLength: 500
+                        bodyTextWrap:
+                          type: string
+                          description: How to wrap the text in the node. Can be 'none', 'wrap', or 'ellipsis'.
+                          enum:
+                            - none
+                            - wrap
+                            - ellipsis
+                        bodyTextMaxWidth:
+                          type: string
+                          description: The maximum width for wrapping text in the node.
+                          maxLength: 50
+                        bodyTextOpacity:
+                          type: number
+                          description: The opacity of the node's body text, including its outline.
+                          minimum: 0
+                          maximum: 1
+                        bodyTextBackgroundColor:
+                          type: string
+                          description: >-
+                            The colour of the node's body text background. Colours may be specified by name (e.g. red),
+                            hex (e.g.
+                          maxLength: 100
+                        bodyTextFontSize:
+                          type: number
+                          description: The size of the node's body text.
+                          minimum: 0
+                        bodyTextColor:
+                          type: string
+                          description: The colour of the node's body text. Colours may be specified by name (e.g. red), hex (e.g.
+                          maxLength: 100
+                        bodyTextFontWeight:
+                          type: string
+                          description: A CSS font weight to be applied to the node's body text.
+                          maxLength: 50
+                        bodyTextHorizontalAlign:
+                          type: string
+                          description: A CSS horizontal alignment to be applied to the node's body text.
+                          maxLength: 50
+                        bodyTextDecoration:
+                          type: string
+                          description: A CSS text decoration to be applied to the node's body text.
+                          maxLength: 100
+                        bodyTextVerticalAlign:
+                          type: string
+                          description: A CSS vertical alignment to be applied to the node's body text.
+                          maxLength: 50
+                        width:
+                          type: number
+                          description: The width of the node's body or the width of an edge's line.
+                          minimum: 0
+                        height:
+                          type: number
+                          description: The height of the node's body
+                          minimum: 0
+                        backgroundImage:
+                          type: string
+                          format: uri
+                          description: The URL that points to the image to show in the node.
+                          maxLength: 2048
+                        backgroundColor:
+                          type: string
+                          description: The colour of the node's body. Colours may be specified by name (e.g. red), hex (e.g.
+                          maxLength: 100
+                        backgroundBlacken:
+                          type: number
+                          description: >-
+                            Blackens the node's body for values from 0 to 1; whitens the node's body for values from 0
+                            to -1.
+                          maximum: 1
+                          minimum: -1
+                        backgroundOpacity:
+                          type: number
+                          description: The opacity level of the node's background colour
+                          maximum: 1
+                          minimum: 0
+                        backgroundPositionX:
+                          type: string
+                          description: The x position of the background image, measured in percent (e.g. 50%) or pixels (e.g. 10px)
+                          maxLength: 50
+                        backgroundPositionY:
+                          type: string
+                          description: The y position of the background image, measured in percent (e.g. 50%) or pixels (e.g. 10px)
+                          maxLength: 50
+                        backgroundOffsetX:
+                          type: string
+                          description: The x offset of the background image, measured in percent (e.g. 50%) or pixels (e.g. 10px)
+                          maxLength: 50
+                        backgroundOffsetY:
+                          type: string
+                          description: The y offset of the background image, measured in percent (e.g. 50%) or pixels (e.g. 10px)
+                          maxLength: 50
+                        backgroundFit:
+                          type: string
+                          description: How the background image is fit to the node. Can be 'none', 'contain', or 'cover'.
+                          enum:
+                            - none
+                            - contain
+                            - cover
+                        backgroundClip:
+                          type: string
+                          description: How the background image is clipped to the node. Can be 'none', 'node', or 'node-border'.
+                          enum:
+                            - none
+                            - node
+                            - node-border
+                        backgroundWidthRelativeTo:
+                          type: string
+                          description: How the background image's width is determined. Can be 'none', 'inner', or 'outer'.
+                          enum:
+                            - none
+                            - inner
+                            - outer
+                        backgroundHeightRelativeTo:
+                          type: string
+                          description: How the background image's height is determined. Can be 'none', 'inner', or 'outer'.
+                          enum:
+                            - none
+                            - inner
+                            - outer
+                        borderWidth:
+                          type: number
+                          description: The size of the node's border.
+                          minimum: 0
+                        borderStyle:
+                          type: string
+                          description: The style of the node's border
+                          enum:
+                            - solid
+                            - dotted
+                            - dashed
+                            - double
+                        borderColor:
+                          type: string
+                          description: The colour of the node's border. Colours may be specified by name (e.g. red), hex (e.g.
+                          maxLength: 100
+                        borderOpacity:
+                          type: number
+                          description: The opacity of the node's border
+                          minimum: 0
+                          maximum: 1
+                        padding:
+                          type: number
+                          description: The amount of padding around all sides of the node.
+                          minimum: 0
+                        textHalign:
+                          type: string
+                          description: The horizontal alignment of a node's label
+                          enum:
+                            - left
+                            - center
+                            - right
+                        textValign:
+                          type: string
+                          description: The vertical alignment of a node's label
+                          enum:
+                            - top
+                            - center
+                            - bottom
+                        ghost:
+                          type: string
+                          description: >-
+                            Whether to use the ghost effect, a semitransparent duplicate of the element drawn at an
+                            offset.
+                          default: 'no'
+                          enum:
+                            - 'yes'
+                            - 'no'
+                        activeBgColor:
+                          type: string
+                          description: >-
+                            The colour of the indicator shown when the background is grabbed by the user. Selector needs
+                            to be *core*. Colours may be specified by name (e.g. red), hex (e.g.
+                          maxLength: 100
+                        activeBgOpacity:
+                          type: string
+                          description: The opacity of the active background indicator. Selector needs to be *core*.
+                          maxLength: 50
+                        activeBgSize:
+                          type: string
+                          description: The opacity of the active background indicator. Selector needs to be *core*.
+                          maxLength: 50
+                        selectionBoxColor:
+                          type: string
+                          description: >-
+                            The background colour of the selection box used for drag selection. Selector needs to be
+                            *core*. Colours may be specified by name (e.g. red), hex (e.g.
+                          maxLength: 100
+                        selectionBoxBorderWidth:
+                          type: number
+                          description: The size of the border on the selection box. Selector needs to be *core*
+                          minimum: 0
+                        selectionBoxOpacity:
+                          type: number
+                          description: The opacity of the selection box. Selector needs to be *core*
+                          minimum: 0
+                          maximum: 1
+                        outsideTextureBgColor:
+                          type: string
+                          description: >-
+                            The colour of the area outside the viewport texture when initOptions.textureOnViewport ===
+                            true. Selector needs to be *core*. Colours may be specified by name (e.g. red), hex (e.g.
+                          maxLength: 100
+                        outsideTextureBgOpacity:
+                          type: number
+                          description: The opacity of the area outside the viewport texture. Selector needs to be *core*
+                          minimum: 0
+                          maximum: 1
+                        shapePolygonPoints:
+                          type: string
+                          description: >-
+                            An array (or a space-separated string) of numbers ranging on [-1, 1], representing
+                            alternating x and y values (i.e. x1 y1 x2 y2, x3 y3 ...). This represents the points in the
+                            polygon for the node's shape. The bounding box of the node is given by (-1, -1), (1, -1),
+                            (1, 1), (-1, 1). The node's position is the origin (0, 0 )
+                          maxLength: 2000
+                        menuBackgroundColor:
+                          type: string
+                          description: >-
+                            The colour of the background of the component menu. Colours may be specified by name (e.g.
+                            red), hex (e.g.
+                          maxLength: 100
+                        menuBackgroundOpacity:
+                          type: number
+                          description: The opacity of the background of the component menu.
+                          minimum: 0
+                          maximum: 1
+                        menuForgroundColor:
+                          type: string
+                          description: >-
+                            The colour of the text or icons in the component menu. Colours may be specified by name
+                            (e.g. red), hex (e.g.
+                          maxLength: 100
+                transitionMap:
+                  type: object
+                  description: >-
+                    Map describing the connection state machine. Each key is a current connection status and its value
+                    is the list of states the connection may transition to from that status.
+                  additionalProperties:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: false
+                      description: >-
+                        A single permissible state transition for a connection, describing the next reachable state and
+                        the meaning of that transition.
+                      required:
+                        - nextState
+                      properties:
+                        nextState:
+                          type: string
+                          description: Connection Status Value
+                          x-go-name: ConnectionStatusValue
+                          enum:
+                            - discovered
+                            - registered
+                            - connected
+                            - ignored
+                            - maintenance
+                            - disconnected
+                            - deleted
+                            - not found
+                          x-order: 1
+                        description:
+                          type: string
+                          description: Human-readable explanation of when or why this transition occurs.
+                          maxLength: 1000
+                          x-oapi-codegen-extra-tags:
+                            json: description,omitempty
+                          x-order: 2
+                  x-go-type-skip-optional-pointer: true
+                  x-oapi-codegen-extra-tags:
+                    json: transitionMap,omitempty
       responses:
         '200':
           description: Connection definition updated
@@ -21757,7 +23004,7 @@ paths:
                     Select an organization in which you want to create this new environment. Keep in mind that the
                     organization cannot be changed after creation.
                   x-go-type-skip-optional-pointer: true
-                  x-go-name: OrgId
+                  x-go-name: OrgID
                   x-oapi-codegen-extra-tags:
                     json: organizationId
                   maxLength: 500
@@ -21952,9 +23199,18 @@ paths:
           description: Get responses by page
           schema:
             type: string
+        - name: pageSize
+          in: query
+          description: >-
+            Number of responses to return per page. Canonical camelCase pagination parameter; prefer this over the
+            deprecated all-lowercase `pagesize`.
+          schema:
+            type: integer
+            minimum: 1
         - name: pagesize
           in: query
-          description: Get responses by pagesize
+          description: Get responses by pagesize. Deprecated alias of pageSize.
+          deprecated: true
           schema:
             type: string
         - name: orgId
@@ -22432,7 +23688,7 @@ paths:
                     Select an organization in which you want to create this new environment. Keep in mind that the
                     organization cannot be changed after creation.
                   x-go-type-skip-optional-pointer: true
-                  x-go-name: OrgId
+                  x-go-name: OrgID
                   x-oapi-codegen-extra-tags:
                     json: organizationId
                   maxLength: 500
@@ -22719,9 +23975,18 @@ paths:
           description: Get responses by page
           schema:
             type: string
+        - name: pageSize
+          in: query
+          description: >-
+            Number of responses to return per page. Canonical camelCase pagination parameter; prefer this over the
+            deprecated all-lowercase `pagesize`.
+          schema:
+            type: integer
+            minimum: 1
         - name: pagesize
           in: query
-          description: Get responses by pagesize
+          description: Get responses by pagesize. Deprecated alias of pageSize.
+          deprecated: true
           schema:
             type: string
         - name: filter
@@ -25179,9 +26444,18 @@ paths:
           description: Get responses by page
           schema:
             type: string
+        - name: pageSize
+          in: query
+          description: >-
+            Number of responses to return per page. Canonical camelCase pagination parameter; prefer this over the
+            deprecated all-lowercase `pagesize`.
+          schema:
+            type: integer
+            minimum: 1
         - name: pagesize
           in: query
-          description: Get responses by pagesize
+          description: Get responses by pagesize. Deprecated alias of pageSize.
+          deprecated: true
           schema:
             type: string
         - name: filter
@@ -25272,7 +26546,7 @@ paths:
                             json: owner,omitempty
                         ownerId:
                           description: User ID of the workspace owner.
-                          x-go-name: OwnerId
+                          x-go-name: OwnerID
                           x-oapi-codegen-extra-tags:
                             db: owner_id
                             json: ownerId,omitempty
@@ -25307,7 +26581,7 @@ paths:
                             json: metadata,omitempty
                         organizationId:
                           description: Organization to which this workspace belongs.
-                          x-go-name: OrganizationId
+                          x-go-name: OrganizationID
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: organization_id
@@ -26008,9 +27282,18 @@ paths:
           description: Get responses by page
           schema:
             type: string
+        - name: pageSize
+          in: query
+          description: >-
+            Number of responses to return per page. Canonical camelCase pagination parameter; prefer this over the
+            deprecated all-lowercase `pagesize`.
+          schema:
+            type: integer
+            minimum: 1
         - name: pagesize
           in: query
-          description: Get responses by pagesize
+          description: Get responses by pagesize. Deprecated alias of pageSize.
+          deprecated: true
           schema:
             type: string
         - name: filter
@@ -26440,9 +27723,18 @@ paths:
           description: Get responses by page
           schema:
             type: string
+        - name: pageSize
+          in: query
+          description: >-
+            Number of responses to return per page. Canonical camelCase pagination parameter; prefer this over the
+            deprecated all-lowercase `pagesize`.
+          schema:
+            type: integer
+            minimum: 1
         - name: pagesize
           in: query
-          description: Get responses by pagesize
+          description: Get responses by pagesize. Deprecated alias of pageSize.
+          deprecated: true
           schema:
             type: string
         - name: filter
@@ -26934,9 +28226,18 @@ paths:
           description: Get responses by page
           schema:
             type: string
+        - name: pageSize
+          in: query
+          description: >-
+            Number of responses to return per page. Canonical camelCase pagination parameter; prefer this over the
+            deprecated all-lowercase `pagesize`.
+          schema:
+            type: integer
+            minimum: 1
         - name: pagesize
           in: query
-          description: Get responses by pagesize
+          description: Get responses by pagesize. Deprecated alias of pageSize.
+          deprecated: true
           schema:
             type: string
         - name: filter
@@ -31801,9 +33102,18 @@ paths:
           description: Get responses by page
           schema:
             type: string
+        - name: pageSize
+          in: query
+          description: >-
+            Number of responses to return per page. Canonical camelCase pagination parameter; prefer this over the
+            deprecated all-lowercase `pagesize`.
+          schema:
+            type: integer
+            minimum: 1
         - name: pagesize
           in: query
-          description: Get responses by pagesize
+          description: Get responses by pagesize. Deprecated alias of pageSize.
+          deprecated: true
           schema:
             type: string
         - name: filter
