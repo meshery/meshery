@@ -1,4 +1,3 @@
-export { default as subscribeEvents } from './EventsSubscription';
 export { default as subscribeClusterResources } from './ClusterResourcesSubscription';
 export { default as subscribeConfiguration } from './ConfigurationSubscription';
 export { default as subscribeK8sContext } from './K8sContextSubscription';
