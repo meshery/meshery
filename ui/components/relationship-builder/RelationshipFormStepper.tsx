@@ -15,7 +15,10 @@ import {
 } from '@sistent/sistent';
 import { GlobalStyles } from '@/theme';
 import { styled, DescriptionIcon, CodeIcon } from '@sistent/sistent';
-import { RelationshipDefinitionV1Beta2OpenApiSchema } from '@meshery/schemas';
+import {
+  RelationshipDefinitionV1Beta2OpenApiSchema,
+  ModelDefinitionV1Beta1OpenApiSchema,
+} from '@meshery/schemas';
 import {
   Link as LinkIcon,
   FilterAlt as FilterAltIcon,
@@ -42,6 +45,8 @@ const StyledDocsRedirectLink = styled('a')(({ theme }) => ({
 const RelationshipFormStepper = React.memo(({ handleClose }) => {
   const RelationshipDefinitionSchema =
     RelationshipDefinitionV1Beta2OpenApiSchema.components.schemas.RelationshipDefinition;
+  const ModelDefinitionSchema =
+    ModelDefinitionV1Beta1OpenApiSchema.components.schemas.ModelDefinition;
 
   const filteredSchema = omit(RelationshipDefinitionSchema, [
     'properties.capabilities',
@@ -211,7 +216,9 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                     onChange={handleCategoryChange}
                     fullWidth
                     variant="outlined"
-                    helperText="Select a model category"
+                    helperText={
+                      ModelDefinitionSchema?.properties?.category?.properties?.name?.description
+                    }
                   >
                     <MenuItem value="" disabled>
                       <em>Select Category</em>
@@ -252,7 +259,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                     onChange={handleModelChange}
                     fullWidth
                     variant="outlined"
-                    helperText="Select a model type"
+                    helperText={RelationshipDefinitionSchema?.properties?.model?.description}
                   >
                     <MenuItem value="" disabled>
                       <em>Select Model</em>

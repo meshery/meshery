@@ -19,8 +19,12 @@ import RJSFWrapper from '../meshery-mesh-interface/PatternService/RJSF_wrapper';
 import cloneDeep from 'lodash/cloneDeep';
 import { useMeshModelComponents } from '@/utils/hooks/useMeshModelComponents';
 import omit from 'lodash/omit';
+import { ModelDefinitionV1Beta1OpenApiSchema } from '@meshery/schemas';
 
 const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
+  const ModelDefinitionSchema =
+    ModelDefinitionV1Beta1OpenApiSchema.components.schemas.ModelDefinition;
+
   const [tabValue, setTabValue] = React.useState(0);
   const [selectorsData, setSelectorsData] = React.useState(
     formData?.selectors || {
@@ -232,7 +236,10 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
                           onChange={(e) => handleCategoryChange(type, direction, index, e)}
                           fullWidth
                           variant="outlined"
-                          helperText="Select the model category"
+                          helperText={
+                            ModelDefinitionSchema?.properties?.category?.properties?.name
+                              ?.description
+                          }
                         >
                           <MenuItem value="" disabled>
                             <em>Select Category</em>
@@ -256,7 +263,10 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
                           onChange={(e) => handleModelChange(type, direction, index, e)}
                           fullWidth
                           variant="outlined"
-                          helperText="Select the model name"
+                          helperText={
+                            selectorsSchema?.items?.properties?.allow?.properties?.from?.items
+                              ?.properties?.model?.description
+                          }
                         >
                           <MenuItem value="" disabled>
                             <em>Select Model</em>
