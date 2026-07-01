@@ -5,7 +5,7 @@ import (
 
 	models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/meshkit/models/meshmodel/entity"
-	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta2/model"
 	"github.com/meshery/schemas/models/v1beta3/component"
 )
 

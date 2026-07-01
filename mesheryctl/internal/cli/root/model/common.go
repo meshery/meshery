@@ -7,7 +7,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	meshkiterrors "github.com/meshery/meshkit/errors"
-	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta2/model"
 )
 
 var modelsApiPath = "api/meshmodels/models"

@@ -26,7 +26,7 @@ import (
 	mesheryutils "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/schemas/models/v1beta1/category"
 	"github.com/meshery/schemas/models/v1beta1/connection"
-	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta2/model"
 	"github.com/meshery/schemas/models/v1beta3/component"
 
 	"github.com/meshery/schemas/models/v1beta3"
