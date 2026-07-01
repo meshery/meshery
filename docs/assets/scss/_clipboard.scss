@@ -72,7 +72,7 @@ pre.codeblock-pre {
     color: #f1f3f5 !important;
   }
   & i.fa-check::before {
-    color: #00b39f !important;
+    color: var(--brand-color-secondary) !important;
   }
 }
 .clipbtn:hover {
