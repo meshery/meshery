@@ -642,8 +642,6 @@ github.com/maxatome/go-testdeep v1.14.0 h1:rRlLv1+kI8eOI3OaBXZwb3O7xY3exRzdW5QyX
 github.com/maxatome/go-testdeep v1.14.0/go.mod h1:lPZc/HAcJMP92l7yI6TRz1aZN5URwUBUAfUNvrclaNM=
 github.com/meshery/meshery-operator v0.8.11 h1:eDo2Sw0jjVrXsvvhF8LenADM58pK+7Z68ROPVIejTPc=
 github.com/meshery/meshery-operator v0.8.11/go.mod h1:hQEtFKKa5Fr/Mskk6bV5ip3bQ0+3F0u1voYS3XisBp4=
-github.com/meshery/meshkit v1.0.18 h1:MzbRkwRFOUhF0753tWeMVjVzxmSnGKq8JgGnzNG/Fek=
-github.com/meshery/meshkit v1.0.18/go.mod h1:pChQu1xqvr0oNjIfVEzakaKmrqMSgiYu7wq7YPREhT4=
 github.com/meshery/meshkit v1.0.19 h1:24/JpLoPnWXKEriYhkWdaEQXfoVQlBKSQPgoe7nE4z8=
 github.com/meshery/meshkit v1.0.19/go.mod h1:pChQu1xqvr0oNjIfVEzakaKmrqMSgiYu7wq7YPREhT4=
 github.com/meshery/meshsync v1.0.0 h1:BIHEVG4BDjqOnSd3vBt9B4IfWJNTfMRAgdwLroBcCfY=
