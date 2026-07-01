@@ -23,6 +23,9 @@ Some examples include:
 
 - **Authentication and Authorization**
   - Examples: session management, two factor authentication, LDAP integration.
+- **Identity and Organization Management**
+  - Examples: multi-tenant [Organizations]({{< ref "concepts/logical/organizations.md" >}}), teams as user groups, fine-grained roles and permissions.
+  - Examples: per-organization identity providers (OAuth/OIDC single sign-on), custom domains, and branding/white-labeling.
 - **Long-Term Persistence**
   - Examples: Storage and retrieval of performance test results.
   - Examples: Storage and retrieval of user preferences.
@@ -47,6 +50,15 @@ There are two types of providers defined in Meshery, `local` and `remote`.
 - The **Local** provider is built-into Meshery.
 - **Remote providers** can be implemented by anyone or an organization that wishes to integrate with Meshery. Any number of Remote providers may be available in your Meshery deployment.
 
+### Identity and Multi-Tenancy
+
+The provider you choose determines whether Meshery is single-user or multi-tenant:
+
+- With the **Local** provider, Meshery is **single-user**: there is no authentication, no identity, and no multi-tenancy. There are no [Organizations]({{< ref "concepts/logical/organizations.md" >}}), teams, or shared ownership — every resource belongs to the single local user.
+- With a **Remote Provider**, Meshery is **multi-user and multi-tenant**. The provider supplies identity, and [Organizations]({{< ref "concepts/logical/organizations.md" >}}) become the unit of tenancy: they group users, own all Workspaces, Environments, Designs, and Connections, and carry the roles and permissions that govern access. A Remote Provider can extend an Organization further with its own identity provider, custom domain, and branding.
+
+This is the central reason to use a Remote Provider for any shared, ongoing, or public-facing Meshery deployment — see [Recommended Production Deployment Settings](#recommended-production-deployment-settings) below. For the tenancy model itself, see [Organizations]({{< ref "concepts/logical/organizations.md" >}}).
+
 ### Default Installation Configuration
 
 By default, Meshery installations **do not have a provider preselected**. This is an intentional design choice: upon first launch, users are presented with the provider selection UI, allowing them to make an informed choice among all available providers.
@@ -66,6 +78,16 @@ For production deployments, consider the following security best practices regar
 - **Use `mesheryctl system provider reset`** to clear an enforced provider and return to the provider selection UI.
 
 
+#### AI Provider Usage in Production
+
+When integrating AI providers with Meshery, apply the following additional controls:
+
+- **Prefer local inference for sensitive environments** — use locally hosted models to prevent sensitive workload data from leaving your network boundary.
+- **Rotate API keys and restrict to minimum scopes** — issue short-lived, least-privilege credentials and rotate them on a defined schedule.
+- **Limit outbound network access to known provider endpoints** — use egress policies or firewall rules to allow only the specific AI provider hostnames your deployment requires.
+- **Avoid logging prompts or model responses unless required** — treat model inputs and outputs as potentially sensitive; disable verbose logging by default and apply retention limits if logging is necessary.
+- **Define an incident response plan for leaked API keys** — document revocation steps, affected-system audit procedures, and communication channels before an incident occurs.
+
 ### Remote Providers
 
 The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Meshery Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
@@ -78,7 +100,7 @@ Name: **"Meshery"** (default), URL: `https://cloud.meshery.io`
 - Long-term term persistence.
 - Save environment setup.
 - Retrieve performance test results.
-- Events are stored locally and can be published to remote provider. [Read more about server events](/project/contributing/contributing-server-events)
+- Events are stored locally and can be published to remote provider. [Read more about server events]({{< ref "project/contributing/contributing-server-events/index.md" >}})
 
 Name: **"Digital Ocean"**, URL: `https://meshery.digitalocean.com`
 
@@ -93,7 +115,7 @@ Name: **"Acme"**
 - Long-term term persistence.
 - Save environment setup.
 - Retrieve performance test results.
-- Events are stored locally and can be published to remote provider. [Read more about server events](/project/contributing/contributing-server-events)
+- Events are stored locally and can be published to remote provider. [Read more about server events]({{< ref "project/contributing/contributing-server-events/index.md" >}})
 - Free to use.
 
 ### Local Provider
@@ -107,7 +129,7 @@ Name: **"Local"** (legacy alias: **"None"**)
 - Container-local storage of test results. Ephemeral.
 - Environment setup not saved.
 - No performance test result history.
-- Server events are stored locally in database. [Read more about server events](/project/contributing/contributing-server-events)
+- Server events are stored locally in database. [Read more about server events]({{< ref "project/contributing/contributing-server-events/index.md" >}})
 - Free to use.
 
 #### Login Behavior
@@ -161,6 +183,8 @@ Deep-link targets are validated to prevent open redirect vulnerabilities. Only r
 ## Runtime Configuration Options
 
 Meshery provides runtime configuration options to control provider behavior:
+
+For the full server-wide reference, including provider-independent settings such as tracing, policy evaluation, and storage paths, see [Meshery Server Environment Variables]({{< ref "installation/advanced/environment-variables.md" >}}).
 
 ### PROVIDER
 

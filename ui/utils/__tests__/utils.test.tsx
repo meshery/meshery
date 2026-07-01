@@ -204,7 +204,10 @@ describe('generateValidatePayload', () => {
         },
       },
     ];
-    const result = generateValidatePayload(yaml, workloads);
+    const result = generateValidatePayload(yaml, workloads) as Record<
+      string,
+      { schema: string; value: string; valueType: string }
+    >;
     expect(result).toHaveProperty('svc1');
     expect(result.svc1).toEqual({
       schema: '{"type":"object"}',
@@ -437,8 +440,22 @@ describe('processDesign', () => {
     const result = processDesign({ schemaVersion: 'designs.meshery.io/v1alpha1', components: [] });
     expect(result.configurableComponents).toEqual([]);
     expect(result.annotationComponents).toEqual([]);
-    expect(result.designJson.name).toBe('');
+    expect((result.designJson as { name?: string }).name).toBe('');
     errSpy.mockRestore();
+  });
+
+  it('accepts v1beta3 designs and preserves their components', () => {
+    const design = {
+      schemaVersion: 'designs.meshery.io/v1beta3',
+      components: [{ id: 'a' }, { id: 'b', metadata: { isAnnotation: true } }],
+    };
+
+    const result = processDesign(design);
+
+    expect(result.components).toEqual(design.components);
+    expect(result.configurableComponents.map((c: { id: string }) => c.id)).toEqual(['a']);
+    expect(result.annotationComponents.map((c: { id: string }) => c.id)).toEqual(['b']);
+    expect(result.designJson).toBe(design);
   });
 
   it('separates annotation components from configurable ones', () => {

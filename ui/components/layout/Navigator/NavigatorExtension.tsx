@@ -89,6 +89,15 @@ function NavigatorExtension({ url }: NavigatorExtensionProps) {
     selectedK8sContexts,
     organization: currentOrganization,
   } = useSelector((state) => state.ui);
+  // `useRemoteComponent` fetches the bundle, evaluates it as a CommonJS module,
+  // and returns `module.exports.default` as the component. The remote bundle MUST
+  // therefore export the component as a CommonJS default
+  // (`module.exports = { default: Component, __esModule: true }`). NOTE: the hook
+  // does NOT throw when `.default` is missing — it returns `RemoteComponent ===
+  // undefined` with `err === undefined`, so a mis-built bundle fails silently
+  // (no loader error; React then throws "Element type is invalid … got: undefined").
+  // If an extension renders as undefined with no error, inspect the bundle's export
+  // shape, not this code. See meshery-extensions/docs/troubleshoot.md.
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   const { openModalWithDefault, onLoadResource } = useContext(WorkspaceModalContext);
   const registryModal = useRegistryModal();

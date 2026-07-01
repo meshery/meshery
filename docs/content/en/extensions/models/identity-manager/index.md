@@ -1,7 +1,7 @@
 ---
 title: Identity Manager
 subtitle: Collaborative and visual infrastructure as design for Identity Manager
-image: /extensions/models/identity-manager/icons/color/identity-manager-color.svg
+image: extensions/models/identity-manager/icons/color/identity-manager-color.svg
 aliases: /extensibility/integrations/identity-manager
 docURL: https://docs.meshery.io/extensibility/integrations/identity-manager
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Key Management
 registrant: Artifact Hub
 components: 
 - name: workload-identity
-  colorIcon: content/en/extensions/models/identity-manager/components/workload-identity/icons/color/workload-identity-color.svg
-  whiteIcon: content/en/extensions/models/identity-manager/components/workload-identity/icons/white/workload-identity-white.svg
+  colorIcon: extensions/models/identity-manager/components/workload-identity/icons/color/workload-identity-color.svg
+  whiteIcon: extensions/models/identity-manager/components/workload-identity/icons/white/workload-identity-white.svg
   description: 
 components-count: 1
 relationships: 

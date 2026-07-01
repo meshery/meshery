@@ -46,8 +46,12 @@ vi.mock('@sistent/sistent', () => ({
   ListItemIcon: ({ children }: any) => <span>{children}</span>,
   ListItemText: ({ primary }: any) => <span>{primary}</span>,
   IconButton: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
-  ChevronLeftIcon: () => <svg data-testid="chev-left" />,
-  ChevronRightIcon: () => <svg data-testid="chev-right" />,
+  ChevronLeftIcon: (props) =>
+    React.createElement('svg', { 'data-component': 'chevron-left-icon', ...props }),
+  ChevronRightIcon: (props) =>
+    React.createElement('svg', { 'data-component': 'chevron-right-icon', ...props }),
+  LeftArrowIcon: (props) =>
+    React.createElement('svg', { 'data-component': 'left-arrow-icon', ...props }),
   FileIcon: () => <svg data-testid="file-icon" />,
   InfoIcon: () => <svg data-testid="info-icon" />,
   DatabaseIcon: () => <svg data-testid="database-icon" />,
@@ -148,6 +152,19 @@ vi.mock('@/rtk-query/meshModel', () => ({
 
 vi.mock('./helper', () => ({
   removeDuplicateVersions: (m: any[]) => m,
+}));
+
+vi.mock('../general/style', () => ({
+  ChevronButtonWrapper: ({ children, onClick, isCollapsed }: any) => (
+    <button
+      type="button"
+      onClick={onClick}
+      data-collapsed={String(!!isCollapsed)}
+      data-testid="sidebar-collapse-toggle"
+    >
+      {children}
+    </button>
+  ),
 }));
 
 import RegistryModal, { Navigation } from './RegistryModal';

@@ -1,5 +1,4 @@
 import { expect } from '@playwright/test';
-
 const LEFT_NAV = {
   DASHBOARD: {
     name: 'Dashboard',
@@ -19,6 +18,13 @@ const LEFT_NAV = {
     name: 'configuration',
     NAV_ITEMS: {
       DESIGNS: 'design',
+    },
+  },
+  TELEMETRY: {
+    name: 'telemetry',
+    NAV_ITEMS: {
+      CHARTS: 'Grafana',
+      METRICS: 'Prometheus',
     },
   },
   PERFORMANCE: {
@@ -54,21 +60,21 @@ export class DashboardPage {
 
   async navigateToMenu(navItem) {
     const menuItem = this.page.getByTestId(navItem);
-    await expect(menuItem).toBeVisible({ timeout: 120000 });
+    await expect(menuItem).toBeVisible();
     await menuItem.click();
   }
 
   async navigateToSubMenuItem(parentItem, childItem) {
     await this.navigateToMenu(parentItem);
     const submenuItem = this.page.getByTestId(childItem);
-    await expect(submenuItem).toBeVisible({ timeout: 120000 });
+    await expect(submenuItem).toBeVisible();
     await submenuItem.click();
   }
 
   async navigateToDashboard() {
     await this.page.goto(LEFT_NAV.DASHBOARD.path, { waitUntil: 'domcontentloaded' });
-    await expect(this.navigationPanel).toBeVisible({ timeout: 120000 });
-    await expect(this.headerMenu).toBeVisible({ timeout: 120000 });
+    await expect(this.navigationPanel).toBeVisible();
+    await expect(this.headerMenu).toBeVisible();
   }
 
   async navigateToPerformance() {
@@ -77,6 +83,18 @@ export class DashboardPage {
 
   async navigateToExtensions() {
     await this.navigateToMenu(LEFT_NAV.EXTENSIONS.name);
+  }
+
+  async navigateToTelemetry() {
+    await this.navigateToMenu(LEFT_NAV.TELEMETRY.name);
+  }
+
+  async navigateToTelemetryCharts() {
+    await this.navigateToSubMenuItem(LEFT_NAV.TELEMETRY.name, LEFT_NAV.TELEMETRY.NAV_ITEMS.CHARTS);
+  }
+
+  async navigateToTelemetryMetrics() {
+    await this.navigateToSubMenuItem(LEFT_NAV.TELEMETRY.name, LEFT_NAV.TELEMETRY.NAV_ITEMS.METRICS);
   }
 
   async navigateToLifecycle() {
@@ -123,10 +141,10 @@ export class DashboardPage {
   }
 
   async navigateToHeaderItem(navItem) {
-    await expect(this.headerMenu).toBeVisible({ timeout: 120000 });
+    await expect(this.headerMenu).toBeVisible();
     await this.headerMenu.click();
     const headerItem = this.page.getByTestId(navItem);
-    await expect(headerItem).toBeVisible({ timeout: 120000 });
+    await expect(headerItem).toBeVisible();
     await headerItem.click();
   }
 

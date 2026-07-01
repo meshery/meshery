@@ -13,9 +13,7 @@ import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
 
-// Sistent re-exports InfoOutlinedIcon as `InfoOutlined`; alias on
-// import so call sites stay unchanged.
-import { Box, InfoOutlined as InfoOutlinedIcon, Typography, useTheme } from '@sistent/sistent';
+import { Box, InfoOutlinedIcon, Typography, useTheme } from '@sistent/sistent';
 
 type ChartColumn = [string, number];
 

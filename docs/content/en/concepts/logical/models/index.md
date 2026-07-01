@@ -19,10 +19,10 @@ Models serve as the foundational packaging units for Meshery's logical object re
 * **Extensibility:** Models are highly extensible, allowing you to define custom components, relationships, and policies. 
 
 {{% alert title="Creating your own models" color="light" %}}
-If you would like to create your own, augment existing models, or contribute new models, please refer to the [Contributing to Models](/project/contributing/contributing-models) guide.
+If you would like to create your own, augment existing models, or contribute new models, please refer to the [Contributing to Models]({{< ref "project/contributing/models" >}}) guide.
 {{% /alert %}}
 
-See [Contributing to Models](/project/contributing/contributing-models).
+See [Contributing to Models]({{< ref "project/contributing/models" >}}).
 
 As a cloud native manager that provides a comprehensive set of tools for managing multi-cloud and cloud native applications and infrastructure, Meshery needs object models that can granularly characterize a wide range of systems under management from simple applications to complex microservices architectures and their infrastructure. This document describes the Meshery Model and its constituent set of entities  used to represent and manage cloud and cloud native systems.
 
@@ -32,7 +32,7 @@ Using Meshery Models, users can define and manage cloud-native systems, includin
 
 Each model (package) can be imported and exported from Meshery Server as OCI-compatible images. This makes models portable, abstracts their complexity, and encapsulates intellectual property that you might have created while designing your own models. Model packages are versioned and bundle any number of components, relationships, policies, connections, and credentials.
 
-Models are stored in Meshery's [registry](/concepts/logical/registry) where they can be:
+Models are stored in Meshery's [registry]({{< ref "concepts/logical/registry.md" >}}) where they can be:
 
 * Discovered and reused by teams
 * Versioned and tagged
@@ -41,7 +41,7 @@ Models are stored in Meshery's [registry](/concepts/logical/registry) where they
 
 The registry provides a central location for managing and distributing your infrastructure models.
 
-Every entity type is implemented by a [registrant](/concepts/logical/registry). Without registrants and models, Meshery can't manage any kind of infrastructure.
+Every entity type is implemented by a [registrant]({{< ref "concepts/logical/registry.md" >}}). Without registrants and models, Meshery can't manage any kind of infrastructure.
 
 Most registrants configure a specific infrastructure platform (either cloud or self-hosted). Registrants vary in their capabilities. Capabilities come in the form of components, some of which represent infrastructure to be managed others of which represent functional additional functionality to augment Meshery's behavior and deepen its feature set. Some registrants offer infrastructure-specific orchestration. For example the Meshery Adapter for Istio offers integration with each of Istio's addons.
 
@@ -78,15 +78,15 @@ Models introduce various core constructs that form the foundation of the model. 
 
 ### Component
 
-[Component](/concepts/logical/components) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates.
+[Component]({{< ref "concepts/logical/components.md" >}}) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates.
 
 ### Policy
 
-[Policies](/concepts/logical/policies) includes constructs for managing metrics, defining actions, and specifying color properties of components or designs. These constructs help in monitoring, controlling, and visualizing different aspects of the Meshery ecosystem.
+[Policies]({{< ref "concepts/logical/policies/index.md" >}}) includes constructs for managing metrics, defining actions, and specifying color properties of components or designs. These constructs help in monitoring, controlling, and visualizing different aspects of the Meshery ecosystem.
 
 ### Relationships
 
-[Relationships](/concepts/logical/relationships) define the nature of interaction between interconnected components in Model. They represent various types of connections and dependencies between components, such as hierarchical, network, or default relationships. Relationships have selectors, metadata, and optional parameters.
+[Relationships]({{< ref "concepts/logical/relationships/index.md" >}}) define the nature of interaction between interconnected components in Model. They represent various types of connections and dependencies between components, such as hierarchical, network, or default relationships. Relationships have selectors, metadata, and optional parameters.
 
 #### Evaluation of Relationships
 
@@ -98,7 +98,7 @@ Model constructs are defined using a schema language called Cue. Cue is a powerf
 
 ### Designs
 
-[Designs](/concepts/logical/designs) are deployable units in Meshery that describe the desired infrastructure. They consist of components and patterns, allowing users to define and configure the behavior of their cloud-native applications. A design is a collection of components and patterns that represent a desired state of infrastructure. Designs are used to deploy and manage cloud-native systems.
+[Designs]({{< ref "concepts/logical/designs.md" >}}) are deployable units in Meshery that describe the desired infrastructure. They consist of components and patterns, allowing users to define and configure the behavior of their cloud-native applications. A design is a collection of components and patterns that represent a desired state of infrastructure. Designs are used to deploy and manage cloud-native systems.
 
 ### Patterns
 

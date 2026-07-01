@@ -5,11 +5,15 @@ import {
   Switch,
   CircularProgress,
   Typography,
-  // Sistent re-exports InfoOutlinedIcon as `InfoOutlined`; alias on
-  // import so call sites stay unchanged.
-  InfoOutlined as InfoOutlinedIcon,
+  InfoOutlinedIcon,
 } from '@sistent/sistent';
-import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
+import {
+  MODELS,
+  COMPONENTS,
+  RELATIONSHIPS,
+  REGISTRANTS,
+  CONNECTIONS,
+} from '../../constants/navigator';
 import SearchBar from '@/utils/custom-search';
 import debounce from '@/utils/debounce';
 import { useWindowDimensions } from '@/utils/dimension';
@@ -25,6 +29,7 @@ import MesheryTreeViewModel from './MesheryTreeViewModel';
 import MesheryTreeViewRegistrants from './MesheryTreeViewRegistrants';
 import ComponentTree from './ComponentTree';
 import RelationshipTree from './RelationshipTree';
+import ConnectionDefinitionTree from './ConnectionDefinitionTree';
 
 type MesheryTreeViewProps = {
   data: any[];
@@ -73,11 +78,14 @@ const MesheryTreeView = React.memo(
     const [selected, setSelected] = React.useState<string[]>([]);
     const { width } = useWindowDimensions();
     const [isSearchExpanded, setIsSearchExpanded] = useState(searchText ? true : false);
-    const [prevState, setPrevState] = useState<{ data: any[]; uuid: string }>({
-      data: [],
-      uuid: '',
-    });
+
     const scrollRef = useRef<number | null>(null);
+    // Stable ref so the deep-link useEffect can read showDetailsData without
+    // subscribing to it as a dependency (which would cause an infinite loop).
+    const showDetailsDataRef = useRef(showDetailsData);
+    useEffect(() => {
+      showDetailsDataRef.current = showDetailsData;
+    }, [showDetailsData]);
 
     const handleScroll = (scrollingView: string) => (event: React.UIEvent<HTMLDivElement>) => {
       const div = event.target;
@@ -153,18 +161,6 @@ const MesheryTreeView = React.memo(
     };
 
     useEffect(() => {
-      // Compare previous data with current data and uuid
-      if (
-        prevState.data &&
-        JSON.stringify(prevState.data) === JSON.stringify(data) &&
-        prevState.uuid === selectedItemUUID
-      ) {
-        return;
-      }
-
-      // Update the state with the current data and uuid
-      setPrevState({ data, uuid: selectedItemUUID });
-
       // No data present then return
       if (data.length === 0) {
         return;
@@ -172,9 +168,10 @@ const MesheryTreeView = React.memo(
 
       const selectedIdArr = selectedItemUUID.split('.');
       if (selectedIdArr.length >= 0) {
-        // Check if showDetailsData data matches with item from route
-        // This will prevent unnecessary state update
-        if (showDetailsData.data.id !== selectedIdArr[selectedIdArr.length - 1]) {
+        // Read showDetailsData via ref — avoids listing it as a dep, which would
+        // create an infinite loop (effect writes showDetailsData → dep triggers
+        // effect → writes again → ∞).
+        if (showDetailsDataRef.current.data.id !== selectedIdArr[selectedIdArr.length - 1]) {
           const newExpanded = selectedIdArr.reduce(
             (acc, id, index) => [...acc, index > 0 ? `${acc[index - 1]}.${id}` : id],
             [],
@@ -186,7 +183,15 @@ const MesheryTreeView = React.memo(
             setSelected([selectedItemUUID]);
           }
           const showData = getFilteredDataForDetailsComponent(data, selectedItemUUID);
-          if (JSON.stringify(showData) !== JSON.stringify(showDetailsData)) {
+          // Only update the details panel when the item was found in the top-level data.
+          // If showData.data is empty, the selected item is nested (a component or
+          // relationship inside a model version). Those cases are handled by
+          // VersionedModelComponentTree / VersionedModelRelationshipTree — overwriting
+          // with an empty object here would wipe the details panel the onClick just set.
+          if (
+            Object.keys(showData.data).length > 0 &&
+            showData?.data?.id !== showDetailsDataRef.current?.data?.id
+          ) {
             setShowDetailsData(showData);
           }
         }
@@ -198,7 +203,9 @@ const MesheryTreeView = React.memo(
           data: {},
         });
       }
-    }, [selectedItemUUID, data, showDetailsData]);
+      // showDetailsData intentionally omitted — read via showDetailsDataRef to
+      // prevent the infinite loop described above.
+    }, [selectedItemUUID, data]);
 
     useEffect(() => {
       const selectedIdArr = selectedItemUUID.split('.');
@@ -215,7 +222,7 @@ const MesheryTreeView = React.memo(
     }, [view]);
 
     const disabledExpand = () => {
-      return view === COMPONENTS;
+      return view === COMPONENTS || view === CONNECTIONS;
     };
 
     const renderHeader = (type: string, hasRecords: boolean) => (
@@ -282,8 +289,16 @@ const MesheryTreeView = React.memo(
                     )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`}
                     sx={{ margin: '0rem', padding: '0rem' }}
                   >
-                    <IconButton>
-                      <InfoOutlinedIcon height={20} width={20} />
+                    <IconButton
+                      size="small"
+                      aria-label="View duplicate entries information"
+                      sx={{
+                        width: 32,
+                        height: 32,
+                        mt: 0.5,
+                      }}
+                    >
+                      <InfoOutlinedIcon />
                     </IconButton>
                   </CustomTextTooltip>
                 </>
@@ -326,7 +341,7 @@ const MesheryTreeView = React.memo(
           {renderHeader(type, !!data.length)}
           {data.length === 0 && !searchText ? (
             <JustifyAndAlignCenter style={{ height: '27rem' }}>
-              {isLoading || (data.length === 0 && !searchText) ? (
+              {isLoading ? (
                 <CircularProgress sx={{ color: theme.palette.primary.main }} />
               ) : (
                 <Typography>No {type.toLowerCase()} found</Typography>
@@ -414,6 +429,21 @@ const MesheryTreeView = React.memo(
               isRelationshipFetching={isFetching[RELATIONSHIPS]}
             />,
             RELATIONSHIPS,
+            isLoading[view],
+          )}
+        {view === CONNECTIONS &&
+          renderTree(
+            <ConnectionDefinitionTree
+              handleToggle={handleToggle}
+              handleSelect={handleSelect}
+              expanded={expanded}
+              selected={selected}
+              data={data}
+              setShowDetailsData={setShowDetailsData}
+              lastConnectionRef={lastItemRef[CONNECTIONS]}
+              isConnectionFetching={isFetching[CONNECTIONS]}
+            />,
+            CONNECTIONS,
             isLoading[view],
           )}
       </MesheryTreeViewWrapper>

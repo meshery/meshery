@@ -188,9 +188,9 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	case "/token":
 		if req.Method == http.MethodGet {
 			if p.token != "" {
-				fmt.Fprintf(wr, p.token)
+				fmt.Fprint(wr, p.token)
 			} else {
-				fmt.Fprintf(wr, "null")
+				fmt.Fprint(wr, "null")
 			}
 			return
 		}
