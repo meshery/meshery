@@ -4,7 +4,6 @@ import { useNotificationHandlers } from '../../utils/hooks/useNotification';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
 import ResourcesSubMenu, { CRDsResourcesSubMenu } from './resources/resources-sub-menu';
-import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 import MesheryIcon from './images/meshery-icon';
 import { TabPanel } from './tabpanel';
 import { iconLarge } from '../../css/icons.styles';
@@ -22,10 +21,18 @@ import {
   OutlinedResetIcon,
   useTheme,
   ErrorBoundary,
+  FolderRoundedIcon,
+  ApplicationIcon,
+  ConfigurationIcon,
+  AccountTreeIcon,
+  LockIcon,
+  DatabaseIcon,
+  ExtensionIcon,
 } from '@sistent/sistent';
 import { WrapperPaper } from './style';
 import _ from 'lodash';
 import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
+import ConnectionIcon from '@/assets/icons/Connection';
 import { Responsive } from 'react-grid-layout/legacy';
 import debounceWidthProvider from './debounceWidthProvider';
 import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaultLayout';
@@ -83,6 +90,23 @@ const useDashboardRouter = () => {
 };
 
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
+
+type ResourceCategoryKey = 'Overview' | keyof typeof ResourcesConfig;
+
+const RESOURCE_ICONS: Record<
+  ResourceCategoryKey,
+  React.FC<{ style?: React.CSSProperties; fill?: string }>
+> = {
+  Overview: MesheryIcon,
+  Node: ConnectionIcon,
+  Namespace: FolderRoundedIcon,
+  Workload: ApplicationIcon,
+  Configuration: ConfigurationIcon,
+  Network: AccountTreeIcon,
+  Security: LockIcon,
+  Storage: DatabaseIcon,
+  CRDS: ExtensionIcon,
+};
 
 const Dashboard = () => {
   const { data: userData, isLoading } = useGetUserPrefQuery();
@@ -370,13 +394,19 @@ const Dashboard = () => {
                       gap: '0.4rem',
                     }}
                     key={resource}
-                    icon={
-                      resource === 'Overview' ? (
-                        <MesheryIcon style={iconLarge} />
-                      ) : (
-                        <KubernetesIcon style={iconLarge} />
-                      )
-                    }
+                    icon={(() => {
+                      const isActive = resource === resourceCategory;
+                      const fill = isActive
+                        ? theme.palette.primary.main
+                        : theme.palette.icon.default;
+
+                      const Icon = RESOURCE_ICONS[resource as ResourceCategoryKey];
+                      return Icon ? (
+                        <span aria-hidden="true" style={{ display: 'flex' }}>
+                          <Icon style={iconLarge} fill={fill} />
+                        </span>
+                      ) : null;
+                    })()}
                     label={resource}
                   />
                 </CustomTooltip>
