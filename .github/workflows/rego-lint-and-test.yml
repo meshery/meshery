@@ -59,7 +59,7 @@ jobs:
           commit_options: "--no-verify"
 
       - name: Setup Regal
-        uses: StyraInc/setup-regal@v1
+        uses: open-policy-agent/setup-regal@v1
         with:
           version: 0.25.0
 
