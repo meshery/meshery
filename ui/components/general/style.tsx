@@ -311,37 +311,20 @@ export const SecondaryDivider = styled(Divider)(({ theme }) => ({
 
 export const MainListIcon = styled(ListItemIcon, {
   shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed',
-})(({ theme, isDrawerCollapsed }) => ({
-  minWidth: theme.spacing(3.5),
-  paddingTop: theme.spacing(0.5),
-  textAlign: 'center',
-  display: 'inline-table',
-  // The gap to the label and the leftward nudge only make sense when the label
-  // is actually visible next to the icon. In the collapsed state there is no
-  // label, so keeping these would push the icon off-center.
-  paddingRight: isDrawerCollapsed ? 0 : theme.spacing(0.5),
-  marginLeft: isDrawerCollapsed ? 0 : '8.45px',
+})(({ isDrawerCollapsed, theme }: { isDrawerCollapsed?: boolean; theme?: any }) => ({
+  color: 'inherit',
+  minWidth: isDrawerCollapsed ? 'auto' : '40px', // Allow it to shrink when collapsed
+  justifyContent: isDrawerCollapsed ? 'center' : 'flex-start', // Center when collapsed
+  marginRight: isDrawerCollapsed ? '0px' : theme?.spacing(1) || '8px', // Remove margin when collapsed
 }));
 
 export const ListIconSide = styled(ListItemIcon, {
   shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed',
-})(({ theme, isDrawerCollapsed }) => ({
-  paddingTop: theme.spacing(0.5),
-  textAlign: 'center',
-  display: 'inline-table',
-  paddingRight: isDrawerCollapsed ? 0 : theme.spacing(0.5),
-  marginLeft: isDrawerCollapsed ? 0 : theme.spacing(0.8),
-  color: theme.palette.background.constant.white,
-  opacity: '0.7',
-  transition: 'opacity 200ms linear',
-  '&:hover': {
-    opacity: 1,
-    background: 'transparent',
-  },
-  '&:focus': {
-    opacity: 1,
-    background: 'transparent',
-  },
+})(({ isDrawerCollapsed }: { isDrawerCollapsed?: boolean }) => ({
+  padding: '0',
+  minWidth: isDrawerCollapsed ? 'auto' : '40px', 
+  justifyContent: isDrawerCollapsed ? 'center' : 'flex-start',
+  marginRight: isDrawerCollapsed ? '0px' : '0px', 
 }));
 
 export const HiddenText = styled(ListItemText)(({ drawerCollapsed, theme }) => ({
