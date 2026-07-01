@@ -41,9 +41,9 @@ const legacyToPascal = {
   ASSIGN_VIEWS_TO_WORKSPACE: 'KanvasAssignViewsToWorkspace',
   REMOVE_VIEWS_FROM_WORKSPACE: 'KanvasUnassignViewsFromWorkspace',
   VIEW_TEAMS: 'IdentityAccessManagementViewTeams',
-  DELETE_TEAM: 'TeamManagementDeleteTeam',
-  CREATE_TEAM: 'TeamManagementCreateTeam',
-  EDIT_TEAM: 'TeamManagementEditTeam',
+  DELETE_TEAM: 'IdentityAccessManagementDeleteTeam',
+  CREATE_TEAM: 'IdentityAccessManagementCreateTeam',
+  EDIT_TEAM: 'IdentityAccessManagementEditTeam',
   LEAVE_TEAM: 'IdentityAccessManagementLeaveTeam',
   ASSIGN_ENVIRONMENT_TO_WORKSPACE: 'WorkspaceManagementAssignEnvironmentToWorkspace',
   REMOVE_ENVIRONMENT_FROM_WORKSPACE: 'WorkspaceManagementRemoveEnvironmentFromWorkspace',
@@ -91,7 +91,7 @@ const legacyToPascal = {
   REGISTER_DISCOVERED_MESHSYNC_RESOURCE: 'LifecycleManagementRegisterDiscoveredMeshsyncResource',
   DELETE_A_CONNECTION: 'LifecycleManagementDeleteAConnection',
   INSTALL_EXTENSION: 'ExtensibilityInstallExtension',
-  UNINSTALL_EXTENSION: 'SecurityManagementDeleteCredential',
+  UNINSTALL_EXTENSION: 'ExtensibilityInstallExtension',
   VIEW_EXTENSIONS: 'ExtensibilityViewExtensions',
   VIEW_MESHERY_USER_PREFERENCES: 'ExtensibilityViewMesheryUserPreferences',
   ASSIGN_USER_ROLES: 'IdentityAccessManagementAssignUserRoles',
@@ -135,32 +135,38 @@ const legacyToPascal = {
   RESET_DATABASE: 'MesherySystemResetDatabase',
 } as const;
 
+type UiPermissionKey = { action: string; subject: string };
+type UiPermissionKeyMap = Record<string, UiPermissionKey>;
+
 // Map the new Keys to the legacy action/subject shape for the UI
-const mappedKeys = Object.entries(Keys).reduce((acc, [name, keyObj]) => {
-  acc[name] = {
-    action: keyObj.id,
-    subject: keyObj.function,
-  };
-  return acc;
-}, {} as any);
+const mappedKeys: UiPermissionKeyMap = Object.fromEntries(
+  Object.entries(Keys).map(([name, keyObj]) => [
+    name,
+    {
+      action: keyObj.id,
+      subject: keyObj.function,
+    },
+  ]),
+);
 
 // Create legacy keys mapped to schema details
 const legacyKeys = Object.entries(legacyToPascal).reduce((acc, [legacy, pascal]) => {
   const keyObj = Keys[pascal as keyof typeof Keys];
-  if (keyObj) {
-    acc[legacy] = {
-      action: keyObj.id,
-      subject: keyObj.function,
-    };
-  } else {
-    // Fallback block if any key is missing during transition
-    acc[legacy] = {
-      action: '',
-      subject: '',
-    };
+  if (!keyObj) {
+    const msg = `Unknown permission key mapping: ${legacy} -> ${pascal}`;
+    if (process.env.NODE_ENV !== 'production') {
+      throw new Error(msg);
+    }
+    // Keep a visible, non-empty sentinel in production to avoid silent failures.
+    acc[legacy] = { action: `MISSING:${pascal}`, subject: msg };
+    return acc;
   }
+  acc[legacy] = {
+    action: keyObj.id,
+    subject: keyObj.function,
+  };
   return acc;
-}, {} as any);
+}, {} as UiPermissionKeyMap);
 
 export const keys = {
   ...mappedKeys,

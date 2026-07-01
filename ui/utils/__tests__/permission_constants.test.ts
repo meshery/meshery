@@ -21,6 +21,20 @@ describe('permission_constants dynamic bridge and CASL capability tests', () => 
     expect(keys.AccountManagementViewProfile.subject).toBe('View Profile');
   });
 
+  it('every exported permission key has a non-empty subject and UUID action', () => {
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    for (const [name, value] of Object.entries(keys)) {
+      expect(value, `key=${name}`).toMatchObject({
+        subject: expect.any(String),
+        action: expect.any(String),
+      });
+      expect((value as { subject: string }).subject.length, `subject for ${name}`).toBeGreaterThan(
+        0,
+      );
+      expect((value as { action: string }).action, `action for ${name}`).toMatch(uuidPattern);
+    }
+  });
+
   it('should verify CASL CAN capability with active abilities', () => {
     // Initialize ability with specific permissions
     ability.update([
