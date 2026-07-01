@@ -21,8 +21,6 @@ performance management, and multi-tenancy capabilities across any cloud or on-pr
   Docker Compose files, and platform-specific deployment scripts.
 - **/provider-ui** – Provider-specific UI extensions; isolated React application for remote provider
   integrations.
-- **/policies** – Open Policy Agent (OPA) Rego policies for relationship evaluation and design
-  validation.
 - **/.github** – GitHub Actions workflows, issue templates, Copilot agent definitions, and community
   health files.
 
