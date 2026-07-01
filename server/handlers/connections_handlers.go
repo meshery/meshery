@@ -383,7 +383,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	// In fact this method is used (for now) only for perform meshsync deployment mode change.
 	// If mode change fails return error.
 	if connection.Kind != "" && connection.Kind != "kubernetes" {
-		err := ErrInvalidConnectionKind(fmt.Errorf("expected connection kind 'kubernetes', got '%s'", connection.Kind))
+		err := ErrInvalidConnectionKind(connection.Kind, "kubernetes")
 		h.log.Error(err)
 		writeMeshkitError(w, err, http.StatusBadRequest)
 		return
