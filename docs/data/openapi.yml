@@ -65,6 +65,8 @@ tags:
     description: Operations related to Meshery filters.
   - name: Invitation_Invitation
     description: Operations related to invitation
+  - name: PatternResource_patternResources
+    description: Operations related to Meshery pattern resources.
   - name: Performance_Profile_performance
     description: APIs for managing Meshery performance profiles.
   - name: Plan_Plans
@@ -568,7 +570,7 @@ paths:
                                           path: github.com/gofrs/uuid
                                         x-go-name: UserID
                                         x-oapi-codegen-extra-tags:
-                                          db: user_id
+                                          db: owner
                                           yaml: user_id
                                         x-order: 9
                                       created_at:
@@ -4873,7 +4875,7 @@ paths:
                                             path: github.com/gofrs/uuid
                                           x-go-name: UserID
                                           x-oapi-codegen-extra-tags:
-                                            db: user_id
+                                            db: owner
                                             yaml: user_id
                                           x-order: 9
                                         created_at:
@@ -9115,7 +9117,7 @@ paths:
                           description: UUID of the user who owns this credential.
                           x-order: 3
                           x-oapi-codegen-extra-tags:
-                            db: user_id
+                            db: owner
                           type: string
                           format: uuid
                           x-go-type: uuid.UUID
@@ -9296,7 +9298,7 @@ paths:
                     description: UUID of the user who owns this credential.
                     x-order: 3
                     x-oapi-codegen-extra-tags:
-                      db: user_id
+                      db: owner
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -9466,7 +9468,7 @@ paths:
                     description: UUID of the user who owns this credential.
                     x-order: 3
                     x-oapi-codegen-extra-tags:
-                      db: user_id
+                      db: owner
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -9657,7 +9659,7 @@ paths:
                     description: UUID of the user who owns this credential.
                     x-order: 3
                     x-oapi-codegen-extra-tags:
-                      db: user_id
+                      db: owner
                     type: string
                     format: uuid
                     x-go-type: uuid.UUID
@@ -10289,6 +10291,64 @@ paths:
                                   type: object
                                   description: Preferences specific to dashboard behavior.
                                   additionalProperties: true
+                                authBranding:
+                                  x-go-type: AuthBranding
+                                  type: object
+                                  x-internal:
+                                    - cloud
+                                  description: >-
+                                    Optional per-organization branding overrides for the auth pages: carousel slides and
+                                    FAQ entries. Stored as JSON inside organization.metadata.preferences, so no
+                                    dedicated column backs it. Empty or omitted fields fall back to the platform
+                                    defaults.
+                                  properties:
+                                    carousel:
+                                      type: array
+                                      description: Ordered slides rendered in the auth-page feature carousel.
+                                      items:
+                                        type: object
+                                        x-internal:
+                                          - cloud
+                                        description: A single slide in the auth-page feature carousel.
+                                        required:
+                                          - imageUrl
+                                          - title
+                                          - description
+                                        properties:
+                                          imageUrl:
+                                            type: string
+                                            format: uri
+                                            maxLength: 2048
+                                            description: URL of the slide image asset.
+                                            x-go-name: ImageURL
+                                          title:
+                                            type: string
+                                            maxLength: 500
+                                            description: Slide title.
+                                          description:
+                                            type: string
+                                            maxLength: 2048
+                                            description: Slide description text.
+                                    faqs:
+                                      type: array
+                                      description: FAQ entries rendered on the auth pages.
+                                      items:
+                                        type: object
+                                        x-internal:
+                                          - cloud
+                                        description: A single question/answer pair for the auth-page FAQ section.
+                                        required:
+                                          - question
+                                          - answer
+                                        properties:
+                                          question:
+                                            type: string
+                                            maxLength: 500
+                                            description: The question text.
+                                          answer:
+                                            type: string
+                                            maxLength: 5000
+                                            description: The answer text.
                                 links:
                                   x-go-type: Links
                                   type: object
@@ -10506,6 +10566,63 @@ paths:
                       type: object
                       description: Preferences specific to dashboard behavior.
                       additionalProperties: true
+                    authBranding:
+                      x-go-type: AuthBranding
+                      type: object
+                      x-internal:
+                        - cloud
+                      description: >-
+                        Optional per-organization branding overrides for the auth pages: carousel slides and FAQ
+                        entries. Stored as JSON inside organization.metadata.preferences, so no dedicated column backs
+                        it. Empty or omitted fields fall back to the platform defaults.
+                      properties:
+                        carousel:
+                          type: array
+                          description: Ordered slides rendered in the auth-page feature carousel.
+                          items:
+                            type: object
+                            x-internal:
+                              - cloud
+                            description: A single slide in the auth-page feature carousel.
+                            required:
+                              - imageUrl
+                              - title
+                              - description
+                            properties:
+                              imageUrl:
+                                type: string
+                                format: uri
+                                maxLength: 2048
+                                description: URL of the slide image asset.
+                                x-go-name: ImageURL
+                              title:
+                                type: string
+                                maxLength: 500
+                                description: Slide title.
+                              description:
+                                type: string
+                                maxLength: 2048
+                                description: Slide description text.
+                        faqs:
+                          type: array
+                          description: FAQ entries rendered on the auth pages.
+                          items:
+                            type: object
+                            x-internal:
+                              - cloud
+                            description: A single question/answer pair for the auth-page FAQ section.
+                            required:
+                              - question
+                              - answer
+                            properties:
+                              question:
+                                type: string
+                                maxLength: 500
+                                description: The question text.
+                              answer:
+                                type: string
+                                maxLength: 5000
+                                description: The answer text.
                     links:
                       x-go-type: Links
                       type: object
@@ -10715,6 +10832,64 @@ paths:
                                   type: object
                                   description: Preferences specific to dashboard behavior.
                                   additionalProperties: true
+                                authBranding:
+                                  x-go-type: AuthBranding
+                                  type: object
+                                  x-internal:
+                                    - cloud
+                                  description: >-
+                                    Optional per-organization branding overrides for the auth pages: carousel slides and
+                                    FAQ entries. Stored as JSON inside organization.metadata.preferences, so no
+                                    dedicated column backs it. Empty or omitted fields fall back to the platform
+                                    defaults.
+                                  properties:
+                                    carousel:
+                                      type: array
+                                      description: Ordered slides rendered in the auth-page feature carousel.
+                                      items:
+                                        type: object
+                                        x-internal:
+                                          - cloud
+                                        description: A single slide in the auth-page feature carousel.
+                                        required:
+                                          - imageUrl
+                                          - title
+                                          - description
+                                        properties:
+                                          imageUrl:
+                                            type: string
+                                            format: uri
+                                            maxLength: 2048
+                                            description: URL of the slide image asset.
+                                            x-go-name: ImageURL
+                                          title:
+                                            type: string
+                                            maxLength: 500
+                                            description: Slide title.
+                                          description:
+                                            type: string
+                                            maxLength: 2048
+                                            description: Slide description text.
+                                    faqs:
+                                      type: array
+                                      description: FAQ entries rendered on the auth pages.
+                                      items:
+                                        type: object
+                                        x-internal:
+                                          - cloud
+                                        description: A single question/answer pair for the auth-page FAQ section.
+                                        required:
+                                          - question
+                                          - answer
+                                        properties:
+                                          question:
+                                            type: string
+                                            maxLength: 500
+                                            description: The question text.
+                                          answer:
+                                            type: string
+                                            maxLength: 5000
+                                            description: The answer text.
                                 links:
                                   x-go-type: Links
                                   type: object
@@ -11141,6 +11316,64 @@ paths:
                                   type: object
                                   description: Preferences specific to dashboard behavior.
                                   additionalProperties: true
+                                authBranding:
+                                  x-go-type: AuthBranding
+                                  type: object
+                                  x-internal:
+                                    - cloud
+                                  description: >-
+                                    Optional per-organization branding overrides for the auth pages: carousel slides and
+                                    FAQ entries. Stored as JSON inside organization.metadata.preferences, so no
+                                    dedicated column backs it. Empty or omitted fields fall back to the platform
+                                    defaults.
+                                  properties:
+                                    carousel:
+                                      type: array
+                                      description: Ordered slides rendered in the auth-page feature carousel.
+                                      items:
+                                        type: object
+                                        x-internal:
+                                          - cloud
+                                        description: A single slide in the auth-page feature carousel.
+                                        required:
+                                          - imageUrl
+                                          - title
+                                          - description
+                                        properties:
+                                          imageUrl:
+                                            type: string
+                                            format: uri
+                                            maxLength: 2048
+                                            description: URL of the slide image asset.
+                                            x-go-name: ImageURL
+                                          title:
+                                            type: string
+                                            maxLength: 500
+                                            description: Slide title.
+                                          description:
+                                            type: string
+                                            maxLength: 2048
+                                            description: Slide description text.
+                                    faqs:
+                                      type: array
+                                      description: FAQ entries rendered on the auth pages.
+                                      items:
+                                        type: object
+                                        x-internal:
+                                          - cloud
+                                        description: A single question/answer pair for the auth-page FAQ section.
+                                        required:
+                                          - question
+                                          - answer
+                                        properties:
+                                          question:
+                                            type: string
+                                            maxLength: 500
+                                            description: The question text.
+                                          answer:
+                                            type: string
+                                            maxLength: 5000
+                                            description: The answer text.
                                 links:
                                   x-go-type: Links
                                   type: object
@@ -11432,6 +11665,63 @@ paths:
                       type: object
                       description: Preferences specific to dashboard behavior.
                       additionalProperties: true
+                    authBranding:
+                      x-go-type: AuthBranding
+                      type: object
+                      x-internal:
+                        - cloud
+                      description: >-
+                        Optional per-organization branding overrides for the auth pages: carousel slides and FAQ
+                        entries. Stored as JSON inside organization.metadata.preferences, so no dedicated column backs
+                        it. Empty or omitted fields fall back to the platform defaults.
+                      properties:
+                        carousel:
+                          type: array
+                          description: Ordered slides rendered in the auth-page feature carousel.
+                          items:
+                            type: object
+                            x-internal:
+                              - cloud
+                            description: A single slide in the auth-page feature carousel.
+                            required:
+                              - imageUrl
+                              - title
+                              - description
+                            properties:
+                              imageUrl:
+                                type: string
+                                format: uri
+                                maxLength: 2048
+                                description: URL of the slide image asset.
+                                x-go-name: ImageURL
+                              title:
+                                type: string
+                                maxLength: 500
+                                description: Slide title.
+                              description:
+                                type: string
+                                maxLength: 2048
+                                description: Slide description text.
+                        faqs:
+                          type: array
+                          description: FAQ entries rendered on the auth pages.
+                          items:
+                            type: object
+                            x-internal:
+                              - cloud
+                            description: A single question/answer pair for the auth-page FAQ section.
+                            required:
+                              - question
+                              - answer
+                            properties:
+                              question:
+                                type: string
+                                maxLength: 500
+                                description: The question text.
+                              answer:
+                                type: string
+                                maxLength: 5000
+                                description: The answer text.
                     links:
                       x-go-type: Links
                       type: object
@@ -11641,6 +11931,64 @@ paths:
                                   type: object
                                   description: Preferences specific to dashboard behavior.
                                   additionalProperties: true
+                                authBranding:
+                                  x-go-type: AuthBranding
+                                  type: object
+                                  x-internal:
+                                    - cloud
+                                  description: >-
+                                    Optional per-organization branding overrides for the auth pages: carousel slides and
+                                    FAQ entries. Stored as JSON inside organization.metadata.preferences, so no
+                                    dedicated column backs it. Empty or omitted fields fall back to the platform
+                                    defaults.
+                                  properties:
+                                    carousel:
+                                      type: array
+                                      description: Ordered slides rendered in the auth-page feature carousel.
+                                      items:
+                                        type: object
+                                        x-internal:
+                                          - cloud
+                                        description: A single slide in the auth-page feature carousel.
+                                        required:
+                                          - imageUrl
+                                          - title
+                                          - description
+                                        properties:
+                                          imageUrl:
+                                            type: string
+                                            format: uri
+                                            maxLength: 2048
+                                            description: URL of the slide image asset.
+                                            x-go-name: ImageURL
+                                          title:
+                                            type: string
+                                            maxLength: 500
+                                            description: Slide title.
+                                          description:
+                                            type: string
+                                            maxLength: 2048
+                                            description: Slide description text.
+                                    faqs:
+                                      type: array
+                                      description: FAQ entries rendered on the auth pages.
+                                      items:
+                                        type: object
+                                        x-internal:
+                                          - cloud
+                                        description: A single question/answer pair for the auth-page FAQ section.
+                                        required:
+                                          - question
+                                          - answer
+                                        properties:
+                                          question:
+                                            type: string
+                                            maxLength: 500
+                                            description: The question text.
+                                          answer:
+                                            type: string
+                                            maxLength: 5000
+                                            description: The answer text.
                                 links:
                                   x-go-type: Links
                                   type: object
@@ -11869,6 +12217,63 @@ paths:
                         type: object
                         description: Preferences specific to dashboard behavior.
                         additionalProperties: true
+                      authBranding:
+                        x-go-type: AuthBranding
+                        type: object
+                        x-internal:
+                          - cloud
+                        description: >-
+                          Optional per-organization branding overrides for the auth pages: carousel slides and FAQ
+                          entries. Stored as JSON inside organization.metadata.preferences, so no dedicated column backs
+                          it. Empty or omitted fields fall back to the platform defaults.
+                        properties:
+                          carousel:
+                            type: array
+                            description: Ordered slides rendered in the auth-page feature carousel.
+                            items:
+                              type: object
+                              x-internal:
+                                - cloud
+                              description: A single slide in the auth-page feature carousel.
+                              required:
+                                - imageUrl
+                                - title
+                                - description
+                              properties:
+                                imageUrl:
+                                  type: string
+                                  format: uri
+                                  maxLength: 2048
+                                  description: URL of the slide image asset.
+                                  x-go-name: ImageURL
+                                title:
+                                  type: string
+                                  maxLength: 500
+                                  description: Slide title.
+                                description:
+                                  type: string
+                                  maxLength: 2048
+                                  description: Slide description text.
+                          faqs:
+                            type: array
+                            description: FAQ entries rendered on the auth pages.
+                            items:
+                              type: object
+                              x-internal:
+                                - cloud
+                              description: A single question/answer pair for the auth-page FAQ section.
+                              required:
+                                - question
+                                - answer
+                              properties:
+                                question:
+                                  type: string
+                                  maxLength: 500
+                                  description: The question text.
+                                answer:
+                                  type: string
+                                  maxLength: 5000
+                                  description: The answer text.
                       links:
                         x-go-type: Links
                         type: object
@@ -13289,7 +13694,7 @@ paths:
                         userId:
                           description: User ID
                           x-oapi-codegen-extra-tags:
-                            db: user_id
+                            db: owner
                             json: userId
                           type: string
                           format: uuid
@@ -13446,7 +13851,7 @@ paths:
                   userId:
                     description: User ID
                     x-oapi-codegen-extra-tags:
-                      db: user_id
+                      db: owner
                       json: userId
                     type: string
                     format: uuid
@@ -21231,6 +21636,168 @@ paths:
             application/json:
               schema:
                 type: object
+                description: Paginated list of Kubernetes contexts.
+                required:
+                  - page
+                  - pageSize
+                  - totalCount
+                  - contexts
+                properties:
+                  page:
+                    type: integer
+                    description: Zero-based page index returned in this response.
+                    minimum: 0
+                    x-oapi-codegen-extra-tags:
+                      json: page
+                  pageSize:
+                    type: integer
+                    description: Maximum number of items returned on each page.
+                    minimum: 1
+                    x-oapi-codegen-extra-tags:
+                      json: pageSize
+                  totalCount:
+                    type: integer
+                    description: Total number of items across all pages.
+                    minimum: 0
+                    x-oapi-codegen-extra-tags:
+                      json: totalCount
+                  contexts:
+                    type: array
+                    description: Kubernetes contexts in this page.
+                    items:
+                      type: object
+                      description: >-
+                        Kubernetes-specific authentication context projected from a kubernetes connection and its
+                        credential. Connection metadata supplies the context identity (id, name, server, version,
+                        deployment type, instance and server IDs); the credential secret supplies the auth and cluster
+                        material. This is a response projection, not a stored table row.
+                      properties:
+                        id:
+                          type: string
+                          description: >-
+                            Stable identifier of the Kubernetes context, assigned when the context is registered. Not a
+                            UUID; carried in connection metadata.
+                          x-id-format: external
+                          maxLength: 255
+                          x-go-name: ID
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            json: id,omitempty
+                        name:
+                          type: string
+                          description: Human-readable name of the Kubernetes context.
+                          maxLength: 255
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            json: name,omitempty
+                        auth:
+                          type: object
+                          description: >-
+                            Authentication material for the context (token or kubeconfig reference), sourced from the
+                            connection's credential secret.
+                          x-go-type: core.Map
+                          x-go-type-import:
+                            path: github.com/meshery/schemas/models/core
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            json: auth,omitempty
+                        cluster:
+                          type: object
+                          description: >-
+                            Cluster definition for the context (certificate authority and server details), sourced from
+                            the connection's credential secret.
+                          x-go-type: core.Map
+                          x-go-type-import:
+                            path: github.com/meshery/schemas/models/core
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            json: cluster,omitempty
+                        server:
+                          type: string
+                          description: API server URL of the Kubernetes cluster.
+                          maxLength: 2048
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            json: server,omitempty
+                        owner:
+                          description: ID of the user who owns the underlying connection.
+                          x-oapi-codegen-extra-tags:
+                            json: owner,omitempty
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                        createdBy:
+                          description: ID of the user who registered the context.
+                          x-oapi-codegen-extra-tags:
+                            json: createdBy,omitempty
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                        mesheryInstanceId:
+                          description: ID of the Meshery instance the context is registered with.
+                          x-go-name: MesheryInstanceID
+                          x-oapi-codegen-extra-tags:
+                            json: mesheryInstanceId,omitempty
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                        kubernetesServerId:
+                          description: ID of the Kubernetes server associated with the context.
+                          x-go-name: KubernetesServerID
+                          x-oapi-codegen-extra-tags:
+                            json: kubernetesServerId,omitempty
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                        deploymentType:
+                          type: string
+                          description: How Meshery is deployed relative to the cluster (e.g. in_cluster, out_of_cluster).
+                          maxLength: 64
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            json: deploymentType
+                        version:
+                          type: string
+                          description: Kubernetes server version of the cluster.
+                          maxLength: 64
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            json: version
+                        createdAt:
+                          type: string
+                          description: Timestamp when the underlying connection was created.
+                          format: date-time
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            json: createdAt,omitempty
+                        updatedAt:
+                          type: string
+                          description: Timestamp when the underlying connection was last updated.
+                          format: date-time
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            json: updatedAt,omitempty
+                        connectionId:
+                          description: ID of the connection this context was projected from.
+                          x-go-name: ConnectionID
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            json: connectionId,omitempty
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                    x-oapi-codegen-extra-tags:
+                      json: contexts
         '401':
           description: Expired JWT token used or insufficient privilege
           content:
@@ -28894,7 +29461,7 @@ paths:
                                                   path: github.com/gofrs/uuid
                                                 x-go-name: UserID
                                                 x-oapi-codegen-extra-tags:
-                                                  db: user_id
+                                                  db: owner
                                                   yaml: user_id
                                                 x-order: 9
                                               created_at:
@@ -33248,7 +33815,7 @@ paths:
                           x-go-name: UserID
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
-                            db: user_id
+                            db: owner
                             json: user_id,omitempty
                         workspace_name:
                           type: string
