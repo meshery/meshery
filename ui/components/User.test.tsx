@@ -68,12 +68,12 @@ vi.mock('@sistent/sistent', () => ({
 }));
 
 vi.mock('./layout/Header/Header.styles', () => ({
-  IconButtonAvatar: ({ children, onClick, color, 'aria-haspopup': hasPopup }: any) => (
+  IconButtonAvatar: ({ children, tabIndex, 'aria-hidden': ariaHidden, disabled }: any) => (
     <button
       data-testid="icon-button-avatar"
-      data-color={color}
-      aria-haspopup={hasPopup}
-      onClick={onClick}
+      tabIndex={tabIndex}
+      aria-hidden={ariaHidden}
+      disabled={disabled}
     >
       {children}
     </button>
@@ -207,8 +207,7 @@ describe('User component', () => {
     expect(payload.details).toBe('oops');
   });
 
-  it('navigates to the profile URL when the avatar is clicked', async () => {
-    const user = userEvent.setup();
+  it('renders a Link with the profile URL that opens in a new tab', async () => {
     mockGetUserQuery = {
       data: { status: 'authenticated' },
       isSuccess: true,
@@ -227,8 +226,17 @@ describe('User component', () => {
     // Trigger a re-render of the providerCapabilities effect.
     await waitFor(() => expect(ExtensionPointSchemaValidator).toHaveBeenCalledWith('account'));
 
-    await user.click(screen.getByTestId('icon-button-avatar'));
-    expect(window.location.href).toContain('https://cloud.test/profile');
+    const profileLink = screen.getByRole('link', { name: 'Open user profile' });
+    expect(profileLink).toHaveAttribute('href', 'https://cloud.test/profile');
+    expect(profileLink).toHaveAttribute('target', '_blank');
+    expect(profileLink).toHaveAttribute('rel', 'noopener noreferrer');
+
+    const handleClick = vi.fn();
+    profileLink.addEventListener('click', handleClick);
+    await userEvent.click(profileLink);
+    expect(handleClick).toHaveBeenCalledTimes(1);
+
+    expect(profileLink.querySelector('[data-testid="avatar"]')).toBeInTheDocument();
   });
 
   it('does not redirect when no profile URL is present', async () => {

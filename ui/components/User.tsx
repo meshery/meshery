@@ -30,13 +30,7 @@ const User = (props) => {
     return (account || [])?.find((item) => item.title === 'Cloud Account')?.href;
   };
 
-  const goToProfile = () => {
-    const profileUrl = getProfileUrl();
-    if (profileUrl) {
-      window.location = profileUrl;
-      return;
-    }
-  };
+  const profileUrl = getProfileUrl();
 
   useEffect(() => {
     if (!userLoaded && isGetUserSuccess) {
@@ -78,17 +72,32 @@ const User = (props) => {
     );
   }
 
+  const avatar = (
+    <Avatar
+      sx={{ height: 36, width: 36 }}
+      src={isGetUserSuccess ? userData?.avatarUrl : null}
+      imgProps={{ referrerPolicy: 'no-referrer' }}
+    />
+  );
+
   return (
     <div>
       <NoSsr>
         <div data-testid="profile-button">
-          <IconButtonAvatar color={color} aria-haspopup="true" onClick={goToProfile}>
-            <Avatar
-              sx={{ height: 36, width: 36 }}
-              src={isGetUserSuccess ? userData?.avatarUrl : null}
-              imgProps={{ referrerPolicy: 'no-referrer' }}
-            />
-          </IconButtonAvatar>
+          {profileUrl ? (
+            <a
+              href={profileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open user profile"
+            >
+              <IconButtonAvatar tabIndex={-1} aria-hidden="true">
+                {avatar}
+              </IconButtonAvatar>
+            </a>
+          ) : (
+            <IconButtonAvatar disabled>{avatar}</IconButtonAvatar>
+          )}
         </div>
       </NoSsr>
     </div>
