@@ -78,6 +78,7 @@ Meshery Server reads these values from the hosting environment when they are pre
 | --- | --- | --- | --- |
 | `KUBERNETES_SERVICE_HOST` | unset | Kubernetes service host used to detect in-cluster execution and to build in-cluster Kubernetes contexts. | `KUBERNETES_SERVICE_HOST=10.96.0.1` |
 | `KUBERNETES_SERVICE_PORT` | unset | Kubernetes service port paired with `KUBERNETES_SERVICE_HOST` for in-cluster execution. | `KUBERNETES_SERVICE_PORT=443` |
+| `KUBERNETES_TARGET_NAMESPACE` | unset | Overrides the Kubernetes namespace whose UID is used to derive the cluster server ID (`kubernetesServerId`). Resolution order: (1) this env var when set, (2) the in-cluster service-account namespace file (`/var/run/secrets/kubernetes.io/serviceaccount/namespace`), (3) `kube-system`. Set this for namespace-scoped RBAC or multi-tenant deployments where Meshery cannot read `kube-system`. | `KUBERNETES_TARGET_NAMESPACE=custom-ns` |
 | `HOME` | Inherited from the process environment | Home directory used when Meshery resolves paths under `.meshery/` for local registry/model content. | `HOME=/home/appuser` |
 
 ## Common deployment examples

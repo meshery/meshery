@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/meshery/schemas/models/core"
@@ -169,8 +170,8 @@ func NewK8sContextWithServerID(
 		return nil, err
 	}
 
-	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
-	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
+	// Get Kubernetes API server ID by querying a namespace uuid
+	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), getKubeNamespace(), v1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -458,11 +459,51 @@ func (kc K8sContext) PingTest() error {
 	return nil
 }
 
+// saNamespaceFile is the path to the in-cluster service-account namespace file.
+// Exposed as a variable so tests can override it.
+//
+// WARNING: This is a package-level global and is NOT safe for t.Parallel()
+// tests. Any test that mutates this variable must restore it via t.Cleanup
+// and MUST NOT set t.Parallel().
+var saNamespaceFile = "/var/run/secrets/kubernetes.io/serviceaccount/namespace"
+
+// getKubeNamespace returns the namespace whose UID is used to derive the cluster server ID.
+// Resolution order:
+//  1. KUBERNETES_TARGET_NAMESPACE environment variable
+//  2. In-cluster service-account namespace file
+//  3. "kube-system" (default/fallback)
+//
+// Note: changing the resolved namespace will change KubernetesServerID; keep it stable per deployment.
+func getKubeNamespace() string {
+	if ns := strings.TrimSpace(os.Getenv("KUBERNETES_TARGET_NAMESPACE")); ns != "" {
+		return ns
+	}
+
+	nsBytes, err := os.ReadFile(saNamespaceFile)
+	if err == nil {
+		if ns := strings.TrimSpace(string(nsBytes)); ns != "" {
+			return ns
+		}
+	}
+
+	return "kube-system"
+}
+
 // AssignServerID will attempt to assign kubernetes
 // server ID to the kubernetes context
 func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
-	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
-	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
+	// Skip assignment if a non-empty server ID is already set to avoid silently
+	// overwriting the identity of an existing deployment on re-discovery.
+	// Still verify API reachability because callers use AssignServerID as a connectivity gate.
+	if kc.KubernetesServerID != nil && *kc.KubernetesServerID != uuid.Nil {
+		res := handler.KubeClient.DiscoveryClient.RESTClient().Get().RequestURI("/livez").Timeout(1 * time.Second).Do(context.TODO())
+		if res.Error() != nil {
+			return ErrUnreachableKubeAPI(res.Error(), kc.Server)
+		}
+		return nil
+	}
+	// Get Kubernetes API server ID by querying a namespace uuid
+	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), getKubeNamespace(), v1.GetOptions{})
 	if err != nil {
 		return ErrUnreachableKubeAPI(err, kc.Server)
 	}
