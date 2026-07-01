@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Defines the non-binding reference from a PriorityClass to a Pod. Evaluates and automatically patches the priorityClassName field within the Pod's configuration.",
+    "description": "Defines the non-binding reference from a PriorityClass to a ReplicaSet. Evaluates and automatically patches the priorityClassName field within the ReplicaSet's configuration.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -62,7 +62,7 @@
         "to": [
           {
             "id": null,
-            "kind": "Pod",
+            "kind": "ReplicaSet",
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",
@@ -80,6 +80,8 @@
               "mutatedRef": [
                 [
                   "configuration",
+                  "spec",
+                  "template",
                   "spec",
                   "priorityClassName"
                 ]
