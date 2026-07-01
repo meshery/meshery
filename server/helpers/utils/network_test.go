@@ -18,7 +18,7 @@ func TestValidateURLForOutboundRequest(t *testing.T) {
 		{"AWS metadata", "http://169.254.169.254/latest/meta-data/", true},
 		{"bad scheme", "ftp://example.com", true},
 		{"no host", "http://", true},
-		{"valid http", "http://grafana.example.com/api", false},
+		{"valid http", "http://example.com/api", false},
 		{"valid https", "https://artifacthub.io/packages", false},
 	}
 
