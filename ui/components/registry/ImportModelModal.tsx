@@ -32,7 +32,7 @@ import { Modal, FormModal } from '@/components/shared/Modal';
 import CsvStepper from './Stepper/CSVStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
-import { useState, useEffect, useContext, memo } from 'react';
+import { useState, useContext, useRef, useEffect, memo } from 'react';
 import { capitalize } from 'lodash';
 import { Loading } from '@/components/designs/lifecycle/common';
 import { NotificationCenterContext } from '@/components/layout/NotificationCenter';
@@ -57,25 +57,16 @@ import {
   importModelUiSchema,
 } from './importModelSchema';
 
-const FinishDeploymentStep = ({ deploymentType }: { deploymentType: string }) => {
-  const { operationsCenterActorRef } = useContext(NotificationCenterContext);
-  const [isDeploying, setIsDeploying] = useState(true);
-  const [deployEvent, setDeployEvent] = useState<any>();
+const FinishDeploymentStep = ({
+  deploymentType,
+  isDeploying,
+  deployEvent,
+}: {
+  deploymentType: string;
+  isDeploying: boolean;
+  deployEvent: any;
+}) => {
   const theme = useTheme();
-
-  useEffect(() => {
-    const subscription = operationsCenterActorRef.on(
-      OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
-      (event) => {
-        const serverEvent = event.data.event;
-        if (serverEvent.action === deploymentType) {
-          setIsDeploying(false);
-          setDeployEvent(serverEvent);
-        }
-      },
-    );
-    return () => subscription.unsubscribe();
-  }, []);
 
   const progressMessage = `${capitalize(deploymentType)}ing model`;
 
@@ -167,6 +158,25 @@ const ImportModelModal = memo<ImportModelModalProps>(
     const [importModelReq] = useImportMeshModelMutation();
     const [activeStep, setActiveStep] = useState(0);
     const { notify } = useNotification();
+    const { operationsCenterActorRef } = useContext(NotificationCenterContext);
+    const [isDeploying, setIsDeploying] = useState(true);
+    const [deployEvent, setDeployEvent] = useState<any>();
+    const subscriptionRef = useRef<{ unsubscribe: () => void } | null>(null);
+
+    useEffect(() => {
+      if (!isImportModalOpen) {
+        subscriptionRef.current?.unsubscribe();
+        subscriptionRef.current = null;
+        setIsCsvModalOpen(false);
+        setActiveStep(0);
+        setIsDeploying(true);
+        setDeployEvent(undefined);
+      }
+      return () => {
+        subscriptionRef.current?.unsubscribe();
+        subscriptionRef.current = null;
+      };
+    }, [isImportModalOpen]);
 
     const handleClose = () => {
       setIsImportModalOpen(false);
@@ -273,15 +283,40 @@ const ImportModelModal = memo<ImportModelModalProps>(
         }
       }
 
-      // Fire the request first; only advance to the Finish step on success so
-      // a failed import doesn't strand the user on a perpetual loading screen
-      // (the Finish step subscribes to the operations-center event bus and
-      // only ever stops loading on a SUCCESS event).
+      // Subscribe to the operations-center bus before firing the request to avoid
+      // the race where the server emits the event before FinishDeploymentStep mounts.
+      // The loader stops on the first matching `register` event regardless of severity.
+
+      setIsDeploying(true);
+      setDeployEvent(undefined);
+      subscriptionRef.current?.unsubscribe();
+
+      const subscription = operationsCenterActorRef.on(
+        OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+        (event) => {
+          const serverEvent = event?.data?.event;
+          if (
+            serverEvent?.action === 'register' &&
+            (serverEvent?.metadata?.ModelImportMessage !== undefined ||
+              serverEvent?.metadata?.ModelDetails !== undefined)
+          ) {
+            setIsDeploying(false);
+            setDeployEvent(serverEvent);
+            subscription.unsubscribe();
+            subscriptionRef.current = null;
+          }
+        },
+      );
+
+      subscriptionRef.current = subscription;
+
       updateProgress({ showProgress: true });
       try {
         await importModelReq({ importBody: requestBody }).unwrap();
         setActiveStep(1);
       } catch (err) {
+        subscriptionRef.current?.unsubscribe();
+        subscriptionRef.current = null;
         console.error('Failed to import model:', err);
         notify({
           message: 'Model import failed. Please verify the file or URL and try again.',
@@ -333,7 +368,11 @@ const ImportModelModal = memo<ImportModelModalProps>(
             actions={<ModalButtonPrimary onClick={handleClose}>Finish</ModalButtonPrimary>}
             sx={{ zIndex: 1600 }}
           >
-            <FinishDeploymentStep deploymentType="register" />
+            <FinishDeploymentStep
+              deploymentType="register"
+              isDeploying={isDeploying}
+              deployEvent={deployEvent}
+            />
           </Modal>
         )}
 

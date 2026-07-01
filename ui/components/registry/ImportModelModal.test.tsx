@@ -1,8 +1,11 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const importModelReq = vi.fn();
+const { importModelReq, mockOn } = vi.hoisted(() => ({
+  importModelReq: vi.fn(),
+  mockOn: vi.fn().mockReturnValue({ unsubscribe: vi.fn() }),
+}));
 
 vi.mock('@sistent/sistent', () => ({
   FormControlLabel: ({ label, control }: any) => (
@@ -26,6 +29,12 @@ vi.mock('@/components/shared/Modal', () => ({
     isOpen ? (
       <div data-testid={`modal-${title}`}>
         <div data-testid="rjsf-wrapper">{helpText}</div>
+        <button
+          data-testid="submit-file"
+          onClick={() => onSubmit({ uploadType: 'file', modelFile: 'mockFile' })}
+        >
+          submit-file
+        </button>
         <button
           data-testid="submit-url"
           onClick={() => onSubmit({ uploadType: 'urlImport', url: 'https://x.com' })}
@@ -76,9 +85,7 @@ vi.mock('@/components/designs/lifecycle/common', () => ({
 
 vi.mock('@/components/layout/NotificationCenter', () => {
   const Ctx = (require('react') as typeof import('react')).createContext({
-    operationsCenterActorRef: {
-      on: () => ({ unsubscribe: () => {} }),
-    },
+    operationsCenterActorRef: { on: mockOn },
   });
   return { NotificationCenterContext: Ctx };
 });
@@ -125,6 +132,8 @@ describe('ImportModelModal', () => {
   beforeEach(() => {
     importModelReq.mockReset();
     importModelReq.mockReturnValue({ unwrap: () => Promise.resolve({}) });
+    mockOn.mockReset();
+    mockOn.mockReturnValue({ unsubscribe: vi.fn() });
   });
 
   it('renders the main Import Model modal when open', () => {
@@ -155,6 +164,13 @@ describe('ImportModelModal', () => {
     consoleSpy.mockRestore();
   });
 
+  it('calls importModelReq on file submission with a valid file', async () => {
+    render(<ImportModelModal isImportModalOpen={true} setIsImportModalOpen={vi.fn()} />);
+    fireEvent.click(screen.getByTestId('submit-file'));
+    await Promise.resolve();
+    expect(importModelReq).toHaveBeenCalled();
+  });
+
   it('does not call importModelReq for an invalid upload type', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     render(<ImportModelModal isImportModalOpen={true} setIsImportModalOpen={vi.fn()} />);
@@ -172,5 +188,97 @@ describe('ImportModelModal', () => {
     fireEvent.click(screen.getByTestId('submit-csv'));
     expect(setIsImportModalOpen).toHaveBeenCalledWith(false);
     expect(screen.getByTestId('modal-Import CSV')).toBeInTheDocument();
+  });
+
+  it('subscribes to operations-center before firing the import request for url', async () => {
+    render(<ImportModelModal isImportModalOpen={true} setIsImportModalOpen={vi.fn()} />);
+    fireEvent.click(screen.getByTestId('submit-url'));
+    await Promise.resolve();
+
+    const onCallOrder = mockOn.mock.invocationCallOrder[0];
+    const reqCallOrder = importModelReq.mock.invocationCallOrder[0];
+    expect(onCallOrder).toBeLessThan(reqCallOrder);
+  });
+
+  it('subscribes to operations-center before firing the import request for file', async () => {
+    render(<ImportModelModal isImportModalOpen={true} setIsImportModalOpen={vi.fn()} />);
+    fireEvent.click(screen.getByTestId('submit-file'));
+    await Promise.resolve();
+
+    const onCallOrder = mockOn.mock.invocationCallOrder[0];
+    const reqCallOrder = importModelReq.mock.invocationCallOrder[0];
+    expect(onCallOrder).toBeLessThan(reqCallOrder);
+  });
+
+  it('unsubscribes from operations-center on import request failure for url', async () => {
+    const unsubscribe = vi.fn();
+    mockOn.mockReturnValue({ unsubscribe });
+    importModelReq.mockReturnValue({ unwrap: () => Promise.reject(new Error('failed')) });
+
+    render(<ImportModelModal isImportModalOpen={true} setIsImportModalOpen={vi.fn()} />);
+    fireEvent.click(screen.getByTestId('submit-url'));
+    await Promise.resolve();
+
+    expect(unsubscribe).toHaveBeenCalled();
+  });
+
+  it('unsubscribes from operations-center on import request failure for file', async () => {
+    const unsubscribe = vi.fn();
+    mockOn.mockReturnValue({ unsubscribe });
+    importModelReq.mockReturnValue({ unwrap: () => Promise.reject(new Error('failed')) });
+
+    render(<ImportModelModal isImportModalOpen={true} setIsImportModalOpen={vi.fn()} />);
+    fireEvent.click(screen.getByTestId('submit-file'));
+    await Promise.resolve();
+
+    expect(unsubscribe).toHaveBeenCalled();
+  });
+
+  it('renders the import result when the register event is received for url', async () => {
+    const unsubscribe = vi.fn();
+    mockOn.mockReturnValue({ unsubscribe });
+    render(<ImportModelModal isImportModalOpen={true} setIsImportModalOpen={vi.fn()} />);
+    fireEvent.click(screen.getByTestId('submit-url'));
+    await waitFor(() => expect(screen.getByTestId('loading')).toBeInTheDocument());
+
+    const handler = mockOn.mock.calls[0][1];
+
+    handler({
+      data: {
+        event: {
+          action: 'register',
+          metadata: { ModelImportMessage: 'ok', ModelDetails: {} },
+        },
+      },
+    });
+    await waitFor(() => expect(screen.queryByTestId('loading')).not.toBeInTheDocument());
+
+    expect(screen.getByTestId('import-messages')).toBeInTheDocument();
+    expect(screen.getByTestId('imported-section')).toBeInTheDocument();
+    expect(unsubscribe).toHaveBeenCalled();
+  });
+
+  it('renders the import result when the register event is received for file', async () => {
+    const unsubscribe = vi.fn();
+    mockOn.mockReturnValue({ unsubscribe });
+    render(<ImportModelModal isImportModalOpen={true} setIsImportModalOpen={vi.fn()} />);
+    fireEvent.click(screen.getByTestId('submit-file'));
+    await waitFor(() => expect(screen.getByTestId('loading')).toBeInTheDocument());
+
+    const handler = mockOn.mock.calls[0][1];
+
+    handler({
+      data: {
+        event: {
+          action: 'register',
+          metadata: { ModelImportMessage: 'ok', ModelDetails: {} },
+        },
+      },
+    });
+
+    await waitFor(() => expect(screen.queryByTestId('loading')).not.toBeInTheDocument());
+    expect(screen.getByTestId('import-messages')).toBeInTheDocument();
+    expect(screen.getByTestId('imported-section')).toBeInTheDocument();
+    expect(unsubscribe).toHaveBeenCalled();
   });
 });
