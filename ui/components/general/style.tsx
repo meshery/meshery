@@ -322,9 +322,9 @@ export const ListIconSide = styled(ListItemIcon, {
   shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed',
 })(({ isDrawerCollapsed }: { isDrawerCollapsed?: boolean }) => ({
   padding: '0',
-  minWidth: isDrawerCollapsed ? 'auto' : '40px', 
+  minWidth: isDrawerCollapsed ? 'auto' : '40px',
   justifyContent: isDrawerCollapsed ? 'center' : 'flex-start',
-  marginRight: isDrawerCollapsed ? '0px' : '0px', 
+  marginRight: isDrawerCollapsed ? '0px' : '0px',
 }));
 
 export const HiddenText = styled(ListItemText)(({ drawerCollapsed, theme }) => ({
