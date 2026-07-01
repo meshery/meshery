@@ -438,7 +438,7 @@ describe('createHandleClone', () => {
     clone('f-1', 'flt');
     await flush();
     expect(cloneFilter).toHaveBeenCalledWith({
-      body: JSON.stringify({ name: 'flt (Copy)' }),
+      body: { name: 'flt (Copy)' },
       filterID: 'f-1',
     });
     expect(notify).toHaveBeenCalledWith({

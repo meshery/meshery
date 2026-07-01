@@ -323,7 +323,7 @@ export function createHandlePublish({
 }
 
 type CreateHandleCloneArgs = {
-  cloneFilter: (_args: { body: string; filterID: string }) => { unwrap: () => Promise<any> };
+  cloneFilter: (_args: { body: any; filterID: string }) => { unwrap: () => Promise<any> };
   notify: Notify;
   handleError: ErrorHandler;
 };
