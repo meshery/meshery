@@ -41,10 +41,13 @@
 
 function HideToggleFunction() {
     var hide = document.getElementById("hiddendiv");
-    if (hide.style.display === "block") {
-        hide.style.display = "none";
-    } else {
-        hide.style.display = "block";
+    
+    if (hide) {
+        if (hide.style.display === "block") {
+            hide.style.display = "none";
+        } else {
+            hide.style.display = "block";
+        }
     }
 }
 
