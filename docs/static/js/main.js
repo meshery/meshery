@@ -72,7 +72,14 @@ getcodeelement.each(function (i) {
     $(this).after(clipButton);
 });
 
-var clipboard = new Clipboard('.clipbtn');
+var clipboard = new Clipboard('.clipbtn', {
+    text: function(trigger) {
+        var el = trigger.closest('.highlight');
+        var content = el ? el.querySelector('.clipboardjs') : null;
+        var text = content ? content.textContent : '';
+        return text.replace(/\$ /gi, '');
+    }
+});
 
 /* Change copy icon to check icon when successfully copied*/
 clipboard.on("success", (e) => {
