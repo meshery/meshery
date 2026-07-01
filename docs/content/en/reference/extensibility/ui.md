@@ -1,6 +1,7 @@
 ---
 title: "Extensibility: UI"
 description: Meshery offers support for more adapters than any other project or product in the world. Meshery UI has a number of extension points that allow users to customize their experience with third-party plugins.
+categories: [extensibility]
 aliases:
 - /extensibility/ui
 ---

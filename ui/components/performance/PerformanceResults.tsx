@@ -3,7 +3,6 @@ import MUIDataTable from '@sistent/mui-datatables';
 import Moment from 'react-moment';
 import CustomToolbarSelect from '../CustomToolbarSelect';
 import MesheryChart from '../MesheryChart';
-import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import GenericModal from '../shared/Modal/GenericModal';
 import { Info as InfoIcon, Reply as ReplyIcon } from '@/assets/icons';
 import NodeDetails from './NodeDetails';
@@ -359,11 +358,6 @@ function ResultChart({ result, handleTabChange, tabValue }) {
   const row = result.runnerResults;
   if (!row) return <div />;
 
-  const boardConfig = result.serverBoardConfig;
-  const serverMetrics = result.serverMetrics;
-  const startTime = new Date(row.StartTime || result.testStartTime);
-  const endTime = new Date(startTime.getTime() + (row.ActualDuration ?? 0) / 1000000);
-
   return (
     <Paper
       style={{
@@ -385,20 +379,6 @@ function ResultChart({ result, handleTabChange, tabValue }) {
               data={[result && result.runnerResults ? result.runnerResults : {}]}
             />
           </div>
-          {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
-            <div>
-              <GrafanaCustomCharts
-                boardPanelConfigs={[boardConfig]}
-                // @ts-ignore
-                boardPanelData={[serverMetrics]}
-                startDate={startTime}
-                from={startTime.getTime().toString()}
-                endDate={endTime}
-                to={endTime.getTime().toString()}
-                liveTail={false}
-              />
-            </div>
-          )}
         </div>
       ) : tabValue == 1 ? (
         <div>
@@ -418,10 +398,6 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }) {
   const row = result.runnerResults;
   if (!row) return <div />;
 
-  const boardConfig = result.serverBoardConfig;
-  const serverMetrics = result.serverMetrics;
-  const startTime = new Date(row.StartTime || result.testStartTime);
-  const endTime = new Date(startTime.getTime() + (row.ActualDuration ?? 0) / 1000000);
   return (
     <Paper
       style={{
@@ -454,20 +430,6 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }) {
               data={[result && result.runnerResults ? result.runnerResults : {}]}
             />
           </div>
-          {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
-            <div>
-              <GrafanaCustomCharts
-                boardPanelConfigs={[boardConfig]}
-                // @ts-ignore
-                boardPanelData={[serverMetrics]}
-                startDate={startTime}
-                from={startTime.getTime().toString()}
-                endDate={endTime}
-                to={endTime.getTime().toString()}
-                liveTail={false}
-              />
-            </div>
-          )}
         </div>
       ) : (
         <div />

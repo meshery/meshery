@@ -1,6 +1,7 @@
 ---
 title: "Extensibility: Build-time"
 description: System integrators can supply build-time configuration, data, packages, and other extensions to Meshery's container image.
+categories: [extensibility]
 aliases:
 - /extensibility/build-time
 ---
