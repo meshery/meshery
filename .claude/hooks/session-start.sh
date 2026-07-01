@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
-# SessionStart hook — two jobs for ephemeral Claude-Code-on-the-web sessions:
+# SessionStart hook — three jobs for ephemeral Claude-Code-on-the-web sessions:
 #
 #   1. Provision the meshery/schemas source-of-truth repo (and, optionally, the
 #      other adjacent coordination repos) as siblings of this repo so the
 #      MANDATED schema-first workflow and `consumer-audit` are actually
 #      runnable.
-#   2. Surface the GitHub tooling policy into the session (see the echo near the
+#   2. Install the Meshery UI's npm dependencies so vitest unit tests and eslint
+#      are ready to run immediately (a fresh web container ships without
+#      ui/node_modules).
+#   3. Surface the GitHub tooling policy into the session (see the echo near the
 #      end) so every web run uses the right tool for each GitHub operation.
 #
 # Why job 1 exists: meshery-cloud is schema-driven — wire/DB constructs are
@@ -17,8 +20,8 @@
 # Persistence: this file is committed to the repo, so every fresh web session
 # (which re-clones meshery-cloud) loads and runs it — it is NOT in ~/.claude.
 #
-# Best-effort and non-fatal: a clone failure prints a warning to stderr but
-# never blocks the session.
+# Best-effort and non-fatal: a clone or install failure prints a warning to
+# stderr but never blocks the session.
 set -uo pipefail
 
 # Only meaningful in the remote (web) environment, where the siblings start
@@ -64,6 +67,13 @@ if command -v gh >/dev/null 2>&1; then
   # Prefer the primary email from the API; fall back to GitHub's verified
   # noreply address which every developer already has on their account.
   _gh_email=$(gh api user/emails --jq '.[] | select(.primary==true) | .email' 2>/dev/null | head -1 || true)
+  # gh can emit an API error blob (not an email) on repo-scoped tokens that
+  # cannot read user/emails; reject anything that isn't a plausible address so
+  # the noreply fallback below is used instead of a garbage git identity.
+  case "$_gh_email" in
+    *@*.*) ;;
+    *) _gh_email="" ;;
+  esac
   if [ -z "$_gh_email" ] && [ -n "$_gh_id" ] && [ -n "$_gh_login" ]; then
     _gh_email="${_gh_id}+${_gh_login}@users.noreply.github.com"
   fi
@@ -127,5 +137,19 @@ for slug in "${REPOS[@]}"; do
     echo "[session-start] WARNING: could not clone $slug by any method (gh/https/ssh) — schema-first changes to constructs it owns will need it cloned manually, e.g.: git clone https://github.com/$slug.git ../$name" >&2
   fi
 done
+
+# Install the Meshery UI's npm dependencies so vitest unit tests and eslint are
+# ready to run immediately. Mirrors the `ui` half of `make ui-setup` (a plain
+# `npm install` in ./ui); kept as a direct npm call rather than shelling out to
+# make so it stays robust regardless of the Makefile's node-version check.
+# Best-effort: a failure warns but never blocks the session.
+if [ -d "$repo_root/ui" ]; then
+  echo "[session-start] installing Meshery UI dependencies (ui/)"
+  if (cd "$repo_root/ui" && npm install --no-audit --no-fund 1>&2); then
+    echo "[session-start] UI dependencies ready"
+  else
+    echo "[session-start] WARNING: 'npm install' in ui/ failed — run 'cd ui && npm install' (or 'make ui-setup') manually before running UI tests/linters." >&2
+  fi
+fi
 
 exit 0
