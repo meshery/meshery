@@ -7,6 +7,7 @@ import ConnectCluster from './charts/ConnectCluster';
 import { ErrorContainer, HoneycombRoot } from './style';
 import { ErrorIcon, Typography, useTheme, type Theme } from '@sistent/sistent';
 import { useSelector } from 'react-redux';
+import type { RootState } from '../../store';
 
 const ErrorDisplay = ({ theme }: { theme: Theme }) => (
   <ErrorContainer>
@@ -26,7 +27,7 @@ const ErrorDisplay = ({ theme }: { theme: Theme }) => (
 );
 
 const Overview = ({ isEditMode }: { isEditMode?: boolean }) => {
-  const { k8sConfig, selectedK8sContexts } = useSelector((state) => state.ui);
+  const { k8sConfig, selectedK8sContexts } = useSelector((state: RootState) => state.ui);
   const clusterIds = useMemo(
     () => getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig),
     [k8sConfig, selectedK8sContexts],
