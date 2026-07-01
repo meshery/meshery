@@ -169,12 +169,23 @@ describe('KubernetesConnectionStatsChart', () => {
     expect(screen.getByText('KUBERNETES CLUSTER STATUS')).toBeInTheDocument();
   });
 
-  it('shows a loading indicator while connections are being fetched', () => {
+  it('shows a loading indicator on the initial load', () => {
     connectionsQueryReturn = { isFetching: true, isLoading: true };
     render(<KubernetesConnectionStatsChart />);
     expect(screen.getByTestId('loading-container')).toBeInTheDocument();
     expect(screen.getByTestId('circular-progress')).toBeInTheDocument();
     expect(screen.queryByTestId('connect-cluster')).not.toBeInTheDocument();
+  });
+
+  it('keeps showing the chart during a background refetch instead of the loading indicator', () => {
+    connectionsQueryReturn = {
+      data: { connections: [{ status: 'connected' }] },
+      isFetching: true,
+      isLoading: false,
+    };
+    render(<KubernetesConnectionStatsChart />);
+    expect(screen.queryByTestId('loading-container')).not.toBeInTheDocument();
+    expect(screen.getByTestId('bb-chart')).toBeInTheDocument();
   });
 
   it('shows the error fallback when the connections query fails', () => {
