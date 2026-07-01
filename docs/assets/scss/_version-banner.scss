@@ -1,0 +1,114 @@
+:root {
+  --version-banner-height: 0px;
+}
+
+.version-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.55rem 2.5rem 0.55rem 1rem;
+  background-color: #EBC017;
+  color: #1a1a1a;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.4;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+  &__icon {
+    flex-shrink: 0;
+    font-size: 1rem;
+  }
+
+  &__link {
+    color: #1a1a1a;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    margin-left: 0.25rem;
+
+    &:hover {
+      color: #000;
+      text-decoration-thickness: 2px;
+    }
+  }
+
+  &__dismiss {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #1a1a1a;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.15s ease;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+body.has-version-banner {
+  --version-banner-height: 2.4rem;
+
+  @media (max-width: 37.5em) {
+    --version-banner-height: 3rem;
+  }
+}
+
+body.has-version-banner header {
+  top: var(--version-banner-height);
+}
+
+body.has-version-banner .navbar {
+  top: var(--version-banner-height);
+}
+
+body.has-version-banner .main-container {
+  padding-top: calc(var(--navbar-height) + var(--version-banner-height));
+}
+
+body.has-version-banner .breadcrumb {
+  margin-top: calc(var(--navbar-height) + var(--version-banner-height));
+}
+
+body.has-version-banner .left-container {
+  top: calc(var(--navbar-height) + var(--version-banner-height));
+  margin-top: calc(var(--navbar-height) + var(--version-banner-height));
+  height: calc(100vh - var(--navbar-height) - var(--version-banner-height));
+}
+
+body.has-version-banner .sidebar-container {
+  height: calc(100vh - var(--navbar-height) - var(--version-banner-height) - 3vh);
+}
+
+body.has-version-banner .content-table {
+  top: calc(var(--navbar-height) + var(--version-banner-height) + 5rem);
+  max-height: calc(100vh - var(--navbar-height) - var(--version-banner-height) - 6rem);
+}
+
+html.has-version-banner {
+  scroll-padding-top: calc(var(--navbar-height) + var(--version-banner-height));
+}
+
+body.has-version-banner #main_navbar {
+  @media (max-width: 1200px) {
+    top: calc(var(--navbar-height) + var(--version-banner-height));
+  }
+
+  @media (max-width: 600px) {
+    top: calc(var(--navbar-height) - 2.5rem + var(--version-banner-height));
+  }
+}

@@ -1,0 +1,38 @@
+{{/*
+  Version banner partial – shows a dismissible warning when the site is
+  built as an archived version (archived_version = true in hugo.toml).
+
+  For pre-built static snapshots (v0.8, v0.9), the banner is injected
+  client-side by static/js/main.js which those pages already load.
+*/}}
+
+{{ if .Site.Params.archived_version }}
+  {{ $latestUrl := .Site.Params.url_latest_version | default "https://docs.meshery.io" }}
+
+  <div class="version-banner" id="version-banner" role="alert">
+    <span class="version-banner__icon" aria-hidden="true">&#9888;</span>
+    <span>
+      You are not viewing the latest version of the documentation.
+      <a class="version-banner__link" href="{{ $latestUrl }}">
+        View the latest version &rarr;
+      </a>
+    </span>
+    <button
+      class="version-banner__dismiss"
+      aria-label="Dismiss version warning"
+      onclick="this.parentElement.remove(); document.body.classList.remove('has-version-banner'); document.documentElement.classList.remove('has-version-banner'); sessionStorage.setItem('version-banner-dismissed','1');"
+    >&times;</button>
+  </div>
+
+  <script>
+    (function () {
+      if (sessionStorage.getItem('version-banner-dismissed') === '1') {
+        var b = document.getElementById('version-banner');
+        if (b) b.remove();
+      } else {
+        document.body.classList.add('has-version-banner');
+        document.documentElement.classList.add('has-version-banner');
+      }
+    })();
+  </script>
+{{ end }}
