@@ -388,14 +388,8 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		// Retrieve the persisted connection to validate its kind against the request.
 		existingConn, statusCode, err := provider.GetConnectionByID(token, connectionID)
 		if err != nil {
-			h.log.Error(ErrRetrieveData(err))
-			writeMeshkitError(w, ErrRetrieveData(err), statusCode)
-			return
-		}
-		if existingConn == nil {
-			err := fmt.Errorf("connection not found")
-			h.log.Error(ErrRetrieveData(err))
-			writeMeshkitError(w, ErrRetrieveData(err), http.StatusNotFound)
+			h.log.Error(err)
+			writeMeshkitError(w, err, statusCode)
 			return
 		}
 		if existingConn.Kind != "kubernetes" {
