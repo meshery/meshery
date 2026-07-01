@@ -120,6 +120,8 @@ describe('user endpoints', () => {
     expect(mod.useGetAllUsersQuery).toBeTypeOf('function');
     expect(mod.useRemoveUserFromTeamMutation).toBeTypeOf('function');
     expect(mod.useGetSystemVersionQuery).toBeTypeOf('function');
+    expect(mod.useInstallProviderExtensionMutation).toBeTypeOf('function');
+    expect(mod.useRemoveProviderExtensionMutation).toBeTypeOf('function');
     expect(mod.useGetUserProfileSummaryByIdQuery).toBeTypeOf('function');
     expect(mod.useGetUserByIdQuery).toBeTypeOf('function');
     expect(mod.useGetUsersForOrgQuery).toBeTypeOf('function');
@@ -365,6 +367,35 @@ describe('user endpoints', () => {
     await store.dispatch(api.endpoints.getSystemVersion.initiate({}));
     const req = fetchMock.mock.calls[0][0] as Request;
     expect(req.url).toContain('/api/system/version');
+  });
+
+  it('installProviderExtension POSTs /api/provider/extension/install with the extension payload', async () => {
+    fetchMock.mockResolvedValue(okResponse({}));
+    const { api, store } = await setupStore();
+    const body = {
+      extType: 'navigator',
+      packageUrl: 'https://example.com/provider-meshery.tar.gz',
+      extensionMetadata: { title: 'Kanvas' },
+    };
+    await store.dispatch(api.endpoints.installProviderExtension.initiate(body));
+    const req = fetchMock.mock.calls[0][0] as Request;
+    expect(req.method).toBe('POST');
+    expect(req.url).toContain('/api/provider/extension/install');
+    expect(JSON.parse(await req.text())).toEqual(body);
+  });
+
+  it('removeProviderExtension POSTs /api/provider/extension/remove with the extension identity', async () => {
+    fetchMock.mockResolvedValue(okResponse({}));
+    const { api, store } = await setupStore();
+    const body = {
+      extType: 'navigator',
+      title: 'Kanvas',
+    };
+    await store.dispatch(api.endpoints.removeProviderExtension.initiate(body));
+    const req = fetchMock.mock.calls[0][0] as Request;
+    expect(req.method).toBe('POST');
+    expect(req.url).toContain('/api/provider/extension/remove');
+    expect(JSON.parse(await req.text())).toEqual(body);
   });
 
   it('handleFeedbackFormSubmission POSTs the extensions feedback URL', async () => {

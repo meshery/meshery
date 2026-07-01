@@ -10,15 +10,15 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
 	core "github.com/meshery/schemas/models/core"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 )
 
 var tempProfileID = "a2a555cf-ae16-479c-b5d2-a35656ba741e"
 
 // PerformanceResultsAPIResponse is a local struct for testing unmarshal errors.
 //
-// The JSON tag mirrors the real models.PerformanceResultsAPIResponse.PageSize
+// The JSON tag mirrors the real perfprofile.PerformanceResultPage.PageSize
 // tag (`pageSize`) so the error message produced by json.Unmarshal references
 // the same field name the production code would surface.
 type PerformanceResultsAPIResponse struct {
@@ -36,7 +36,7 @@ func TestResultCmd(t *testing.T) {
 	currDir := filepath.Dir(filename)
 	testToken := filepath.Join(currDir, "fixtures", "auth.json")
 
-	profileURL := testContext.BaseURL + "/api/user/performance/profiles"
+	profileURL := testContext.BaseURL + "/api/performance/profiles"
 	resultURL := testContext.BaseURL + "/api/user/performance/profiles/" + tempProfileID + "/results"
 
 	listTests := []utils.MesheryMultiURLCommamdTest{
@@ -169,9 +169,9 @@ func TestProfilesToStringArraysHandlesMissingLoadGenerators(t *testing.T) {
 	t.Parallel()
 
 	id := core.Uuid(uuid.Nil)
-	data := profilesToStringArrays([]models.PerformanceProfile{
+	data := profilesToStringArrays([]perfprofile.PerformanceProfile{
 		{
-			ID:             &id,
+			ID:             id,
 			Name:           "test-profile",
 			TotalResults:   3,
 			LoadGenerators: nil,

@@ -1,20 +1,11 @@
 import React from 'react';
 import CustomErrorMessage from '../components/ErrorPage';
-import { NoSsr } from '@sistent/sistent';
-import Head from 'next/head';
-import { usePageTitle } from '@/utils/hooks';
+import { MesheryPage } from '../components/MesheryPage';
 
-const Error = () => {
-  usePageTitle('Error');
-
-  return (
-    <NoSsr>
-      <Head>
-        <title>404 - Page Not Found </title>
-      </Head>
-      <CustomErrorMessage />
-    </NoSsr>
-  );
-};
+const Error = () => (
+  <MesheryPage title="Error" headTitle="404 - Page Not Found" noSuffix>
+    <CustomErrorMessage />
+  </MesheryPage>
+);
 
 export default Error;

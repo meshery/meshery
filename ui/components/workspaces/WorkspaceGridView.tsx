@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
-  ChevronLeft,
-  ChevronRight,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   Grid2,
   L5DeleteIcon,
   Modal,
@@ -128,7 +128,10 @@ const WorkspaceGridView = ({
           onChange={debounce((_, page) => setPage(page - 1), 150)}
           boundaryCount={3}
           renderItem={(item) => (
-            <PaginationItem slots={{ previous: ChevronLeft, next: ChevronRight }} {...item} />
+            <PaginationItem
+              slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
+              {...item}
+            />
           )}
         />
       </Grid2>

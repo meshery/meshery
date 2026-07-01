@@ -1,7 +1,6 @@
 /**
- * @generated SignedSource<<00a7efd76cb1577f21654847337968b9>>
+ * @generated SignedSource<<70fc80cdd8621839c5bcf3dc3558ee6e>>
  * @lightSyntaxTransform
- * @nogrep
  */
 
 /* tslint:disable */
@@ -35,8 +34,8 @@ export type ConfigurationSubscription$data = {
         readonly filter_resource: string;
         readonly id: string;
         readonly name: string;
+        readonly owner: string;
         readonly updated_at: string | null | undefined;
-        readonly user_id: string;
         readonly visibility: string;
       } | null | undefined> | null | undefined;
       readonly page: number;
@@ -53,13 +52,13 @@ export type ConfigurationSubscription$data = {
         readonly errmsg: string | null | undefined;
         readonly id: string;
         readonly name: string;
+        readonly owner: string;
         readonly pattern_file: string;
         readonly type: {
           readonly String: string;
           readonly Valid: boolean;
         } | null | undefined;
         readonly updated_at: string | null | undefined;
-        readonly user_id: string;
         readonly visibility: string;
       } | null | undefined> | null | undefined;
       readonly total_count: number;
@@ -121,7 +120,7 @@ v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "user_id",
+  "name": "owner",
   "storageKey": null
 },
 v8 = {
@@ -180,9 +179,9 @@ v12 = [
         "name": "patterns",
         "plural": false,
         "selections": [
-          (v2/*: any*/),
-          (v3/*: any*/),
-          (v4/*: any*/),
+          (v2/*:: as any*/),
+          (v3/*:: as any*/),
+          (v4/*:: as any*/),
           {
             "alias": null,
             "args": null,
@@ -191,9 +190,9 @@ v12 = [
             "name": "patterns",
             "plural": true,
             "selections": [
-              (v5/*: any*/),
-              (v6/*: any*/),
-              (v7/*: any*/),
+              (v5/*:: as any*/),
+              (v6/*:: as any*/),
+              (v7/*:: as any*/),
               {
                 "alias": null,
                 "args": null,
@@ -201,8 +200,8 @@ v12 = [
                 "name": "pattern_file",
                 "storageKey": null
               },
-              (v8/*: any*/),
-              (v9/*: any*/),
+              (v8/*:: as any*/),
+              (v9/*:: as any*/),
               {
                 "alias": null,
                 "args": null,
@@ -217,8 +216,8 @@ v12 = [
                 "name": "errmsg",
                 "storageKey": null
               },
-              (v10/*: any*/),
-              (v11/*: any*/),
+              (v10/*:: as any*/),
+              (v11/*:: as any*/),
               {
                 "alias": null,
                 "args": null,
@@ -258,9 +257,9 @@ v12 = [
         "name": "filters",
         "plural": false,
         "selections": [
-          (v2/*: any*/),
-          (v3/*: any*/),
-          (v4/*: any*/),
+          (v2/*:: as any*/),
+          (v3/*:: as any*/),
+          (v4/*:: as any*/),
           {
             "alias": null,
             "args": null,
@@ -269,8 +268,8 @@ v12 = [
             "name": "filters",
             "plural": true,
             "selections": [
-              (v5/*: any*/),
-              (v6/*: any*/),
+              (v5/*:: as any*/),
+              (v6/*:: as any*/),
               {
                 "alias": null,
                 "args": null,
@@ -285,11 +284,11 @@ v12 = [
                 "name": "filter_resource",
                 "storageKey": null
               },
-              (v8/*: any*/),
-              (v9/*: any*/),
-              (v7/*: any*/),
-              (v10/*: any*/),
-              (v11/*: any*/)
+              (v8/*:: as any*/),
+              (v9/*:: as any*/),
+              (v7/*:: as any*/),
+              (v10/*:: as any*/),
+              (v11/*:: as any*/)
             ],
             "storageKey": null
           }
@@ -303,37 +302,37 @@ v12 = [
 return {
   "fragment": {
     "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
+      (v0/*:: as any*/),
+      (v1/*:: as any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "ConfigurationSubscription",
-    "selections": (v12/*: any*/),
+    "selections": (v12/*:: as any*/),
     "type": "Subscription",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
+      (v1/*:: as any*/),
+      (v0/*:: as any*/)
     ],
     "kind": "Operation",
     "name": "ConfigurationSubscription",
-    "selections": (v12/*: any*/)
+    "selections": (v12/*:: as any*/)
   },
   "params": {
-    "cacheID": "114d3745286afe9f521748a330799adc",
+    "cacheID": "73c2ec47656f6e3d79d21162c80f8d78",
     "id": null,
     "metadata": {},
     "name": "ConfigurationSubscription",
     "operationKind": "subscription",
-    "text": "subscription ConfigurationSubscription(\n  $patternSelector: PageFilter!\n  $filterSelector: PageFilter!\n) {\n  configuration: subscribeConfiguration(patternSelector: $patternSelector, filterSelector: $filterSelector) {\n    patterns {\n      page\n      page_size\n      total_count\n      patterns {\n        id\n        name\n        user_id\n        pattern_file\n        visibility\n        catalog_data\n        canSupport\n        errmsg\n        created_at\n        updated_at\n        type {\n          String\n          Valid\n        }\n      }\n    }\n    filters {\n      page\n      page_size\n      total_count\n      filters {\n        id\n        name\n        filter_file\n        filter_resource\n        visibility\n        catalog_data\n        user_id\n        created_at\n        updated_at\n      }\n    }\n  }\n}\n"
+    "text": "subscription ConfigurationSubscription(\n  $patternSelector: PageFilter!\n  $filterSelector: PageFilter!\n) {\n  configuration: subscribeConfiguration(patternSelector: $patternSelector, filterSelector: $filterSelector) {\n    patterns {\n      page\n      page_size\n      total_count\n      patterns {\n        id\n        name\n        owner\n        pattern_file\n        visibility\n        catalog_data\n        canSupport\n        errmsg\n        created_at\n        updated_at\n        type {\n          String\n          Valid\n        }\n      }\n    }\n    filters {\n      page\n      page_size\n      total_count\n      filters {\n        id\n        name\n        filter_file\n        filter_resource\n        visibility\n        catalog_data\n        owner\n        created_at\n        updated_at\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7aa8cbbbeec029fbf5f68fff16f3888b";
+(node as any).hash = "8cdd56b8dfa59bae588c090b04049521";
 
 export default node;

@@ -166,7 +166,7 @@ const AdapterCategoryCard: React.FC<AdapterCategoryCardProps> = ({
           )}
         {cat === 4 && renderYamlDialog(cat, false)}
         {cat !== 3 && (
-          <Box width={'100%'}>
+          <Box sx={{ width: '100%' }}>
             <IconButton
               aria-label="delete"
               ref={(ch) => (delIconEles.current[cat] = ch)}

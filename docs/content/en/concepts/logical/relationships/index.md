@@ -5,7 +5,7 @@ aliases:
 - /concepts/relationships/
 ---
 
-Meshery Relationships characterize how [components](./components) are connected and interact with each other. Relationships are defined within [models](./models) to aid in structuring the interrelationships between one or more components in a [design](./designs) to further in comprehending the overall structure and dependencies within managed systems.
+Meshery Relationships characterize how [components]({{< ref "components.md" >}}) are connected and interact with each other. Relationships are defined within [models]({{< ref "models/index.md" >}}) to aid in structuring the interrelationships between one or more components in a [design]({{< ref "designs.md" >}}) to further in comprehending the overall structure and dependencies within managed systems.
 
 Meshery recognizes that relationships exist in various forms and that the existence of a relationship might be interdependent upon the existence (or absence) of another relationship. To support this complexity, Meshery relationships are highly expressive, characterizing the nature of interaction of interconnected components no matter their genealogy.
 
@@ -17,7 +17,7 @@ Meshery recognizes that relationships exist in various forms and that the existe
 - **Increased Flexibility:** The use of selectors, actions, and operators provides flexibility in defining and managing relationships.
 
 {{% alert color="dark" title="Contributor Guide to Meshery Relationships" %}}
-If you want to create a new relationship definition or modify existing relationship definitions, see the [Contributing to Meshery Relationships](/project/contributing/contributing-relationships) guide.
+If you want to create a new relationship definition or modify existing relationship definitions, see the [Contributing to Meshery Relationships]({{< ref "project/contributing/models/relationships" >}}) guide.
 {{% /alert %}}
 
 ## Types of Relationships
@@ -29,7 +29,7 @@ Meshery supports different types of relationships to cater to various use cases:
 - **Edge Relationships:** These represent relationships that are visually depicted as edges connecting components in Meshery. Edge relationships are used to define how components interact with each other, such as network connections, bindings, or permissions. They are also used to identify interdependencies between components.
 - **TagSets Relationships:** These represent relationships between components of same Labels or Annotations key/value pairs. Labels and Annotations are two different types of Tags. Labels are often used to identify components and are visible on the design canvas. Annotations are often used to provide additional information about components.
  
-Relationships are categorized into different kinds, types, and subtypes, so that they can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpreted by Meshery UI (or other [extensions](/extensibility/extensions)) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of ways in which relationships are represented in Meshery.
+Relationships are categorized into different kinds, types, and subtypes, so that they can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpreted by Meshery UI (or other [extensions]({{< ref "extensions/_index.md" >}})) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of ways in which relationships are represented in Meshery.
 
 
 <!-- Broadly, here is a list of the different types of relationships that Meshery supports:
@@ -331,7 +331,7 @@ Beyond this automatic filtering, relationship evaluation can also be selectively
 
 ### How Relationships are formed?
 
-1. You can create relationships manually by using the edge handles, bringing related components to close proximity or dragging a component inside other component. It may happen that, you created a relationship from the UI, but the <a href='/concepts/logical/policies'>Policy Engine</a> rejected or overrode the decision if all the constraints for a particular relationship are not satisfied.
+1. You can create relationships manually by using the edge handles, bringing related components to close proximity or dragging a component inside other component. It may happen that, you created a relationship from the UI, but the <a href='{{< ref "concepts/logical/policies/index.md" >}}'>Policy Engine</a> rejected or overrode the decision if all the constraints for a particular relationship are not satisfied.
 
 2. Relationships are automatically created when a component's configuration is modified in a way that relationship criteria is satisfied.
 
@@ -341,7 +341,7 @@ To explore an example of this behavior, see the [Example Edge-Permission Relatio
 
 When the relationships are created by the user, almost in all cases the config of the involved components are patched. To see the specifics of patching refer [Patch Strategies](#patch-strategies).
 
-Designs are evaluated by the [Policy Engine](/concepts/logical/policies) for potential relationships.
+Designs are evaluated by the [Policy Engine]({{< ref "concepts/logical/policies/index.md" >}}) for potential relationships.
 
 <!-- Explain how and what configs get patched when relationships are created -->
 <!-- Explain real time evaluation of relationships on -->

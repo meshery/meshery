@@ -71,7 +71,7 @@ jobs:
           driver: docker
           start args: --cni "${{ inputs.k8s_cni }}"
       - name: Checkout Code
-        uses: actions/checkout@master
+        uses: actions/checkout@v6
 
       # Build the image by setting appropriate environmental variables in order to access the image from minikube
       - name: Build the tagged Docker image
@@ -96,7 +96,7 @@ jobs:
           if  [ "${{ inputs.provider }}" = "Meshery" ] && [ "$provider_token" != "" ] ;then
             jq -n --arg token "$provider_token" '{ "meshery-provider": "Meshery", "token": $token }' > ~/.meshery/auth.json
           else
-            echo '{ "meshery-provider": "None", "token": "" }'  > ~/.meshery/auth.json
+            echo '{ "meshery-provider": "Local", "token": "" }'  > ~/.meshery/auth.json
           fi
           chmod 600 ~/.meshery/auth.json
           echo "Meshery provider auth configured"
