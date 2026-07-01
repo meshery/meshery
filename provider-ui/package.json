@@ -28,14 +28,14 @@
     "@rjsf/mui": "^6.6.2",
     "@rjsf/utils": "^6.6.2",
     "@rjsf/validator-ajv8": "^6.6.2",
-    "@sistent/sistent": "^0.21.25",
+    "@sistent/sistent": "^0.21.26",
     "@xstate/react": "^6.1.0",
     "http-proxy": "^1.18.1",
     "next": "^16.2.9",
     "prop-types": "^15.8.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "xstate": "^5.32.2"
+    "xstate": "^5.32.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
