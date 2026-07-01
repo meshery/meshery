@@ -469,7 +469,7 @@ policy-lint:
 	@echo "Formatting Rego files..."
 	@opa fmt --write .
 	@echo "Linting Rego files..."
-	@regal lint --config-file ./server/policies/.regal/config.yaml ./server/meshmodel
+	@regal lint --config-file ./server/policies/.regal/config.yaml ./models/meshery-core/0.7.2/v1.0.0/policies
 
 ## Run Rego policy unit tests using OPA and Go test runner
 policy-test:
