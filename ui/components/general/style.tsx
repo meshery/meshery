@@ -269,10 +269,13 @@ export const SideBarText = styled(ListItemText, {
 })(({ drawerCollapsed }: { drawerCollapsed?: boolean }) => ({
   opacity: drawerCollapsed ? 0 : 1,
   width: drawerCollapsed ? 0 : 'auto',
+  flex: drawerCollapsed ? '0 0 0' : '1 1 auto',
+  minWidth: 0,
   margin: drawerCollapsed ? 0 : undefined,
   overflow: 'hidden',
   whiteSpace: 'nowrap',
-  transition: 'opacity 200ms ease-in-out, width 200ms ease-in-out',
+  textOverflow: 'ellipsis',
+  transition: 'opacity 200ms ease-in-out',
   fontSize: '1rem',
   color: 'inherit',
 }));
