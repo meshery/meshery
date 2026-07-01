@@ -97,7 +97,7 @@
     "hotkeys-js": "^4.0.4",
     "humanize-duration": "^3.33.2",
     "immer": "^11.1.8",
-    "js-yaml": "^5.1.0",
+    "js-yaml": "^5.2.0",
     "lodash": "^4.18.1",
     "moment": "^2.30.1",
     "next": "^16.2.9",
