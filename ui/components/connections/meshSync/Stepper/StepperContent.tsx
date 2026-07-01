@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Checkbox,
   MenuItem,
@@ -27,31 +27,97 @@ import {
   useVerifyAndRegisterConnectionMutation,
 } from '@/rtk-query/connection';
 import { useGetCredentialsQuery } from '@/rtk-query/credentials';
+import { useGetComponentsQuery } from '@/rtk-query/meshModel';
 
-const CONNECTION_TYPES = ['Prometheus Connection', 'Grafana Connection'];
+/**
+ * Represents a single registerable connection type derived from the registry.
+ */
+interface ConnectionType {
+  /** The stable kind value sent to the backend, e.g. "Prometheus" */
+  kind: string;
+  /** The human-readable label shown in the UI, e.g. "Prometheus Connection" */
+  label: string;
+}
 
-const schema = selectCompSchema(
-  CONNECTION_TYPES,
-  'Select one of the available Connection type',
-  'Select type of Connection to register',
-  'selectedConnectionType',
-);
+/** Suffix that all registerable connection component names end with in the registry. */
+const CONNECTION_COMPONENT_SUFFIX = 'Connection';
+
+/**
+ * Derives a stable list of ConnectionType objects from raw registry component data.
+ * Filters to components whose name ends exactly with "Connection", then extracts
+ * the kind by removing that suffix — never by slicing a display label.
+ */
+export const deriveConnectionTypes = (
+  components: { component?: { kind?: string } }[],
+): ConnectionType[] => {
+  if (!Array.isArray(components)) return [];
+
+  const seen = new Set<string>();
+  const result: ConnectionType[] = [];
+
+  for (const comp of components) {
+    const name = comp?.component?.kind ?? '';
+    if (!name.endsWith(CONNECTION_COMPONENT_SUFFIX)) continue;
+
+    // Extract kind by removing the suffix — stable, not derived from a display label.
+    const kind = name.slice(0, name.length - CONNECTION_COMPONENT_SUFFIX.length);
+    if (!kind || seen.has(kind)) continue;
+
+    seen.add(kind);
+    result.push({
+      kind,
+      label: `${kind} Connection`,
+    });
+  }
+
+  return result;
+};
+
 export const SelectConnection = ({ setSharedData, handleNext }) => {
   const formRef = useRef();
   const [registerConnection] = useVerifyAndRegisterConnectionMutation();
 
-  const handleRegisterConnection = async (componentName) => {
+  // Fetch all components whose name contains "Connection" from the registry.
+  // The search param narrows the result set server-side; client-side filtering
+  // then ensures we only keep names that end exactly with "Connection".
+  const {
+    data: componentsData,
+    isLoading: isLoadingComponents,
+    isError: isComponentsError,
+  } = useGetComponentsQuery({
+    params: { pagesize: 'all', search: CONNECTION_COMPONENT_SUFFIX, trim: true },
+  });
+
+  const connectionTypes: ConnectionType[] = useMemo(
+    () => deriveConnectionTypes(componentsData?.components ?? []),
+    [componentsData],
+  );
+
+  // Build the RJSF enum from display labels. The label is only used for display;
+  // kind is looked up from connectionTypes when the user makes a selection.
+  const schema = useMemo(
+    () =>
+      selectCompSchema(
+        connectionTypes.map((ct) => ct.label),
+        'Select one of the available connection types',
+        'Select the type of connection to register',
+        'selectedConnectionType',
+      ),
+    [connectionTypes],
+  );
+
+  const handleRegisterConnection = async (kind: string) => {
     try {
       const payload = {
         body: {
-          kind: componentName,
+          kind,
           status: 'initialize',
         },
       };
 
       const result = await registerConnection(payload).unwrap();
 
-      let schemaObj = {
+      const schemaObj = {
         connection: JsonParse(result?.connection?.schema),
         credential: JsonParse(result?.credential?.schema),
       };
@@ -60,7 +126,7 @@ export const SelectConnection = ({ setSharedData, handleNext }) => {
         ...prevState,
         connection: result,
         schemas: schemaObj,
-        kind: componentName.toLowerCase(),
+        kind: kind.toLowerCase(),
       }));
 
       handleNext();
@@ -74,15 +140,43 @@ export const SelectConnection = ({ setSharedData, handleNext }) => {
   };
 
   const handleChange = (data) => {
-    if (data.selectedConnectionType) {
-      const selectedConnectionType = data.selectedConnectionType;
-      // The selectedConnectionType is the concatentaion of connectionType, ' ' and 'Connection' suffix.
-      // Therefore, when initiating connection we are removing ' ' and suffix so that correct schema is retrieved.
-      handleRegisterConnection(
-        selectedConnectionType?.slice(0, selectedConnectionType.indexOf(' ')),
-      );
+    if (!data.selectedConnectionType) return;
+
+    const selectedLabel: string = data.selectedConnectionType;
+
+    // Look up the stable kind from the registry-derived list.
+    // Never derive kind by slicing the display label.
+    const match = connectionTypes.find((ct) => ct.label === selectedLabel);
+    if (match) {
+      handleRegisterConnection(match.kind);
     }
   };
+
+  if (isLoadingComponents) {
+    return (
+      <StepperContent {...SelectConnectionTypeContent} handleCallback={handleCallback}>
+        <Typography variant="body2">Loading available connection types…</Typography>
+      </StepperContent>
+    );
+  }
+
+  if (isComponentsError && connectionTypes.length === 0) {
+    return (
+      <StepperContent {...SelectConnectionTypeContent} handleCallback={handleCallback}>
+        <Typography variant="body2" color="error">
+          Failed to load connection types. Please try again.
+        </Typography>
+      </StepperContent>
+    );
+  }
+
+  if (connectionTypes.length === 0) {
+    return (
+      <StepperContent {...SelectConnectionTypeContent} handleCallback={handleCallback}>
+        <Typography variant="body2">No connection types are currently available.</Typography>
+      </StepperContent>
+    );
+  }
 
   return (
     <StepperContent {...SelectConnectionTypeContent} handleCallback={handleCallback}>
