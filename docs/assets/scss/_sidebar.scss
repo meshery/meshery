@@ -15,6 +15,8 @@
 
   @media (max-width: 75em) {
     position: fixed;
+    width: min(100vw, var(--sidebar-width));
+    max-width: 100vw;
 
     margin-top: 0;
     margin-right: 0;
@@ -23,6 +25,7 @@
   @media (max-width: 37.5em) {
     top: calc(var(--navbar-height) - 10);
     height: 100vh;
+    width: 100vw;
   }
 
   &--active {
@@ -42,6 +45,11 @@
     background: #121212;
     background: linear-gradient(37deg, rgba(71, 126, 150, 0.52) 0%, rgba(0, 0, 0, 0.81) 12%, rgba(60, 73, 79, 1) 100%);
     box-shadow: var(--box-shadow-primary);
+
+    @media (max-width: 75em) {
+      width: 100%;
+      max-width: 100%;
+    }
   }
   & .icon-container {
     height: fit-content;
@@ -52,7 +60,8 @@
     bottom: 3rem;
     
     @media (max-width: 37.5em) {
-      bottom: 7rem;
+      right: 0.75rem;
+      bottom: 0.75rem;
     }
   }
 }
@@ -115,12 +124,15 @@
     top: var(--navbar-height);
     left: 0;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     z-index: 9;
     transition: 0.5s ease-in-out;
   }
 
   @media (max-width: 37.5em) {
     width: 100%;
+    max-width: 100%;
   }
 
   & .td-sidebar__inner {
