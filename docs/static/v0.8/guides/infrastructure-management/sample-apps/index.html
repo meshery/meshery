@@ -79,9 +79,10 @@
     });
     // Function to handle anchor links
     document.addEventListener('click', function (event) {
-      if (event.target.tagName === 'A' && event.target.getAttribute('href').startsWith('#')) {
-        window.location.hash = event.target.getAttribute('href');
-      }
+      const href = event.target.getAttribute('href');
+        if (event.target.tagName === 'A' && href && href.startsWith('#')) {
+            window.location.hash = href;
+        }
     });
   </script>
 </head>
