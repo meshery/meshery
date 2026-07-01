@@ -130,17 +130,8 @@ export const updateProgress = (progressData) => {
 export const coreMiddleware = (getDefaultMiddleware) =>
   getDefaultMiddleware({
     serializableCheck: {
-      // Ignore these action types
-      ignoredActions: ['core/updateGrafanaConfig', 'core/updatePrometheusConfig'],
-      // Ignore these field paths in all actions
-      ignoredActionPaths: ['payload.grafana.ts', 'payload.prometheus.ts'],
       // Ignore these paths in the state
-      ignoredPaths: [
-        'core.grafana.ts',
-        'core.prometheus.ts',
-        'core.loadTestPref.ts',
-        'core.meshAdaptersts',
-      ],
+      ignoredPaths: ['core.loadTestPref.ts', 'core.meshAdaptersts'],
     },
   });
 

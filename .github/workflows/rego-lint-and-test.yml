@@ -78,7 +78,7 @@ jobs:
         id: opa-test
         run: |
           echo "Running OPA tests..."
-          POLICIES_DIR="./server/meshmodel/meshery-core/0.7.2/v1.0.0/policies"
+          POLICIES_DIR="./models/meshery-core/0.7.2/v1.0.0/policies"
           
           # Ensure that failures in any part of a pipeline are detected
           set -o pipefail
