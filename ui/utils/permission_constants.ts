@@ -152,25 +152,26 @@ const mappedKeys: UiPermissionKeyMap = Object.fromEntries(
 );
 
 // Create legacy keys mapped to schema details
-const legacyKeys = (
-  Object.entries(legacyToPascal) as Array<[string, keyof typeof Keys]>
-).reduce((acc, [legacy, pascal]) => {
-  const keyObj = Keys[pascal];
-  if (!keyObj) {
-    const msg = `Unknown permission key mapping: ${legacy} -> ${pascal}`;
-    if (process.env.NODE_ENV !== 'production') {
-      throw new Error(msg);
+const legacyKeys = (Object.entries(legacyToPascal) as Array<[string, keyof typeof Keys]>).reduce(
+  (acc, [legacy, pascal]) => {
+    const keyObj = Keys[pascal];
+    if (!keyObj) {
+      const msg = `Unknown permission key mapping: ${legacy} -> ${pascal}`;
+      if (process.env.NODE_ENV !== 'production') {
+        throw new Error(msg);
+      }
+      // Keep a visible, non-empty sentinel in production to avoid silent failures.
+      acc[legacy] = { action: `MISSING:${pascal}`, subject: msg };
+      return acc;
     }
-    // Keep a visible, non-empty sentinel in production to avoid silent failures.
-    acc[legacy] = { action: `MISSING:${pascal}`, subject: msg };
+    acc[legacy] = {
+      action: keyObj.id,
+      subject: keyObj.function,
+    };
     return acc;
-  }
-  acc[legacy] = {
-    action: keyObj.id,
-    subject: keyObj.function,
-  };
-  return acc;
-}, {} as UiPermissionKeyMap);
+  },
+  {} as UiPermissionKeyMap,
+);
 
 export const keys = {
   ...mappedKeys,
