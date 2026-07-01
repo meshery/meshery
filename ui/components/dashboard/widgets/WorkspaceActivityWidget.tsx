@@ -2,7 +2,8 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { WorkspaceActivityCard } from '@sistent/sistent';
 import { useGetEventsOfWorkspaceQuery, useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { useSelector } from 'react-redux';
-import type { RootState } from '@/store/store';
+import type { RootState } from '../../../store';
+import WidgetErrorFallback from './WidgetErrorFallback';
 
 type WorkspaceChangeHandler = NonNullable<
   React.ComponentProps<typeof WorkspaceActivityCard>['handleWorkspaceChange']
@@ -10,10 +11,11 @@ type WorkspaceChangeHandler = NonNullable<
 
 const WorkspaceActivityWidget = () => {
   const { organization: currentOrg } = useSelector((state: RootState) => state.ui);
-  const { data: workspaces } = useGetWorkspacesQuery(
-    { orgId: currentOrg?.id },
-    { skip: !currentOrg?.id },
-  );
+  const {
+    data: workspaces,
+    isError: isWorkspacesError,
+    isLoading: isWorkspacesLoading,
+  } = useGetWorkspacesQuery({ orgId: currentOrg?.id }, { skip: !currentOrg?.id });
 
   const workspaceOptions = workspaces?.workspaces ?? [];
   const [selectedWorkspace, setSelectedWorkspace] = useState('');
@@ -46,13 +48,22 @@ const WorkspaceActivityWidget = () => {
     setSelectedWorkspace(String(event.target.value));
   }, []);
 
+  if (isWorkspacesError) {
+    return (
+      <WidgetErrorFallback
+        widgetTitle="Workspace Activity"
+        message="Unable to load your workspaces. Please try again later."
+      />
+    );
+  }
+
   return (
     <WorkspaceActivityCard
       selectedWorkspace={activeWorkspaceId}
       handleWorkspaceChange={handleWorkspaceChange}
       activities={isEventsError ? [] : (events?.data ?? [])}
       workspaces={workspaceOptions}
-      isEventsLoading={isEventsLoading}
+      isEventsLoading={isEventsLoading || isWorkspacesLoading}
       workspacePagePath="/management/workspaces"
     />
   );

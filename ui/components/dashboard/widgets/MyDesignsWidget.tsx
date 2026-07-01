@@ -50,14 +50,17 @@ const cardData = [
 const MyDesignsWidget = ({ iconsProps }: MyDesignsWidgetProps) => {
   const [sortOrder, setSortOrder] = useState(DEFAULT_SORT_ORDER);
   const { data: userData } = useGetLoggedInUserQuery();
-  const { data: patternsData, isFetching: isPatternsFetching } = useGetUserDesignsQuery({
-    expandUser: true,
-    page: 0,
-    pagesize: 7,
-    order: sortOrder,
-    userId: userData?.id,
-    metrics: true,
-  });
+  const { data: patternsData, isFetching: isPatternsFetching } = useGetUserDesignsQuery(
+    {
+      expandUser: true,
+      page: 0,
+      pagesize: 7,
+      order: sortOrder,
+      userId: userData?.id,
+      metrics: true,
+    },
+    { skip: !userData?.id },
+  );
   const theme = useTheme();
 
   const resources = useMemo(

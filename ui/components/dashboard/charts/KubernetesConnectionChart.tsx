@@ -9,12 +9,25 @@ import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
-import { DashboardSection } from '../style';
+import { DashboardSection, LoadingContainer } from '../style';
 import ConnectCluster from './ConnectCluster';
-import { Box, InfoOutlinedIcon, KubernetesIcon, Typography, useTheme } from '@sistent/sistent';
+import {
+  Box,
+  CircularProgress,
+  InfoOutlinedIcon,
+  KubernetesIcon,
+  Typography,
+  useTheme,
+} from '@sistent/sistent';
+import WidgetErrorFallback from '../widgets/WidgetErrorFallback';
 
 export default function KubernetesConnectionStatsChart() {
-  const { data: connectionData } = useGetConnectionsQuery({
+  const {
+    data: connectionData,
+    isFetching,
+    isLoading,
+    isError,
+  } = useGetConnectionsQuery({
     page: 0,
     pagesize: 'all',
     kind: JSON.stringify(['kubernetes']),
@@ -106,6 +119,29 @@ export default function KubernetesConnectionStatsChart() {
       </div>
     </div>
   );
+
+  if (isFetching || isLoading) {
+    return (
+      <DashboardSection>
+        {header}
+        <LoadingContainer>
+          <CircularProgress />
+        </LoadingContainer>
+      </DashboardSection>
+    );
+  }
+
+  if (isError) {
+    return (
+      <DashboardSection>
+        {header}
+        <WidgetErrorFallback
+          widgetTitle="Kubernetes Cluster Status"
+          message="Unable to load your cluster connections. Please try again later."
+        />
+      </DashboardSection>
+    );
+  }
 
   if (chartData.length === 0) {
     return (

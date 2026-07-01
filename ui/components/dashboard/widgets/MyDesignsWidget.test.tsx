@@ -10,14 +10,15 @@ let patternsReturn: {
 } = { data: { patterns: [] }, isFetching: false };
 
 const designCardSpy = vi.fn();
+const useGetUserDesignsQuerySpy = vi.fn();
 
 vi.mock('@/rtk-query/user', () => ({
   useGetLoggedInUserQuery: () => loggedInReturn,
 }));
 
 vi.mock('@/rtk-query/design', () => ({
-  useGetUserDesignsQuery: (args: unknown) => {
-    (useGetUserDesignsQuery as { lastArgs?: unknown }).lastArgs = args;
+  useGetUserDesignsQuery: (...args: unknown[]) => {
+    useGetUserDesignsQuerySpy(...args);
     return patternsReturn;
   },
 }));
@@ -84,13 +85,12 @@ vi.mock('@sistent/sistent', () => ({
   },
 }));
 
-const useGetUserDesignsQuery = () => patternsReturn;
-
 import MyDesignsWidget from './MyDesignsWidget';
 
 describe('MyDesignsWidget', () => {
   beforeEach(() => {
     designCardSpy.mockReset();
+    useGetUserDesignsQuerySpy.mockReset();
     loggedInReturn = { data: { id: 'user-1' } };
     patternsReturn = { data: { patterns: [] }, isFetching: false };
   });
@@ -145,5 +145,18 @@ describe('MyDesignsWidget', () => {
     expect(screen.getByTestId('design-card')).toHaveAttribute('data-sort', 'updated_at desc');
     await userEvent.click(screen.getByRole('button', { name: 'changeOrder' }));
     expect(screen.getByTestId('design-card')).toHaveAttribute('data-sort', 'created_at desc');
+  });
+
+  it('skips fetching designs until the logged-in user id is available', () => {
+    loggedInReturn = {};
+    render(<MyDesignsWidget />);
+    const [, options] = useGetUserDesignsQuerySpy.mock.calls[0];
+    expect(options).toEqual({ skip: true });
+  });
+
+  it('does not skip fetching designs once the logged-in user id is available', () => {
+    render(<MyDesignsWidget />);
+    const [, options] = useGetUserDesignsQuerySpy.mock.calls[0];
+    expect(options).toEqual({ skip: false });
   });
 });
