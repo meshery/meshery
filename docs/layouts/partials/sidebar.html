@@ -182,8 +182,7 @@
         restoreScroll();
 
         // Restore again after layout changes/transitions have completed
-        setTimeout(restoreScroll, 100);
-        setTimeout(restoreScroll, 300);
+        requestAnimationFrame(restoreScroll);
 
         // Save scroll position on click or scroll
         $(sidebarContainer).on('click', 'a', function() {
