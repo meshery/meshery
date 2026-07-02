@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Guides on Documentation</title><link>/pr-preview/pr-20413/guides/</link><description>Recent content in Guides on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/pr-preview/pr-20413/guides/index.xml" rel="self" type="application/rss+xml"/><item><title>Upgrading Meshery</title><link>/pr-preview/pr-20413/guides/upgrading-meshery/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20413/guides/upgrading-meshery/</guid><description>&lt;p&gt;This guide walks through upgrading a running Meshery deployment. Meshery is a
+composition of components that upgrade in a specific order: the CLI first, the
+Server second, and the components on managed clusters — Meshery Operator,
+MeshSync, and Broker — &lt;strong&gt;automatically, driven by the Server&lt;/strong&gt;. You do not
+upgrade the Operator by hand.&lt;/p&gt;
+&lt;p&gt;For background on which components version together, see the
+&lt;a href="/pr-preview/pr-20413/installation/upgrades/"&gt;Upgrade Guide&lt;/a&gt;. For production
+practices (pinned versions, upgrade-friendly probes, rollback rehearsal), see
+the &lt;a href="/pr-preview/pr-20413/installation/production/operational-readiness-checklist/"&gt;Operational Readiness Checklist&lt;/a&gt;.&lt;/p&gt;</description></item></channel></rss>
