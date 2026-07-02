@@ -30,11 +30,21 @@ const eventStreamKeepAliveInterval = 15 * time.Second
 // disconnects the request context is cancelled, we unsubscribe from the
 // broadcaster, and the goroutine returns.
 func (h *Handler) SubscribeEventsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+
 	flusher, ok := w.(http.Flusher)
 	if !ok {
 		writeJSONError(w, "streaming unsupported", http.StatusInternalServerError)
 		return
 	}
+
+	// Subscribe before writing headers so events published between the request
+	// arriving and the stream being ready aren't dropped.
+	ch, unsubscribe := h.config.EventBroadcaster.Subscribe(user.ID)
+	defer unsubscribe()
 
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
@@ -44,9 +54,6 @@ func (h *Handler) SubscribeEventsHandler(w http.ResponseWriter, req *http.Reques
 	w.Header().Set("X-Accel-Buffering", "no")
 	w.WriteHeader(http.StatusOK)
 	flusher.Flush()
-
-	ch, unsubscribe := h.config.EventBroadcaster.Subscribe(user.ID)
-	defer unsubscribe()
 
 	h.log.Infof("Events SSE subscription started for %s", user.ID)
 	defer h.log.Infof("Events SSE subscription stopped for %s", user.ID)
@@ -59,9 +66,19 @@ func (h *Handler) SubscribeEventsHandler(w http.ResponseWriter, req *http.Reques
 		select {
 		case <-ctx.Done():
 			return
-		case data := <-ch:
-			event, ok := data.(*events.Event)
-			if !ok {
+		case data, open := <-ch:
+			// A closed channel yields the zero value without blocking; bail out
+			// instead of spinning at 100% CPU on a dead subscription.
+			if !open {
+				return
+			}
+			var event *events.Event
+			switch e := data.(type) {
+			case *events.Event:
+				event = e
+			case events.Event:
+				event = &e
+			default:
 				continue
 			}
 			payload, err := json.Marshal(event)

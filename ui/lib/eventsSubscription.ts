@@ -6,9 +6,10 @@
  * which streams the user's events, each framed as `data: <event-json>\n\n`.
  *
  * Being same-origin, the EventSource automatically carries the `meshery-provider`
- * auth cookie, and gives us built-in reconnection with backoff — so no separate
- * retry logic is needed for this stream. The returned `{ dispose }` mirrors the
- * shape of the old Relay subscription so callers stay unchanged.
+ * auth cookie and will automatically attempt to reconnect if the connection
+ * drops, so no separate retry logic is needed for this stream. The returned
+ * `{ dispose }` mirrors the shape of the old Relay subscription so callers stay
+ * unchanged.
  */
 
 const EVENTS_STREAM_URL = '/api/system/events/subscribe';
