@@ -49,7 +49,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.14.1",
-    "@meshery/schemas": "^1.3.18",
+    "@meshery/schemas": "^1.3.23",
     "@microlink/react-json-view": "^1.31.20",
     "@mui/icons-material": "^9.1.1",
     "@mui/material": "^9.1.2",
