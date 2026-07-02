@@ -1,0 +1,64 @@
+# Publishes ONLY the meshery-operator chart to meshery.io/charts, versioned by
+# a meshery-operator release (e.g. 1.0.0) rather than a Meshery Server release.
+#
+# Fired by meshery/meshery-operator's sync-downstream workflow via
+# repository_dispatch AFTER it has pushed the synced CRDs/chart versions to
+# this repo (a guard below refuses to publish if master's chart appVersion
+# does not match the dispatched version, which would mean the sync did not
+# land). Can also be run manually via workflow_dispatch.
+#
+# Meshery Server keeps consuming charts stamped with its own release versions
+# from helm-chart-releaser.yml — the operator-versioned entries published here
+# are additive index entries for standalone `helm install` consumers and for
+# version-pinned operator deployments.
+name: Release Meshery Operator Chart
+on:
+  repository_dispatch:
+    types: [meshery-operator-released]
+  workflow_dispatch:
+    inputs:
+      release-ver:
+        description: "meshery-operator release version to publish, e.g. 1.0.0 (no leading v)"
+        required: true
+
+jobs:
+  publish-operator-chart:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: master
+      - name: Resolve version
+        id: vars
+        run: |
+          VERSION="${{ github.event.client_payload.version || github.event.inputs.release-ver }}"
+          if [ -z "$VERSION" ]; then echo "::error::no version provided"; exit 1; fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - name: Guard — chart must already be synced to this version
+        run: |
+          # Handles both quoted (appVersion: "1.0.0") and unquoted forms.
+          APP_VERSION=$(awk '/^appVersion:/ {v=$2; gsub(/"/, "", v); print v}' install/kubernetes/helm/meshery-operator/Chart.yaml)
+          if [ "$APP_VERSION" != "${{ steps.vars.outputs.version }}" ]; then
+            echo "::error::chart appVersion ($APP_VERSION) != dispatched version (${{ steps.vars.outputs.version }}); has the operator sync commit landed on master?"
+            exit 1
+          fi
+      - name: Stage only the operator chart
+        run: |
+          mkdir -p .operator-chart-stage
+          cp -R install/kubernetes/helm/meshery-operator .operator-chart-stage/
+      - name: Publish meshery-operator chart
+        # Pinned to an immutable commit (master as of 2023-09-27, > v1.7.0):
+        # this workflow runs with GH_ACCESS_TOKEN in scope, so a floating ref
+        # would be a supply-chain exposure.
+        uses: stefanprodan/helm-gh-pages@89c6698c192e70ed0e495bee7d3d1ca5b477fe82
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          charts_dir: .operator-chart-stage
+          owner: meshery
+          repository: meshery.io
+          branch: master
+          target_dir: charts
+          commit_username: l5io
+          commit_email: ci@meshery.io
+          chart_version: ${{ steps.vars.outputs.version }}
+          app_version: ${{ steps.vars.outputs.version }}
