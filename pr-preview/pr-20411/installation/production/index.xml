@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Production Deployment on Documentation</title><link>/pr-preview/pr-20411/installation/production/</link><description>Recent content in Production Deployment on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/pr-preview/pr-20411/installation/production/index.xml" rel="self" type="application/rss+xml"/><item><title>Deployment Models &amp; Reference Architecture</title><link>/pr-preview/pr-20411/installation/production/deployment-models/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20411/installation/production/deployment-models/</guid><description>&lt;p&gt;The first production decision is &lt;em&gt;where&lt;/em&gt; Meshery runs relative to the
+infrastructure it manages, and &lt;em&gt;how&lt;/em&gt; its components are hosted. This page frames
+those choices and maps the Meshery component inventory onto production
+topologies. It complements the &lt;a href="/pr-preview/pr-20411/concepts/architecture/"&gt;Meshery Architecture&lt;/a&gt;
+reference with the trade-offs that matter when the deployment is shared and
+long-lived.&lt;/p&gt;
+&lt;h2 id="where-meshery-runs-in-cluster-vs-out-of-cluster"&gt;
+	Where Meshery runs: in-cluster vs. out-of-cluster
+&lt;/h2&gt;
+&lt;p&gt;Every Meshery deployment is either &lt;em&gt;in-cluster&lt;/em&gt; or &lt;em&gt;out-of-cluster&lt;/em&gt; with respect
+to the clusters it manages. The distinction is not about how Meshery is
+packaged—it is about the network and trust relationship between Meshery Server
+and the clusters under management.&lt;/p&gt;</description></item><item><title>Infrastructure, Sizing &amp; Performance</title><link>/pr-preview/pr-20411/installation/production/infrastructure-sizing-and-performance/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20411/installation/production/infrastructure-sizing-and-performance/</guid><description>&lt;p&gt;Meshery&amp;rsquo;s resource footprint is driven by two largely independent forces: the
+volume of user-facing API and UI traffic, and the scope of infrastructure it
+continuously discovers. Sizing a production deployment means accounting for
+both. This page provides per-component resource guidance, the levers you can
+pull to scale, and the performance bounds to design around.&lt;/p&gt;
+&lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;No one-size-fits-all numbers&lt;/div&gt;
+&lt;p&gt;The Helm chart intentionally ships with &lt;strong&gt;no default CPU/memory requests or
+limits&lt;/strong&gt; so Meshery can start on small clusters. That default is not a
+production recommendation. Set requests and limits explicitly, measure under
+your own load, and iterate. The figures below are starting points, not
+guarantees.&lt;/p&gt;</description></item><item><title>High Availability &amp; Resiliency</title><link>/pr-preview/pr-20411/installation/production/high-availability-and-resiliency/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20411/installation/production/high-availability-and-resiliency/</guid><description>&lt;p&gt;Resiliency for Meshery has two layers: the platform-level self-healing that
+Kubernetes provides, and the application-level recovery behavior built into
+Meshery&amp;rsquo;s components. This page explains how Meshery behaves under failure, how
+to configure it for high availability, and—critically—where durable state lives
+so that a lost Server is a recoverable event rather than a data-loss event.&lt;/p&gt;
+&lt;h2 id="the-resiliency-model-in-one-idea"&gt;
+	The resiliency model in one idea
+&lt;/h2&gt;
+&lt;p&gt;Meshery is designed so that its &lt;strong&gt;runtime state is reconstructable&lt;/strong&gt;:&lt;/p&gt;</description></item><item><title>Networking &amp; Connectivity</title><link>/pr-preview/pr-20411/installation/production/networking-and-connectivity/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20411/installation/production/networking-and-connectivity/</guid><description>&lt;p&gt;Getting networking right is what makes the difference between a Meshery
+deployment that &amp;ldquo;works on my cluster&amp;rdquo; and one that reliably manages a fleet from
+behind an ingress. This page covers the ports and directions traffic flows, how
+to expose Meshery securely, how the Broker is reached (especially
+out-of-cluster), and the egress Meshery needs.&lt;/p&gt;
+&lt;h2 id="network-ports"&gt;
+	Network ports
+&lt;/h2&gt;
+&lt;p&gt;Meshery uses the following ports across its components. The Broker ports beyond
+the client port are for clustering/routing features and are not all in use in
+current releases.&lt;/p&gt;</description></item><item><title>Security Hardening</title><link>/pr-preview/pr-20411/installation/production/security-hardening/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20411/installation/production/security-hardening/</guid><description>&lt;p&gt;Meshery is a management plane with broad visibility into—and, when you use it
+for lifecycle management, control over—the infrastructure it connects to. That
+makes hardening it a priority. This page covers the controls that reduce
+Meshery&amp;rsquo;s attack surface and blast radius in production. Identity and provider
+choices are covered separately in
+&lt;a href="/pr-preview/pr-20411/installation/production/authentication-and-identity/"&gt;Authentication, Authorization &amp;amp; Identity&lt;/a&gt;;
+read both together.&lt;/p&gt;
+&lt;div class="alert alert-warning" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Start with identity&lt;/div&gt;
+&lt;p&gt;The highest-impact security decision is to &lt;strong&gt;preselect a Remote Provider&lt;/strong&gt; so
+production never runs with the unauthenticated Local Provider, and so you
+control which identity providers are accepted. That topic has its own page:
+&lt;a href="/pr-preview/pr-20411/installation/production/authentication-and-identity/"&gt;Authentication, Authorization &amp;amp; Identity&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Authentication, Authorization &amp; Identity</title><link>/pr-preview/pr-20411/installation/production/authentication-and-identity/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20411/installation/production/authentication-and-identity/</guid><description>&lt;p&gt;Identity is the first security control to get right in production. Meshery&amp;rsquo;s
+authentication, authorization, and durable user state all flow from its
+&lt;strong&gt;provider&lt;/strong&gt; model. This page explains why production deployments should
+preselect a Remote Provider, how to configure the OAuth flow correctly behind an
+ingress, and how authorization is expressed. It pairs with
+&lt;a href="/pr-preview/pr-20411/installation/production/security-hardening/"&gt;Security Hardening&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="providers-local-vs-remote"&gt;
+	Providers: Local vs. Remote
+&lt;/h2&gt;
+&lt;p&gt;Meshery supports two kinds of &lt;a href="/pr-preview/pr-20411/reference/extensibility/providers/"&gt;providers&lt;/a&gt;:&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th style="text-align: left"&gt;Provider&lt;/th&gt;
+ &lt;th style="text-align: left"&gt;Identity&lt;/th&gt;
+ &lt;th style="text-align: left"&gt;Durable state&lt;/th&gt;
+ &lt;th style="text-align: left"&gt;Production fit&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: left"&gt;&lt;strong&gt;Local&lt;/strong&gt; (built-in; legacy alias &lt;code&gt;None&lt;/code&gt;)&lt;/td&gt;
+ &lt;td style="text-align: left"&gt;&lt;strong&gt;None&lt;/strong&gt;—sessions are unauthenticated&lt;/td&gt;
+ &lt;td style="text-align: left"&gt;Only the ephemeral local database&lt;/td&gt;
+ &lt;td style="text-align: left"&gt;Evaluation and single-operator local use. &lt;strong&gt;Not for shared production.&lt;/strong&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: left"&gt;&lt;strong&gt;Remote&lt;/strong&gt; (pluggable, e.g. Meshery Cloud)&lt;/td&gt;
+ &lt;td style="text-align: left"&gt;Delegated to the provider&amp;rsquo;s identity providers (OAuth)&lt;/td&gt;
+ &lt;td style="text-align: left"&gt;&lt;strong&gt;Durable, long-term&lt;/strong&gt; persistence of users, environments, and saved work&lt;/td&gt;
+ &lt;td style="text-align: left"&gt;The production choice.&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The Local Provider exists so Meshery can run with zero external dependencies,
+but it offers &lt;strong&gt;no authentication&lt;/strong&gt; and no durable home for user state. A
+Remote Provider adds authentication and authorization, controls which identity
+providers are accepted, and persists user data beyond the lifetime of any Server
+instance.&lt;/p&gt;</description></item><item><title>Multi-Cluster &amp; Multi-Cloud Operations</title><link>/pr-preview/pr-20411/installation/production/multi-cluster-and-multi-cloud/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20411/installation/production/multi-cluster-and-multi-cloud/</guid><description>&lt;p&gt;A core reason to run Meshery as a central management plane is to operate many
+clusters—often across multiple clouds—from one place. This page covers how
+Meshery connects to clusters, the difference between managed and unmanaged
+connections, how discovery is deployed per cluster, and the cloud-specific
+details that decide whether a fleet &amp;ldquo;just works.&amp;rdquo;&lt;/p&gt;
+&lt;h2 id="how-meshery-connects-to-a-cluster"&gt;
+	How Meshery connects to a cluster
+&lt;/h2&gt;
+&lt;p&gt;A Meshery–cluster connection is established by providing Meshery Server access to
+the cluster&amp;rsquo;s Kubernetes API:&lt;/p&gt;</description></item><item><title>Monitoring, Observability &amp; Health KPIs</title><link>/pr-preview/pr-20411/installation/production/monitoring-observability-and-kpis/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20411/installation/production/monitoring-observability-and-kpis/</guid><description>&lt;p&gt;A production management plane must itself be observed. This page defines what
+&amp;ldquo;healthy&amp;rdquo; looks like for Meshery, the key performance indicators (KPIs) to track
+per component, and how to wire Meshery into your monitoring, tracing, logging,
+and alerting stack.&lt;/p&gt;
+&lt;h2 id="health-endpoints"&gt;
+	Health endpoints
+&lt;/h2&gt;
+&lt;p&gt;Meshery Server exposes Kubernetes-compliant health endpoints that are the
+foundation of both self-healing and external monitoring:&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th style="text-align: left"&gt;Endpoint&lt;/th&gt;
+ &lt;th style="text-align: left"&gt;Used by&lt;/th&gt;
+ &lt;th style="text-align: left"&gt;Signals&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: left"&gt;&lt;code&gt;/healthz/live&lt;/code&gt;&lt;/td&gt;
+ &lt;td style="text-align: left"&gt;Liveness probe&lt;/td&gt;
+ &lt;td style="text-align: left"&gt;Server is running and responsive; provider capabilities are loaded.&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: left"&gt;&lt;code&gt;/healthz/ready&lt;/code&gt;&lt;/td&gt;
+ &lt;td style="text-align: left"&gt;Readiness probe&lt;/td&gt;
+ &lt;td style="text-align: left"&gt;Server is ready to accept traffic.&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Query readiness with a verbose breakdown for detail:&lt;/p&gt;</description></item><item><title>Operational Readiness Checklist &amp; Known Caveats</title><link>/pr-preview/pr-20411/installation/production/operational-readiness-checklist/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20411/installation/production/operational-readiness-checklist/</guid><description>&lt;p&gt;This page brings the whole set together: a single checklist you can work through
+before declaring a Meshery deployment production-ready, the upgrade strategy to
+adopt, and the known caveats to design around. Each item links back to the page
+where it is explained in full.&lt;/p&gt;
+&lt;h2 id="upgrade-strategy"&gt;
+	Upgrade strategy
+&lt;/h2&gt;
+&lt;p&gt;Meshery is a composition of components—Server, UI, Operator, MeshSync, Broker,
+Adapters, and &lt;code&gt;mesheryctl&lt;/code&gt;—some of which upgrade together and some
+independently. For Kubernetes production deployments:&lt;/p&gt;</description></item></channel></rss>
