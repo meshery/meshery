@@ -6,7 +6,7 @@ aliases: [/project/contributing/contributing-models]
 weight: 5
 ---
 
-**Meshery Models are schema-driven.** Model definitions, including their structure, metadata, and versioning, are defined by JSON Schemas in the [`meshery/schemas`](https://github.com/meshery/schemas) repository. Before contributing to models, familiarize yourself with the [Model schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/model) and see [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for the development workflow.
+**Meshery Models are schema-driven.** Model definitions, including their structure, metadata, and versioning, are defined by JSON Schemas in the [`meshery/schemas`](https://github.com/meshery/schemas) repository. Before contributing to models, familiarize yourself with the [Model schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/model) and see [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas/_index.md" >}}) for the development workflow.
 
 
 ## Understanding the internals of Meshery's logical object model

@@ -6,7 +6,7 @@ aliases:
   - /extensibility/schemas
 ---
 
-Meshery follows a [Schema-Driven Development]({{< ref "project/contributing/contributing-schemas.md" >}}) approach in which schemas define the structure of data across the platform. To support remote providers, Meshery schemas are intentionally extensible via `x-*` vendor extensions — a standard OpenAPI mechanism that allows custom metadata to be attached to a schema without affecting tools or validators that don't recognize it.
+Meshery follows a [Schema-Driven Development]({{< ref "project/contributing/contributing-schemas" >}}) approach in which schemas define the structure of data across the platform. To support remote providers, Meshery schemas are intentionally extensible via `x-*` vendor extensions — a standard OpenAPI mechanism that allows custom metadata to be attached to a schema without affecting tools or validators that don't recognize it.
 
 ## x-annotations as an Extension Point
 
@@ -55,6 +55,6 @@ if annotations, ok := schema["x-annotations"].(map[string]interface{}); ok {
 ## Related
 
 - [Extensibility: Providers]({{< ref "reference/extensibility/providers/index.md" >}})
-- [Contributing to Meshery Schemas]({{< ref "project/contributing/contributing-schemas.md" >}})
+- [Contributing to Meshery Schemas]({{< ref "project/contributing/contributing-schemas" >}})
 
 {{< discuss >}}

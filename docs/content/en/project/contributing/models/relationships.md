@@ -6,7 +6,7 @@ aliases: [/project/contributing/contributing-relationships]
 weight: 20
 ---
 
-**Relationships follow a schema-defined structure.** The [Relationship schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1alpha3/relationship) specifies how relationships between components are expressed. Refer to the schema when defining new relationship types or selectors. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.
+**Relationships follow a schema-defined structure.** The [Relationship schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1alpha3/relationship) specifies how relationships between components are expressed. Refer to the schema when defining new relationship types or selectors. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas/_index.md" >}}) for details.
 
 [Relationships]({{< ref "concepts/logical/relationships/index.md" >}}) within [Models]({{< ref "concepts/logical/models/index.md" >}}) play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected [Components]({{< ref "concepts/logical/components.md" >}}).
 
