@@ -2,11 +2,14 @@ import React, { useState, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { NotificationDrawerButton } from '../NotificationCenter/index';
 import User from '../../User';
-import { successHandlerGenerator, errorHandlerGenerator } from '../../../utils/helpers/common';
+import { errorHandlerGenerator } from '../../../utils/helpers/common';
 import { ConnectionChip } from '../../connections/ConnectionChip';
 import { normalizeStaticImagePath } from '../../../utils/fallback';
 import { useLazyGetSystemSyncQuery } from '../../../rtk-query/system';
-import { useUpdateConnectionStatusMutation } from '../../../rtk-query/connection';
+import {
+  useGetConnectionsQuery,
+  useUpdateConnectionByIdMutation,
+} from '../../../rtk-query/connection';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '../../../utils/Enum';
 import _PromptComponent from '../../PromptComponent';
 import { iconMedium, iconSmall } from '../../../css/icons.styles';
@@ -61,7 +64,6 @@ import {
   getUserProfile,
   useGetProviderCapabilitiesQuery,
 } from '@/rtk-query/user';
-import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
@@ -142,6 +144,7 @@ function K8sContextMenu({
   activeContexts = [],
   setActiveContexts = () => {},
   searchContexts = () => {},
+  removeK8sContextByConnectionId = () => {},
 }) {
   const theme = useTheme();
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
@@ -151,7 +154,7 @@ function K8sContextMenu({
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
-  const [updateConnectionStatus] = useUpdateConnectionStatusMutation();
+  const [updateConnectionById] = useUpdateConnectionByIdMutation();
   const { controllerState: meshsyncControllerState, connectionMetadataState } = useSelector(
     (state) => state.ui,
   );
@@ -221,7 +224,19 @@ function K8sContextMenu({
       showInfoIcon: `Learn more about the [lifecycle of connections](https://docs.meshery.io/concepts/logical/connections) and what it means to delete a connection.`,
     });
     if (responseOfDeleteK8sCtx === 'CONFIRM') {
-      const successCallback = async () => {
+      try {
+        await updateConnectionById({
+          connectionId: connectionID,
+          body: { status: CONNECTION_STATES.DELETED },
+        }).unwrap();
+
+        removeK8sContextByConnectionId(connectionID);
+
+        notify({
+          message: `Kubernetes connection "${name}" removed`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+
         try {
           const res = await fetchSystemSync().unwrap();
           if (Array.isArray(res?.k8sConfig)) {
@@ -230,17 +245,6 @@ function K8sContextMenu({
         } catch (e) {
           console.error('An error occurred while loading k8sconfig', e);
         }
-      };
-      try {
-        await updateConnectionStatus({
-          kind: CONNECTION_KINDS.KUBERNETES,
-          body: { [connectionID]: CONNECTION_STATES.DELETED },
-        }).unwrap();
-        successHandlerGenerator(
-          notify,
-          `Kubernetes connection "${name}" removed`,
-          successCallback,
-        )();
       } catch (err) {
         errorHandlerGenerator(notify, `Failed to remove Kubernetes connection "${name}"`)(err);
       }
@@ -414,8 +418,9 @@ const Header = ({
   activeContexts,
   setActiveContexts,
   searchContexts,
+  removeK8sContextByConnectionId,
 }) => {
-  const { notify } = useNotification;
+  const { notify } = useNotification();
   const { openModal } = useContext(WorkspaceModalContext) || {};
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
@@ -508,6 +513,7 @@ const Header = ({
                       activeContexts={activeContexts}
                       setActiveContexts={setActiveContexts}
                       searchContexts={searchContexts}
+                      removeK8sContextByConnectionId={removeK8sContextByConnectionId}
                     />
                   </UserSpan>
                   <CustomTooltip title="Notifications">

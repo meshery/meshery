@@ -74,6 +74,7 @@ const connectionsApi = api.injectEndpoints({
         url: mesheryApiPath(`integrations/connections/${queryArg.connectionId}`),
         method: 'PUT',
         body: {
+          id: queryArg.connectionId,
           status: queryArg.body?.status,
           metadata: queryArg.body?.metadata,
         },

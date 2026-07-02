@@ -7,7 +7,8 @@ const getControllerStatesByConnectionID = vi.fn();
 const dispatchMock = vi.fn();
 const notifyMock = vi.fn();
 const fetchSystemSyncMock = vi.fn(() => ({ unwrap: () => Promise.resolve({ k8sConfig: [] }) }));
-const updateConnectionStatusMock = vi.fn(() => ({ unwrap: () => Promise.resolve({}) }));
+const updateConnectionByIdMock = vi.fn(() => ({ unwrap: () => Promise.resolve({}) }));
+const removeK8sContextByConnectionIdMock = vi.fn();
 const useGetConnectionsQueryMock = vi.fn(() => ({ data: { connections: [] } }));
 const useGetProviderCapabilitiesQueryMock = vi.fn(() => ({
   data: { providerUrl: 'https://x', extensions: {} },
@@ -37,7 +38,6 @@ vi.mock('../../User', () => ({
 }));
 
 vi.mock('../../../utils/helpers/common', () => ({
-  successHandlerGenerator: () => () => {},
   errorHandlerGenerator: () => () => {},
 }));
 
@@ -61,12 +61,12 @@ vi.mock('../../../rtk-query/system', () => ({
 }));
 
 vi.mock('../../../rtk-query/connection', () => ({
-  useUpdateConnectionStatusMutation: () => [updateConnectionStatusMock],
+  useUpdateConnectionByIdMutation: () => [updateConnectionByIdMock],
   useGetConnectionsQuery: () => useGetConnectionsQueryMock(),
 }));
 
 vi.mock('@/rtk-query/connection', () => ({
-  useUpdateConnectionStatusMutation: () => [updateConnectionStatusMock],
+  useUpdateConnectionByIdMutation: () => [updateConnectionByIdMock],
   useGetConnectionsQuery: () => useGetConnectionsQueryMock(),
 }));
 
@@ -369,6 +369,7 @@ describe('Header (default export)', () => {
         activeContexts={[]}
         setActiveContexts={vi.fn()}
         searchContexts={vi.fn()}
+        removeK8sContextByConnectionId={removeK8sContextByConnectionIdMock}
       />,
     );
 
@@ -390,6 +391,7 @@ describe('Header (default export)', () => {
         activeContexts={[]}
         setActiveContexts={vi.fn()}
         searchContexts={vi.fn()}
+        removeK8sContextByConnectionId={removeK8sContextByConnectionIdMock}
       />,
     );
     expect(screen.getByTestId('space-switcher')).toBeInTheDocument();
@@ -404,6 +406,7 @@ describe('Header (default export)', () => {
         activeContexts={[]}
         setActiveContexts={vi.fn()}
         searchContexts={vi.fn()}
+        removeK8sContextByConnectionId={removeK8sContextByConnectionIdMock}
       />,
     );
     expect(screen.getByTestId('cbadge')).toHaveTextContent('3');
