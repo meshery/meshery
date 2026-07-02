@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Box, Button, Grid2, Typography, styled } from '@sistent/sistent';
+import { Box, Button, Grid2, Typography } from '@sistent/sistent';
 import {
   useGetProviderCapabilitiesQuery,
   useGetSystemVersionQuery,
@@ -10,6 +10,7 @@ import { CardContainer, FrontSideDescription } from 'css/icons.styles';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '@/utils/hooks';
 import { formatApiError } from '@/utils/helpers/meshkitError';
+import { ResponsiveImage } from './ResponsiveImage';
 
 type ChildrenProps = {
   children: React.ReactNode;
@@ -88,18 +89,6 @@ const UnifiedButtonContainer = ({ children }: ChildrenProps) => (
   <Box sx={{ position: 'absolute', bottom: 12, left: 12, right: 12, textAlign: 'right' }}>
     {children}
   </Box>
-);
-
-const StyledResponsiveImage = styled('img')({
-  height: 'auto',
-  width: 'auto',
-  maxWidth: '140px',
-  maxHeight: '85px',
-  flexShrink: 0,
-});
-
-const ResponsiveImage = ({ src, alt, testId }: { src: string; alt?: string; testId?: string }) => (
-  <StyledResponsiveImage data-testid={testId} src={src} alt={alt || ''} />
 );
 
 const resolveExtensionHref = (href?: ExtensionMetadata['href']) => {

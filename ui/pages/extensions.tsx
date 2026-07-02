@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme, Box } from '@sistent/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
-import { Adapters, KanvasExtension } from '../components/extensions';
+import { Adapters, KanvasExtension, ResponsiveImage } from '../components/extensions';
 import DefaultError from '@/components/general/error-404';
 import { EVENT_TYPES } from '../lib/event-types';
 import { useNotification, usePageTitle } from '@/utils/hooks';
@@ -73,27 +73,6 @@ const UnifiedButtonContainer = ({ children }: ChildrenProps) => (
   <Box sx={{ position: 'absolute', bottom: 12, left: 12, right: 12, textAlign: 'right' }}>
     {children}
   </Box>
-);
-
-type ResponsiveImageProps = {
-  src: string;
-  alt?: string;
-  testId?: string;
-};
-
-const ResponsiveImage = ({ src, alt, testId }: ResponsiveImageProps) => (
-  <img
-    style={{
-      height: 'auto',
-      width: 'auto',
-      maxWidth: '140px',
-      maxHeight: '85px',
-      flexShrink: 0,
-    }}
-    data-testid={testId}
-    src={src}
-    alt={alt || ''}
-  />
 );
 
 const GRID_SIZE = { xs: 12, sm: 12, md: 12, lg: 6, xl: 4 };
