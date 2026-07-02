@@ -69,7 +69,7 @@ Meshery should now be running in your GKE cluster, and the Meshery UI should be 
 
 Use Meshery's CLI to streamline your connection to your GKE cluster. Configure Meshery to connect to your GKE cluster by executing:
 
-{{< code code="mesheryctl system config gke" >}}
+{{< code code="mesheryctl connection create --type gke" >}}
 
 Once configured, execute the following command to start Meshery.
 
