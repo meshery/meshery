@@ -150,8 +150,11 @@ setup_cluster() {
   # broker is important to be present before submitting k8s context,
   # as server will attempt to connect
   echo "Waiting for broker to be ready..."
-  kubectl --namespace $MESHERY_K8S_NAMESPACE rollout status --watch statefulset/meshery-broker --timeout "$MESHERY_BROKER_WAIT_TIMEOUT"
-  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=ready pod --selector=app=meshery,component=broker --timeout="$MESHERY_BROKER_WAIT_TIMEOUT"
+  # Operator >= 1.0.0 renders the broker from the official NATS chart: the
+  # StatefulSet is meshery-nats with app.kubernetes.io/* labels (previously
+  # statefulset/meshery-broker with app=meshery,component=broker).
+  kubectl --namespace $MESHERY_K8S_NAMESPACE rollout status --watch statefulset/meshery-nats --timeout "$MESHERY_BROKER_WAIT_TIMEOUT"
+  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=ready pod --selector=app.kubernetes.io/instance=meshery-nats --timeout="$MESHERY_BROKER_WAIT_TIMEOUT"
   echo ""
 
   echo "Outputing cluster resources..."
