@@ -1,5 +1,6 @@
 import React from 'react';
-import HandleError from '../../ErrorHandling';
+import { useNotification } from '../../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../../lib/event-types';
 import { buildUiSchema } from '../helpers';
 import { getRefinedJsonSchema } from './helper';
 // import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
@@ -20,7 +21,18 @@ function RJSFWrapper(props) {
     ...restProps
     //.. temporarily ignoring till handler is attached successfully
   } = props;
-  const errorHandler = HandleError();
+  const { notify } = useNotification();
+  const errorHandler = React.useCallback(
+    (err: unknown, prefixMessage: string) => {
+      const message = err instanceof Error ? err.message : String(err);
+      notify({
+        message: `${prefixMessage}: ${message}`,
+        event_type: EVENT_TYPES.ERROR,
+        details: String(err),
+      });
+    },
+    [notify],
+  );
 
   const [data, setData] = React.useState((prev) => ({ ...formData, ...prev }));
   const [schema, setSchema] = React.useState({ rjsfSchema: {}, uiSchema: {} });
