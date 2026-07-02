@@ -43,7 +43,7 @@ jobs:
         token: ${{ secrets.GH_ACCESS_TOKEN }}
         path: meshery-extensions
     - name: Setup Go
-      uses: actions/setup-go@master
+      uses: actions/setup-go@v6
       with:
         go-version-file: meshery/go.mod
     - name: Go mod sync utility
