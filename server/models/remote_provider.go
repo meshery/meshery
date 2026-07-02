@@ -2631,7 +2631,13 @@ func (l *RemoteProvider) CloneMesheryPattern(req *http.Request, patternID string
 
 	bf := bytes.NewBuffer(data)
 
-	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	cReq, err := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	if err != nil {
+		err = ErrClone(err, "design")
+		l.Log.Error(err)
+		return nil, err
+	}
+	cReq.Header.Set("Content-Type", "application/json")
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
@@ -3210,7 +3216,13 @@ func (l *RemoteProvider) CloneMesheryFilter(req *http.Request, filterID string, 
 
 	bf := bytes.NewBuffer(data)
 
-	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	cReq, err := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	if err != nil {
+		err = ErrClone(err, "filter")
+		l.Log.Error(err)
+		return nil, err
+	}
+	cReq.Header.Set("Content-Type", "application/json")
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {

@@ -196,7 +196,7 @@ export function createPatternsActions(deps) {
   function handleClone(patternID, name) {
     updateProgress({ showProgress: true });
     clonePattern({
-      body: JSON.stringify({ name: name + ' (Copy)' }),
+      body: { name: name + ' (Copy)' },
       patternID: patternID,
     })
       .unwrap()

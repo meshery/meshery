@@ -323,7 +323,7 @@ export function createHandlePublish({
 }
 
 type CreateHandleCloneArgs = {
-  cloneFilter: (_args: { body: string; filterID: string }) => { unwrap: () => Promise<any> };
+  cloneFilter: (_args: { body: any; filterID: string }) => { unwrap: () => Promise<any> };
   notify: Notify;
   handleError: ErrorHandler;
 };
@@ -332,7 +332,7 @@ export function createHandleClone({ cloneFilter, notify, handleError }: CreateHa
   return function handleClone(filterID: string, name: string) {
     updateProgress({ showProgress: true });
     cloneFilter({
-      body: JSON.stringify({ name: name + ' (Copy)' }),
+      body: { name: name + ' (Copy)' },
       filterID: filterID,
     })
       .unwrap()
