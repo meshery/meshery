@@ -228,7 +228,11 @@ function K8sContextMenu({
             dispatch(updateK8SConfig({ k8sConfig: res.k8sConfig }));
           }
         } catch (e) {
-          console.error('An error occurred while loading k8sconfig', e);
+          notify({
+            message: 'An error occurred while loading k8sconfig',
+            event_type: EVENT_TYPES.ERROR,
+            details: e instanceof Error ? e.message : String(e),
+          });
         }
       };
       try {
@@ -415,7 +419,7 @@ const Header = ({
   setActiveContexts,
   searchContexts,
 }) => {
-  const { notify } = useNotification;
+  const { notify } = useNotification();
   const { openModal } = useContext(WorkspaceModalContext) || {};
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
@@ -426,13 +430,15 @@ const Header = ({
     error: providerCapabilitiesError,
   } = useGetProviderCapabilitiesQuery();
 
-  if (isProviderCapabilitiesError) {
-    notify({
-      message: 'Error fetching provider capabilities',
-      event_type: EVENT_TYPES.ERROR,
-      details: providerCapabilitiesError?.data,
-    });
-  }
+  React.useEffect(() => {
+    if (isProviderCapabilitiesError) {
+      notify({
+        message: 'Error fetching provider capabilities',
+        event_type: EVENT_TYPES.ERROR,
+        details: providerCapabilitiesError?.data,
+      });
+    }
+  }, [isProviderCapabilitiesError, providerCapabilitiesError, notify]);
 
   const remoteProviderUrl = providerCapabilities?.providerUrl;
   const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
