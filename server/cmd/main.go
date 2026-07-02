@@ -319,8 +319,7 @@ func main() {
 		PlaygroundBuild: viper.GetBool("PLAYGROUND"),
 		AdapterTracker:  adapterTracker,
 
-		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
-
+		KubeConfigFolder:          viper.GetString("KUBECONFIG_FOLDER"),
 		PatternChannel:            models.NewBroadcaster("Patterns"),
 		FilterChannel:             models.NewBroadcaster("Filters"),
 		EventBroadcaster:          models.NewBroadcaster("Events"),

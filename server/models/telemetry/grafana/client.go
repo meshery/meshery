@@ -13,6 +13,7 @@ import (
 	"sync"
 	"time"
 
+	helperutils "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshkit/logger"
 )
 
@@ -40,7 +41,7 @@ func New(baseURL, secret string, log logger.Handler) *Client {
 	return &Client{
 		baseURL:    strings.TrimRight(strings.TrimSpace(baseURL), "/"),
 		authHeader: authHeader(secret),
-		httpClient: &http.Client{Timeout: defaultTimeout},
+		httpClient: helperutils.NewSafeHTTPClient(defaultTimeout),
 		log:        log,
 	}
 }
@@ -109,6 +110,9 @@ func StatusCode(err error) int {
 func (c *Client) do(ctx context.Context, method, path string, query url.Values) ([]byte, error) {
 	if c.baseURL == "" {
 		return nil, fmt.Errorf("grafana: empty base URL")
+	}
+	if err := helperutils.ValidateURLForOutboundRequest(c.baseURL); err != nil {
+		return nil, fmt.Errorf("grafana: %w", err)
 	}
 	u := c.baseURL + path
 	if len(query) > 0 {
