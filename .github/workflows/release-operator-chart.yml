@@ -36,7 +36,8 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
       - name: Guard — chart must already be synced to this version
         run: |
-          APP_VERSION=$(awk -F'"' '/^appVersion:/ {print $2}' install/kubernetes/helm/meshery-operator/Chart.yaml)
+          # Handles both quoted (appVersion: "1.0.0") and unquoted forms.
+          APP_VERSION=$(awk '/^appVersion:/ {v=$2; gsub(/"/, "", v); print v}' install/kubernetes/helm/meshery-operator/Chart.yaml)
           if [ "$APP_VERSION" != "${{ steps.vars.outputs.version }}" ]; then
             echo "::error::chart appVersion ($APP_VERSION) != dispatched version (${{ steps.vars.outputs.version }}); has the operator sync commit landed on master?"
             exit 1
@@ -46,7 +47,10 @@ jobs:
           mkdir -p .operator-chart-stage
           cp -R install/kubernetes/helm/meshery-operator .operator-chart-stage/
       - name: Publish meshery-operator chart
-        uses: stefanprodan/helm-gh-pages@master
+        # Pinned to an immutable commit (master as of 2023-09-27, > v1.7.0):
+        # this workflow runs with GH_ACCESS_TOKEN in scope, so a floating ref
+        # would be a supply-chain exposure.
+        uses: stefanprodan/helm-gh-pages@89c6698c192e70ed0e495bee7d3d1ca5b477fe82
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           charts_dir: .operator-chart-stage

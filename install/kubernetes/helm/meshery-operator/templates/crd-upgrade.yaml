@@ -1,4 +1,5 @@
 {{- if .Values.crds.updateJob.enabled }}
+{{- $fullname := include "meshery-operator.fullname" . }}
 {{/*
 Helm applies the crds/ directory only on `helm install` — never on upgrade.
 This pre-install,pre-upgrade hook Job server-side-applies files/crds.yaml
@@ -11,7 +12,7 @@ spec.conversion from the ConfigMap rendered in webhook.yaml.
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: meshery-operator-crd-update
+  name: {{ $fullname }}-crd-update
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "meshery-operator.labels" . | nindent 4 }}
@@ -23,7 +24,7 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: meshery-operator-crd-update
+  name: {{ $fullname }}-crd-update
   labels:
     {{- include "meshery-operator.labels" . | nindent 4 }}
   annotations:
@@ -44,7 +45,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: meshery-operator-crd-update
+  name: {{ $fullname }}-crd-update
   labels:
     {{- include "meshery-operator.labels" . | nindent 4 }}
   annotations:
@@ -54,16 +55,16 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: meshery-operator-crd-update
+  name: {{ $fullname }}-crd-update
 subjects:
 - kind: ServiceAccount
-  name: meshery-operator-crd-update
+  name: {{ $fullname }}-crd-update
   namespace: {{ .Release.Namespace }}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: meshery-operator-crds
+  name: {{ $fullname }}-crds
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "meshery-operator.labels" . | nindent 4 }}
@@ -78,7 +79,7 @@ data:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: meshery-operator-crd-update
+  name: {{ $fullname }}-crd-update
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "meshery-operator.labels" . | nindent 4 }}
@@ -88,12 +89,15 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   backoffLimit: 3
+  # Fail fast (image pull failure, RBAC misconfiguration) rather than
+  # blocking `helm upgrade` until the Job controller gives up.
+  activeDeadlineSeconds: 300
   template:
     metadata:
       labels:
         {{- include "meshery-operator.selectorLabels" . | nindent 8 }}
     spec:
-      serviceAccountName: meshery-operator-crd-update
+      serviceAccountName: {{ $fullname }}-crd-update
       restartPolicy: Never
       securityContext:
         runAsNonRoot: true
@@ -110,6 +114,11 @@ spec:
             capabilities:
               drop:
                 - ALL
+          env:
+            # kubectl writes discovery/schema caches under $HOME; point it at
+            # the writable emptyDir so the read-only rootfs stays warning-free.
+            - name: HOME
+              value: /tmp
           command:
             - /bin/sh
             - -ec
@@ -133,6 +142,8 @@ spec:
             - name: crds
               mountPath: /crds
               readOnly: true
+            - name: tmp
+              mountPath: /tmp
             {{- if .Values.webhook.enabled }}
             - name: conversion-patch
               mountPath: /patch
@@ -141,10 +152,12 @@ spec:
       volumes:
         - name: crds
           configMap:
-            name: meshery-operator-crds
+            name: {{ $fullname }}-crds
+        - name: tmp
+          emptyDir: {}
         {{- if .Values.webhook.enabled }}
         - name: conversion-patch
           configMap:
-            name: meshery-operator-conversion-patch
+            name: {{ $fullname }}-conversion-patch
         {{- end }}
 {{- end }}
