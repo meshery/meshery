@@ -70,9 +70,9 @@ getcodeelement.each(function (i) {
 });
 
 var clipboard = new Clipboard('.clipbtn', {
-    text: function(trigger) {
-        var el = trigger.closest('.highlight');
-        var content = el ? el.querySelector('.clipboardjs') : null;
+    text: function (trigger) {
+        var container = trigger.closest('pre') || trigger.closest('.highlight');
+        var content = container ? container.querySelector('.clipboardjs') : null;
         var text = content ? content.textContent : '';
         return text.replace(/\$ /gi, '');
     }
