@@ -58,23 +58,23 @@ The Notification Center is a dedicated panel in Meshery’s UI that helps you mo
 
 ---
 
-The `NotificationCenter` component of Meshery UI Switching to Graphql subscriptions and implementing robust filtering. Events are persisted in Meshery Server and state management on client is done using Redux Toolkit and RTK.
+The `NotificationCenter` component of Meshery UI uses GraphQL subscriptions and implements robust filtering. Events are persisted in Meshery Server, while client-side state management is handled using Redux Toolkit and RTK Query.
 
 ### User-facing Features
 
 - Robust filtering support inspired by GitHub's notification filtering style.
   - Search is also included.
-- Proper hierarchial presentation of error details, including probable cause and suggested remeditation.
+- Proper hierarchical presentation of error details, including probable cause and suggested remediation.
 - Support for notification status (notifications can be marked as read and unread)
   - _Future: Notifications can be acknowledged or resolved._
-- Event-based notification via Graphql subscription (provided by Meshery Server and any upstream components or externally managed systems, like Kubernetes)
+- Event-based notification via GraphQL subscription (provided by Meshery Server and any upstream components or externally managed systems, like Kubernetes)
 - Infinite scroll for pagination.
 
 ### State Management and Internal Details
 
-- The State on client is managed using `Redux Tooltik` and `Rtk-query`
+- The State on the client is managed using `Redux Toolkit` and `RTK Query`.
 - Update and Delete operations are optimistically handled.
-- Network Request are cached and are invalidated when new events come or events are deleted/updated.
+- Network Requests are cached and invalidated when new events arrive or when events are deleted or updated.
 - Due to need for infinite scroll and optimistic update the events are stored globally in Redux.
 
 ### Bulk Operations
@@ -110,7 +110,7 @@ The BodySectionRenderer is responsible for formatting and rendering raw text str
 
 ### ArrayRenderer
 
-The ArrayRenderer is responsible for rendering an array of items in a recursive manner, presenting them as a bulletized list using the MetdataFormatter.
+The ArrayRenderer is responsible for rendering an array of items in a recursive manner, presenting them as a bulletized list using the MetadataFormatter.
 
 ### KeyValueRenderer
 
@@ -128,13 +128,13 @@ While this system was initially developed for our events and notification center
 
 When a notification event is received from the server, it includes a `metadata` field containing structured, event-specific information. The purpose of formatters is to present this data in a clean, readable, and user-friendly format inside the expanded view of each notification.
 
-The core logic for rendering metadata is handled by the `FormattedMetadata` component in `metadata.js`, which follows this decision tree:
+The core logic for rendering metadata is handled by the `FormattedMetadata` component in `metadata.tsx`, which follows this decision tree:
 
 1. **Event-Specific Formatter Check**  
    If a formatter exists for the event's type (registered under `EventTypeFormatters`), that dedicated formatter is used to fully control how the metadata is displayed.
 
 2. **Fallback to Property-Based Formatting**  
-   If no event-specific formatter is found, the `FormattedMetadata` component falls back to the `FormatStructuredData` function (also in `metadata.js`).
+   If no event-specific formatter is found, the `FormattedMetadata` component falls back to the `FormatStructuredData` component (imported from `ui/components/data-formatter/index.tsx`).
 
    - This function renders each key-value pair from the `metadata` using the mappings defined in:
      - `PropertyFormatters` – for structured or specialized visual formats.
@@ -146,19 +146,34 @@ This section outlines the essential files and folders that you'll interact with 
 
 #### `NotificationCenter/` _(Root Directory)_
 
-- **index.js**: Contains the main context provider (`NotificationCenterProvider`), the drawer component (`NotificationCenterDrawer`), and orchestrates the overall structure.
-- **metadata.js**: Defines `PropertyFormatters`, `LinkFormatters`, `PropertyLinkFormatters`, and `EventTypeFormatters`. Contains the `FormattedMetadata` component which decides _how_ to format the metadata based on event type or specific properties.
-- **notification.js**: Defines how an individual notification is rendered.
+- **[index.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/index.tsx)**:  
+  Contains the main context provider (`NotificationCenterProvider`), the drawer component (`NotificationCenterDrawer`), and orchestrates the overall structure.
+
+- **[metadata.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/metadata.tsx)**:  
+  Defines `PropertyFormatters`, `LinkFormatters`, `PropertyLinkFormatters`, and `EventTypeFormatters`. Contains the `FormattedMetadata` component which decides how to format metadata based on event type or specific properties.
+
+- **[notification.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/notification.tsx)**:  
+  Defines how an individual notification is rendered.
+
 
 #### `formatters/` _(NotificationCenter/formatters)_
 
 This directory houses reusable formatter components dedicated to specific types of metadata or event types.
 
-- **common.js**: Contains shared components like `TitleLink`, `DataToFileLink`, `EmptyState`.
-- **error.js**: Defines `ErrorMetadataFormatter` for displaying structured error details.
-- **model_registration.js**: Contains formatters for model import/registration events (`ModelImportMessages`, `ModelImportedSection`).
-- **pattern_dryrun.js**: Defines `DryRunResponseFormatter` which utilizes components from `DesignLifeCycle`.
-- **relationship_evaluation.js**: Defines `RelationshipEvaluationEventFormatter` responsible for rendering notifications related to the evaluation of relationships between components in a design.
+- **[common.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/formatters/common.tsx)**:  
+  Contains shared components like `TitleLink`, `DataToFileLink`, `EmptyState`.
+
+- **[error.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/formatters/error.tsx)**:  
+  Defines `ErrorMetadataFormatter` for displaying structured error details.
+
+- **[model_registration.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/formatters/model_registration.tsx)**:  
+  Contains formatters for model import/registration events (`ModelImportMessages`, `ModelImportedSection`).
+
+- **[pattern_dryrun.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/formatters/pattern_dryrun.tsx)**:  
+  Defines `DryRunResponseFormatter` which utilizes components from `designs/lifecycle` (for example, `DryRun.tsx` and `ValidateDesign.tsx`).
+
+- **[relationship_evaluation.tsx](https://github.com/meshery/meshery/blob/master/ui/components/layout/NotificationCenter/formatters/relationship_evaluation.tsx)**:  
+  Defines `RelationshipEvaluationEventFormatter` responsible for rendering notifications related to the evaluation of relationships between components in a design.
 
 ## Types of Event Specific Notification Formatters
 
@@ -198,18 +213,18 @@ The `ErrorMetadataFormatter` is used for formatting error-related notifications 
   - `SuggestedRemediation`: Suggests solutions to fix the error.
 - `event` (object, optional): Contains the notification event data.
 
-**Path:** `ui/components/NotificationCenter/formatters/error.js`
+**Path:** `ui/components/layout/NotificationCenter/formatters/error.tsx`
 
 **Example:**
 
 ```javascript
 <ErrorMetadataFormatter
-  metadata={
-    LongDescription: "An unexpected error occurred while deploying the mesh.",
-    ProbableCause: "Misconfigured Kubernetes cluster.",
-    SuggestedRemediation: "Check your kubeconfig file and retry deployment.",
-  }
-  event={ description: "Mesh deployment failed" }
+  metadata={{
+    LongDescription: ["An unexpected error occurred while deploying the mesh."],
+    ProbableCause: ["Misconfigured Kubernetes cluster."],
+    SuggestedRemediation: ["Check your kubeconfig file and retry deployment."],
+  }}
+  event={{ description: "Mesh deployment failed" }}
 />
 ```
 
@@ -223,7 +238,7 @@ The `ErrorMetadataFormatter` is used when dealing with structured error events t
 
 The `Model Registration Formatter` formats and displays model registration details, including components and relationships, in Meshery UI's Notification Center. It ensures structured representation of imported models and error handling during the import process.
 
-**Path:** `ui/components/NotificationCenter/formatters/model_registration.js`
+**Path:** `ui/components/layout/NotificationCenter/formatters/model_registration.tsx`
 
 **Components:**
 
@@ -246,7 +261,7 @@ The `Model Registration Formatter` formats and displays model registration detai
 
 The **Relationship Evaluation Formatter** is responsible for rendering notifications related to the evaluation of relationships between components in a design. It provides a detailed breakdown of changes in components and relationships, such as additions, updates, and removals, during the evaluation process.
 
-**Path:** `ui/components/NotificationCenter/formatters/relationship_evaluation.js`
+**Path:** `ui/components/layout/NotificationCenter/formatters/relationship_evaluation.tsx`
 
 #### Key Components
 
@@ -312,7 +327,7 @@ The **Relationship Evaluation Formatter** is specifically designed to handle not
 
 The **Dry Run Formatter** is responsible for rendering notifications related to the dry run validation of a design. A dry run simulates the deployment or undeployment of a design to identify potential errors without actually applying the changes.
 
-**Path:** `ui/components/DesignLifeCycle/DryRun.js`
+**Path:** `ui/components/designs/lifecycle/DryRun.tsx`
 
 #### Key Components
 
@@ -344,7 +359,7 @@ The **Dry Run Formatter** is used in the following scenarios:
 
 The **Deployment Summary Formatter** is responsible for rendering notifications related to the deployment or undeployment of components in a design.
 
-**Path:** `ui/components/DesignLifeCycle/DeploymentSummary.js`
+**Path:** `ui/components/designs/lifecycle/DeploymentSummary.tsx`
 
 #### Key Components
 
