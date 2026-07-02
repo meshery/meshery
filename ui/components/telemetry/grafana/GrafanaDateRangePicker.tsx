@@ -27,18 +27,18 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const DialogTitleBar = styled('div')(() => ({
+const DialogTitleBar = styled('div')(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
-  backgroundColor: 'rgb(57, 102, 121)',
-  color: 'white',
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.primary.contrastText,
 }));
 
-const CloseIconButton = styled(IconButton)(() => ({
+const CloseIconButton = styled(IconButton)(({ theme }) => ({
   height: '2.3rem',
   marginTop: '0.8rem',
   marginRight: '10px',
-  color: 'white',
+  color: theme.palette.primary.contrastText,
 }));
 
 const CloseIcon = styled(Close)({
@@ -577,7 +577,7 @@ const GrafanaDateRangePicker = (props) => {
 
   return (
     <NoSsr>
-      <RangeButton variant="filled" onClick={handleClick}>
+      <RangeButton variant="outlined" onClick={handleClick}>
         <AccessTimeIcon sx={{ marginRight: '0.25rem', fontSize: '1.15rem' }} />
         <Moment format="LLLL">{startDate}</Moment>
         <Space>-</Space>
@@ -650,7 +650,7 @@ const GrafanaDateRangePicker = (props) => {
                 Quick Ranges
                 <Grid2 container spacing={0} size="grow">
                   {quickRanges.map((qr, index) => (
-                    <TimeList item key={`qr-${index}`} size={{ xs: 12, sm: 3 }}>
+                    <TimeList key={`qr-${index}`} size={{ xs: 12, sm: 3 }}>
                       {qr.map((q) => (
                         <Button key={q} variant="text" onClick={setRange(q)}>
                           {q}
