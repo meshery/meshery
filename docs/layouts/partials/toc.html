@@ -1,0 +1,15 @@
+{{ if eq .Type "models" }}
+  <!-- Custom TOC strictly for Model Pages -->
+  <nav id="TableOfContents" class="td-toc">
+    <ul id="model-toc-list">
+      {{ if and .Params.components (gt (len .Params.components) 0) }}
+        <li><a href="#components">Components</a></li>
+      {{ end }}
+      
+      <li id="toc-related-designs-item"><a href="#related-designs-header">Related Designs</a></li>
+      <li id="toc-related-tutorials-item"><a href="#related-tutorials-header">Related Tutorials</a></li>
+    </ul>
+  </nav>
+{{ else }}
+  {{ .TableOfContents }}
+{{ end }}

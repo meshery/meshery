@@ -8,6 +8,7 @@ suggested_reading: false
 type: models
 cascade: 
     type: models
+    display_toc: false
 ---
 
 The following list of [models]({{< ref "concepts/logical/models/index.md" >}}) are packaged into each Meshery release, available in the [registry]({{< ref "concepts/logical/registry.md" >}}) where you may optionally disable, export and customize, and import new models.

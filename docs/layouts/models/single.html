@@ -2,11 +2,26 @@
 <article>
     {{ with .Params.subtitle }}<p>{{ . }}</p>{{ end }}
     {{ .Content }}
+
+        <nav id="model-toc" aria-label="On this page">
+      <ul id="model-toc-list">
+        {{ if and .Params.components (gt (len .Params.components) 0) }}
+        <li id="toc-components-item"><a href="#components">Components</a></li>
+        {{ end }}
+        <li id="toc-related-designs-item">
+          <a href="#related-designs-header">Related Designs</a>
+        </li>
+        <li id="toc-related-tutorials-item">
+          <a href="#related-tutorials-header">Related Tutorials</a>
+        </li>
+      </ul>
+    </nav>
+
     <!-- components -->
     <div>
         <section class="Compheading">
             {{ if and .Params.components (gt (len .Params.components) 0) }}
-            <h3>
+            <h3 id="components">
                 Components ({{ len .Params.components }})
             </h3>
             <p>The Meshery model for {{ .Title }} supports the following components.</p>
@@ -139,18 +154,38 @@
 </article>
 
 <script>
-    function handleImageError(image) {
-        image.onerror = null;
-        image.src = '{{ strings.TrimPrefix "/" .Params.image | relURL }}';
-    }
-    const designLinks = document.querySelectorAll('.design-link');
-    if (designLinks.length === 0) {
-        document.getElementById('related-designs-header').style.display = 'none';
-    }
+  function handleImageError(image) {
+    image.onerror = null;
+    image.src = '{{ strings.TrimPrefix "/" .Params.image | relURL }}';
+  }
 
-    const relatedTutorials = document.querySelectorAll(".tutorial-link");
-    if (relatedTutorials.length === 0) {
-        document.getElementById("related-tutorials-header").style.display = "none";
+  // Handle Related Designs
+  const designLinks = document.querySelectorAll('.design-link');
+  if (designLinks.length === 0) {
+    const designsHeader = document.getElementById('related-designs-header');
+    const tocDesignsItem = document.getElementById('toc-related-designs-item');
+    if (designsHeader) designsHeader.style.display = 'none';
+    if (tocDesignsItem) tocDesignsItem.style.display = 'none';
+  }
+
+  // Handle Related Tutorials
+  const relatedTutorials = document.querySelectorAll('.tutorial-link');
+  if (relatedTutorials.length === 0) {
+    const tutorialsHeader = document.getElementById('related-tutorials-header');
+    const tocTutorialsItem = document.getElementById('toc-related-tutorials-item');
+    if (tutorialsHeader) tutorialsHeader.style.display = 'none';
+    if (tocTutorialsItem) tocTutorialsItem.style.display = 'none';
+  }
+
+  // Hide the entire TOC block if all list items are hidden
+  const modelTocList = document.getElementById('model-toc-list');
+  if (modelTocList) {
+    const hasVisibleTocItems = Array.from(modelTocList.querySelectorAll('li'))
+      .some(li => window.getComputedStyle(li).display !== 'none');
+    
+    if (!hasVisibleTocItems) {
+      document.getElementById('TableOfContents').style.display = 'none';
     }
+  }
 </script>
 {{ end }}
