@@ -9,7 +9,7 @@ let profile: {
 } = {
   data: { preferences: { remoteProviderPreferences: { getstarted: ['step-1'] } } },
 };
-let currentOrg: { id?: string } = { id: 'org-1' };
+let currentOrg: { id?: string } | null = { id: 'org-1' };
 
 const actionCardSpy = vi.fn();
 const modalSpy = vi.fn();
@@ -139,5 +139,13 @@ describe('GetStarted', () => {
     render(<GetStarted />);
     const props = actionCardSpy.mock.calls[0][0];
     expect(props.completedSteps).toEqual([]);
+  });
+
+  it('does not crash and passes an undefined currentOrgId when the organization is null', () => {
+    currentOrg = null;
+    render(<GetStarted />);
+    expect(screen.getByTestId('action-card')).toBeInTheDocument();
+    const modalProps = modalSpy.mock.calls[0][0];
+    expect(modalProps.currentOrgId).toBeUndefined();
   });
 });
