@@ -2,7 +2,7 @@ import {
   UnifiedCardContainer,
   UnifiedDescription,
   UnifiedButtonContainer,
-} from '../components/extensions/sharedLayout';
+} from '../components/extensions/extensionLayout';
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme, Box } from '@sistent/sistent';

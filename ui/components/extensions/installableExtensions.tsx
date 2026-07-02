@@ -6,7 +6,11 @@ import {
   useInstallProviderExtensionMutation,
   useRemoveProviderExtensionMutation,
 } from '@/rtk-query/user';
-import { UnifiedCardContainer, UnifiedDescription, UnifiedButtonContainer } from './sharedLayout';
+import {
+  UnifiedCardContainer,
+  UnifiedDescription,
+  UnifiedButtonContainer,
+} from './extensionLayout';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '@/utils/hooks';
 import { formatApiError } from '@/utils/helpers/meshkitError';

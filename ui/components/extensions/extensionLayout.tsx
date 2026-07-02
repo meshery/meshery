@@ -12,6 +12,7 @@ type UnifiedDescriptionProps = Omit<
 > & {
   children: React.ReactNode;
   hasIcon?: boolean;
+  'data-testid'?: string;
 };
 
 export const UnifiedCardContainer = ({ children, sx = {} }: ChildrenProps & { sx?: object }) => (
@@ -43,6 +44,7 @@ export const UnifiedDescription = ({
       alignItems: { xs: hasIcon ? 'center' : 'flex-start', sm: 'flex-start' },
       textAlign: { xs: hasIcon ? 'center' : 'left', sm: 'left' },
       gap: { xs: hasIcon ? '12px' : '8px', sm: '8px' },
+
       marginBottom: { xs: '50px', sm: '45px', lg: '40px' },
       overflow: 'hidden',
       wordWrap: 'break-word',
