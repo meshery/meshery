@@ -7,6 +7,7 @@ import {
   Divider,
   IconButton,
   styled,
+  useTheme,
   FullScreenIcon,
   FullScreenExitIcon,
 } from '@sistent/sistent';
@@ -20,6 +21,7 @@ import { YamlDialogTitle, YamlDialogTitleText } from './MesheryPatterns.styled';
 function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
   const [yaml, setYaml] = useState(pattern.patternFile);
   const [fullScreen, setFullScreen] = useState(false);
+  const theme = useTheme();
 
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
@@ -56,7 +58,11 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
             onClick={toggleFullScreen}
           >
-            {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
+            {fullScreen ? (
+              <FullScreenExitIcon fill={theme.palette.icon.default} />
+            ) : (
+              <FullScreenIcon fill={theme.palette.icon.default} />
+            )}
           </CustomTooltip>
           <CustomTooltip placement="top" title="Exit" onClick={onClose}>
             <CloseIcon />

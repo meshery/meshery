@@ -9,6 +9,7 @@ import {
   IconButton,
   SaveIcon,
   Tooltip,
+  useTheme,
 } from '@sistent/sistent';
 import { UnControlled as CodeMirror } from './CodeMirror';
 import { YamlDialogTitleText, StyledDialog } from './designs/patterns/style';
@@ -24,6 +25,7 @@ const YAMLDialog = ({
   updateHandler,
   isReadOnly = false,
 }) => {
+  const theme = useTheme();
   return (
     <Dialog
       aria-labelledby="filter-dialog-title"
@@ -34,9 +36,17 @@ const YAMLDialog = ({
     >
       <StyledDialog disableTypography id="filter-dialog-title">
         <YamlDialogTitleText variant="h6">{name}</YamlDialogTitleText>
-        <Tooltip title="Exit Fullscreen" arrow placement="bottom">
+        <Tooltip
+          title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+          arrow
+          placement="bottom"
+        >
           <IconButton onClick={toggleFullScreen} size="large">
-            {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
+            {fullScreen ? (
+              <FullScreenExitIcon fill={theme.palette.icon.default} />
+            ) : (
+              <FullScreenIcon fill={theme.palette.icon.default} />
+            )}
           </IconButton>
         </Tooltip>
       </StyledDialog>
