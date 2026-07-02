@@ -174,7 +174,7 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
   <script type="text/javascript">
     window.open('docker-desktop://dashboard/open', '_self')
   </script>
-  <p>You have been authenticated succesfully, you can safely close this window.</p>
+  <p>You have been authenticated. You can safely close this window.</p>
 
 </body>
 
