@@ -83,7 +83,7 @@ pre::-webkit-scrollbar {
     background-color: var(--color-primary-medium);
     padding: 0.75rem;
     overflow: hidden;
-   &::-webkit-scrollbar {
+    &::-webkit-scrollbar {
       display: none;
     }
   }
