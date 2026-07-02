@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 // Heavy machinery deps need stubbing exactly like the individual machine tests
 // or the import graph will pull in the relay env, the redux store, the RTK
-// query API, and the GraphQL subscription bootstrap.
+// query API, and the events SSE subscription bootstrap.
 vi.mock('@/rtk-query/meshModel', () => ({ getComponentDefinition: vi.fn() }));
 vi.mock('@/rtk-query/design', () => ({
   designsApi: {
@@ -14,8 +14,8 @@ vi.mock('@/utils/utils', () => ({
   encodeDesignFile: vi.fn(),
   processDesign: vi.fn(() => ({ components: [] })),
 }));
-vi.mock('@/graphql/subscriptions/EventsSubscription', () => ({
-  default: () => ({ dispose: vi.fn() }),
+vi.mock('lib/eventsSubscription', () => ({
+  subscribeToEvents: () => ({ dispose: vi.fn() }),
 }));
 vi.mock('../../store', () => ({ store: { dispatch: vi.fn() } }));
 vi.mock('@/store/slices/events', () => ({ pushEvent: vi.fn() }));

@@ -113,35 +113,6 @@ type Error {
   description: String!
 }
 
-# ================= EVENTS =================
-
-type Event {
-  id: ID!,
-  owner: ID!,
-  actedUpon: ID!,
-  operationID: ID!,
-  systemID: ID!,
-  severity: Severity!,
-  action: String!,
-  status: String!,
-  category: String!,
-  description: String!,
-  metadata: Map,
-  createdAt: Time!,
-  updatedAt: Time!,
-  deletedAt: Time
-}
-
-enum Severity {
-  alert,
-  critical,
-  debug,
-  emergency,
-  error,
-  warning,
-  informational
-}
-
 # ================ DASHBOARD ================
 
 type Resource {
@@ -690,9 +661,6 @@ type Subscription {
   subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
 
   subscribeMeshModelSummary(selector: MeshModelSummarySelector!) : MeshModelSummary!
-
-  # Publish events to user
-  subscribeEvents : Event!
 }
 
 type KctlDescribeDetails {

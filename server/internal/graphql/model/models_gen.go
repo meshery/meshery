@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"strconv"
-	"time"
 )
 
 type AdapterStatusInput struct {
@@ -144,23 +143,6 @@ type DataPlane struct {
 type Error struct {
 	Code        string `json:"code"`
 	Description string `json:"description"`
-}
-
-type Event struct {
-	ID          string         `json:"id"`
-	Owner       string         `json:"owner"`
-	ActedUpon   string         `json:"actedUpon"`
-	OperationID string         `json:"operationID"`
-	SystemID    string         `json:"systemID"`
-	Severity    Severity       `json:"severity"`
-	Action      string         `json:"action"`
-	Status      string         `json:"status"`
-	Category    string         `json:"category"`
-	Description string         `json:"description"`
-	Metadata    map[string]any `json:"metadata,omitempty"`
-	CreatedAt   time.Time      `json:"createdAt"`
-	UpdatedAt   time.Time      `json:"updatedAt"`
-	DeletedAt   *time.Time     `json:"deletedAt,omitempty"`
 }
 
 type FilterPage struct {
@@ -642,71 +624,6 @@ func (e *MesheryControllerStatus) UnmarshalJSON(b []byte) error {
 }
 
 func (e MesheryControllerStatus) MarshalJSON() ([]byte, error) {
-	var buf bytes.Buffer
-	e.MarshalGQL(&buf)
-	return buf.Bytes(), nil
-}
-
-type Severity string
-
-const (
-	SeverityAlert         Severity = "alert"
-	SeverityCritical      Severity = "critical"
-	SeverityDebug         Severity = "debug"
-	SeverityEmergency     Severity = "emergency"
-	SeverityError         Severity = "error"
-	SeverityWarning       Severity = "warning"
-	SeverityInformational Severity = "informational"
-)
-
-var AllSeverity = []Severity{
-	SeverityAlert,
-	SeverityCritical,
-	SeverityDebug,
-	SeverityEmergency,
-	SeverityError,
-	SeverityWarning,
-	SeverityInformational,
-}
-
-func (e Severity) IsValid() bool {
-	switch e {
-	case SeverityAlert, SeverityCritical, SeverityDebug, SeverityEmergency, SeverityError, SeverityWarning, SeverityInformational:
-		return true
-	}
-	return false
-}
-
-func (e Severity) String() string {
-	return string(e)
-}
-
-func (e *Severity) UnmarshalGQL(v any) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = Severity(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid Severity", str)
-	}
-	return nil
-}
-
-func (e Severity) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-func (e *Severity) UnmarshalJSON(b []byte) error {
-	s, err := strconv.Unquote(string(b))
-	if err != nil {
-		return err
-	}
-	return e.UnmarshalGQL(s)
-}
-
-func (e Severity) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	e.MarshalGQL(&buf)
 	return buf.Bytes(), nil
