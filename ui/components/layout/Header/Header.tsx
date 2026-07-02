@@ -143,6 +143,7 @@ function K8sContextMenu({
   setActiveContexts = () => {},
   searchContexts = () => {},
 }) {
+  const theme = useTheme();
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
   const anchorRef = React.useRef(null);
   // The dropdown slides up from below; its translate distance scales with the
