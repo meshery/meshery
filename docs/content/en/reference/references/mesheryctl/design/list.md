@@ -70,7 +70,7 @@ mesheryctl design list --count
   -h, --help           help for list
   -p, --page int       (optional) List next set of designs with --page (default 1)
       --pagesize int   (optional) Number of designs to be displayed per page (default 10)
-  -v, --verbose        (optional) Display full length user identifiers and detailed timestamps
+  -v, --verbose        (optional) Display full length owner identifiers and detailed timestamps
 
 </div>
 </pre>
@@ -92,4 +92,4 @@ Usage of mesheryctl design list
 
 ## See Also
 
-Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/contributing-cli.md#preserving-manually-added-documentation" >}}) for guidance.
+Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

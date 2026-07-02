@@ -201,12 +201,21 @@ const ModelContents = ({ modelDef }: { modelDef: any }) => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '0.5rem',
+          marginBottom: '0.5rem',
+        }}
+      >
         <TitleWithImg
           displayName={modelDef.displayName}
           iconSrc={`/${modelDef?.metadata?.svgColor}`}
         />
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
           {ExportAvailable ? (
             <Button
               aria-label="Export Model"
@@ -473,6 +482,9 @@ const StatusChip = ({ entityData, entityType }: { entityData: any; entityType: s
           value={data?.status || REGISTRY_ITEM_STATES.IGNORED}
           defaultValue={data?.status || REGISTRY_ITEM_STATES.IGNORED}
           onChange={(e) => handleStatusChange(e)}
+          SelectDisplayProps={{
+            'aria-label': 'Model status',
+          }}
           sx={{
             textTransform: 'capitalize',
           }}
