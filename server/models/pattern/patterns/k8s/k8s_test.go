@@ -42,7 +42,7 @@ func TestDryRunCreateSuccess(t *testing.T) {
 			"name": "nginx",
 		},
 	}
-
+	called := false
 	client := &restfake.RESTClient{
 		GroupVersion: schema.GroupVersion{
 			Group:   "apps",
@@ -50,6 +50,7 @@ func TestDryRunCreateSuccess(t *testing.T) {
 		},
 		NegotiatedSerializer: scheme.Codecs.WithoutConversion(),
 		Client: restfake.CreateHTTPClient(func(req *http.Request) (*http.Response, error) {
+			called = true
 
 			if req.Method != http.MethodPost {
 				t.Fatalf("expected POST request, got %s", req.Method)
@@ -72,6 +73,17 @@ func TestDryRunCreateSuccess(t *testing.T) {
 			if q.Get("fieldManager") != "meshery" {
 				t.Fatal("expected fieldManager=meshery")
 			}
+			if req.Header.Get("Accept") != runtime.ContentTypeJSON {
+				t.Fatalf("expected Accept %s, got %q",
+					runtime.ContentTypeJSON,
+					req.Header.Get("Accept"))
+			}
+
+			if req.Header.Get("Content-Type") != runtime.ContentTypeJSON {
+				t.Fatalf("expected Content-Type %s, got %q",
+					runtime.ContentTypeJSON,
+					req.Header.Get("Content-Type"))
+			}
 
 			header := http.Header{}
 			header.Set("Content-Type", runtime.ContentTypeJSON)
@@ -84,6 +96,9 @@ func TestDryRunCreateSuccess(t *testing.T) {
 		}),
 	}
 	status, success, err := dryRun(client, resource, "default", false)
+	if !called {
+		t.Fatal("expected HTTP client to be called")
+	}
 
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
@@ -111,7 +126,7 @@ func TestDryRunDeleteSuccess(t *testing.T) {
 			"name": "nginx",
 		},
 	}
-
+	called := false
 	client := &restfake.RESTClient{
 		GroupVersion: schema.GroupVersion{
 			Group:   "apps",
@@ -119,6 +134,7 @@ func TestDryRunDeleteSuccess(t *testing.T) {
 		},
 		NegotiatedSerializer: scheme.Codecs.WithoutConversion(),
 		Client: restfake.CreateHTTPClient(func(req *http.Request) (*http.Response, error) {
+			called = true
 
 			if req.Method != http.MethodDelete {
 				t.Fatalf("expected DELETE request, got %s", req.Method)
@@ -132,6 +148,12 @@ func TestDryRunDeleteSuccess(t *testing.T) {
 				t.Fatalf("unexpected path: %s", req.URL.Path)
 			}
 
+			if req.Header.Get("Accept") != runtime.ContentTypeJSON {
+				t.Fatalf("expected Accept %s, got %q",
+					runtime.ContentTypeJSON,
+					req.Header.Get("Accept"))
+			}
+
 			header := http.Header{}
 			header.Set("Content-Type", runtime.ContentTypeJSON)
 
@@ -143,6 +165,9 @@ func TestDryRunDeleteSuccess(t *testing.T) {
 		}),
 	}
 	status, success, err := dryRun(client, resource, "default", true)
+	if !called {
+		t.Fatal("expected HTTP client to be called")
+	}
 
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
@@ -237,7 +262,7 @@ func TestDryRunReturnsFailureStatus(t *testing.T) {
 			"name": "nginx",
 		},
 	}
-
+	called := false
 	client := &restfake.RESTClient{
 		GroupVersion: schema.GroupVersion{
 			Group:   "apps",
@@ -245,6 +270,7 @@ func TestDryRunReturnsFailureStatus(t *testing.T) {
 		},
 		NegotiatedSerializer: scheme.Codecs.WithoutConversion(),
 		Client: restfake.CreateHTTPClient(func(req *http.Request) (*http.Response, error) {
+			called = true
 			header := http.Header{}
 			header.Set("Content-Type", runtime.ContentTypeJSON)
 
@@ -260,6 +286,9 @@ func TestDryRunReturnsFailureStatus(t *testing.T) {
 	}
 
 	status, success, err := dryRun(client, resource, "default", false)
+	if !called {
+		t.Fatal("expected HTTP client to be called")
+	}
 
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
@@ -286,13 +315,14 @@ func TestDryRunCreateCoreResourceSuccess(t *testing.T) {
 			"name": "nginx",
 		},
 	}
-
+	called := false
 	client := &restfake.RESTClient{
 		GroupVersion: schema.GroupVersion{
 			Version: "v1",
 		},
 		NegotiatedSerializer: scheme.Codecs.WithoutConversion(),
 		Client: restfake.CreateHTTPClient(func(req *http.Request) (*http.Response, error) {
+			called = true
 
 			if req.Method != http.MethodPost {
 				t.Fatalf("expected POST request, got %s", req.Method)
@@ -316,6 +346,18 @@ func TestDryRunCreateCoreResourceSuccess(t *testing.T) {
 				t.Fatal("expected fieldManager=meshery")
 			}
 
+			if req.Header.Get("Accept") != runtime.ContentTypeJSON {
+				t.Fatalf("expected Accept %s, got %q",
+					runtime.ContentTypeJSON,
+					req.Header.Get("Accept"))
+			}
+
+			if req.Header.Get("Content-Type") != runtime.ContentTypeJSON {
+				t.Fatalf("expected Content-Type %s, got %q",
+					runtime.ContentTypeJSON,
+					req.Header.Get("Content-Type"))
+			}
+
 			header := http.Header{}
 			header.Set("Content-Type", runtime.ContentTypeJSON)
 
@@ -327,6 +369,9 @@ func TestDryRunCreateCoreResourceSuccess(t *testing.T) {
 		}),
 	}
 	status, success, err := dryRun(client, resource, "default", false)
+	if !called {
+		t.Fatal("expected HTTP client to be called")
+	}
 
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
