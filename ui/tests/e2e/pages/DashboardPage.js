@@ -65,8 +65,15 @@ export class DashboardPage {
   }
 
   async navigateToSubMenuItem(parentItem, childItem) {
-    await this.navigateToMenu(parentItem);
+    const parentMenu = this.page.getByTestId(parentItem);
+    await expect(parentMenu).toBeVisible();
+
     const submenuItem = this.page.getByTestId(childItem);
+    if (!(await submenuItem.isVisible())) {
+      const expandButton = parentMenu.locator('xpath=../following-sibling::button');
+      await expandButton.click();
+    }
+
     await expect(submenuItem).toBeVisible();
     await submenuItem.click();
   }
