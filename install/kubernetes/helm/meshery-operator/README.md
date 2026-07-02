@@ -59,7 +59,7 @@ The chart's `version`/`appVersion` and the CRD bundles under `crds/` and
 | fullnameOverride | string | `"meshery-operator"` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.repository | string | `"meshery/meshery-operator"` |  |
-| image.tag | string | `""` | Defaults to the chart appVersion |
+| image.tag | string | `"1.0.0"` | Pinned operator release, stamped by the sync workflow. Kept explicit because server-release chart publishing re-stamps appVersion with the server tag; empty falls back to the chart appVersion |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.enabled | bool | `false` |  |

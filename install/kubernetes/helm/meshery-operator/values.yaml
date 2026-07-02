@@ -6,9 +6,13 @@ replicaCount: 1
 
 image:
   repository: meshery/meshery-operator
-  # Defaults to the chart appVersion, which the sync-downstream workflow in
-  # meshery/meshery-operator keeps in lockstep with operator releases.
-  tag: ""
+  # Pinned operator release; stamped by meshery/meshery-operator's
+  # sync-downstream workflow on every operator release. Kept explicit (not
+  # derived from appVersion) because helm-chart-releaser re-stamps appVersion
+  # with the *Meshery Server* tag when it republishes charts at server
+  # releases — an appVersion-derived tag would then point at a nonexistent
+  # operator image. Empty falls back to the chart appVersion.
+  tag: "1.0.0"
   pullPolicy: IfNotPresent
 
 # Extra environment variables for the manager container (name: value).
