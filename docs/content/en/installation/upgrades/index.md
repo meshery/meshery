@@ -109,8 +109,7 @@ Operator Deployment to the operator image pinned in the chart. The Operator
 then reconciles MeshSync and the Broker.
 
 **Reconciliation.** The Server periodically re-applies the operator chart if
-the Operator is missing or unhealthy (`UpgradeIfInstalled`). Two practical
-consequences:
+the Operator is missing or unhealthy. Two practical consequences:
 
 - **Manual operator changes are temporary.** A hand-run
   `helm upgrade meshery-operator --version <x>` or an edited image tag on a

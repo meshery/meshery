@@ -8,7 +8,6 @@ categories: [installation]
 weight: 10
 aliases:
 - /guides/upgrade
-- /guides/upgrading-meshery
 ---
 
 This guide walks through upgrading a running Meshery deployment. Meshery is a
@@ -110,7 +109,7 @@ kubectl get crds brokers.meshery.io meshsyncs.meshery.io
 
 # Broker and MeshSync are reconciled and ready
 kubectl -n meshery get brokers,meshsyncs
-kubectl -n meshery get statefulset meshery-broker deploy meshery-meshsync
+kubectl -n meshery get statefulset/meshery-nats deployment/meshery-meshsync
 ```
 
 In Meshery UI, confirm the cluster connection shows the Operator, MeshSync,
@@ -127,9 +126,10 @@ Remote Provider, and the local database is a rebuildable cache. Two notes:
 
 - The Operator follows the Server: after a rollback, the Server re-applies the
   older operator chart on managed clusters.
-- CRD schemas are not rolled back automatically (the older chart's CRD update
-  Job re-applies the older schema on its next run; stored objects remain
-  readable because served versions stay identical across current schema
-  revisions).
+- CRD schemas are not rolled back by `helm rollback` directly. When the
+  rolled-back Server reconnects to managed clusters, it re-applies the older
+  operator chart as a Helm upgrade, and that chart's CRD update Job re-applies
+  the older schemas. Stored objects remain readable throughout, because served
+  versions stay identical across current schema revisions.
 
 {{< related-discussions tag="meshery" >}}

@@ -181,7 +181,7 @@ Alternatively, a whitelist inverts the behavior — only the listed resources
 spec:
   watch-list:
     data:
-      whitelist: '[{"Resource":"namespaces.v1.","Events":["ADDED","DELETE"]},{"Resource":"pods.v1.","Events":["MODIFIED"]}]'
+      whitelist: '[{"Resource":"namespaces.v1.","Events":["ADDED","MODIFIED","DELETED"]},{"Resource":"pods.v1.","Events":["MODIFIED"]}]'
 ```
 
 Restart MeshSync (`kubectl -n meshery rollout restart deploy/meshery-meshsync`)
