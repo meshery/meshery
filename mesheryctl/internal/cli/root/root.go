@@ -99,7 +99,12 @@ func Execute() error {
 	RootCmd.SilenceErrors = true
 	err := RootCmd.Execute()
 	if err != nil {
-		utils.Log.Errorf("%s", strings.ReplaceAll(err.Error(), " | ", "\n"))
+		errMsg := strings.ReplaceAll(err.Error(), " | ", "\n")
+		if utils.Log != nil {
+			utils.Log.Errorf("%s", errMsg)
+		} else {
+			fmt.Fprintf(os.Stderr, "Error: %s\n", errMsg)
+		}
 	}
 	return err
 }
