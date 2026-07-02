@@ -53,19 +53,13 @@ function HideToggleFunction() {
 
 /*clipboard*/
 
-var getcodeelement = $('.clipboardjs'); /*create custom id*/
+var getcodeelement = $('.clipboardjs');
 
-getcodeelement.each(function (i) {
+getcodeelement.each(function () {
     
     /*trigger*/
-    var text = $(this).text();
-    text = text.replace(/\$ /gi, '')
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/'/g, "&#39;")
-        .replace(/"/g, "&quot;");
-    var clipButton = '<div class="btn-copy-wrap"><button type="button" class="clipbtn" aria-label="Copy code to clipboard" data-clipboard-text="' + text + '"><i class="far fa-copy" aria-hidden="true"></i></button></div>';
+    
+    var clipButton = '<div class="btn-copy-wrap"><button type="button" class="clipbtn" aria-label="Copy code to clipboard"><i class="far fa-copy" aria-hidden="true"></i></button></div>';
     $(this).after(clipButton);
 });
 
@@ -104,18 +98,19 @@ clipboard.on("success", (e) => {
     button.replaceChild(text, icon);
 
     setTimeout(() => {
-        if (!button.isConnected) {
-            return;
-        }
+    // 1. Always reset accessible name/state first (safe even if detached)
+    button.setAttribute('aria-label', 'Copy code to clipboard');
+    button.removeAttribute("data-is-copying");
 
-        // Always reset accessible name/state, even if the DOM changed.
-        button.setAttribute('aria-label', 'Copy code to clipboard');
-        button.removeAttribute("data-is-copying");
+    // 2. Guard only the physical DOM manipulation
+    if (!button.isConnected) {
+        return;
+    }
 
-        if (button.contains(text)) {
-            button.replaceChild(originalIcon, text);
-        }
-    }, 2000);
+    if (button.contains(text)) {
+        button.replaceChild(originalIcon, text);
+    }
+}, 2000);
 });
 
 const toggleBtnSidebarNav = document.querySelector(".nav-toggle-btn--document");
