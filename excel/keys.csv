@@ -103,6 +103,6 @@ Operator,View Views,See all views within a workspace,X,X,,,X,,X,X,View Managemen
 Operator,Delete View,Dissolve environment and all connection memberships. Leave associated resources intact.,X*,X*,,,X,,X,X,View Management,48076416-bc07-456b-bbea-49bdca239d0f,X,FALSE
 Operator,Assign Views to Workspace,Add new views to workspace,,,,,X,,X,X,Workspace Management,fb6c987b-e54c-4016-b3f3-0488228ee998,X,FALSE
 Operator,Unassign Views from Workspace,Remove views from workspace ,,,,,X,,X,X,Workspace Management,f77d74ef-1cae-4527-b45e-ecc1431681df,X,FALSE
-Credentials,View Credentials,,,,,,,,X,X,,96759f76-4add-45f8-b4ef-d4ace5ab1bc4,X,FALSE
+Credentials,View Credentials,,,,,,,,X,X,,96759f76-4add-45f8-b4ef-d4ace5ab1bc4,X,TRUE
 Tokens,Download Token,,X,X,,,X,,X,X,,ee5fc23e-d629-4c7b-8169-27e526394e8b,X,FALSE
 Roles,Assign User Roles,,,,,,,,X,X,User Management,9a84a76a-0a16-11ee-be56-0242ac120002,X,FALSE
