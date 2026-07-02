@@ -1,7 +1,7 @@
 package stages
 
 import (
-	"log"
+	"github.com/sirupsen/logrus"
 
 	"github.com/meshery/meshery/server/models/pattern/core"
 )
@@ -13,7 +13,7 @@ func Format() ChainStageFunction {
 			next(data, err)
 			return
 		}
-		log.Println("Deprettifying the pattern file")
+		logrus.Info("Deprettifying the pattern file")
 		for _, component := range data.Pattern.Components {
 			component.Configuration = core.Format.DePrettify(component.Configuration, false)
 		}

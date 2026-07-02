@@ -13,7 +13,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"log"
+	"github.com/sirupsen/logrus"
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/model"
@@ -64,7 +64,7 @@ func RecursiveCastMapStringInterfaceToMapStringInterface(in map[string]interface
 	res := ConvertMapInterfaceMapString(in)
 	out, ok := res.(map[string]interface{})
 	if !ok {
-		log.Println("warning: failed to cast map interface to map string")
+		logrus.Warn("failed to cast map interface to map string")
 	}
 
 	return out
@@ -199,19 +199,19 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 		path := filepath.Join(UI, dirname, "white")
 		err := os.MkdirAll(path, 0777)
 		if err != nil {
-			log.Printf("error creating SVG directory: %v", err)
+			logrus.Errorf("error creating SVG directory: %v", err)
 			return
 		}
 		successCreatingDirectory = true
-
-		f, err := os.Create(filepath.Join(path, filename+"-white.svg"))
+		f, err := os.Create(filepath.Join(path, filename+"-color.svg"))
 		if err != nil {
-			log.Printf("error creating SVG file: %v", err)
+			logrus.Errorf("error creating SVG file: %v", err)
 			return
 		}
-		_, err = f.WriteString(svgWhite)
+		defer f.Close()
+		_, err = f.WriteString(svgColor)
 		if err != nil {
-			log.Printf("error writing SVG white data: %v", err)
+			logrus.Errorf("error writing SVG file: %v", err)
 			return
 		}
 		svgWhitePath = getRelativePathForAPI(filepath.Join(dirname, "white", filename+"-white.svg")) //Replace the actual SVG with path to SVG
@@ -221,7 +221,7 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 		path := filepath.Join(UI, dirname, "complete")
 		err := os.MkdirAll(path, 0777)
 		if err != nil {
-			log.Printf("error creating SVG directory: %v", err)
+			logrus.Errorf("error creating SVG directory: %v", err)
 			return
 		}
 		successCreatingDirectory = true
