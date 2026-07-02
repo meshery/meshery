@@ -429,9 +429,9 @@ func main() {
 	// the boot-time availability probe + post-probe SyncPreferences
 	// activation in a background goroutine, so a slow remote cannot
 	// delay server startup. The probe publishes status events as each
-	// remote settles, so the chooseemote
-	// entry independently as its probe completesr shows the local provider (and any
-	// already-reachable remotes) immediately and updates each r.
+	// remote settles, so the chooser shows the local provider (and any
+	// already-reachable remotes) immediately and updates each remote
+	// entry independently as its probe completes.
 	providerTracker := models.NewProviderTracker(provs, log)
 	hc.ProviderTracker = providerTracker
 	go func() {
