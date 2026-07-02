@@ -6,7 +6,7 @@ import (
 	mathrand "math/rand"
 	"strconv"
 	"strings"
-
+	"log"
 	"github.com/meshery/meshkit/encoding"
 )
 
@@ -16,7 +16,7 @@ func RecursiveCastMapStringInterfaceToMapStringInterface(in map[string]interface
 	res := ConvertMapInterfaceMapString(in)
 	out, ok := res.(map[string]interface{})
 	if !ok {
-		fmt.Println("failed to cast")
+		log.Println("warning: failed to cast map interface to map string")
 	}
 
 	return out

@@ -1,7 +1,7 @@
 package stages
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/meshery/meshery/server/models/pattern/core"
 )
@@ -13,7 +13,7 @@ func Format() ChainStageFunction {
 			next(data, err)
 			return
 		}
-		fmt.Println("Deprettifying the pattern file")
+		log.Println("Deprettifying the pattern file")
 		for _, component := range data.Pattern.Components {
 			component.Configuration = core.Format.DePrettify(component.Configuration, false)
 		}

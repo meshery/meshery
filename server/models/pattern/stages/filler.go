@@ -36,7 +36,7 @@ func Filler(skipPrintLogs bool) ChainStageFunction {
 		flattenedComponent := map[string]interface{}{}
 		utils.FlattenMap("", utils.ToMapStringInterface(data.Pattern), flattenedComponent)
 		if !skipPrintLogs {
-			fmt.Printf("%+#v\n", flattenedComponent)
+			log.Printf("flattened component: %+#v", flattenedComponent)
 		}
 		err = fill(data.Pattern, flattenedComponent)
 		if next != nil {
