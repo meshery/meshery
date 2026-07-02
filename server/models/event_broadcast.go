@@ -25,14 +25,29 @@ type Broadcast struct {
 // safe to call multiple times: once the channel has been removed subsequent
 // calls are no-ops (so the channel is never double-closed).
 func (c *Broadcast) Subscribe(id core.Uuid) (chan interface{}, func()) {
-	actual, _ := c.clients.LoadOrStore(id, &clients{})
-	client := actual.(*clients)
-
 	ch := make(chan interface{}, 1)
 
-	client.mu.Lock()
-	client.listeners = append(client.listeners, ch)
-	client.mu.Unlock()
+	// Attach ch to whichever entry is currently active in the map. If a
+	// concurrent unsubscribe removed the entry we loaded (see unsubscribe
+	// below) we must retry, otherwise we would register on an orphaned
+	// *clients that Publish can no longer reach and the listener would never
+	// receive events.
+	var client *clients
+	for {
+		actual, _ := c.clients.LoadOrStore(id, &clients{})
+		client = actual.(*clients)
+
+		client.mu.Lock()
+		if cur, ok := c.clients.Load(id); !ok || cur != actual {
+			// The entry was deleted or replaced after our load; drop it and
+			// try again with the fresh entry.
+			client.mu.Unlock()
+			continue
+		}
+		client.listeners = append(client.listeners, ch)
+		client.mu.Unlock()
+		break
+	}
 
 	unsubscribe := func() {
 		client.mu.Lock()
@@ -47,6 +62,17 @@ func (c *Broadcast) Subscribe(id core.Uuid) (chan interface{}, func()) {
 			}
 		}
 		client.listeners = updated
+
+		// Drop the map entry once its last listener leaves so ids that are no
+		// longer subscribed don't accumulate empty entries forever. The
+		// CompareAndDelete runs under the same lock that guards the listener
+		// set and only removes this exact *clients, so it can never delete an
+		// entry a concurrent Subscribe has already attached to: that Subscribe
+		// either observes a non-empty slice here (no delete) or fails its
+		// post-lock validation above and retries with a fresh entry.
+		if len(updated) == 0 {
+			c.clients.CompareAndDelete(id, client)
+		}
 	}
 	return ch, unsubscribe
 }

@@ -135,18 +135,64 @@ func TestBroadcast_ConcurrentPublishAndUnsubscribe(t *testing.T) {
 
 	wg.Wait()
 
-	// Every Subscribe was paired with an unsubscribe, so no listeners should
-	// remain leaked in the slice.
-	if actual, ok := b.clients.Load(id); ok {
-		cl := actual.(*clients)
-		cl.mu.Lock()
-		n := len(cl.listeners)
-		cl.mu.Unlock()
-		if n != 0 {
-			t.Fatalf("expected no listeners after all unsubscribes, got %d", n)
-		}
+	// Every Subscribe was paired with an unsubscribe, so the map entry must be
+	// gone rather than left behind as an empty (leaked) entry.
+	if _, ok := b.clients.Load(id); ok {
+		t.Fatalf("expected the map entry to be removed after all unsubscribes")
 	}
 
 	// A final publish after all the churn must still be safe.
 	b.Publish(id, "final")
+}
+
+// TestBroadcast_MapEntryRemovedAfterLastUnsubscribe verifies the map entry for
+// an id is reclaimed once its last listener unsubscribes, preventing unbounded
+// growth as unique ids come and go.
+func TestBroadcast_MapEntryRemovedAfterLastUnsubscribe(t *testing.T) {
+	b := NewBroadcaster("test")
+	id := newBroadcastTestID(t)
+
+	_, unsubscribe := b.Subscribe(id)
+	if _, ok := b.clients.Load(id); !ok {
+		t.Fatal("expected a map entry to exist while subscribed")
+	}
+
+	unsubscribe()
+	if _, ok := b.clients.Load(id); ok {
+		t.Fatal("expected the map entry to be removed after the last unsubscribe")
+	}
+
+	// Subscribing again after cleanup must still work and deliver events.
+	ch, unsubscribe2 := b.Subscribe(id)
+	defer unsubscribe2()
+	b.Publish(id, "again")
+	if got := <-ch; got != "again" {
+		t.Fatalf("got %v, want %q", got, "again")
+	}
+}
+
+// TestBroadcast_MapEntryRetainedWhileSubscribersRemain verifies the entry is
+// only removed once the *last* listener leaves, not on the first unsubscribe.
+func TestBroadcast_MapEntryRetainedWhileSubscribersRemain(t *testing.T) {
+	b := NewBroadcaster("test")
+	id := newBroadcastTestID(t)
+
+	_, unsubscribe1 := b.Subscribe(id)
+	ch2, unsubscribe2 := b.Subscribe(id)
+
+	unsubscribe1()
+	if _, ok := b.clients.Load(id); !ok {
+		t.Fatal("expected the map entry to remain while a listener is still subscribed")
+	}
+
+	// The surviving listener must still receive events.
+	b.Publish(id, "still-here")
+	if got := <-ch2; got != "still-here" {
+		t.Fatalf("got %v, want %q", got, "still-here")
+	}
+
+	unsubscribe2()
+	if _, ok := b.clients.Load(id); ok {
+		t.Fatal("expected the map entry to be removed after the last unsubscribe")
+	}
 }
