@@ -42,9 +42,12 @@
   <input
     type="search"
     name="q"
-    class="td-search__input form-control"
-    placeholder='{{ T "ui_search" }}'
-    aria-label='{{ T "ui_search" }}'
+    class="td-search__input form-control td-search-input"
+    placeholder='{{ T "ui_search" | default "Search this site" }}…'
+    aria-label='{{ T "ui_search" | default "Search this site" }}'
+    role="combobox"
+    aria-autocomplete="list"
+    aria-expanded="false"
     autocomplete="off"
     {{/*
       The data attribute name of the json file URL must end with `src` since
@@ -57,6 +60,7 @@
     data-offline-search-base-href="{{ "" | relURL }}"
     data-offline-search-max-results="{{ .Site.Params.offlineSearchMaxResults | default 10 }}"
   >
+  <div class="search-suggestions-dropdown" role="listbox"></div>
 </div>
 
 {{- end -}}
