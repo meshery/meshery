@@ -350,6 +350,7 @@ func main() {
 		}
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		hc.MeshModelSummaryChannel.Publish()
+		hc.StartupStatus.SeedingComplete.Store(true)
 	}()
 
 	lProv.SeedContent(log)
@@ -447,6 +448,7 @@ func main() {
 			}
 			rp.SyncPreferences()
 		}
+		hc.StartupStatus.ProviderTrackerComplete.Store(true)
 	}()
 
 	// Defer StopSyncPreferences for every remote, regardless of whether
