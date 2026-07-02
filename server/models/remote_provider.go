@@ -33,6 +33,9 @@ import (
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
+	// TEMPORARY: aliased to retry so call sites (retry.Do, retry.WithMaxAttempts, etc.)
+	// stay unchanged. Replace with github.com/meshery/meshkit/retry once meshkit#1007 merges.
+	retry "github.com/meshery/meshery/server/models/retryutil"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
@@ -217,8 +220,8 @@ func (l *RemoteProvider) loadCapabilitiesFromLocalFile(filePath string) (Provide
 // remotes that do not serve a versioned manifest still report capabilities.
 // When "token" is non-empty, only the version-scoped path is attempted,
 // matching the existing authenticated capability fetch contract.
-func (l *RemoteProvider) loadCapabilities(token string) (ProviderProperties, error) {
-	return l.loadCapabilitiesWithContext(context.Background(), token)
+func (l *RemoteProvider) loadCapabilities(ctx context.Context, token string) (ProviderProperties, error) {
+	return l.loadCapabilitiesWithContext(ctx, token)
 }
 
 // loadCapabilitiesWithContext is the context-aware form of loadCapabilities.
@@ -288,21 +291,27 @@ func (l *RemoteProvider) fetchCapabilities(ctx context.Context, token string, ve
 	var resp *http.Response
 	if token == "" {
 		c := &http.Client{Timeout: 3 * time.Second}
-		const maxRetries = 3
-		for i := 0; i < maxRetries; i++ {
-			resp, err = c.Do(req)
-			if err == nil && resp != nil {
-				break
-			}
-			l.Log.Debugf("Attempt %d/%d: failed to fetch capabilities from %s: %v", i+1, maxRetries, finalURL, err)
-			if i < maxRetries-1 {
-				select {
-				case <-ctx.Done():
-					return providerProperties, ctx.Err()
-				case <-time.After(1 * time.Second):
+		err = retry.Do(ctx, func(ctx context.Context) error {
+			var doErr error
+			resp, doErr = c.Do(req)
+			if doErr != nil {
+				if resp != nil {
+					_ = resp.Body.Close()
 				}
+				return doErr
 			}
-		}
+			if resp == nil {
+				return errors.New("nil response from remote provider")
+			}
+			return nil
+		},
+			retry.WithMaxAttempts(3),
+			retry.WithInitialInterval(1*time.Second),
+			retry.WithMultiplier(2.0),
+			retry.WithMaxInterval(4*time.Second),
+			retry.WithMaxElapsedTime(10*time.Second),
+			retry.WithLogNotifier(l.Log),
+		)
 	} else {
 		resp, err = l.DoRequest(req, token)
 	}
@@ -420,7 +429,7 @@ func (l *RemoteProvider) SyncPreferences() {
 func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *http.Request, userID string) {
 	tokenString := req.Context().Value(TokenCtxKey).(string)
 
-	providerProperties, err := l.loadCapabilities(tokenString)
+	providerProperties, err := l.loadCapabilities(req.Context(), tokenString)
 
 	if err != nil {
 		l.Log.Error(fmt.Errorf("[RemoteProvider.GetProviderCapabilities] failed to load capabilities from remote provider: %v", err))
@@ -4086,7 +4095,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 
 	// Get new capabilities
 	// Doing this here is important so that the latest capabilities are always fetched when a user logs in
-	providerProperties, err := l.loadCapabilities(tokenString)
+	providerProperties, err := l.loadCapabilitiesWithContext(r.Context(), tokenString)
 
 	// error out if capabilities could not be fetched
 	if err != nil {
