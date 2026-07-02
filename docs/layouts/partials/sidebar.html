@@ -162,5 +162,52 @@
         if (toggle) toggle.click();
       }
     });
+
+    // Preserve sidebar scroll position across page loads
+    try {
+      const sidebarContainer = document.querySelector('.sidebar-container');
+      if (sidebarContainer) {
+        const restoreScroll = function() {
+          try {
+            const savedScroll = sessionStorage.getItem('sidebar-scroll');
+            if (savedScroll !== null) {
+              sidebarContainer.scrollTop = parseInt(savedScroll, 10);
+            }
+          } catch (e) {
+            console.warn('Could not restore sidebar scroll:', e);
+          }
+        };
+
+        // Restore immediately
+        restoreScroll();
+
+        // Restore again after layout changes/transitions have completed
+        requestAnimationFrame(restoreScroll);
+
+        // Save scroll position on click or scroll
+        $(sidebarContainer).on('click', 'a', function() {
+          try {
+            sessionStorage.setItem('sidebar-scroll', sidebarContainer.scrollTop);
+          } catch (e) {
+            console.warn('Could not save sidebar scroll on click:', e);
+          }
+        });
+
+        let scrollTimeout;
+        sidebarContainer.addEventListener('scroll', function() {
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(function() {
+            try {
+              sessionStorage.setItem('sidebar-scroll', sidebarContainer.scrollTop);
+            } catch (e) {
+              console.warn('Could not save sidebar scroll on scroll:', e);
+            }
+          }, 150);
+        }, { passive: true });
+      }
+    } catch (err) {
+      console.warn('Preserve sidebar scroll initialization failed:', err);
+    }
   });
 </script>
+
