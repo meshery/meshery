@@ -29,6 +29,7 @@ aliases:
 The Meshery Adapter for Istio includes a handful of sample applications. Use Meshery to deploy any of these sample applications:
 
 - [Bookinfo]({{< ref "guides/infrastructure-management/sample-apps/index.md#bookinfo" >}})
+  - The sample Bookinfo application displays information about a book, similar to a single catalog entry of an online book store.
 - [Httpbin]({{< ref "guides/infrastructure-management/sample-apps/index.md#httpbin" >}})
   - Httpbin is a simple HTTP request and response service.
 - [Online Boutique]({{< ref "guides/infrastructure-management/sample-apps/index.md#online-boutique" >}})

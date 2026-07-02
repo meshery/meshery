@@ -20,6 +20,7 @@ aliases:
 The Meshery Adapter for Traefik Mesh includes some sample applications operations. Meshery can be used to deploy any of these sample applications.
 
 - [Bookinfo]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
+  - The sample Bookinfo application displays information about a book, similar to a single catalog entry of an online book store.
 - [Httpbin]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
   - Httpbin is a simple HTTP request and response service.
 
