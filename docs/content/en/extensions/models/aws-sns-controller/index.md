@@ -1,7 +1,7 @@
 ---
 title: AWS Simple Notification Service
 subtitle: Collaborative and visual infrastructure as design for AWS Simple Notification Service
-image: /extensions/models/aws-sns-controller/icons/color/aws-sns-controller-color.svg
+image: extensions/models/aws-sns-controller/icons/color/aws-sns-controller-color.svg
 aliases: /extensibility/integrations/aws-sns-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-sns-controller
 description: 

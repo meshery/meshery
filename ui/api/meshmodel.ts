@@ -88,6 +88,10 @@ export async function getMeshModelComponentByName(component) {
   return promisifiedDataFetch(`${MESHMODEL_COMPONENT_ENDPOINT}/components/${component}`);
 }
 
+export async function getConnectionDefinitions() {
+  return promisifiedDataFetch(`/api/meshmodels/connections?pagesize=all`);
+}
+
 export async function fetchCategories() {
   return promisifiedDataFetch(`${CATEGORIES_ENDPOINT}`);
 }

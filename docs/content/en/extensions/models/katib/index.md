@@ -1,7 +1,7 @@
 ---
 title: Kubeflow Katib
 subtitle: Collaborative and visual infrastructure as design for Kubeflow Katib
-image: /extensions/models/katib/icons/color/katib-color.svg
+image: extensions/models/katib/icons/color/katib-color.svg
 aliases: /extensibility/integrations/katib
 docURL: https://docs.meshery.io/extensibility/integrations/katib
 description: 

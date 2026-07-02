@@ -45,7 +45,7 @@ Potential Solution:
 
 To build a Docker image of Meshery, please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
 
-{{< code code=`make docker` >}}
+{{< code code=`make docker-build` >}}
 
 #### Define and validate errors
 

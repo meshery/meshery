@@ -1,7 +1,7 @@
 ---
 title: APISIX Ingress Controller
 subtitle: Collaborative and visual infrastructure as design for APISIX Ingress Controller
-image: /extensions/models/apisix-ingress-controller/icons/color/apisix-ingress-controller-color.svg
+image: extensions/models/apisix-ingress-controller/icons/color/apisix-ingress-controller-color.svg
 aliases: /extensibility/integrations/apisix-ingress-controller
 docURL: https://docs.meshery.io/extensibility/integrations/apisix-ingress-controller
 description: 

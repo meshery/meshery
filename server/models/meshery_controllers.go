@@ -661,7 +661,7 @@ func (mch *MesheryControllersHelper) emitEvent(description string, severity even
 			WithMetadata(metadata)
 
 		if userID != uuid.Nil {
-			eventBuilder = eventBuilder.FromUser(userID)
+			eventBuilder = eventBuilder.FromOwner(userID)
 		}
 
 		if actedUpon != uuid.Nil {

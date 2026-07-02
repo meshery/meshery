@@ -1,7 +1,7 @@
 ---
 title: Vald
 subtitle: Collaborative and visual infrastructure as design for Vald
-image: /extensions/models/vald/icons/color/vald-color.svg
+image: extensions/models/vald/icons/color/vald-color.svg
 aliases: /extensibility/integrations/vald
 docURL: https://docs.meshery.io/extensibility/integrations/vald
 description: 

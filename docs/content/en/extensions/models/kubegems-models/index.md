@@ -1,7 +1,7 @@
 ---
 title: Kubegems Models
 subtitle: Collaborative and visual infrastructure as design for Kubegems Models
-image: /extensions/models/kubegems-models/icons/color/kubegems-models-color.svg
+image: extensions/models/kubegems-models/icons/color/kubegems-models-color.svg
 aliases: /extensibility/integrations/kubegems-models
 docURL: https://docs.meshery.io/extensibility/integrations/kubegems-models
 description: 

@@ -1,7 +1,7 @@
 ---
 title: AWS Elastic Container Service
 subtitle: Collaborative and visual infrastructure as design for AWS Elastic Container Service
-image: /extensions/models/aws-ecs-controller/icons/color/aws-ecs-controller-color.svg
+image: extensions/models/aws-ecs-controller/icons/color/aws-ecs-controller-color.svg
 aliases: /extensibility/integrations/aws-ecs-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-ecs-controller
 description: 
@@ -33,7 +33,11 @@ components:
   colorIcon: extensions/models/aws-ecs-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
   whiteIcon: extensions/models/aws-ecs-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
-components-count: 6
+- name: capacity-provider
+  colorIcon: extensions/models/aws-ecs-controller/components/capacity-provider/icons/color/capacity-provider-color.svg
+  whiteIcon: extensions/models/aws-ecs-controller/components/capacity-provider/icons/white/capacity-provider-white.svg
+  description: 
+components-count: 7
 relationships: 
 - type: "non-binding"
   kind: "edge"

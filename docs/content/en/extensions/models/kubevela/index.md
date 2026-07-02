@@ -1,7 +1,7 @@
 ---
 title: Kubevela
 subtitle: Collaborative and visual infrastructure as design for Kubevela
-image: /extensions/models/kubevela/icons/color/kubevela-color.svg
+image: extensions/models/kubevela/icons/color/kubevela-color.svg
 aliases: /extensibility/integrations/kubevela
 docURL: https://docs.meshery.io/extensibility/integrations/kubevela
 description: 

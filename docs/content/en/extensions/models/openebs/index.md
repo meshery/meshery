@@ -1,7 +1,7 @@
 ---
 title: OpenEBS
 subtitle: Collaborative and visual infrastructure as design for OpenEBS
-image: /extensions/models/openebs/icons/color/openebs-color.svg
+image: extensions/models/openebs/icons/color/openebs-color.svg
 aliases: /extensibility/integrations/openebs
 docURL: https://docs.meshery.io/extensibility/integrations/openebs
 description: 

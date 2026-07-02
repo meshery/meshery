@@ -1,7 +1,7 @@
 ---
 title: Aerospike Kubernetes Operator
 subtitle: Collaborative and visual infrastructure as design for Aerospike Kubernetes Operator
-image: /extensions/models/aerospike-kubernetes-operator/icons/color/aerospike-kubernetes-operator-color.svg
+image: extensions/models/aerospike-kubernetes-operator/icons/color/aerospike-kubernetes-operator-color.svg
 aliases: /extensibility/integrations/aerospike-kubernetes-operator
 docURL: https://docs.meshery.io/extensibility/integrations/aerospike-kubernetes-operator
 description: Aerospike Kubernetes Operator automates the configuration, provisioning, scaling, and recovery of Aerospike clusters. It reduces the complexity of manual deployment and lifecycle management, and enables the use of declarative configuration for Aerospike clusters.

@@ -1,7 +1,7 @@
 ---
 title: Azure Cache
 subtitle: Collaborative and visual infrastructure as design for Azure Cache
-image: /extensions/models/azure-cache/icons/color/azure-cache-color.svg
+image: extensions/models/azure-cache/icons/color/azure-cache-color.svg
 aliases: /extensibility/integrations/azure-cache
 docURL: https://docs.meshery.io/extensibility/integrations/azure-cache
 description: 

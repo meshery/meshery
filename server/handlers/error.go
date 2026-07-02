@@ -144,7 +144,6 @@ const (
 	ErrConvertingK8sManifestToDesignCode   = "meshery-server-1133"
 	ErrConvertingDockerComposeToDesignCode = "meshery-server-1134"
 	ErrConvertingHelmChartToDesignCode     = "meshery-server-1136"
-	ErrInvalidUUIDCode                     = "meshery-server-1137"
 	ErrPersistEventToRemoteProviderCode    = "meshery-server-1320"
 	ErrEventStreamingNotSupportedCode      = "meshery-server-1324"
 	ErrGenerateClusterContextCode          = "meshery-server-1325"
@@ -210,6 +209,11 @@ const (
 	ErrExtensionProxyCode                  = "meshery-server-1427"
 	ErrInitializeMachineCode               = "meshery-server-1428"
 	ErrSendMachineEventCode                = "meshery-server-1429"
+	ErrTelemetryGrafanaCode                = "meshery-server-1430"
+	ErrTelemetryPrometheusCode             = "meshery-server-1431"
+	ErrTelemetryGrafanaDatasourceCode      = "meshery-server-1433"
+	ErrTelemetryGrafanaAuthCode            = "meshery-server-1434"
+	ErrTelemetryPrometheusAuthCode         = "meshery-server-1435"
 )
 
 var (
@@ -761,10 +765,6 @@ func ErrConvertingHelmChartToDesign(err error) error {
 	return errors.New(ErrConvertingHelmChartToDesignCode, errors.Alert, []string{"Failed to convert helm chart to design"}, []string{err.Error()}, []string{"unable to convert helm chart to design", "helm chart may be corrupted", "incorrect source type selected"}, []string{"check if the helm chart is valid and not corrupted", "check if the source type selected is Helm Chart"})
 }
 
-func ErrInvalidUUID(err error) error {
-	return errors.New(ErrInvalidUUIDCode, errors.Alert, []string{"invalid or empty uuid"}, []string{err.Error()}, []string{"provided id is not a valid uuid"}, []string{"provide a valid uuid"})
-}
-
 func ErrPersistEventToRemoteProvider(err error) error {
 	return errors.New(ErrPersistEventToRemoteProviderCode, errors.Alert, []string{"failed to persist event to remote provider"}, []string{err.Error()}, []string{"token is expired/revoked", "Remote Provider is not reachable or unavailable"}, []string{"Try re-authenticating with the remote provider", "Verify remote provider for its reachability or availability."})
 }
@@ -928,6 +928,44 @@ func ErrInvalidConnectionKind(actual, expected string) error {
 // HTTP 500.
 func ErrUpdateConnection(err error) error {
 	return errors.New(ErrUpdateConnectionCode, errors.Alert, []string{"Could not update the connection"}, []string{err.Error()}, []string{"Remote provider is unreachable.", "Connection has been deleted since it was loaded.", "Persisted metadata is corrupt."}, []string{"Verify provider connectivity and that the connection still exists, then retry."})
+}
+
+// ErrTelemetryGrafana wraps failures talking to a Grafana telemetry connection
+// (health, board search/fetch, datasource listing, or datasource query proxy).
+// The op string identifies the operation that failed. Emitted with HTTP 502.
+func ErrTelemetryGrafana(err error, op string) error {
+	return errors.New(ErrTelemetryGrafanaCode, errors.Alert, []string{fmt.Sprintf("Grafana telemetry request failed during %s", op)}, []string{err.Error()}, []string{"The Grafana instance is unreachable or returned an error.", "The stored credential (API key / basic auth) is missing, expired, or lacks permission.", "The connection's URL is incorrect."}, []string{"Verify the Grafana URL is reachable from the Meshery server and that the connection's credential is valid, then retry."})
+}
+
+// ErrTelemetryGrafanaDatasource reports that a panel referenced a datasource the
+// Grafana instance could not resolve (by uid or name). Emitted with HTTP 404.
+func ErrTelemetryGrafanaDatasource(ref string, available []string) error {
+	longDesc := fmt.Sprintf("Grafana could not resolve a datasource identified by %q to a known datasource.", ref)
+	if len(available) > 0 {
+		longDesc = fmt.Sprintf("%s Available datasources: %s.", longDesc, strings.Join(available, ", "))
+	} else {
+		longDesc = fmt.Sprintf("%s No datasources were listable, so the credential may lack permission to read datasources.", longDesc)
+	}
+	return errors.New(ErrTelemetryGrafanaDatasourceCode, errors.Alert, []string{fmt.Sprintf("Datasource %q used by this panel was not found in Grafana", ref)}, []string{longDesc}, []string{"The dashboard references a datasource by a name or uid that does not exist in this Grafana instance.", "The datasource is provisioned only in a different environment.", "The connection's credential cannot list datasources, so a name could not be resolved to a uid."}, []string{"Confirm the datasource exists in this Grafana instance and that the connection's credential has permission to read datasources."})
+}
+
+// ErrTelemetryGrafanaAuth reports that Grafana rejected the connection's
+// credential (HTTP 401/403). Emitted with HTTP 502.
+func ErrTelemetryGrafanaAuth(err error) error {
+	return errors.New(ErrTelemetryGrafanaAuthCode, errors.Alert, []string{"Grafana rejected the connection's credential"}, []string{err.Error()}, []string{"The API key / token is missing, expired, or invalid.", "The credential lacks permission for this operation."}, []string{"Update the connection with a valid Grafana credential that has the required permissions, then retry."})
+}
+
+// ErrTelemetryPrometheus wraps failures talking to a Prometheus telemetry
+// connection (health, metric/label discovery, metadata, or query/query_range).
+// The op string identifies the operation that failed. Emitted with HTTP 502.
+func ErrTelemetryPrometheus(err error, op string) error {
+	return errors.New(ErrTelemetryPrometheusCode, errors.Alert, []string{fmt.Sprintf("Prometheus telemetry request failed during %s", op)}, []string{err.Error()}, []string{"The Prometheus instance is unreachable or returned an error.", "The stored credential (API key / basic auth) is missing, expired, or lacks permission.", "The connection's URL is incorrect."}, []string{"Verify the Prometheus URL is reachable from the Meshery server and that the connection's credential is valid, then retry."})
+}
+
+// ErrTelemetryPrometheusAuth reports that Prometheus rejected the connection's
+// credential (HTTP 401/403). Emitted with HTTP 502.
+func ErrTelemetryPrometheusAuth(err error) error {
+	return errors.New(ErrTelemetryPrometheusAuthCode, errors.Alert, []string{"Prometheus rejected the connection's credential"}, []string{err.Error()}, []string{"The API key / token is missing, expired, or invalid.", "The credential lacks permission for this operation."}, []string{"Update the connection with a valid Prometheus credential that has the required permissions, then retry."})
 }
 
 // ErrExportModel wraps failures in the ExportModel pipeline — building the

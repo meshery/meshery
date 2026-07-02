@@ -1,7 +1,7 @@
 ---
 title: CNI Host NIC
 subtitle: Collaborative and visual infrastructure as design for CNI Host NIC
-image: /extensions/models/cni-hostnic/icons/color/cni-hostnic-color.svg
+image: extensions/models/cni-hostnic/icons/color/cni-hostnic-color.svg
 aliases: /extensibility/integrations/cni-hostnic
 docURL: https://docs.meshery.io/extensibility/integrations/cni-hostnic
 description: 

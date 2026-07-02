@@ -31,7 +31,7 @@ export const formattoLongDate = (date) => {
 export const TransferButton = ({ title, count, onAssign, disabled }) => {
   const theme = useTheme();
   return (
-    <PopupButton disabled={disabled} onClick={onAssign} s>
+    <PopupButton disabled={disabled} onClick={onAssign}>
       <Grid2>
         <TabCount>{count}</TabCount>
         <TabTitle>{title}</TabTitle>

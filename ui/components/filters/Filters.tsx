@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTableUrlState } from '@/utils/hooks/useTableUrlState';
+import { useColumnVisibilityPreference } from '@/utils/hooks/useColumnVisibilityPreference';
 import { NoSsr } from '@sistent/sistent';
 import { Publish as PublishIcon } from '@/assets/icons';
 import _PromptComponent from '../PromptComponent';
@@ -67,12 +69,30 @@ function resetSelectedFilter() {
 }
 
 function MesheryFilters() {
-  const [page, setPage] = useState(0);
-  const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('');
+  const { tableState, updateTableState } = useTableUrlState({
+    tableKey: 'fil',
+    defaults: {
+      page: 0,
+      pageSize: 10,
+      sortOrder: '',
+      search: '',
+      filters: { vis: '' },
+    },
+  });
+
+  const { page, pageSize, sortOrder, search } = tableState;
+  const setPage = useCallback((p) => updateTableState({ page: p }), [updateTableState]);
+  const setPageSize = useCallback((ps) => updateTableState({ pageSize: ps }), [updateTableState]);
+  const setSortOrder = useCallback((so) => updateTableState({ sortOrder: so }), [updateTableState]);
+  const setSearch = useCallback(
+    (s) => updateTableState({ search: s, page: 0 }),
+    [updateTableState],
+  );
+
+  const visibilityFilter = tableState.filters.vis || null;
+
   const [count, setCount] = useState(0);
   const modalRef = useRef<{ show: (_args: any) => Promise<string> } | null>(null);
-  const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState<any[]>([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState<any | null>(null);
@@ -109,11 +129,9 @@ function MesheryFilters() {
   const catalogContentRef = useRef<any[]>([]);
   const catalogVisibilityRef = useRef<boolean>(false);
   const disposeConfSubscriptionRef = useRef<{ dispose: () => void } | null>(null);
-  const [visibilityFilter, setVisibilityFilter] = useState<string | null>(null);
-
-  const [selectedFilters, setSelectedFilters] = useState<{ visibility: string }>({
-    visibility: 'All',
-  });
+  const [selectedFilters, setSelectedFilters] = useState<{ visibility: string }>(() => ({
+    visibility: tableState.filters.vis || 'All',
+  }));
 
   const {
     data: filtersData,
@@ -199,9 +217,10 @@ function MesheryFilters() {
   };
 
   const handleApplyFilter = () => {
-    const visibilityFilter =
-      selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
-    setVisibilityFilter(visibilityFilter);
+    updateTableState({
+      filters: { vis: selectedFilters.visibility === 'All' ? '' : selectedFilters.visibility },
+      page: 0,
+    });
   };
 
   function resetSelectedRowData() {
@@ -274,7 +293,6 @@ function MesheryFilters() {
       });
       setCount(filtersData.totalCount || 0);
       handleSetFilters(filteredWasmFilters);
-      setVisibilityFilter(visibilityFilter);
       setFilters(filtersData.filters || []);
     }
   }, [filtersData]);
@@ -374,15 +392,24 @@ function MesheryFilters() {
 
   const [tableCols, updateCols] = useState(columns);
 
-  const [columnVisibility, setColumnVisibility] = useState(() => {
-    let showCols = updateVisibleColumns(COLUMN_VIEWS, width);
-    // Initialize column visibility based on the original columns' visibility
-    const initialVisibility = {};
+  const responsiveColDefaults = (() => {
+    const showCols = updateVisibleColumns(COLUMN_VIEWS, width);
+    const initialVisibility: Record<string, boolean> = {};
     columns.forEach((col) => {
       initialVisibility[col.name] = showCols[col.name];
     });
     return initialVisibility;
-  });
+  })();
+
+  const {
+    columnVisibility,
+    setColumnVisibilityByUser: setColumnVisibility,
+    setColumnVisibilityByResponsive,
+  } = useColumnVisibilityPreference('filters', responsiveColDefaults);
+
+  useEffect(() => {
+    setColumnVisibilityByResponsive(responsiveColDefaults);
+  }, [width, setColumnVisibilityByResponsive]);
 
   const filter = {
     visibility: {

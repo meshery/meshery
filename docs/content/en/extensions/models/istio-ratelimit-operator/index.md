@@ -1,7 +1,7 @@
 ---
 title: Istio Rate Limit Operator
 subtitle: The easiest way to get production-grade Istio service mesh up and running
-image: /extensions/models/istio-ratelimit-operator/icons/color/istio-ratelimit-operator-color.svg
+image: extensions/models/istio-ratelimit-operator/icons/color/istio-ratelimit-operator-color.svg
 aliases: /extensibility/integrations/istio-ratelimit-operator
 docURL: https://docs.meshery.io/extensibility/adapters/istio
 description: 

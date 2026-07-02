@@ -43,7 +43,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 		return
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*h.SystemID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*h.SystemID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
 
 	if string(connectionRegisterPayload.Status) == string(machines.Init) {
 		h.handleRegistrationInitEvent(w, req, &connectionRegisterPayload)
@@ -131,7 +131,7 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 	}
 	// id act as a connection registration process tracker.
 	// The clients should always include this "id" in the subsequent API calls until the process is completed or terminated.
-	id, _ := uuid.NewV4()
+	id := uuid.Must(uuid.NewV4())
 	schema["id"] = id
 
 	err := json.NewEncoder(w).Encode(&schema)
@@ -159,7 +159,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 		return
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
+	eventBuilder := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	if token == "" {
@@ -333,7 +333,7 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	if connectionID == uuid.Nil {
-		invalidIDErr := ErrInvalidUUID(fmt.Errorf("invalid connection ID"))
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID"))
 		h.log.Error(invalidIDErr)
 		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
@@ -367,7 +367,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
 
 	connection := &connections.ConnectionPayload{}
 	err = json.Unmarshal(bd, connection)
@@ -470,7 +470,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID core.Uuid, provider models.Provider, token string, connection *connections.ConnectionPayload) (events.Event, error) {
 	connectionID := connection.ID
 
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
 
 	if connection.Status != "" {
 		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
@@ -553,7 +553,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {

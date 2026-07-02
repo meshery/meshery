@@ -1,7 +1,7 @@
 ---
 title: Pulsar Operator
 subtitle: Collaborative and visual infrastructure as design for Pulsar Operator
-image: /extensions/models/pulsar-operator/icons/color/pulsar-operator-color.svg
+image: extensions/models/pulsar-operator/icons/color/pulsar-operator-color.svg
 aliases: /extensibility/integrations/pulsar-operator
 docURL: https://docs.meshery.io/extensibility/integrations/pulsar-operator
 description: 

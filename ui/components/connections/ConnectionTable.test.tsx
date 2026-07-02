@@ -7,6 +7,7 @@ import ConnectionTable from './ConnectionTable';
 const notify = vi.fn();
 const push = vi.fn();
 const ping = vi.fn();
+const pingGrafana = vi.fn();
 const modalShow = vi.fn();
 const updateConnectionByIdMutator = vi.fn();
 const addConnectionToEnvironmentMutator = vi.fn();
@@ -44,6 +45,7 @@ vi.mock('@sistent/sistent', () => ({
   MenuItem: ({ children }) => <div>{children}</div>,
   Box: ({ children }) => <div>{children}</div>,
   SyncAltIcon: () => <svg data-testid="sync-alt-icon" />,
+  SettingsIcon: () => <svg data-testid="settings-icon" />,
   MoreVertIcon: () => <svg data-testid="more-vert-icon" />,
   InfoOutlinedIcon: () => <svg data-testid="info-outlined-icon" />,
   IconButton: ({ children, onClick, ...props }) => (
@@ -108,8 +110,8 @@ vi.mock('@/assets/styles/general/tool.styles', () => ({
   ToolWrapper: ({ children }) => <div>{children}</div>,
 }));
 
-vi.mock('../MesherySettingsEnvButtons', () => ({
-  default: () => <div data-testid="settings-buttons" />,
+vi.mock('./ConnectionWizardLauncher', () => ({
+  default: () => <div data-testid="connection-wizard-launcher" />,
 }));
 
 vi.mock('../../utils/utils', () => ({
@@ -126,6 +128,10 @@ vi.mock('@/graphql/queries/ResetDatabaseQuery', () => ({
 
 vi.mock('@/utils/hooks/useKubernetesHook', () => ({
   default: () => ping,
+}));
+
+vi.mock('@/utils/hooks/useGrafanaPingHook', () => ({
+  default: () => pingGrafana,
 }));
 
 vi.mock('./ConnectionChip', () => ({
@@ -315,7 +321,7 @@ describe('ConnectionTable', () => {
   });
 
   it('hydrates search from a string router query and passes it to the connections query', async () => {
-    router.query = { searchText: 'cluster-a' };
+    router.query = { con_q: 'cluster-a' };
 
     render(<ConnectionTable />);
 
@@ -396,6 +402,53 @@ describe('ConnectionTable', () => {
     await waitFor(() => {
       expect(dataTableProps.columnVisibility.kind).toBe(false);
     });
+  });
+
+  // Regression: the Environments select disappeared from the table. The cells
+  // come from a memoized `columns` whose `customBodyRender` closes over
+  // `isEnvironmentsSuccess` at definition time, and ResponsiveDataTable renders
+  // from a `tableCols` *snapshot* that it only re-syncs to the live `columns`
+  // when `columnVisibility` identity changes. On first render the environments
+  // query is still pending (isEnvironmentsSuccess=false), so the snapshot froze
+  // a cell that renders nothing; once the query resolved the snapshot was never
+  // refreshed and the select never reappeared. ConnectionTable now keeps
+  // `tableCols` following `columns`, so the resolved cell reaches the table.
+  it('re-renders the Environments select once the environments query resolves', async () => {
+    getEnvironmentsQuery.mockReturnValue({
+      data: { environments: [] },
+      isSuccess: false,
+      isError: false,
+      error: undefined,
+    });
+
+    const { rerender } = render(<ConnectionTable />);
+
+    // Render the snapshot's environments cell and report whether the select
+    // (mocked as `multi-select-wrapper`) is present.
+    const environmentsSelectIsRendered = () => {
+      const envColumn = dataTableProps.tableCols.find((col) => col.name === 'environments');
+      const { container, unmount } = render(
+        <>{envColumn.options.customBodyRender([], { rowData: [] })}</>,
+      );
+      const present = !!container.querySelector('[data-testid="multi-select-wrapper"]');
+      unmount();
+      return present;
+    };
+
+    expect(environmentsSelectIsRendered()).toBe(false);
+
+    getEnvironmentsQuery.mockReturnValue({
+      data: { environments: [{ id: 'env-1', name: 'dev' }] },
+      isSuccess: true,
+      isError: false,
+      error: undefined,
+    });
+    // Re-render under act() so the tableCols-sync effect flushes; then assert
+    // once (no render() inside waitFor, so a regression fails fast instead of
+    // looping the snapshot render until timeout).
+    rerender(<ConnectionTable />);
+
+    expect(environmentsSelectIsRendered()).toBe(true);
   });
 
   // Regression for issue #19405 — `/management/connections` crashes with

@@ -1,7 +1,6 @@
 /**
- * @generated SignedSource<<22fe2142625128f51930ffae62197796>>
+ * @generated SignedSource<<9704537c49001849c21e609d35353864>>
  * @lightSyntaxTransform
- * @nogrep
  */
 
 /* tslint:disable */
@@ -90,20 +89,20 @@ v1 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": (v0/*:: as any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "ClusterResourcesSubscription",
-    "selections": (v1/*: any*/),
+    "selections": (v1/*:: as any*/),
     "type": "Subscription",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": (v0/*:: as any*/),
     "kind": "Operation",
     "name": "ClusterResourcesSubscription",
-    "selections": (v1/*: any*/)
+    "selections": (v1/*:: as any*/)
   },
   "params": {
     "cacheID": "d3c5e48d338830a81ec808ac6acf5d8a",

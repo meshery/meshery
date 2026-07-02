@@ -1,7 +1,7 @@
 ---
 title: Vault Secrets
 subtitle: Collaborative and visual infrastructure as design for Vault Secrets
-image: /extensions/models/vault-secrets/icons/color/vault-secrets-color.svg
+image: extensions/models/vault-secrets/icons/color/vault-secrets-color.svg
 aliases: /extensibility/integrations/vault-secrets
 docURL: https://docs.meshery.io/extensibility/integrations/vault-secrets
 description: 

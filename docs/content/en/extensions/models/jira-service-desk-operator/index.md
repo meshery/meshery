@@ -1,7 +1,7 @@
 ---
 title: Jira Service Desk Operator
 subtitle: Collaborative and visual infrastructure as design for Jira Service Desk Operator
-image: /extensions/models/jira-service-desk-operator/icons/color/jira-service-desk-operator-color.svg
+image: extensions/models/jira-service-desk-operator/icons/color/jira-service-desk-operator-color.svg
 aliases: /extensibility/integrations/jira-service-desk-operator
 docURL: https://docs.meshery.io/extensibility/integrations/jira-service-desk-operator
 description: 

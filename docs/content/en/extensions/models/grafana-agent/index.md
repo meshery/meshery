@@ -1,7 +1,7 @@
 ---
 title: Grafana Agent
 subtitle: Operational dashboards for your data with Grafana and Meshery
-image: /extensions/models/grafana-agent/icons/color/grafana-agent-color.svg
+image: extensions/models/grafana-agent/icons/color/grafana-agent-color.svg
 aliases: /extensibility/integrations/grafana-agent
 docURL: https://docs.meshery.io/extensibility/integrations/grafana-agent
 description: 

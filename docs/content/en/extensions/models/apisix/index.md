@@ -1,7 +1,7 @@
 ---
 title: APISIX
 subtitle: Collaborative and visual infrastructure as design for APISIX
-image: /extensions/models/apisix/icons/color/apisix-color.svg
+image: extensions/models/apisix/icons/color/apisix-color.svg
 aliases: /extensibility/integrations/apisix
 docURL: https://docs.meshery.io/extensibility/integrations/apisix
 description: 

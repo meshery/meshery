@@ -1,7 +1,7 @@
 ---
 title: Capsule Proxy
 subtitle: Collaborative and visual infrastructure as design for Capsule Proxy
-image: /extensions/models/capsule-proxy/icons/color/capsule-proxy-color.svg
+image: extensions/models/capsule-proxy/icons/color/capsule-proxy-color.svg
 aliases: /extensibility/integrations/capsule-proxy
 docURL: https://docs.meshery.io/extensibility/integrations/capsule-proxy
 description: 

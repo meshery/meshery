@@ -7,7 +7,7 @@
       "id": "76430bfa-e725-4444-a79f-76112bef1a78",
       "name": "IstioSM",
       "patternFile": "name: IstioSM\nversion: 1.0.1\nservices:\n  istio:\n    type: IstioMesh\n    namespace: istio-system\n    settings:\n      version: 1.9.1\n    traits:\n      mTLS:\n        policy: mutual\n        namespaces:\n          - istio-test\n      automaticSidecarInjection:\n        namespaces:\n          - default\n          - istio-test\n",
-      "userId": null,
+      "owner": null,
       "location": {
         "branch": "",
         "host": "",

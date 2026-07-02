@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import MesheryMetrics from './MesheryMetrics';
 import PerformanceCalendar from './PerformanceCalendar';
 import MesheryPerformanceComponent from './index';
 import { useNotification } from '../../utils/hooks/useNotification';
@@ -10,7 +9,7 @@ import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/general/error-404/index';
 import { Modal, Button, Grid2, Paper, Typography, useTheme, styled } from '@sistent/sistent';
 import { updateProgressAction } from '@/store/slices/mesheryUi';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useGetPerformanceProfilesQuery } from '@/rtk-query/performance-profile';
 import { useGetPerformanceResultsQuery } from '@meshery/schemas/mesheryApi';
 
@@ -62,7 +61,6 @@ function Dashboard() {
   const [runTest, setRunTest] = useState(false);
   const { notify } = useNotification();
   const router = useRouter();
-  const { grafana } = useSelector((state) => state.telemetry);
   const dispatch = useDispatch();
   const theme = useTheme();
   const {
@@ -141,6 +139,7 @@ function Dashboard() {
             style={{ padding: '0.5rem' }}
             size="grow"
             sx={{ alignContent: 'space-around' }}
+            data-testid="performance-dashboard"
           >
             <Grid2 spacing={1} size={{ xs: 12, lg: 6 }} sx={{ flexDirection: 'column' }}>
               <Grid2>
@@ -216,18 +215,6 @@ function Dashboard() {
                   <PerformanceCalendar style={{ height: '40rem', margin: '2rem 0 0' }} />
                 </StyledPaper>
               </Grid2>
-            </Grid2>
-            <Grid2 size={{ xs: 12, lg: 6 }}>
-              <StyledPaper style={{ height: '100%' }}>
-                <MesheryMetrics
-                  boardConfigs={grafana.selectedBoardsConfigs}
-                  grafanaURL={grafana.grafanaURL}
-                  grafanaAPIKey={grafana.grafanaAPIKey}
-                  handleGrafanaChartAddition={() =>
-                    router.push('/settings?settingsCategory=Metrics&tab=Grafana')
-                  }
-                />
-              </StyledPaper>
             </Grid2>
           </Grid2>
 

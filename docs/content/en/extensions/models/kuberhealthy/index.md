@@ -1,7 +1,7 @@
 ---
 title: Kuberhealthy
 subtitle: Collaborative and visual infrastructure as design for Kuberhealthy
-image: /extensions/models/kuberhealthy/icons/color/kuberhealthy-color.svg
+image: extensions/models/kuberhealthy/icons/color/kuberhealthy-color.svg
 aliases: /extensibility/integrations/kuberhealthy
 docURL: https://docs.meshery.io/extensibility/integrations/kuberhealthy
 description: 

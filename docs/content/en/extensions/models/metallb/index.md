@@ -1,7 +1,7 @@
 ---
 title: Metallb
 subtitle: Collaborative and visual infrastructure as design for Metallb
-image: /extensions/models/metallb/icons/color/metallb-color.svg
+image: extensions/models/metallb/icons/color/metallb-color.svg
 aliases: /extensibility/integrations/metallb
 docURL: https://docs.meshery.io/extensibility/integrations/metallb
 description: 
