@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import Link from 'next/link';
 import {
   CustomTooltip,
@@ -212,12 +212,18 @@ const NavigatorWrapper = () => {
     if (isMobile && !isDrawerCollapsed) {
       dispatch(toggleDrawer({ isDrawerCollapsed: true }));
     }
-  }, [dispatch, isDrawerCollapsed, isMobile]);
+    if (!isMobile && isDrawerCollapsed) {
+      dispatch(toggleDrawer({ isDrawerCollapsed: false }));
+    }
+  }, [isMobile]);
 
   return <NavigatorContent />;
 };
 
 const NavigatorContent = () => {
+  const isMobile = useMediaQuery('(max-width:599px)');
+  const { isDrawerCollapsed } = useSelector((state) => state.ui);
+  const sidebarNodeRef = useRef(null);
   const { meshAdapters } = useSelector((state) => state.adapter);
   const dispatch = useDispatch();
   const { catalogVisibility } = useSelector((state) => state.ui);
@@ -348,6 +354,28 @@ const NavigatorContent = () => {
     dispatch(updateTitle({ title: activeNavigatorItem.title }));
     dispatch(updateBetaBadge({ isBeta: activeNavigatorItem.isBeta }));
   }, [currentPath, dispatch, navigatorComponents]);
+
+  useEffect(() => {
+    if (!isMobile || isDrawerCollapsed) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (sidebarNodeRef.current && !sidebarNodeRef.current.contains(e.target)) {
+        dispatch(toggleDrawer({ isDrawerCollapsed: true }));
+      }
+    };
+
+    const handleRouteChange = () => {
+      dispatch(toggleDrawer({ isDrawerCollapsed: true }));
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router.events, dispatch, isMobile, isDrawerCollapsed]);
 
   const handleTitleClick = () => {
     router.push('/');
@@ -644,7 +672,7 @@ const NavigatorContent = () => {
     }
     return linkContent;
   };
-  const { isDrawerCollapsed } = useSelector((state) => state.ui);
+
   const Title = (
     <div
       style={
@@ -921,15 +949,17 @@ const NavigatorContent = () => {
 
   return (
     <NoSsr>
-      <SidebarDrawer isCollapsed={isDrawerCollapsed} variant="permanent">
-        {Title}
-        {Menu}
-        <FixedSidebarFooter>
-          {Chevron}
-          {HelpIcons}
-          {Version}
-        </FixedSidebarFooter>
-      </SidebarDrawer>
+      <div ref={sidebarNodeRef}>
+        <SidebarDrawer isCollapsed={isDrawerCollapsed} variant="permanent">
+          {Title}
+          {Menu}
+          <FixedSidebarFooter>
+            {Chevron}
+            {HelpIcons}
+            {Version}
+          </FixedSidebarFooter>
+        </SidebarDrawer>
+      </div>
     </NoSsr>
   );
 };
