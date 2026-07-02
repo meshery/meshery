@@ -56,10 +56,7 @@ function HideToggleFunction() {
 var getcodeelement = $('.clipboardjs'); /*create custom id*/
 
 getcodeelement.each(function (i) {
-    /*target*/
-    var currentId = 'codeblock' + (i + 1);
-    $(this).attr('id', currentId);
-
+    
     /*trigger*/
     var text = $(this).text();
     text = text.replace(/\$ /gi, '')
