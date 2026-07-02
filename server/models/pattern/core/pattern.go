@@ -43,7 +43,7 @@ func (p prettifier) DePrettify(m map[string]interface{}, isSchema bool) map[stri
 	res := ConvertMapInterfaceMapString(m, false, isSchema)
 	out, ok := res.(map[string]interface{})
 	if !ok {
-		log.Println("warning: failed to cast map interface to map string")
+		logrus.Warn("failed to cast map interface to map string")
 	}
 	return out
 
