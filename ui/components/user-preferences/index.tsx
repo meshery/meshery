@@ -56,9 +56,7 @@ import { SecondaryTab, SecondaryTabs } from '../dashboard/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
 
-interface ThemeTogglerProps {
-  handleUpdateUserPref: (_theme: string) => void;
-}
+interface ThemeTogglerProps {}
 
 interface ThemeComponentProps {
   mode: 'light' | 'dark';
@@ -103,7 +101,7 @@ interface _UserData {
   };
 }
 
-const ThemeToggler: React.FC<ThemeTogglerProps> = ({ handleUpdateUserPref }) => {
+const ThemeToggler: React.FC<ThemeTogglerProps> = () => {
   const Component: React.FC<ThemeComponentProps> = ({ mode, toggleTheme }) => {
     return (
       <div>
@@ -112,10 +110,9 @@ const ThemeToggler: React.FC<ThemeTogglerProps> = ({ handleUpdateUserPref }) => 
           checked={mode === 'dark'}
           onChange={() => {
             toggleTheme();
-            handleUpdateUserPref(mode === 'dark' ? 'light' : 'dark');
           }}
         />
-        Dark Mode
+        {mode === 'dark' ? 'Dark Mode' : 'Light Mode'}
       </div>
     );
   };
@@ -175,7 +172,11 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
         });
       })
       .catch(() => {
-        handleError('There was an error sending your preference');
+        updateProgress({ showProgress: false });
+        notify({
+          message: 'There was an error sending your preference',
+          event_type: EVENT_TYPES.ERROR,
+        });
       });
   };
 
@@ -187,11 +188,6 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
       setPerfResultStats(!perfResultStats);
       handleChange(name, !perfResultStats);
     }
-  };
-
-  const handleError = (name) => () => {
-    updateProgress({ showProgress: false });
-    notify({ message: name, event_type: EVENT_TYPES.ERROR });
   };
 
   const handleChange = (name, resultState) => {
@@ -207,10 +203,10 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
         : 'Sending anonymous performance results was disabled';
     }
 
-    const requestBody = JSON.stringify({
+    const requestBody = {
       anonymousUsageStats: name === 'anonymousUsageStats' ? val : anonymousStats,
       anonymousPerfResults: name === 'anonymousPerfResults' ? val : perfResultStats,
-    });
+    };
 
     updateProgress({ showProgress: true });
     updateUserPrefWithContext({ body: requestBody })
@@ -222,7 +218,11 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
         }
       })
       .catch(() => {
-        handleError('There was an error sending your preference');
+        updateProgress({ showProgress: false });
+        notify({
+          message: 'There was an error sending your preference',
+          event_type: EVENT_TYPES.ERROR,
+        });
       });
   };
 
@@ -528,7 +528,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
 
   const handleUpdateUserPref = (key, value) => {
     const updates = _.set(_.cloneDeep(userData), key, value);
-    updateUserPrefWithContext(updates);
+    updateUserPrefWithContext({ body: updates });
   };
   return (
     <>
@@ -627,10 +627,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                   <FormLegend component="legend">Theme</FormLegend>
 
                   <FormGroup>
-                    <ThemeToggler
-                      handleUpdateUserPref={handleUpdateUserPref}
-                      classes={props.classes}
-                    />
+                    <ThemeToggler />
                   </FormGroup>
                 </FormGroupWrapper>
               </FormContainerWrapper>
