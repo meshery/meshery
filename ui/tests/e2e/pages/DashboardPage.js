@@ -70,7 +70,8 @@ export class DashboardPage {
 
     const submenuItem = this.page.getByTestId(childItem);
     if (!(await submenuItem.isVisible())) {
-      const expandButton = parentMenu.locator('xpath=../following-sibling::button');
+      const menuRow = parentMenu.locator('..').locator('..');
+      const expandButton = menuRow.getByRole('button', { name: /expand|collapse/i });
       await expandButton.click();
     }
 
