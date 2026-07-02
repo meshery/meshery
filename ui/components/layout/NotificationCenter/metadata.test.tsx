@@ -179,8 +179,8 @@ describe('PropertyFormatters', () => {
     expect(PropertyFormatters.ModelDetails(undefined)).toBe(undefined);
   });
 
-  it('returns null for history_title field', () => {
-    expect(PropertyFormatters.history_title('anything')).toBeNull();
+  it('returns null for historyTitle field', () => {
+    expect(PropertyFormatters.historyTitle('anything')).toBeNull();
   });
 
   it('exposes dryRunResponse formatter', () => {
