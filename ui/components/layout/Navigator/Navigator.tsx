@@ -763,7 +763,7 @@ const NavigatorContent = () => {
                   </SideBarListItem>
                   {hasChildren && !isDrawerCollapsed && (
                     <ExpandMore
-                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         toggleItemCollapse(childId);

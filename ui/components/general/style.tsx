@@ -275,7 +275,7 @@ export const SideBarText = styled(ListItemText, {
   overflow: 'hidden',
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
-  transition: 'opacity 200ms ease-in-out',
+  transition: 'opacity 200ms ease-in-out, width 200ms ease-in-out',
   fontSize: '1rem',
   color: 'inherit',
 }));
@@ -331,7 +331,7 @@ export const HiddenText = styled(ListItemText)(({ drawerCollapsed, theme }) => (
   opacity: drawerCollapsed ? 0 : 1,
   color: theme.palette.background.constant.white,
   fontSize: '14px',
-  transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
+  transition: drawerCollapsed ? 'opacity 200ms ease-in-out, width 200ms ease-in-out' : 'opacity 200ms ease-in-out, width 200ms ease-in-out',
 }));
 
 export const LinkContainer = styled('div')(() => ({
