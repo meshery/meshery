@@ -1,0 +1,147 @@
+{{- if .Values.webhook.enabled }}
+{{/*
+CRD conversion webhook wiring (opt-in). Not required while the v1alpha1 and
+v1alpha2 schemas are field-identical — the shipped CRDs use conversion
+strategy None. Enable when the schemas diverge.
+
+The Service name (meshery-webhook-service) matches the operator's own
+kustomize output so the two deployment methods stay interchangeable. The
+conversion patch below is applied to the CRDs by the CRD update Job
+(crd-upgrade.yaml); certificates come from cert-manager when
+webhook.certManager.enabled, otherwise from a chart-generated self-signed CA
+that is reused across upgrades via lookup.
+*/}}
+{{- if not .Values.crds.updateJob.enabled }}
+{{- fail "webhook.enabled requires crds.updateJob.enabled: the CRD update Job is what patches spec.conversion onto the CRDs" }}
+{{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: meshery-webhook-service
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: 443
+      protocol: TCP
+      targetPort: webhook-server
+  selector:
+    {{- include "meshery-operator.selectorLabels" . | nindent 4 }}
+{{- if .Values.webhook.certManager.enabled }}
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: meshery-operator-selfsigned-issuer
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: meshery-operator-serving-cert
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+spec:
+  dnsNames:
+    - meshery-webhook-service.{{ .Release.Namespace }}.svc
+    - meshery-webhook-service.{{ .Release.Namespace }}.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: meshery-operator-selfsigned-issuer
+  secretName: meshery-operator-webhook-cert
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: meshery-operator-conversion-patch
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-3"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+data:
+  # cert-manager's cainjector fills spec.conversion.webhook.clientConfig.caBundle
+  # from the annotation.
+  conversion-patch.yaml: |
+    metadata:
+      annotations:
+        cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/meshery-operator-serving-cert
+    spec:
+      conversion:
+        strategy: Webhook
+        webhook:
+          clientConfig:
+            service:
+              name: meshery-webhook-service
+              namespace: {{ .Release.Namespace }}
+              path: /convert
+          conversionReviewVersions:
+            - v1
+{{- else }}
+{{- /* Self-signed path: reuse the existing Secret's certs across upgrades so
+       the caBundle stays stable; generate once on first install. */}}
+{{- $secretName := "meshery-operator-webhook-cert" }}
+{{- $existing := lookup "v1" "Secret" .Release.Namespace $secretName }}
+{{- $caCert := "" }}{{- $tlsCrt := "" }}{{- $tlsKey := "" }}
+{{- if and $existing (index $existing.data "ca.crt") (index $existing.data "tls.crt") (index $existing.data "tls.key") }}
+{{- $caCert = index $existing.data "ca.crt" }}
+{{- $tlsCrt = index $existing.data "tls.crt" }}
+{{- $tlsKey = index $existing.data "tls.key" }}
+{{- else }}
+{{- $ca := genCA "meshery-operator-webhook-ca" 3650 }}
+{{- $svc := printf "meshery-webhook-service.%s.svc" .Release.Namespace }}
+{{- $cert := genSignedCert $svc nil (list "meshery-webhook-service" $svc (printf "%s.cluster.local" $svc)) 3650 $ca }}
+{{- $caCert = $ca.Cert | b64enc }}
+{{- $tlsCrt = $cert.Cert | b64enc }}
+{{- $tlsKey = $cert.Key | b64enc }}
+{{- end }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ $secretName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+type: kubernetes.io/tls
+data:
+  ca.crt: {{ $caCert }}
+  tls.crt: {{ $tlsCrt }}
+  tls.key: {{ $tlsKey }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: meshery-operator-conversion-patch
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-3"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+data:
+  conversion-patch.yaml: |
+    spec:
+      conversion:
+        strategy: Webhook
+        webhook:
+          clientConfig:
+            caBundle: {{ $caCert }}
+            service:
+              name: meshery-webhook-service
+              namespace: {{ .Release.Namespace }}
+              path: /convert
+          conversionReviewVersions:
+            - v1
+{{- end }}
+{{- end }}
