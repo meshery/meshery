@@ -30,16 +30,26 @@ clusters:
 - cluster:
     server: https://127.0.0.1:6443
   name: kind-kind
+- cluster:
+    server: https://127.0.0.1:8443
+  name: minikube
 contexts:
 - context:
     cluster: kind-kind
     user: kind-kind
   name: kind-kind
+- context:
+    cluster: minikube
+    user: minikube
+  name: minikube
 current-context: kind-kind
 kind: Config
 preferences: {}
 users:
 - name: kind-kind
+  user:
+    token: "fake-token"
+- name: minikube
   user:
     token: "fake-token"
 `
