@@ -43,6 +43,7 @@ type MesheryTreeViewProps = {
   showDetailsData: { type: string; data: any };
   setResourcesDetail: React.Dispatch<React.SetStateAction<any[]>>;
   setModelsFilters: React.Dispatch<React.SetStateAction<{ page: number }>>;
+  setRegistrantsFilters?: React.Dispatch<React.SetStateAction<{ page: number }>>;
   lastItemRef: Record<string, React.MutableRefObject<any>>;
   isFetching: Record<string, boolean>;
   isLoading: Record<string, boolean>;
@@ -63,6 +64,7 @@ const MesheryTreeView = React.memo(
     showDetailsData,
     setResourcesDetail,
     setModelsFilters,
+    setRegistrantsFilters,
     lastItemRef,
     isFetching,
     isLoading,
@@ -323,6 +325,7 @@ const MesheryTreeView = React.memo(
       if (!isExpand) {
         setSearchText(() => null);
         setResourcesDetail(() => []);
+        setRegistrantsFilters({ page: 0 });
         setPage({
           Models: 0,
           Components: 0,
