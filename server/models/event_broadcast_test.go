@@ -5,18 +5,20 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/schemas/models/core"
 )
 
-// newBroadcastTestID returns a fresh random id for broadcaster tests.
-// core.Uuid is an alias for uuid.UUID, so this value is usable directly as the
-// id argument to Subscribe/Publish.
-func newBroadcastTestID(t *testing.T) uuid.UUID {
+// newBroadcastTestID returns a fresh random id for broadcaster tests. It
+// returns core.Uuid (converting explicitly) so callers match the
+// Subscribe/Publish signature regardless of whether core.Uuid stays a type
+// alias for uuid.UUID.
+func newBroadcastTestID(t *testing.T) core.Uuid {
 	t.Helper()
 	id, err := uuid.NewV4()
 	if err != nil {
 		t.Fatalf("failed to generate uuid: %v", err)
 	}
-	return id
+	return core.Uuid(id)
 }
 
 // TestBroadcast_PublishDeliversToSubscriber verifies the basic contract: an
