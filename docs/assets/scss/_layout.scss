@@ -2,6 +2,7 @@
 html {
   font-size: 100%;
   box-sizing: border-box;
+
   scrollbar-color: var(--scrollbar-color) var(--background-light);
   scrollbar-width: auto;
 
@@ -39,15 +40,18 @@ body {
 }
 
 ::-webkit-scrollbar-track {
+
   background: var(--background-light);
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--scrollbar-color);
+
   border-radius: 0.3rem;
 }
 
 ::-webkit-scrollbar-thumb:hover {
+
   background: #555;
 }
 
@@ -71,6 +75,7 @@ body::-webkit-scrollbar-thumb {
 html::-webkit-scrollbar-thumb:hover,
 body::-webkit-scrollbar-thumb:hover {
   background: #555;
+
 }
 
 body {
