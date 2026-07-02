@@ -1,2 +1,2 @@
 export * from './adapters';
-export { KanvasExtension } from './installableExtensions';
+export { VisualDesignerExtension } from './installableExtensions';
