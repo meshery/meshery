@@ -112,8 +112,8 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 			Description:    ws.Description,
 			ID:             ws.ID,
 			Name:           ws.Name,
-			OrganizationId: uuidPtr(ws.OrganizationID),
-			OwnerId:        ws.Owner,
+			OrganizationID: uuidPtr(ws.OrganizationID),
+			OwnerID:        ws.Owner,
 			UpdatedAt:      ws.UpdatedAt,
 		}
 		availableWorkspaces = append(availableWorkspaces, aw)

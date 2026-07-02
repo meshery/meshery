@@ -25,9 +25,13 @@ Working with the Meshery Policy Engine can feel complex because of the large num
 - Since we will be running these policies using the OPA CLI directly without the Go bootstrap code we need to provide the necessary context for the policy engine. This means providing a data structure containing the valid Meshery Relationships the policy engine will evaluate against. 
 - The input to the policy engine is a Meshery Design as a JSON data structure. When testing the Meshery Policy Engine you will need to provide this design as input. If you are working on a bug you will need to get the design from the issue or directly from the individual who reported the bug.
 
-## Executing OPA 
+## Testing the Policy Engine
 
-You can evaluate the Rego policies against test data stored in the `policies/test` folder:
+The relationship policy engine is implemented in Go as a module under `server/policies`. You can run the policy engine's test suite, which exercises the Rego policies through the native Go engine, with:
 
-{{< code code="make rego-eval" >}}
+{{< code code="make policy-test" >}}
+
+To format and lint the Rego policy files, run:
+
+{{< code code="make policy-lint" >}}
 
