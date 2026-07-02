@@ -358,7 +358,7 @@ const NavigatorContent = () => {
   useEffect(() => {
     if (!isMobile || isDrawerCollapsed) return;
 
-    const handleClickOutside = (e) => {
+    const handleClickOutside = (e: MouseEvent) => {
       if (sidebarNodeRef.current && !sidebarNodeRef.current.contains(e.target)) {
         dispatch(toggleDrawer({ isDrawerCollapsed: true }));
       }
@@ -375,7 +375,7 @@ const NavigatorContent = () => {
       document.removeEventListener('mousedown', handleClickOutside);
       router.events.off('routeChangeStart', handleRouteChange);
     };
-  }, [router.events, dispatch]);
+  }, [router.events, dispatch, isMobile, isDrawerCollapsed]);
 
   const handleTitleClick = () => {
     router.push('/');
@@ -949,15 +949,17 @@ const NavigatorContent = () => {
 
   return (
     <NoSsr>
-      <SidebarDrawer ref={sidebarNodeRef} isCollapsed={isDrawerCollapsed} variant="permanent">
-        {Title}
-        {Menu}
-        <FixedSidebarFooter>
-          {Chevron}
-          {HelpIcons}
-          {Version}
-        </FixedSidebarFooter>
-      </SidebarDrawer>
+      <div ref={sidebarNodeRef}>
+        <SidebarDrawer isCollapsed={isDrawerCollapsed} variant="permanent">
+          {Title}
+          {Menu}
+          <FixedSidebarFooter>
+            {Chevron}
+            {HelpIcons}
+            {Version}
+          </FixedSidebarFooter>
+        </SidebarDrawer>
+      </div>
     </NoSsr>
   );
 };
