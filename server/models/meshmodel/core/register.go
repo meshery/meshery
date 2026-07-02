@@ -90,7 +90,9 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 		return err
 	}
 	event := events.NewEvent().ActedUpon(connectionUUID).WithCategory("kubernetes_components").WithAction("registration").FromSystem(mesheryInstanceID).FromOwner(userUUID).WithSeverity(events.Informational).WithDescription(fmt.Sprintf("%d Kubernetes components registered for %s", count, ctxName)).WithMetadata(map[string]interface{}{
-		"doc": "https://docs.meshery.io/tasks/lifecycle-management",
+		"doclink": "https://docs.meshery.io/concepts/logical/registry",
+		"Context": ctxName,
+		"Discovered By": "MeshSync",
 	}).Build()
 	_, err = helpers.FailedEventCompute("Kubernetes", mesheryInstanceID, provider, userID, ec)
 	if err != nil {
