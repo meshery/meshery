@@ -32,6 +32,7 @@ import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaul
 import { applyMinSizeConstraints } from './layoutConstraints';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
+import WidgetErrorFallback from './widgets/WidgetErrorFallback';
 import { TABS_SCROLL_BUTTONS_CLASS } from './constants';
 import { useSelector } from 'react-redux';
 import useUnsavedChanges from './useUnsavedChanges';
@@ -419,7 +420,11 @@ const Dashboard = () => {
                 {widgetsToRenderForLayout(dashboardLayout, currentBreakPoint).map((widget) => {
                   return (
                     <div key={widget.key} style={isEditMode ? editModeStyles : {}}>
-                      <ErrorBoundary>
+                      <ErrorBoundary
+                        customFallback={(fallbackProps) => (
+                          <WidgetErrorFallback {...fallbackProps} widgetTitle={widget.title} />
+                        )}
+                      >
                         <LayoutWidget
                           isEditMode={isEditMode}
                           key={widget.key}

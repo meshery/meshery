@@ -341,7 +341,7 @@ const MesheryTreeView = React.memo(
           {renderHeader(type, !!data.length)}
           {data.length === 0 && !searchText ? (
             <JustifyAndAlignCenter style={{ height: '27rem' }}>
-              {isLoading || (data.length === 0 && !searchText) ? (
+              {isLoading ? (
                 <CircularProgress sx={{ color: theme.palette.primary.main }} />
               ) : (
                 <Typography>No {type.toLowerCase()} found</Typography>

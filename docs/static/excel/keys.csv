@@ -4,10 +4,11 @@ Catalog ,Share Design,"Share design with anyone within your organization, and ma
 Catalog,Clone Design,Clone any published design to customise it according to your use cases,X,X,,,X,,X,X,Catalog Management,94a12f80-3c45-4a1f-afb2-a68b909d0d7f,X,TRUE
 Designs ,View Designs,View all public and published designs of other team members and private of signed-in user,X,X,,,X,,X,X,Catalog Management,3798736d-1f5d-41b3-876f-f3f01453dd15,X,TRUE
 Filters,View Filters,View all public and published filters of other team members and private of signed-in user,X,X,,,X,,X,X,Catalog Management,df41c45f-7c73-49c2-a055-0584fdcec1c1,X,TRUE
+Filters,Publish WASM Filter,Publish WASM Filter,X*,X*,,,X,,X,X,Catalog Management,173d99b7-3820-4c0c-88b2-a8455bd7a6b5,X,FALSE
+Filters,Unpublish WASM Filter,Unpublish WASM Filter,X*,X*,,,X,,X,X,Catalog Management,773f0a4d-ba04-40ed-9298-59ac8749804a,X,FALSE
 Catalog Requests,View Catalog Requests,View the catalog publication request queue,,,,,X,,X,X,Chargeback,30b68d69-d199-48fd-b4ff-54b5282c5c03,X,FALSE
 Catalog Requests,Approve Catalog Request,Approve catalog publication requests,,,,,X,,X,X,Chargeback,66fbc8c0-b08a-494b-8c60-68ee1b607176,X,FALSE
 Catalog Requests,Deny Catalog Request,Deny catalog publication requests,,,,,X,,X,X,Chargeback,b9137717-a20a-44e8-a2f9-94dc3d1a6dcb,X,FALSE
-,,,,,,,,,,,,,,FALSE
 Designs,Create new design,Create new Meshery design,X,X,,,X,,X,X,Catalog Management,14bd933e-83b7-464d-9a4d-d8c8eb9682ab,X,TRUE
 Designs,Import Design,Import a design,X,X,,,X,,X,X,Catalog Management,cc040d21-3160-4a96-8efa-833487a234cd,X,TRUE
 Designs,Publish Design,Publish a design,X,X,,,X,,X,X,Catalog Management,9e66bdec-4177-42f9-8cec-d9eb52a12c38,X,FALSE
@@ -30,6 +31,7 @@ Extensions,Install extension,Install or enable or disabble extensions in Meshery
 Extensions,View Meshery User Preferences,View all user preferences in Meshery UI ,X,X,,,X,,X,X,Extension Point Management,cdec6212-bbbf-4cab-b10d-76d12bee7e56,X,TRUE
 Extensions,View Extensions,View all extensions on the extension page,X,X,,,X,,X,X,Extension Point Management,c1330df4-1bbe-4d5d-8828-f4bd9ee989e5,X,TRUE
 Users,View All Kubernetes Clusters,View all configured Kubernetes clusters,X,X,,,X,,X,X,Lifecycle management,b99a9a0a-2cb9-4be7-8251-14a249e4038e,X,TRUE
+Users,Leave Team,Leave a team,X,X,,,X,,,X,User Management,680b9fcb-6d8d-448d-8012-4b792d71c52e,X,FALSE
 Teams,View Team,See only teams to which you are a member. See all other members within those teams.,X,X,,,X,,X,X,Team Management,27447fb0-be46-4497-8366-c34e24920f22,X,FALSE
 Teams,View Teams,See all teams of which you are an administrator. See all members of those teams.,,X,,,X,,X,X,Team Management,6ecbbe79-c392-43bd-b7b6-ecdec019e24c,X,FALSE
 Teams,View All Teams,See all teams within an organization. See all members of all teams.,X,X,,,X,,X,X,Organization Management,8b94dd6b-234f-4c89-86cf-b029e0090255,X,FALSE
@@ -97,3 +99,10 @@ Workspace,Assign Designs to Workspaces,Assign designs to workspaces,,,,,X,,X,X,W
 Workspace,Remove Designs from Workspaces,Remove designs from workspaces,,,,,X,,X,X,Workspace Management,076515f1-f696-4211-ae27-58d5463a229e,X,TRUE
 Settings,Reset Database,Reset Meshery database,,,,,,,X,X,Settings Management,84fc402c-f33e-4a21-a0e3-e14f9e20b125,X,TRUE
 Administration,Access the Academy console,View and assess the performance of learners and of your organization's academy content.,,,,,,,,,Academy Management,045fad17-d2cc-46e8-bb10-f9ee026c799f,,FALSE
+Operator,View Views,See all views within a workspace,X,X,,,X,,X,X,View Management,93cba7f8-82ec-4a64-b384-f81d6acc8db3,X,FALSE
+Operator,Delete View,Dissolve environment and all connection memberships. Leave associated resources intact.,X*,X*,,,X,,X,X,View Management,48076416-bc07-456b-bbea-49bdca239d0f,X,FALSE
+Operator,Assign Views to Workspace,Add new views to workspace,,,,,X,,X,X,Workspace Management,fb6c987b-e54c-4016-b3f3-0488228ee998,X,FALSE
+Operator,Unassign Views from Workspace,Remove views from workspace ,,,,,X,,X,X,Workspace Management,f77d74ef-1cae-4527-b45e-ecc1431681df,X,FALSE
+Credentials,View Credentials,,,,,,,,X,X,,96759f76-4add-45f8-b4ef-d4ace5ab1bc4,X,FALSE
+Tokens,Download Token,,X,X,,,X,,X,X,,ee5fc23e-d629-4c7b-8169-27e526394e8b,X,FALSE
+Roles,Assign User Roles,,,,,,,,X,X,User Management,9a84a76a-0a16-11ee-be56-0242ac120002,X,FALSE

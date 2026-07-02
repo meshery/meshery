@@ -11,7 +11,7 @@ import {
 import { useSelector } from 'react-redux';
 import { Modal } from '@/components/shared/Modal';
 import ConnectionIcon from '@/assets/icons/Connection';
-import type { RootState } from '@/store/store';
+import type { RootState } from '../../store';
 import { useListConnectionDefinitionsQuery } from '@meshery/schemas/mesheryApi';
 import { buildConnectionWizardKindConfigs } from './ConnectionWizard.helpers';
 import { useConnectionWizard } from './wizard/useConnectionWizard';
