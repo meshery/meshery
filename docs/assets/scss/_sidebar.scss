@@ -1,6 +1,6 @@
 .left-container {
   position: sticky;
-  z-index: 9;
+  z-index: 11;
   flex-shrink: 0;
 
   width: var(--sidebar-width);
@@ -15,14 +15,18 @@
 
   @media (max-width: 75em) {
     position: fixed;
+    width: min(88vw, var(--sidebar-width));
+    max-width: 100vw;
+    z-index: 11;
 
     margin-top: 0;
     margin-right: 0;
   }
 
   @media (max-width: 37.5em) {
-    top: calc(var(--navbar-height) - 10);
-    height: 100vh;
+    top: calc(var(--navbar-height) - 2.5rem);
+    height: calc(100vh - (var(--navbar-height) - 2.5rem));
+    width: min(88vw, var(--sidebar-width));
   }
 
   &--active {
@@ -32,9 +36,41 @@
     & .nav-toggle-btn--document svg {
       transform: rotate(180deg);
     }
+
+    @media (max-width: 75em) {
+      &::before {
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
+  }
+
+  &::before {
+    content: "";
+    position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - var(--navbar-height));
+    background: rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+
+    @media (min-width: 75.001em) {
+      display: none;
+    }
+
+    @media (max-width: 37.5em) {
+      top: calc(var(--navbar-height) - 2.5rem);
+      height: calc(100vh - (var(--navbar-height) - 2.5rem));
+    }
   }
 
   & .sidebar-container-wrapper {
+    position: relative;
+    z-index: 2;
     height: 100%;
     padding: 0.5rem;
 
@@ -42,17 +78,23 @@
     background: #121212;
     background: linear-gradient(37deg, rgba(71, 126, 150, 0.52) 0%, rgba(0, 0, 0, 0.81) 12%, rgba(60, 73, 79, 1) 100%);
     box-shadow: var(--box-shadow-primary);
+
+    @media (max-width: 75em) {
+      width: 100%;
+      max-width: 100%;
+    }
   }
   & .icon-container {
     height: fit-content;
-    z-index: 9;
+    z-index: 3;
     display: block;
     position: absolute;
     right: -3rem;
     bottom: 3rem;
     
     @media (max-width: 37.5em) {
-      bottom: 7rem;
+      right: 0.75rem;
+      bottom: 0.75rem;
     }
   }
 }
@@ -69,6 +111,8 @@
   cursor: pointer;
   justify-content: center;
   transition: background-color 0.2s ease;
+  position: relative;
+  z-index: 4;
   &:hover {
     background-color: var(--brand-color);
     & svg { fill: #fff; }
@@ -91,7 +135,7 @@
   font-size: 1.5rem;
   width: var(--sidebar-width);
   max-width: var(--sidebar-width);
-  min-width: var(--sidebar-width);
+  min-width: 0;
 
   /* Sidebar scrollbar aligned with global docs design */
   &::-webkit-scrollbar {
@@ -115,12 +159,15 @@
     top: var(--navbar-height);
     left: 0;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     z-index: 9;
     transition: 0.5s ease-in-out;
   }
 
   @media (max-width: 37.5em) {
     width: 100%;
+    max-width: 100%;
   }
 
   & .td-sidebar__inner {
@@ -185,7 +232,7 @@
 
   & .td-sidebar-nav {
     display: block !important;
-    font-size: 1.05rem;
+    font-size: clamp(0.95rem, 0.85rem + 0.35vw, 1.05rem);
     padding: 0;
     margin: 0;
     overflow-y: visible;
@@ -326,14 +373,19 @@
     display: flex;
     align-items: center;
     gap: 0.2rem;
-    font-size: 1.05rem;
+    font-size: clamp(0.95rem, 0.85rem + 0.35vw, 1.05rem);
     font-weight: 500;
 
     min-width: 0;
-    width: fit-content;
+    width: 100%;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: normal;
 
     &>span {
       color: var(--sidebar-text-color);
+      min-width: 0;
+      overflow-wrap: anywhere;
     }
   }
   // Breathing room between lists
@@ -352,7 +404,7 @@
   & .td-sidebar-nav .ul-1>li>a.td-sidebar-link,
   & .td-sidebar-nav .ul-1>li>.sidebar-section-flex-wrapper>a.td-sidebar-link {
     font-weight: 600;
-    font-size: 1.30rem;
+    font-size: clamp(1.1rem, 0.98rem + 0.55vw, 1.3rem);
     // background-color: red;
 
   }
@@ -368,7 +420,7 @@
   & .td-sidebar-nav__section.with-child > a.td-sidebar-link,
   & .td-sidebar-nav__section.with-child > .sidebar-section-flex-wrapper > a.td-sidebar-link {
     font-weight: 800;
-    font-size: 1.2rem;
+    font-size: clamp(1.05rem, 0.96rem + 0.4vw, 1.2rem);
   }
 
   & .td-sidebar-nav__section.without-child > a.td-sidebar-link {

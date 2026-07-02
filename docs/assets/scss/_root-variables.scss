@@ -1,8 +1,8 @@
 :root {
   --navbar-height: 6.5rem;
   --footer-height: 8.0rem;
-  --sidebar-width: 360px;
-  --sidebar-wrapper-width: 375px;
+  --sidebar-width: clamp(18rem, 30vw, 22.5rem);
+  --sidebar-wrapper-width: calc(var(--sidebar-width) + 0.9375rem);
 
   // Colors that will not change in the dark mode.
   --brand-color-primary: #00d3a9;
@@ -194,4 +194,3 @@
     --navbar-height: 7.5rem;
   }
 }
-
