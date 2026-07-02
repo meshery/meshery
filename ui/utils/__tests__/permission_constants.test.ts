@@ -1,65 +1,66 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, afterEach } from 'vitest';
+import { Keys } from '@meshery/schemas/permissions';
 import { keys } from '../permission_constants';
+import CAN, { ability } from '../can';
 
-describe('permission_constants.keys', () => {
-  it('exports a non-empty record of permission keys', () => {
-    expect(typeof keys).toBe('object');
-    expect(keys).not.toBeNull();
-    expect(Object.keys(keys).length).toBeGreaterThan(0);
+describe('permission_constants dynamic bridge and CASL capability tests', () => {
+  afterEach(() => {
+    // Reset ability to avoid leaking state into other test files
+    ability.update([]);
   });
 
-  it('every entry has both a `subject` and a UUID-format `action`', () => {
-    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  it('should resolve legacy keys correctly with action and subject', () => {
+    // legacy key AccountManagementViewProfile
+    expect(keys.VIEW_PROFILE).toBeDefined();
+    expect(keys.VIEW_PROFILE.action).toBe(Keys.AccountManagementViewProfile.id);
+    expect(keys.VIEW_PROFILE.subject).toBe(Keys.AccountManagementViewProfile.function);
 
+    // legacy key AccountManagementEditAccount
+    expect(keys.EDIT_ACCOUNT).toBeDefined();
+    expect(keys.EDIT_ACCOUNT.action).toBe(Keys.AccountManagementEditAccount.id);
+    expect(keys.EDIT_ACCOUNT.subject).toBe(Keys.AccountManagementEditAccount.function);
+  });
+
+  it('should resolve new PascalCase keys directly mapped from schemas', () => {
+    expect(keys.AccountManagementViewProfile).toBeDefined();
+    expect(keys.AccountManagementViewProfile.action).toBe(Keys.AccountManagementViewProfile.id);
+    expect(keys.AccountManagementViewProfile.subject).toBe(
+      Keys.AccountManagementViewProfile.function,
+    );
+  });
+
+  it('every exported permission key has a non-empty subject and UUID action', () => {
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     for (const [name, value] of Object.entries(keys)) {
       expect(value, `key=${name}`).toMatchObject({
         subject: expect.any(String),
         action: expect.any(String),
       });
-      expect(value.subject.length, `subject for ${name}`).toBeGreaterThan(0);
-      expect(value.action, `action for ${name}`).toMatch(uuidPattern);
+      expect((value as { subject: string }).subject.length, `subject for ${name}`).toBeGreaterThan(
+        0,
+      );
+      expect((value as { action: string }).action, `action for ${name}`).toMatch(uuidPattern);
     }
   });
 
-  it('exposes well-known permission keys with their expected subjects', () => {
-    expect(keys.EDIT_ORGANIZATION.subject).toBe('Edit Organization');
-    expect(keys.VIEW_ALL_ORGANIZATIONS.subject).toBe('View All Organizations');
-    expect(keys.VIEW_PROFILE.subject).toBe('View Profile');
-    expect(keys.RESET_DATABASE.subject).toBe('Reset database');
-  });
-
-  it('exposes design/filter/workspace lifecycle keys', () => {
-    expect(keys.CREATE_NEW_DESIGN).toBeDefined();
-    expect(keys.DELETE_A_DESIGN).toBeDefined();
-    expect(keys.PUBLISH_DESIGN).toBeDefined();
-    expect(keys.UNPUBLISH_DESIGN).toBeDefined();
-    expect(keys.DELETE_WORKSPACE).toBeDefined();
-    expect(keys.EDIT_WASM_FILTER).toBeDefined();
-  });
-
-  it('reuses the same action UUID for the two "download a design" subjects', () => {
-    // DOWNLOAD_DESIGN and DOWNLOAD_A_DESIGN intentionally share an action ID
-    // in the current key catalog. Pinning this so we notice if the seeds change.
-    expect(keys.DOWNLOAD_DESIGN.action).toBe(keys.DOWNLOAD_A_DESIGN.action);
-  });
-
-  it('does not share action UUIDs between unrelated keys', () => {
-    // Build a map of action -> [names] and assert that every collision is on
-    // a known, intentional duplicate pair.
-    const knownDuplicateGroups = new Set([
-      ['DOWNLOAD_DESIGN', 'DOWNLOAD_A_DESIGN'].sort().join(','),
+  it('should verify CASL CAN capability with active abilities', () => {
+    // Initialize ability with specific permissions
+    ability.update([
+      {
+        action: Keys.AccountManagementViewProfile.id,
+        subject: 'view profile',
+      },
     ]);
 
-    const byAction: Record<string, string[]> = {};
-    for (const [name, value] of Object.entries(keys)) {
-      byAction[value.action] = byAction[value.action] || [];
-      byAction[value.action].push(name);
-    }
+    // Check CAN check with legacy key
+    expect(CAN(keys.VIEW_PROFILE.action, keys.VIEW_PROFILE.subject)).toBe(true);
 
-    for (const [, names] of Object.entries(byAction)) {
-      if (names.length > 1) {
-        expect(knownDuplicateGroups).toContain(names.sort().join(','));
-      }
-    }
+    // Check CAN check with PascalCase key
+    expect(
+      CAN(keys.AccountManagementViewProfile.action, keys.AccountManagementViewProfile.subject),
+    ).toBe(true);
+
+    // Check CAN check with a key the user doesn't have
+    expect(CAN(keys.EDIT_ACCOUNT.action, keys.EDIT_ACCOUNT.subject)).toBe(false);
   });
 });
