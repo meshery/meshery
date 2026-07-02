@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
@@ -95,7 +96,11 @@ func Execute() error {
 	//log formatter for improved UX
 	// Removing printing command usage on error
 	RootCmd.SilenceUsage = true
+	RootCmd.SilenceErrors = true
 	err := RootCmd.Execute()
+	if err != nil {
+		utils.Log.Errorf("%s", strings.ReplaceAll(err.Error(), " | ", "\n"))
+	}
 	return err
 }
 
