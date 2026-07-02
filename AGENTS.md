@@ -12,7 +12,6 @@ Meshery is a self-service engineering platform and open source cloud native mana
 | `/docs` | Hugo documentation site |
 | `/install` | Dockerfiles, Kubernetes manifests, Helm charts |
 | `/provider-ui` | Provider-specific React UI extensions |
-| `/policies` | OPA Rego policies for relationship evaluation |
 | `/.github` | GitHub Actions, issue templates, Copilot agent definitions |
 
 ## Identifier Naming Conventions — MANDATORY

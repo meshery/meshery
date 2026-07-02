@@ -35,6 +35,7 @@ import {
   useMediaQuery,
   SearchIcon,
   SettingsIcon,
+  FilterAllIcon,
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -142,6 +143,7 @@ function K8sContextMenu({
   setActiveContexts = () => {},
   searchContexts = () => {},
 }) {
+  const theme = useTheme();
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
   const anchorRef = React.useRef(null);
   // The dropdown slides up from below; its translate distance scales with the
@@ -338,7 +340,7 @@ function K8sContextMenu({
                           marginTop: '1rem',
                         }}
                       >
-                        <div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
                           <>
                             <Checkbox
                               checked={activeContexts.includes('all')}
@@ -347,9 +349,18 @@ function K8sContextMenu({
                                   ? setActiveContexts([])
                                   : setActiveContexts('all')
                               }
+                              icon={
+                                <FilterAllIcon
+                                  fill={theme.palette.background.brand.default}
+                                  style={{ opacity: 0.4 }}
+                                />
+                              }
+                              inputProps={{ 'aria-label': 'select all contexts' }}
                             />
                           </>
-                          <span style={{ fontWeight: 'bolder' }}>select all</span>
+                          <span style={{ fontWeight: 'bolder', whiteSpace: 'nowrap' }}>
+                            select all
+                          </span>
                         </div>
                         <CustomTooltip title="Configure Connections">
                           <div>
