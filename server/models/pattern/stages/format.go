@@ -13,7 +13,7 @@ func Format() ChainStageFunction {
 			next(data, err)
 			return
 		}
-		logrus.Info("Deprettifying the pattern file")
+		logrus.Info("De-prettifying the pattern file")
 		for _, component := range data.Pattern.Components {
 			component.Configuration = core.Format.DePrettify(component.Configuration, false)
 		}
