@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -228,12 +229,12 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 
 		f, err := os.Create(filepath.Join(path, filename+"-complete.svg"))
 		if err != nil {
-			log.Printf("error creating SVG file: %v", err)
+			logrus.Errorf("error creating SVG file: %v", err)
 			return
 		}
 		_, err = f.WriteString(svgComplete)
 		if err != nil {
-			log.Printf("error writing SVG complete data: %v", err)
+			logrus.Errorf("error writing SVG complete data: %v", err)
 			return
 		}
 		svgCompletePath = getRelativePathForAPI(filepath.Join(dirname, "complete", filename+"-complete.svg")) //Replace the actual SVG with path to SVG
