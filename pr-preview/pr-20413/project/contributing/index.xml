@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Contributing on Documentation</title><link>/pr-preview/pr-20413/project/contributing/</link><description>Recent content in Contributing on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/pr-preview/pr-20413/project/contributing/index.xml" rel="self" type="application/rss+xml"/><item><title>Build &amp; Release (CI)</title><link>/pr-preview/pr-20413/project/contributing/build-and-release/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20413/project/contributing/build-and-release/</guid><description>&lt;p&gt;Meshery’s build and release system incorporates many tools, organized into different workflows each triggered by different events. Meshery’s build and release system does not run on a schedule, but is event-driven. GitHub Actions are used to define Meshery’s CI workflows. New builds of Meshery and its various components are automatically generated upon push, release, and other similar events, typically in relation to their respective master branches.&lt;/p&gt;
+&lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Meshery Test Documents&lt;/div&gt;
+&lt;p&gt;The Meshery Test Strategy (&lt;a href='https://docs.google.com/document/d/11nAxYtz2SUusCYZ0JeNRrOLIxkgmmbUVWz63MBZV2oE/edit'&gt;1&lt;/a&gt;,&lt;a href='https://docs.google.com/document/d/14vbwnKafqxrr-cJOmLWEvvj75MFrxFKiUdfPwZRhg64/edit'&gt;2&lt;/a&gt;) is a comprehensive document that outlines the approach to testing, types of tests, frameworks used - test strategy - for each of Meshery&amp;rsquo;s architectural components. The &lt;a href='https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit'&gt;Meshery Test Plan&lt;/a&gt; is a tactical spreadsheet that &lt;em&gt;itemizes&lt;/em&gt; specific integration and end-to-end test cases and tracks their status. It includes a list of GitHub workflows and their purpose. Join the &lt;a href='https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#'&gt;Meshery CI meeting&lt;/a&gt; and/or the &lt;a href='https://meshery.io/subscribe'&gt;developers mailing list&lt;/a&gt; to get involved. &lt;/div&gt;&lt;/p&gt;</description></item><item><title>Contributing to Meshery Adapters</title><link>/pr-preview/pr-20413/project/contributing/contributing-adapters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20413/project/contributing/contributing-adapters/</guid><description>&lt;p&gt;Meshery Adapters are the Extension Points in Meshery&amp;rsquo;s architecture. Their design, the process of creating a new adapter is documented in &lt;a href="/pr-preview/pr-20413/concepts/architecture/adapters/"&gt;Extensibility: Meshery Adapters&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;With the &lt;a href="https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#adapter"&gt;CONTRIBUTING.md&lt;/a&gt; in mind, understand that development follows the usual fork-and-pull request workflow described here, see also GitHub Process. On forking GitHub deactivates all workflows. It is safe and good practice to activate them such that the code is validated on each push. This requires that branches filter for “on push” is set to ‘**’ to be triggered also on branches containing ‘/’ in their name. The actions are parameterized using secrets (see Build &amp;amp; Release Strategy). The Docker image is only built and pushed to Docker Hub if a tag is pushed and the corresponding authentication information is configured.&lt;/p&gt;</description></item><item><title>Contributing to Meshery Docker Extension</title><link>/pr-preview/pr-20413/project/contributing/contributing-docker-extension/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20413/project/contributing/contributing-docker-extension/</guid><description>&lt;h2 id="prerequisites"&gt;
+	Prerequisites
+&lt;/h2&gt;
+&lt;p&gt;To start contributing to Meshery Docker Extension, make sure you have &lt;a href="https://docs.docker.com/get-docker/"&gt;Docker&lt;/a&gt; installed on your system.&lt;/p&gt;
+&lt;h3 id="docker-extension-for-meshery"&gt;
+	Docker Extension for Meshery
+&lt;/h3&gt;
+&lt;p&gt;The Docker Extension for Meshery extends Docker Desktop’s position as the cloud native developer’s go-to Kubernetes environment with easy access to the next layer of cloud native infrastructure. The extension provides a seamless experience for developers to manage and monitor their Kubernetes applications and services.&lt;/p&gt;
+&lt;h4 id="using-docker-desktop"&gt;
+	Using Docker Desktop
+&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Navigate to the Extensions Marketplace of Docker Desktop.&lt;/p&gt;</description></item><item><title>Contributing to Meshery Docs</title><link>/pr-preview/pr-20413/project/contributing/contributing-docs/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20413/project/contributing/contributing-docs/</guid><description>&lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Important&lt;/div&gt;
+&lt;p&gt;Before contributing, please review the &lt;a href="https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow"&gt;Documentation Contribution Flow&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Use the following steps to set up your development environment depending on your Operating System of choice, fork the repository, install dependencies and run the site locally. You can then make changes, test locally, sign-off and commit, and push the changes made for review.&lt;/p&gt;
+&lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Meshery Documentation Design Specification&lt;/div&gt;
+&lt;p&gt;See the &lt;a href="https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit"&gt;Meshery Documentation Design Specification&lt;/a&gt; which serves to provide an overview of the tooling and approach used to create Meshery&amp;rsquo;s documentation and its information architecture.&lt;/p&gt;</description></item><item><title>Contributing to Meshery Operator</title><link>/pr-preview/pr-20413/project/contributing/contributing-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20413/project/contributing/contributing-operator/</guid><description>&lt;p&gt;&lt;a href="/pr-preview/pr-20413/concepts/architecture/operator/"&gt;Meshery Operator&lt;/a&gt; is a
+Kubernetes operator that manages the lifecycle of
+&lt;a href="/pr-preview/pr-20413/concepts/architecture/meshsync/"&gt;MeshSync&lt;/a&gt; and the
+&lt;a href="/pr-preview/pr-20413/concepts/architecture/broker/"&gt;Meshery Broker&lt;/a&gt;. It is built with
+&lt;a href="https://book.kubebuilder.io/"&gt;Kubebuilder&lt;/a&gt; and the Operator SDK, and follows the standard
+Kubebuilder &lt;code&gt;go/v4&lt;/code&gt; project layout - the manager entrypoint lives at &lt;code&gt;cmd/main.go&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Development follows the usual fork-and-pull-request workflow. Every commit must be signed
+off; see the &lt;a href="/pr-preview/pr-20413/project/contributing/"&gt;Contributing Overview&lt;/a&gt; and the
+&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-gitflow/"&gt;Git workflow guide&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="prerequisites"&gt;
+	Prerequisites
+&lt;/h2&gt;
+&lt;p&gt;You only need Go and Docker installed locally. The &lt;code&gt;Makefile&lt;/code&gt; downloads its pinned build
+tools into &lt;code&gt;bin/&lt;/code&gt; on demand (kustomize, controller-gen, setup-envtest, kind, operator-sdk,
+opm), so their versions are reproducible and you do not install them globally. A running
+Kubernetes cluster - or &lt;code&gt;make kind&lt;/code&gt; to provision one with kind - is required for the deploy
+and integration-test targets.&lt;/p&gt;</description></item><item><title>Contributing to Meshery Policies</title><link>/pr-preview/pr-20413/project/contributing/contributing-policies/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20413/project/contributing/contributing-policies/</guid><description>&lt;h2 id="background"&gt;
+	Background
+&lt;/h2&gt;
+&lt;p&gt;Meshery has a built-in policy engine, based on &lt;a href="https://www.openpolicyagent.org/docs/latest/"&gt;Open Policy Agent (OPA)&lt;/a&gt;. Meshery uses the &lt;a href="https://www.openpolicyagent.org/docs/latest/policy-language/"&gt;Rego&lt;/a&gt; query language to create these &lt;a href="https://docs.meshery.io/concepts/logical/policies"&gt;policies&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="prerequisites"&gt;
+	Prerequisites
+&lt;/h2&gt;
+&lt;p&gt;To start contributing to Meshery Policy Engine, make sure you have &lt;a href="https://www.openpolicyagent.org/docs/latest/#running-opa"&gt;OPA CLI&lt;/a&gt; installed on your system. You will also need to clone the &lt;a href="https://github.com/meshery/meshery/"&gt;Meshery Server&lt;/a&gt; project from Github.&lt;/p&gt;
+&lt;h2 id="components-of-meshery-policy-engine"&gt;
+	Components of Meshery Policy Engine
+&lt;/h2&gt;
+&lt;p&gt;Rego policies are the declarative logic behind the policy engine. These policies define how the underlying engine understands relationships within Meshery Designs. Rego policies can be found &lt;a href="https://github.com/meshery/meshery/tree/master/models/meshery-core/0.7.2/v1.0.0/policies"&gt;here&lt;/a&gt; in the Meshery GitHub repository.&lt;/p&gt;</description></item><item><title>Contributing to Meshery Schemas</title><link>/pr-preview/pr-20413/project/contributing/contributing-schemas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20413/project/contributing/contributing-schemas/</guid><description>&lt;p&gt;This comprehensive guide covers everything you need to know to contribute to the Meshery Schemas repository. Meshery follows &lt;strong&gt;Schema-Driven Development (SDD)&lt;/strong&gt;, where the structure of data is centrally defined using schemas that power consistency, validation, and code generation across the platform.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="table-of-contents"&gt;
+	Table of Contents
+&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#overview"&gt;Overview&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#prerequisites"&gt;Prerequisites&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#quick-start"&gt;Quick Start&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#schema-directory-structure"&gt;Schema Directory Structure&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#understanding-apiyml---the-construct-index-file"&gt;Understanding &lt;code&gt;api.yml&lt;/code&gt; - The Construct Index File&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#schema-file-roles"&gt;Schema File Roles&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#naming-conventions"&gt;Naming Conventions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#adding-a-new-schema"&gt;Adding a New Schema&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#modifying-existing-schemas"&gt;Modifying Existing Schemas&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#code-generation"&gt;Code Generation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#vendor-extensions-x--annotations"&gt;Vendor Extensions (&lt;code&gt;x-*&lt;/code&gt; Annotations)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#go-helper-files"&gt;Go Helper Files&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#typescript-integration"&gt;TypeScript Integration&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#common-schema-patterns"&gt;Common Schema Patterns&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#template-files"&gt;Template Files&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#what-not-to-commit"&gt;What NOT to Commit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#testing-your-changes"&gt;Testing Your Changes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#common-mistakes-to-avoid"&gt;Common Mistakes to Avoid&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#checklist-for-schema-changes"&gt;Checklist for Schema Changes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/pr-preview/pr-20413/project/contributing/contributing-schemas/#getting-help"&gt;Getting Help&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="overview"&gt;
+	Overview
+&lt;/h2&gt;
+&lt;p&gt;Meshery schemas offer a powerful system designed for:&lt;/p&gt;</description></item><item><title>Contributing to Meshery Server</title><link>/pr-preview/pr-20413/project/contributing/contributing-server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20413/project/contributing/contributing-server/</guid><description>&lt;p&gt;As a new contributor, you’re going to want to familiarize with the project in order to resolve the issues in the best way. Installing and playing around with Meshery will give you context for any issues that you might work on.&lt;/p&gt;
+&lt;p&gt;Once an issue has been addressed, you’ll need to test it as well. Ideally, these tests are run from the user’s perspective (someone running Meshery in a container), not from a contributor’s perspective (someone running Meshery as a locally-compiled service).&lt;/p&gt;</description></item><item><title>Contributing to Meshery Server Events</title><link>/pr-preview/pr-20413/project/contributing/contributing-server-events/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20413/project/contributing/contributing-server-events/</guid><description>&lt;p&gt;Meshery incorporates an internal events publication mechanism that provides users with real-time updates on the processes occurring within the Meshery server when interacting with its endpoints. It ensures that users are kept in the loop regarding the ongoing activities within the API, and guides users towards future steps to resolve issues. This guide will provide step-by-step instructions on sending events from the server, including when to trigger events and what information to include.&lt;/p&gt;</description></item><item><title>Contributing to Meshery using git</title><link>/pr-preview/pr-20413/project/contributing/contributing-gitflow/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20413/project/contributing/contributing-gitflow/</guid><description>&lt;h1 id="working-by-forking"&gt;
+	Working by Forking
+&lt;/h1&gt;
+&lt;p&gt;Just head over to the GitHub page and click the &amp;ldquo;Fork&amp;rdquo; button. It&amp;rsquo;s just that simple. Once you&amp;rsquo;ve done that, you can use your favorite git client to clone your repo or just head straight to the command line:&lt;/p&gt;
+&lt;h2 id="clone-your-fork-to-your-local-machine"&gt;
+	Clone your fork to your local machine
+&lt;/h2&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;git clone git@github.com:USERNAME/FORKED-PROJECT.git
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Keeping Your Fork Up to Date
+While this isn&amp;rsquo;t a necessary step, if you plan on doing anything more than just a tiny quick fix, you&amp;rsquo;ll want to make sure you keep your fork up to date by tracking the original &amp;ldquo;upstream&amp;rdquo; repo that you forked. To do this, you&amp;rsquo;ll need to add a remote:&lt;/p&gt;</description></item><item><title>How to write MeshKit compatible errors</title><link>/pr-preview/pr-20413/project/contributing/contributing-error/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20413/project/contributing/contributing-error/</guid><description>&lt;p&gt;Meshery pervasively uses MeshKit as a golang and infrastructure management-specific library in all of its components. MeshKit helps populate error messages with a uniform and useful set of informative attributes.&lt;/p&gt;
+&lt;p&gt;To help with creating error codes, MeshKit contains a tool that analyzes, verifies and updates error codes in Meshery source code trees. It extracts error details into a file that can be used for publishing all error code references on the Meshery &lt;a href="/pr-preview/pr-20413/reference/references/error-codes/"&gt;error codes reference page&lt;/a&gt;. The objective to create this was to avoid centralized handling of error codes and automating everything&lt;/p&gt;</description></item><item><title>HTTP Error Response Contract</title><link>/pr-preview/pr-20413/project/contributing/error-contract/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20413/project/contributing/error-contract/</guid><description>&lt;h1 id="http-error-response-contract"&gt;
+	HTTP Error Response Contract
+&lt;/h1&gt;
+&lt;p&gt;Every non-2xx HTTP response from Meshery Server carries a JSON body with
+&lt;code&gt;Content-Type: application/json; charset=utf-8&lt;/code&gt;. Clients should parse the body
+as JSON before surfacing errors to users.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Migration status:&lt;/strong&gt; the JSON contract is enforced across the &lt;code&gt;./server&lt;/code&gt;
+Go module by a &lt;code&gt;forbidigo&lt;/code&gt; lint rule that blocks any new &lt;code&gt;http.Error&lt;/code&gt; call
+at CI time, configured in
+&lt;a href="https://github.com/meshery/meshery/blob/master/.github/.golangci.yml"&gt;&lt;code&gt;.github/.golangci.yml&lt;/code&gt;&lt;/a&gt;.
+The migration landed in PR
+&lt;a href="https://github.com/meshery/meshery/pull/18919"&gt;#18919&lt;/a&gt; and the lint guard
+was flipped from advisory to fully blocking in PR
+&lt;a href="https://github.com/meshery/meshery/pull/18927"&gt;#18927&lt;/a&gt;. Legitimate
+non-JSON responders are handled in one of three ways: a file-level allowlist
+in &lt;code&gt;.github/.golangci.yml&lt;/code&gt; for the Kubernetes healthz probe handler
+(&lt;code&gt;k8s_healthz_handler.go&lt;/code&gt;) and the static-asset UI handler
+(&lt;code&gt;ui_handler.go&lt;/code&gt;); SSE stream handlers (&lt;code&gt;events_streamer.go&lt;/code&gt;,
+&lt;code&gt;load_test_handler.go&lt;/code&gt;) that don&amp;rsquo;t call &lt;code&gt;http.Error&lt;/code&gt; at all (they emit
+error events through the active SSE writer instead); and binary/tar/YAML
+downloads and HTTP redirects, which use &lt;code&gt;w.Write&lt;/code&gt; or &lt;code&gt;http.Redirect&lt;/code&gt;
+rather than &lt;code&gt;http.Error&lt;/code&gt; and so are not governed by the lint rule.&lt;/p&gt;</description></item><item><title>Meshery Documentation Structure and Organization</title><link>/pr-preview/pr-20413/project/contributing/contributing-docs-structure/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20413/project/contributing/contributing-docs-structure/</guid><description>&lt;p&gt;Providing well-structured, easy-to-navigate documentation tailored for a diverse audience—from beginners to experts.&lt;/p&gt;
+&lt;h2 id="target-audience"&gt;
+	Target Audience
+&lt;/h2&gt;
+&lt;p&gt;We first identify &lt;strong&gt;who&lt;/strong&gt; this documentation serves before diving into how it’s organized. By clarifying different user personas, we can better direct them to relevant sections:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Users&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;New Users&lt;/strong&gt;: Individuals just getting started with Meshery, needing a straightforward, guided setup.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Advanced Users&lt;/strong&gt;: Those who already have some experience and want deeper insights or specialized use cases.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Contributors &amp;amp; System Integrators&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>Setting up Meshery Development Environment on Windows</title><link>/pr-preview/pr-20413/project/contributing/meshery-windows/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20413/project/contributing/meshery-windows/</guid><description>&lt;p&gt;You can use one of the following three approaches to setup a Meshery development environment in Windows:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Using WSL or WSL2 (Recommended)&lt;/li&gt;
+&lt;li&gt;Natively (directly) on Windows&lt;/li&gt;
+&lt;li&gt;Using Hyper-V to create a Linux VM&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Setting up a Meshery development environment on WSL(2) or Hyper-V is not much different from setting up on a native Linux platform. The same instructions can be followed as already documented.&lt;/p&gt;
+&lt;p&gt;All three methods require the same prerequisites mentioned below in the &lt;a href="/pr-preview/pr-20413/project/contributing/meshery-windows/#prerequisites"&gt;Prerequisites&lt;/a&gt; section but the Linux-based methods/platforms come with some of the prerequisites pre-installed and have no issues with Linux style commands making it easier to setup the environment.&lt;/p&gt;</description></item></channel></rss>
