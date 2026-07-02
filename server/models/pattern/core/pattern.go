@@ -7,7 +7,7 @@ import (
 	"io"
 	"path/filepath"
 	"strings"
-	"log"
+	"github.com/sirupsen/logrus"
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/meshkit/encoding"
