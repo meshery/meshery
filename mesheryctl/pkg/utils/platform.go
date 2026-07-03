@@ -249,9 +249,20 @@ func GetDeploymentVersion(filePath string) (string, error) {
 		return "", fmt.Errorf("unable to unmarshal config %s | %s", MesheryDeployment, err)
 	}
 
-	image := compose.Spec.Template.Spec.Containers[0].Image
+	containers := compose.Spec.Template.Spec.Containers
+	if len(containers) == 0 {
+		return "", fmt.Errorf("unable to determine version: no containers found in %s", MesheryDeployment)
+	}
+	image := containers[0].Image
 	spliter := strings.Split(image, ":")
-	version := strings.Split(spliter[1], "-")[1]
+	if len(spliter) < 2 {
+		return "", fmt.Errorf("unable to determine version: image %q in %s has no tag", image, MesheryDeployment)
+	}
+	tag := strings.Split(spliter[1], "-")
+	if len(tag) < 2 {
+		return "", fmt.Errorf("unable to determine version: unexpected image tag %q in %s", spliter[1], MesheryDeployment)
+	}
+	version := tag[1]
 
 	return version, nil
 }
