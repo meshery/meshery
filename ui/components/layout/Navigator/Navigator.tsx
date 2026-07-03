@@ -739,22 +739,9 @@ const NavigatorContent = () => {
                         disableTouchListener={!isDrawerCollapsed}
                         TransitionComponent={Zoom}
                       >
-                        {isDrawerCollapsed &&
-                        (hoveredId === childId || (openItems.includes(childId) && submenu)) ? (
-                          <div>
-                            <CustomTooltip
-                              title={title}
-                              placement="right"
-                              TransitionComponent={Zoom}
-                            >
-                              <ListItemIcon style={{ marginLeft: '20%', marginBottom: '0.4rem' }}>
-                                {hovericon}
-                              </ListItemIcon>
-                            </CustomTooltip>
-                          </div>
-                        ) : (
+
                           <MainListIcon>{icon}</MainListIcon>
-                        )}
+                        
                       </CustomTooltip>
                       <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>
                     </NavigatorLink>

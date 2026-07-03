@@ -114,8 +114,8 @@ export const MainLogoText = styled('img')(({ theme }) => ({
 export const ExpandMoreIcon = styled('svg', {
   shouldForwardProp: (prop) => prop !== 'isExpanded' && prop !== 'hasChildren',
 })(({ isExpanded, hasChildren, theme }) => ({
-  opacity: 0, // Initially hidden
-  visibility: 'hidden',
+  opacity: 1,
+  visibility: 'visible',
   cursor: 'pointer',
   display: hasChildren ? 'inline-block' : 'none',
   transform: isExpanded ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
