@@ -237,7 +237,7 @@ func TestParity_RegoAndGoEngineEmitEquivalentInventoryAdditions(t *testing.T) {
 	goNew := goActions[0].Component
 
 	// --- Rego engine ---
-	policiesDir := "../meshmodel/meshery-core/0.7.2/v1.0.0/policies"
+	policiesDir := "../../models/meshery-core/0.7.2/v1.0.0/policies"
 	files, err := collectRegoFiles(policiesDir)
 	require.NoError(t, err)
 	var modules []func(*rego.Rego)

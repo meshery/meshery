@@ -1,7 +1,7 @@
 ---
 title: Containerd
 subtitle: Collaborative and visual infrastructure as design for Containerd
-image: /extensions/models/containerd/icons/color/containerd-color.svg
+image: extensions/models/containerd/icons/color/containerd-color.svg
 aliases: /extensibility/integrations/containerd
 docURL: https://docs.meshery.io/extensibility/integrations/containerd
 description: 

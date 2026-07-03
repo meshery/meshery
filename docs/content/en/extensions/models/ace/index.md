@@ -1,7 +1,7 @@
 ---
 title: AppsCode Container Engine
 subtitle: Collaborative and visual infrastructure as design for AppsCode Container Engine
-image: /extensions/models/ace/icons/color/ace-color.svg
+image: extensions/models/ace/icons/color/ace-color.svg
 aliases: /extensibility/integrations/ace
 docURL: https://docs.meshery.io/extensibility/integrations/ace
 description: 

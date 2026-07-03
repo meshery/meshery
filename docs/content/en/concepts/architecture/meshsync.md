@@ -94,6 +94,19 @@ For efficient management of large Kubernetes clusters, MeshSync uses tiered disc
 
 Meshery's event-driven approach ensures high-speed operations, making it suitable for managing both small and large clusters. [Meshery Broker]({{< ref "concepts/architecture/broker/index.md" >}}) uses NATS as the messaging bus to ensure continuous communication between MeshSync and Meshery Server. In case of connectivity interruptions, MeshSync data is persisted in NATS topics.
 
+## Broker connection
+
+In operator mode, [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}})
+wires MeshSync to the Broker: it derives the Broker's address from the
+`Broker` resource's `status.endpoint` and injects it into the MeshSync
+Deployment as the `BROKER_URL` environment variable — always a
+`nats://host:port` URL. Because the Operator watches the Broker, a change to
+the Broker's endpoint (for example after
+[reconfiguring its service networking]({{< ref "concepts/architecture/broker/index.md#declarative-service-networking" >}}))
+re-reconciles MeshSync so it reconnects to the new address automatically. To
+point MeshSync at an externally managed NATS instead, set
+`spec.broker.custom.url` on the `MeshSync` resource.
+
 # MeshSync deployment mode
 
 MeshSync operates in one of two modes: operator or embedded.
@@ -116,15 +129,63 @@ When the deployment mode is switched from operator to embedded: the operator is 
 
 When the deployment mode is switched from embedded to operator: the MeshSync library routine is stopped for the managed cluster, and the operator is deployed to the managed cluster.
 
+# Common tasks
+
+**Check MeshSync health:**
+
+```bash
+kubectl -n meshery get meshsync meshery-meshsync -o jsonpath='{.status.conditions}{"\n"}'
+kubectl -n meshery rollout status deploy/meshery-meshsync
+```
+
+**Verify which Broker MeshSync is connected to:**
+
+```bash
+kubectl -n meshery get deploy meshery-meshsync \
+  -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="BROKER_URL")].value}{"\n"}'
+```
+
+**Trigger a fresh discovery** (MeshSync re-discovers on start):
+
+```bash
+kubectl -n meshery rollout restart deploy/meshery-meshsync
+```
+
 # MeshSync FAQs
 
 ## How to configure MeshSync's resource discovery behavior: Can specific, "uninteresting" resources be blacklisted?
 
-MeshSync is managed by [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}), which watches for changes on the meshsync CRD for changes and updates the deployed MeshSync instance accordingly. You can blacklist specific Kubernetes resources from being discovered and watched by MeshSync. In order to identify the list of one or more resources for MeshSync to ignore, update the meshsync CRD using kubectl:
+Yes. MeshSync reads its discovery filter from the `watch-list` section of the
+`MeshSync` **custom resource** (not the CRD schema) — `meshery-meshsync` in
+the `meshery` namespace. The `whitelist` and `blacklist` keys each hold a
+JSON-encoded list; resources are identified as `<plural>.<version>.<group>`
+(core-group resources end with a trailing dot, e.g. `pods.v1.`).
 
-- Download the CRD with kubectl get crd meshsyncs.meshery.io -o yaml > meshsync.yaml
-- Open the downloaded file and edit the field informer_config to blacklist all the types of resources that you don't want updates from.
-- Apply the new definition with kubectl apply -f meshsync.yaml
+To ignore specific resource types, edit the custom resource:
+
+```bash
+kubectl -n meshery edit meshsync meshery-meshsync
+```
+
+```yaml
+spec:
+  watch-list:
+    data:
+      blacklist: '["events.v1.","replicasets.v1.apps"]'
+```
+
+Alternatively, a whitelist inverts the behavior — only the listed resources
+(and event types) are watched:
+
+```yaml
+spec:
+  watch-list:
+    data:
+      whitelist: '[{"Resource":"namespaces.v1.","Events":["ADDED","MODIFIED","DELETED"]},{"Resource":"pods.v1.","Events":["MODIFIED"]}]'
+```
+
+Restart MeshSync (`kubectl -n meshery rollout restart deploy/meshery-meshsync`)
+for the new filter to take effect.
 
 
 {{% alert color="info" title="Still seeing issues?" %}}

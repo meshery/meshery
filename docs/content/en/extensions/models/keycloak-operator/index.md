@@ -1,7 +1,7 @@
 ---
 title: Keycloak Operator
 subtitle: Collaborative and visual infrastructure as design for Keycloak Operator
-image: /extensions/models/keycloak-operator/icons/color/keycloak-operator-color.svg
+image: extensions/models/keycloak-operator/icons/color/keycloak-operator-color.svg
 aliases: /extensibility/integrations/keycloak-operator
 docURL: https://docs.meshery.io/extensibility/integrations/keycloak-operator
 description: 

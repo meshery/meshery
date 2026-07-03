@@ -19,6 +19,7 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { CONNECTION_STATES } from '../utils/Enum';
 import { TooltipWrappedConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
+import { getKubernetesContexts } from './connections/ConnectionWizard.helpers';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import { keys } from '@/utils/permission_constants';
 import useTestIDsGenerator from '@/utils/hooks/useTestIDs';
@@ -56,9 +57,14 @@ const MesherySettingsEnvButtons = () => {
 
   const handleConfigSnackbars = (ctxs) => {
     updateProgress({ showProgress: false });
-    for (let ctx of ctxs.errored_contexts) {
+    // Errored contexts are plain K8sContext objects (no per-context `error`
+    // field — the failure is recorded server-side in event metadata), so build
+    // the message from the data that is actually present. Read the bucket via
+    // the shared helper which tolerates both camelCase (current wire format) and
+    // legacy snake_case payloads.
+    for (let ctx of getKubernetesContexts(ctxs, 'errored')) {
       const msg = `Failed to add cluster "${ctx.name}" at ${ctx.server}`;
-      notify({ message: msg, event_type: EVENT_TYPES.ERROR, details: ctx.error.toString() });
+      notify({ message: msg, event_type: EVENT_TYPES.ERROR });
     }
   };
 
@@ -90,9 +96,9 @@ const MesherySettingsEnvButtons = () => {
 
   const showUploadedContexts = async (inputFileName) => {
     const modal = ref.current;
-    const registeredContexts = contextsRef.current.registered_contexts;
-    const connectedContexts = contextsRef.current.connected_contexts;
-    const ignoredContexts = contextsRef.current.ignored_contexts;
+    const registeredContexts = getKubernetesContexts(contextsRef.current, 'registered');
+    const connectedContexts = getKubernetesContexts(contextsRef.current, 'connected');
+    const ignoredContexts = getKubernetesContexts(contextsRef.current, 'ignored');
     if (
       registeredContexts.length === 0 &&
       connectedContexts.length == 0 &&

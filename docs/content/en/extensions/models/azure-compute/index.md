@@ -1,7 +1,7 @@
 ---
 title: Azure Compute
 subtitle: Collaborative and visual infrastructure as design for Azure Compute
-image: /extensions/models/azure-compute/icons/color/azure-compute-color.svg
+image: extensions/models/azure-compute/icons/color/azure-compute-color.svg
 aliases: /extensibility/integrations/azure-compute
 docURL: https://docs.meshery.io/extensibility/integrations/azure-compute
 description: 

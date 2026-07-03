@@ -1,7 +1,7 @@
 ---
 title: Trickster
 subtitle: Collaborative and visual infrastructure as design for Trickster
-image: /extensions/models/trickster/icons/color/trickster-color.svg
+image: extensions/models/trickster/icons/color/trickster-color.svg
 aliases: /extensibility/integrations/trickster
 docURL: https://docs.meshery.io/extensibility/integrations/trickster
 description: 

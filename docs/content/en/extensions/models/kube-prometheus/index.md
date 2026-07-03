@@ -1,7 +1,7 @@
 ---
 title: Kube Prometheus
 subtitle: Collaborative and visual infrastructure as design for Kube Prometheus
-image: /extensions/models/kube-prometheus/icons/color/kube-prometheus-color.svg
+image: extensions/models/kube-prometheus/icons/color/kube-prometheus-color.svg
 aliases: /extensibility/integrations/kube-prometheus
 docURL: https://docs.meshery.io/extensibility/integrations/kube-prometheus
 description: 

@@ -124,7 +124,11 @@ export default function CustomizedSteppers({
     // produced another new reference, etc.
   }, [onClose, setSharedData]);
 
-  const ActiveStepContent = stepContent[String(activeStep + 1)].component;
+  // Guard against an out-of-range step: if `activeStep` ever points past the
+  // last entry (e.g. a stray increment, or a re-render while the modal is
+  // tearing down), `stepContent[...]` is undefined — reading `.component`
+  // unguarded throws "can't access property 'component', ... is undefined".
+  const ActiveStepContent = stepContent[String(activeStep + 1)]?.component;
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -163,7 +167,7 @@ export default function CustomizedSteppers({
       </StepperHeader>
       <StepperContent>
         <TipsCarousel tips={ConnectionStepperTips} />
-        {React.cloneElement(ActiveStepContent, stepProps)}
+        {ActiveStepContent ? React.cloneElement(ActiveStepContent, stepProps) : null}
       </StepperContent>
     </StepperLayout>
   );

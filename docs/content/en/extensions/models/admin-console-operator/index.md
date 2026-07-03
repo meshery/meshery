@@ -1,7 +1,7 @@
 ---
 title: EPAM Delivery Platform
 subtitle: Collaborative and visual infrastructure as design for EPAM Delivery Platform
-image: /extensions/models/admin-console-operator/icons/color/admin-console-operator-color.svg
+image: extensions/models/admin-console-operator/icons/color/admin-console-operator-color.svg
 aliases: /extensibility/integrations/admin-console-operator
 docURL: https://docs.meshery.io/extensibility/integrations/admin-console-operator
 description: 

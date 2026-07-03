@@ -1,7 +1,7 @@
 ---
 title: Percona Operator for MySQL
 subtitle: Collaborative and visual infrastructure as design for Percona Operator for MySQL
-image: /extensions/models/ps-operator/icons/color/ps-operator-color.svg
+image: extensions/models/ps-operator/icons/color/ps-operator-color.svg
 aliases: /extensibility/integrations/ps-operator
 docURL: https://docs.meshery.io/extensibility/integrations/ps-operator
 description: 

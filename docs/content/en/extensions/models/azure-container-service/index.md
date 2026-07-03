@@ -1,7 +1,7 @@
 ---
 title: Azure Container Service
 subtitle: Collaborative and visual infrastructure as design for Azure Container Service
-image: /extensions/models/azure-container-service/icons/color/azure-container-service-color.svg
+image: extensions/models/azure-container-service/icons/color/azure-container-service-color.svg
 aliases: /extensibility/integrations/azure-container-service
 docURL: https://docs.meshery.io/extensibility/integrations/azure-container-service
 description: 

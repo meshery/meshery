@@ -155,7 +155,7 @@ Using CSV | fa fa-list
 <code>mesheryctl registry generate --directory templates-csvs --model "YOUR_MODEL_NAME"</code>
 
 <h4>4. Locating Generated Files</h4>
-<p>After successful generation, your model's files will be created in the Meshery server's model directory. You can find these files at <code>meshery/server/meshmodel/[YOUR_MODEL_NAME]/</code>. Take time to review these generated files to ensure they accurately reflect your intended model structure.</p>
+<p>After successful generation, your model's files will be created in the repository's <code>models/</code> directory. You can find these files at <code>meshery/models/[YOUR_MODEL_NAME]/</code>. Take time to review these generated files to ensure they accurately reflect your intended model structure.</p>
 
 <h4>5. Troubleshooting</h4>
 <p>If you encounter issues during the generation process, you can use these diagnostic approaches to identify and resolve problems:</p>
@@ -241,7 +241,7 @@ Using Integration Spreadsheet | fa fa-table
 </ul>
 
 <h4>3. Verification</h4>
-<p>The model will be generated in <code>meshery/server/meshmodels/[YOUR_MODEL_NAME]</code></p>
+<p>The model will be generated in <code>meshery/models/[YOUR_MODEL_NAME]</code></p>
 
 {{% alert color="info" title="Using Meshery CLI with the Meshery Registry and Meshery Models" %}}
 Meshery CLI has a set of commands that pertain to the lifecycle management of models:

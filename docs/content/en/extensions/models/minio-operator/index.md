@@ -1,7 +1,7 @@
 ---
 title: MinIO Operator
 subtitle: Collaborative and visual infrastructure as design for MinIO Operator
-image: /extensions/models/minio-operator/icons/color/minio-operator-color.svg
+image: extensions/models/minio-operator/icons/color/minio-operator-color.svg
 aliases: /extensibility/integrations/minio-operator
 docURL: https://docs.meshery.io/extensibility/integrations/minio-operator
 description: 

@@ -1,3 +1,7 @@
+// Meshery Extension Point
+// Add your installable plugins  as a component with the Extension Interface into this extension point.
+// Learn more: https://docs.meshery.io/extensibility/ui
+
 import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Button, Grid2, Typography, styled } from '@sistent/sistent';
 import {
@@ -33,6 +37,9 @@ type Extension = {
   metadata?: ExtensionMetadata;
 };
 
+// Meshery Extension Point
+// Add your installable plugins  as a component with the Extension Interface into this extension point.
+// Learn more: https://docs.meshery.io/extensibility/ui
 type InstallableExtensionProps = {
   extension: Extension;
 };
@@ -293,7 +300,7 @@ const InstallableExtension: React.FC<InstallableExtensionProps> = ({ extension }
   );
 };
 
-export const KanvasExtension: React.FC = () => {
+export const VisualDesignerExtension: React.FC = () => {
   const { data: mesheryVersionData } = useGetSystemVersionQuery();
   const version = mesheryVersionData?.build ? `${mesheryVersionData.build}-1` : null;
 
@@ -303,7 +310,7 @@ export const KanvasExtension: React.FC = () => {
       ? `https://github.com/meshery-extensions/meshery-extensions-packages/releases/download/${version}/provider-meshery.tar.gz`
       : '',
     title: 'Kanvas',
-    icon: '/static/img/extensions/kanvas.svg',
+    icon: '/static/img/extensions/visual-designer-extension-logo.svg',
     description:
       'Collaboratively design and manage your Kubernetes clusters and Cloud services. Kanvas is a visual interface for managing your infrastructure. It allows you to create, edit, and share your infrastructure as code.',
     metadata: {

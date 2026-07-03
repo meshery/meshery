@@ -1,7 +1,7 @@
 ---
 title: AWS VPC CNI
 subtitle: Collaborative and visual infrastructure as code for AWS VPC CNI
-image: /extensions/models/aws-vpc-cni/icons/color/aws-vpc-cni-color.svg
+image: extensions/models/aws-vpc-cni/icons/color/aws-vpc-cni-color.svg
 aliases: /extensibility/integrations/aws-vpc-cni
 docURL: https://docs.meshery.io/extensibility/integrations/aws-vpc-cni
 description: 

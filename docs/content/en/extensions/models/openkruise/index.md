@@ -1,7 +1,7 @@
 ---
 title: Openkruise
 subtitle: Collaborative and visual infrastructure as design for Openkruise
-image: /extensions/models/openkruise/icons/color/openkruise-color.svg
+image: extensions/models/openkruise/icons/color/openkruise-color.svg
 aliases: /extensibility/integrations/openkruise
 docURL: https://docs.meshery.io/extensibility/integrations/openkruise
 description: 

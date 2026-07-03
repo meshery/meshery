@@ -1,7 +1,7 @@
 ---
 title: SPIRE
 subtitle: Collaborative and visual infrastructure as design for SPIRE
-image: /extensions/models/spire/icons/color/spire-color.svg
+image: extensions/models/spire/icons/color/spire-color.svg
 aliases: /extensibility/integrations/spire
 docURL: https://docs.meshery.io/extensibility/integrations/spire
 description: 

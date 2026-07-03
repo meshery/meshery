@@ -59,7 +59,7 @@ jobs:
           commit_options: "--no-verify"
 
       - name: Setup Regal
-        uses: StyraInc/setup-regal@v1
+        uses: open-policy-agent/setup-regal@v1
         with:
           version: 0.25.0
 
@@ -67,7 +67,7 @@ jobs:
         id: lint
         run: |
           set +e
-          regal lint --config-file ./policies/wasm/policies/.regal/config.yaml --format github ./server/meshmodel 2>&1 | tee lint-results.txt
+          regal lint --config-file ./server/policies/.regal/config.yaml --format github ./models/meshery-core/0.7.2/v1.0.0/policies 2>&1 | tee lint-results.txt
           LINT_EXIT_CODE=${PIPESTATUS[0]}
           echo "lint-exit-code=$LINT_EXIT_CODE" >> $GITHUB_OUTPUT
           if [ $LINT_EXIT_CODE -ne 0 ]; then
@@ -78,7 +78,7 @@ jobs:
         id: opa-test
         run: |
           echo "Running OPA tests..."
-          POLICIES_DIR="./server/meshmodel/meshery-core/0.7.2/v1.0.0/policies"
+          POLICIES_DIR="./models/meshery-core/0.7.2/v1.0.0/policies"
           
           # Ensure that failures in any part of a pipeline are detected
           set -o pipefail
@@ -206,8 +206,19 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const summary = fs.readFileSync('test-summary.md', 'utf8');
-            
+            let summary = fs.readFileSync('test-summary.md', 'utf8');
+
+            // GitHub rejects issue comments longer than 65536 characters. The
+            // embedded OPA/Go test output can far exceed that, which previously
+            // failed this job with "Body is too long" even when every test
+            // passed. Truncate to a safe size and point readers to the full
+            // output (job summary + uploaded `rego-test-results` artifact).
+            const MAX_COMMENT_LENGTH = 60000;
+            if (summary.length > MAX_COMMENT_LENGTH) {
+              const notice = '\n\n> ⚠️ Test output truncated to fit GitHub\'s comment size limit. See the job summary and the `rego-test-results` artifact for the full results.\n';
+              summary = summary.slice(0, MAX_COMMENT_LENGTH - notice.length) + notice;
+            }
+
             // Find existing comment
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,

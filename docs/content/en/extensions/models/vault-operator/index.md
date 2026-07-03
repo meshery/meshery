@@ -1,7 +1,7 @@
 ---
 title: Vault Operator
 subtitle: Collaborative and visual infrastructure as design for Vault Operator
-image: /extensions/models/vault-operator/icons/color/vault-operator-color.svg
+image: extensions/models/vault-operator/icons/color/vault-operator-color.svg
 aliases: /extensibility/integrations/vault-operator
 docURL: https://docs.meshery.io/extensibility/integrations/vault-operator
 description: 

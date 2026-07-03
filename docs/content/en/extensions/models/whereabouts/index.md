@@ -1,7 +1,7 @@
 ---
 title: Whereabouts
 subtitle: Collaborative and visual infrastructure as design for Whereabouts
-image: /extensions/models/whereabouts/icons/color/whereabouts-color.svg
+image: extensions/models/whereabouts/icons/color/whereabouts-color.svg
 aliases: /extensibility/integrations/whereabouts
 docURL: https://docs.meshery.io/extensibility/integrations/whereabouts
 description: Whereabouts is a CNI IPAM plugin for Kubernetes clusters. It dynamically assigns IP addresses cluster-wide. Features both IPv4 and IPv6 addressing.

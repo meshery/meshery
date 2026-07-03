@@ -1,7 +1,7 @@
 ---
 title: Harbor Operator
 subtitle: Collaborative and visual infrastructure as design for Harbor Operator
-image: /extensions/models/harbor-operator/icons/color/harbor-operator-color.svg
+image: extensions/models/harbor-operator/icons/color/harbor-operator-color.svg
 aliases: /extensibility/integrations/harbor-operator
 docURL: https://docs.meshery.io/extensibility/integrations/harbor-operator
 description: 
