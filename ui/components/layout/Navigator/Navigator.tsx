@@ -11,7 +11,6 @@ import {
   NoSsr,
   Zoom,
   HelpOutlinedIcon,
-  LeftArrowIcon,
   ExternalLinkIcon as IconExternalLink,
   OpenInNewIcon,
   RemoveIcon,
@@ -22,7 +21,7 @@ import {
   DiscussForumIcon,
 } from '@sistent/sistent';
 import ExtensionPointSchemaValidator from '../../../utils/ExtensionPointSchemaValidator';
-import { cursorNotAllowed, disabledStyle } from '../../../css/disableComponent.styles';
+import { cursorNotAllowed } from '../../../css/disableComponent.styles';
 import { ProviderUiAccessControl } from '../../../utils/disabledComponents';
 import {
   CONFIGURATION,
@@ -30,7 +29,6 @@ import {
   CATALOG,
   LIFECYCLE,
   SERVICE_MESH,
-  TOGGLER,
 } from '../../../constants/navigator';
 import { iconSmall } from '../../../css/icons.styles';
 import CAN from '@/utils/can';
@@ -57,8 +55,6 @@ import {
   NavigatorHelpIcons,
   HelpListItem,
   HelpButton,
-  ChevronButtonWrapper,
-  FixedSidebarFooter,
   SidebarDrawer,
   ExpandMore,
 } from '../../general/style';
@@ -891,44 +887,11 @@ const NavigatorContent = () => {
     </ListItem>
   );
 
-  const Chevron = (
-    <ChevronButtonWrapper
-      isCollapsed={isDrawerCollapsed}
-      style={
-        providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : cursorNotAllowed
-      }
-    >
-      <div
-        style={
-          providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : disabledStyle
-        }
-        onClick={toggleMiniDrawer}
-      >
-        <LeftArrowIcon
-          alt="Sidebar collapse toggle"
-          style={{
-            cursor: 'pointer',
-            verticalAlign: 'middle',
-          }}
-          fill={theme.palette.icon.default}
-          stroke={theme.palette.icon.default}
-          width="1.2rem"
-          height="2.8rem"
-        />
-      </div>
-    </ChevronButtonWrapper>
-  );
-
   return (
     <NoSsr>
       <SidebarDrawer isCollapsed={isDrawerCollapsed} variant="permanent">
         {Title}
         {Menu}
-        <FixedSidebarFooter>
-          {Chevron}
-          {HelpIcons}
-          {Version}
-        </FixedSidebarFooter>
       </SidebarDrawer>
     </NoSsr>
   );

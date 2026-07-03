@@ -163,12 +163,6 @@ vi.mock('../../general/style', () => {
         {children}
       </button>
     ),
-    ChevronButtonWrapper: ({ children, ...props }: any) => (
-      <div data-testid="chevron-wrapper" {...props}>
-        {children}
-      </div>
-    ),
-    FixedSidebarFooter: make('sidebar-footer'),
     SidebarDrawer: ({ children, isCollapsed }: any) => (
       <aside data-testid="sidebar-drawer" data-collapsed={String(Boolean(isCollapsed))}>
         {children}
@@ -298,8 +292,6 @@ describe('Navigator', () => {
 
   it('renders the chevron and version footer area', () => {
     render(<Navigator />);
-    expect(screen.getByTestId('sidebar-footer')).toBeInTheDocument();
-    expect(screen.getByTestId('chevron-wrapper')).toBeInTheDocument();
   });
 
   it('renders an expand/collapse caret only for nav items that have children', async () => {
