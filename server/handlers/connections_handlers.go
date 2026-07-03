@@ -403,6 +403,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		oldMode, newMode, modeChanged, err := h.handleMeshSyncDeploymentModeChange(
 			req.Context(),
 			connectionID,
+			existingConn,
 			connection,
 			token,
 			userID,
@@ -598,12 +599,13 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	w.WriteHeader(http.StatusOK)
 }
 
-// handleMeshSyncDeploymentModeChange retrieves existing connection, compares meshsync deployment modes
+// handleMeshSyncDeploymentModeChange compares meshsync deployment modes
 // between existing and new connections, and performs necessary actions when they differ
 // Returns: oldMode, newMode, changed, error
 func (h *Handler) handleMeshSyncDeploymentModeChange(
 	ctx context.Context,
 	connectionID core.Uuid,
+	existingConnection *connections.Connection,
 	newConnection *connections.ConnectionPayload,
 	token string,
 	userID core.Uuid,
@@ -618,20 +620,6 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 	}
 	// TODO is h.SystemID a correct instance id here?
 	mesheryInstanceID := *h.SystemID
-
-	// Retrieve existing connection for mode comparison
-	existingConnection, statusCode, err := provider.GetConnectionByID(token, connectionID)
-	if err != nil {
-		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("failed to retrieve existing connection (status %d): %w", statusCode, err)
-	}
-
-	if existingConnection == nil {
-		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("existing connection is nil, cannot compare meshsync deployment modes")
-	}
-
-	if existingConnection.Kind != "kubernetes" {
-		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("connection is not of kind kubernetes")
-	}
 
 	existingMeshSyncMode := connections.MeshsyncDeploymentModeFromMetadata(existingConnection.Metadata)
 	newMeshSyncMode := connections.MeshsyncDeploymentModeFromMetadata(newConnection.MetaData)
