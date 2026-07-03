@@ -271,9 +271,9 @@ export const getConnectionStateColors = (theme: Theme) => ({
   [CONNECTION_STATES.REGISTERED]: theme.palette.primary.main,
   [CONNECTION_STATES.DISCOVERED]: theme.palette.warning.main,
   [CONNECTION_STATES.IGNORED]: theme.palette.warning.main,
-  [CONNECTION_STATES.DELETED]: theme.palette.error?.main || theme.palette.background.error.default,
+  [CONNECTION_STATES.DELETED]: theme.palette.background?.error?.default || theme.palette.error.main,
   [CONNECTION_STATES.MAINTENANCE]: theme.palette.warning.main,
   [CONNECTION_STATES.DISCONNECTED]:
-    theme.palette.error?.main || theme.palette.background.error.default,
+    theme.palette.background?.error?.default || theme.palette.error.main,
   [CONNECTION_STATES.NOTFOUND]: theme.palette.warning.main,
 });
