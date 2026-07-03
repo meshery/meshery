@@ -36,7 +36,7 @@ permissions:
 jobs:
   build-and-scan:
     name: Build & Scan Container Image
-    if: github.repository == 'meshery/meshery'
+    if: github.repository == 'meshery/meshery' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -57,7 +57,7 @@ jobs:
           output: 'trivy-scan-results.json'
 
       - name: Upload scan results
-        if: ${{ !cancelled() }}
+        if: ${{ always() && !cancelled() && hashFiles('trivy-scan-results.json') != '' }}
         uses: actions/upload-artifact@v6
         with:
           name: trivy-scan-results
