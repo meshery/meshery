@@ -103,7 +103,7 @@ clipboard.on("success", (e) => {
     button.removeAttribute("data-is-copying");
 
     // 2. Guard only the physical DOM manipulation
-    if (!button.isConnected) {
+    if (button.isConnected === false) {
         return;
     }
 
