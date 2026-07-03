@@ -97,7 +97,7 @@ Endpoints specify the access URL for the Meshery UI, for a deployment. Endpoints
 
 #### Question: Can I get an API token using mesheryctl?
 
-Yes, if you need to establish a session with your Meshery Server, you can [authenticate using mesheryctl](/guides/mesheryctl/authenticate-with-meshery-via-cli), using `mesheryctl system login`.
+Yes, if you need to establish a session with your Meshery Server, you can [authenticate using mesheryctl]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}), using `mesheryctl system login`.
 
 ## Advanced Installation
 
@@ -121,7 +121,7 @@ services:
 
 For an exhaustive list of `mesheryctl` commands and syntax:
 
-- See [`mesheryctl` Command Reference](/reference/mesheryctl).
+- See [`mesheryctl` Command Reference]({{< ref "reference/references/mesheryctl/_index.md" >}}).
 
 Guides to using Meshery's various features and components.
 

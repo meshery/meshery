@@ -39,6 +39,10 @@ export const ACTION_TYPES = {
     name: 'SCHEMA_FETCH',
     error_msg: 'failed to fetch import schema',
   },
+  EVALUATE_RELATIONSHIP: {
+    name: 'EVALUATE_RELATIONSHIP',
+    error_msg: 'Failed to evaluate design relationships',
+  },
 };
 
 export const genericClickHandler = (ev, fn) => {

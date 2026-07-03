@@ -12,7 +12,7 @@ import {
   Button,
   DeleteIcon,
   DragIcon,
-  Theme,
+  type Theme,
 } from '@sistent/sistent';
 
 import { iconMedium } from 'css/icons.styles';

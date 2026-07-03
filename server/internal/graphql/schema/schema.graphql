@@ -113,35 +113,6 @@ type Error {
   description: String!
 }
 
-# ================= EVENTS =================
-
-type Event {
-  id: ID!,
-  userID: ID!,
-  actedUpon: ID!,
-  operationID: ID!,
-  systemID: ID!,
-  severity: Severity!,
-  action: String!,
-  status: String!,
-  category: String!,
-  description: String!,
-  metadata: Map,
-  createdAt: Time!,
-  updatedAt: Time!,
-  deletedAt: Time
-}
-
-enum Severity {
-  alert,
-  critical,
-  debug,
-  emergency,
-  error,
-  warning,
-  informational
-}
-
 # ================ DASHBOARD ================
 
 type Resource {
@@ -344,7 +315,7 @@ type ApplicationResult {
   name: String!
   application_file: String!
   type: NullString!
-  user_id: String!
+  owner: String!
   location: Location!
   visibility: String!
   created_at: String
@@ -370,7 +341,7 @@ type FilterResult {
   name: String!
   filter_file: String!
   filter_resource: String!
-  user_id: String!
+  owner: String!
   location: Location!
   visibility: String!
   catalog_data: Map
@@ -382,7 +353,7 @@ type CatalogFilter {
   id: ID!
   name: String!
   filter_file: String!
-  user_id: String!
+  owner: String!
   location: Location!
   filter_resource: String!
   visibility: String!
@@ -403,7 +374,7 @@ type PatternPageResult {
 type PatternResult {
   id: ID!
   name: String!
-  user_id: String!
+  owner: String!
   location: Location!
   pattern_file: String!
   visibility: String!
@@ -425,7 +396,7 @@ type Location {
 type CatalogPattern {
   id: ID!
   name: String!
-  user_id: String!
+  owner: String!
   pattern_file: String!
   location: Location!
   visibility: String!
@@ -464,7 +435,7 @@ type PerfProfile {
   qps: Int
   total_results: Int
   updated_at: String
-  user_id: String!
+  owner: String!
   request_headers: String
   request_cookies: String
   request_body: String
@@ -483,7 +454,7 @@ type MesheryResult {
   server_metrics: String
   server_board_config: String
   test_start_time: String
-  user_id: String
+  owner: String
   updated_at: String
   created_at: String
 }
@@ -690,9 +661,6 @@ type Subscription {
   subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
 
   subscribeMeshModelSummary(selector: MeshModelSummarySelector!) : MeshModelSummary!
-
-  # Publish events to user
-  subscribeEvents : Event!
 }
 
 type KctlDescribeDetails {

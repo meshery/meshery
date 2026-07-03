@@ -184,7 +184,7 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 	if err != nil {
 		// Caller decides how loudly to surface this. SessionSyncHandler probes
 		// tracked adapters on every page load and these probes routinely fail
-		// for stale or never-deployed adapters (e.g., the Layer5 Playground),
+		// for stale or never-deployed adapters (e.g., the Meshery Playground),
 		// which otherwise floods server logs with ERROR entries.
 		//
 		// Log both the raw transport `err` and the MeshKit error code so

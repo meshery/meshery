@@ -32,7 +32,7 @@ func designFileName(loc *ast.Location) string {
 func TestRegoPolicy(t *testing.T) {
 	ctx := context.Background()
 
-	policiesDir := "../meshmodel/meshery-core/0.7.2/v1.0.0/policies"
+	policiesDir := "../../models/meshery-core/0.7.2/v1.0.0/policies"
 	testsDir := filepath.Join(policiesDir, "tests")
 
 	policyFiles, err := collectRegoFiles(policiesDir)
@@ -114,7 +114,7 @@ func TestRegoPolicy(t *testing.T) {
 func TestRegoPolicyRules(t *testing.T) {
 	ctx := context.Background()
 
-	policiesDir := "../meshmodel/meshery-core/0.7.2/v1.0.0/policies"
+	policiesDir := "../../models/meshery-core/0.7.2/v1.0.0/policies"
 
 	policyFiles, err := collectRegoFiles(policiesDir)
 	if err != nil {
@@ -201,7 +201,7 @@ func TestRegoPolicyRules(t *testing.T) {
 func TestRelationshipEvaluationScenarios(t *testing.T) {
 	ctx := context.Background()
 
-	policiesDir := "../meshmodel/meshery-core/0.7.2/v1.0.0/policies"
+	policiesDir := "../../models/meshery-core/0.7.2/v1.0.0/policies"
 
 	policyFiles, err := collectRegoFiles(policiesDir)
 	if err != nil {
@@ -368,7 +368,7 @@ func collectRegoFiles(dir string) ([]string, error) {
 
 // TestRegoSyntax verifies all Rego files can be parsed without errors.
 func TestRegoSyntax(t *testing.T) {
-	policiesDir := "../meshmodel/meshery-core/0.7.2/v1.0.0/policies"
+	policiesDir := "../../models/meshery-core/0.7.2/v1.0.0/policies"
 
 	files, err := collectRegoFiles(policiesDir)
 	if err != nil {

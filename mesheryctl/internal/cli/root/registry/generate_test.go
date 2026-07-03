@@ -49,7 +49,7 @@ func TestGenerateCmdFlags(t *testing.T) {
 		{
 			name:         "output flag exists with correct default",
 			flagName:     "output",
-			defaultValue: "../server/meshmodel",
+			defaultValue: "./models",
 			expectedType: "string",
 			description:  "location to output generated models",
 		},

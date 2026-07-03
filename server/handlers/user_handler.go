@@ -30,7 +30,7 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 	userID := mux.Vars(r)["id"]
 	_, err := uuid.FromString(userID)
 	if err != nil {
-		writeMeshkitError(w, ErrInvalidUUID(err), http.StatusBadRequest)
+		writeMeshkitError(w, models.ErrInvalidUUID(err), http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetUserByID(r, userID)

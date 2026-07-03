@@ -27,8 +27,10 @@ vi.mock('@/utils/hooks/useNotification', () => ({
 }));
 
 vi.mock('@sistent/sistent', () => ({
-  ChevronLeft: () => <svg data-testid="chevron-left" />,
-  ChevronRight: () => <svg data-testid="chevron-right" />,
+  ChevronLeftIcon: (props) =>
+    React.createElement('svg', { 'data-component': 'chevron-left-icon', ...props }),
+  ChevronRightIcon: (props) =>
+    React.createElement('svg', { 'data-component': 'chevron-right-icon', ...props }),
   Grid2: ({ children }: any) => <div>{children}</div>,
   L5DeleteIcon: ({ onClick, disabled }: any) => (
     <button data-testid="bulk-delete-btn" onClick={onClick} disabled={disabled}>

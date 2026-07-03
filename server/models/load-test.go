@@ -111,11 +111,11 @@ type MesheryResult struct {
 	ServerBoardConfig interface{} `json:"serverBoardConfig,omitempty" gorm:"type:JSONB"`
 
 	TestStartTime          *time.Time         `json:"testStartTime,omitempty"`
-	PerformanceProfileInfo PerformanceProfile `json:"-,omitempty" gorm:"constraint:OnDelete:SET NULL;foreignKey:PerformanceProfile"`
+	PerformanceProfileInfo PerformanceProfile `json:"-" gorm:"constraint:OnDelete:SET NULL;foreignKey:PerformanceProfile"`
 
 	UpdatedAt string `json:"updatedAt,omitempty"`
 	CreatedAt string `json:"createdAt,omitempty"`
-	UserID    string `json:"userId,omitempty"`
+	Owner     string `json:"owner,omitempty"`
 }
 
 // ConvertToSpec - converts meshery result to SMP

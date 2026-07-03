@@ -6,7 +6,7 @@ import { buildIngressColumns } from './ingress-columns';
 import { buildIngressClassColumns } from './ingress-class-columns';
 import { buildNetworkPolicyColumns } from './network-policy-columns';
 
-export const NetWorkTableConfig = (
+export const useNetWorkTableConfig = (
   switchView,
   meshSyncResources,
   k8sConfig,

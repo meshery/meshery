@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -14,6 +15,10 @@ import (
 
 	"net/http"
 )
+
+// legacyProviderConfigWarnOnce gates the one-shot deprecation warning emitted
+// when GetMesheryCtl rewrites a legacy "None" provider entry to "Local".
+var legacyProviderConfigWarnOnce sync.Once
 
 // Version unmarshals the json response from the server's version api
 type Version struct {
@@ -55,6 +60,24 @@ func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 	err := v.Unmarshal(&c)
 	if err != nil {
 		return nil, ErrInvalidMeshConfig(err)
+	}
+	// In-memory migration: the built-in local provider was renamed
+	// "None" -> "Local". Rewrite legacy values so commands behave consistently
+	// against post-rename servers. The on-disk config is only updated the next
+	// time something else calls viper.WriteConfig. A one-shot Warn is emitted
+	// so users see the deprecation when running any mesheryctl command against
+	// a legacy meshconfig — visible without --verbose, but only once per
+	// process to avoid spam.
+	for name, ctx := range c.Contexts {
+		if strings.EqualFold(ctx.Provider, "None") {
+			ctx.Provider = "Local"
+			c.Contexts[name] = ctx
+			legacyProviderConfigWarnOnce.Do(func() {
+				if mesheryctllogger.Log != nil {
+					mesheryctllogger.Log.Warnf("DEPRECATION: provider %q in ~/.meshery/config.yaml is the legacy alias for %q and will be removed in a future Meshery release. Run 'mesheryctl system context view' and update affected contexts. This warning is logged once per process.", "None", "Local")
+				}
+			})
+		}
 	}
 	return c, nil
 }

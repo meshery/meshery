@@ -1,7 +1,7 @@
 ---
 title: Jaeger Operator
 subtitle: Collaborative and visual infrastructure as design for Jaeger Operator
-image: /extensions/models/jaeger-operator/icons/color/jaeger-operator-color.svg
+image: extensions/models/jaeger-operator/icons/color/jaeger-operator-color.svg
 aliases: /extensibility/integrations/jaeger-operator
 docURL: https://docs.meshery.io/extensibility/integrations/jaeger-operator
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Tracing
 registrant: GitHub
 components: 
 - name: jaeger
-  colorIcon: content/en/extensions/models/jaeger-operator/components/jaeger/icons/color/jaeger-color.svg
-  whiteIcon: content/en/extensions/models/jaeger-operator/components/jaeger/icons/white/jaeger-white.svg
+  colorIcon: extensions/models/jaeger-operator/components/jaeger/icons/color/jaeger-color.svg
+  whiteIcon: extensions/models/jaeger-operator/components/jaeger/icons/white/jaeger-white.svg
   description: 
 components-count: 1
 relationships: 

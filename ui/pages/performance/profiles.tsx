@@ -1,19 +1,12 @@
 import React from 'react';
-import { NoSsr } from '@sistent/sistent';
-import PerformanceProfiles from '../../components/performance/PerformanceProfiles';
-import Head from 'next/head';
-import { usePageTitle } from '@/utils/hooks';
+import PerformanceProfiles from '@/components/performance/PerformanceProfiles';
+import { MesheryPage } from '../../components/MesheryPage';
 
 function Results() {
-  usePageTitle('Profiles');
-
   return (
-    <NoSsr>
-      <Head>
-        <title>Performance Profiles | Meshery</title>
-      </Head>
+    <MesheryPage title="Profiles" headTitle="Performance Profiles">
       <PerformanceProfiles />
-    </NoSsr>
+    </MesheryPage>
   );
 }
 

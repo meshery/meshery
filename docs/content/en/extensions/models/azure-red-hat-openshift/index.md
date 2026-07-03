@@ -1,7 +1,7 @@
 ---
 title: Azure Red Hat OpenShift
 subtitle: Collaborative and visual infrastructure as design for Azure Red Hat OpenShift
-image: /extensions/models/azure-red-hat-openshift/icons/color/azure-red-hat-openshift-color.svg
+image: extensions/models/azure-red-hat-openshift/icons/color/azure-red-hat-openshift-color.svg
 aliases: /extensibility/integrations/azure-red-hat-openshift
 docURL: https://docs.meshery.io/extensibility/integrations/azure-red-hat-openshift
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Certified Kubernetes - Distribution
 registrant: GitHub
 components: 
 - name: open-shift-cluster
-  colorIcon: content/en/extensions/models/azure-red-hat-openshift/components/open-shift-cluster/icons/color/open-shift-cluster-color.svg
-  whiteIcon: content/en/extensions/models/azure-red-hat-openshift/components/open-shift-cluster/icons/white/open-shift-cluster-white.svg
+  colorIcon: extensions/models/azure-red-hat-openshift/components/open-shift-cluster/icons/color/open-shift-cluster-color.svg
+  whiteIcon: extensions/models/azure-red-hat-openshift/components/open-shift-cluster/icons/white/open-shift-cluster-white.svg
   description: 
 components-count: 1
 relationships: 

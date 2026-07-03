@@ -46,7 +46,7 @@ module.exports = defineConfig({
     },
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'retain-on-failure',
-    provider: process.env.MESHERY_PROVIDER || 'None',
+    provider: process.env.MESHERY_PROVIDER || 'Local',
   },
 
   /* Configure projects for major browsers */
@@ -74,7 +74,7 @@ module.exports = defineConfig({
       name: 'chromium-local-provider',
       use: {
         ...devices['Desktop Chrome'],
-        provider: 'None',
+        provider: 'Local',
         // Use prepared auth state.
         storageState: ENV.AUTHFILELOCALPROVIDER,
       },

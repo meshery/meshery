@@ -13,15 +13,32 @@ export const ToolWrapper = styled(Box)(({ theme }) => ({
   zIndex: '101',
 }));
 
-export const MeshModelToolbar = styled(Box)(() => ({
+export const WorkloadsContainer = styled('div')(() => ({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+}));
+
+export const MeshModelToolbar = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
+  alignItems: 'center',
   height: '4rem',
   paddingLeft: '1.5rem',
+  paddingRight: '1.5rem',
   borderRadius: '0.5rem',
   position: 'relative',
   zIndex: '125',
   marginBottom: '0.5rem',
+  [theme.breakpoints.down('sm')]: {
+    paddingLeft: '0.75rem',
+    paddingRight: '0.75rem',
+    height: 'auto',
+    flexWrap: 'wrap',
+    gap: '0.5rem',
+    paddingTop: '0.5rem',
+    paddingBottom: '0.5rem',
+  },
 }));
 
 export const MainContainer = styled(Box)(() => ({
@@ -29,6 +46,9 @@ export const MainContainer = styled(Box)(() => ({
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
+  flex: 1,
+  minHeight: 0,
+  overflow: 'hidden',
 }));
 
 export const InnerContainer = styled(Box)(({ theme }) => ({
@@ -111,7 +131,7 @@ export const DetailsContainer = styled(Box, {
   }),
   [theme.breakpoints.down('sm')]: {
     width: '100%',
-    padding: isEmpty ? '0.5rem' : '1rem',
+    padding: isEmpty ? '0.5rem' : '0.6rem',
   },
 }));
 
@@ -129,14 +149,20 @@ export const TreeWrapper = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: '1rem',
   paddingTop: '0.5rem',
+  paddingBottom: '0.5rem',
   paddingLeft: '1rem',
   paddingRight: '1rem',
   flexDirection: 'row',
   width: '100%',
+  flex: 1,
+  minHeight: 0,
+  overflow: 'hidden',
   borderBottomLeftRadius: '0.5rem',
   borderBottomRightRadius: '0.5rem',
   [theme.breakpoints.down('sm')]: {
-    flexDirection: 'column-reverse',
+    flexDirection: 'column',
+    overflow: 'auto',
+    flex: 1,
   },
 }));
 

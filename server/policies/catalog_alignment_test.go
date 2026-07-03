@@ -288,7 +288,6 @@ func catalogDesigns() []catalogEntry {
 		{"9f249a4b-13da-4ea1-860e-98c4060a444a", "0.0.3", "pv-pvc-edge-non-binding-reference-relationship"},
 		{"9f358588-ba37-4ebe-852d-df4dd0c71ecb", "0.0.2", "Hierarchical-Parent-Inventory-Relationship-9f35"},
 		{"9fc0c134-4a85-4e59-8593-e93d9cc2fce2", "0.0.5", "Brainstorming-Template"},
-		{"a10ca98d-d978-4cfd-accb-d9834a26904f", "0.0.280", "Kanvas-Docker-Extension-Architecture"},
 		{"a1eaf8c4-4da3-4cc4-ba75-edc9e808ab98", "0.0.49", "ELKK-Stack-with-Kafka"},
 		{"a2e7d86c-ff41-4385-9c19-81335a1204e7", "0.0.458", "Keycloak-SSO-with-OAuth2-Proxy-design"},
 		{"a3a75d20-9453-4c80-a404-4d126fc72aa9", "0.0.1", "wordpress-26.0.0.tgz"},

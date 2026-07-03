@@ -50,24 +50,35 @@ export const logYAxe = {
   },
 };
 
+function getRawResultUrl(rawdata) {
+  const rawResult = Array.isArray(rawdata) ? rawdata[0] : undefined;
+
+  return rawResult?.runnerResults?.URL || rawResult?.runner_results?.URL;
+}
+
+function getLabels(res) {
+  return res.Labels?.split(' -_- ') || [];
+}
+
 /**
  * getMetadata takes in the test data and returns an object
  * with partially computed data and a "display" field
  */
 export function getMetadata(rawdata, res) {
+  const labels = getLabels(res);
+
   return {
     title: {
       display: {
         key: 'Title',
         // value : res.Labels.split(' -_- ')?.[0] || "No Title"
-        value: (rawdata ? rawdata[0].name : res.Labels.split(' -_- ')?.[0]) || 'No Title',
+        value: (rawdata ? rawdata[0].name : labels[0]) || 'No Title',
       },
     },
     url: {
       display: {
         key: 'URL',
-        value:
-          (rawdata ? rawdata[0].runner_results.URL : res.Labels.split(' -_- ')?.[1]) || 'No URL',
+        value: (rawdata ? getRawResultUrl(rawdata) : labels[1]) || 'No URL',
       },
     },
     startTime: {
@@ -223,10 +234,10 @@ export function makeTitle(rawdata, res) {
       // http results
       // title.push(res.Labels + ' - ' + res.URL + ' - ' + formatDate(res.StartTime))
       // title.push(res.URL + ' - ' + formatDate(res.StartTime))
-      var labels = res.Labels.split(' -_- ');
+      var labels = getLabels(res);
       // title.push(`Labels: ${labels.map(item => item + '\n')}`)
       title.push(`Title: ${rawdata ? rawdata[0].name : labels[0]}`);
-      title.push(`URL: ${rawdata ? rawdata[0].runner_results.URL : labels[1]}`);
+      title.push(`URL: ${rawdata ? getRawResultUrl(rawdata) : labels[1]}`);
       title.push(`Start Time: ${formatDate(res.StartTime)}`);
     } else {
       // grpc results

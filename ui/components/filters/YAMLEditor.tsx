@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Close as CloseIcon,
-  Delete as DeleteIcon,
-  Fullscreen as FullscreenIcon,
-  FullscreenExit as FullscreenExitIcon,
-  Save as SaveIcon,
-} from '@/assets/icons';
+import { Close as CloseIcon, Delete as DeleteIcon, Save as SaveIcon } from '@/assets/icons';
 import {
   CustomTooltip,
   Dialog,
@@ -14,6 +8,8 @@ import {
   Divider,
   IconButton,
   styled,
+  FullScreenIcon,
+  FullScreenExitIcon,
 } from '@sistent/sistent';
 import { UnControlled as CodeMirror } from '../CodeMirror';
 import { FILE_OPS } from '../../utils/Enum';
@@ -72,9 +68,9 @@ function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
             onClick={toggleFullScreen}
           >
             {fullScreen ? (
-              <FullscreenExitIcon style={iconMedium} />
+              <FullScreenExitIcon style={iconMedium} />
             ) : (
-              <FullscreenIcon style={iconMedium} />
+              <FullScreenIcon style={iconMedium} />
             )}
           </TooltipIcon>
           <TooltipIcon title="Exit" onClick={onClose}>

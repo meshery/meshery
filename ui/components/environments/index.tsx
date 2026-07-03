@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  ChevronLeft,
-  ChevronRight,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   DeleteIcon,
   NoSsr,
   Pagination,
   PaginationItem,
+  useTheme,
 } from '@sistent/sistent';
 import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
@@ -57,6 +58,7 @@ const ACTION_TYPES = {
 };
 
 const Environments = () => {
+  const theme = useTheme();
   const { organization } = useSelector((state) => state.ui);
   const [environmentModal, setEnvironmentModal] = useState({
     open: false,
@@ -536,7 +538,7 @@ const Environments = () => {
                   boundaryCount={3}
                   renderItem={(item) => (
                     <PaginationItem
-                      slots={{ previous: ChevronLeft, next: ChevronRight }}
+                      slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
                       {...item}
                     />
                   )}
@@ -549,10 +551,9 @@ const Environments = () => {
                 <EnvironmentIcon
                   height="6rem"
                   width="6rem"
-                  fill="#808080"
-                  secondaryFill="#979797"
+                  fill={theme.palette.icon.default}
+                  secondaryFill={theme.palette.icon.secondary}
                 />
-                // TODO: replace all fill and secondary fill hex values with sistent tokens
               }
               message="No environment available"
               pointerLabel="Click “Create” to establish your first environment."
@@ -596,11 +597,19 @@ const Environments = () => {
                 assignedData={handleAssignConnectionData}
                 originalAssignedData={environmentConnectionsData}
                 emptyStateIconLeft={
-                  <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
+                  <ConnectionIcon
+                    width="120"
+                    primaryFill={theme.palette.icon.default}
+                    secondaryFill={theme.palette.icon.secondary}
+                  />
                 }
                 emtyStateMessageLeft="No connections available"
                 emptyStateIconRight={
-                  <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
+                  <ConnectionIcon
+                    width="120"
+                    primaryFill={theme.palette.icon.default}
+                    secondaryFill={theme.palette.icon.secondary}
+                  />
                 }
                 emtyStateMessageRight="No connections assigned"
                 transferComponentType={TRANSFER_COMPONENT.CHIP}

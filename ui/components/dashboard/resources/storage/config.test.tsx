@@ -31,10 +31,10 @@ vi.mock('../../view', () => ({
 }));
 vi.mock('../config', () => ({ SINGLE_VIEW: 'single' }));
 
-import { StorageTableConfig } from './config';
+import { useStorageTableConfig } from './config';
 
-describe('StorageTableConfig', () => {
-  const config = StorageTableConfig(vi.fn(), [], {}, {}, 'PersistentVolume');
+describe('useStorageTableConfig', () => {
+  const config = useStorageTableConfig(vi.fn(), [], {}, {}, 'PersistentVolume');
 
   it('exposes three storage workload configs', () => {
     expect(Object.keys(config)).toEqual([

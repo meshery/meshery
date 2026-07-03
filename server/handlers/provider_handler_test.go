@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"encoding/json"
 	"encoding/base64"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -34,14 +34,14 @@ func newTestHandler(t *testing.T, providers map[string]models.Provider, provider
 	}
 }
 
-func TestProviderHandler_NoneRedirectsThroughLogin(t *testing.T) {
+func TestProviderHandler_LocalRedirectsThroughLogin(t *testing.T) {
 	local := &models.DefaultLocalProvider{}
 	local.Initialize()
 
 	providers := map[string]models.Provider{local.Name(): local}
 	h := newTestHandler(t, providers, "")
 
-	req := httptest.NewRequest(http.MethodGet, "/api/provider?provider=None", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/provider?provider=Local", nil)
 	rec := httptest.NewRecorder()
 
 	h.ProviderHandler(rec, req)
@@ -58,28 +58,64 @@ func TestProviderHandler_NoneRedirectsThroughLogin(t *testing.T) {
 	}
 
 	loc := resp.Header.Get("Location")
-	if loc != "/user/login?provider=None" {
-		t.Errorf("expected redirect to /user/login?provider=None, got %s", loc)
+	if loc != "/user/login?provider=Local" {
+		t.Errorf("expected redirect to /user/login?provider=Local, got %s", loc)
 	}
 
 	// Verify provider cookie is set
 	var found bool
 	for _, c := range resp.Cookies() {
-		if c.Name == "meshery-provider" && c.Value == "None" {
+		if c.Name == "meshery-provider" && c.Value == "Local" {
 			found = true
 			break
 		}
 	}
 	if !found {
-		t.Error("expected meshery-provider cookie to be set to None")
+		t.Error("expected meshery-provider cookie to be set to Local")
 	}
 }
 
-func TestProviderUIHandler_NoneEnvVarRedirectsThroughLogin(t *testing.T) {
+// TestProviderHandler_NoneAliasResolvesToLocal is the backward-compatibility
+// guard: clients (browsers with stale cookies, older mesheryctl, hand-written
+// scripts) that still send "None" must be accepted and mapped to "Local".
+func TestProviderHandler_NoneAliasResolvesToLocal(t *testing.T) {
 	local := &models.DefaultLocalProvider{}
 	local.Initialize()
 
 	providers := map[string]models.Provider{local.Name(): local}
+	h := newTestHandler(t, providers, "")
+
+	req := httptest.NewRequest(http.MethodGet, "/api/provider?provider=None", nil)
+	rec := httptest.NewRecorder()
+
+	h.ProviderHandler(rec, req)
+
+	resp := rec.Result()
+	t.Cleanup(func() { _ = resp.Body.Close() })
+
+	if resp.StatusCode != http.StatusFound {
+		t.Fatalf("expected 302 Found, got %d", resp.StatusCode)
+	}
+
+	for _, c := range resp.Cookies() {
+		if c.Name == "meshery-provider" {
+			if c.Value != "Local" {
+				t.Errorf("None alias should resolve to Local; got cookie value %q", c.Value)
+			}
+			return
+		}
+	}
+	t.Error("expected meshery-provider cookie to be set when sending legacy None alias")
+}
+
+func TestProviderUIHandler_LocalEnvVarRedirectsThroughLogin(t *testing.T) {
+	local := &models.DefaultLocalProvider{}
+	local.Initialize()
+
+	providers := map[string]models.Provider{local.Name(): local}
+	// Pass the legacy alias as PROVIDER env to confirm the auto-select path
+	// still works after the rename — backward-compat guard for stale
+	// Helm/Compose deployments.
 	h := newTestHandler(t, providers, "None")
 
 	req := httptest.NewRequest(http.MethodGet, "/provider", nil)
@@ -108,6 +144,51 @@ func TestProviderUIHandler_NoneEnvVarRedirectsThroughLogin(t *testing.T) {
 	// auto-select branch must always set a non-empty cookie naming a
 	// registered provider.
 	assertProviderCookieIsRegistered(t, resp, "meshery-provider", providers)
+}
+
+func TestProviderUIHandler_RemoteCanonicalNameRedirectsThroughLogin(t *testing.T) {
+	remote := &models.RemoteProvider{RemoteProviderURL: "https://cloud.meshery.io"}
+	remote.Initialize()
+	remote.SetProviderProperties(models.ProviderProperties{
+		ProviderName: "Meshery",
+		ProviderType: models.RemoteProviderType,
+		ProviderURL:  remote.RemoteProviderURL,
+	})
+
+	providers := map[string]models.Provider{"cloud.meshery.io": remote}
+	h := newTestHandler(t, providers, "Meshery")
+
+	req := httptest.NewRequest(http.MethodGet, "/provider", nil)
+	rec := httptest.NewRecorder()
+
+	h.ProviderUIHandler(rec, req)
+
+	resp := rec.Result()
+	t.Cleanup(func() {
+		if err := resp.Body.Close(); err != nil {
+			t.Errorf("failed to close response body: %v", err)
+		}
+	})
+
+	if resp.StatusCode != http.StatusFound {
+		t.Fatalf("expected 302 Found, got %d", resp.StatusCode)
+	}
+	if loc := resp.Header.Get("Location"); loc != "/user/login" {
+		t.Fatalf("expected redirect to /user/login, got %q", loc)
+	}
+
+	assertProviderCookieIsRegistered(t, resp, "meshery-provider", providers)
+
+	var got string
+	for _, c := range resp.Cookies() {
+		if c.Name == "meshery-provider" {
+			got = c.Value
+			break
+		}
+	}
+	if got != "cloud.meshery.io" {
+		t.Fatalf("expected meshery-provider cookie to carry internal remote key %q, got %q", "cloud.meshery.io", got)
+	}
 }
 
 // assertProviderCookieIsRegistered fails the test if any meshery-provider
@@ -160,7 +241,7 @@ func assertNoProviderCookieSet(t *testing.T, resp *http.Response, cookieName str
 func TestProviderUIHandler_LoopGuards(t *testing.T) {
 	local := &models.DefaultLocalProvider{}
 	local.Initialize()
-	registered := map[string]models.Provider{local.Name(): local} // local.Name() == "None"
+	registered := map[string]models.Provider{local.Name(): local} // local.Name() == "Local"
 
 	tests := []struct {
 		name             string
@@ -423,31 +504,31 @@ func TestLoginHandler_NoneProviderFromMiddleware(t *testing.T) {
 func TestDeleteMeshSyncResource(t *testing.T) {
 	handler := newTestHandler(t, map[string]models.Provider{}, "")
 
-		tests := []struct {
-			name                 string
-			migrateResourceTable bool
-			expectedStatus       int
-			expectedContentType  string
-			expectedBody         string
-		}{
-			{
-				name: "given resource table migrated when DeleteMeshSyncResource then return status 200 and deleted true",
-				migrateResourceTable: true,
-				expectedStatus:       http.StatusOK,
-				expectedContentType:  "application/json",
-				expectedBody:         `"deleted":true`,
-			},
-			{
-				name: "given resource table not migrated when DeleteMeshSyncResource then return status 500 and failed to delete",
-				migrateResourceTable: false,
-				expectedStatus:       http.StatusInternalServerError,
-				expectedContentType:  "application/json",
-				// Error response now carries the MeshKit envelope; match on the
-				// error code emitted by ErrFailToDelete so the assertion is
-				// stable across short-description wording changes.
-				expectedBody:         "meshery-server-",
-			},
-		}
+	tests := []struct {
+		name                 string
+		migrateResourceTable bool
+		expectedStatus       int
+		expectedContentType  string
+		expectedBody         string
+	}{
+		{
+			name:                 "given resource table migrated when DeleteMeshSyncResource then return status 200 and deleted true",
+			migrateResourceTable: true,
+			expectedStatus:       http.StatusOK,
+			expectedContentType:  "application/json",
+			expectedBody:         `"deleted":true`,
+		},
+		{
+			name:                 "given resource table not migrated when DeleteMeshSyncResource then return status 500 and failed to delete",
+			migrateResourceTable: false,
+			expectedStatus:       http.StatusInternalServerError,
+			expectedContentType:  "application/json",
+			// Error response now carries the MeshKit envelope; match on the
+			// error code emitted by ErrFailToDelete so the assertion is
+			// stable across short-description wording changes.
+			expectedBody: "meshery-server-",
+		},
+	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

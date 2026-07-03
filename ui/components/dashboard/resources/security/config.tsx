@@ -9,7 +9,7 @@ import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
 
-export const SecurityTypesConfig = (
+export const useSecurityTypesConfig = (
   switchView,
   meshSyncResources,
   k8sConfig,
