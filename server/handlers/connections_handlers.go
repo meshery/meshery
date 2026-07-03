@@ -382,13 +382,28 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	// Only handle mode changes if a mode is explicitly provided (not undefined).
 	// In fact this method is used (for now) only for perform meshsync deployment mode change.
 	// If mode change fails return error.
-	// TODO: also check that kind = "kubernetes" (when client starts to send full connection object)
 	if connections.MeshsyncDeploymentModeFromMetadata(connection.MetaData) != connections.MeshsyncDeploymentModeUndefined {
-		// Handle meshsync deployment mode changes before connection update
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
+
+		// Retrieve the persisted connection to validate its kind against the request.
+		existingConn, statusCode, err := provider.GetConnectionByID(token, connectionID)
+		if err != nil {
+			h.log.Error(err)
+			writeMeshkitError(w, err, statusCode)
+			return
+		}
+		if existingConn.Kind != "kubernetes" {
+			err := ErrInvalidConnectionKind(existingConn.Kind, "kubernetes")
+			h.log.Error(err)
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
+
+		// Handle meshsync deployment mode changes before connection update
 		oldMode, newMode, modeChanged, err := h.handleMeshSyncDeploymentModeChange(
 			req.Context(),
 			connectionID,
+			existingConn,
 			connection,
 			token,
 			userID,
@@ -586,12 +601,13 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	w.WriteHeader(http.StatusOK)
 }
 
-// handleMeshSyncDeploymentModeChange retrieves existing connection, compares meshsync deployment modes
+// handleMeshSyncDeploymentModeChange compares meshsync deployment modes
 // between existing and new connections, and performs necessary actions when they differ
 // Returns: oldMode, newMode, changed, error
 func (h *Handler) handleMeshSyncDeploymentModeChange(
 	ctx context.Context,
 	connectionID core.Uuid,
+	existingConnection *connections.Connection,
 	newConnection *connections.ConnectionPayload,
 	token string,
 	userID core.Uuid,
@@ -606,20 +622,6 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 	}
 	// TODO is h.SystemID a correct instance id here?
 	mesheryInstanceID := *h.SystemID
-
-	// Retrieve existing connection for mode comparison
-	existingConnection, statusCode, err := provider.GetConnectionByID(token, connectionID)
-	if err != nil {
-		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("failed to retrieve existing connection (status %d): %w", statusCode, err)
-	}
-
-	if existingConnection == nil {
-		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("existing connection is nil, cannot compare meshsync deployment modes")
-	}
-
-	if existingConnection.Kind != "kubernetes" {
-		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("connection is not of kind kubernetes")
-	}
 
 	existingMeshSyncMode := connections.MeshsyncDeploymentModeFromMetadata(existingConnection.Metadata)
 	newMeshSyncMode := connections.MeshsyncDeploymentModeFromMetadata(newConnection.MetaData)

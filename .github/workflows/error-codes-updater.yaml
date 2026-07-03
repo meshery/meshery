@@ -33,7 +33,12 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version-file: go.mod
+          go-version: '1.26.4'
+
+      - name: Show Go version
+        run: |
+          go version
+          go env GOTOOLCHAIN
 
       - name: Build Error Utility
         run: |
