@@ -47,11 +47,27 @@ independently. For Kubernetes production deployments:
   only for testing. The channel is reflected by `RELEASE_CHANNEL`.
 - **Mind component groupings.** See the
   [Upgrade Guide]({{< ref "installation/upgrades/index.md" >}}) for which components move together
-  (e.g., Server/UI/Load Generators/Database) versus independently (Operator and
-  its controllers, Adapters, `mesheryctl`).
+  (e.g., Server/UI/Load Generators/Database) versus independently (Adapters,
+  `mesheryctl`). The Operator and its controllers effectively move **with the
+  Server**: each Server release pins the operator chart (and operator image)
+  it deploys to managed clusters.
+- **Let the Server own the Operator.** On Server-managed clusters, do not
+  hand-upgrade or hand-configure the `meshery-operator` Helm release — the
+  Server's reconciliation re-applies its own pinned chart version and reverts
+  manual changes. Upgrading the Server is the supported way to upgrade the
+  Operator; the chart's CRD update Job refreshes the `Broker`/`MeshSync` CRD
+  schemas on each upgrade (Helm alone never updates CRDs). See
+  [How Meshery Server manages Meshery Operator]({{< ref "installation/upgrades/index.md#how-meshery-server-manages-meshery-operator" >}}).
+- **Expect CRDs to persist.** The `brokers.meshery.io` and
+  `meshsyncs.meshery.io` CRDs (and their objects) deliberately survive
+  operator uninstalls and Helm release deletion; include the explicit
+  `kubectl delete crd ...` step in decommissioning runbooks only when
+  permanent removal is intended.
 - **Rehearse and roll back.** Because durable state lives with the Remote
   Provider and the local database is a cache, rolling back the deployment is
-  low-risk for data—validate the rollback path anyway.
+  low-risk for data—validate the rollback path anyway. On rollback, managed
+  clusters converge back to the older Server's pinned operator chart
+  automatically.
 - **Edge caches need no purge.** If a CDN or caching reverse proxy fronts
   Meshery, its UI cache busts itself on upgrade—hashed asset URLs change and the
   HTML `ETag` follows the build/release version—so a manual cache purge is not

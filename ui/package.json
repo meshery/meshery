@@ -90,6 +90,7 @@
     "cytoscape-fcose": "^2.2.0",
     "cytoscape-layers": "^3.1.0",
     "cytoscape-popper": "^4.0.1",
+    "date-fns": "^4.4.0",
     "dockview": "^7.0.2",
     "emoji-picker-react": "^4.19.1",
     "graphql": "^17.0.1",
