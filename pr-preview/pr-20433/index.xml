@@ -35459,7 +35459,7 @@ A &lt;strong&gt;&lt;a href="/pr-preview/pr-20433/concepts/logical/designs/"&gt;d
 &lt;ul&gt;
 &lt;li&gt;&lt;a href="/pr-preview/pr-20433/guides/infrastructure-management/sample-apps/"&gt;Bookinfo&lt;/a&gt;
 &lt;ul&gt;
-&lt;li&gt;The sample Bookinfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
+&lt;li&gt;The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;&lt;a href="/pr-preview/pr-20433/guides/infrastructure-management/sample-apps/"&gt;Httpbin&lt;/a&gt;
