@@ -23,7 +23,10 @@ func TestGetDeploymentVersion(t *testing.T) {
 		wantErr bool
 	}{
 		{name: "standard tag", yaml: deployment("layer5/meshery:stable-latest"), want: "latest", wantErr: false},
+		{name: "registry with port", yaml: deployment("localhost:5000/layer5/meshery:stable-latest"), want: "latest", wantErr: false},
+		{name: "multi dash prerelease tag", yaml: deployment("layer5/meshery:stable-v0.7.0-rc.1"), want: "v0.7.0-rc.1", wantErr: false},
 		{name: "untagged image", yaml: deployment("layer5/meshery"), wantErr: true},
+		{name: "untagged image with registry port", yaml: deployment("localhost:5000/layer5/meshery"), wantErr: true},
 		{name: "tag without dash", yaml: deployment("layer5/meshery:latest"), wantErr: true},
 		{name: "no containers", yaml: noContainers, wantErr: true},
 	}
