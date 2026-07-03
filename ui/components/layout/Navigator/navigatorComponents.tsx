@@ -183,9 +183,9 @@ export const getNavigatorComponents = (
   },
   {
     id: TELEMETRY,
-    icon: <InsertChartIcon style={{ ...drawerIconsStyle }} />,
+    icon: <InsertChartIcon style={drawerIconsStyle} />,
     hovericon: (
-      <InsertChartIcon style={{ ...drawerIconsStyle }} />
+      <InsertChartIcon style={drawerIconsStyle} />
     ),
     href: '/telemetry',
     title: 'Telemetry',
@@ -195,7 +195,7 @@ export const getNavigatorComponents = (
     children: [
       {
         id: GRAFANA,
-        icon: <InsertChartIcon style={{ ...drawerIconsStyle }} />,
+        icon: <InsertChartIcon style={drawerIconsStyle} />,
         href: '/telemetry/charts',
         title: 'Charts',
         show: providerUiAccessControl.isNavigatorComponentEnabled([TELEMETRY, GRAFANA]),
