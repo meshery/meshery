@@ -30,8 +30,8 @@ import React, { useContext, useState } from 'react';
 import { capitalize } from 'lodash/fp';
 import { getAllUsers } from '@/rtk-query/user';
 import { ImportDesignModal } from '@/components/designs/ImportDesignModal';
+import { buildImportDesignRequestBody } from '@/components/designs/import-design-request';
 import { useNotification } from '@/utils/hooks/useNotification';
-import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useImportPatternMutation } from '@/rtk-query/design';
 import { updateProgress } from '@/store/slices/mesheryUi';
@@ -326,32 +326,22 @@ export const ImportButton = ({ workspaceId, disabled = false, refetch }) => {
   const [importPattern] = useImportPatternMutation();
   const { notify } = useNotification();
   const theme = useTheme();
-  function handleImportDesign(data) {
+  async function handleImportDesign(data) {
     updateProgress({ showProgress: true });
-    const { uploadType, name, url, file } = data;
+    const { name } = data;
 
-    let requestBody = null;
-    switch (uploadType) {
-      case 'File Upload': {
-        const fileElement = document.getElementById('root_file');
-        const fileName = fileElement.files[0].name;
-        requestBody = JSON.stringify({
-          name,
-          file_name: fileName,
-          file: getUnit8ArrayDecodedFile(file),
-        });
-        break;
-      }
-      case 'URL Import':
-        requestBody = JSON.stringify({
-          url,
-          name,
-        });
-        break;
+    const importRequest = await buildImportDesignRequestBody(data);
+    if ('errorMessage' in importRequest) {
+      updateProgress({ showProgress: false });
+      notify({
+        message: importRequest.errorMessage,
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
     }
 
     importPattern({
-      importBody: requestBody,
+      importBody: importRequest.requestBody,
     })
       .unwrap()
       .then((data) => {

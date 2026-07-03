@@ -6,7 +6,7 @@
     {
       "id": "957fbc9b-708d-4396-84b8-e2ba37c1adcc",
       "name": "kumatest",
-      "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
+      "owner": "990f779c-708d-4396-84b8-e2ba37c1adcc",
       "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  VirtualService-0.4157272729581598:\n    type: VirtualService\n    namespace: VirtualService\n    traits:\n      meshmap:\n        position:\n          posX: 313\n          posY: 173\n",
       "location": {
         "branch": "",
@@ -20,7 +20,7 @@
     {
       "id": "be9c3c76-a988-4fbd-8f50-209e4baafc03",
       "name": "RolloutAndIstio",
-      "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "owner": "2540d988-4ae2-44ff-8688-2301be1ca87a",
       "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  IstioMesh-0.8210882560998072:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 594\n          posY: 452\n",
       "location": {
         "branch": "",
@@ -34,7 +34,7 @@
     {
       "id": "ecd1b220-1510-4c99-aacb-a5a6e1963ec9",
       "name": "Untitled Design",
-      "user_id": "3540d988-4ae2-44ff-8698-7t01be1ca87a",
+      "owner": "3540d988-4ae2-44ff-8698-7t01be1ca87a",
       "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.2274220971228964:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 462\n          posY: 514\n",
       "location": {
         "branch": "",

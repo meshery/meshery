@@ -3,11 +3,11 @@
 | Name           | GitHub       | Affiliation |
 | -------------- | ------------ | ----------- |
 | Matthieu Evrin | @lekaf974    | Moneris     |
-| Ian Whitney     | @ianrwhitney | Intuit      |
-| Mia Grenell      | @miacycle    | USyd        |
-| Aabid Sofi        | @aabidsofi19 | Independent |
-| Lee Calcote     | @leecalcote  | Layer5     |
-| Sangram Rath | @sangramrath | OD10    |
+| Ian Whitney    | @ianrwhitney | Intuit      |
+| Mia Grenell    | @miacycle    | USyd        |
+| Aabid Sofi     | @aabidsofi19 | Independent |
+| Lee Calcote    | @leecalcote  | Layer5      |
+| Sangram Rath   | @sangramrath | OD10        |
 
 Repositories:
 
@@ -20,7 +20,7 @@ Repositories:
 
 | Name                 | GitHub         | Affiliation |
 | -------------------- | -------------- | ----------- |
-| Hussaina Begum       | @hexxdump      | Netskope      |
+| Hussaina Begum       | @hexxdump      | Netskope    |
 | Aadhitya Amarendiran | @alphaX86      | Citi        |
 | Antonette Caldwell   | @acald-creator | Acquia      |
 | Matthieu Evrin       | @lekaf974      | Moneris     |
@@ -39,7 +39,7 @@ UI maintainers are responsible for the development and maintenance of Meshery's 
 
 | Name               | GitHub          | Affiliation   |
 | ------------------ | --------------- | ------------- |
-| Nikhil Ladha       | @Nikhil-Ladha   | IBM       |
+| Nikhil Ladha       | @Nikhil-Ladha   | IBM           |
 | Antonette Caldwell | @acald-creator  | Acquia        |
 | Aabid Sofi         | @aabidsofi19    | Independent   |
 | Yash Sharma        | @Yashsharma1911 | Digital Ocean |
@@ -76,7 +76,6 @@ Repositories:
 | ---------------- | ---------------- | ----------- |
 | Adithya Krishna  | @adithyaakrishna | Red Hat     |
 | Lee Calcote      | @leecalcote      | Layer5      |
-| Raunak Madan     | @codexraunak     | Layer5      |
 | Mia Grenell      | @miacycle        | USyd        |
 | Carlos Rio Silva | @carlosriosilva  | IesBrazil   |
 
@@ -88,8 +87,8 @@ Repositories:
 
 | Name                   | GitHub        | Affiliation    |
 | ---------------------- | ------------- | -------------- |
-| Nikhil Ladha           | @Nikhil-Ladha | IBM        |
-| Mericio                | @simihablo    | Independent    |
+| Nikhil Ladha           | @Nikhil-Ladha | IBM            |
+| Mericio Salazar        | @simihablo    | Independent    |
 | Aaditya Narayan Subedy | @asubedy      | Fast Retailing |
 | Jamie Plu              | @jamieplu     | Independent    |
 
@@ -102,13 +101,12 @@ Repositories:
 
 | Name                | GitHub          | Affiliation   |
 | ------------------- | --------------- | ------------- |
-| Raunak Madan        | @codexraunak    | Layer5        |
-| Kavitha Karunakaran | @matrixkavi     | Independent         |
+| Kavitha Karunakaran | @matrixkavi     | Upsun         |
 | Alex Quinn          | @alexquincy     | Netflix       |
 | Marcus Blom         | @marblom007     | AWS           |
 | Kate Suttons        | @suttonskate    | Layer5        |
 | Yash Sharma         | @Yashsharma1911 | Digital Ocean |
-| Shivay Lamba      | @shivaylamba       | Qualcomm |
+| Shivay Lamba        | @shivaylamba    | Qualcomm      |
 
 Repositories:
 
@@ -136,7 +134,7 @@ Repositories:
 | Pontus Ringblom | @pontusringblom | Infor       | meshery-extensions/shape-builder                 |
 | Dheeraj Gedam   | @dheerajng      | Citrix      | meshery-extensions/meshery-cpx                   |
 | Haim Helman     | @thehh1974      | VMware      | meshery-extensions/meshery-octarine              |
-| Hussaina Begum  | @hexxdump       | NetSkope      | meshery-extensions/meshery-tanzu-sm              |
+| Hussaina Begum  | @hexxdump       | NetSkope    | meshery-extensions/meshery-tanzu-sm              |
 | Ashish Tiwari   | @revolyssup     | API7        | meshery-extensions/meshery-istio                 |
 | Michael Gfeller | @mgfeller       | Computas AS | meshery/meshkit, meshery/meshery-adapter-library |
 | Marcus Blom     | @marblom007     | Independent | meshery-extensions/shape-builder                 |
@@ -150,7 +148,7 @@ Repositories:
 | Mia Grenell            | @miacycle         | USyd         | meshery-extensions/meshery-academy             |
 | Yi Nuo                 | @yi-nuo426        | HKUDS        | meshery-extensions/kubectl-meshsync-snapshot   |
 | Cooper Fitzgerald      | @cooperfitzgerald | Independent  | meshery-extensions/mcp-server                  |
-| Arjun Mehta                  | @arjunmehta-git   | TCS          | meshery-extensions/meshery-extensions-packages, meshery-extensions/integrations-workflow |
+| Arjun Mehta            | @arjunmehta-git   | TCS          | meshery-extensions/meshery-extensions-packages, meshery-extensions/integrations-workflow |
 | Kate Suttons           | @suttonskate      | Layer5       | meshery-extensions/meshery-academy             |
 | Rian Cteulp            | @ritzorama        | Independent  | meshery-extensions/kanvas-site                 |
 

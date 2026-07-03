@@ -193,6 +193,24 @@ export const userApi = api
         query: () => '/api/system/version',
         method: 'GET',
       }),
+      installProviderExtension: builder.mutation({
+        query: (queryArg) => ({
+          url: '/api/provider/extension/install',
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: queryArg,
+        }),
+        invalidatesTags: [Tags.PROVIDER_CAP],
+      }),
+      removeProviderExtension: builder.mutation({
+        query: (queryArg) => ({
+          url: '/api/provider/extension/remove',
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: queryArg,
+        }),
+        invalidatesTags: [Tags.PROVIDER_CAP],
+      }),
       handleFeedbackFormSubmission: builder.mutation({
         query: (queryArg) => ({
           url: mesheryApiPath(`extensions/api/identity/users/notify/feedback`),
@@ -262,6 +280,8 @@ export const {
   useGetAllUsersQuery,
   useRemoveUserFromTeamMutation,
   useGetSystemVersionQuery,
+  useInstallProviderExtensionMutation,
+  useRemoveProviderExtensionMutation,
   useGetUserProfileSummaryByIdQuery,
 } = userApi;
 
@@ -427,8 +447,8 @@ export const useGetSelectedWorkspace = () => {
 export const useUpdateSelectedOrganizationMutation = () => {
   const [updateUserPref, response] = useUpdateUserPrefMutation();
 
-  const updateSelectedOrganization = async (orgId) => {
-    await updateUserPref({ selectedOrganizationID: orgId });
+  const updateSelectedOrganization = (orgId) => {
+    return updateUserPref({ selectedOrganizationID: orgId });
   };
 
   return [updateSelectedOrganization, response];

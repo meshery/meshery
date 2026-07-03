@@ -2,7 +2,7 @@ apiVersion: v2
 name: meshery-operator
 description: Meshery Operator chart.
 icon: https://meshery.io/images/logos/meshery-logo.png
-source:
+sources:
   - https://github.com/meshery/meshery-operator
 keywords:
   - meshery-broker
@@ -19,14 +19,11 @@ deprecated: false
 # pipeline. Library charts do not define any templates and therefore cannot be deployed.
 type: application
 
-# This is the chart version. This version number should be incremented each time you make changes
-# to the chart and its templates, including the app version.
-version: 0.8.0
-
-# This is the version number of the application being deployed. This version number should be
-# incremented each time you make changes to the application.
-# TODO: Need the confirm the image tag.
-# appVersion: 0.6.0
+# version and appVersion track meshery-operator releases; both are stamped by
+# hack/sync-downstream.sh in meshery/meshery-operator on every operator
+# release (the sync-downstream workflow). Do not hand-edit without a reason.
+version: 1.0.2
+appVersion: "1.0.2"
 
 dependencies:
   - name: meshery-broker
@@ -43,4 +40,3 @@ maintainers:
     email: urakiny@gmail.com
   - name: maintainers
     email: maintainers@meshery.io
-

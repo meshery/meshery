@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"strconv"
-	"time"
 )
 
 type AdapterStatusInput struct {
@@ -39,7 +38,7 @@ type ApplicationResult struct {
 	Name            string      `json:"name"`
 	ApplicationFile string      `json:"application_file"`
 	Type            *NullString `json:"type"`
-	UserID          string      `json:"user_id"`
+	Owner           string      `json:"owner"`
 	Location        *Location   `json:"location"`
 	Visibility      string      `json:"visibility"`
 	CreatedAt       *string     `json:"created_at,omitempty"`
@@ -50,7 +49,7 @@ type CatalogFilter struct {
 	ID             string         `json:"id"`
 	Name           string         `json:"name"`
 	FilterFile     string         `json:"filter_file"`
-	UserID         string         `json:"user_id"`
+	Owner          string         `json:"owner"`
 	Location       *Location      `json:"location"`
 	FilterResource string         `json:"filter_resource"`
 	Visibility     string         `json:"visibility"`
@@ -62,7 +61,7 @@ type CatalogFilter struct {
 type CatalogPattern struct {
 	ID          string         `json:"id"`
 	Name        string         `json:"name"`
-	UserID      string         `json:"user_id"`
+	Owner       string         `json:"owner"`
 	PatternFile string         `json:"pattern_file"`
 	Location    *Location      `json:"location"`
 	Visibility  string         `json:"visibility"`
@@ -146,23 +145,6 @@ type Error struct {
 	Description string `json:"description"`
 }
 
-type Event struct {
-	ID          string         `json:"id"`
-	UserID      string         `json:"userID"`
-	ActedUpon   string         `json:"actedUpon"`
-	OperationID string         `json:"operationID"`
-	SystemID    string         `json:"systemID"`
-	Severity    Severity       `json:"severity"`
-	Action      string         `json:"action"`
-	Status      string         `json:"status"`
-	Category    string         `json:"category"`
-	Description string         `json:"description"`
-	Metadata    map[string]any `json:"metadata,omitempty"`
-	CreatedAt   time.Time      `json:"createdAt"`
-	UpdatedAt   time.Time      `json:"updatedAt"`
-	DeletedAt   *time.Time     `json:"deletedAt,omitempty"`
-}
-
 type FilterPage struct {
 	Page       int             `json:"page"`
 	PageSize   int             `json:"page_size"`
@@ -175,7 +157,7 @@ type FilterResult struct {
 	Name           string         `json:"name"`
 	FilterFile     string         `json:"filter_file"`
 	FilterResource string         `json:"filter_resource"`
-	UserID         string         `json:"user_id"`
+	Owner          string         `json:"owner"`
 	Location       *Location      `json:"location"`
 	Visibility     string         `json:"visibility"`
 	CatalogData    map[string]any `json:"catalog_data,omitempty"`
@@ -257,7 +239,7 @@ type MesheryResult struct {
 	ServerMetrics      *string        `json:"server_metrics,omitempty"`
 	ServerBoardConfig  *string        `json:"server_board_config,omitempty"`
 	TestStartTime      *string        `json:"test_start_time,omitempty"`
-	UserID             *string        `json:"user_id,omitempty"`
+	Owner              *string        `json:"owner,omitempty"`
 	UpdatedAt          *string        `json:"updated_at,omitempty"`
 	CreatedAt          *string        `json:"created_at,omitempty"`
 }
@@ -310,7 +292,7 @@ type PatternPageResult struct {
 type PatternResult struct {
 	ID          string         `json:"id"`
 	Name        string         `json:"name"`
-	UserID      string         `json:"user_id"`
+	Owner       string         `json:"owner"`
 	Location    *Location      `json:"location"`
 	PatternFile string         `json:"pattern_file"`
 	Visibility  string         `json:"visibility"`
@@ -348,7 +330,7 @@ type PerfProfile struct {
 	QPS               *int           `json:"qps,omitempty"`
 	TotalResults      *int           `json:"total_results,omitempty"`
 	UpdatedAt         *string        `json:"updated_at,omitempty"`
-	UserID            string         `json:"user_id"`
+	Owner             string         `json:"owner"`
 	RequestHeaders    *string        `json:"request_headers,omitempty"`
 	RequestCookies    *string        `json:"request_cookies,omitempty"`
 	RequestBody       *string        `json:"request_body,omitempty"`
@@ -642,71 +624,6 @@ func (e *MesheryControllerStatus) UnmarshalJSON(b []byte) error {
 }
 
 func (e MesheryControllerStatus) MarshalJSON() ([]byte, error) {
-	var buf bytes.Buffer
-	e.MarshalGQL(&buf)
-	return buf.Bytes(), nil
-}
-
-type Severity string
-
-const (
-	SeverityAlert         Severity = "alert"
-	SeverityCritical      Severity = "critical"
-	SeverityDebug         Severity = "debug"
-	SeverityEmergency     Severity = "emergency"
-	SeverityError         Severity = "error"
-	SeverityWarning       Severity = "warning"
-	SeverityInformational Severity = "informational"
-)
-
-var AllSeverity = []Severity{
-	SeverityAlert,
-	SeverityCritical,
-	SeverityDebug,
-	SeverityEmergency,
-	SeverityError,
-	SeverityWarning,
-	SeverityInformational,
-}
-
-func (e Severity) IsValid() bool {
-	switch e {
-	case SeverityAlert, SeverityCritical, SeverityDebug, SeverityEmergency, SeverityError, SeverityWarning, SeverityInformational:
-		return true
-	}
-	return false
-}
-
-func (e Severity) String() string {
-	return string(e)
-}
-
-func (e *Severity) UnmarshalGQL(v any) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = Severity(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid Severity", str)
-	}
-	return nil
-}
-
-func (e Severity) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-func (e *Severity) UnmarshalJSON(b []byte) error {
-	s, err := strconv.Unquote(string(b))
-	if err != nil {
-		return err
-	}
-	return e.UnmarshalGQL(s)
-}
-
-func (e Severity) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	e.MarshalGQL(&buf)
 	return buf.Bytes(), nil

@@ -5,14 +5,14 @@ aliases:
 - /extensibility/authorization
 ---
 
-Meshery features an extensible authorization system that offers the ability to deliver fine-grained access control across it's web-based user interface, [Meshery UI](/concepts/architecture).
+Meshery features an extensible authorization system that offers the ability to deliver fine-grained access control across it's web-based user interface, [Meshery UI]({{< ref "concepts/architecture/_index.md" >}}).
 
 ## Authorization Keys
 
-The extensible authorization system consists of a large set of keys. Each key uniquely represents a specific capability, for example, the ability to view a [Connection](/concepts/logical/connections), edit or delete a Connection. With the help of these keys, the system evaluates the permissions during runtime and renders UI both helping offer a secure management system and a customizable user experience.
+The extensible authorization system consists of a large set of keys. Each key uniquely represents a specific capability, for example, the ability to view a [Connection]({{< ref "concepts/logical/connections/index.md" >}}), edit or delete a Connection. With the help of these keys, the system evaluates the permissions during runtime and renders UI both helping offer a secure management system and a customizable user experience.
 
 {{% alert color="info" title="Note" %}}
-The extensible authorization system is available to both Local and Remote Providers. Depending upon your chosen [Remote Provider](/extensibility/providers), keys, clustering of them, assigning them to user groups, not just individual users or to user roles may be offered.
+The extensible authorization system is available to both Local and Remote Providers. Depending upon your chosen [Remote Provider]({{< ref "reference/extensibility/providers/index.md" >}}), keys, clustering of them, assigning them to user groups, not just individual users or to user roles may be offered.
 {{% /alert %}}
 
 ## Authorization Framework
@@ -42,7 +42,7 @@ It's important to understand not all pages uses CASL authorization, means even i
 
 ## Authorization using Local Provider
 
-Meshery's built-in identity provider, "Local" Provider, operates with a large set of predefined keys interspersed throughout Meshery UI and persisted in [Meshery Database](/concepts/architecture/database). These keys are used to evaluate the permissions of a given user and render the UI accordingly. The keys are grouped into three categories: `action`, `subject`, and `object`.
+Meshery's built-in identity provider, "Local" Provider, operates with a large set of predefined keys interspersed throughout Meshery UI and persisted in [Meshery Database]({{< ref "concepts/architecture/database/index.md" >}}). These keys are used to evaluate the permissions of a given user and render the UI accordingly. The keys are grouped into three categories: `action`, `subject`, and `object`.
 
 {{< discuss >}}
 

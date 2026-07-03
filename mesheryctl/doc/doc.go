@@ -86,12 +86,12 @@ func linkHandler(name string) string {
 	name = filepath.ToSlash(name)
 
 	// Find the reference root
-	idx := strings.Index(name, "reference/mesheryctl")
+	idx := strings.Index(name, "reference/references/mesheryctl")
 	if idx == -1 {
 		return ""
 	}
 
-	// Trim everything before reference/mesheryctl
+	// Trim everything before reference/references/mesheryctl
 	trimmed := name[idx:]
 
 	// Remove file extension
@@ -110,7 +110,7 @@ func linkHandler(name string) string {
 
 // docs is a function to generate the markdown docs for mesheryctl
 func doc() {
-	markDownPath := "../../docs/content/en/reference/mesheryctl/" // Path for docs
+	markDownPath := "../../docs/content/en/reference/references/mesheryctl/" // Path for docs
 	//yamlPath := "./internal/cli/root/testDoc/"
 
 	fmt.Println("Scanning available commands...")
@@ -240,7 +240,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 				}
 			})
 		}
-		buf.WriteString("Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.")
+		buf.WriteString(`Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.`)
 		buf.WriteString("\n")
 	}
 
@@ -356,10 +356,21 @@ func getManuallyAddedContentMap(filename string) (map[int]string, error) {
 	shortcodePattern := regexp.MustCompile(`\{\{<\s*([^>]+)\s*>\}\}`)
 	shortcodeMatches := shortcodePattern.FindAllStringSubmatch(content, -1)
 	for i, match := range shortcodeMatches {
+		shortcodeContent := strings.TrimSpace(match[1])
+		if isGeneratedShortcode(shortcodeContent) {
+			continue
+		}
 		// Store the shortcode content in the map with order as the key
-		manuallyAddedContentMap[i] = strings.TrimSpace(match[1])
+		manuallyAddedContentMap[i] = shortcodeContent
 	}
 	return manuallyAddedContentMap, nil
+}
+
+func isGeneratedShortcode(shortcodeContent string) bool {
+	return shortcodeContent == `ref "reference/references/mesheryctl/_index.md"` ||
+		shortcodeContent == `ref "reference/reference/mesheryctl/_index.md"` ||
+		shortcodeContent == `ref "project/contributing/cli/cli.md#preserving-manually-added-documentation"` ||
+		shortcodeContent == `ref "project/contributing/cli/index.md#preserving-manually-added-documentation"`
 }
 
 func main() {

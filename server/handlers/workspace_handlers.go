@@ -6,8 +6,8 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	openapi_types "github.com/oapi-codegen/runtime/types"
 
 	"github.com/meshery/meshery/server/models"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
@@ -30,13 +30,13 @@ func (p *workspacePayloadWire) UnmarshalJSON(data []byte) error {
 	type alias workspace.WorkspacePayload
 	aux := struct {
 		*alias
-		OrganizationIDCamel *openapi_types.UUID `json:"organizationId,omitempty"`
-		OrganizationIDSnake *openapi_types.UUID `json:"organization_id,omitempty"`
+		OrganizationIDCamel *uuid.UUID `json:"organizationId,omitempty"`
+		OrganizationIDSnake *uuid.UUID `json:"organization_id,omitempty"`
 	}{alias: (*alias)(&p.WorkspacePayload)}
 
 	// Zero OrganizationID so a reused receiver does not carry stale data
 	// when the next payload omits both spellings.
-	p.OrganizationID = openapi_types.UUID{}
+	p.OrganizationID = uuid.UUID{}
 
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
@@ -60,11 +60,11 @@ func (p *workspaceUpdatePayloadWire) UnmarshalJSON(data []byte) error {
 	type alias workspace.WorkspaceUpdatePayload
 	aux := struct {
 		*alias
-		OrganizationIDCamel *openapi_types.UUID `json:"organizationId,omitempty"`
-		OrganizationIDSnake *openapi_types.UUID `json:"organization_id,omitempty"`
+		OrganizationIDCamel *uuid.UUID `json:"organizationId,omitempty"`
+		OrganizationIDSnake *uuid.UUID `json:"organization_id,omitempty"`
 	}{alias: (*alias)(&p.WorkspaceUpdatePayload)}
 
-	p.OrganizationID = openapi_types.UUID{}
+	p.OrganizationID = uuid.UUID{}
 
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err

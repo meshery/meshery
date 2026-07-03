@@ -1,4 +1,4 @@
-FROM golang:1.25.5 AS meshery-server
+FROM golang:1.26.4 AS meshery-server
 ARG TOKEN
 ARG GIT_VERSION
 ARG GIT_COMMITSHA
@@ -17,7 +17,7 @@ RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSU
 # ran -- so the request fell through to the SPA HTML shell and the browser
 # refused to execute it (MIME 'text/plain'). Full source is copied because
 # server/policies/wasm/go.mod sets `replace github.com/meshery/meshery => ../../../`.
-FROM golang:1.25.5 AS meshery-wasm
+FROM golang:1.26.4 AS meshery-wasm
 WORKDIR /github.com/meshery/meshery
 ADD . .
 RUN mkdir -p /wasm-dist && cd server/policies/wasm && \
@@ -109,7 +109,7 @@ RUN apt-get update && apt-get install -y ca-certificates && apt-get clean && rm 
 RUN update-ca-certificates
 
 COPY ./server/cmd/server-config.env /app/server/cmd/server-config.env
-COPY ./server/meshmodel /app/server/meshmodel
+COPY ./models /app/models
 COPY ./server/permissions /app/server/permissions/
 COPY ./docs/data/catalog /app/docs/data/catalog/
 COPY --from=meshery-server /meshery /app/server/cmd/

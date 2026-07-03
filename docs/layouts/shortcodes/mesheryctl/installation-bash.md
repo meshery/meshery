@@ -36,7 +36,7 @@ To install or upgrade `mesheryctl` using `bash`, execute anyone of the following
 
 #### Option 4: Install `mesheryctl` binary and Meshery adapter(s)
 
-Install `mesheryctl` binary and include one or more [adapters](/concepts/architecture/adapters) to be deployed
+Install `mesheryctl` binary and include one or more [adapters]({{ relref . "concepts/architecture/adapters.md" }}) to be deployed
 
  <pre class="codeblock-pre">
  <div class="codeblock">

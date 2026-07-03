@@ -10,8 +10,10 @@ import {
   Avatar,
   useTheme,
   InfoOutlinedIcon,
+  FullScreenIcon,
+  FullScreenExitIcon,
 } from '@sistent/sistent';
-import { Delete as DeleteIcon, Fullscreen, Save, FullscreenExit } from '@/assets/icons';
+import { Delete as DeleteIcon, Save } from '@/assets/icons';
 import Moment from 'react-moment';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from '../CodeMirror';
@@ -258,7 +260,7 @@ function FiltersCard_({
                       })
                     }
                   >
-                    {fullScreen ? <FullscreenExit /> : <Fullscreen />}
+                    {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
                   </IconButton>
                 </Tooltip>
               </CardHeaderRight>

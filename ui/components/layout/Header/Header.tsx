@@ -4,6 +4,7 @@ import { NotificationDrawerButton } from '../NotificationCenter/index';
 import User from '../../User';
 import { successHandlerGenerator, errorHandlerGenerator } from '../../../utils/helpers/common';
 import { ConnectionChip } from '../../connections/ConnectionChip';
+import { normalizeStaticImagePath } from '../../../utils/fallback';
 import { useLazyGetSystemSyncQuery } from '../../../rtk-query/system';
 import { useUpdateConnectionStatusMutation } from '../../../rtk-query/connection';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '../../../utils/Enum';
@@ -34,6 +35,7 @@ import {
   useMediaQuery,
   SearchIcon,
   SettingsIcon,
+  FilterAllIcon,
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -117,10 +119,13 @@ const K8sContextConnectionChip_ = ({
             title={ctx?.name}
             onDelete={onDelete ? () => onDelete(ctx.name, ctx.connectionId) : null}
             handlePing={() => ping(ctx.name, ctx.server, ctx.connectionId)}
+            // Pass the raw icon (inline SVG markup from the connection
+            // definition's styles.svgColor, or a path) — ConnectionChip runs it
+            // through normalizeStaticImagePath, which turns SVG markup into a
+            // data URI. Prefixing with "/" here would corrupt the SVG markup.
             iconSrc={
-              connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
-                ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                : '/static/img/integrations/kubernetes.svg'
+              connectionMetadataState?.[CONNECTION_KINDS.KUBERNETES]?.icon ||
+              '/static/img/integrations/kubernetes.svg'
             }
             status={connectionStatus}
           />
@@ -138,11 +143,11 @@ function K8sContextMenu({
   setActiveContexts = () => {},
   searchContexts = () => {},
 }) {
-  const [anchorEl, setAnchorEl] = useState(false);
+  const theme = useTheme();
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
+  const anchorRef = React.useRef(null);
   // The dropdown slides up from below; its translate distance scales with the
   // number of context rows it will render so it ends up flush against the badge.
-  const transformProperty = 100 + (contexts?.contexts?.length || 0) * 3.125;
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
@@ -168,8 +173,7 @@ function K8sContextMenu({
     position: 'absolute',
     left: '-7rem',
     zIndex: '-1',
-    bottom: showFullContextMenu ? '40%' : '-110%',
-    transform: showFullContextMenu ? `translateY(${transformProperty}%)` : 'translateY(0)',
+    top: '60px',
   };
 
   const StateTransitionDetails = styled(Box)(({ theme }) => ({
@@ -243,11 +247,6 @@ function K8sContextMenu({
     }
   };
 
-  let open = Boolean(anchorEl);
-  if (showFullContextMenu) {
-    open = showFullContextMenu;
-  }
-
   const [isConnectionOpenModal, setIsConnectionOpenModal] = useState(false);
 
   return (
@@ -255,21 +254,14 @@ function K8sContextMenu({
       <div>
         <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS}>
           <IconButton
+            ref={anchorRef}
             aria-label="contexts"
             className="k8s-icon-button"
             onClick={(e) => {
               e.preventDefault();
               setShowFullContextMenu((prev) => !prev);
             }}
-            onMouseOver={(e) => {
-              e.preventDefault();
-              setAnchorEl(true);
-            }}
-            onMouseLeave={(e) => {
-              e.preventDefault();
-              setAnchorEl(false);
-            }}
-            aria-owns={open ? 'menu-list-grow' : undefined}
+            aria-controls={showFullContextMenu ? 'menu-list-grow' : undefined}
             aria-haspopup="true"
             style={{
               marginRight: '0.5rem',
@@ -279,10 +271,9 @@ function K8sContextMenu({
               <img
                 className="k8s-image"
                 src={
-                  connectionMetadataState &&
-                  connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
-                    ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                    : '/static/img/integrations/kubernetes.svg'
+                  normalizeStaticImagePath(
+                    connectionMetadataState?.[CONNECTION_KINDS.KUBERNETES]?.icon,
+                  ) || '/static/img/integrations/kubernetes.svg'
                 }
                 onError={(e) => {
                   e.target.src = '/static/img/integrations/kubernetes.svg';
@@ -296,14 +287,6 @@ function K8sContextMenu({
                   e.stopPropagation();
                   setShowFullContextMenu((prev) => !prev);
                 }}
-                onMouseOver={(e) => {
-                  e.stopPropagation();
-                  setAnchorEl(true);
-                }}
-                onMouseLeave={(e) => {
-                  e.stopPropagation();
-                  setAnchorEl(false);
-                }}
               >
                 {contexts?.totalCount || 0}
               </CBadge>
@@ -315,7 +298,7 @@ function K8sContextMenu({
           direction="down"
           style={styleSlider}
           timeout={400}
-          in={open}
+          in={showFullContextMenu}
           mountOnEnter
           unmountOnExit
         >
@@ -323,18 +306,13 @@ function K8sContextMenu({
             <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS} invert_action={['hide']}>
               <ClickAwayListener
                 onClickAway={(e) => {
-                  if (
-                    typeof e.target.className == 'string' &&
-                    !e.target.className?.includes('cbadge') &&
-                    e.target?.className != 'k8s-image' &&
-                    !e.target.className.includes('k8s-icon-button')
-                  ) {
-                    setAnchorEl(false);
-                    setShowFullContextMenu(false);
+                  if (anchorRef.current && anchorRef.current.contains(e.target as Node)) {
+                    return;
                   }
+                  setShowFullContextMenu(false);
                 }}
               >
-                <CMenuContainer>
+                <CMenuContainer id="menu-list-grow">
                   <div>
                     <TextField
                       id="search-ctx"
@@ -362,7 +340,7 @@ function K8sContextMenu({
                           marginTop: '1rem',
                         }}
                       >
-                        <div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
                           <>
                             <Checkbox
                               checked={activeContexts.includes('all')}
@@ -371,9 +349,18 @@ function K8sContextMenu({
                                   ? setActiveContexts([])
                                   : setActiveContexts('all')
                               }
+                              icon={
+                                <FilterAllIcon
+                                  fill={theme.palette.background.brand.default}
+                                  style={{ opacity: 0.4 }}
+                                />
+                              }
+                              inputProps={{ 'aria-label': 'select all contexts' }}
                             />
                           </>
-                          <span style={{ fontWeight: 'bolder' }}>select all</span>
+                          <span style={{ fontWeight: 'bolder', whiteSpace: 'nowrap' }}>
+                            select all
+                          </span>
                         </div>
                         <CustomTooltip title="Configure Connections">
                           <div>

@@ -47,13 +47,7 @@ type PerformanceTestParameters struct {
 	Duration string `json:"dur"`
 }
 
-// PerformanceProfilesAPIResponse response retruned by performance endpoint on meshery server
-type PerformanceProfilesAPIResponse struct {
-	Page       uint                 `json:"page"`
-	PageSize   uint                 `json:"pageSize"`
-	TotalCount uint                 `json:"totalCount"`
-	Profiles   []PerformanceProfile `json:"profiles,omitempty"`
-}
+type PerformanceProfilesAPIResponse = PerformanceProfilePage
 
 // PerformanceResultsAPIResponse response retruned by performance endpoint on meshery server
 type PerformanceResultsAPIResponse struct {
@@ -69,7 +63,7 @@ type PerformanceResult struct {
 	Name               string        `json:"name,omitempty"`
 	Mesh               string        `json:"mesh,omitempty"`
 	PerformanceProfile *core.Uuid    `json:"performanceProfile,omitempty"`
-	UserID             *core.Uuid    `json:"userId"`
+	Owner              *core.Uuid    `json:"owner"`
 	RunnerResults      RunnerResults `json:"runnerResults"`
 	ServerMetrics      interface{}   `json:"serverMetrics"`
 	ServerBoardConfig  interface{}   `json:"serverBoardConfig,omitempty"`

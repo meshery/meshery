@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
-	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -67,9 +66,9 @@ type ComplexityRoot struct {
 		ID              func(childComplexity int) int
 		Location        func(childComplexity int) int
 		Name            func(childComplexity int) int
+		Owner           func(childComplexity int) int
 		Type            func(childComplexity int) int
 		UpdatedAt       func(childComplexity int) int
-		UserID          func(childComplexity int) int
 		Visibility      func(childComplexity int) int
 	}
 
@@ -81,8 +80,8 @@ type ComplexityRoot struct {
 		ID             func(childComplexity int) int
 		Location       func(childComplexity int) int
 		Name           func(childComplexity int) int
+		Owner          func(childComplexity int) int
 		UpdatedAt      func(childComplexity int) int
-		UserID         func(childComplexity int) int
 		Visibility     func(childComplexity int) int
 	}
 
@@ -92,9 +91,9 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		Location    func(childComplexity int) int
 		Name        func(childComplexity int) int
+		Owner       func(childComplexity int) int
 		PatternFile func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
 		Visibility  func(childComplexity int) int
 	}
 
@@ -158,23 +157,6 @@ type ComplexityRoot struct {
 		Description func(childComplexity int) int
 	}
 
-	Event struct {
-		ActedUpon   func(childComplexity int) int
-		Action      func(childComplexity int) int
-		Category    func(childComplexity int) int
-		CreatedAt   func(childComplexity int) int
-		DeletedAt   func(childComplexity int) int
-		Description func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Metadata    func(childComplexity int) int
-		OperationID func(childComplexity int) int
-		Severity    func(childComplexity int) int
-		Status      func(childComplexity int) int
-		SystemID    func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
-	}
-
 	FilterPage struct {
 		Filters    func(childComplexity int) int
 		Page       func(childComplexity int) int
@@ -190,8 +172,8 @@ type ComplexityRoot struct {
 		ID             func(childComplexity int) int
 		Location       func(childComplexity int) int
 		Name           func(childComplexity int) int
+		Owner          func(childComplexity int) int
 		UpdatedAt      func(childComplexity int) int
-		UserID         func(childComplexity int) int
 		Visibility     func(childComplexity int) int
 	}
 
@@ -260,6 +242,7 @@ type ComplexityRoot struct {
 		Mesh               func(childComplexity int) int
 		MesheryID          func(childComplexity int) int
 		Name               func(childComplexity int) int
+		Owner              func(childComplexity int) int
 		PerformanceProfile func(childComplexity int) int
 		RunnerResults      func(childComplexity int) int
 		ServerBoardConfig  func(childComplexity int) int
@@ -267,7 +250,6 @@ type ComplexityRoot struct {
 		TestID             func(childComplexity int) int
 		TestStartTime      func(childComplexity int) int
 		UpdatedAt          func(childComplexity int) int
-		UserID             func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -307,10 +289,10 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		Location    func(childComplexity int) int
 		Name        func(childComplexity int) int
+		Owner       func(childComplexity int) int
 		PatternFile func(childComplexity int) int
 		Type        func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
 		Visibility  func(childComplexity int) int
 	}
 
@@ -339,6 +321,7 @@ type ComplexityRoot struct {
 		LoadGenerators    func(childComplexity int) int
 		Metadata          func(childComplexity int) int
 		Name              func(childComplexity int) int
+		Owner             func(childComplexity int) int
 		QPS               func(childComplexity int) int
 		RequestBody       func(childComplexity int) int
 		RequestCookies    func(childComplexity int) int
@@ -346,7 +329,6 @@ type ComplexityRoot struct {
 		ServiceMesh       func(childComplexity int) int
 		TotalResults      func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
-		UserID            func(childComplexity int) int
 	}
 
 	Query struct {
@@ -378,7 +360,6 @@ type ComplexityRoot struct {
 	Subscription struct {
 		SubscribeClusterResources         func(childComplexity int, k8scontextIDs []string, namespace string) int
 		SubscribeConfiguration            func(childComplexity int, patternSelector model.PageFilter, filterSelector model.PageFilter) int
-		SubscribeEvents                   func(childComplexity int) int
 		SubscribeK8sContext               func(childComplexity int, selector model.PageFilter) int
 		SubscribeMeshModelSummary         func(childComplexity int, selector model.MeshModelSummarySelector) int
 		SubscribeMesheryControllersStatus func(childComplexity int, connectionIDs []string) int
@@ -425,7 +406,6 @@ type SubscriptionResolver interface {
 	SubscribeClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error)
 	SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error)
 	SubscribeMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error)
-	SubscribeEvents(ctx context.Context) (<-chan *model.Event, error)
 }
 
 type executableSchema struct {
@@ -515,6 +495,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.ApplicationResult.Name(childComplexity), true
+	case "ApplicationResult.owner":
+		if e.complexity.ApplicationResult.Owner == nil {
+			break
+		}
+
+		return e.complexity.ApplicationResult.Owner(childComplexity), true
 	case "ApplicationResult.type":
 		if e.complexity.ApplicationResult.Type == nil {
 			break
@@ -527,12 +513,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.ApplicationResult.UpdatedAt(childComplexity), true
-	case "ApplicationResult.user_id":
-		if e.complexity.ApplicationResult.UserID == nil {
-			break
-		}
-
-		return e.complexity.ApplicationResult.UserID(childComplexity), true
 	case "ApplicationResult.visibility":
 		if e.complexity.ApplicationResult.Visibility == nil {
 			break
@@ -582,18 +562,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.CatalogFilter.Name(childComplexity), true
+	case "CatalogFilter.owner":
+		if e.complexity.CatalogFilter.Owner == nil {
+			break
+		}
+
+		return e.complexity.CatalogFilter.Owner(childComplexity), true
 	case "CatalogFilter.updated_at":
 		if e.complexity.CatalogFilter.UpdatedAt == nil {
 			break
 		}
 
 		return e.complexity.CatalogFilter.UpdatedAt(childComplexity), true
-	case "CatalogFilter.user_id":
-		if e.complexity.CatalogFilter.UserID == nil {
-			break
-		}
-
-		return e.complexity.CatalogFilter.UserID(childComplexity), true
 	case "CatalogFilter.visibility":
 		if e.complexity.CatalogFilter.Visibility == nil {
 			break
@@ -631,6 +611,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.CatalogPattern.Name(childComplexity), true
+	case "CatalogPattern.owner":
+		if e.complexity.CatalogPattern.Owner == nil {
+			break
+		}
+
+		return e.complexity.CatalogPattern.Owner(childComplexity), true
 	case "CatalogPattern.pattern_file":
 		if e.complexity.CatalogPattern.PatternFile == nil {
 			break
@@ -643,12 +629,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.CatalogPattern.UpdatedAt(childComplexity), true
-	case "CatalogPattern.user_id":
-		if e.complexity.CatalogPattern.UserID == nil {
-			break
-		}
-
-		return e.complexity.CatalogPattern.UserID(childComplexity), true
 	case "CatalogPattern.visibility":
 		if e.complexity.CatalogPattern.Visibility == nil {
 			break
@@ -863,91 +843,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Error.Description(childComplexity), true
 
-	case "Event.actedUpon":
-		if e.complexity.Event.ActedUpon == nil {
-			break
-		}
-
-		return e.complexity.Event.ActedUpon(childComplexity), true
-	case "Event.action":
-		if e.complexity.Event.Action == nil {
-			break
-		}
-
-		return e.complexity.Event.Action(childComplexity), true
-	case "Event.category":
-		if e.complexity.Event.Category == nil {
-			break
-		}
-
-		return e.complexity.Event.Category(childComplexity), true
-	case "Event.createdAt":
-		if e.complexity.Event.CreatedAt == nil {
-			break
-		}
-
-		return e.complexity.Event.CreatedAt(childComplexity), true
-	case "Event.deletedAt":
-		if e.complexity.Event.DeletedAt == nil {
-			break
-		}
-
-		return e.complexity.Event.DeletedAt(childComplexity), true
-	case "Event.description":
-		if e.complexity.Event.Description == nil {
-			break
-		}
-
-		return e.complexity.Event.Description(childComplexity), true
-	case "Event.id":
-		if e.complexity.Event.ID == nil {
-			break
-		}
-
-		return e.complexity.Event.ID(childComplexity), true
-	case "Event.metadata":
-		if e.complexity.Event.Metadata == nil {
-			break
-		}
-
-		return e.complexity.Event.Metadata(childComplexity), true
-	case "Event.operationID":
-		if e.complexity.Event.OperationID == nil {
-			break
-		}
-
-		return e.complexity.Event.OperationID(childComplexity), true
-	case "Event.severity":
-		if e.complexity.Event.Severity == nil {
-			break
-		}
-
-		return e.complexity.Event.Severity(childComplexity), true
-	case "Event.status":
-		if e.complexity.Event.Status == nil {
-			break
-		}
-
-		return e.complexity.Event.Status(childComplexity), true
-	case "Event.systemID":
-		if e.complexity.Event.SystemID == nil {
-			break
-		}
-
-		return e.complexity.Event.SystemID(childComplexity), true
-	case "Event.updatedAt":
-		if e.complexity.Event.UpdatedAt == nil {
-			break
-		}
-
-		return e.complexity.Event.UpdatedAt(childComplexity), true
-	case "Event.userID":
-		if e.complexity.Event.UserID == nil {
-			break
-		}
-
-		return e.complexity.Event.UserID(childComplexity), true
-
 	case "FilterPage.filters":
 		if e.complexity.FilterPage.Filters == nil {
 			break
@@ -1015,18 +910,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.FilterResult.Name(childComplexity), true
+	case "FilterResult.owner":
+		if e.complexity.FilterResult.Owner == nil {
+			break
+		}
+
+		return e.complexity.FilterResult.Owner(childComplexity), true
 	case "FilterResult.updated_at":
 		if e.complexity.FilterResult.UpdatedAt == nil {
 			break
 		}
 
 		return e.complexity.FilterResult.UpdatedAt(childComplexity), true
-	case "FilterResult.user_id":
-		if e.complexity.FilterResult.UserID == nil {
-			break
-		}
-
-		return e.complexity.FilterResult.UserID(childComplexity), true
 	case "FilterResult.visibility":
 		if e.complexity.FilterResult.Visibility == nil {
 			break
@@ -1265,6 +1160,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.MesheryResult.Name(childComplexity), true
+	case "MesheryResult.owner":
+		if e.complexity.MesheryResult.Owner == nil {
+			break
+		}
+
+		return e.complexity.MesheryResult.Owner(childComplexity), true
 	case "MesheryResult.performance_profile":
 		if e.complexity.MesheryResult.PerformanceProfile == nil {
 			break
@@ -1307,12 +1208,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.MesheryResult.UpdatedAt(childComplexity), true
-	case "MesheryResult.user_id":
-		if e.complexity.MesheryResult.UserID == nil {
-			break
-		}
-
-		return e.complexity.MesheryResult.UserID(childComplexity), true
 
 	case "Mutation.changeAdapterStatus":
 		if e.complexity.Mutation.ChangeAdapterStatus == nil {
@@ -1455,6 +1350,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PatternResult.Name(childComplexity), true
+	case "PatternResult.owner":
+		if e.complexity.PatternResult.Owner == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.Owner(childComplexity), true
 	case "PatternResult.pattern_file":
 		if e.complexity.PatternResult.PatternFile == nil {
 			break
@@ -1473,12 +1374,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PatternResult.UpdatedAt(childComplexity), true
-	case "PatternResult.user_id":
-		if e.complexity.PatternResult.UserID == nil {
-			break
-		}
-
-		return e.complexity.PatternResult.UserID(childComplexity), true
 	case "PatternResult.visibility":
 		if e.complexity.PatternResult.Visibility == nil {
 			break
@@ -1596,6 +1491,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PerfProfile.Name(childComplexity), true
+	case "PerfProfile.owner":
+		if e.complexity.PerfProfile.Owner == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.Owner(childComplexity), true
 	case "PerfProfile.qps":
 		if e.complexity.PerfProfile.QPS == nil {
 			break
@@ -1638,12 +1539,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PerfProfile.UpdatedAt(childComplexity), true
-	case "PerfProfile.user_id":
-		if e.complexity.PerfProfile.UserID == nil {
-			break
-		}
-
-		return e.complexity.PerfProfile.UserID(childComplexity), true
 
 	case "Query.fetchAllResults":
 		if e.complexity.Query.FetchAllResults == nil {
@@ -1879,12 +1774,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Subscription.SubscribeConfiguration(childComplexity, args["patternSelector"].(model.PageFilter), args["filterSelector"].(model.PageFilter)), true
-	case "Subscription.subscribeEvents":
-		if e.complexity.Subscription.SubscribeEvents == nil {
-			break
-		}
-
-		return e.complexity.Subscription.SubscribeEvents(childComplexity), true
 	case "Subscription.subscribeK8sContext":
 		if e.complexity.Subscription.SubscribeK8sContext == nil {
 			break
@@ -2205,35 +2094,6 @@ type Error {
   description: String!
 }
 
-# ================= EVENTS =================
-
-type Event {
-  id: ID!,
-  userID: ID!,
-  actedUpon: ID!,
-  operationID: ID!,
-  systemID: ID!,
-  severity: Severity!,
-  action: String!,
-  status: String!,
-  category: String!,
-  description: String!,
-  metadata: Map,
-  createdAt: Time!,
-  updatedAt: Time!,
-  deletedAt: Time
-}
-
-enum Severity {
-  alert,
-  critical,
-  debug,
-  emergency,
-  error,
-  warning,
-  informational
-}
-
 # ================ DASHBOARD ================
 
 type Resource {
@@ -2436,7 +2296,7 @@ type ApplicationResult {
   name: String!
   application_file: String!
   type: NullString!
-  user_id: String!
+  owner: String!
   location: Location!
   visibility: String!
   created_at: String
@@ -2462,7 +2322,7 @@ type FilterResult {
   name: String!
   filter_file: String!
   filter_resource: String!
-  user_id: String!
+  owner: String!
   location: Location!
   visibility: String!
   catalog_data: Map
@@ -2474,7 +2334,7 @@ type CatalogFilter {
   id: ID!
   name: String!
   filter_file: String!
-  user_id: String!
+  owner: String!
   location: Location!
   filter_resource: String!
   visibility: String!
@@ -2495,7 +2355,7 @@ type PatternPageResult {
 type PatternResult {
   id: ID!
   name: String!
-  user_id: String!
+  owner: String!
   location: Location!
   pattern_file: String!
   visibility: String!
@@ -2517,7 +2377,7 @@ type Location {
 type CatalogPattern {
   id: ID!
   name: String!
-  user_id: String!
+  owner: String!
   pattern_file: String!
   location: Location!
   visibility: String!
@@ -2556,7 +2416,7 @@ type PerfProfile {
   qps: Int
   total_results: Int
   updated_at: String
-  user_id: String!
+  owner: String!
   request_headers: String
   request_cookies: String
   request_body: String
@@ -2575,7 +2435,7 @@ type MesheryResult {
   server_metrics: String
   server_board_config: String
   test_start_time: String
-  user_id: String
+  owner: String
   updated_at: String
   created_at: String
 }
@@ -2782,9 +2642,6 @@ type Subscription {
   subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
 
   subscribeMeshModelSummary(selector: MeshModelSummarySelector!) : MeshModelSummary!
-
-  # Publish events to user
-  subscribeEvents : Event!
 }
 
 type KctlDescribeDetails {
@@ -3372,8 +3229,8 @@ func (ec *executionContext) fieldContext_ApplicationPage_applications(_ context.
 				return ec.fieldContext_ApplicationResult_application_file(ctx, field)
 			case "type":
 				return ec.fieldContext_ApplicationResult_type(ctx, field)
-			case "user_id":
-				return ec.fieldContext_ApplicationResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_ApplicationResult_owner(ctx, field)
 			case "location":
 				return ec.fieldContext_ApplicationResult_location(ctx, field)
 			case "visibility":
@@ -3511,14 +3368,14 @@ func (ec *executionContext) fieldContext_ApplicationResult_type(_ context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _ApplicationResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _ApplicationResult_owner(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_ApplicationResult_user_id,
+		ec.fieldContext_ApplicationResult_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -3527,7 +3384,7 @@ func (ec *executionContext) _ApplicationResult_user_id(ctx context.Context, fiel
 	)
 }
 
-func (ec *executionContext) fieldContext_ApplicationResult_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ApplicationResult_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ApplicationResult",
 		Field:      field,
@@ -3753,14 +3610,14 @@ func (ec *executionContext) fieldContext_CatalogFilter_filter_file(_ context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _CatalogFilter_user_id(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
+func (ec *executionContext) _CatalogFilter_owner(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_CatalogFilter_user_id,
+		ec.fieldContext_CatalogFilter_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -3769,7 +3626,7 @@ func (ec *executionContext) _CatalogFilter_user_id(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_CatalogFilter_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_CatalogFilter_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CatalogFilter",
 		Field:      field,
@@ -4024,14 +3881,14 @@ func (ec *executionContext) fieldContext_CatalogPattern_name(_ context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _CatalogPattern_user_id(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
+func (ec *executionContext) _CatalogPattern_owner(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_CatalogPattern_user_id,
+		ec.fieldContext_CatalogPattern_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -4040,7 +3897,7 @@ func (ec *executionContext) _CatalogPattern_user_id(ctx context.Context, field g
 	)
 }
 
-func (ec *executionContext) fieldContext_CatalogPattern_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_CatalogPattern_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CatalogPattern",
 		Field:      field,
@@ -5298,412 +5155,6 @@ func (ec *executionContext) fieldContext_Error_description(_ context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Event_id(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_id,
-		func(ctx context.Context) (any, error) {
-			return obj.ID, nil
-		},
-		nil,
-		ec.marshalNID2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_userID(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_userID,
-		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
-		},
-		nil,
-		ec.marshalNID2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_userID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_actedUpon(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_actedUpon,
-		func(ctx context.Context) (any, error) {
-			return obj.ActedUpon, nil
-		},
-		nil,
-		ec.marshalNID2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_actedUpon(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_operationID(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_operationID,
-		func(ctx context.Context) (any, error) {
-			return obj.OperationID, nil
-		},
-		nil,
-		ec.marshalNID2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_operationID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_systemID(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_systemID,
-		func(ctx context.Context) (any, error) {
-			return obj.SystemID, nil
-		},
-		nil,
-		ec.marshalNID2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_systemID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_severity(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_severity,
-		func(ctx context.Context) (any, error) {
-			return obj.Severity, nil
-		},
-		nil,
-		ec.marshalNSeverity2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐSeverity,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_severity(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Severity does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_action(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_action,
-		func(ctx context.Context) (any, error) {
-			return obj.Action, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_action(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_status(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_status,
-		func(ctx context.Context) (any, error) {
-			return obj.Status, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_category(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_category,
-		func(ctx context.Context) (any, error) {
-			return obj.Category, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_category(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_description(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_description,
-		func(ctx context.Context) (any, error) {
-			return obj.Description, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_metadata(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_metadata,
-		func(ctx context.Context) (any, error) {
-			return obj.Metadata, nil
-		},
-		nil,
-		ec.marshalOMap2map,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_metadata(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Map does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_createdAt,
-		func(ctx context.Context) (any, error) {
-			return obj.CreatedAt, nil
-		},
-		nil,
-		ec.marshalNTime2timeᚐTime,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_updatedAt,
-		func(ctx context.Context) (any, error) {
-			return obj.UpdatedAt, nil
-		},
-		nil,
-		ec.marshalNTime2timeᚐTime,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_deletedAt,
-		func(ctx context.Context) (any, error) {
-			return obj.DeletedAt, nil
-		},
-		nil,
-		ec.marshalOTime2ᚖtimeᚐTime,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_deletedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _FilterPage_page(ctx context.Context, field graphql.CollectedField, obj *model.FilterPage) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -5823,8 +5274,8 @@ func (ec *executionContext) fieldContext_FilterPage_filters(_ context.Context, f
 				return ec.fieldContext_FilterResult_filter_file(ctx, field)
 			case "filter_resource":
 				return ec.fieldContext_FilterResult_filter_resource(ctx, field)
-			case "user_id":
-				return ec.fieldContext_FilterResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_FilterResult_owner(ctx, field)
 			case "location":
 				return ec.fieldContext_FilterResult_location(ctx, field)
 			case "visibility":
@@ -5958,14 +5409,14 @@ func (ec *executionContext) fieldContext_FilterResult_filter_resource(_ context.
 	return fc, nil
 }
 
-func (ec *executionContext) _FilterResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _FilterResult_owner(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_FilterResult_user_id,
+		ec.fieldContext_FilterResult_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -5974,7 +5425,7 @@ func (ec *executionContext) _FilterResult_user_id(ctx context.Context, field gra
 	)
 }
 
-func (ec *executionContext) fieldContext_FilterResult_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_FilterResult_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "FilterResult",
 		Field:      field,
@@ -7398,14 +6849,14 @@ func (ec *executionContext) fieldContext_MesheryResult_test_start_time(_ context
 	return fc, nil
 }
 
-func (ec *executionContext) _MesheryResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.MesheryResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _MesheryResult_owner(ctx context.Context, field graphql.CollectedField, obj *model.MesheryResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_MesheryResult_user_id,
+		ec.fieldContext_MesheryResult_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalOString2ᚖstring,
@@ -7414,7 +6865,7 @@ func (ec *executionContext) _MesheryResult_user_id(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_MesheryResult_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_MesheryResult_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "MesheryResult",
 		Field:      field,
@@ -7946,8 +7397,8 @@ func (ec *executionContext) fieldContext_PatternPageResult_patterns(_ context.Co
 				return ec.fieldContext_PatternResult_id(ctx, field)
 			case "name":
 				return ec.fieldContext_PatternResult_name(ctx, field)
-			case "user_id":
-				return ec.fieldContext_PatternResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_PatternResult_owner(ctx, field)
 			case "location":
 				return ec.fieldContext_PatternResult_location(ctx, field)
 			case "pattern_file":
@@ -8031,14 +7482,14 @@ func (ec *executionContext) fieldContext_PatternResult_name(_ context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _PatternResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _PatternResult_owner(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PatternResult_user_id,
+		ec.fieldContext_PatternResult_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -8047,7 +7498,7 @@ func (ec *executionContext) _PatternResult_user_id(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_PatternResult_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PatternResult_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PatternResult",
 		Field:      field,
@@ -8470,8 +7921,8 @@ func (ec *executionContext) fieldContext_PerfPageProfiles_profiles(_ context.Con
 				return ec.fieldContext_PerfProfile_total_results(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_PerfProfile_updated_at(ctx, field)
-			case "user_id":
-				return ec.fieldContext_PerfProfile_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_PerfProfile_owner(ctx, field)
 			case "request_headers":
 				return ec.fieldContext_PerfProfile_request_headers(ctx, field)
 			case "request_cookies":
@@ -8620,8 +8071,8 @@ func (ec *executionContext) fieldContext_PerfPageResult_results(_ context.Contex
 				return ec.fieldContext_MesheryResult_server_board_config(ctx, field)
 			case "test_start_time":
 				return ec.fieldContext_MesheryResult_test_start_time(ctx, field)
-			case "user_id":
-				return ec.fieldContext_MesheryResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_MesheryResult_owner(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_MesheryResult_updated_at(ctx, field)
 			case "created_at":
@@ -8952,14 +8403,14 @@ func (ec *executionContext) fieldContext_PerfProfile_updated_at(_ context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _PerfProfile_user_id(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+func (ec *executionContext) _PerfProfile_owner(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PerfProfile_user_id,
+		ec.fieldContext_PerfProfile_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -8968,7 +8419,7 @@ func (ec *executionContext) _PerfProfile_user_id(ctx context.Context, field grap
 	)
 }
 
-func (ec *executionContext) fieldContext_PerfProfile_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PerfProfile_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PerfProfile",
 		Field:      field,
@@ -9608,8 +9059,8 @@ func (ec *executionContext) fieldContext_Query_getPerfResult(ctx context.Context
 				return ec.fieldContext_MesheryResult_server_board_config(ctx, field)
 			case "test_start_time":
 				return ec.fieldContext_MesheryResult_test_start_time(ctx, field)
-			case "user_id":
-				return ec.fieldContext_MesheryResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_MesheryResult_owner(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_MesheryResult_updated_at(ctx, field)
 			case "created_at":
@@ -9912,8 +9363,8 @@ func (ec *executionContext) fieldContext_Query_fetchPatternCatalogContent(ctx co
 				return ec.fieldContext_CatalogPattern_id(ctx, field)
 			case "name":
 				return ec.fieldContext_CatalogPattern_name(ctx, field)
-			case "user_id":
-				return ec.fieldContext_CatalogPattern_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_CatalogPattern_owner(ctx, field)
 			case "pattern_file":
 				return ec.fieldContext_CatalogPattern_pattern_file(ctx, field)
 			case "location":
@@ -9975,8 +9426,8 @@ func (ec *executionContext) fieldContext_Query_fetchFilterCatalogContent(ctx con
 				return ec.fieldContext_CatalogFilter_name(ctx, field)
 			case "filter_file":
 				return ec.fieldContext_CatalogFilter_filter_file(ctx, field)
-			case "user_id":
-				return ec.fieldContext_CatalogFilter_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_CatalogFilter_owner(ctx, field)
 			case "location":
 				return ec.fieldContext_CatalogFilter_location(ctx, field)
 			case "filter_resource":
@@ -10619,65 +10070,6 @@ func (ec *executionContext) fieldContext_Subscription_subscribeMeshModelSummary(
 	if fc.Args, err = ec.field_Subscription_subscribeMeshModelSummary_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Subscription_subscribeEvents(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	return graphql.ResolveFieldStream(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Subscription_subscribeEvents,
-		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Subscription().SubscribeEvents(ctx)
-		},
-		nil,
-		ec.marshalNEvent2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐEvent,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Subscription_subscribeEvents(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscription",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Event_id(ctx, field)
-			case "userID":
-				return ec.fieldContext_Event_userID(ctx, field)
-			case "actedUpon":
-				return ec.fieldContext_Event_actedUpon(ctx, field)
-			case "operationID":
-				return ec.fieldContext_Event_operationID(ctx, field)
-			case "systemID":
-				return ec.fieldContext_Event_systemID(ctx, field)
-			case "severity":
-				return ec.fieldContext_Event_severity(ctx, field)
-			case "action":
-				return ec.fieldContext_Event_action(ctx, field)
-			case "status":
-				return ec.fieldContext_Event_status(ctx, field)
-			case "category":
-				return ec.fieldContext_Event_category(ctx, field)
-			case "description":
-				return ec.fieldContext_Event_description(ctx, field)
-			case "metadata":
-				return ec.fieldContext_Event_metadata(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Event_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Event_updatedAt(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_Event_deletedAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Event", field.Name)
-		},
 	}
 	return fc, nil
 }
@@ -12761,8 +12153,8 @@ func (ec *executionContext) _ApplicationResult(ctx context.Context, sel ast.Sele
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._ApplicationResult_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._ApplicationResult_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -12829,8 +12221,8 @@ func (ec *executionContext) _CatalogFilter(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._CatalogFilter_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._CatalogFilter_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -12899,8 +12291,8 @@ func (ec *executionContext) _CatalogPattern(ctx context.Context, sel ast.Selecti
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._CatalogPattern_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._CatalogPattern_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -13380,104 +12772,6 @@ func (ec *executionContext) _Error(ctx context.Context, sel ast.SelectionSet, ob
 	return out
 }
 
-var eventImplementors = []string{"Event"}
-
-func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, obj *model.Event) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, eventImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Event")
-		case "id":
-			out.Values[i] = ec._Event_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "userID":
-			out.Values[i] = ec._Event_userID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "actedUpon":
-			out.Values[i] = ec._Event_actedUpon(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "operationID":
-			out.Values[i] = ec._Event_operationID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "systemID":
-			out.Values[i] = ec._Event_systemID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "severity":
-			out.Values[i] = ec._Event_severity(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "action":
-			out.Values[i] = ec._Event_action(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "status":
-			out.Values[i] = ec._Event_status(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "category":
-			out.Values[i] = ec._Event_category(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "description":
-			out.Values[i] = ec._Event_description(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "metadata":
-			out.Values[i] = ec._Event_metadata(ctx, field, obj)
-		case "createdAt":
-			out.Values[i] = ec._Event_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "updatedAt":
-			out.Values[i] = ec._Event_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "deletedAt":
-			out.Values[i] = ec._Event_deletedAt(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
 var filterPageImplementors = []string{"FilterPage"}
 
 func (ec *executionContext) _FilterPage(ctx context.Context, sel ast.SelectionSet, obj *model.FilterPage) graphql.Marshaler {
@@ -13560,8 +12854,8 @@ func (ec *executionContext) _FilterResult(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._FilterResult_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._FilterResult_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -14080,8 +13374,8 @@ func (ec *executionContext) _MesheryResult(ctx context.Context, sel ast.Selectio
 			out.Values[i] = ec._MesheryResult_server_board_config(ctx, field, obj)
 		case "test_start_time":
 			out.Values[i] = ec._MesheryResult_test_start_time(ctx, field, obj)
-		case "user_id":
-			out.Values[i] = ec._MesheryResult_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._MesheryResult_owner(ctx, field, obj)
 		case "updated_at":
 			out.Values[i] = ec._MesheryResult_updated_at(ctx, field, obj)
 		case "created_at":
@@ -14376,8 +13670,8 @@ func (ec *executionContext) _PatternResult(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._PatternResult_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._PatternResult_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -14578,8 +13872,8 @@ func (ec *executionContext) _PerfProfile(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._PerfProfile_total_results(ctx, field, obj)
 		case "updated_at":
 			out.Values[i] = ec._PerfProfile_updated_at(ctx, field, obj)
-		case "user_id":
-			out.Values[i] = ec._PerfProfile_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._PerfProfile_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -15129,8 +14423,6 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_subscribeK8sContext(ctx, fields[0])
 	case "subscribeMeshModelSummary":
 		return ec._Subscription_subscribeMeshModelSummary(ctx, fields[0])
-	case "subscribeEvents":
-		return ec._Subscription_subscribeEvents(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
@@ -15964,20 +15256,6 @@ func (ec *executionContext) marshalNDataPlane2ᚖgithubᚗcomᚋmesheryᚋmesher
 	return ec._DataPlane(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNEvent2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐEvent(ctx context.Context, sel ast.SelectionSet, v model.Event) graphql.Marshaler {
-	return ec._Event(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNEvent2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐEvent(ctx context.Context, sel ast.SelectionSet, v *model.Event) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._Event(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v any) (string, error) {
 	res, err := graphql.UnmarshalID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -16378,16 +15656,6 @@ func (ec *executionContext) marshalNResource2ᚖgithubᚗcomᚋmesheryᚋmeshery
 	return ec._Resource(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNSeverity2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐSeverity(ctx context.Context, v any) (model.Severity, error) {
-	var res model.Severity
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNSeverity2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐSeverity(ctx context.Context, sel ast.SelectionSet, v model.Severity) graphql.Marshaler {
-	return v
-}
-
 func (ec *executionContext) unmarshalNStatus2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx context.Context, v any) (model.Status, error) {
 	var res model.Status
 	err := res.UnmarshalGQL(v)
@@ -16450,22 +15718,6 @@ func (ec *executionContext) marshalNTelemetryComp2ᚕᚖgithubᚗcomᚋmeshery�
 	wg.Wait()
 
 	return ret
-}
-
-func (ec *executionContext) unmarshalNTime2timeᚐTime(ctx context.Context, v any) (time.Time, error) {
-	res, err := graphql.UnmarshalTime(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
-	_ = sel
-	res := graphql.MarshalTime(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
@@ -17435,24 +16687,6 @@ func (ec *executionContext) marshalOTelemetryComp2ᚖgithubᚗcomᚋmesheryᚋme
 		return graphql.Null
 	}
 	return ec._TelemetryComp(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOTime2ᚖtimeᚐTime(ctx context.Context, v any) (*time.Time, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := graphql.UnmarshalTime(v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOTime2ᚖtimeᚐTime(ctx context.Context, sel ast.SelectionSet, v *time.Time) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	_ = sel
-	_ = ctx
-	res := graphql.MarshalTime(*v)
-	return res
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

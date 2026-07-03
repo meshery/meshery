@@ -2,6 +2,7 @@
 title: Frequently Asked Questions
 description: General commonly asked questions and answers about Meshery.
 categories: [project]
+weight: 100
 ---
 
 ## General FAQs
@@ -39,14 +40,14 @@ categories: [project]
     <summary>
     <h6>Question: Is Meshery an open source project?</h6>
 </summary>
-<p><strong>Answer:</strong> Yes, Meshery is a Cloud Native Computing Foundation (CNCF) project and is licensed under Apache v2. As an internal developer platform, Meshery is <a href="/extensibility">highly extensible</a>, offering multiple forms of extension points within which users and partners can customize and extend Meshery's functionality.</p>
+<p><strong>Answer:</strong> Yes, Meshery is a Cloud Native Computing Foundation (CNCF) project and is licensed under Apache v2. As an internal developer platform, Meshery is <a href="{{< ref "reference/extensibility/_index.md" >}}">highly extensible</a>, offering multiple forms of extension points within which users and partners can customize and extend Meshery's functionality.</p>
 </details>
 
 <details>
     <summary>
 <h6>Question: Why should I use Meshery?</h6>
 </summary>
-<p><strong>Answer:</strong> Meshery is a powerful tool for managing Kubernetes infrastructure. It seamlessly integrates with hundreds of tools and offers extensibility through many different <a href="/extensibility#extension-points">extension points</a>. With Meshery, you can easily discover your environment, collaboratively manage multiple Kubernetes clusters, connect your Git and Helm repos, and analyze app and infra performance.</p>
+<p><strong>Answer:</strong> Meshery is a powerful tool for managing Kubernetes infrastructure. It seamlessly integrates with hundreds of tools and offers extensibility through many different <a href="{{< ref "reference/extensibility/_index.md#extension-points" >}}">extension points</a>. With Meshery, you can easily discover your environment, collaboratively manage multiple Kubernetes clusters, connect your Git and Helm repos, and analyze app and infra performance.</p>
 </details>
 
 
@@ -63,12 +64,12 @@ categories: [project]
 <summary>
 <h6>Question: How do I install Meshery?</h6>
 </summary>
-<p><strong>Answer:</strong> Meshery runs on a <a href="/installation">number of platforms</a>. You are encouraged to use <code>mesheryctl</code> to configure and control Meshery deployments. Install `mesheryctl` using any of these options:</p>
+<p><strong>Answer:</strong> Meshery runs on a <a href="{{< ref "installation/_index.md" >}}">number of platforms</a>. You are encouraged to use <code>mesheryctl</code> to configure and control Meshery deployments. Install `mesheryctl` using any of these options:</p>
 
 <ul>
-<li><a href="/installation/linux-mac/bash">Bash user</a></li>
-<li><a href="/installation/linux-mac/brew">Brew user</a></li>
-<li><a href="/installation/windows/scoop">Scoop user</a></li>
+<li><a href="{{< ref "installation/mesheryctl/linux-mac/bash.md" >}}">Bash user</a></li>
+<li><a href="{{< ref "installation/mesheryctl/linux-mac/brew.md" >}}">Brew user</a></li>
+<li><a href="{{< ref "installation/mesheryctl/windows/scoop.md" >}}">Scoop user</a></li>
 <li><a href="https://github.com/meshery/meshery/releases/latest">Direct download</a></li>
 </ul>
 </details>
@@ -83,12 +84,12 @@ categories: [project]
 <li>Configure and manage non-Kubernetes infrastructure (like AWS and GCP services)</li>
 <li>Use Kubernetes operators to manage Cloud services outside of Kubernetes (e.g. AWS EC2)</li>
 </ul>
-<p>See <a href="/extensibility/integrations">supported cloud integrations</a> for more details.</p>
+<p>See <a href="{{< ref "reference/extensibility/api.md" >}}">supported cloud integrations</a> for more details.</p>
 </details>
 
 <details>
 <summary><h6>Question: What architecture does Meshery have?</h6></summary>
-<p><strong>Answer:</strong> An extensible architecture. There are several components and languages, and they have different purposes. See Meshery's <a href="/concepts/architecture">Architecture</a>.</p>
+<p><strong>Answer:</strong> An extensible architecture. There are several components and languages, and they have different purposes. See Meshery's <a href="{{< ref "concepts/architecture/_index.md" >}}">Architecture</a>.</p>
 </details>
 
 <details>
@@ -102,7 +103,7 @@ categories: [project]
 <summary>
 <h6>Question: What systems can I deploy Meshery onto?</h6>
 </summary>
-<strong>Answer:</strong> Many. See Meshery's <a href="/installation/compatibility-matrix">Compatibility Matrix</a>.
+<strong>Answer:</strong> Many. See Meshery's <a href="{{< ref "project/compatibility-matrix/compatibility-matrix.md" >}}">Compatibility Matrix</a>.
 </details>
 
 <details>
@@ -145,7 +146,7 @@ categories: [project]
 <li>If you don't see the specific entities in Meshery UI, you may choose to reset Meshery's database. This option is in the <code>Reset System</code> Tab in <code>Settings</code> page.</li>
 </ul>
 
-<p>Note: You can also verify the health of your system using <a href="/reference/mesheryctl/system/check">mesheryctl system check</a></p>
+<p>Note: You can also verify the health of your system using <a href="{{< ref "reference/references/mesheryctl/system/check.md" >}}">mesheryctl system check</a></p>
 
 </details>
 
@@ -154,7 +155,7 @@ categories: [project]
 <details>
 <summary>
 <strong>Question: Getting an error while running <code>make server</code> on Windows?</strong>
-</summary><strong>Answer:</strong> <p>On Windows, set up the project on Ubuntu WSL2 and you will be able to run the Meshery UI and the server. For more information please visit <a href="/project/contributing/meshery-windows">Setting up Meshery Development Environment on Windows</a>.</p>
+</summary><strong>Answer:</strong> <p>On Windows, set up the project on Ubuntu WSL2 and you will be able to run the Meshery UI and the server. For more information please visit <a href="{{< ref "project/contributing/meshery-windows/index.md" >}}">Setting up Meshery Development Environment on Windows</a>.</p>
 </details>
 
 {{< discuss >}}

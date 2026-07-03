@@ -4,13 +4,13 @@ import (
 	"bytes"
 
 	"github.com/go-openapi/strfmt"
-	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/models/events"
 	system "github.com/meshery/schemas/models/v1beta1/system"
 	workspace "github.com/meshery/schemas/models/v1beta1/workspace"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	v1 "k8s.io/api/core/v1"
 )
 
@@ -86,56 +86,9 @@ type performanceTestParameterWrapper struct {
 	Body *models.PerformanceTestParameters
 }
 
-type grafanaConfigParamsWrapper struct {
-	// in: body
-	// required: true
-	Body *models.GrafanaConfigParams
-}
-
-type grafanaConfigResponseWrapper struct {
-	// in: body
-	Body *models.Grafana
-}
-
-type grafanaBoardsParamsWrapper struct {
-	// in: query
-	DashboardSearch string `json:"dashboardSearch"`
-}
-
-type grafanaBoardsResponseWrapper struct {
-	// in: body
-	Body []*models.GrafanaBoard
-}
-
 type v1ServicesMapResponseWrapper struct {
 	// in: body
 	Body map[string][]v1.Service
-}
-
-type prometheusConfigParamsWrapper struct {
-	// in: body
-	PrometheusURL string `json:"prometheusURL,omitempty"`
-}
-
-type prometheusConfigResponseWrapper struct {
-	// in: body
-	Body *models.Prometheus
-}
-
-type prometheusBoardImportRespWrapper struct {
-	// in: body
-	Body *models.GrafanaBoard
-}
-
-type prometheusStaticBoardRespWrapper struct {
-	// in: body
-	Body map[string]*models.GrafanaBoard
-}
-
-type prometheusBoardParamsWrapper struct {
-	// in: body
-	// required: true
-	Body []*models.SelectedGrafanaConfig
 }
 
 type userLoadTestPrefsRespWrapper struct {
@@ -151,12 +104,12 @@ type anonymousStatsParamsWrapper struct {
 
 type loadTestPreferencesRespWrapper struct {
 	// in: body
-	Body SMP.PerformanceTestConfig
+	Body perfprofile.PerformanceTestConfig
 }
 
 type loadTestPreferencesParamsWrapper struct {
 	// in: body
-	Body SMP.PerformanceTestConfig
+	Body perfprofile.PerformanceTestConfig
 }
 
 type UUIDParamsWrapper struct {
@@ -168,7 +121,7 @@ type perfTestParamsWrapper struct {
 	// in: query
 	Query *models.PerformanceTestParameters
 	// in: body
-	Body *SMP.PerformanceTestConfig
+	Body *perfprofile.PerformanceTestConfig
 }
 
 type perfSingleResultRespWrapper struct {
@@ -446,16 +399,7 @@ var (
 	_ performanceProfileResponseWrapper
 	_ performanceProfileParameterWrapper
 	_ performanceTestParameterWrapper
-	_ grafanaConfigParamsWrapper
-	_ grafanaConfigResponseWrapper
-	_ grafanaBoardsParamsWrapper
-	_ grafanaBoardsResponseWrapper
 	_ v1ServicesMapResponseWrapper
-	_ prometheusConfigParamsWrapper
-	_ prometheusConfigResponseWrapper
-	_ prometheusBoardImportRespWrapper
-	_ prometheusStaticBoardRespWrapper
-	_ prometheusBoardParamsWrapper
 	_ userLoadTestPrefsRespWrapper
 	_ anonymousStatsParamsWrapper
 	_ loadTestPreferencesRespWrapper

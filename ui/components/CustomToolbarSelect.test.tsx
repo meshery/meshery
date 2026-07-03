@@ -17,9 +17,9 @@ vi.mock('@/store/slices/prefTest', () => ({
 }));
 
 vi.mock('@sistent/sistent', () => ({
-  IndeterminateCheckBox: () => <span data-testid="indeterminate-checkbox" />,
-  CompareArrows: () => <span data-testid="compare-arrows" />,
-  GetApp: () => <span data-testid="get-app" />,
+  IndeterminateCheckBoxIcon: () => <span data-testid="indeterminate-checkbox" />,
+  CompareArrowsIcon: () => <span data-testid="compare-arrows" />,
+  GetAppIcon: () => <span data-testid="get-app" />,
   IconButton: ({ children, onClick, href, download, 'aria-label': ariaLabel }: any) => (
     <a
       data-testid={ariaLabel ? `icon-button-${ariaLabel}` : 'icon-button'}
