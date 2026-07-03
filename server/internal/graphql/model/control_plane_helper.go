@@ -86,12 +86,18 @@ func haveCommonElements(a []string, b map[string]bool) bool {
 	return false
 }
 
-// imageTag returns the tag portion of a container image reference
-// (the text after the first ":"), or "" when the reference carries no tag.
+// imageTag returns the tag portion of a container image reference, or "" when
+// the reference carries no tag. It ignores a registry port (the ":" that comes
+// before the first "/") and any "@digest" suffix, so a reference like
+// "localhost:5000/istio/proxyv2:1.20.0" yields "1.20.0" and
+// "localhost:5000/istio/proxyv2" yields "".
 func imageTag(image string) string {
-	parts := strings.Split(image, ":")
-	if len(parts) > 1 {
-		return parts[1]
+	if at := strings.IndexByte(image, '@'); at != -1 {
+		image = image[:at]
 	}
-	return ""
+	lastColon := strings.LastIndexByte(image, ':')
+	if lastColon == -1 || lastColon < strings.LastIndexByte(image, '/') {
+		return ""
+	}
+	return image[lastColon+1:]
 }

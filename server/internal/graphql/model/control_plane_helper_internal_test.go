@@ -16,6 +16,9 @@ func TestImageTag(t *testing.T) {
 		{image: "nginx", want: ""},
 		{image: "istio/proxyv2:1.20.0", want: "1.20.0"},
 		{image: "docker.io/istio/proxyv2:1.20.0", want: "1.20.0"},
+		{image: "localhost:5000/istio/proxyv2:1.20.0", want: "1.20.0"},
+		{image: "localhost:5000/istio/proxyv2", want: ""},
+		{image: "istio/proxyv2@sha256:abc123", want: ""},
 	}
 	for _, tt := range tests {
 		if got := imageTag(tt.image); got != tt.want {
