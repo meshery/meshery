@@ -508,7 +508,7 @@ Any change that involves the layer5io docs assets — whether adding new functio
 
 The `related-reading.html` partial renders a list of links to other content covering similar material, shown at the end of a page. It is mounted in from the [`layer5io/docs`](https://github.com/layer5io/docs) module and invoked from the default layout, so the block appears across the site without any per-page configuration:
 
-```go-html-template
+```
 {{ partial "related-reading.html" . -}}
 ```
 
@@ -518,7 +518,7 @@ When the engine yields no matches, the partial resolves recommendations from tax
 
 This partial is the single source of recommendations across the site. Hardcoded lists of links should not be written into a page to stand in for it; recommendations are meant to be resolved from taxonomy so they stay consistent site-wide and update automatically as content is added. To have a page participate, assign it relevant `categories` and `tags` in its frontmatter:
 
-```yaml
+```
 ---
 title: Managing Meshery Deployments
 categories: [deployment]
@@ -534,7 +534,7 @@ Resizable layouts allow a section of the page to be dragged to a new width, with
 
 A region is wrapped between `resizable-start.html` and `resizable-end.html`; the content placed between them becomes adjustable. The opening call configures it through a parameter dictionary:
 
-```go-html-template
+```
 {{ partial "resizable-start.html" (dict "side" "right" "key" "sidebar" "min" 200 "max" 480 "default" 260) }}
   <aside class="td-sidebar d-print-none">
     {{ partial "sidebar.html" . }}
