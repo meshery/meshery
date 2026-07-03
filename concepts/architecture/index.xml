@@ -21,7 +21,7 @@ generates into a Secret — no static credentials ship with the deployment.&lt;/
  &lt;div style="flex: 4;"&gt;
  &lt;h1&gt;MeshSync&lt;/h1&gt;
  &lt;p&gt;
- MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of managed multi-cloud and cloud native infrastructure. It operates in one of two modes: operator or embedded. When it runs in operator mode, it is managed by the &lt;a href="/concepts/architecture/operator/"&gt;Meshery Operator&lt;/a&gt;.
+ MeshSync is a custom Kubernetes controller that performs event-driven discovery of, and continual synchronization with, Meshery Server as to the state of managed Kubernetes infrastructure. It operates in one of two modes: operator or embedded. When it runs in operator mode, it is managed by the &lt;a href="/concepts/architecture/operator/"&gt;Meshery Operator&lt;/a&gt;.
  &lt;/p&gt;
  &lt;/div&gt;
 &lt;/div&gt;
@@ -29,14 +29,13 @@ generates into a Secret — no static credentials ship with the deployment.&lt;/
 	Key Features
 &lt;/h3&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Greenfield and Brownfield Support&lt;/strong&gt;: MeshSync discovers and identifies infrastructure whether you&amp;rsquo;re starting from scratch (greenfield) with Meshery performing the initial deployment of your infrastructure or bringing in Meshery to manage your existing infrastructure (brownfield).&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Real-time / Event-driven Status&lt;/strong&gt;: MeshSync subscribes for updates from your platform and listens for state changes, understanding that changes to managed infrastructure may be done out of band of Meshery.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Scalable and Performant&lt;/strong&gt;: Meshery&amp;rsquo;s event-driven approach ensures speed and scalability. You have control over the depth of object discovery to manage large clusters efficiently. MeshSync&amp;rsquo;s working snapshot of the state of each cluster under management is stored in the Server&amp;rsquo;s local database and continuously refreshed.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Greenfield and Brownfield Support&lt;/strong&gt;: MeshSync discovers infrastructure whether you&amp;rsquo;re starting from scratch (greenfield) with Meshery performing the initial deployment of your infrastructure or bringing in Meshery to manage your existing infrastructure (brownfield).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Real-time / Event-driven Status&lt;/strong&gt;: MeshSync uses Kubernetes &lt;a href="https://pkg.go.dev/k8s.io/client-go/informers"&gt;shared informers&lt;/a&gt; to subscribe for updates from the cluster and listen for state changes, understanding that changes to managed infrastructure may be done out of band of Meshery.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Configurable resource scope&lt;/strong&gt;: MeshSync watches a default set of resource types across all namespaces. You can narrow this set with a whitelist or blacklist (see &lt;a href="/concepts/architecture/meshsync/#meshsync-faqs"&gt;FAQs&lt;/a&gt;) so that uninteresting resource types are not discovered.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Working cluster snapshot&lt;/strong&gt;: MeshSync&amp;rsquo;s working snapshot of the state of each cluster under management is held in-memory (Kubernetes informer caches) and streamed to Meshery Server, whose local database persists it as a continuously refreshed cache.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id="discovery"&gt;
-	Discovery
-&lt;/h2&gt;
-&lt;p&gt;MeshSync supports both greenfield and brownfield discovery of infrastructure. Greenfield discovery manages infrastructure created and managed entirely by Meshery, while brownfield discovery identifies separately created infrastructure.&lt;/p&gt;</description></item><item><title>Operator</title><link>/concepts/architecture/operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/concepts/architecture/operator/</guid><description>&lt;h1 id="meshery-operator"&gt;
+&lt;div class="alert alert-warning" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Roadmap features&lt;/div&gt;
+&lt;p&gt;Several capabilities described in MeshSync&amp;rsquo;s original design - &lt;strong&gt;tiered (progressively refined) discovery&lt;/strong&gt;, &lt;strong&gt;composite fingerprints that span multiple entities&lt;/strong&gt;, &lt;strong&gt;broker-side persistence of events&lt;/strong&gt;, and &lt;strong&gt;non-Kubernetes targets&lt;/strong&gt; - are design goals that are &lt;strong&gt;not yet implemented&lt;/strong&gt;. Sections below that describe roadmap behavior are marked accordingly so that operators can distinguish current behavior from intended direction.&lt;/p&gt;</description></item><item><title>Operator</title><link>/concepts/architecture/operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/concepts/architecture/operator/</guid><description>&lt;h1 id="meshery-operator"&gt;
 	Meshery Operator &lt;img src="./images/B203EFA85E89491B.png" width="30" height="35" style="display:inline"/&gt;
 &lt;/h1&gt;
 &lt;p&gt;Meshery Operator is a Kubernetes operator (built on the
