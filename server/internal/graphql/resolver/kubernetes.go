@@ -100,6 +100,9 @@ func (r *Resolver) subscribeClusterResources(ctx context.Context, provider model
 	r.Config.DashboardK8sResourcesChan.SubscribeDashbordK8Resources(ch)
 
 	go func() {
+		// Remove this listener when the subscription ends so PublishDashboardK8sResources
+		// stops tracking it (the channel is never closed, so removal is enough).
+		defer r.Config.DashboardK8sResourcesChan.UnsubscribeDashboardK8sResources(ch)
 		r.Log.Info("Initializing Cluster Resources subscription")
 		for {
 			select {
