@@ -382,10 +382,24 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	// Only handle mode changes if a mode is explicitly provided (not undefined).
 	// In fact this method is used (for now) only for perform meshsync deployment mode change.
 	// If mode change fails return error.
-	// TODO: also check that kind = "kubernetes" (when client starts to send full connection object)
 	if connections.MeshsyncDeploymentModeFromMetadata(connection.MetaData) != connections.MeshsyncDeploymentModeUndefined {
-		// Handle meshsync deployment mode changes before connection update
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
+
+		// Retrieve the persisted connection to validate its kind against the request.
+		existingConn, statusCode, err := provider.GetConnectionByID(token, connectionID)
+		if err != nil {
+			h.log.Error(err)
+			writeMeshkitError(w, err, statusCode)
+			return
+		}
+		if existingConn.Kind != "kubernetes" {
+			err := ErrInvalidConnectionKind(existingConn.Kind, "kubernetes")
+			h.log.Error(err)
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
+
+		// Handle meshsync deployment mode changes before connection update
 		oldMode, newMode, modeChanged, err := h.handleMeshSyncDeploymentModeChange(
 			req.Context(),
 			connectionID,
