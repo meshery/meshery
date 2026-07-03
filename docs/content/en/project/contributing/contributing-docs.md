@@ -19,7 +19,9 @@ See the [Meshery Documentation Design Specification](https://docs.google.com/doc
 Meshery documentation is built using the following components:
 
 - Framework - [Hugo](https://gohugo.io) (Extended)
-- Theme - [Docsy](https://www.docsy.dev) (imported as a Hugo module)
+- Themes and modules (imported as Hugo modules):
+  - [Docsy](https://www.docsy.dev) — fully mounted
+  - [Layer5io Docs](https://github.com/layer5io/docs) — manual mounting required
 - Repo - [https://github.com/meshery/meshery/tree/master/docs](https://github.com/meshery/meshery/tree/master/docs)
 - Site - [https://docs.meshery.io](https://docs.meshery.io)
 
@@ -49,17 +51,10 @@ In case of any installation issues, use the [discussion forum](https://discuss.m
   </code>
   </div></pre>
 
-- Change to the docs directory
-
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">cd docs
-  </code>
-  </div></pre>
-
 - Install dependencies
 
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">make setup
+  <code class="clipboardjs">make docs:setup
   </code>
   </div></pre>
 
@@ -74,12 +69,12 @@ In case of any installation issues, use the [discussion forum](https://discuss.m
   </code>
   </div></pre>
 
-  This runs `hugo server -D -F`, which serves the site with draft and future content enabled. The site will be available at `http://localhost:1313`.
+  This runs `hugo --cleanDestinationDir -e dev server -DFE`, which serves the site with draft and future content enabled. The site will be available at `http://localhost:1313`.
 
 - To build the site without serving:
 
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">make build
+  <code class="clipboardjs">make docs:build
   </code>
   </div></pre>
 
@@ -108,20 +103,21 @@ This runs `docker compose watch`, which builds and serves the site inside a cont
 Gitpod will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It will also automatically build the project for you on launch, comes with Docker and other tools pre-installed, making it one of the fastest ways to spin up a development environment for [Meshery](https://github.com/meshery/meshery).
 {{% /alert %}}
 
-- After opening the project on Gitpod, change to the docs directory.
+- After opening the project on Gitpod, install dependencies
 
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">cd docs
+  <code class="clipboardjs">make docs:setup
   </code>
   </div></pre>
 
-- Install dependencies and serve the site.
+- Serve the site locally.
 
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">make setup
-  make site
+  <code class="clipboardjs">make site
   </code>
   </div></pre>
+
+  This runs `hugo --cleanDestinationDir -e dev server -DFE`, which serves the site with draft and future content enabled. The site will be available at `http://localhost:1313`.
 
 You should be able to access the site on port `1313`. If you want to access it in your localhost read the [docs for port-forwarding using ssh](https://www.gitpod.io/docs/configure/workspaces/ports#local-port-forwarding-via-ssh).
 
@@ -135,22 +131,23 @@ You should be able to access the site on port `1313`. If you want to access it i
 GitHub Codespaces will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It comes with pre-installed tools which are quite helpful to spin up the development environment for [Meshery](https://github.com/meshery/meshery).
 {{% /alert %}}
 
-- After opening the project on GitHub Codespaces, change to the docs directory.
+- After opening the project on GitHub Codespaces, install dependencies
 
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">cd docs
+  <code class="clipboardjs">make docs:setup
   </code>
   </div></pre>
 
-- Install dependencies and serve the site.
+- Serve the site locally.
 
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">make setup
-  make site
+  <code class="clipboardjs">make site
   </code>
   </div></pre>
 
-You should be able to access the site on port `1313`. If you want to access it in your localhost just click the `code` button on your forked repository and select open with Visual Studio Code under your GitHub Codespace this will launch a GitHub Codespace instance in your local machine and connects with the remote GitHub Codespace environment after that run `cd docs` then `make setup && make site` and it will start the development server on port `1313`.
+  This runs `hugo --cleanDestinationDir -e dev server -DFE`, which serves the site with draft and future content enabled. The site will be available at `http://localhost:1313`.
+
+You should be able to access the site on port `1313`. If you want to access it in your localhost just click the `code` button on your forked repository and select open with Visual Studio Code under your GitHub Codespace this will launch a GitHub Codespace instance in your local machine and connects with the remote GitHub Codespace environment after that run `make docs:setup && make site` and it will start the development server on port `1313`.
 
 ### Make Necessary Changes
 - Make changes as required based on the issue you are solving.
@@ -433,44 +430,6 @@ You can include block quotes to emphasize text.
 
 ## Development
 
-### Adding Integration Specific Information to Individual Integration Pages
-
-Integration pages ([example]({{< ref "extensions/models/aws/index.md" >}})) are automatically generated, however, integration specific documentation is often needed.
-
-[modelscustominfo](https://github.com/meshery/meshery/tree/master/docs/data/modelscustominfo) collection holds custom markdown files. Follow these steps:
-
-1. Create a file inside the `modelscustominfo` collection.
-2. Ensure the file includes frontmatter with the `title` key, set to the title of the integration.
-
-The content that follows the frontmatter in this file will be automatically parsed and rendered on the integration page
-
-Example:
-
-file: `modelscustominfo/aad.md`
-
-```
----
-title: Azure Active Directory (AAD)
----
-<h2>Azure Active Directory (AAD)</h2>
-
-```
-
-In this example, the heading "<b>Azure Active Directory</b>" will be displayed on the integration page:
-[Azure Active Directory Integration Page]({{< ref "extensions/models/aad-pod-identity/index.md" >}})
-
-### Suggested Reading
-
-Disable suggested reading by setting the `suggested-reading` frontmatter variable to `false`.
-
-### Editable Intra-page Table of Contents Toolbar
-
-Control the display of this intra-page navigator with either page level or layout level frontmatter variables:
-
-`display-toolbar`
-
-Set to `true` (make "editable" toolbar visible) or `false` (hide "editable" toolbar)
-
 ### `if` conditional
 
 In Hugo templates, conditionals are written using Go template syntax:
@@ -520,6 +479,124 @@ Shortcodes are reusable content snippets that can be used in Markdown files. The
 In Hugo templates, variables are defined using the `:=` operator:
 
 {{< code code=`{{ $variable1 := true }}` >}}
+
+### Hugo modules
+
+Meshery Docs is built from Hugo modules — self-contained, versioned bundles of layouts, assets, and configuration that the site imports from other repositories rather than keeping in its own tree. Because each module is pulled in by version, shared functionality is defined once upstream and reused here, and updates arrive by bumping a single version reference instead of editing copied files.
+
+Modules are declared in `hugo.toml` under the `[module]` block. Each module is listed as a `[[module.imports]]` entry with its `path` set to the module's repository. When a module's files should map directly onto the site, that import is all Hugo needs. When only certain files are wanted, the import adds `[[module.imports.mounts]]` entries, each pairing a `source` path inside the module with a `target` path in the site, so only the mounted paths are brought in.
+
+In a mount, `source` is the location of the file *within the imported module*, and `target` is the location it should appear at *within the site*. Hugo does not copy these files into the project; instead it composes every module, including the site itself, into a single union file system — one virtual tree where each module contributes its files at their target paths. A mount is what places a module's `source` file at a given `target` in that shared tree, and from Hugo's perspective the file then sits there as if it were part of the site. Because all modules share one tree, targets can overlap: when more than one module contributes a file to the same target, precedence decides which one is used, with the site's own files taking priority over imports and earlier imports taking priority over later ones.
+
+This precedence is what makes overriding possible. To replace an imported file, the site adds its own file at the same target path; because the site's files outrank imports in the union tree, its version wins and Hugo uses it in place of the module's. This is especially useful with fully imported modules like Docsy, where the entire theme is mapped onto the site: rather than forking the theme to change a single layout, partial, or stylesheet, the site can supply a file of the same name at the matching path and override just that one piece, while everything else continues to come from the module and stays in sync with upstream updates.
+
+The site imports three modules:
+
+- **`github.com/google/docsy`** — the Docsy theme, which provides the site's base look and feel: its layouts, partials, and styling. It is imported directly, so everything the theme defines is available to the site.
+- **`github.com/google/docsy/dependencies`** — a companion module that supplies the front-end dependencies the Docsy theme relies on, such as Bootstrap and its other bundled assets. It too is imported directly.
+- **`github.com/layer5io/docs`** — the shared Layer5 docs repository. Its own configuration is ignored, and instead of importing the module wholesale, selected partials and assets are mounted individually into the site. These bring in shared pieces of markup, scripts, and styles that layer onto the existing structure to add functionality without altering the site's own layouts.
+
+Because these assets are shared, prefer using the upstream ones over creating equivalent assets inside this repository.
+
+{{% alert color="warning" title="Contribute shared assets upstream" %}}
+Any change that involves the layer5io docs assets — whether adding new functionality to the docs or making quality-of-life improvements to the shared assets — should be made in the [`layer5io/docs`](https://github.com/layer5io/docs) repository rather than here, and then imported downstream. Making the change upstream keeps a single source of truth and ensures every site that consumes the module, both Meshery Docs and Layer5's own docs, receives the same improvement instead of the work living in one repo and drifting from the other.
+{{% /alert %}}
+
+### Layer5io Mounts
+
+#### Related Reading
+
+The `related-reading.html` partial renders a list of links to other content covering similar material, shown at the end of a page. It is mounted in from the [`layer5io/docs`](https://github.com/layer5io/docs) module and invoked from the default layout, so the block appears across the site without any per-page configuration:
+
+```go-html-template
+{{ partial "related-reading.html" . -}}
+```
+
+The context (`.`) passed in the call is the current page, which the partial uses as the basis for its recommendations. These are drawn from [Hugo's related-content engine](https://gohugo.io/content-management/related/), which scores the site's content against the current page and returns the closest matches. That result is optionally constrained to the types and sections listed under `Site.Params.relatedReading`, filtered to exclude video entries, and capped at six.
+
+When the engine yields no matches, the partial resolves recommendations from taxonomy instead: it gathers content sharing the current `categories` or `tags`, applies the same type, section, and video filters, and again caps the result at six. The block is omitted entirely when neither path produces a result.
+
+This partial is the single source of recommendations across the site. Hardcoded lists of links should not be written into a page to stand in for it; recommendations are meant to be resolved from taxonomy so they stay consistent site-wide and update automatically as content is added. To have a page participate, assign it relevant `categories` and `tags` in its frontmatter:
+
+```yaml
+---
+title: Managing Meshery Deployments
+categories: [deployment]
+tags: [kubernetes, operator]
+---
+```
+
+Pages sharing these values become candidates for one another's recommendations, so aligning taxonomy across related content is what surfaces it here.
+
+#### Resizable layouts
+
+Resizable layouts allow a section of the page to be dragged to a new width, with the size retained across visits. The behavior arrives through the [`layer5io/docs`](https://github.com/layer5io/docs) module, which mounts the markup, script, and styles it depends on so it drops into a layout as a complete unit.
+
+A region is wrapped between `resizable-start.html` and `resizable-end.html`; the content placed between them becomes adjustable. The opening call configures it through a parameter dictionary:
+
+```go-html-template
+{{ partial "resizable-start.html" (dict "side" "right" "key" "sidebar" "min" 200 "max" 480 "default" 260) }}
+  <aside class="td-sidebar d-print-none">
+    {{ partial "sidebar.html" . }}
+  </aside>
+{{ partial "resizable-end.html" . }}
+```
+
+The dictionary accepts the following:
+
+- `side` — the edge the drag handle sits on, either `right` or `left`.
+- `key` — a unique identifier under which the width is stored and restored; each region must supply its own.
+- `min` / `max` — the lower and upper bounds of the width, in pixels.
+- `default` — the width applied when nothing has been stored yet.
+- `class` — optional additional classes placed on the wrapper.
+
+{{% alert color="info" title="Companion partials and assets" %}}
+Alongside the wrappers, two companion partials are included once in the layout: `resizable-head-script.html` in the `<head>` to apply saved widths before the first paint, and `resizable-script.html` near the end of the `<body>` to load the behavior. For either to work, the mounted assets — `assets/js/resizable.js` and `assets/scss/_resizable.scss` — must also be imported into the project so the script and styles are built into the site.
+{{% /alert %}}
+
+Sizing is governed by the component through the `--resizable-w` property, which it sets directly on the element as the region is dragged. Because the value lives inline on the element rather than in a stylesheet, anything that needs to react to the current width has to observe the element to read it, rather than depending on a fixed CSS rule.
+
+The component is built to be reused across sites, so its own rules are not meant to be rewritten. Overriding them locally couples the region to one layout and works against the shared design the component exists to provide.
+
+{{% alert color="info" title="Style through the wrapper, not the component" %}}
+To apply site-specific styling, pass a class through the `class` parameter and style that instead. The class lands on the wrapper, so it surrounds the component and layers styling on top of it without touching the component's own rules — keeping the shared asset intact and reusable.
+{{% /alert %}}
+
+If an override is truly unavoidable — and it should be treated as a last resort rather than a first option — it belongs in a dedicated `resizer_override` file imported into the project's styles, rather than edited inline against the component. Isolating overrides this way keeps changes to the width variable and the component's rules tracked in one place and maintainable over time, instead of scattering specificity fixes across the layout. It also contains the awkwardness that comes with promoting the component's class to raise its specificity when an override has to win, keeping that complexity out of the shared asset.
+
+### Adding Integration Specific Information to Individual Integration Pages
+
+Integration pages ([example]({{< ref "extensions/models/aws/index.md" >}})) are automatically generated, however, integration specific documentation is often needed.
+
+[modelscustominfo](https://github.com/meshery/meshery/tree/master/docs/data/modelscustominfo) collection holds custom markdown files. Follow these steps:
+
+1. Create a file inside the `modelscustominfo` collection.
+2. Ensure the file includes frontmatter with the `title` key, set to the title of the integration.
+
+The content that follows the frontmatter in this file will be automatically parsed and rendered on the integration page
+
+Example:
+
+file: `modelscustominfo/aad.md`
+
+```
+---
+title: Azure Active Directory (AAD)
+---
+<h2>Azure Active Directory (AAD)</h2>
+
+```
+
+In this example, the heading "<b>Azure Active Directory</b>" will be displayed on the integration page:
+[Azure Active Directory Integration Page]({{< ref "extensions/models/aad-pod-identity/index.md" >}})
+
+### Editable Intra-page Table of Contents Toolbar
+
+Control the display of this intra-page navigator with either page level or layout level frontmatter variables:
+
+`display-toolbar`
+
+Set to `true` (make "editable" toolbar visible) or `false` (hide "editable" toolbar)
 
 Two helpful resources:
 
