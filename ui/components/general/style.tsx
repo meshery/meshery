@@ -122,12 +122,6 @@ export const ExpandMoreIcon = styled('svg', {
   transition:
     'transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out',
 
-  // Show icon when the parent element is hovered
-  '&:hover, *:hover > &': {
-    opacity: 1,
-    visibility: 'visible',
-  },
-
   '&:hover': {
     fill: theme?.palette?.background?.brand?.default || 'black',
   },

@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
   CustomTooltip,
-  ListItemIcon,
   Grow,
   ListItem,
   List,
@@ -229,7 +228,6 @@ const NavigatorContent = () => {
   );
   const [showHelperButton, setShowHelperButton] = useState(false);
   const [openItems, setOpenItems] = useState<string[]>([]);
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [providerUiAccessControl, setProviderUiAccessControl] =
     useState<ProviderUiAccessControl | null>(null);
   const [versionDetail, setVersionDetail] = useState(defaultVersionDetail);
@@ -689,18 +687,7 @@ const NavigatorContent = () => {
     <>
       <HideScrollbar disablePadding>
         {navigatorComponents.map(
-          ({
-            id: childId,
-            title,
-            icon,
-            href,
-            show,
-            link,
-            children,
-            hovericon,
-            submenu,
-            permission,
-          }) => {
+          ({ id: childId, title, icon, href, show, link, children, permission }) => {
             const hasChildren = Array.isArray(children) && children.length > 0;
             return (
               <RootDiv key={childId}>
@@ -722,10 +709,6 @@ const NavigatorContent = () => {
                       if (link && openItems.includes(childId)) return;
                       toggleItemCollapse(childId);
                     }}
-                    onMouseOver={() => (isDrawerCollapsed ? setHoveredId(childId) : null)}
-                    onMouseLeave={() =>
-                      !submenu || !openItems.includes(childId) ? setHoveredId(null) : null
-                    }
                     disabled={permission ? !CAN(permission.action, permission.subject) : false}
                     style={{ flex: 1, minWidth: 0 }}
                     {...(link && href ? { component: Link, href } : {})}
@@ -739,9 +722,7 @@ const NavigatorContent = () => {
                         disableTouchListener={!isDrawerCollapsed}
                         TransitionComponent={Zoom}
                       >
-
-                          <MainListIcon>{icon}</MainListIcon>
-                        
+                        <MainListIcon>{icon}</MainListIcon>
                       </CustomTooltip>
                       <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>
                     </NavigatorLink>
