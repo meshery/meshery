@@ -166,6 +166,13 @@ describe('PropertyFormatters', () => {
     expect(chip).toHaveTextContent('my-conn name');
   });
 
+  it('renders discoveredBy MeshSync as a docs link', () => {
+    render(<>{PropertyFormatters.discoveredBy('MeshSync')}</>);
+    const link = screen.getByTestId('title-link');
+    expect(link).toHaveAttribute('href', 'https://docs.meshery.io/concepts/architecture/meshsync');
+    expect(link).toHaveTextContent('MeshSync');
+  });
+
   it('forwards ModelImportMessage and ModelDetails when non-empty', () => {
     render(<>{PropertyFormatters.ModelImportMessage('msg')}</>);
     expect(screen.getByTestId('model-import-messages')).toHaveTextContent('msg');
