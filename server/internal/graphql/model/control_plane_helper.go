@@ -55,8 +55,10 @@ func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider mo
 					continue
 				}
 
-				if len(strings.Split(objspec.Containers[0].Image, ":")) > 1 {
-					version = strings.Split(objspec.Containers[0].Image, ":")[1]
+				if len(objspec.Containers) > 0 {
+					if tag := imageTag(objspec.Containers[0].Image); tag != "" {
+						version = tag
+					}
 				}
 
 				members = append(members, &ControlPlaneMember{
@@ -82,4 +84,14 @@ func haveCommonElements(a []string, b map[string]bool) bool {
 		}
 	}
 	return false
+}
+
+// imageTag returns the tag portion of a container image reference
+// (the text after the first ":"), or "" when the reference carries no tag.
+func imageTag(image string) string {
+	parts := strings.Split(image, ":")
+	if len(parts) > 1 {
+		return parts[1]
+	}
+	return ""
 }
