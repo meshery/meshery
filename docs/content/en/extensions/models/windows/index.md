@@ -1,7 +1,7 @@
 ---
 title: Windows
 subtitle: Collaborative and visual infrastructure as design for Windows
-image: /extensions/models/windows/icons/color/windows-color.svg
+image: extensions/models/windows/icons/color/windows-color.svg
 aliases: /extensibility/integrations/windows
 docURL: https://docs.meshery.io/installation//windows
 description: 

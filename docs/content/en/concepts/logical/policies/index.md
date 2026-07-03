@@ -13,7 +13,29 @@ The relationships are a powerful way to design your infrastructure and each of t
 [![Meshery Models Policy Evaluation](./images/meshery-models-policy-evaluation.svg
 )](./images/meshery-models-policy-evaluation.svg)
 
-Meshery Server has a built-in policy engine, based on Open Policy Agent (OPA). Currently, Meshery Server is the only place where the policy evals occur. Policy evaluation is invoked each time a design is updated, and each time a design is imported. By default, policies evaluate for all registered relationships.
+Meshery Server has a built-in policy engine implemented natively in Go (ported from the Open Policy Agent (OPA) Rego engine). Currently, Meshery Server is the only place where the policy evaluations occur. Policy evaluation is invoked each time a design is updated, and each time a design is imported. By default, policies evaluate for all registered relationships.
+
+### Engine Behavior
+
+Each evaluation cycle visits every registered policy and applies it to the current design in three phases:
+
+- **Identify** — propose new relationships from the policy's selectors and the matching component configuration. The hierarchical parent-child policy, for example, connects a Pod that declares `namespace: production` to the `Namespace/production` declaration in the same design.
+- **Validate** — drop existing relationships whose endpoints no longer satisfy the policy (the from or to component was removed, or its kind / labels no longer match).
+- **Apply side effects** — patch component configuration when a relationship requires it. A binding relationship copies a value from its mutator endpoint into a field on the bound component, and reverses that patch on deletion.
+
+**Built-in policies**
+
+Each policy is responsible for a specific relationship, matched by its `kind` / `type` / `subType`:
+
+- **Hierarchical parent-child** (`hierarchical` / `parent` / `inventory`) connects components that nest naturally (Namespace owning Deployments, Deployment owning Pods).
+- **Hierarchical alias** (`hierarchical` / `parent` / `alias`) declares an alias node that resolves to a path inside another component (a container port, for example).
+- **Inventory** (`hierarchical` / `parent` / `inventory`) auto-adds parent declarations when a child references a parent that is not yet present in the design.
+- **Sibling matchLabels** (type `sibling`) groups components that share the same value at a configured field path (typically labels).
+- **Edge non-binding** (`edge` / `non-binding`) is a logical reference between two components, with no configuration mutation.
+- **Edge binding** (`edge` / `binding`) is a 3-party relationship (from, binding, to) that patches both endpoints through the binding component.
+
+The same Go codebase is built for two targets: the native server binary that ships with Meshery Server, and a `js/wasm` WebAssembly module that runs the identical evaluation logic in the browser, enabling client-side relationship evaluation in the Meshery UI without a server round trip.
+
 
 In any given Meshery deployment, you can reference and search the full set of registered policies (in Meshery's internal registry) in using either of Meshery's client interfaces.
 

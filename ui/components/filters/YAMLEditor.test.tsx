@@ -19,8 +19,6 @@ vi.mock('@/utils/permission_constants', () => ({
 vi.mock('@/assets/icons', () => ({
   Close: () => <svg data-testid="close-icon" />,
   Delete: () => <svg data-testid="delete-icon" />,
-  Fullscreen: () => <svg data-testid="fullscreen-icon" />,
-  FullscreenExit: () => <svg data-testid="fullscreen-exit-icon" />,
   Save: () => <svg data-testid="save-icon" />,
 }));
 
@@ -44,6 +42,8 @@ vi.mock('@sistent/sistent', () => {
       </button>
     ),
     styled,
+    FullScreenIcon: () => <svg data-testid="fullscreen-icon" />,
+    FullScreenExitIcon: () => <svg data-testid="fullscreen-exit-icon" />,
   };
 });
 

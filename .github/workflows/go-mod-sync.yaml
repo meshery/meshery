@@ -45,7 +45,7 @@ jobs:
     - name: Setup Go
       uses: actions/setup-go@master
       with:
-        go-version: "1.25"
+        go-version-file: meshery/go.mod
     - name: Go mod sync utility
       run: cd meshery-extensions;make graphql-sync;
 

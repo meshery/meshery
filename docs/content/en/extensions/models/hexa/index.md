@@ -1,7 +1,7 @@
 ---
 title: Hexa
 subtitle: Collaborative and visual infrastructure as design for Hexa
-image: /extensions/models/hexa/icons/color/hexa-color.svg
+image: extensions/models/hexa/icons/color/hexa-color.svg
 aliases: /extensibility/integrations/hexa
 docURL: https://docs.meshery.io/extensibility/integrations/hexa
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Rustrial Aws Eks Iam Auth Controller
 subtitle: Collaborative and visual infrastructure as design for Rustrial Aws Eks Iam Auth Controller
-image: /extensions/models/rustrial-aws-eks-iam-auth-controller/icons/color/rustrial-aws-eks-iam-auth-controller-color.svg
+image: extensions/models/rustrial-aws-eks-iam-auth-controller/icons/color/rustrial-aws-eks-iam-auth-controller-color.svg
 aliases: /extensibility/integrations/rustrial-aws-eks-iam-auth-controller
 docURL: https://docs.meshery.io/extensibility/integrations/rustrial-aws-eks-iam-auth-controller
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Security Identity Compliance
 registrant: Artifact Hub
 components: 
 - name: iam-identity-mapping
-  colorIcon: content/en/extensions/models/rustrial-aws-eks-iam-auth-controller/components/iam-identity-mapping/icons/color/iam-identity-mapping-color.svg
-  whiteIcon: content/en/extensions/models/rustrial-aws-eks-iam-auth-controller/components/iam-identity-mapping/icons/white/iam-identity-mapping-white.svg
+  colorIcon: extensions/models/rustrial-aws-eks-iam-auth-controller/components/iam-identity-mapping/icons/color/iam-identity-mapping-color.svg
+  whiteIcon: extensions/models/rustrial-aws-eks-iam-auth-controller/components/iam-identity-mapping/icons/white/iam-identity-mapping-white.svg
   description: 
 components-count: 1
 relationships: 

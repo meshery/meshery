@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import {
-  IndeterminateCheckBox,
-  CompareArrows,
-  GetApp,
+  IndeterminateCheckBoxIcon as IndeterminateCheckBox,
+  CompareArrowsIcon as CompareArrows,
+  GetAppIcon as GetApp,
   IconButton,
   Tooltip,
   styled,
@@ -30,7 +30,6 @@ const StyledIcon = styled('span')(({ theme }) => ({
 function CustomToolbarSelect({ setSelectedRows }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [data, setData] = useState([]);
-  const [, setChartCompare] = useState([]);
   const fullData = [];
   const dispatch = useDispatch();
   const { results_selection } = useSelector((state) => state.prefTest);
@@ -51,33 +50,14 @@ function CustomToolbarSelect({ setSelectedRows }) {
   const handleCompareSelected = () => {
     const rs = results_selection;
 
-    // Reset the data and chartCompare states.
+    // Reset the data state.
     setData([]);
-    setChartCompare([]);
 
     Object.keys(rs).forEach((k1) => {
       Object.keys(rs[k1]).forEach((k2) => {
         if (typeof rs[k1][k2] !== 'undefined') {
           // Directly update the data state.
           setData((prevData) => [...prevData, rs[k1][k2].runner_results]);
-
-          const row = rs[k1][k2].runner_results;
-          const startTime = new Date(row.StartTime);
-          const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
-          const boardConfig = rs[k1][k2].server_board_config;
-          const serverMetrics = rs[k1][k2].server_metrics;
-
-          // Directly update the chartCompare state.
-          setChartCompare((prevChartCompare) => [
-            ...prevChartCompare,
-            {
-              label: row.Labels,
-              startTime,
-              endTime,
-              boardConfig,
-              serverMetrics,
-            },
-          ]);
         }
       });
     });

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
@@ -35,36 +36,54 @@ func isTransientProviderError(err error) bool {
 
 const providerQParamName = "provider"
 
+// legacyProviderAliasWarnOnce ensures the "None"->"Local" deprecation warning
+// fires at most once per process lifetime, regardless of how many requests
+// arrive with the legacy alias.
+var legacyProviderAliasWarnOnce sync.Once
+
 // resolveProviderName returns the provider name for a request based on, in
 // order: the provider cookie, the provider header, the ?provider= query
 // param, and finally the enforced default. Returns "" only in
-// multi-provider mode when the client supplied no hint.
+// multi-provider mode when the client supplied no hint. The returned name is
+// passed through models.NormalizeProviderName so the legacy "None" alias
+// resolves to "Local"; the second return value indicates whether the raw
+// input was a casing of the legacy alias so the caller can log a one-shot
+// deprecation warning.
 //
 // Falling through to enforcedProvider here is what removes the need for a
 // cookie round-trip via /provider, which is fragile across SameSite/popup/CDN
 // boundaries and was the trigger for an observed /user/login ⇄ /provider
 // redirect loop on enforced-provider hosts.
-func resolveProviderName(req *http.Request, cookieName, enforcedProvider string) string {
+func resolveProviderName(req *http.Request, cookieName, enforcedProvider string) (string, bool) {
+	var name string
 	if ck, err := req.Cookie(cookieName); err == nil && ck.Value != "" {
-		return ck.Value
+		name = ck.Value
+	} else if hdr := req.Header.Get(cookieName); hdr != "" {
+		name = hdr
+	} else if q := req.URL.Query().Get(providerQParamName); q != "" {
+		name = q
+	} else {
+		name = enforcedProvider
 	}
-	if hdr := req.Header.Get(cookieName); hdr != "" {
-		return hdr
-	}
-	if q := req.URL.Query().Get(providerQParamName); q != "" {
-		return q
-	}
-	return enforcedProvider
+	usedLegacyAlias := strings.EqualFold(name, models.LocalProviderLegacyAlias)
+	return models.NormalizeProviderName(name), usedLegacyAlias
 }
 
 // ProviderMiddleware is a middleware to validate if a provider is set
 func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
 		var provider models.Provider
-		providerName := resolveProviderName(req, h.config.ProviderCookieName, h.Provider)
+		providerName, usedLegacyAlias := resolveProviderName(req, h.config.ProviderCookieName, h.Provider)
+		if usedLegacyAlias {
+			legacyProviderAliasWarnOnce.Do(func() {
+				h.log.Warnf("DEPRECATION: the local provider name %q is the legacy alias for %q and will be removed in a future Meshery release. Update meshery-provider cookies, the PROVIDER environment variable, and ~/.meshery/config.yaml to use %q. This warning is logged once per server process.", models.LocalProviderLegacyAlias, models.LocalProviderName, models.LocalProviderName)
+			})
+		}
 		if providerName != "" {
-			provider = h.config.Providers[providerName]
-			if provider == nil && h.Provider != "" && providerName == h.Provider {
+			if providerKey, ok := models.ResolveProviderKey(providerName, h.config.Providers); ok {
+				provider = h.config.Providers[providerKey]
+			}
+			if provider == nil && h.Provider != "" && providerName == models.NormalizeProviderName(h.Provider) {
 				h.log.Errorf("enforced provider %q is not registered in h.config.Providers; ProviderUIHandler will degrade to serving the provider-selection UI instead of auto-login. Register %q in PROVIDERS or unset PROVIDER on this deployment.", h.Provider, h.Provider)
 			}
 		}

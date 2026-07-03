@@ -25,7 +25,7 @@ type SubmitArgs = {
 type CreateSubmitHandlerArgs = {
   notify: Notify;
   handleError: ErrorHandler;
-  showmodal: (_count: number) => Promise<string | undefined>;
+  showmodal: (_count: number, _name?: string) => Promise<string | undefined>;
   resetSelectedRowData: () => () => void;
   deleteFilterFile: (_args: { id: string }) => { unwrap: () => Promise<any> };
   uploadFilterFile: (_args: { uploadBody: any }) => { unwrap: () => Promise<any> };
@@ -42,10 +42,9 @@ export function createHandleSubmit({
   updateFilterFile,
 }: CreateSubmitHandlerArgs) {
   return async function handleSubmit({ data, name, id, type, metadata, catalogData }: SubmitArgs) {
-    // TODO: use filter name
     updateProgress({ showProgress: true });
     if (type === FILE_OPS.DELETE) {
-      const response = await showmodal(1);
+      const response = await showmodal(1, name);
       if (response !== 'Delete') {
         updateProgress({ showProgress: false });
         return;

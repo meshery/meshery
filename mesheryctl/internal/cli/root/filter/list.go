@@ -87,7 +87,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 		var footer []string
 
 		if verbose {
-			if provider == "None" {
+			if utils.IsLocalProvider(provider) {
 				for _, v := range response.Filters {
 					FilterID := v.ID.String()
 					FilterName := v.Name
@@ -100,21 +100,21 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			} else {
 				for _, v := range response.Filters {
 					FilterID := utils.TruncateID(v.ID.String())
-					var UserID string
-					if v.UserID != nil {
-						UserID = *v.UserID
+					var owner string
+					if v.Owner != nil {
+						owner = *v.Owner
 					} else {
-						UserID = "null"
+						owner = "null"
 					}
 					FilterName := v.Name
 					CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
 					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
-					data = append(data, []string{FilterID, UserID, FilterName, CreatedAt, UpdatedAt})
+					data = append(data, []string{FilterID, owner, FilterName, CreatedAt, UpdatedAt})
 				}
-				header = []string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}
+				header = []string{"FILTER ID", "OWNER", "NAME", "CREATED", "UPDATED"}
 				footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""}
 			}
-		} else if provider == "None" {
+		} else if utils.IsLocalProvider(provider) {
 			for _, v := range response.Filters {
 				FilterName := strings.Trim(v.Name, filepath.Ext(v.Name))
 				FilterID := utils.TruncateID(v.ID.String())
@@ -127,18 +127,18 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 		} else {
 			for _, v := range response.Filters {
 				FilterID := utils.TruncateID(v.ID.String())
-				var UserID string
-				if v.UserID != nil {
-					UserID = utils.TruncateID(*v.UserID)
+				var owner string
+				if v.Owner != nil {
+					owner = utils.TruncateID(*v.Owner)
 				} else {
-					UserID = "null"
+					owner = "null"
 				}
 				FilterName := v.Name
 				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
 				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
-				data = append(data, []string{FilterID, UserID, FilterName, CreatedAt, UpdatedAt})
+				data = append(data, []string{FilterID, owner, FilterName, CreatedAt, UpdatedAt})
 			}
-			header = []string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}
+			header = []string{"FILTER ID", "OWNER", "NAME", "CREATED", "UPDATED"}
 			footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""}
 		}
 

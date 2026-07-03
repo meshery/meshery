@@ -154,9 +154,11 @@ const MeshAdapterConfigComponent = () => {
       setSelectedAvailableAdapter(newValue);
       setSelectedAvailableAdapterError(false);
 
-      if (newValue !== null) {
+      if (newValue && !newValue.__isNew__) {
         setMeshDeployURL(newValue.value);
         setMeshDeployURLError(false);
+      } else {
+        setMeshDeployURL('');
       }
     }
   };

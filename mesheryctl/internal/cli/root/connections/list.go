@@ -115,7 +115,7 @@ func getConnectionDetail(connection *connection.Connection) []string {
 		data[1] = "N/A"
 	}
 
-	data[2] = connection.Type
+	data[2] = connection.ConnectionType
 
 	data[3] = connection.Kind
 

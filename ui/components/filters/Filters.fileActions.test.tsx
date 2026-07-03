@@ -86,7 +86,7 @@ describe('createHandleSubmit', () => {
     await handleSubmit({ data: '', name: 'foo', id: 'i-1', type: 'DELETE' });
     await flush();
 
-    expect(showmodal).toHaveBeenCalledWith(1);
+    expect(showmodal).toHaveBeenCalledWith(1, 'foo');
     expect(deleteFilterFile).toHaveBeenCalledWith({ id: 'i-1' });
     expect(notify).toHaveBeenCalledWith({
       message: '"foo" filter deleted',

@@ -44,7 +44,7 @@ describe('stepsData', () => {
   });
 
   it('uses MESHERY_CLOUD_PROD in the GitHub setup action', () => {
-    // Step 2: GitOps your infra with Kanvas Snapshots
+    // Step 2: GitOps your infra with snapshots
     const gitHubAction = stepsData[1].journey[0].primaryAction;
     expect(typeof gitHubAction).toBe('function');
 

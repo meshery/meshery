@@ -3,7 +3,7 @@ import {
   CustomTooltip,
   DeleteIcon,
   EditIcon,
-  GroupAdd,
+  GroupAddIcon,
   IconButton,
   ListItemIcon,
   Menu,
@@ -51,7 +51,7 @@ const WorkspaceActionList = ({
     {
       key: 'assign-teams',
       label: 'Assign Teams',
-      icon: <GroupAdd style={{ color: theme.palette.icon.default, ...iconMedium }} />,
+      icon: <GroupAddIcon style={{ color: theme.palette.icon.default, ...iconMedium }} />,
       onClick: (e) => handleTeamsModalOpen(e, workspaceId, workspaceName),
     },
     {

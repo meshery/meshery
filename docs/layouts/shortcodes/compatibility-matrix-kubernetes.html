@@ -89,43 +89,43 @@
       <th style="text-align: left; padding: 10px; border-bottom: 2px solid #ccc;">Kubernetes Version</th>
       <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
         <a href="https://github.com/meshery/meshery-istio" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
-          <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/istio.svg" />
+          <img style="height: 1.5rem; vertical-align: text-bottom;" src="{{ "project/compatibility-matrix/images/service-meshes/istio.svg" | relURL }}" />
           meshery-istio
         </a>
       </th>
       <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
         <a href="https://github.com/meshery/meshery-linkerd" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
-          <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/linkerd.svg" />
+          <img style="height: 1.5rem; vertical-align: text-bottom;" src="{{ "project/compatibility-matrix/images/service-meshes/linkerd.svg" | relURL }}" />
           meshery-linkerd
         </a>
       </th>
       <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
         <a href="https://github.com/meshery/meshery-kuma" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
-          <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/kuma.svg" />
+          <img style="height: 1.5rem; vertical-align: text-bottom;" src="{{ "project/compatibility-matrix/images/service-meshes/kuma.svg" | relURL }}" />
           meshery-kuma
         </a>
       </th>
       <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
         <a href="https://github.com/meshery/meshery-nginx-sm" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
-          <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/nginx-sm.svg" />
+          <img style="height: 1.5rem; vertical-align: text-bottom;" src="{{ "project/compatibility-matrix/images/service-meshes/nginx-sm.svg" | relURL }}" />
           meshery-nginx-sm
         </a>
       </th>
       <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
         <a href="https://github.com/meshery/meshery-traefik-mesh" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
-          <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/traefik-mesh.svg" />
+          <img style="height: 1.5rem; vertical-align: text-bottom;" src="{{ "project/compatibility-matrix/images/service-meshes/traefik-mesh.svg" | relURL }}" />
           meshery-traefik-mesh
         </a>
       </th>
       <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
         <a href="https://github.com/meshery/meshery-cilium" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
-          <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/cilium.svg" />
+          <img style="height: 1.5rem; vertical-align: text-bottom;" src="{{ "project/compatibility-matrix/images/service-meshes/cilium.svg" | relURL }}" />
           meshery-cilium
         </a>
       </th>
       <th style="text-align: center; padding: 10px; border-bottom: 2px solid #ccc;">
         <a href="https://github.com/meshery/meshery-consul" style="text-decoration: none; color: #1dd1a1; cursor: pointer;">
-          <img style="height: 1.5rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/consul.svg" />
+          <img style="height: 1.5rem; vertical-align: text-bottom;" src="{{ "project/compatibility-matrix/images/service-meshes/consul.svg" | relURL }}" />
           meshery-consul
         </a>
       </th>
@@ -227,7 +227,7 @@
     
     const page = adapterMap[adapter];
     if (page) {
-      window.location.href = `/installation/compatibility-matrix/${page}`;
+      window.location.href = `{{ "installation/compatibility-matrix/" | relURL }}${page}`;
     }
   }
   
@@ -238,25 +238,25 @@
       if (status === "✓") {
         statusCells[i].innerHTML = `
           <div class="tooltipss" style="text-align:center; cursor: pointer;">
-            <img src="/installation/compatibility-matrix/images/service-meshes/passing.svg" class="yellowCheckbox" alt="Passing" />
+            <img src="{{ "project/compatibility-matrix/images/service-meshes/passing.svg" | relURL }}" class="yellowCheckbox" alt="Passing" />
             <span class="tooltiptext">Passing</span>
           </div>`;
       } else if (status === "✗") {
         statusCells[i].innerHTML = `
           <div class="tooltipss" style="text-align:center; cursor: pointer;">
-            <img src="/installation/compatibility-matrix/images/service-meshes/failing.svg" class="yellowCheckbox" alt="Failing" />
+            <img src="{{ "project/compatibility-matrix/images/service-meshes/failing.svg" | relURL }}" class="yellowCheckbox" alt="Failing" />
             <span class="tooltiptext">Failing</span>
           </div>`;
       } else if (status === "—") {
         statusCells[i].innerHTML = `
           <div class="tooltipss" style="text-align:center; cursor: pointer;">
-            <img src="/installation/compatibility-matrix/images/service-meshes/passing.svg" class="yellowCheckbox" alt="Partial" />
+            <img src="{{ "project/compatibility-matrix/images/service-meshes/passing.svg" | relURL }}" class="yellowCheckbox" alt="Partial" />
             <span class="tooltiptext">Partial</span>
           </div>`;
       } else if (status === "N/A") {
         statusCells[i].innerHTML = `
           <div class="tooltipss" style="text-align:center; cursor: pointer;">
-            <img src="/installation/compatibility-matrix/images/service-meshes/na-icon.svg" class="yellowCheckbox" alt="Not Applicable" />
+            <img src="{{ "project/compatibility-matrix/images/service-meshes/na-icon.svg" | relURL }}" class="yellowCheckbox" alt="Not Applicable" />
             <span class="tooltiptext">Not Applicable</span>
           </div>`;
       }

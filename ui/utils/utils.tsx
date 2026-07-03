@@ -1,13 +1,11 @@
 import { trueRandom } from '../lib/trueRandom';
-import jsYaml from 'js-yaml';
+import * as jsYaml from 'js-yaml';
 import { findWorkloadByName } from './workloadFilter';
 import { APP_MODE, EVENT_TYPES } from './Enum';
 import _ from 'lodash';
 import { getWebAdress } from './webApis';
 import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
 import { Tooltip } from '@sistent/sistent';
-import jsyaml from 'js-yaml';
-import yaml from 'js-yaml';
 import { mesheryExtensionRoute } from '../pages/_app';
 import { mesheryEventBus } from './eventBus';
 import { useSelector } from 'react-redux';
@@ -376,7 +374,7 @@ export const ResizableCell = ({ value }) => (
 
 export const parseDesignFile = (designFile) => {
   try {
-    return jsyaml.load(designFile);
+    return jsYaml.load(designFile);
   } catch (e) {
     console.error('Error parsing design file', e);
     return null;
@@ -385,7 +383,7 @@ export const parseDesignFile = (designFile) => {
 
 export const encodeDesignFile = (designJson) => {
   try {
-    return jsyaml.dump(designJson);
+    return jsYaml.dump(designJson);
   } catch (e) {
     console.error('Error encoding design file', e);
     return null;
@@ -396,9 +394,15 @@ export const encodeDesignFile = (designJson) => {
  * Process the design data to extract the components and design version
  * @param {object} design - The design file of format design schema v1beta1
  */
-export const processDesign = (design) => {
-  if (design.schemaVersion != 'designs.meshery.io/v1beta1') {
-    console.error('Invalid design schema version', design);
+export const processDesign = (design = {}) => {
+  const normalizedDesign = design ?? {};
+
+  const schemaVersion = normalizedDesign?.schemaVersion;
+  const isSupportedDesignSchema =
+    typeof schemaVersion === 'string' && /^designs\.meshery\.io\/v1beta\d+$/.test(schemaVersion);
+
+  if (!isSupportedDesignSchema) {
+    console.error('Invalid design schema version', normalizedDesign);
     return {
       configurableComponents: [],
       annotationComponents: [],
@@ -406,13 +410,14 @@ export const processDesign = (design) => {
       designJson: {
         name: '',
         components: [],
+        schemaVersion: undefined,
       },
     };
   }
 
   const isAnnotation = (component) => component?.metadata?.isAnnotation;
 
-  const components = design.components;
+  const components = Array.isArray(normalizedDesign.components) ? normalizedDesign.components : [];
   const configurableComponents = components.filter(_.negate(isAnnotation));
   const annotationComponents = components.filter(isAnnotation);
 
@@ -420,7 +425,7 @@ export const processDesign = (design) => {
     configurableComponents,
     annotationComponents,
     components,
-    designJson: design,
+    designJson: normalizedDesign,
   };
 };
 
@@ -438,7 +443,7 @@ export const getDesignVersion = (design) => {
     return design.catalog_data?.published_version;
   } else {
     try {
-      const parsedYaml = yaml.load(design.patternFile);
+      const parsedYaml = jsYaml.load(design.patternFile);
       return parsedYaml?.version;
     } catch (error) {
       console.error('Version is not available for this design: ', error);

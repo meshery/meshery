@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -10,32 +11,55 @@ import (
 
 // ProviderHandler - handles the choice of provider
 func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
-	provider := r.URL.Query().Get("provider")
-	for _, p := range h.config.Providers {
-		if provider == p.Name() {
-			http.SetCookie(w, &http.Cookie{
-				Name:     h.config.ProviderCookieName,
-				Value:    p.Name(),
-				Path:     "/",
-				HttpOnly: true,
-			})
-			redirectURL := "/user/login?" + r.URL.RawQuery
-			http.Redirect(w, r, redirectURL, http.StatusFound)
-			return
-		}
+	providerKey, ok := models.ResolveProviderKey(r.URL.Query().Get("provider"), h.config.Providers)
+	if !ok {
+		// An unknown or unregistered provider (e.g. a stale UI sending a
+		// name that no longer maps to a registered provider) would
+		// otherwise fall through to a silent 200 with an empty body,
+		// leaving the browser with no actionable signal. Send the user
+		// back to the provider chooser so they can pick a valid one.
+		http.Redirect(w, r, "/provider", http.StatusFound)
+		return
 	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     h.config.ProviderCookieName,
+		Value:    providerKey,
+		Path:     "/",
+		HttpOnly: true,
+	})
+	redirectURL := "/user/login?" + r.URL.RawQuery
+	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
 
 // ProvidersHandler returns a list of providers
+//
+// The response is sourced from ProviderTracker's snapshot (the same state
+// /api/providers/stream broadcasts) so this handler never blocks on a
+// remote probe. Existing clients keep working: each map value is the same
+// ProviderProperties shape they expect. Clients that want live updates as
+// remotes settle should subscribe to /api/providers/stream instead of
+// polling this endpoint.
 func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
-	// if r.Method != http.MethodGet {
-	// 	http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-	// 	return
-	// }
-
+	// Key the response by the registration map key - that is the value a
+	// client must put in the meshery-provider cookie to route to this
+	// provider. Using p.Name() here would collapse entries whenever two
+	// remote URLs report the same providerName from /capabilities (their
+	// shared name overwrites in the output even though the registration
+	// map disambiguates them by URL host).
 	providers := map[string]models.ProviderProperties{}
-	for _, p := range h.config.Providers {
-		providers[p.Name()] = (p.GetProviderProperties())
+	if h.config.ProviderTracker != nil {
+		for key, evt := range h.config.ProviderTracker.Snapshot() {
+			providers[key] = evt.Properties
+		}
+	} else {
+		// Fallback for tests / older wiring that did not build a
+		// tracker. Reads cached state from each provider directly;
+		// since GetProviderProperties no longer blocks on HTTP, this
+		// is still bounded.
+		for key, p := range h.config.Providers {
+			providers[key] = p.GetProviderProperties()
+		}
 	}
 	bd, err := json.Marshal(providers)
 	if err != nil {
@@ -45,6 +69,71 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
 		return
 	}
 	_, _ = w.Write(bd)
+}
+
+// ProvidersStreamHandler streams provider availability over Server-Sent
+// Events. Each event is a JSON ProviderStatusEvent: the registration key,
+// status (checking|online|offline), current ProviderProperties, and an
+// optional error message. The subscriber first receives one event per
+// registered provider (current state), then continues to receive updates
+// as the tracker re-probes remotes.
+//
+// On every subscription we also kick off a tracker.VerifyAll in the
+// background, so opening the chooser refreshes status without the UI
+// having to poll. Overlapping VerifyAll calls are collapsed by the
+// tracker's refresh mutex - the SSE flood from many tabs cannot stampede
+// the configured remotes.
+func (h *Handler) ProvidersStreamHandler(w http.ResponseWriter, r *http.Request) {
+	if h.config.ProviderTracker == nil {
+		writeJSONError(w, "provider tracker not initialized", http.StatusInternalServerError)
+		return
+	}
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		writeJSONError(w, "streaming unsupported", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+	// X-Accel-Buffering disables buffering at any nginx hop in front of
+	// Meshery so the events reach the browser immediately.
+	w.Header().Set("X-Accel-Buffering", "no")
+	w.WriteHeader(http.StatusOK)
+	flusher.Flush()
+
+	ctx := r.Context()
+	events, unsubscribe := h.config.ProviderTracker.Subscribe(ctx)
+	defer unsubscribe()
+
+	// Refresh status on subscribe so a freshly-opened chooser shows live
+	// state. The call is non-blocking from the SSE writer's perspective:
+	// VerifyAll publishes to all subscribers as it runs, and overlapping
+	// runs are coalesced by the tracker's refresh mutex.
+	go h.config.ProviderTracker.VerifyAll(ctx)
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case evt, ok := <-events:
+			if !ok {
+				return
+			}
+			data, err := json.Marshal(evt)
+			if err != nil {
+				h.log.Error(models.ErrMarshal(err, "provider status event"))
+				continue
+			}
+			if _, err := fmt.Fprintf(w, "event: provider\ndata: %s\n\n", data); err != nil {
+				// Client disconnected mid-write; ctx cancellation
+				// will close the channel and we'll exit cleanly.
+				return
+			}
+			flusher.Flush()
+		}
+	}
 }
 
 // ProviderUIHandler serves the provider-selection UI, or — when the deployment
@@ -73,11 +162,12 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
 // the operator at least gets the provider-chooser page (degraded UX, but
 // reachable) and a clear log line pointing at the deployment misconfig.
 func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
-	if h.Provider != "" {
-		if h.config.Providers[h.Provider] != nil {
+	enforcedProvider := models.NormalizeProviderName(h.Provider)
+	if enforcedProvider != "" {
+		if providerKey, ok := models.ResolveProviderKey(enforcedProvider, h.config.Providers); ok {
 			http.SetCookie(w, &http.Cookie{
 				Name:     h.config.ProviderCookieName,
-				Value:    h.Provider,
+				Value:    providerKey,
 				Path:     "/",
 				HttpOnly: true,
 			})

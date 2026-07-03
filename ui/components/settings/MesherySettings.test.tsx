@@ -67,16 +67,8 @@ vi.mock('../dashboard/charts/DashboardMeshModelGraph', () => ({
   default: () => <div data-testid="dashboard-graph" />,
 }));
 
-vi.mock('../telemetry/grafana/GrafanaComponent', () => ({
-  default: () => <div data-testid="grafana-component" />,
-}));
-
 vi.mock('../MeshAdapterConfigComponent', () => ({
   default: () => <div data-testid="adapter-config" />,
-}));
-
-vi.mock('../telemetry/prometheus/PrometheusComponent', () => ({
-  default: () => <div data-testid="prometheus-component" />,
 }));
 
 vi.mock('../PromptComponent', () => ({
@@ -178,14 +170,14 @@ describe('MesherySettings', () => {
     };
   });
 
-  it('renders the main settings tab bar with the 5 settings categories', () => {
+  it('renders the main settings tab bar with the 4 settings categories', () => {
     render(<MesherySettings />);
 
     expect(screen.getByTestId('tab-Overview')).toBeInTheDocument();
     expect(screen.getByTestId('tab-Adapters')).toBeInTheDocument();
-    expect(screen.getByTestId('tab-Metrics')).toBeInTheDocument();
     expect(screen.getByTestId('tab-Registry')).toBeInTheDocument();
     expect(screen.getByTestId('tab-Reset')).toBeInTheDocument();
+    expect(screen.queryByTestId('tab-Metrics')).not.toBeInTheDocument();
   });
 
   it('renders the Overview tab content (dashboard graph) by default', () => {

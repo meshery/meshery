@@ -449,7 +449,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
                 </Typography>
               </Button>
             </CreateButtonWrapper>
-            <Box display={'flex'} alignItems={'center'}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
               {!selectedWorkspace?.id && (
                 <>
                   <SearchBar

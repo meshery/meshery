@@ -25,11 +25,6 @@ import (
 	"sort"
 )
 
-var (
-	MesheryProvider = "Layer5"
-	NoneProvider    = "None"
-)
-
 type cmdProviderViewFlags struct {
 	All bool `json:"all" validate:"boolean"`
 }
