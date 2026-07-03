@@ -392,10 +392,13 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 			writeMeshkitError(w, err, statusCode)
 			return
 		}
+		if existingConn == nil {
+			h.log.Error(ErrRetrieveData(fmt.Errorf("connection not found")))
+			writeMeshkitError(w, ErrRetrieveData(fmt.Errorf("connection not found")), http.StatusNotFound)
+			return
+		}
 		if existingConn.Kind != "kubernetes" {
-			err := ErrInvalidConnectionKind(existingConn.Kind, "kubernetes")
-			h.log.Error(err)
-			writeMeshkitError(w, err, http.StatusBadRequest)
+			writeMeshkitError(w, ErrInvalidConnectionKind(existingConn.Kind, "kubernetes"), http.StatusBadRequest)
 			return
 		}
 
@@ -613,6 +616,10 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 ) (connections.MeshsyncDeploymentMode, connections.MeshsyncDeploymentMode, bool, error) {
 	if newConnection == nil {
 		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("new connection is nil, cannot compare meshsync deployment modes")
+	}
+
+	if existingConnection == nil {
+		return connections.MeshsyncDeploymentModeUndefined, connections.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("existing connection is nil, cannot compare meshsync deployment modes")
 	}
 
 	if h.SystemID == nil {
