@@ -56,20 +56,18 @@ func patchBindingMatchFields(rel *relationship.RelationshipDefinition, design *p
 
 	for _, ss := range *rel.Selectors {
 		for _, selArr := range [][]relationship.SelectorItem{ss.Allow.From, ss.Allow.To} {
-			if len(selArr) == 0 {
-				continue
-			}
-			sel := selArr[0]
-			if sel.Match == nil {
-				continue
-			}
-			compID := selectorItemID(sel)
-			comp := componentDeclarationByID(design, compID)
-			if comp == nil {
-				continue
-			}
+			for _, sel := range selArr {
+				if sel.Match == nil {
+					continue
+				}
+				compID := selectorItemID(sel)
+				comp := componentDeclarationByID(design, compID)
+				if comp == nil {
+					continue
+				}
 
-			actions = append(actions, patchBindingMatchFieldsForSelector(sel.Match, comp, design, reverse)...)
+				actions = append(actions, patchBindingMatchFieldsForSelector(sel.Match, comp, design, reverse)...)
+			}
 		}
 	}
 	return actions
@@ -93,50 +91,53 @@ func patchBindingMatchFieldsForSelector(match *relationship.MatchSelector, _ *co
 		if ms.self == nil || len(*ms.self) == 0 {
 			continue
 		}
-		mSel := (*ms.self)[0]
-		if mSel.MutatorRef == nil {
-			continue
-		}
-		matchComp := findMatchSelectorComponent(mSel, design)
-		if matchComp == nil {
-			continue
-		}
-
 		if ms.other == nil || len(*ms.other) == 0 {
 			continue
 		}
-		otherSel := (*ms.other)[0]
-		if otherSel.MutatedRef == nil {
-			continue
-		}
-		otherComp := findMatchSelectorComponent(otherSel, design)
-		if otherComp == nil {
-			continue
-		}
-
-		count := min(len(*mSel.MutatorRef), len(*otherSel.MutatedRef))
-
-		for i := range count {
-			mutatorPath := (*mSel.MutatorRef)[i]
-			mutatedPath := (*otherSel.MutatedRef)[i]
-
-			mutatorValue := configurationForComponentAtPath(mutatorPath, matchComp, design)
-			oldValue := configurationForComponentAtPath(mutatedPath, otherComp, design)
-
-			if mutatorValue == nil {
+		pairCount := min(len(*ms.self), len(*ms.other))
+		for p := range pairCount {
+			mSel := (*ms.self)[p]
+			if mSel.MutatorRef == nil {
 				continue
 			}
-			if reverse {
-				if !deepEqual(mutatorValue, oldValue) {
+			matchComp := findMatchSelectorComponent(mSel, design)
+			if matchComp == nil {
+				continue
+			}
+
+			otherSel := (*ms.other)[p]
+			if otherSel.MutatedRef == nil {
+				continue
+			}
+			otherComp := findMatchSelectorComponent(otherSel, design)
+			if otherComp == nil {
+				continue
+			}
+
+			count := min(len(*mSel.MutatorRef), len(*otherSel.MutatedRef))
+
+			for i := range count {
+				mutatorPath := (*mSel.MutatorRef)[i]
+				mutatedPath := (*otherSel.MutatedRef)[i]
+
+				mutatorValue := configurationForComponentAtPath(mutatorPath, matchComp, design)
+				oldValue := configurationForComponentAtPath(mutatedPath, otherComp, design)
+
+				if mutatorValue == nil {
 					continue
 				}
-				actions = append(actions, cleanupActionForPath(otherComp.ID.String(), mutatedPath, otherComp))
-				continue
+				if reverse {
+					if !deepEqual(mutatorValue, oldValue) {
+						continue
+					}
+					actions = append(actions, cleanupActionForPath(otherComp.ID.String(), mutatedPath, otherComp))
+					continue
+				}
+				if deepEqual(mutatorValue, oldValue) {
+					continue
+				}
+				actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedPath), otherComp.ID.String(), mutatedPath, mutatorValue))
 			}
-			if deepEqual(mutatorValue, oldValue) {
-				continue
-			}
-			actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedPath), otherComp.ID.String(), mutatedPath, mutatorValue))
 		}
 	}
 	return actions
@@ -318,11 +319,15 @@ func patchBindingSelectorIDsTyped(sel *relationship.SelectorItem, matchFromID, m
 	}
 	fromUUID, _ := uuidFromString(matchFromID)
 	toUUID, _ := uuidFromString(matchToID)
-	if sel.Match.From != nil && len(*sel.Match.From) > 0 {
-		(*sel.Match.From)[0].ID = &fromUUID
+	if sel.Match.From != nil {
+		for i := range *sel.Match.From {
+			(*sel.Match.From)[i].ID = &fromUUID
+		}
 	}
-	if sel.Match.To != nil && len(*sel.Match.To) > 0 {
-		(*sel.Match.To)[0].ID = &toUUID
+	if sel.Match.To != nil {
+		for i := range *sel.Match.To {
+			(*sel.Match.To)[i].ID = &toUUID
+		}
 	}
 }
 
@@ -356,33 +361,51 @@ func isValidBindingTyped(comp1, comp2 *component.ComponentDefinition, sel relati
 }
 
 // extractMutatorFromMatch finds the mutator component and ref paths from a match field.
+// Concatenates refs across every match item that declares a MutatorRef so multi-ref
+// bindings produce a complete path list instead of dropping items past [0].
 func extractMutatorFromMatch(match *relationship.MatchSelector, comp1, comp2 *component.ComponentDefinition) (*component.ComponentDefinition, [][]string) {
-	if match.From != nil && len(*match.From) > 0 {
-		if (*match.From)[0].MutatorRef != nil {
-			return comp1, *(*match.From)[0].MutatorRef
+	if match.From != nil {
+		if refs := collectRefs(*match.From, func(m relationship.MatchSelectorItem) *relationship.MutatorRef { return m.MutatorRef }); len(refs) > 0 {
+			return comp1, refs
 		}
 	}
-	if match.To != nil && len(*match.To) > 0 {
-		if (*match.To)[0].MutatorRef != nil {
-			return comp2, *(*match.To)[0].MutatorRef
+	if match.To != nil {
+		if refs := collectRefs(*match.To, func(m relationship.MatchSelectorItem) *relationship.MutatorRef { return m.MutatorRef }); len(refs) > 0 {
+			return comp2, refs
 		}
 	}
 	return nil, nil
 }
 
 // extractMutatedFromMatch finds the mutated component and ref paths from a match field.
+// Concatenates refs across every match item that declares a MutatedRef so multi-ref
+// bindings produce a complete path list instead of dropping items past [0].
 func extractMutatedFromMatch(match *relationship.MatchSelector, comp1, comp2 *component.ComponentDefinition) (*component.ComponentDefinition, [][]string) {
-	if match.From != nil && len(*match.From) > 0 {
-		if (*match.From)[0].MutatedRef != nil {
-			return comp1, *(*match.From)[0].MutatedRef
+	if match.From != nil {
+		if refs := collectRefs(*match.From, func(m relationship.MatchSelectorItem) *relationship.MutatedRef { return m.MutatedRef }); len(refs) > 0 {
+			return comp1, refs
 		}
 	}
-	if match.To != nil && len(*match.To) > 0 {
-		if (*match.To)[0].MutatedRef != nil {
-			return comp2, *(*match.To)[0].MutatedRef
+	if match.To != nil {
+		if refs := collectRefs(*match.To, func(m relationship.MatchSelectorItem) *relationship.MutatedRef { return m.MutatedRef }); len(refs) > 0 {
+			return comp2, refs
 		}
 	}
 	return nil, nil
+}
+
+// collectRefs flattens the [][]string entries from a slice of match items using
+// the supplied accessor (MutatorRef or MutatedRef).
+func collectRefs(items []relationship.MatchSelectorItem, ref func(relationship.MatchSelectorItem) *[][]string) [][]string {
+	var out [][]string
+	for _, m := range items {
+		r := ref(m)
+		if r == nil {
+			continue
+		}
+		out = append(out, (*r)...)
+	}
+	return out
 }
 
 // filterComponentsByKindTyped returns components matching the given kind.
