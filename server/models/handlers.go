@@ -215,6 +215,8 @@ type HandlerInterface interface {
 	ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	ExportModel(w http.ResponseWriter, req *http.Request)
+	PushModel(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PullModel(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetEnvironments(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetEnvironmentByIDHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)

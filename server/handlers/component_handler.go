@@ -1,12 +1,16 @@
 package handlers
 
 import (
+	"archive/tar"
 	"bytes"
+	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -32,9 +36,9 @@ import (
 	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
-	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta3/component"
 
 	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
@@ -84,10 +88,10 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		TotalCount:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -140,10 +144,10 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		TotalCount:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -200,10 +204,10 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		TotalCount:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -257,10 +261,10 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		TotalCount:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -300,7 +304,7 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 	res := models.MeshmodelCategoriesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Categories: categories,
 	}
 
@@ -342,7 +346,7 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	res := models.MeshmodelCategoriesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Categories: categories,
 	}
 
@@ -396,7 +400,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -448,7 +452,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -501,7 +505,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -552,7 +556,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -603,7 +607,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -654,7 +658,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -703,7 +707,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -752,7 +756,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	res := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -838,7 +842,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	res := models.MeshmodelRegistrantsAPIResponse{
 		Page:        page,
 		PageSize:    int(pgSize),
-		TotalCount:       count,
+		TotalCount:  count,
 		Registrants: hosts,
 	}
 
@@ -1468,6 +1472,508 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 			h.log.Error(ErrEncodeResponse(err))
 		}
 	}
+}
+
+func (h *Handler) PushModel(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	var req struct {
+		ModelID      string `json:"modelId"`
+		ModelName    string `json:"modelName"`
+		Version      string `json:"version"`
+		Registry     string `json:"registry"`
+		Repository   string `json:"repository"`
+		Tag          string `json:"tag"`
+		CredentialID string `json:"credentialId"`
+		Username     string `json:"username"`
+		Password     string `json:"password"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeJSONError(rw, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+	if req.ModelID == "" && req.ModelName == "" {
+		writeJSONError(rw, "modelId or modelName is required", http.StatusBadRequest)
+		return
+	}
+
+	username, password, err := resolveCredentials(r, &req.CredentialID, req.Username, req.Password, provider)
+	// Clear inline credentials from the request struct to minimise
+	// accidental exposure lifetime. This is not secure memory erasure;
+	// strings in Go are immutable and may linger in memory until GC.
+	req.Username = ""
+	req.Password = ""
+	if err != nil {
+		writeMeshkitError(rw, ErrPushModel(err, "credential resolution"), http.StatusBadRequest)
+		return
+	}
+
+	if err := validateOCIRegistryDestination(req.Registry, req.Repository); err != nil {
+		writeJSONError(rw, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if req.Tag == "" {
+		req.Tag = "latest"
+	}
+
+	modelFilter := &regv1beta1.ModelFilter{
+		Id:            req.ModelID,
+		Name:          req.ModelName,
+		Components:    true,
+		Relationships: true,
+		Greedy:        true,
+		Version:       req.Version,
+	}
+	e, _, _, err := h.registryManager.GetEntities(modelFilter)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		writeMeshkitError(rw, ErrGetMeshModels(err), http.StatusInternalServerError)
+		return
+	}
+	if len(e) == 0 {
+		writeJSONError(rw, "model not found", http.StatusNotFound)
+		return
+	}
+
+	model := e[0].(*_model.ModelDefinition)
+
+	modelDir, err := os.MkdirTemp("", "model-push-")
+	if err != nil {
+		h.log.Error(err)
+		writeMeshkitError(rw, ErrPushModel(err, "temp directory creation"), http.StatusInternalServerError)
+		return
+	}
+	defer func() {
+		if err := os.RemoveAll(modelDir); err != nil {
+			h.log.Error(err)
+		}
+	}()
+
+	versionDir := filepath.Join(modelDir, model.Model.Version, model.Version)
+	for _, dir := range []string{versionDir, filepath.Join(versionDir, "components"), filepath.Join(versionDir, "relationships")} {
+		if err := os.MkdirAll(dir, 0700); err != nil {
+			h.log.Error(err)
+			writeMeshkitError(rw, ErrPushModel(err, "temp directory creation"), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	var components []component.ComponentDefinition
+	if model.Components != nil {
+		var ok bool
+		components, ok = model.Components.([]component.ComponentDefinition)
+		if !ok {
+			err := fmt.Errorf("unexpected type for Components: %T", model.Components)
+			h.log.Error(err)
+			writeMeshkitError(rw, ErrPushModel(err, "type assertion"), http.StatusInternalServerError)
+			return
+		}
+	}
+	var relationships []relationship.RelationshipDefinition
+	if model.Relationships != nil {
+		var ok bool
+		relationships, ok = model.Relationships.([]relationship.RelationshipDefinition)
+		if !ok {
+			err := fmt.Errorf("unexpected type for Relationships: %T", model.Relationships)
+			h.log.Error(err)
+			writeMeshkitError(rw, ErrPushModel(err, "type assertion"), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	_ = model.ReplaceSVGData("../../")
+	model.Relationships = nil
+	model.Components = nil
+
+	if err := model.WriteModelDefinition(filepath.Join(versionDir, "model.json"), "json"); err != nil {
+		h.log.Error(err)
+		writeMeshkitError(rw, ErrPushModel(err, "model definition write"), http.StatusInternalServerError)
+		return
+	}
+	for _, comp := range components {
+		_ = comp.ReplaceSVGData("../../")
+		comp.Model = model
+		if _, err := comp.WriteComponentDefinition(filepath.Join(versionDir, "components"), "json"); err != nil {
+			h.log.Error(err)
+			writeMeshkitError(rw, ErrPushModel(err, "component definition write"), http.StatusInternalServerError)
+			return
+		}
+	}
+	for _, rel := range relationships {
+		rel.Model = model.ToReference()
+		if err := rel.WriteRelationshipDefinition(filepath.Join(versionDir, "relationships"), "json"); err != nil {
+			h.log.Error(err)
+			writeMeshkitError(rw, ErrPushModel(err, "relationship definition write"), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	if err := meshkitOci.PushToOCIRegistry(modelDir, req.Registry, req.Repository, req.Tag, username, password); err != nil {
+		h.log.Error(err)
+		writeMeshkitError(rw, ErrPushModel(err, "OCI push"), http.StatusInternalServerError)
+		return
+	}
+
+	writeJSONMessage(rw, map[string]string{"message": "Model pushed successfully"}, http.StatusOK)
+}
+
+func (h *Handler) PullModel(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	var req struct {
+		Registry     string `json:"registry"`
+		Repository   string `json:"repository"`
+		Tag          string `json:"tag"`
+		CredentialID string `json:"credentialId"`
+		Username     string `json:"username"`
+		Password     string `json:"password"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeJSONError(rw, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	username, password, err := resolveCredentials(r, &req.CredentialID, req.Username, req.Password, provider)
+	req.Username = ""
+	req.Password = ""
+	if err != nil {
+		writeMeshkitError(rw, ErrPullModel(err, "credential resolution"), http.StatusBadRequest)
+		return
+	}
+
+	if err := validateOCIRegistryDestination(req.Registry, req.Repository); err != nil {
+		writeJSONError(rw, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if req.Tag == "" {
+		req.Tag = "latest"
+	}
+
+	pullDir, err := os.MkdirTemp("", "model-pull-")
+	if err != nil {
+		h.log.Error(err)
+		writeMeshkitError(rw, ErrPullModel(err, "pull directory creation"), http.StatusInternalServerError)
+		return
+	}
+	defer func() {
+		if err := os.RemoveAll(pullDir); err != nil {
+			h.log.Error(err)
+		}
+	}()
+
+	if err := meshkitOci.PullFromOCIRegistry(pullDir, req.Registry, req.Repository, req.Tag, username, password); err != nil {
+		h.log.Error(err)
+		writeMeshkitError(rw, ErrPullModel(err, "OCI pull"), http.StatusInternalServerError)
+		return
+	}
+
+	extractDir, err := os.MkdirTemp("", "model-extract-")
+	if err != nil {
+		h.log.Error(err)
+		writeMeshkitError(rw, ErrPullModel(err, "extract directory creation"), http.StatusInternalServerError)
+		return
+	}
+	defer func() {
+		if err := os.RemoveAll(extractDir); err != nil {
+			h.log.Error(err)
+		}
+	}()
+
+	if err := extractFromOCIStore(pullDir, req.Tag, extractDir); err != nil {
+		h.log.Error(err)
+		writeMeshkitError(rw, ErrPullModel(err, "artifact extraction"), http.StatusInternalServerError)
+		return
+	}
+
+	regErrorStore := models.NewRegistrationFailureLogHandler()
+	registrationHelper := registration.NewRegistrationHelper(utils.UI, h.registryManager, regErrorStore)
+	dir := registration.NewDir(extractDir)
+	registrationHelper.Register(dir)
+
+	if len(registrationHelper.PkgUnits) == 0 {
+		h.log.Error(ErrPullModel(fmt.Errorf("registration produced no valid package units"), "registration"))
+		writeMeshkitError(rw, ErrPullModel(fmt.Errorf("registration produced no valid package units"), "registration"), http.StatusInternalServerError)
+		return
+	}
+
+	writeJSONMessage(rw, map[string]string{"message": "Model pulled and registered successfully"}, http.StatusOK)
+}
+
+// extractFromOCIStore reads an ORAS file store (created by PullFromOCIRegistry),
+// finds its first layer blob, decompresses and untars it into destDir.
+// It validates digests before reading files, streams layer content instead of
+// reading the entire blob into memory, rejects symlinks/hardlinks, enforces
+// resource limits, and prevents path traversal.
+func extractFromOCIStore(pullDir, tag, destDir string) error {
+	const (
+		maxTotalBytes = 500 << 20 // 500 MiB total decompressed
+		maxFileSize   = 100 << 20 // 100 MiB per file
+		maxFileCount  = 10000
+	)
+
+	indexFile := filepath.Join(pullDir, "index.json")
+	data, err := os.ReadFile(indexFile)
+	if err != nil {
+		return fmt.Errorf("cannot read index.json: %w", err)
+	}
+
+	var index struct {
+		Manifests []struct {
+			Digest      string            `json:"digest"`
+			Annotations map[string]string `json:"annotations,omitempty"`
+		} `json:"manifests"`
+	}
+	if err := json.Unmarshal(data, &index); err != nil {
+		return fmt.Errorf("cannot parse index.json: %w", err)
+	}
+	if len(index.Manifests) == 0 {
+		return fmt.Errorf("no manifests found in pulled artifact")
+	}
+
+	manifestDigest := index.Manifests[0].Digest
+	for _, m := range index.Manifests {
+		if ref, ok := m.Annotations["org.opencontainers.image.ref.name"]; ok && ref == tag {
+			manifestDigest = m.Digest
+			break
+		}
+	}
+
+	if err := validateOCIDigest(manifestDigest); err != nil {
+		return fmt.Errorf("invalid manifest digest: %w", err)
+	}
+
+	manifestFile := filepath.Join(pullDir, "blobs", "sha256", strings.TrimPrefix(manifestDigest, "sha256:"))
+	manifestData, err := os.ReadFile(manifestFile)
+	if err != nil {
+		return fmt.Errorf("cannot read manifest blob %s: %w", manifestDigest, err)
+	}
+
+	var manifest struct {
+		Layers []struct {
+			Digest string `json:"digest"`
+		} `json:"layers"`
+	}
+	if err := json.Unmarshal(manifestData, &manifest); err != nil {
+		return fmt.Errorf("cannot parse manifest: %w", err)
+	}
+	if len(manifest.Layers) == 0 {
+		return fmt.Errorf("no layers found in pulled artifact")
+	}
+
+	layerDigest := manifest.Layers[0].Digest
+	if err := validateOCIDigest(layerDigest); err != nil {
+		return fmt.Errorf("invalid layer digest: %w", err)
+	}
+
+	layerFile := filepath.Join(pullDir, "blobs", "sha256", strings.TrimPrefix(layerDigest, "sha256:"))
+	f, err := os.Open(layerFile)
+	if err != nil {
+		return fmt.Errorf("cannot open layer blob %s: %w", layerDigest, err)
+	}
+	defer f.Close()
+
+	gzr, err := gzip.NewReader(f)
+	if err != nil {
+		return fmt.Errorf("cannot decompress layer: %w", err)
+	}
+	defer gzr.Close()
+
+	var totalExtracted int64
+	var fileCount int
+	tr := tar.NewReader(gzr)
+	for {
+		header, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return fmt.Errorf("error reading tar stream: %w", err)
+		}
+
+		if header.Typeflag == tar.TypeSymlink || header.Typeflag == tar.TypeLink {
+			return fmt.Errorf("rejected symlink/hardlink entry: %s", header.Name)
+		}
+
+		target := filepath.Join(destDir, filepath.Clean(header.Name))
+		if !strings.HasPrefix(target, filepath.Clean(destDir)+string(os.PathSeparator)) {
+			return fmt.Errorf("path traversal rejected: %s", header.Name)
+		}
+
+		switch header.Typeflag {
+		case tar.TypeDir:
+			mode := os.FileMode(header.Mode) & os.ModePerm
+			if mode > 0777 {
+				mode = 0755
+			}
+			if err := os.MkdirAll(target, mode); err != nil {
+				return fmt.Errorf("cannot create dir %s: %w", target, err)
+			}
+		case tar.TypeReg:
+			if header.Size > maxFileSize {
+				return fmt.Errorf("file %s exceeds max size %d", header.Name, maxFileSize)
+			}
+			if totalExtracted+header.Size > maxTotalBytes {
+				return fmt.Errorf("total extracted size would exceed limit %d", maxTotalBytes)
+			}
+			if fileCount >= maxFileCount {
+				return fmt.Errorf("extracted file count exceeds limit %d", maxFileCount)
+			}
+			fileCount++
+
+			if err := os.MkdirAll(filepath.Dir(target), 0755); err != nil {
+				return fmt.Errorf("cannot create parent dir for %s: %w", target, err)
+			}
+			// Restrict created file permissions; ignore header mode bits
+			// that grant group/world write.
+			mode := os.FileMode(header.Mode) & 0666
+			fw, err := os.OpenFile(target, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, mode)
+			if err != nil {
+				return fmt.Errorf("cannot create file %s: %w", target, err)
+			}
+			written, err := io.Copy(fw, io.LimitReader(tr, header.Size))
+			fw.Close()
+			if err != nil {
+				return fmt.Errorf("cannot write file %s: %w", target, err)
+			}
+			if written != header.Size {
+				return fmt.Errorf("short write for %s: wrote %d, expected %d", target, written, header.Size)
+			}
+			totalExtracted += written
+		}
+	}
+
+	return nil
+}
+
+// validateOCIDigest checks that a digest string has the form "sha256:<hex>".
+func validateOCIDigest(digest string) error {
+	if !strings.HasPrefix(digest, "sha256:") {
+		return fmt.Errorf("unsupported digest algorithm: %s", digest)
+	}
+	hexPart := strings.TrimPrefix(digest, "sha256:")
+	if len(hexPart) != 64 {
+		return fmt.Errorf("invalid digest length: %s", digest)
+	}
+	for _, c := range hexPart {
+		if !((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
+			return fmt.Errorf("invalid hex character in digest: %s", digest)
+		}
+	}
+	return nil
+}
+
+// resolveCredentials retrieves OCI registry credentials either from a stored
+// Credential (by ID) or from inline username/password. If credentialId is set
+// it takes precedence over inline values.
+func resolveCredentials(r *http.Request, credentialID *string, inlineUsername, inlinePassword string, provider models.Provider) (username, password string, err error) {
+	if credentialID != nil && *credentialID != "" {
+		token, ok := r.Context().Value(models.TokenCtxKey).(string)
+		if !ok {
+			return "", "", fmt.Errorf("failed to retrieve auth token from context")
+		}
+		cid := uuid.FromStringOrNil(*credentialID)
+		if cid.IsNil() {
+			return "", "", fmt.Errorf("invalid credentialId: %s", *credentialID)
+		}
+		cred, _, cerr := provider.GetCredentialByID(token, cid)
+		if cerr != nil {
+			return "", "", fmt.Errorf("failed to retrieve credential: %w", cerr)
+		}
+		if cred == nil {
+			return "", "", fmt.Errorf("credential not found")
+		}
+		u, _ := cred.Secret["username"].(string)
+		p, _ := cred.Secret["password"].(string)
+		if u == "" {
+			return "", "", fmt.Errorf("credential %q has no username", *credentialID)
+		}
+		return u, p, nil
+	}
+	return inlineUsername, inlinePassword, nil
+}
+
+// validateOCIRegistryDestination validates the registry address and repository
+// for OCI operations. It rejects private/loopback/link-local destinations to
+// prevent SSRF attacks.
+func validateOCIRegistryDestination(registry, repository string) error {
+	if registry == "" {
+		return fmt.Errorf("registry is required")
+	}
+	if repository == "" {
+		return fmt.Errorf("repository is required")
+	}
+
+	// Strip optional scheme for parsing; only https/http are potentially
+	// acceptable, but we strip them to focus on the host.
+	raw := registry
+	if strings.Contains(raw, "://") {
+		u, perr := url.Parse(raw)
+		if perr != nil {
+			return fmt.Errorf("invalid registry URL: %w", perr)
+		}
+		if u.Scheme != "" && u.Scheme != "https" && u.Scheme != "http" {
+			return fmt.Errorf("unsupported registry scheme: %s", u.Scheme)
+		}
+		raw = u.Host
+	}
+
+	// Extract host (and optional port)
+	host := raw
+	if h, _, err := net.SplitHostPort(raw); err == nil {
+		host = h
+	}
+
+	if host == "" {
+		return fmt.Errorf("registry host is empty")
+	}
+
+	// Reject path separators in registry (must be pure host:port)
+	if strings.ContainsAny(registry, "/\\") {
+		return fmt.Errorf("registry must be a host:port, not a path")
+	}
+
+	// Reject repository path traversal
+	if strings.Contains(repository, "..") {
+		return fmt.Errorf("repository must not contain path traversal")
+	}
+
+	// Reject known-bad host patterns including unspecified addresses.
+	lower := strings.ToLower(host)
+	if lower == "localhost" || lower == "127.0.0.1" || lower == "::1" {
+		return fmt.Errorf("registry must not be a loopback address")
+	}
+	if lower == "0.0.0.0" || lower == "::" {
+		return fmt.Errorf("registry must not be an unspecified address")
+	}
+
+	// Resolve hostname and check IP ranges.
+	// NOTE: DNS-rebinding TOCTOU — the resolution below happens at
+	// SSRF-check time, not at connection time. The meshkit OCI transport
+	// (PushToOCIRegistry / PullFromOCIRegistry) does not expose a dial
+	// control function, so the resolved addresses cannot be re-checked
+	// on the actual TCP connection. This is an upstream limitation of
+	// github.com/meshery/meshkit v1.0.19. The correct fix would require
+	// meshkit to accept a net.Dialer or dial-context function.
+	ips, err := net.LookupHost(host)
+	if err != nil {
+		return fmt.Errorf("registry host %q could not be resolved: %w", host, err)
+	}
+	for _, ipStr := range ips {
+		ip := net.ParseIP(ipStr)
+		if ip == nil {
+			continue
+		}
+		if ip.IsLoopback() {
+			return fmt.Errorf("registry resolved to loopback address: %s", ipStr)
+		}
+		if ip.IsUnspecified() {
+			return fmt.Errorf("registry resolved to unspecified address: %s", ipStr)
+		}
+		if ip.IsPrivate() {
+			return fmt.Errorf("registry resolved to private address: %s", ipStr)
+		}
+		if ip.IsLinkLocalUnicast() || ip.IsLinkLocalMulticast() {
+			return fmt.Errorf("registry resolved to link-local address: %s", ipStr)
+		}
+	}
+
+	return nil
 }
 
 func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) error {

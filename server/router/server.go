@@ -131,6 +131,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/system/availableAdapters", http.HandlerFunc(h.AvailableAdaptersHandler)).
 		Methods("GET")
 	gMux.Handle("/api/meshmodels/export", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ExportModel), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/push", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PushModel), models.ProviderAuth))).Methods("POST")
+	gMux.Handle("/api/meshmodels/pull", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PullModel), models.ProviderAuth))).Methods("POST")
 
 	gMux.Handle("/api/system/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ClientEventHandler), models.ProviderAuth))).
 		Methods("POST")

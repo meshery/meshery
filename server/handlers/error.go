@@ -214,6 +214,8 @@ const (
 	ErrTelemetryGrafanaDatasourceCode      = "meshery-server-1433"
 	ErrTelemetryGrafanaAuthCode            = "meshery-server-1434"
 	ErrTelemetryPrometheusAuthCode         = "meshery-server-1435"
+	ErrPushModelCode                       = "meshery-server-1436"
+	ErrPullModelCode                       = "meshery-server-1437"
 )
 
 var (
@@ -1085,4 +1087,14 @@ func ErrInitializeMachine(err error) error {
 // caller input.
 func ErrSendMachineEvent(err error) error {
 	return errors.New(ErrSendMachineEventCode, errors.Alert, []string{"Failed to advance connection state machine"}, []string{err.Error()}, []string{"The requested event is not valid from the connection's current state.", "A side-effect action attached to the transition (e.g. provisioning, discovery) returned an error."}, []string{"Inspect the connection's current status before retrying. If the failure originates from a side-effect action, address the underlying cause (e.g. cluster reachability, credential validity) and retry."})
+}
+
+// ErrPushModel wraps failures pushing a model to an OCI registry.
+func ErrPushModel(err error, stage string) error {
+	return errors.New(ErrPushModelCode, errors.Alert, []string{fmt.Sprintf("Failed to push model to OCI registry during %s", stage)}, []string{err.Error()}, []string{"OCI registry is unreachable or rejected credentials.", "Model directory could not be prepared.", "Network error during push."}, []string{"Verify the OCI registry URL and credentials are correct and the registry is reachable from the Meshery server."})
+}
+
+// ErrPullModel wraps failures pulling a model from an OCI registry.
+func ErrPullModel(err error, stage string) error {
+	return errors.New(ErrPullModelCode, errors.Alert, []string{fmt.Sprintf("Failed to pull model from OCI registry during %s", stage)}, []string{err.Error()}, []string{"OCI registry is unreachable or rejected credentials.", "Pulled artifact is malformed or missing expected content.", "Model directory could not be extracted or registered."}, []string{"Verify the OCI registry URL and credentials are correct and the registry is reachable from the Meshery server."})
 }
