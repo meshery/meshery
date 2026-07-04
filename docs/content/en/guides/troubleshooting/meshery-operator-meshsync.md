@@ -1,7 +1,7 @@
 ---
 title: Meshery Operator, MeshSync, Broker Troubleshooting Guide
 description: Comprehensive guidance for troubleshooting Meshery Operator, MeshSync and Broker deployments under various scenarios.
-no_list: true 
+no_list: true
 hide_section_list: true
 categories: [troubleshooting]
 ---
@@ -118,6 +118,43 @@ Future Enhancements for Troubleshooting:
 - NATS/MeshSync not running prompts a review of available operations in the Settings panel.
 
 </div>
+
+## Inspecting MeshSync Directly
+
+When the CLI and UI clients don't explain *why* data is missing or stale, inspect the MeshSync pod directly.
+
+**Read MeshSync logs** (enable debug logging for detail):
+
+```bash
+kubectl -n meshery logs deploy/meshery-meshsync
+# For verbose output, set DEBUG=true on the Deployment and let it restart:
+kubectl -n meshery set env deploy/meshery-meshsync DEBUG=true
+```
+
+**Check liveness and readiness** (MeshSync serves these on port `11000`):
+
+```bash
+kubectl -n meshery port-forward deploy/meshery-meshsync 11000:11000 &
+curl -sS http://127.0.0.1:11000/healthz    # liveness
+curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:11000/readyz   # 200 == connected to Broker
+```
+
+{{% alert color="info" title="What readiness does and does not mean" %}}
+<code>/readyz</code> returns <code>200</code> once MeshSync has connected to the Broker, <strong>not</strong> once its informer caches have finished priming. Immediately after a (re)start MeshSync may report ready while its cluster snapshot is still filling in. If Meshery shows a partial cluster right after a restart, give discovery a moment or trigger a fresh discovery with <code>kubectl -n meshery rollout restart deploy/meshery-meshsync</code>.
+{{% /alert %}}
+
+**Verify the Broker is reachable from MeshSync.** On startup MeshSync runs a connectivity test against the Broker's monitoring endpoint (`http://<broker-host>:8222/connz`) before opening its NATS client; a failure here appears in the MeshSync logs and blocks readiness. Confirm the `BROKER_URL` value and that the Broker Service is reachable:
+
+```bash
+kubectl -n meshery get deploy meshery-meshsync \
+  -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="BROKER_URL")].value}{"\n"}'
+```
+
+### Behaviors that commonly explain missing or churning data
+
+- **A new or changed CRD triggers a full re-discovery.** MeshSync watches the cluster's CustomResourceDefinitions and rebuilds its informers when the CRD set changes. On clusters where controllers rewrite CRDs frequently (for example, cert-manager's CA injector updating CRD `caBundle` fields), this can cause repeated re-discovery and transient load or gaps. If you observe this, scope discovery with a whitelist (see the [MeshSync configuration FAQ]({{< ref "concepts/architecture/meshsync.md#meshsync-faqs" >}})).
+- **Secrets are discovered by default.** MeshSync watches `secrets.v1.`, and the Secret objects it forwards to Meshery Server include their `data` and `stringData` payload. Those Secret contents are therefore transmitted over the Broker and persisted in the Meshery Database. In security-sensitive environments, blacklist `secrets.v1.` (or use a whitelist that omits it) to keep Secret payloads out of the Meshery Database.
+- **Discovery is watch-driven with no periodic re-list.** MeshSync relies on the Kubernetes watch stream rather than polling. If you suspect the in-memory snapshot has drifted, force a re-list with `kubectl -n meshery rollout restart deploy/meshery-meshsync` or reset the Meshery Database from the UI.
 
 {{< related-discussions tag="meshery" >}}
 
