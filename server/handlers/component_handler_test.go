@@ -217,6 +217,41 @@ func TestValidateOCIRegistryDestination_RejectsUnspecifiedWithPort(t *testing.T)
 	}
 }
 
+func TestValidateOCIRegistryDestination_RejectsSchemeWithPath(t *testing.T) {
+	err := validateOCIRegistryDestination("https://reg.example.com/some/path", "repo")
+	if err == nil || !strings.Contains(err.Error(), "path, query, or fragment") {
+		t.Fatal("expected path rejection error, got:", err)
+	}
+}
+
+func TestValidateOCIRegistryDestination_RejectsSchemeWithQuery(t *testing.T) {
+	err := validateOCIRegistryDestination("https://reg.example.com?query=val", "repo")
+	if err == nil || !strings.Contains(err.Error(), "path, query, or fragment") {
+		t.Fatal("expected query rejection error, got:", err)
+	}
+}
+
+func TestValidateOCIRegistryDestination_RejectsSchemeWithFragment(t *testing.T) {
+	err := validateOCIRegistryDestination("https://reg.example.com#frag", "repo")
+	if err == nil || !strings.Contains(err.Error(), "path, query, or fragment") {
+		t.Fatal("expected fragment rejection error, got:", err)
+	}
+}
+
+func TestValidateOCIRegistryDestination_AcceptsSchemeHost(t *testing.T) {
+	err := validateOCIRegistryDestination("https://reg.example.com", "repo")
+	if err != nil {
+		t.Fatal("unexpected error:", err)
+	}
+}
+
+func TestValidateOCIRegistryDestination_AcceptsSchemeHostPort(t *testing.T) {
+	err := validateOCIRegistryDestination("http://reg.example.com:5000", "repo")
+	if err != nil {
+		t.Fatal("unexpected error:", err)
+	}
+}
+
 // ---- resolveCredentials ----
 
 func TestResolveCredentials_Inline(t *testing.T) {
@@ -603,7 +638,9 @@ func TestExtractFromOCIStore_InvalidLayerDigest(t *testing.T) {
 func TestExtractFromOCIStore_NoManifests(t *testing.T) {
 	src := t.TempDir()
 	dst := t.TempDir()
-	os.WriteFile(filepath.Join(src, "index.json"), []byte(`{"manifests":[]}`), 0644)
+	if err := os.WriteFile(filepath.Join(src, "index.json"), []byte(`{"manifests":[]}`), 0644); err != nil {
+		t.Fatal(err)
+	}
 
 	err := extractFromOCIStore(src, "latest", dst)
 	if err == nil || !strings.Contains(err.Error(), "no manifests") {
@@ -637,7 +674,7 @@ func TestPushModel_InvalidJSON(t *testing.T) {
 	h.PushModel(rec, req, nil, nil, prov)
 
 	resp := rec.Result()
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusBadRequest {
 		t.Errorf("expected 400, got %d", resp.StatusCode)
 	}
@@ -658,7 +695,7 @@ func TestPushModel_MissingModelId(t *testing.T) {
 	h.PushModel(rec, req, nil, nil, prov)
 
 	resp := rec.Result()
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusBadRequest {
 		t.Errorf("expected 400, got %d", resp.StatusCode)
 	}
@@ -675,7 +712,7 @@ func TestPullModel_InvalidJSON(t *testing.T) {
 	h.PullModel(rec, req, nil, nil, prov)
 
 	resp := rec.Result()
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusBadRequest {
 		t.Errorf("expected 400, got %d", resp.StatusCode)
 	}
@@ -692,8 +729,12 @@ func TestExtractFromOCIStore_NoLayers(t *testing.T) {
 	hm := sha256.Sum256(md)
 	mDigest := fmt.Sprintf("sha256:%s", hex.EncodeToString(hm[:]))
 
-	os.MkdirAll(filepath.Join(src, "blobs", "sha256"), 0755)
-	os.WriteFile(filepath.Join(src, "blobs", "sha256", strings.TrimPrefix(mDigest, "sha256:")), md, 0644)
+	if err := os.MkdirAll(filepath.Join(src, "blobs", "sha256"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(src, "blobs", "sha256", strings.TrimPrefix(mDigest, "sha256:")), md, 0644); err != nil {
+		t.Fatal(err)
+	}
 	idx, _ := json.Marshal(struct {
 		Manifests []struct {
 			Digest string `json:"digest"`
@@ -701,7 +742,9 @@ func TestExtractFromOCIStore_NoLayers(t *testing.T) {
 	}{Manifests: []struct {
 		Digest string `json:"digest"`
 	}{{Digest: mDigest}}})
-	os.WriteFile(filepath.Join(src, "index.json"), idx, 0644)
+	if err := os.WriteFile(filepath.Join(src, "index.json"), idx, 0644); err != nil {
+		t.Fatal(err)
+	}
 
 	err := extractFromOCIStore(src, "latest", dst)
 	if err == nil || !strings.Contains(err.Error(), "no layers") {

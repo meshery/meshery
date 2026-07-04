@@ -1587,11 +1587,13 @@ func (h *Handler) PushModel(rw http.ResponseWriter, r *http.Request, _ *models.P
 		}
 	}
 
-	_ = model.ReplaceSVGData("../../")
-	model.Relationships = nil
-	model.Components = nil
+	// Work on a copy to avoid mutating shared registry state.
+	mc := *model
+	_ = mc.ReplaceSVGData("../../")
+	mc.Relationships = nil
+	mc.Components = nil
 
-	if err := model.WriteModelDefinition(filepath.Join(versionDir, "model.json"), "json"); err != nil {
+	if err := mc.WriteModelDefinition(filepath.Join(versionDir, "model.json"), "json"); err != nil {
 		h.log.Error(err)
 		writeMeshkitError(rw, ErrPushModel(err, "model definition write"), http.StatusInternalServerError)
 		return
@@ -1862,7 +1864,7 @@ func validateOCIDigest(digest string) error {
 		return fmt.Errorf("invalid digest length: %s", digest)
 	}
 	for _, c := range hexPart {
-		if !((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
+		if (c < '0' || c > '9') && (c < 'a' || c > 'f') && (c < 'A' || c > 'F') {
 			return fmt.Errorf("invalid hex character in digest: %s", digest)
 		}
 	}
@@ -1920,6 +1922,9 @@ func validateOCIRegistryDestination(registry, repository string) error {
 		}
 		if u.Scheme != "" && u.Scheme != "https" && u.Scheme != "http" {
 			return fmt.Errorf("unsupported registry scheme: %s", u.Scheme)
+		}
+		if u.Path != "" || u.RawQuery != "" || u.Fragment != "" {
+			return fmt.Errorf("registry URL must not contain path, query, or fragment")
 		}
 		raw = u.Host
 	}
