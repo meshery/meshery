@@ -693,7 +693,7 @@ const NavigatorContent = () => {
               <RootDiv key={childId}>
                 {/* Row wraps the navigable anchor and the expand/collapse caret as
                     siblings so the caret button is never nested inside the anchor. */}
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
                   <SideBarListItem
                     dense
                     key={childId}
@@ -727,16 +727,19 @@ const NavigatorContent = () => {
                       <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>
                     </NavigatorLink>
                   </SideBarListItem>
-                  <ExpandMore
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      toggleItemCollapse(childId);
-                    }}
-                    isExpanded={openItems.includes(childId)}
-                    theme={theme}
-                    hasChildren={hasChildren}
-                  />
+                  {hasChildren && (
+                    <ExpandMore
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleItemCollapse(childId);
+                      }}
+                      isExpanded={openItems.includes(childId)}
+                      theme={theme}
+                      hasChildren={hasChildren}
+                      isCollapsed={isDrawerCollapsed}
+                    />
+                  )}
                 </div>
                 <Collapse
                   in={openItems.includes(childId)}
