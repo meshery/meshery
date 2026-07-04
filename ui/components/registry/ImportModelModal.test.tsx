@@ -217,9 +217,7 @@ describe('ImportModelModal', () => {
 
     render(<ImportModelModal isImportModalOpen={true} setIsImportModalOpen={vi.fn()} />);
     fireEvent.click(screen.getByTestId('submit-url'));
-    await Promise.resolve();
-
-    expect(unsubscribe).toHaveBeenCalled();
+    await waitFor(() => expect(unsubscribe).toHaveBeenCalled());
   });
 
   it('unsubscribes from operations-center on import request failure for file', async () => {
@@ -229,9 +227,7 @@ describe('ImportModelModal', () => {
 
     render(<ImportModelModal isImportModalOpen={true} setIsImportModalOpen={vi.fn()} />);
     fireEvent.click(screen.getByTestId('submit-file'));
-    await Promise.resolve();
-
-    expect(unsubscribe).toHaveBeenCalled();
+    await waitFor(() => expect(unsubscribe).toHaveBeenCalled());
   });
 
   it('renders the import result when the register event is received for url', async () => {
