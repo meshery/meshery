@@ -84,34 +84,36 @@ func (t *ProviderTracker) Snapshot() map[string]ProviderStatusEvent {
 }
 
 // Subscribe registers a new listener for status transitions. The returned
-// channel receives the current snapshot first (one event per provider)
-// followed by every future Publish. The returned unsubscribe must be called
-// when the listener is done; calling it twice is safe.
+// channel is pre-loaded with the current snapshot (one event per provider)
+// before it is registered for live updates, so the subscriber is guaranteed
+// to observe the snapshot ahead of any concurrent Publish. The subscription
+// lifetime is governed by the returned unsubscribe, which is safe to call
+// more than once.
 //
 // Sends to a subscriber that is not draining its channel are dropped
 // (logged at debug) rather than blocking the publisher. A slow SSE client
 // will simply miss intermediate updates and pick up state on its next
 // reconnection.
-func (t *ProviderTracker) Subscribe(ctx context.Context) (<-chan ProviderStatusEvent, func()) {
+func (t *ProviderTracker) Subscribe() (<-chan ProviderStatusEvent, func()) {
 	ch := make(chan ProviderStatusEvent, 32)
 
 	t.mu.Lock()
-	t.subs[ch] = struct{}{}
-	snapshot := make([]ProviderStatusEvent, 0, len(t.statuses))
+	// Seed the snapshot into the buffer *before* ch is registered in t.subs.
+	// Because no Publish can observe ch until it is registered, the snapshot
+	// always precedes live events in the channel's FIFO order — this is what
+	// delivers the "snapshot first, then updates" contract without a separate
+	// replay goroutine that could race Publish. Sends are non-blocking; the
+	// 32-slot buffer comfortably holds one event per registered provider, and
+	// any entry dropped on a (pathologically) full buffer is re-published by
+	// the VerifyAll the handler kicks off on connect.
 	for _, evt := range t.statuses {
-		snapshot = append(snapshot, evt)
-	}
-	t.mu.Unlock()
-
-	go func() {
-		for _, evt := range snapshot {
-			select {
-			case ch <- evt:
-			case <-ctx.Done():
-				return
-			}
+		select {
+		case ch <- evt:
+		default:
 		}
-	}()
+	}
+	t.subs[ch] = struct{}{}
+	t.mu.Unlock()
 
 	var once sync.Once
 	unsubscribe := func() {
@@ -128,19 +130,20 @@ func (t *ProviderTracker) Subscribe(ctx context.Context) (<-chan ProviderStatusE
 }
 
 // Publish records the new event in the status map and broadcasts it to every
-// subscriber. Sends are non-blocking; a subscriber whose channel is full is
-// skipped for this event so a single stalled SSE writer cannot stall the
-// tracker for everyone else.
+// subscriber.
+//
+// The tracker mutex is held across the entire fan-out. Because unsubscribe
+// closes a subscriber channel only while holding the same lock, no channel can
+// be closed mid-send, so Publish can never panic with "send on closed channel"
+// during a concurrent unsubscribe/client-disconnect. The sends are
+// non-blocking (a subscriber whose buffer is full is skipped for this event),
+// so holding the lock across the fan-out never blocks the tracker on a single
+// stalled SSE writer.
 func (t *ProviderTracker) Publish(evt ProviderStatusEvent) {
 	t.mu.Lock()
+	defer t.mu.Unlock()
 	t.statuses[evt.Key] = evt
-	subs := make([]chan ProviderStatusEvent, 0, len(t.subs))
 	for ch := range t.subs {
-		subs = append(subs, ch)
-	}
-	t.mu.Unlock()
-
-	for _, ch := range subs {
 		select {
 		case ch <- evt:
 		default:

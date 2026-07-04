@@ -104,7 +104,7 @@ func (h *Handler) ProvidersStreamHandler(w http.ResponseWriter, r *http.Request)
 	flusher.Flush()
 
 	ctx := r.Context()
-	events, unsubscribe := h.config.ProviderTracker.Subscribe(ctx)
+	events, unsubscribe := h.config.ProviderTracker.Subscribe()
 	defer unsubscribe()
 
 	// Refresh status on subscribe so a freshly-opened chooser shows live
