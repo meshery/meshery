@@ -178,23 +178,6 @@ const ImportModelModal = memo<ImportModelModalProps>(
       };
     }, [isImportModalOpen]);
 
-    const subscriptionRef = useRef<{ unsubscribe: () => void } | null>(null);
-
-useEffect(() => {
-  if (!isImportModalOpen) {
-    subscriptionRef.current?.unsubscribe();
-    subscriptionRef.current = null;
-    setActiveStep(0);
-    setIsCsvModalOpen(false);
-    setIsDeploying(true);
-    setDeployEvent(undefined);
-  }
-  return () => {
-    subscriptionRef.current?.unsubscribe();
-    subscriptionRef.current = null;
-  };
-}, [isImportModalOpen]);
-
     const handleClose = () => {
       setIsImportModalOpen(false);
       setIsCsvModalOpen(false);
@@ -300,7 +283,7 @@ useEffect(() => {
         }
       }
 
-// Subscribe to the operations-center bus before firing the request to avoid
+      // Subscribe to the operations-center bus before firing the request to avoid
       // the race where the server emits the event before FinishDeploymentStep mounts.
       // The loader stops on the first matching `register` event regardless of severity.
       setIsDeploying(true);
