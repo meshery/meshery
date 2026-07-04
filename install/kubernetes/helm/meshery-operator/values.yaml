@@ -4,35 +4,48 @@
 
 replicaCount: 1
 
-mesheryOperator:
-  name: manager
-  image:
-    repository: meshery/meshery-operator:stable-latest
-    pullPolicy: Always
-  args:
-    - --metrics-addr=127.0.0.1:8080
-    - --enable-leader-election
-  command:
-    - /manager
+image:
+  repository: meshery/meshery-operator
+  # Pinned operator release; stamped by meshery/meshery-operator's
+  # sync-downstream workflow on every operator release. Kept explicit (not
+  # derived from appVersion) because helm-chart-releaser re-stamps appVersion
+  # with the *Meshery Server* tag when it republishes charts at server
+  # releases — an appVersion-derived tag would then point at a nonexistent
+  # operator image. Empty falls back to the chart appVersion.
+  tag: "1.0.2"
+  pullPolicy: IfNotPresent
 
-kubeRbac:
-  name: kube-rbac-proxy
-  image:
-    repository: registry.k8s.io/kubebuilder/kube-rbac-proxy:v0.16.0
-    pullPolicy: Always
-  args:
-    - --secure-listen-address=0.0.0.0:8443
-    - --upstream=http://127.0.0.1:8080/
-    - --logtostderr=false
-    - --v=10
-
+# Extra environment variables for the manager container (name: value).
 env: {}
 
-probe:
-  livenessProbe:
+crds:
+  # Helm only applies the crds/ directory on first install and never on
+  # upgrade. This pre-install/pre-upgrade hook Job server-side-applies
+  # files/crds.yaml on every install AND upgrade, so CRD schema updates
+  # actually reach live clusters.
+  updateJob:
+    enabled: true
+    image:
+      repository: alpine/k8s
+      tag: 1.35.6
+      pullPolicy: IfNotPresent
+
+webhook:
+  # Serve v1alpha1<->v1alpha2 CRD conversion through the operator's webhook
+  # (port 9443). NOT required today: the shipped CRDs use conversion strategy
+  # None, which is exact while the v1alpha1 and v1alpha2 schemas are
+  # field-identical. Enable when the schemas diverge (see
+  # api/v1alpha1/conversion.go in meshery/meshery-operator).
+  enabled: false
+  certManager:
+    # Issue the webhook serving certificate with cert-manager
+    # (cert-manager.io/v1) and inject the CA via cainjector, instead of the
+    # chart-generated self-signed certificate. Requires cert-manager in the
+    # cluster.
     enabled: false
-  readinessProbe:
-    enabled: false
+
+leaderElection:
+  enabled: true
 
 imagePullSecrets: []
 nameOverride: ""
@@ -40,29 +53,32 @@ fullnameOverride: "meshery-operator"
 
 serviceAccount:
   # Specifies whether a service account should be created
-  create: create
+  create: true
   # The name of the service account to use.
   # If not set and create is false, a name is generated using the fullname template
   name: meshery-operator
 
-podSecurityContext:
-  {}
-  # fsGroup: 2000
-
+podAnnotations: {}
 annotations: {}
 
-securityContext:
-  {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: false
-  # runAsNonRoot: false
-  # runAsUser: 1000
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  seccompProfile:
+    type: RuntimeDefault
 
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+# Exposes the manager's TLS metrics endpoint (authn/authz-filtered; scrapers
+# need a token bound to the meshery-metrics-reader ClusterRole).
 service:
   type: ClusterIP
-  port: 10000
+  port: 8443
   annotations: {}
 
 ingress:
@@ -80,33 +96,26 @@ ingress:
       ## For Kubernetes >= 1.18 you should specify the pathType (determines how Ingress paths should be matched)
       ## See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#better-path-matching-with-path-types
       # pathType: ImplementationSpecific
-      
+
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
+# Parity with the operator's own config/manager/manager.yaml.
 resources:
-  {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 64Mi
 
 nodeSelector: {}
 
 tolerations: []
 
 affinity: {}
-
-testCase:
-  enabled: false
 
 # By default, the adapters need to have the same cluster role as the meshery to have permissions for performing necessary operations
 

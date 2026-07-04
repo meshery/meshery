@@ -32,7 +32,7 @@ Meshery learns about Connections two ways. **Managed** Connections (for example,
 1. Open the **Connections** page in Meshery (**Lifecycle → Connections**).
 2. Click **Create Connection**.
 
-The wizard opens as a modal. The set of Connection kinds you can create is driven by the [connection definitions]({{< ref "project/contributing/contributing-connections.md" >}}) registered in your Meshery Server's [Registry]({{< ref "concepts/logical/registry.md" >}}). Out of the box this includes **Kubernetes**, **Grafana**, and **Prometheus**; your deployment may offer more. If a kind you need is missing, a contributor can add it - see [Contributing a Connection]({{< ref "project/contributing/contributing-connections.md" >}}).
+The wizard opens as a modal. The set of Connection kinds you can create is driven by the [connection definitions]({{< ref "project/contributing/models/connections" >}}) registered in your Meshery Server's [Registry]({{< ref "concepts/logical/registry.md" >}}). Out of the box this includes **Kubernetes**, **Grafana**, and **Prometheus**; your deployment may offer more. If a kind you need is missing, a contributor can add it - see [Contributing a Connection]({{< ref "project/contributing/models/connections" >}}).
 
 ## Creating a Connection
 
@@ -111,6 +111,6 @@ Prefer the terminal? `mesheryctl` can create, list, view, and delete Connections
 - [Credentials]({{< ref "concepts/logical/credentials.md" >}}) - authentication for Connections.
 - [Environments]({{< ref "concepts/logical/environments.md" >}}) and [Workspaces]({{< ref "concepts/logical/workspaces.md" >}}) - grouping and sharing Connections.
 - [Managing Connections]({{< ref "guides/infrastructure-management/lifecycle-management/index.md" >}}) - lifecycle operations.
-- [Contributing a Connection]({{< ref "project/contributing/contributing-connections.md" >}}) - add a new Connection kind to the wizard.
+- [Contributing a Connection]({{< ref "project/contributing/models/connections" >}}) - add a new Connection kind to the wizard.
 
 {{< discuss >}}
