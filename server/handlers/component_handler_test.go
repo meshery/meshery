@@ -415,8 +415,12 @@ func TestExtractFromOCIStore_Symlink(t *testing.T) {
 	if err := tw.WriteHeader(&tar.Header{Name: "link", Typeflag: tar.TypeSymlink, Linkname: "/etc/passwd"}); err != nil {
 		t.Fatal(err)
 	}
-	tw.Close()
-	gz.Close()
+	if err := tw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := gz.Close(); err != nil {
+		t.Fatal(err)
+	}
 
 	h := sha256.Sum256(buf.Bytes())
 	ld := fmt.Sprintf("sha256:%s", hex.EncodeToString(h[:]))
@@ -434,10 +438,16 @@ func TestExtractFromOCIStore_Symlink(t *testing.T) {
 		return d, fmt.Sprintf("sha256:%s", hex.EncodeToString(hm[:]))
 	}()
 
-	os.MkdirAll(filepath.Join(src, "blobs", "sha256"), 0755)
-	os.WriteFile(filepath.Join(src, "blobs", "sha256", strings.TrimPrefix(ld, "sha256:")), layerData, 0644)
-	os.WriteFile(filepath.Join(src, "blobs", "sha256", strings.TrimPrefix(mDigest, "sha256:")), md, 0644)
-	idx, _ := json.Marshal(struct {
+	if err := os.MkdirAll(filepath.Join(src, "blobs", "sha256"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(src, "blobs", "sha256", strings.TrimPrefix(ld, "sha256:")), layerData, 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(src, "blobs", "sha256", strings.TrimPrefix(mDigest, "sha256:")), md, 0644); err != nil {
+		t.Fatal(err)
+	}
+	idx, err := json.Marshal(struct {
 		Manifests []struct {
 			Digest      string            `json:"digest"`
 			Annotations map[string]string `json:"annotations,omitempty"`
@@ -448,7 +458,12 @@ func TestExtractFromOCIStore_Symlink(t *testing.T) {
 			Annotations map[string]string `json:"annotations,omitempty"`
 		}{{Digest: mDigest, Annotations: map[string]string{"org.opencontainers.image.ref.name": "latest"}}},
 	})
-	os.WriteFile(filepath.Join(src, "index.json"), idx, 0644)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(src, "index.json"), idx, 0644); err != nil {
+		t.Fatal(err)
+	}
 
 	err := extractFromOCIStore(src, "latest", dst)
 	if err == nil || !strings.Contains(err.Error(), "symlink") {
@@ -473,16 +488,25 @@ func TestExtractFromOCIStore_InvalidLayerDigest(t *testing.T) {
 		return d, fmt.Sprintf("sha256:%s", hex.EncodeToString(hm[:]))
 	}()
 
-	os.MkdirAll(filepath.Join(src, "blobs", "sha256"), 0755)
-	os.WriteFile(filepath.Join(src, "blobs", "sha256", strings.TrimPrefix(mDigest, "sha256:")), md, 0644)
-	idx, _ := json.Marshal(struct {
+	if err := os.MkdirAll(filepath.Join(src, "blobs", "sha256"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(src, "blobs", "sha256", strings.TrimPrefix(mDigest, "sha256:")), md, 0644); err != nil {
+		t.Fatal(err)
+	}
+	idx, err := json.Marshal(struct {
 		Manifests []struct {
 			Digest string `json:"digest"`
 		} `json:"manifests"`
 	}{Manifests: []struct {
 		Digest string `json:"digest"`
 	}{{Digest: mDigest}}})
-	os.WriteFile(filepath.Join(src, "index.json"), idx, 0644)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(src, "index.json"), idx, 0644); err != nil {
+		t.Fatal(err)
+	}
 
 	err := extractFromOCIStore(src, "latest", dst)
 	if err == nil || !strings.Contains(err.Error(), "invalid layer digest") {

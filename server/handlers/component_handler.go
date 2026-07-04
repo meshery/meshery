@@ -1331,7 +1331,11 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model := e[0].(*_model.ModelDefinition)
+	model, ok := e[0].(*_model.ModelDefinition)
+	if !ok {
+		writeJSONError(rw, "invalid model definition type", http.StatusInternalServerError)
+		return
+	}
 	//This path is used to so that the function can be aware of where the svg file is
 	//This is for relative path as we are inside meshery/server/cmd/main.go
 	//File is stored in Ui folder so we need to move 2 directories back
@@ -1533,7 +1537,11 @@ func (h *Handler) PushModel(rw http.ResponseWriter, r *http.Request, _ *models.P
 		return
 	}
 
-	model := e[0].(*_model.ModelDefinition)
+	model, ok := e[0].(*_model.ModelDefinition)
+	if !ok {
+		writeJSONError(rw, "invalid model definition type", http.StatusInternalServerError)
+		return
+	}
 
 	modelDir, err := os.MkdirTemp("", "model-push-")
 	if err != nil {
@@ -1766,13 +1774,13 @@ func extractFromOCIStore(pullDir, tag, destDir string) error {
 	if err != nil {
 		return fmt.Errorf("cannot open layer blob %s: %w", layerDigest, err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	gzr, err := gzip.NewReader(f)
 	if err != nil {
 		return fmt.Errorf("cannot decompress layer: %w", err)
 	}
-	defer gzr.Close()
+	defer func() { _ = gzr.Close() }()
 
 	var totalExtracted int64
 	var fileCount int
@@ -1820,14 +1828,16 @@ func extractFromOCIStore(pullDir, tag, destDir string) error {
 				return fmt.Errorf("cannot create parent dir for %s: %w", target, err)
 			}
 			// Restrict created file permissions; ignore header mode bits
-			// that grant group/world write.
-			mode := os.FileMode(header.Mode) & 0666
+			// that grant execute, setuid, setgid, or group/world write.
+			mode := os.FileMode(header.Mode) & 0644
 			fw, err := os.OpenFile(target, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, mode)
 			if err != nil {
 				return fmt.Errorf("cannot create file %s: %w", target, err)
 			}
 			written, err := io.Copy(fw, io.LimitReader(tr, header.Size))
-			fw.Close()
+			if cerr := fw.Close(); cerr != nil && err == nil {
+				err = fmt.Errorf("cannot close file %s: %w", target, cerr)
+			}
 			if err != nil {
 				return fmt.Errorf("cannot write file %s: %w", target, err)
 			}
@@ -1867,9 +1877,9 @@ func resolveCredentials(r *http.Request, credentialID *string, inlineUsername, i
 		if !ok {
 			return "", "", fmt.Errorf("failed to retrieve auth token from context")
 		}
-		cid := uuid.FromStringOrNil(*credentialID)
-		if cid.IsNil() {
-			return "", "", fmt.Errorf("invalid credentialId: %s", *credentialID)
+		cid, parseErr := uuid.FromString(*credentialID)
+		if parseErr != nil {
+			return "", "", fmt.Errorf("invalid credentialId: %w", parseErr)
 		}
 		cred, _, cerr := provider.GetCredentialByID(token, cid)
 		if cerr != nil {
@@ -1923,8 +1933,8 @@ func validateOCIRegistryDestination(registry, repository string) error {
 		return fmt.Errorf("registry host is empty")
 	}
 
-	// Reject path separators in registry (must be pure host:port)
-	if strings.ContainsAny(registry, "/\\") {
+	// Reject path separators in host (must be pure host:port)
+	if strings.ContainsAny(raw, "/\\") {
 		return fmt.Errorf("registry must be a host:port, not a path")
 	}
 
