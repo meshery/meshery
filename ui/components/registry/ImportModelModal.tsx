@@ -310,12 +310,13 @@ const ImportModelModal = memo<ImportModelModalProps>(
       subscriptionRef.current = subscription;
 
       updateProgress({ showProgress: true });
+      setActiveStep(1);
       try {
         await importModelReq({ importBody: requestBody }).unwrap();
-        setActiveStep(1);
       } catch (err) {
         subscriptionRef.current?.unsubscribe();
         subscriptionRef.current = null;
+        setActiveStep(0);
         console.error('Failed to import model:', err);
         notify({
           message: 'Model import failed. Please verify the file or URL and try again.',
