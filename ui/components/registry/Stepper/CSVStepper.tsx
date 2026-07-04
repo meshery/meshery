@@ -114,7 +114,10 @@ const CsvStepper = React.memo(({ handleClose }: CsvStepperProps) => {
       const rawUrl = `${CSV_TEMPLATE_BASE_URL}${fileName}`;
       const response = await fetch(rawUrl);
       if (!response.ok) {
-        enqueueSnackbar(`Failed to download ${fileName}: ${response.statusText || 'Server error'}`, { variant: 'error' });
+        enqueueSnackbar(
+          `Failed to download ${fileName} (HTTP ${response.status}): ${response.statusText || 'Server error'}`,
+          { variant: 'error' },
+        );
         return;
       }
       const blob = await response.blob();
@@ -134,7 +137,9 @@ const CsvStepper = React.memo(({ handleClose }: CsvStepperProps) => {
       window.URL.revokeObjectURL(downloadUrl);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      enqueueSnackbar(`Network error or failed to fetch ${fileName}: ${errorMessage}`, { variant: 'error' });
+      enqueueSnackbar(`Network error or failed to download ${fileName}: ${errorMessage}`, {
+        variant: 'error',
+      });
     }
   };
 

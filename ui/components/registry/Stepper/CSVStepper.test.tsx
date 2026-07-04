@@ -11,6 +11,11 @@ let stepperState: any = {
   activeStepComponent: <div data-testid="step-content" />,
 };
 
+const mockEnqueueSnackbar = vi.fn();
+vi.mock('notistack', () => ({
+  useSnackbar: () => ({ enqueueSnackbar: mockEnqueueSnackbar }),
+}));
+
 vi.mock('@sistent/sistent', () => {
   const styled = (Component: any) => () => {
     const StyledComponent = ({ children, ...props }: any) =>
@@ -121,6 +126,7 @@ import CsvStepper from './CSVStepper';
 
 describe('CsvStepper', () => {
   beforeEach(() => {
+    mockEnqueueSnackbar.mockClear();
     stepperState = {
       activeStep: 0,
       steps: [],
@@ -179,5 +185,45 @@ describe('CsvStepper', () => {
     stepperState.activeStep = 2;
     render(<CsvStepper handleClose={vi.fn()} />);
     expect(screen.getByTestId('next')).toBeDisabled();
+  });
+
+  it('shows error snackbar when CSV template download fails with non-2xx status', async () => {
+    stepperState.activeStep = 0;
+    const originalFetch = global.fetch;
+    global.fetch = vi.fn(() => Promise.resolve({ ok: false, statusText: 'Not Found' })) as any;
+
+    render(<CsvStepper handleClose={vi.fn()} />);
+    const downloadBtn = screen.getByTestId('tooltip-button');
+    fireEvent.click(downloadBtn);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('Models.csv'));
+    expect(mockEnqueueSnackbar).toHaveBeenCalledWith(
+      expect.stringContaining('Failed to download Models.csv'),
+      expect.objectContaining({ variant: 'error' }),
+    );
+
+    global.fetch = originalFetch;
+  });
+
+  it('shows error snackbar when CSV template download throws network error', async () => {
+    stepperState.activeStep = 0;
+    const originalFetch = global.fetch;
+    global.fetch = vi.fn(() => Promise.reject(new Error('Network Error'))) as any;
+
+    render(<CsvStepper handleClose={vi.fn()} />);
+    const downloadBtn = screen.getByTestId('tooltip-button');
+    fireEvent.click(downloadBtn);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('Models.csv'));
+    expect(mockEnqueueSnackbar).toHaveBeenCalledWith(
+      expect.stringContaining('Network error'),
+      expect.objectContaining({ variant: 'error' }),
+    );
+
+    global.fetch = originalFetch;
   });
 });
