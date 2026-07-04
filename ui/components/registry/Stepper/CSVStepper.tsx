@@ -22,6 +22,7 @@ import {
   InsertDriveFile as InsertDriveFileIcon,
 } from '@/assets/icons';
 import { TooltipIconButton } from '@/utils/TooltipButton';
+import { useSnackbar } from 'notistack';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 import { StyledDocsRedirectLink } from './style';
 import {
@@ -60,6 +61,7 @@ const CSV_TEMPLATE_BASE_URL =
 type CsvStepperProps = { handleClose: () => void };
 
 const CsvStepper = React.memo(({ handleClose }: CsvStepperProps) => {
+  const { enqueueSnackbar } = useSnackbar();
   const [modelData, setModelData] = React.useState<Record<string, any>>({});
   const [modelCsvFile, setModelCsvFile] = React.useState<{ base64: string; name: string } | null>(
     null,
@@ -111,6 +113,10 @@ const CsvStepper = React.memo(({ handleClose }: CsvStepperProps) => {
       // Convert GitHub raw URL
       const rawUrl = `${CSV_TEMPLATE_BASE_URL}${fileName}`;
       const response = await fetch(rawUrl);
+      if (!response.ok) {
+        enqueueSnackbar(`Failed to download ${fileName}: ${response.statusText || 'Server error'}`, { variant: 'error' });
+        return;
+      }
       const blob = await response.blob();
 
       // Create a download link
@@ -127,7 +133,8 @@ const CsvStepper = React.memo(({ handleClose }: CsvStepperProps) => {
       // Cleanup
       window.URL.revokeObjectURL(downloadUrl);
     } catch (error) {
-      console.error('Error downloading the file:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      enqueueSnackbar(`Network error or failed to fetch ${fileName}: ${errorMessage}`, { variant: 'error' });
     }
   };
 
