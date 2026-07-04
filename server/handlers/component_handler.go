@@ -1798,8 +1798,9 @@ func extractFromOCIStore(pullDir, tag, destDir string) error {
 			return fmt.Errorf("rejected symlink/hardlink entry: %s", header.Name)
 		}
 
-		target := filepath.Join(destDir, filepath.Clean(header.Name))
-		if !strings.HasPrefix(target, filepath.Clean(destDir)+string(os.PathSeparator)) {
+		cleanDest := filepath.Clean(destDir)
+		target := filepath.Join(cleanDest, filepath.Clean(header.Name))
+		if target != cleanDest && !strings.HasPrefix(target, cleanDest+string(os.PathSeparator)) {
 			return fmt.Errorf("path traversal rejected: %s", header.Name)
 		}
 

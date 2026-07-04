@@ -405,6 +405,92 @@ func TestExtractFromOCIStore_PathTraversal(t *testing.T) {
 	}
 }
 
+func TestExtractFromOCIStore_AbsolutePath(t *testing.T) {
+	src := t.TempDir()
+	dst := t.TempDir()
+	writeOCIStore(t, src, "latest", map[string]string{"/etc/passwd": "x"})
+
+	err := extractFromOCIStore(src, "latest", dst)
+	if err == nil || !strings.Contains(err.Error(), "path traversal") {
+		t.Fatal("expected path traversal error for absolute path, got:", err)
+	}
+}
+
+func TestExtractFromOCIStore_RootDirEntry(t *testing.T) {
+	src := t.TempDir()
+	dst := t.TempDir()
+
+	// Build a layer with a root-directory header followed by regular files.
+	var buf bytes.Buffer
+	gz := gzip.NewWriter(&buf)
+	tw := tar.NewWriter(gz)
+	if err := tw.WriteHeader(&tar.Header{Name: ".", Typeflag: tar.TypeDir, Mode: 0755}); err != nil {
+		t.Fatal(err)
+	}
+	if err := tw.WriteHeader(&tar.Header{Name: "a.txt", Size: int64(len("ok")), Mode: 0644}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := io.WriteString(tw, "ok"); err != nil {
+		t.Fatal(err)
+	}
+	if err := tw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := gz.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	h := sha256.Sum256(buf.Bytes())
+	ld := fmt.Sprintf("sha256:%s", hex.EncodeToString(h[:]))
+	layerData := buf.Bytes()
+	md, mDigest := func() ([]byte, string) {
+		m := struct {
+			Layers []struct {
+				Digest string `json:"digest"`
+			} `json:"layers"`
+		}{Layers: []struct {
+			Digest string `json:"digest"`
+		}{{Digest: ld}}}
+		d, _ := json.Marshal(m)
+		hm := sha256.Sum256(d)
+		return d, fmt.Sprintf("sha256:%s", hex.EncodeToString(hm[:]))
+	}()
+
+	if err := os.MkdirAll(filepath.Join(src, "blobs", "sha256"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(src, "blobs", "sha256", strings.TrimPrefix(ld, "sha256:")), layerData, 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(src, "blobs", "sha256", strings.TrimPrefix(mDigest, "sha256:")), md, 0644); err != nil {
+		t.Fatal(err)
+	}
+	idx, err := json.Marshal(struct {
+		Manifests []struct {
+			Digest      string            `json:"digest"`
+			Annotations map[string]string `json:"annotations,omitempty"`
+		} `json:"manifests"`
+	}{
+		Manifests: []struct {
+			Digest      string            `json:"digest"`
+			Annotations map[string]string `json:"annotations,omitempty"`
+		}{{Digest: mDigest, Annotations: map[string]string{"org.opencontainers.image.ref.name": "latest"}}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(src, "index.json"), idx, 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := extractFromOCIStore(src, "latest", dst); err != nil {
+		t.Fatal("root dir entry should be accepted:", err)
+	}
+	if _, err := os.Stat(filepath.Join(dst, "a.txt")); err != nil {
+		t.Error("a.txt not extracted:", err)
+	}
+}
+
 func TestExtractFromOCIStore_Symlink(t *testing.T) {
 	src := t.TempDir()
 	dst := t.TempDir()
@@ -465,7 +551,7 @@ func TestExtractFromOCIStore_Symlink(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err := extractFromOCIStore(src, "latest", dst)
+	err = extractFromOCIStore(src, "latest", dst)
 	if err == nil || !strings.Contains(err.Error(), "symlink") {
 		t.Fatal("expected symlink error, got:", err)
 	}
@@ -508,7 +594,7 @@ func TestExtractFromOCIStore_InvalidLayerDigest(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err := extractFromOCIStore(src, "latest", dst)
+	err = extractFromOCIStore(src, "latest", dst)
 	if err == nil || !strings.Contains(err.Error(), "invalid layer digest") {
 		t.Fatal("expected invalid layer digest error, got:", err)
 	}

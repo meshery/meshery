@@ -214,8 +214,8 @@ const (
 	ErrTelemetryGrafanaDatasourceCode      = "meshery-server-1433"
 	ErrTelemetryGrafanaAuthCode            = "meshery-server-1434"
 	ErrTelemetryPrometheusAuthCode         = "meshery-server-1435"
-	ErrPushModelCode                       = "meshery-server-1436"
-	ErrPullModelCode                       = "meshery-server-1437"
+	ErrPushModelCode                       = "meshery-server-1438"
+	ErrPullModelCode                       = "meshery-server-1439"
 )
 
 var (
