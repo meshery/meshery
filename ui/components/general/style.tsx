@@ -115,9 +115,9 @@ export const ExpandMoreIcon = styled('svg', {
   shouldForwardProp: (prop) => prop !== 'isExpanded' && prop !== 'hasChildren',
 })(({ isExpanded, hasChildren, theme }) => ({
   opacity: 1,
-  visibility: 'visible',
+  visibility: hasChildren ? 'visible' : 'hidden',
   cursor: 'pointer',
-  display: hasChildren ? 'inline-block' : 'none',
+  display: 'inline-block',
   transform: isExpanded ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
   transition:
     'transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out',
@@ -133,7 +133,8 @@ export const ExpandMore = ({ isExpanded, hasChildren, theme, ...props }) => (
     aria-label={isExpanded ? 'Collapse' : 'Expand'}
     style={{
       padding: 0,
-      display: hasChildren ? 'inline-block' : 'none',
+      display: 'inline-block',
+      visibility: hasChildren ? 'visible' : 'hidden',
     }}
     {...props}
   >

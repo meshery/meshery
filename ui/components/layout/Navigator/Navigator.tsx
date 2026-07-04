@@ -727,18 +727,16 @@ const NavigatorContent = () => {
                       <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>
                     </NavigatorLink>
                   </SideBarListItem>
-                  {hasChildren && (
-                    <ExpandMore
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        toggleItemCollapse(childId);
-                      }}
-                      isExpanded={openItems.includes(childId)}
-                      theme={theme}
-                      hasChildren={hasChildren}
-                    />
-                  )}
+                  <ExpandMore
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggleItemCollapse(childId);
+                    }}
+                    isExpanded={openItems.includes(childId)}
+                    theme={theme}
+                    hasChildren={hasChildren}
+                  />
                 </div>
                 <Collapse
                   in={openItems.includes(childId)}
