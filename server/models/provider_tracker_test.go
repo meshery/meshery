@@ -160,6 +160,7 @@ func TestProviderTracker_ConcurrentPublishUnsubscribeNoPanic(t *testing.T) {
 	tracker := NewProviderTracker(map[string]Provider{}, newTestLogger(t))
 
 	stop := make(chan struct{})
+	start := make(chan struct{})
 	var wg sync.WaitGroup
 
 	// Publishers hammer Publish for the whole test.
@@ -167,6 +168,7 @@ func TestProviderTracker_ConcurrentPublishUnsubscribeNoPanic(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
+			<-start
 			for {
 				select {
 				case <-stop:
@@ -177,6 +179,8 @@ func TestProviderTracker_ConcurrentPublishUnsubscribeNoPanic(t *testing.T) {
 			}
 		}()
 	}
+
+	close(start)
 
 	// Subscribers churn: each subscribe is immediately torn down so the
 	// close(ch) in unsubscribe races the concurrent Publish fan-outs.
