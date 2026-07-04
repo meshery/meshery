@@ -1,5 +1,4 @@
 import React from 'react';
-import { useGetUserOrgRolesQuery } from '@/rtk-query/orgRoles';
 import { useGetUserProviderRolesQuery } from '@/rtk-query/providerRoles';
 import {
   StyledBox,
@@ -24,22 +23,18 @@ import { useGetSelectedOrganization } from '@/rtk-query/user';
 const CurrentSessionInfo = () => {
   const { selectedOrganization } = useGetSelectedOrganization();
 
-  const {
-    data: rolesRes,
-    // isSuccess: isRolesSuccess,
-    // isError: isRolesError,
-    // error: rolesError,
-  } = useGetUserOrgRolesQuery(
-    { orgId: selectedOrganization?.id },
-    { skip: !selectedOrganization?.id },
-  );
+  // The logged-in user profile (/api/user) already carries the user's
+  // per-organization role assignments under organizations.organizationsWithRoles,
+  // so this single profile query powers both the provider (global) roles and the
+  // organization roles rendered below — no separate org-roles request is needed.
+  const { data: providerRolesRes } = useGetUserProviderRolesQuery();
 
-  const {
-    data: providerRolesRes,
-    // isSuccess: isProviderRolesSuccess,
-    // isError: isProviderRolesError,
-    // error: providerRolesError,
-  } = useGetUserProviderRolesQuery();
+  // Roles assigned to the signed-in user within the currently selected
+  // organization (as opposed to every role defined in that organization).
+  const organizationRoleNames =
+    providerRolesRes?.organizations?.organizationsWithRoles?.find(
+      (org) => org.id === selectedOrganization?.id,
+    )?.roleNames ?? [];
 
   const theme = useTheme();
 
@@ -70,8 +65,8 @@ const CurrentSessionInfo = () => {
           </CustomTooltip>
         </HeaderContainer>
         <StyledBox>
-          {rolesRes
-            ? rolesRes?.roles?.map?.((role) => <StyledChip key={role.id} label={role.roleName} />)
+          {organizationRoleNames.length > 0
+            ? organizationRoleNames.map((role, index) => <StyledChip key={index} label={role} />)
             : 'No roles found'}
         </StyledBox>
       </div>

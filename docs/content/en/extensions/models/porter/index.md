@@ -1,7 +1,7 @@
 ---
 title: Porter
 subtitle: Collaborative and visual infrastructure as design for Porter
-image: /extensions/models/porter/icons/color/porter-color.svg
+image: extensions/models/porter/icons/color/porter-color.svg
 aliases: /extensibility/integrations/porter
 docURL: https://docs.meshery.io/extensibility/integrations/porter
 description: 

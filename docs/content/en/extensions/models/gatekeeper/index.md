@@ -1,7 +1,7 @@
 ---
 title: Open Policy Agent Gatekeeper
 subtitle: Collaborative and visual infrastructure as design for Open Policy Agent Gatekeeper
-image: /extensions/models/gatekeeper/icons/color/gatekeeper-color.svg
+image: extensions/models/gatekeeper/icons/color/gatekeeper-color.svg
 aliases: /extensibility/integrations/gatekeeper
 docURL: https://docs.meshery.io/extensibility/integrations/gatekeeper
 description: 

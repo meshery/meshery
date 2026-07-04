@@ -1,7 +1,7 @@
 ---
 title: Posthog
 subtitle: Collaborative and visual infrastructure as design for Posthog
-image: /extensions/models/posthog/icons/color/posthog-color.svg
+image: extensions/models/posthog/icons/color/posthog-color.svg
 aliases: /extensibility/integrations/posthog
 docURL: https://docs.meshery.io/extensibility/integrations/posthog
 description: 

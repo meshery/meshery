@@ -2,8 +2,6 @@ package models
 
 import (
 	"sync"
-
-	"github.com/meshery/meshery/server/helpers/utils"
 )
 
 type DashboardK8sResourcesChan struct {
@@ -24,10 +22,34 @@ func (d *DashboardK8sResourcesChan) SubscribeDashbordK8Resources(ch chan struct{
 	d.ResourcesChan = append(d.ResourcesChan, ch)
 }
 
+// UnsubscribeDashboardK8sResources removes a listener registered with
+// SubscribeDashbordK8Resources. Subscribers must call it when their context is
+// done, otherwise ResourcesChan grows without bound as subscriptions come and go.
+func (d *DashboardK8sResourcesChan) UnsubscribeDashboardK8sResources(ch chan struct{}) {
+	d.mx.Lock()
+	defer d.mx.Unlock()
+
+	for i := 0; i < len(d.ResourcesChan); i++ {
+		if d.ResourcesChan[i] == ch {
+			d.ResourcesChan = append(d.ResourcesChan[:i], d.ResourcesChan[i+1:]...)
+			return
+		}
+	}
+}
+
 func (d *DashboardK8sResourcesChan) PublishDashboardK8sResources() {
-	for _, ch := range d.ResourcesChan {
-		if !utils.IsClosed(ch) {
-			ch <- struct{}{}
+	d.mx.Lock()
+	subscribers := make([]chan struct{}, len(d.ResourcesChan))
+	copy(subscribers, d.ResourcesChan)
+	d.mx.Unlock()
+
+	for _, ch := range subscribers {
+		// Non-blocking coalescing send - see the note in K8scontextChan.
+		// PublishContext. The former utils.IsClosed guard destructively consumed
+		// buffered signals and could block the publisher on a slow subscriber.
+		select {
+		case ch <- struct{}{}:
+		default:
 		}
 	}
 }

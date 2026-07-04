@@ -1,7 +1,7 @@
 ---
 title: Azure Authorization
 subtitle: Collaborative and visual infrastructure as design for Azure Authorization
-image: /extensions/models/azure-authorization/icons/color/azure-authorization-color.svg
+image: extensions/models/azure-authorization/icons/color/azure-authorization-color.svg
 aliases: /extensibility/integrations/azure-authorization
 docURL: https://docs.meshery.io/extensibility/integrations/azure-authorization
 description: 

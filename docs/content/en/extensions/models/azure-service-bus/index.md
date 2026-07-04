@@ -1,7 +1,7 @@
 ---
 title: Azure Service Bus
 subtitle: Collaborative and visual infrastructure as design for Azure Service Bus
-image: /extensions/models/azure-service-bus/icons/color/azure-service-bus-color.svg
+image: extensions/models/azure-service-bus/icons/color/azure-service-bus-color.svg
 aliases: /extensibility/integrations/azure-service-bus
 docURL: https://docs.meshery.io/extensibility/integrations/azure-service-bus
 description: 

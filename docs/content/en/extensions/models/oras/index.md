@@ -1,7 +1,7 @@
 ---
 title: Oras
 subtitle: Collaborative and visual infrastructure as design for Oras
-image: /extensions/models/oras/icons/color/oras-color.svg
+image: extensions/models/oras/icons/color/oras-color.svg
 aliases: /extensibility/integrations/oras
 docURL: https://docs.meshery.io/extensibility/integrations/oras
 description: 

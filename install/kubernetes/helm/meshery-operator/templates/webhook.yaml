@@ -1,0 +1,261 @@
+{{- if .Values.webhook.enabled }}
+{{- $fullname := include "meshery-operator.fullname" . }}
+{{/*
+CRD conversion webhook wiring (opt-in). Not required while the v1alpha1 and
+v1alpha2 schemas are field-identical — the shipped CRDs use conversion
+strategy None. Enable when the schemas diverge.
+
+The Service name (meshery-webhook-service) matches the operator's own
+kustomize output so the two deployment methods stay interchangeable. The
+conversion patch below is applied to the CRDs by the CRD update Job
+(crd-upgrade.yaml); certificates come from cert-manager when
+webhook.certManager.enabled, otherwise from a chart-generated self-signed CA
+that is reused across upgrades via lookup.
+
+Because the CRDs deliberately survive `helm uninstall`, a pre-delete hook Job
+resets their conversion strategy to None — otherwise they would keep pointing
+at the (deleted) webhook Service and every v1alpha1 read would fail.
+*/}}
+{{- if not .Values.crds.updateJob.enabled }}
+{{- fail "webhook.enabled requires crds.updateJob.enabled: the CRD update Job is what patches spec.conversion onto the CRDs" }}
+{{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: meshery-webhook-service
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: 443
+      protocol: TCP
+      targetPort: webhook-server
+  selector:
+    {{- include "meshery-operator.selectorLabels" . | nindent 4 }}
+{{- if .Values.webhook.certManager.enabled }}
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ $fullname }}-selfsigned-issuer
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ $fullname }}-serving-cert
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+spec:
+  dnsNames:
+    - meshery-webhook-service.{{ .Release.Namespace }}.svc
+    - meshery-webhook-service.{{ .Release.Namespace }}.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: {{ $fullname }}-selfsigned-issuer
+  secretName: meshery-operator-webhook-cert
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullname }}-conversion-patch
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-3"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+data:
+  # cert-manager's cainjector fills spec.conversion.webhook.clientConfig.caBundle
+  # from the annotation.
+  conversion-patch.yaml: |
+    metadata:
+      annotations:
+        cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ $fullname }}-serving-cert
+    spec:
+      conversion:
+        strategy: Webhook
+        webhook:
+          clientConfig:
+            service:
+              name: meshery-webhook-service
+              namespace: {{ .Release.Namespace }}
+              path: /convert
+          conversionReviewVersions:
+            - v1
+{{- else }}
+{{- /* Self-signed path: reuse the existing Secret's certs across upgrades so
+       the caBundle stays stable; generate once on first install. */}}
+{{- $secretName := "meshery-operator-webhook-cert" }}
+{{- $existing := lookup "v1" "Secret" .Release.Namespace $secretName }}
+{{- $caCert := "" }}{{- $tlsCrt := "" }}{{- $tlsKey := "" }}
+{{- if and $existing (index $existing.data "ca.crt") (index $existing.data "tls.crt") (index $existing.data "tls.key") }}
+{{- $caCert = index $existing.data "ca.crt" }}
+{{- $tlsCrt = index $existing.data "tls.crt" }}
+{{- $tlsKey = index $existing.data "tls.key" }}
+{{- else }}
+{{- $ca := genCA "meshery-operator-webhook-ca" 3650 }}
+{{- $svc := printf "meshery-webhook-service.%s.svc" .Release.Namespace }}
+{{- $cert := genSignedCert $svc nil (list "meshery-webhook-service" $svc (printf "%s.cluster.local" $svc)) 3650 $ca }}
+{{- $caCert = $ca.Cert | b64enc }}
+{{- $tlsCrt = $cert.Cert | b64enc }}
+{{- $tlsKey = $cert.Key | b64enc }}
+{{- end }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ $secretName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+type: kubernetes.io/tls
+data:
+  ca.crt: {{ $caCert }}
+  tls.crt: {{ $tlsCrt }}
+  tls.key: {{ $tlsKey }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullname }}-conversion-patch
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-3"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+data:
+  conversion-patch.yaml: |
+    spec:
+      conversion:
+        strategy: Webhook
+        webhook:
+          clientConfig:
+            caBundle: {{ $caCert }}
+            service:
+              name: meshery-webhook-service
+              namespace: {{ .Release.Namespace }}
+              path: /convert
+          conversionReviewVersions:
+            - v1
+{{- end }}
+---
+# Pre-delete teardown: the CRDs outlive the release by design, so before the
+# webhook Service disappears their conversion must fall back to strategy None
+# (exact while the served schemas are field-identical). Without this, every
+# v1alpha1 read after `helm uninstall` fails on an unreachable webhook.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ $fullname }}-webhook-teardown
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ $fullname }}-webhook-teardown
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+rules:
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - get
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ $fullname }}-webhook-teardown
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-4"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ $fullname }}-webhook-teardown
+subjects:
+- kind: ServiceAccount
+  name: {{ $fullname }}-webhook-teardown
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $fullname }}-webhook-teardown
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 300
+  template:
+    metadata:
+      labels:
+        {{- include "meshery-operator.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ $fullname }}-webhook-teardown
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: webhook-teardown
+          image: "{{ .Values.crds.updateJob.image.repository }}:{{ .Values.crds.updateJob.image.tag }}"
+          imagePullPolicy: {{ .Values.crds.updateJob.image.pullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: HOME
+              value: /tmp
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              for crd in brokers.meshery.io meshsyncs.meshery.io; do
+                kubectl patch crd "$crd" --type merge \
+                  -p '{"spec":{"conversion":{"strategy":"None","webhook":null}}}' || true
+                kubectl annotate crd "$crd" cert-manager.io/inject-ca-from- --overwrite >/dev/null 2>&1 || true
+              done
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+{{- end }}

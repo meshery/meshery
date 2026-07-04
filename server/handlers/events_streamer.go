@@ -557,7 +557,7 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		return
 	}
 
-	if evt.ActedUpon.IsNil() || evt.Action == "" || evt.Category == "" || evt.Severity == "" {
+	if evt.ActedUpon == uuid.Nil || evt.Action == "" || evt.Category == "" || evt.Severity == "" {
 		h.log.Error(models.ErrInvalidEventData())
 		writeMeshkitError(w, models.ErrInvalidEventData(), http.StatusBadRequest)
 		return

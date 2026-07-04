@@ -1,7 +1,7 @@
 ---
 title: AWS CloudFront
 subtitle: Collaborative and visual infrastructure as design for AWS CloudFront
-image: /extensions/models/aws-cloudfront-controller/icons/color/aws-cloudfront-controller-color.svg
+image: extensions/models/aws-cloudfront-controller/icons/color/aws-cloudfront-controller-color.svg
 aliases: /extensibility/integrations/aws-cloudfront-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudfront-controller
 description: 

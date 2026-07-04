@@ -1,7 +1,7 @@
 ---
 title: Karpenter
 subtitle: Collaborative and visual infrastructure as design for Karpenter
-image: /extensions/models/karpenter/icons/color/karpenter-color.svg
+image: extensions/models/karpenter/icons/color/karpenter-color.svg
 aliases: /extensibility/integrations/karpenter
 docURL: https://docs.meshery.io/extensibility/integrations/karpenter
 description: 

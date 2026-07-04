@@ -17,7 +17,7 @@ Meshery recognizes that relationships exist in various forms and that the existe
 - **Increased Flexibility:** The use of selectors, actions, and operators provides flexibility in defining and managing relationships.
 
 {{% alert color="dark" title="Contributor Guide to Meshery Relationships" %}}
-If you want to create a new relationship definition or modify existing relationship definitions, see the [Contributing to Meshery Relationships]({{< ref "project/contributing/contributing-relationships.md" >}}) guide.
+If you want to create a new relationship definition or modify existing relationship definitions, see the [Contributing to Meshery Relationships]({{< ref "project/contributing/models/relationships" >}}) guide.
 {{% /alert %}}
 
 ## Types of Relationships

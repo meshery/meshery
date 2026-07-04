@@ -1,7 +1,7 @@
 ---
 title: Aerokube
 subtitle: Collaborative and visual infrastructure as design for Aerokube
-image: /extensions/models/aerokube/icons/color/aerokube-color.svg
+image: extensions/models/aerokube/icons/color/aerokube-color.svg
 aliases: /extensibility/integrations/aerokube
 docURL: https://docs.meshery.io/extensibility/integrations/aerokube
 description: 

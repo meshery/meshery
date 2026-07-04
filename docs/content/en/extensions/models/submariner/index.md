@@ -1,7 +1,7 @@
 ---
 title: Submariner
 subtitle: Collaborative and visual infrastructure as design for Submariner
-image: /extensions/models/submariner/icons/color/submariner-color.svg
+image: extensions/models/submariner/icons/color/submariner-color.svg
 aliases: /extensibility/integrations/submariner
 docURL: https://docs.meshery.io/extensibility/integrations/submariner
 description: 

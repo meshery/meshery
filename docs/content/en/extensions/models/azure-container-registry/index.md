@@ -1,7 +1,7 @@
 ---
 title: Azure Container Registry
 subtitle: Collaborative and visual infrastructure as design for Azure Container Registry
-image: /extensions/models/azure-container-registry/icons/color/azure-container-registry-color.svg
+image: extensions/models/azure-container-registry/icons/color/azure-container-registry-color.svg
 aliases: /extensibility/integrations/azure-container-registry
 docURL: https://docs.meshery.io/extensibility/integrations/azure-container-registry
 description: 

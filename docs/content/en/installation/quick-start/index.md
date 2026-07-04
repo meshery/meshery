@@ -85,7 +85,7 @@ Run connectivity tests and verify the health of your Meshery system. Verify Mesh
 
 ## 6. Design and operate Kubernetes clusters and their workloads
 
-You may now proceed to manage any cloud native infrastructure supported by Meshery. See all [integrations]({{< ref "reference/extensibility/api.md" >}}) for a complete list of supported infrastructure.
+You may now proceed to manage any cloud native infrastructure supported by Meshery. See all [integrations]({{< ref "extensions/models/_index.md" >}}) for a complete list of supported infrastructure.
 
 <a href="./images/meshery-designs.png">
   <img class="center" style="width:min(100%,650px);" src="./images/meshery-designs.png" />

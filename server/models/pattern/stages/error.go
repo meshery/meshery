@@ -4,7 +4,7 @@ import "github.com/meshery/meshkit/errors"
 
 const (
 	ErrResolveReferenceCode = "meshery-server-1361"
-	ErrYAMLUnmarshalCode    = "meshery-server-1431"
+	ErrYAMLUnmarshalCode    = "meshery-server-1436"
 )
 
 func ErrResolveReference(err error) error {

@@ -1,7 +1,7 @@
 ---
 title: AWS KMS
 subtitle: Collaborative and visual infrastructure as design for AWS KMS
-image: /extensions/models/aws-kms-controller/icons/color/aws-kms-controller-color.svg
+image: extensions/models/aws-kms-controller/icons/color/aws-kms-controller-color.svg
 aliases: /extensibility/integrations/aws-kms-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-kms-controller
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Kubedb
 subtitle: Collaborative and visual infrastructure as design for Kubedb
-image: /extensions/models/kubedb/icons/color/kubedb-color.svg
+image: extensions/models/kubedb/icons/color/kubedb-color.svg
 aliases: /extensibility/integrations/kubedb
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb
 description: 

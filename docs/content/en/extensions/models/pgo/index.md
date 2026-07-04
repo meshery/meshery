@@ -1,7 +1,7 @@
 ---
 title: PGO (CrunchyData)
 subtitle: Collaborative and visual infrastructure as design for PGO (CrunchyData)
-image: /extensions/models/pgo/icons/color/pgo-color.svg
+image: extensions/models/pgo/icons/color/pgo-color.svg
 aliases: /extensibility/integrations/pgo
 docURL: https://docs.meshery.io/extensibility/integrations/pgo
 description: 

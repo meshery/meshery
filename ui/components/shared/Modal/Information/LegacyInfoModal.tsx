@@ -27,7 +27,7 @@ import {
   useTheme,
 } from '@sistent/sistent';
 import { Close, Lock, Public } from '@/assets/icons';
-import yaml from 'js-yaml';
+import * as yaml from 'js-yaml';
 import _ from 'lodash';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useRef, useState, FC } from 'react';

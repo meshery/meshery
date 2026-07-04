@@ -1,7 +1,7 @@
 ---
 title: Azure Architecture
 subtitle: Collaborative and visual infrastructure as design for Azure Architecture
-image: /extensions/models/azure-architecture/icons/color/azure-architecture-color.svg
+image: extensions/models/azure-architecture/icons/color/azure-architecture-color.svg
 aliases: /extensibility/integrations/azure-architecture
 docURL: https://docs.meshery.io/extensibility/integrations/azure-architecture
 description: 
