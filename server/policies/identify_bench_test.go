@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // buildMatchlabelsBenchFixture returns n Pods sharing label values across a
@@ -17,18 +17,14 @@ func buildMatchlabelsBenchFixture(n int) (*pattern.PatternFile, *relationship.Re
 	comps := make([]*component.ComponentDefinition, 0, n)
 	groups := n/5 + 1
 	for i := 0; i < n; i++ {
-		c := &component.ComponentDefinition{
-			Component: component.Component{Kind: "Pod"},
-			Configuration: map[string]interface{}{
-				"metadata": map[string]interface{}{
-					"labels": map[string]interface{}{
-						"app":     fmt.Sprintf("g-%d", i%groups),
-						"version": fmt.Sprintf("v-%d", i%5),
-					},
+		c := comp("Pod", staticUUID(fmt.Sprintf("pod-%d", i)), map[string]interface{}{
+			"metadata": map[string]interface{}{
+				"labels": map[string]interface{}{
+					"app":     fmt.Sprintf("g-%d", i%groups),
+					"version": fmt.Sprintf("v-%d", i%5),
 				},
 			},
-		}
-		c.ID = staticUUID(fmt.Sprintf("pod-%d", i))
+		})
 		comps = append(comps, c)
 	}
 

@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	"github.com/meshery/meshkit/logger"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/open-policy-agent/opa/v1/rego"
 	"github.com/open-policy-agent/opa/v1/storage/inmem"
 )
@@ -137,56 +137,32 @@ func benchTypedDesign() *pattern.PatternFile {
 
 // benchTypedComponents returns the three typed components used in benchmarks.
 func benchTypedComponents() (ns, deploy, svc *component.ComponentDefinition) {
-	ns = &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Namespace"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{"name": "default"},
-	}
-	// Use deterministic UUIDs that correspond to the map-based IDs above.
-	ns.ID = staticUUID("ns-1")
-
-	deploy = &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Deployment"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{"namespace": "default", "replicas": float64(3)},
-	}
-	deploy.ID = staticUUID("deploy-1")
-
-	svc = &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Service"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{"namespace": "default", "port": float64(80)},
-	}
-	svc.ID = staticUUID("svc-1")
+	// Deterministic seed-based UUIDs correspond to the map-based IDs above.
+	ns = k8sComp("Namespace", staticUUID("ns-1"), map[string]interface{}{"name": "default"})
+	deploy = k8sComp("Deployment", staticUUID("deploy-1"), map[string]interface{}{"namespace": "default", "replicas": float64(3)})
+	svc = k8sComp("Service", staticUUID("svc-1"), map[string]interface{}{"namespace": "default", "port": float64(80)})
 
 	return ns, deploy, svc
 }
 
-
 // benchTypedRelationship builds the approved hierarchical relationship between ns and deploy.
 func benchTypedRelationship(ns, deploy *component.ComponentDefinition) *relationship.RelationshipDefinition {
-	mutatorRef := relationship.MutatorRef{[]string{"configuration", "name"}}
-	mutatedRef := relationship.MutatedRef{[]string{"configuration", "namespace"}}
 	relStatus := relationship.RelationshipDefinitionStatus("approved")
 	selectorSet := relationship.SelectorSet{
 		relationship.SelectorSetItem{
 			Allow: relationship.Selector{
 				From: []relationship.SelectorItem{
 					{
-						ID:   &ns.ID,
-						Kind: strPtr("Namespace"),
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatorRef: &mutatorRef,
-						},
+						ID:                                   &ns.ID,
+						Kind:                                 strPtr("Namespace"),
+						RelationshipDefinitionSelectorsPatch: mutatorPatch("configuration", "name"),
 					},
 				},
 				To: []relationship.SelectorItem{
 					{
-						ID:   &deploy.ID,
-						Kind: strPtr("Deployment"),
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatedRef: &mutatedRef,
-						},
+						ID:                                   &deploy.ID,
+						Kind:                                 strPtr("Deployment"),
+						RelationshipDefinitionSelectorsPatch: mutatedPatch("configuration", "namespace"),
 					},
 				},
 			},
@@ -206,27 +182,21 @@ func benchTypedRelationship(ns, deploy *component.ComponentDefinition) *relation
 
 // benchTypedRelDefs returns the relationship definitions for benchmarking as typed structs.
 func benchTypedRelDefs() []*relationship.RelationshipDefinition {
-	mutatorRef := relationship.MutatorRef{[]string{"configuration", "name"}}
-	mutatedRef := relationship.MutatedRef{[]string{"configuration", "namespace"}}
 	selectorSet := relationship.SelectorSet{
 		relationship.SelectorSetItem{
 			Allow: relationship.Selector{
 				From: []relationship.SelectorItem{
 					{
-						Kind:  strPtr("Namespace"),
-						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatorRef: &mutatorRef,
-						},
+						Kind:                                 strPtr("Namespace"),
+						Model:                                k8sModel(),
+						RelationshipDefinitionSelectorsPatch: mutatorPatch("configuration", "name"),
 					},
 				},
 				To: []relationship.SelectorItem{
 					{
-						Kind:  strPtr("Deployment"),
-						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatedRef: &mutatedRef,
-						},
+						Kind:                                 strPtr("Deployment"),
+						Model:                                k8sModel(),
+						RelationshipDefinitionSelectorsPatch: mutatedPatch("configuration", "namespace"),
 					},
 				},
 			},

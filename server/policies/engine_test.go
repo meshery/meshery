@@ -4,25 +4,12 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
 	relationshipv1alpha3 "github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
-
-// strPtr returns a pointer to the given string.
-func strPtr(s string) *string { return &s }
-
-// makePatternFile builds a PatternFile from typed components and relationships.
-func makePatternFile(comps []*component.ComponentDefinition, rels []*relationship.RelationshipDefinition) *pattern.PatternFile {
-	return &pattern.PatternFile{
-		Components:    comps,
-		Relationships: rels,
-	}
-}
 
 func TestIsRelationshipFeasible(t *testing.T) {
 	comp := &component.ComponentDefinition{
@@ -200,11 +187,8 @@ func TestPolicyImplication(t *testing.T) {
 }
 
 func TestFromAndToComponentsExist(t *testing.T) {
-	compA := &component.ComponentDefinition{}
-	compA.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
-
-	compB := &component.ComponentDefinition{}
-	compB.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000002")
+	compA := comp("", testUUID("1"), nil)
+	compB := comp("", testUUID("2"), nil)
 
 	design := makePatternFile([]*component.ComponentDefinition{compA, compB}, nil)
 
@@ -222,7 +206,7 @@ func TestFromAndToComponentsExist(t *testing.T) {
 		t.Error("Expected both components to exist")
 	}
 
-	missingID, _ := uuid.FromString("00000000-0000-0000-0000-000000000099")
+	missingID := testUUID("99")
 	selectorSetMissing := relationship.SelectorSet{
 		relationship.SelectorSetItem{
 			Allow: relationship.Selector{
@@ -308,11 +292,8 @@ func TestConvertRelationships(t *testing.T) {
 }
 
 func TestValidateRelationshipsInDesign(t *testing.T) {
-	compA := &component.ComponentDefinition{}
-	compA.ID, _ = uuid.FromString("00000000-0000-0000-0000-0000000000aa")
-
-	compDeleted := &component.ComponentDefinition{}
-	compDeleted.ID, _ = uuid.FromString("00000000-0000-0000-0000-00000000dead")
+	compA := comp("", testUUID("aa"), nil)
+	compDeleted := comp("", testUUID("dead"), nil)
 
 	relStatus := relationship.RelationshipDefinitionStatus("approved")
 	selectorSet := relationship.SelectorSet{
@@ -329,7 +310,7 @@ func TestValidateRelationshipsInDesign(t *testing.T) {
 		Status:           &relStatus,
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
+	rel.ID = testUUID("1")
 
 	design := makePatternFile([]*component.ComponentDefinition{compA}, []*relationship.RelationshipDefinition{rel})
 
@@ -368,31 +349,17 @@ func TestEdgeBindingPolicyImplication(t *testing.T) {
 }
 
 func TestIsValidBinding(t *testing.T) {
-	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	role := comp("Role", testUUID("1"), map[string]interface{}{"name": "my-role"})
+	roleBinding := comp("RoleBinding", testUUID("2"), map[string]interface{}{"roleRef": map[string]interface{}{"name": "my-role"}})
 
-	role := &component.ComponentDefinition{
-		Component:     component.Component{Kind: "Role"},
-		Configuration: map[string]interface{}{"name": "my-role"},
-	}
-	role.ID = roleID
-
-	roleBinding := &component.ComponentDefinition{
-		Component:     component.Component{Kind: "RoleBinding"},
-		Configuration: map[string]interface{}{"roleRef": map[string]interface{}{"name": "my-role"}},
-	}
-	roleBinding.ID = rbID
-
-	mutatorRef := relationship.MutatorRef{[]string{"configuration", "name"}}
-	mutatedRef := relationship.MutatedRef{[]string{"configuration", "roleRef", "name"}}
 	selector := relationship.SelectorItem{
 		Kind: strPtr("Role"),
 		Match: &relationship.MatchSelector{
 			From: &[]relationship.MatchSelectorItem{
-				{Kind: "self", MutatorRef: &mutatorRef},
+				{Kind: "self", MutatorRef: mutatorRef("configuration", "name")},
 			},
 			To: &[]relationship.MatchSelectorItem{
-				{Kind: "RoleBinding", MutatedRef: &mutatedRef},
+				{Kind: "RoleBinding", MutatedRef: mutatedRef("configuration", "roleRef", "name")},
 			},
 		},
 	}
@@ -403,12 +370,7 @@ func TestIsValidBinding(t *testing.T) {
 		t.Error("Expected valid binding")
 	}
 
-	badRbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
-	badBinding := &component.ComponentDefinition{
-		Component:     component.Component{Kind: "RoleBinding"},
-		Configuration: map[string]interface{}{"roleRef": map[string]interface{}{"name": "other-role"}},
-	}
-	badBinding.ID = badRbID
+	badBinding := comp("RoleBinding", testUUID("3"), map[string]interface{}{"roleRef": map[string]interface{}{"name": "other-role"}})
 
 	design2 := makePatternFile([]*component.ComponentDefinition{role, badBinding}, nil)
 	if isValidBindingTyped(role, badBinding, selector, design2) {
@@ -419,49 +381,29 @@ func TestIsValidBinding(t *testing.T) {
 func TestHierarchicalIdentifyRelationship(t *testing.T) {
 	p := &HierarchicalParentChildPolicy{}
 
-	nsID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
-
-	ns := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Namespace"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{"name": "default"},
-	}
-	ns.ID = nsID
-
-	deploy := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Deployment"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{"namespace": "default"},
-	}
-	deploy.ID = deployID
+	ns := k8sComp("Namespace", testUUID("1"), map[string]interface{}{"name": "default"})
+	deploy := k8sComp("Deployment", testUUID("2"), map[string]interface{}{"namespace": "default"})
 
 	design := makePatternFile(
 		[]*component.ComponentDefinition{ns, deploy},
 		[]*relationship.RelationshipDefinition{},
 	)
 
-	mutatorRef := relationship.MutatorRef{[]string{"configuration", "name"}}
-	mutatedRef := relationship.MutatedRef{[]string{"configuration", "namespace"}}
 	selectorSet := relationship.SelectorSet{
 		relationship.SelectorSetItem{
 			Allow: relationship.Selector{
 				From: []relationship.SelectorItem{
 					{
-						Kind:  strPtr("Namespace"),
-						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatorRef: &mutatorRef,
-						},
+						Kind:                                 strPtr("Namespace"),
+						Model:                                k8sModel(),
+						RelationshipDefinitionSelectorsPatch: mutatorPatch("configuration", "name"),
 					},
 				},
 				To: []relationship.SelectorItem{
 					{
-						Kind:  strPtr("Deployment"),
-						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatedRef: &mutatedRef,
-						},
+						Kind:                                 strPtr("Deployment"),
+						Model:                                k8sModel(),
+						RelationshipDefinitionSelectorsPatch: mutatedPatch("configuration", "namespace"),
 					},
 				},
 			},
@@ -474,7 +416,7 @@ func TestHierarchicalIdentifyRelationship(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	relDef.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
+	relDef.ID = testUUID("10")
 
 	identified := p.IdentifyRelationship(relDef, design)
 	if len(identified) != 1 {
@@ -488,43 +430,28 @@ func TestHierarchicalIdentifyRelationship(t *testing.T) {
 func TestHierarchicalSideEffects(t *testing.T) {
 	p := &HierarchicalParentChildPolicy{}
 
-	nsID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	nsID := testUUID("1")
+	deployID := testUUID("2")
 
-	ns := &component.ComponentDefinition{
-		Component:     component.Component{Kind: "Namespace"},
-		Configuration: map[string]interface{}{"name": "production"},
-	}
-	ns.ID = nsID
-
-	deploy := &component.ComponentDefinition{
-		Component:     component.Component{Kind: "Deployment"},
-		Configuration: map[string]interface{}{"namespace": "default"},
-	}
-	deploy.ID = deployID
+	ns := comp("Namespace", nsID, map[string]interface{}{"name": "production"})
+	deploy := comp("Deployment", deployID, map[string]interface{}{"namespace": "default"})
 
 	design := makePatternFile([]*component.ComponentDefinition{ns, deploy}, nil)
 
-	mutatorRef := relationship.MutatorRef{[]string{"configuration", "name"}}
-	mutatedRef := relationship.MutatedRef{[]string{"configuration", "namespace"}}
 	relStatus := relationship.RelationshipDefinitionStatus("approved")
 	selectorSet := relationship.SelectorSet{
 		relationship.SelectorSetItem{
 			Allow: relationship.Selector{
 				From: []relationship.SelectorItem{
 					{
-						ID: &nsID,
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatorRef: &mutatorRef,
-						},
+						ID:                                   &nsID,
+						RelationshipDefinitionSelectorsPatch: mutatorPatch("configuration", "name"),
 					},
 				},
 				To: []relationship.SelectorItem{
 					{
-						ID: &deployID,
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatedRef: &mutatedRef,
-						},
+						ID:                                   &deployID,
+						RelationshipDefinitionSelectorsPatch: mutatedPatch("configuration", "namespace"),
 					},
 				},
 			},
@@ -537,7 +464,7 @@ func TestHierarchicalSideEffects(t *testing.T) {
 		Status:           &relStatus,
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000001")
+	rel.ID = testUUID("1")
 
 	actions := p.SideEffects(rel, design)
 	if len(actions) == 0 {
@@ -562,37 +489,24 @@ func TestGoEngineCreation(t *testing.T) {
 func TestAliasIsInvalidStatusMatrix(t *testing.T) {
 	p := &AliasPolicy{}
 
-	fromID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	toID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	fromID := testUUID("1")
+	toID := testUUID("2")
 
-	fromComp := &component.ComponentDefinition{
-		Component: component.Component{Kind: "Container"},
-		Configuration: map[string]interface{}{
-			"ports": []interface{}{map[string]interface{}{"containerPort": 80}},
-		},
+	ports := map[string]interface{}{
+		"ports": []interface{}{map[string]interface{}{"containerPort": 80}},
 	}
-	fromComp.ID = fromID
-
-	toComp := &component.ComponentDefinition{
-		Component: component.Component{Kind: "Deployment"},
-		Configuration: map[string]interface{}{
-			"ports": []interface{}{map[string]interface{}{"containerPort": 80}},
-		},
-	}
-	toComp.ID = toID
+	fromComp := comp("Container", fromID, ports)
+	toComp := comp("Deployment", toID, ports)
 
 	makeRel := func(status string) *relationship.RelationshipDefinition {
-		mutatorRef := relationship.MutatorRef{[]string{"configuration", "ports"}}
 		relStatus := relationship.RelationshipDefinitionStatus(status)
 		selectorSet := relationship.SelectorSet{
 			relationship.SelectorSetItem{
 				Allow: relationship.Selector{
 					From: []relationship.SelectorItem{
 						{
-							ID: &fromID,
-							RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-								MutatorRef: &mutatorRef,
-							},
+							ID:                                   &fromID,
+							RelationshipDefinitionSelectorsPatch: mutatorPatch("configuration", "ports"),
 						},
 					},
 					To: []relationship.SelectorItem{
@@ -640,16 +554,11 @@ func TestAliasIsInvalidStatusMatrix(t *testing.T) {
 // into the generated IDs.
 func TestMatchLabelsPolicyIdentificationIsDeterministic(t *testing.T) {
 	pod := func(idHex string) *component.ComponentDefinition {
-		c := &component.ComponentDefinition{
-			Component: component.Component{Kind: "Pod"},
-			Configuration: map[string]interface{}{
-				"metadata": map[string]interface{}{
-					"labels": map[string]interface{}{"app": "meshery", "tier": "api"},
-				},
+		return comp("Pod", testUUID(idHex), map[string]interface{}{
+			"metadata": map[string]interface{}{
+				"labels": map[string]interface{}{"app": "meshery", "tier": "api"},
 			},
-		}
-		c.ID, _ = uuid.FromString("00000000-0000-0000-0000-" + idHex)
-		return c
+		})
 	}
 	podA, podB, podC := pod("00000000aaa1"), pod("00000000bbb2"), pod("00000000ccc3")
 

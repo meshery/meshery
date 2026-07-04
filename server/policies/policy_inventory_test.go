@@ -22,8 +22,6 @@ import (
 // model points to a Namespace via metadata.namespace; the new Namespace's
 // displayName is set from that value.
 func kubernetesInventoryRelationship() *relationship.RelationshipDefinition {
-	mutatedRef := relationship.MutatedRef{{"configuration", "metadata", "namespace"}}
-	mutatorRef := relationship.MutatorRef{{"displayName"}}
 	wildcard := "*"
 	namespace := "Namespace"
 	return &relationship.RelationshipDefinition{
@@ -38,18 +36,14 @@ func kubernetesInventoryRelationship() *relationship.RelationshipDefinition {
 						Model: &modelv1beta1.ModelReference{
 							Name: "*",
 						},
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatedRef: &mutatedRef,
-						},
+						RelationshipDefinitionSelectorsPatch: mutatedPatch("configuration", "metadata", "namespace"),
 					}},
 					To: []relationship.SelectorItem{{
 						Kind: &namespace,
 						Model: &modelv1beta1.ModelReference{
 							Name: "kubernetes",
 						},
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatorRef: &mutatorRef,
-						},
+						RelationshipDefinitionSelectorsPatch: mutatorPatch("displayName"),
 					}},
 				},
 			},
@@ -63,8 +57,6 @@ func kubernetesInventoryRelationship() *relationship.RelationshipDefinition {
 // the child (EventSubscription). Used to verify the auto-added parent
 // follows the to-side model, not the child's model.
 func crossModelInventoryRelationship() *relationship.RelationshipDefinition {
-	mutatedRef := relationship.MutatedRef{{"configuration", "spec", "destination", "storageAccount"}}
-	mutatorRef := relationship.MutatorRef{{"displayName"}}
 	fromKind := "EventSubscription"
 	toKind := "StorageAccount"
 	return &relationship.RelationshipDefinition{
@@ -75,18 +67,14 @@ func crossModelInventoryRelationship() *relationship.RelationshipDefinition {
 			relationship.SelectorSetItem{
 				Allow: relationship.Selector{
 					From: []relationship.SelectorItem{{
-						Kind:  &fromKind,
-						Model: &modelv1beta1.ModelReference{Name: "azure-event-grid"},
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatedRef: &mutatedRef,
-						},
+						Kind:                                 &fromKind,
+						Model:                                &modelv1beta1.ModelReference{Name: "azure-event-grid"},
+						RelationshipDefinitionSelectorsPatch: mutatedPatch("configuration", "spec", "destination", "storageAccount"),
 					}},
 					To: []relationship.SelectorItem{{
-						Kind:  &toKind,
-						Model: &modelv1beta1.ModelReference{Name: "azure-storage"},
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatorRef: &mutatorRef,
-						},
+						Kind:                                 &toKind,
+						Model:                                &modelv1beta1.ModelReference{Name: "azure-storage"},
+						RelationshipDefinitionSelectorsPatch: mutatorPatch("displayName"),
 					}},
 				},
 			},

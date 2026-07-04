@@ -5,9 +5,9 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // TestWalletPatching verifies that wallet relationships patch the child component's
@@ -17,65 +17,49 @@ import (
 func TestWalletPatching(t *testing.T) {
 	p := &HierarchicalWalletPolicy{}
 
-	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	deployID := testUUID("1")
+	podTplID := testUUID("2")
 
-	deploy := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Deployment"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"template": map[string]interface{}{
-					"spec": map[string]interface{}{
-						"containers": []interface{}{
-							map[string]interface{}{"name": "nginx", "image": "nginx:1.25"},
-						},
+	deploy := k8sComp("Deployment", deployID, map[string]interface{}{
+		"spec": map[string]interface{}{
+			"template": map[string]interface{}{
+				"spec": map[string]interface{}{
+					"containers": []interface{}{
+						map[string]interface{}{"name": "nginx", "image": "nginx:1.25"},
 					},
 				},
 			},
 		},
-	}
-	deploy.ID = deployID
+	})
 
-	podTpl := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "PodTemplate"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"containers": []interface{}{
-					map[string]interface{}{"name": "old", "image": "old:0.1"},
-				},
+	podTpl := k8sComp("PodTemplate", podTplID, map[string]interface{}{
+		"spec": map[string]interface{}{
+			"containers": []interface{}{
+				map[string]interface{}{"name": "old", "image": "old:0.1"},
 			},
 		},
-	}
-	podTpl.ID = podTplID
+	})
 
 	design := makePatternFile([]*component.ComponentDefinition{deploy, podTpl}, nil)
 
 	// Wallet relationship: Deployment -> PodTemplate
 	// mutatorRef on Deployment side (parent), mutatedRef on PodTemplate side (child)
-	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "containers"}}
-	mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "containers"}}
 	relStatus := relationship.RelationshipDefinitionStatus("approved")
 	selectorSet := relationship.SelectorSet{
 		relationship.SelectorSetItem{
 			Allow: relationship.Selector{
 				From: []relationship.SelectorItem{
 					{
-						ID:   &deployID,
-						Kind: strPtr("Deployment"),
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatorRef: &mutatorRef,
-						},
+						ID:                                   &deployID,
+						Kind:                                 strPtr("Deployment"),
+						RelationshipDefinitionSelectorsPatch: mutatorPatch("configuration", "spec", "template", "spec", "containers"),
 					},
 				},
 				To: []relationship.SelectorItem{
 					{
-						ID:   &podTplID,
-						Kind: strPtr("PodTemplate"),
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatedRef: &mutatedRef,
-						},
+						ID:                                   &podTplID,
+						Kind:                                 strPtr("PodTemplate"),
+						RelationshipDefinitionSelectorsPatch: mutatedPatch("configuration", "spec", "containers"),
 					},
 				},
 			},
@@ -90,7 +74,7 @@ func TestWalletPatching(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
+	rel.ID = testUUID("10")
 
 	actions := p.SideEffects(rel, design)
 	if len(actions) == 0 {
@@ -118,59 +102,42 @@ func TestWalletPatching(t *testing.T) {
 
 // TestWalletPatchingFullPipeline tests wallet patching through the full evaluation pipeline.
 func TestWalletPatchingFullPipeline(t *testing.T) {
-	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	deployID := testUUID("1")
+	podTplID := testUUID("2")
 
-	deploy := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Deployment"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"replicas": float64(3),
-				"template": map[string]interface{}{
-					"spec": map[string]interface{}{
-						"serviceAccountName": "my-sa",
-					},
+	deploy := k8sComp("Deployment", deployID, map[string]interface{}{
+		"spec": map[string]interface{}{
+			"replicas": float64(3),
+			"template": map[string]interface{}{
+				"spec": map[string]interface{}{
+					"serviceAccountName": "my-sa",
 				},
 			},
 		},
-	}
-	deploy.ID = deployID
+	})
 
-	podTpl := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "PodTemplate"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"serviceAccountName": "default",
-			},
+	podTpl := k8sComp("PodTemplate", podTplID, map[string]interface{}{
+		"spec": map[string]interface{}{
+			"serviceAccountName": "default",
 		},
-	}
-	podTpl.ID = podTplID
+	})
 
-	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "serviceAccountName"}}
-	mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "serviceAccountName"}}
 	relStatus := relationship.RelationshipDefinitionStatus("approved")
-	relID, _ := uuid.FromString("00000000-0000-0000-0000-000000000010")
 	selectorSet := relationship.SelectorSet{
 		relationship.SelectorSetItem{
 			Allow: relationship.Selector{
 				From: []relationship.SelectorItem{
 					{
-						ID:   &deployID,
-						Kind: strPtr("Deployment"),
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatorRef: &mutatorRef,
-						},
+						ID:                                   &deployID,
+						Kind:                                 strPtr("Deployment"),
+						RelationshipDefinitionSelectorsPatch: mutatorPatch("configuration", "spec", "template", "spec", "serviceAccountName"),
 					},
 				},
 				To: []relationship.SelectorItem{
 					{
-						ID:   &podTplID,
-						Kind: strPtr("PodTemplate"),
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatedRef: &mutatedRef,
-						},
+						ID:                                   &podTplID,
+						Kind:                                 strPtr("PodTemplate"),
+						RelationshipDefinitionSelectorsPatch: mutatedPatch("configuration", "spec", "serviceAccountName"),
 					},
 				},
 			},
@@ -185,7 +152,7 @@ func TestWalletPatchingFullPipeline(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID = relID
+	rel.ID = testUUID("10")
 
 	design := makePatternFile(
 		[]*component.ComponentDefinition{deploy, podTpl},
@@ -222,71 +189,50 @@ func TestWalletPatchingFullPipeline(t *testing.T) {
 func TestBindingPatching(t *testing.T) {
 	p := &EdgeBindingPolicy{}
 
-	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	saID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
-	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
+	roleID := testUUID("1")
+	saID := testUUID("2")
+	rbID := testUUID("3")
 
-	role := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "ClusterRole"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"metadata": map[string]interface{}{
-				"name": "admin-role",
-			},
+	role := k8sComp("ClusterRole", roleID, map[string]interface{}{
+		"metadata": map[string]interface{}{
+			"name": "admin-role",
 		},
-	}
-	role.ID = roleID
+	})
 
-	sa := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "ServiceAccount"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"metadata": map[string]interface{}{
-				"name": "my-service-account",
-			},
+	sa := k8sComp("ServiceAccount", saID, map[string]interface{}{
+		"metadata": map[string]interface{}{
+			"name": "my-service-account",
 		},
-	}
-	sa.ID = saID
+	})
 
-	rb := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "ClusterRoleBinding"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"roleRef": map[string]interface{}{
+	rb := k8sComp("ClusterRoleBinding", rbID, map[string]interface{}{
+		"roleRef": map[string]interface{}{
+			"name": "",
+		},
+		"subjects": []interface{}{
+			map[string]interface{}{
 				"name": "",
-			},
-			"subjects": []interface{}{
-				map[string]interface{}{
-					"name": "",
-					"kind": "ServiceAccount",
-				},
+				"kind": "ServiceAccount",
 			},
 		},
-	}
-	rb.ID = rbID
+	})
 
 	design := makePatternFile([]*component.ComponentDefinition{role, sa, rb}, nil)
 
 	// Binding relationship: from=ClusterRole, to=ServiceAccount, binding=ClusterRoleBinding
 	// The from selector's match field references the binding component (ClusterRoleBinding).
-	roleMutatorRef := relationship.MutatorRef{[]string{"configuration", "metadata", "name"}}
-	rbMutatedRef := relationship.MutatedRef{[]string{"configuration", "roleRef", "name"}}
-
 	fromMatchFrom := []relationship.MatchSelectorItem{
-		{Kind: "ClusterRole", MutatorRef: &roleMutatorRef, ID: &roleID},
+		{Kind: "ClusterRole", MutatorRef: mutatorRef("configuration", "metadata", "name"), ID: &roleID},
 	}
 	fromMatchTo := []relationship.MatchSelectorItem{
-		{Kind: "ClusterRoleBinding", MutatedRef: &rbMutatedRef, ID: &rbID},
+		{Kind: "ClusterRoleBinding", MutatedRef: mutatedRef("configuration", "roleRef", "name"), ID: &rbID},
 	}
-
-	saMutatorRef := relationship.MutatorRef{[]string{"configuration", "metadata", "name"}}
-	rbSubjectMutatedRef := relationship.MutatedRef{[]string{"configuration", "subjects", "0", "name"}}
 
 	toMatchFrom := []relationship.MatchSelectorItem{
-		{Kind: "ClusterRoleBinding", MutatorRef: &saMutatorRef, ID: &rbID},
+		{Kind: "ClusterRoleBinding", MutatorRef: mutatorRef("configuration", "metadata", "name"), ID: &rbID},
 	}
 	toMatchTo := []relationship.MatchSelectorItem{
-		{Kind: "ServiceAccount", MutatedRef: &rbSubjectMutatedRef, ID: &saID},
+		{Kind: "ServiceAccount", MutatedRef: mutatedRef("configuration", "subjects", "0", "name"), ID: &saID},
 	}
 
 	relStatus := relationship.RelationshipDefinitionStatus("approved")
@@ -325,7 +271,7 @@ func TestBindingPatching(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000020")
+	rel.ID = testUUID("20")
 
 	actions := p.SideEffects(rel, design)
 
@@ -359,53 +305,45 @@ func TestBindingPatching(t *testing.T) {
 func TestAliasSideEffects(t *testing.T) {
 	p := &AliasPolicy{}
 
-	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	aliasID, _ := uuid.FromString("00000000-0000-0000-0000-000000000099")
+	deployID := testUUID("1")
+	aliasID := testUUID("99")
 
-	deploy := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Deployment"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"template": map[string]interface{}{
-					"spec": map[string]interface{}{
-						"containers": []interface{}{
-							map[string]interface{}{"name": "web", "image": "nginx:1.25"},
-						},
+	deploy := k8sComp("Deployment", deployID, map[string]interface{}{
+		"spec": map[string]interface{}{
+			"template": map[string]interface{}{
+				"spec": map[string]interface{}{
+					"containers": []interface{}{
+						map[string]interface{}{"name": "web", "image": "nginx:1.25"},
 					},
 				},
 			},
 		},
-	}
-	deploy.ID = deployID
+	})
 
 	design := makePatternFile([]*component.ComponentDefinition{deploy}, nil)
 
 	// Alias relationship with status "identified" should produce add-component actions.
-	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "containers", "0"}}
-	mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "template", "spec", "containers", "0"}}
+	containerPath := []string{"configuration", "spec", "template", "spec", "containers", "0"}
+	patch := &relationship.RelationshipDefinitionSelectorsPatch{
+		MutatorRef: mutatorRef(containerPath...),
+		MutatedRef: mutatedRef(containerPath...),
+	}
 	relStatus := relationship.RelationshipDefinitionStatus("identified")
 	selectorSet := relationship.SelectorSet{
 		relationship.SelectorSetItem{
 			Allow: relationship.Selector{
 				From: []relationship.SelectorItem{
 					{
-						ID:   &aliasID,
-						Kind: strPtr("Container"),
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatorRef: &mutatorRef,
-							MutatedRef: &mutatedRef,
-						},
+						ID:                                   &aliasID,
+						Kind:                                 strPtr("Container"),
+						RelationshipDefinitionSelectorsPatch: patch,
 					},
 				},
 				To: []relationship.SelectorItem{
 					{
-						ID:   &deployID,
-						Kind: strPtr("Deployment"),
-						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
-							MutatorRef: &mutatorRef,
-							MutatedRef: &mutatedRef,
-						},
+						ID:                                   &deployID,
+						Kind:                                 strPtr("Deployment"),
+						RelationshipDefinitionSelectorsPatch: patch,
 					},
 				},
 			},
@@ -420,7 +358,7 @@ func TestAliasSideEffects(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "meshery-core"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000030")
+	rel.ID = testUUID("30")
 
 	actions := p.SideEffects(rel, design)
 	if len(actions) == 0 {
@@ -440,92 +378,69 @@ func TestAliasSideEffects(t *testing.T) {
 	}
 }
 
+// rbacTriple returns the Role / RoleBinding / ServiceAccount components shared
+// by the binding-permission identification tests, with IDs testUUID 1/2/3 and
+// empty configuration. Callers that need a populated RoleBinding override
+// rb.Configuration after the call.
+func rbacTriple() (role, rb, sa *component.ComponentDefinition) {
+	role = k8sComp("Role", testUUID("1"), map[string]interface{}{})
+	role.DisplayName = "my-role"
+	rb = k8sComp("RoleBinding", testUUID("2"), map[string]interface{}{})
+	sa = k8sComp("ServiceAccount", testUUID("3"), map[string]interface{}{})
+	sa.DisplayName = "my-sa"
+	return role, rb, sa
+}
+
+// bindingPermissionSelectors returns the canonical RBAC binding-permission
+// selector set: a Role bound to a ServiceAccount through a RoleBinding.
+func bindingPermissionSelectors() relationship.SelectorSet {
+	fromMatchFrom := []relationship.MatchSelectorItem{{Kind: "self", MutatorRef: &relationship.MutatorRef{{"component", "kind"}, {"displayName"}}}}
+	fromMatchTo := []relationship.MatchSelectorItem{{Kind: "RoleBinding", MutatedRef: &relationship.MutatedRef{{"configuration", "spec", "roleRef", "kind"}, {"configuration", "spec", "roleRef", "name"}}}}
+	toMatchFrom := []relationship.MatchSelectorItem{{Kind: "RoleBinding", MutatedRef: &relationship.MutatedRef{{"configuration", "spec", "subjects", "_", "name"}}}}
+	toMatchTo := []relationship.MatchSelectorItem{{Kind: "self", MutatorRef: &relationship.MutatorRef{{"displayName"}}}}
+	return relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{{
+					Kind:  strPtr("Role"),
+					Model: k8sModel(),
+					Match: &relationship.MatchSelector{From: &fromMatchFrom, To: &fromMatchTo},
+				}},
+				To: []relationship.SelectorItem{{
+					Kind:  strPtr("ServiceAccount"),
+					Model: k8sModel(),
+					Match: &relationship.MatchSelector{From: &toMatchFrom, To: &toMatchTo},
+				}},
+			},
+		},
+	}
+}
+
 // TestBindingIdentification tests that binding/permission relationships can be identified
 // for Role-RoleBinding-ServiceAccount triples.
 func TestBindingIdentification(t *testing.T) {
 	p := &EdgeBindingPolicy{}
 
-	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
-	saID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
-
-	role := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Role"},
-		DisplayName:    "my-role",
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{},
-	}
-	role.ID = roleID
-
-	rb := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "RoleBinding"},
-		DisplayName:    "my-rb",
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"roleRef": map[string]interface{}{
-					"kind": "Role",
-					"name": "my-role",
-				},
-				"subjects": []interface{}{
-					map[string]interface{}{
-						"kind": "ServiceAccount",
-						"name": "my-sa",
-					},
+	role, rb, sa := rbacTriple()
+	rb.DisplayName = "my-rb"
+	rb.Configuration = map[string]interface{}{
+		"spec": map[string]interface{}{
+			"roleRef": map[string]interface{}{
+				"kind": "Role",
+				"name": "my-role",
+			},
+			"subjects": []interface{}{
+				map[string]interface{}{
+					"kind": "ServiceAccount",
+					"name": "my-sa",
 				},
 			},
 		},
 	}
-	rb.ID = rbID
-
-	sa := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "ServiceAccount"},
-		DisplayName:    "my-sa",
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{},
-	}
-	sa.ID = saID
 
 	design := makePatternFile([]*component.ComponentDefinition{role, rb, sa}, nil)
 
-	// Load actual relDef structure from the real JSON.
-	roleMutatorRef := relationship.MutatorRef{{"component", "kind"}, {"displayName"}}
-	rbMutatedRef := relationship.MutatedRef{{"configuration", "spec", "roleRef", "kind"}, {"configuration", "spec", "roleRef", "name"}}
-	saMutatorRef := relationship.MutatorRef{{"displayName"}}
-	rbSubjectMutatedRef := relationship.MutatedRef{{"configuration", "spec", "subjects", "_", "name"}}
-
-	fromMatchFrom := []relationship.MatchSelectorItem{{Kind: "self", MutatorRef: &roleMutatorRef}}
-	fromMatchTo := []relationship.MatchSelectorItem{{Kind: "RoleBinding", MutatedRef: &rbMutatedRef}}
-	toMatchFrom := []relationship.MatchSelectorItem{{Kind: "RoleBinding", MutatedRef: &rbSubjectMutatedRef}}
-	toMatchTo := []relationship.MatchSelectorItem{{Kind: "self", MutatorRef: &saMutatorRef}}
-
-	selectorSet := relationship.SelectorSet{
-		relationship.SelectorSetItem{
-			Allow: relationship.Selector{
-				From: []relationship.SelectorItem{
-					{
-						Kind: strPtr("Role"),
-						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
-						Match: &relationship.MatchSelector{
-							From: &fromMatchFrom,
-							To:   &fromMatchTo,
-						},
-					},
-				},
-				To: []relationship.SelectorItem{
-					{
-						Kind: strPtr("ServiceAccount"),
-						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
-						Match: &relationship.MatchSelector{
-							From: &toMatchFrom,
-							To:   &toMatchTo,
-						},
-					},
-				},
-			},
-		},
-	}
-
+	selectorSet := bindingPermissionSelectors()
 	relDef := &relationship.RelationshipDefinition{
 		Kind:             relationship.Edge,
 		RelationshipType: "binding",
@@ -533,7 +448,7 @@ func TestBindingIdentification(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	relDef.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000050")
+	relDef.ID = testUUID("50")
 
 	// Debug: check isValidBinding manually.
 	fromSel := selectorSet[0].Allow.From[0]
@@ -563,71 +478,16 @@ func TestBindingIdentification(t *testing.T) {
 func TestBindingIdentificationEmptyValues(t *testing.T) {
 	p := &EdgeBindingPolicy{}
 
-	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
-	saID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
-
-	role := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Role"},
-		DisplayName:    "my-role",
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{},
-	}
-	role.ID = roleID
-
-	rb := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "RoleBinding"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{},
-	}
-	rb.ID = rbID
-
-	sa := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "ServiceAccount"},
-		DisplayName:    "my-sa",
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{},
-	}
-	sa.ID = saID
+	role, rb, sa := rbacTriple()
 
 	design := makePatternFile([]*component.ComponentDefinition{role, rb, sa}, nil)
 
-	roleMutatorRef := relationship.MutatorRef{{"component", "kind"}, {"displayName"}}
-	rbMutatedRef := relationship.MutatedRef{{"configuration", "spec", "roleRef", "kind"}, {"configuration", "spec", "roleRef", "name"}}
-	saMutatorRef := relationship.MutatorRef{{"displayName"}}
-	rbSubjectMutatedRef := relationship.MutatedRef{{"configuration", "spec", "subjects", "_", "name"}}
-
-	fromMatchFrom := []relationship.MatchSelectorItem{{Kind: "self", MutatorRef: &roleMutatorRef}}
-	fromMatchTo := []relationship.MatchSelectorItem{{Kind: "RoleBinding", MutatedRef: &rbMutatedRef}}
-	toMatchFrom := []relationship.MatchSelectorItem{{Kind: "RoleBinding", MutatedRef: &rbSubjectMutatedRef}}
-	toMatchTo := []relationship.MatchSelectorItem{{Kind: "self", MutatorRef: &saMutatorRef}}
-
-	selectorSet := relationship.SelectorSet{
-		relationship.SelectorSetItem{
-			Allow: relationship.Selector{
-				From: []relationship.SelectorItem{
-					{
-						Kind:  strPtr("Role"),
-						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
-						Match: &relationship.MatchSelector{From: &fromMatchFrom, To: &fromMatchTo},
-					},
-				},
-				To: []relationship.SelectorItem{
-					{
-						Kind:  strPtr("ServiceAccount"),
-						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
-						Match: &relationship.MatchSelector{From: &toMatchFrom, To: &toMatchTo},
-					},
-				},
-			},
-		},
-	}
-
+	selectorSet := bindingPermissionSelectors()
 	relDef := &relationship.RelationshipDefinition{
 		Kind: relationship.Edge, RelationshipType: "binding", SubType: "permission",
 		Model: modelv1beta1.ModelReference{Name: "kubernetes"}, Selectors: &selectorSet,
 	}
-	relDef.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000060")
+	relDef.ID = testUUID("60")
 
 	identified := p.IdentifyRelationship(relDef, design)
 	if len(identified) == 0 {
@@ -638,72 +498,17 @@ func TestBindingIdentificationEmptyValues(t *testing.T) {
 // TestBindingIdentificationFullPipeline tests binding identification through the full engine,
 // simulating the e2e flow where relationships are stripped and re-evaluated.
 func TestBindingIdentificationFullPipeline(t *testing.T) {
-	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
-	saID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
-
-	role := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Role"},
-		DisplayName:    "my-role",
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{},
-	}
-	role.ID = roleID
-
-	rb := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "RoleBinding"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{},
-	}
-	rb.ID = rbID
-
-	sa := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "ServiceAccount"},
-		DisplayName:    "my-sa",
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{},
-	}
-	sa.ID = saID
+	role, rb, sa := rbacTriple()
 
 	design := makePatternFile([]*component.ComponentDefinition{role, rb, sa}, nil)
 
 	// Build the binding permission relDef (same structure as the real one).
-	roleMutatorRef := relationship.MutatorRef{{"component", "kind"}, {"displayName"}}
-	rbMutatedRef := relationship.MutatedRef{{"configuration", "spec", "roleRef", "kind"}, {"configuration", "spec", "roleRef", "name"}}
-	saMutatorRef := relationship.MutatorRef{{"displayName"}}
-	rbSubjectMutatedRef := relationship.MutatedRef{{"configuration", "spec", "subjects", "_", "name"}}
-
-	fromMatchFrom := []relationship.MatchSelectorItem{{Kind: "self", MutatorRef: &roleMutatorRef}}
-	fromMatchTo := []relationship.MatchSelectorItem{{Kind: "RoleBinding", MutatedRef: &rbMutatedRef}}
-	toMatchFrom := []relationship.MatchSelectorItem{{Kind: "RoleBinding", MutatedRef: &rbSubjectMutatedRef}}
-	toMatchTo := []relationship.MatchSelectorItem{{Kind: "self", MutatorRef: &saMutatorRef}}
-
-	selectorSet := relationship.SelectorSet{
-		relationship.SelectorSetItem{
-			Allow: relationship.Selector{
-				From: []relationship.SelectorItem{
-					{
-						Kind:  strPtr("Role"),
-						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
-						Match: &relationship.MatchSelector{From: &fromMatchFrom, To: &fromMatchTo},
-					},
-				},
-				To: []relationship.SelectorItem{
-					{
-						Kind:  strPtr("ServiceAccount"),
-						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
-						Match: &relationship.MatchSelector{From: &toMatchFrom, To: &toMatchTo},
-					},
-				},
-			},
-		},
-	}
-
+	selectorSet := bindingPermissionSelectors()
 	relDef := &relationship.RelationshipDefinition{
 		Kind: relationship.Edge, RelationshipType: "binding", SubType: "permission",
 		Model: modelv1beta1.ModelReference{Name: "kubernetes"}, Selectors: &selectorSet,
 	}
-	relDef.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000070")
+	relDef.ID = testUUID("70")
 
 	log, _ := logger.New("test", logger.Options{Format: logger.SyslogLogFormat})
 	engine := NewGoEngine(log)
@@ -731,42 +536,24 @@ func TestBindingIdentificationFullPipeline(t *testing.T) {
 func TestInventoryNamespaceIdentification(t *testing.T) {
 	p := &HierarchicalParentChildPolicy{}
 
-	nsID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
-	svcID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
+	nsID := testUUID("1")
+	deployID := testUUID("2")
+	svcID := testUUID("3")
 
-	ns := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Namespace"},
-		DisplayName:    "default",
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{},
-	}
-	ns.ID = nsID
-
-	deploy := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Deployment"},
-		DisplayName:    "my-deploy",
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"metadata": map[string]interface{}{
-				"namespace": "default",
-			},
+	ns := k8sComp("Namespace", nsID, map[string]interface{}{})
+	ns.DisplayName = "default"
+	deploy := k8sComp("Deployment", deployID, map[string]interface{}{
+		"metadata": map[string]interface{}{
+			"namespace": "default",
 		},
-	}
-	deploy.ID = deployID
-
-	svc := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Service"},
-		DisplayName:    "my-svc",
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"metadata": map[string]interface{}{
-				"namespace": "default",
-			},
+	})
+	deploy.DisplayName = "my-deploy"
+	svc := k8sComp("Service", svcID, map[string]interface{}{
+		"metadata": map[string]interface{}{
+			"namespace": "default",
 		},
-	}
-	svc.ID = svcID
-
+	})
+	svc.DisplayName = "my-svc"
 	design := makePatternFile([]*component.ComponentDefinition{ns, deploy, svc}, nil)
 
 	// Inventory relDef: mutatorRef=["displayName"] on Namespace, mutatedRef=["configuration","metadata","namespace"] on any
@@ -781,15 +568,15 @@ func TestInventoryNamespaceIdentification(t *testing.T) {
 			Allow: relationship.Selector{
 				From: []relationship.SelectorItem{
 					{
-						Kind:  strPtr("*"),
-						Model: &modelv1beta1.ModelReference{Name: "*"},
+						Kind:                                 strPtr("*"),
+						Model:                                &modelv1beta1.ModelReference{Name: "*"},
 						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{MutatedRef: &mutatedRef},
 					},
 				},
 				To: []relationship.SelectorItem{
 					{
-						Kind:  strPtr("Namespace"),
-						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+						Kind:                                 strPtr("Namespace"),
+						Model:                                &modelv1beta1.ModelReference{Name: "kubernetes"},
 						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{MutatorRef: &mutatorRef},
 					},
 				},
@@ -802,7 +589,7 @@ func TestInventoryNamespaceIdentification(t *testing.T) {
 		Kind: relationship.Hierarchical, RelationshipType: "parent", SubType: "inventory",
 		Model: modelv1beta1.ModelReference{Name: "kubernetes"}, Selectors: &selectorSet,
 	}
-	relDef.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000080")
+	relDef.ID = testUUID("80")
 
 	identified := p.IdentifyRelationship(relDef, design)
 	t.Logf("Identified: %d relationships", len(identified))
@@ -823,23 +610,11 @@ func TestInventoryNamespaceIdentification(t *testing.T) {
 // The relationship is pre-existing (approved) in the design, and the mutator value
 // differs from the mutated value, so patching should update it.
 func TestInventoryPatchingFullPipeline(t *testing.T) {
-	nsID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	nsID := testUUID("1")
+	deployID := testUUID("2")
 
-	ns := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Namespace"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{"name": "production"},
-	}
-	ns.ID = nsID
-
-	deploy := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Deployment"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{"namespace": "default"},
-	}
-	deploy.ID = deployID
-
+	ns := k8sComp("Namespace", nsID, map[string]interface{}{"name": "production"})
+	deploy := k8sComp("Deployment", deployID, map[string]interface{}{"namespace": "default"})
 	// Pre-existing approved relationship in the design.
 	mutatorRef := relationship.MutatorRef{[]string{"configuration", "name"}}
 	mutatedRef := relationship.MutatedRef{[]string{"configuration", "namespace"}}
@@ -877,7 +652,7 @@ func TestInventoryPatchingFullPipeline(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	existingRel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000040")
+	existingRel.ID = testUUID("40")
 
 	design := makePatternFile(
 		[]*component.ComponentDefinition{ns, deploy},
@@ -910,37 +685,25 @@ func TestInventoryPatchingFullPipeline(t *testing.T) {
 func TestWalletPatchingCleanupOnDelete(t *testing.T) {
 	p := &HierarchicalWalletPolicy{}
 
-	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	deployID := testUUID("1")
+	podTplID := testUUID("2")
 
 	// Both components already hold the mutator value (simulating a prior patch
 	// that has been applied and persisted).
-	deploy := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Deployment"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"template": map[string]interface{}{
-					"spec": map[string]interface{}{
-						"serviceAccountName": "my-sa",
-					},
+	deploy := k8sComp("Deployment", deployID, map[string]interface{}{
+		"spec": map[string]interface{}{
+			"template": map[string]interface{}{
+				"spec": map[string]interface{}{
+					"serviceAccountName": "my-sa",
 				},
 			},
 		},
-	}
-	deploy.ID = deployID
-
-	podTpl := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "PodTemplate"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"serviceAccountName": "my-sa",
-			},
+	})
+	podTpl := k8sComp("PodTemplate", podTplID, map[string]interface{}{
+		"spec": map[string]interface{}{
+			"serviceAccountName": "my-sa",
 		},
-	}
-	podTpl.ID = podTplID
-
+	})
 	design := makePatternFile([]*component.ComponentDefinition{deploy, podTpl}, nil)
 
 	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "serviceAccountName"}}
@@ -979,7 +742,7 @@ func TestWalletPatchingCleanupOnDelete(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
+	rel.ID = testUUID("10")
 
 	actions := p.SideEffects(rel, design)
 	if len(actions) == 0 {
@@ -1003,46 +766,33 @@ func TestWalletPatchingCleanupOnDelete(t *testing.T) {
 func TestWalletPatchingCleanupUsesSchemaDefault(t *testing.T) {
 	p := &HierarchicalWalletPolicy{}
 
-	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	deployID := testUUID("1")
+	podTplID := testUUID("2")
 
-	deploy := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Deployment"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"template": map[string]interface{}{
-					"spec": map[string]interface{}{
-						"serviceAccountName": "my-sa",
-					},
+	deploy := k8sComp("Deployment", deployID, map[string]interface{}{
+		"spec": map[string]interface{}{
+			"template": map[string]interface{}{
+				"spec": map[string]interface{}{
+					"serviceAccountName": "my-sa",
 				},
 			},
 		},
-	}
-	deploy.ID = deployID
-
-	podTpl := &component.ComponentDefinition{
-		Component: component.Component{
-			Kind: "PodTemplate",
-			Schema: `{
+	})
+	podTpl := k8sComp("PodTemplate", podTplID, map[string]interface{}{
+		"spec": map[string]interface{}{
+			"serviceAccountName": "my-sa",
+		},
+	})
+	// Schema carries the serviceAccountName default that cleanup must restore to.
+	podTpl.Component.Schema = `{
+		"properties": {
+			"spec": {
 				"properties": {
-					"spec": {
-						"properties": {
-							"serviceAccountName": {"default": "default"}
-						}
-					}
+					"serviceAccountName": {"default": "default"}
 				}
-			}`,
-		},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"serviceAccountName": "my-sa",
-			},
-		},
-	}
-	podTpl.ID = podTplID
-
+			}
+		}
+	}`
 	design := makePatternFile([]*component.ComponentDefinition{deploy, podTpl}, nil)
 
 	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "serviceAccountName"}}
@@ -1081,7 +831,7 @@ func TestWalletPatchingCleanupUsesSchemaDefault(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
+	rel.ID = testUUID("10")
 
 	actions := p.SideEffects(rel, design)
 	found := false
@@ -1098,41 +848,29 @@ func TestWalletPatchingCleanupUsesSchemaDefault(t *testing.T) {
 // TestWalletCleanupOnDeleteFullPipeline verifies that a deleted wallet relationship
 // restores the mutated field through the full evaluation pipeline.
 func TestWalletCleanupOnDeleteFullPipeline(t *testing.T) {
-	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	deployID := testUUID("1")
+	podTplID := testUUID("2")
 
-	deploy := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Deployment"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"template": map[string]interface{}{
-					"spec": map[string]interface{}{
-						"serviceAccountName": "my-sa",
-					},
+	deploy := k8sComp("Deployment", deployID, map[string]interface{}{
+		"spec": map[string]interface{}{
+			"template": map[string]interface{}{
+				"spec": map[string]interface{}{
+					"serviceAccountName": "my-sa",
 				},
 			},
 		},
-	}
-	deploy.ID = deployID
-
+	})
 	// PodTemplate.serviceAccountName already holds the mutator value, simulating
 	// a previous evaluation that applied the patch.
-	podTpl := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "PodTemplate"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"serviceAccountName": "my-sa",
-			},
+	podTpl := k8sComp("PodTemplate", podTplID, map[string]interface{}{
+		"spec": map[string]interface{}{
+			"serviceAccountName": "my-sa",
 		},
-	}
-	podTpl.ID = podTplID
-
+	})
 	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "serviceAccountName"}}
 	mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "serviceAccountName"}}
 	relStatus := relationship.RelationshipDefinitionStatus("deleted")
-	relID, _ := uuid.FromString("00000000-0000-0000-0000-000000000010")
+	relID := testUUID("10")
 	selectorSet := relationship.SelectorSet{
 		relationship.SelectorSetItem{
 			Allow: relationship.Selector{
@@ -1201,36 +939,24 @@ func TestWalletCleanupOnDeleteFullPipeline(t *testing.T) {
 func TestWalletPatchingSkipsWhenValueDiverged(t *testing.T) {
 	p := &HierarchicalWalletPolicy{}
 
-	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	deployID := testUUID("1")
+	podTplID := testUUID("2")
 
-	deploy := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Deployment"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"template": map[string]interface{}{
-					"spec": map[string]interface{}{
-						"serviceAccountName": "my-sa",
-					},
+	deploy := k8sComp("Deployment", deployID, map[string]interface{}{
+		"spec": map[string]interface{}{
+			"template": map[string]interface{}{
+				"spec": map[string]interface{}{
+					"serviceAccountName": "my-sa",
 				},
 			},
 		},
-	}
-	deploy.ID = deployID
-
+	})
 	// PodTemplate holds a different value than the mutator (user changed it).
-	podTpl := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "PodTemplate"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"serviceAccountName": "user-changed",
-			},
+	podTpl := k8sComp("PodTemplate", podTplID, map[string]interface{}{
+		"spec": map[string]interface{}{
+			"serviceAccountName": "user-changed",
 		},
-	}
-	podTpl.ID = podTplID
-
+	})
 	design := makePatternFile([]*component.ComponentDefinition{deploy, podTpl}, nil)
 
 	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "serviceAccountName"}}
@@ -1269,7 +995,7 @@ func TestWalletPatchingSkipsWhenValueDiverged(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
+	rel.ID = testUUID("10")
 
 	actions := p.SideEffects(rel, design)
 	if len(actions) != 0 {
@@ -1283,25 +1009,13 @@ func TestWalletPatchingSkipsWhenValueDiverged(t *testing.T) {
 func TestInventoryPatchingCleanupOnDelete(t *testing.T) {
 	p := &HierarchicalParentChildPolicy{}
 
-	nsID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	nsID := testUUID("1")
+	deployID := testUUID("2")
 
-	ns := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Namespace"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{"name": "production"},
-	}
-	ns.ID = nsID
-
+	ns := k8sComp("Namespace", nsID, map[string]interface{}{"name": "production"})
 	// Deployment.namespace already holds the mutator value ("production"),
 	// simulating a prior patch that has been applied.
-	deploy := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Deployment"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration:  map[string]interface{}{"namespace": "production"},
-	}
-	deploy.ID = deployID
-
+	deploy := k8sComp("Deployment", deployID, map[string]interface{}{"namespace": "production"})
 	design := makePatternFile([]*component.ComponentDefinition{ns, deploy}, nil)
 
 	mutatorRef := relationship.MutatorRef{[]string{"configuration", "name"}}
@@ -1340,7 +1054,7 @@ func TestInventoryPatchingCleanupOnDelete(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
+	rel.ID = testUUID("10")
 
 	actions := p.SideEffects(rel, design)
 	found := false
@@ -1359,32 +1073,20 @@ func TestInventoryPatchingCleanupOnDelete(t *testing.T) {
 func TestEdgeNetworkPatchingCleanupOnDelete(t *testing.T) {
 	p := &EdgeNonBindingPolicy{}
 
-	svcID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	podID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	svcID := testUUID("1")
+	podID := testUUID("2")
 
-	svc := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Service"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"selector": map[string]interface{}{"app": "web"},
-			},
+	svc := k8sComp("Service", svcID, map[string]interface{}{
+		"spec": map[string]interface{}{
+			"selector": map[string]interface{}{"app": "web"},
 		},
-	}
-	svc.ID = svcID
-
+	})
 	// Pod.labels.app already holds the mutator value, simulating a prior patch.
-	pod := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Pod"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"metadata": map[string]interface{}{
-				"labels": map[string]interface{}{"app": "web"},
-			},
+	pod := k8sComp("Pod", podID, map[string]interface{}{
+		"metadata": map[string]interface{}{
+			"labels": map[string]interface{}{"app": "web"},
 		},
-	}
-	pod.ID = podID
-
+	})
 	design := makePatternFile([]*component.ComponentDefinition{svc, pod}, nil)
 
 	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "selector", "app"}}
@@ -1423,7 +1125,7 @@ func TestEdgeNetworkPatchingCleanupOnDelete(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000010")
+	rel.ID = testUUID("10")
 
 	actions := p.SideEffects(rel, design)
 	found := false
@@ -1443,42 +1145,24 @@ func TestEdgeNetworkPatchingCleanupOnDelete(t *testing.T) {
 func TestBindingPatchingCleanupOnDelete(t *testing.T) {
 	p := &EdgeBindingPolicy{}
 
-	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	saID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
-	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
+	roleID := testUUID("1")
+	saID := testUUID("2")
+	rbID := testUUID("3")
 
-	role := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "ClusterRole"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"metadata": map[string]interface{}{"name": "admin-role"},
-		},
-	}
-	role.ID = roleID
-
-	sa := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "ServiceAccount"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"metadata": map[string]interface{}{"name": "my-service-account"},
-		},
-	}
-	sa.ID = saID
-
+	role := k8sComp("ClusterRole", roleID, map[string]interface{}{
+		"metadata": map[string]interface{}{"name": "admin-role"},
+	})
+	sa := k8sComp("ServiceAccount", saID, map[string]interface{}{
+		"metadata": map[string]interface{}{"name": "my-service-account"},
+	})
 	// ClusterRoleBinding already holds the mutator value on roleRef.name,
 	// simulating a prior binding patch that was applied.
-	rb := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "ClusterRoleBinding"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"roleRef": map[string]interface{}{"name": "admin-role"},
-			"subjects": []interface{}{
-				map[string]interface{}{"name": "", "kind": "ServiceAccount"},
-			},
+	rb := k8sComp("ClusterRoleBinding", rbID, map[string]interface{}{
+		"roleRef": map[string]interface{}{"name": "admin-role"},
+		"subjects": []interface{}{
+			map[string]interface{}{"name": "", "kind": "ServiceAccount"},
 		},
-	}
-	rb.ID = rbID
-
+	})
 	design := makePatternFile([]*component.ComponentDefinition{role, sa, rb}, nil)
 
 	roleMutatorRef := relationship.MutatorRef{[]string{"configuration", "metadata", "name"}}
@@ -1537,7 +1221,7 @@ func TestBindingPatchingCleanupOnDelete(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
 		Selectors:        &selectorSet,
 	}
-	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000020")
+	rel.ID = testUUID("20")
 
 	actions := p.SideEffects(rel, design)
 	found := false
@@ -1562,47 +1246,29 @@ func TestBindingPatchingCleanupOnDelete(t *testing.T) {
 // (see PR #18885 review). The test pins current behavior so a future fix is
 // visible as a diff.
 func TestCleanupConcurrentRelationshipsSameField(t *testing.T) {
-	deployAID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
-	deployBID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
-	podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
+	deployAID := testUUID("1")
+	deployBID := testUUID("2")
+	podTplID := testUUID("3")
 
 	// Two Deployments both hold the same serviceAccountName; PodTemplate
 	// already holds that value (simulating prior patches from both rels).
-	deployA := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Deployment"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"template": map[string]interface{}{
-					"spec": map[string]interface{}{"serviceAccountName": "shared-sa"},
-				},
+	deployA := k8sComp("Deployment", deployAID, map[string]interface{}{
+		"spec": map[string]interface{}{
+			"template": map[string]interface{}{
+				"spec": map[string]interface{}{"serviceAccountName": "shared-sa"},
 			},
 		},
-	}
-	deployA.ID = deployAID
-
-	deployB := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "Deployment"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{
-				"template": map[string]interface{}{
-					"spec": map[string]interface{}{"serviceAccountName": "shared-sa"},
-				},
+	})
+	deployB := k8sComp("Deployment", deployBID, map[string]interface{}{
+		"spec": map[string]interface{}{
+			"template": map[string]interface{}{
+				"spec": map[string]interface{}{"serviceAccountName": "shared-sa"},
 			},
 		},
-	}
-	deployB.ID = deployBID
-
-	podTpl := &component.ComponentDefinition{
-		Component:      component.Component{Kind: "PodTemplate"},
-		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
-		Configuration: map[string]interface{}{
-			"spec": map[string]interface{}{"serviceAccountName": "shared-sa"},
-		},
-	}
-	podTpl.ID = podTplID
-
+	})
+	podTpl := k8sComp("PodTemplate", podTplID, map[string]interface{}{
+		"spec": map[string]interface{}{"serviceAccountName": "shared-sa"},
+	})
 	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "spec", "serviceAccountName"}}
 	mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "serviceAccountName"}}
 
