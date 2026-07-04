@@ -112,13 +112,13 @@ export const MainLogoText = styled('img')(({ theme }) => ({
 }));
 
 export const ExpandMoreIcon = styled('svg', {
-  shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
-})(({ isCollapsed, hasChildren, theme }) => ({
+  shouldForwardProp: (prop) => prop !== 'isExpanded' && prop !== 'hasChildren',
+})(({ isExpanded, hasChildren, theme }) => ({
   opacity: 0, // Initially hidden
   visibility: 'hidden',
   cursor: 'pointer',
   display: hasChildren ? 'inline-block' : 'none',
-  transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
+  transform: isExpanded ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
   transition:
     'transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out',
 
@@ -133,18 +133,27 @@ export const ExpandMoreIcon = styled('svg', {
   },
 }));
 
-export const ExpandMore = ({ isCollapsed, hasChildren, theme, ...props }) => (
-  <ExpandMoreIcon
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    width="20"
-    height="20"
-    isCollapsed={isCollapsed}
-    hasChildren={hasChildren}
+export const ExpandMore = ({ isExpanded, hasChildren, isDrawerCollapsed, theme, ...props }) => (
+  <IconButton
+    aria-expanded={!!isExpanded}
+    aria-label={isExpanded ? 'Collapse' : 'Expand'}
+    style={{
+      padding: 0,
+      display: hasChildren && !isDrawerCollapsed ? 'inline-block' : 'none', // ⚠️ Hidden when collapsed
+    }}
     {...props}
   >
-    <CaretDownIcon fill={theme.palette.icon.brand} />
-  </ExpandMoreIcon>
+    <ExpandMoreIcon
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width="20"
+      height="20"
+      isExpanded={isExpanded}
+      hasChildren={hasChildren}
+    >
+      <CaretDownIcon fill={theme.palette.icon.brand} />
+    </ExpandMoreIcon>
+  </IconButton>
 );
 
 export const NavigatorList = styled(List)({
@@ -255,9 +264,18 @@ export const SideBarListItem = styled(ListItemButton, {
   fontSize: '1rem',
 }));
 
-export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
+export const SideBarText = styled(ListItemText, {
+  shouldForwardProp: (prop) => prop !== 'drawerCollapsed',
+})<{ drawerCollapsed?: boolean }>(({ drawerCollapsed }) => ({
   opacity: drawerCollapsed ? 0 : 1,
-  transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
+  maxWidth: drawerCollapsed ? 0 : '100%', // ✅ Animatable
+  flex: drawerCollapsed ? '0 0 0' : '1 1 auto',
+  minWidth: 0,
+  margin: drawerCollapsed ? 0 : undefined,
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  transition: 'opacity 200ms ease-in-out, maxWidth 200ms ease-in-out',
   fontSize: '1rem',
   color: 'inherit',
   '& .MuiListItemText-primary': {
@@ -300,21 +318,25 @@ export const SecondaryDivider = styled(Divider)(({ theme }) => ({
   borderColor: theme.palette.divider,
 }));
 
-export const MainListIcon = styled(ListItemIcon)(({ theme }) => ({
-  minWidth: theme.spacing(3.5),
+export const MainListIcon = styled(ListItemIcon, {
+  shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed',
+})<{ isDrawerCollapsed?: boolean }>(({ isDrawerCollapsed, theme }) => ({
+  minWidth: isDrawerCollapsed ? 'auto' : theme.spacing(3.5),
   paddingTop: theme.spacing(0.5),
   textAlign: 'center',
   display: 'inline-table',
-  paddingRight: theme.spacing(0.5),
-  marginLeft: '8.45px',
+  paddingRight: isDrawerCollapsed ? 0 : theme.spacing(0.5),
+  marginLeft: isDrawerCollapsed ? '0' : '8.45px', // ✅ Only zero when collapsed
 }));
 
-export const ListIconSide = styled(ListItemIcon)(({ theme }) => ({
+export const ListIconSide = styled(ListItemIcon, {
+  shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed',
+})<{ isDrawerCollapsed?: boolean }>(({ isDrawerCollapsed, theme }) => ({
   paddingTop: theme.spacing(0.5),
   textAlign: 'center',
   display: 'inline-table',
-  paddingRight: theme.spacing(0.5),
-  marginLeft: theme.spacing(0.8),
+  paddingRight: isDrawerCollapsed ? 0 : theme.spacing(0.5),
+  marginLeft: isDrawerCollapsed ? '0' : theme.spacing(0.8),
   color: theme.palette.background.constant.white,
   opacity: '0.7',
   transition: 'opacity 200ms linear',
@@ -332,7 +354,7 @@ export const HiddenText = styled(ListItemText)(({ drawerCollapsed, theme }) => (
   opacity: drawerCollapsed ? 0 : 1,
   color: theme.palette.background.constant.white,
   fontSize: '14px',
-  transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
+  transition: 'opacity 200ms ease-in-out', // ✅ No conditional needed; always the same
 }));
 
 export const LinkContainer = styled('div')(() => ({
