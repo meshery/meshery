@@ -5,8 +5,8 @@
 # Security note: This workflow was previously triggered by pull_request_target, which
 # runs forked-PR code with the base repo's GITHUB_TOKEN (write scope). Because the job
 # executes `make docker-build` (arbitrary code from the PR), a malicious PR could exfiltrate
-# secrets or mutate the repository. Switching to `pull_request` sandboxes forked PRs with
-# a read-only token, eliminating this attack vector.
+# secrets or mutate the repository. This workflow now uses `pull_request` and additionally
+# skips execution for forked PRs (see the job-level `if:` guard), eliminating this attack vector.
 # Ref: https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
 name: Trivy Container Image Scan
 
