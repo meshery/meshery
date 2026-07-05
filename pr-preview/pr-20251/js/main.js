@@ -107,7 +107,7 @@ clipboard.on("success", (e) => {
         return;
     }
 
-    if (button.contains(text)) {
+    if (text.parentNode === button) {
         button.replaceChild(originalIcon, text);
     }
 }, 2000);
