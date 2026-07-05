@@ -137,8 +137,8 @@ export const ExpandMore = ({ isExpanded, hasChildren, theme, isCollapsed, ...pro
       ...(isCollapsed && {
         position: 'absolute',
         right: '2px',
-        bottom: '2px',
-        transform: 'scale(0.8)',
+        top: '50%',
+        transform: 'translateY(-50%) scale(0.8)',
       }),
     }}
     {...props}
