@@ -518,7 +518,7 @@ export const openViewScopedToDesignInOperator = (designName, designId, router) =
     return;
   }
 
-  router.push(`/extension/meshmap?mode=operator&type=view&design_id=${designId}`);
+  router.push(`/extension/meshmap?mode=operator&type=view&designId=${designId}`);
 };
 
 export const mergeDesignWithCurrent = (designId, designName) => {

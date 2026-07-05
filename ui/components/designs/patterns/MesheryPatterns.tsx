@@ -419,7 +419,7 @@ function MesheryPatterns({
   };
 
   const handleOpenInConfigurator = (id) => {
-    router.push('/configuration/designs/configurator?design_id=' + id);
+    router.push('/configuration/designs/configurator?designId=' + id);
   };
 
   const columns = buildPatternColumns({

@@ -99,7 +99,7 @@ function MesheryPatternCard_({
   const theme = useTheme();
 
   const editInConfigurator = () => {
-    router.push('/configuration/designs/configurator?design_id=' + id);
+    router.push('/configuration/designs/configurator?designId=' + id);
   };
   const isOwner = user?.userId == pattern?.userId;
   const userCanEdit = CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) || isOwner;

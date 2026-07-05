@@ -585,7 +585,7 @@ describe('event-bus router helpers', () => {
     openViewScopedToDesignInOperator('My Design', 'd-1', router);
     expect(eventBus.publish).not.toHaveBeenCalled();
     expect(router.push).toHaveBeenCalledWith(
-      '/extension/meshmap?mode=operator&type=view&design_id=d-1',
+      '/extension/meshmap?mode=operator&type=view&designId=d-1',
     );
   });
 
