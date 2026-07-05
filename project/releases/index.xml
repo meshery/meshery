@@ -1,4 +1,54 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Thu, 02 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.51</title><link>/project/releases/v1.0.51/</link><pubDate>Thu, 02 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.51/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Sun, 05 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.53</title><link>/project/releases/v1.0.53/</link><pubDate>Sun, 05 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.53/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[CI] Bump docs-docker recipe to utilize hugo image v0.163.3 @banana-three-join (#20469)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[mesheryctl] Guard empty design response in apply to avoid index out of range @mightbeanshuu (#20448)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Expose MeshSync, Operator, and Broker configuration: server-wide defaults (Settings) and per-connection overrides (Connections) @leecalcote (#20492)&lt;/li&gt;
+&lt;li&gt;chore(rtk): remove /evaluate path exception from mesheryApiPath @yi-nuo426 (#19822)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;chore(rtk): remove /evaluate path exception from mesheryApiPath @yi-nuo426 (#19822)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Docs] Add guide: Bringing Existing Infrastructure Under Meshery Management @leecalcote (#20491)&lt;/li&gt;
+&lt;li&gt;[Docs] Configuring Meshery Operator, MeshSync, and Broker guide @leecalcote (#20490)&lt;/li&gt;
+&lt;li&gt;[Docs] Add Contributing to MeshSync guide @leecalcote (#20486)&lt;/li&gt;
+&lt;li&gt;[Docs] MeshSync: align architecture, logical, and troubleshooting docs with the implementation @leecalcote (#20464)&lt;/li&gt;
+&lt;li&gt;[Docs] Fix Overview &amp;amp; Installation button link @Bharath314 (#20440)&lt;/li&gt;
+&lt;li&gt;[Docs] Hide redundant hero logo on mobile home/overview page @mightbeanshuu (#20460)&lt;/li&gt;
+&lt;li&gt;Joined newcomers meet @Ayush-kr-giga (#20457)&lt;/li&gt;
+&lt;li&gt;[Docs] Add introduction for Ashtithwa in meeting notes @ubermensch177 (#20455)&lt;/li&gt;
+&lt;li&gt;Add Akash Sah&amp;rsquo;s introduction in meeting notes @SuperNeom (#20454)&lt;/li&gt;
+&lt;li&gt;Create Sulagna @suzy-g38 (#20453)&lt;/li&gt;
+&lt;li&gt;Add Chethan&amp;rsquo;s introduction to meeting notes @chethanac15 (#20452)&lt;/li&gt;
+&lt;li&gt;Create Debjit.md with bio and project details @D-source1602 (#20451)&lt;/li&gt;
+&lt;li&gt;Add Yash.md with introductory text @YASHMAHAKAL (#20449)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Ayush-kr-giga, @Bharath314, @D-source1602, @SuperNeom, @YASHMAHAKAL, @alexquincy, @banana-three-join, @chethanac15, @fitzergerald, @hortison, @leecalcote, @marblom007, @meshery-ci, @mightbeanshuu, @pontusringblom, @rishiraj38, @suzy-g38, @ubermensch177 and @yi-nuo426&lt;/p&gt;</description></item><item><title>v1.0.51</title><link>/project/releases/v1.0.51/</link><pubDate>Thu, 02 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.51/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -34110,7 +34160,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.52&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.53&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
