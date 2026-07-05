@@ -3890,6 +3890,42 @@
         "short_description": "failed to parse YAML configuration",
         "probable_cause": "malformed YAML in component configuration",
         "suggested_remediation": "verify the YAML syntax in your design configuration"
+      },
+      "1437": {
+        "name": "ErrControllersConfigInvalidCode",
+        "code": "1437",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid controllers configuration.",
+        "probable_cause": "The submitted Meshery Operator / MeshSync / Broker configuration violates a validation rule.",
+        "suggested_remediation": "Correct the highlighted field and resubmit. Replica counts must be 1-10, a watch list sets at most one of whitelist or blacklist, and load-balancer settings require the LoadBalancer service type."
+      },
+      "1438": {
+        "name": "ErrControllersConfigMetadataCode",
+        "code": "1438",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to read or write the connection's controllers configuration.",
+        "probable_cause": "The controllers_config entry on the connection's metadata is not valid JSON or does not match the expected schema.",
+        "suggested_remediation": "Clear the connection's controllers configuration override and reapply it from the Connections page."
+      },
+      "1439": {
+        "name": "ErrSystemSettingsCode",
+        "code": "1439",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error accessing server-wide system settings",
+        "probable_cause": "The system_settings store could not be read or written, or the stored value is not valid JSON.",
+        "suggested_remediation": "Verify Meshery Server's database is reachable and writable, then retry the operation."
+      },
+      "1440": {
+        "name": "ErrApplyControllersConfigCode",
+        "code": "1440",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying controllers configuration to the cluster",
+        "probable_cause": "The MeshSync or Broker custom resource could not be patched, or the MeshSync deployment overlay could not be applied.\nThe Meshery Operator may not be deployed on the target cluster yet.",
+        "suggested_remediation": "Confirm the cluster is reachable and the Meshery Operator is deployed (operator deployment mode).\nRetry the change; configuration is re-applied whenever the connection reconnects."
       }
     }
   }

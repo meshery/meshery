@@ -152,6 +152,8 @@ const (
 	ErrRemoteProviderCapabilitiesCode     = "meshery-server-1420"
 	ErrRemoteProviderAuthExhaustedCode    = "meshery-server-1421"
 	ErrInvalidUUIDValueCode               = "meshery-server-1432"
+	ErrSystemSettingsCode                 = "meshery-server-1439"
+	ErrApplyControllersConfigCode         = "meshery-server-1440"
 )
 
 var (
@@ -688,4 +690,17 @@ func ErrMeshsyncEvent(err error) error {
 
 func ErrMeshsyncStoreUpdates(err error) error {
 	return errors.New(ErrMeshsyncStoreUpdatesCode, errors.Alert, []string{"Error processing MeshSync store update"}, []string{err.Error()}, []string{"MeshSync encountered an error while processing a store update event"}, []string{"Check MeshSync store logs. Verify that the database connection is active and the store is not corrupted."})
+}
+
+// ErrSystemSettings wraps failures reading or writing Meshery Server's
+// server-wide system settings store.
+func ErrSystemSettings(err error) error {
+	return errors.New(ErrSystemSettingsCode, errors.Alert, []string{"Error accessing server-wide system settings"}, []string{err.Error()}, []string{"The system_settings store could not be read or written, or the stored value is not valid JSON."}, []string{"Verify Meshery Server's database is reachable and writable, then retry the operation."})
+}
+
+// ErrApplyControllersConfig wraps failures propagating a resolved
+// controllers configuration (Meshery Operator / MeshSync / Broker) to a
+// managed cluster.
+func ErrApplyControllersConfig(err error) error {
+	return errors.New(ErrApplyControllersConfigCode, errors.Alert, []string{"Error applying controllers configuration to the cluster"}, []string{err.Error()}, []string{"The MeshSync or Broker custom resource could not be patched, or the MeshSync deployment overlay could not be applied.", "The Meshery Operator may not be deployed on the target cluster yet."}, []string{"Confirm the cluster is reachable and the Meshery Operator is deployed (operator deployment mode).", "Retry the change; configuration is re-applied whenever the connection reconnects."})
 }
