@@ -146,6 +146,10 @@ export const rjsfTheme = createTheme({
       },
     },
     MuiTooltip: {
+      defaultProps: {
+        enterDelay: 100,
+        leaveDelay: 0,
+      },
       styleOverrides: {
         tooltip: {
           backgroundColor: '#3C494F',
@@ -412,6 +416,10 @@ export const darkRjsfTheme = createTheme({
       },
     },
     MuiTooltip: {
+      defaultProps: {
+        enterDelay: 100,
+        leaveDelay: 0,
+      },
       styleOverrides: {
         tooltip: {
           backgroundColor: '#3C494F',
