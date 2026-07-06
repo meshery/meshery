@@ -715,7 +715,7 @@ const NavigatorContent = () => {
                   >
                     <NavigatorLink data-testid={childId}>
                       <CustomTooltip
-                        title={childId}
+                        title={childId.charAt(0).toUpperCase() + childId.slice(1)}
                         placement="right"
                         disableFocusListener={!isDrawerCollapsed}
                         disableHoverListener={!isDrawerCollapsed}
