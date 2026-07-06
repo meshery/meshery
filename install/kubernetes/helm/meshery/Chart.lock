@@ -28,6 +28,6 @@ dependencies:
   version: 0.7.0
 - name: meshery-operator
   repository: file://../meshery-operator
-  version: 1.0.2
-digest: sha256:f0f70eb0cf86974b2457a7207bf962c054bbf8b8148903d88084f727d7c8531f
-generated: "2026-07-02T20:59:02.879433163Z"
+  version: 1.0.3
+digest: sha256:9bc9800685d6d6b614949eb604af1ede70e1725077abe2bda410eb75ddb20460
+generated: "2026-07-06T04:36:32.99962845Z"
