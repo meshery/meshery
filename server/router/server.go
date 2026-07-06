@@ -14,6 +14,7 @@ import (
 const (
 	maxHeaderBytes    = 1 << 20 // 1 MiB
 	readHeaderTimeout = 20 * time.Second
+	idleTimeout       = 120 * time.Second
 )
 
 // Router represents Meshery router
@@ -485,6 +486,7 @@ func (r *Router) Run() error {
 		Handler:           r.S,
 		ReadHeaderTimeout: readHeaderTimeout,
 		MaxHeaderBytes:    maxHeaderBytes,
+		IdleTimeout:       idleTimeout,
 	}
 	return s.ListenAndServe()
 }
