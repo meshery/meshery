@@ -90,7 +90,7 @@ repository:
           Meshery has performed a security self-assessment. The assessment
           document is linked below as evidence.
         evidence-url:
-          - https://docs.google.com/document/d/17BqoEibnFdgx1U97AwM4RRkEbwTin_T78_W_WzB-0Gg/edit?usp=sharing
+          - https://docs.google.com/document/d/17BqoEibnFdgx1U97AwM4RRkEbwTin_T78_W_WzB-0Gg
   documentation:
     contributing-guide: https://docs.meshery.io/project/contributing
     governance: https://github.com/meshery/meshery/blob/master/GOVERNANCE.md
