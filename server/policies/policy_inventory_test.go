@@ -164,6 +164,25 @@ func TestIdentifyInventoryAdditions_SkipsWhenParentAlreadyPresent(t *testing.T) 
 	assert.Empty(t, actions, "must not emit add_component when a matching parent already exists in the design")
 }
 
+// Two Pods that reference the SAME missing namespace must produce exactly
+// one add_component action, not one per referencing Pod. buildInventoryParentCandidate
+// assigns each candidate a fresh random component ID, so an ID-keyed dedup
+// (what this used to do) can never collapse two candidates that describe the
+// same logical addition; the rego engine avoids this because its candidate
+// id is derived from the candidate's own content instead of being random.
+func TestIdentifyInventoryAdditions_DedupesSharedMissingParent(t *testing.T) {
+	t.Parallel()
+	_, pod1 := makePodWithNamespace(t, "default")
+	_, pod2 := makePodWithNamespace(t, "default")
+	design := makePatternFile([]*component.ComponentDefinition{pod1, pod2}, nil)
+
+	actions := identifyInventoryAdditions(design, []*relationship.RelationshipDefinition{kubernetesInventoryRelationship()})
+
+	require.Len(t, actions, 1, "two Pods referencing the same missing namespace must produce exactly one add_component action")
+	assert.Equal(t, "Namespace", actions[0].Component.Component.Kind)
+	assert.Equal(t, "default", string(actions[0].Component.DisplayName))
+}
+
 // Cross-model regression: if the relationship has a different model on the
 // to-side than the from-side (e.g. azure-event-grid EventSubscription →
 // azure-storage StorageAccount), the auto-added parent must inherit the

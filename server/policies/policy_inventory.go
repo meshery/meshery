@@ -63,7 +63,7 @@ func identifyInventoryAdditionsForRel(
 		return nil
 	}
 	var out []PolicyAction
-	emittedIDs := map[string]bool{}
+	emittedKeys := map[string]bool{}
 
 	for _, ss := range *rel.Selectors {
 		mutatedSels, mutatorSels := partitionByPatchRole(ss)
@@ -87,6 +87,18 @@ func identifyInventoryAdditionsForRel(
 					if existsMatchingMutatorComponent(design, mutatorSel, mutatorRefs, values) {
 						continue
 					}
+					// De-duplicate on content before a candidate gets its (always
+					// unique) random component ID assigned below. Without this,
+					// several mutated components that imply the same missing
+					// parent (e.g. multiple Pods in the same missing namespace)
+					// each produce their own candidate with a different random
+					// ID, so an ID-keyed dedup can never collapse them. The rego
+					// engine avoids this because its candidate id is derived from
+					// the candidate's content, not randomly generated.
+					key := inventoryCandidateKey(mutatorSel, values)
+					if emittedKeys[key] {
+						continue
+					}
 					candidate := buildInventoryParentCandidate(mutatorSel, mutatorRefs, values)
 					if candidate == nil {
 						continue
@@ -98,10 +110,7 @@ func identifyInventoryAdditionsForRel(
 					if feasibleRelationshipSelectorBetween(mutatedComp, candidate, rel) == nil {
 						continue
 					}
-					if emittedIDs[candidate.ID.String()] {
-						continue
-					}
-					emittedIDs[candidate.ID.String()] = true
+					emittedKeys[key] = true
 					out = append(out, newAddComponentAction(candidate))
 				}
 			}
@@ -157,6 +166,22 @@ func extractValuesAtPaths(
 		values = append(values, v)
 	}
 	return values, true
+}
+
+// inventoryCandidateKey derives a stable de-duplication key for a
+// not-yet-created inventory parent candidate, from the same inputs
+// buildInventoryParentCandidate uses to construct it. Two candidates with
+// the same kind, model, and resolved mutator values represent the same
+// logical addition (e.g. "a Namespace named default") and must collapse to
+// one add_component action even though each gets its own random component
+// ID once built.
+func inventoryCandidateKey(mutatorSel relationship.SelectorItem, values []interface{}) string {
+	modelName := ""
+	if mutatorSel.Model != nil {
+		modelName = mutatorSel.Model.Name
+	}
+	valuesJSON, _ := json.Marshal(values)
+	return selectorItemKind(mutatorSel) + "|" + modelName + "|" + string(valuesJSON)
 }
 
 // existsMatchingMutatorComponent answers "is there already a parent in the
