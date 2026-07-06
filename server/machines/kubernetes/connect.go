@@ -103,7 +103,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 			SetControllersConfig(mergedControllersConfig).
 			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
 			DeployUndeployedOperators(machinectx.OperatorTracker)
-		ctrlHelper.AddMeshsynDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)
+		ctrlHelper.AddMeshsyncDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)
 
 		// Operator mode: best-effort apply of the explicitly-set
 		// configuration onto the cluster's MeshSync/Broker custom resources

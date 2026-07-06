@@ -57,6 +57,10 @@ func (b *testMeshsyncBroker) IsEmpty() bool {
 	return false
 }
 
+func (b *testMeshsyncBroker) IsConnected() bool {
+	return !b.isClosed()
+}
+
 func (b *testMeshsyncBroker) CloseConnection() {
 	b.mu.Lock()
 	defer b.mu.Unlock()

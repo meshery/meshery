@@ -2717,7 +2717,7 @@
         "code": "1305",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Unable to flush MeshSync data for context %s at %s ",
+        "short_description": "",
         "probable_cause": "Meshery Database handler is not accessible to perform operations",
         "suggested_remediation": "Restart Meshery Server or Perform Hard Reset"
       },
@@ -3926,6 +3926,15 @@
         "short_description": "Error applying controllers configuration to the cluster",
         "probable_cause": "The MeshSync or Broker custom resource could not be patched, or the MeshSync deployment overlay could not be applied.\nThe Meshery Operator may not be deployed on the target cluster yet.",
         "suggested_remediation": "Confirm the cluster is reachable and the Meshery Operator is deployed (operator deployment mode).\nRetry the change; configuration is re-applied whenever the connection reconnects."
+      },
+      "1441": {
+        "name": "ErrEmptyMeshSyncHandlerCode",
+        "code": "1441",
+        "severity": "Alert",
+        "long_description": "The MeshSync database handler is nil, or its underlying database connection is not initialized",
+        "short_description": "MeshSync data flush skipped: database handler is not usable",
+        "probable_cause": "Meshery Database handler is not accessible to perform operations\nMeshery Database is crashed or not reachable",
+        "suggested_remediation": "Restart Meshery Server\nVerify that Meshery Server can reach the database"
       }
     }
   }

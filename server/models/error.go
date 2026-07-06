@@ -107,6 +107,7 @@ const (
 	ErrInvalidEventDataCode               = "meshery-server-1357"
 	ErrUnreachableKubeAPICode             = "meshery-server-1304"
 	ErrFlushMeshSyncDataCode              = "meshery-server-1305"
+	ErrEmptyMeshSyncHandlerCode           = "meshery-server-1441"
 	ErrUpdateConnectionStatusCode         = "meshery-server-1306"
 	ErrResultNotFoundCode                 = "meshery-server-1307"
 	ErrPersistCredentialCode              = "meshery-server-1308"
@@ -547,7 +548,11 @@ func ErrUnreachableKubeAPI(err error, server string) error {
 }
 
 func ErrFlushMeshSyncData(err error, contextName, server string) error {
-	return errors.New(ErrFlushMeshSyncDataCode, errors.Alert, []string{"Unable to flush MeshSync data for context %s at %s "}, []string{err.Error()}, []string{"Meshery Database handler is not accessible to perform operations"}, []string{"Restart Meshery Server or Perform Hard Reset"})
+	return errors.New(ErrFlushMeshSyncDataCode, errors.Alert, []string{fmt.Sprintf("Unable to flush MeshSync data for context %s at %s", contextName, server)}, []string{err.Error()}, []string{"Meshery Database handler is not accessible to perform operations"}, []string{"Restart Meshery Server or Perform Hard Reset"})
+}
+
+func ErrEmptyMeshSyncHandler() error {
+	return errors.New(ErrEmptyMeshSyncHandlerCode, errors.Alert, []string{"MeshSync data flush skipped: database handler is not usable"}, []string{"The MeshSync database handler is nil, or its underlying database connection is not initialized"}, []string{"Meshery Database handler is not accessible to perform operations", "Meshery Database is crashed or not reachable"}, []string{"Restart Meshery Server", "Verify that Meshery Server can reach the database"})
 }
 
 func ErrUpdateConnectionStatus(err error, statusCode int) error {

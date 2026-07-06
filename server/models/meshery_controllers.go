@@ -156,8 +156,8 @@ func (mch *MesheryControllersHelper) ResolveControllersConfigForConnection(metad
 // initialized yet. Apart from updating the map, it also runs the handler after
 // updating the map. The presence of a handler for a context in a map indicate that
 // the meshsync data for that context is properly being handled
-func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context, k8scontext K8sContext, userID, mesheryInstanceID core.Uuid, provider Provider) *MesheryControllersHelper {
-	// only checking those contexts whose MesheryConrollers are active
+func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context, k8scontext K8sContext, userID, mesheryInstanceID core.Uuid, provider Provider) *MesheryControllersHelper {
+	// only checking those contexts whose MesheryControllers are active
 	// go func(mch *MesheryControllersHelper) {
 
 	ctxID := k8scontext.ID
@@ -167,13 +167,13 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 
 		switch mch.meshsyncDeploymentMode {
 		case connections.MeshsyncDeploymentModeOperator:
-			brokerHandler = mch.meshsynDataHandlersNatsBroker(k8scontext, userID)
+			brokerHandler = mch.meshsyncDataHandlersNatsBroker(k8scontext, userID)
 		case connections.MeshsyncDeploymentModeEmbedded:
 			brokerHandler = channelBroker.NewChannelBrokerHandler()
 			// use a standalone context here context.Background(), as
 			// meshsync run must be stopped only when meshsync data handler is deregistered
 			// and ctx which is passed from above, could be closed earlier
-			stop, err := mch.meshsynDataHandlersStartLibMeshsyncRun(context.Background(), brokerHandler, k8scontext, userID)
+			stop, err := mch.meshsyncDataHandlersStartLibMeshsyncRun(context.Background(), brokerHandler, k8scontext, userID)
 			if err != nil {
 				mch.log.Error(err)
 				mch.emitErrorEvent("Failed to start MeshSync library run", err, map[string]any{
@@ -200,7 +200,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 		}
 
 		if brokerHandler == nil {
-			mch.log.Warnf("MesheryControllersHelper::AddMeshsynDataHandlers brokerHandler is nil")
+			mch.log.Warnf("MesheryControllersHelper::AddMeshsyncDataHandlers brokerHandler is nil")
 			mch.emitWarningEvent("MeshSync data handler broker is nil", nil, map[string]any{
 				"k8sContextID":   ctxID,
 				"k8sContextName": k8scontext.Name,
@@ -249,7 +249,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 	return mch
 }
 
-func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
+func (mch *MesheryControllersHelper) meshsyncDataHandlersNatsBroker(
 	k8scontext K8sContext,
 	userID core.Uuid,
 ) broker.Handler {
@@ -303,9 +303,9 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 	return brokerHandler
 }
 
-// meshsynDataHandlersStartLibMeshsyncRun starts the libmeshsync run for the given context.
+// meshsyncDataHandlersStartLibMeshsyncRun starts the libmeshsync run for the given context.
 // returns stop function to stop goroutine
-func (mch *MesheryControllersHelper) meshsynDataHandlersStartLibMeshsyncRun(
+func (mch *MesheryControllersHelper) meshsyncDataHandlersStartLibMeshsyncRun(
 	ctx context.Context,
 	brokerHandler broker.Handler,
 	k8sContext K8sContext,
@@ -313,7 +313,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersStartLibMeshsyncRun(
 ) (func(), error) {
 	kubeConfig, err := k8sContext.GenerateKubeConfig()
 	if err != nil {
-		return nil, fmt.Errorf("MesheryControllersHelper::meshsynDataHandlersStartLibMeshsyncRun error generating kubeconfig from context: %v", err)
+		return nil, fmt.Errorf("MesheryControllersHelper::meshsyncDataHandlersStartLibMeshsyncRun error generating kubeconfig from context: %v", err)
 	}
 
 	cancelCtx, stopFunc := context.WithCancel(ctx)
@@ -344,7 +344,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersStartLibMeshsyncRun(
 			mch.log,
 			runOptions...,
 		); err != nil {
-			meshsyncErr := fmt.Errorf("MesheryControllersHelper::meshsynDataHandlersStartLibMeshsyncRun error running meshsync lib: %v", err)
+			meshsyncErr := fmt.Errorf("MesheryControllersHelper::meshsyncDataHandlersStartLibMeshsyncRun error running meshsync lib: %v", err)
 			mch.log.Error(meshsyncErr)
 			mch.emitErrorEvent("Error running MeshSync library", meshsyncErr, map[string]any{
 				"k8sContextID":           k8sContext.ID,

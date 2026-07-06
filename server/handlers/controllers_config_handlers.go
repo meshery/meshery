@@ -363,7 +363,7 @@ func (h *Handler) applyControllersConfigToConnection(
 		// watch-list are re-read.
 		contextID := machineCtx.K8sContext.ID
 		ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
-		ctrlHelper.AddMeshsynDataHandlers(ctx, machineCtx.K8sContext, userID, *h.SystemID, provider)
+		ctrlHelper.AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, *h.SystemID, provider)
 		h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Informational, "Controllers configuration applied: embedded MeshSync restarted with the updated configuration.", map[string]interface{}{"connectionId": connectionID})
 	case connections.MeshsyncDeploymentModeOperator:
 		kubeClient, err := machineCtx.K8sContext.GenerateKubeHandler()
