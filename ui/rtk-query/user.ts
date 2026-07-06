@@ -1,9 +1,5 @@
 import { ctxUrl } from '../utils/multi-ctx';
-import {
-  mesheryApi,
-  useGetTeamsQuery as useSchemasGetTeamsQuery,
-  useGetUsersForOrgQuery as useSchemasGetUsersForOrgQuery,
-} from '@meshery/schemas/mesheryApi';
+import { useGetUsersForOrgQuery as useSchemasGetUsersForOrgQuery } from '@meshery/schemas/mesheryApi';
 import { api, mesheryApiPath } from './index';
 import { initiateQuery } from './utils';
 import { useGetOrgsQuery } from './organization';
@@ -16,11 +12,13 @@ const Tags = {
   USER_PREF: 'userPref',
   LOAD_TEST_PREF: 'loadTestPref',
   PROVIDER_CAP: 'provider_capabilities',
+  TEAMS: 'teams',
+  USERS: 'users',
 };
 
 export const userApi = api
   .enhanceEndpoints({
-    addTagTypes: [Tags.USER_PREF, Tags.LOAD_TEST_PREF, Tags.PROVIDER_CAP],
+    addTagTypes: [Tags.USER_PREF, Tags.LOAD_TEST_PREF, Tags.PROVIDER_CAP, Tags.TEAMS, Tags.USERS],
   })
   .injectEndpoints({
     endpoints: (builder) => ({
@@ -232,6 +230,23 @@ export const userApi = api
         }),
         providesTags: ['users'],
       }),
+      // Hand-written since @meshery/schemas 1.3.25: the teams endpoints were
+      // reclassified as cloud-only in the schemas spec (meshery/schemas#1015),
+      // which removed getTeams from the generated mesheryApi surface. Meshery
+      // Server still proxies the endpoint for providers that serve it, so the
+      // query lives here now, mirroring the generated hook's argument shape.
+      getTeams: builder.query({
+        query: (queryArg) => ({
+          url: `/api/identity/orgs/${queryArg.orgId}/teams`,
+          params: {
+            search: queryArg.search,
+            order: queryArg.order,
+            page: queryArg.page,
+            pagesize: queryArg.pagesize,
+          },
+        }),
+        providesTags: ['teams'],
+      }),
       removeUserFromTeam: builder.mutation({
         query: (queryArg) => ({
           url: mesheryApiPath(
@@ -313,7 +328,7 @@ export const useGetUsersForOrgQuery = (queryArg, options) =>
   );
 
 export const useGetTeamsQuery = (queryArg, options) =>
-  useSchemasGetTeamsQuery(
+  userApi.endpoints.getTeams.useQuery(
     {
       orgId: queryArg?.orgId,
       search: queryArg?.search,
@@ -325,7 +340,7 @@ export const useGetTeamsQuery = (queryArg, options) =>
   );
 
 export const useLazyGetTeamsQuery = () => {
-  const [trigger, result, lastPromiseInfo] = mesheryApi.endpoints.getTeams.useLazyQuery();
+  const [trigger, result, lastPromiseInfo] = userApi.endpoints.getTeams.useLazyQuery();
 
   const wrappedTrigger = (queryArg, preferCacheValue) =>
     trigger(
