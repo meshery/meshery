@@ -11,6 +11,12 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 )
 
+const (
+	maxHeaderBytes    = 1 << 20 // 1 MiB
+	readHeaderTimeout = 20 * time.Second
+	idleTimeout       = 120 * time.Second
+)
+
 // Router represents Meshery router
 type Router struct {
 	S    *mux.Router
@@ -529,14 +535,12 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 // Run starts the http server
 func (r *Router) Run() error {
-	// s := &http.Server{
-	// 	Addr:           fmt.Sprintf(":%d", r.port),
-	// 	Handler:        r.s,
-	// 	ReadTimeout:    5 * time.Second,
-	// 	WriteTimeout:   2 * time.Minute,
-	// 	MaxHeaderBytes: 1 << 20,
-	// 	IdleTimeout:    0, //time.Second,
-	// }
-	// return s.ListenAndServe()
-	return http.ListenAndServe(fmt.Sprintf(":%d", r.port), r.S)
+	s := &http.Server{
+		Addr:              fmt.Sprintf(":%d", r.port),
+		Handler:           r.S,
+		ReadHeaderTimeout: readHeaderTimeout,
+		MaxHeaderBytes:    maxHeaderBytes,
+		IdleTimeout:       idleTimeout,
+	}
+	return s.ListenAndServe()
 }
