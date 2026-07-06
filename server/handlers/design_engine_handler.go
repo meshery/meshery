@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -186,7 +187,7 @@ func (h *Handler) PatternFileHandler(
 
 	serverURL, _ := r.Context().Value(models.MesheryServerURL).(string)
 
-	viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&designId=%s", serverURL, patternID)
+	viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&designId=%s", serverURL, url.QueryEscape(patternID.String()))
 	description = fmt.Sprintf("%s.", description)
 	metadata["viewLink"] = viewLink
 	metadata["designName"] = patternFile.Name
