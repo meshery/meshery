@@ -58,6 +58,10 @@ func GetOperator(kubeclient *mesherykube.Client) (string, string, error) {
 		return "", "", ErrMesheryClient(err)
 	}
 
+	if dep == nil {
+		return "", "", nil
+	}
+
 	version := ""
 	if err == nil {
 		for _, container := range dep.Spec.Template.Spec.Containers {
@@ -88,7 +92,12 @@ func ParseOperatorImageVersion(image string) string {
 		return "latest"
 	}
 
-	return image[idx+1:]
+	tag := image[idx+1:]
+	if tag == "" {
+		return "latest"
+	}
+
+	return tag
 }
 
 func GetBrokerInfo(broker controllers.IMesheryController, log logger.Handler) OperatorControllerStatus {

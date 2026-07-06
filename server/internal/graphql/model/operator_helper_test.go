@@ -167,6 +167,11 @@ func TestParseOperatorImageVersion(t *testing.T) {
 			image:    "layer5/meshery-operator:v0.7.2@sha256:abcd1234abcd1234",
 			expected: "v0.7.2",
 		},
+		{
+			name:     "image with trailing colon and empty tag",
+			image:    "layer5/meshery-operator:",
+			expected: "latest",
+		},
 	}
 
 	for _, tc := range tests {
