@@ -177,18 +177,20 @@ func extractValuesAtPaths(
 // ID once built.
 func inventoryCandidateKey(mutatorSel relationship.SelectorItem, values []interface{}) string {
 	modelName := ""
+	modelVersion := ""
 	if mutatorSel.Model != nil {
 		modelName = mutatorSel.Model.Name
+		modelVersion = mutatorSel.Model.Version
 	}
 	valuesJSON, err := json.Marshal(values)
 	if err != nil {
 		// Fall back to a unique identifier so that unmarshalable candidates
 		// are never incorrectly collapsed into the same dedup bucket.
 		if u, uuidErr := uuid.NewV4(); uuidErr == nil {
-			return selectorItemKind(mutatorSel) + "|" + modelName + "|" + u.String()
+			return selectorItemKind(mutatorSel) + "|" + modelName + "|" + modelVersion + "|" + u.String()
 		}
 	}
-	return selectorItemKind(mutatorSel) + "|" + modelName + "|" + string(valuesJSON)
+	return selectorItemKind(mutatorSel) + "|" + modelName + "|" + modelVersion + "|" + string(valuesJSON)
 }
 
 // existsMatchingMutatorComponent answers "is there already a parent in the
