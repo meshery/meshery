@@ -162,9 +162,7 @@ const MainDesignsContent = ({
       workspaceSwitcherContext.closeModal();
     }
     if (!isDesignerAvailable) {
-      router.push(
-        `/configuration/designs/configurator?designId=${encodeURIComponent(designId)}`,
-      );
+      router.push(`/configuration/designs/configurator?designId=${encodeURIComponent(designId)}`);
       return;
     }
 
