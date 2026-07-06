@@ -194,4 +194,4 @@ Invoke this skill when you need to define a new relationship between two or more
 1.  **Source of Truth**: Always prioritize `v1beta1` schema rules from `meshery/schemas`. Do not copy existing `v1beta2` or older files blindly as they may contain legacy non-compliant structures.
 2.  **Strict Pathing**: Ensure that the `mutatorRef` and `mutatedRef` paths correspond to the actual JSON schema of the components being linked.
 3.  **Logical Consistency**: Match `Kinds`, `Types`, and `subTypes` that corresponds logically to the components being linked (e.g. `inventory` for `Parent`, `network` for `Service` connections).
-4.  **No Guessing**: If component schemas are unavailable, use `grep_search` to find component definitions in `server/meshmodel` to verify valid paths for `patch` operations.
+4.  **No Guessing**: If component schemas are unavailable, use `grep_search` to find component definitions in `models` to verify valid paths for `patch` operations.

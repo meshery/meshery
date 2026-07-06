@@ -1,5 +1,5 @@
 import React from 'react';
-import { CatalogIcon, TachographDigitalIcon } from '@sistent/sistent';
+import { CatalogIcon, TachographDigitalIcon, InsertChartIcon } from '@sistent/sistent';
 import ConfigurationIcon from '../../../assets/icons/ConfigurationIcon';
 import ConnectionIcon from '../../../assets/icons/Connection';
 import CredentialIcon from '../../../assets/icons/CredentialIcon';
@@ -23,10 +23,13 @@ import {
   DESIGN,
   ENVIRONMENT,
   EXTENSIONS,
+  GRAFANA,
   LIFECYCLE,
   PERFORMANCE,
   PROFILES,
+  PROMETHEUS,
   SERVICE_MESH,
+  TELEMETRY,
   WORKSPACE,
 } from '../../../constants/navigator';
 import { iconSmall } from '../../../css/icons.styles';
@@ -175,6 +178,36 @@ export const getNavigatorComponents = (
           action: keys.VIEW_DESIGNS.action,
           subject: keys.VIEW_DESIGNS.subject,
         },
+      },
+    ],
+  },
+  {
+    id: TELEMETRY,
+    icon: <InsertChartIcon style={{ ...drawerIconsStyle }} fill={theme.palette.icon.default} />,
+    hovericon: (
+      <InsertChartIcon style={{ ...drawerIconsStyle }} fill={theme.palette.icon.default} />
+    ),
+    href: '/telemetry',
+    title: 'Telemetry',
+    show: providerUiAccessControl.isNavigatorComponentEnabled([TELEMETRY]),
+    link: true,
+    submenu: true,
+    children: [
+      {
+        id: GRAFANA,
+        icon: <InsertChartIcon style={{ ...drawerIconsStyle }} fill={theme.palette.icon.default} />,
+        href: '/telemetry/charts',
+        title: 'Charts',
+        show: providerUiAccessControl.isNavigatorComponentEnabled([TELEMETRY, GRAFANA]),
+        link: true,
+      },
+      {
+        id: PROMETHEUS,
+        icon: <TachographDigitalIcon fill={theme.palette.icon.default} style={drawerIconsStyle} />,
+        href: '/telemetry/metrics',
+        title: 'Metrics',
+        show: providerUiAccessControl.isNavigatorComponentEnabled([TELEMETRY, PROMETHEUS]),
+        link: true,
       },
     ],
   },

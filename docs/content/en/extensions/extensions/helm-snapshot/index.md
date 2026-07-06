@@ -4,7 +4,7 @@ description: Helm CLI plugin to visually render a snapshot of your Helm charts.
 display_title: false
 ---
 
-# <img style="height: 4rem; width: 4rem;" src="images/helm-chart-color.svg" /> Helm Snapshot
+# <img style="height: 4rem; width: 4rem; vertical-align: middle;" src="images/helm-chart-color.svg" alt="" /> Helm Snapshot
 
 ## Extension Overview
 

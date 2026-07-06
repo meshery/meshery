@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('@sistent/sistent', () => ({
   CatalogIcon: (props: any) => <svg data-testid="catalog-icon" {...props} />,
   TachographDigitalIcon: (props: any) => <svg data-testid="tachograph-icon" {...props} />,
+  InsertChartIcon: (props: any) => <svg data-testid="insert-chart-icon" {...props} />,
 }));
 
 vi.mock('../../../assets/icons/ConfigurationIcon', () => ({
@@ -58,10 +59,13 @@ vi.mock('../../../constants/navigator', () => ({
   DESIGN: 'DESIGN',
   ENVIRONMENT: 'ENVIRONMENT',
   EXTENSIONS: 'EXTENSIONS',
+  GRAFANA: 'GRAFANA',
   LIFECYCLE: 'LIFECYCLE',
   PERFORMANCE: 'PERFORMANCE',
   PROFILES: 'PROFILES',
+  PROMETHEUS: 'PROMETHEUS',
   SERVICE_MESH: 'SERVICE_MESH',
+  TELEMETRY: 'TELEMETRY',
   WORKSPACE: 'WORKSPACE',
 }));
 
@@ -122,6 +126,7 @@ describe('navigatorComponents', () => {
       'Dashboard',
       'Lifecycle',
       'Configuration',
+      'Telemetry',
       'Performance',
       'Extensions',
     ]);

@@ -23,6 +23,19 @@ vi.mock('@sistent/sistent', () => ({
   AddCircleIcon: () => <svg data-testid="add-icon" />,
   ExternalLinkIcon: () => <svg data-testid="ext-icon" />,
   FileUploadIcon: () => <svg data-testid="upload-icon" />,
+  useMediaQuery: () => false,
+}));
+
+vi.mock('@/theme', () => ({
+  useTheme: () => ({
+    palette: {
+      common: { white: '#fff' },
+      divider: 'rgba(0, 0, 0, 0.12)',
+    },
+    breakpoints: {
+      down: () => '',
+    },
+  }),
 }));
 
 vi.mock('../../constants/navigator', () => ({

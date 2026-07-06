@@ -7,7 +7,7 @@ linkTitle: Documentation
 ---
 
 <div style="display:grid; justify-items:center">
-  <div style="align-self:center; margin-bottom:0px; margin-top:0px;padding-top:0px; padding-bottom:0px;width:clamp(170px, 50%, 800px);">
+  <div class="home-hero-logo" style="align-self: center; margin: 0; padding: 0; width: clamp(170px, 50%, 800px);">
     {{< svg/meshery-logo >}}
   </div>
   <h3 style="font-size:1.6rem">As a self-service engineering platform, Meshery enables collaborative design and operation of cloud and cloud native infrastructure.</h3>
@@ -16,7 +16,7 @@ linkTitle: Documentation
 <div class="flex container">
   <!-- OVERVIEW -->
   <div class="section">
-    <a href="{{< ref "project/_index.md" >}}">
+    <a href="{{< ref "installation/_index.md" >}}">
         <div class="btn-primary">Overview & Installation</div>
     </a>
     <ul>
@@ -203,7 +203,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        {{< section-pages section="reference" >}}
+        {{< section-pages section="reference/references" >}}
       </ul>
     </details>
     <!-- Extensibility -->
@@ -214,11 +214,11 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
-        {{< section-pages section="extensibility" >}}
+        {{< section-pages section="reference/extensibility" >}}
       </ul>
     </details>
   </div>
 
 </div>
 
-<p width="100%">Follow on <a href="https://x.com/mesheryio">X</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="https://meshery.io/community#discussion-forums">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>
+<p width="100%">Follow on <a href="https://x.com/mesheryio">X</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="https://discuss.meshery.io/">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>

@@ -26,7 +26,7 @@ import {
   CredentialAssociationStep,
   GenericConnectionDetailsStep,
 } from '../ConnectionWizardStepContent';
-import type { GenericRecord, WizardContext, WizardStep } from './types';
+import type { WizardContext, WizardStep } from './types';
 
 export const kindPermission = (config?: ConnectionWizardKindConfig | null) => {
   if (!config) {
@@ -37,14 +37,6 @@ export const kindPermission = (config?: ConnectionWizardKindConfig | null) => {
     ? CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject)
     : CAN(keys.CONNECT_METRICS.action, keys.CONNECT_METRICS.subject);
 };
-
-const readPath = (source: unknown, path: string[]): unknown =>
-  path.reduce<unknown>((value, key) => {
-    if (!value || typeof value !== 'object') {
-      return undefined;
-    }
-    return (value as GenericRecord)[key];
-  }, source);
 
 const existingCredentialsFor = (ctx: WizardContext) =>
   filterCredentialsForKind(ctx.services.credentials, ctx.data.kindConfig?.kind);
@@ -74,7 +66,6 @@ const SelectStepBody = ({ ctx }: { ctx: WizardContext }) => (
         skipCredentialVerification: false,
         kubeconfigFile: null,
         registrationId: null,
-        connectionModel: null,
         registrationResult: null,
         registrationError: null,
         postConfig: {},
@@ -217,10 +208,10 @@ const RegisterStepBody = ({ ctx }: { ctx: WizardContext }) => {
 
 const buildGenericPayload = (ctx: WizardContext) => {
   const { kindConfig } = ctx.data;
-  const connectionType =
-    readPath(ctx.data.connectionModel, ['category', 'name']) ?? kindConfig?.type;
-  const connectionSubType =
-    readPath(ctx.data.connectionModel, ['subCategory']) ?? kindConfig?.subType;
+  // A connection carries its own kind/type/subType; use them directly rather
+  // than deriving type/subType from a model's category/subCategory.
+  const connectionType = kindConfig?.type;
+  const connectionSubType = kindConfig?.subType;
   const selectedCredential = existingCredentialsFor(ctx).find(
     (credential) => credential.id === ctx.data.selectedCredentialId,
   );

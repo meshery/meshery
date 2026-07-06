@@ -49,6 +49,7 @@ type UseConnectionColumnsArgs = {
   ) => void | Promise<void>;
   handleActionMenuOpen: (event: any, tableMeta: RowData) => void;
   ping: (name: string, server: string, id: string) => void;
+  pingGrafana: (connectionID: string, name?: string) => void;
   // Per-kind connection state machine, keyed by connection kind. Sourced from
   // the connection definitions' `transitionMap` (see `_app.tsx`).
   transitionMapByKind: Record<string, ConnectionTransitionMap | undefined> | null;
@@ -65,6 +66,7 @@ export const useConnectionColumns = ({
   handleStatusChange,
   handleActionMenuOpen,
   ping,
+  pingGrafana,
   transitionMapByKind,
 }: UseConnectionColumnsArgs) => {
   return useMemo(() => {
@@ -123,17 +125,23 @@ export const useConnectionColumns = ({
               <>
                 <TooltipWrappedConnectionChip
                   tooltip={server ? `Server: ${server}` : ''}
-                  title={kind === CONNECTION_KINDS.KUBERNETES ? name : value}
+                  title={kind === CONNECTION_KINDS.KUBERNETES ? name : value || name || kind}
                   status={getColumnValue(tableMeta.rowData, 'status', nextColumns)}
                   onDelete={() =>
                     handleDeleteConnection(getColumnValue(tableMeta.rowData, 'id', nextColumns))
                   }
                   handlePing={() => {
-                    if (getColumnValue(tableMeta.rowData, 'kind', nextColumns) === 'kubernetes') {
+                    const rowKind = getColumnValue(tableMeta.rowData, 'kind', nextColumns);
+                    if (rowKind === CONNECTION_KINDS.KUBERNETES) {
                       ping(
                         getColumnValue(tableMeta.rowData, 'metadata.name', nextColumns),
                         getColumnValue(tableMeta.rowData, 'metadata.server', nextColumns),
                         getColumnValue(tableMeta.rowData, 'id', nextColumns),
+                      );
+                    } else if (rowKind === CONNECTION_KINDS.GRAFANA) {
+                      pingGrafana(
+                        getColumnValue(tableMeta.rowData, 'id', nextColumns),
+                        getColumnValue(tableMeta.rowData, 'name', nextColumns),
                       );
                     }
                   }}
@@ -539,6 +547,7 @@ export const useConnectionColumns = ({
     handleStatusChange,
     isEnvironmentsSuccess,
     ping,
+    pingGrafana,
     transitionMapByKind,
     updatingConnection,
     url,

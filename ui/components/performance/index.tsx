@@ -20,10 +20,7 @@ import { getMeshModels } from '@/api/meshmodel';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateLoadTest } from '@/store/slices/prefTest';
-import { updateStaticPrometheusBoardConfig } from '@/store/slices/telemetry';
-import { useGetStaticPrometheusBoardConfigQuery } from '@/rtk-query/telemetry';
 import { normalizeLoadTestPrefs } from '../../lib/load-test-prefs';
-import PerformanceCharts from './PerformanceCharts';
 import PerformanceForm from './PerformanceForm';
 import PerformanceFormActions from './PerformanceFormActions';
 import PerformanceTestResults from './PerformanceTestResults';
@@ -70,8 +67,6 @@ const MesheryPerformanceComponent_ = (props) => {
   const [testResult, setTestResult] = useState();
   const [testResultsOpen, setTestResultsOpen] = useState(false);
   const { selectedK8sContexts, k8sConfig } = useSelector((state) => state.ui);
-  const { prometheus, staticPrometheusBoardConfig } = useSelector((state) => state.telemetry);
-
   const [headersState, setHeaders] = useState(headers || '');
   const [cookiesState, setCookies] = useState(cookies || '');
   const [reqBodyState, setReqBody] = useState(reqBody || '');
@@ -92,9 +87,6 @@ const MesheryPerformanceComponent_ = (props) => {
   const [availableAdaptersState, setAvailableAdapters] = useState([]);
   const [availableSMPMeshesState, setAvailableSMPMeshes] = useState([]);
   const [metadataState, setMetadata] = useState(metadata);
-  const [staticPrometheusBoardConfigState, setStaticPrometheusBoardConfig] = useState(
-    staticPrometheusBoardConfig,
-  );
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const { data: userData, isSuccess: isUserDataFetched } =
@@ -384,55 +376,6 @@ const MesheryPerformanceComponent_ = (props) => {
     setLoadGenerator(loadTestPrefs.gen);
   };
 
-  const shouldSkipFetch =
-    (staticPrometheusBoardConfig &&
-      staticPrometheusBoardConfig !== null &&
-      Object.keys(staticPrometheusBoardConfig).length > 0) ||
-    (staticPrometheusBoardConfigState &&
-      staticPrometheusBoardConfigState !== null &&
-      Object.keys(staticPrometheusBoardConfigState).length > 0);
-
-  const {
-    data: configData,
-    isSuccess: isConfigFetchSuccessful,
-    isError: isConfigFetchFailed,
-    error: fetchError,
-  } = useGetStaticPrometheusBoardConfigQuery(prometheus?.connectionID, {
-    skip: shouldSkipFetch || !prometheus?.connectionID,
-  });
-
-  const persistStaticBoardConfig = () => {
-    if (
-      isConfigFetchSuccessful &&
-      configData &&
-      typeof configData !== 'undefined' &&
-      typeof configData.cluster !== 'undefined' &&
-      typeof configData.node !== 'undefined' &&
-      typeof configData.cluster.panels !== 'undefined' &&
-      configData.cluster.panels.length > 0 &&
-      typeof configData.node.panels !== 'undefined' &&
-      configData.node.panels.length > 0
-    ) {
-      dispatch(
-        updateStaticPrometheusBoardConfig({
-          staticPrometheusBoardConfig: configData,
-        }),
-      );
-      setStaticPrometheusBoardConfig(configData);
-    }
-  };
-
-  const logBoardConfigFetchError = () => {
-    handleWarn(
-      'Unable to fetch pre-configured boards: No Kubernetes cluster is connected, so statistics will not be gathered from cluster',
-    )(fetchError);
-  };
-
-  useEffect(() => {
-    if (isConfigFetchSuccessful) persistStaticBoardConfig();
-    else if (isConfigFetchFailed) logBoardConfigFetchError();
-  }, [isConfigFetchSuccessful, isConfigFetchFailed]);
-
   const getK8sClusterIds = () => {
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
   };
@@ -505,24 +448,6 @@ const MesheryPerformanceComponent_ = (props) => {
     };
   }
 
-  function handleWarn(msg) {
-    return (error) => {
-      // setBlockRunTest(false);
-      // setTimerDialogOpen(false);
-      // closeEventStream();
-      let finalMsg = msg;
-      if (typeof error === 'string') {
-        finalMsg = `${msg}`;
-      }
-
-      notify({
-        message: finalMsg,
-        event_type: EVENT_TYPES.WARNING,
-        details: error.toString(),
-      });
-    };
-  }
-
   const handleCertificateUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -540,17 +465,6 @@ const MesheryPerformanceComponent_ = (props) => {
   const handleTimerDialogClose = () => {
     setTimerDialogOpen(false);
   };
-  const { grafana } = useSelector((state) => state.telemetry);
-  let localStaticPrometheusBoardConfig;
-  if (
-    staticPrometheusBoardConfig &&
-    staticPrometheusBoardConfig != null &&
-    Object.keys(staticPrometheusBoardConfig).length > 0
-  ) {
-    localStaticPrometheusBoardConfig = staticPrometheusBoardConfig;
-  } else {
-    localStaticPrometheusBoardConfig = staticPrometheusBoardConfigState;
-  }
   let chartStyle = {};
   if (timerDialogOpenState) {
     chartStyle = { opacity: 0.3 };
@@ -629,13 +543,6 @@ const MesheryPerformanceComponent_ = (props) => {
               </CenterTimer>
             ) : null}
           </React.Fragment>
-
-          <PerformanceCharts
-            localStaticPrometheusBoardConfig={localStaticPrometheusBoardConfig}
-            prometheus={prometheus}
-            grafana={grafana}
-            testUUID={testUUIDState}
-          />
         </>
       ) : (
         <DefaultError />

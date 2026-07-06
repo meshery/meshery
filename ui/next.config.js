@@ -23,6 +23,13 @@ const nextConfig = {
     '@uiw/react-markdown-preview',
     '@uiw/react-codemirror',
     'billboard.js',
+    // @mui/x-internals' disposable/index.mjs does a bare directory import of
+    // `core-js-pure/actual/disposable-stack`, which Node's native ESM resolver
+    // rejects with ERR_UNSUPPORTED_DIR_IMPORT when the package is loaded as an
+    // external module. Transpiling lets webpack/Turbopack resolve the directory
+    // import (to its index.js) instead of leaving it for Node.
+    '@mui/x-tree-view',
+    '@mui/x-internals',
   ],
 
   // SWC Compiler Configuration (SWC is the default in Next.js 15)
@@ -59,6 +66,9 @@ const nextConfig = {
       '/management/adapter': { page: '/management/adapter' },
       '/management/environments': { page: '/management/environments' },
       '/management/connections': { page: '/management/connections' },
+      '/management/credentials': { page: '/management/connections' },
+      '/telemetry/metrics': { page: '/telemetry/metrics' },
+      '/telemetry/charts': { page: '/telemetry/charts' },
       '/management/workspaces': { page: '/management/workspaces' },
       '/performance': { page: '/performance' },
       '/performance/profiles': { page: '/performance/profiles' },

@@ -7,6 +7,7 @@ import resetDatabase from '@/graphql/queries/ResetDatabaseQuery';
 
 import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
+import useGrafanaPingHook from '@/utils/hooks/useGrafanaPingHook';
 import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
@@ -48,6 +49,13 @@ const ConnectionConfigureModal = dynamic(() => import('./ConnectionConfigureModa
   ssr: false,
 });
 
+// Lazy-loaded for the same reason: only mounted for Kubernetes connections
+// when the controllers configuration action is invoked.
+const ConnectionControllersConfigModal = dynamic(
+  () => import('./ConnectionControllersConfigModal'),
+  { ssr: false },
+);
+
 const ConnectionTable = ({
   selectedFilter,
   selectedConnectionId,
@@ -74,6 +82,7 @@ const ConnectionTable = ({
     }) => state.ui,
   );
   const ping = useKubernetesHook();
+  const pingGrafana = useGrafanaPingHook();
   const { width } = useWindowDimensions();
 
   const { tableState, updateTableState, copyRowDeepLink } = useTableUrlState({
@@ -129,6 +138,8 @@ const ConnectionTable = ({
   const [configureConnection, setConfigureConnection] = useState<ConfigurableConnection | null>(
     null,
   );
+  const [controllersConfigConnection, setControllersConfigConnection] =
+    useState<ConfigurableConnection | null>(null);
   const open = Boolean(anchorEl);
   const deploymentModeOpen = Boolean(deploymentModeAnchorEl);
   const modalRef = useRef<{ show: (options: unknown) => Promise<string | null> } | null>(null);
@@ -261,8 +272,12 @@ const ConnectionTable = ({
     // only populated after `_app.tsx`'s async `loadMeshModelComponent`
     // completes. The pages-router routes to /management/connections before
     // that promise resolves, so this memo must tolerate a null map.
+    // A connection only needs a kind and a status to render; the display name
+    // falls back to `metadata.name`/kind in the Name column. Requiring a
+    // top-level `name` here wrongly hid connections (e.g. kubernetes, grafana)
+    // whose name lives only in `metadata.name`.
     return connectionData.connections
-      .filter((conn) => conn.name && conn.kind && conn.status)
+      .filter((conn) => conn && conn.kind && conn.status)
       .map((connection) => ({
         ...connection,
         nextStatus:
@@ -402,6 +417,16 @@ const ConnectionTable = ({
     handleActionMenuClose();
     if (connection) {
       setConfigureConnection(connection as ConfigurableConnection);
+    }
+  }, [getConnectionAtRowIndex, handleActionMenuClose, rowData?.rowIndex]);
+
+  const handleConfigureControllers = useCallback(() => {
+    const connection = getConnectionAtRowIndex(rowData?.rowIndex);
+    handleActionMenuClose();
+    // Operator / MeshSync / Broker configuration applies to Kubernetes
+    // connections only.
+    if (connection && (connection as ConfigurableConnection).kind === 'kubernetes') {
+      setControllersConfigConnection(connection as ConfigurableConnection);
     }
   }, [getConnectionAtRowIndex, handleActionMenuClose, rowData?.rowIndex]);
 
@@ -660,6 +685,7 @@ const ConnectionTable = ({
     handleStatusChange,
     handleActionMenuOpen,
     ping,
+    pingGrafana,
     transitionMapByKind,
   });
   const columnNames = useMemo(
@@ -756,6 +782,13 @@ const ConnectionTable = ({
         onFlushMeshSync={handleFlushMeshSync}
         onDeploymentModeAnchor={handleDeploymentModeAnchorOpen}
         onConfigure={handleConfigureConnection}
+        onConfigureControllers={
+          rowData?.rowIndex != null &&
+          (getConnectionAtRowIndex(rowData.rowIndex) as ConfigurableConnection | null)?.kind ===
+            'kubernetes'
+            ? handleConfigureControllers
+            : undefined
+        }
         onCopyLink={
           rowData?.rowIndex != null
             ? () => {
@@ -772,6 +805,15 @@ const ConnectionTable = ({
           isOpen={Boolean(configureConnection)}
           connection={configureConnection}
           onClose={() => setConfigureConnection(null)}
+        />
+      )}
+
+      {controllersConfigConnection?.id && (
+        <ConnectionControllersConfigModal
+          isOpen={Boolean(controllersConfigConnection)}
+          connectionId={String(controllersConfigConnection.id)}
+          connectionName={controllersConfigConnection.name}
+          onClose={() => setControllersConfigConnection(null)}
         />
       )}
 

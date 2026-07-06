@@ -5,7 +5,6 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import AddIconCircleBorder from '@/assets/icons/AddIconCircleBorder';
 import ConnectionWizardModal from './ConnectionWizardModal';
-
 const LaunchButton = styled(Button)({
   width: '100%',
   borderRadius: 5,

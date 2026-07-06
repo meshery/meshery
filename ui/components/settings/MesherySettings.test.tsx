@@ -47,6 +47,7 @@ vi.mock('@sistent/sistent', () => ({
   DatabaseIcon: () => <svg />,
   MendeleyIcon: () => <svg />,
   FileIcon: () => <svg />,
+  SettingsIcon: () => <svg />,
   useTheme: () => ({
     palette: {
       icon: { default: 'icon' },
@@ -67,16 +68,8 @@ vi.mock('../dashboard/charts/DashboardMeshModelGraph', () => ({
   default: () => <div data-testid="dashboard-graph" />,
 }));
 
-vi.mock('../telemetry/grafana/GrafanaComponent', () => ({
-  default: () => <div data-testid="grafana-component" />,
-}));
-
 vi.mock('../MeshAdapterConfigComponent', () => ({
   default: () => <div data-testid="adapter-config" />,
-}));
-
-vi.mock('../telemetry/prometheus/PrometheusComponent', () => ({
-  default: () => <div data-testid="prometheus-component" />,
 }));
 
 vi.mock('../PromptComponent', () => ({
@@ -121,6 +114,7 @@ vi.mock('@/constants/navigator', () => ({
   PROMETHEUS: 'Prometheus',
   OVERVIEW: 'Overview',
   REGISTRY: 'Registry',
+  CONTROLLERS: 'Controllers',
 }));
 
 vi.mock('../registry/helper', () => ({
@@ -129,6 +123,10 @@ vi.mock('../registry/helper', () => ({
 
 vi.mock('../registry/MeshModelComponent', () => ({
   default: () => <div data-testid="mesh-model-component" />,
+}));
+
+vi.mock('./MesheryControllersConfig', () => ({
+  default: () => <div data-testid="controllers-config" />,
 }));
 
 vi.mock('../general/error-404', () => ({
@@ -183,9 +181,16 @@ describe('MesherySettings', () => {
 
     expect(screen.getByTestId('tab-Overview')).toBeInTheDocument();
     expect(screen.getByTestId('tab-Adapters')).toBeInTheDocument();
-    expect(screen.getByTestId('tab-Metrics')).toBeInTheDocument();
     expect(screen.getByTestId('tab-Registry')).toBeInTheDocument();
+    expect(screen.getByTestId('tab-Controllers')).toBeInTheDocument();
     expect(screen.getByTestId('tab-Reset')).toBeInTheDocument();
+    expect(screen.queryByTestId('tab-Metrics')).not.toBeInTheDocument();
+  });
+
+  it('renders the controllers configuration tab when selected', () => {
+    routerState.query = { settingsCategory: 'Controllers' };
+    render(<MesherySettings />);
+    expect(screen.getByTestId('controllers-config')).toBeInTheDocument();
   });
 
   it('renders the Overview tab content (dashboard graph) by default', () => {
