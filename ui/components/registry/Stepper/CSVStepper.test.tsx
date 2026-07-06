@@ -209,21 +209,24 @@ describe('CsvStepper', () => {
 
   it('shows error snackbar when CSV template download throws network error', async () => {
     stepperState.activeStep = 0;
-    const originalFetch = global.fetch;
-    global.fetch = vi.fn(() => Promise.reject(new Error('Network Error'))) as any;
+    const originalFetch = globalThis.fetch;
 
-    render(<CsvStepper handleClose={vi.fn()} />);
-    const downloadBtn = screen.getByTestId('tooltip-button');
-    fireEvent.click(downloadBtn);
+    try {
+      globalThis.fetch = vi.fn(() => Promise.reject(new Error('Network Error'))) as any;
 
-    await new Promise((resolve) => setTimeout(resolve, 0));
+      render(<CsvStepper handleClose={vi.fn()} />);
+      fireEvent.click(screen.getByTestId('tooltip-button'));
 
-    expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('Models.csv'));
-    expect(mockEnqueueSnackbar).toHaveBeenCalledWith(
-      expect.stringContaining('Network error'),
-      expect.objectContaining({ variant: 'error' }),
-    );
+      await expect.poll(() => mockEnqueueSnackbar.mock.calls.length).toBeGreaterThan(0);
 
-    global.fetch = originalFetch;
+
+      expect(globalThis.fetch).toHaveBeenCalledWith(expect.stringContaining('Models.csv'));
+      expect(mockEnqueueSnackbar).toHaveBeenCalledWith(
+        expect.stringContaining('Network error'),
+        expect.objectContaining({ variant: 'error' }),
+      );
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 });
