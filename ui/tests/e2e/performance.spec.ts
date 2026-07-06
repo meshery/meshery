@@ -23,7 +23,7 @@ test.describe('Performance Section Tests', () => {
     // Readiness signal for the performance dashboard. The legacy "Configure
     // Metrics" flow (meshery-metrics / grafana config) was removed when
     // telemetry moved to its own section under /telemetry — see telemetry.spec.ts.
-    await expect(page.getByTestId('performance-dashboard')).toBeVisible({ timeout: 60000 });
+    await expect(page.getByTestId('performance-dashboard')).toBeVisible();
   });
 
   test('Common UI elements', async ({ page }: { page: Page }) => {

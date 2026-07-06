@@ -132,13 +132,14 @@ function Dashboard() {
   return (
     <>
       {CAN(keys.VIEW_PERFORMANCE_PROFILES.action, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
-        <div data-testid="performance-dashboard" style={{ width: '100%', height: '100%' }}>
+        <>
           <Grid2
             container
             spacing={2}
             style={{ padding: '0.5rem' }}
             size="grow"
             sx={{ alignContent: 'space-around' }}
+            data-testid="performance-dashboard"
           >
             <Grid2 spacing={1} size={{ xs: 12, lg: 6 }} sx={{ flexDirection: 'column' }}>
               <Grid2>
@@ -225,7 +226,7 @@ function Dashboard() {
           >
             <MesheryPerformanceComponent />
           </Modal>
-        </div>
+        </>
       ) : (
         <DefaultError />
       )}
