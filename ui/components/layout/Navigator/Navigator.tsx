@@ -718,7 +718,7 @@ const NavigatorContent = () => {
                         title={childId}
                         placement="right"
                         disableFocusListener={!isDrawerCollapsed}
-                        disableHoverListener={true}
+                        disableHoverListener={!isDrawerCollapsed}
                         disableTouchListener={!isDrawerCollapsed}
                         TransitionComponent={Zoom}
                       >
