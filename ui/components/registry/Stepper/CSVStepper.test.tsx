@@ -189,7 +189,7 @@ describe('CsvStepper', () => {
 
   it('shows error snackbar when CSV template download fails with non-2xx status', async () => {
     stepperState.activeStep = 0;
-    const originalFetch = global.fetch;
+    const originalFetch = globalThis.fetch;
 
     try {
       globalThis.fetch = vi.fn(() =>
