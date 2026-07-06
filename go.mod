@@ -56,7 +56,7 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v1.0.3
-	github.com/meshery/meshkit v1.0.20
+	github.com/meshery/meshkit v1.0.21
 	github.com/meshery/meshsync v1.0.3
 	github.com/meshery/schemas v1.3.25
 	github.com/nsf/termbox-go v1.1.1
