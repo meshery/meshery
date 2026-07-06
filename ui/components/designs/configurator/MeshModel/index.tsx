@@ -56,8 +56,10 @@ export default function DesignConfigurator() {
   const formReference = useRef();
 
   const router = useRouter();
-  const { designId: queryDesignId, design_id } = router.query;
-  const selectedDesignId = queryDesignId || design_id;
+  const { designId: queryDesignId, design_id: legacyDesignId } = router.query;
+  const selectedDesignId =
+    (Array.isArray(queryDesignId) ? queryDesignId[0] : queryDesignId) ||
+    (Array.isArray(legacyDesignId) ? legacyDesignId[0] : legacyDesignId);
 
   useEffect(
     function loadDesignOnMount() {

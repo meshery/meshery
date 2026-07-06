@@ -14,7 +14,7 @@ export class DesignConfiguratorPage {
   }
 
   async navigateTo(designId) {
-    const query = designId ? `?designId=${designId}` : '';
+    const query = designId ? `?designId=${encodeURIComponent(designId)}` : '';
     await this.page.goto(`/configuration/designs/configurator${query}`);
   }
 
