@@ -190,21 +190,26 @@ describe('CsvStepper', () => {
   it('shows error snackbar when CSV template download fails with non-2xx status', async () => {
     stepperState.activeStep = 0;
     const originalFetch = global.fetch;
-    global.fetch = vi.fn(() => Promise.resolve({ ok: false, statusText: 'Not Found' })) as any;
 
-    render(<CsvStepper handleClose={vi.fn()} />);
-    const downloadBtn = screen.getByTestId('tooltip-button');
-    fireEvent.click(downloadBtn);
+    try {
+      globalThis.fetch = vi.fn(() =>
+        Promise.resolve({ ok: false, status: 404, statusText: 'Not Found' }),
+      ) as any;
 
-    await new Promise((resolve) => setTimeout(resolve, 0));
+      render(<CsvStepper handleClose={vi.fn()} />);
+      const downloadBtn = screen.getByTestId('tooltip-button');
+      fireEvent.click(downloadBtn);
 
-    expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('Models.csv'));
-    expect(mockEnqueueSnackbar).toHaveBeenCalledWith(
-      expect.stringContaining('Failed to download Models.csv'),
-      expect.objectContaining({ variant: 'error' }),
-    );
+      await expect.poll(() => mockEnqueueSnackbar.mock.calls.length).toBeGreaterThan(0);
 
-    global.fetch = originalFetch;
+      expect(globalThis.fetch).toHaveBeenCalledWith(expect.stringContaining('Models.csv'));
+      expect(mockEnqueueSnackbar).toHaveBeenCalledWith(
+        expect.stringContaining('Failed to download Models.csv'),
+        expect.objectContaining({ variant: 'error' }),
+      );
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 
   it('shows error snackbar when CSV template download throws network error', async () => {
