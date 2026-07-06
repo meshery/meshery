@@ -219,7 +219,6 @@ describe('CsvStepper', () => {
 
       await expect.poll(() => mockEnqueueSnackbar.mock.calls.length).toBeGreaterThan(0);
 
-
       expect(globalThis.fetch).toHaveBeenCalledWith(expect.stringContaining('Models.csv'));
       expect(mockEnqueueSnackbar).toHaveBeenCalledWith(
         expect.stringContaining('Network error'),
