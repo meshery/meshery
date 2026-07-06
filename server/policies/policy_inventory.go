@@ -180,7 +180,14 @@ func inventoryCandidateKey(mutatorSel relationship.SelectorItem, values []interf
 	if mutatorSel.Model != nil {
 		modelName = mutatorSel.Model.Name
 	}
-	valuesJSON, _ := json.Marshal(values)
+	valuesJSON, err := json.Marshal(values)
+	if err != nil {
+		// Fall back to a unique identifier so that unmarshalable candidates
+		// are never incorrectly collapsed into the same dedup bucket.
+		if u, uuidErr := uuid.NewV4(); uuidErr == nil {
+			return selectorItemKind(mutatorSel) + "|" + modelName + "|" + u.String()
+		}
+	}
 	return selectorItemKind(mutatorSel) + "|" + modelName + "|" + string(valuesJSON)
 }
 
