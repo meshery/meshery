@@ -115,7 +115,7 @@ const CsvStepper = React.memo(({ handleClose }: CsvStepperProps) => {
       const response = await fetch(rawUrl);
       if (!response.ok) {
         enqueueSnackbar(
-          `Failed to download ${fileName} (HTTP ${response.status}): ${response.statusText || 'Server error'}`,
+          `Failed to download ${fileName} (HTTP ${response.status}): ${response.statusText || 'Request Failed'}`,
           { variant: 'error' },
         );
         return;
