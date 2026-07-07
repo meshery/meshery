@@ -11,9 +11,9 @@ import { useCan } from '@/utils/hooks/useCan';
 export function usePermissionDisabled(
   permission: { action: string; subject: string } | undefined,
 ): boolean {
-  // Hooks must always be called, so we pass empty strings when there is no
+  // Hooks must always be called, so we pass undefined when there is no
   // permission and ignore the result.
-  const allowed = useCan(permission?.action ?? '', permission?.subject ?? '');
+  const allowed = useCan(permission?.action, permission?.subject);
 
   if (!permission) return false;
   return !allowed;

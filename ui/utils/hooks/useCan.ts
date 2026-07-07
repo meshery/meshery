@@ -14,12 +14,28 @@ import { ability } from '../can';
  * @param subject - The subject string (will be lower-cased via lodash).
  * @returns `true` if the current ability rules allow the action on the subject.
  */
-export function useCan(action: string, subject: string): boolean {
-  const evaluate = useCallback(() => ability.can(action, _.lowerCase(subject)), [action, subject]);
+export function useCan(action?: string, subject?: string): boolean {
+  const evaluate = useCallback(() => {
+    if (!action || !subject) return false;
+    return ability.can(action, _.lowerCase(subject));
+  }, [action, subject]);
 
   const [allowed, setAllowed] = useState(evaluate);
 
+  // Update state during render to avoid a stale state render cycle
+  // if the action or subject props ever change.
+  const [prevAction, setPrevAction] = useState(action);
+  const [prevSubject, setPrevSubject] = useState(subject);
+
+  if (action !== prevAction || subject !== prevSubject) {
+    setPrevAction(action);
+    setPrevSubject(subject);
+    setAllowed(evaluate());
+  }
+
   useEffect(() => {
+    if (!action || !subject) return;
+
     // Re-evaluate immediately in case rules changed between render and effect
     setAllowed(evaluate());
 
@@ -30,7 +46,7 @@ export function useCan(action: string, subject: string): boolean {
     return () => {
       unsubscribe();
     };
-  }, [evaluate]);
+  }, [action, subject, evaluate]);
 
   return allowed;
 }

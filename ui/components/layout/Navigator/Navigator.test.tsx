@@ -111,6 +111,10 @@ vi.mock('../../../css/icons.styles', () => ({
 
 vi.mock('@/utils/can', () => ({
   default: () => true,
+  ability: {
+    can: () => true,
+    on: () => vi.fn(),
+  },
 }));
 
 vi.mock('../../general/style', () => {
