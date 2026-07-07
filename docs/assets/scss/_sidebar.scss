@@ -89,16 +89,14 @@
     z-index: 3;
     display: block;
     position: absolute;
-    right: -3rem;
+    left: 100%;
     bottom: 3rem;
     
     @media (max-width: 75em) {
-      right: -2rem;
       bottom: 0.75rem;
     }
 
     @media (max-width: 37.5em) {
-      right: -2rem;
       bottom: 0.75rem;
     }
   }
@@ -570,4 +568,27 @@
 /* Sidebar toggle button arrows - white color */
 #td-sidebar-menu .sidebar-section-toggle .caret-icon path {
   stroke: var(--sidebar-text-color);
+}
+
+.models-sidebar-wrapper {
+  position: fixed;
+  top: 0;
+  left: calc(var(--sidebar-wrapper-width) + 1.5rem);
+  height: calc(100vh - var(--navbar-height));
+  z-index: 99;
+
+  @media (max-width: 1099px) {
+    display: none;
+  }
+}
+
+.models-list {
+  flex: 1;
+  min-width: 0;
+  margin-left: calc(var(--models-alphabet-sidebar-width, 50px) + 5rem);
+
+  @media (max-width: 1099px) {
+    width: 100%;
+    margin-left: 0;
+  }
 }
