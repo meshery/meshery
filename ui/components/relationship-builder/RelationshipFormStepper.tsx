@@ -259,9 +259,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                     onChange={handleModelChange}
                     fullWidth
                     variant="outlined"
-                    helperText={
-                      RelationshipDefinitionSchema?.properties?.model?.helperText
-                    }
+                    helperText={RelationshipDefinitionSchema?.properties?.model?.helperText}
                   >
                     <MenuItem value="" disabled>
                       <em>Select Model</em>

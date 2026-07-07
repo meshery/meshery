@@ -219,7 +219,7 @@ describe('RelationshipFormStepper', () => {
     useStepperMock.mockImplementation(({ steps }) =>
       makeStepperMock({
         activeStepComponent: steps[0].component,
-      })
+      }),
     );
 
     render(<RelationshipFormStepper handleClose={vi.fn()} />);
