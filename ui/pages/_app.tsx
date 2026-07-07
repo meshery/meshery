@@ -135,7 +135,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     isOpen: false,
     relayEnvironment: createRelayEnvironment(),
     connectionMetadata: {},
-    keys: [],
     abilities: [],
     abilityUpdated: false,
   });
@@ -336,26 +335,56 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     [dispatch],
   );
 
-  const updateAbility = useCallback(() => {
-    ability.update(
-      state.keys?.map((key) => ({ action: key.id, subject: _.lowerCase(key.function) })),
-    );
-    setState((prevState) => ({ ...prevState, abilityUpdated: true }));
-  }, [state.keys]);
+  const updateAbility = useCallback(
+    (keys: { id: string; function: string }[] | null | undefined) => {
+      const safeKeys = Array.isArray(keys) ? keys : [];
+      ability.update(
+        safeKeys
+          .filter((key) => key && typeof key === 'object')
+          .map((key) => ({ action: key.id, subject: _.lowerCase(key.function) })),
+      );
+      setState((prevState) => ({ ...prevState, abilityUpdated: true }));
+    },
+    [ability],
+  );
 
   const loadAbility = useCallback(
     async (orgID, reFetchKeys) => {
       const storedKeys = sessionStorage.getItem('keys');
-      if (storedKeys !== null && !reFetchKeys && storedKeys !== 'undefined') {
-        setState((prevState) => ({ ...prevState, keys: JSON.parse(storedKeys) }));
-        updateAbility();
+      let parsedKeys: { id: string; function: string }[] | null = null;
+
+      if (storedKeys !== null && !reFetchKeys) {
+        try {
+          const parsed = JSON.parse(storedKeys);
+          if (
+            Array.isArray(parsed) &&
+            parsed.every(
+              (key) =>
+                key !== null &&
+                typeof key === 'object' &&
+                typeof key.id === 'string' &&
+                typeof key.function === 'string',
+            )
+          ) {
+            parsedKeys = parsed;
+          }
+        } catch {
+          // Ignore parsing errors and let the fallback handle cleanup
+        }
+
+        if (!parsedKeys) {
+          sessionStorage.removeItem('keys');
+        }
+      }
+
+      if (parsedKeys) {
+        updateAbility(parsedKeys);
       } else {
         try {
           const result = await fetchUserKeys({ orgId: orgID }).unwrap();
           if (result) {
-            setState((prevState) => ({ ...prevState, keys: result.keys }));
             dispatch(setKeys({ keys: result.keys }));
-            updateAbility();
+            updateAbility(result.keys);
           }
         } catch (err) {
           console.log('There was an error fetching user keys:', err);
