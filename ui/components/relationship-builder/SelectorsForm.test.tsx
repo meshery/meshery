@@ -46,7 +46,7 @@ vi.mock('@sistent/sistent', () => ({
       {children}
     </div>
   ),
-  TextField: ({ value, onChange, label, children, select }: any) => (
+  TextField: ({ helperText, value, onChange, label, children, select }: any) => (
     <div>
       <label>{label}</label>
       {select ? (
@@ -56,6 +56,7 @@ vi.mock('@sistent/sistent', () => ({
       ) : (
         <input data-testid={`input-${label}`} value={value || ''} onChange={onChange} />
       )}
+      {helperText && <span>{helperText}</span>}
     </div>
   ),
   Typography: ({ children }: any) => <span>{children}</span>,
@@ -74,6 +75,26 @@ vi.mock('../meshery-mesh-interface/PatternService/RJSF_wrapper', () => ({
   ),
 }));
 
+vi.mock('@meshery/schemas', () => ({
+  ModelDefinitionV1Beta1OpenApiSchema: {
+    components: {
+      schemas: {
+        ModelDefinition: {
+          properties: {
+            category: {
+              properties: {
+                name: {
+                  helperText: 'Select a model category',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}));
+
 vi.mock('@/utils/hooks/useMeshModelComponents', () => ({
   useMeshModelComponents: () => useMeshModelComponentsMock(),
 }));
@@ -90,7 +111,9 @@ describe('SelectorsForm', () => {
               items: {
                 properties: {
                   kind: {},
-                  model: {},
+                  model: {
+                    helperText: 'Select a model',
+                  },
                   matchLabels: { type: 'string' },
                 },
               },
@@ -206,5 +229,23 @@ describe('SelectorsForm', () => {
     fireEvent.click(triggers[0]);
 
     expect(onChange).toHaveBeenCalled();
+  });
+
+  it('renders helper text from schema metadata', () => {
+    render(
+      <SelectorsForm
+        selectorsSchema={selectorsSchema}
+        formData={{
+          selectors: {
+            allow: { from: [{ kind: '', model: { name: '', registrant: { kind: '' } } }], to: [] },
+            deny: { from: [], to: [] },
+          },
+        }}
+        onChange={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('Select a model category')).toBeInTheDocument();
+    expect(screen.getByText('Select a model')).toBeInTheDocument();
   });
 });

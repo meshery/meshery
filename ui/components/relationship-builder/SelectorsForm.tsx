@@ -238,7 +238,7 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
                           variant="outlined"
                           helperText={
                             ModelDefinitionSchema?.properties?.category?.properties?.name
-                              ?.description
+                              ?.helperText
                           }
                         >
                           <MenuItem value="" disabled>
@@ -265,7 +265,7 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
                           variant="outlined"
                           helperText={
                             selectorsSchema?.items?.properties?.allow?.properties?.from?.items
-                              ?.properties?.model?.description
+                              ?.properties?.model?.helperText
                           }
                         >
                           <MenuItem value="" disabled>
