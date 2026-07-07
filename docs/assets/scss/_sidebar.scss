@@ -42,6 +42,9 @@
     background: #121212;
     background: linear-gradient(37deg, rgba(71, 126, 150, 0.52) 0%, rgba(0, 0, 0, 0.81) 12%, rgba(60, 73, 79, 1) 100%);
     box-shadow: var(--box-shadow-primary);
+    @media (max-width: 75em) {
+      background: linear-gradient(37deg, rgba(71, 126, 150, 1) 0%, rgba(0, 0, 0, 1) 12%, rgba(60, 73, 79, 1) 100%);
+    }
   }
   & .icon-container {
     height: fit-content;
