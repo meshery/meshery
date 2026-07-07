@@ -336,3 +336,33 @@ func TestModelInit(t *testing.T) {
 		})
 	}
 }
+
+func TestModelDisplayPath(t *testing.T) {
+	tests := []struct {
+		name     string
+		path     string
+		expected string
+	}{
+		{
+			name:     "empty path",
+			path:     "",
+			expected: ".",
+		},
+		{
+			name:     "slash path",
+			path:     "models/aws-controller/v0.1.0",
+			expected: "models/aws-controller/v0.1.0",
+		},
+		{
+			name:     "windows separator path",
+			path:     `models\aws-controller\v0.1.0`,
+			expected: "models/aws-controller/v0.1.0",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expected, modelDisplayPath(tc.path))
+		})
+	}
+}

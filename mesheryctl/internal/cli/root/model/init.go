@@ -77,6 +77,9 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 
 		modelFolder := filepath.Join(path, modelName)
 		modelVersionFolder := filepath.Join(modelFolder, modelInitFlags.Version)
+		displayPath := modelDisplayPath(path)
+		displayModelFolder := modelDisplayPath(modelFolder)
+		displayModelVersionFolder := modelDisplayPath(modelVersionFolder)
 
 		{
 			// if model/version folder already exists return with error
@@ -141,18 +144,18 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 					}
 				}
 			}
-			utils.Log.Infof("Created %s model at %s", modelName, modelFolder)
+			utils.Log.Infof("Created %s model at %s", modelName, displayModelFolder)
 			utils.Log.Info("")
 			utils.Log.Info(
 				initModelReplacePlaceholders(
 					initModelNextStepsText,
 					map[string]string{
-						"{path}":               path,
+						"{path}":               displayPath,
 						"{modelName}":          modelName,
 						"{modelVersion}":       modelInitFlags.Version,
-						"{modelFolder}":        modelFolder,
+						"{modelFolder}":        displayModelFolder,
 						"{outputFormat}":       modelInitFlags.OutputFormat,
-						"{modelVersionFolder}": modelVersionFolder,
+						"{modelVersionFolder}": displayModelVersionFolder,
 					},
 				),
 			)
@@ -269,6 +272,13 @@ var initModelData = []struct {
 			utils.Log.Info("Creating credentials directory...")
 		},
 	},
+}
+
+func modelDisplayPath(path string) string {
+	if path == "" {
+		return "."
+	}
+	return strings.ReplaceAll(filepath.ToSlash(filepath.Clean(path)), `\`, "/")
 }
 
 func initModelReadTemplate(templatePath string) ([]byte, error) {
