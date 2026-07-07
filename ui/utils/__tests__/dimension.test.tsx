@@ -132,4 +132,33 @@ describe('useWindowDimensions', () => {
     expect(removeListenerSpy.mock.calls.some(([eventName]) => eventName === 'resize')).toBe(true);
     removeListenerSpy.mockRestore();
   });
+
+  it('clears the pending debounce timeout on unmount', () => {
+    const onRender = vi.fn();
+    const { unmount } = render(<Probe onRender={onRender} />);
+    onRender.mockClear();
+
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      writable: true,
+      value: 1200,
+    });
+    Object.defineProperty(window, 'innerHeight', {
+      configurable: true,
+      writable: true,
+      value: 900,
+    });
+
+    act(() => {
+      window.dispatchEvent(new Event('resize'));
+    });
+
+    unmount();
+
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+
+    expect(onRender).not.toHaveBeenCalled();
+  });
 });
