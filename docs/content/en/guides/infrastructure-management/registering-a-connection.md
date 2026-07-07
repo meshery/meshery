@@ -32,7 +32,7 @@ Meshery learns about Connections two ways. **Managed** Connections (for example,
 1. Open the **Connections** page in Meshery (**Lifecycle → Connections**).
 2. Click **Create Connection**.
 
-The wizard opens as a modal. The set of Connection kinds you can create is driven by the [connection definitions]({{< ref "project/contributing/contributing-connections.md" >}}) registered in your Meshery Server's [Registry]({{< ref "concepts/logical/registry.md" >}}). Out of the box this includes **Kubernetes**, **Grafana**, and **Prometheus**; your deployment may offer more. If a kind you need is missing, a contributor can add it - see [Contributing a Connection]({{< ref "project/contributing/contributing-connections.md" >}}).
+The wizard opens as a modal. The set of Connection kinds you can create is driven by the [connection definitions]({{< ref "project/contributing/models/connections" >}}) registered in your Meshery Server's [Registry]({{< ref "concepts/logical/registry.md" >}}). Out of the box this includes **Kubernetes**, **Grafana**, and **Prometheus**; your deployment may offer more. If a kind you need is missing, a contributor can add it - see [Contributing a Connection]({{< ref "project/contributing/models/connections" >}}).
 
 ## Creating a Connection
 
@@ -65,7 +65,7 @@ Kubernetes uses a dedicated flow because a single kubeconfig can describe many c
 3. **Select contexts.** Choose which contexts to import. For each, you can override the Connection name and choose a [MeshSync deployment mode](#meshsync-deployment-mode).
 4. **Review Import.** Confirm your selection and import. Meshery creates one Connection per selected context and reports the outcome, grouped into connected, registered, ignored, and errored buckets.
 
-Each imported cluster is created as a Kubernetes Connection that [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) keeps in sync. From there, Meshery can deploy and operate workloads, visualize the cluster, and more. See [Managing Connections]({{< ref "guides/infrastructure-management/lifecycle-management/index.md" >}}).
+Each imported cluster is created as a Kubernetes Connection that [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) keeps in sync. From there, Meshery can deploy and operate workloads, visualize the cluster, and more. See [Managing Connections]({{< ref "guides/infrastructure-management/lifecycle-management/index.md" >}}). If the cluster already runs workloads you did not deploy through Meshery, see [Bringing Existing Infrastructure Under Meshery Management]({{< ref "guides/infrastructure-management/managing-existing-infrastructure.md" >}}) for what to evaluate before importing and how discovery treats pre-existing resources.
 
 {{% alert color="dark" title="Who can access an imported cluster?" %}}
 A Kubernetes Connection is owned by the user who imported it and is private until you explicitly share it - by assigning it to an [Environment]({{< ref "concepts/logical/environments.md" >}}) and that environment to a [Workspace]({{< ref "concepts/logical/workspaces.md" >}}). See the sharing FAQ under [Managing Connections]({{< ref "guides/infrastructure-management/lifecycle-management/index.md" >}}).
@@ -78,7 +78,7 @@ When you import or reconfigure a Kubernetes cluster, you choose how [MeshSync]({
 - **Operator** - installs the [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}) into the cluster. MeshSync runs in-cluster and streams resource changes to Meshery in real time.
 - **Embedded** - runs MeshSync from within Meshery Server. Nothing is installed into the cluster; discovery happens out-of-cluster. This is the default.
 
-Switching the mode later makes Meshery redeploy MeshSync accordingly (see [Updating a Connection](#updating-a-connection)).
+Switching the mode later makes Meshery redeploy MeshSync accordingly (see [Updating a Connection](#updating-a-connection)). For the behavioral trade-offs between the two modes - cluster footprint, permissions, network requirements, and what each mode gives up - and for every other setting of these components, see [Configuring Meshery Operator, MeshSync, and Broker]({{< ref "guides/infrastructure-management/configuring-operator-meshsync-broker.md" >}}).
 
 ## Updating a Connection
 
@@ -108,9 +108,10 @@ Prefer the terminal? `mesheryctl` can create, list, view, and delete Connections
 ## Related
 
 - [Connections]({{< ref "concepts/logical/connections/index.md" >}}) - concepts and state lifecycle.
+- [Configuring Meshery Operator, MeshSync, and Broker]({{< ref "guides/infrastructure-management/configuring-operator-meshsync-broker.md" >}}) - tuning the components that keep an imported cluster in sync.
 - [Credentials]({{< ref "concepts/logical/credentials.md" >}}) - authentication for Connections.
 - [Environments]({{< ref "concepts/logical/environments.md" >}}) and [Workspaces]({{< ref "concepts/logical/workspaces.md" >}}) - grouping and sharing Connections.
 - [Managing Connections]({{< ref "guides/infrastructure-management/lifecycle-management/index.md" >}}) - lifecycle operations.
-- [Contributing a Connection]({{< ref "project/contributing/contributing-connections.md" >}}) - add a new Connection kind to the wizard.
+- [Contributing a Connection]({{< ref "project/contributing/models/connections" >}}) - add a new Connection kind to the wizard.
 
 {{< discuss >}}

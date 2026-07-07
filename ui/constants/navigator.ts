@@ -56,6 +56,7 @@ export const CONNECTIONS = 'Connections';
 export const REGISTRY = 'Registry';
 export const ADAPTERS = 'Adapters';
 export const RESET = 'Reset';
+export const CONTROLLERS = 'Controllers';
 export const METRICS = 'Metrics';
 export const TELEMETRY = 'telemetry';
 export const GRAFANA = 'Grafana';

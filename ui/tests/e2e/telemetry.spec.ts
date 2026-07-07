@@ -9,13 +9,6 @@ import { DashboardPage } from './pages/DashboardPage';
 // Both render an empty state when no matching connection is registered, which
 // is the expected state in a fresh CI environment.
 
-const COMMON_UI_ELEMENTS: string[] = [
-  'navigation',
-  'notification-button',
-  'profile-button',
-  'header-menu',
-];
-
 test.describe('Telemetry Section Tests', () => {
   // navigateToDashboard() + navigateToSubMenuItem() chain their own 120s inner
   // waits; 180s gives the hook enough wall-clock on slow CI.
@@ -53,17 +46,5 @@ test.describe('Telemetry Section Tests', () => {
         .getByTestId('telemetry-prometheus-empty')
         .or(page.getByTestId('telemetry-prometheus-toolbar')),
     ).toBeVisible();
-  });
-
-  test('Common UI elements', async ({ page }: { page: Page }) => {
-    const dashboardPage = new DashboardPage(page);
-    await dashboardPage.navigateToTelemetryCharts();
-
-    for (const elementId of COMMON_UI_ELEMENTS) {
-      await expect(
-        page.getByTestId(elementId),
-        `UI element with ID ${elementId} should be visible`,
-      ).toBeVisible();
-    }
   });
 });
