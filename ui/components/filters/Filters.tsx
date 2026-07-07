@@ -41,6 +41,7 @@ import {
 } from '@/rtk-query/filter';
 import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { isLocalProvider } from '@/utils/provider';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
@@ -371,7 +372,7 @@ function MesheryFilters() {
   });
 
   const options = buildFiltersTableOptions({
-    user,
+    isLocalProvider: isLocalProvider(capabilitiesData),
     count,
     page,
     pageSize,
