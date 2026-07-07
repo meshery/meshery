@@ -20,6 +20,7 @@ type ConnectionActionMenuProps = {
   onFlushMeshSync: () => void;
   onDeploymentModeAnchor: (event: React.MouseEvent<HTMLElement>) => void;
   onConfigure?: () => void;
+  onConfigureControllers?: () => void;
   onCopyLink?: () => void;
 };
 
@@ -30,6 +31,7 @@ export const ConnectionActionMenu = ({
   onFlushMeshSync,
   onDeploymentModeAnchor,
   onConfigure,
+  onConfigureControllers,
   onCopyLink,
 }: ConnectionActionMenuProps) => {
   return (
@@ -48,6 +50,20 @@ export const ConnectionActionMenu = ({
             <SettingsIcon {...iconMedium} />
             <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
               Configure
+            </Typography>
+          </Button>
+        </ActionListItem>
+      )}
+      {onConfigureControllers && (
+        <ActionListItem>
+          <Button
+            type="button"
+            onClick={onConfigureControllers}
+            data-cy="btnConfigureConnectionControllers"
+          >
+            <SettingsIcon {...iconMedium} />
+            <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+              Configure Controllers
             </Typography>
           </Button>
         </ActionListItem>

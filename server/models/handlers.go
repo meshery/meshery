@@ -72,6 +72,7 @@ type HandlerInterface interface {
 	AdaptersHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AvailableAdaptersHandler(w http.ResponseWriter, req *http.Request)
 	EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	SubscribeEventsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	ClientEventHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AdapterPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
@@ -212,6 +213,11 @@ type HandlerInterface interface {
 	UpdateConnectionById(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	GetControllersDefaultConfig(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	UpdateControllersDefaultConfig(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetConnectionControllersConfig(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	UpdateConnectionControllersConfig(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	ExportModel(w http.ResponseWriter, req *http.Request)
 

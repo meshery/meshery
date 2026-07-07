@@ -267,6 +267,7 @@ func main() {
 		workspace.WorkspacesTeamsMapping{},
 		workspace.WorkspacesViewsMapping{},
 		_events.Event{},
+		&models.SystemSetting{},
 	)
 	if err != nil {
 		log.Error(ErrDatabaseAutoMigration(err))
