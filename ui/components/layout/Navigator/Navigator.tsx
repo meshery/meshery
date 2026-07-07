@@ -206,7 +206,6 @@ const resolveNavigatorComponents = ({
 const NavigatorWrapper = () => {
   const isMobile = useMediaQuery('(max-width:599px)');
   const dispatch = useDispatch();
-  const { isDrawerCollapsed } = useSelector((state) => state.ui);
 
   useEffect(() => {
     if (isMobile) {
