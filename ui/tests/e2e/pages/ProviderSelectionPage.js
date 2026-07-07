@@ -5,7 +5,8 @@ export class ProviderSelectionPage {
   }
 
   getProviderMenuItem(providerName) {
-    return this.page.getByRole('menuitem', { name: providerName });
+    // Use a regex with word boundary to avoid "Local" matching "localhost:9876"
+    return this.page.getByRole('menuitem', { name: new RegExp('^' + providerName + '\\b', 'i') });
   }
 
   async navigateToProviderSelection() {
