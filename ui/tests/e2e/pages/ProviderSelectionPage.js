@@ -5,8 +5,10 @@ export class ProviderSelectionPage {
   }
 
   getProviderMenuItem(providerName) {
-    // Use a regex with word boundary to avoid "Local" matching "localhost:9876"
-    return this.page.getByRole('menuitem', { name: new RegExp('^' + providerName + '\\b', 'i') });
+    // Escape providerName to avoid regex injection, then use word boundary.
+    // We cannot use exact: true because the accessible name includes tooltip text.
+    const escapedName = providerName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return this.page.getByRole('menuitem', { name: new RegExp('^' + escapedName + '\\b', 'i') });
   }
 
   async navigateToProviderSelection() {
