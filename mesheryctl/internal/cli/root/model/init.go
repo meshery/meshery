@@ -278,7 +278,7 @@ func modelDisplayPath(path string) string {
 	if path == "" {
 		return "."
 	}
-	return strings.ReplaceAll(filepath.ToSlash(filepath.Clean(path)), `\`, "/")
+	return strings.ReplaceAll(filepath.Clean(path), `\`, "/")
 }
 
 func initModelReadTemplate(templatePath string) ([]byte, error) {
