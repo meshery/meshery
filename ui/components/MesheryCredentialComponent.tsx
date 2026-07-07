@@ -27,7 +27,7 @@ import {
 } from '@/rtk-query/credentials';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
-import type { RootState } from '@/store/store';
+import type { RootState } from '../store';
 import type { MUIDataTableColumn, MUIDataTableMeta } from '@sistent/mui-datatables';
 
 const CredentialIcon = styled('img')({

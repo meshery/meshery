@@ -2,8 +2,16 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
-let connectionsQueryReturn: { data?: { connections?: Array<{ status?: string }> } } = {
+let connectionsQueryReturn: {
+  data?: { connections?: Array<{ status?: string }> };
+  isFetching?: boolean;
+  isLoading?: boolean;
+  isError?: boolean;
+} = {
   data: { connections: [] },
+  isFetching: false,
+  isLoading: false,
+  isError: false,
 };
 const canSpy = vi.fn(() => true);
 const bbChartSpy = vi.fn();
@@ -64,20 +72,32 @@ vi.mock('next/router', () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
-vi.mock('../style', () => ({
-  DashboardSection: ({ children }: { children?: React.ReactNode }) => (
-    <section data-testid="dashboard-section">{children}</section>
-  ),
-}));
-
 vi.mock('./ConnectCluster', () => ({
   default: ({ message }: { message: React.ReactNode }) => (
     <div data-testid="connect-cluster">{message}</div>
   ),
 }));
 
+vi.mock('../widgets/WidgetErrorFallback', () => ({
+  default: ({ widgetTitle, message }: { widgetTitle: string; message?: string }) => (
+    <div data-testid="widget-error-fallback" data-title={widgetTitle}>
+      {message}
+    </div>
+  ),
+}));
+
+vi.mock('../style', () => ({
+  DashboardSection: ({ children }: { children?: React.ReactNode }) => (
+    <section data-testid="dashboard-section">{children}</section>
+  ),
+  LoadingContainer: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="loading-container">{children}</div>
+  ),
+}));
+
 vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+  CircularProgress: () => <div data-testid="circular-progress" />,
   InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
   KubernetesIcon: () => <svg data-testid="k8s-icon" />,
   Typography: ({ children }: { children?: React.ReactNode }) => <p>{children}</p>,
@@ -93,7 +113,12 @@ describe('KubernetesConnectionStatsChart', () => {
     bbChartSpy.mockReset();
     canSpy.mockClear();
     canSpy.mockReturnValue(true);
-    connectionsQueryReturn = { data: { connections: [] } };
+    connectionsQueryReturn = {
+      data: { connections: [] },
+      isFetching: false,
+      isLoading: false,
+      isError: false,
+    };
   });
 
   it('shows ConnectCluster fallback when there are no kubernetes connections', () => {
@@ -142,5 +167,34 @@ describe('KubernetesConnectionStatsChart', () => {
     render(<KubernetesConnectionStatsChart />);
     expect(screen.getByTestId('k8s-icon')).toBeInTheDocument();
     expect(screen.getByText('KUBERNETES CLUSTER STATUS')).toBeInTheDocument();
+  });
+
+  it('shows a loading indicator on the initial load', () => {
+    connectionsQueryReturn = { isFetching: true, isLoading: true };
+    render(<KubernetesConnectionStatsChart />);
+    expect(screen.getByTestId('loading-container')).toBeInTheDocument();
+    expect(screen.getByTestId('circular-progress')).toBeInTheDocument();
+    expect(screen.queryByTestId('connect-cluster')).not.toBeInTheDocument();
+  });
+
+  it('keeps showing the chart during a background refetch instead of the loading indicator', () => {
+    connectionsQueryReturn = {
+      data: { connections: [{ status: 'connected' }] },
+      isFetching: true,
+      isLoading: false,
+    };
+    render(<KubernetesConnectionStatsChart />);
+    expect(screen.queryByTestId('loading-container')).not.toBeInTheDocument();
+    expect(screen.getByTestId('bb-chart')).toBeInTheDocument();
+  });
+
+  it('shows the error fallback when the connections query fails', () => {
+    connectionsQueryReturn = { isError: true };
+    render(<KubernetesConnectionStatsChart />);
+    expect(screen.getByTestId('widget-error-fallback')).toHaveAttribute(
+      'data-title',
+      'Kubernetes Cluster Status',
+    );
+    expect(screen.queryByTestId('connect-cluster')).not.toBeInTheDocument();
   });
 });

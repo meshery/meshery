@@ -13,6 +13,7 @@ import {
   DatabaseIcon,
   MendeleyIcon,
   FileIcon,
+  SettingsIcon,
   useTheme,
 } from '@sistent/sistent';
 import DashboardMeshModelGraph from '../dashboard/charts/DashboardMeshModelGraph';
@@ -29,7 +30,8 @@ import {
 } from '../../api/meshmodel';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { ADAPTERS, RESET, OVERVIEW, REGISTRY } from '@/constants/navigator';
+import { ADAPTERS, RESET, OVERVIEW, REGISTRY, CONTROLLERS } from '@/constants/navigator';
+import MesheryControllersConfig from './MesheryControllersConfig';
 import { removeDuplicateVersions } from '../registry/helper';
 import MeshModelComponent from '../registry/MeshModelComponent';
 import DefaultError from '../general/error-404';
@@ -256,6 +258,19 @@ const MesherySettings = () => {
                   />
                 </CustomTooltip>
 
+                <CustomTooltip
+                  title="Meshery Operator, MeshSync & Broker defaults"
+                  placement="top"
+                  value={CONTROLLERS}
+                >
+                  <Tab
+                    icon={<SettingsIcon {...iconMedium} fill={theme.palette.icon.default} />}
+                    label="Operator, MeshSync & Broker"
+                    data-testid="settings-tab-controllers"
+                    value={CONTROLLERS}
+                  />
+                </CustomTooltip>
+
                 <CustomTooltip title="Reset System" placement="top" value={RESET}>
                   <Tab
                     icon={<DatabaseIcon {...iconMedium} fill={theme.palette.icon.default} />}
@@ -329,6 +344,12 @@ const MesherySettings = () => {
             {tabVal === REGISTRY && (
               <TabContainer>
                 <MeshModelComponent settingsRouter={settingsRouter} />
+              </TabContainer>
+            )}
+
+            {tabVal === CONTROLLERS && (
+              <TabContainer>
+                <MesheryControllersConfig />
               </TabContainer>
             )}
 
