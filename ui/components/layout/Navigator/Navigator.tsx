@@ -209,10 +209,10 @@ const NavigatorWrapper = () => {
   const { isDrawerCollapsed } = useSelector((state) => state.ui);
 
   useEffect(() => {
-    if (isMobile && !isDrawerCollapsed) {
+    if (isMobile) {
       dispatch(toggleDrawer({ isDrawerCollapsed: true }));
     }
-  }, [dispatch, isDrawerCollapsed, isMobile]);
+  }, [dispatch, isMobile]);
 
   return <NavigatorContent />;
 };
