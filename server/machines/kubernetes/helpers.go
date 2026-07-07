@@ -58,6 +58,7 @@ func GetMachineCtx(machinectx interface{}, eb *events.EventBuilder) (*MachineCtx
 		}
 		return nil, err
 	}
+
 	return machineCtx, nil
 }
 

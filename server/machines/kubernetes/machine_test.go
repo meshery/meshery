@@ -50,11 +50,9 @@ func TestAssignInitialCtx_AttachesLoggerBeforeClientSetAssignment(t *testing.T) 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, models.UserCtxKey, user)
 	ctx = context.WithValue(ctx, models.SystemIDKey, &sysID)
-	// ProviderCtxKey: a typed-nil is fine — AssignControllerHandlers is only
-	// reached after AssignClientSetToContext, and that's the point we want
-	// to defend. If AssignClientSetToContext returns an error we never reach
-	// controller setup, which matches the production scenario.
-	var provider models.Provider
+	// ProviderCtxKey: Assign a concrete provider to pass the validation check in
+	// AssignInitialCtx, which ensures we reach AssignClientSetToContext.
+	var provider models.Provider = &models.DefaultLocalProvider{}
 	ctx = context.WithValue(ctx, models.ProviderCtxKey, provider)
 
 	machinectx := &MachineCtx{

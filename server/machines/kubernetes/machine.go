@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/meshery/schemas/models/core"
 
@@ -149,9 +150,21 @@ func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachin
 }
 
 func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	user, ok := ctx.Value(models.UserCtxKey).(*models.User)
+	if !ok || user == nil {
+		err := fmt.Errorf("user missing from context")
+		return nil, events.NewEvent().WithCategory("connection").WithAction("register").WithDescription(err.Error()).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+	}
+	sysID, ok := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	if !ok || sysID == nil {
+		err := fmt.Errorf("system ID missing from context")
+		return nil, events.NewEvent().WithCategory("connection").WithAction("register").WithDescription(err.Error()).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+	}
+	provider, ok := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if !ok || machines.IsProviderNil(provider) {
+		err := fmt.Errorf("provider missing from context")
+		return nil, events.NewEvent().WithCategory("connection").WithAction("register").WithDescription(err.Error()).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+	}
 	userUUID := user.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromOwner(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id

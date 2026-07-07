@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"time"
 
@@ -34,9 +35,21 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 		logrus.Error(err)
 		os.Exit(1)
 	}
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	user, ok := ctx.Value(models.UserCtxKey).(*models.User)
+	if !ok || user == nil {
+		err := fmt.Errorf("user missing from context")
+		return machines.NoOp, events.NewEvent().WithCategory("connection").WithAction("update").WithDescription(err.Error()).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+	}
+	sysID, ok := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	if !ok || sysID == nil {
+		err := fmt.Errorf("system ID missing from context")
+		return machines.NoOp, events.NewEvent().WithCategory("connection").WithAction("update").WithDescription(err.Error()).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+	}
+	provider, ok := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if !ok || machines.IsProviderNil(provider) {
+		err := fmt.Errorf("provider missing from context")
+		return machines.NoOp, events.NewEvent().WithCategory("connection").WithAction("update").WithDescription(err.Error()).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+	}
 	userUUID := user.ID
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")

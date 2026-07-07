@@ -3,6 +3,7 @@ package machines
 import (
 	"context"
 	"fmt"
+	"reflect"
 	"sync"
 
 	"github.com/meshery/meshery/server/models"
@@ -11,6 +12,21 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
 )
+
+// IsProviderNil safely checks whether a provider interface is nil,
+// including whether it wraps a typed-nil pointer (e.g., *RemoteProvider == nil).
+func IsProviderNil(p models.Provider) bool {
+	if p == nil {
+		return true
+	}
+	v := reflect.ValueOf(p)
+	//nolint:govet // required: reflect-based nil checks trigger a false positive in CI
+	switch v.Kind() {
+	case reflect.Chan, reflect.Func, reflect.Map, reflect.Ptr, reflect.Interface, reflect.Slice:
+		return v.IsNil()
+	}
+	return false
+}
 
 const (
 	Discovery  EventType = "discovery"
@@ -125,12 +141,20 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 	return DefaultState, ErrInvalidTransitionEvent(sm.CurrentState, event)
 }
 
-// Returns events.Event and error. The func invoking the SendEvent should handle the error and publish the event.
-// wherever possible use the userID and systemID from context as the events can be created from other comps or actors and not only user actors.
-// In cases when the event is received as part of some other event and not explicitly created by an actor, use the useID and systemID of the actor who initially invoked the machine.
+// SendEvent transitions the state machine and returns an events.Event and error. The func invoking the SendEvent should handle the error and publish the event.
+// The context must contain a valid user (*models.User via models.UserCtxKey) and system ID (*core.Uuid via models.SystemIDKey). If they are missing, an error is returned.
+// In cases when the event is received as part of some other event and not explicitly created by an actor, ensure the context is passed down from the actor who initially invoked the machine.
 func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) (*events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	user, ok := ctx.Value(models.UserCtxKey).(*models.User)
+	if !ok || user == nil {
+		err := fmt.Errorf("user missing from context")
+		return events.NewEvent().WithCategory("connection").WithAction(string(eventType)).WithDescription(err.Error()).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).ActedUpon(sm.ID).Build(), err
+	}
+	sysID, ok := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	if !ok || sysID == nil {
+		err := fmt.Errorf("system ID missing from context")
+		return events.NewEvent().WithCategory("connection").WithAction(string(eventType)).WithDescription(err.Error()).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).ActedUpon(sm.ID).FromOwner(user.ID).Build(), err
+	}
 	userUUID := user.ID
 	ctx = context.WithValue(ctx, models.ProviderCtxKey, sm.Provider)
 	defaultEvent := events.NewEvent().WithDescription(fmt.Sprintf("Invalid status change requested to %s for connection type %s.", eventType, sm.Name)).ActedUpon(sm.ID).FromOwner(userUUID).FromSystem(*sysID).WithSeverity(events.Error)
@@ -198,7 +222,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		sm.CurrentState = nextState
 	}
 
-	if sm.Provider != nil && eventType != Exit {
+	if !IsProviderNil(sm.Provider) && eventType != Exit {
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
 		connection, _, err := sm.Provider.GetConnectionByID(token, sm.ID)
 

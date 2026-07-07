@@ -19,10 +19,22 @@ func (da *DiscoverAction) ExecuteOnEntry(ctx context.Context, machineCtx interfa
 }
 
 func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	user, ok := ctx.Value(models.UserCtxKey).(*models.User)
+	if !ok || user == nil {
+		err := fmt.Errorf("user missing from context")
+		return machines.NoOp, events.NewEvent().WithCategory("connection").WithAction("update").WithDescription(err.Error()).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+	}
+	sysID, ok := ctx.Value(models.SystemIDKey).(*core.Uuid)
+	if !ok || sysID == nil {
+		err := fmt.Errorf("system ID missing from context")
+		return machines.NoOp, events.NewEvent().WithCategory("connection").WithAction("update").WithDescription(err.Error()).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+	}
+	provider, ok := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if !ok || machines.IsProviderNil(provider) {
+		err := fmt.Errorf("provider missing from context")
+		return machines.NoOp, events.NewEvent().WithCategory("connection").WithAction("update").WithDescription(err.Error()).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+	}
 	userUUID := user.ID
-	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
 
