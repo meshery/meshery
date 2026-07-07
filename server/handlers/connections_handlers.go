@@ -366,6 +366,11 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		writeMeshkitError(w, ErrRequestBody(err), http.StatusInternalServerError)
 		return
 	}
+	var (
+		oldDeploymentMode     connections.MeshsyncDeploymentMode
+		newDeploymentMode     connections.MeshsyncDeploymentMode
+		deploymentModeChanged bool
+	)
 
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
 
@@ -411,6 +416,9 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 
 		// Log and emit event if mode actually changed
 		if modeChanged {
+			oldDeploymentMode = oldMode
+			newDeploymentMode = newMode
+			deploymentModeChanged = modeChanged
 			description := fmt.Sprintf("MeshSync deployment mode changed from '%s' to '%s' for connection %s", oldMode, newMode, connectionID)
 			metadata := map[string]any{
 				"meshsyncDeploymentModeOld": oldMode,
@@ -453,6 +461,14 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 
 	// TODO enhance event with information about meshsync deployment mode change
 	description := fmt.Sprintf("Connection %s updated.", updatedConnection.Name)
+	if deploymentModeChanged {
+		description = fmt.Sprintf(
+			"Connection %s updated. MeshSync deployment mode changed from '%s' to '%s'.",
+			updatedConnection.Name,
+			oldDeploymentMode,
+			newDeploymentMode,
+		)
+	}
 	eventBuilder = eventBuilder.WithDescription(description)
 
 	if connection.Status != "" {
