@@ -1,7 +1,7 @@
 import type React from 'react';
 
 type BuildFiltersTableOptionsArgs = {
-  user: any;
+  isLocalProvider: boolean;
   count: number;
   page: number;
   pageSize: number;
@@ -26,7 +26,7 @@ type BuildFiltersTableOptionsArgs = {
 };
 
 export function buildFiltersTableOptions({
-  user,
+  isLocalProvider,
   count,
   page,
   pageSize,
@@ -47,7 +47,7 @@ export function buildFiltersTableOptions({
   return {
     filter: false,
     viewColumns: false,
-    sort: !(user && user.userId === 'meshery'),
+    sort: !isLocalProvider,
     search: false,
     filterType: 'textField',
     responsive: 'standard',

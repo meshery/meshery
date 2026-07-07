@@ -697,10 +697,15 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 		return nil, ErrUnmarshal(err, "User Pref")
 	}
 
-	prefLocal, _ := l.ReadFromPersister(up.UserId)
+	prefLocal, _ := l.ReadFromPersister(up.ID.String())
 
-	if prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences) {
-		_ = l.WriteToPersister(up.UserId, up.Preferences)
+	// Guard up.Preferences: up is pre-initialized with a non-nil Preferences, so
+	// an absent `preferences` field stays non-nil; but an explicit
+	// `"preferences": null` from the remote provider overwrites it to nil, and
+	// dereferencing UpdatedAt / RemoteProviderPreferences below would then panic.
+	// Nothing to persist in that case.
+	if up.Preferences != nil && (prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences)) {
+		_ = l.WriteToPersister(up.ID.String(), up.Preferences)
 	}
 
 	// Uncomment when Debug verbosity is figured out project wide. | @leecalcote
