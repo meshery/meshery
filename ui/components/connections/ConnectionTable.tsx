@@ -49,6 +49,13 @@ const ConnectionConfigureModal = dynamic(() => import('./ConnectionConfigureModa
   ssr: false,
 });
 
+// Lazy-loaded for the same reason: only mounted for Kubernetes connections
+// when the controllers configuration action is invoked.
+const ConnectionControllersConfigModal = dynamic(
+  () => import('./ConnectionControllersConfigModal'),
+  { ssr: false },
+);
+
 const ConnectionTable = ({
   selectedFilter,
   selectedConnectionId,
@@ -131,6 +138,8 @@ const ConnectionTable = ({
   const [configureConnection, setConfigureConnection] = useState<ConfigurableConnection | null>(
     null,
   );
+  const [controllersConfigConnection, setControllersConfigConnection] =
+    useState<ConfigurableConnection | null>(null);
   const open = Boolean(anchorEl);
   const deploymentModeOpen = Boolean(deploymentModeAnchorEl);
   const modalRef = useRef<{ show: (options: unknown) => Promise<string | null> } | null>(null);
@@ -408,6 +417,16 @@ const ConnectionTable = ({
     handleActionMenuClose();
     if (connection) {
       setConfigureConnection(connection as ConfigurableConnection);
+    }
+  }, [getConnectionAtRowIndex, handleActionMenuClose, rowData?.rowIndex]);
+
+  const handleConfigureControllers = useCallback(() => {
+    const connection = getConnectionAtRowIndex(rowData?.rowIndex);
+    handleActionMenuClose();
+    // Operator / MeshSync / Broker configuration applies to Kubernetes
+    // connections only.
+    if (connection && (connection as ConfigurableConnection).kind === 'kubernetes') {
+      setControllersConfigConnection(connection as ConfigurableConnection);
     }
   }, [getConnectionAtRowIndex, handleActionMenuClose, rowData?.rowIndex]);
 
@@ -763,6 +782,13 @@ const ConnectionTable = ({
         onFlushMeshSync={handleFlushMeshSync}
         onDeploymentModeAnchor={handleDeploymentModeAnchorOpen}
         onConfigure={handleConfigureConnection}
+        onConfigureControllers={
+          rowData?.rowIndex != null &&
+          (getConnectionAtRowIndex(rowData.rowIndex) as ConfigurableConnection | null)?.kind ===
+            'kubernetes'
+            ? handleConfigureControllers
+            : undefined
+        }
         onCopyLink={
           rowData?.rowIndex != null
             ? () => {
@@ -779,6 +805,15 @@ const ConnectionTable = ({
           isOpen={Boolean(configureConnection)}
           connection={configureConnection}
           onClose={() => setConfigureConnection(null)}
+        />
+      )}
+
+      {controllersConfigConnection?.id && (
+        <ConnectionControllersConfigModal
+          isOpen={Boolean(controllersConfigConnection)}
+          connectionId={String(controllersConfigConnection.id)}
+          connectionName={controllersConfigConnection.name}
+          onClose={() => setControllersConfigConnection(null)}
         />
       )}
 
