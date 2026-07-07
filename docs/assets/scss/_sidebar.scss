@@ -92,8 +92,13 @@
     right: -3rem;
     bottom: 3rem;
     
+    @media (max-width: 75em) {
+      right: -2rem;
+      bottom: 0.75rem;
+    }
+
     @media (max-width: 37.5em) {
-      right: 0.75rem;
+      right: -2rem;
       bottom: 0.75rem;
     }
   }
