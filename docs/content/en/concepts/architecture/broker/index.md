@@ -64,7 +64,10 @@ status:
 ```
 
 See [How does the operator expose information about broker endpoints?]({{< ref "concepts/architecture/operator/index.md#how-does-the-operator-expose-information-about-broker-endpoints" >}})
-for the endpoint selection order.
+for the endpoint selection order. For the Broker's place in the full
+configuration surface of Meshery's in-cluster components - including when to
+choose each service type - see
+[Configuring Meshery Operator, MeshSync, and Broker]({{< ref "guides/infrastructure-management/configuring-operator-meshsync-broker.md#configuring-meshery-broker" >}}).
 
 ## Common tasks
 

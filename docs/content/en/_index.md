@@ -7,7 +7,7 @@ linkTitle: Documentation
 ---
 
 <div style="display:grid; justify-items:center">
-  <div style="align-self:center; margin-bottom:0px; margin-top:0px;padding-top:0px; padding-bottom:0px;width:clamp(170px, 50%, 800px);">
+  <div class="home-hero-logo" style="align-self: center; margin: 0; padding: 0; width: clamp(170px, 50%, 800px);">
     {{< svg/meshery-logo >}}
   </div>
   <h3 style="font-size:1.6rem">As a self-service engineering platform, Meshery enables collaborative design and operation of cloud and cloud native infrastructure.</h3>
@@ -16,7 +16,7 @@ linkTitle: Documentation
 <div class="flex container">
   <!-- OVERVIEW -->
   <div class="section">
-    <a href="{{< ref "project/_index.md" >}}">
+    <a href="{{< ref "installation/_index.md" >}}">
         <div class="btn-primary">Overview & Installation</div>
     </a>
     <ul>
