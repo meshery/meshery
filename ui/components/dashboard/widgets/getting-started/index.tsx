@@ -25,7 +25,9 @@ const GetStarted = (props: { iconsProps?: object }) => {
   const { data: profileData } = useGetUserByIdQuery(currentUser?.id, {
     skip: !currentUser?.id,
   });
-  const { data: userPrefs } = useGetUserPrefQuery();
+  const { data: userPrefs } = useGetUserPrefQuery(undefined, {
+    skip: !currentUser?.id,
+  });
   const { organization: currentOrg } = useSelector((state: RootState) => state.ui);
   const org_id = currentOrg?.id;
   return (
@@ -34,16 +36,19 @@ const GetStarted = (props: { iconsProps?: object }) => {
         title="GETTING STARTED"
         description="New here? Follow along these guided tasks to help you get the most of your account."
         onClick={() => setOpenModal(true)}
-        profileData={{
-          ...profileData,
-          preferences: userPrefs,
-        }}
+        profileData={
+          profileData
+            ? { ...profileData, preferences: userPrefs ?? profileData.preferences }
+            : profileData
+        }
         btnTitle="Start"
         icon={
           <GetStartedIcon {...props.iconsProps} {...iconMedium} fill={theme.palette.icon.default} />
         }
         showProgress={true}
-        completedSteps={userPrefs?.remoteProviderPreferences?.getstarted || []}
+        completedSteps={
+          (userPrefs ?? profileData?.preferences)?.remoteProviderPreferences?.getstarted || []
+        }
         totalSteps={stepsData.length}
       />
 
@@ -52,10 +57,11 @@ const GetStarted = (props: { iconsProps?: object }) => {
         handleClose={() => setOpenModal(false)}
         handleOpen={() => setOpenModal(true)}
         stepsData={stepsData}
-        profileData={{
-          ...profileData,
-          preferences: userPrefs,
-        }}
+        profileData={
+          profileData
+            ? { ...profileData, preferences: userPrefs ?? profileData.preferences }
+            : profileData
+        }
         useUpdateUserPrefMutation={useUpdateUserPrefMutation}
         currentOrgId={org_id}
         useGetOrgsQuery={useGetOrgsQuery}
