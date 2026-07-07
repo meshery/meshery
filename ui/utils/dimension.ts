@@ -33,13 +33,13 @@ export function useWindowDimensions() {
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
   useEffect(() => {
-    let searchTimeout;
+    let resizeDebounceTimeout: ReturnType<typeof window.setTimeout> | undefined;
 
     function handleResize() {
-      if (searchTimeout) {
-        clearTimeout(searchTimeout);
+      if (resizeDebounceTimeout !== undefined) {
+        clearTimeout(resizeDebounceTimeout);
       }
-      searchTimeout = setTimeout(() => {
+      resizeDebounceTimeout = window.setTimeout(() => {
         setWindowDimensions(getWindowDimensions());
       }, 500);
     }
@@ -47,8 +47,8 @@ export function useWindowDimensions() {
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
-      if (searchTimeout) {
-        clearTimeout(searchTimeout);
+      if (resizeDebounceTimeout !== undefined) {
+        clearTimeout(resizeDebounceTimeout);
       }
     };
   }, []);
