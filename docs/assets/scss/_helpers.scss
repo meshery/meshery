@@ -122,11 +122,11 @@ summary {
   font-weight: normal;
 
   a {
-    color: var(--details-link-color) !important;
+    color: var(--details-link-color);
     text-decoration: none;
 
     &:hover {
-      color: var(--brand-color-secondary) !important;
+      color: var(--brand-color-secondary);
     }
   }
 }
@@ -162,10 +162,10 @@ details > ul {
   margin-bottom: 0;
 
   li a {
-    color: var(--details-link-color) !important;
+    color: var(--details-link-color);
 
     &:hover {
-      color: var(--brand-color-secondary) !important;
+      color: var(--brand-color-secondary);
     }
   }
 }
