@@ -32,7 +32,7 @@ In other words, Organizations are a capability that a Remote Provider extends Me
 
 While the Organization is the core of Meshery's security boundary, identity, access, and authorization are determined by a combination of three considerations:
 
-1. **org-connected IdP (identity and authentication)** — More than one Organization can share the same identity providers, in both canonical and on-eTLD custom host classes. Authentication is resolved at the IdP level, not at the org boundary.
+ 1. **Organization-connected identity provider (IdP) (identity and authentication)** — More than one Organization can share the same identity provider(s), in both canonical and custom-domain host classes under the same effective top-level domain (eTLD). Authentication is resolved at the IdP level, not at the Organization boundary.
 
 2. **Assigned org-scoped keys, keychains, and roles (generic permission to perform an operation)** — A user's keys, keychains, and roles are scoped per-organization. The same user can and will have different permissions depending on which Organization context they are operating in.
 
