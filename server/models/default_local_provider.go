@@ -375,7 +375,7 @@ func (l *DefaultLocalProvider) fetchUserDetails() *User {
 	avatarUrl := ""
 	localEmail := types.Email("meshery@meshery.local")
 	return &User{
-		UserId:    "meshery",
+		ID:        LocalProviderUserID,
 		FirstName: "Meshery",
 		LastName:  "Meshery",
 		Email:     localEmail,
@@ -677,7 +677,7 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 		return "", ErrMarshal(err, "meshery result for shipping")
 	}
 	user, _ := l.GetUserDetails(req)
-	pref, _ := l.ReadFromPersister(user.UserId)
+	pref, _ := l.ReadFromPersister(user.ID.String())
 	if !pref.AnonymousPerfResults {
 		return "", nil
 	}

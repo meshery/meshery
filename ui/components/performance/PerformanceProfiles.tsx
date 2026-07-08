@@ -36,6 +36,7 @@ import { useWindowDimensions } from '@/utils/dimension';
 import { ConditionalTooltip } from '@/utils/utils';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { isLocalProvider } from '@/utils/provider';
 import { ButtonTextWrapper, ProfileContainer, ViewSwitchBUtton } from './style';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import { useDispatch, useSelector } from 'react-redux';
@@ -72,7 +73,7 @@ function PerformanceProfile({ handleDelete }) {
   const { notify } = useNotification();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const { user } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
 
   const [deletePerformanceProfile] = useDeletePerformanceProfileMutation();
@@ -347,8 +348,7 @@ function PerformanceProfile({ handleDelete }) {
     filter: false,
     search: false,
     viewColumns: false,
-    sort: !(user && user.userId === 'meshery'),
-    // search : !(user && user.userId === "meshery"),
+    sort: !isLocalProvider(providerCapabilities),
     filterType: 'textField',
     responsive: 'standard',
     resizableColumns: true,
