@@ -4,9 +4,10 @@
   --sidebar-width: 360px;
   --sidebar-wrapper-width: 375px;
 
-  // Colors that will not change in the dark mode.
+  // Colors that will change in the dark mode.
   --brand-color-primary: #00d3a9;
   --brand-color-secondary: #00b39f;
+  --details-link-color: #004d40;
   --brand-color-secondary-50: rbga(0, 179, 159, .5);
   --color-white: #fff;
   // #EBC017;
@@ -90,8 +91,10 @@
 }
 
 .dark-mode {
-  --brand-color: #00d3a9;
+  --brand-color-primary: #00d3a9;
   --brand-color-secondary: #00b39f;
+  --details-link-color: #00d3a9;
+  --brand-color: #00d3a9;
   --brand-color-tertiary: #3C494F;
   --color-primary-light: #212529;
   --color-primary-medium: #343a40;

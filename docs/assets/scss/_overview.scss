@@ -64,7 +64,7 @@ div.overview:hover {
 
 a:hover,
 a > strong:hover {
-  color: #00d3a9;
+  color: var(--brand-color-secondary);
 }
 
 @media (max-width: 900px) {

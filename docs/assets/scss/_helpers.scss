@@ -120,6 +120,15 @@ summary {
   cursor: pointer;
   font-size: 1.1rem;
   font-weight: normal;
+
+  a {
+    color: var(--details-link-color) !important;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--brand-color-secondary) !important;
+    }
+  }
 }
 
 summary:before {
@@ -151,4 +160,12 @@ details summary::-webkit-details-marker {
 details > ul {
   padding: 1rem auto;
   margin-bottom: 0;
+
+  li a {
+    color: var(--details-link-color) !important;
+
+    &:hover {
+      color: var(--brand-color-secondary) !important;
+    }
+  }
 }

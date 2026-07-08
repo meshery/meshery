@@ -14,35 +14,40 @@
   padding: 1rem;
   background: transparent;
   text-decoration: none;
-  transition: border-color 200ms cubic-bezier(.08,.52,.52,1);
+  transition: border-color 200ms cubic-bezier(.08,.52,.52,1), background-color 200ms cubic-bezier(.08,.52,.52,1);
 
   &:hover {
     border-color: var(--brand-color-secondary);
+    background-color: var(--brand-color-secondary);
+
+    .toc-label {
+      color: rgba(255, 255, 255, 0.85) !important;
+    }
+
+    .toc-title {
+      color: var(--color-white) !important;
+    }
   }
 }
 
 .toc-label {
-  color: var(--color-white);
+  color: var(--color-grey-dark);
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
+  transition: color 200ms ease;
 }
 
 .toc-title {
-  color: var(--brand-color-secondary);
+  color: var(--details-link-color);
   font-size: 1rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  .fa-chevron-right::before, .fa-chevron-left::before {
-    color: var(--brand-color-secondary);
+  transition: color 200ms ease;
+
+  .arrow i {
     font-size: 1rem;
-  }
-  &:hover {
-    .fa-chevron-right::before, .fa-chevron-left::before {
-        color: var(--color-white);
-    }
-    color: var(--color-white);
   }
 }
 
