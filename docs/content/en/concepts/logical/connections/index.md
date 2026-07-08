@@ -16,6 +16,14 @@ Managed Connections are those that are discovered by MeshSync and are managed by
 
 Bringing a cluster that already runs production workloads under Meshery's management? See [Bringing Existing Infrastructure Under Meshery Management]({{< ref "guides/infrastructure-management/managing-existing-infrastructure.md" >}}) for what discovery does - and deliberately does not do - to pre-existing resources.
 
+## Access Control for Connections
+
+Access to a Connection, and therefore its associated Credentials, is allowed if **any** of the following is true:
+
+1. **Direct ownership:** The Connection Owner (UserID) matches the current user's ID.
+
+2. **Indirect access:** The Connection is assigned to an Environment that is linked to a Workspace, and the current user is a member of a Team that has access to that Workspace. In other words, if a user is a member of a team that has access to a workspace that is linked to an environment containing the connection, then, the user automatically inherits access control and authorization over the linked Environments, Connections, Credentials, Designs, and Views.
+
 ## States and the Lifecycle of Connections
 
 Meshery tracks the status of each connections throughout the connection's lifecycle. Meshery is intentional about the currently assigned state and which state a connection may or may not transition to and from. To better understand connection states and their meaning, let's consider an example in which you a `Kubernetes` cluster with `Prometheus` installed.

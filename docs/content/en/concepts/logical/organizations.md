@@ -28,6 +28,16 @@ In other words, Organizations are a capability that a Remote Provider extends Me
 - **Access control** — with a Remote Provider, Organizations carry roles and permissions that govern what each member may do with the Organization's resources.
 - **Identity and branding** — a Remote Provider can extend an Organization with its own identity provider, custom domain, and branding (see [With a Remote Provider](#organizations-with-a-remote-provider) below).
 
+## How Identity, Access, and Authorization Are Determined
+
+While the Organization is the core of Meshery's security boundary, identity, access, and authorization are determined by a combination of three considerations:
+
+1. **org-connected IdP (identity and authentication)** — More than one Organization can share the same identity providers, in both canonical and on-eTLD custom host classes. Authentication is resolved at the IdP level, not at the org boundary.
+
+2. **Assigned org-scoped keys, keychains, and roles (generic permission to perform an operation)** — A user's keys, keychains, and roles are scoped per-organization. The same user can and will have different permissions depending on which Organization context they are operating in.
+
+3. **Resource access mapping (granular access to a specific resource)** — Resource access can and will cross organizational boundaries. A user does not need to be a member of an Organization to access a resource that belongs to it. For example, a Design shared by a user of one Organization with a user in another Organization.
+
 ## Where Organizations fit
 
 Organizations sit at the top of Meshery's logical hierarchy:
