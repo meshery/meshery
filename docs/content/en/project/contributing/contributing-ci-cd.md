@@ -16,6 +16,8 @@ Meshery's CI/CD toolchain automates and standardizes how the project is built, t
 
 Meshery's Makefile is organized around a set of core recipes that follow a shared standard. Any change to one of these recipes must preserve that standard.
 
+Recipes follow a `noun-verb` naming scheme, in which the noun identifies the component the recipe acts upon and the verb identifies the action performed upon it. A recipe that serves the documentation site is therefore named `site-serve` rather than `serve-site`. Naming recipes in this order keeps those that act upon the same component grouped together.
+
 A recipe resolves directly to the local command it runs rather than delegating to another script. For example, a recipe that serves the documentation site locally invokes the tool directly:
 
 {{< code code=`site:
