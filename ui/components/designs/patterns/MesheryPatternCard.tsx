@@ -101,7 +101,7 @@ function MesheryPatternCard_({
   const editInConfigurator = () => {
     router.push('/configuration/designs/configurator?design_id=' + id);
   };
-  const isOwner = user?.userId == pattern?.userId;
+  const isOwner = !!user?.id && user.id === pattern?.userId;
   const userCanEdit = CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) || isOwner;
 
   const formatPatternFile = (file) => {

@@ -42,7 +42,7 @@ func uuidPtr(u core.Uuid) *core.Uuid {
 
 func (wp *WorkspacePersister) fetchUserDetails() *User {
 	return &User{
-		UserId:    "meshery",
+		ID:        LocalProviderUserID,
 		FirstName: "Meshery",
 		LastName:  "Meshery",
 	}
@@ -112,8 +112,8 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 			Description:    ws.Description,
 			ID:             ws.ID,
 			Name:           ws.Name,
-			OrganizationId: uuidPtr(ws.OrganizationID),
-			OwnerId:        ws.Owner,
+			OrganizationID: uuidPtr(ws.OrganizationID),
+			OwnerID:        ws.Owner,
 			UpdatedAt:      ws.UpdatedAt,
 		}
 		availableWorkspaces = append(availableWorkspaces, aw)
@@ -166,7 +166,7 @@ func (wp *WorkspacePersister) DeleteWorkspace(workspace *workspace.Workspace) ([
 	}
 	err = wp.DB.Delete(workspace).Error
 	if err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
 	// Marshal the workspace to JSON
@@ -383,7 +383,7 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
 
 	// Delete the environment mapping
 	if err := wp.DB.Delete(&wsEnvMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
 	wsJSON, err := json.Marshal(wsEnvMapping)
@@ -442,7 +442,7 @@ func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID co
 
 	// Delete the design mapping
 	if err := wp.DB.Delete(&wsDesignMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
 	wsJSON, err := json.Marshal(wsDesignMapping)
@@ -592,7 +592,7 @@ func (wp *WorkspacePersister) DeleteViewFromWorkspace(workspaceID, viewID core.U
 	}
 
 	if err := wp.DB.Delete(&wsViewMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
 	wsJSON, err := json.Marshal(wsViewMapping)
@@ -720,7 +720,7 @@ func (wp *WorkspacePersister) DeleteTeamFromWorkspace(workspaceID, teamID core.U
 	}
 
 	if err := wp.DB.Delete(&wsTeamMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
 	wsJSON, err := json.Marshal(wsTeamMapping)
