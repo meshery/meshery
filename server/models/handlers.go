@@ -214,6 +214,11 @@ type HandlerInterface interface {
 	DeleteConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
+	GetControllersDefaultConfig(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	UpdateControllersDefaultConfig(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetConnectionControllersConfig(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	UpdateConnectionControllersConfig(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
 	ExportModel(w http.ResponseWriter, req *http.Request)
 
 	GetEnvironments(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)

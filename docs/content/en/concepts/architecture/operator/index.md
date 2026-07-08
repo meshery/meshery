@@ -57,6 +57,10 @@ state without fighting other controllers, watches the objects it owns
 (including the Broker's Services), and reports health through standard status
 `conditions` on each custom resource.
 
+To customize what these custom resources declare - MeshSync's discovery scope,
+version, and scale, and the Broker's version, scale, and service networking -
+see [Configuring Meshery Operator, MeshSync, and Broker]({{< ref "guides/infrastructure-management/configuring-operator-meshsync-broker.md" >}}).
+
 ## Controllers managed by Meshery Operator
 
 ### Broker Controller

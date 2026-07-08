@@ -39,7 +39,7 @@ describe('buildFiltersTableOptions', () => {
 
   const build = (overrides: any = {}) =>
     buildFiltersTableOptions({
-      user: { userId: 'u-1' },
+      isLocalProvider: false,
       count: 10,
       page: 0,
       pageSize: 25,
@@ -59,8 +59,8 @@ describe('buildFiltersTableOptions', () => {
       ...overrides,
     });
 
-  it('disables sort for the meshery user', () => {
-    expect(build({ user: { userId: 'meshery' } }).sort).toBe(false);
+  it('disables sort on the local provider and enables it on a remote provider', () => {
+    expect(build({ isLocalProvider: true }).sort).toBe(false);
     expect(build().sort).toBe(true);
   });
 
