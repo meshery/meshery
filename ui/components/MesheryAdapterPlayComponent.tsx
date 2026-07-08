@@ -672,7 +672,6 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
             pageSize={pageSize}
             search={search}
             sortOrder={sortOrder}
-            user={props.user}
             fetchSMIResults={fetchSMIResults}
             onPageChange={setPage}
             onPageSizeChange={setPageSize}

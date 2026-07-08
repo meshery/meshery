@@ -230,11 +230,32 @@ setup_connection() {
   echo ""
   echo ""
 
-  echo "Printing meshsync logs..." 
-  # Get the pod name for the deployment
-  MESHSYNC_DEPLOYMENT_POD_NAME=$(kubectl get pods --namespace "$MESHERY_K8S_NAMESPACE" --selector=app=meshery,component=meshsync -o jsonpath='{.items[0].metadata.name}')
-  # Output logs from the pod
-  kubectl --namespace $MESHERY_K8S_NAMESPACE logs $MESHSYNC_DEPLOYMENT_POD_NAME
+  echo "Printing meshsync workload state..."
+  # The meshsync Deployment intermittently carries a second, broken
+  # ReplicaSet (its pod sits in InvalidImageName; observed on green master
+  # runs too, e.g. run 28722881637). Dump the rollout state so the
+  # underlying bug is diagnosable from any run.
+  kubectl --namespace $MESHERY_K8S_NAMESPACE get deployment meshery-meshsync \
+    -o custom-columns='NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image,GEN:.metadata.generation' || true
+  kubectl --namespace $MESHERY_K8S_NAMESPACE get replicasets \
+    --selector=app=meshery,component=meshsync \
+    -o custom-columns='NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image,DESIRED:.spec.replicas,REVISION:.metadata.annotations.deployment\.kubernetes\.io/revision' || true
+  kubectl --namespace $MESHERY_K8S_NAMESPACE get meshsyncs.meshery.io meshery-meshsync \
+    -o yaml --show-managed-fields || true
+  kubectl --namespace $MESHERY_K8S_NAMESPACE get events \
+    --field-selector involvedObject.kind=Pod --sort-by='.lastTimestamp' | tail -20 || true
+  echo ""
+
+  echo "Printing meshsync logs..."
+  # Log every meshsync pod rather than items[0]: pod names sort by random
+  # hash, so with a broken second ReplicaSet present the single-pod variant
+  # fails or succeeds by alphabetical accident. A pod whose container never
+  # started cannot serve logs; report and continue.
+  for MESHSYNC_POD_NAME in $(kubectl get pods --namespace "$MESHERY_K8S_NAMESPACE" --selector=app=meshery,component=meshsync -o jsonpath='{.items[*].metadata.name}'); do
+    echo "--- logs: $MESHSYNC_POD_NAME ---"
+    kubectl --namespace $MESHERY_K8S_NAMESPACE logs "$MESHSYNC_POD_NAME" \
+      || echo "logs unavailable for $MESHSYNC_POD_NAME (container not started)"
+  done
   echo ""
   echo ""
 

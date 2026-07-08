@@ -40,6 +40,8 @@ const User = (props) => {
 
   useEffect(() => {
     if (!userLoaded && isGetUserSuccess) {
+      // userData is normalized by getLoggedInUser's transformResponse
+      // (userId backfilled from id for the v1beta3 Cloud response).
       dispatch(updateUser({ user: userData }));
       setUserLoaded(true);
     } else if (isGetUserError) {
