@@ -185,11 +185,13 @@
         requestAnimationFrame(restoreScroll);
 
         // Save scroll position on click or scroll
-        $(sidebarContainer).on('click', 'a', function() {
-          try {
-            sessionStorage.setItem('sidebar-scroll', sidebarContainer.scrollTop);
-          } catch (e) {
-            console.warn('Could not save sidebar scroll on click:', e);
+        sidebarContainer.addEventListener('click', function(event) {
+          if (event.target.closest('a')) {
+            try {
+              sessionStorage.setItem('sidebar-scroll', sidebarContainer.scrollTop);
+            } catch (e) {
+              console.warn('Could not save sidebar scroll on click:', e);
+            }
           }
         });
 
