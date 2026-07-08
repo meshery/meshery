@@ -105,7 +105,7 @@ td {
 &lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Customizable Permissions&lt;/div&gt;
 &lt;p&gt;Default permissions can be easily customized by simply creating your own keychains and roles.&lt;/div&gt;&lt;/p&gt;
 &lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Contributing to Permission Keys&lt;/div&gt;
-&lt;p&gt;To contribute permission keys, see the &lt;a href='/reference/extensibility/authorization/'&gt;Authorization Extensibility Documentation&lt;/a&gt;. This guide explains Meshery&amp;rsquo;s extensible authorization system.&lt;/div&gt;&lt;/p&gt;
+&lt;p&gt;To contribute permission keys, see the &lt;a href='/reference/extensibility/authorization/#adding-a-new-permission-key'&gt;Adding a New Permission Key Guide&lt;/a&gt;. This guide explains Meshery&amp;rsquo;s extensible authorization system.&lt;/div&gt;&lt;/p&gt;
 &lt;div style="overflow-x:auto;"&gt;
 &lt;style&gt;
  tbody {
