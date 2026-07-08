@@ -1,14 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const sidebar = document.querySelector('.models-alphabet-sidebar');
   const wrapper = document.querySelector('.models-sidebar-wrapper');
   const sections = document.querySelectorAll('.models-list section[id^="models-group-"]');
   const links = document.querySelectorAll('.alphabet-link');
 
-  if (!sidebar || !wrapper || sections.length === 0 || links.length === 0) return;
+  if (!wrapper || sections.length === 0 || links.length === 0) return;
 
   function updateActiveLetter() {
     let currentActive = null;
-    const scrollPosition = window.scrollY;
     const viewportMid = window.innerHeight / 3;
 
     for (let section of sections) {
@@ -46,9 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function updateSidebarPlacement() {
     const nav = document.querySelector('.models-top-nav');
     if (!nav) return;
-    const rect = nav.getBoundingClientRect();
-    const topOffset = rect.top;
-    wrapper.style.top = `${topOffset}px`;
+    wrapper.style.top = `${nav.getBoundingClientRect().top}px`;
   }
 
   window.addEventListener('resize', updateSidebarPlacement);
