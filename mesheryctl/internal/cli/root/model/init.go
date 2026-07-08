@@ -88,7 +88,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 				return ErrModelInitFromString(
 					fmt.Sprintf(
 						errInitFolderExists,
-						modelVersionFolder,
+						displayModelVersionFolder,
 					),
 				)
 			}
@@ -272,13 +272,6 @@ var initModelData = []struct {
 			utils.Log.Info("Creating credentials directory...")
 		},
 	},
-}
-
-func modelDisplayPath(path string) string {
-	if path == "" {
-		return "."
-	}
-	return strings.ReplaceAll(filepath.Clean(path), `\`, "/")
 }
 
 func initModelReadTemplate(templatePath string) ([]byte, error) {

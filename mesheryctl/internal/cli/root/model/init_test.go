@@ -219,7 +219,7 @@ func TestModelInit(t *testing.T) {
 			ExpectedResponse:   "",
 			AfterTestRemoveDir: "./" + initTestEC2Controller,
 			IsOutputGolden:     false,
-			ExpectedError:      ErrModelInitFromString(fmt.Sprintf(errInitFolderExists, filepath.Join(initTestEC2Controller, initTestInvalidVersion))),
+			ExpectedError:      ErrModelInitFromString(fmt.Sprintf(errInitFolderExists, modelDisplayPath(filepath.Join(initTestEC2Controller, initTestInvalidVersion)))),
 		},
 		{
 			Name:             "given invalid version format when model init then throw error",
@@ -357,6 +357,11 @@ func TestModelDisplayPath(t *testing.T) {
 			name:     "windows separator path",
 			path:     `models\aws-controller\v0.1.0`,
 			expected: "models/aws-controller/v0.1.0",
+		},
+		{
+			name:     "windows separator path with parent directory",
+			path:     `models\..\aws-controller\v0.1.0`,
+			expected: "aws-controller/v0.1.0",
 		},
 	}
 
