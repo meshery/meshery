@@ -8,6 +8,7 @@ import { ResizableCell } from '../../../../utils/utils';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
+import { safeJsonParse } from '../../../../utils/json-parse';
 
 export const buildPodColumns = ({
   switchView,
@@ -85,8 +86,8 @@ export const buildPodColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
-          let hostIP = attribute?.hostIP;
+          const attribute = safeJsonParse<{ hostIP?: string; podIP?: string; nodeName?: string }>(val);
+          const hostIP = attribute?.hostIP;
           return <>{hostIP}</>;
         },
       },
@@ -100,8 +101,8 @@ export const buildPodColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
-          let podIP = attribute?.podIP;
+          const attribute = safeJsonParse<{ hostIP?: string; podIP?: string; nodeName?: string }>(val);
+          const podIP = attribute?.podIP;
           return <>{podIP}</>;
         },
       },
@@ -125,7 +126,7 @@ export const buildPodColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(value) {
-          const parsedStatus = JSON.parse(value);
+          const parsedStatus = safeJsonParse<{ containerStatuses?: Array<{ restartCount?: number }> }>(value);
           const totalRestarts = parsedStatus?.containerStatuses?.reduce(
             (sum, container) => sum + (container.restartCount || 0),
             0,
@@ -143,7 +144,7 @@ export const buildPodColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(value) {
-          const parsedSpec = JSON.parse(value);
+          const parsedSpec = safeJsonParse<{ containers?: Array<unknown> }>(value);
           return <>{parsedSpec?.containers?.length ?? 0}</>;
         },
       },
@@ -157,8 +158,8 @@ export const buildPodColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
-          let nodeName = attribute?.nodeName;
+          const attribute = safeJsonParse<{ hostIP?: string; podIP?: string; nodeName?: string }>(val);
+          const nodeName = attribute?.nodeName;
           return (
             <>
               <ResizableCell value={nodeName} />

@@ -7,6 +7,7 @@ import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { FormatId } from '@/components/data-formatter';
+import { safeJsonParse } from '../../../../utils/json-parse';
 
 export const buildHorizontalPodAutoscalerColumns = ({
   switchView,
@@ -84,7 +85,7 @@ export const buildHorizontalPodAutoscalerColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
+          const attribute = safeJsonParse<{ minReplicas?: number; maxReplicas?: number; currentReplicas?: number }>(val);
           let minReplicas = attribute?.minReplicas;
           return <>{minReplicas}</>;
         },
@@ -99,7 +100,7 @@ export const buildHorizontalPodAutoscalerColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
+          const attribute = safeJsonParse<{ minReplicas?: number; maxReplicas?: number; currentReplicas?: number }>(val);
           let maxReplicas = attribute?.maxReplicas;
           return <>{maxReplicas}</>;
         },
@@ -114,7 +115,7 @@ export const buildHorizontalPodAutoscalerColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
+          const attribute = safeJsonParse<{ minReplicas?: number; maxReplicas?: number; currentReplicas?: number }>(val);
           let currentReplicas = attribute?.currentReplicas;
           return <>{currentReplicas}</>;
         },

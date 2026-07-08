@@ -7,6 +7,7 @@ import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { FormatId } from '@/components/data-formatter';
+import { safeJsonParse } from '../../../../utils/json-parse';
 
 export const buildLeasesColumns = ({
   switchView,
@@ -84,7 +85,7 @@ export const buildLeasesColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
+          const attribute = safeJsonParse<{ holderIdentity?: string }>(val);
           let holderIdentity = attribute?.holderIdentity;
           return <>{holderIdentity}</>;
         },

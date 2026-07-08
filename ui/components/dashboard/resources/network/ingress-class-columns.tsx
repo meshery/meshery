@@ -7,6 +7,7 @@ import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChi
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
+import { safeJsonParse } from '../../../../utils/json-parse';
 
 export const buildIngressClassColumns = ({
   switchView,
@@ -84,7 +85,7 @@ export const buildIngressClassColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
+          const attribute = safeJsonParse<{ controller?: string }>(val);
           let controller = attribute?.controller;
           return <>{controller}</>;
         },

@@ -10,6 +10,7 @@ import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
+import { safeJsonParse } from '../../../../utils/json-parse';
 
 export const useNodeTableConfig = (
   switchView,
@@ -91,7 +92,7 @@ export const useNodeTableConfig = (
             return <DefaultTableCell columnData={column} />;
           },
           customBodyRender: function CustomBody(val) {
-            let attribute = JSON.parse(val);
+            const attribute = safeJsonParse<{ capacity?: { cpu?: string; memory?: string }; addresses?: Array<{ type?: string; address?: string }> }>(val);
             let capacity = attribute?.capacity;
             return <>{capacity?.cpu}</>;
           },
@@ -106,7 +107,7 @@ export const useNodeTableConfig = (
             return <DefaultTableCell columnData={column} />;
           },
           customBodyRender: function CustomBody(val) {
-            let attribute = JSON.parse(val);
+            const attribute = safeJsonParse<{ capacity?: { cpu?: string; memory?: string }; addresses?: Array<{ type?: string; address?: string }> }>(val);
             let capacity = attribute?.capacity;
             let memory = getResourceStr(resourceParsers['memory'](capacity?.memory), 'memory');
             return <>{memory}</>;
@@ -157,7 +158,7 @@ export const useNodeTableConfig = (
             return <DefaultTableCell columnData={column} />;
           },
           customBodyRender: function CustomBody(val) {
-            let attribute = JSON.parse(val);
+            const attribute = safeJsonParse<{ capacity?: { cpu?: string; memory?: string }; addresses?: Array<{ type?: string; address?: string }> }>(val);
             let addresses = attribute?.addresses || [];
             let internalIP =
               addresses?.find((address) => address.type === 'InternalIP')?.address || '';
@@ -174,7 +175,7 @@ export const useNodeTableConfig = (
             return <DefaultTableCell columnData={column} />;
           },
           customBodyRender: function CustomBody(val) {
-            let attribute = JSON.parse(val);
+            const attribute = safeJsonParse<{ capacity?: { cpu?: string; memory?: string }; addresses?: Array<{ type?: string; address?: string }> }>(val);
             let addresses = attribute?.addresses || [];
             let externalIP = addresses?.find((address) => address.type === 'ExternalIP')
               ?.address || <span style={{ display: 'flex', justifyContent: 'center' }}>-</span>;

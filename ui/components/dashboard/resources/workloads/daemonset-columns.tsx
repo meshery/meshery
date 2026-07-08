@@ -7,6 +7,7 @@ import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChi
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
+import { safeJsonParse } from '../../../../utils/json-parse';
 
 export const buildDaemonSetColumns = ({
   switchView,
@@ -84,10 +85,10 @@ export const buildDaemonSetColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
-          let template = attribute?.template;
-          let spec = template?.spec;
-          let nodeSelector = spec?.nodeSelector;
+          const attribute = safeJsonParse<{ template?: { spec?: { nodeSelector?: Record<string, string> } } }>(val);
+          const template = attribute?.template;
+          const spec = template?.spec;
+          const nodeSelector = spec?.nodeSelector;
           return <>{JSON.stringify(nodeSelector)}</>;
         },
       },

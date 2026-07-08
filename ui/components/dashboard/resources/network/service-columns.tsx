@@ -7,6 +7,7 @@ import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChi
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
+import { safeJsonParse } from '../../../../utils/json-parse';
 
 export const buildServiceColumns = ({
   switchView,
@@ -88,7 +89,7 @@ export const buildServiceColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
+          const attribute = safeJsonParse<{ type?: string; clusterIP?: string; loadbalancer?: { ingress?: Array<{ hostname?: string }> }; ports?: Array<{ port?: number; targetPort?: number; protocol?: string }> }>(val);
           let type = attribute?.type;
           return <>{type}</>;
         },
@@ -103,7 +104,7 @@ export const buildServiceColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
+          const attribute = safeJsonParse<{ type?: string; clusterIP?: string; loadbalancer?: { ingress?: Array<{ hostname?: string }> }; ports?: Array<{ port?: number; targetPort?: number; protocol?: string }> }>(val);
           let clusterIP = attribute?.clusterIP;
           return <>{clusterIP}</>;
         },
@@ -118,7 +119,7 @@ export const buildServiceColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
+          const attribute = safeJsonParse<{ type?: string; clusterIP?: string; loadbalancer?: { ingress?: Array<{ hostname?: string }> }; ports?: Array<{ port?: number; targetPort?: number; protocol?: string }> }>(val);
           let loadbalancer = attribute?.loadbalancer;
           let ingresses = loadbalancer?.ingress;
           return (
@@ -145,7 +146,7 @@ export const buildServiceColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val, tableMeta) {
-          let attribute = JSON.parse(val);
+          const attribute = safeJsonParse<{ type?: string; clusterIP?: string; loadbalancer?: { ingress?: Array<{ hostname?: string }> }; ports?: Array<{ port?: number; targetPort?: number; protocol?: string }> }>(val);
           let ports = attribute?.ports;
 
           const showViewAll = ports?.length > 1;

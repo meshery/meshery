@@ -9,6 +9,7 @@ import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
+import { safeJsonParse } from '../../../../utils/json-parse';
 
 export const useStorageTableConfig = (
   switchView,
@@ -91,7 +92,7 @@ export const useStorageTableConfig = (
               return <DefaultTableCell columnData={column} />;
             },
             customBodyRender: function CustomBody(val) {
-              let attribute = JSON.parse(val);
+              const attribute = safeJsonParse<{ storageClassName?: string; claimRef?: { name?: string }; capacity?: { storage?: string }; phase?: string; resources?: { requests?: { storage?: string } } }>(val);
               let storageClassName = attribute?.storageClassName;
               return <>{storageClassName}</>;
             },
@@ -106,7 +107,7 @@ export const useStorageTableConfig = (
               return <DefaultTableCell columnData={column} />;
             },
             customBodyRender: function CustomBody(val) {
-              let attribute = JSON.parse(val);
+              const attribute = safeJsonParse<{ storageClassName?: string; claimRef?: { name?: string }; capacity?: { storage?: string }; phase?: string; resources?: { requests?: { storage?: string } } }>(val);
               let claimRef = attribute?.claimRef;
               let name = claimRef?.name;
               return <>{name}</>;
@@ -122,7 +123,7 @@ export const useStorageTableConfig = (
               return <DefaultTableCell columnData={column} />;
             },
             customBodyRender: function CustomBody(val) {
-              let attribute = JSON.parse(val);
+              const attribute = safeJsonParse<{ storageClassName?: string; claimRef?: { name?: string }; capacity?: { storage?: string }; phase?: string; resources?: { requests?: { storage?: string } } }>(val);
               let capacity = attribute?.capacity;
               let storage = capacity?.storage;
               return <>{storage}</>;
@@ -138,7 +139,7 @@ export const useStorageTableConfig = (
               return <DefaultTableCell columnData={column} />;
             },
             customBodyRender: function CustomBody(val) {
-              let attribute = JSON.parse(val);
+              const attribute = safeJsonParse<{ storageClassName?: string; claimRef?: { name?: string }; capacity?: { storage?: string }; phase?: string; resources?: { requests?: { storage?: string } } }>(val);
               let phase = attribute?.phase;
               return <>{phase}</>;
             },
@@ -264,7 +265,7 @@ export const useStorageTableConfig = (
               return <DefaultTableCell columnData={column} />;
             },
             customBodyRender: function CustomBody(val) {
-              let attribute = JSON.parse(val);
+              const attribute = safeJsonParse<{ storageClassName?: string; claimRef?: { name?: string }; capacity?: { storage?: string }; phase?: string; resources?: { requests?: { storage?: string } } }>(val);
               let storageClassName = attribute?.storageClassName;
               return <>{storageClassName}</>;
             },
@@ -279,7 +280,7 @@ export const useStorageTableConfig = (
               return <DefaultTableCell columnData={column} />;
             },
             customBodyRender: function CustomBody(val) {
-              let attribute = JSON.parse(val);
+              const attribute = safeJsonParse<{ storageClassName?: string; claimRef?: { name?: string }; capacity?: { storage?: string }; phase?: string; resources?: { requests?: { storage?: string } } }>(val);
               let resources = attribute?.resources;
               let requests = resources?.requests;
               let storage = requests?.storage;
@@ -296,7 +297,7 @@ export const useStorageTableConfig = (
               return <DefaultTableCell columnData={column} />;
             },
             customBodyRender: function CustomBody(val) {
-              let attribute = JSON.parse(val);
+              const attribute = safeJsonParse<{ storageClassName?: string; claimRef?: { name?: string }; capacity?: { storage?: string }; phase?: string; resources?: { requests?: { storage?: string } } }>(val);
               let phase = attribute?.phase;
               return <>{phase}</>;
             },

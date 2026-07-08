@@ -7,6 +7,7 @@ import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChi
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
+import { safeJsonParse } from '../../../../utils/json-parse';
 
 export const buildIngressColumns = ({
   switchView,
@@ -86,7 +87,7 @@ export const buildIngressColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
+          const attribute = safeJsonParse<{ loadBalancer?: { ingress?: Array<{ ip?: string }> }; rules?: Array<{ host?: string }> }>(val);
           let loadBalancer = attribute?.loadBalancer;
           let ingress = loadBalancer?.ingress;
           const IPs = ingress?.map((ingress) => ingress.ip);
@@ -103,7 +104,7 @@ export const buildIngressColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
+          const attribute = safeJsonParse<{ loadBalancer?: { ingress?: Array<{ ip?: string }> }; rules?: Array<{ host?: string }> }>(val);
 
           let rules = attribute?.rules;
           return (

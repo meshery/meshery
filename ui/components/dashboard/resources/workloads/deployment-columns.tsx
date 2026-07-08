@@ -7,6 +7,7 @@ import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChi
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
+import { safeJsonParse } from '../../../../utils/json-parse';
 
 export const buildDeploymentColumns = ({
   switchView,
@@ -86,7 +87,7 @@ export const buildDeploymentColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const parsedStatus = JSON.parse(val);
+          const parsedStatus = safeJsonParse<{ replicas?: number; availableReplicas?: number }>(val);
           const pods =
             parsedStatus?.replicas === undefined
               ? parsedStatus?.availableReplicas?.toString()
@@ -106,8 +107,8 @@ export const buildDeploymentColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
-          let replicas = attribute?.replicas;
+          const attribute = safeJsonParse<{ replicas?: number; template?: { spec?: { restartPolicy?: string } } }>(val);
+          const replicas = attribute?.replicas;
           return <>{replicas}</>;
         },
       },
@@ -121,10 +122,10 @@ export const buildDeploymentColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
-          let template = attribute?.template;
-          let spec = template?.spec;
-          let restartPolicy = spec?.restartPolicy;
+          const attribute = safeJsonParse<{ replicas?: number; template?: { spec?: { restartPolicy?: string } } }>(val);
+          const template = attribute?.template;
+          const spec = template?.spec;
+          const restartPolicy = spec?.restartPolicy;
           return <>{restartPolicy}</>;
         },
       },
