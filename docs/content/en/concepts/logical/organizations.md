@@ -36,7 +36,7 @@ While the Organization is the core of Meshery's security boundary, identity, acc
 
 2. **Assigned org-scoped keys, keychains, and roles (generic permission to perform an operation)** — A user's keys, keychains, and roles are scoped per-organization. The same user can and will have different permissions depending on which Organization context they are operating in.
 
-3. **Resource access mapping (granular access to a specific resource)** — Resource access can and will cross organizational boundaries. A user does not need to be a member of an Organization to access a resource that belongs to it. For example, a Design shared by a user of one Organization with a user in another Organization.
+3. **Resource sharing and access mappings (granular access to a specific resource)** — While Organizations isolate resources by default, explicit sharing (for example, sharing a Design with a user in another Organization) can grant cross-organization access to a specific resource without Organization membership.
 
 ## Where Organizations fit
 
