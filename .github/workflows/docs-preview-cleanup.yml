@@ -1,0 +1,39 @@
+name: Deploy Docs Preview Cleanup
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [master]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/build-and-preview-docs.yml'
+      - 'mesheryctl/doc/**'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cleanup-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        with:
+          egress-policy: audit
+
+      - name: Checkout for cleanup
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          fetch-depth: 0
+          sparse-checkout: |
+            pr-preview
+
+      - name: Cleanup PR preview on close
+        uses: rossjrw/pr-preview-action@8ff09e486b4c23709012eedd3b42e9f0b95dd0c5 #1.6.3
+        with:
+          action: remove

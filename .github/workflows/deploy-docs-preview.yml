@@ -1,0 +1,211 @@
+name: Deploy Docs Preview
+
+on:
+  workflow_run:
+    workflows: ["Build Docs Preview"]
+    types: [completed]
+    
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read 
+
+concurrency:
+  group: deploy-preview-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+
+env:
+  PREVIEW_RETENTION_LIMIT: 6
+
+jobs:
+  deploy:
+    if: >
+        github.event.workflow_run.event == 'pull_request' &&
+        github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        with:
+          egress-policy: audit
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: docs-preview-build
+          path: docs-preview-build
+          run-id: ${{ github.event.workflow_run.id }}
+    
+      - name: Retrieve PR Number
+        id: pr
+        run: |
+         echo "PULL_REQUEST=$(cat ./docs-preview-build/pr/number)" >> $GITHUB_OUTPUT
+
+      - name: Deploy PR preview
+        uses: rossjrw/pr-preview-action@8ff09e486b4c23709012eedd3b42e9f0b95dd0c5 #1.6.3
+        with:
+          source-dir: ./docs-preview-build/docs/public
+          action: deploy
+          comment: false
+
+      - name: Checkout gh-pages for preview retention
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          fetch-depth: 0
+          sparse-checkout: |
+            pr-preview
+          path: gh-pages-maintenance
+
+      - name: Prune old PR previews
+        id: prune-previews
+        # Pruning is best-effort housekeeping on the shared gh-pages branch.
+        # Many docs preview runs write to gh-pages at once, so it must never be
+        # the reason a preview is reported as failed: the push is retried against
+        # the freshest state, and the step is continue-on-error as a backstop.
+        continue-on-error: true
+        run: |
+          cd gh-pages-maintenance
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Write safe defaults first. $GITHUB_OUTPUT is last-write-wins, so even
+          # if this step is interrupted, the downstream "Comment on pruned
+          # previews" job sees a valid empty list rather than an empty string.
+          {
+            echo "removed_prs="
+            echo "removed_prs_json=[]"
+          } >> "$GITHUB_OUTPUT"
+
+          # A naive push to the shared gh-pages branch loses the race with other
+          # concurrent preview runs ("! [rejected] (fetch first)"). Re-derive the
+          # prune from the freshest remote state on every attempt and retry with
+          # backoff so a lost race self-heals instead of failing the workflow.
+          removed_prs=()
+          outcome=""
+          attempts=5
+
+          for attempt in $(seq 1 "$attempts"); do
+            git fetch --quiet origin gh-pages
+            git reset --quiet --hard FETCH_HEAD
+            mkdir -p pr-preview
+
+            mapfile -t previews < <(
+              while IFS= read -r preview; do
+                timestamp="$(git log -1 --format=%ct -- "pr-preview/$preview" 2>/dev/null || echo 0)"
+                printf '%s %s\n' "$timestamp" "$preview"
+              done < <(find pr-preview -mindepth 1 -maxdepth 1 -type d -name 'pr-*' -printf '%f\n') \
+                | sort -nr \
+                | awk '{print $2}'
+            )
+
+            removed_prs=()
+            if (( ${#previews[@]} > PREVIEW_RETENTION_LIMIT )); then
+              for preview in "${previews[@]:PREVIEW_RETENTION_LIMIT}"; do
+                rm -rf "pr-preview/$preview"
+                removed_prs+=("${preview#pr-}")
+              done
+            fi
+
+            # Within the retention limit, or another run already pruned: done.
+            if git diff --quiet -- pr-preview; then
+              outcome="noop"
+              break
+            fi
+
+            git add pr-preview
+            git commit --quiet -m "Prune old PR previews"
+
+            if git push origin HEAD:gh-pages; then
+              outcome="pushed"
+              break
+            fi
+
+            echo "Prune push lost the race (attempt ${attempt}/${attempts}); re-syncing gh-pages and retrying..."
+            sleep "$(( attempt * 5 + RANDOM % 5 ))"
+          done
+
+          if [ -z "$outcome" ]; then
+            echo "::warning::Could not prune old PR previews after ${attempts} attempts due to concurrent gh-pages updates; a later run will retry. Not failing the preview."
+            removed_prs=()
+          fi
+
+          if [ "${#removed_prs[@]}" -eq 0 ]; then
+            {
+              echo "removed_prs="
+              echo "removed_prs_json=[]"
+            } >> "$GITHUB_OUTPUT"
+          else
+            {
+              echo "removed_prs=$(IFS=,; echo "${removed_prs[*]}")"
+              echo "removed_prs_json=$(printf '%s\n' "${removed_prs[@]}" | jq -R . | jq -sc .)"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment PR with Preview URL
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 #v3.0.5
+        with:
+          number: ${{ steps.pr.outputs.PULL_REQUEST }}
+          header: pr-preview
+          message: |
+            🚀 Preview deployment: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-preview/pr-${{ steps.pr.outputs.PULL_REQUEST }}/
+            > *Note: Preview may take a moment (GitHub Pages deployment in progress). Please wait and refresh. Track deployment [here](https://github.com/${{ github.repository }}/actions/workflows/pages/pages-build-deployment)*
+
+      - name: Comment on pruned previews
+        uses: actions/github-script@v8
+        if: steps.prune-previews.outputs.removed_prs_json != '[]'
+        env:
+          REMOVED_PRS_JSON: ${{ steps.prune-previews.outputs.removed_prs_json }}
+          PREVIEW_RETENTION_LIMIT: ${{ env.PREVIEW_RETENTION_LIMIT }}
+        with:
+          script: |
+            const removedPrs = JSON.parse(process.env.REMOVED_PRS_JSON);
+            const retentionLimit = process.env.PREVIEW_RETENTION_LIMIT;
+            const header = "pr-preview";
+            const marker = `<!-- Sticky Pull Request Comment${header} -->`;
+
+            for (const prNumber of removedPrs) {
+              const body =
+                `Preview deployment for PR #${prNumber} removed.\n\n` +
+                `This PR preview was automatically pruned because we keep only the ${retentionLimit} most recently updated previews on GitHub Pages to stay within deployment size limits.\n\n` +
+                `If needed, push a new commit to this PR to generate a fresh preview.\n` +
+                `${marker}`;
+
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: Number(prNumber),
+                per_page: 100,
+              });
+
+              const existingComment = [...comments].reverse().find((comment) =>
+                comment.user?.login === "github-actions[bot]" &&
+                comment.body?.includes(marker)
+              );
+
+              if (existingComment) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existingComment.id,
+                  body,
+                });
+                continue;
+              }
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: Number(prNumber),
+                body,
+              });
+            }
+      - name: Comment PR on preview failure
+        if: failure() 
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 #v3.0.5
+        with:
+          header: pr-preview-status
+          message: |
+            ❌ Docs preview build failed for `${{ github.workflow }}`.
+            Please review the [workflow logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for remediation details.
+      
