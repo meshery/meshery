@@ -379,6 +379,69 @@ func TestRelationshipEvaluationScenarios(t *testing.T) {
 			},
 		},
 		{
+			// Ragged ref lists: the pair count is clamped to the shorter of
+			// mutatorRef/mutatedRef, like the Go engine, so the extra
+			// mutator entry is ignored rather than dropping the whole
+			// selector.
+			name:  "patch_mutators_clamps_to_shorter_ref_list",
+			query: "data.eval_rules.patch_mutators_action(input.relationship, input.design_file)",
+			input: map[string]interface{}{
+				"relationship": map[string]interface{}{
+					"selectors": []map[string]interface{}{
+						{
+							"allow": map[string]interface{}{
+								"from": []map[string]interface{}{
+									{
+										"id": "route-1",
+										"patch": map[string]interface{}{
+											"mutatorRef": [][]string{
+												{"configuration", "spec", "target"},
+												{"configuration", "spec", "extra"},
+											},
+										},
+									},
+								},
+								"to": []map[string]interface{}{
+									{
+										"id": "integration-1",
+										"patch": map[string]interface{}{
+											"mutatedRef": [][]string{{"configuration", "spec", "integrationID"}},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				"design_file": map[string]interface{}{
+					"components": []map[string]interface{}{
+						{
+							"id": "route-1",
+							"configuration": map[string]interface{}{
+								"spec": map[string]interface{}{"target": "integrations/abc", "extra": "x"},
+							},
+						},
+						{
+							"id":            "integration-1",
+							"configuration": map[string]interface{}{"spec": map[string]interface{}{}},
+						},
+					},
+				},
+			},
+			expectError: false,
+			designFile:  "inline",
+			expected: []interface{}{
+				map[string]interface{}{
+					"op": "update_component_configuration",
+					"value": map[string]interface{}{
+						"id":    "integration-1",
+						"path":  []interface{}{"configuration", "spec", "integrationID"},
+						"value": "integrations/abc",
+					},
+				},
+			},
+		},
+		{
 			// Positive control for the case above: the common from-side
 			// mutator orientation keeps working unchanged.
 			name:  "patch_mutators_emits_update_for_from_side_mutator",
@@ -526,8 +589,14 @@ func TestRegoSyntax(t *testing.T) {
 // use this orientation, and the Go engine resolves it
 // (resolveMutatorMutatedRefs), so the Rego engine must identify it too.
 func TestParity_RegoAndGoEngineIdentifyToSideMutatorRelationship(t *testing.T) {
-	vpcLinkID, _ := uuid.FromString("00000000-0000-0000-0000-0000000000a1")
-	integrationID, _ := uuid.FromString("00000000-0000-0000-0000-0000000000a2")
+	vpcLinkID, err := uuid.FromString("00000000-0000-0000-0000-0000000000a1")
+	if err != nil {
+		t.Fatalf("parse vpcLink id: %v", err)
+	}
+	integrationID, err := uuid.FromString("00000000-0000-0000-0000-0000000000a2")
+	if err != nil {
+		t.Fatalf("parse integration id: %v", err)
+	}
 
 	vpcLink := &component.ComponentDefinition{
 		Component:      component.Component{Kind: "VPCLink"},
@@ -586,7 +655,10 @@ func TestParity_RegoAndGoEngineIdentifyToSideMutatorRelationship(t *testing.T) {
 		Model:            modelv1beta1.ModelReference{Name: "aws-apigatewayv2-controller"},
 		Selectors:        &selectorSet,
 	}
-	relDef.ID, _ = uuid.FromString("00000000-0000-0000-0000-0000000000b1")
+	relDef.ID, err = uuid.FromString("00000000-0000-0000-0000-0000000000b1")
+	if err != nil {
+		t.Fatalf("parse relationship id: %v", err)
+	}
 
 	goIdentified := (&EdgeNonBindingPolicy{}).IdentifyRelationship(relDef, design)
 	if len(goIdentified) != 1 {

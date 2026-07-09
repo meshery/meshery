@@ -63,7 +63,9 @@ patch_mutators_action(relationship, design_file) := {action |
 	mutator := clauses[orientation.mutator]
 	mutated := clauses[orientation.mutated]
 
-	some i in numbers.range(0, count(mutator.patch.mutatorRef) - 1)
+	# clamp to the shorter of the two ref lists, like the Go engine
+	pair_count := min([count(mutator.patch.mutatorRef), count(mutated.patch.mutatedRef)])
+	some i in numbers.range(0, pair_count - 1)
 
 	mutatorRef := mutator.patch.mutatorRef[i]
 	mutatedRef := mutated.patch.mutatedRef[i]
@@ -182,7 +184,10 @@ matching_mutators(component_from, component_to, from_clause, to_clause, design_f
 	mutated_component := components[orientation.mutated]
 
 	# print("match_strategy",match_strategy_matrix)
-	mutatorCount := count(mutator_clause.patch.mutatorRef)
+	# clamp to the shorter of the two ref lists and require at least one
+	# pair, like the Go engine
+	mutatorCount := min([count(mutator_clause.patch.mutatorRef), count(mutated_clause.patch.mutatedRef)])
+	mutatorCount > 0
 
 	every i in numbers.range(0, mutatorCount - 1) {
 		mutatorPath := mutator_clause.patch.mutatorRef[i]
