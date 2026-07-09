@@ -43,7 +43,7 @@ Click **Open** when installation is done or click **Meshery** on the left under 
 
 Click **Login** to open the _Meshery Cloud_ login page. Log in or sign up and you will be redirected back to Docker Desktop.
 
-<a href="{{ 'assets/img/platforms/docker-desktop-meshery-extension-login.png' | relURL }}"><img src="{{ 'assets/img/platforms/docker-desktop-meshery-extension-login.png' | relURL }}" alt="Docker Meshery Extension Login" /></a>
+<a href='{{< static "assets/img/platforms/docker-desktop-meshery-extension-login.png" >}}'><img src='{{< static "assets/img/platforms/docker-desktop-meshery-extension-login.png" >}}' alt="Docker Meshery Extension Login" /></a>
 
 Finally, click **Launch Meshery** to load Meshery Dashboard in a browser window. It runs at http://localhost:9081/ by default.
 
