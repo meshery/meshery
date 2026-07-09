@@ -47,11 +47,21 @@ func NewParallelProcessGraph(g *Graph) *ParallelProcessGraph {
 		}
 	}
 
-	// Copy the edges data
+	// Copy the edges data, skipping endpoints that do not map to a known
+	// node: an unknown destination would nil-panic the DepCount bookkeeping
+	// and an unknown source would leave its dependents waiting on a signal
+	// that never arrives.
 	for node, adjacentNodes := range g.Edges {
-		pg.Edges[node] = adjacentNodes
+		if _, ok := pg.ParallelProcessGraphNodeMap[node]; !ok {
+			continue
+		}
 
 		for _, aNode := range adjacentNodes {
+			if _, ok := pg.ParallelProcessGraphNodeMap[aNode]; !ok {
+				continue
+			}
+
+			pg.Edges[node] = append(pg.Edges[node], aNode)
 			pg.ParallelProcessGraphNodeMap[aNode].DepCount++
 		}
 	}
