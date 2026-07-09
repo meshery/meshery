@@ -31,7 +31,7 @@ import { useGetProviderCapabilitiesQuery, useGetSelectedOrganization } from '@/r
 import { isLocalProvider } from '@/utils/provider';
 import SharedContent from './SpacesSwitcher/SharedContent';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import type { Theme } from '@/theme';
 import { NavItem, WorkspacesSection, NavConfigItem } from './WorkspaceFormModalSections';
@@ -72,7 +72,7 @@ const getNavItem = (theme: Theme): NavConfigItem[] => {
       id: 'My-Views',
       label: 'My Views',
       icon: <ViewIcon {...iconSmall} fill={theme.palette.icon.default} />,
-      enabled: CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject),
+      enabled: CAN(Keys.KanvasViewViews.id, Keys.KanvasViewViews.function),
       content: <MyViewsContent />,
     },
     {

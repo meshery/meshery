@@ -24,9 +24,7 @@ vi.mock('../rtk-query/connection', () => ({
   useAddKubernetesConfigMutation: () => [h.addTriggerMock],
 }));
 vi.mock('@/utils/can', () => ({ default: () => true }));
-vi.mock('@/utils/permission_constants', () => ({
-  keys: { ADD_CLUSTER: { action: 'add', subject: 'cluster' } },
-}));
+
 vi.mock('@/utils/hooks/useKubernetesHook', () => ({ default: () => vi.fn() }));
 vi.mock('@/utils/hooks/useTestIDs', () => ({ default: () => () => 'test-id' }));
 vi.mock('@/store/slices/mesheryUi', () => ({ updateProgress: vi.fn() }));

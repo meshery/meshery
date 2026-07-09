@@ -7,7 +7,7 @@ import MeshSyncTable from './meshSync';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '../general/error-404/index';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
 import CustomErrorFallback from '../shared/ErrorBoundary/ErrorBoundary';
@@ -144,7 +144,10 @@ function Connections() {
   if (!isReady) return null;
   return (
     <NoSsr>
-      {CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) ? (
+      {CAN(
+        Keys.WorkspaceManagementViewConnections.id,
+        Keys.WorkspaceManagementViewConnections.function,
+      ) ? (
         <>
           <AppBar position="static" color="default" style={{ marginBottom: '3rem' }}>
             <ConnectionTabs
@@ -176,12 +179,16 @@ function Connections() {
             </ConnectionTabs>
           </AppBar>
 
-          {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
-            <ConnectionTable
-              selectedConnectionId={connectionId}
-              updateUrlWithConnectionId={updateUrlWithConnectionId}
-            />
-          )}
+          {tab === 0 &&
+            CAN(
+              Keys.WorkspaceManagementViewConnections.id,
+              Keys.WorkspaceManagementViewConnections.function,
+            ) && (
+              <ConnectionTable
+                selectedConnectionId={connectionId}
+                updateUrlWithConnectionId={updateUrlWithConnectionId}
+              />
+            )}
           {tab === 1 && (
             <MeshSyncTable
               selectedResourceId={connectionId}
