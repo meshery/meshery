@@ -72,7 +72,7 @@ mesheryctl component search [query-text] --model [model-name] -o yaml
 		if len(args) > 1 {
 			return utils.ErrInvalidArgument(fmt.Errorf("at most one argument (search query) can be provided\n\n%s", searchUsageMsg))
 		}
-		if len(args) == 0 && !cmd.Flags().Changed("model") {
+		if len(args) == 0 && strings.TrimSpace(componentSearchFlags.Model) == "" {
 			return utils.ErrInvalidArgument(fmt.Errorf("provide a search query or use --model flag\n\n%s", searchUsageMsg))
 		}
 		return nil
