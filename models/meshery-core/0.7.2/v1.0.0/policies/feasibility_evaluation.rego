@@ -17,10 +17,21 @@ match_name(name, match) if {
 	regex.match(match, name)
 }
 
+# A component's model name may live under modelReference (the shape of
+# current designs; the full model object is a nullable pointer in the schema
+# and absent from e2e design fixtures) or under the legacy model object. The
+# Go engine normalizes the two before matching (engine.go copies Model.Name
+# into an empty ModelReference.Name); resolve the same way here so
+# modelReference-only components stay visible to feasibility checks.
+component_model_name(comp) := name if {
+	name := comp.modelReference.name
+	name != ""
+} else := comp.model.name
+
 is_relationship_feasible(selector, comp) if {
-	# print("is_relationship_feasible", comp.component.kind, comp.model.name, "-->", selector.kind, selector.model.name)
+	# print("is_relationship_feasible", comp.component.kind, component_model_name(comp), "-->", selector.kind, selector.model.name)
 	match_name(comp.component.kind, selector.kind)
-	match_name(comp.model.name, selector.model.name)
+	match_name(component_model_name(comp), selector.model.name)
 }
 
 is_relationship_feasible_to(component, relationship) := to if {

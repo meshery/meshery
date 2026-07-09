@@ -3,6 +3,7 @@ package policies
 
 import (
 	"context"
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -10,10 +11,15 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/open-policy-agent/opa/v1/ast"
 	"github.com/open-policy-agent/opa/v1/rego"
 	"github.com/open-policy-agent/opa/v1/tester"
 	"github.com/open-policy-agent/opa/v1/topdown"
+
+	"github.com/meshery/schemas/models/v1beta1/component"
+	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // designFileName extracts a human-friendly design file name from a test location.
@@ -309,6 +315,70 @@ func TestRelationshipEvaluationScenarios(t *testing.T) {
 			designFile:  "namespace_parent_inline",
 			expected:    true,
 		},
+		{
+			// Components in current designs carry the model name under
+			// modelReference, not under a full model object (which is a
+			// nullable pointer in the schema and absent from e2e design
+			// fixtures). Feasibility must resolve the name from either
+			// place, like the Go engine does (engine.go normalizes
+			// Model.Name into ModelReference.Name before matching).
+			name:  "feasibility_matches_model_reference_only_component",
+			query: "data.feasibility_evaluation_utils.is_relationship_feasible(input.selector, input.component)",
+			input: map[string]interface{}{
+				"selector": map[string]interface{}{
+					"kind":  "Pod",
+					"model": map[string]interface{}{"name": "kubernetes"},
+				},
+				"component": map[string]interface{}{
+					"component":      map[string]interface{}{"kind": "Pod"},
+					"model":          nil,
+					"modelReference": map[string]interface{}{"name": "kubernetes"},
+				},
+			},
+			expectError: false,
+			designFile:  "inline",
+			expected:    true,
+		},
+		{
+			// Legacy shape keeps working: model object only, no
+			// modelReference.
+			name:  "feasibility_matches_model_only_component",
+			query: "data.feasibility_evaluation_utils.is_relationship_feasible(input.selector, input.component)",
+			input: map[string]interface{}{
+				"selector": map[string]interface{}{
+					"kind":  "Pod",
+					"model": map[string]interface{}{"name": "kubernetes"},
+				},
+				"component": map[string]interface{}{
+					"component": map[string]interface{}{"kind": "Pod"},
+					"model":     map[string]interface{}{"name": "kubernetes"},
+				},
+			},
+			expectError: false,
+			designFile:  "inline",
+			expected:    true,
+		},
+		{
+			// An empty modelReference.name falls back to the model object,
+			// mirroring the Go engine's normalization (which only copies
+			// Model.Name when ModelReference.Name is empty).
+			name:  "feasibility_falls_back_on_empty_model_reference_name",
+			query: "data.feasibility_evaluation_utils.is_relationship_feasible(input.selector, input.component)",
+			input: map[string]interface{}{
+				"selector": map[string]interface{}{
+					"kind":  "Pod",
+					"model": map[string]interface{}{"name": "kubernetes"},
+				},
+				"component": map[string]interface{}{
+					"component":      map[string]interface{}{"kind": "Pod"},
+					"model":          map[string]interface{}{"name": "kubernetes"},
+					"modelReference": map[string]interface{}{"name": ""},
+				},
+			},
+			expectError: false,
+			designFile:  "inline",
+			expected:    true,
+		},
 	}
 
 	for _, tc := range testCases {
@@ -387,5 +457,138 @@ func TestRegoSyntax(t *testing.T) {
 				t.Errorf("Parse error in %s: %v", filepath.Base(file), err)
 			}
 		})
+	}
+}
+
+// TestParity_RegoAndGoEngineIdentifyForModelReferenceOnlyComponent runs alias
+// identification for a design whose component carries its model name only
+// under modelReference (the shape of current designs and the UI e2e design
+// fixtures; ComponentDefinition.Model is a nullable pointer that marshals to
+// null when unset) through BOTH engines and asserts they agree. The Go engine
+// normalizes the two fields before matching (engine.go), so the Rego
+// feasibility check must resolve modelReference too.
+func TestParity_RegoAndGoEngineIdentifyForModelReferenceOnlyComponent(t *testing.T) {
+	podID, err := uuid.FromString("00000000-0000-0000-0000-0000000000c1")
+	if err != nil {
+		t.Fatalf("parse pod id: %v", err)
+	}
+	pod := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Pod"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"containers": []interface{}{
+					map[string]interface{}{"name": "app"},
+					map[string]interface{}{"name": "sidecar"},
+				},
+			},
+		},
+	}
+	pod.ID = podID
+
+	design := makePatternFile([]*component.ComponentDefinition{pod}, nil)
+
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "containers", "_"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "containers", "_"}}
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						Kind: strPtr("Container"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						Kind:  strPtr("Pod"),
+						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &mutatedRef,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	relDef := &relationship.RelationshipDefinition{
+		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
+		RelationshipType: "parent",
+		SubType:          "alias",
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+	relDef.ID, err = uuid.FromString("00000000-0000-0000-0000-0000000000d1")
+	if err != nil {
+		t.Fatalf("parse relationship id: %v", err)
+	}
+
+	goIdentified := (&AliasPolicy{}).IdentifyRelationship(relDef, design)
+	if len(goIdentified) == 0 {
+		t.Fatal("Go engine: expected identified alias relationships, got none")
+	}
+
+	// Feed the byte-identical input to the Rego engine. The marshaled
+	// component has "model": null and the name only under "modelReference",
+	// which is exactly the shape under test.
+	relJSON, err := json.Marshal(relDef)
+	if err != nil {
+		t.Fatalf("marshal relationship: %v", err)
+	}
+	designJSON, err := json.Marshal(design)
+	if err != nil {
+		t.Fatalf("marshal design: %v", err)
+	}
+	var relMap, designMap map[string]interface{}
+	if err := json.Unmarshal(relJSON, &relMap); err != nil {
+		t.Fatalf("unmarshal relationship: %v", err)
+	}
+	if err := json.Unmarshal(designJSON, &designMap); err != nil {
+		t.Fatalf("unmarshal design: %v", err)
+	}
+
+	policiesDir := "../../models/meshery-core/0.7.2/v1.0.0/policies"
+	policyFiles, err := collectRegoFiles(policiesDir)
+	if err != nil {
+		t.Fatalf("collect rego files: %v", err)
+	}
+	var opts []func(*rego.Rego)
+	for _, file := range policyFiles {
+		if strings.Contains(file, "/tests/") || strings.HasSuffix(file, ".template") {
+			continue
+		}
+		content, readErr := os.ReadFile(file)
+		if readErr != nil {
+			t.Fatalf("read %s: %v", file, readErr)
+		}
+		opts = append(opts, rego.Module(file, string(content)))
+	}
+	opts = append(opts,
+		rego.Query(`data.eval.identify_relationship(input.relationship, input.design_file, "alias_relationships_policy")`),
+		rego.Input(map[string]interface{}{
+			"relationship": relMap,
+			"design_file":  designMap,
+		}),
+	)
+
+	rs, err := rego.New(opts...).Eval(context.Background())
+	if err != nil {
+		t.Fatalf("rego eval: %v", err)
+	}
+
+	regoCount := 0
+	if len(rs) > 0 && len(rs[0].Expressions) > 0 {
+		identified, ok := rs[0].Expressions[0].Value.([]interface{})
+		if !ok {
+			t.Fatalf("unexpected rego result shape: %#v", rs[0].Expressions[0].Value)
+		}
+		regoCount = len(identified)
+	}
+
+	if regoCount != len(goIdentified) {
+		t.Fatalf("engine divergence: Go identified %d, Rego identified %d", len(goIdentified), regoCount)
 	}
 }
