@@ -5,6 +5,7 @@ const TAGS = {
   SYSTEM: 'system',
   ADAPTERS: 'adapters',
   SYNC: 'sync',
+  CONNECTIONS: 'Connection_API_Connections',
 };
 
 const systemApi = api.injectEndpoints({
@@ -70,6 +71,15 @@ const systemApi = api.injectEndpoints({
       providesTags: [TAGS.SYSTEM],
     }),
 
+    deleteKubernetesContext: builder.mutation({
+      query: (queryArg) => ({
+        url: mesheryApiPath(`system/kubernetes/contexts/${queryArg.connectionId}`),
+        method: 'DELETE',
+        credentials: 'include',
+      }),
+      invalidatesTags: [TAGS.CONNECTIONS],
+    }),
+
     adapterOperation: builder.mutation({
       query: (queryArg) => ({
         url: mesheryApiPath(queryArg.url || 'system/adapter/operation'),
@@ -128,6 +138,7 @@ export const {
   useLazyGetSystemSyncQuery,
   useGetKubernetesContextsQuery,
   useLazyGetKubernetesContextsQuery,
+  useDeleteKubernetesContextMutation,
   useAdapterOperationMutation,
   useLazyGetSmiResultsQuery,
 } = systemApi;

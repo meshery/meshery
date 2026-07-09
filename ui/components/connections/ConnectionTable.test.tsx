@@ -10,6 +10,7 @@ const ping = vi.fn();
 const pingGrafana = vi.fn();
 const modalShow = vi.fn();
 const updateConnectionByIdMutator = vi.fn();
+const deleteKubernetesContextMutator = vi.fn();
 const addConnectionToEnvironmentMutator = vi.fn();
 const removeConnectionFromEnvironmentMutator = vi.fn();
 const saveEnvironmentMutator = vi.fn();
@@ -193,6 +194,10 @@ vi.mock('@/rtk-query/connection', () => ({
   useUpdateConnectionByIdMutation: () => [updateConnectionByIdMutator],
 }));
 
+vi.mock('@/rtk-query/system', () => ({
+  useDeleteKubernetesContextMutation: () => [deleteKubernetesContextMutator],
+}));
+
 vi.mock('../../assets/icons/disconnect', () => ({
   default: () => <svg />,
 }));
@@ -254,6 +259,7 @@ describe('ConnectionTable', () => {
     refetchConnections.mockReset();
 
     updateConnectionByIdMutator.mockReset();
+    deleteKubernetesContextMutator.mockReset();
     addConnectionToEnvironmentMutator.mockReset();
     removeConnectionFromEnvironmentMutator.mockReset();
     saveEnvironmentMutator.mockReset();
@@ -275,6 +281,9 @@ describe('ConnectionTable', () => {
 
     updateConnectionByIdMutator.mockImplementation(({ connectionId, body }) => ({
       unwrap: () => Promise.resolve({ connectionId, body }),
+    }));
+    deleteKubernetesContextMutator.mockImplementation(({ connectionId }) => ({
+      unwrap: () => Promise.resolve({ connectionId }),
     }));
     addConnectionToEnvironmentMutator.mockImplementation(() => ({
       unwrap: () => Promise.resolve({}),
@@ -378,16 +387,14 @@ describe('ConnectionTable', () => {
 
     await waitFor(() => {
       expect(modalShow).toHaveBeenCalled();
-      expect(updateConnectionByIdMutator).toHaveBeenCalledTimes(2);
+      expect(deleteKubernetesContextMutator).toHaveBeenCalledTimes(2);
     });
 
-    expect(updateConnectionByIdMutator).toHaveBeenNthCalledWith(1, {
+    expect(deleteKubernetesContextMutator).toHaveBeenNthCalledWith(1, {
       connectionId: 'connection-1',
-      body: { status: 'deleted' },
     });
-    expect(updateConnectionByIdMutator).toHaveBeenNthCalledWith(2, {
+    expect(deleteKubernetesContextMutator).toHaveBeenNthCalledWith(2, {
       connectionId: 'connection-2',
-      body: { status: 'deleted' },
     });
   });
 

@@ -52,6 +52,7 @@ describe('system endpoints', () => {
     expect(mod.useLazyGetSystemSyncQuery).toBeTypeOf('function');
     expect(mod.useGetKubernetesContextsQuery).toBeTypeOf('function');
     expect(mod.useLazyGetKubernetesContextsQuery).toBeTypeOf('function');
+    expect(mod.useDeleteKubernetesContextMutation).toBeTypeOf('function');
     expect(mod.useAdapterOperationMutation).toBeTypeOf('function');
     expect(mod.useLazyGetSmiResultsQuery).toBeTypeOf('function');
   });
@@ -156,6 +157,17 @@ describe('system endpoints', () => {
     expect(req.url).toContain('pagesize=10');
     // Empty search string should still be encoded in the params
     expect(req.url).toMatch(/search=&?/);
+  });
+
+  it('deleteKubernetesContext issues DELETE on /api/system/kubernetes/contexts/{id}', async () => {
+    const { api, store } = await setupStore();
+    await store.dispatch(
+      api.endpoints.deleteKubernetesContext.initiate({ connectionId: 'conn-1' }),
+    );
+    const req = fetchMock.mock.calls[0][0] as Request;
+    expect(req.method).toBe('DELETE');
+    expect(req.url).toContain('/api/system/kubernetes/contexts/conn-1');
+    expect(req.credentials).toBe('include');
   });
 
   it('adapterOperation issues POST with form-encoded body and custom url override', async () => {

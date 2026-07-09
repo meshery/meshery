@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const pingKubernetes = vi.fn();
@@ -7,7 +7,8 @@ const getControllerStatesByConnectionID = vi.fn();
 const dispatchMock = vi.fn();
 const notifyMock = vi.fn();
 const fetchSystemSyncMock = vi.fn(() => ({ unwrap: () => Promise.resolve({ k8sConfig: [] }) }));
-const updateConnectionStatusMock = vi.fn(() => ({ unwrap: () => Promise.resolve({}) }));
+const deleteKubernetesContextMock = vi.fn(() => ({ unwrap: () => Promise.resolve({}) }));
+const promptShowMock = vi.fn(() => Promise.resolve('CANCEL'));
 const useGetConnectionsQueryMock = vi.fn(() => ({ data: { connections: [] } }));
 const useGetProviderCapabilitiesQueryMock = vi.fn(() => ({
   data: { providerUrl: 'https://x', extensions: {} },
@@ -37,7 +38,12 @@ vi.mock('../../User', () => ({
 }));
 
 vi.mock('../../../utils/helpers/common', () => ({
-  successHandlerGenerator: () => () => {},
+  successHandlerGenerator:
+    (_notify: any, _message: string, callback?: () => Promise<void>) => async () => {
+      if (callback) {
+        await callback();
+      }
+    },
   errorHandlerGenerator: () => () => {},
 }));
 
@@ -58,15 +64,10 @@ vi.mock('../../connections/ConnectionChip', () => ({
 
 vi.mock('../../../rtk-query/system', () => ({
   useLazyGetSystemSyncQuery: () => [fetchSystemSyncMock],
-}));
-
-vi.mock('../../../rtk-query/connection', () => ({
-  useUpdateConnectionStatusMutation: () => [updateConnectionStatusMock],
-  useGetConnectionsQuery: () => useGetConnectionsQueryMock(),
+  useDeleteKubernetesContextMutation: () => [deleteKubernetesContextMock],
 }));
 
 vi.mock('@/rtk-query/connection', () => ({
-  useUpdateConnectionStatusMutation: () => [updateConnectionStatusMock],
   useGetConnectionsQuery: () => useGetConnectionsQueryMock(),
 }));
 
@@ -78,7 +79,7 @@ vi.mock('../../../utils/Enum', () => ({
 vi.mock('../../PromptComponent', () => ({
   default: React.forwardRef((_props: any, ref: any) => {
     if (ref) {
-      ref.current = { show: vi.fn(() => Promise.resolve('CANCEL')) };
+      ref.current = { show: promptShowMock };
     }
     return <div data-testid="prompt-component" />;
   }),
@@ -407,5 +408,33 @@ describe('Header (default export)', () => {
       />,
     );
     expect(screen.getByTestId('cbadge')).toHaveTextContent('3');
+  });
+
+  it('refreshes the header contexts after deleting a kubernetes connection', async () => {
+    promptShowMock.mockResolvedValueOnce('CONFIRM');
+    const searchContextsMock = vi.fn(() => Promise.resolve());
+
+    render(
+      <Header
+        onDrawerToggle={vi.fn()}
+        contexts={{
+          totalCount: 1,
+          contexts: [
+            { id: 'ctx-1', name: 'cluster-a', server: 'https://a', connectionId: 'conn-1' },
+          ],
+        }}
+        activeContexts={[]}
+        setActiveContexts={vi.fn()}
+        searchContexts={searchContextsMock}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId('chip-delete'));
+
+    await waitFor(() => {
+      expect(deleteKubernetesContextMock).toHaveBeenCalledWith({ connectionId: 'conn-1' });
+      expect(fetchSystemSyncMock).toHaveBeenCalled();
+      expect(searchContextsMock).toHaveBeenCalledWith('');
+    });
   });
 });
