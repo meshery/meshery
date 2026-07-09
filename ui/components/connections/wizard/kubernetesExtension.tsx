@@ -8,6 +8,9 @@ import {
   MenuItem,
   TextField,
   Typography,
+  CloudUploadIcon,
+  AssignmentTurnedInIcon,
+  SettingsIcon,
 } from '@sistent/sistent';
 import { alpha, styled } from '@/theme';
 import { EVENT_TYPES } from 'lib/event-types';
@@ -135,6 +138,7 @@ const KubeconfigStepBody = ({ ctx }: { ctx: WizardContext }) => (
 const kubernetesDetailsStep: WizardStep = {
   id: 'kubeconfig',
   label: 'Import Kubeconfig',
+  icon: CloudUploadIcon,
   Component: KubeconfigStepBody,
   canProceed: (ctx) => Boolean(ctx.data.kubeconfigFile),
   nextLabel: () => 'Discover Contexts',
@@ -301,6 +305,7 @@ const collectCreated = (result: GenericRecord | null): CreatedContext[] => {
 const kubernetesReviewStep: WizardStep = {
   id: 'kubernetes-review',
   label: 'Review Contexts',
+  icon: AssignmentTurnedInIcon,
   Component: ReviewContextsStepBody,
   nextLabel: () => 'Import',
   canProceed: (ctx) => getDiscovered(ctx).some((context) => getChoices(ctx)[context.id]?.selected),
@@ -526,6 +531,7 @@ const ContextsStepBody = ({ ctx }: { ctx: WizardContext }) => {
 const kubernetesContextsStep: WizardStep = {
   id: 'kubernetes-contexts',
   label: 'Manage Clusters',
+  icon: SettingsIcon,
   Component: ContextsStepBody,
   // The creation flow handles selecting + connecting in the review step; this
   // step only adds value when (re)configuring an existing connection that

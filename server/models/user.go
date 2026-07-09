@@ -3,7 +3,8 @@ package models
 import (
 	"encoding/gob"
 
-	userV1beta2 "github.com/meshery/schemas/models/v1beta2/user"
+	"github.com/gofrs/uuid"
+	userV1beta3 "github.com/meshery/schemas/models/v1beta3/user"
 )
 
 func init() {
@@ -15,8 +16,17 @@ var (
 	GlobalTokenForAnonymousResults = "dev_token"
 )
 
+// LocalProviderUserID is the stable synthetic id the built-in local provider
+// uses to key preferences and persister-scoped data for its single "meshery"
+// system user. schemas v1beta3 dropped the string User.UserId ("meshery"); this
+// deterministic (namespaced) uuid replaces it so the local persister key stays
+// stable across restarts. It is a non-zero UUID on purpose - the zero value
+// (uuid.Nil) is treated as "unset" on the remote path (see the
+// `user.ID == uuid.Nil` guards in this package).
+var LocalProviderUserID = uuid.NewV5(uuid.NamespaceDNS, "meshery-local-provider-user")
+
 // User - represents a user in Meshery
-type User = userV1beta2.User
+type User = userV1beta3.User
 
 type AllUsers struct {
 	Page       int     `json:"page"`

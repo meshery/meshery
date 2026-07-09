@@ -1,4 +1,4 @@
-import type { ReactNode, RefObject } from 'react';
+import type { ReactNode, RefObject, ElementType } from 'react';
 import type { ConnectionWizardKindConfig, CredentialRecord } from '../ConnectionWizard.helpers';
 
 export type GenericRecord = Record<string, unknown>;
@@ -44,7 +44,6 @@ export type WizardData = {
 
   // registration outcome
   registrationId: string | null;
-  connectionModel: GenericRecord | null;
   registrationResult: GenericRecord | null;
   registrationError: unknown;
 
@@ -104,6 +103,7 @@ export type WizardContext = {
 export type WizardStep = {
   id: string;
   label: string;
+  icon?: ElementType;
   Component: (props: { ctx: WizardContext }) => ReactNode;
   /** Whether the primary (Next) button is enabled. Defaults to always. */
   canProceed?: (ctx: WizardContext) => boolean;

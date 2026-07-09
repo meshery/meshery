@@ -30,7 +30,7 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 	userID := mux.Vars(r)["id"]
 	_, err := uuid.FromString(userID)
 	if err != nil {
-		writeMeshkitError(w, ErrInvalidUUID(err), http.StatusBadRequest)
+		writeMeshkitError(w, models.ErrInvalidUUID(err), http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetUserByID(r, userID)
@@ -143,7 +143,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		}
 	}
 
-	if err := provider.RecordPreferences(req, user.UserId, prefObj); err != nil {
+	if err := provider.RecordPreferences(req, user.ID.String(), prefObj); err != nil {
 		err := fmt.Errorf("unable to save user preferences: %v", err)
 		h.log.Error(ErrSavingUserPreference(err))
 		writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusInternalServerError)

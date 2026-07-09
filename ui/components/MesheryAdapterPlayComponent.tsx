@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Grid, NoSsr } from '@sistent/sistent';
 import { useRouter } from 'next/router';
-import yaml from 'js-yaml';
+import * as yaml from 'js-yaml';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
 import {
   useAdapterOperationMutation,
@@ -10,7 +10,6 @@ import {
 } from '../rtk-query/system';
 import fetchAvailableAddons from '@/graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from '@/graphql/queries/NamespaceQuery';
-import MesheryMetrics from './performance/MesheryMetrics';
 import MesheryResultDialog from './MesheryResultDialog';
 import ReactSelectWrapper from './ReactSelectWrapper';
 import ConfirmationMsg from '@/components/designs/lifecycle/DeployConfirmationModal';
@@ -62,7 +61,6 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
   const [triggerAdapterOp] = useAdapterOperationMutation();
   const [triggerPingAdapter] = useLazyPingAdapterQuery();
   const [triggerGetSmiResults] = useLazyGetSmiResultsQuery();
-  const { grafana } = useSelector((state) => state.telemetry);
   const router = useRouter();
   const addIconEles = useRef({});
   const delIconEles = useRef({});
@@ -550,17 +548,6 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
     submitOp(ops.category, ops.key, !addonSwitchGroup[ops.key]);
   };
 
-  const renderGrafanaCustomCharts = (boardConfigs, grafanaURL, grafanaAPIKey) => {
-    return (
-      <MesheryMetrics
-        boardConfigs={boardConfigs}
-        grafanaAPIKey={grafanaAPIKey}
-        grafanaURL={grafanaURL}
-        handleGrafanaChartAddition={() => router.push('/settings?settingsCategory=Metrics')}
-      />
-    );
-  };
-
   // Render component
   let adapterName = adapter.name.split(' ').join('').toLowerCase();
   let imageSrc = '/static/img/' + adapterName + '.svg';
@@ -662,16 +649,6 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
                 </Grid>
               </PaneSection>
             </Grid>
-            {/* SECTION 2 */}
-            <Grid item xs={12}>
-              <PaneSection>
-                {renderGrafanaCustomCharts(
-                  grafana.selectedBoardsConfigs,
-                  grafana.grafanaURL,
-                  grafana.grafanaAPIKey,
-                )}
-              </PaneSection>
-            </Grid>
           </Grid>
         </AdapterSmWrapper>
         <ConfirmationMsg
@@ -695,7 +672,6 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
             pageSize={pageSize}
             search={search}
             sortOrder={sortOrder}
-            user={props.user}
             fetchSMIResults={fetchSMIResults}
             onPageChange={setPage}
             onPageSizeChange={setPageSize}

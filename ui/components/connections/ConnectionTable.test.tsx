@@ -7,6 +7,7 @@ import ConnectionTable from './ConnectionTable';
 const notify = vi.fn();
 const push = vi.fn();
 const ping = vi.fn();
+const pingGrafana = vi.fn();
 const modalShow = vi.fn();
 const updateConnectionByIdMutator = vi.fn();
 const addConnectionToEnvironmentMutator = vi.fn();
@@ -129,6 +130,10 @@ vi.mock('@/utils/hooks/useKubernetesHook', () => ({
   default: () => ping,
 }));
 
+vi.mock('@/utils/hooks/useGrafanaPingHook', () => ({
+  default: () => pingGrafana,
+}));
+
 vi.mock('./ConnectionChip', () => ({
   ConnectionStateChip: () => <div />,
   TooltipWrappedConnectionChip: () => <div />,
@@ -172,15 +177,6 @@ vi.mock('@/store/slices/mesheryUi', () => ({
 
 vi.mock('@/utils/can', () => ({
   default: () => true,
-}));
-
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    ASSIGN_CONNECTIONS_TO_ENVIRONMENT: { action: 'assign', subject: 'environment' },
-    CHANGE_CONNECTION_STATE: { action: 'change', subject: 'connection' },
-    DELETE_A_CONNECTION: { action: 'delete', subject: 'connection' },
-    FLUSH_MESHSYNC_DATA: { action: 'flush', subject: 'meshsync' },
-  },
 }));
 
 vi.mock('@/rtk-query/connection', () => ({
@@ -316,7 +312,7 @@ describe('ConnectionTable', () => {
   });
 
   it('hydrates search from a string router query and passes it to the connections query', async () => {
-    router.query = { searchText: 'cluster-a' };
+    router.query = { con_q: 'cluster-a' };
 
     render(<ConnectionTable />);
 

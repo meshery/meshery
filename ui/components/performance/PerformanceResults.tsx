@@ -3,7 +3,6 @@ import MUIDataTable from '@sistent/mui-datatables';
 import Moment from 'react-moment';
 import CustomToolbarSelect from '../CustomToolbarSelect';
 import MesheryChart from '../MesheryChart';
-import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import GenericModal from '../shared/Modal/GenericModal';
 import { Info as InfoIcon, Reply as ReplyIcon } from '@/assets/icons';
 import NodeDetails from './NodeDetails';
@@ -29,6 +28,7 @@ import {
 
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import { useDispatch, useSelector } from 'react-redux';
+import { isLocalProvider } from '@/utils/provider';
 import { updateProgressAction } from '@/store/slices/mesheryUi';
 import { updateResultsSelection } from '@/store/slices/prefTest';
 import { useGetPerformanceProfileResultsQuery } from '@meshery/schemas/mesheryApi';
@@ -359,11 +359,6 @@ function ResultChart({ result, handleTabChange, tabValue }) {
   const row = result.runnerResults;
   if (!row) return <div />;
 
-  const boardConfig = result.serverBoardConfig;
-  const serverMetrics = result.serverMetrics;
-  const startTime = new Date(row.StartTime || result.testStartTime);
-  const endTime = new Date(startTime.getTime() + (row.ActualDuration ?? 0) / 1000000);
-
   return (
     <Paper
       style={{
@@ -385,20 +380,6 @@ function ResultChart({ result, handleTabChange, tabValue }) {
               data={[result && result.runnerResults ? result.runnerResults : {}]}
             />
           </div>
-          {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
-            <div>
-              <GrafanaCustomCharts
-                boardPanelConfigs={[boardConfig]}
-                // @ts-ignore
-                boardPanelData={[serverMetrics]}
-                startDate={startTime}
-                from={startTime.getTime().toString()}
-                endDate={endTime}
-                to={endTime.getTime().toString()}
-                liveTail={false}
-              />
-            </div>
-          )}
         </div>
       ) : tabValue == 1 ? (
         <div>
@@ -418,10 +399,6 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }) {
   const row = result.runnerResults;
   if (!row) return <div />;
 
-  const boardConfig = result.serverBoardConfig;
-  const serverMetrics = result.serverMetrics;
-  const startTime = new Date(row.StartTime || result.testStartTime);
-  const endTime = new Date(startTime.getTime() + (row.ActualDuration ?? 0) / 1000000);
   return (
     <Paper
       style={{
@@ -454,20 +431,6 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }) {
               data={[result && result.runnerResults ? result.runnerResults : {}]}
             />
           </div>
-          {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
-            <div>
-              <GrafanaCustomCharts
-                boardPanelConfigs={[boardConfig]}
-                // @ts-ignore
-                boardPanelData={[serverMetrics]}
-                startDate={startTime}
-                from={startTime.getTime().toString()}
-                endDate={endTime}
-                to={endTime.getTime().toString()}
-                liveTail={false}
-              />
-            </div>
-          )}
         </div>
       ) : (
         <div />
@@ -502,7 +465,7 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
   const [anchorEl, setAnchorEl] = useState([]);
   const [socialMessage, setSocialMessage] = useState();
   const theme = useTheme();
-  const { user } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
   const { results_selection } = useSelector((state) => state.prefTest);
   const searchTimeout = useRef();
@@ -595,8 +558,8 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
   const options = {
     elevation: elevation,
     filter: false,
-    sort: !(user?.userId === 'meshery'),
-    search: !(user?.userId === 'meshery'),
+    sort: !isLocalProvider(providerCapabilities),
+    search: !isLocalProvider(providerCapabilities),
     filterType: 'textField',
     responsive: 'standard',
     resizableColumns: true,

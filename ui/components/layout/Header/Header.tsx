@@ -35,9 +35,10 @@ import {
   useMediaQuery,
   SearchIcon,
   SettingsIcon,
+  FilterAllIcon,
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import OrganizationAndWorkSpaceSwitcher from '../../workspaces/SpacesSwitcher/SpaceSwitcher';
 import HeaderMenu from './HeaderMenu';
 import ConnectionModal from '../../connections/ConnectionFormModal';
@@ -142,11 +143,11 @@ function K8sContextMenu({
   setActiveContexts = () => {},
   searchContexts = () => {},
 }) {
-  const [anchorEl, setAnchorEl] = useState(false);
+  const theme = useTheme();
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
+  const anchorRef = React.useRef(null);
   // The dropdown slides up from below; its translate distance scales with the
   // number of context rows it will render so it ends up flush against the badge.
-  const transformProperty = 100 + (contexts?.contexts?.length || 0) * 3.125;
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
@@ -172,8 +173,7 @@ function K8sContextMenu({
     position: 'absolute',
     left: '-7rem',
     zIndex: '-1',
-    bottom: showFullContextMenu ? '40%' : '-110%',
-    transform: showFullContextMenu ? `translateY(${transformProperty}%)` : 'translateY(0)',
+    top: '60px',
   };
 
   const StateTransitionDetails = styled(Box)(({ theme }) => ({
@@ -247,33 +247,26 @@ function K8sContextMenu({
     }
   };
 
-  let open = Boolean(anchorEl);
-  if (showFullContextMenu) {
-    open = showFullContextMenu;
-  }
-
   const [isConnectionOpenModal, setIsConnectionOpenModal] = useState(false);
 
   return (
     <>
       <div>
-        <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS}>
+        <CanShow
+          Key={{
+            action: Keys.IdentityAccessManagementViewAllKubernetesClusters.id,
+            subject: Keys.IdentityAccessManagementViewAllKubernetesClusters.function,
+          }}
+        >
           <IconButton
+            ref={anchorRef}
             aria-label="contexts"
             className="k8s-icon-button"
             onClick={(e) => {
               e.preventDefault();
               setShowFullContextMenu((prev) => !prev);
             }}
-            onMouseOver={(e) => {
-              e.preventDefault();
-              setAnchorEl(true);
-            }}
-            onMouseLeave={(e) => {
-              e.preventDefault();
-              setAnchorEl(false);
-            }}
-            aria-owns={open ? 'menu-list-grow' : undefined}
+            aria-controls={showFullContextMenu ? 'menu-list-grow' : undefined}
             aria-haspopup="true"
             style={{
               marginRight: '0.5rem',
@@ -299,14 +292,6 @@ function K8sContextMenu({
                   e.stopPropagation();
                   setShowFullContextMenu((prev) => !prev);
                 }}
-                onMouseOver={(e) => {
-                  e.stopPropagation();
-                  setAnchorEl(true);
-                }}
-                onMouseLeave={(e) => {
-                  e.stopPropagation();
-                  setAnchorEl(false);
-                }}
               >
                 {contexts?.totalCount || 0}
               </CBadge>
@@ -318,26 +303,27 @@ function K8sContextMenu({
           direction="down"
           style={styleSlider}
           timeout={400}
-          in={open}
+          in={showFullContextMenu}
           mountOnEnter
           unmountOnExit
         >
           <div>
-            <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS} invert_action={['hide']}>
+            <CanShow
+              Key={{
+                action: Keys.IdentityAccessManagementViewAllKubernetesClusters.id,
+                subject: Keys.IdentityAccessManagementViewAllKubernetesClusters.function,
+              }}
+              invert_action={['hide']}
+            >
               <ClickAwayListener
                 onClickAway={(e) => {
-                  if (
-                    typeof e.target.className == 'string' &&
-                    !e.target.className?.includes('cbadge') &&
-                    e.target?.className != 'k8s-image' &&
-                    !e.target.className.includes('k8s-icon-button')
-                  ) {
-                    setAnchorEl(false);
-                    setShowFullContextMenu(false);
+                  if (anchorRef.current && anchorRef.current.contains(e.target as Node)) {
+                    return;
                   }
+                  setShowFullContextMenu(false);
                 }}
               >
-                <CMenuContainer>
+                <CMenuContainer id="menu-list-grow">
                   <div>
                     <TextField
                       id="search-ctx"
@@ -365,7 +351,7 @@ function K8sContextMenu({
                           marginTop: '1rem',
                         }}
                       >
-                        <div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
                           <>
                             <Checkbox
                               checked={activeContexts.includes('all')}
@@ -374,9 +360,18 @@ function K8sContextMenu({
                                   ? setActiveContexts([])
                                   : setActiveContexts('all')
                               }
+                              icon={
+                                <FilterAllIcon
+                                  fill={theme.palette.background.brand.default}
+                                  style={{ opacity: 0.4 }}
+                                />
+                              }
+                              inputProps={{ 'aria-label': 'select all contexts' }}
                             />
                           </>
-                          <span style={{ fontWeight: 'bolder' }}>select all</span>
+                          <span style={{ fontWeight: 'bolder', whiteSpace: 'nowrap' }}>
+                            select all
+                          </span>
                         </div>
                         <CustomTooltip title="Configure Connections">
                           <div>

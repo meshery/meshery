@@ -1,9 +1,16 @@
 import React from 'react';
-import { Button, Popover, Typography, SyncAltIcon, SettingsIcon } from '@sistent/sistent';
+import {
+  Button,
+  Popover,
+  Typography,
+  SyncAltIcon,
+  SettingsIcon,
+  CopyLinkIcon,
+} from '@sistent/sistent';
 import { ActionListItem } from './styles';
 import { iconMedium } from '../../css/icons.styles';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { MESHSYNC_DEPLOYMENT_TYPE } from '../../utils/Enum';
 
 type ConnectionActionMenuProps = {
@@ -13,6 +20,8 @@ type ConnectionActionMenuProps = {
   onFlushMeshSync: () => void;
   onDeploymentModeAnchor: (event: React.MouseEvent<HTMLElement>) => void;
   onConfigure?: () => void;
+  onConfigureControllers?: () => void;
+  onCopyLink?: () => void;
 };
 
 export const ConnectionActionMenu = ({
@@ -22,6 +31,8 @@ export const ConnectionActionMenu = ({
   onFlushMeshSync,
   onDeploymentModeAnchor,
   onConfigure,
+  onConfigureControllers,
+  onCopyLink,
 }: ConnectionActionMenuProps) => {
   return (
     <Popover
@@ -43,12 +54,48 @@ export const ConnectionActionMenu = ({
           </Button>
         </ActionListItem>
       )}
+      {onConfigureControllers && (
+        <ActionListItem>
+          <Button
+            type="button"
+            onClick={onConfigureControllers}
+            data-cy="btnConfigureConnectionControllers"
+          >
+            <SettingsIcon {...iconMedium} />
+            <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+              Configure Controllers
+            </Typography>
+          </Button>
+        </ActionListItem>
+      )}
+      {onCopyLink && (
+        <ActionListItem>
+          <Button
+            type="button"
+            onClick={() => {
+              onCopyLink();
+              onClose();
+            }}
+            data-cy="btnCopyConnectionLink"
+          >
+            <CopyLinkIcon {...iconMedium} />
+            <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+              Copy link
+            </Typography>
+          </Button>
+        </ActionListItem>
+      )}
       <ActionListItem>
         <Button
           type="submit"
           onClick={onFlushMeshSync}
           data-cy="btnResetDatabase"
-          disabled={!CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)}
+          disabled={
+            !CAN(
+              Keys.LifecycleManagementFlushMeshsyncData.id,
+              Keys.LifecycleManagementFlushMeshsyncData.function,
+            )
+          }
         >
           <SyncAltIcon {...iconMedium} />
           <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>

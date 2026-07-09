@@ -6,12 +6,12 @@ import {
   ModalButtonPrimary,
   ModalButtonSecondary,
   ModalFooter,
+  CheckIcon,
 } from '@sistent/sistent';
 import { useSelector } from 'react-redux';
 import { Modal } from '@/components/shared/Modal';
 import ConnectionIcon from '@/assets/icons/Connection';
-import CheckIcon from '@/assets/icons/CheckIcon';
-import type { RootState } from '@/store/store';
+import type { RootState } from '../../store';
 import { useListConnectionDefinitionsQuery } from '@meshery/schemas/mesheryApi';
 import { buildConnectionWizardKindConfigs } from './ConnectionWizard.helpers';
 import { useConnectionWizard } from './wizard/useConnectionWizard';
@@ -59,16 +59,21 @@ const ConnectionWizardModal = ({ isOpen, onClose }: ConnectionWizardModalProps) 
     // wizard.reset is stable; avoid re-running on every render.
   }, [isOpen]);
 
-  const steps = wizard.stepLabels.map((label, index) => ({
-    label,
-    icon:
-      index === 0
-        ? StepConnectionIcon
-        : index === wizard.stepLabels.length - 1
-          ? CheckIcon
-          : DescriptionIcon,
-    component: <></>,
-  }));
+  const steps = useMemo(
+    () =>
+      wizard.steps.map((step, index) => ({
+        label: step.label,
+        icon:
+          step.icon ||
+          (index === 0
+            ? StepConnectionIcon
+            : index === wizard.steps.length - 1
+              ? CheckIcon
+              : DescriptionIcon),
+        component: <></>,
+      })),
+    [wizard.steps],
+  );
 
   const ActiveBody = wizard.activeStep?.Component;
 

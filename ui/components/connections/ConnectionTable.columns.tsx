@@ -19,7 +19,7 @@ import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue } from '../../utils/utils';
 import MultiSelectWrapper from '../multi-select-wrapper';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { formatDate } from '../data-formatter';
 import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
@@ -49,6 +49,7 @@ type UseConnectionColumnsArgs = {
   ) => void | Promise<void>;
   handleActionMenuOpen: (event: any, tableMeta: RowData) => void;
   ping: (name: string, server: string, id: string) => void;
+  pingGrafana: (connectionID: string, name?: string) => void;
   // Per-kind connection state machine, keyed by connection kind. Sourced from
   // the connection definitions' `transitionMap` (see `_app.tsx`).
   transitionMapByKind: Record<string, ConnectionTransitionMap | undefined> | null;
@@ -65,6 +66,7 @@ export const useConnectionColumns = ({
   handleStatusChange,
   handleActionMenuOpen,
   ping,
+  pingGrafana,
   transitionMapByKind,
 }: UseConnectionColumnsArgs) => {
   return useMemo(() => {
@@ -123,17 +125,23 @@ export const useConnectionColumns = ({
               <>
                 <TooltipWrappedConnectionChip
                   tooltip={server ? `Server: ${server}` : ''}
-                  title={kind === CONNECTION_KINDS.KUBERNETES ? name : value}
+                  title={kind === CONNECTION_KINDS.KUBERNETES ? name : value || name || kind}
                   status={getColumnValue(tableMeta.rowData, 'status', nextColumns)}
                   onDelete={() =>
                     handleDeleteConnection(getColumnValue(tableMeta.rowData, 'id', nextColumns))
                   }
                   handlePing={() => {
-                    if (getColumnValue(tableMeta.rowData, 'kind', nextColumns) === 'kubernetes') {
+                    const rowKind = getColumnValue(tableMeta.rowData, 'kind', nextColumns);
+                    if (rowKind === CONNECTION_KINDS.KUBERNETES) {
                       ping(
                         getColumnValue(tableMeta.rowData, 'metadata.name', nextColumns),
                         getColumnValue(tableMeta.rowData, 'metadata.server', nextColumns),
                         getColumnValue(tableMeta.rowData, 'id', nextColumns),
+                      );
+                    } else if (rowKind === CONNECTION_KINDS.GRAFANA) {
+                      pingGrafana(
+                        getColumnValue(tableMeta.rowData, 'id', nextColumns),
+                        getColumnValue(tableMeta.rowData, 'name', nextColumns),
                       );
                     }
                   }}
@@ -224,8 +232,8 @@ export const useConnectionColumns = ({
                         menuPlacement={'bottom'}
                         disabled={
                           !CAN(
-                            keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
-                            keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
+                            Keys.WorkspaceManagementAssignConnectionsToEnvironment.id,
+                            Keys.WorkspaceManagementAssignConnectionsToEnvironment.function,
                           )
                         }
                       />
@@ -414,7 +422,10 @@ export const useConnectionColumns = ({
             const disabled =
               value === 'deleted'
                 ? true
-                : !CAN(keys.CHANGE_CONNECTION_STATE.action, keys.CHANGE_CONNECTION_STATE.subject);
+                : !CAN(
+                    Keys.LifecycleManagementChangeConnectionState.id,
+                    Keys.LifecycleManagementChangeConnectionState.function,
+                  );
 
             return (
               <FormControl>
@@ -539,6 +550,7 @@ export const useConnectionColumns = ({
     handleStatusChange,
     isEnvironmentsSuccess,
     ping,
+    pingGrafana,
     transitionMapByKind,
     updatingConnection,
     url,

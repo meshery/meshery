@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
 import { PROMPT_VARIANTS, ResponsiveDataTable } from '@sistent/sistent';
 import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -8,10 +7,13 @@ import resetDatabase from '@/graphql/queries/ResetDatabaseQuery';
 
 import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
+import useGrafanaPingHook from '@/utils/hooks/useGrafanaPingHook';
 import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
+import { useTableUrlState } from '@/utils/hooks/useTableUrlState';
+import { useColumnVisibilityPreference } from '@/utils/hooks/useColumnVisibilityPreference';
 
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
@@ -47,12 +49,18 @@ const ConnectionConfigureModal = dynamic(() => import('./ConnectionConfigureModa
   ssr: false,
 });
 
+// Lazy-loaded for the same reason: only mounted for Kubernetes connections
+// when the controllers configuration action is invoked.
+const ConnectionControllersConfigModal = dynamic(
+  () => import('./ConnectionControllersConfigModal'),
+  { ssr: false },
+);
+
 const ConnectionTable = ({
   selectedFilter,
   selectedConnectionId,
   updateUrlWithConnectionId,
 }: ConnectionTableProps) => {
-  const router = useRouter();
   const {
     organization,
     connectionMetadataState,
@@ -74,20 +82,49 @@ const ConnectionTable = ({
     }) => state.ui,
   );
   const ping = useKubernetesHook();
+  const pingGrafana = useGrafanaPingHook();
   const { width } = useWindowDimensions();
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  const [sortOrder, setSortOrder] = useState('created_at desc');
+
+  const { tableState, updateTableState, copyRowDeepLink } = useTableUrlState({
+    tableKey: 'con',
+    // Row deeplinks reuse the existing `connectionId` param so the parent's
+    // expansion logic keeps working without changes.
+    rowParam: 'connectionId',
+    defaults: {
+      page: 0,
+      pageSize: 10,
+      sortOrder: 'created_at desc',
+      search: '',
+      filters: { status: '', kind: '' },
+    },
+  });
+
+  const { page, pageSize, sortOrder, search } = tableState;
+  const setPage = useCallback((p: number) => updateTableState({ page: p }), [updateTableState]);
+  const setPageSize = useCallback(
+    (ps: number) => updateTableState({ pageSize: ps }),
+    [updateTableState],
+  );
+  const setSortOrder = useCallback(
+    (so: string) => updateTableState({ sortOrder: so }),
+    [updateTableState],
+  );
+  const setSearch = useCallback(
+    (s: string) => updateTableState({ search: s, page: 0 }),
+    [updateTableState],
+  );
+
+  // Applied filters come from URL state so they survive navigation.
+  const statusFilter = tableState.filters.status || null;
+  const kindFilter = tableState.filters.kind || null;
+
   const [rowData, setRowData] = useState<RowData | null>(null);
   const [rowsExpanded, setRowsExpanded] = useState<number[]>([]);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>({
-    status: 'All',
-    kind: 'All',
-  });
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string | null>(null);
-  const [kindFilter, setKindFilter] = useState<string | null>(null);
+  const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>(() => ({
+    status: tableState.filters.status || 'All',
+    kind: tableState.filters.kind || 'All',
+  }));
   const {
     notify,
     updateConnectionByIdMutator,
@@ -101,6 +138,8 @@ const ConnectionTable = ({
   const [configureConnection, setConfigureConnection] = useState<ConfigurableConnection | null>(
     null,
   );
+  const [controllersConfigConnection, setControllersConfigConnection] =
+    useState<ConfigurableConnection | null>(null);
   const open = Boolean(anchorEl);
   const deploymentModeOpen = Boolean(deploymentModeAnchorEl);
   const modalRef = useRef<{ show: (options: unknown) => Promise<string | null> } | null>(null);
@@ -108,12 +147,6 @@ const ConnectionTable = ({
     environments: '',
     connections: '',
   });
-
-  useEffect(() => {
-    if (typeof router.query.searchText === 'string') {
-      setSearch(router.query.searchText);
-    }
-  }, [router.query.searchText]);
 
   const filters = useMemo(
     () => ({
@@ -139,11 +172,13 @@ const ConnectionTable = ({
   );
 
   const handleApplyFilter = () => {
-    const statusFilter = selectedFilters.status === 'All' ? null : selectedFilters.status;
-    const kindFilter = selectedFilters.kind === 'All' ? null : selectedFilters.kind;
-
-    setKindFilter(kindFilter);
-    setStatusFilter(statusFilter);
+    updateTableState({
+      filters: {
+        status: selectedFilters.status === 'All' ? '' : selectedFilters.status,
+        kind: selectedFilters.kind === 'All' ? '' : selectedFilters.kind,
+      },
+      page: 0,
+    });
   };
   // lock for not allowing multiple updates at the same time
   // needs to be a ref because it needs to be shared between renders
@@ -237,8 +272,12 @@ const ConnectionTable = ({
     // only populated after `_app.tsx`'s async `loadMeshModelComponent`
     // completes. The pages-router routes to /management/connections before
     // that promise resolves, so this memo must tolerate a null map.
+    // A connection only needs a kind and a status to render; the display name
+    // falls back to `metadata.name`/kind in the Name column. Requiring a
+    // top-level `name` here wrongly hid connections (e.g. kubernetes, grafana)
+    // whose name lives only in `metadata.name`.
     return connectionData.connections
-      .filter((conn) => conn.name && conn.kind && conn.status)
+      .filter((conn) => conn && conn.kind && conn.status)
       .map((connection) => ({
         ...connection,
         nextStatus:
@@ -378,6 +417,16 @@ const ConnectionTable = ({
     handleActionMenuClose();
     if (connection) {
       setConfigureConnection(connection as ConfigurableConnection);
+    }
+  }, [getConnectionAtRowIndex, handleActionMenuClose, rowData?.rowIndex]);
+
+  const handleConfigureControllers = useCallback(() => {
+    const connection = getConnectionAtRowIndex(rowData?.rowIndex);
+    handleActionMenuClose();
+    // Operator / MeshSync / Broker configuration applies to Kubernetes
+    // connections only.
+    if (connection && (connection as ConfigurableConnection).kind === 'kubernetes') {
+      setControllersConfigConnection(connection as ConfigurableConnection);
     }
   }, [getConnectionAtRowIndex, handleActionMenuClose, rowData?.rowIndex]);
 
@@ -636,6 +685,7 @@ const ConnectionTable = ({
     handleStatusChange,
     handleActionMenuOpen,
     ping,
+    pingGrafana,
     transitionMapByKind,
   });
   const columnNames = useMemo(
@@ -682,28 +732,19 @@ const ConnectionTable = ({
     setTableCols(columnsRef.current);
   }, [isEnvironmentsSuccess, environmentOptions]);
 
-  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean | undefined>>(
-    () => getResponsiveColumnVisibility(columnNames, colViews, width),
-  );
+  const { columnVisibility, setColumnVisibilityByUser, setColumnVisibilityByResponsive } =
+    useColumnVisibilityPreference(
+      'connections',
+      getResponsiveColumnVisibility(columnNames, colViews, width),
+    );
 
   useEffect(() => {
-    setColumnVisibility((previous) => {
-      const next = getResponsiveColumnVisibility(columnNames, colViews, width);
+    const next = getResponsiveColumnVisibility(columnNames, colViews, width);
 
-      // `getResponsiveColumnVisibility` always allocates a new object, so a
-      // plain `setColumnVisibility(next)` queues a commit even when the
-      // computed visibility matches the prior commit. Bail out on a
-      // value-equal computation to keep the table from re-rendering on every
-      // unrelated parent re-render that recomputes `columnNames`.
-      const keys = new Set([...Object.keys(previous), ...Object.keys(next)]);
-      for (const key of keys) {
-        if (previous[key] !== next[key]) {
-          return next;
-        }
-      }
-      return previous;
-    });
-  }, [colViews, columnNames, width]);
+    // Only apply responsive update when the computed layout actually changed so
+    // we avoid flushing user-preference overrides on every unrelated re-render.
+    setColumnVisibilityByResponsive(next);
+  }, [colViews, columnNames, width, setColumnVisibilityByResponsive]);
 
   if (isConnectionLoading) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Connections" />;
@@ -721,7 +762,7 @@ const ConnectionTable = ({
         handleApplyFilter={handleApplyFilter}
         columns={columns}
         columnVisibility={columnVisibility}
-        setColumnVisibility={setColumnVisibility}
+        setColumnVisibility={setColumnVisibilityByUser}
       />
 
       <ResponsiveDataTable
@@ -741,6 +782,21 @@ const ConnectionTable = ({
         onFlushMeshSync={handleFlushMeshSync}
         onDeploymentModeAnchor={handleDeploymentModeAnchorOpen}
         onConfigure={handleConfigureConnection}
+        onConfigureControllers={
+          rowData?.rowIndex != null &&
+          (getConnectionAtRowIndex(rowData.rowIndex) as ConfigurableConnection | null)?.kind ===
+            'kubernetes'
+            ? handleConfigureControllers
+            : undefined
+        }
+        onCopyLink={
+          rowData?.rowIndex != null
+            ? () => {
+                const connection = filteredConnections[rowData.rowIndex];
+                if (connection?.id) copyRowDeepLink(connection.id);
+              }
+            : undefined
+        }
       />
 
       {/* Only mount (and thus load) the configure modal once a row is chosen. */}
@@ -749,6 +805,15 @@ const ConnectionTable = ({
           isOpen={Boolean(configureConnection)}
           connection={configureConnection}
           onClose={() => setConfigureConnection(null)}
+        />
+      )}
+
+      {controllersConfigConnection?.id && (
+        <ConnectionControllersConfigModal
+          isOpen={Boolean(controllersConfigConnection)}
+          connectionId={String(controllersConfigConnection.id)}
+          connectionName={controllersConfigConnection.name}
+          onClose={() => setControllersConfigConnection(null)}
         />
       )}
 
