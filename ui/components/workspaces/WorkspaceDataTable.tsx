@@ -7,7 +7,7 @@ import {
 } from '@/rtk-query/workspace';
 import CAN from '@/utils/can';
 import { useNotificationHandlers } from '@/utils/hooks/useNotification';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { getColumnValue } from '@/utils/utils';
 import {
   AuthorCell,
@@ -211,8 +211,8 @@ const WorkspaceDataTable = ({
               }
               useNotificationHandlers={useNotificationHandlers}
               isAssignedEnvironmentAllowed={CAN(
-                keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
-                keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
+                Keys.WorkspaceManagementAssignEnvironmentToWorkspace.id,
+                Keys.WorkspaceManagementAssignEnvironmentToWorkspace.function,
               )}
             />
           );

@@ -19,7 +19,7 @@ import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue } from '../../utils/utils';
 import MultiSelectWrapper from '../multi-select-wrapper';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { formatDate } from '../data-formatter';
 import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
@@ -232,8 +232,8 @@ export const useConnectionColumns = ({
                         menuPlacement={'bottom'}
                         disabled={
                           !CAN(
-                            keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
-                            keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
+                            Keys.WorkspaceManagementAssignConnectionsToEnvironment.id,
+                            Keys.WorkspaceManagementAssignConnectionsToEnvironment.function,
                           )
                         }
                       />
@@ -422,7 +422,10 @@ export const useConnectionColumns = ({
             const disabled =
               value === 'deleted'
                 ? true
-                : !CAN(keys.CHANGE_CONNECTION_STATE.action, keys.CHANGE_CONNECTION_STATE.subject);
+                : !CAN(
+                    Keys.LifecycleManagementChangeConnectionState.id,
+                    Keys.LifecycleManagementChangeConnectionState.function,
+                  );
 
             return (
               <FormControl>
