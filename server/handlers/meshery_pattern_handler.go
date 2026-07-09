@@ -1046,7 +1046,11 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			go h.config.EventBroadcaster.Publish(userID, event)
 			return
 		}
-		defer artifactHubPkgFile.Close()
+		defer func() {
+			if err := artifactHubPkgFile.Close(); err != nil {
+				h.log.Error(err)
+			}
+		}()
 
 		data, err := createArtifactHubPkg(pattern, strings.Trim(fmt.Sprintf("%s %s", user.FirstName, user.LastName), " "))
 		if err != nil {
