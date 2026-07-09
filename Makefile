@@ -486,11 +486,14 @@ wasm-engine: dep-check-go
 	@echo "Patching wasm_exec.js to add process.env polyfill..."
 	@tmp=server/policies/wasm/wasm_exec.js.tmp && \
 		awk '{ \
-			print; \
-			if (index($$0, "chdir() { throw enosys(); },") > 0) { \
+			if (index($$0, "chdir() { throw enosys(); }") > 0) { \
+				sub(/},?$$/, "},"); \
+				print; \
 				print "\t\t\tenv: {},"; \
 				found = 1; \
+				next; \
 			} \
+			print; \
 		} END { exit(found ? 0 : 1) }' server/policies/wasm/wasm_exec.js > "$$tmp" && \
 		mv "$$tmp" server/policies/wasm/wasm_exec.js || { \
 			rm -f "$$tmp"; \
