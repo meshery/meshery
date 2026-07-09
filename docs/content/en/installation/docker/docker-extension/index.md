@@ -35,7 +35,7 @@ Select one of the following three options to install the Docker Meshery Extensio
 
 Navigate to the **Extensions** marketplace of Docker Desktop. Search for Meshery and click the Install button to install the extension.
 
-[![Docker Meshery Extension Install](/installation/docker/docker-extension/images/docker-desktop-meshery-extension-install.png)](/installation/docker/docker-extension/images/docker-desktop-meshery-extension-install.png)
+[![Docker Meshery Extension Install](/installation/docker/images/docker-desktop-meshery-extension-install.png)](/installation/docker/images/docker-desktop-meshery-extension-install.png)
 
 Click **Open** when installation is done or click **Meshery** on the left under **Extensions**.
 
