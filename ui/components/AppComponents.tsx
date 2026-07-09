@@ -3,7 +3,7 @@ import { FavoriteIcon, Hidden, Typography, useTheme } from '@sistent/sistent';
 import Navigator from './layout/Navigator/Navigator';
 import subscribeK8sContext from '@/graphql/subscriptions/K8sContextSubscription';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { useDispatch, useSelector } from 'react-redux';
 import { normalizeKubernetesContextsResponse } from '@/rtk-query/transforms';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
@@ -65,7 +65,12 @@ export const KubernetesSubscription = ({ setAppState }: { setAppState: SetAppSta
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!CAN(keys.VIEW_ALL_KUBERNETES_CLUSTERS.action, keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject)) {
+    if (
+      !CAN(
+        Keys.IdentityAccessManagementViewAllKubernetesClusters.id,
+        Keys.IdentityAccessManagementViewAllKubernetesClusters.function,
+      )
+    ) {
       return;
     }
 

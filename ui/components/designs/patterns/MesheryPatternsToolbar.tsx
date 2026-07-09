@@ -3,7 +3,7 @@ import { CustomColumnVisibilityControl, SearchBar, UniversalFilter } from '@sist
 import { Publish as PublishIcon } from '@/assets/icons';
 import ViewSwitch from '../../ViewSwitch';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import TooltipButton from '@/utils/TooltipButton';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
@@ -64,7 +64,12 @@ function MesheryPatternsToolbar({
                     // @ts-ignore
                     onClick={() => router.push('designs/configurator')}
                     style={{ display: 'flex', marginRight: '2rem' }}
-                    disabled={!CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)}
+                    disabled={
+                      !CAN(
+                        Keys.CatalogManagementCreateNewDesign.id,
+                        Keys.CatalogManagementCreateNewDesign.function,
+                      )
+                    }
                   >
                     <AddIconStyled />
                     <BtnText> Create Design </BtnText>
@@ -79,7 +84,12 @@ function MesheryPatternsToolbar({
                     // @ts-ignore
                     onClick={handleUploadImport}
                     style={{ display: 'flex', marginRight: '2rem', marginLeft: '-0.6rem' }}
-                    disabled={!CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject)}
+                    disabled={
+                      !CAN(
+                        Keys.CatalogManagementImportDesign.id,
+                        Keys.CatalogManagementImportDesign.function,
+                      )
+                    }
                   >
                     <AddIconStyled>
                       <PublishIcon />

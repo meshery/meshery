@@ -45,12 +45,6 @@ vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => canSpy(...args),
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    VIEW_CONNECTIONS: { action: 'view', subject: 'connections' },
-  },
-}));
-
 vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: { children?: React.ReactNode }) => <div data-testid="box">{children}</div>,
   MenuItem: ({ children, value }: { children?: React.ReactNode; value?: string }) => (
