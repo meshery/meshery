@@ -68,7 +68,7 @@ var clipboard = new Clipboard('.clipbtn', {
         var container = trigger.closest('pre') || trigger.closest('.highlight');
         var content = container ? container.querySelector('.clipboardjs') : null;
         var text = content ? content.textContent : '';
-        return text.replace(/\$ /gi, '');
+        return text.trim().replace(/^\s*\$\s+/gm, '');
     }
 });
 
