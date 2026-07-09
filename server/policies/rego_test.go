@@ -3,6 +3,7 @@ package policies
 
 import (
 	"context"
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -10,10 +11,15 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/open-policy-agent/opa/v1/ast"
 	"github.com/open-policy-agent/opa/v1/rego"
 	"github.com/open-policy-agent/opa/v1/tester"
 	"github.com/open-policy-agent/opa/v1/topdown"
+
+	"github.com/meshery/schemas/models/v1beta1/component"
+	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // designFileName extracts a human-friendly design file name from a test location.
@@ -309,6 +315,127 @@ func TestRelationshipEvaluationScenarios(t *testing.T) {
 			designFile:  "namespace_parent_inline",
 			expected:    true,
 		},
+		{
+			// Many shipped relationship definitions (AWS/Azure controller
+			// models) declare mutatorRef on the TO side and mutatedRef on
+			// the FROM side. patch_mutators_action must resolve that
+			// orientation instead of assuming from-side mutators, like the
+			// Go engine (resolveMutatorMutatedRefs) and the hierarchical
+			// and binding flows already do. The emitted update targets the
+			// mutated (from) component.
+			name:  "patch_mutators_emits_update_for_to_side_mutator",
+			query: "data.eval_rules.patch_mutators_action(input.relationship, input.design_file)",
+			input: map[string]interface{}{
+				"relationship": map[string]interface{}{
+					"selectors": []map[string]interface{}{
+						{
+							"allow": map[string]interface{}{
+								"from": []map[string]interface{}{
+									{
+										"id": "vpclink-1",
+										"patch": map[string]interface{}{
+											"mutatedRef": [][]string{{"configuration", "status", "vpcLinkID"}},
+										},
+									},
+								},
+								"to": []map[string]interface{}{
+									{
+										"id": "integration-1",
+										"patch": map[string]interface{}{
+											"mutatorRef": [][]string{{"configuration", "spec", "vpcLinkID"}},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				"design_file": map[string]interface{}{
+					"components": []map[string]interface{}{
+						{
+							"id":            "vpclink-1",
+							"configuration": map[string]interface{}{"status": map[string]interface{}{}},
+						},
+						{
+							"id": "integration-1",
+							"configuration": map[string]interface{}{
+								"spec": map[string]interface{}{"vpcLinkID": "vpcl-abc123"},
+							},
+						},
+					},
+				},
+			},
+			expectError: false,
+			designFile:  "inline",
+			expected: []interface{}{
+				map[string]interface{}{
+					"op": "update_component_configuration",
+					"value": map[string]interface{}{
+						"id":    "vpclink-1",
+						"path":  []interface{}{"configuration", "status", "vpcLinkID"},
+						"value": "vpcl-abc123",
+					},
+				},
+			},
+		},
+		{
+			// Positive control for the case above: the common from-side
+			// mutator orientation keeps working unchanged.
+			name:  "patch_mutators_emits_update_for_from_side_mutator",
+			query: "data.eval_rules.patch_mutators_action(input.relationship, input.design_file)",
+			input: map[string]interface{}{
+				"relationship": map[string]interface{}{
+					"selectors": []map[string]interface{}{
+						{
+							"allow": map[string]interface{}{
+								"from": []map[string]interface{}{
+									{
+										"id": "route-1",
+										"patch": map[string]interface{}{
+											"mutatorRef": [][]string{{"configuration", "spec", "target"}},
+										},
+									},
+								},
+								"to": []map[string]interface{}{
+									{
+										"id": "integration-1",
+										"patch": map[string]interface{}{
+											"mutatedRef": [][]string{{"configuration", "spec", "integrationID"}},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				"design_file": map[string]interface{}{
+					"components": []map[string]interface{}{
+						{
+							"id": "route-1",
+							"configuration": map[string]interface{}{
+								"spec": map[string]interface{}{"target": "integrations/abc"},
+							},
+						},
+						{
+							"id":            "integration-1",
+							"configuration": map[string]interface{}{"spec": map[string]interface{}{}},
+						},
+					},
+				},
+			},
+			expectError: false,
+			designFile:  "inline",
+			expected: []interface{}{
+				map[string]interface{}{
+					"op": "update_component_configuration",
+					"value": map[string]interface{}{
+						"id":    "integration-1",
+						"path":  []interface{}{"configuration", "spec", "integrationID"},
+						"value": "integrations/abc",
+					},
+				},
+			},
+		},
 	}
 
 	for _, tc := range testCases {
@@ -387,5 +514,141 @@ func TestRegoSyntax(t *testing.T) {
 				t.Errorf("Parse error in %s: %v", filepath.Base(file), err)
 			}
 		})
+	}
+}
+
+// TestParity_RegoAndGoEngineIdentifyToSideMutatorRelationship runs
+// identification for an edge/non-binding relationship whose mutatorRef lives
+// on the TO-side selector (with mutatedRef on the FROM side) through BOTH
+// engines and asserts they agree. Hundreds of shipped relationship
+// definitions (AWS/Azure controller models, e.g.
+// models/aws-apigatewayv2-controller/.../edge-binding-network-udxey.json)
+// use this orientation, and the Go engine resolves it
+// (resolveMutatorMutatedRefs), so the Rego engine must identify it too.
+func TestParity_RegoAndGoEngineIdentifyToSideMutatorRelationship(t *testing.T) {
+	vpcLinkID, _ := uuid.FromString("00000000-0000-0000-0000-0000000000a1")
+	integrationID, _ := uuid.FromString("00000000-0000-0000-0000-0000000000a2")
+
+	vpcLink := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "VPCLink"},
+		ModelReference: modelv1beta1.ModelReference{Name: "aws-apigatewayv2-controller"},
+		Configuration: map[string]interface{}{
+			"status": map[string]interface{}{"vpcLinkID": "vpcl-abc123"},
+		},
+	}
+	vpcLink.ID = vpcLinkID
+
+	integration := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Integration"},
+		ModelReference: modelv1beta1.ModelReference{Name: "aws-apigatewayv2-controller"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{"vpcLinkID": "vpcl-abc123"},
+		},
+	}
+	integration.ID = integrationID
+
+	design := makePatternFile([]*component.ComponentDefinition{vpcLink, integration}, nil)
+
+	// from side carries mutatedRef only, to side carries mutatorRef only —
+	// the shipped orientation under test.
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "status", "vpcLinkID"}}
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "vpcLinkID"}}
+
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						Kind:  strPtr("VPCLink"),
+						Model: &modelv1beta1.ModelReference{Name: "aws-apigatewayv2-controller"},
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &mutatedRef,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						Kind:  strPtr("Integration"),
+						Model: &modelv1beta1.ModelReference{Name: "aws-apigatewayv2-controller"},
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	relDef := &relationship.RelationshipDefinition{
+		Kind:             relationship.RelationshipDefinitionKind("edge"),
+		RelationshipType: "non-binding",
+		SubType:          "network",
+		Model:            modelv1beta1.ModelReference{Name: "aws-apigatewayv2-controller"},
+		Selectors:        &selectorSet,
+	}
+	relDef.ID, _ = uuid.FromString("00000000-0000-0000-0000-0000000000b1")
+
+	goIdentified := (&EdgeNonBindingPolicy{}).IdentifyRelationship(relDef, design)
+	if len(goIdentified) != 1 {
+		t.Fatalf("Go engine: expected 1 identified relationship, got %d", len(goIdentified))
+	}
+
+	// Feed the byte-identical input to the Rego engine.
+	relJSON, err := json.Marshal(relDef)
+	if err != nil {
+		t.Fatalf("marshal relationship: %v", err)
+	}
+	designJSON, err := json.Marshal(design)
+	if err != nil {
+		t.Fatalf("marshal design: %v", err)
+	}
+	var relMap, designMap map[string]interface{}
+	if err := json.Unmarshal(relJSON, &relMap); err != nil {
+		t.Fatalf("unmarshal relationship: %v", err)
+	}
+	if err := json.Unmarshal(designJSON, &designMap); err != nil {
+		t.Fatalf("unmarshal design: %v", err)
+	}
+
+	policiesDir := "../../models/meshery-core/0.7.2/v1.0.0/policies"
+	policyFiles, err := collectRegoFiles(policiesDir)
+	if err != nil {
+		t.Fatalf("collect rego files: %v", err)
+	}
+	var opts []func(*rego.Rego)
+	for _, file := range policyFiles {
+		if strings.Contains(file, "/tests/") || strings.HasSuffix(file, ".template") {
+			continue
+		}
+		content, readErr := os.ReadFile(file)
+		if readErr != nil {
+			t.Fatalf("read %s: %v", file, readErr)
+		}
+		opts = append(opts, rego.Module(file, string(content)))
+	}
+	opts = append(opts,
+		rego.Query(`data.eval.identify_relationship(input.relationship, input.design_file, "edge-non-binding")`),
+		rego.Input(map[string]interface{}{
+			"relationship": relMap,
+			"design_file":  designMap,
+		}),
+	)
+
+	rs, err := rego.New(opts...).Eval(context.Background())
+	if err != nil {
+		t.Fatalf("rego eval: %v", err)
+	}
+
+	regoCount := 0
+	if len(rs) > 0 && len(rs[0].Expressions) > 0 {
+		identified, ok := rs[0].Expressions[0].Value.([]interface{})
+		if !ok {
+			t.Fatalf("unexpected rego result shape: %#v", rs[0].Expressions[0].Value)
+		}
+		regoCount = len(identified)
+	}
+
+	if regoCount != len(goIdentified) {
+		t.Fatalf("engine divergence: Go identified %d, Rego identified %d", len(goIdentified), regoCount)
 	}
 }
