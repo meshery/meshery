@@ -161,7 +161,7 @@ describe('PropertyFormatters', () => {
     const chip = screen.getByTestId('chip-wrapper');
     expect(chip).toHaveAttribute(
       'href',
-      `/management/connections?tab=connections&searchText=${encodeURIComponent('my-conn name')}`,
+      `/management/connections?tab=connections&con_q=${encodeURIComponent('my-conn name')}`,
     );
     expect(chip).toHaveTextContent('my-conn name');
   });
