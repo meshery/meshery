@@ -3,6 +3,9 @@ title: mesheryctl-system-context-switch
 display_title: false
 command: system
 subcommand: context
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys, mesheryctl-ctx]
 ---
 
 # mesheryctl system context switch
@@ -18,7 +21,7 @@ Configure mesheryctl to actively use one one context vs. another context.
 mesheryctl system context switch context-name [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Switch to context named "sample"
 mesheryctl system context switch sample
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -55,7 +58,5 @@ mesheryctl system context switch sample
 
 Usage of mesheryctl context switch
 ![context-switch-usage](../../../../images/contextswitch.png)
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

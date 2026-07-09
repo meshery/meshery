@@ -3,6 +3,9 @@ title: mesheryctl-component-view
 display_title: false
 command: component
 subcommand: view
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-component]
 ---
 
 # mesheryctl component view
@@ -18,7 +21,7 @@ View a component registered in Meshery Server
 mesheryctl component view [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ View details of a specific component
 mesheryctl component view [component-name | component-id]
 
 </div>
-</pre> 
+</pre>
 
 View details of a specific component in specified format
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ View details of a specific component in specified format
 mesheryctl component view [component-name | component-id] -o [json|yaml]
 
 </div>
-</pre> 
+</pre>
 
 View details of a specific component in specified format and save it as a file
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ View details of a specific component in specified format and save it as a file
 mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -66,7 +69,5 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

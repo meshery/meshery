@@ -3,6 +3,9 @@ title: mesheryctl-environment-view
 display_title: false
 command: environment
 subcommand: view
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-env]
 ---
 
 # mesheryctl environment view
@@ -18,7 +21,7 @@ View details of an environment registered in Meshery Server for a specific organ
 mesheryctl environment view [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ View details of a specific environment
 mesheryctl environment view --orgId [orgId]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -51,7 +54,5 @@ mesheryctl environment view --orgId [orgId]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -3,6 +3,9 @@ title: mesheryctl-design-deploy
 display_title: false
 command: design
 subcommand: deploy
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-design]
 ---
 
 # mesheryctl design deploy
@@ -17,7 +20,7 @@ Command will trigger deploy of design
 mesheryctl design deploy [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ Deploy design by providing file path
 mesheryctl design deploy -f [filepath] -s [source type]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -56,7 +59,5 @@ mesheryctl design deploy -f [filepath] -s [source type]
 
 Usage of mesheryctl design deploy
 ![pattern-onboard-usage](../../../images/app-onboard.png)
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

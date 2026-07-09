@@ -3,6 +3,9 @@ title: mesheryctl-system-provider
 display_title: false
 command: system
 subcommand: provider
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys]
 ---
 
 # mesheryctl system provider
@@ -17,7 +20,7 @@ Enforce a provider. Choose between available Meshery providers
 mesheryctl system provider [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ To view provider
 mesheryctl system provider view
 
 </div>
-</pre> 
+</pre>
 
 To list all available providers
 <pre class='codeblock-pre'>
@@ -35,7 +38,7 @@ To list all available providers
 mesheryctl system provider list
 
 </div>
-</pre> 
+</pre>
 
 To set a provider
 <pre class='codeblock-pre'>
@@ -43,7 +46,7 @@ To set a provider
 mesheryctl system provider set [provider]
 
 </div>
-</pre> 
+</pre>
 
 To switch provider and redeploy Meshery
 <pre class='codeblock-pre'>
@@ -51,7 +54,7 @@ To switch provider and redeploy Meshery
 mesheryctl system provider switch [provider]
 
 </div>
-</pre> 
+</pre>
 
 To clear the configured provider
 <pre class='codeblock-pre'>
@@ -59,7 +62,7 @@ To clear the configured provider
 mesheryctl system provider reset
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -81,7 +84,5 @@ mesheryctl system provider reset
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

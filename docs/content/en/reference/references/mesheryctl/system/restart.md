@@ -3,6 +3,9 @@ title: mesheryctl-system-restart
 display_title: false
 command: system
 subcommand: restart
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys]
 ---
 
 # mesheryctl system restart
@@ -18,7 +21,7 @@ Restart all Meshery containers / pods.
 mesheryctl system restart [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Restart all Meshery containers, their instances and their connected volumes
 mesheryctl system restart
 
 </div>
-</pre> 
+</pre>
 
 (optional) skip checking for new updates available in Meshery.
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ mesheryctl system restart
 mesheryctl system restart --skip-update
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -60,7 +63,5 @@ mesheryctl system restart --skip-update
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

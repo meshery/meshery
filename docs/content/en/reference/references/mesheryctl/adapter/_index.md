@@ -3,6 +3,9 @@ title: mesheryctl-adapter
 display_title: false
 command: adapter
 subcommand: nil
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl adapter
@@ -12,7 +15,7 @@ Connect and use Meshery adapters
 ## Synopsis
 
 Provisioning, configuration, and on-going operational management of cloud and cloud native infrastructure.
-	
+
 ## Options
 
 <pre class='codeblock-pre'>
@@ -32,7 +35,5 @@ Provisioning, configuration, and on-going operational management of cloud and cl
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

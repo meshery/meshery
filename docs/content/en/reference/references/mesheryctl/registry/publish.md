@@ -3,6 +3,9 @@ title: mesheryctl-registry-publish
 display_title: false
 command: registry
 subcommand: publish
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-reg]
 ---
 
 # mesheryctl registry publish
@@ -18,7 +21,7 @@ Publishes metadata about Meshery Models to Websites, Remote Provider, or Meshery
 mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Publish To System
 mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
 
 </div>
-</pre> 
+</pre>
 
 Publish To Meshery
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ Publish To Meshery
 mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/models
 
 </div>
-</pre> 
+</pre>
 
 Publish To Remote Provider
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ Publish To Remote Provider
 mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]/meshmodels/models [repo]/ui/public/img/meshmodels
 
 </div>
-</pre> 
+</pre>
 
 Publish To Website
 <pre class='codeblock-pre'>
@@ -52,7 +55,7 @@ Publish To Website
 mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/img/meshmodels
 
 </div>
-</pre> 
+</pre>
 
 Publishing to meshery docs
 <pre class='codeblock-pre'>
@@ -60,14 +63,14 @@ Publishing to meshery docs
 cd docs;
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
 
 </div>
-</pre> 
+</pre>
 
 Publishing to mesheryio site
 <pre class='codeblock-pre'>
@@ -75,7 +78,7 @@ Publishing to mesheryio site
 mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
 
 </div>
-</pre> 
+</pre>
 
 Publishing to any website
 <pre class='codeblock-pre'>
@@ -83,7 +86,7 @@ Publishing to any website
 mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw path/to/models path/to/icons -o mdx
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -104,7 +107,5 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

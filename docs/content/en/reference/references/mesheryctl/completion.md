@@ -3,6 +3,9 @@ title: mesheryctl-completion
 display_title: false
 command: completion
 subcommand: nil
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl completion
@@ -17,7 +20,7 @@ Output shell completion code
 mesheryctl completion [bash|zsh|fish]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,23 +30,23 @@ mesheryctl completion [bash|zsh|fish]
 source /dev/stdin <<< "$(mesheryctl completion bash)"
 
 </div>
-</pre> 
+</pre>
 
 bash <= 3.2 on osx
 ensure you have bash-completion 1.3+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-brew install bash-completion 
+brew install bash-completion
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
 
 </div>
-</pre> 
+</pre>
 
 ### bash >= 4.0
 <pre class='codeblock-pre'>
@@ -51,7 +54,7 @@ mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
 source <(mesheryctl completion bash)
 
 </div>
-</pre> 
+</pre>
 
 bash >= 4.0 on osx
 <pre class='codeblock-pre'>
@@ -59,14 +62,14 @@ bash >= 4.0 on osx
 brew install bash-completion@2
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
 
 </div>
-</pre> 
+</pre>
 
 ### zsh
 If shell completion is not already enabled in your environment you will need
@@ -77,14 +80,14 @@ Might need to start a new shell for this setup to take effect.
 $ echo "autoload -U compinit; compinit" >> ~/.zshrc
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 source <(mesheryctl completion zsh)
 
 </div>
-</pre> 
+</pre>
 
 zsh on osx / oh-my-zsh
 <pre class='codeblock-pre'>
@@ -92,7 +95,7 @@ zsh on osx / oh-my-zsh
 COMPLETION_DIR=$(echo $fpath | grep -o '[^ ]*completions' | grep -v cache) && mkdir -p $COMPLETION_DIR && mesheryctl completion zsh > "${COMPLETION_DIR}/_mesheryctl"
 
 </div>
-</pre> 
+</pre>
 
 ### fish:
 <pre class='codeblock-pre'>
@@ -100,7 +103,7 @@ COMPLETION_DIR=$(echo $fpath | grep -o '[^ ]*completions' | grep -v cache) && mk
 mesheryctl completion fish | source
 
 </div>
-</pre> 
+</pre>
 
 To load fish shell completions for each session, execute once:
 <pre class='codeblock-pre'>
@@ -108,7 +111,7 @@ To load fish shell completions for each session, execute once:
 mesheryctl completion fish > ~/.config/fish/completions/mesheryctl.fish
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -128,7 +131,5 @@ mesheryctl completion fish > ~/.config/fish/completions/mesheryctl.fish
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

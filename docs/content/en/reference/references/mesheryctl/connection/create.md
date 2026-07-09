@@ -3,6 +3,9 @@ title: mesheryctl-connection-create
 display_title: false
 command: connection
 subcommand: create
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-connection]
 ---
 
 # mesheryctl connection create
@@ -17,7 +20,7 @@ Create a new connection to a Kubernetes cluster or other supported platform
 mesheryctl connection create [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,28 +30,28 @@ Create a new Kubernetes connection using a specific type
 mesheryctl connection create --type aks
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl connection create --type eks
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl connection create --type gke
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl connection create --type minikube
 
 </div>
-</pre> 
+</pre>
 
 Create a connection with a token
 <pre class='codeblock-pre'>
@@ -56,7 +59,7 @@ Create a connection with a token
 mesheryctl connection create --type gke --token auth.json
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -78,7 +81,5 @@ mesheryctl connection create --type gke --token auth.json
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

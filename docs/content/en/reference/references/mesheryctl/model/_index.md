@@ -3,6 +3,9 @@ title: mesheryctl-model
 display_title: false
 command: model
 subcommand: nil
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl model
@@ -18,7 +21,7 @@ Export, generate, import, list, search and view model(s) and detailed informatio
 mesheryctl model [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Display number of available models in Meshery
 mesheryctl model --count
 
 </div>
-</pre> 
+</pre>
 
 Export registered models
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ Export registered models
 mesheryctl model export [model-name]
 
 </div>
-</pre> 
+</pre>
 
 Generate a model from a CSV directory
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ Generate a model from a CSV directory
 mesheryctl model generate [path-to-csv-directory]
 
 </div>
-</pre> 
+</pre>
 
 Generate a model from a URL based on a JSON template
 <pre class='codeblock-pre'>
@@ -52,7 +55,7 @@ Generate a model from a URL based on a JSON template
 mesheryctl model generate --file [URL] --template [path-to-template.json]
 
 </div>
-</pre> 
+</pre>
 
 Import model(s)
 <pre class='codeblock-pre'>
@@ -60,7 +63,7 @@ Import model(s)
 mesheryctl model import -f [Uri]
 
 </div>
-</pre> 
+</pre>
 
 List available model(s)
 <pre class='codeblock-pre'>
@@ -68,7 +71,7 @@ List available model(s)
 mesheryctl model list
 
 </div>
-</pre> 
+</pre>
 
 Delete available model(s)
 <pre class='codeblock-pre'>
@@ -76,7 +79,7 @@ Delete available model(s)
 mesheryctl model delete [model-id]
 
 </div>
-</pre> 
+</pre>
 
 Search for a specific model
 <pre class='codeblock-pre'>
@@ -84,7 +87,7 @@ Search for a specific model
 mesheryctl model search [model-name]
 
 </div>
-</pre> 
+</pre>
 
 View a specific model
 <pre class='codeblock-pre'>
@@ -92,7 +95,7 @@ View a specific model
 mesheryctl model view [model-name]
 
 </div>
-</pre> 
+</pre>
 
 Scaffold a folder structure for model creation
 <pre class='codeblock-pre'>
@@ -100,7 +103,7 @@ Scaffold a folder structure for model creation
 mesheryctl model init [model-name]
 
 </div>
-</pre> 
+</pre>
 
 Create an OCI-compliant package from the model files
 <pre class='codeblock-pre'>
@@ -108,14 +111,14 @@ Create an OCI-compliant package from the model files
 mesheryctl model build [model-name]
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model build [model-name]/[model-version]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -136,7 +139,5 @@ mesheryctl model build [model-name]/[model-version]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

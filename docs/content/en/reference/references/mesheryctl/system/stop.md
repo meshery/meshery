@@ -3,6 +3,9 @@ title: mesheryctl-system-stop
 display_title: false
 command: system
 subcommand: stop
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys]
 ---
 
 # mesheryctl system stop
@@ -17,7 +20,7 @@ Stop all Meshery containers / remove all Meshery resources.
 mesheryctl system stop [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ Stop Meshery
 mesheryctl system stop
 
 </div>
-</pre> 
+</pre>
 
 Reset Meshery's configuration file to default settings.
 <pre class='codeblock-pre'>
@@ -35,7 +38,7 @@ Reset Meshery's configuration file to default settings.
 mesheryctl system stop --reset
 
 </div>
-</pre> 
+</pre>
 
 (optional) keep the Meshery namespace during uninstallation
 <pre class='codeblock-pre'>
@@ -43,7 +46,7 @@ mesheryctl system stop --reset
 mesheryctl system stop --keep-namespace
 
 </div>
-</pre> 
+</pre>
 
 Stop Meshery forcefully (use it when system stop doesn't work)
 <pre class='codeblock-pre'>
@@ -51,7 +54,7 @@ Stop Meshery forcefully (use it when system stop doesn't work)
 mesheryctl system stop --force
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -76,7 +79,5 @@ mesheryctl system stop --force
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -3,6 +3,9 @@ title: mesheryctl-component-list
 display_title: false
 command: component
 subcommand: list
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-component]
 ---
 
 # mesheryctl component list
@@ -18,7 +21,7 @@ List all components registered in Meshery Server
 mesheryctl component list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ View list of components
 mesheryctl component list
 
 </div>
-</pre> 
+</pre>
 
 View list of components with specified page number (10 components per page)
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ View list of components with specified page number (10 components per page)
 mesheryctl component list --page [page-number]
 
 </div>
-</pre> 
+</pre>
 
 View list of components with specified page number with specified number of components per page
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ View list of components with specified page number with specified number of comp
 mesheryctl component list --page [page-number] --pagesize [page-size]
 
 </div>
-</pre> 
+</pre>
 
 Display the number of components present in Meshery
 <pre class='codeblock-pre'>
@@ -52,7 +55,7 @@ Display the number of components present in Meshery
 mesheryctl component list --count
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -75,7 +78,5 @@ mesheryctl component list --count
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

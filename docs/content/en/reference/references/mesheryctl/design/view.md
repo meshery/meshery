@@ -3,6 +3,9 @@ title: mesheryctl-design-view
 display_title: false
 command: design
 subcommand: view
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-design]
 ---
 
 # mesheryctl design view
@@ -17,7 +20,7 @@ Display the content of a specific design based on name or id
 mesheryctl design view design name [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ view a design
 mesheryctl design view [design-name | ID]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -55,7 +58,5 @@ mesheryctl design view [design-name | ID]
 
 Usage of mesheryctl design view
 ![pattern-view-usage](../../../images/patternView.png)
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

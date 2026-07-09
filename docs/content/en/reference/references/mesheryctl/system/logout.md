@@ -3,6 +3,9 @@ title: mesheryctl-system-logout
 display_title: false
 command: system
 subcommand: logout
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys]
 ---
 
 # mesheryctl system logout
@@ -20,7 +23,7 @@ This command removes the authentication token from the user's filesystem
 mesheryctl system logout [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -30,7 +33,7 @@ Logout current session with your Meshery Provider.
 mesheryctl system logout
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -52,7 +55,5 @@ mesheryctl system logout
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

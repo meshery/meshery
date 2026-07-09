@@ -3,6 +3,9 @@ title: mesheryctl-system-context
 display_title: false
 command: system
 subcommand: context
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys]
 ---
 
 # mesheryctl system context
@@ -18,7 +21,7 @@ Configure and switch between different named Meshery server and component versio
 mesheryctl system context [command] [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Base command
 mesheryctl system context
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -50,7 +53,5 @@ mesheryctl system context
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

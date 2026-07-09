@@ -3,6 +3,9 @@ title: mesheryctl-component-search
 display_title: false
 command: component
 subcommand: search
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-component]
 ---
 
 # mesheryctl component search
@@ -18,7 +21,7 @@ Search components registered in Meshery Server based on kind
 mesheryctl component search [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Search for components using a query
 mesheryctl component search [query-text]
 
 </div>
-</pre> 
+</pre>
 
 Search for multi-word component names (must be quoted)
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ Search for multi-word component names (must be quoted)
 mesheryctl component search "Component name"
 
 </div>
-</pre> 
+</pre>
 
 Search list of components of specified page [int]
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ Search list of components of specified page [int]
 mesheryctl component search [query-text] [--page 1]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -66,7 +69,5 @@ mesheryctl component search [query-text] [--page 1]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

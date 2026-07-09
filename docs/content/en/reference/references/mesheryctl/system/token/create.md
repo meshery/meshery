@@ -3,6 +3,9 @@ title: mesheryctl-system-token-create
 display_title: false
 command: system
 subcommand: token
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys, mesheryctl-tkn]
 ---
 
 # mesheryctl system token create
@@ -17,7 +20,7 @@ Create the token with provided token name (optionally token path) to your meshco
 mesheryctl system token create [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -26,21 +29,21 @@ mesheryctl system token create [flags]
 mesheryctl system token create [token-name] -f [token-path]
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system token create [token-name] (default path is auth.json)
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system token create [token-name] -f [token-path] --set
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -64,7 +67,5 @@ mesheryctl system token create [token-name] -f [token-path] --set
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

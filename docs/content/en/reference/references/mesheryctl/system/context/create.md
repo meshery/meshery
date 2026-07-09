@@ -3,6 +3,9 @@ title: mesheryctl-system-context-create
 display_title: false
 command: system
 subcommand: context
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys, mesheryctl-ctx]
 ---
 
 # mesheryctl system context create
@@ -18,7 +21,7 @@ Add a new context to Meshery config.yaml file.
 mesheryctl system context create context-name [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Create new context
 mesheryctl system context create [context-name]
 
 </div>
-</pre> 
+</pre>
 
 Create new context and provide list of components, platform & URL and set it as current context
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ Create new context and provide list of components, platform & URL and set it as 
 mesheryctl system context create [context-name] --components [meshery-nsm] --platform [docker|kubernetes] --url [server-url] --set --yes
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -68,7 +71,5 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
 
 Usage of mesheryctl context create
 ![context-create-usage](../../../../images/newcontext.png)
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

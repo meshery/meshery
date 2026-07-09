@@ -3,6 +3,9 @@ title: mesheryctl-model-init
 display_title: false
 command: model
 subcommand: init
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-model]
 ---
 
 # mesheryctl model init
@@ -18,7 +21,7 @@ Generates a folder structure and guides user on model creation
 mesheryctl model init [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ generates a folder structure
 mesheryctl model init [model-name]
 
 </div>
-</pre> 
+</pre>
 
 generates a folder structure and sets up model version
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ generates a folder structure and sets up model version
 mesheryctl model init [model-name] --version [version] (default is v0.1.0)
 
 </div>
-</pre> 
+</pre>
 
 generates a folder structure under specified path
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ generates a folder structure under specified path
 mesheryctl model init [model-name] --path [path-to-location] (default is current folder)
 
 </div>
-</pre> 
+</pre>
 
 generate a folder structure in json format
 <pre class='codeblock-pre'>
@@ -52,14 +55,14 @@ generate a folder structure in json format
 mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is json)
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-    
+
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -82,7 +85,5 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

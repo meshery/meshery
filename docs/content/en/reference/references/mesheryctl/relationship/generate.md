@@ -3,6 +3,9 @@ title: mesheryctl-relationship-generate
 display_title: false
 command: relationship
 subcommand: generate
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-relationship]
 ---
 
 # mesheryctl relationship generate
@@ -17,7 +20,7 @@ Generate relationships documents from a CSV file or Google Spreadsheet
 mesheryctl relationship generate [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ Generate relationships documents from a CSV file
 mesheryctl relationship generate --file <path-to-relationships.csv>
 
 </div>
-</pre> 
+</pre>
 
 Generate relationships documents with a custom output path
 <pre class='codeblock-pre'>
@@ -35,7 +38,7 @@ Generate relationships documents with a custom output path
 mesheryctl relationship generate --file <path-to-relationships.csv> --output <path-to-output.json>
 
 </div>
-</pre> 
+</pre>
 
 Generate relationships documents from a Google Spreadsheet
 <pre class='codeblock-pre'>
@@ -43,7 +46,7 @@ Generate relationships documents from a Google Spreadsheet
 mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -67,7 +70,5 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

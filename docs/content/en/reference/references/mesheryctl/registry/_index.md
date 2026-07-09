@@ -3,6 +3,9 @@ title: mesheryctl-registry
 display_title: false
 command: registry
 subcommand: nil
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl registry
@@ -18,7 +21,7 @@ Manage the state and contents of Meshery’s internal registry of capabilities.
 mesheryctl registry [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ mesheryctl registry [flags]
 mesheryctl registry [subcommand]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -47,7 +50,5 @@ mesheryctl registry [subcommand]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

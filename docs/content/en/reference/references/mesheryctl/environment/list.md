@@ -3,6 +3,9 @@ title: mesheryctl-environment-list
 display_title: false
 command: environment
 subcommand: list
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-env]
 ---
 
 # mesheryctl environment list
@@ -18,7 +21,7 @@ List detailed information of all registered environments
 mesheryctl environment list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ List all registered environment
 mesheryctl environment list --orgId [orgId]
 
 </div>
-</pre> 
+</pre>
 
 List count of all registered environment
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ List count of all registered environment
 mesheryctl environment list --orgId [orgId] --count
 
 </div>
-</pre> 
+</pre>
 
 List all registered environment at a specific page
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ List all registered environment at a specific page
 mesheryctl environment list --orgId [orgId] --page [page]
 
 </div>
-</pre> 
+</pre>
 
 List all registered environment with a specific page size
 <pre class='codeblock-pre'>
@@ -52,7 +55,7 @@ List all registered environment with a specific page size
 mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -76,7 +79,5 @@ mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

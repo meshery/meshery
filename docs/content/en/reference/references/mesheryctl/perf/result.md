@@ -3,6 +3,9 @@ title: mesheryctl-perf-result
 display_title: false
 command: perf
 subcommand: result
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-perf]
 ---
 
 # mesheryctl perf result
@@ -17,7 +20,7 @@ List all the available test results of a performance profile
 mesheryctl perf result [profile-name] [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ List Test results (maximum 25 results)
 mesheryctl perf result saturday-profile
 
 </div>
-</pre> 
+</pre>
 
 View other set of performance results with --page (maximum 25 results)
 <pre class='codeblock-pre'>
@@ -35,7 +38,7 @@ View other set of performance results with --page (maximum 25 results)
 mesheryctl perf result saturday-profile --page 2
 
 </div>
-</pre> 
+</pre>
 
 View single performance result with detailed information
 <pre class='codeblock-pre'>
@@ -43,7 +46,7 @@ View single performance result with detailed information
 mesheryctl perf result saturday-profile --view
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -73,7 +76,5 @@ mesheryctl perf result saturday-profile --view
 
 Usage of mesheryctl perf result
 ![perf-result-usage](../../../images/perf-result.png)
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

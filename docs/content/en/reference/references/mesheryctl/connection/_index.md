@@ -3,6 +3,9 @@ title: mesheryctl-connection
 display_title: false
 command: connection
 subcommand: nil
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl connection
@@ -18,7 +21,7 @@ View and manage your Meshery connection.
 mesheryctl connection [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Display total count of all available connections
 mesheryctl connection --count
 
 </div>
-</pre> 
+</pre>
 
 Create a new Kubernetes connection using a specific type
 <pre class='codeblock-pre'>
@@ -36,28 +39,28 @@ Create a new Kubernetes connection using a specific type
 mesheryctl connection create --type aks
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl connection create --type eks
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl connection create --type gke
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl connection create --type minikube
 
 </div>
-</pre> 
+</pre>
 
 List all the connection
 <pre class='codeblock-pre'>
@@ -65,14 +68,14 @@ List all the connection
 mesheryctl connection list
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl connection list --count
 
 </div>
-</pre> 
+</pre>
 
 Delete a connection
 <pre class='codeblock-pre'>
@@ -80,7 +83,7 @@ Delete a connection
 mesheryctl connection delete [connection_id]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -101,7 +104,5 @@ mesheryctl connection delete [connection_id]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

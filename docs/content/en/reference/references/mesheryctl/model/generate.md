@@ -3,6 +3,9 @@ title: mesheryctl-model-generate
 display_title: false
 command: model
 subcommand: generate
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-model]
 ---
 
 # mesheryctl model generate
@@ -18,7 +21,7 @@ Generate models by specifying the directory, file, or URL. You can also provide 
 mesheryctl model generate [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Generate a model from a CSV directory
 mesheryctl model generate -f [path-to-csv-directory]
 
 </div>
-</pre> 
+</pre>
 
 Generate a model from a URL based on a JSON template
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ Generate a model from a URL based on a JSON template
 mesheryctl model generate -f [URL] -t [path-to-template.json]
 
 </div>
-</pre> 
+</pre>
 
 Generate a model from a URL based on a JSON template skipping registration
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ Generate a model from a URL based on a JSON template skipping registration
 mesheryctl model generate --file [URL] --template [path-to-template.json] --skip-registration
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -67,7 +70,5 @@ mesheryctl model generate --file [URL] --template [path-to-template.json] --skip
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

@@ -3,6 +3,9 @@ title: mesheryctl-relationship-search
 display_title: false
 command: relationship
 subcommand: search
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-relationship]
 ---
 
 # mesheryctl relationship search
@@ -17,7 +20,7 @@ Search registered relationship(s) used by different models
 mesheryctl relationship search [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ Search for a specific relationship
 mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
 
 </div>
-</pre> 
+</pre>
 
 Search a relationship for a specified page
 <pre class='codeblock-pre'>
@@ -35,7 +38,7 @@ Search a relationship for a specified page
 mesheryctl relationship search [--kind <kind>] [--page <int>]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -60,7 +63,5 @@ mesheryctl relationship search [--kind <kind>] [--page <int>]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

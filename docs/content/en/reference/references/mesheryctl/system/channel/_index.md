@@ -3,6 +3,9 @@ title: mesheryctl-system-channel
 display_title: false
 command: system
 subcommand: channel
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys]
 ---
 
 # mesheryctl system channel
@@ -18,7 +21,7 @@ Subscribe to a release channel. Choose between either 'stable' or 'edge' channel
 mesheryctl system channel [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Subscribe to release channel or version
 mesheryctl system channel
 
 </div>
-</pre> 
+</pre>
 
 To set the channel
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ To set the channel
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 </div>
-</pre> 
+</pre>
 
 To pin/set the channel to a specific version
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ To pin/set the channel to a specific version
 mesheryctl system channel set stable-v0.6.0
 
 </div>
-</pre> 
+</pre>
 
 To view release channel and version
 <pre class='codeblock-pre'>
@@ -52,7 +55,7 @@ To view release channel and version
 mesheryctl system channel view
 
 </div>
-</pre> 
+</pre>
 
 To switch release channel and version
 <pre class='codeblock-pre'>
@@ -60,7 +63,7 @@ To switch release channel and version
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -82,7 +85,5 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

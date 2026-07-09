@@ -3,6 +3,9 @@ title: mesheryctl-workspace-list
 display_title: false
 command: workspace
 subcommand: list
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-wrk]
 ---
 
 # mesheryctl workspace list
@@ -18,7 +21,7 @@ List name of all registered workspaces
 mesheryctl workspace list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ List of workspace under a specific organization
 mesheryctl workspace list --orgId [orgId]
 
 </div>
-</pre> 
+</pre>
 
 List of workspace under a specific organization for a specified page
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ List of workspace under a specific organization for a specified page
 mesheryctl workspace list --orgId [orgId] --page [page-number]
 
 </div>
-</pre> 
+</pre>
 
 Display number of available  workspace under a specific organization
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ Display number of available  workspace under a specific organization
 mesheryctl workspace list --orgId [orgId] --count
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -68,7 +71,5 @@ mesheryctl workspace list --orgId [orgId] --count
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

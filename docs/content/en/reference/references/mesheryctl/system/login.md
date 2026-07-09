@@ -3,6 +3,9 @@ title: mesheryctl-system-login
 display_title: false
 command: system
 subcommand: login
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-sys]
 ---
 
 # mesheryctl system login
@@ -20,7 +23,7 @@ The authentication mode is web-based browser flow
 mesheryctl system login [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -30,7 +33,7 @@ Login with the Meshery Provider of your choice: the Local Provider or a Remote P
 mesheryctl system login
 
 </div>
-</pre> 
+</pre>
 
 Login with the Meshery Provider by specifying it via -p or --provider flag.
 <pre class='codeblock-pre'>
@@ -38,7 +41,7 @@ Login with the Meshery Provider by specifying it via -p or --provider flag.
 mesheryctl system login -p Meshery
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -61,7 +64,5 @@ mesheryctl system login -p Meshery
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

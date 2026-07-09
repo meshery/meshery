@@ -3,6 +3,9 @@ title: mesheryctl-component
 display_title: false
 command: component
 subcommand: nil
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl component
@@ -18,7 +21,7 @@ List, search and view component(s) and detailed informations
 mesheryctl component [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ Display number of available components in Meshery
 mesheryctl component --count
 
 </div>
-</pre> 
+</pre>
 
 List available component(s)
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ List available component(s)
 mesheryctl component list
 
 </div>
-</pre> 
+</pre>
 
 Search for component(s)
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ Search for component(s)
 mesheryctl component search [component-name]
 
 </div>
-</pre> 
+</pre>
 
 View a specific component
 <pre class='codeblock-pre'>
@@ -52,7 +55,7 @@ View a specific component
 mesheryctl component view [component-name | component-id]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -73,7 +76,5 @@ mesheryctl component view [component-name | component-id]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

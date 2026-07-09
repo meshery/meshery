@@ -3,6 +3,9 @@ title: mesheryctl-model-view
 display_title: false
 command: model
 subcommand: view
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-model]
 ---
 
 # mesheryctl model view
@@ -18,7 +21,7 @@ View a model queried by its name or ID
 mesheryctl model view [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ View a specific model from current provider by using [model-name] or [model-id] 
 mesheryctl model view [model-name]
 
 </div>
-</pre> 
+</pre>
 
 View a specific model in specified format
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ View a specific model in specified format
 mesheryctl model view [model-name] --output-format [json|yaml]
 
 </div>
-</pre> 
+</pre>
 
 View a specific model in specified format and save it as a file
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ View a specific model in specified format and save it as a file
 mesheryctl model view [model-name] --output-format [json|yaml] --save
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -66,7 +69,5 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

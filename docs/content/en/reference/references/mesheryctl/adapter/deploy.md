@@ -3,6 +3,9 @@ title: mesheryctl-adapter-deploy
 display_title: false
 command: adapter
 subcommand: deploy
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-adapter]
 ---
 
 # mesheryctl adapter deploy
@@ -17,7 +20,7 @@ Deploy infrastructure to the connected Kubernetes cluster
 mesheryctl adapter deploy [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -27,7 +30,7 @@ Deploy a infrastructure from an interactive on the default namespace
 mesheryctl adapter deploy
 
 </div>
-</pre> 
+</pre>
 
 Deploy infrastructure
 <pre class='codeblock-pre'>
@@ -35,7 +38,7 @@ Deploy infrastructure
 mesheryctl adapter deploy linkerd
 
 </div>
-</pre> 
+</pre>
 
 Deploy Linkerd mesh on a specific namespace
 <pre class='codeblock-pre'>
@@ -43,7 +46,7 @@ Deploy Linkerd mesh on a specific namespace
 mesheryctl adapter deploy linkerd --namespace linkerd-ns
 
 </div>
-</pre> 
+</pre>
 
 Deploy Linkerd mesh and wait for it to be deployed
 <pre class='codeblock-pre'>
@@ -51,14 +54,14 @@ Deploy Linkerd mesh and wait for it to be deployed
 mesheryctl adapter deploy linkerd --watch
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-		
+
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -86,7 +89,5 @@ mesheryctl adapter deploy linkerd --watch
 
 Usage of mesheryctl adapter deploy
 ![mesh-deploy-usage](../../../images/deploy-mesh.png)
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

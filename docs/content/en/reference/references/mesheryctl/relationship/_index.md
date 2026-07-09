@@ -3,6 +3,9 @@ title: mesheryctl-relationship
 display_title: false
 command: relationship
 subcommand: nil
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl relationship
@@ -19,7 +22,7 @@ Meshery uses relationships to define how interconnected components interact.
 mesheryctl relationship [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -29,15 +32,15 @@ Display number of available relationships in Meshery
 mesheryctl relationship --count
 
 </div>
-</pre> 
+</pre>
 
-Generate a relationship documentation 
+Generate a relationship documentation
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl relationship generate [flags]
 
 </div>
-</pre> 
+</pre>
 
 List available relationship(s)
 <pre class='codeblock-pre'>
@@ -45,7 +48,7 @@ List available relationship(s)
 mesheryctl relationship list [flags]
 
 </div>
-</pre> 
+</pre>
 
 Search for a specific relationship
 <pre class='codeblock-pre'>
@@ -53,7 +56,7 @@ Search for a specific relationship
 mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
 
 </div>
-</pre> 
+</pre>
 
 View a specific relationship
 <pre class='codeblock-pre'>
@@ -61,7 +64,7 @@ View a specific relationship
 mesheryctl relationship view [model-name]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -82,7 +85,5 @@ mesheryctl relationship view [model-name]
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

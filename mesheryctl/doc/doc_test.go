@@ -31,6 +31,9 @@ title: mesheryctl
 display_title: false
 command: mesheryctl
 subcommand: nil
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref]
 ---
 
 `
@@ -44,6 +47,9 @@ title: mesheryctl-adapter
 display_title: false
 command: adapter
 subcommand: nil
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref]
 ---
 
 `
@@ -57,6 +63,9 @@ title: mesheryctl-adapter-deploy
 display_title: false
 command: adapter
 subcommand: deploy
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref]
 ---
 
 `
@@ -70,6 +79,9 @@ title: mesheryctl-exp-relationship-generate
 display_title: false
 command: exp
 subcommand: relationship
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref]
 ---
 
 `

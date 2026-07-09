@@ -3,6 +3,9 @@ title: mesheryctl-organization-list
 display_title: false
 command: organization
 subcommand: list
+no_list: true
+hide_section_list: true
+categories: [mesheryctl-ref, mesheryctl-org]
 ---
 
 # mesheryctl organization list
@@ -18,7 +21,7 @@ List all registered organizations with their id, name and date of creation. Orga
 mesheryctl organization list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -28,7 +31,7 @@ list all organizations
 mesheryctl organization list
 
 </div>
-</pre> 
+</pre>
 
 list organizations for a specified page
 <pre class='codeblock-pre'>
@@ -36,7 +39,7 @@ list organizations for a specified page
 mesheryctl organization list --page [page-number]
 
 </div>
-</pre> 
+</pre>
 
 Display number of available organizations
 <pre class='codeblock-pre'>
@@ -44,7 +47,7 @@ Display number of available organizations
 mesheryctl organization list --count
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -67,7 +70,5 @@ mesheryctl organization list --count
 
 </div>
 </pre>
-
-## See Also
 
 Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.
