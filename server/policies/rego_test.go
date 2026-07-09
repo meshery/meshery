@@ -359,6 +359,47 @@ func TestRelationshipEvaluationScenarios(t *testing.T) {
 			expected:    true,
 		},
 		{
+			// A JSON-null modelReference.name also falls back to the model
+			// object instead of failing the match outright.
+			name:  "feasibility_falls_back_on_null_model_reference_name",
+			query: "data.feasibility_evaluation_utils.is_relationship_feasible(input.selector, input.component)",
+			input: map[string]interface{}{
+				"selector": map[string]interface{}{
+					"kind":  "Pod",
+					"model": map[string]interface{}{"name": "kubernetes"},
+				},
+				"component": map[string]interface{}{
+					"component":      map[string]interface{}{"kind": "Pod"},
+					"model":          map[string]interface{}{"name": "kubernetes"},
+					"modelReference": map[string]interface{}{"name": nil},
+				},
+			},
+			expectError: false,
+			designFile:  "inline",
+			expected:    true,
+		},
+		{
+			// When both fields are present with different names,
+			// modelReference wins: the selector matching the modelReference
+			// name is feasible.
+			name:  "feasibility_prefers_model_reference_over_model_object",
+			query: "data.feasibility_evaluation_utils.is_relationship_feasible(input.selector, input.component)",
+			input: map[string]interface{}{
+				"selector": map[string]interface{}{
+					"kind":  "Pod",
+					"model": map[string]interface{}{"name": "kubernetes"},
+				},
+				"component": map[string]interface{}{
+					"component":      map[string]interface{}{"kind": "Pod"},
+					"model":          map[string]interface{}{"name": "legacy-model"},
+					"modelReference": map[string]interface{}{"name": "kubernetes"},
+				},
+			},
+			expectError: false,
+			designFile:  "inline",
+			expected:    true,
+		},
+		{
 			// An empty modelReference.name falls back to the model object,
 			// mirroring the Go engine's normalization (which only copies
 			// Model.Name when ModelReference.Name is empty).

@@ -25,6 +25,7 @@ match_name(name, match) if {
 # modelReference-only components stay visible to feasibility checks.
 component_model_name(comp) := name if {
 	name := comp.modelReference.name
+	name != null
 	name != ""
 } else := comp.model.name
 
