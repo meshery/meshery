@@ -8,7 +8,7 @@ image: installation/docker/images/docker.svg
 description: Install Docker Extension for Meshery
 ---
 
-<h1>Quick Start with Docker Extension <img src="../images/docker.svg" style="width:35px;height:35px;" /></h1>
+<h1>Quick Start with Docker Extension <img src="{{ 'assets/img/platforms/docker.svg' | relURL }}" style="width:35px;height:35px;" /></h1>
 
 The Docker Extension for Meshery extends Docker Desktop's position as the developer's go-to Kubernetes environment with easy access to the full capabilities of Meshery's collaborative cloud native management features.
 
@@ -35,19 +35,19 @@ Select one of the following three options to install the Docker Meshery Extensio
 
 Navigate to the **Extensions** marketplace of Docker Desktop. Search for Meshery and click the Install button to install the extension.
 
-[![Docker Meshery Extension Install](../images/docker-desktop-meshery-extension-install.png)](../images/docker-desktop-meshery-extension-install.png)
+<a href="{{ 'assets/img/platforms/docker-desktop-meshery-extension-install.png' | relURL }}"><img src="{{ 'assets/img/platforms/docker-desktop-meshery-extension-install.png' | relURL }}" alt="Docker Meshery Extension Install" /></a>
 
 Click **Open** when installation is done or click **Meshery** on the left under **Extensions**.
 
-[![Docker Meshery Extension Open](../images/docker-desktop-meshery-extension-open.png)](../images/docker-desktop-meshery-extension-open.png)
+<a href="{{ 'assets/img/platforms/docker-desktop-meshery-extension-open.png' | relURL }}"><img src="{{ 'assets/img/platforms/docker-desktop-meshery-extension-open.png' | relURL }}" alt="Docker Meshery Extension Open" /></a>
 
 Click **Login** to open the _Meshery Cloud_ login page. Log in or sign up and you will be redirected back to Docker Desktop.
 
-[![Docker Meshery Extension Login](../images/docker-desktop-meshery-extension-login.png)](../images/docker-desktop-meshery-extension-login.png)
+<a href="{{ 'assets/img/platforms/docker-desktop-meshery-extension-login.png' | relURL }}"><img src="{{ 'assets/img/platforms/docker-desktop-meshery-extension-login.png' | relURL }}" alt="Docker Meshery Extension Login" /></a>
 
 Finally, click **Launch Meshery** to load Meshery Dashboard in a browser window. It runs at http://localhost:9081/ by default.
 
-[![Docker Meshery Extension Launch](../images/docker-desktop-meshery-extension-launch.png)](../images/docker-desktop-meshery-extension-launch.png)
+<a href="{{ 'assets/img/platforms/docker-desktop-meshery-extension-launch.png' | relURL }}"><img src="{{ 'assets/img/platforms/docker-desktop-meshery-extension-launch.png' | relURL }}" alt="Docker Meshery Extension Launch" /></a>
 
 You can also open http://localhost:9081/ directly on a browser on the local machine after installing the Docker extension and complete the _Meshery Cloud_ login process to achieve the same result.
 
@@ -55,19 +55,14 @@ You can also open http://localhost:9081/ directly on a browser on the local mach
 
 Another way to install the Meshery Docker Extension is from the Docker Hub. Navigate to the [Meshery Docker Extension](https://hub.docker.com/extensions/meshery/docker-extension-meshery) page and click Open in Docker Desktop to get started. Once installed, the rest of the process is same as above.
 
-[![Docker Hub Extension](../images/docker-hub-meshery-extension.png)](../images/docker-hub-meshery-extension.png)
+<a href="{{ 'assets/img/platforms/docker-hub-meshery-extension.png' | relURL }}"><img src="{{ 'assets/img/platforms/docker-hub-meshery-extension.png' | relURL }}" alt="Docker Hub Extension" /></a>
 
 ### Using Docker CLI
 
 Finally, you can also install the Meshery Docker Extension using the Docker CLI. Follow the commands in the clipboard below. 
 
-<!--
-{% capture code_content %}docker extension install meshery/docker-extension-meshery{% endcapture %} -->
-<!-- {% include code.html code=code_content %} -->
-
 <pre class="codeblock-pre" style="padding: 0; font-size: 0px;">
   <div class="codeblock" style="display: block;">
-    <!-- Updated style for clipboardjs -->
     <div class="clipboardjs" style="padding: 0; height: 0.5rem; overflow: hidden;">
       <span style="font-size: 0;">docker extension install meshery/docker-extension-meshery</span> 
     </div>
@@ -93,7 +88,7 @@ You can remove the Docker Extension from the Docker Desktop interface or from th
 
 Navigate to **Manage** under Extensions, click the ellipsis button (three vertical dots) and select **Uninstall**.
 
-[![Remove Meshery Docker Desktop Extension](../images/docker-desktop-meshery-extension-remove.png)](../images/docker-desktop-meshery-extension-remove.png)
+<a href="{{ 'assets/img/platforms/docker-desktop-meshery-extension-remove.png' | relURL }}"><img src="{{ 'assets/img/platforms/docker-desktop-meshery-extension-remove.png' | relURL }}" alt="Remove Meshery Docker Desktop Extension" /></a>
 
 ### Removing using Docker CLI
 
