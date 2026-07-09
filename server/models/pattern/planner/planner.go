@@ -41,7 +41,7 @@ func CreatePlan(pattern pattern.PatternFile, invert bool) (*Plan, error) {
 			continue
 		}
 
-		dependsOn, err := utils.Cast[[]string](_dependsOn)
+		dependsOn, err := castStringSlice(_dependsOn)
 		if err != nil {
 			err = errors.Wrapf(err, "Failed to cast 'dependsOn' to []string for component %s", component.DisplayName)
 			return nil, err
@@ -60,4 +60,30 @@ func CreatePlan(pattern pattern.PatternFile, invert bool) (*Plan, error) {
 	}
 
 	return &Plan{pattern, g}, nil
+}
+
+// castStringSlice accepts both []string (in-process callers) and
+// []interface{}: the schema's JSON unmarshaler stores unknown metadata keys
+// such as "dependsOn" as []interface{}, so wire-decoded designs never carry
+// a typed []string.
+func castStringSlice(val interface{}) ([]string, error) {
+	if strs, err := utils.Cast[[]string](val); err == nil {
+		return strs, nil
+	}
+
+	items, err := utils.Cast[[]interface{}](val)
+	if err != nil {
+		return nil, err
+	}
+
+	strs := make([]string, 0, len(items))
+	for _, item := range items {
+		s, err := utils.Cast[string](item)
+		if err != nil {
+			return nil, err
+		}
+		strs = append(strs, s)
+	}
+
+	return strs, nil
 }
