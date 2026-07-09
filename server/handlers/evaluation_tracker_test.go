@@ -11,7 +11,7 @@ import (
 func TestEvaluationTracker_SingleLeader(t *testing.T) {
 	tr := newEvaluationTracker()
 
-	leader, wait := tr.acquire("d1")
+	leader, gen, wait := tr.acquire("d1")
 	if !leader {
 		t.Fatal("first caller should be the leader")
 	}
@@ -20,10 +20,10 @@ func TestEvaluationTracker_SingleLeader(t *testing.T) {
 	}
 
 	// publish with no followers should not panic or block
-	tr.publish("d1", evalResult{})
+	tr.publish("d1", gen, evalResult{})
 
 	// after publish, the next caller should again be a leader
-	leader2, _ := tr.acquire("d1")
+	leader2, _, _ := tr.acquire("d1")
 	if !leader2 {
 		t.Fatal("after publish, next caller should be a new leader")
 	}
@@ -33,7 +33,7 @@ func TestEvaluationTracker_CoalescesConcurrent(t *testing.T) {
 	tr := newEvaluationTracker()
 
 	// Leader acquires first and does not publish yet.
-	leader, _ := tr.acquire("d1")
+	leader, gen, _ := tr.acquire("d1")
 	if !leader {
 		t.Fatal("first caller should be the leader")
 	}
@@ -41,7 +41,7 @@ func TestEvaluationTracker_CoalescesConcurrent(t *testing.T) {
 	const followers = 50
 	waits := make([]<-chan evalResult, 0, followers)
 	for range followers {
-		isLeader, w := tr.acquire("d1")
+		isLeader, _, w := tr.acquire("d1")
 		if isLeader {
 			t.Fatal("subsequent callers should be followers")
 		}
@@ -50,7 +50,7 @@ func TestEvaluationTracker_CoalescesConcurrent(t *testing.T) {
 
 	// Leader finishes and publishes once. All followers must receive the same result.
 	sentinelErr := errors.New("boom")
-	tr.publish("d1", evalResult{err: sentinelErr})
+	tr.publish("d1", gen, evalResult{err: sentinelErr})
 
 	var wg sync.WaitGroup
 	var received int32
@@ -78,19 +78,65 @@ func TestEvaluationTracker_CoalescesConcurrent(t *testing.T) {
 
 func TestEvaluationTracker_PublishIsIdempotent(t *testing.T) {
 	tr := newEvaluationTracker()
-	_, _ = tr.acquire("d1")
+	_, gen, _ := tr.acquire("d1")
 
-	tr.publish("d1", evalResult{})
+	tr.publish("d1", gen, evalResult{})
 	// second publish must be a no-op (in particular, no panic).
-	tr.publish("d1", evalResult{})
+	tr.publish("d1", gen, evalResult{})
 }
 
 func TestEvaluationTracker_DistinctDesignsAreIndependent(t *testing.T) {
 	tr := newEvaluationTracker()
 
-	leader1, _ := tr.acquire("d1")
-	leader2, _ := tr.acquire("d2")
+	leader1, _, _ := tr.acquire("d1")
+	leader2, _, _ := tr.acquire("d2")
 	if !leader1 || !leader2 {
 		t.Fatal("different designs should each get their own leader")
+	}
+}
+
+// A publish carrying the generation of an abandoned evaluation must not
+// deliver into a newer evaluation of the same design. Sequence mirrors the
+// handler's timeout path: leader A times out and clears the slot, leader B
+// starts a fresh evaluation with follower C, then A's goroutine finishes
+// late.
+func TestEvaluationTracker_StaleGenerationPublishIsIgnored(t *testing.T) {
+	tr := newEvaluationTracker()
+
+	// A leads, then its HTTP side times out and clears the slot.
+	leaderA, genA, _ := tr.acquire("d1")
+	if !leaderA {
+		t.Fatal("A should be the leader")
+	}
+	tr.publish("d1", genA, evalResult{err: errors.New("timeout")})
+
+	// B starts a new evaluation of the same design; C coalesces onto it.
+	leaderB, genB, _ := tr.acquire("d1")
+	if !leaderB {
+		t.Fatal("B should lead the new evaluation")
+	}
+	_, _, waitC := tr.acquire("d1")
+
+	// A's abandoned goroutine finishes late. C must not see its result.
+	staleErr := errors.New("stale result from A")
+	tr.publish("d1", genA, evalResult{err: staleErr})
+
+	select {
+	case r := <-waitC:
+		t.Fatalf("follower received a result from the abandoned evaluation: %v", r.err)
+	default:
+	}
+
+	// B's real result must still reach C.
+	realErr := errors.New("real result from B")
+	tr.publish("d1", genB, evalResult{err: realErr})
+
+	select {
+	case r := <-waitC:
+		if !errors.Is(r.err, realErr) {
+			t.Fatalf("follower got %v, want the current leader's result", r.err)
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("follower timed out waiting for the current leader's result")
 	}
 }
