@@ -39,7 +39,7 @@ Navigate to the **Extensions** marketplace of Docker Desktop. Search for Meshery
 
 Click **Open** when installation is done or click **Meshery** on the left under **Extensions**.
 
-<a href="{{ 'assets/img/platforms/docker-desktop-meshery-extension-open.png' | relURL }}"><img src="{{ 'assets/img/platforms/docker-desktop-meshery-extension-open.png' | relURL }}" alt="Docker Meshery Extension Open" /></a>
+<a href='{{< static "assets/img/platforms/docker-desktop-meshery-extension-open.png" >}}'><img src='{{< static "assets/img/platforms/docker-desktop-meshery-extension-open.png" >}}' alt="Docker Meshery Extension Open" /></a>
 
 Click **Login** to open the _Meshery Cloud_ login page. Log in or sign up and you will be redirected back to Docker Desktop.
 
