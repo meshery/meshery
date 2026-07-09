@@ -97,22 +97,19 @@ clipboard.on("success", (e) => {
 
     button.replaceChild(text, icon);
 
-    setTimeout(() => {
-    // 1. Always reset accessible name/state first (safe even if detached)
-    button.setAttribute('aria-label', 'Copy code to clipboard');
-    button.removeAttribute("data-is-copying");
-
-    // 2. Guard only the physical DOM manipulation
-    if (button.isConnected === false) {
-        return;
-    }
-
-    if (text.parentNode === button) {
-        button.replaceChild(originalIcon, text);
-    }
-}, 2000);
+   setTimeout(() => {
+        // 1. Always reset accessible name/state first (safe even if detached)
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+        button.removeAttribute("data-is-copying");
+        // 2. Guard only the physical DOM manipulation
+        if (button.isConnected === false) {
+            return;
+        }
+        if (text.parentNode === button) {
+            button.replaceChild(originalIcon, text);
+        }
+    }, 2000);
 });
-
 const toggleBtnSidebarNav = document.querySelector(".nav-toggle-btn--document");
 
 if (toggleBtnSidebarNav) {
