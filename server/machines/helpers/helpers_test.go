@@ -34,9 +34,12 @@ func TestInitializeMachineWithContext_ZombieProcess(t *testing.T) {
 	// Use a concrete available provider default instead of an uninitialized embedded interface mock
 	provider := &models.DefaultLocalProvider{}
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	inst, err := InitializeMachineWithContext(
 		nil,
-		context.Background(),
+		ctx,
 		id,
 		userID,
 		tracker,
@@ -79,9 +82,12 @@ func TestInitializeMachineWithContext_SuccessPath(t *testing.T) {
 
 	provider := &models.DefaultLocalProvider{}
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	_, err = InitializeMachineWithContext(
 		nil,
-		context.Background(),
+		ctx,
 		id,
 		userID,
 		tracker,
