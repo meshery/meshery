@@ -13,8 +13,8 @@ import (
 	"github.com/meshery/schemas/models/core"
 )
 
-func TestInitializeMachineWithContext_ZombieProcess(t *testing.T) {
-	log, err := logger.New("meshery", logger.Options{Format: logger.TerminalLogFormat})
+func TestInitializeMachineWithContext_DoesNotCacheOnStartError(t *testing.T) {
+	log, err := logger.New("test", logger.Options{})
 	if err != nil {
 		t.Fatalf("Failed to initialize logger: %v", err)
 	}
@@ -63,7 +63,7 @@ func TestInitializeMachineWithContext_ZombieProcess(t *testing.T) {
 }
 
 func TestInitializeMachineWithContext_SuccessPath(t *testing.T) {
-	log, err := logger.New("meshery", logger.Options{Format: logger.TerminalLogFormat})
+	log, err := logger.New("test", logger.Options{})
 	if err != nil {
 		t.Fatalf("Failed to initialize logger: %v", err)
 	}
