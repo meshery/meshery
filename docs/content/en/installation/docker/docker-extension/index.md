@@ -47,7 +47,7 @@ Click **Login** to open the _Meshery Cloud_ login page. Log in or sign up and yo
 
 Finally, click **Launch Meshery** to load Meshery Dashboard in a browser window. It runs at http://localhost:9081/ by default.
 
-<a href="{{ 'assets/img/platforms/docker-desktop-meshery-extension-launch.png' | relURL }}"><img src="{{ 'assets/img/platforms/docker-desktop-meshery-extension-launch.png' | relURL }}" alt="Docker Meshery Extension Launch" /></a>
+<a href='{{< static "assets/img/platforms/docker-desktop-meshery-extension-launch.png" >}}'><img src='{{< static "assets/img/platforms/docker-desktop-meshery-extension-launch.png" >}}' alt="Docker Meshery Extension Launch" /></a>
 
 You can also open http://localhost:9081/ directly on a browser on the local machine after installing the Docker extension and complete the _Meshery Cloud_ login process to achieve the same result.
 
