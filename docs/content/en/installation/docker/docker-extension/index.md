@@ -88,7 +88,7 @@ You can remove the Docker Extension from the Docker Desktop interface or from th
 
 Navigate to **Manage** under Extensions, click the ellipsis button (three vertical dots) and select **Uninstall**.
 
-<a href="{{ 'assets/img/platforms/docker-desktop-meshery-extension-remove.png' | relURL }}"><img src="{{ 'assets/img/platforms/docker-desktop-meshery-extension-remove.png' | relURL }}" alt="Remove Meshery Docker Desktop Extension" /></a>
+<a href="/installation/docker/images/docker-desktop-meshery-extension-remove.png"><img src="/installation/docker/images/docker-desktop-meshery-extension-remove.png" alt="Remove Meshery Docker Desktop Extension" /></a>
 
 ### Removing using Docker CLI
 
