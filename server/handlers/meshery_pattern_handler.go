@@ -1128,6 +1128,10 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			return
 		}
 
+		if err := file.Close(); err != nil {
+			h.log.Error(err)
+		}
+
 		file, err = os.OpenFile(tmpOCITarFilePath, os.O_RDONLY, 0444)
 		if err != nil {
 			h.log.Error(ErrOpenFile(tmpOCITarFilePath))
