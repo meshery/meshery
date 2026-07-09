@@ -2,6 +2,7 @@ package policies
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -87,20 +88,20 @@ func identifyInventoryAdditionsForRel(
 					if existsMatchingMutatorComponent(design, mutatorSel, mutatorRefs, values) {
 						continue
 					}
-					// De-duplicate on content before a candidate gets its (always
-					// unique) random component ID assigned below. Without this,
-					// several mutated components that imply the same missing
+					candidate := buildInventoryParentCandidate(mutatorSel, mutatorRefs, values)
+					if candidate == nil {
+						continue
+					}
+					// De-duplicate on the candidate's content, ignoring the (always
+					// unique) random component ID it was just assigned. Without
+					// this, several mutated components that imply the same missing
 					// parent (e.g. multiple Pods in the same missing namespace)
 					// each produce their own candidate with a different random
 					// ID, so an ID-keyed dedup can never collapse them. The rego
 					// engine avoids this because its candidate id is derived from
 					// the candidate's content, not randomly generated.
-					key := inventoryCandidateKey(mutatorSel, values)
+					key := inventoryCandidateKey(candidate)
 					if emittedKeys[key] {
-						continue
-					}
-					candidate := buildInventoryParentCandidate(mutatorSel, mutatorRefs, values)
-					if candidate == nil {
 						continue
 					}
 					// The rego runs feasibility against the relationship-as-a-whole;
@@ -168,29 +169,36 @@ func extractValuesAtPaths(
 	return values, true
 }
 
-// inventoryCandidateKey derives a stable de-duplication key for a
-// not-yet-created inventory parent candidate, from the same inputs
-// buildInventoryParentCandidate uses to construct it. Two candidates with
-// the same kind, model, and resolved mutator values represent the same
-// logical addition (e.g. "a Namespace named default") and must collapse to
-// one add_component action even though each gets its own random component
-// ID once built.
-func inventoryCandidateKey(mutatorSel relationship.SelectorItem, values []interface{}) string {
-	modelName := ""
-	modelVersion := ""
-	if mutatorSel.Model != nil {
-		modelName = mutatorSel.Model.Name
-		modelVersion = mutatorSel.Model.Version
+// inventoryCandidateKey derives a de-duplication key from a built
+// candidate's content, ignoring its random component ID. Two candidates
+// that would add the same logical component (same kind, model, displayName
+// and configuration) represent the same addition (e.g. "a Namespace named
+// default") and must collapse to one add_component action. Keying on the
+// built candidate rather than the selector inputs also captures the effect
+// of the mutatorRef paths, which decide where the mutated values land on
+// the candidate.
+func inventoryCandidateKey(candidate *component.ComponentDefinition) string {
+	content := struct {
+		Kind          string                      `json:"kind"`
+		Model         modelv1beta1.ModelReference `json:"model"`
+		DisplayName   string                      `json:"displayName"`
+		Configuration map[string]interface{}      `json:"configuration"`
+	}{
+		Kind:          candidate.Component.Kind,
+		Model:         candidate.ModelReference,
+		DisplayName:   candidate.DisplayName,
+		Configuration: candidate.Configuration,
 	}
-	valuesJSON, err := json.Marshal(values)
+	key, err := json.Marshal(content)
 	if err != nil {
-		// Fall back to a unique identifier so that unmarshalable candidates
-		// are never incorrectly collapsed into the same dedup bucket.
-		if u, uuidErr := uuid.NewV4(); uuidErr == nil {
-			return selectorItemKind(mutatorSel) + "|" + modelName + "|" + modelVersion + "|" + u.String()
-		}
+		// Configuration values come from JSON-decoded design content, so
+		// marshaling only fails on values JSON cannot represent (e.g. NaN).
+		// Fall back to fmt's textual form, which is also deterministic (map
+		// keys print in sorted order), so distinct candidates keep distinct
+		// keys and identical ones still collapse.
+		return fmt.Sprintf("%v|%v|%v|%#v", candidate.Component.Kind, candidate.ModelReference, candidate.DisplayName, candidate.Configuration)
 	}
-	return selectorItemKind(mutatorSel) + "|" + modelName + "|" + modelVersion + "|" + string(valuesJSON)
+	return string(key)
 }
 
 // existsMatchingMutatorComponent answers "is there already a parent in the
