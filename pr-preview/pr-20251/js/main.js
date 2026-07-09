@@ -97,7 +97,7 @@ clipboard.on("success", (e) => {
 
     button.replaceChild(text, icon);
 
-   setTimeout(() => {
+    setTimeout(() => {
         // 1. Always reset accessible name/state first (safe even if detached)
         button.setAttribute('aria-label', 'Copy code to clipboard');
         button.removeAttribute("data-is-copying");
