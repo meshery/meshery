@@ -56,6 +56,11 @@ patch_mutators_action(relationship, design_file) := {action |
 	mutatorValue := core_utils.configuration_for_component_at_path(mutatorRef, from_component, design_file)
 	old_value := core_utils.configuration_for_component_at_path(mutatedRef, to_component, design_file)
 
+	# A missing mutator path resolves to null; without this guard the action
+	# below writes null over the mutated field. The hierarchical patch path
+	# already guards this (patch_helper_rules.rego `update_value != null`).
+	mutatorValue != null
+
 	old_value != mutatorValue
 
 	action := {
