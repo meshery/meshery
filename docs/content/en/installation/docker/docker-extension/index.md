@@ -55,7 +55,7 @@ You can also open http://localhost:9081/ directly on a browser on the local mach
 
 Another way to install the Meshery Docker Extension is from the Docker Hub. Navigate to the [Meshery Docker Extension](https://hub.docker.com/extensions/meshery/docker-extension-meshery) page and click Open in Docker Desktop to get started. Once installed, the rest of the process is same as above.
 
-<a href="{{ 'assets/img/platforms/docker-hub-meshery-extension.png' | relURL }}"><img src="{{ 'assets/img/platforms/docker-hub-meshery-extension.png' | relURL }}" alt="Docker Hub Extension" /></a>
+<a href='{{< static "installation/docker/images/docker-hub-meshery-extension.png" >}}'><img src='{{< static "installation/docker/images/docker-hub-meshery-extension.png" >}}' alt="Docker Hub Extension" /></a>
 
 ### Using Docker CLI
 
