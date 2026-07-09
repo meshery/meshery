@@ -138,7 +138,7 @@ func (g *Graph) Visit(fn VisitFn) {
 	for node := range g.Nodes {
 		for _, edgeNode := range g.Edges[node] {
 			n, ok := g.Nodes[edgeNode]
-			if !ok {
+			if !ok || n == nil {
 				continue
 			}
 

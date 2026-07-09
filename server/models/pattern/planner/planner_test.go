@@ -140,6 +140,17 @@ func TestCreatePlanDependsOnByComponentID(t *testing.T) {
 	}
 }
 
+func TestCreatePlanAmbiguousDependencyErrors(t *testing.T) {
+	db1 := testComponent(t, "db")
+	db2 := testComponent(t, "db")
+	app := testComponent(t, "app", "db")
+
+	_, err := CreatePlan(pattern.PatternFile{Components: []*component.ComponentDefinition{app, db1, db2}}, false)
+	if err == nil {
+		t.Fatal("expected an error when a dependsOn entry matches multiple components")
+	}
+}
+
 func TestCreatePlanUnknownDependencyErrors(t *testing.T) {
 	app := testComponent(t, "app", "ghost")
 
