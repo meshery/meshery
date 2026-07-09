@@ -85,7 +85,11 @@ export const buildHorizontalPodAutoscalerColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const attribute = safeJsonParse<{ minReplicas?: number; maxReplicas?: number; currentReplicas?: number }>(val);
+          const attribute = safeJsonParse<{
+            minReplicas?: number;
+            maxReplicas?: number;
+            currentReplicas?: number;
+          }>(val);
           let minReplicas = attribute?.minReplicas;
           return <>{minReplicas}</>;
         },
@@ -100,7 +104,11 @@ export const buildHorizontalPodAutoscalerColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const attribute = safeJsonParse<{ minReplicas?: number; maxReplicas?: number; currentReplicas?: number }>(val);
+          const attribute = safeJsonParse<{
+            minReplicas?: number;
+            maxReplicas?: number;
+            currentReplicas?: number;
+          }>(val);
           let maxReplicas = attribute?.maxReplicas;
           return <>{maxReplicas}</>;
         },
@@ -115,7 +123,11 @@ export const buildHorizontalPodAutoscalerColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const attribute = safeJsonParse<{ minReplicas?: number; maxReplicas?: number; currentReplicas?: number }>(val);
+          const attribute = safeJsonParse<{
+            minReplicas?: number;
+            maxReplicas?: number;
+            currentReplicas?: number;
+          }>(val);
           let currentReplicas = attribute?.currentReplicas;
           return <>{currentReplicas}</>;
         },

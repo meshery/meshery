@@ -87,7 +87,10 @@ export const buildIngressColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const attribute = safeJsonParse<{ loadBalancer?: { ingress?: Array<{ ip?: string }> }; rules?: Array<{ host?: string }> }>(val);
+          const attribute = safeJsonParse<{
+            loadBalancer?: { ingress?: Array<{ ip?: string }> };
+            rules?: Array<{ host?: string }>;
+          }>(val);
           let loadBalancer = attribute?.loadBalancer;
           let ingress = loadBalancer?.ingress;
           const IPs = ingress?.map((ingress) => ingress.ip);
@@ -104,7 +107,10 @@ export const buildIngressColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const attribute = safeJsonParse<{ loadBalancer?: { ingress?: Array<{ ip?: string }> }; rules?: Array<{ host?: string }> }>(val);
+          const attribute = safeJsonParse<{
+            loadBalancer?: { ingress?: Array<{ ip?: string }> };
+            rules?: Array<{ host?: string }>;
+          }>(val);
 
           let rules = attribute?.rules;
           return (

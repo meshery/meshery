@@ -7,9 +7,11 @@
  * functions (e.g. MUI-Datatables `customBodyRender`) where a thrown error would
  * crash the entire component tree.
  */
-export function safeJsonParse<T extends object = Record<string, unknown>>(
+export function safeJsonParse<T extends object = Record<string, unknown> | unknown[]>(
   value: unknown,
-  fallback: T = {} as T,
+  fallback: T = (typeof value === 'string' && value.trimStart().startsWith('[')
+    ? ([] as unknown)
+    : ({} as unknown)) as T,
 ): T {
   if (value === null || value === undefined) {
     return fallback;

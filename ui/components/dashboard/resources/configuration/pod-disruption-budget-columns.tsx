@@ -85,7 +85,12 @@ export const buildPodDisruptionBudgetColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const attribute = safeJsonParse<{ minAvailable?: number; maxAvailable?: number; currentHealthy?: number; desiredHealthy?: number }>(val);
+          const attribute = safeJsonParse<{
+            minAvailable?: number;
+            maxAvailable?: number;
+            currentHealthy?: number;
+            desiredHealthy?: number;
+          }>(val);
           let minAvailable = attribute?.minAvailable;
           return <>{minAvailable}</>;
         },
@@ -100,7 +105,12 @@ export const buildPodDisruptionBudgetColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const attribute = safeJsonParse<{ minAvailable?: number; maxAvailable?: number; currentHealthy?: number; desiredHealthy?: number }>(val);
+          const attribute = safeJsonParse<{
+            minAvailable?: number;
+            maxAvailable?: number;
+            currentHealthy?: number;
+            desiredHealthy?: number;
+          }>(val);
           let maxAvailable = attribute?.maxAvailable;
           return <>{maxAvailable}</>;
         },
@@ -115,7 +125,12 @@ export const buildPodDisruptionBudgetColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const attribute = safeJsonParse<{ minAvailable?: number; maxAvailable?: number; currentHealthy?: number; desiredHealthy?: number }>(val);
+          const attribute = safeJsonParse<{
+            minAvailable?: number;
+            maxAvailable?: number;
+            currentHealthy?: number;
+            desiredHealthy?: number;
+          }>(val);
           let currentHealthy = attribute?.currentHealthy;
           return <>{currentHealthy}</>;
         },
@@ -130,7 +145,12 @@ export const buildPodDisruptionBudgetColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const attribute = safeJsonParse<{ minAvailable?: number; maxAvailable?: number; currentHealthy?: number; desiredHealthy?: number }>(val);
+          const attribute = safeJsonParse<{
+            minAvailable?: number;
+            maxAvailable?: number;
+            currentHealthy?: number;
+            desiredHealthy?: number;
+          }>(val);
           let desiredHealthy = attribute?.desiredHealthy;
           return <>{desiredHealthy}</>;
         },

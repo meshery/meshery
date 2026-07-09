@@ -87,7 +87,9 @@ export const buildDeploymentColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const parsedStatus = safeJsonParse<{ replicas?: number; availableReplicas?: number }>(val);
+          const parsedStatus = safeJsonParse<{ replicas?: number; availableReplicas?: number }>(
+            val,
+          );
           const pods =
             parsedStatus?.replicas === undefined
               ? parsedStatus?.availableReplicas?.toString()
@@ -107,7 +109,10 @@ export const buildDeploymentColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const attribute = safeJsonParse<{ replicas?: number; template?: { spec?: { restartPolicy?: string } } }>(val);
+          const attribute = safeJsonParse<{
+            replicas?: number;
+            template?: { spec?: { restartPolicy?: string } };
+          }>(val);
           const replicas = attribute?.replicas;
           return <>{replicas}</>;
         },
@@ -122,7 +127,10 @@ export const buildDeploymentColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const attribute = safeJsonParse<{ replicas?: number; template?: { spec?: { restartPolicy?: string } } }>(val);
+          const attribute = safeJsonParse<{
+            replicas?: number;
+            template?: { spec?: { restartPolicy?: string } };
+          }>(val);
           const template = attribute?.template;
           const spec = template?.spec;
           const restartPolicy = spec?.restartPolicy;

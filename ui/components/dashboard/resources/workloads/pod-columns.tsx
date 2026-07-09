@@ -86,7 +86,9 @@ export const buildPodColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const attribute = safeJsonParse<{ hostIP?: string; podIP?: string; nodeName?: string }>(val);
+          const attribute = safeJsonParse<{ hostIP?: string; podIP?: string; nodeName?: string }>(
+            val,
+          );
           const hostIP = attribute?.hostIP;
           return <>{hostIP}</>;
         },
@@ -101,7 +103,9 @@ export const buildPodColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const attribute = safeJsonParse<{ hostIP?: string; podIP?: string; nodeName?: string }>(val);
+          const attribute = safeJsonParse<{ hostIP?: string; podIP?: string; nodeName?: string }>(
+            val,
+          );
           const podIP = attribute?.podIP;
           return <>{podIP}</>;
         },
@@ -126,7 +130,9 @@ export const buildPodColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(value) {
-          const parsedStatus = safeJsonParse<{ containerStatuses?: Array<{ restartCount?: number }> }>(value);
+          const parsedStatus = safeJsonParse<{
+            containerStatuses?: Array<{ restartCount?: number }>;
+          }>(value);
           const totalRestarts = parsedStatus?.containerStatuses?.reduce(
             (sum, container) => sum + (container.restartCount || 0),
             0,
@@ -158,7 +164,9 @@ export const buildPodColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const attribute = safeJsonParse<{ hostIP?: string; podIP?: string; nodeName?: string }>(val);
+          const attribute = safeJsonParse<{ hostIP?: string; podIP?: string; nodeName?: string }>(
+            val,
+          );
           const nodeName = attribute?.nodeName;
           return (
             <>

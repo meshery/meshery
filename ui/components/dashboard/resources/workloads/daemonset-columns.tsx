@@ -85,7 +85,9 @@ export const buildDaemonSetColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const attribute = safeJsonParse<{ template?: { spec?: { nodeSelector?: Record<string, string> } } }>(val);
+          const attribute = safeJsonParse<{
+            template?: { spec?: { nodeSelector?: Record<string, string> } };
+          }>(val);
           const template = attribute?.template;
           const spec = template?.spec;
           const nodeSelector = spec?.nodeSelector;

@@ -86,7 +86,9 @@ export const buildStatefulSetColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          const parsedStatus = safeJsonParse<{ replicas?: number; availableReplicas?: number }>(val);
+          const parsedStatus = safeJsonParse<{ replicas?: number; availableReplicas?: number }>(
+            val,
+          );
           const pods =
             parsedStatus?.replicas === undefined
               ? parsedStatus?.availableReplicas?.toString()
