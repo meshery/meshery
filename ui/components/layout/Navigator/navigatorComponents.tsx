@@ -183,8 +183,8 @@ export const getNavigatorComponents = (
   },
   {
     id: TELEMETRY,
-    icon: <InsertChartIcon style={{ ...drawerIconsStyle }} />,
-    hovericon: <InsertChartIcon style={{ ...drawerIconsStyle }} />,
+    icon: <InsertChartIcon style={drawerIconsStyle} />,
+    hovericon: <InsertChartIcon style={drawerIconsStyle} />,
     href: '/telemetry',
     title: 'Telemetry',
     show: providerUiAccessControl.isNavigatorComponentEnabled([TELEMETRY]),
