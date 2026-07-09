@@ -22,9 +22,11 @@ jobs:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            channel: CSK7N9TGX
-            type: "mrkdwn"
-            text: "<https://github.com/${{ github.actor }}|${{ github.actor }}> just starred <https://github.com/${{ github.repository }}/stargazers|${{ github.repository }}> bringing the total ⭐️ count up to: ${{ env.STARS }}"
+            {
+              "channel": "CSK7N9TGX",
+              "type": "mrkdwn",
+              "text": ${{ toJSON(format('<https://github.com/{0}|{0}> just starred <https://github.com/{1}/stargazers|{1}> bringing the total ⭐️ count up to: {2}', github.actor, github.repository, env.STARS)) }}
+            }
 
   good-first-issue-notify:
     if: github.event_name == 'issues' && (github.event.label.name == 'good first issue' || github.event.label.name == 'first-timers-only')
@@ -37,5 +39,7 @@ jobs:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            channel: C019426UBNY
-            text: ":new: Good first issue up for grabs: <${{ github.event.issue.html_url }}|${{ github.event.issue.title }}>"
+            {
+              "channel": "C019426UBNY",
+              "text": ${{ toJSON(format(':new: Good first issue up for grabs: <{0}|{1}>', github.event.issue.html_url, github.event.issue.title)) }}
+            }
