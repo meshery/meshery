@@ -114,17 +114,18 @@ const StyledMainContent = styled(Box, { shouldForwardProp: (prop) => prop !== 'o
   display: 'flex',
   flexDirection: 'column',
   ...(open && {
-    marginLeft: `calc(${theme.spacing(7)} + 1px - 250px)`,
+    marginLeft: `calc(${theme.spacing(7)} + 1px - ${DRAWER_WIDTH}px)`,
     [theme.breakpoints.up('sm')]: {
-      marginLeft: `calc(${theme.spacing(8)} + 1px - 250px)`,
+      marginLeft: `calc(${theme.spacing(8)} + 1px - ${DRAWER_WIDTH}px)`,
     },
-    transition: theme.transitions.create('margin', {
+    transition: theme.transitions.create('margin-left', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
   }),
   ...(!open && {
-    transition: theme.transitions.create('margin', {
+    marginLeft: 0,
+    transition: theme.transitions.create('margin-left', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
