@@ -34,6 +34,7 @@ import ConnectionDefinitionTree from './ConnectionDefinitionTree';
 type MesheryTreeViewProps = {
   data: any[];
   view: string;
+  hasResourcesLoaded: boolean;
   setSearchText: (_value: string | null) => void;
   searchText: string | null;
   setPage: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>;
@@ -54,6 +55,7 @@ const MesheryTreeView = React.memo(
   ({
     data,
     view,
+    hasResourcesLoaded,
     setSearchText,
     searchText,
     setPage,
@@ -225,7 +227,7 @@ const MesheryTreeView = React.memo(
       return view === COMPONENTS || view === CONNECTIONS;
     };
 
-    const renderHeader = (type: string, hasRecords: boolean) => (
+    const renderHeader = (type: string) => (
       <div
         style={{
           display: 'flex',
@@ -272,8 +274,8 @@ const MesheryTreeView = React.memo(
                     control={
                       <Switch
                         checked={checked}
-                        onClick={handleChecked}
-                        disabled={!hasRecords}
+                        onChange={handleChecked}
+                        disabled={!hasResourcesLoaded && !checked}
                         inputProps={{ 'aria-label': 'controlled' }}
                         size="small"
                       />
@@ -328,6 +330,7 @@ const MesheryTreeView = React.memo(
           Components: 0,
           Relationships: 0,
           Registrants: 0,
+          Connections: 0,
         });
       }
       setIsSearchExpanded(isExpand);
@@ -338,7 +341,7 @@ const MesheryTreeView = React.memo(
       const scrollHeight = hasControlButtons ? '70vh' : '100vh';
       return (
         <>
-          {renderHeader(type, !!data.length)}
+          {renderHeader(type)}
           {data.length === 0 && !searchText ? (
             <JustifyAndAlignCenter style={{ height: '27rem' }}>
               {isLoading ? (

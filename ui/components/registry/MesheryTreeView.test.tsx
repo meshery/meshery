@@ -19,14 +19,14 @@ vi.mock('@sistent/sistent', () => ({
       <span>{label}</span>
     </label>
   ),
-  Switch: ({ checked, onClick, disabled, ...rest }: any) => (
+  Switch: ({ checked, onClick, onChange, disabled, ...rest }: any) => (
     <input
       type="checkbox"
       data-testid="switch"
       checked={!!checked}
       onClick={onClick}
+      onChange={onChange}
       disabled={disabled}
-      onChange={() => {}}
       {...rest}
     />
   ),
@@ -130,6 +130,7 @@ describe('MesheryTreeView', () => {
     setPage: vi.fn(),
     checked: false,
     setChecked: vi.fn(),
+    hasResourcesLoaded: true,
     setShowDetailsData: vi.fn(),
     showDetailsData: { type: '', data: {} },
     setResourcesDetail: vi.fn(),
@@ -232,9 +233,13 @@ describe('MesheryTreeView', () => {
   });
 
   it('disables the Duplicates switch when there are no records', () => {
-    render(<MesheryTreeView {...makeProps({ view: 'Models', data: [], searchText: 'x' })} />);
-    // Search returns no results — the switch should still render disabled
-    // Note: with no records, "No result found" is shown but the header still renders
+    render(
+      <MesheryTreeView
+        {...makeProps({ view: 'Models', data: [], searchText: 'x', hasResourcesLoaded: false })}
+      />,
+    );
+    // hasResourcesLoaded=false is what actually disables the switch now —
+    // this test exercises that flag directly rather than relying on data length.
     expect(screen.getByTestId('switch')).toBeDisabled();
   });
 

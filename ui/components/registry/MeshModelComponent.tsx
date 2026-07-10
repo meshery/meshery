@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+/* eslint-disable max-lines -- MeshModelComponent is currently large; prefer refactor/splitting when feasible. */
+import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo } from 'react';
 import {
   MODELS,
   COMPONENTS,
@@ -106,6 +107,11 @@ const MeshModelComponent_ = ({
   const [getRelationshipsData, relationshipsRes] = useLazyGetRelationshipsQuery();
   const [getRegistrantsData, registrantsRes] = useLazyGetRegistrantsQuery();
   const [getConnectionDefinitionsData, connectionsRes] = useLazyGetConnectionDefinitionsQuery();
+  // Separate instance from getMeshModelsData above: getRegistrants() below fetches
+  // models per-registrant, and sharing the Models-tab query would overwrite
+  // modelsRes.data with whichever registrant queried last, corrupting the
+  // Models tab's count badge.
+  const [getRegistrantModelsData] = useLazyGetMeshModelsQuery();
 
   /**
    * RTK Queries for counts
@@ -173,6 +179,7 @@ const MeshModelComponent_ = ({
     }
     setConnectionsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
   }, [connectionsRes, hasMoreConnections]);
+
   /**
    * IntersectionObservers
    */
@@ -181,6 +188,70 @@ const MeshModelComponent_ = ({
   const lastRelationshipRef = useInfiniteScrollRef(loadNextRelationshipsPage);
   const lastRegistrantRef = useInfiniteScrollRef(loadNextRegistrantsPage);
   const lastConnectionRef = useInfiniteScrollRef(loadNextConnectionsPage);
+
+  const getRegistrants = useCallback(async () => {
+    let registrantResponse;
+    let response;
+    registrantResponse = await getRegistrantsData(
+      {
+        params: {
+          page: searchText ? 0 : registrantFilters.page,
+          pagesize: searchText ? 'all' : 25,
+          search: searchText || '',
+        },
+      },
+      true,
+    );
+    if (registrantResponse.data && registrantResponse.data.registrants) {
+      const registrants = registrantResponse.data.registrants;
+      const tempResourcesDetail = [];
+
+      // Fetch each registrant's models in bounded-size batches: fully sequential
+      // is slow for large registrant lists, but firing every request at once via
+      // Promise.all(registrants.map(...)) can fan out into dozens of concurrent
+      // requests and overwhelm the browser/API. Batching keeps a fixed cap on
+      // in-flight requests while still parallelizing within each batch.
+      const REGISTRANT_FETCH_BATCH_SIZE = 5;
+      for (let i = 0; i < registrants.length; i += REGISTRANT_FETCH_BATCH_SIZE) {
+        const batch = registrants.slice(i, i + REGISTRANT_FETCH_BATCH_SIZE);
+        const batchResults = await Promise.all(
+          batch.map(async (registrant) => {
+            const hostname = registrant?.hostname ? toLower(registrant.hostname) : '';
+            if (!hostname) {
+              return null;
+            }
+            const { data: modelRes } = await getRegistrantModelsData(
+              {
+                params: {
+                  page: 0,
+                  pagesize: 'all',
+                  registrant: hostname,
+                  components: false,
+                  relationships: false,
+                },
+              },
+              true,
+            );
+            if (modelRes?.models && modelRes.models.length > 0) {
+              return {
+                ...registrant,
+                models: removeDuplicateVersions(modelRes.models) || [],
+              };
+            }
+            return null;
+          }),
+        );
+        tempResourcesDetail.push(...batchResults.filter(Boolean));
+      }
+      response = {
+        data: {
+          registrants: tempResourcesDetail,
+        },
+      };
+    }
+    setRowsPerPage(25);
+    return response;
+  }, [getRegistrantsData, getRegistrantModelsData, searchText, registrantFilters.page]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -227,7 +298,6 @@ const MeshModelComponent_ = ({
           break;
         case REGISTRANTS:
           response = await getRegistrants();
-
           break;
         case CONNECTIONS: {
           const res = await getConnectionDefinitionsData(
@@ -251,20 +321,23 @@ const MeshModelComponent_ = ({
           break;
       }
       if (response?.data && response.data[view.toLowerCase()]) {
-        // When search or "show duplicates" functionality is active:
-        // Avoid appending data to the previous dataset.
-        // preventing duplicate entries and ensuring the UI reflects the API's response accurately.
-        // For instance, during a search, display the data returned by the API instead of appending it to the previous results.
-        // Use functional setState so we don't need resourcesDetail in the
-        // useCallback dependency array (which caused a stale-closure re-fetch
-        // loop and the 2304ms Redux middleware warning).
+        // Use functional state update to avoid depending on resourcesDetail in the
+        // useCallback dependency array (which caused a stale-closure re-fetch loop).
+        // Replace vs append is determined by whether this is the first page of the
+        // current view, so infinite scroll pagination works correctly in all cases.
+        // Relationships always fetch all pages at once (pagesize: 'all'), so they
+        // always replace.
         setResourcesDetail((prev) => {
-          const incoming = response.data[view.toLowerCase()];
-          const combined =
-            searchText || view === RELATIONSHIPS ? [...incoming] : [...prev, ...incoming];
-          // Use _.uniqWith for safe deep equality deduplication, as
-          // not all objects (e.g. static seed files) carry unique UUIDs.
-          return _.uniqWith(combined, _.isEqual);
+          const fresh = response.data[view.toLowerCase()] ?? [];
+          const isFirstPage =
+            (view === MODELS && modelFilters.page === 0) ||
+            (view === COMPONENTS && componentsFilters.page === 0) ||
+            (view === REGISTRANTS && registrantFilters.page === 0) ||
+            (view === RELATIONSHIPS && relationshipsFilters.page === 0) ||
+            (view === CONNECTIONS && connectionsFilters.page === 0);
+          const shouldReplace = searchText || isFirstPage || view === RELATIONSHIPS;
+          const newData = shouldReplace ? [...fresh] : [...prev, ...fresh];
+          return _.uniqWith(newData, _.isEqual);
         });
 
         // Deeplink may contain higher rowsPerPage val for first time fetch
@@ -282,68 +355,23 @@ const MeshModelComponent_ = ({
     getMeshModelsData,
     getComponentsData,
     getRelationshipsData,
-    getRegistrantsData,
+    getRegistrants,
     getConnectionDefinitionsData,
     modelFilters,
     registrantFilters,
+    componentsFilters,
+    relationshipsFilters,
     connectionsFilters,
     view,
-    page,
     rowsPerPage,
     searchText,
-    // resourcesDetail intentionally omitted — read via functional setState above
-    // to avoid stale-closure re-fetch loop and O(n²) _.isEqual dedup.
-    checked,
   ]);
 
-  const getRegistrants = async () => {
-    let registrantResponse;
-    let response;
-    registrantResponse = await getRegistrantsData(
-      {
-        params: {
-          page: searchText ? 0 : registrantFilters.page,
-          pagesize: searchText ? 'all' : 25,
-          search: searchText || '',
-        },
-      },
-      true,
-    );
-    if (registrantResponse.data && registrantResponse.data.registrants) {
-      const registrants = registrantResponse.data.registrants;
-      const tempResourcesDetail = [];
+  // NOTE: The "Duplicates" toggle is a pure client-side display filter over
+  // whatever has already been loaded into `resourcesDetail` — it should not
+  // clear state or trigger network refetches when toggled.
+  // Avoid adding effects that refetch solely due to `checked` changes.
 
-      for (let registrant of registrants) {
-        let hostname = toLower(registrant?.hostname);
-        const { data: modelRes } = await getMeshModelsData(
-          {
-            params: {
-              page: page?.Models,
-              pagesize: 'all',
-              registrant: hostname,
-              components: false,
-              relationships: false,
-            },
-          },
-          true,
-        );
-        if (modelRes.models && modelRes.models.length > 0) {
-          const updatedRegistrant = {
-            ...registrant,
-            models: removeDuplicateVersions(modelRes.models) || [],
-          };
-          tempResourcesDetail.push(updatedRegistrant);
-        }
-      }
-      response = {
-        data: {
-          registrants: tempResourcesDetail,
-        },
-      };
-    }
-    setRowsPerPage(25);
-    return response;
-  };
   const handleTabClick = (selectedView) => {
     // -> use settingsRouter when not in modal mode (Settings page)
     if (handleChangeSelectedTab && externalView === null) {
@@ -359,24 +387,28 @@ const MeshModelComponent_ = ({
     setComponentsFilters({ page: 0 });
     setRelationshipsFilters({ page: 0 });
     setConnectionsFilters({ page: 0 });
-    setPage({
-      Models: 0,
-      Components: 0,
-      Relationships: 0,
-      Registrants: 0,
-    });
+    setPage({ Models: 0, Components: 0, Relationships: 0, Registrants: 0, Connections: 0 });
     setShowDetailsData({
       type: '',
       data: {},
     });
   };
+
   const modifyData = () => {
     if (!resourcesDetail) return [];
 
     if (view === MODELS) {
-      return removeDuplicateVersions(
-        checked ? resourcesDetail.filter((model) => model.duplicates > 0) : resourcesDetail,
-      );
+      if (!checked) {
+        return removeDuplicateVersions(resourcesDetail);
+      }
+      // Server's `duplicates` field is page-scoped; recompute across all loaded models.
+      const keyOf = (m) => `${m?.name}@${m?.model?.version}`;
+      const countByKey: Record<string, number> = {};
+      resourcesDetail.forEach((m) => {
+        countByKey[keyOf(m)] = (countByKey[keyOf(m)] || 0) + 1;
+      });
+      const dupeRows = resourcesDetail.filter((m) => countByKey[keyOf(m)] > 1);
+      return removeDuplicateVersions(dupeRows);
     } else if (view === RELATIONSHIPS) {
       return groupRelationshipsByKind(resourcesDetail);
     } else if (view === REGISTRANTS) {
@@ -391,29 +423,35 @@ const MeshModelComponent_ = ({
   // MesheryTreeView.tsx safe (prevState.data === data).
   const treeData = useMemo(modifyData, [resourcesDetail, view, checked]);
 
-  useEffect(() => {
-    if (searchText !== null && page[view] > 0) {
-      setPage({
-        Models: 0,
-        Components: 0,
-        Relationships: 0,
-        Registrants: 0,
-      });
+  // Reset every view's page state whenever a search opens or closes. fetchData's
+  // replace-vs-append decision (isFirstPage) trusts each view's *Filters.page to
+  // be 0 at that point — otherwise, after infinite-scrolling a view and then
+  // opening/clearing search, a stale non-zero page gets requested into a
+  // freshly emptied list, silently dropping earlier results.
+  // Uses useLayoutEffect (not useEffect) so this reset is flushed synchronously
+  // before the fetchData effect below runs, guaranteeing fetchData never sees
+  // a stale non-zero *Filters.page value on the same render pass.
+  useLayoutEffect(() => {
+    const isStale =
+      page[view] > 0 ||
+      modelFilters.page > 0 ||
+      componentsFilters.page > 0 ||
+      registrantFilters.page > 0 ||
+      relationshipsFilters.page > 0 ||
+      connectionsFilters.page > 0;
+    if (isStale) {
+      setModelsFilters({ page: 0 });
+      setRegistrantsFilters({ page: 0 });
+      setComponentsFilters({ page: 0 });
+      setRelationshipsFilters({ page: 0 });
+      setConnectionsFilters({ page: 0 });
+      setPage({ Models: 0, Components: 0, Relationships: 0, Registrants: 0, Connections: 0 });
     }
   }, [searchText]);
 
   useEffect(() => {
     fetchData();
-  }, [
-    view,
-    page,
-    rowsPerPage,
-    checked,
-    searchText,
-    modelFilters,
-    registrantFilters,
-    connectionsFilters,
-  ]);
+  }, [fetchData]);
 
   // Sync view state with externalView or selectedTab (for modal or route usage)
   useEffect(() => {
@@ -427,12 +465,8 @@ const MeshModelComponent_ = ({
       setRegistrantsFilters({ page: 0 });
       setComponentsFilters({ page: 0 });
       setRelationshipsFilters({ page: 0 });
-      setPage({
-        Models: 0,
-        Components: 0,
-        Relationships: 0,
-        Registrants: 0,
-      });
+      setConnectionsFilters({ page: 0 });
+      setPage({ Models: 0, Components: 0, Relationships: 0, Registrants: 0, Connections: 0 });
       setShowDetailsData({
         type: '',
         data: {},
@@ -524,6 +558,12 @@ const MeshModelComponent_ = ({
               setPage={setPage}
               checked={checked}
               setChecked={setChecked}
+              // Whether ANY (unfiltered) models are loaded. Used to decide
+              // whether the Duplicates switch should be usable — must NOT be
+              // derived from treeData/data, since that's already filtered by
+              // `checked` and would make the switch disable itself the
+              // moment it finds zero duplicates, permanently locking it on.
+              hasResourcesLoaded={view === MODELS ? resourcesDetail.length > 0 : true}
               searchText={searchText}
               setShowDetailsData={setShowDetailsData}
               showDetailsData={showDetailsData}
@@ -649,6 +689,7 @@ const TabCard = ({ label, count, active, onClick }) => {
     </CardStyle>
   );
 };
+
 const MeshModelComponent = (props) => {
   return (
     <NoSsr>
@@ -656,4 +697,5 @@ const MeshModelComponent = (props) => {
     </NoSsr>
   );
 };
+
 export default MeshModelComponent;
