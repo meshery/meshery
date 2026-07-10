@@ -47,13 +47,13 @@ func TestExtensionProxy_EmptyRemainder(t *testing.T) {
 	// The function should proceed (empty path appended to remote provider URL).
 	req := httptest.NewRequest(http.MethodGet, "http://meshery.local/api/extensions", nil)
 
-	// This will fail at the network call (remote.example is unreachable), but it
-	// must NOT return ErrInvalidExtensionProxyPath — the path itself is valid.
+	// Request has a valid /api/extensions path, so validation should pass.
+	// The call should fail at token retrieval because the request has no token cookie.
 	_, err := l.ExtensionProxy(req)
-	if err != nil {
-		if code := mkerrors.GetCode(err); code == ErrInvalidExtensionProxyPathCode {
-			t.Fatal("exact /api/extensions path should not be rejected as invalid")
-		}
-		// Any other error (network, auth) is expected since remote.example is not real
+	if err == nil {
+		t.Fatal("expected error due to missing token cookie, got nil")
+	}
+	if code := mkerrors.GetCode(err); code != ErrGetTokenCode {
+		t.Fatalf("expected error code %s, got %s", ErrGetTokenCode, code)
 	}
 }
