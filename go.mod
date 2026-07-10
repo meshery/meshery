@@ -23,7 +23,7 @@ replace (
 
 // replace github.com/service-mesh-performance/service-mesh-performance => ../service-mesh-performance
 
-// replace github.com/meshery/schemas => ../schemas
+replace github.com/meshery/schemas => ../schemas
 
 // replace github.com/meshery/meshkit => ../meshkit
 
