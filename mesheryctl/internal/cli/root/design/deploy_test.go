@@ -127,6 +127,31 @@ func TestDeployCmd(t *testing.T) {
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound("nonexistent-design"),
 		},
+		{
+			// Regression for the double-encoded search param: a multi-word name
+			// must be sent as `search=multi+word+design`, not double-encoded to
+			// `search=multi%2Bword%2Bdesign`, otherwise the server never matches.
+			Name:             "given a design name with spaces when design deploy then the search param is single-encoded",
+			Args:             []string{"deploy", "multi", "word", "design"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern/types",
+					Response:     "view.designTypes.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=multi+word+design",
+					Response:     "pattern.empty.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrDesignNotFound("multi word design"),
+		},
 	}
 
 	// Run tests

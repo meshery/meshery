@@ -107,7 +107,11 @@ mesheryctl design deploy -f [filepath] -s [source type]
 
 			queryParams := url.Values{}
 			queryParams.Set("populate", "pattern_file")
-			queryParams.Set("search", url.QueryEscape(patternName))
+			// url.Values.Encode() already percent-encodes each value, so the
+			// name must be set raw here; pre-escaping with url.QueryEscape would
+			// double-encode it (e.g. "My Design" -> "search=My%2BDesign") and the
+			// server would never match the design.
+			queryParams.Set("search", patternName)
 			urlPath := fmt.Sprintf("%s?%s", patternURLPath, queryParams.Encode())
 			// search and fetch patterns with pattern-name
 			utils.Log.Debug("Fetching designs")
