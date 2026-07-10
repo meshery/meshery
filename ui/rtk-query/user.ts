@@ -267,7 +267,7 @@ export const userApi = api
         query: (queryArg) => ({
           url: mesheryApiPath(`extensions/api/identity/orgs/${queryArg.orgId}/users/invite`),
           method: 'POST',
-          body: queryArg.userInvite || queryArg.body,
+          body: queryArg?.userInvite ?? queryArg?.body,
         }),
         invalidatesTags: ['users'],
       }),
