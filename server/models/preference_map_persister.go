@@ -35,7 +35,7 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 		LogLevel: logLevel,
 	})
 	if err != nil {
-		fmt.Println(err)
+		logrus.Error(err)
 		os.Exit(1)
 	}
 	data := NewDefaultPreference()
