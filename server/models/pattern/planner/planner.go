@@ -67,23 +67,20 @@ func CreatePlan(pattern pattern.PatternFile, invert bool) (*Plan, error) {
 // such as "dependsOn" as []interface{}, so wire-decoded designs never carry
 // a typed []string.
 func castStringSlice(val interface{}) ([]string, error) {
-	if strs, err := utils.Cast[[]string](val); err == nil {
-		return strs, nil
-	}
-
-	items, err := utils.Cast[[]interface{}](val)
-	if err != nil {
-		return nil, err
-	}
-
-	strs := make([]string, 0, len(items))
-	for _, item := range items {
-		s, err := utils.Cast[string](item)
-		if err != nil {
-			return nil, err
+	switch v := val.(type) {
+	case []string:
+		return v, nil
+	case []interface{}:
+		strs := make([]string, 0, len(v))
+		for _, item := range v {
+			s, err := utils.Cast[string](item)
+			if err != nil {
+				return nil, err
+			}
+			strs = append(strs, s)
 		}
-		strs = append(strs, s)
+		return strs, nil
+	default:
+		return utils.Cast[[]string](val)
 	}
-
-	return strs, nil
 }

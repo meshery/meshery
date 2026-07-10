@@ -182,7 +182,9 @@ func normalizeToJSON(data []byte) []byte {
 	}
 
 	var doc interface{}
-	if err := yamlv3.Unmarshal(data, &doc); err != nil {
+	if err := yamlv3.Unmarshal(data, &doc); err != nil || doc == nil {
+		// Empty / comment-only YAML unmarshals to nil; leave the input alone
+		// so the regular unmarshal path keeps its existing error behavior.
 		return data
 	}
 

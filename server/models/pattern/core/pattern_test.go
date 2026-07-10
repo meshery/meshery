@@ -146,4 +146,13 @@ components:
 	if len(plan.Edges) == 0 {
 		t.Fatal("expected the design's dependsOn to produce at least one ordering edge")
 	}
+
+	// Traversal dereferences edge endpoints; make sure a YAML-parsed
+	// dependsOn does not panic when the plan is evaluated.
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("Plan.IsFeasible panicked on YAML-parsed dependsOn: %v", r)
+		}
+	}()
+	_ = plan.IsFeasible()
 }
