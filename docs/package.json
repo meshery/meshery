@@ -21,7 +21,6 @@
     "check:links": "npm run _check:links",
     "clean": "rm -Rf public/* resources",
     "dev:build": "npm run _hugo-dev",
-    "dev:clean": "npm run _hugo",
     "dev:serve": "npm run _hugo-dev -- server --watch=false",
     "dev:site": "npm run _hugo-dev -- server",
     "make:public": "git init -b main public",

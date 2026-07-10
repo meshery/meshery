@@ -48,9 +48,10 @@ build-production: check-deps
 		npm run build:production -- --gc; \
 	fi
 
-## Empty build cache and run docs.meshery.io on your local machine.
-clean: check-deps
-	npm run dev:clean
+## Empty the build cache, reinstall dependencies, and run the site locally.
+clean:
+	npm run clean
+	$(MAKE) setup
 	$(MAKE) site
 
 ## Validate Go is installed by delegating to the root Makefile check.
