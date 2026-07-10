@@ -1397,9 +1397,31 @@ func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connecti
 	return updatedConnection, http.StatusOK, nil
 }
 
-func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, _ string) (*connections.Connection, error) {
+func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error) {
+	// Always persist against the connection identified by the URL id. A payload
+	// that omits `id` (e.g. an RTK mutation that only forwards status+metadata)
+	// would otherwise carry a nil id, and GORM's Save() with a zero primary key
+	// INSERTs a new row — silently creating a duplicate connection instead of
+	// updating the intended one. Fail fast on an unparseable connId rather than
+	// falling back to a nil id and INSERTing that duplicate.
+	id := conn.ID
+	if id == uuid.Nil {
+		parsedID, err := uuid.FromString(connId)
+		if err != nil {
+			return nil, err
+		}
+		id = parsedID
+	}
+	conn.ID = id
+	// A partial payload (e.g. the UI's connect action sending only {status}, or an
+	// FSM status transition sending only {kind, metadata, status}) must not
+	// clobber the columns it omits — UpdateConnection persists via GORM's Save(),
+	// which writes every column. Backfill omitted fields from the persisted row.
+	if existing, gerr := l.ConnectionPersister.GetConnection(id, ""); gerr == nil && existing != nil {
+		connections.MergePayloadOntoExisting(conn, existing)
+	}
 	connection := connections.Connection{
-		ID:             conn.ID,
+		ID:             id,
 		Name:           conn.Name,
 		ConnectionType: conn.Type,
 		SubType:        conn.SubType,

@@ -3935,6 +3935,15 @@
         "short_description": "MeshSync data flush skipped: database handler is not usable",
         "probable_cause": "Meshery Database handler is not accessible to perform operations\nMeshery Database is crashed or not reachable",
         "suggested_remediation": "Restart Meshery Server\nVerify that Meshery Server can reach the database"
+      },
+      "1442": {
+        "name": "ErrMeshsyncReconcileCode",
+        "code": "1442",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to reconcile MeshSync deployment mode",
+        "probable_cause": "The connection's state machine or Kubernetes controllers may not be ready, or the cluster is unreachable",
+        "suggested_remediation": "Ensure the connection is connected and the cluster is reachable, then retry the mode change"
       }
     }
   }
