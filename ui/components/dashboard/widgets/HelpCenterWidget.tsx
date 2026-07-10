@@ -70,8 +70,8 @@ const HelpCenterWidget = ({ iconsProps }: HelpCenterWidgetProps) => {
       icon={
         <DocumentIcon
           {...iconsProps}
-          fill={theme.palette.icon.default}
-          secondaryFill={theme.palette.icon.disabled}
+          primaryFill={theme.palette.icon.default}
+          secondaryFill={theme.palette.icon.default}
           {...iconMedium}
         />
       }
