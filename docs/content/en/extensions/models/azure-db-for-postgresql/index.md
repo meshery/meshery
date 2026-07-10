@@ -1,7 +1,7 @@
 ---
 title: Azure DB for PostgreSQL
 subtitle: Collaborative and visual infrastructure as design for Azure DB for PostgreSQL
-image: /extensions/models/azure-db-for-postgresql/icons/color/azure-db-for-postgresql-color.svg
+image: extensions/models/azure-db-for-postgresql/icons/color/azure-db-for-postgresql-color.svg
 aliases: /extensibility/integrations/azure-db-for-postgresql
 docURL: https://docs.meshery.io/extensibility/integrations/azure-db-for-postgresql
 description: 

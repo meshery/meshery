@@ -78,6 +78,16 @@ For production deployments, consider the following security best practices regar
 - **Use `mesheryctl system provider reset`** to clear an enforced provider and return to the provider selection UI.
 
 
+#### AI Provider Usage in Production
+
+When integrating AI providers with Meshery, apply the following additional controls:
+
+- **Prefer local inference for sensitive environments** — use locally hosted models to prevent sensitive workload data from leaving your network boundary.
+- **Rotate API keys and restrict to minimum scopes** — issue short-lived, least-privilege credentials and rotate them on a defined schedule.
+- **Limit outbound network access to known provider endpoints** — use egress policies or firewall rules to allow only the specific AI provider hostnames your deployment requires.
+- **Avoid logging prompts or model responses unless required** — treat model inputs and outputs as potentially sensitive; disable verbose logging by default and apply retention limits if logging is necessary.
+- **Define an incident response plan for leaked API keys** — document revocation steps, affected-system audit procedures, and communication channels before an incident occurs.
+
 ### Remote Providers
 
 The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Meshery Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.

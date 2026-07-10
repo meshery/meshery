@@ -1,7 +1,7 @@
 ---
 title: Percona Server for MySQL
 subtitle: Collaborative and visual infrastructure as design for Percona Server for MySQL
-image: /extensions/models/ps-db/icons/color/ps-db-color.svg
+image: extensions/models/ps-db/icons/color/ps-db-color.svg
 aliases: /extensibility/integrations/ps-db
 docURL: https://docs.meshery.io/extensibility/integrations/ps-db
 description: 
@@ -21,7 +21,11 @@ components:
   colorIcon: extensions/models/ps-db/components/percona-server-my-sql/icons/color/percona-server-my-sql-color.svg
   whiteIcon: extensions/models/ps-db/components/percona-server-my-sql/icons/white/percona-server-my-sql-white.svg
   description: 
-components-count: 3
+- name: percona-server-my-sql-cluster-set
+  colorIcon: extensions/models/ps-db/components/percona-server-my-sql-cluster-set/icons/color/percona-server-my-sql-cluster-set-color.svg
+  whiteIcon: extensions/models/ps-db/components/percona-server-my-sql-cluster-set/icons/white/percona-server-my-sql-cluster-set-white.svg
+  description: 
+components-count: 4
 relationships: 
 relationship-count: 0
 featureList: [

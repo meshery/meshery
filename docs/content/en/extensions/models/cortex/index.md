@@ -1,7 +1,7 @@
 ---
 title: Cortex
 subtitle: Collaborative and visual infrastructure as design for Cortex
-image: /extensions/models/cortex/icons/color/cortex-color.svg
+image: extensions/models/cortex/icons/color/cortex-color.svg
 aliases: /extensibility/integrations/cortex
 docURL: https://docs.meshery.io/extensibility/integrations/cortex
 description: 

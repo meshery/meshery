@@ -32,7 +32,10 @@ func (r *Resolver) subscribeMeshModelSummary(ctx context.Context, provider model
 				respChan <- meshModelSummary
 			case <-ctx.Done():
 				close(respChan)
-				close(ch)
+				// Detach the listener instead of closing ch: SummaryChannel keeps
+				// no way to remove a closed channel, so a closed ch left in its
+				// slice would make the next Publish panic on a send to it.
+				r.Config.MeshModelSummaryChannel.Unsubscribe(ch)
 				r.Log.Info("Closing MeshModelSummary subscription")
 				return
 			}

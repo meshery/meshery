@@ -107,6 +107,7 @@ const (
 	ErrInvalidEventDataCode               = "meshery-server-1357"
 	ErrUnreachableKubeAPICode             = "meshery-server-1304"
 	ErrFlushMeshSyncDataCode              = "meshery-server-1305"
+	ErrEmptyMeshSyncHandlerCode           = "meshery-server-1441"
 	ErrUpdateConnectionStatusCode         = "meshery-server-1306"
 	ErrResultNotFoundCode                 = "meshery-server-1307"
 	ErrPersistCredentialCode              = "meshery-server-1308"
@@ -151,6 +152,9 @@ const (
 	ErrMeshsyncStoreUpdatesCode           = "meshery-server-1380"
 	ErrRemoteProviderCapabilitiesCode     = "meshery-server-1420"
 	ErrRemoteProviderAuthExhaustedCode    = "meshery-server-1421"
+	ErrInvalidUUIDValueCode               = "meshery-server-1432"
+	ErrSystemSettingsCode                 = "meshery-server-1439"
+	ErrApplyControllersConfigCode         = "meshery-server-1440"
 )
 
 var (
@@ -366,6 +370,10 @@ func ErrGenerateUUID(err error) error {
 	return errors.New(ErrGenerateUUIDCode, errors.Alert, []string{"Unable to generate a new UUID"}, []string{err.Error()}, []string{}, []string{})
 }
 
+func ErrInvalidUUID(err error) error {
+	return errors.New(ErrInvalidUUIDValueCode, errors.Alert, []string{"Invalid UUID"}, []string{err.Error()}, []string{"The provided identifier is not a valid UUID"}, []string{"Provide a valid UUID"})
+}
+
 func ErrGrafanaOrg(err error) error {
 	return errors.New(ErrGrafanaOrgCode, errors.Alert, []string{"Failed to get Org data from Grafana"}, []string{err.Error()}, []string{"Invalid URL", "Invalid API-Key"}, []string{})
 }
@@ -540,7 +548,11 @@ func ErrUnreachableKubeAPI(err error, server string) error {
 }
 
 func ErrFlushMeshSyncData(err error, contextName, server string) error {
-	return errors.New(ErrFlushMeshSyncDataCode, errors.Alert, []string{"Unable to flush MeshSync data for context %s at %s "}, []string{err.Error()}, []string{"Meshery Database handler is not accessible to perform operations"}, []string{"Restart Meshery Server or Perform Hard Reset"})
+	return errors.New(ErrFlushMeshSyncDataCode, errors.Alert, []string{fmt.Sprintf("Unable to flush MeshSync data for context %s at %s", contextName, server)}, []string{err.Error()}, []string{"Meshery Database handler is not accessible to perform operations"}, []string{"Restart Meshery Server or Perform Hard Reset"})
+}
+
+func ErrEmptyMeshSyncHandler() error {
+	return errors.New(ErrEmptyMeshSyncHandlerCode, errors.Alert, []string{"MeshSync data flush skipped: database handler is not usable"}, []string{"The MeshSync database handler is nil, or its underlying database connection is not initialized"}, []string{"Meshery Database handler is not accessible to perform operations", "Meshery Database is crashed or not reachable"}, []string{"Restart Meshery Server", "Verify that Meshery Server can reach the database"})
 }
 
 func ErrUpdateConnectionStatus(err error, statusCode int) error {
@@ -683,4 +695,17 @@ func ErrMeshsyncEvent(err error) error {
 
 func ErrMeshsyncStoreUpdates(err error) error {
 	return errors.New(ErrMeshsyncStoreUpdatesCode, errors.Alert, []string{"Error processing MeshSync store update"}, []string{err.Error()}, []string{"MeshSync encountered an error while processing a store update event"}, []string{"Check MeshSync store logs. Verify that the database connection is active and the store is not corrupted."})
+}
+
+// ErrSystemSettings wraps failures reading or writing Meshery Server's
+// server-wide system settings store.
+func ErrSystemSettings(err error) error {
+	return errors.New(ErrSystemSettingsCode, errors.Alert, []string{"Error accessing server-wide system settings"}, []string{err.Error()}, []string{"The system_settings store could not be read or written, or the stored value is not valid JSON."}, []string{"Verify Meshery Server's database is reachable and writable, then retry the operation."})
+}
+
+// ErrApplyControllersConfig wraps failures propagating a resolved
+// controllers configuration (Meshery Operator / MeshSync / Broker) to a
+// managed cluster.
+func ErrApplyControllersConfig(err error) error {
+	return errors.New(ErrApplyControllersConfigCode, errors.Alert, []string{"Error applying controllers configuration to the cluster"}, []string{err.Error()}, []string{"The MeshSync or Broker custom resource could not be patched, or the MeshSync deployment overlay could not be applied.", "The Meshery Operator may not be deployed on the target cluster yet."}, []string{"Confirm the cluster is reachable and the Meshery Operator is deployed (operator deployment mode).", "Retry the change; configuration is re-applied whenever the connection reconnects."})
 }

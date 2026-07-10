@@ -1,7 +1,7 @@
 ---
 title: Azure Data Factory
 subtitle: Collaborative and visual infrastructure as design for Azure Data Factory
-image: /extensions/models/azure-data-factory/icons/color/azure-data-factory-color.svg
+image: extensions/models/azure-data-factory/icons/color/azure-data-factory-color.svg
 aliases: /extensibility/integrations/azure-data-factory
 docURL: https://docs.meshery.io/extensibility/integrations/azure-data-factory
 description: 

@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTableUrlState } from '@/utils/hooks/useTableUrlState';
+import { useColumnVisibilityPreference } from '@/utils/hooks/useColumnVisibilityPreference';
 import { NoSsr } from '@sistent/sistent';
 import { Publish as PublishIcon } from '@/assets/icons';
 import _PromptComponent from '../PromptComponent';
@@ -26,7 +28,7 @@ import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../shared/Modal/Information/InfoModal';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '../general/error-404/index';
 import {
   useGetFiltersQuery,
@@ -39,6 +41,7 @@ import {
 } from '@/rtk-query/filter';
 import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { isLocalProvider } from '@/utils/provider';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
@@ -67,12 +70,30 @@ function resetSelectedFilter() {
 }
 
 function MesheryFilters() {
-  const [page, setPage] = useState(0);
-  const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('');
+  const { tableState, updateTableState } = useTableUrlState({
+    tableKey: 'fil',
+    defaults: {
+      page: 0,
+      pageSize: 10,
+      sortOrder: '',
+      search: '',
+      filters: { vis: '' },
+    },
+  });
+
+  const { page, pageSize, sortOrder, search } = tableState;
+  const setPage = useCallback((p) => updateTableState({ page: p }), [updateTableState]);
+  const setPageSize = useCallback((ps) => updateTableState({ pageSize: ps }), [updateTableState]);
+  const setSortOrder = useCallback((so) => updateTableState({ sortOrder: so }), [updateTableState]);
+  const setSearch = useCallback(
+    (s) => updateTableState({ search: s, page: 0 }),
+    [updateTableState],
+  );
+
+  const visibilityFilter = tableState.filters.vis || null;
+
   const [count, setCount] = useState(0);
   const modalRef = useRef<{ show: (_args: any) => Promise<string> } | null>(null);
-  const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState<any[]>([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState<any | null>(null);
@@ -109,11 +130,9 @@ function MesheryFilters() {
   const catalogContentRef = useRef<any[]>([]);
   const catalogVisibilityRef = useRef<boolean>(false);
   const disposeConfSubscriptionRef = useRef<{ dispose: () => void } | null>(null);
-  const [visibilityFilter, setVisibilityFilter] = useState<string | null>(null);
-
-  const [selectedFilters, setSelectedFilters] = useState<{ visibility: string }>({
-    visibility: 'All',
-  });
+  const [selectedFilters, setSelectedFilters] = useState<{ visibility: string }>(() => ({
+    visibility: tableState.filters.vis || 'All',
+  }));
 
   const {
     data: filtersData,
@@ -199,9 +218,10 @@ function MesheryFilters() {
   };
 
   const handleApplyFilter = () => {
-    const visibilityFilter =
-      selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
-    setVisibilityFilter(visibilityFilter);
+    updateTableState({
+      filters: { vis: selectedFilters.visibility === 'All' ? '' : selectedFilters.visibility },
+      page: 0,
+    });
   };
 
   function resetSelectedRowData() {
@@ -274,7 +294,6 @@ function MesheryFilters() {
       });
       setCount(filtersData.totalCount || 0);
       handleSetFilters(filteredWasmFilters);
-      setVisibilityFilter(visibilityFilter);
       setFilters(filtersData.filters || []);
     }
   }, [filtersData]);
@@ -353,7 +372,7 @@ function MesheryFilters() {
   });
 
   const options = buildFiltersTableOptions({
-    user,
+    isLocalProvider: isLocalProvider(capabilitiesData),
     count,
     page,
     pageSize,
@@ -374,15 +393,24 @@ function MesheryFilters() {
 
   const [tableCols, updateCols] = useState(columns);
 
-  const [columnVisibility, setColumnVisibility] = useState(() => {
-    let showCols = updateVisibleColumns(COLUMN_VIEWS, width);
-    // Initialize column visibility based on the original columns' visibility
-    const initialVisibility = {};
+  const responsiveColDefaults = (() => {
+    const showCols = updateVisibleColumns(COLUMN_VIEWS, width);
+    const initialVisibility: Record<string, boolean> = {};
     columns.forEach((col) => {
       initialVisibility[col.name] = showCols[col.name];
     });
     return initialVisibility;
-  });
+  })();
+
+  const {
+    columnVisibility,
+    setColumnVisibilityByUser: setColumnVisibility,
+    setColumnVisibilityByResponsive,
+  } = useColumnVisibilityPreference('filters', responsiveColDefaults);
+
+  useEffect(() => {
+    setColumnVisibilityByResponsive(responsiveColDefaults);
+  }, [width, setColumnVisibilityByResponsive]);
 
   const filter = {
     visibility: {
@@ -413,7 +441,7 @@ function MesheryFilters() {
     <>
       <>
         <NoSsr>
-          {CAN(keys.VIEW_FILTERS.action, keys.VIEW_FILTERS.subject) ? (
+          {CAN(Keys.CatalogManagementViewFilters.id, Keys.CatalogManagementViewFilters.function) ? (
             <>
               {selectedRowData && Object.keys(selectedRowData).length > 0 && (
                 <YAMLEditor
@@ -433,7 +461,12 @@ function MesheryFilters() {
                           color="primary"
                           size="large"
                           onClick={handleUploadImport}
-                          disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
+                          disabled={
+                            !CAN(
+                              Keys.CatalogManagementImportFilter.id,
+                              Keys.CatalogManagementImportFilter.function,
+                            )
+                          }
                         >
                           <PublishIcon style={iconMedium} data-cy="import-button" />
                           <BtnText> Import Filters </BtnText>
@@ -520,21 +553,31 @@ function MesheryFilters() {
               )}
               {canPublishFilter &&
                 publishModal.open &&
-                CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject) && (
+                CAN(
+                  Keys.CatalogManagementPublishWasmFilter.id,
+                  Keys.CatalogManagementPublishWasmFilter.function,
+                ) && (
                   <PublishModal
                     handleClose={handlePublishModalClose}
                     title={publishModal.filter?.name}
                     handleSubmit={handlePublish}
                   />
                 )}
-              {importModal.open && CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject) && (
-                <ImportModal
-                  handleClose={handleUploadImportClose}
-                  handleImportFilter={handleImportFilter}
-                />
-              )}
+              {importModal.open &&
+                CAN(
+                  Keys.CatalogManagementImportFilter.id,
+                  Keys.CatalogManagementImportFilter.function,
+                ) && (
+                  <ImportModal
+                    handleClose={handleUploadImportClose}
+                    handleImportFilter={handleImportFilter}
+                  />
+                )}
               {infoModal.open &&
-                CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject) && (
+                CAN(
+                  Keys.CatalogManagementDetailsOfWasmFilter.id,
+                  Keys.CatalogManagementDetailsOfWasmFilter.function,
+                ) && (
                   <InfoModal
                     handlePublish={handlePublish}
                     infoModalOpen={true}

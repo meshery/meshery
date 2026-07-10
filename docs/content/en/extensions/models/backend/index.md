@@ -1,7 +1,7 @@
 ---
 title: Backend
 subtitle: Collaborative and visual infrastructure as design for Backend
-image: /extensions/models/backend/icons/color/backend-color.svg
+image: extensions/models/backend/icons/color/backend-color.svg
 aliases: /extensibility/integrations/backend
 docURL: https://docs.meshery.io/extensibility/integrations/backend
 description: 

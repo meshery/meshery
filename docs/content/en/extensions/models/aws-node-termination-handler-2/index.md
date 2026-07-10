@@ -1,7 +1,7 @@
 ---
 title: AWS Node Termination Handler
 subtitle: Collaborative and visual infrastructure as design for AWS Node Termination Handler
-image: /extensions/models/aws-node-termination-handler-2/icons/color/aws-node-termination-handler-2-color.svg
+image: extensions/models/aws-node-termination-handler-2/icons/color/aws-node-termination-handler-2-color.svg
 aliases: /extensibility/integrations/aws-node-termination-handler-2
 docURL: https://docs.meshery.io/extensibility/integrations/aws-node-termination-handler-2
 description: 

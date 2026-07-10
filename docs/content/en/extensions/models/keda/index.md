@@ -1,7 +1,7 @@
 ---
 title: KEDA
 subtitle: Collaborative and visual infrastructure as design for KEDA
-image: /extensions/models/keda/icons/color/keda-color.svg
+image: extensions/models/keda/icons/color/keda-color.svg
 aliases: /extensibility/integrations/keda
 docURL: https://docs.meshery.io/extensibility/integrations/keda
 description: 

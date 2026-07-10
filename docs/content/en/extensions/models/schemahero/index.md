@@ -1,7 +1,7 @@
 ---
 title: Schemahero
 subtitle: Collaborative and visual infrastructure as design for Schemahero
-image: /extensions/models/schemahero/icons/color/schemahero-color.svg
+image: extensions/models/schemahero/icons/color/schemahero-color.svg
 aliases: /extensibility/integrations/schemahero
 docURL: https://docs.meshery.io/extensibility/integrations/schemahero
 description: 

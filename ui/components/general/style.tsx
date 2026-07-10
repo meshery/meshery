@@ -61,8 +61,8 @@ export const StyledListItem = styled(ListItem, {
   cursor: 'pointer',
   backgroundColor: charcoal[30],
   boxShadow: '0 -1px 0 #404854 inset',
-  paddingTop: '1.325rem',
-  paddingBottom: '1.325rem',
+  paddingTop: '1.625rem',
+  paddingBottom: '1.625rem',
   position: 'sticky',
   top: 0,
   zIndex: 5,
@@ -74,6 +74,7 @@ export const StyledListItem = styled(ListItem, {
   '&:hover': {
     '& .expandMoreIcon': {
       opacity: 1,
+      visibility: 'visible',
       transition: 'opacity 200ms ease-in',
     },
   },
@@ -112,13 +113,13 @@ export const MainLogoText = styled('img')(({ theme }) => ({
 }));
 
 export const ExpandMoreIcon = styled('svg', {
-  shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
-})(({ isCollapsed, hasChildren, theme }) => ({
+  shouldForwardProp: (prop) => prop !== 'isExpanded' && prop !== 'hasChildren',
+})(({ isExpanded, hasChildren, theme }) => ({
   opacity: 0, // Initially hidden
   visibility: 'hidden',
   cursor: 'pointer',
   display: hasChildren ? 'inline-block' : 'none',
-  transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
+  transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
   transition:
     'transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out',
 
@@ -133,18 +134,31 @@ export const ExpandMoreIcon = styled('svg', {
   },
 }));
 
-export const ExpandMore = ({ isCollapsed, hasChildren, theme, ...props }) => (
-  <ExpandMoreIcon
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    width="20"
-    height="20"
-    isCollapsed={isCollapsed}
-    hasChildren={hasChildren}
+export const ExpandMore = ({ isExpanded, hasChildren, theme, isDrawerCollapsed, ...props }) => (
+  <IconButton
+    component="span"
+    aria-expanded={!!isExpanded}
+    aria-label={isExpanded ? 'Collapse' : 'Expand'}
+    style={{
+      padding: 0,
+      display: hasChildren ? 'inline-block' : 'none',
+      position: isDrawerCollapsed ? 'absolute' : 'relative',
+      right: isDrawerCollapsed ? '5px' : 'auto',
+    }}
     {...props}
   >
-    <CaretDownIcon fill={theme.palette.icon.brand} />
-  </ExpandMoreIcon>
+    <ExpandMoreIcon
+      className="expandMoreIcon"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width="20"
+      height="20"
+      isExpanded={isExpanded}
+      hasChildren={hasChildren}
+    >
+      <CaretDownIcon fill={theme.palette.icon.brand} />
+    </ExpandMoreIcon>
+  </IconButton>
 );
 
 export const NavigatorList = styled(List)({
@@ -166,13 +180,14 @@ export const NavigatorListItem = styled(ListItemButton, {
     backgroundColor: alpha(theme.palette.navigation.hover, 0.14),
     color: theme.palette.common.white,
     fill: theme.palette.common.white,
-    '& $expandMoreIcon': {
+    '& .expandMoreIcon': {
       opacity: 1,
+      visibility: 'visible',
       transition: 'opacity 200ms ease-in',
     },
   },
-  paddingTop: 4,
-  paddingBottom: 4,
+  paddingTop: theme.spacing(1.25),
+  paddingBottom: theme.spacing(1.25),
 }));
 
 export const NavigatorListItemII = styled(ListItemButton, {
@@ -191,13 +206,14 @@ export const NavigatorListItemII = styled(ListItemButton, {
     backgroundColor: alpha(theme.palette.navigation.hover, 0.14),
     color: theme.palette.common.white,
     fill: theme.palette.common.white,
-    '& $expandMoreIcon': {
+    '& .expandMoreIcon': {
       opacity: 1,
+      visibility: 'visible',
       transition: 'opacity 200ms ease-in',
     },
   },
-  paddingTop: 4,
-  paddingBottom: 4,
+  paddingTop: theme.spacing(1.25),
+  paddingBottom: theme.spacing(1.25),
 }));
 
 export const NavigatorListItemIII = styled(ListItemButton, {
@@ -216,13 +232,14 @@ export const NavigatorListItemIII = styled(ListItemButton, {
     backgroundColor: alpha(theme.palette.navigation.hover, 0.14),
     color: theme.palette.common.white,
     fill: theme.palette.common.white,
-    '& $expandMoreIcon': {
+    '& .expandMoreIcon': {
       opacity: 1,
+      visibility: 'visible',
       transition: 'opacity 200ms ease-in',
     },
   },
-  paddingTop: 4,
-  paddingBottom: 4,
+  paddingTop: theme.spacing(1.25),
+  paddingBottom: theme.spacing(1.25),
   pointerEvents: isShow ? 'none' : 'auto',
   opacity: isShow ? 0.5 : '',
 }));
@@ -247,9 +264,14 @@ export const SideBarListItem = styled(ListItemButton, {
       opacity: 1,
       visibility: 'visible',
     },
+    '& .expandMoreIcon': {
+      opacity: 1,
+      visibility: 'visible',
+      transition: 'opacity 200ms ease-in',
+    },
   },
-  paddingTop: 4,
-  paddingBottom: 4,
+  paddingTop: theme.spacing(1.25),
+  paddingBottom: theme.spacing(1.25),
   pointerEvents: isShow ? 'none' : 'auto',
   opacity: isShow ? 0.5 : '',
   fontSize: '1rem',
@@ -257,9 +279,10 @@ export const SideBarListItem = styled(ListItemButton, {
 
 export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
   opacity: drawerCollapsed ? 0 : 1,
-  transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
+  transition: 'opacity 200ms ease-in-out, visibility 200ms ease-in-out',
   fontSize: '1rem',
   color: 'inherit',
+  visibility: drawerCollapsed ? 'hidden' : 'visible',
   '& .MuiListItemText-primary': {
     fontSize: '1rem',
     color: 'inherit',
@@ -407,20 +430,21 @@ export const ChevronButtonWrapper = styled('div', {
 export const NavigatorLink = styled('span')({
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
-  width: '100%',
+  justifyContent: 'flex-start',
+  flex: 1,
   height: '30px',
 });
 
 export const HelpListItem = styled(ListItem)(({ theme }) => ({
   paddingLeft: 0,
-  paddingTop: 4,
-  paddingBottom: 4,
+  paddingTop: theme.spacing(1.25),
+  paddingBottom: theme.spacing(1.25),
   color: theme.palette.background.constant.disabled,
   fill: theme.palette.background.constant.white,
   '&:hover': {
-    '& $expandMoreIcon': {
+    '& .expandMoreIcon': {
       opacity: 1,
+      visibility: 'visible',
       transition: 'opacity 200ms ease-in',
     },
   },

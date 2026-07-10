@@ -1,7 +1,7 @@
 ---
 title: Mattermost Operator
 subtitle: Collaborative and visual infrastructure as design for Mattermost Operator
-image: /extensions/models/mattermost-operator/icons/color/mattermost-operator-color.svg
+image: extensions/models/mattermost-operator/icons/color/mattermost-operator-color.svg
 aliases: /extensibility/integrations/mattermost-operator
 docURL: https://docs.meshery.io/extensibility/integrations/mattermost-operator
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Azure Monitor
 subtitle: Collaborative and visual infrastructure as design for Azure Monitor
-image: /extensions/models/azure-monitor/icons/color/azure-monitor-color.svg
+image: extensions/models/azure-monitor/icons/color/azure-monitor-color.svg
 aliases: /extensibility/integrations/azure-monitor
 docURL: https://docs.meshery.io/extensibility/integrations/azure-monitor
 description: 

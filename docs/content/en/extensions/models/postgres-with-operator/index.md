@@ -1,7 +1,7 @@
 ---
 title: Postgres With Operator
 subtitle: Collaborative and visual infrastructure as design for Postgres With Operator
-image: /extensions/models/postgres-with-operator/icons/color/postgres-with-operator-color.svg
+image: extensions/models/postgres-with-operator/icons/color/postgres-with-operator-color.svg
 aliases: /extensibility/integrations/postgres-with-operator
 docURL: https://docs.meshery.io/extensibility/integrations/postgres-with-operator
 description: 

@@ -1,7 +1,7 @@
 ---
 title: GitLab
 subtitle: Collaborative and visual infrastructure as design for GitLab
-image: /extensions/models/gitlab/icons/color/gitlab-color.svg
+image: extensions/models/gitlab/icons/color/gitlab-color.svg
 aliases: /extensibility/integrations/gitlab
 docURL: https://docs.meshery.io/extensibility/integrations/gitlab
 description: 

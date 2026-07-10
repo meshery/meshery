@@ -113,14 +113,15 @@ weight: 100
 
 <details>
 <summary><h6>Question: Why is Meshery Server only receiving MeshSync updates from one of my Kubernetes Clusters?</h6></summary>
-<p><strong>Answer:</strong> In order to receive MeshSync updates, Meshery Server subscribes for updates from Meshery Broker. In other words, Meshery Server connects to the <code>meshery-broker</code> service port in order to subscribe for streaming MeshSync updates. By default, the Meshery Broker service is deployed as a Kubernetes Service of type <code>LoadBalancer</code>, which requires that your Kubernetes cluster provides an external IP address to the Meshery Broker service, exposing it outside of the Kubernetes cluster.</p>
-<p>If you're running Kubernetes in Docker Desktop, an external IP address of <code>localhost</code> is assigned. If you're running Minikube and execute <code>minikube tunnel</code> to gain access to Meshery Broker's service, you will find that both Meshery Broker service endpoints (from two different clusters) share the same <code>localhost:4222</code> address and port number. This port sharing causes a conflict, and Meshery Server is only able to connect to one of the Meshery Brokers.</p>
+<p><strong>Answer:</strong> In order to receive MeshSync updates, Meshery Server subscribes to updates from Meshery Broker. In other words, Meshery Server connects to the Meshery Broker service (<code>meshery-nats</code>) in order to subscribe to streaming MeshSync updates. When Meshery Server runs outside of a managed cluster, that cluster's Broker must be exposed to it: the Broker Service is cluster-internal (<code>ClusterIP</code>) by default, and you expose it by setting <code>spec.service.type</code> to <code>NodePort</code> or <code>LoadBalancer</code> on the <code>Broker</code> custom resource (or by pinning <code>spec.service.externalEndpointOverride</code> when the Broker sits behind an ingress, gateway, or NAT). See <a href="{{< ref "guides/infrastructure-management/configuring-operator-meshsync-broker.md#broker-service-networking" >}}">Broker service networking</a>.</p>
+<p>If you're running Kubernetes in Docker Desktop with <code>LoadBalancer</code> exposure, an external IP address of <code>localhost</code> is assigned. If you're running Minikube and execute <code>minikube tunnel</code> to gain access to Meshery Broker's service, you will find that both Meshery Broker service endpoints (from two different clusters) share the same <code>localhost:4222</code> address and port number. This port sharing causes a conflict, and Meshery Server is only able to connect to one of the Meshery Brokers.</p>
 
 <p>A few ways to solve this problem:</p>
 
 <ul>
 <li>Use an external cloud provider that provides you with a LoadBalancer with an external IP address other than localhost.</li>
 <li>Use <a href="https://kind.sigs.k8s.io">Kind</a> cluster with <a href="https://metallb.universe.tf">MetalLB</a> configuration</li>
+<li>Give each Broker a distinct advertised address with <code>spec.service.externalEndpointOverride</code> on its <code>Broker</code> resource.</li>
 </ul>
 </details>
 

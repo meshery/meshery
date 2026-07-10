@@ -6,7 +6,7 @@
     {
       "id": "3817ec9a-1d83-4f6f-9154-0fd4408ba9f0",
       "name": "Untitled Design",
-      "userId": "990f779c-708d-4396-84b8-e2ba37c1adcc",
+      "owner": "990f779c-708d-4396-84b8-e2ba37c1adcc",
       "patternFile": "name: MesheryGeneratedPatternFile\n",
       "location": {
         "branch": "",
@@ -20,7 +20,7 @@
     {
       "id": "0af0b4b0-9656-45a2-b778-0da3446e422f",
       "name": "Untitled Design",
-      "userId": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "owner": "2540d988-4ae2-44ff-8688-2301be1ca87a",
       "patternFile": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.27908838824537985:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 209\n          posY: 506\n",
       "location": {
         "branch": "",
@@ -34,7 +34,7 @@
     {
       "id": "a7236994-e5b7-427e-9108-b4d7281e1971",
       "name": "Untitled Design",
-      "userId": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "owner": "2540d988-4ae2-44ff-8688-2301be1ca87a",
       "patternFile": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.7878536729717105:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 218\n          posY: 520\n",
       "location": {
         "branch": "",
@@ -48,7 +48,7 @@
     {
       "id": "7c89d94e-e05a-4251-ba3f-cc83d54fb435",
       "name": "Untitled Design",
-      "userId": "f76b761f-2adb-406a-b291-4ddbbd44f0c1",
+      "owner": "f76b761f-2adb-406a-b291-4ddbbd44f0c1",
       "patternFile": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.37476815392181395:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 471.98200252453256\n          posY: 217.001940904217\n",
       "location": {
         "branch": "",
@@ -62,7 +62,7 @@
     {
       "id": "e47c3c76-a988-4fbd-8f50-209e4baafc03",
       "name": "Untitled Design",
-      "userId": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "owner": "2540d988-4ae2-44ff-8688-2301be1ca87a",
       "patternFile": "name: MesheryGeneratedPatternFile\nservices:\n  IstioMesh-0.8210882560998072:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 594\n          posY: 452\n",
       "location": {
         "branch": "",
@@ -76,7 +76,7 @@
     {
       "id": "ecd1b220-1510-4c99-aacb-a5a6e1963ec9",
       "name": "Untitled Design",
-      "userId": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "owner": "2540d988-4ae2-44ff-8688-2301be1ca87a",
       "patternFile": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.2274220971228964:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 462\n          posY: 514\n",
       "location": {
         "branch": "",
@@ -90,7 +90,7 @@
     {
       "id": "41f81b3d-64dc-42de-8b68-fa904ec46da9",
       "name": "Untitled Design",
-      "userId": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "owner": "2540d988-4ae2-44ff-8688-2301be1ca87a",
       "patternFile": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.8005725680310047:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 552\n          posY: 495\n  Application-0.09360455543391955:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 288\n          posY: 541\n",
       "location": {
         "branch": "",
@@ -104,7 +104,7 @@
     {
       "id": "e793dfc9-d1be-4747-98b7-623b50188432",
       "name": "Untitled Design",
-      "userId": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "owner": "2540d988-4ae2-44ff-8688-2301be1ca87a",
       "patternFile": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.176390234717001:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 433\n          posY: 478\n",
       "location": {
         "branch": "",
@@ -118,7 +118,7 @@
     {
       "id": "ef074b5c-46f1-4900-8e6b-6e582cf0c8dc",
       "name": "Untitled Design",
-      "userId": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "owner": "2540d988-4ae2-44ff-8688-2301be1ca87a",
       "patternFile": "name: MesheryGeneratedPatternFile\nservices:\n  IstioMesh-0.17864617140697137:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 499\n          posY: 534\n",
       "location": {
         "branch": "",
@@ -132,7 +132,7 @@
     {
       "id": "2606d710-2915-4693-8384-ba7cd57e9a24",
       "name": "Untitled Design",
-      "userId": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "owner": "2540d988-4ae2-44ff-8688-2301be1ca87a",
       "patternFile": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.621009018425815:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 470\n          posY: 531\n",
       "location": {
         "branch": "",

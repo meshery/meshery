@@ -1,7 +1,7 @@
 ---
 title: Istio Operator
 subtitle: The easiest way to get production-grade Istio service mesh up and running
-image: /extensions/models/istio-operator/icons/color/istio-operator-color.svg
+image: extensions/models/istio-operator/icons/color/istio-operator-color.svg
 aliases: /extensibility/integrations/istio-operator
 docURL: https://docs.meshery.io/extensibility/adapters/istio
 description: 

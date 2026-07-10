@@ -1,7 +1,7 @@
 ---
 title: Vitess
 subtitle: Collaborative and visual infrastructure as design for Vitess
-image: /extensions/models/vitess/icons/color/vitess-color.svg
+image: extensions/models/vitess/icons/color/vitess-color.svg
 aliases: /extensibility/integrations/vitess
 docURL: https://docs.meshery.io/extensibility/integrations/vitess
 description: 

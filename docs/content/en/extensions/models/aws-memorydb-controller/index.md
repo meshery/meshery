@@ -1,7 +1,7 @@
 ---
 title: AWS MemoryDB for Redis
 subtitle: Collaborative and visual infrastructure as design for AWS MemoryDB for Redis
-image: /extensions/models/aws-memorydb-controller/icons/color/aws-memorydb-controller-color.svg
+image: extensions/models/aws-memorydb-controller/icons/color/aws-memorydb-controller-color.svg
 aliases: /extensibility/integrations/aws-memorydb-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-memorydb-controller
 description: 

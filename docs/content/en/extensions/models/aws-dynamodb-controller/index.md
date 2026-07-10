@@ -1,7 +1,7 @@
 ---
 title: AWS DynamoDB
 subtitle: Collaborative and visual infrastructure as design for AWS DynamoDB
-image: /extensions/models/aws-dynamodb-controller/icons/color/aws-dynamodb-controller-color.svg
+image: extensions/models/aws-dynamodb-controller/icons/color/aws-dynamodb-controller-color.svg
 aliases: /extensibility/integrations/aws-dynamodb-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-dynamodb-controller
 description: 

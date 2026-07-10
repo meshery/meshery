@@ -1,7 +1,7 @@
 ---
 title: Tremor
 subtitle: Collaborative and visual infrastructure as design for Tremor
-image: /extensions/models/tremor/icons/color/tremor-color.svg
+image: extensions/models/tremor/icons/color/tremor-color.svg
 aliases: /extensibility/integrations/tremor
 docURL: https://docs.meshery.io/extensibility/integrations/tremor
 description: 

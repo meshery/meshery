@@ -1,7 +1,7 @@
 ---
 title: AWS Simple Queuing Service
 subtitle: Collaborative and visual infrastructure as design for AWS Simple Queuing Service
-image: /extensions/models/aws-sqs-controller/icons/color/aws-sqs-controller-color.svg
+image: extensions/models/aws-sqs-controller/icons/color/aws-sqs-controller-color.svg
 aliases: /extensibility/integrations/aws-sqs-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-sqs-controller
 description: 

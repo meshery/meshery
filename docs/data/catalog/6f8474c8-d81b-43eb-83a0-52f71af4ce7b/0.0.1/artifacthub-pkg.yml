@@ -14,7 +14,7 @@ links:
 readme: " \n ##h4 Caveats and Consideration \n"
 install: mesheryctl design import -f
 provider:
-    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+    name: 6e718f76-a798-485f-b915-8d5cc8a2d97a
 screenshots:
     - title: Meshery Project
       url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

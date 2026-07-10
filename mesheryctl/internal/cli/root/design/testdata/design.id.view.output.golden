@@ -1,22 +1,12 @@
-createdAt: "2023-07-31T16:22:41+01:00"
-id: 957fbc9b-708d-4396-84b8-e2ba37c1adcc
+createdAt: "2021-07-30T13:37:03.729663Z"
+id: 3817ec9a-1d83-4f6f-9154-0fd4408ba9f0
 location:
-  branch: ""
-  host: ""
-  path: ""
-  type: local
-name: kumatest
+    branch: ""
+    host: ""
+    path: ""
+    type: local
+name: Untitled Design
+owner: 990f779c-708d-4396-84b8-e2ba37c1adcc
 patternFile: |
-  name: MesheryGeneratedPatternFile
-  services:
-    VirtualService-0.4157272729581598:
-      type: VirtualService
-      namespace: VirtualService
-      traits:
-        meshmap:
-          position:
-            posX: 313
-            posY: 173
-updatedAt: "2023-07-31T16:22:41+01:00"
-userId: 990f779c-708d-4396-84b8-e2ba37c1adcc
-
+    name: MesheryGeneratedPatternFile
+updatedAt: "2021-07-30T14:14:10.672636Z"

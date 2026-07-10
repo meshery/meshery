@@ -175,6 +175,7 @@ server: dep-check
 	PROVIDER_CAPABILITIES_FILEPATH=$(PROVIDER_CAPABILITIES_FILEPATH) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
+	MESHSYNC_DEFAULT_DEPLOYMENT_MODE=$${MESHSYNC_DEFAULT_DEPLOYMENT_MODE:-operator} \
 	go run main.go error.go;
 
 ## Build and run Meshery Server with some Meshery Adapters on your local machine.
@@ -318,7 +319,7 @@ ui-setup: dep-check-node
 	cd provider-ui; npm i; cd ..
 
 ## Clean Install dependencies for building Meshery UI.
-ui-setup-ci: dep-check-node 
+ui-setup-ci: dep-check-node
 	cd ui; npm ci; cd ..
 
 ## Run Meshery UI on your local machine. Listen for changes.
@@ -351,7 +352,7 @@ ui-meshery-build: dep-check-node wasm-engine
 	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
-ui-provider-build: 
+ui-provider-build:
 	cd provider-ui; npm i; npm run build; cd ..
 
 ## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
@@ -397,8 +398,7 @@ docs-build-production:
 
 ## Run Meshery Docs in a Docker container. Listen for changes.
 docs-docker:
-	cd docs; docker run --rm --name meshery-docs -p 1313:1313 -v `pwd`:/src -w /src ghcr.io/gohugoio/hugo:v0.157.0 server -D -F --bind 0.0.0.0
-
+	cd docs; docker run --rm --name meshery-docs -p 1313:1313 -v `pwd`:/src -w /src ghcr.io/gohugoio/hugo:v0.163.3 server -D -F --bind 0.0.0.0
 
 ## Build Meshery CLI docs
 docs-mesheryctl:
@@ -462,18 +462,14 @@ test-e2e-ci:
 #-----------------------------------------------------------------------------
 # Rego Policies
 #-----------------------------------------------------------------------------
-.PHONY: rego-eval policy-test policy-lint
-
-rego-eval:
-	opa eval -i policies/test/design_all_relationships.yaml -d relationships:policies/test/all_relationships.json -d server/meshmodel/meshery-core/0.7.2/v1.0.0/policies/ \
-	'data.relationship_evaluation_policy.evaluate' --format=pretty
+.PHONY: policy-test policy-lint
 
 ## Format and lint Rego policy files
 policy-lint:
 	@echo "Formatting Rego files..."
 	@opa fmt --write .
 	@echo "Linting Rego files..."
-	@regal lint --config-file ./policies/wasm/policies/.regal/config.yaml ./server/meshmodel
+	@regal lint --config-file ./server/policies/.regal/config.yaml ./models/meshery-core/0.7.2/v1.0.0/policies
 
 ## Run Rego policy unit tests using OPA and Go test runner
 policy-test:

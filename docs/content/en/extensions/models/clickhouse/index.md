@@ -1,7 +1,7 @@
 ---
 title: ClickHouse
 subtitle: Collaborative and visual infrastructure as design for ClickHouse
-image: /extensions/models/clickhouse/icons/color/clickhouse-color.svg
+image: extensions/models/clickhouse/icons/color/clickhouse-color.svg
 aliases: /extensibility/integrations/clickhouse
 docURL: https://docs.meshery.io/extensibility/integrations/clickhouse
 description: 

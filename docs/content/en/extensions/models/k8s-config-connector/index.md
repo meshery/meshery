@@ -1,7 +1,7 @@
 ---
 title: Google Cloud Platform
 subtitle: Collaborative and visual infrastructure as design for Google Cloud Platform
-image: /extensions/models/k8s-config-connector/icons/color/k8s-config-connector-color.svg
+image: extensions/models/k8s-config-connector/icons/color/k8s-config-connector-color.svg
 aliases: /extensibility/integrations/k8s-config-connector
 docURL: https://docs.meshery.io/extensibility/integrations/k8s-config-connector
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Cloudcore
 subtitle: Collaborative and visual infrastructure as design for Cloudcore
-image: /extensions/models/cloudcore/icons/color/cloudcore-color.svg
+image: extensions/models/cloudcore/icons/color/cloudcore-color.svg
 aliases: /extensibility/integrations/cloudcore
 docURL: https://docs.meshery.io/extensibility/integrations/cloudcore
 description: 

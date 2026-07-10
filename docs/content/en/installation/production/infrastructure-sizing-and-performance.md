@@ -125,6 +125,11 @@ data and events between each cluster and the Server. Production guidance:
   replication helps with read/stateless request handling; mind the database
   caveats in
   [High Availability & Resiliency]({{< ref "installation/production/high-availability-and-resiliency.md" >}}).
+- **Static UI assets** are served by the Server with release-scoped cache
+  headers, so a CDN or caching reverse proxy in front of Meshery can offload
+  virtually all repeat static-asset requests—worthwhile when serving many
+  concurrent UI users. See
+  [Networking & Connectivity]({{< ref "installation/production/networking-and-connectivity.md" >}}).
 - **Registry and models** are held to serve design and relationship operations;
   larger registries increase baseline memory.
 - **Relationship/policy evaluation** is CPU-bound and time-boxed by
@@ -143,6 +148,7 @@ data and events between each cluster and the Server. Production guidance:
 | MeshSync mode (operator vs. embedded) | Shifts discovery cost in-cluster vs. into Server | Per connection / `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` |
 | Broker memory | Absorbs in-flight message bursts | Helm values for the Broker/Operator |
 | `POLICY_EVAL_TIMEOUT`, CPU | Tolerance for large policy evaluations | Env var / Helm |
+| CDN / caching reverse proxy for the UI | Offloads repeat static UI asset serving from the Server | Edge in front of Meshery |
 
 ## Known performance bounds and caveats
 

@@ -1,7 +1,7 @@
 ---
 title: CRI-O
 subtitle: Collaborative and visual infrastructure as design for CRI-O
-image: /extensions/models/cri-o/icons/color/cri-o-color.svg
+image: extensions/models/cri-o/icons/color/cri-o-color.svg
 aliases: /extensibility/integrations/cri-o
 docURL: https://docs.meshery.io/extensibility/integrations/cri-o
 description: 

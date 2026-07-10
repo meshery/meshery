@@ -1,7 +1,7 @@
 ---
 title: Kubevault Metrics
 subtitle: Collaborative and visual infrastructure as design for Kubevault Metrics
-image: /extensions/models/kubevault-metrics/icons/color/kubevault-metrics-color.svg
+image: extensions/models/kubevault-metrics/icons/color/kubevault-metrics-color.svg
 aliases: /extensibility/integrations/kubevault-metrics
 docURL: https://docs.meshery.io/extensibility/integrations/kubevault-metrics
 description: 

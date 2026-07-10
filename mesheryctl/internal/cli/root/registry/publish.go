@@ -61,7 +61,7 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/registry/
 mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
 
 // Publish To Meshery
-mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/server/meshmodel
+mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/models
 
 // Publish To Remote Provider
 mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]/meshmodels/models [repo]/ui/public/img/meshmodels

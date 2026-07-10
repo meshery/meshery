@@ -1,7 +1,7 @@
 ---
 title: Percona Server for MongoDB
 subtitle: Collaborative and visual infrastructure as design for Percona Server for MongoDB
-image: /extensions/models/psmdb-db/icons/color/psmdb-db-color.svg
+image: extensions/models/psmdb-db/icons/color/psmdb-db-color.svg
 aliases: /extensibility/integrations/psmdb-db
 docURL: https://docs.meshery.io/extensibility/integrations/psmdb-db
 description: 

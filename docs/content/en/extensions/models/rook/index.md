@@ -1,7 +1,7 @@
 ---
 title: Rook
 subtitle: Collaborative and visual infrastructure as design for Rook
-image: /extensions/models/rook/icons/color/rook-color.svg
+image: extensions/models/rook/icons/color/rook-color.svg
 aliases: /extensibility/integrations/rook
 docURL: https://docs.meshery.io/extensibility/integrations/rook
 description: 

@@ -1,7 +1,7 @@
 ---
 title: ArangoDB Kubernetes Operator
 subtitle: Collaborative and visual infrastructure as design for ArangoDB Kubernetes Operator
-image: /extensions/models/kube-arangodb/icons/color/kube-arangodb-color.svg
+image: extensions/models/kube-arangodb/icons/color/kube-arangodb-color.svg
 aliases: /extensibility/integrations/kube-arangodb
 docURL: https://docs.meshery.io/extensibility/integrations/kube-arangodb
 description: 

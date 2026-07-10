@@ -1,7 +1,7 @@
 ---
 title: AWS OpenSearch Service
 subtitle: Collaborative and visual infrastructure as design for AWS OpenSearch Service
-image: /extensions/models/aws-opensearchservice-controller/icons/color/aws-opensearchservice-controller-color.svg
+image: extensions/models/aws-opensearchservice-controller/icons/color/aws-opensearchservice-controller-color.svg
 aliases: /extensibility/integrations/aws-opensearchservice-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-opensearchservice-controller
 description: 
