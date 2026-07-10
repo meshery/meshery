@@ -161,8 +161,17 @@ const MesherySettings = () => {
     scannedGrafana: [],
   });
 
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  useEffect(() => window.addEventListener('resize', () => setWindowWidth(window.innerWidth)), []);
+  const [windowWidth, setWindowWidth] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth : 0,
+  );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const systemResetPromptRef = useRef<{ show: (_args: any) => Promise<string> } | null>(null);
 
   useEffect(() => {
