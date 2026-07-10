@@ -118,6 +118,9 @@ const StyledMainContent = styled(Box, { shouldForwardProp: (prop) => prop !== 'o
     [theme.breakpoints.up('sm')]: {
       marginLeft: `calc(${theme.spacing(8)} + 1px - ${DRAWER_WIDTH}px)`,
     },
+    [theme.breakpoints.up('md')]: {
+      marginLeft: 0,
+    },
     transition: theme.transitions.create('margin-left', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -139,7 +142,7 @@ const StyledRegistryModal = styled(Modal)(({ theme }) => ({
   zIndex: 1500,
   '& .modal-header': {
     position: 'relative',
-    zIndex: 2000,
+    zIndex: theme.zIndex.drawer + 1,
   },
   '& .MuiDialog-paperFullScreen': {
     margin: 0,
