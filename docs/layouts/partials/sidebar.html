@@ -153,14 +153,21 @@
     });
 
     document.addEventListener("click", function(event) {
+      if (!window.matchMedia("(max-width: 37.5em)").matches) return;
+
+      const targetLink = event.target.closest("#td-sidebar-menu a.td-sidebar-link");
+      const clickedInsideSidebar = event.target.closest("#td-sidebar-menu, .sidebar-container, .sidebar-container-wrapper");
+      const clickedToggle = event.target.closest("#toggleBtnSidebarNav");
+
       if (
-        window.matchMedia("(max-width: 37.5em)").matches &&
         document.querySelector(".left-container.left-container--active") &&
-        (event.target.closest("#td-sidebar-menu a") || event.target.closest("#td-sidebar-menu button"))
+        !clickedToggle &&
+        (targetLink || !clickedInsideSidebar)
       ) {
         const toggle = document.getElementById("toggleBtnSidebarNav");
         if (toggle) toggle.click();
       }
     });
+
   });
 </script>
