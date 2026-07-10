@@ -225,6 +225,11 @@ type HandlerInterface interface {
 	GetConnectionControllersConfig(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateConnectionControllersConfig(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
+	// Interactive sessions (terminal, logs) against a connection's resources.
+	GetSessionCapabilities(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	TerminalSessionHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	LogSessionHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
 	ExportModel(w http.ResponseWriter, req *http.Request)
 
 	GetEnvironments(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
