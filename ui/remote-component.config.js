@@ -195,6 +195,15 @@ module.exports = {
     // plugin-side imports are side-effect only.
     '@xterm/xterm/css/xterm.css': {},
 
+    // Extension Point: Meshery's interactive terminal and log sessions.
+    // Extensions import `useSessions()` to launch a shell or log tail against a
+    // connection's resource, and `SessionPanel` to embed one directly. Sharing
+    // the implementation is the point: the sessions drawer, the WebSocket
+    // client, and the wire contract all live in Meshery, so an extension never
+    // carries a second copy of them. The provider is mounted app-wide in
+    // pages/_app.tsx, so useSessions() resolves from any extension surface.
+    '@meshery/sessions': require('./components/sessions'),
+
     // Extension Point: Shared runtime for extensions
     '@dnd-kit/core': require('@dnd-kit/core'),
     '@dnd-kit/utilities': require('@dnd-kit/utilities'),

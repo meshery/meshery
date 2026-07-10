@@ -8,6 +8,7 @@ import { ResizableCell } from '../../../../utils/utils';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
+import SessionActionsCell from '@/components/sessions/SessionActionsCell';
 
 export const buildPodColumns = ({
   switchView,
@@ -31,6 +32,7 @@ export const buildPodColumns = ({
     ['metadata.creationTimestamp', 'l'],
     ['status.attribute', 'm'],
     ['spec.attribute', 'm'],
+    ['sessions', 'xs'],
   ],
   columns: [
     {
@@ -213,6 +215,25 @@ export const buildPodColumns = ({
         customBodyRender: function CustomBody(value) {
           let time = timeAgo(value);
           return <>{time}</>;
+        },
+      },
+    },
+    {
+      name: 'sessions',
+      label: 'Actions',
+      options: {
+        sort: false,
+        filter: false,
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
+        },
+        customBodyRender: function CustomBody(_value, tableMeta) {
+          return (
+            <SessionActionsCell
+              resource={meshSyncResources[tableMeta.rowIndex]}
+              k8sConfig={k8sConfig}
+            />
+          );
         },
       },
     },
