@@ -12,7 +12,7 @@ image:
   # with the *Meshery Server* tag when it republishes charts at server
   # releases — an appVersion-derived tag would then point at a nonexistent
   # operator image. Empty falls back to the chart appVersion.
-  tag: "1.0.2"
+  tag: "1.0.4"
   pullPolicy: IfNotPresent
 
 # Extra environment variables for the manager container (name: value).

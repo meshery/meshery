@@ -14,6 +14,8 @@ Meshery Environments allow you to logically group related [Connections]({{< ref 
 Managed Connections are those that are discovered by MeshSync and are managed by Meshery. Unmanaged Connections are those that are manually added by the user and are not managed by Meshery.
 {{% /alert %}}
 
+Bringing a cluster that already runs production workloads under Meshery's management? See [Bringing Existing Infrastructure Under Meshery Management]({{< ref "guides/infrastructure-management/managing-existing-infrastructure.md" >}}) for what discovery does - and deliberately does not do - to pre-existing resources.
+
 ## States and the Lifecycle of Connections
 
 Meshery tracks the status of each connections throughout the connection's lifecycle. Meshery is intentional about the currently assigned state and which state a connection may or may not transition to and from. To better understand connection states and their meaning, let's consider an example in which you a `Kubernetes` cluster with `Prometheus` installed.

@@ -10,18 +10,6 @@ vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => can(...args),
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    PUBLISH_WASM_FILTER: { action: 'publish', subject: 'wasm-filter' },
-    UNPUBLISH_WASM_FILTER: { action: 'unpublish', subject: 'wasm-filter' },
-    DOWNLOAD_A_WASM_FILTER: { action: 'download', subject: 'wasm-filter' },
-    CLONE_WASM_FILTER: { action: 'clone', subject: 'wasm-filter' },
-    DETAILS_OF_WASM_FILTER: { action: 'details', subject: 'wasm-filter' },
-    EDIT_WASM_FILTER: { action: 'edit', subject: 'wasm-filter' },
-    DELETE_WASM_FILTER: { action: 'delete', subject: 'wasm-filter' },
-  },
-}));
-
 vi.mock('../../rtk-query/user', () => ({
   useGetUserByIdQuery: (...args: unknown[]) => getUserByIdQuery(...args),
 }));

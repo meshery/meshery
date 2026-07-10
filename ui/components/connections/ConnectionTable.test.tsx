@@ -179,15 +179,6 @@ vi.mock('@/utils/can', () => ({
   default: () => true,
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    ASSIGN_CONNECTIONS_TO_ENVIRONMENT: { action: 'assign', subject: 'environment' },
-    CHANGE_CONNECTION_STATE: { action: 'change', subject: 'connection' },
-    DELETE_A_CONNECTION: { action: 'delete', subject: 'connection' },
-    FLUSH_MESHSYNC_DATA: { action: 'flush', subject: 'meshsync' },
-  },
-}));
-
 vi.mock('@/rtk-query/connection', () => ({
   useGetConnectionsQuery: (...args) => getConnectionsQuery(...args),
   useUpdateConnectionByIdMutation: () => [updateConnectionByIdMutator],

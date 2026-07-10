@@ -79,6 +79,12 @@ func (b *testMeshsyncBroker) isClosed() bool {
 	return b.closed
 }
 
+// IsConnected satisfies broker.Handler; the fake is "connected" until its
+// connection is closed.
+func (b *testMeshsyncBroker) IsConnected() bool {
+	return !b.isClosed()
+}
+
 func newTestMeshsyncHandler(t *testing.T, broker meshkitBroker.Handler, stopFunc func()) *MeshsyncDataHandler {
 	t.Helper()
 

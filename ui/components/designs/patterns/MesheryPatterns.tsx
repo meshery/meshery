@@ -23,7 +23,8 @@ import { useColumnVisibilityPreference } from '@/utils/hooks/useColumnVisibility
 import InfoModal from '../../shared/Modal/Information/InfoModal';
 import DefaultError from '../../general/error-404/index';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
+import { canEditDesign } from './design-permissions';
 import ExportDesignModal from '../export/ExportDesignModal';
 import { useModal, Modal as SistentModal } from '@sistent/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
@@ -45,6 +46,7 @@ import {
 } from '@/rtk-query/design';
 // import { useGetUserPrefQuery } from '@/rtk-query/user';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { isLocalProvider } from '@/utils/provider';
 import { useSelector } from 'react-redux';
 import { ACTION_TYPES, resetSelectedPattern } from './MesheryPatterns.constants';
 import YAMLEditor from './YAMLEditor';
@@ -412,11 +414,7 @@ function MesheryPatterns({
       handleUndeploy,
     });
 
-  const userCanEdit = (pattern) => {
-    return (
-      CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) && user?.userId == pattern?.userId
-    );
-  };
+  const userCanEdit = (pattern) => canEditDesign(user, pattern);
 
   const handleOpenInConfigurator = (id) => {
     router.push('/configuration/designs/configurator?design_id=' + id);
@@ -473,7 +471,7 @@ function MesheryPatterns({
     page,
     search,
     sortOrder,
-    user,
+    isLocalProvider: isLocalProvider(capabilitiesData),
     searchTimeout,
     setPage,
     setPageSize,
@@ -520,7 +518,7 @@ function MesheryPatterns({
   return (
     <>
       <NoSsr>
-        {CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? (
+        {CAN(Keys.CatalogManagementViewDesigns.id, Keys.CatalogManagementViewDesigns.function) ? (
           <>
             {selectedRowData && Object.keys(selectedRowData).length > 0 && (
               <YAMLEditor
@@ -612,7 +610,10 @@ function MesheryPatterns({
 
             <SistentModal maxWidth="sm" {...designLifecycleModal}></SistentModal>
             <SistentModal {...sistentInfoModal}>
-              {CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) &&
+              {CAN(
+                Keys.CatalogManagementDetailsOfDesign.id,
+                Keys.CatalogManagementDetailsOfDesign.function,
+              ) &&
                 infoModal.open && (
                   <InfoModal
                     infoModalOpen={true}
@@ -626,7 +627,10 @@ function MesheryPatterns({
 
             {canPublishPattern &&
               publishModal.open &&
-              CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) && (
+              CAN(
+                Keys.CatalogManagementPublishDesign.id,
+                Keys.CatalogManagementPublishDesign.function,
+              ) && (
                 <PublishDesignModal
                   publishFormSchema={publishSchema}
                   handleClose={handlePublishModalClose}
@@ -634,12 +638,16 @@ function MesheryPatterns({
                   handleSubmit={handlePublish}
                 />
               )}
-            {importModal.open && CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject) && (
-              <ImportDesignModal
-                handleClose={handleUploadImportClose}
-                handleImportDesign={handleImportDesign}
-              />
-            )}
+            {importModal.open &&
+              CAN(
+                Keys.CatalogManagementImportDesign.id,
+                Keys.CatalogManagementImportDesign.function,
+              ) && (
+                <ImportDesignModal
+                  handleClose={handleUploadImportClose}
+                  handleImportDesign={handleImportDesign}
+                />
+              )}
             <_PromptComponent ref={modalRef} />
           </>
         ) : (
