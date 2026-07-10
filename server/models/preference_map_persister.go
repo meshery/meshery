@@ -35,7 +35,7 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 	})
 	if err != nil {
 		logrus.Error(err)
-		return nil, err
+		return NewDefaultPreference(), err
 	}
 	data := NewDefaultPreference()
 
