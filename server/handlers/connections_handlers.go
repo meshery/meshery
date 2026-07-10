@@ -523,7 +523,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 					}
 					h.config.EventBroadcaster.Publish(userID, event)
 				} else {
-					h.log.Warn(fmt.Errorf("connection status change event was nil for connection %s, skipping persistence", inst.ID))
+					h.log.Warn(fmt.Errorf("connection status change event was nil for connection %s, skipping persistence and broadcast", inst.ID))
 				}
 				return
 			}
@@ -538,7 +538,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 				}
 				h.config.EventBroadcaster.Publish(userID, event)
 			} else {
-				h.log.Warn(fmt.Errorf("connection status change event was nil for connection %s, skipping persistence", inst.ID))
+				h.log.Warn(fmt.Errorf("connection status change event was nil for connection %s, skipping persistence and broadcast", inst.ID))
 			}
 		}(inst, connection.Status)
 	}

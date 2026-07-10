@@ -6,7 +6,7 @@ import (
 	"github.com/meshery/meshkit/models/events"
 )
 
-// TestNilEventGuard_Regression is a regression test for the nil-event guard
+// TestPersistEventNilGuard is a regression test for the nil-event guard
 // added to the NotifySmOfConnectionStatusChange goroutine in connections_handlers.go.
 //
 // Background: SendEvent can return (nil, error) from multiple code paths.
@@ -18,7 +18,7 @@ import (
 // would require a running server context with mocked providers and state machines,
 // which is out of scope for this fix. This test ensures that if the guard is
 // ever accidentally removed, the panic is caught immediately in CI.
-func TestNilEventGuard_Regression(t *testing.T) {
+func TestPersistEventNilGuard(t *testing.T) {
 	tests := []struct {
 		name  string
 		event *events.Event
