@@ -37,7 +37,7 @@ func Filler(skipPrintLogs bool) ChainStageFunction {
 		flattenedComponent := map[string]interface{}{}
 		utils.FlattenMap("", utils.ToMapStringInterface(data.Pattern), flattenedComponent)
 		if !skipPrintLogs {
-			logrus.Infof("flattened component: %+#v", flattenedComponent)
+			logrus.Debugf("flattened component: %+#v", flattenedComponent)
 		}
 		err = fill(data.Pattern, flattenedComponent)
 		if next != nil {
@@ -139,8 +139,8 @@ func fillNamespace(component *component.ComponentDefinition, flattenedPattern ma
 	}
 
 	configurationMetadata, err := mutils.Cast[map[string]interface{}](_metadata)
-	logrus.Infof("configurationMetadata: %v %v", configurationMetadata, err)
 	if err != nil {
+		logrus.Debugf("configurationMetadata cast error: %v", err)
 		return errors.Wrapf(err, "failed to resolve namespace reference for \"%s: %s\"", component.DisplayName, component.Component.Kind)
 	}
 
