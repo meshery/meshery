@@ -53,10 +53,6 @@ vi.mock('@/rtk-query/meshModel', () => ({
 
 vi.mock('@/utils/can', () => ({ default: () => true }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: { VIEW_REGISTRY: { action: 'view', subject: 'registry' } },
-}));
-
 vi.mock('next/router', () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 vi.mock('../style', () => ({

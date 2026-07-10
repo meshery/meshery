@@ -175,6 +175,7 @@ server: dep-check
 	PROVIDER_CAPABILITIES_FILEPATH=$(PROVIDER_CAPABILITIES_FILEPATH) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
+	MESHSYNC_DEFAULT_DEPLOYMENT_MODE=$${MESHSYNC_DEFAULT_DEPLOYMENT_MODE:-operator} \
 	go run main.go error.go;
 
 ## Build and run Meshery Server with some Meshery Adapters on your local machine.

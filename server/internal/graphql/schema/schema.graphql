@@ -549,27 +549,12 @@ type Query {
     filter: ServiceMeshFilter
   ): [DataPlane!]!
 
-  # Query status of Meshery Operator in your cluster
-  getOperatorStatus(
-        connectionID: String!
-  ): MesheryControllersStatusListItem @KubernetesMiddleware
-
   # Query to resync the cluster discovery
   resyncCluster(
     # Selector to control several resync actions
     selector: ReSyncActions
     k8scontextID: String!
   ): Status!  @KubernetesMiddleware
-
-  # Check the Meshsync Status
-  getMeshsyncStatus(
-        connectionID: String!
-  ): OperatorControllerStatus!
-
-  # Check is Meshey Server is connected to NATS
-  getNatsStatus(
-        connectionID: String!
-  ): OperatorControllerStatus!
 
   # Query available Namesapces in your cluster
   getAvailableNamespaces(
@@ -639,10 +624,8 @@ type Subscription {
   # Listen to all results for profile ID
   subscribePerfResults(selector: PageFilter!, profileID: String!): PerfPageResult!
 
-  # Listen to changes in the status of meshery controllers
-  subscribeMesheryControllersStatus(
-    connectionIDs: [String!]
-  ): [MesheryControllersStatusListItem!]! @KubernetesMiddleware
+  # NOTE: subscribeMesheryControllersStatus was migrated to Server-Sent Events.
+  # See GET /api/system/controllers/status/subscribe (SubscribeMesheryControllersStatusHandler).
 
   # Listen to the events that MeshSync is sending through Meshery Broker.
   # Note: It does not listen to the changes in meshery database, but to meshsync events
@@ -658,7 +641,9 @@ type Subscription {
     namespace: String!
   ): ClusterResources!
 
-  subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
+  # NOTE: subscribeK8sContext was removed. The k8s context / connection list is
+  # now driven by the connections REST API (kind=kubernetes) with RTK cache
+  # invalidation — everything is connection-driven.
 
   subscribeMeshModelSummary(selector: MeshModelSummarySelector!) : MeshModelSummary!
 }

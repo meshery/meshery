@@ -33,7 +33,7 @@ import {
   WORKSPACE,
 } from '../../../constants/navigator';
 import { iconSmall } from '../../../css/icons.styles';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 
 export const drawerIconsStyle = {
   height: '19.36px',
@@ -74,8 +74,8 @@ export const getNavigatorComponents = (
         show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
         link: true,
         permission: {
-          action: keys.VIEW_CONNECTIONS.action,
-          subject: keys.VIEW_CONNECTIONS.subject,
+          action: Keys.WorkspaceManagementViewConnections.id,
+          subject: Keys.WorkspaceManagementViewConnections.function,
         },
       },
       {
@@ -86,8 +86,8 @@ export const getNavigatorComponents = (
         show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, CREDENTIAL]),
         link: true,
         permission: {
-          action: keys.VIEW_CREDENTIALS.action,
-          subject: keys.VIEW_CREDENTIALS.subject,
+          action: Keys.SecurityManagementViewCredentials.id,
+          subject: Keys.SecurityManagementViewCredentials.function,
         },
       },
       {
@@ -98,8 +98,8 @@ export const getNavigatorComponents = (
         show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, ENVIRONMENT]),
         link: true,
         permission: {
-          action: keys.VIEW_ENVIRONMENTS.action,
-          subject: keys.VIEW_ENVIRONMENTS.subject,
+          action: Keys.WorkspaceManagementViewEnvironment.id,
+          subject: Keys.WorkspaceManagementViewEnvironment.function,
         },
       },
       {
@@ -110,8 +110,8 @@ export const getNavigatorComponents = (
         show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, WORKSPACE]),
         link: true,
         permission: {
-          action: keys.VIEW_WORKSPACE.action,
-          subject: keys.VIEW_WORKSPACE.subject,
+          action: Keys.WorkspaceManagementViewWorkspace.id,
+          subject: Keys.WorkspaceManagementViewWorkspace.function,
         },
       },
       {
@@ -122,8 +122,8 @@ export const getNavigatorComponents = (
         icon: <ServiceMeshIcon style={{ ...drawerIconsStyle }} />,
         show: true,
         permission: {
-          action: keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
-          subject: keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+          action: Keys.InfrastructureManagementViewCloudNativeInfrastructure.id,
+          subject: Keys.InfrastructureManagementViewCloudNativeInfrastructure.function,
         },
       },
     ],
@@ -162,8 +162,8 @@ export const getNavigatorComponents = (
         link: true,
         isBeta: true,
         permission: {
-          action: keys.VIEW_CATALOG.action,
-          subject: keys.VIEW_CATALOG.subject,
+          action: Keys.CatalogManagementViewCatalog.id,
+          subject: Keys.CatalogManagementViewCatalog.function,
         },
       },
       {
@@ -175,8 +175,8 @@ export const getNavigatorComponents = (
         link: true,
         isBeta: true,
         permission: {
-          action: keys.VIEW_DESIGNS.action,
-          subject: keys.VIEW_DESIGNS.subject,
+          action: Keys.CatalogManagementViewDesigns.id,
+          subject: Keys.CatalogManagementViewDesigns.function,
         },
       },
     ],
@@ -229,8 +229,8 @@ export const getNavigatorComponents = (
         show: providerUiAccessControl.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
         link: true,
         permission: {
-          action: keys.VIEW_PERFORMANCE_PROFILES.action,
-          subject: keys.VIEW_PERFORMANCE_PROFILES.subject,
+          action: Keys.PerformanceManagementViewPerformanceProfiles.id,
+          subject: Keys.PerformanceManagementViewPerformanceProfiles.function,
         },
       },
     ],
@@ -246,8 +246,8 @@ export const getNavigatorComponents = (
     href: '/extensions',
     submenu: false,
     permission: {
-      action: keys.VIEW_EXTENSIONS.action,
-      subject: keys.VIEW_EXTENSIONS.subject,
+      action: Keys.ExtensibilityViewExtensions.id,
+      subject: Keys.ExtensibilityViewExtensions.function,
     },
   },
 ];

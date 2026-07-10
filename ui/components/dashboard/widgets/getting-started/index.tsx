@@ -15,7 +15,7 @@ import {
   useGetOrgsQuery,
 } from '@meshery/schemas/mesheryApi';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../../store';
 
@@ -58,8 +58,8 @@ const GetStarted = (props: { iconsProps?: object }) => {
         useHandleUserInviteMutation={useHandleUserInviteMutation}
         useNotificationHandlers={useNotificationHandlers}
         isAssignUserRolesAllowed={CAN(
-          keys.ASSIGN_USER_ROLES.action,
-          keys.ASSIGN_USER_ROLES.subject,
+          Keys.IdentityAccessManagementAssignUserRoles.id,
+          Keys.IdentityAccessManagementAssignUserRoles.function,
         )}
         useLazyGetTeamsQuery={useLazyGetTeamsQuery}
         embedDesignPath="/static/img/getting-started/embedded-design-edge-stack.js"
