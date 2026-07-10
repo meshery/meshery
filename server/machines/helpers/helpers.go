@@ -92,6 +92,11 @@ func InitializeMachineWithContext(
 	if err != nil {
 		return nil, err
 	}
+
+	// Register only after Start() succeeds to prevent zombie (broken) instances
+	// from being cached. Add/Get are concurrency-safe (sm_tracker.go uses a mutex),
+	// but concurrent callers may still race to create/start multiple instances for
+	// the same ID before the first one is cached.
 	smInstanceTracker.Add(ID, inst)
 
 	return inst, nil
