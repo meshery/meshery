@@ -68,7 +68,7 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	val, err := json.Marshal(databaseSummary)
 	if err != nil {
 		h.log.Error(err)
-		http.Error(w, "failed to marshal database summary", http.StatusInternalServerError)
+		writeJSONError(w, "failed to marshal database summary", http.StatusInternalServerError)
 		return
 	}
 	if _, err := fmt.Fprint(w, string(val)); err != nil {
