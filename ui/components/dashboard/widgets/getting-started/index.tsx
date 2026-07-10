@@ -2,17 +2,18 @@ import { useState } from 'react';
 import { iconMedium } from 'css/icons.styles';
 import { useTheme, ActionButtonCard, GetStartedModal, GetStartedIcon } from '@sistent/sistent';
 import {
-  useGetLoggedInUserQuery,
-  useGetUserByIdQuery,
   useHandleUserInviteMutation,
   useLazyGetTeamsQuery,
   useUpdateUserPrefMutation,
-  useGetUserPrefQuery,
 } from '@/rtk-query/user';
 import { stepsData } from './data';
 import { useNotificationHandlers } from '@/utils/hooks/useNotification';
 import { useGetUserOrgRolesQuery } from '@/rtk-query/orgRoles';
-import { useGetOrgsQuery } from '@/rtk-query/organization';
+import {
+  useGetUserQuery,
+  useGetUserProfileByIdQuery,
+  useGetOrgsQuery,
+} from '@meshery/schemas/mesheryApi';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useSelector } from 'react-redux';
@@ -21,13 +22,11 @@ import type { RootState } from '../../../../store';
 const GetStarted = (props: { iconsProps?: object }) => {
   const [openModal, setOpenModal] = useState(false);
   const theme = useTheme();
-  const { data: currentUser } = useGetLoggedInUserQuery();
-  const { data: profileData } = useGetUserByIdQuery(currentUser?.id, {
-    skip: !currentUser?.id,
-  });
-  const { data: userPrefs } = useGetUserPrefQuery(undefined, {
-    skip: !currentUser?.id,
-  });
+  const { data: currentUser } = useGetUserQuery();
+  const { data: profileData } = useGetUserProfileByIdQuery(
+    { id: currentUser?.id },
+    { skip: !currentUser?.id },
+  );
   const { organization: currentOrg } = useSelector((state: RootState) => state.ui);
   const org_id = currentOrg?.id;
   return (
@@ -36,19 +35,13 @@ const GetStarted = (props: { iconsProps?: object }) => {
         title="GETTING STARTED"
         description="New here? Follow along these guided tasks to help you get the most of your account."
         onClick={() => setOpenModal(true)}
-        profileData={
-          profileData
-            ? { ...profileData, preferences: userPrefs ?? profileData.preferences }
-            : profileData
-        }
+        profileData={profileData}
         btnTitle="Start"
         icon={
           <GetStartedIcon {...props.iconsProps} {...iconMedium} fill={theme.palette.icon.default} />
         }
         showProgress={true}
-        completedSteps={
-          (userPrefs ?? profileData?.preferences)?.remoteProviderPreferences?.getstarted || []
-        }
+        completedSteps={profileData?.preferences?.remoteProviderPreferences?.getstarted || []}
         totalSteps={stepsData.length}
       />
 
@@ -57,11 +50,7 @@ const GetStarted = (props: { iconsProps?: object }) => {
         handleClose={() => setOpenModal(false)}
         handleOpen={() => setOpenModal(true)}
         stepsData={stepsData}
-        profileData={
-          profileData
-            ? { ...profileData, preferences: userPrefs ?? profileData.preferences }
-            : profileData
-        }
+        profileData={profileData}
         useUpdateUserPrefMutation={useUpdateUserPrefMutation}
         currentOrgId={org_id}
         useGetOrgsQuery={useGetOrgsQuery}

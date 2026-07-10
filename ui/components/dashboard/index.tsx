@@ -30,7 +30,8 @@ import { Responsive } from 'react-grid-layout/legacy';
 import debounceWidthProvider from './debounceWidthProvider';
 import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaultLayout';
 import { applyMinSizeConstraints } from './layoutConstraints';
-import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
+import { useUpdateUserPrefMutation } from '@/rtk-query/user';
+import { useGetUserQuery } from '@meshery/schemas/mesheryApi';
 import getWidgets from './widgets/getWidgets';
 import WidgetErrorFallback from './widgets/WidgetErrorFallback';
 import { TABS_SCROLL_BUTTONS_CLASS } from './constants';
@@ -86,16 +87,16 @@ const useDashboardRouter = () => {
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
 
 const Dashboard = () => {
-  const { data: userData, isLoading } = useGetUserPrefQuery();
+  const { data: userData, isLoading } = useGetUserQuery();
   const [updateUserPref] = useUpdateUserPrefMutation();
   const defaultLayout = useMemo(
     () =>
       isLoading
         ? OVERVIEW_LAYOUT
-        : userData?.remoteProviderPreferences
+        : userData?.preferences?.remoteProviderPreferences
           ? DEFAULT_LAYOUT
           : LOCAL_PROVIDER_LAYOUT,
-    [isLoading, userData?.remoteProviderPreferences],
+    [isLoading, userData?.preferences?.remoteProviderPreferences],
   ); //TODO: Use capability to determine default layout
   const { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource } =
     useDashboardRouter();
@@ -159,7 +160,9 @@ const Dashboard = () => {
         (widget) => widget?.isEnabled?.() && !isWidgetAlreadyAdded(widget.key, layout, breakpoint),
       );
   };
-  const orgDashboardLayout = getCurrentDashboardLayoutFromOrgPrefs(userData?.dashboardPreferences);
+  const orgDashboardLayout = getCurrentDashboardLayoutFromOrgPrefs(
+    userData?.preferences?.dashboardPreferences,
+  );
   const [dashboardLayout, setDashboardLayout] = useState(orgDashboardLayout);
 
   const {

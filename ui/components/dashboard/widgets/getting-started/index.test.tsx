@@ -20,20 +20,19 @@ const actionCardSpy = vi.fn();
 const modalSpy = vi.fn();
 
 vi.mock('@/rtk-query/user', () => ({
-  useGetLoggedInUserQuery: () => loggedIn,
-  useGetUserByIdQuery: () => profile,
   useHandleUserInviteMutation: () => [vi.fn()],
   useLazyGetTeamsQuery: () => [vi.fn()],
   useUpdateUserPrefMutation: () => [vi.fn()],
-  useGetUserPrefQuery: () => userPrefsMock,
 }));
 
 vi.mock('@/rtk-query/orgRoles', () => ({
   useGetUserOrgRolesQuery: () => ({ data: [] }),
 }));
 
-vi.mock('@/rtk-query/organization', () => ({
+vi.mock('@meshery/schemas/mesheryApi', () => ({
   useGetOrgsQuery: () => ({ data: [] }),
+  useGetUserQuery: () => loggedIn,
+  useGetUserProfileByIdQuery: () => profile,
 }));
 
 vi.mock('@/utils/hooks/useNotification', () => ({
