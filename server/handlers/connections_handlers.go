@@ -518,8 +518,12 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 			if err != nil {
 				h.log.Error(err)
 				if event != nil {
-					_ = provider.PersistEvent(*event, token)
+					if persistErr := provider.PersistEvent(*event, token); persistErr != nil {
+						h.log.Warn(persistErr)
+					}
 					h.config.EventBroadcaster.Publish(userID, event)
+				} else {
+					h.log.Warn(fmt.Errorf("connection status change event was nil for connection %s, skipping persistence", inst.ID))
 				}
 				return
 			}
@@ -529,8 +533,12 @@ func (h *Handler) NotifySmOfConnectionStatusChange(context context.Context, user
 			}
 
 			if event != nil {
-				_ = provider.PersistEvent(*event, token)
+				if persistErr := provider.PersistEvent(*event, token); persistErr != nil {
+					h.log.Warn(persistErr)
+				}
 				h.config.EventBroadcaster.Publish(userID, event)
+			} else {
+				h.log.Warn(fmt.Errorf("connection status change event was nil for connection %s, skipping persistence", inst.ID))
 			}
 		}(inst, connection.Status)
 	}
