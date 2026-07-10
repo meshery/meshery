@@ -51,12 +51,6 @@ vi.mock('@/utils/can', () => ({
   default: () => true,
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    DOWNLOAD_TOKEN: { action: 'download', subject: 'token' },
-  },
-}));
-
 vi.mock('@sistent/sistent', () => ({
   MenuIcon: () => <svg data-testid="menu-icon" />,
   NavigationNavbar: ({ navigationItems }: any) => (

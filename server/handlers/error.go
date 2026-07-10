@@ -214,6 +214,7 @@ const (
 	ErrTelemetryGrafanaDatasourceCode      = "meshery-server-1433"
 	ErrTelemetryGrafanaAuthCode            = "meshery-server-1434"
 	ErrTelemetryPrometheusAuthCode         = "meshery-server-1435"
+	ErrMeshsyncReconcileCode               = "meshery-server-1442"
 )
 
 var (
@@ -435,6 +436,12 @@ func ErrRetrieveUserToken(err error) error {
 
 func ErrFailToSave(err error, obj string) error {
 	return errors.New(ErrFailToSaveCode, errors.Alert, []string{"Failed to Save: ", obj}, []string{err.Error()}, []string{"Provider Database could be down or not reachable"}, []string{"Make sure provider is up and reachable"})
+}
+
+// ErrMeshsyncReconcile reports a failure to (re)deploy MeshSync for a
+// connection's chosen deployment mode after the mode was persisted.
+func ErrMeshsyncReconcile(reason string) error {
+	return errors.New(ErrMeshsyncReconcileCode, errors.Alert, []string{"Failed to reconcile MeshSync deployment mode"}, []string{reason}, []string{"The connection's state machine or Kubernetes controllers may not be ready, or the cluster is unreachable"}, []string{"Ensure the connection is connected and the cluster is reachable, then retry the mode change"})
 }
 func ErrFailToDelete(err error, obj string) error {
 	return errors.New(ErrFailToDeleteCode, errors.Alert, []string{"Failed to Delete: ", obj}, []string{err.Error()}, []string{"Provider Database could be down or not reachable"}, []string{"Make sure provider is up and reachable"})
