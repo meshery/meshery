@@ -4,11 +4,26 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"reflect"
 	"sort"
 	"sync"
+	"syscall"
 	"testing"
+
+	helperutils "github.com/meshery/meshery/server/helpers/utils"
 )
+
+func TestMain(m *testing.M) {
+	origValidator := helperutils.URLValidator
+	origDial := helperutils.DialControl
+	helperutils.URLValidator = func(string) error { return nil }
+	helperutils.DialControl = func(network, address string, c syscall.RawConn) error { return nil }
+	code := m.Run()
+	helperutils.URLValidator = origValidator
+	helperutils.DialControl = origDial
+	os.Exit(code)
+}
 
 func TestAuthHeader(t *testing.T) {
 	cases := []struct {

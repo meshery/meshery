@@ -7,11 +7,26 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
 	"reflect"
 	"strings"
 	"sync"
+	"syscall"
 	"testing"
+
+	helperutils "github.com/meshery/meshery/server/helpers/utils"
 )
+
+func TestMain(m *testing.M) {
+	origValidator := helperutils.URLValidator
+	origDial := helperutils.DialControl
+	helperutils.URLValidator = func(string) error { return nil }
+	helperutils.DialControl = func(network, address string, c syscall.RawConn) error { return nil }
+	code := m.Run()
+	helperutils.URLValidator = origValidator
+	helperutils.DialControl = origDial
+	os.Exit(code)
+}
 
 func TestAuthHeader(t *testing.T) {
 	cases := []struct {
@@ -404,9 +419,9 @@ func TestQueryRangeBatch(t *testing.T) {
 
 	c := New(srv.URL, "", nil)
 	queries := []BatchQuery{
-		{ID: "1:A", DS: "good-uid", Query: "up"},      // valid uid, direct success
-		{ID: "2:B", DS: "dev-cortex", Query: "mem"},   // name -> resolves to abc123
-		{ID: "3:C", DS: "ghost", Query: "cpu"},        // unresolvable -> per-result error
+		{ID: "1:A", DS: "good-uid", Query: "up"},    // valid uid, direct success
+		{ID: "2:B", DS: "dev-cortex", Query: "mem"}, // name -> resolves to abc123
+		{ID: "3:C", DS: "ghost", Query: "cpu"},      // unresolvable -> per-result error
 	}
 	results := c.QueryRangeBatch(context.Background(), "1", "2", "15", queries)
 	if len(results) != 3 {
