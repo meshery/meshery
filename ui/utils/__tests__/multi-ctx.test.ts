@@ -11,6 +11,7 @@ import {
   getConnectionIdFromClusterId,
   getClusterNameFromCtxId,
   getConnectionIDsFromContextIds,
+  getControllerPollConnectionIDsFromContextIds,
 } from '../multi-ctx';
 
 const sampleConfig = [
@@ -167,5 +168,59 @@ describe('getConnectionIDsFromContextIds', () => {
 
   it('returns an empty array when contexts list is empty', () => {
     expect(getConnectionIDsFromContextIds([], sampleConfig)).toEqual([]);
+  });
+});
+
+describe('getControllerPollConnectionIDsFromContextIds', () => {
+  const pollConfig = [
+    // operator + connected → eligible
+    {
+      id: 'ctx-1',
+      connectionId: 'conn-1',
+      meshsync_deployment_mode: 'operator',
+      connectionStatus: 'connected',
+    },
+    // operator + connected (camelCase mode) → eligible
+    {
+      id: 'ctx-2',
+      connectionId: 'conn-2',
+      meshsyncDeploymentMode: 'operator',
+      connectionStatus: 'connected',
+    },
+    // operator but not connected → excluded
+    {
+      id: 'ctx-3',
+      connectionId: 'conn-3',
+      meshsync_deployment_mode: 'operator',
+      connectionStatus: 'registered',
+    },
+    // embedded but connected → excluded
+    {
+      id: 'ctx-4',
+      connectionId: 'conn-4',
+      meshsync_deployment_mode: 'embedded',
+      connectionStatus: 'connected',
+    },
+    // operator + connected, but no status field → excluded (missing = not connected)
+    { id: 'ctx-5', connectionId: 'conn-5', meshsync_deployment_mode: 'operator' },
+  ];
+
+  it('returns only connections that are operator-mode AND connected', () => {
+    expect(
+      getControllerPollConnectionIDsFromContextIds(
+        ['ctx-1', 'ctx-2', 'ctx-3', 'ctx-4', 'ctx-5'],
+        pollConfig,
+      ),
+    ).toEqual(['conn-1', 'conn-2']);
+  });
+
+  it('excludes not-connected, embedded, and status-less connections', () => {
+    expect(
+      getControllerPollConnectionIDsFromContextIds(['ctx-3', 'ctx-4', 'ctx-5'], pollConfig),
+    ).toEqual([]);
+  });
+
+  it('respects the context filter', () => {
+    expect(getControllerPollConnectionIDsFromContextIds(['ctx-1'], pollConfig)).toEqual(['conn-1']);
   });
 });
