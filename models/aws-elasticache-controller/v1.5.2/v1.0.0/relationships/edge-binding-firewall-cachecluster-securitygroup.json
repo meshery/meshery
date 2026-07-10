@@ -1,0 +1,104 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "edge_binding_firewall_relationship",
+  "kind": "edge",
+  "metadata": {
+    "description": "Binds an ElastiCache CacheCluster to an EC2 SecurityGroup as a VPC firewall rule. The CacheCluster's securityGroupRefs[0].from.name field is populated with the SecurityGroup name to control inbound and outbound cache traffic.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.5.2"
+    },
+    "name": "aws-elasticache-controller",
+    "registrant": {
+      "kind": "github"
+    },
+    "version": "v1.5.2"
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "SecurityGroup",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-ec2-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "CacheCluster",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-elasticache-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "securityGroupRefs",
+                  "0",
+                  "from",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "firewall",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}
