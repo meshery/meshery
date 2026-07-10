@@ -105,3 +105,26 @@ export const normalizeKubernetesContextsResponse = (response?: KubernetesContext
       : [],
   };
 };
+
+type LoggedInUserResponse = {
+  id?: string;
+  userId?: string;
+  [key: string]: unknown;
+};
+
+// normalizeLoggedInUser adapts the current-user response for the v1beta3 Cloud
+// account-consolidation cutover: schemas v1beta3 dropped the `userId` field (the
+// canonical identifier is the `id` UUID). Backfill `userId` from `id` so
+// ownership checks that compare `user.userId` against a resource's owner UUID
+// keep working across every consumer of getLoggedInUser. Non-destructive: all
+// other fields pass through unchanged.
+export const normalizeLoggedInUser = (response?: LoggedInUserResponse) => {
+  if (!response || typeof response !== 'object') {
+    return undefined;
+  }
+
+  return {
+    ...response,
+    userId: response.userId ?? response.id,
+  };
+};

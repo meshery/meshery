@@ -253,7 +253,7 @@ Whenever the code tags are detected, the clipboard javascript file is automatica
 ## Documentation Contribution Flow Summary
 
 {{% alert color="light" title="Note" %}}
-For contributing `mesheryctl` reference section, refer [Contributing CLI]({{< ref "project/contributing/contributing-cli.md" >}})
+For contributing `mesheryctl` reference section, refer [Contributing CLI]({{< ref "project/contributing/cli" >}})
 {{% /alert %}}
 
 

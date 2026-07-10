@@ -35,9 +35,10 @@ import {
   useMediaQuery,
   SearchIcon,
   SettingsIcon,
+  FilterAllIcon,
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import OrganizationAndWorkSpaceSwitcher from '../../workspaces/SpacesSwitcher/SpaceSwitcher';
 import HeaderMenu from './HeaderMenu';
 import ConnectionModal from '../../connections/ConnectionFormModal';
@@ -142,6 +143,7 @@ function K8sContextMenu({
   setActiveContexts = () => {},
   searchContexts = () => {},
 }) {
+  const theme = useTheme();
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
   const anchorRef = React.useRef(null);
   // The dropdown slides up from below; its translate distance scales with the
@@ -250,7 +252,12 @@ function K8sContextMenu({
   return (
     <>
       <div>
-        <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS}>
+        <CanShow
+          Key={{
+            action: Keys.IdentityAccessManagementViewAllKubernetesClusters.id,
+            subject: Keys.IdentityAccessManagementViewAllKubernetesClusters.function,
+          }}
+        >
           <IconButton
             ref={anchorRef}
             aria-label="contexts"
@@ -301,7 +308,13 @@ function K8sContextMenu({
           unmountOnExit
         >
           <div>
-            <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS} invert_action={['hide']}>
+            <CanShow
+              Key={{
+                action: Keys.IdentityAccessManagementViewAllKubernetesClusters.id,
+                subject: Keys.IdentityAccessManagementViewAllKubernetesClusters.function,
+              }}
+              invert_action={['hide']}
+            >
               <ClickAwayListener
                 onClickAway={(e) => {
                   if (anchorRef.current && anchorRef.current.contains(e.target as Node)) {
@@ -338,7 +351,7 @@ function K8sContextMenu({
                           marginTop: '1rem',
                         }}
                       >
-                        <div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
                           <>
                             <Checkbox
                               checked={activeContexts.includes('all')}
@@ -347,9 +360,18 @@ function K8sContextMenu({
                                   ? setActiveContexts([])
                                   : setActiveContexts('all')
                               }
+                              icon={
+                                <FilterAllIcon
+                                  fill={theme.palette.background.brand.default}
+                                  style={{ opacity: 0.4 }}
+                                />
+                              }
+                              inputProps={{ 'aria-label': 'select all contexts' }}
                             />
                           </>
-                          <span style={{ fontWeight: 'bolder' }}>select all</span>
+                          <span style={{ fontWeight: 'bolder', whiteSpace: 'nowrap' }}>
+                            select all
+                          </span>
                         </div>
                         <CustomTooltip title="Configure Connections">
                           <div>

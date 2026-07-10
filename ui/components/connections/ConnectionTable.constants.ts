@@ -45,8 +45,8 @@ export const ACTION_TYPES = {
     name: 'FETCH_ENVIRONMENT',
     error_msg: 'Failed to fetch environment',
   },
-  CREATE_ENVIRONMENT: {
-    name: 'CREATE_ENVIRONMENT',
+  WorkspaceManagementCreateEnvironment: {
+    name: 'WorkspaceManagementCreateEnvironment',
     error_msg: 'Failed to create environment',
   },
 };
