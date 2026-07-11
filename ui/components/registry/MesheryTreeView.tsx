@@ -109,7 +109,9 @@ const MesheryTreeView = React.memo(
 
     const handleChecked = useCallback(() => {
       setChecked((prevChecked) => !prevChecked);
-    }, [setChecked]);
+      setModelsFilters({ page: 0 });
+      setResourcesDetail([]);
+    }, [setChecked, setModelsFilters, setResourcesDetail]);
 
     // Expand first level tree
     const expandAll = () => {
