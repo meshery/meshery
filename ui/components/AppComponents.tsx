@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { FavoriteIcon, Hidden, Typography, useTheme } from '@sistent/sistent';
 import Navigator from './layout/Navigator/Navigator';
-import subscribeK8sContext from '@/graphql/subscriptions/K8sContextSubscription';
 import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import { useDispatch, useSelector } from 'react-redux';
-import { normalizeKubernetesContextsResponse } from '@/rtk-query/transforms';
+import { connectionsToK8sContexts } from '@/rtk-query/transforms';
+import { useGetConnectionsQuery } from '@/rtk-query/connection';
+import { CONNECTION_KINDS } from '@/utils/Enum';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
 import { StyledDrawer, StyledFooterBody, StyledFooterText } from '../themes/App.styles';
 
@@ -61,48 +62,45 @@ export const Footer = ({ providerCapabilities, handleMesheryCommunityClick }: Fo
 
 type SetAppState = (partial: Record<string, unknown>) => void;
 
+// KubernetesSubscription keeps the app-wide k8s context list (k8sConfig) in sync
+// with the user's kubernetes connections. It replaces the subscribeK8sContext
+// GraphQL subscription: the list is now driven by the connections REST API
+// (kind=kubernetes) and stays fresh via RTK Query cache invalidation — every
+// connection mutation invalidates the `Connection_API_Connections` tag, which
+// refetches this query. Everything is connection-driven.
 export const KubernetesSubscription = ({ setAppState }: { setAppState: SetAppState }) => {
   const dispatch = useDispatch();
+  const canViewClusters = CAN(
+    Keys.IdentityAccessManagementViewAllKubernetesClusters.id,
+    Keys.IdentityAccessManagementViewAllKubernetesClusters.function,
+  );
+
+  const { data: connectionData } = useGetConnectionsQuery(
+    // Filter by kind via a plain repeated query param (?kind=kubernetes);
+    // pageSize=all fetches every cluster in one shot.
+    { kind: CONNECTION_KINDS.KUBERNETES, pageSize: 'all' },
+    { skip: !canViewClusters },
+  );
 
   useEffect(() => {
-    if (
-      !CAN(
-        Keys.IdentityAccessManagementViewAllKubernetesClusters.id,
-        Keys.IdentityAccessManagementViewAllKubernetesClusters.function,
-      )
-    ) {
+    if (!canViewClusters) {
       return;
     }
 
-    const subscription = subscribeK8sContext(
-      (result) => {
-        const normalizedK8sContext = normalizeKubernetesContextsResponse(result?.k8sContext);
-        const allContexts: string[] = [];
-        if (normalizedK8sContext?.contexts?.length > 0) {
-          normalizedK8sContext.contexts.forEach((ctx: { id: string }) => allContexts.push(ctx.id));
-          allContexts.push('all');
-        }
+    const normalizedK8sContext = connectionsToK8sContexts(connectionData?.connections);
+    const allContexts: string[] = [];
+    if (normalizedK8sContext?.contexts?.length > 0) {
+      normalizedK8sContext.contexts.forEach((ctx: { id: string }) => allContexts.push(ctx.id));
+      allContexts.push('all');
+    }
 
-        setAppState({
-          k8sContexts: normalizedK8sContext,
-          activeK8sContexts: allContexts,
-        });
+    setAppState({
+      k8sContexts: normalizedK8sContext,
+      activeK8sContexts: allContexts,
+    });
 
-        dispatch(updateK8SConfig({ k8sConfig: normalizedK8sContext?.contexts ?? [] }));
-      },
-      {
-        selector: { page: '', pageSize: '10', order: '', search: '' },
-      },
-    );
-
-    const dispose = () => {
-      if (subscription && typeof subscription.dispose === 'function') {
-        subscription.dispose();
-      }
-    };
-    setAppState({ disposeK8sContextSubscription: dispose });
-    return dispose;
-  }, [dispatch, setAppState]);
+    dispatch(updateK8SConfig({ k8sConfig: normalizedK8sContext?.contexts ?? [] }));
+  }, [connectionData, canViewClusters, dispatch, setAppState]);
 
   return null;
 };

@@ -5,6 +5,7 @@ import {
   useConnectToConnectionMutation,
   useDiscoverKubernetesContextsMutation,
   useGetCredentialsQuery,
+  usePerformConnectionActionMutation,
   useUpdateConnectionByIdMutation,
   useVerifyAndRegisterConnectionMutation,
 } from '@/rtk-query/connection';
@@ -57,6 +58,7 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
   const [addKubernetesConfig] = useAddKubernetesConfigMutation();
   const [discoverKubernetesContexts] = useDiscoverKubernetesContextsMutation();
   const [updateConnectionById] = useUpdateConnectionByIdMutation();
+  const [performConnectionAction] = usePerformConnectionActionMutation();
   const { data: credentialsResponse } = useGetCredentialsQuery(undefined, { skip: !isOpen });
 
   const formRefs = useRef<WizardFormRefs>({
@@ -138,6 +140,20 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
       },
       updateConnectionById: (connectionId, body) =>
         updateConnectionById({ connectionId, body }).unwrap(),
+      setMeshsyncMode: (connectionId, mode) =>
+        performConnectionAction({
+          connectionId,
+          body: { action: 'setMeshsyncMode', mode },
+        }).unwrap(),
+      flushMeshsync: (connectionId) =>
+        performConnectionAction({
+          connectionId,
+          // `flushMeshsync` is a valid server action but is not yet part of the
+          // published schemas action enum (a closed union of `setMeshsyncMode`),
+          // so cast until the schemas enum change ships. FOLLOW-UP: drop the cast
+          // once @meshery/schemas exposes the `flushMeshsync` action.
+          body: { action: 'flushMeshsync' } as unknown as { action: 'setMeshsyncMode' },
+        }).unwrap(),
       credentials: credentialsResponse?.credentials || [],
     }),
     [
@@ -147,6 +163,7 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
       addKubernetesConfig,
       discoverKubernetesContexts,
       updateConnectionById,
+      performConnectionAction,
       credentialsResponse,
     ],
   );

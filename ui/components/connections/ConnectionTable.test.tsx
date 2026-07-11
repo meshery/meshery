@@ -122,10 +122,6 @@ vi.mock('../../utils/utils', () => ({
   },
 }));
 
-vi.mock('@/graphql/queries/ResetDatabaseQuery', () => ({
-  default: vi.fn(),
-}));
-
 vi.mock('@/utils/hooks/useKubernetesHook', () => ({
   default: () => ping,
 }));
@@ -182,6 +178,7 @@ vi.mock('@/utils/can', () => ({
 vi.mock('@/rtk-query/connection', () => ({
   useGetConnectionsQuery: (...args) => getConnectionsQuery(...args),
   useUpdateConnectionByIdMutation: () => [updateConnectionByIdMutator],
+  usePerformConnectionActionMutation: () => [vi.fn(() => ({ unwrap: () => Promise.resolve({}) }))],
 }));
 
 vi.mock('../../assets/icons/disconnect', () => ({
@@ -558,14 +555,9 @@ describe('ConnectionTable', () => {
     expect(setRowsExpandedSpy).not.toHaveBeenCalled();
   });
 
-  it('reuses the same onFlushMeshSync callback across rerenders so children are not invalidated', () => {
+  it('keeps the ResponsiveDataTable options referentially stable across rerenders', () => {
     const { rerender } = render(<ConnectionTable />);
 
-    // The action menu only renders when an anchor is set. Capture the
-    // identity of the JSX-bound `onFlushMeshSync` by re-rendering with the
-    // same props and asserting the prop bag handed to ResponsiveDataTable
-    // (the only render-time reflection of `handleFlushMeshSync` available
-    // here) is referentially stable across renders.
     const firstOptions = dataTableProps.options;
 
     rerender(<ConnectionTable />);

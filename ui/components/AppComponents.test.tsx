@@ -1,13 +1,13 @@
 import React from 'react';
-import { act, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { KubernetesSubscription } from './AppComponents';
 
 const dispatchMock = vi.fn();
 const setAppStateMock = vi.fn();
-const disposeMock = vi.fn();
-const subscribeK8sContextMock = vi.fn();
-let subscriptionCallback: ((result: Record<string, unknown>) => void) | undefined;
+
+// Return value of useGetConnectionsQuery, swapped per test.
+let connectionsResult: { data?: { connections?: unknown[] } } = { data: undefined };
 
 vi.mock('react-redux', () => ({
   useDispatch: () => dispatchMock,
@@ -15,18 +15,18 @@ vi.mock('react-redux', () => ({
     selector({ ui: { extensionType: '' } }),
 }));
 
-vi.mock('@/graphql/subscriptions/K8sContextSubscription', () => ({
-  default: (
-    callback: (result: Record<string, unknown>) => void,
-    variables: Record<string, unknown>,
-  ) => {
-    subscriptionCallback = callback;
-    return subscribeK8sContextMock(callback, variables);
-  },
+// The k8s context list is now driven by the connections REST API
+// (kind=kubernetes) instead of the subscribeK8sContext GraphQL subscription.
+vi.mock('@/rtk-query/connection', () => ({
+  useGetConnectionsQuery: () => connectionsResult,
 }));
 
 vi.mock('@/utils/can', () => ({
   default: () => true,
+}));
+
+vi.mock('@/utils/Enum', () => ({
+  CONNECTION_KINDS: { KUBERNETES: 'kubernetes' },
 }));
 
 vi.mock('@/store/slices/mesheryUi', () => ({
@@ -63,62 +63,33 @@ describe('KubernetesSubscription', () => {
   beforeEach(() => {
     dispatchMock.mockReset();
     setAppStateMock.mockReset();
-    disposeMock.mockReset();
-    subscribeK8sContextMock.mockReset();
-    subscriptionCallback = undefined;
-
-    subscribeK8sContextMock.mockReturnValue({ dispose: disposeMock });
+    connectionsResult = { data: undefined };
   });
 
-  it('normalizes subscription payloads before storing contexts and connection config', () => {
-    const { unmount } = render(<KubernetesSubscription setAppState={setAppStateMock} />);
+  it('maps kubernetes connections into contexts and connection config', () => {
+    connectionsResult = {
+      data: {
+        connections: [
+          {
+            id: 'conn-1',
+            metadata: { id: 'ctx-1', name: 'prod-us', kubernetes_server_id: 's1' },
+          },
+          {
+            id: 'conn-2',
+            metadata: { id: 'ctx-2', name: 'prod-eu' },
+          },
+        ],
+      },
+    };
 
-    expect(subscribeK8sContextMock).toHaveBeenCalledWith(
-      expect.any(Function),
-      expect.objectContaining({
-        selector: { page: '', pageSize: '10', order: '', search: '' },
-      }),
-    );
-    expect(setAppStateMock).toHaveBeenCalledWith({
-      disposeK8sContextSubscription: expect.any(Function),
-    });
-
-    act(() => {
-      subscriptionCallback?.({
-        k8sContext: {
-          total_count: 2,
-          contexts: [
-            {
-              id: 'ctx-1',
-              name: 'prod-us',
-              connection_id: 'conn-1',
-              created_by: 'meshery',
-            },
-            {
-              id: 'ctx-2',
-              name: 'prod-eu',
-              connection_id: 'conn-2',
-              created_by: 'meshery',
-            },
-          ],
-        },
-      });
-    });
+    render(<KubernetesSubscription setAppState={setAppStateMock} />);
 
     expect(setAppStateMock).toHaveBeenCalledWith({
       k8sContexts: expect.objectContaining({
         totalCount: 2,
         contexts: [
-          expect.objectContaining({
-            id: 'ctx-1',
-            connectionId: 'conn-1',
-            createdBy: 'meshery',
-          }),
-          expect.objectContaining({
-            id: 'ctx-2',
-            connectionId: 'conn-2',
-            createdBy: 'meshery',
-          }),
+          expect.objectContaining({ id: 'ctx-1', connectionId: 'conn-1', name: 'prod-us' }),
+          expect.objectContaining({ id: 'ctx-2', connectionId: 'conn-2', name: 'prod-eu' }),
         ],
       }),
       activeK8sContexts: ['ctx-1', 'ctx-2', 'all'],
@@ -128,47 +99,23 @@ describe('KubernetesSubscription', () => {
         type: 'core/updateK8SConfig',
         payload: {
           k8sConfig: [
-            expect.objectContaining({
-              id: 'ctx-1',
-              connectionId: 'conn-1',
-            }),
-            expect.objectContaining({
-              id: 'ctx-2',
-              connectionId: 'conn-2',
-            }),
+            expect.objectContaining({ id: 'ctx-1', connectionId: 'conn-1' }),
+            expect.objectContaining({ id: 'ctx-2', connectionId: 'conn-2' }),
           ],
         },
       }),
     );
-
-    unmount();
-    expect(disposeMock).toHaveBeenCalledTimes(1);
   });
 
-  it('passes through an already-camelCased subscription payload (GraphQL alias path)', () => {
+  it('stores an empty list when there are no kubernetes connections', () => {
+    connectionsResult = { data: { connections: [] } };
+
     render(<KubernetesSubscription setAppState={setAppStateMock} />);
 
-    act(() => {
-      subscriptionCallback?.({
-        k8sContext: {
-          totalCount: 4,
-          contexts: [
-            { id: 'ctx-1', name: 'a', connectionId: 'conn-1', createdBy: 'meshery' },
-            { id: 'ctx-2', name: 'b', connectionId: 'conn-2', createdBy: 'meshery' },
-          ],
-        },
-      });
-    });
-
-    expect(setAppStateMock).toHaveBeenCalledWith(
+    expect(dispatchMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        k8sContexts: expect.objectContaining({
-          totalCount: 4,
-          contexts: expect.arrayContaining([
-            expect.objectContaining({ id: 'ctx-1', connectionId: 'conn-1' }),
-            expect.objectContaining({ id: 'ctx-2', connectionId: 'conn-2' }),
-          ]),
-        }),
+        type: 'core/updateK8SConfig',
+        payload: { k8sConfig: [] },
       }),
     );
   });

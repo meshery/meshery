@@ -4717,6 +4717,23 @@ func (l *RemoteProvider) UpdateConnectionById(token string, connection *connecti
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+	// Ensure the payload carries the URL id so the remote provider keys the
+	// update on the intended connection even if the client omitted `id`
+	// (avoids duplicate-row creation). Fail fast on an unparseable connId.
+	if connection.ID == uuid.Nil {
+		parsedID, err := uuid.FromString(connId)
+		if err != nil {
+			return nil, err
+		}
+		connection.ID = parsedID
+	}
+	// A partial payload (e.g. the UI's connect action sending only {status}, or an
+	// FSM status transition sending only {kind, metadata, status}) must not
+	// clobber the fields it omits on the remote row. Backfill omitted fields from
+	// the persisted connection before sending the full PUT.
+	if existing, _, gerr := l.GetConnectionByID(token, connection.ID); gerr == nil && existing != nil {
+		connections.MergePayloadOntoExisting(connection, existing)
+	}
 	_conn, err := json.Marshal(connection)
 	if err != nil {
 		return nil, err
