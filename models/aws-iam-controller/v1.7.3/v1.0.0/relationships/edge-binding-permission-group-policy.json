@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Binds IAM Group to Policy via spec.policies.",
+    "description": "Binds an IAM Policy to an IAM Group by attaching it via the Group's spec.policies list, granting the group the policy's permissions.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -49,9 +49,7 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "configuration",
-                  "metadata",
-                  "name"
+                  "displayName"
                 ]
               ]
             }
@@ -81,8 +79,7 @@
                 [
                   "configuration",
                   "spec",
-                  "policies",
-                  "0"
+                  "policies"
                 ]
               ]
             }
@@ -97,6 +94,6 @@
   ],
   "subType": "permission",
   "status": "enabled",
-  "type": "non-binding",
+  "type": "binding",
   "version": "v1.0.0"
 }

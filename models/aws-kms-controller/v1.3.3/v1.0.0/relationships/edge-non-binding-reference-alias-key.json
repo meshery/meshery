@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Binds KMS Grant to Key via spec.keyID.",
+    "description": "References a KMS Key from a KMS Alias via spec.targetKeyID; the Alias acts as a friendly pointer to the Key's identity.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "Key",
+            "kind": "Alias",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -50,8 +50,8 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "metadata",
-                  "name"
+                  "spec",
+                  "targetKeyID"
                 ]
               ]
             }
@@ -60,7 +60,7 @@
         "to": [
           {
             "id": null,
-            "kind": "Grant",
+            "kind": "Key",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -79,9 +79,7 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "keyID"
+                  "displayName"
                 ]
               ]
             }
@@ -94,7 +92,7 @@
       }
     }
   ],
-  "subType": "permission",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"

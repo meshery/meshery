@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Binds SECRETSMANAGER Secret to Key via spec.kmsKeyID.",
+    "description": "References a KMS Key from a KMS Grant via spec.keyID, identifying which key the grant applies to.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -15,13 +15,13 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.3.2"
+      "version": "v1.3.3"
     },
-    "name": "aws-secretsmanager-controller",
+    "name": "aws-kms-controller",
     "registrant": {
       "kind": "github"
     },
-    "version": "v1.3.2"
+    "version": "v1.3.3"
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "Key",
+            "kind": "Grant",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -50,8 +50,8 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "metadata",
-                  "name"
+                  "spec",
+                  "keyID"
                 ]
               ]
             }
@@ -60,7 +60,7 @@
         "to": [
           {
             "id": null,
-            "kind": "Secret",
+            "kind": "Key",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -69,7 +69,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-secretsmanager-controller",
+              "name": "aws-kms-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -79,9 +79,7 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "kmsKeyID"
+                  "displayName"
                 ]
               ]
             }
@@ -94,7 +92,7 @@
       }
     }
   ],
-  "subType": "permission",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"

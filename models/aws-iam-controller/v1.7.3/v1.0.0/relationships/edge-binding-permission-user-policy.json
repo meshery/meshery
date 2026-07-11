@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Binds IAM User to Policy via spec.permissionsBoundary.",
+    "description": "Binds an IAM Policy to an IAM User as its permissions boundary (spec.permissionsBoundary), capping the maximum permissions the user can be granted.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -46,12 +46,12 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "patchStrategy": "replace",
+              "mutatorRef": [
                 [
                   "displayName"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ],
@@ -94,6 +94,6 @@
   ],
   "subType": "permission",
   "status": "enabled",
-  "type": "non-binding",
+  "type": "binding",
   "version": "v1.0.0"
 }
