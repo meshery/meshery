@@ -46,12 +46,12 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "patchStrategy": "replace",
+              "mutatorRef": [
                 [
                   "displayName"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ],
@@ -74,15 +74,15 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
+              "patchStrategy": "replace",
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
                   "loggingConfig",
                   "logGroup"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ]

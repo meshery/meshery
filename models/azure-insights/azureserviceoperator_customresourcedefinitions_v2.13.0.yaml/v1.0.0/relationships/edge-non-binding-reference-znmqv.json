@@ -45,7 +45,8 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "patchStrategy": "replace",
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
@@ -67,8 +68,7 @@
                   "0",
                   "name"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ],
@@ -90,7 +90,8 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
+              "patchStrategy": "replace",
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -104,8 +105,7 @@
                   "spec",
                   "name"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ]
