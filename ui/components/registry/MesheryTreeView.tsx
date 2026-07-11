@@ -321,14 +321,16 @@ const MesheryTreeView = React.memo(
 
     const setSearchExpand = (isExpand) => {
       if (!isExpand) {
-        setSearchText(() => null);
-        setResourcesDetail(() => []);
-        setPage({
-          Models: 0,
-          Components: 0,
-          Relationships: 0,
-          Registrants: 0,
-        });
+        if (searchText) {
+          setSearchText(() => null);
+          setResourcesDetail(() => []);
+          setPage({
+            Models: 0,
+            Components: 0,
+            Relationships: 0,
+            Registrants: 0,
+          });
+        }
       }
       setIsSearchExpanded(isExpand);
     };
