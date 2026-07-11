@@ -47,6 +47,7 @@ type UseConnectionColumnsArgs = {
   handleActionMenuOpen: (event: any, tableMeta: RowData) => void;
   ping: (name: string, server: string, id: string) => void;
   pingGrafana: (connectionID: string, name?: string) => void;
+  pingPrometheus: (connectionID: string, name?: string) => void;
   // Per-kind connection state machine, keyed by connection kind. Sourced from
   // the connection definitions' `transitionMap` (see `_app.tsx`).
   transitionMapByKind: Record<string, ConnectionTransitionMap | undefined> | null;
@@ -64,6 +65,7 @@ export const useConnectionColumns = ({
   handleActionMenuOpen,
   ping,
   pingGrafana,
+  pingPrometheus,
   transitionMapByKind,
 }: UseConnectionColumnsArgs) => {
   return useMemo(() => {
@@ -127,21 +129,36 @@ export const useConnectionColumns = ({
                   onDelete={() =>
                     handleDeleteConnection(getColumnValue(tableMeta.rowData, 'id', nextColumns))
                   }
-                  handlePing={() => {
+                  // Only attach handlePing for kinds that support a chip ping.
+                  // An always-defined handler makes the chip swallow row clicks
+                  // (stopPropagation) even when it cannot ping.
+                  handlePing={(() => {
                     const rowKind = getColumnValue(tableMeta.rowData, 'kind', nextColumns);
+                    const connectionId = getColumnValue(tableMeta.rowData, 'id', nextColumns);
                     if (rowKind === CONNECTION_KINDS.KUBERNETES) {
-                      ping(
-                        getColumnValue(tableMeta.rowData, 'metadata.name', nextColumns),
-                        getColumnValue(tableMeta.rowData, 'metadata.server', nextColumns),
-                        getColumnValue(tableMeta.rowData, 'id', nextColumns),
-                      );
-                    } else if (rowKind === CONNECTION_KINDS.GRAFANA) {
-                      pingGrafana(
-                        getColumnValue(tableMeta.rowData, 'id', nextColumns),
-                        getColumnValue(tableMeta.rowData, 'name', nextColumns),
-                      );
+                      return () =>
+                        ping(
+                          getColumnValue(tableMeta.rowData, 'metadata.name', nextColumns),
+                          getColumnValue(tableMeta.rowData, 'metadata.server', nextColumns),
+                          connectionId,
+                        );
                     }
-                  }}
+                    if (rowKind === CONNECTION_KINDS.GRAFANA) {
+                      return () =>
+                        pingGrafana(
+                          connectionId,
+                          getColumnValue(tableMeta.rowData, 'name', nextColumns),
+                        );
+                    }
+                    if (rowKind === CONNECTION_KINDS.PROMETHEUS) {
+                      return () =>
+                        pingPrometheus(
+                          connectionId,
+                          getColumnValue(tableMeta.rowData, 'name', nextColumns),
+                        );
+                    }
+                    return undefined;
+                  })()}
                   iconSrc={iconSrc}
                   width="12rem"
                 />
@@ -506,6 +523,7 @@ export const useConnectionColumns = ({
     isEnvironmentsSuccess,
     ping,
     pingGrafana,
+    pingPrometheus,
     transitionMapByKind,
     updatingConnection,
     url,

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React, { useMemo, useEffect } from 'react';
 import {
   Grid2,
@@ -10,6 +11,10 @@ import {
   useTheme,
 } from '@sistent/sistent';
 import { useGetControllerDiagnosticsQuery } from '@/rtk-query/connection';
+import telemetryPrometheusApi, {
+  useLazyPingPrometheusConnectionQuery,
+} from '@/rtk-query/telemetryPrometheus';
+import telemetryGrafanaApi, { useLazyPingGrafanaConnectionQuery } from '@/rtk-query/telemetryGrafana';
 
 import {
   FormatId,
@@ -26,7 +31,11 @@ import useKubernetesHook, {
   useNatsController,
 } from '@/utils/hooks/useKubernetesHook';
 import { TooltipWrappedConnectionChip } from './ConnectionChip';
-import { CONTROLLER_STATES, MESHSYNC_DEPLOYMENT_TYPE } from '../../utils/Enum';
+import {
+  CONNECTION_STATES,
+  CONTROLLER_STATES,
+  MESHSYNC_DEPLOYMENT_TYPE,
+} from '../../utils/Enum';
 import { formatToTitleCase } from '../../utils/utils';
 
 import { ColumnWrapper, ContentContainer, OperationButton, FormatterWrapper } from './styles';
@@ -34,6 +43,228 @@ import { ColumnWrapper, ContentContainer, OperationButton, FormatterWrapper } fr
 const DISABLED = 'DISABLED';
 const KUBERNETES = 'kubernetes';
 const MESHERY = 'meshery';
+const PROMETHEUS = 'prometheus';
+const GRAFANA = 'grafana';
+const GITHUB = 'github';
+
+// Canonical connection.Metadata keys (server contracts). Prefer camelCase;
+// tolerate legacy snake_case for rows that predate the identifier-naming flip.
+const META = {
+  URL: 'url',
+  NAME: 'name',
+  // Meshery platform connection - BuildMesheryConnectionPayload
+  SERVER_ID: 'serverId',
+  SERVER_VERSION: 'serverVersion',
+  SERVER_BUILD_SHA: 'serverBuildSha',
+  SERVER_LOCATION: 'serverLocation',
+  // Telemetry - models/telemetry/{prometheus,grafana}
+  PROM_PANELS: 'telemetryPrometheusPanels',
+  GRAFANA_BOARDS: 'telemetryPinnedBoards',
+  // GitHub App (Layer5 Cloud) - installation + design snapshot paths
+  INSTALLATION_ID: 'installationId',
+  SNAPSHOT_PATHS: 'snapshotPaths',
+};
+
+const KIND_ICONS = {
+  [PROMETHEUS]: '/static/img/integrations/prometheus_logo_orange_circle.svg',
+  [GRAFANA]: '/static/img/integrations/grafana_icon.svg',
+  [GITHUB]: '/static/img/extensions/github.svg',
+  [MESHERY]: '/static/img/meshery-logo/meshery-logo.png',
+};
+
+const StyledListItemText = styled(ListItemText)(({ theme }) => ({
+  '& .MuiTypography-root.MuiTypography-body2': {
+    color: theme.palette.text.tertiary,
+  },
+}));
+
+/** First non-nullish value among metadata keys (canonical then legacy). */
+const readMeta = (metadata, ...keys) => {
+  if (!metadata) return undefined;
+  for (const key of keys) {
+    const value = metadata[key];
+    if (value !== undefined && value !== null && value !== '') {
+      return value;
+    }
+  }
+  return undefined;
+};
+
+const countArray = (value) => (Array.isArray(value) ? value.length : 0);
+
+const UrlLink = ({ url }) => (url ? <Link title={url} href={url} /> : 'N/A');
+
+const DetailListItem = ({ primary, secondary }) => (
+  <ListItem>
+    <StyledListItemText primary={primary} secondary={secondary ?? 'N/A'} />
+  </ListItem>
+);
+
+/**
+ * Shared left-panel layout used by non-Kubernetes connection detail views:
+ * ping/status chip on top, then two equal detail columns.
+ */
+const ConnectionDetailPanel = ({ chip, leftItems, rightItems, sidePanel }) => {
+  const theme = useTheme();
+  return (
+    <Grid2 container spacing={1} sx={{ textTransform: 'none' }} size="grow">
+      <Grid2 size={{ xs: 12, md: sidePanel ? 6 : 12 }}>
+        <ColumnWrapper>
+          <Grid2 container spacing={1} size="grow">
+            <OperationButton size={{ xs: 12, md: 5 }}>
+              <List>
+                <ListItem>{chip}</ListItem>
+              </List>
+            </OperationButton>
+          </Grid2>
+          <ContentContainer container spacing={1} size="grow">
+            <Grid2 size={{ xs: 12, md: 5 }}>
+              <List>{leftItems}</List>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 5 }}>
+              <List>{rightItems}</List>
+            </Grid2>
+          </ContentContainer>
+        </ColumnWrapper>
+      </Grid2>
+      {sidePanel && (
+        <Grid2
+          size={{ xs: 12, md: 6 }}
+          sx={{
+            padding: '1rem',
+            borderLeft: `1px solid ${theme.palette.border?.default || theme.palette.divider}`,
+          }}
+        >
+          {sidePanel}
+        </Grid2>
+      )}
+    </Grid2>
+  );
+};
+
+/**
+ * Prometheus / Grafana detail view.
+ *
+ * Ping is chip-only (same model as Kubernetes): expanding the row must NOT hit
+ * the telemetry endpoint. We trigger via useLazy*Query, but *read* version /
+ * error state from useQueryState so a ping from the table name-column chip
+ * (which uses the same RTK cache entry) also refreshes this panel.
+ *
+ * Panel/board counts come from the canonical metadata keys written by the
+ * telemetry handlers; version appears only after any successful chip ping.
+ */
+const TelemetryMetadataFormatter = ({
+  connection,
+  metadata,
+  productName,
+  iconSrc,
+  countLabel,
+  countValue,
+  useLazyPingQuery,
+  usePingQueryState,
+  diagnosticCode,
+}) => {
+  const connectionID = connection.id;
+  // Fire the request only on chip click (table chip or detail chip).
+  const [triggerPing] = useLazyPingQuery();
+  // Subscribe to the shared RTK cache without auto-fetching on mount - so a
+  // ping from the name-column chip also updates Version here.
+  const { data, isError, isFetching, isUninitialized, isSuccess } = usePingQueryState(
+    { connectionID },
+    { skip: !connectionID },
+  );
+
+  const handlePing = () => {
+    if (connectionID) {
+      triggerPing({ connectionID });
+    }
+  };
+
+  const url = readMeta(metadata, META.URL);
+  const displayName = connection.name || readMeta(metadata, META.NAME) || productName;
+  let version = '-';
+  if (isFetching) {
+    version = 'Checking…';
+  } else if (!isUninitialized && isError) {
+    version = 'Unavailable';
+  } else if (data?.version) {
+    version = data.version;
+  } else if (isSuccess || !isUninitialized) {
+    version = 'Unknown';
+  }
+  // Only override chip status after a failed chip-initiated ping.
+  const displayedStatus =
+    !isUninitialized && isError ? CONNECTION_STATES.DISCONNECTED : connection.status;
+
+  const diagnostics = [];
+  if (!isUninitialized && isError) {
+    diagnostics.push({
+      code: diagnosticCode,
+      severity: 'error',
+      summary: `${productName} Unreachable`,
+      description: `Meshery could not communicate with the configured ${productName} URL.`,
+      endpoint: url,
+      remediation: [
+        'Ensure the URL is correct and includes the scheme (http:// or https://).',
+        `Verify ${productName} is running and reachable from the Meshery Server network.`,
+        'Confirm the credential (API token / basic auth) is still valid.',
+      ],
+    });
+  }
+
+  const sidePanel =
+    diagnostics.length > 0 ? (
+      <>
+        <Typography variant="body1" sx={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>
+          Diagnostics
+        </Typography>
+        {diagnostics.map((diagnostic) => (
+          <DiagnosticCard key={diagnostic.code} diagnostic={diagnostic} />
+        ))}
+      </>
+    ) : null;
+
+  return (
+    <ConnectionDetailPanel
+      chip={
+        <TooltipWrappedConnectionChip
+          tooltip={url ? `Server: ${url}` : productName}
+          title={displayName}
+          status={displayedStatus}
+          iconSrc={connection.kindLogo || iconSrc}
+          handlePing={connectionID ? handlePing : undefined}
+        />
+      }
+      leftItems={
+        <>
+          <DetailListItem primary="Name" secondary={displayName} />
+          <DetailListItem
+            primary="Created At"
+            secondary={<FormattedDate date={connection.createdAt} />}
+          />
+          <DetailListItem
+            primary="Updated At"
+            secondary={<FormattedDate date={connection.updatedAt} />}
+          />
+        </>
+      }
+      rightItems={
+        <>
+          <ListItem>
+            <StyledListItemText
+              style={{ width: '80%', wordWrap: 'break-word' }}
+              primary="Server"
+              secondary={<UrlLink url={url} />}
+            />
+          </ListItem>
+          <DetailListItem primary="Version" secondary={version} />
+          <DetailListItem primary={countLabel} secondary={countValue} />
+        </>
+      }
+      sidePanel={sidePanel}
+    />
+  );
+};
 
 const customIdFormatter = (title, id) => (
   <FormatterWrapper>
@@ -59,12 +290,6 @@ const DefaultPropertyFormatters = {
   last_applied: (value) => customDateFormatter('Last Applied', value),
   last_updated: (value) => customDateFormatter('Last Updated', value),
 };
-
-const StyledListItemText = styled(ListItemText)(({ theme }) => ({
-  '& .MuiTypography-root.MuiTypography-body2': {
-    color: theme.palette.text.tertiary, // Use the secondary color from the theme
-  },
-}));
 
 const DIAGNOSTIC_SEVERITY_PALETTE = {
   error: 'error',
@@ -264,7 +489,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                       wordWrap: 'break-word',
                     }}
                     primary="Server"
-                    secondary={<Link title={metadata.server}>{metadata.server}</Link>}
+                    secondary={<UrlLink url={metadata.server} />}
                   />
                 </ListItem>
               </List>
@@ -391,24 +616,159 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
   );
 };
 
-const MesheryMetadataFormatter = ({ connection }) => {
-  const uiSchema = useMemo(
-    () =>
-      createColumnUiSchema({
-        metadata: connection.metadata || {},
-        numCols: {
-          xs: 2,
-          md: 4,
-        },
-      }),
-    [connection.metadata],
-  );
+const usePrometheusPingQueryState = (arg, opts) =>
+  telemetryPrometheusApi.endpoints.pingPrometheusConnection.useQueryState(arg, opts);
+
+const useGrafanaPingQueryState = (arg, opts) =>
+  telemetryGrafanaApi.endpoints.pingGrafanaConnection.useQueryState(arg, opts);
+
+const PrometheusMetadataFormatter = ({ connection, metadata }) => (
+  <TelemetryMetadataFormatter
+    connection={connection}
+    metadata={metadata}
+    productName="Prometheus"
+    iconSrc={KIND_ICONS[PROMETHEUS]}
+    countLabel="Saved Panels"
+    countValue={countArray(readMeta(metadata, META.PROM_PANELS))}
+    useLazyPingQuery={useLazyPingPrometheusConnectionQuery}
+    usePingQueryState={usePrometheusPingQueryState}
+    diagnosticCode="prometheus-unreachable"
+  />
+);
+
+const GrafanaMetadataFormatter = ({ connection, metadata }) => (
+  <TelemetryMetadataFormatter
+    connection={connection}
+    metadata={metadata}
+    productName="Grafana"
+    iconSrc={KIND_ICONS[GRAFANA]}
+    countLabel="Pinned Boards"
+    countValue={countArray(readMeta(metadata, META.GRAFANA_BOARDS))}
+    useLazyPingQuery={useLazyPingGrafanaConnectionQuery}
+    usePingQueryState={useGrafanaPingQueryState}
+    diagnosticCode="grafana-unreachable"
+  />
+);
+
+// GitHub App connections (Layer5 Cloud): metadata carries installationId +
+// snapshotPaths (design snapshot repo paths). Not owner/host/path design-file fields.
+const GithubMetadataFormatter = ({ connection, metadata }) => {
+  const installationId = readMeta(metadata, META.INSTALLATION_ID, 'installation_id');
+  const snapshotPaths = readMeta(metadata, META.SNAPSHOT_PATHS, 'snapshot_paths', 'repositoryPaths');
+  const snapshotCount = countArray(snapshotPaths);
+  const displayName = connection.name || 'GitHub App';
+  const connectionType = [connection.type, connection.subType].filter(Boolean).join(' / ') || 'N/A';
 
   return (
-    <FormatStructuredData
-      data={connection.metadata}
-      uiSchema={uiSchema}
-      propertyFormatters={DefaultPropertyFormatters}
+    <ConnectionDetailPanel
+      chip={
+        <TooltipWrappedConnectionChip
+          tooltip={
+            installationId ? `GitHub App installation ${installationId}` : 'GitHub App connection'
+          }
+          title={displayName}
+          status={connection.status}
+          iconSrc={connection.kindLogo || KIND_ICONS[GITHUB]}
+          handlePing={undefined}
+        />
+      }
+      leftItems={
+        <>
+          <DetailListItem primary="Name" secondary={displayName} />
+          <DetailListItem
+            primary="Installation ID"
+            secondary={installationId ? <FormatId id={String(installationId)} /> : 'N/A'}
+          />
+          <DetailListItem primary="Type" secondary={connectionType} />
+        </>
+      }
+      rightItems={
+        <>
+          <DetailListItem
+            primary="Snapshot Paths"
+            secondary={
+              snapshotCount > 0 ? `${snapshotCount} configured` : 'None configured'
+            }
+          />
+          <DetailListItem
+            primary="Created At"
+            secondary={<FormattedDate date={connection.createdAt} />}
+          />
+          <DetailListItem
+            primary="Updated At"
+            secondary={<FormattedDate date={connection.updatedAt} />}
+          />
+        </>
+      }
+    />
+  );
+};
+
+// Meshery platform connection - BuildMesheryConnectionPayload camelCase keys.
+const MesheryMetadataFormatter = ({ connection, metadata }) => {
+  const serverLocation = readMeta(metadata, META.SERVER_LOCATION, 'server_location');
+  const serverVersion = readMeta(metadata, META.SERVER_VERSION, 'server_version');
+  const serverBuildSha = readMeta(metadata, META.SERVER_BUILD_SHA, 'server_build_sha');
+  const serverId = readMeta(metadata, META.SERVER_ID, 'server_id');
+  const displayName = connection.name || 'Meshery Server';
+  const shortSha =
+    typeof serverBuildSha === 'string' && serverBuildSha.length > 0
+      ? serverBuildSha.substring(0, 7)
+      : null;
+
+  return (
+    <ConnectionDetailPanel
+      chip={
+        <TooltipWrappedConnectionChip
+          tooltip={serverLocation ? `Location: ${serverLocation}` : 'Meshery Server'}
+          title={displayName}
+          status={connection.status}
+          iconSrc={connection.kindLogo || KIND_ICONS[MESHERY]}
+          handlePing={undefined}
+        />
+      }
+      leftItems={
+        <>
+          <DetailListItem primary="Server Name" secondary={displayName} />
+          <DetailListItem primary="Server Version" secondary={serverVersion || 'N/A'} />
+          <ListItem>
+            <StyledListItemText
+              style={{ width: '80%', wordWrap: 'break-word' }}
+              primary="Server Location"
+              secondary={<UrlLink url={serverLocation} />}
+            />
+          </ListItem>
+        </>
+      }
+      rightItems={
+        <>
+          <DetailListItem
+            primary="Server ID"
+            secondary={serverId ? <FormatId id={String(serverId)} /> : 'N/A'}
+          />
+          <DetailListItem
+            primary="Build SHA"
+            secondary={
+              shortSha ? (
+                <Link
+                  title={shortSha}
+                  href={`https://github.com/meshery/meshery/commit/${serverBuildSha}`}
+                />
+              ) : (
+                'N/A'
+              )
+            }
+          />
+          <DetailListItem
+            primary="Created At"
+            secondary={<FormattedDate date={connection.createdAt} />}
+          />
+          <DetailListItem
+            primary="Updated At"
+            secondary={<FormattedDate date={connection.updatedAt} />}
+          />
+        </>
+      }
     />
   );
 };
@@ -454,7 +814,24 @@ const FormatConnectionMetadata = (props) => {
       );
       break;
     case MESHERY:
-      formatter = <MesheryMetadataFormatter connection={connection} />;
+      formatter = (
+        <MesheryMetadataFormatter connection={connection} metadata={connection.metadata} />
+      );
+      break;
+    case PROMETHEUS:
+      formatter = (
+        <PrometheusMetadataFormatter connection={connection} metadata={connection.metadata} />
+      );
+      break;
+    case GRAFANA:
+      formatter = (
+        <GrafanaMetadataFormatter connection={connection} metadata={connection.metadata} />
+      );
+      break;
+    case GITHUB:
+      formatter = (
+        <GithubMetadataFormatter connection={connection} metadata={connection.metadata} />
+      );
       break;
     default:
       formatter = (

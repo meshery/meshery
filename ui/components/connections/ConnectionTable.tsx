@@ -7,6 +7,7 @@ import _PromptComponent from '../PromptComponent';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import useGrafanaPingHook from '@/utils/hooks/useGrafanaPingHook';
+import usePrometheusPingHook from '@/utils/hooks/usePrometheusPingHook';
 import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
@@ -81,6 +82,7 @@ const ConnectionTable = ({
   );
   const ping = useKubernetesHook();
   const pingGrafana = useGrafanaPingHook();
+  const pingPrometheus = usePrometheusPingHook();
   const { width } = useWindowDimensions();
 
   const { tableState, updateTableState, copyRowDeepLink } = useTableUrlState({
@@ -193,7 +195,7 @@ const ConnectionTable = ({
       pageSize: pageSize,
       search: search,
       order: sortOrder,
-      // Repeated query params (?status=connected, ?kind=kubernetes) — no JSON.
+      // Repeated query params (?status=connected, ?kind=kubernetes) - no JSON.
       status: statusFilter || undefined,
       kind: selectedFilter || kindFilter || undefined,
     },
@@ -265,7 +267,7 @@ const ConnectionTable = ({
     // only populated after `_app.tsx`'s async `loadMeshModelComponent`
     // completes. The pages-router routes to /management/connections before
     // that promise resolves, so this memo must tolerate a null map.
-    // Render every connection the API returns — the columns already fall back
+    // Render every connection the API returns - the columns already fall back
     // for missing fields (the Name column uses `metadata.name`/kind, etc.).
     // Do NOT drop connections for a missing name/kind/status: that wrongly hid
     // real connections. The only guard is against null/undefined array entries.
@@ -330,7 +332,7 @@ const ConnectionTable = ({
 
       // Capture the connection IDs up front. The user has to acknowledge the
       // confirmation modal before delete fires, and `filteredConnections` can
-      // be invalidated/reordered by an in-flight refetch in that window — using
+      // be invalidated/reordered by an in-flight refetch in that window - using
       // the index after-the-fact dereferenced stale rows and silently no-op'd
       // (no PUT, no notification), which surfaced as a hung e2e snackbar wait.
       const ids = selected.data
@@ -500,7 +502,7 @@ const ConnectionTable = ({
   // churn on every cache hit doesn't re-fire this effect. The effect re-fires
   // through `filteredConnectionsKey` (a primitive snapshot of the visible id
   // set), which only changes when the *content* of the visible page changes
-  // — which is exactly the condition under which a previously-missing deep
+  // - which is exactly the condition under which a previously-missing deep
   // link could now succeed (data finished loading, user paginated, filter
   // changed). Same-data refetches produce the same key string, so they bail
   // out of the effect via `Object.is` equality on the dep.
@@ -526,7 +528,7 @@ const ConnectionTable = ({
     const index = connections.findIndex((conn) => conn.id === selectedConnectionId);
     if (index === -1) {
       // The deep-linked connection isn't on the current page. Do not mark
-      // `lastProcessedId` — that would lock the effect out for the rest of
+      // `lastProcessedId` - that would lock the effect out for the rest of
       // the session. If the user paginates or filters into a page that does
       // include this id, `filteredConnectionsKey` will change and the effect
       // re-runs to expand the row. Intentionally do NOT clear the URL: the
@@ -564,6 +566,7 @@ const ConnectionTable = ({
     handleActionMenuOpen,
     ping,
     pingGrafana,
+    pingPrometheus,
     transitionMapByKind,
   });
   const columnNames = useMemo(
@@ -593,7 +596,7 @@ const ConnectionTable = ({
   const [tableCols, setTableCols] = useState(columns);
 
   // Keep the latest `columns` in a ref so the sync effect below can read them
-  // without depending on `columns` identity — `columns` is rebuilt on most
+  // without depending on `columns` identity - `columns` is rebuilt on most
   // renders (not all of its inputs are referentially stable), so a `[columns]`
   // dependency would setState every render and loop infinitely.
   const columnsRef = useRef(columns);
@@ -603,7 +606,7 @@ const ConnectionTable = ({
   // re-syncs it on columnVisibility identity changes, so a cell whose
   // `customBodyRender` closes over async data (the environments select is gated
   // on `isEnvironmentsSuccess`) would stay frozen at its first-render output.
-  // Re-push the freshly built columns once those inputs settle — keyed on the
+  // Re-push the freshly built columns once those inputs settle - keyed on the
   // settling signals (not `columns`) so it runs only when the rendered output
   // can actually change.
   useEffect(() => {

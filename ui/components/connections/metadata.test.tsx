@@ -8,6 +8,8 @@ const pingMesheryOperator = vi.fn();
 const pingMeshSync = vi.fn();
 const pingNats = vi.fn();
 const getControllerStatesByConnectionID = vi.fn();
+const triggerPrometheusPing = vi.fn();
+const triggerGrafanaPing = vi.fn();
 
 vi.mock('@sistent/sistent', () => {
   const styled = (Component) => () => {
@@ -46,7 +48,14 @@ vi.mock('@sistent/sistent', () => {
       },
     }),
     useTheme: () => ({
-      palette: { background: { card: 'black' }, text: { tertiary: 'gray' } },
+      palette: {
+        background: { card: 'black', default: '#111' },
+        text: { tertiary: 'gray', secondary: 'silver' },
+        error: { main: 'red' },
+        warning: { main: 'orange' },
+        info: { main: 'blue' },
+        divider: '#333',
+      },
     }),
   };
 });
@@ -61,7 +70,7 @@ vi.mock('../../utils/utils', () => ({
 }));
 
 vi.mock('../data-formatter', () => ({
-  FormatId: ({ id }) => <span>{id}</span>,
+  FormatId: ({ id }) => <span data-testid="format-id">{id}</span>,
   FormatStructuredData: ({ data }) => (
     <div data-testid="structured-data">{JSON.stringify(data || {})}</div>
   ),
@@ -72,7 +81,7 @@ vi.mock('../data-formatter', () => ({
       <span>{Value}</span>
     </div>
   ),
-  Link: ({ title }) => <span>{title}</span>,
+  Link: ({ title, href }) => <a href={href}>{title}</a>,
   createColumnUiSchema: ({ metadata }) => ({ fields: Object.keys(metadata || {}) }),
 }));
 
@@ -92,6 +101,37 @@ vi.mock('@/rtk-query/connection', () => ({
     isFetching: false,
     refetch: vi.fn(),
   }),
+}));
+
+const emptyPingState = {
+  data: undefined,
+  isError: false,
+  isFetching: false,
+  isUninitialized: true,
+  isSuccess: false,
+};
+
+vi.mock('@/rtk-query/telemetryPrometheus', () => ({
+  // Lazy: trigger only - cache reads go through useQueryState.
+  useLazyPingPrometheusConnectionQuery: () => [triggerPrometheusPing, emptyPingState],
+  default: {
+    endpoints: {
+      pingPrometheusConnection: {
+        useQueryState: () => emptyPingState,
+      },
+    },
+  },
+}));
+
+vi.mock('@/rtk-query/telemetryGrafana', () => ({
+  useLazyPingGrafanaConnectionQuery: () => [triggerGrafanaPing, emptyPingState],
+  default: {
+    endpoints: {
+      pingGrafanaConnection: {
+        useQueryState: () => emptyPingState,
+      },
+    },
+  },
 }));
 
 vi.mock('./ConnectionChip', () => ({
@@ -115,6 +155,8 @@ describe('FormatConnectionMetadata', () => {
     pingMesheryOperator.mockReset();
     pingMeshSync.mockReset();
     pingNats.mockReset();
+    triggerPrometheusPing.mockReset();
+    triggerGrafanaPing.mockReset();
     getControllerStatesByConnectionID.mockReset();
     getControllerStatesByConnectionID.mockReturnValue({
       operatorState: 'DEPLOYED',
@@ -158,29 +200,142 @@ describe('FormatConnectionMetadata', () => {
     expect(pingNats).toHaveBeenCalledWith({ connectionID: 'connection-1' });
   });
 
-  it('renders structured metadata for meshery connections', () => {
+  it('renders meshery platform metadata from canonical server-* keys', () => {
     render(
       <FormatConnectionMetadata
         connection={{
           kind: 'meshery',
-          metadata: { endpoint: 'https://meshery.local' },
+          name: 'My Meshery',
+          status: 'connected',
+          createdAt: '2024-01-01',
+          updatedAt: '2024-01-02',
+          metadata: {
+            serverId: 'instance-123',
+            serverVersion: 'v0.8.0',
+            serverBuildSha: 'deadbeefcafebabe',
+            serverLocation: 'https://meshery.local',
+          },
         }}
       />,
     );
 
-    expect(screen.getByTestId('structured-data')).toHaveTextContent('meshery.local');
+    expect(screen.getByText('Server Name')).toBeInTheDocument();
+    expect(screen.getByText('Server Version')).toBeInTheDocument();
+    expect(screen.getByText('v0.8.0')).toBeInTheDocument();
+    expect(screen.getByText('Server Location')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'https://meshery.local' })).toHaveAttribute(
+      'href',
+      'https://meshery.local',
+    );
+    expect(screen.getByText('Server ID')).toBeInTheDocument();
+    expect(screen.getByTestId('format-id')).toHaveTextContent('instance-123');
+    expect(screen.getByRole('link', { name: 'deadbee' })).toHaveAttribute(
+      'href',
+      'https://github.com/meshery/meshery/commit/deadbeefcafebabe',
+    );
   });
 
-  it('falls back to the generic structured formatter for other connection kinds', () => {
+  it('renders prometheus details and only pings when the connection chip is clicked', () => {
+    render(
+      <FormatConnectionMetadata
+        connection={{
+          id: 'prom-1',
+          kind: 'prometheus',
+          name: 'Prom Prod',
+          status: 'connected',
+          metadata: {
+            url: 'https://prometheus.example:9090',
+            telemetryPrometheusPanels: [{ id: 'p1' }, { id: 'p2' }],
+          },
+        }}
+      />,
+    );
+
+    // Expanding / mounting the detail panel must not ping.
+    expect(triggerPrometheusPing).not.toHaveBeenCalled();
+    expect(screen.getByText('Server')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'https://prometheus.example:9090' })).toHaveAttribute(
+      'href',
+      'https://prometheus.example:9090',
+    );
+    expect(screen.getByText('Version')).toBeInTheDocument();
+    // No ping yet - version stays placeholder.
+    expect(screen.getByText('-')).toBeInTheDocument();
+    expect(screen.getByText('Saved Panels')).toBeInTheDocument();
+    expect(screen.getByText('2')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Prom Prod' }));
+    expect(triggerPrometheusPing).toHaveBeenCalledTimes(1);
+    expect(triggerPrometheusPing).toHaveBeenCalledWith({ connectionID: 'prom-1' });
+  });
+
+  it('renders grafana details and only pings when the connection chip is clicked', () => {
+    render(
+      <FormatConnectionMetadata
+        connection={{
+          id: 'graf-1',
+          kind: 'grafana',
+          name: 'Grafana Ops',
+          status: 'connected',
+          metadata: {
+            url: 'https://grafana.example',
+            telemetryPinnedBoards: [{ uid: 'b1' }],
+          },
+        }}
+      />,
+    );
+
+    expect(triggerGrafanaPing).not.toHaveBeenCalled();
+    expect(screen.getByRole('link', { name: 'https://grafana.example' })).toHaveAttribute(
+      'href',
+      'https://grafana.example',
+    );
+    expect(screen.getByText('Pinned Boards')).toBeInTheDocument();
+    expect(screen.getByText('1')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Grafana Ops' }));
+    expect(triggerGrafanaPing).toHaveBeenCalledTimes(1);
+    expect(triggerGrafanaPing).toHaveBeenCalledWith({ connectionID: 'graf-1' });
+  });
+
+  it('renders github app metadata from installationId and snapshotPaths', () => {
     render(
       <FormatConnectionMetadata
         connection={{
           kind: 'github',
-          metadata: { owner: 'meshery' },
+          name: 'GitHub App',
+          type: 'source',
+          subType: 'git',
+          status: 'connected',
+          metadata: {
+            installationId: '12345678',
+            snapshotPaths: [{ 'layer5io/meshery': '/.github' }],
+          },
         }}
       />,
     );
 
-    expect(screen.getByTestId('structured-data')).toHaveTextContent('meshery');
+    expect(screen.getByText('Installation ID')).toBeInTheDocument();
+    expect(screen.getByTestId('format-id')).toHaveTextContent('12345678');
+    expect(screen.getByText('Type')).toBeInTheDocument();
+    expect(screen.getByText('source / git')).toBeInTheDocument();
+    expect(screen.getByText('Snapshot Paths')).toBeInTheDocument();
+    expect(screen.getByText('1 configured')).toBeInTheDocument();
+    // Must not surface design-file location fields as if they were connection metadata.
+    expect(screen.queryByText('Account Owner')).not.toBeInTheDocument();
+    expect(screen.queryByText('Target Path')).not.toBeInTheDocument();
+  });
+
+  it('falls back to the generic structured formatter for unknown connection kinds', () => {
+    render(
+      <FormatConnectionMetadata
+        connection={{
+          kind: 'slack',
+          metadata: { workspace: 'layer5' },
+        }}
+      />,
+    );
+
+    expect(screen.getByTestId('structured-data')).toHaveTextContent('layer5');
   });
 });
