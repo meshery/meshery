@@ -29,6 +29,7 @@ import {
   useGetComponentsQuery,
   useGetRelationshipsQuery,
   useGetRegistrantsQuery,
+  useGetConnectionDefinitionsQuery,
 } from '@/rtk-query/meshModel';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
@@ -120,6 +121,9 @@ const MeshModelComponent_ = ({
     params: { page: 0, pagesize: 1 },
   });
   const { data: registrantsCountData } = useGetRegistrantsQuery({
+    params: { page: 0, pagesize: 1 },
+  });
+  const { data: connectionsCountData } = useGetConnectionDefinitionsQuery({
     params: { page: 0, pagesize: 1 },
   });
 
@@ -500,7 +504,7 @@ const MeshModelComponent_ = ({
             />
             <TabCard
               label="Connections"
-              count={connectionsData?.totalCount || 0}
+              count={connectionsData?.totalCount ?? connectionsCountData?.totalCount ?? 0}
               active={view === CONNECTIONS}
               onClick={() => handleTabClick(CONNECTIONS)}
             />
