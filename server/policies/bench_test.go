@@ -245,7 +245,7 @@ func benchTypedRelDefs() []*relationship.RelationshipDefinition {
 
 // loadOPAModules loads all rego policy modules (excluding tests).
 func loadOPAModules(tb testing.TB) []func(*rego.Rego) {
-	policiesDir := "../meshmodel/meshery-core/0.7.2/v1.0.0/policies"
+	policiesDir := "../../models/meshery-core/0.7.2/v1.0.0/policies"
 	policyFiles, err := collectRegoFiles(policiesDir)
 	if err != nil {
 		tb.Fatalf("Failed to collect policy files: %v", err)

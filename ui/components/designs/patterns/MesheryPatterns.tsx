@@ -5,7 +5,7 @@ import {
   ResponsiveDataTable,
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import MesheryPatternGrid from './MesheryPatternGridView';
 import _PromptComponent from '../../PromptComponent';
 import LoadingScreen from '../../shared/LoadingState/LoadingComponent';
@@ -18,10 +18,13 @@ import { getMeshModels } from '../../../api/meshmodel';
 import { modifyRJSFSchema } from '../../../utils/utils';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
+import { useTableUrlState } from '@/utils/hooks/useTableUrlState';
+import { useColumnVisibilityPreference } from '@/utils/hooks/useColumnVisibilityPreference';
 import InfoModal from '../../shared/Modal/Information/InfoModal';
 import DefaultError from '../../general/error-404/index';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
+import { canEditDesign } from './design-permissions';
 import ExportDesignModal from '../export/ExportDesignModal';
 import { useModal, Modal as SistentModal } from '@sistent/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
@@ -39,9 +42,11 @@ import {
   useUnpublishPatternMutation,
   useUpdatePatternFileMutation,
   useUploadPatternFileMutation,
+  useEvaluateRelationshipsMutation,
 } from '@/rtk-query/design';
 // import { useGetUserPrefQuery } from '@/rtk-query/user';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { isLocalProvider } from '@/utils/provider';
 import { useSelector } from 'react-redux';
 import { ACTION_TYPES, resetSelectedPattern } from './MesheryPatterns.constants';
 import YAMLEditor from './YAMLEditor';
@@ -64,16 +69,36 @@ function MesheryPatterns({
   pageTitle = 'Designs',
   arePatternsReadOnly = false,
 }) {
-  const [page, setPage] = useState(0);
-  const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('updated_at desc');
+  const router = useRouter();
+
+  const { tableState, updateTableState } = useTableUrlState({
+    tableKey: 'des',
+    defaults: {
+      page: 0,
+      pageSize: 10,
+      sortOrder: 'updated_at desc',
+      search: '',
+      filters: { vis: '' },
+    },
+  });
+
+  const { page, pageSize, sortOrder, search } = tableState;
+  const setPage = useCallback((p) => updateTableState({ page: p }), [updateTableState]);
+  const setPageSize = useCallback((ps) => updateTableState({ pageSize: ps }), [updateTableState]);
+  const setSortOrder = useCallback((so) => updateTableState({ sortOrder: so }), [updateTableState]);
+  const setSearch = useCallback(
+    (s) => updateTableState({ search: s, page: 0 }),
+    [updateTableState],
+  );
+
+  // visibilityFilter is persisted in URL — no separate useState needed.
+  const visibilityFilter = tableState.filters.vis || null;
+
   const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
   const modalRef = useRef();
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
-  const router = useRouter();
   const [meshModels, setMeshModels] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState(initialFilters);
   const [canPublishPattern, setCanPublishPattern] = useState(false);
@@ -87,7 +112,6 @@ function MesheryPatterns({
   const { view } = router.query;
   const [viewType, setViewType] = useState(view === 'table' ? 'table' : 'grid');
   const { notify } = useNotification();
-  const [visibilityFilter, setVisibilityFilter] = useState(null);
   const { selectedK8sContexts, catalogVisibility, user } = useSelector((state) => state.ui);
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
@@ -111,6 +135,7 @@ function MesheryPatterns({
   const [updatePattern] = useUpdatePatternFileMutation();
   const [uploadPatternFile] = useUploadPatternFileMutation();
   const [deletePatternFile] = useDeletePatternFileMutation();
+  const [evaluateRelationships] = useEvaluateRelationshipsMutation();
 
   useEffect(() => {
     if (patternsData) {
@@ -122,7 +147,6 @@ function MesheryPatterns({
       });
       setCount(patternsData.totalCount || 0);
       handleSetPatterns(filteredPatterns);
-      setVisibilityFilter(visibilityFilter);
       setPatterns(patternsData.patterns || []);
     }
   }, [patternsData]);
@@ -184,6 +208,7 @@ function MesheryPatterns({
     handleImportDesign,
     deletePatterns,
     handleDownload,
+    handleEvaluateRelationship,
     showModal,
   } = createPatternsActions({
     clonePattern,
@@ -196,6 +221,7 @@ function MesheryPatterns({
     uploadPatternFile,
     deployPatternMutation,
     undeployPatternMutation,
+    evaluateRelationships,
     modalRef,
     meshModels,
     infoModal,
@@ -237,14 +263,12 @@ function MesheryPatterns({
   /**
    * fetch patterns when the page loads
    */
-  // @ts-ignore
   useEffect(() => {
     document.body.style.overflowX = 'hidden';
-    const visibilityFilter =
-      selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
-    setVisibilityFilter(visibilityFilter);
-    return () => (document.body.style.overflowX = 'auto');
-  }, [visibilityFilter]);
+    return () => {
+      document.body.style.overflowX = 'auto';
+    };
+  }, []);
 
   useEffect(() => {
     if (viewType === 'grid') {
@@ -390,11 +414,7 @@ function MesheryPatterns({
       handleUndeploy,
     });
 
-  const userCanEdit = (pattern) => {
-    return (
-      CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) && user?.userId == pattern?.userId
-    );
-  };
+  const userCanEdit = (pattern) => canEditDesign(user, pattern);
 
   const handleOpenInConfigurator = (id) => {
     router.push('/configuration/designs/configurator?design_id=' + id);
@@ -412,6 +432,7 @@ function MesheryPatterns({
       handleDesignDownloadModal,
       handleInfoModal,
       handleUnpublishModal,
+      handleEvaluateRelationship,
       userCanEdit,
     },
   });
@@ -424,9 +445,8 @@ function MesheryPatterns({
 
   const [tableCols, updateCols] = useState(columns);
 
-  const [columnVisibility, setColumnVisibility] = useState(() => {
-    let showCols = updateVisibleColumns(PATTERN_COL_VIEWS, width);
-    // Initialize column visibility based on the original columns' visibility
+  const responsiveColDefaults = (() => {
+    const showCols = updateVisibleColumns(PATTERN_COL_VIEWS, width);
     const initialVisibility = {};
     columns.forEach((col) => {
       if (!(hideVisibility && col.name === 'visibility')) {
@@ -434,7 +454,14 @@ function MesheryPatterns({
       }
     });
     return initialVisibility;
-  });
+  })();
+
+  const { columnVisibility, setColumnVisibilityByUser, setColumnVisibilityByResponsive } =
+    useColumnVisibilityPreference('designs', responsiveColDefaults);
+
+  useEffect(() => {
+    setColumnVisibilityByResponsive(responsiveColDefaults);
+  }, [width, setColumnVisibilityByResponsive]);
 
   const options = buildPatternsTableOptions({
     patterns,
@@ -444,7 +471,7 @@ function MesheryPatterns({
     page,
     search,
     sortOrder,
-    user,
+    isLocalProvider: isLocalProvider(capabilitiesData),
     searchTimeout,
     setPage,
     setPageSize,
@@ -482,15 +509,16 @@ function MesheryPatterns({
   };
 
   const handleApplyFilter = () => {
-    const visibilityFilter =
-      selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
-    setVisibilityFilter(visibilityFilter);
+    updateTableState({
+      filters: { vis: selectedFilters.visibility === 'All' ? '' : selectedFilters.visibility },
+      page: 0,
+    });
   };
 
   return (
     <>
       <NoSsr>
-        {CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? (
+        {CAN(Keys.CatalogManagementViewDesigns.id, Keys.CatalogManagementViewDesigns.function) ? (
           <>
             {selectedRowData && Object.keys(selectedRowData).length > 0 && (
               <YAMLEditor
@@ -524,7 +552,7 @@ function MesheryPatterns({
               handleApplyFilter={handleApplyFilter}
               columns={columns}
               columnVisibility={columnVisibility}
-              setColumnVisibility={setColumnVisibility}
+              setColumnVisibility={setColumnVisibilityByUser}
             />
             {!selectedPattern.show && viewType === 'table' && (
               <>
@@ -570,6 +598,7 @@ function MesheryPatterns({
                 user={user}
                 fetch={() => getPatterns()}
                 handleInfoModal={handleInfoModal}
+                handleEvaluateRelationship={handleEvaluateRelationship}
                 openUndeployModal={openUndeployModal}
                 openValidationModal={openValidateModal}
                 openDryRunModal={openDryRunModal}
@@ -581,7 +610,10 @@ function MesheryPatterns({
 
             <SistentModal maxWidth="sm" {...designLifecycleModal}></SistentModal>
             <SistentModal {...sistentInfoModal}>
-              {CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) &&
+              {CAN(
+                Keys.CatalogManagementDetailsOfDesign.id,
+                Keys.CatalogManagementDetailsOfDesign.function,
+              ) &&
                 infoModal.open && (
                   <InfoModal
                     infoModalOpen={true}
@@ -595,7 +627,10 @@ function MesheryPatterns({
 
             {canPublishPattern &&
               publishModal.open &&
-              CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) && (
+              CAN(
+                Keys.CatalogManagementPublishDesign.id,
+                Keys.CatalogManagementPublishDesign.function,
+              ) && (
                 <PublishDesignModal
                   publishFormSchema={publishSchema}
                   handleClose={handlePublishModalClose}
@@ -603,12 +638,16 @@ function MesheryPatterns({
                   handleSubmit={handlePublish}
                 />
               )}
-            {importModal.open && CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject) && (
-              <ImportDesignModal
-                handleClose={handleUploadImportClose}
-                handleImportDesign={handleImportDesign}
-              />
-            )}
+            {importModal.open &&
+              CAN(
+                Keys.CatalogManagementImportDesign.id,
+                Keys.CatalogManagementImportDesign.function,
+              ) && (
+                <ImportDesignModal
+                  handleClose={handleUploadImportClose}
+                  handleImportDesign={handleImportDesign}
+                />
+              )}
             <_PromptComponent ref={modalRef} />
           </>
         ) : (

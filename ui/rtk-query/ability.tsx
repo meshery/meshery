@@ -1,4 +1,5 @@
 import { ability } from '../utils/can';
+import { isLocalProvider } from '../utils/provider';
 import { useGetUserKeysQuery } from './userKeys';
 import _ from 'lodash';
 import CustomErrorMessage from '@/components/ErrorPage';
@@ -210,7 +211,7 @@ const SelectedOrganizationProvider = ({ children }) => {
   }
 
   const loaderMessage = showSlowLoadingNotice
-    ? `Still initializing your ${providerCapabilities?.providerType === 'local' ? 'local provider session' : 'session'}. Waiting for ${formatPendingSessionBootstrapStep(
+    ? `Still initializing your ${isLocalProvider(providerCapabilities) ? 'local provider session' : 'session'}. Waiting for ${formatPendingSessionBootstrapStep(
         {
           isFetchingSelectedOrg,
           isLoadingAbilities,

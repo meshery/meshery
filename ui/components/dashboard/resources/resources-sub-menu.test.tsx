@@ -80,12 +80,12 @@ vi.mock('@sistent/sistent', () => ({
   },
 }));
 
-import ResourcesSubMenu from './resources-sub-menu';
+import ResourcesSubMenu, { CRDsResourcesSubMenu } from './resources-sub-menu';
 
 describe('ResourcesSubMenu', () => {
   const baseResource = {
     submenu: true,
-    tableConfig: () => ({
+    useTableConfig: () => ({
       Pod: { name: 'Pod' },
       Deployment: { name: 'Deployment' },
     }),
@@ -155,5 +155,36 @@ describe('ResourcesSubMenu', () => {
     expect(screen.getByTestId('tab-1')).toHaveTextContent('Bar');
     // Panel for selected resource only
     expect(screen.getByTestId('panel-Foo')).toBeInTheDocument();
+  });
+});
+
+describe('CRDsResourcesSubMenu', () => {
+  it('resolves CRD kinds from the table-config hook and renders them as tabs', () => {
+    // The CRDs config hook is invoked with cluster args at this component's top
+    // level (not in the parent render loop) and keyed by discovered kind.
+    const crdsArgs: unknown[][] = [];
+    const crdsResource = {
+      submenu: true,
+      useTableConfig: (...args: unknown[]) => {
+        crdsArgs.push(args);
+        return {
+          Foo: { name: 'Foo', model: 'foo-model' },
+          Bar: { name: 'Bar', model: 'bar-model' },
+        };
+      },
+    };
+    render(
+      <CRDsResourcesSubMenu
+        k8sConfig={{ id: 'cluster-1' }}
+        resource={crdsResource}
+        selectedK8sContexts={['ctx-1']}
+        selectedResource="Foo"
+        handleChangeSelectedResource={vi.fn()}
+      />,
+    );
+    expect(screen.getByTestId('tab-0')).toHaveTextContent('Foo');
+    expect(screen.getByTestId('tab-1')).toHaveTextContent('Bar');
+    // The hook is called with the cluster args needed to fetch CRD kinds.
+    expect(crdsArgs[0]).toEqual([null, null, { id: 'cluster-1' }, null, 'CRDS', ['ctx-1']]);
   });
 });

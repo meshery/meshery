@@ -37,7 +37,7 @@ The following tools are required to build and run the Meshery documentation site
 - [Go](https://go.dev/dl/) (required for Hugo modules)
 
 {{% alert color="light" title="Note" %}}
-In case of any installation issues, use the [discussion forum](https://meshery.io/community#discussion-forums).
+In case of any installation issues, use the [discussion forum](https://discuss.meshery.io/).
 {{% /alert %}}
 
 ### Get the code
@@ -185,6 +185,29 @@ If the issue requires making new doc page that replaces the old page, please don
 
 ## Using the features of Meshery Docs
 
+### Linking to Pages and Assets
+
+**Internal content pages** use Hugo's `ref` shortcode:
+
+```md
+[About]({{</* ref "about.md" */>}})
+```
+
+**Page-bundle assets** use standard relative paths. For assets adjacent to `index.md` or `_index.md`, or inside that page bundle:
+
+```md
+![Architecture]({{< static "images/meshery-architecture.webp" >}})
+<img src="{{< static "images/meshery-architecture.webp" >}}" />
+```
+
+**Global shared assets** under `static/` use the `static` shortcode:
+
+```md
+{{</* static "images/logo.png" */>}}
+```
+
+Do not use raw root-relative page links like `[About](/about/)`. External links (starting with `http://`, `https://`, `mailto:`, `tel:`, `#`) should be kept unchanged.
+
 ### Clipboard Feature
 
 Most popular clipboard plugins like Clipboard JS require the manual creation of a new ID for each code snippet. A different approach is used here. For code snippets, we either use html tags or markdown in the following manner:
@@ -230,7 +253,7 @@ Whenever the code tags are detected, the clipboard javascript file is automatica
 ## Documentation Contribution Flow Summary
 
 {{% alert color="light" title="Note" %}}
-For contributing `mesheryctl` reference section, refer [Contributing CLI](/project/contributing/contributing-cli)
+For contributing `mesheryctl` reference section, refer [Contributing CLI]({{< ref "project/contributing/cli" >}})
 {{% /alert %}}
 
 
@@ -376,7 +399,7 @@ Control image display in documentation pages using the following methods.
 
 Using the Markdown image syntax:
 
-{{< code code="[![Image Title](/assets/img/your-image.png)](/assets/img/your-image.png)" >}}
+{{< code code="[![Image Title](../../../assets/img/your-image.png)](../../../assets/img/your-image.png)" >}}
 
 This renders as:
 
@@ -412,7 +435,7 @@ You can include block quotes to emphasize text.
 
 ### Adding Integration Specific Information to Individual Integration Pages
 
-Integration pages ([example](/extensibility/integrations/aws)) are automatically generated, however, integration specific documentation is often needed.
+Integration pages ([example]({{< ref "extensions/models/aws/index.md" >}})) are automatically generated, however, integration specific documentation is often needed.
 
 [modelscustominfo](https://github.com/meshery/meshery/tree/master/docs/data/modelscustominfo) collection holds custom markdown files. Follow these steps:
 
@@ -434,7 +457,7 @@ title: Azure Active Directory (AAD)
 ```
 
 In this example, the heading "<b>Azure Active Directory</b>" will be displayed on the integration page:
-[Azure Active Directory Integration Page](/extensibility/integrations/aad-pod-identity)
+[Azure Active Directory Integration Page]({{< ref "extensions/models/aad-pod-identity/index.md" >}})
 
 ### Suggested Reading
 

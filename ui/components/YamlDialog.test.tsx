@@ -18,7 +18,7 @@ vi.mock('@sistent/sistent', () => ({
   DialogActions: ({ children }: any) => <div data-testid="dialog-actions">{children}</div>,
   DialogContent: ({ children }: any) => <div data-testid="dialog-content">{children}</div>,
   Divider: () => <hr data-testid="divider" />,
-  FullScreenIconExit: () => <svg data-testid="exit-fullscreen-icon" />,
+  FullScreenExitIcon: () => <svg data-testid="exit-fullscreen-icon" />,
   FullScreenIcon: () => <svg data-testid="enter-fullscreen-icon" />,
   IconButton: ({ children, onClick, 'aria-label': ariaLabel }: any) => (
     <button data-testid={ariaLabel ? `icon-${ariaLabel}` : 'icon-button'} onClick={onClick}>

@@ -53,10 +53,6 @@ vi.mock('@/rtk-query/meshModel', () => ({
 
 vi.mock('@/utils/can', () => ({ default: () => true }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: { VIEW_REGISTRY: { action: 'view', subject: 'registry' } },
-}));
-
 vi.mock('next/router', () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 vi.mock('../style', () => ({
@@ -65,7 +61,7 @@ vi.mock('../style', () => ({
 
 vi.mock('@sistent/sistent', () => ({
   Grid2: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
-  InfoOutlined: () => <svg data-testid="info-icon" />,
+  InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
   Typography: ({ children }: { children?: React.ReactNode }) => <p>{children}</p>,
   useTheme: () => ({ palette: { icon: { default: '#000' } } }),
 }));

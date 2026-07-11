@@ -26,7 +26,12 @@ const ActionsRow = styled('div')({
 });
 
 const DiscardButton = styled(ModalButtonPrimary)(({ theme }) => ({
-  background: theme.palette.background.error.default,
+  '&&': {
+    backgroundColor: theme.palette.background.error.default,
+    '&:hover': {
+      backgroundColor: theme.palette.background.error.hover,
+    },
+  },
 }));
 
 export interface UnsavedChangesModalProps {

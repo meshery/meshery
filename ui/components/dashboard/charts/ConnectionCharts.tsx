@@ -7,11 +7,11 @@ import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
-import { Box, InfoOutlined, Typography, useTheme } from '@sistent/sistent';
+import { Box, InfoOutlinedIcon, Typography, useTheme } from '@sistent/sistent';
 
 export default function ConnectionStatsChart() {
   const { data: connectionsData } = useGetConnectionsQuery({
@@ -69,7 +69,10 @@ export default function ConnectionStatsChart() {
     [chartData, router, theme],
   );
 
-  const canViewConnections = CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject);
+  const canViewConnections = CAN(
+    Keys.WorkspaceManagementViewConnections.id,
+    Keys.WorkspaceManagementViewConnections.function,
+  );
 
   return (
     <Link
@@ -90,7 +93,7 @@ export default function ConnectionStatsChart() {
               placement="left"
             >
               <div>
-                <InfoOutlined
+                <InfoOutlinedIcon
                   color={theme.palette.icon.default}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
                 />

@@ -1,7 +1,7 @@
 ---
 title: New Relic Operator
 subtitle: Collaborative and visual infrastructure as design for New Relic Operator
-image: /extensions/models/newrelic-operator/icons/color/newrelic-operator-color.svg
+image: extensions/models/newrelic-operator/icons/color/newrelic-operator-color.svg
 aliases: /extensibility/integrations/newrelic-operator
 docURL: https://docs.meshery.io/extensibility/integrations/newrelic-operator
 description: 
@@ -10,24 +10,24 @@ integrations-subcategory: Observability and Analysis
 registrant: Artifact Hub
 components: 
 - name: alert-channel
-  colorIcon: content/en/extensions/models/newrelic-operator/components/alert-channel/icons/color/alert-channel-color.svg
-  whiteIcon: content/en/extensions/models/newrelic-operator/components/alert-channel/icons/white/alert-channel-white.svg
+  colorIcon: extensions/models/newrelic-operator/components/alert-channel/icons/color/alert-channel-color.svg
+  whiteIcon: extensions/models/newrelic-operator/components/alert-channel/icons/white/alert-channel-white.svg
   description: 
 - name: alert-policy
-  colorIcon: content/en/extensions/models/newrelic-operator/components/alert-policy/icons/color/alert-policy-color.svg
-  whiteIcon: content/en/extensions/models/newrelic-operator/components/alert-policy/icons/white/alert-policy-white.svg
+  colorIcon: extensions/models/newrelic-operator/components/alert-policy/icons/color/alert-policy-color.svg
+  whiteIcon: extensions/models/newrelic-operator/components/alert-policy/icons/white/alert-policy-white.svg
   description: 
 - name: dashboard
-  colorIcon: content/en/extensions/models/newrelic-operator/components/dashboard/icons/color/dashboard-color.svg
-  whiteIcon: content/en/extensions/models/newrelic-operator/components/dashboard/icons/white/dashboard-white.svg
+  colorIcon: extensions/models/newrelic-operator/components/dashboard/icons/color/dashboard-color.svg
+  whiteIcon: extensions/models/newrelic-operator/components/dashboard/icons/white/dashboard-white.svg
   description: 
 - name: data
-  colorIcon: content/en/extensions/models/newrelic-operator/components/data/icons/color/data-color.svg
-  whiteIcon: content/en/extensions/models/newrelic-operator/components/data/icons/white/data-white.svg
+  colorIcon: extensions/models/newrelic-operator/components/data/icons/color/data-color.svg
+  whiteIcon: extensions/models/newrelic-operator/components/data/icons/white/data-white.svg
   description: 
 - name: monitor
-  colorIcon: content/en/extensions/models/newrelic-operator/components/monitor/icons/color/monitor-color.svg
-  whiteIcon: content/en/extensions/models/newrelic-operator/components/monitor/icons/white/monitor-white.svg
+  colorIcon: extensions/models/newrelic-operator/components/monitor/icons/color/monitor-color.svg
+  whiteIcon: extensions/models/newrelic-operator/components/monitor/icons/white/monitor-white.svg
   description: 
 components-count: 5
 relationships: 

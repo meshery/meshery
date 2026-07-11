@@ -70,15 +70,15 @@ export const eventDetailFormatterKey = ({
 }): string => `${action}-${category}`;
 
 export const EVENT_TYPE = {
-  DEPLOY_DESIGN: {
+  CatalogManagementDeployDesign: {
     category: 'pattern',
     action: 'deploy',
   },
-  UNDEPLOY_DESIGN: {
+  CatalogManagementUndeployDesign: {
     category: 'pattern',
     action: 'undeploy',
   },
-  VALIDATE_DESIGN: {
+  CatalogManagementValidateDesign: {
     category: 'pattern',
     action: 'validate',
   },

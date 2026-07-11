@@ -161,7 +161,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		if err != nil {
 			utils.Log.Info("Failure, cleaning up...")
 			if !isModelFolderAlreadyExists {
-				// if model folder didn'tv exist before -> delete it
+				// if model folder didn't exist before -> delete it
 				utils.Log.Infof("Removing %s", modelFolder)
 				_ = os.RemoveAll(modelFolder)
 			} else {

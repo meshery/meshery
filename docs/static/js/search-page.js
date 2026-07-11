@@ -20,6 +20,18 @@
         if (/^(?:[a-z]+:)?\/\//i.test(pathname)) return pathname;
         if (/^(?:data:|mailto:|tel:|#)/i.test(pathname)) return pathname;
         if (!pathname.startsWith("/")) return pathname;
+
+        const siteRootPath = getSiteRootUrl().pathname.replace(/\/+$/, "/");
+        const siteRootWithoutTrailingSlash = siteRootPath.replace(/\/$/, "");
+
+        if (
+            siteRootPath === "/" ||
+            pathname === siteRootWithoutTrailingSlash ||
+            pathname.startsWith(siteRootPath)
+        ) {
+            return new URL(pathname, window.location.origin).toString();
+        }
+
         return new URL(pathname.slice(1), getSiteRootUrl()).toString();
     }
 

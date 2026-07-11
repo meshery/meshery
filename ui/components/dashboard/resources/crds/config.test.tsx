@@ -28,20 +28,20 @@ vi.mock('../config', () => ({
   getAllCustomResourceDefinitionsKinds: (kinds: any[]) => kinds ?? [],
 }));
 
-import { CustomResourceConfig } from './config';
+import { useCustomResourceConfig } from './config';
 
 const callConfig = (kinds: any[]) => {
   useGetMeshSyncResourceKindsQuery.mockReturnValue({ data: { kinds } });
   let captured: any = null;
   const Probe = () => {
-    captured = CustomResourceConfig(vi.fn(), [], {}, {}, 'CRDS', []);
+    captured = useCustomResourceConfig(vi.fn(), [], {}, {}, 'CRDS', []);
     return null;
   };
   render(<Probe />);
   return captured;
 };
 
-describe('CustomResourceConfig', () => {
+describe('useCustomResourceConfig', () => {
   it('returns an empty config when no kinds are present', () => {
     const result = callConfig([]);
     expect(result).toEqual({});

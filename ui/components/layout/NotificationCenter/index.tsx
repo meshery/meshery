@@ -58,12 +58,11 @@ import DoneIcon from '../../../assets/icons/DoneIcon';
 import { hasClass } from '../../../utils/Elements';
 import ReadIcon from '../../../assets/icons/ReadIcon';
 import UnreadIcon from '../../../assets/icons/UnreadIcon';
-import DeleteIcon from '../../../assets/icons/DeleteIcon';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { useActorRef } from '@xstate/react';
 import { operationsCenterActor } from 'machines/operationsCenter';
 import { useDispatch, useSelector } from 'react-redux';
-import { ErrorBoundary } from '@sistent/sistent';
+import { DeleteIcon, ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '../../shared/ErrorBoundary/ErrorBoundary';
 
 export const NotificationCenterContext = React.createContext({

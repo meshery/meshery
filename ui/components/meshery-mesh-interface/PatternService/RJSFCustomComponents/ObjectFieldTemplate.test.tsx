@@ -13,6 +13,7 @@ vi.mock('@sistent/sistent', () => ({
   Typography: ({ children }: any) => <span>{children}</span>,
   useTheme: () => ({ palette: { mode: 'light', error: { main: '#f00' } } }),
   CssBaseline: () => null,
+  ExpandMoreIcon: () => <svg data-testid="expand-more" />,
 }));
 
 vi.mock('@rjsf/utils', () => ({
@@ -25,10 +26,6 @@ vi.mock('../../../../assets/icons/AddIcon', () => ({
 
 vi.mock('../../../../assets/icons/ExpandLessIcon', () => ({
   default: () => <svg data-testid="expand-less" />,
-}));
-
-vi.mock('../../../../assets/icons/ExpandMoreIcon', () => ({
-  default: () => <svg data-testid="expand-more" />,
 }));
 
 vi.mock('../../../../assets/icons/ErrorOutlineIcon', () => ({

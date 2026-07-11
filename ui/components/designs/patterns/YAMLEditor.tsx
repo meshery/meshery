@@ -7,18 +7,14 @@ import {
   Divider,
   IconButton,
   styled,
+  FullScreenIcon,
+  FullScreenExitIcon,
 } from '@sistent/sistent';
-import {
-  Close as CloseIcon,
-  Delete as DeleteIcon,
-  Fullscreen as FullscreenIcon,
-  FullscreenExit as FullscreenExitIcon,
-  Save as SaveIcon,
-} from '@/assets/icons';
+import { Close as CloseIcon, Delete as DeleteIcon, Save as SaveIcon } from '@/assets/icons';
 import { UnControlled as CodeMirror } from '../../CodeMirror';
 import { FILE_OPS } from '../../../utils/Enum';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { YamlDialogTitle, YamlDialogTitleText } from './MesheryPatterns.styled';
 
 function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
@@ -60,7 +56,7 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
             onClick={toggleFullScreen}
           >
-            {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+            {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
           </CustomTooltip>
           <CustomTooltip placement="top" title="Exit" onClick={onClose}>
             <CloseIcon />
@@ -93,7 +89,12 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             <CustomTooltip title="Update Design">
               <IconButton
                 aria-label="Update"
-                disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
+                disabled={
+                  !CAN(
+                    Keys.CatalogManagementEditDesign.id,
+                    Keys.CatalogManagementEditDesign.function,
+                  )
+                }
                 onClick={() =>
                   onSubmit({
                     data: yaml,
@@ -110,7 +111,12 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             <CustomTooltip title="Delete Pattern">
               <IconButton
                 aria-label="Delete"
-                disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
+                disabled={
+                  !CAN(
+                    Keys.CatalogManagementDeleteADesign.id,
+                    Keys.CatalogManagementDeleteADesign.function,
+                  )
+                }
                 onClick={() =>
                   onSubmit({
                     data: yaml,

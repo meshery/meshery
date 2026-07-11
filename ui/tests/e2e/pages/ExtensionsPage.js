@@ -29,6 +29,32 @@ export class ExtensionsPage {
     await dashboardPage.navigateToExtensions();
   }
 
+  async hasExtensionNavigation() {
+    return (
+      (await this.extensionNavRegion.count()) > 0 && (await this.extensionRootNavItems.count()) > 0
+    );
+  }
+
+  async hasPerformanceAnalysis() {
+    return (await this.performanceHeading.count()) > 0;
+  }
+
+  async hasDockerExtension() {
+    return (await this.dockerExtensionHeading.count()) > 0;
+  }
+
+  async hasDesignEmbed() {
+    return (await this.designEmbedLearnMoreBtn.count()) > 0;
+  }
+
+  async hasIstioAdapterDocs() {
+    return (await this.adapterDocsIstioLink.count()) > 0;
+  }
+
+  async hasCatalogSection() {
+    return (await this.catalogSectionHeading.count()) > 0;
+  }
+
   async verifyPerformanceAnalysisDetails() {
     await expect(this.performanceHeading).toBeVisible();
     await expect(this.performanceEnableBtn).toBeVisible();

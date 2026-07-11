@@ -19,11 +19,11 @@
             <div class="maincontainer">
                 <div class="componentimg">
                     <img id="logo-dark-light"
-                        src="/{{ .colorIcon }}"
+                        src="{{ strings.TrimPrefix "/" .colorIcon | relURL }}"
                         alt="{{ .name }}"
                         onerror="handleImageError(this)"
-                        data-logo-for-dark="/{{ .whiteIcon }}"
-                        data-logo-for-light="/{{ .colorIcon }}" />
+                        data-logo-for-dark="{{ strings.TrimPrefix "/" .whiteIcon | relURL }}"
+                        data-logo-for-light="{{ strings.TrimPrefix "/" .colorIcon | relURL }}" />
                 </div>
                 <p class="Compitems">{{ .name }}</p>
             </div>
@@ -141,7 +141,7 @@
 <script>
     function handleImageError(image) {
         image.onerror = null;
-        image.src = '{{ .Params.image }}';
+        image.src = '{{ strings.TrimPrefix "/" .Params.image | relURL }}';
     }
     const designLinks = document.querySelectorAll('.design-link');
     if (designLinks.length === 0) {

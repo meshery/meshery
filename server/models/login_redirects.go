@@ -37,18 +37,16 @@ func resolvePostLoginRedirect(rawRef, fallback string) string {
 // state during a custom-domain bounce) was the bug this routing change was
 // introduced to fix.
 func selectPostLoginRefValue(r *http.Request, cookieName string) string {
-	if ck, err := r.Cookie(cookieName); err == nil  {
+	if ck, err := r.Cookie(cookieName); err == nil {
 		return ck.Value
 	}
 	return ""
 }
 
-
-
 // authInitiationPaths are server routes whose job is to *start* authentication.
 // Post-login redirects must never land on one of these, otherwise the browser
 // immediately re-enters the OAuth dance and the original target is lost. The
-// intermittent Kanvas-never-loads behavior was reproduced as exactly this:
+// intermittent not-loading behavior was reproduced as exactly this:
 // TokenHandler succeeded and then redirected to /user/login?provider=Meshery,
 // which restarted InitiateLogin mid-mount.
 var authInitiationPaths = []string{

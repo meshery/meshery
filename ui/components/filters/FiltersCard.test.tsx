@@ -10,18 +10,6 @@ vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => can(...args),
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    PUBLISH_WASM_FILTER: { action: 'publish', subject: 'wasm-filter' },
-    UNPUBLISH_WASM_FILTER: { action: 'unpublish', subject: 'wasm-filter' },
-    DOWNLOAD_A_WASM_FILTER: { action: 'download', subject: 'wasm-filter' },
-    CLONE_WASM_FILTER: { action: 'clone', subject: 'wasm-filter' },
-    DETAILS_OF_WASM_FILTER: { action: 'details', subject: 'wasm-filter' },
-    EDIT_WASM_FILTER: { action: 'edit', subject: 'wasm-filter' },
-    DELETE_WASM_FILTER: { action: 'delete', subject: 'wasm-filter' },
-  },
-}));
-
 vi.mock('../../rtk-query/user', () => ({
   useGetUserByIdQuery: (...args: unknown[]) => getUserByIdQuery(...args),
 }));
@@ -65,18 +53,18 @@ vi.mock('@sistent/sistent', () => {
       },
     }),
     VisibilityChipMenu: ({ value }: any) => <div data-testid="visibility-chip">{value}</div>,
+    InfoOutlinedIcon: () => <svg data-testid="info-outlined-icon" />,
+    FullScreenIcon: () => <svg data-testid="fullscreen-icon" />,
+    FullScreenExitIcon: () => <svg data-testid="fullscreen-exit-icon" />,
     styled,
   };
 });
 
 vi.mock('@/assets/icons', () => ({
   Delete: () => <svg data-testid="delete-icon" />,
-  Fullscreen: () => <svg data-testid="fullscreen-icon" />,
   Save: () => <svg data-testid="save-icon" />,
-  FullscreenExit: () => <svg data-testid="fullscreen-exit-icon" />,
   Public: () => <svg data-testid="public-icon" />,
   GetApp: () => <svg data-testid="get-app-icon" />,
-  InfoOutlined: () => <svg data-testid="info-outlined-icon" />,
   Lock: () => <svg data-testid="lock-icon" />,
 }));
 

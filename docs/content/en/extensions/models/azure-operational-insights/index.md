@@ -1,7 +1,7 @@
 ---
 title: Azure Operational Insights
 subtitle: Collaborative and visual infrastructure as design for Azure Operational Insights
-image: /extensions/models/azure-operational-insights/icons/color/azure-operational-insights-color.svg
+image: extensions/models/azure-operational-insights/icons/color/azure-operational-insights-color.svg
 aliases: /extensibility/integrations/azure-operational-insights
 docURL: https://docs.meshery.io/extensibility/integrations/azure-operational-insights
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Metrics
 registrant: GitHub
 components: 
 - name: workspace
-  colorIcon: content/en/extensions/models/azure-operational-insights/components/workspace/icons/color/workspace-color.svg
-  whiteIcon: content/en/extensions/models/azure-operational-insights/components/workspace/icons/white/workspace-white.svg
+  colorIcon: extensions/models/azure-operational-insights/components/workspace/icons/color/workspace-color.svg
+  whiteIcon: extensions/models/azure-operational-insights/components/workspace/icons/white/workspace-white.svg
   description: 
 components-count: 1
 relationships: 

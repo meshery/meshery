@@ -12,7 +12,6 @@ import {
   DEPLOYMENT_TYPE,
   EVENT_TYPES,
   EXTENSIONS,
-  EXTENSION_NAMES,
   FILE_OPS,
   FILTER,
   MESHSYNC_DEPLOYMENT_TYPE,
@@ -71,8 +70,11 @@ describe('Enum constants', () => {
     expect(EVENT_TYPES.MODIFIED).toBe('MODIFIED');
   });
 
-  it('EXTENSION_NAMES exposes Kanvas', () => {
-    expect(EXTENSION_NAMES.KANVAS).toBe('kanvas');
+  it('exposes the /extension/meshmap page as an available extension', () => {
+    const meshmapPages = Object.values(EXTENSIONS).filter(
+      (ext) => 'signup_url' in ext && ext.signup_url === '/extension/meshmap',
+    );
+    expect(meshmapPages).toHaveLength(1);
   });
 
   it('REGISTRY_ITEM_STATES and transition map line up by key', () => {

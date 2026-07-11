@@ -10,10 +10,10 @@ vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => can(...args),
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    EDIT_WORKSPACE: { action: 'edit', subject: 'workspace' },
-    DELETE_WORKSPACE: { action: 'delete', subject: 'workspace' },
+vi.mock('@meshery/schemas/permissions', () => ({
+  Keys: {
+    WorkspaceManagementEditWorkspace: { id: 'edit', function: 'workspace' },
+    WorkspaceManagementDeleteWorkspace: { id: 'delete', function: 'workspace' },
   },
 }));
 
@@ -24,7 +24,7 @@ vi.mock('@sistent/sistent', () => ({
   ),
   DeleteIcon: () => <svg data-testid="delete-icon" />,
   EditIcon: () => <svg data-testid="edit-icon" />,
-  GroupAdd: () => <svg data-testid="group-add-icon" />,
+  GroupAddIcon: () => <svg data-testid="group-add-icon" />,
   IconButton: ({ children, onClick, disabled, ...props }: any) => (
     <button onClick={onClick} disabled={disabled} {...props}>
       {children}

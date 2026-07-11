@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
-  ChevronLeft,
-  ChevronRight,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   Grid2,
   L5DeleteIcon,
   Modal,
@@ -15,7 +15,7 @@ import {
   ErrorBoundary,
 } from '@sistent/sistent';
 import { useDeleteWorkspaceMutation } from '@/rtk-query/workspace';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import CAN from '@/utils/can';
 import { useNotificationHandlers } from '@/utils/hooks/useNotification';
 import { UserCommonBox } from './styles';
@@ -94,7 +94,10 @@ const WorkspaceGridView = ({
               onClick={handleDeleteWorkspacesModalOpen}
               disabled={
                 selectedWorkspaces.length > 0
-                  ? !CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)
+                  ? !CAN(
+                      Keys.WorkspaceManagementDeleteWorkspace.id,
+                      Keys.WorkspaceManagementDeleteWorkspace.function,
+                    )
                   : true
               }
             />
@@ -128,11 +131,17 @@ const WorkspaceGridView = ({
           onChange={debounce((_, page) => setPage(page - 1), 150)}
           boundaryCount={3}
           renderItem={(item) => (
-            <PaginationItem slots={{ previous: ChevronLeft, next: ChevronRight }} {...item} />
+            <PaginationItem
+              slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
+              {...item}
+            />
           )}
         />
       </Grid2>
-      {CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject) && (
+      {CAN(
+        Keys.WorkspaceManagementDeleteWorkspace.id,
+        Keys.WorkspaceManagementDeleteWorkspace.function,
+      ) && (
         <Modal
           open={deleteWorkspacesModal}
           closeModal={handleDeleteWorkspacesModalClose}

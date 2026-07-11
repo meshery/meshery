@@ -80,8 +80,10 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			})
 		}
 		if providerName != "" {
-			provider = h.config.Providers[providerName]
-			if provider == nil && h.Provider != "" && providerName == h.Provider {
+			if providerKey, ok := models.ResolveProviderKey(providerName, h.config.Providers); ok {
+				provider = h.config.Providers[providerKey]
+			}
+			if provider == nil && h.Provider != "" && providerName == models.NormalizeProviderName(h.Provider) {
 				h.log.Errorf("enforced provider %q is not registered in h.config.Providers; ProviderUIHandler will degrade to serving the provider-selection UI instead of auto-login. Register %q in PROVIDERS or unset PROVIDER on this deployment.", h.Provider, h.Provider)
 			}
 		}
@@ -252,14 +254,14 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			writeMeshkitError(w, ErrGetUserDetails(err), http.StatusUnauthorized)
 			return
 		}
-		prefObj, err := provider.ReadFromPersister(user.UserId)
+		prefObj, err := provider.ReadFromPersister(user.ID.String())
 		if err != nil {
 			// log underlying error from persister along with high-level context
-			h.log.Warn(fmt.Errorf("%w: userID=%s: %v", ErrReadSessionPersistor, user.UserId, err))
+			h.log.Warn(fmt.Errorf("%w: userID=%s: %v", ErrReadSessionPersistor, user.ID.String(), err))
 			prefObj = models.NewDefaultPreference()
 		} else if prefObj == nil {
 			// persister unexpectedly returned a nil preference without error
-			h.log.Warn(fmt.Errorf("%w: persister returned nil preference without error for userID=%s", ErrReadSessionPersistor, user.UserId))
+			h.log.Warn(fmt.Errorf("%w: persister returned nil preference without error for userID=%s", ErrReadSessionPersistor, user.ID.String()))
 			prefObj = models.NewDefaultPreference()
 		}
 

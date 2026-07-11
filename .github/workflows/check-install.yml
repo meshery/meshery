@@ -32,4 +32,4 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Check provider-URL artifacts are in sync
-        run: make check-install
+        run: make providers-check

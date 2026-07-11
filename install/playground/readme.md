@@ -12,9 +12,11 @@ with `kubectl -n meshery apply -f kubernetes/playground-deployment.yaml`.
 
 Provider configuration is set there: the playground offers only the **Meshery** provider
 (`PROVIDER_BASE_URLS=https://cloud.meshery.io`) and pre-selects it on load
-(`PROVIDER=Meshery`). Releases update only the container image via
-`.github/workflows/cncf-playground-deploy-meshery.yaml` (`kubectl set image`); they do not
-reconcile env, so changes to provider configuration must be applied from the manifest above.
+(`PROVIDER=Meshery`). Releases reconcile the spec from this manifest and then roll the
+container image forward via `.github/workflows/cncf-playground-deploy-meshery.yaml`
+(`kubectl apply` then `kubectl set image`), so env changes ride in with the next release.
+Out-of-band edits on the cluster will be overwritten on the next deploy - put the change
+in this manifest instead.
 
 _The bare-metal/Equinix notes below describe an earlier topology and are retained for reference._
 

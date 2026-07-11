@@ -58,10 +58,6 @@ vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => canSpy(...args),
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: { VIEW_CONNECTIONS: { action: 'view', subject: 'connections' } },
-}));
-
 vi.mock('next/router', () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
@@ -80,7 +76,7 @@ vi.mock('./ConnectCluster', () => ({
 
 vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
-  InfoOutlined: () => <svg data-testid="info-icon" />,
+  InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
   Typography: ({ children }: { children?: React.ReactNode }) => <p>{children}</p>,
   useTheme: () => ({ palette: { mode: 'light', icon: { default: '#000' } } }),
 }));

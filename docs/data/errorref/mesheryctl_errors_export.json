@@ -2027,6 +2027,33 @@
         "short_description": "Server error while saving performance profile",
         "probable_cause": "Provider Database could be down or not reachable",
         "suggested_remediation": "Make sure provider is up and reachable"
+      },
+      "1246": {
+        "name": "ErrEmptyCSVDataCode",
+        "code": "1246",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid or empty CSV file provided",
+        "probable_cause": "The CSV file must contain valid relationship entries with the required headers.",
+        "suggested_remediation": "Ensure the CSV file contains two header rows and at least one data row with a minimum of 15 columns. Refer to the Meshery relationship CSV template: \\\"https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv\\"
+      },
+      "1247": {
+        "name": "ErrEvaluateDesignCode",
+        "code": "1247",
+        "severity": "Alert",
+        "long_description": "Exactly one of a design file path (-f) or a design ID must be provided, not both",
+        "short_description": "Design not specified for evaluation",
+        "probable_cause": "A design must be specified either by file path (-f) or by ID as an argument, but not both simultaneously",
+        "suggested_remediation": "Provide a design file using '-f' flag or pass a design ID as an argument (not both).\\n\\nUsage: mesheryctl design evaluate [ID] -o [output-file]\\n       mesheryctl design evaluate -f [file] -o [output-file]"
+      },
+      "1248": {
+        "name": "ErrEvaluateDesignResponseCode",
+        "code": "1248",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to evaluate design",
+        "probable_cause": "The Meshery server returned an error while evaluating the design\nThe design file may be invalid or the server may be experiencing issues",
+        "suggested_remediation": "Ensure the design file is valid\nCheck that the Meshery server is running and accessible\nVerify that the server has the required policies loaded"
       }
     }
   }
