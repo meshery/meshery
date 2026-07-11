@@ -30,7 +30,7 @@ var (
 // GetK8sVersionInfo returns version.Info for the Kubernetes cluster.
 func GetK8sVersionInfo() (*version.Info, error) {
 	// create an kubernetes client
-	client, err := meshkitkube.New([]byte(""))
+	client, err := NewKubeClient()
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +174,7 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 		}
 	case "kubernetes":
 		{
-			client, err := meshkitkube.New([]byte(""))
+			client, err := NewKubeClient()
 			if err != nil {
 				return false, ErrMesheryServerNotRunning(currPlatform)
 			}
@@ -238,7 +238,7 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 		}
 	case "kubernetes":
 		{
-			client, err := meshkitkube.New([]byte(""))
+			client, err := NewKubeClient()
 			if err != nil {
 				return false, ErrMesheryServerNotRunning(currPlatform)
 			}
@@ -264,7 +264,7 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 // AreAllPodsRunning checks if all the deployment pods under kubernetes are running
 func AreAllPodsRunning() (bool, error) {
 	// create an kubernetes client
-	client, err := meshkitkube.New([]byte(""))
+	client, err := NewKubeClient()
 	if err != nil {
 		return false, err
 	}
@@ -287,7 +287,7 @@ func AreAllPodsRunning() (bool, error) {
 
 // CheckMesheryNsDelete waits for Meshery namespace to be deleted, returns (done, error)
 func CheckMesheryNsDelete() (bool, error) {
-	client, err := meshkitkube.New([]byte(""))
+	client, err := NewKubeClient()
 	if err != nil {
 		return false, err
 	}

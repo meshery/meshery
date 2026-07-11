@@ -28,7 +28,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
-	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	apiCorev1 "k8s.io/api/core/v1"
 
 	"github.com/spf13/cobra"
@@ -161,7 +160,7 @@ mesheryctl system logs meshery-istio
 			}
 
 			// create an kubernetes client
-			client, err := meshkitkube.New([]byte(""))
+			client, err := utils.NewKubeClient()
 
 			if err != nil {
 				return err

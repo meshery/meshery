@@ -473,7 +473,7 @@ func waitForMesheryEndpoint(endpoint meshkitutils.HostPort) {
 }
 
 func startKubernetesDeployment(currCtx *config.Context, mesheryImageVersion, callbackURL, providerURL string) error {
-	kubeClient, err := meshkitkube.New([]byte(""))
+	kubeClient, err := utils.NewKubeClient()
 	if err != nil {
 		return err
 	}

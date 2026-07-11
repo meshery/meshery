@@ -140,7 +140,7 @@ func stop() error {
 		}
 		utils.Log.Info("Meshery resources is stopped.")
 	case platformKubernetes:
-		client, err := meshkitkube.New([]byte(""))
+		client, err := utils.NewKubeClient()
 		if err != nil {
 			return err
 		}

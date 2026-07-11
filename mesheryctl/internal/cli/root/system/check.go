@@ -34,7 +34,6 @@ import (
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/models"
 	meshkitutils "github.com/meshery/meshkit/utils"
-	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -377,7 +376,7 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 		utils.Log.Info("\nKubernetes API \n--------------")
 	}
 	//Check whether k8s client can be initialized
-	client, err := meshkitkube.New([]byte(""))
+	client, err := utils.NewKubeClient()
 	if err != nil {
 		if hc.context.Platform == platformKubernetes { // increase failure count
 			failure++
@@ -585,7 +584,7 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 	if hc.Options.PrintLogs {
 		utils.Log.Info("\nMeshery Operators \n--------------")
 	}
-	clientMesh, err := meshkitkube.New([]byte(""))
+	clientMesh, err := utils.NewKubeClient()
 	if err != nil {
 		return err
 	}
@@ -751,7 +750,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 
 // mesheryReadinessHealthCheck is waiting for Meshery to start, returns (ready, error)
 func mesheryReadinessHealthCheck() (bool, error) {
-	kubeClient, err := meshkitkube.New([]byte(""))
+	kubeClient, err := utils.NewKubeClient()
 	if err != nil {
 		return false, err
 	}
