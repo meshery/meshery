@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "References a KMS Key from an SSM Parameter via spec.keyID, the key used to encrypt the parameter value.",
+    "description": "References a KMS Key from an SSM Parameter via spec.keyRef, the key used to encrypt the parameter value.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -51,7 +51,9 @@
                 [
                   "configuration",
                   "spec",
-                  "keyID"
+                  "keyRef",
+                  "from",
+                  "name"
                 ]
               ]
             }

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "References a KMS Key from a KMS Grant via spec.keyID, identifying which key the grant applies to.",
+    "description": "References a KMS Key from a KMS Grant via spec.keyRef, identifying which key the grant applies to.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -51,7 +51,9 @@
                 [
                   "configuration",
                   "spec",
-                  "keyID"
+                  "keyRef",
+                  "from",
+                  "name"
                 ]
               ]
             }

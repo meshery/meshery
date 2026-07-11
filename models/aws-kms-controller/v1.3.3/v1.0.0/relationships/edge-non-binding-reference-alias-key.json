@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "References a KMS Key from a KMS Alias via spec.targetKeyID; the Alias acts as a friendly pointer to the Key's identity.",
+    "description": "References a KMS Key from a KMS Alias via spec.targetKeyRef; the Alias acts as a friendly pointer to the Key.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -51,7 +51,9 @@
                 [
                   "configuration",
                   "spec",
-                  "targetKeyID"
+                  "targetKeyRef",
+                  "from",
+                  "name"
                 ]
               ]
             }
