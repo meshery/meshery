@@ -21,7 +21,7 @@
     "registrant": {
       "kind": ""
     },
-    "version": "v1.10.1"
+    "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
