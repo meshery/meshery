@@ -272,8 +272,8 @@ const MesheryTreeView = React.memo(
                     control={
                       <Switch
                         checked={checked}
-                        onClick={handleChecked}
-                        disabled={!hasRecords}
+                        onChange={handleChecked}
+                        disabled={!hasRecords && !checked}
                         inputProps={{ 'aria-label': 'controlled' }}
                         size="small"
                       />

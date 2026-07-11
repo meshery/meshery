@@ -77,11 +77,11 @@ export const CardStyle = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'isSelected',
 })(({ theme, isSelected }) => ({
   background: isSelected
-    ? accentGrey[30] // color when tab is selected
+    ? theme.palette.background.card
     : theme.palette.mode === 'dark'
-      ? accentGrey[10] // color for inactive tabs
-      : accentGrey[20],
-  color: isSelected ? theme.palette.text.default : theme.palette.background.constant.white,
+      ? theme.palette.background.default
+      : theme.palette.background.hover,
+  color: isSelected ? theme.palette.text.default : theme.palette.text.secondary,
   height: '3rem',
   width: '15rem',
   display: 'flex',

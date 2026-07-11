@@ -190,8 +190,8 @@ const MeshModelComponent_ = ({
           response = await getMeshModelsData(
             {
               params: {
-                page: searchText ? 0 : modelFilters.page,
-                pagesize: searchText ? 'all' : 25,
+                page: searchText || checked ? 0 : modelFilters.page,
+                pagesize: searchText || checked ? 'all' : 25,
                 components: false,
                 relationships: false,
                 search: searchText || '',
@@ -261,7 +261,9 @@ const MeshModelComponent_ = ({
         setResourcesDetail((prev) => {
           const incoming = response.data[view.toLowerCase()];
           const combined =
-            searchText || view === RELATIONSHIPS ? [...incoming] : [...prev, ...incoming];
+            searchText || checked || view === RELATIONSHIPS
+              ? [...incoming]
+              : [...prev, ...incoming];
           // Use _.uniqWith for safe deep equality deduplication, as
           // not all objects (e.g. static seed files) carry unique UUIDs.
           return _.uniqWith(combined, _.isEqual);
