@@ -20,7 +20,6 @@ import (
 	"io"
 	"net"
 	"net/http"
-	"net/url"
 	"os"
 	"os/exec"
 	"slices"
@@ -328,25 +327,19 @@ func setContext(configFile, cname string) error {
 // skipContextUploadWarn logs a non-fatal warning when local kubeconfig generation
 // succeeded but Meshery Server is offline for context upload.
 func skipContextUploadWarn() {
-	utils.Log.Warn(errors.New("Meshery server is not reachable, skipping context upload. Local kubeconfig was written successfully."))
+	utils.Log.Warn(fmt.Errorf("Meshery server is not reachable, skipping context upload. Local kubeconfig was written successfully."))
 	utils.Log.Infof("Start Meshery (`mesheryctl system start`), then re-run this command or upload: %s", utils.ConfigPath)
 }
 
 // isMesheryServerUnreachable reports transport-level failure to reach Meshery
 // (server down / connection refused). Application errors (HTTP 4xx/5xx, bad
 // JSON, empty contexts) return false so they still fail hard.
+// errors.As / errors.Is already walk the Unwrap chain (including *url.Error).
 func isMesheryServerUnreachable(err error) bool {
 	if err == nil {
 		return false
 	}
 
-	// Prefer structured detection when the raw net error is still in the chain.
-	var urlErr *url.Error
-	if errors.As(err, &urlErr) && urlErr.Err != nil {
-		if isMesheryServerUnreachable(urlErr.Err) {
-			return true
-		}
-	}
 	var opErr *net.OpError
 	if errors.As(err, &opErr) {
 		return true

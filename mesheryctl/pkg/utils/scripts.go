@@ -266,7 +266,9 @@ func (c *GKEConfig) waitForTokenSecret(ctx context.Context, clientset kubernetes
 		secret, getErr := clientset.CoreV1().Secrets(c.Namespace).Get(ctx, c.tokenSecretName(), metav1.GetOptions{})
 		if getErr != nil {
 			lastErr = getErr
-			time.Sleep(tokenSecretPollInterval)
+			if err := waitPollInterval(ctx); err != nil {
+				return "", nil, err
+			}
 			continue
 		}
 
@@ -277,13 +279,25 @@ func (c *GKEConfig) waitForTokenSecret(ctx context.Context, clientset kubernetes
 		}
 
 		lastErr = fmt.Errorf("token or ca.crt not yet populated on secret %q", c.tokenSecretName())
-		time.Sleep(tokenSecretPollInterval)
+		if err := waitPollInterval(ctx); err != nil {
+			return "", nil, err
+		}
 	}
 
 	if lastErr != nil {
 		return "", nil, fmt.Errorf("timed out waiting for service account token secret %q: %w", c.tokenSecretName(), lastErr)
 	}
 	return "", nil, fmt.Errorf("timed out waiting for service account token secret %q", c.tokenSecretName())
+}
+
+// waitPollInterval waits for tokenSecretPollInterval or returns early if ctx is cancelled.
+func waitPollInterval(ctx context.Context) error {
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-time.After(tokenSecretPollInterval):
+		return nil
+	}
 }
 
 func (c *GKEConfig) writeKubeconfig(clusterName, endpoint, token string, caCRT []byte) error {
